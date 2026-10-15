@@ -139,7 +139,7 @@ test('KG5 THE CLIENT\'S SESSION: a gambit word sent only to a relay that runs it
     quiet(() => ws.receive({ t: 'welcome', id: 'aaaa-0001', peers: [], host: null, world: null, v }));
     return { s, heard, sent: () => ws.sent.map((x) => JSON.parse(x)).filter((x) => x.t === 'gambit') };
   };
-  const old = link('world202');
+  const old = link('world203');
   assert.equal(old.s.gambitOk, false);
   assert.equal(old.s.sendGambit({ op: 'look', table: 0 }), false, 'KG-SET\'s relay would close the socket on it');
   const now = link(RELAY_VERSION);

@@ -158,8 +158,8 @@ test('KG5 THE WIRE: the `gambit` arm named in parseClient\'s doc, after a hello 
   assert.equal(parseClient(big, { hasHello: true }).error, 'frame too large');
   const ready = JSON.stringify({ t: 'gambit', op: 'ready', table: 15, army: new Array(12).fill(10), crown: 3 });
   assert.ok(ready.length <= GAMBIT_FRAME_MAX, 'a Ready at its longest fits');
-  assert.equal(GAMBIT_RELAY_MIN, 203);
-  assert.equal(RELAY_VERSION, 'world203');
-  assert.equal(relaySupportsGambit('world203'), true);
-  assert.equal(relaySupportsGambit('world202'), false, 'KG-SET\'s relay closes the socket on a gambit frame');
+  assert.equal(GAMBIT_RELAY_MIN, 204);   // PIN MOVED: world203 on its branch, renumbered past FIVE-ASKS's world202 at the merge
+  assert.equal(RELAY_VERSION, 'world204');
+  assert.equal(relaySupportsGambit('world204'), true);
+  assert.equal(relaySupportsGambit('world203'), false, 'KG-SET\'s relay closes the socket on a gambit frame');
 });

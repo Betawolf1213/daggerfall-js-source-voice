@@ -253,8 +253,8 @@
  {
   "name": "KG5-W-relay-min",
   "file": "src/net/wire.js",
-  "old": "export const GAMBIT_RELAY_MIN = 203;",
-  "new": "export const GAMBIT_RELAY_MIN = 202;",
+  "old": "export const GAMBIT_RELAY_MIN = 204;",
+  "new": "export const GAMBIT_RELAY_MIN = 203;",
   "tests": [
    "test/kg5_relay.test.js",
    "test/kg5_client.test.js"

@@ -459,7 +459,7 @@ structure ours.
   the pins that name the version (`wire.js:"export const ILIAC_RELAY_MIN = 182;"` is the minimum's pattern); the client's
   send, its welcome gate and its frames in `net/online.js` and `scenes/world.js`; the alarm, the socket's close and the
   room's sweep.
-- BUILT (KG5, section 18): every seam above, the table's law `net/gambitTable.js`, relay world203.
+- BUILT (KG5, section 18): every seam above, the table's law `net/gambitTable.js`, relay world204.
 - BUILT (KG6, section 19): the gold table through CARDS6's escrow, and the season board with its GRANDMASTER.
 - LATER (KG6, section 10.7): gold tables through the realm's escrow (CARDS6's stake orders and receipts - an arm of their
   own in `server-account/src/cards.js`, whose escrow checks Hold'em's buy-ins in big blinds; AUDIT KG C24) and a season
@@ -1217,7 +1217,7 @@ The owner: **"Dont come back until this is completed in full"** - the slice afte
   already carried; its deploy's path filter names it now (`.github/workflows/account-deploy.yml`, held to the Worker's
   own import graph by `test/accountdeploy.test.js`), so a change to a card's words deploys the service that bundles
   them. The relay's bundle carries none.
-- THE RELAY: world201 (NOT YET DEPLOYED) - the catalog is relay law, and a deck holding one of the nine is one an older
+- THE RELAY: world203 (NOT YET DEPLOYED; world201, then world202, on its branch - renumbered past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merges) - the catalog is relay law, and a deck holding one of the nine is one an older
   relay refuses.
 - MEASURE - ILIAC HAND'S BALANCE, AGAIN. `tools/iliacBalance.mjs`, committed (CARDS7's random games and AUDIT CARDS-6
   B12's regulars were measured by scripts that never were); seed 20261013, the set before the nine (85 cards) and after
@@ -1611,9 +1611,9 @@ mirror, spectators, the clock; friendly.
 - THE WIRE (`net/wire.js`): `parseClient`'s `gambit` arm after a hello only, GAMBIT_FRAME_MAX (a Ready at its longest
   - twelve ids and a crown - fits); `validGambitIn` (each op's fields, a command's numbers in range) and
   `validGambitOut` (a refusal, the room's events by kind, the table and its game the law's). GAMBIT_RELAY_MIN 203 and
-  `relaySupportsGambit` - an older relay closes the socket on the frame. RELAY world203: `net/gambitTable.js`,
+  `relaySupportsGambit` - an older relay closes the socket on the frame. RELAY world204 (world203 on its branch, renumbered past main's FIVE-ASKS world202 at the merge): `net/gambitTable.js`,
   `net/kingsGambit.js`, `characters/enemyBasics.js` and `systems/mathf.js` joined the bundle (`test/relayversion.test.js`
-  RELAY_GRAPH); world202 is KG-SET's, renumbered past main's CHAT-TRADE world201 at the merge.
+  RELAY_GRAPH); world203 is KG-SET's, renumbered past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merges.
 - THE CLIENT: `net/online.js` - `sendGambit` through its own gate to a relay that runs the game, `gambitOk` at the
   welcome, a frame heard from the room the player stands in and checked by the table's law; `scenes/world.js` -
   `online.onGambit` to the modes, `host.gambitOnline` (Iliac Hand's hooks, its own send).
@@ -1656,7 +1656,7 @@ one game all ways; the stored table dropped and the sweep; the wire's arm and th
 the result's beat); the guest's board on the cloth; the client's session (the gate, the room); two pages and a watcher
 over the relay - sit, Ready, the deal, a move on both boards in one place, the turn round, the watcher's board and keys,
 a forfeit and its words, Play again, Play a regular instead, every mesh freed. PINS MOVED: every pin that names the
-relay version (world203); `cards10_client` and `auditcards6_e`'s 'other game' words. Mutants: `tools/mutants/kg5.json`,
+relay version (world204); `cards10_client` and `auditcards6_e`'s 'other game' words. Mutants: `tools/mutants/kg5.json`,
 49, all dead; `kg3.json`'s KG3-S-beat-turn-end (the beat's one home moved to the table's law), KG3-H-concession and
 KG3-H-loads-road, `kg4.json`'s KG4-G-lean-phase and `worldhover.json`'s setMode pair re-aimed by content, dead.
 
@@ -1701,14 +1701,14 @@ floor) wears GRANDMASTER - the mod's highest tier's name."
 - THE RECEIPT (`net/gambitReceipt.js`, `g1`): `{j, f, r, h, i, e}` - the game, the two accounts (the host's first), the
   winning seat (no draw: a game nobody won is no receipt), how (`king`, `forfeit`, `idle`, `left`), a week's life; the
   version inside the signed bytes, so an Iliac Hand receipt is never a King's Gambit one, nor the other way.
-- THE SEASON BOARD (`server-account/src/gambit.js`, migration `0113_gambit_ladder`): Iliac Hand's board's twin for a
+- THE SEASON BOARD (`server-account/src/gambit.js`, migration `0114_gambit_ladder`): Iliac Hand's board's twin for a
   game with no deck to vouch for - one row a game whichever seat carries it (`/v1/gambit/claim`), the arena's Elo and
   season, a pair's day and season capped, a rating written only while both ratings stand as read; the board
   (`/v1/gambit/board`) a top ten, the caller pinned, its #1 and what the title needs. GRANDMASTER (`grandmaster` in the
   token's titles, `titles.js`, its badge `ui/playerBadge.js` in a king's purple): the season's #1 with
   GAMBIT_CHAMPION_MIN_GAMES (10) rated games against GAMBIT_CHAMPION_MIN_FOES (5) foes, counted on the rows, kept for
   every Worker (`gambit_champions`), counted by the minute clock (`cron.js` 'gambit-champion'), laid on the badge's
-  doors, letters and the notice board beside Iliac Hand's, lapsing when another takes the top. ACCOUNT acct133.
+  doors, letters and the notice board beside Iliac Hand's, lapsing when another takes the top - last in the token's titles, after main's I Love Lamp. ACCOUNT acct134.
 - THE CLIENT: `net/online.js` takes a rated result from the room just left too; `scenes/worldModes.js` carries it
   (`host.gambitClaims` - `net/gambitClaims.js`, Iliac Hand's carrier, `net/iliacClaims.js` taught another reader and
   store) and acks it; `scenes/world.js` the door (`net/accountClient.js` accountGambit) and the town's word when a game
@@ -1730,7 +1730,7 @@ at a look, a spent order refused, Not ready's stake home); the escrow's arm and 
 King's Gambit stakes alone. `test/kg6_season.test.js` (5): the receipt; the claim; the board and its Grandmaster (the
 mint, the minute clock, the lapse); the carrier; the gold table's panel (the picks' bounds, the staked Ready, the book
 told, the board shown). PINS MOVED: `kg5_relay`'s gold table (it seats now, its Ready a stake); every pin that names the
-account version (acct133); the relay's law row (world203, its bundle with gambitStakes.js and gambitReceipt.js).
+account version (acct134 - acct133 on its branch, renumbered past main's LAMP-KEEPER II at the merge); the relay's law row (world204, its bundle with gambitStakes.js and gambitReceipt.js).
 Mutants: `tools/mutants/kg6.json`, 44, all dead.
 
 - **Ledger:** section A row THE KING'S GAMBIT - GOLD AND THE SEASON.
