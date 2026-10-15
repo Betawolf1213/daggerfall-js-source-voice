@@ -336,6 +336,17 @@ The CPU's side is under 5 ms in every case.
 NOT SEEN. A GPU; the classic class sprite and the paperdoll lane (they need ARENA2); the names and the auras (the probe
 draws neither). The reporter's machine and settings.
 
+THE SHADOW PASS, COUNTED AFTER (2026-10-14). The probe timed the telegraph and the crowd after `beginFrame`; the shadow
+maps are drawn inside it. `tools/courtShadowProbe.mjs` counts them: a still court draws none, but his glow and every
+landing flash are composed as lamps (`world/gateArena.js` withCourtLights marks none carried), so while he walked among
+a crowd 12 cube faces, 6 lo faces and 6 copies a frame were drawn for his glow alone, and a Hellfire landing on five
+draws 36 faces a frame (66 at worst) over its 27 lit frames and the two after, replaying the bodies about him (0.43M
+corners a frame). Composed carried they would cost nothing and cast no shadow; Mac kept the shadows and asked for the
+engine fixed (2026-10-14, "Engine fix (Recommended)"): LIGHT-ID (`07-Rendering/Enhanced-Lighting-Arc.md`) names each
+light by its producer's record, so his glow moving draws its cube whole - 6 faces, no lo face, no copy - and a light
+holding a 512 map draws no lo map (the landing's worst lo frame 126 faces to 54). The look is the same byte for byte
+(`tools/lightIdLookProbe.mjs`). `07-Rendering/Performance-Rig.md` AOE-PERF has the table.
+
 `test/fb1013e_aoeperf.test.js` (4); `tools/mutants/fb1013e_aoeperf.json` (11, all dead; wb4's and wb13a's campaigns re-run,
 62 of 62 dead). No pin moved. `07-Rendering/Performance-Rig.md` AOE-PERF, `11-Multiplayer/World-Bosses.md` WB13a.
 

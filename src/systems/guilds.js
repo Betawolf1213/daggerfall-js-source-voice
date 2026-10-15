@@ -28,7 +28,8 @@
 // the clock is DAYS SINCE ZERO - year * DaysPerYear + dayOfYear -
 // not a delta. Promotion, demotion and expulsion all reset it. The
 // gate is checked before the recompute, so an eligible player simply
-// waits.
+// waits. PROMO-NOW: online, a promotion does not wait (updateRank's
+// promoteWhenEarned); demotion, probation and expulsion still do.
 //
 // ── what is NOT here ──────────────────────────────────────────────
 // Guild SERVICES (training, healing, spell and item making, banking)
@@ -304,7 +305,11 @@ export function updateRank(memberships, guild, entity, store, now, ctx = null) {
   const m = membershipOf(memberships, guild);
   if (!m) return null;
   const today = daySinceZero(now);
-  if (today < m.lastRankChange + DAYS_BETWEEN_RANK_CHANGES) return null;
+  // PROMO-NOW (FIELD BUGS 2026-10-15; Mac, asked: "No wait"): online (`ctx.promoteWhenEarned`, the host's) a PROMOTION
+  // does not wait the 28 days - the review promotes the moment the member qualifies. The Roll's paced reputation already
+  // paces the ranks (ten a rank, at most 15 a day). Demotion, probation and expulsion keep DFU's wait.
+  const waited = !(today < m.lastRankChange + DAYS_BETWEEN_RANK_CHANGES);   // DFU's own test, negated: an unread stamp opens it
+  if (!waited && !ctx?.promoteWhenEarned) return null;
 
   // CHAP4b (Chapters-Arc 3.5): online, while the Roll holds, ranks 8 and 9 are seats - the host names the highest rank a
   // review gives (`ctx.rankCeiling`, null offline). A review never takes past it, and never demotes a rank above it (the
@@ -312,6 +317,7 @@ export function updateRank(memberships, guild, entity, store, now, ctx = null) {
   const ruled = calculateNewRank(entity, guild, store);
   const ceiling = ctx?.rankCeiling;
   const newRank = Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;
+  if (!waited && !(newRank > m.rank)) return null;   // PROMO-NOW: inside the 28 days, a promotion alone
   // REP6 (the reputation overhaul, 2026-09-29 - "Guilds: probation below 0, and expulsion only below -10, with a warning
   // first"): DFU expels a member the first review their standing is below zero - one failed quest's -2 from 0 was out
   // ("i got expelled from the mages... it says i dont have reputation"), a timeout's -22 was out with a death squad
@@ -338,6 +344,29 @@ export function updateRank(memberships, guild, entity, store, now, ctx = null) {
   // RR1: TokensExpulsion, the virtual - a mod's own lines stand in for record 668
   const rule = outcome === 'expulsion' ? underworldRuleOf(guild) : null;
   return { outcome, rank: newRank, textId: textIdFor(guild, outcome, newRank, ctx), lines: rule?.expulsion ?? null };
+}
+
+/** PROMO-NOW: what the next rank asks, read exactly as baseCalculateNewRank reads its row - the reputation, and how
+ *  many guild skills clear the row's high and low bars. Null for a stranger, without a faction store, or at the
+ *  highest rank a review gives (DFU's nine, or the host's `ctx.rankCeiling`). The rows only rise, so the next row
+ *  met is every row below it met. */
+export function rankNeeds(memberships, guild, entity, store, ctx = null) {
+  const m = membershipOf(memberships, guild);
+  if (!isMember(m) || !store) return null;
+  const top = Number.isInteger(ctx?.rankCeiling) ? ctx.rankCeiling : RANK_REQ_REPUTATION.length - 1;
+  const rank = m.rank + 1;
+  if (rank > top || rank >= RANK_REQ_REPUTATION.length) return null;
+  let best = null;
+  for (const skill of guild?.skills ?? []) {
+    const value = permanentSkillValue(entity, skill);
+    if (!best || value > best.value) best = { skill, value };
+  }
+  return {
+    rank,
+    reputation: getReputation(store, guild.factionId), reputationNeed: RANK_REQ_REPUTATION[rank],
+    skillHigh: RANK_REQ_SKILL_HIGH[rank], skillLow: RANK_REQ_SKILL_LOW[rank],
+    ...numHighLowSkills(entity, guild, rank), best,
+  };
 }
 
 /** TokensPromotion is NOT one record per guild - AUDIT 20 found the

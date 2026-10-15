@@ -83,6 +83,7 @@ import { sdMarksOf, SD_ENDINGS } from '../net/sdMarks.js';
 import { DUNGEON_AMBIENT } from '../world/dungeonLights.js';
 import { INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
 import { perspective, lookAt, identity, mirrorProjectionX } from '../world/mat4.js';
+import { lightList, packLight } from '../render/lightId.js';   // LIGHT-ID: the lab's lights into the list through the one seam
 
 const params = new URLSearchParams(location.search);
 const canvas = document.getElementById('c');
@@ -426,9 +427,9 @@ function frame(now) {
     if (params.has('plate')) hollowEnd.hoverName(SD_RETURN_KEY);
     hollowEnd.frame(null, cam.pos);
     const lit = [...(params.has('torches') ? TORCHES.map((t) => ({ x: t[0], y: t[1], z: t[2], range: 9, color: [1, 0.72, 0.42] })) : []), ...hollowEnd.lights()];
-    const data = new Float32Array(Math.max(1, lit.length) * 4), colors = new Float32Array(Math.max(1, lit.length) * 3);
-    lit.forEach((l, i) => { data.set([l.x, l.y, l.z, l.range], i * 4); colors.set(l.color, i * 3); });
-    renderer.setPointLights(data.subarray(0, lit.length * 4), null, colors.subarray(0, lit.length * 3));
+    const data = lightList(lit.length), colors = new Float32Array(Math.max(1, lit.length) * 3);   // LIGHT-ID: through the one seam
+    lit.forEach((l, i) => { packLight(data, i, l); colors.set(l.color, i * 3); });
+    renderer.setPointLights(data, null, colors.subarray(0, lit.length * 3));
     renderer.setClearColor(INTERIOR_CLEAR);
     renderer.beginFrame(proj, view, INTERIOR_LIGHT_DIR, WORLD_FRAME);
     renderer.drawMesh(roomMesh, identity(), null);
