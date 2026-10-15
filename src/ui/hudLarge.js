@@ -147,7 +147,8 @@ import { BssFile } from '../formats/bssFile.js';
 // hudCrosshair rule ("must not import back into it") is about that
 // module's two GEOMETRY CONSTANTS, which travel as arguments here too:
 // see drawHudLarge's barFill.
-import { bitmapToColor32 } from '../formats/color32Order.js';
+import { bitmapToColor32, toScreenOrder } from '../formats/color32Order.js';
+import { morrowindDataCount, morrowindDataGeneration } from '../scenes/dataSource.js';   // PORTRAIT3D: the head reloads as Morrowind's data comes and goes
 import { largeHudBar, activeSpellIconsPlaced } from './hud.js';   // BUFF-END: and the spell icons it placed this frame
 import { activeSpellAt, hudPointer } from './hudActiveSpells.js';   // BUFF-END: the tooltip's own hit
 import { endBundle, endedSpellText } from '../systems/mysticism.js';   // BUFF-END
@@ -392,6 +393,8 @@ export async function loadHudLarge({ fetchBytes, palette, renderer }, entity = n
 /** The head alone, so a host can refresh it when the entity's
  *  identity changes - DFU's Refresh() nulls HeadTexture on load and
  *  on new game and Update re-reads it. */
+/** PORTRAIT3D: each Morrowind head picture its own texture name. */
+let _mwHeadSeq = 0;
 export async function loadHudLargeHead({ fetchBytes, palette, renderer }, entity) {
   try {
     // V5: the override head first (GetCustomHeadImageData's slot).
@@ -416,6 +419,13 @@ export async function loadHudLargeHead({ fetchBytes, palette, renderer }, entity
         }
       } catch { console.warn('[hudLarge] override head art unavailable - the racial head stands in'); }
     }
+    // PORTRAIT3D (2026-10-15, the owner: "#2 is exactly I wanted"): with Morrowind's data attached, the head is the
+    // Morrowind head the player's body wears - its picture the head rect's own shape at four times its pixels; the
+    // racial record where none is drawn. The curse's override heads above stand first, as DFU's order has them.
+    const [rw, rh] = [LARGE_HUD_RECTS.head[2], LARGE_HUD_RECTS.head[3]];
+    const { playerHeadImage } = await import('../characters/headPortraits.js');
+    const mw = await playerHeadImage(entity, { px: rw * 4, ph: rh * 4, renderer }).catch(() => null);
+    if (mw) return { tex: renderer.uploadTexture('img', `mwhead#hud#${++_mwHeadSeq}`, toScreenOrder(mw)), w: mw.width, h: mw.height };
     const name = headArchiveFor(entity);
     const cif = new CifRciFile();
     cif.load(await fetchBytes(name), name, palette);
@@ -676,7 +686,7 @@ export const activeMouseOverLargeHUD = () =>
  *  null-and-re-read, as a key change. */
 const headKeyFor = (entity) => {
   const ov = racialOverrideHeadArt(entity);
-  return `${entity?.race ?? 'Breton'}|${entity?.gender ?? 'male'}|${entity?.faceIndex ?? 0}|${ov ? `${ov.file}#${ov.record}` : ''}`;
+  return `${entity?.race ?? 'Breton'}|${entity?.gender ?? 'male'}|${entity?.faceIndex ?? 0}|${ov ? `${ov.file}#${ov.record}` : ''}|mw${morrowindDataCount() > 0 ? morrowindDataGeneration() : 0}`;   // PORTRAIT3D
 };
 
 export function largeHudOptions(deps, entity) {

@@ -65,6 +65,7 @@ import {
   pickLanternRecord, hangAnchor, hookOnBone, hangAffine,   // HT-WAIST: the lantern at the waist, and the part that hangs
   tpAnimSources, TP_BASE_MODEL, playerBodyRows, werewolfHeadRows, MW_UNITS_PER_METER, resolveBodyParts, ARM_PARTS, raceRecords, armorRecords, clothingRecords,
   facePools, meshBounds, curatedAnswersFace,   // AUDIT MW-HEADS1: the match stands down where the curated table answers
+  shapeMatchesBone,   // PORTRAIT3D: a head part's shapes, as the binder keeps them
   movementAnimState, composeMovementGroup, MOVEMENT_FALLBACK_SPEED, MOVEMENT_SPEED_CAP, turnAnimSpeed,
   jumpAnimState,
   sourcesKeyTime, sourceVelocityOf,
@@ -1284,7 +1285,8 @@ function adoptMemoGeneration(genOf) {
   const gen = genOf();
   if (gen !== memoGen) {
     memoGen = gen;
-    for (const m of [ESM_WALK_CACHE, CLIP_REPORT_CACHE, TEXTURE_CACHE, FACE_MATCH_CACHE, CLOT_COLOUR_CACHE, ITEM_ICON_CACHE]) m.clear();
+    for (const m of [ESM_WALK_CACHE, CLIP_REPORT_CACHE, TEXTURE_CACHE, FACE_MATCH_CACHE, CLOT_COLOUR_CACHE, ITEM_ICON_CACHE, HEAD_PORTRAIT_CACHE]) m.clear();
+    headCatalog = null;   // PORTRAIT3D: and the catalogue the portraits read
   }
   return gen;
 }
@@ -2180,6 +2182,206 @@ async function buildCreatureBody({ creature, flies = false, deps = null }) {
   }
 }
 
+/** MW-D35: THE FACE, MATCHED to the classic portrait on this data - the build's and (PORTRAIT3D) the head portrait's,
+ *  one door: the same pools, the same curated table, the same kept verdicts. Null halves fall back to the walk inside
+ *  playerBodyRows. */
+async function faceMatchOf({ race, female, faceIndex, werewolf = false, npcFace = null, pools, archives, gen, d }) {
+  // AUDIT 32 F2: memoised per identity per data generation - a
+  // rebuild happens on every equip change now (D32), and the face
+  // does not change when a gauntlet does; without this, every worn
+  // swap re-parsed a dozen meshes and decoded a dozen textures.
+  // AUDIT MW-HEADS1 (L2-F6): THE POOLS THE FACE IS CHOSEN AMONG, as the rows will choose (facePools, the archives'
+  // directory: the port's own where they stand) - and where the curated table answers both halves among them, no
+  // measured match is ever worn (playerBodyRows), so none is measured: every Breton man's ten portraits, which measured
+  // all six of the port's parts on every build for a verdict the table overrode.
+  let faceMatch;
+  if (werewolf) {
+    faceMatch = { head: null, hair: null, reasons: ['werewolf: the head is WerewolfHead'] };   // WEREWOLF1: no face to match
+  } else if (npcFace) {
+    faceMatch = { head: null, hair: null, reasons: ['an NPC: its head and hair walked off its seed'] };   // MWNPC17: no portrait is its own - nothing measured
+  } else if (curatedAnswersFace(pools, race, female, faceIndex)) {
+    faceMatch = { head: null, hair: null, reasons: [t('body.face.curated', 'the curated table names both halves - nothing measured')] };
+  } else if (!d.fetchArena2Bytes) {
+    faceMatch = { head: null, hair: null, reasons: ['no Daggerfall data door - the walk stands'] };
+  } else {
+    const fkey = `${gen}:${race}:${female ? 'f' : 'm'}:${faceIndex | 0}`;
+    faceMatch = FACE_MATCH_CACHE.get(fkey);
+    // MW-LOAD: AND KEPT ACROSS PAGE LOADS. The verdict is a function
+    // of the stored set (every archive's heads and hairs), the
+    // identity and the matcher - so it keys on the set's fingerprint
+    // (names and sizes), the identity and FACE_MATCH_VERSION, in the
+    // derived store, and a set that changes is measured again. The
+    // measuring is a mesh parse and a texture decode per candidate,
+    // a dozen or more of each, on every page load until now.
+    // AUDIT MW-HEADS1 (L2-F6): AND ON THE CANDIDATES MEASURED. The
+    // stored set's fingerprint is the player's files, and the pools
+    // are not only theirs: the port's own heads ship with the page,
+    // and stand only where their archive loaded (facePools) - a
+    // verdict kept over the data's heads was read back over the
+    // port's own, named no head of them, and the walk stood. The
+    // ids measured are the key's, so another pool is measured anew.
+    const print = typeof d.morrowindDataFingerprint === 'function' ? d.morrowindDataFingerprint() : null;
+    const measured = [...pools.heads, ...pools.hairs].map((r) => r.id).join('\n');
+    const dkey = print !== null && typeof d.loadDerivedJson === 'function' && typeof d.storeDerivedJson === 'function'
+      ? `mw-face-match:v${FACE_MATCH_VERSION}:${race}:${female ? 'f' : 'm'}:${faceIndex | 0}:${fnv(print)}:${fnv(measured)}` : null;
+    if (!faceMatch && dkey) {
+      const kept = await d.loadDerivedJson(dkey);
+      if (kept && (kept.head || kept.hair)) { faceMatch = kept; FACE_MATCH_CACHE.set(fkey, kept); }
+    }
+    if (!faceMatch) {
+      faceMatch = await matchFaceFor({ race, female, faceIndex, pools, archives, deps: d });
+      if (dkey && (faceMatch.head || faceMatch.hair)) {
+        try { await d.storeDerivedJson(dkey, faceMatch); } catch (e) { console.warn('[mw] face verdict could not be kept -', e?.message ?? e); }
+      }
+      // AUDIT 32 F3: a MISS is not memoised. The enhanced door opens
+      // before ARENA2 is picked, so the first build of a session can
+      // find no portrait archive at all; caching that verdict would
+      // have pinned "the walk stands" onto every rebuild of the
+      // session even after the data arrived.
+      if (faceMatch.head || faceMatch.hair) FACE_MATCH_CACHE.set(fkey, faceMatch);
+    }
+  }
+  return faceMatch;
+}
+
+
+// PORTRAIT3D (2026-10-15, the owner, of the faces: "can we do the other races with 3d portraits also?", then "#2 is
+// exactly I wanted. Which also affects the talk window for npcs"): THE FACE IS A PICTURE OF THE MORROWIND HEAD. With
+// Morrowind's data attached, a face Daggerfall paints - the player's portrait, an NPC's in the talk window - is drawn
+// as the head and hair the body wears: the same pools, the same curated table and measured match (faceMatchOf), the
+// same walk off an NPC's seed (playerBodyRows), so the portrait and the body are one face. It reads its own catalogue
+// (the archives and the .esm's BODY records, by the derived door the build takes), so it stands before any body is
+// built - at character creation and on the title screen's saves. Head and hair are RIGID parts in the head bone's own
+// frame (+Y the face, +Z the crown - mwFaceMatch headFeatures), so the two meshes render together with no skeleton,
+// each its shapes as the binder keeps them (the hair's filtered on "hair", npcanimation.cpp:801), face-on under an
+// orthographic camera, lit as the inventory's figure is (renderCharacterSpriteImage's studio). One picture per head
+// and hair per data generation, the promise shared; a miss is not kept (AUDIT 32 F3's law), and a caller holds the
+// classic portrait until a picture lands, or for good when none does.
+const HEAD_PORTRAIT_CACHE = new Map();
+/** PORTRAIT3D: the catalogue the portraits read, one per data generation - `{ gen, promise }`. */
+let headCatalog = null;
+
+/** PORTRAIT3D: the archives and every .esm's BODY records, in load order - what facePools and playerBodyRows read. */
+function headCatalogOf(d) {
+  const gen = adoptMemoGeneration(d.morrowindDataGeneration);
+  if (gen !== null && headCatalog && headCatalog.gen === gen) return headCatalog.promise;
+  const promise = (async () => {
+    const archives = await d.loadMorrowindArchives();
+    if (!archives.length) return null;
+    const esmNames = esmLoadOrder((await d.storedMorrowindNames()).filter((n) => /\.esm$/i.test(n)));
+    if (!esmNames.length) return null;
+    const parts = [];
+    for (const n of esmNames) {
+      const records = typeof d.loadMorrowindArmRecords === 'function' ? await d.loadMorrowindArmRecords(n) : null;
+      parts.push(...(records ? armRecordsOf(records, 'parts') : bodyParts(await d.loadMorrowindFile(n))));
+    }
+    return { archives, parts, gen };
+  })();
+  const forget = () => { if (headCatalog && headCatalog.promise === promise) headCatalog = null; };
+  if (gen !== null) headCatalog = { gen, promise };
+  promise.then((c) => { if (!c) forget(); }, forget);
+  return promise;
+}
+
+/** PORTRAIT3D: THE PORTRAIT'S FRAME - face-on to a head and hair in the pass frame (NIF_TO_PASS stands the crown up and
+ *  turns the face to -Z), the orthographic window fitted to the projected corners with a little air, `aspect` (width
+ *  over height) wide - a classic portrait's own shape, so no well stretches it. Pure; pinned. */
+export function headFrame(bounds, { air = 1.08, aspect = 1 } = {}) {
+  const c = [(bounds.minX + bounds.maxX) / 2, (bounds.minY + bounds.maxY) / 2, (bounds.minZ + bounds.maxZ) / 2];
+  const span = Math.hypot(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY, bounds.maxZ - bounds.minZ) || 1;
+  const eye = [c[0], c[1], c[2] - span * 2];
+  const view = lookAt(eye, c, [0, 1, 0]);
+  let hw = 0; let hh = 0;
+  for (const x of [bounds.minX, bounds.maxX]) for (const y of [bounds.minY, bounds.maxY]) for (const z of [bounds.minZ, bounds.maxZ]) {
+    const p = transformPoint(view, x, y, z);
+    hw = Math.max(hw, Math.abs(p[0])); hh = Math.max(hh, Math.abs(p[1]));
+  }
+  const a = aspect > 0 ? aspect : 1;
+  const halfH = Math.max(hh, hw / a) * air || 1;
+  return { view, proj: ortho(halfH * a, halfH, 0.1, span * 8), eye };
+}
+
+/** PORTRAIT3D: the head and hair records `rows` name, rendered to a picture `pw` x `ph` - `{ width, height, data }`
+ *  top-down RGBA, transparent round the head - or null when a mesh or a texture is not in hand. */
+async function renderHeadRows(renderer, cat, rows, pw, ph) {
+  const pieces = [];
+  for (const row of rows) {
+    if (!row.record || !row.record.model) continue;
+    const path = `meshes/${row.record.model}`;
+    await loadFromArchives(cat.archives, [path]);
+    const arc = cat.archives.find((a) => a.has(path));
+    if (!arc || (typeof arc.loaded === 'function' && !arc.loaded(path))) return null;
+    let batches;
+    try { batches = flattenNif(parseNif(arc.get(path).slice())); } catch { return null; }
+    const filter = row.slot === 'hair' ? 'hair' : 'head';
+    const kept = batches.filter((b) => b.positions && b.indices && (!String(b.name || '').trim() || shapeMatchesBone(b.name, filter)));
+    for (const b of kept) pieces.push({ ...b, slot: row.slot, mirrored: false });
+  }
+  if (!pieces.some((p) => p.slot === 'head')) return null;
+  await preloadArmTextures(pieces, cat.archives, cat.gen);
+  if (texturesUnread(pieces, cat.archives, cat.gen)) return null;   // a texture whose bytes never came is no portrait (AUDIT DYE-ICON r3 2's law)
+  const u = 1 / MW_UNITS_PER_METER;
+  const model = multiply(trs(0, 0, 0, 0, 0, 0, u, u, u), NIF_TO_PASS);
+  let minX = Infinity, minY = Infinity, minZ = Infinity, maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+  for (const p of pieces) {
+    for (let i = 0; i < p.positions.length; i += 3) {
+      const q = transformPoint(model, p.positions[i], p.positions[i + 1], p.positions[i + 2]);
+      if (q[0] < minX) minX = q[0]; if (q[0] > maxX) maxX = q[0];
+      if (q[1] < minY) minY = q[1]; if (q[1] > maxY) maxY = q[1];
+      if (q[2] < minZ) minZ = q[2]; if (q[2] > maxZ) maxZ = q[2];
+    }
+  }
+  if (!(maxX > minX)) return null;
+  const w = Math.min(CHAR_SPRITE_RT_SIZE, Math.max(16, pw | 0)), h = Math.min(CHAR_SPRITE_RT_SIZE, Math.max(16, ph | 0));
+  const { view, proj } = headFrame({ minX, minY, minZ, maxX, maxY, maxZ }, { aspect: w / h });
+  const packed = packFpArm(pieces);
+  const mesh = renderer.createCharacterMesh(packed.packed, { uv: true });
+  mesh.ranges = packed.ranges;
+  const textures = collectArmTextures(pieces, cat.archives, cat.gen);
+  for (const r of mesh.ranges) {
+    const entry = r.textureFile ? textures.get(r.textureFile) : null;
+    if (!entry) continue;
+    const m = r.piece.material;
+    r.tex = acquireCharacterTexture(renderer, entry.image.mips, wrapModes(m ? m.clampMode : 3));
+    r.alphaCut = m && m.alphaTest ? (m.alphaThreshold || 0) / 255 : 0;
+  }
+  try {
+    return renderer.renderCharacterSpriteImage(mesh, model, proj, view, w, h);
+  } finally {
+    if (renderer.gl) {
+      renderer.gl.deleteVertexArray(mesh.vao);
+      for (const b of mesh.buffers || []) renderer.gl.deleteBuffer(b);
+    }
+    for (const r of mesh.ranges) if (r.tex) { releaseCharacterTexture(renderer, r.tex); r.tex = null; }
+  }
+}
+
+/** PORTRAIT3D: THE PORTRAIT OF A MORROWIND HEAD - the face of a race and sex as the body wears it: the player's by its
+ *  portrait (`faceIndex`: the curated table, the measured match, the walk), an NPC's walked off its seed (`npcFace`,
+ *  characters/wardrobe.js npcFaceOf), a vampire's head where the race has one. `{ width, height, data }` or null (no
+ *  data attached, no renderer, no head for the race, a mesh or a texture not in hand).
+ *  @param {{ renderer?: any, race?: string|null, female?: boolean, faceIndex?: number, npcFace?: { head: number, hair: number }|null, vampire?: boolean, px?: number, ph?: number, deps?: any }} [opts] */
+export async function headPortrait({ renderer, race, female = false, faceIndex = 0, npcFace = null, vampire = false, px = 128, ph = px, deps = null } = {}) {
+  if (!renderer || !race) return null;
+  const d = deps || await import('../scenes/dataSource.js');
+  const cat = await headCatalogOf(d);
+  if (!cat) return null;
+  const has = archiveHas(cat.archives);
+  const pools = npcFace ? null : facePools(cat.parts, race, female, { has });
+  const faceMatch = await faceMatchOf({ race, female, faceIndex, npcFace, pools, archives: cat.archives, gen: cat.gen, d });
+  const rows = playerBodyRows(cat.parts, race, female, { faceIndex, faceMatch, vampire, walk: npcFace, has }).filter((r) => r.slot === 'head' || r.slot === 'hair');
+  const head = rows.find((r) => r.slot === 'head')?.record;
+  if (!head) return null;
+  const hair = rows.find((r) => r.slot === 'hair')?.record ?? null;
+  const key = `${cat.gen}:${head.id}:${hair ? hair.id : '-'}:${px | 0}x${ph | 0}`;
+  const hit = HEAD_PORTRAIT_CACHE.get(key);
+  if (hit) return hit;
+  const picture = renderHeadRows(renderer, cat, rows, px, ph).catch(() => null);
+  HEAD_PORTRAIT_CACHE.set(key, picture);
+  picture.then((img) => { if (!img && HEAD_PORTRAIT_CACHE.get(key) === picture) HEAD_PORTRAIT_CACHE.delete(key); });
+  return picture;
+}
+
 export async function buildFpArm({
   race, female = false, beast = null, faceIndex = 0, weapon = null, hasAmmo = false, armor = null, deps = null,
   torch = false,   // MW-D51: a lit Daggerfall torch in hand at the build
@@ -2402,64 +2604,8 @@ export async function buildFpArm({
         ? 'werewolfrobe: Bloodmoon.esm is attached and no CLOT record here names it'
         : 'werewolfrobe: no CLOT record carries it - Bloodmoon.esm does, and it is not attached');
     }
-    // MW-D35: THE FACE, MATCHED to the classic portrait on this data.
-    // Null halves fall back to the walk inside playerBodyRows.
-    // AUDIT 32 F2: memoised per identity per data generation - a
-    // rebuild happens on every equip change now (D32), and the face
-    // does not change when a gauntlet does; without this, every worn
-    // swap re-parsed a dozen meshes and decoded a dozen textures.
-    let faceMatch;
-    // AUDIT MW-HEADS1 (L2-F6): THE POOLS THE FACE IS CHOSEN AMONG, as the rows will choose (facePools, the archives'
-    // directory: the port's own where they stand) - and where the curated table answers both halves among them, no
-    // measured match is ever worn (playerBodyRows), so none is measured: every Breton man's ten portraits, which measured
-    // all six of the port's parts on every build for a verdict the table overrode.
     const pools = werewolf || npcFace ? null : facePools(parts, race, female, { has: archiveHas(archives) });
-    if (werewolf) {
-      faceMatch = { head: null, hair: null, reasons: ['werewolf: the head is WerewolfHead'] };   // WEREWOLF1: no face to match
-    } else if (npcFace) {
-      faceMatch = { head: null, hair: null, reasons: ['an NPC: its head and hair walked off its seed'] };   // MWNPC17: no portrait is its own - nothing measured
-    } else if (curatedAnswersFace(pools, race, female, faceIndex)) {
-      faceMatch = { head: null, hair: null, reasons: [t('body.face.curated', 'the curated table names both halves - nothing measured')] };
-    } else if (!d.fetchArena2Bytes) {
-      faceMatch = { head: null, hair: null, reasons: ['no Daggerfall data door - the walk stands'] };
-    } else {
-      const fkey = `${gen}:${race}:${female ? 'f' : 'm'}:${faceIndex | 0}`;
-      faceMatch = FACE_MATCH_CACHE.get(fkey);
-      // MW-LOAD: AND KEPT ACROSS PAGE LOADS. The verdict is a function
-      // of the stored set (every archive's heads and hairs), the
-      // identity and the matcher - so it keys on the set's fingerprint
-      // (names and sizes), the identity and FACE_MATCH_VERSION, in the
-      // derived store, and a set that changes is measured again. The
-      // measuring is a mesh parse and a texture decode per candidate,
-      // a dozen or more of each, on every page load until now.
-      // AUDIT MW-HEADS1 (L2-F6): AND ON THE CANDIDATES MEASURED. The
-      // stored set's fingerprint is the player's files, and the pools
-      // are not only theirs: the port's own heads ship with the page,
-      // and stand only where their archive loaded (facePools) - a
-      // verdict kept over the data's heads was read back over the
-      // port's own, named no head of them, and the walk stood. The
-      // ids measured are the key's, so another pool is measured anew.
-      const print = typeof d.morrowindDataFingerprint === 'function' ? d.morrowindDataFingerprint() : null;
-      const measured = [...pools.heads, ...pools.hairs].map((r) => r.id).join('\n');
-      const dkey = print !== null && typeof d.loadDerivedJson === 'function' && typeof d.storeDerivedJson === 'function'
-        ? `mw-face-match:v${FACE_MATCH_VERSION}:${race}:${female ? 'f' : 'm'}:${faceIndex | 0}:${fnv(print)}:${fnv(measured)}` : null;
-      if (!faceMatch && dkey) {
-        const kept = await d.loadDerivedJson(dkey);
-        if (kept && (kept.head || kept.hair)) { faceMatch = kept; FACE_MATCH_CACHE.set(fkey, kept); }
-      }
-      if (!faceMatch) {
-        faceMatch = await matchFaceFor({ race, female, faceIndex, pools, archives, deps: d });
-        if (dkey && (faceMatch.head || faceMatch.hair)) {
-          try { await d.storeDerivedJson(dkey, faceMatch); } catch (e) { console.warn('[mw] face verdict could not be kept -', e?.message ?? e); }
-        }
-        // AUDIT 32 F3: a MISS is not memoised. The enhanced door opens
-        // before ARENA2 is picked, so the first build of a session can
-        // find no portrait archive at all; caching that verdict would
-        // have pinned "the walk stands" onto every rebuild of the
-        // session even after the data arrived.
-        if (faceMatch.head || faceMatch.hair) FACE_MATCH_CACHE.set(fkey, faceMatch);
-      }
-    }
+    const faceMatch = await faceMatchOf({ race, female, faceIndex, werewolf, npcFace, pools, archives, gen, d });   // PORTRAIT3D: one seam, the head portrait's too
 
     // WEREWOLF1: no race rows - getBodyParts answers nothing for a werewolf, in first person too
     const rows = werewolf ? [] : armReport(parts, race, female);

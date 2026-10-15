@@ -4169,6 +4169,7 @@ export function createWorldModes(host) {
     // has none and takes staticNpcData's Building default.
     const npcSceneCtx = staticNpcSceneCtx(pn);
     const npcData = questBridge?.clickNpc(pn, npcSceneCtx) ?? staticNpcData(pn, npcSceneCtx);
+    talkedTo.set(npcData, pn);   // PORTRAIT3D: whose face the talk window shows
     // AUDIT 24 (wave 20): PlayerActivate.cs:1523-1528, the return the
     // port never had. A clicked NPC whose GameObject carries a
     // QuestResourceBehaviour goes through DoClick FIRST, and a click
@@ -5611,11 +5612,16 @@ export function createWorldModes(host) {
    *  that broke - silently, because the `?.` below never traps. The
    *  hosts spread the whole pipeline now. */
   function staticNpcPortrait(npcData) {
-    return portraitIndexFromStaticNPCBillboard(npcData, {
+    const portrait = portraitIndexFromStaticNPCBillboard(npcData, {
       factionData: townTalk?.factionDict?.get(npcData?.factionID ?? 0) ?? null,
       flatFaceIndex: pipeline.flatFaceIndex,
     });
+    // PORTRAIT3D: and the look this NPC's body stands in (peopleBodies.js personLook) - its face the head that body wears
+    const pn = npcData ? talkedTo.get(npcData) : null;
+    return pn && portrait ? { ...portrait, head: standingLook(pn) } : portrait;
   }
+  /** PORTRAIT3D: the person a click's NPCData was made for - the talk window's face is theirs. */
+  const talkedTo = new WeakMap();
 
   /** TalkManager.cs:757-772 - the QUESTOR DOOR, TalkToStaticNPC's
    *  FIRST act: an NPC in npcsWithWork (or a castle NPC that won its
