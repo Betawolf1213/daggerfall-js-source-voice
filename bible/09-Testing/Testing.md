@@ -17,7 +17,9 @@ its push to the site; the suite alone ~6 minutes on a four-core runner, two whol
   shards, the build - as jobs that run at once. `check.yml` (the PR) calls it, and its `check` job passes only when all
   of it did (it runs `always()` and reads the result: a required check SKIPPED because its need failed would pass).
   `deploy.yml` pins main's head once, verifies that commit with the same jobs beside the site's own build of it, and
-  publishes only after both passed. The shards: `tools/testShards.mjs` splits the files by their recorded times - the
+  publishes only after both passed. `release-desktop.yml`'s `gate` calls it too, on the release's own commit, and every
+  OS leg waits for it (REL-FAST, 2026-10-15, Mac: "Yes, thats insanely slow" - the gate was `npm run check` in series,
+  27.4 of a release's 33 minutes); none of its checkouts keeps a token (AUDIT INSTALL L1-1). The shards: `tools/testShards.mjs` splits the files by their recorded times - the
   longest first, each onto the lightest shard - so the four finish together (~245 s of recorded time each, ~80 s a
   job); EVERY FILE IS IN EXACTLY ONE SHARD, and a file with no recorded time weighs the median.
 - **The times (FLOW1).** `npm run test:times` re-times every file into `tools/testTimes.json`. Stale times only
