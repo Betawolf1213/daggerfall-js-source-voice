@@ -52,5 +52,32 @@
     "tests": [
       "test/bootorder.test.js"
     ]
+  },
+  {
+    "name": "BLOOD1-HOSTSPLIT2-a-bucket-the-build-lays-allocating-per-call",
+    "file": "src/scenes/pixelBuild.js",
+    "old": "            collider.addMesh(key, cpuB.positions, cpuB.indices, local, onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])));   // PERF-COL2: riding the floating origin\n",
+    "new": "            collider.addMesh(key, cpuB.positions, cpuB.indices, local, onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])));   // PERF-COL2: riding the floating origin\n            collider.addMesh(key + ':b', cpuB.positions, cpuB.indices, local, onFloatingFrame(host.state, () => host.state.pixelTranslation(px, py)));\n",
+    "tests": [
+      "test/blood1_decals.test.js"
+    ]
+  },
+  {
+    "name": "TERRAIN-WORKER-HOSTSPLIT2-a-mesh-laid-after-the-publish",
+    "file": "src/scenes/world.js",
+    "old": "  async function standPixelNpcs(entry) {\n",
+    "new": "  async function standPixelNpcs(entry) {\n    collider.addMesh(entry.key, [], [], null, null);\n",
+    "tests": [
+      "test/terrainworker.test.js"
+    ]
+  },
+  {
+    "name": "WATER-NEXT-m8-HOSTSPLIT2-the-build-dries-its-own-puddles",
+    "file": "src/scenes/pixelBuild.js",
+    "old": "  async function buildPixelNow(px, py, { roadsRetry = false } = {}) {\n",
+    "new": "  async function buildPixelNow(px, py, { roadsRetry = false } = {}) {\n    dryPuddles([]);\n",
+    "tests": [
+      "test/audit_waternext.test.js"
+    ]
   }
 ]

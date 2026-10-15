@@ -315,3 +315,22 @@ the build since. Found:
   `host.state.pixelTranslation`, alone - so it counted only the build's seven, and
   a provider the host lays itself, reading `state`, went uncounted, marked or not.
   It counts both spellings now. One mutant, dead (it lived on the rewritten pin).
+- FOUR MORE THE JOIN OR THE SPELLING HID, each proved by a mutant that passed the
+  rewritten pin and failed main's:
+  - LANDFORM4 (`test/landform45.test.js`) ordered the landform tables before
+    `await terrainGen.generate({`, which now stands only in the module the join
+    appends after all of world.js - so any place in world.js passed, below the
+    first build too. It orders them before the build's construction now.
+  - BLOOD1's per-call negative (`test/blood1_decals.test.js`) still spelled the
+    bare `state`, which the build no longer does; it reads both spellings.
+  - TERRAIN-WORKER's "publish follows the collider" (`test/terrainworker.test.js`)
+    appended the module after the door's slice, so both of its `lastIndexOf`
+    landed in the module and a mesh laid after the publish in world.js
+    (`standPixelNpcs`) went unread. The module is spliced in where the host
+    constructs it, as the build stood.
+  - WATER-NEXT m8 (`test/audit_waternext.test.js`) was never rewritten: a NEGATIVE
+    pin cannot fail when code leaves the text it reads, so it kept reading
+    world.js alone and stopped covering the build that lays the pixel's ground.
+    It reads the host whole.
+  Three mutants in `tools/mutants/hostseam.json`, dead; LANDFORM4's is a move of
+  two sites, which a record cannot hold, and was run by hand.

@@ -231,5 +231,8 @@ test('LANDFORM4: the sites ride every kernel - the worker keeps the ones the cli
   // PIN MOVED (AUDIT SD IV S2): the rows read through classicRow once, above, for the landforms and the Hollow's lists alike
   assert.match(world, /\n  const classicRow = \(row\) => \(maps\.locationReplaced\(row\.regionIndex, row\.locationIndex\) \? maps\.readClassicLocation\(row\.regionIndex, row\.locationIndex\) : row\);\n  let _classicRows = landform \|\| params\.has\('online'\) \? _hubRows\.map\(classicRow\)\.filter\(Boolean\) : null;\n  if \(landform\) \{\n    _landformSites = landformSites\(_classicRows\.map\(\(loc\) => \{ const p = longitudeLatitudeToMapPixel\(loc\.mapTableData\.longitude, loc\.mapTableData\.latitude\); return \{ px: p\.x, py: p\.y, loc \}; \}\)\);\n    _landformClimates = landformClimates\(\(x, y\) => maps\.getClimateIndex\(x, y\)\);[^\n]*\n    terrainGen\.setLandformTables\(\{ sites: _landformSites, climates: _landformClimates \}\);\n  \}/, 'made once of the game\'s own rows (HUB1\'s - the same sites on every client), handed to both kernels with the climates');
   assert.ok(world.indexOf('_landformSites = landformSites(_classicRows') > world.indexOf('if (l < baseCount) { _hubRows.push(loc);'), 'after the rows are gathered');   // AUDIT LANDFORMS III B1: each as MAPS.BSA holds it (test/auditlandforms3.test.js)
-  assert.ok(world.indexOf('terrainGen.setLandformTables(') < world.indexOf('await terrainGen.generate({'), 'before the first pixel is asked of either');
+  // HOST-SPLIT 2 (AUDIT, the second read): the build's `generate` now stands in src/scenes/pixelBuild.js, joined after
+  // all of world.js, so ordering against it held nothing - the tables stand above the build's construction instead
+  const built = world.indexOf('const { buildPixelNow } = createPixelBuild(');
+  assert.ok(built > 0 && world.indexOf('terrainGen.setLandformTables(') < built, 'before the first pixel is asked of either');
 });

@@ -1809,7 +1809,7 @@ test('BOOT-TDZ: every Travel Options binding the STREAM reads is declared above 
   // declares below its own first build. With no mod there is nothing to
   // initialise, so the mod is the cheap test and the only safe one.
   const from = w.indexOf('async function buildPixelNow(');
-  assert.notEqual(from, -1, 'world.js no longer carries buildPixelNow');
+  assert.notEqual(from, -1, 'the world host no longer carries buildPixelNow');
   // the body opens at the `) {` that closes the parameter list, not at
   // the first brace (the options bag destructures one of its own)
   const bodyAt = w.indexOf(') {', from) + 2;

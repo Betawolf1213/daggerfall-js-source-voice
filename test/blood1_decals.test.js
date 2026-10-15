@@ -2366,7 +2366,7 @@ test('BLOOD1 AUDIT 3: a mark on streamed terrain lies on the DRAWN ground, and t
   // the ray walk: one translation array a bucket, and no boxed origin
   // (HOST-SPLIT 2: the buckets are laid by the pixel build, src/scenes/pixelBuild.js, which reads the state live - host.state)
   assert.equal((world.match(/\(\(o\) => \(\) => host\.state\.pixelTranslation\(px, py, o\)\)\(\[0, 0, 0\]\)/g) ?? []).length, 8, 'every bucket translation reuses its own array');   // FIELD BUGS 2026-10-13e HILL-SEAT (PIN MOVED): the eighth is a block's hill pads, solid in the pixel's bucket   // GOTHWAY-BOARDS: the seventh is a Gothway Garden board's mesh (one a board), the patch's own   // TACT1: the sixth is the pixel's cover, in the pixel's own frame   // WOD2: the fourth is World of Daggerfall's models, whose sites open the pixel's bucket (a location's pixel never has one); WOD4: the fifth is the camp at Privateer's Hold's
-  assert.doesNotMatch(world, /\(\) => state\.pixelTranslation\(px, py\)[,)]/, 'no bucket allocates a translation per call');
+  assert.doesNotMatch(world, /\(\) => (?:host\.)?state\.pixelTranslation\(px, py\)[,)]/, 'no bucket allocates a translation per call');   // AUDIT HOST-SPLIT 2, the second read: the build's spelling too
   const col = read('src/player/collider.js');
   const box = col.slice(col.indexOf('export function segmentHitsBox('), col.indexOf('\n}', col.indexOf('export function segmentHitsBox(')));
   assert.doesNotMatch(box, /\[ox, oy, oz\]/, 'the box test reads its origin in place - no array of it in any spelling');

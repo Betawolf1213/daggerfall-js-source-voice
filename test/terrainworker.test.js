@@ -271,7 +271,12 @@ test('EV7: the world host rides the client and the pinned build contracts stand'
   // the publish stays atomic and main-side: built.set is still the
   // last act of the build, after the GL uploads and the collider
   // HOST-SPLIT 2: buildPixel and its door stand in world.js, the build they call (buildPixelNow) in src/scenes/pixelBuild.js
-  const bp = world.slice(world.indexOf('async function buildPixel'), world.indexOf('function restrideTerrain')) + hostText('src/scenes/pixelBuild.js');
+  // (AUDIT HOST-SPLIT 2, the second read: spliced in where the host constructs it, as it stood - appended at the end,
+  // both lastIndexOf landed in the module and nothing world.js lays after the build was compared)
+  const door = world.slice(world.indexOf('async function buildPixel'), world.indexOf('function restrideTerrain'));
+  const seam = door.indexOf('  const { buildPixelNow } = createPixelBuild(');
+  assert.ok(seam > 0, 'the build is constructed between its door and the restride');
+  const bp = door.slice(0, seam) + hostText('src/scenes/pixelBuild.js') + door.slice(seam);
   assert.ok(bp.lastIndexOf('built.set(key,') > bp.lastIndexOf('collider.addMesh'), 'publish follows the collider');
   assert.ok(bp.includes('renderer.createTerrainSurface(carved?.positions ?? positions, carved?.normals ?? normals'), 'GL consumes the reply on this thread');   // PIN MOVED (WATER-NEXT 2): the reply's grid, carved under the water for the eye - AUDIT WATER-NEXT P1: carved by the kernel, on the worker
   // AUDIT EV F-SIM1: one build per pixel, ever in flight - the cache
