@@ -12,6 +12,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
@@ -210,7 +211,7 @@ test('PERF-EXT10 (the review): the shadow record writes every batch\'s fractiona
     const b = batches[batches.length - 1];
     console.log(JSON.stringify({ perControl, perBatch, seen: b._shSeen, at: [b._shOx, b._shOy, b._shOz], origin: b.origin }));
   `;
-  const out = spawnSync(process.execPath, ['--expose-gc', '--min-semi-space-size=64', '--max-semi-space-size=64', '--input-type=module', '-e', script], { encoding: 'utf8' });
+  const out = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', script], { encoding: 'utf8' });
   assert.equal(out.status, 0, out.stderr);
   const m = JSON.parse(out.stdout.trim().split('\n').pop());
   // the record really wrote the triple, and wrote the origin

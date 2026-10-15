@@ -3,6 +3,11 @@
 The docs are `bible/` - start at `bible/Home.md` (its Process rules bind every
 change) and read `bible/01-Overview/Port-Doctrine.md` before touching code.
 
+- **Scope** (SCOPE1, Mac, 2026-10-14): DFO Online is its own game, not a 1:1
+  port. Daggerfall Unity is the reference - read it first, cite it, name a
+  departure from it - not a target to match. Older pages that say "1:1" are
+  history; Port-Doctrine's Scope section governs new work.
+
 - **Before a push** (FAST-SUITE, `bible/09-Testing/Testing.md` "How the suite
   runs"): `npm run lint`, `npm run types`, the bible's gates (`test/manifest`,
   `citeanchor`, `citedrift`, `mutantdrift`, `audit18_bible_docs`, `ledger` -
@@ -28,3 +33,10 @@ change) and read `bible/01-Overview/Port-Doctrine.md` before touching code.
   release reads them there. Never commit a patch-notes file:
   `test/rel4_release.test.js` fails the suite on one. Editing a merged pull
   request's description rewrites its release's notes (`release-notes.yml`).
+- **The hosts do not grow** (HOST-SPLIT, `bible/01-Overview/Host-Split.md`):
+  new behaviour goes into a module the host wires (`src/scenes/fishHost.js` is
+  the shape), never into `bootWorld`, `createWorldModes`, `buildDungeonContext`
+  or `bootExterior` themselves - and on the relay into a Room method of its own,
+  never into `_message`. `test/hostceiling.test.js` fails a host that lengthens
+  past its ceiling in code lines; `node tools/hostScope.mjs <host>` maps what a
+  block reads and writes before you move it.

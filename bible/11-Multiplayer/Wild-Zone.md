@@ -510,7 +510,7 @@ half health", "everyone in the zone should see the same ... that the big giant i
   `world.js:"const wildGiantMarks"` - a stood one at its body's own place); eleven by ten since GIANT-SKULL2 (the
   owner: "make the skulls a bit smaller", `wildMapInk.js:"the skulls a bit"`); a fallen one crossed out in red where
   it fell until it walks again. On the Overworld a Greater Giant stood near is marked "Giant", as the enemy it is
-  (PVPGIANT, `world.js:"PVPGIANT: the zone's"`).
+  (PVPGIANT, `travelViewMarks.js:"PVPGIANT: the zone's"`).
 
 ## 16. The zone's other laws (PVPDUNGEONS)
 

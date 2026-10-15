@@ -19,7 +19,9 @@ back of the skull as skin tone and matched every portrait to the
 wrong head with perfect confidence. Fixed at the root: the head is
 sampled THROUGH ITS OWN MESH. The head points +Y (Morrowind's
 forward), so the front vertices are the face, the lower front vertices
-the chin, and each vertex's UV names the exact texel that is its skin
+the chin (LATER - MW-HEADS2, 2026-10-15: in the Head node's frame a head
+looks -Y - the port's own heads, baked +Y, hung backwards in game - so the
+front is the least y now, `04-Characters/Own-Heads.md`), and each vertex's UV names the exact texel that is its skin
 - layout-agnostic by construction. The band read remains only as the
 fallback for a mesh without UVs, and says so (`via`). Pinned on a
 texture whose skin lives in a corner the band never reads: the mesh

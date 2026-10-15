@@ -1182,7 +1182,8 @@ it with rows that are none of open, takeable, or real.
 3. **A fresh audit.** AUDIT 26 found 218 findings, all closed; AUDIT 27
    read the tree's state. ~~An AUDIT 28 against commit 81e89e9 is the
    obvious next systematic source~~ SPENT: it ran 2026-08-30/31 and the
-   series reached AUDIT 64; the board is Road-To-1-1.md.
+   series reached AUDIT 64; the board was Road-To-1-1.md, closed by SCOPE1
+   (`Port-Doctrine.md`, Scope).
 
 ## AUDIT 27 (2026-08-27) - state-of-the-tree findings
 
