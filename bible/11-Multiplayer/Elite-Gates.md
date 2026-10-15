@@ -59,7 +59,7 @@ So, as decided here (each decision is argued in its section):
 - **Six kinds of hall and a Court** (section 8), the Rift-Yard and the Rampart each in five variants: the Rift-Yard
   (relentless waves), the Span (generated platforming), the Rampart (a walkway under fire), the Athenaeum (a seeded
   Orrery under pressure), the Proving Walk (span, champion, span) and the Deepway (a hall of fragments). Twists turn
-  about one hall in four from circle 2, and three Brink halls carry the company from band to band.
+  about one trial hall in four from circle 2, and three Brink halls carry the company from band to band.
 - **Fragments** (section 11): modelled areas a course passes through. Oblivion Caverns and nine kin stand across the
   bands as passages, chambers and shafts, each with a hazard of its own; a set-piece passage a band; every platform a
   modelled object; a fork at every span from circle 2 (the High Road over the void, the Low Road through the caverns
@@ -612,10 +612,15 @@ begins at Hall 5*R*+1, *the first hall* of that breach.
 | 4 | **fight** | the Rift-Yard or the Rampart, drawn apart from slot 1: never the same kind and variant twice running |
 | 5 | **the Court** | the circle's lord (section 13) |
 
-**The first circle** is fixed while any admitted member has never taken Redoubt 1: a Rift-Yard, a Span through an
-Oblivion Caverns passage (a fire-fall curtain, a chasm on ledges, an opening onto the burning sky), a Proving Walk, a
-Rampart, and Grath's Court in the magma chamber. In circles 1 and 2 every span carries a passage. A first breach shows
-the place Mac asked for in its first five minutes.
+**The first circle** is fixed: a Rift-Yard, a Span through an Oblivion Caverns passage (a fire-fall curtain, a chasm on
+ledges, an opening onto the burning sky), a Proving Walk, a Rampart, and Grath's Court in the magma chamber. In circles
+1 and 2 every span carries a passage. A first breach shows the place Mac asked for in its first five minutes. It is fixed
+for every breach, a company of veterans' too (AUDIT EG V, lane3 #9 - first written "while any admitted member has never
+taken Redoubt 1"): a hall is the law's of its seed, its number and its ground alone (section 9), so the relay and every
+screen lay it alike, and a company's past is no input of it - drawing circle 1 by who was admitted would make the
+company a fourth input of every reader of a hall (the relay, the screens, the swap's worker, a law-foreign client given
+the relay's bytes) and move every circle after it, whose draws remember circle 1's. A breach that starts deeper (section
+16.6) skips it.
 
 **One hall at a time, the company together.** The room holds one live hall, and the company moves through its stages
 as one:
@@ -731,8 +736,10 @@ three groups; a pair closes three, back to back, against a legion sized for two.
 
 ### 8.2 The Span (`span`) - platforming
 
-A generated course (section 10) of 12-28 platforms in two to four sections, with islands between them, from the
-arrival plate to the end plate.
+A generated course (section 10) of 4-18 platforms a road in three to five sections (the first circle's 18 in four;
+from circle 11 the High Road's 11-18), with islands between them, from the arrival plate to the end plate. The hall's
+158 m bound (`EG_HALL_LEN_MAX`, under the wire's) holds it under the 12-28 first written (AUDIT EG V, lane5 #18: the
+law's own count, measured over 150 seeds).
 
 - **Harriers** (Imps, hovering at `HOST_HOVER_M` 0.9 m) shadow the company along the course. Over platforms they
   body-block and never bite; they bite only on islands and plates (traversal ground is never aimed at, section 11.7).
@@ -751,7 +758,10 @@ arrival plate to the end plate.
 
 ### 8.3 The Rampart (`rampart`) - a walkway under fire
 
-A walkway 90-160 m long over the void: 3-4.5 m wide for a company of up to four, 5-6 m for five to eight.
+A walkway 90-120 m long over the void and 5 m wide. A hall is the law's of its seed, its number and its ground alone, so
+it cannot know its company, and every hall stands inside the wire's bound (`EG_HALL_LEN_MAX`, 158 m, with its plates):
+first written 90-160 m long, 3-4.5 m wide for a company of up to four and 5-6 m for five to eight (AUDIT EG V, lane1
+#19).
 
 - **Fire vents** cross it on a cycle: each a lane 4 m deep, laid across the walkway and at least 4 m long, past a
   narrow walkway's edges (THE WIDTH RULE, section 11.7),
@@ -760,8 +770,10 @@ A walkway 90-160 m long over the void: 3-4.5 m wide for a company of up to four,
   needs no navmesh.
 - **Bastions** every 35-45 m: fight floors (r 6) off the walkway's side, where the march halts and Breakers enter. The
   back of an eight-member line always has somewhere to fight.
-- **Casters** stand on `1 + ceil(n/3)` pillars beside it, 10-18 m out, throwing discs. Reach them by short side spans,
-  or answer them with arrows and spells. A Caster keeps to its pillar, whatever the pillar's plan meets: one whose plan
+- **Casters** stand on `1 + ceil(n/3)` pillars beside it, 10-18 m out, throwing discs, each pillar's top 2 m up. Reach
+  them by short side spans - from spec law 8 each a stair from the walkway's edge onto its pillar's top (AUDIT EG V,
+  lane5 #15: law 7's lay flat under the top, and a member walked in under it and fell) - or answer them with arrows and
+  spells. A Caster keeps to its pillar, whatever the pillar's plan meets: one whose plan
   meets a bastion's has a lip onto it, and no Caster steps off (EG-ZQ).
 - **Breakers** charge ACROSS the walkway from the side spans, never along it. A lane along a walkway would leave no
   floor to escape to (AUDIT EG0 G4). Their push is 6 m, and a push off the edge is a cast-back, not a death.
@@ -805,7 +817,9 @@ The Battlemages' library, its heart an **Orrery** drawn by `orreryOf` (`src/net/
 
 ### 8.5 The Proving Walk (`proving`) - span, champion, span
 
-The Battlespire was a proving ground. A short span (6-10 platforms) leads to a **proving court** (r 14), where the
+The Battlespire was a proving ground. A short span (5-7 platforms; four, or three, under the span decrees - first written
+6-10: the hall's 158 m bound holds a hero chamber's longer court too, AUDIT EG V lane1 #20) leads to a **proving court**
+(r 14), where the
 band's **champion** stands: a Kynreeve in the Galleries, a Kynmarcher in the Cairn, a Markynaz below.
 
 - It is one foe the relay runs: `PROVE_HP_S` 40 s of the company's reference damage, times the depth.
@@ -826,8 +840,10 @@ band's **champion** stands: a Kynreeve in the Galleries, a Kynmarcher in the Cai
     one his hall's number draws from the four, or the next his fight does not already bear.
 - Its fall opens a second span, whose end is the door. Under Gale-Swept or Crumbling Halls that second span is the
   decrees' own sections, and the first runs short (section 14, THE SPAN DECREES' SECTIONS).
-- From circle 2, one proving court in three is a chamber: the Fallen Stacks' broken dome, with two balconies (section
-  11.4).
+- From circle 2, one proving court in three is a chamber of its band's kit (section 11.4): the Caverns' or the Fallen
+  Stacks' broken dome with its two balconies in the Galleries, the Ossuary in the Cairn, the Gloam Thicket or the Eclipse
+  Vault in the Shade, the Forge Gut, the Clan Pit or the deep Caverns in the Wellhead (first written "the Fallen Stacks'
+  broken dome" alone - AUDIT EG V, lane5 #12).
 
 ### 8.6 The Court (`court`) - every fifth hall
 
@@ -843,11 +859,13 @@ the lord's own ground (section 13).
 
 ### 8.7 The twists
 
-From circle 2, about one hall in four (seeded, never the Court, never two running) carries a **twist**:
+From circle 2, about one trial hall in four (seeded, never the Court or a Brink, never two running) carries a **twist**.
+From spec law 8 a slot rolls a third, so with never two running a quarter of the trial halls turn (0.26 over 400
+seeds); the laws before rolled a quarter, one trial hall in five (AUDIT EG V, lane3 #11):
 
 | twist | what | on |
 |---|---|---|
-| **Reliquary Vault** | a side span to a cache: an extra Reliquary for each member who reaches it with a fair trail, at the count's cost | a Span or a Proving Walk |
+| **Reliquary Vault** | a side span to a cache: an extra Reliquary for each member who reaches it with a fair trail, at the count's cost - taken in the trial or the closing. On a forked span (spec law 8) it stands off the fork's island, across from the Low Road's bridge, where either road's company reaches it | a Span or a Proving Walk |
 | **Dagon's Bargain** | a shrine on the arrival plate: the company's word (section 16.4) accepts one more decree for the rest of the circle, and each member who voted yes gains one Reliquary if it passes. At most one a circle, and none when no family is free (section 14) | any trial hall |
 | **Kynval Squad** | four Kynval elites in place of a wave, each with one affix: **Searing** (its strike leaves a pool, r 2.5, for 6 s), **Shielded** (a shield of a quarter of its health that only blows from behind break), **Wrathful** (shares +10%, inside the 1.5 cap), **Unshaken** (immune to push and to Fade) | a Rift-Yard or a Rampart |
 | **The Scriptorium** | a quiet hall: heals 30%, no trial, and the door opens after 30 s (the count runs) | slot 3, in place of its kind |
@@ -875,8 +893,9 @@ Cairn; the Gloam Thicket and its Hollow Trunk in the Shade; the Forge Gut and it
 
 ### 8.9 The Brink halls - from band to band
 
-Halls 26, 51 and 76, the first of each new band, are a **Brink**: a fixed traversal of about 60 s at the span build,
-with no fight (the count runs). The hall tears loose from one realm into the next as the company crosses it: Galleries
+Halls 26, 51 and 76, the first of each new band, are a **Brink**: a traversal of 132-151 m, about 25-35 s at the span
+build (each seed draws its own; first written "a fixed traversal of about 60 s" - the hall's 158 m bound holds it, AUDIT
+EG V lane5 #10), with no fight (the count runs). The hall tears loose from one realm into the next as the company crosses it: Galleries
 marble giving way to Cairn mist, the Cairn's slate to the Shade's dark, the Shade's glass to the Wellhead's fire. Its
 course is a set-piece passage (section 11.3) solved like any other, and its end plate shows the new band's card. Every
 hall's sky holds the Spire's broken underside, drawn smaller with each band, so depth is something the company can see.
@@ -913,8 +932,20 @@ sum) would give the relay and a phone different halls. So:
 
 - the law files decide only in integers: positions quantized to centimetres, times to milliseconds, costs as
   integers;
-- their trigonometry runs through a polynomial `lawSin`/`lawCos` of their own, exact in integer arithmetic;
-- a source sweep refuses any of the functions above in `net/egLaw.js`, `net/egSpanLaw.js` and `net/egFragLaw.js`;
+- their trigonometry runs through a table of their own: the hall law's `lawSin`/`lawCos` (whole degrees in steps of 5,
+  sines times 10,000), exact in integer arithmetic;
+- THE TIMED SOLVER decides from spec law 8 on THE LAW'S CLOCK (`net/egSpanLaw.js` `egLawSin`, `egPieceAtLaw`,
+  `egPendAtLaw` - AUDIT EG V, lane5 #2): every piece's place at a moment of the shared clock is taken through a
+  whole-degree table of sines (times a million, a literal) read between its degrees, and a reach is compared in squares,
+  never by `Math.hypot`. Nothing in it runs past the arithmetic IEEE rounds exactly on every engine (+, -, x, /, the square
+  root, floor). The laws before were proven on the screens' clock (`egPieceAt` moves the platforms on `Math.sin`, as the
+  Hour's Steps always moved), and keep it, byte for byte; the two clocks part by under a millimetre over a 2 m swing;
+- a source sweep refuses any of the functions above in the law's decisions: the hall law's generator (`net/egLaw.js`,
+  `test/egplay_law.test.js`), the fragments' generator half (`net/egFragLaw.js`, `test/egfrag_law.test.js`), and the span
+  generator, THE LAW'S CLOCK and the solver (`net/egSpanLaw.js`, `test/egaudit5_f.test.js` - which also lays law-8 halls
+  with every one of them refused outright). What the screens alone run on is not swept: the platforms' and the hazards'
+  motion as drawn (`stepAt`, `egPieceAt`, `egPendAt`, a wisp's path, the Eclipse's shafts) and a pose's judgements
+  (`egOnFloor`, `egOnFight`);
 - the state frame carries `sd`, an FNV-1a digest of the quantized spec. A client whose own spec disagrees asks
   `{k:'spec'}` and builds from the relay's bytes, and the mismatch rides the next receipt's measures.
 
@@ -1059,8 +1090,18 @@ what the solver proves, road by road:
 - **Rails**: a Rail's ride ends on a plate it reaches, at the speed the carry gives;
 - **ceilings**: inside a fragment, every flight is clamped by its `ceil` (section 11.5);
 - **shafts**: a shaft takes at most 15 s at the span build;
+- **the ground after a run** (from spec law 8 - AUDIT EG V, lane5 #5): a step no step of its road follows says how far
+  on its road's next still ground begins (`after`) and how high it stands (`ya`), and the leap to it is judged at that
+  height - the laws before took it at the step's own;
+- **the set pieces' margin** (from spec law 8 - section 11.3, AUDIT EG V lane5 #6): every pair of a set piece's course
+  keeps a window of `EG_WINDOW_MIN` x `EG_SET_MARGIN` (1.25 - 0.625 s) in every 12 s and its next window within
+  `EG_WAIT_MAX` / 1.25 (3.2 s); THE SPAN BUILD outruns the Collapsing Tube's fall by the margin (`egTubeFair`); and the
+  Forge Line is crossed clear of its hammers from every start phase (`egForgeLineClear`: a search over the shared clock,
+  waiting on the ground before it as long as it likes and on a conveyor only while its hammer is quiet);
 - **failure**: a course that fails is drawn again from the next sub-seed, at most 8 times, then laid from the band's
-  first two pieces alone.
+  first two pieces alone. From spec law 8 no Brink falls to that last resort over the seeds and grounds the pins ask (law
+  7's Brink into the Cairn did 13.5% of the time - its last leap off the Sinking Stair rose 0.5 m to an island 2-2.6 m
+  out, past THE SPAN BUILD's 2.12 m).
 
 **The crossing's lower bound** (`EG_CROSS_MIN(spec, road)`) is the solver's fastest crossing at THE FAST BUILD, less
 15%, per road. It is a measure in the receipt's `m`, never a door's gate, until EG21 has field data. A bound taken at
@@ -1168,15 +1209,16 @@ NOTHING GETS FASTER: depth adds hazards and fragments, never shorter cycles.
 ### 11.3 The set-piece passages
 
 One a band, at most one a circle, each a normal law record on the shared clock, proven by the solver at the span build
-with at least 25% margin. A member it catches is cast forward to its last standing node at the cast-back's cost, never
+with at least 25% margin - from spec law 8 (section 10.5's set pieces' margin, AUDIT EG V lane5 #6; the laws before proved
+each as any course, the Tube's pace checked by a test alone, the Forge Line's hammers by nothing). A member it catches is cast forward to its last standing node at the cast-back's cost, never
 killed. Each opens with a sting and carries its own short music cue (section 26).
 
 | band | passage | what |
 |---|---|---|
 | the Galleries | **the Collapsing Tube** | the vault falls behind the company at a fixed 4.0 m/s (the span build runs 5.47) for 60-80 m, ending at an opening onto the burning sky |
-| the Cairn | **the Sinking Stair** | each flight sinks into the mist at 0.5 m/s after a foot, each member's own, as a Crumble is |
+| the Cairn | **the Sinking Stair** | each flight sinks into the mist at 0.5 m/s after a foot, each member's own, as a Crumble is. From spec law 8 the island after it stands 0.5 m under its last flight, where that flight has sunk to when its leap is taken |
 | the Shade | **the Moon Path** | a beam walks the Thicket at 2.5 m/s, and the branches stand only under it: follow the light |
-| the Wellhead | **the Forge Line** | three conveyors through hammer drops into the forge's mouth |
+| the Wellhead | **the Forge Line** | three conveyors through hammer drops into the forge's mouth. From spec law 8 they stand THE ENVELOPE's least gap apart (2.4 m: 3.2 m closed each on the leap half its cycle, a 3.5-4 s wait), and the hammers are crossed clear of |
 
 The Brink halls (section 8.9) are built from them.
 
@@ -1185,13 +1227,21 @@ The Brink halls (section 8.9) are built from them.
 - **In a span** (section 8.2). A span's platforms run up to a fragment's mouth (a cavern opening in a floating rock
   mass, a fallen doorway) and on from its exit, to more platforms or the end plate. How many: in circles 1-2 every
   span carries one passage; in circles 3-10, one or two; deeper, up to three, under the hall's cap of four fragments.
+  As laid from spec law 8 (AUDIT EG V, lane5 #11 - the laws before laid one in every span, the Low Road's from circle 2,
+  so the High Road passed through none): from circle 3 the way to the fork runs through a passage of the band's library
+  in place of its run, one span in two, and from circle 11 every span - both roads pass through it; from circle 11, one
+  span in two, the Low Road's still ground is a second passage of the band's library where the hall has room for it, its
+  run and the plate (`EG_FORK_THIRD_CM`). Under three ranks of the span decrees their sections take that room, and the
+  span carries the Low Road's one. Every hall stays inside `EG_HALL_LEN_MAX`.
 - **THE FORK: the High Road and the Low Road.** From circle 2, every span forks at an island. A plaque there shows each
   road's two icons:
   - **the High Road** stays over the void: harder (more pieces in one section, each at the Steps' own timing) and
     shorter. At its hardest point a cache gives one Reliquary to each member who touches it with a fair trail;
   - **the Low Road** drops into the deep, by a Drop or a shaft, into an Oblivion Caverns passage (or the band's own)
-    beneath the course. It is half as long again, with fewer falls and more foes (Lurkers in alcoves, Harriers along
-    its graph). Its **Battlemage's niche**, the one niche that heals, heals 15% once a member, holds a Vestige shard for
+    beneath the course. It is longer - a fifth to a third again from the fork to the plate, its bridge across and back
+    beside (a median of 1.22), and about a third slower at the span build (a median of 1.34, 1.06 to 1.96 times the
+    High Road's crossing; first written "half as long again" - AUDIT EG V, lane5 #4, over 1,466 forks) - with fewer falls
+    and more foes (Lurkers in alcoves, Harriers along its graph). Its **Battlemage's niche**, the one niche that heals, heals 15% once a member, holds a Vestige shard for
     each member who reaches it, and is a Memento niche (section 16.5);
   - **each road is its own course**: its own islands, toll and crossing bound. Their graphs join at the sockets'
     nodes. The end plate stands at the Low Road's height, and the High Road reaches it by a Drop;
@@ -1204,10 +1254,12 @@ The Brink halls (section 8.9) are built from them.
     Road's.
 - **The Deepway** (`deepway`, section 8.8): four fragments end to end.
 - **Chambers in other halls**: from circle 2, one Rift-Yard in three stands in a chamber, its rifts set in the walls,
-  and one proving court in three is a chamber (the Fallen Stacks' broken dome). The lords fight on modelled ground
+  and one proving court in three is a chamber of its band's kit (section 8.5). The lords fight on modelled ground
   (section 13.3).
 - **A chamber is never a disc with walls.** Its record names its `play`, at least one of:
-  - a second fight floor 3-4 m up, on two stairs, where Casters stand;
+  - a second fight floor 3-4 m up, on two stairs, where Casters stand - in an Eclipse Vault, from spec law 8, only where
+    its moon-shafts reach it within section 11.2's 20 m (`egEclipseHolds`: a court of 19.1 m at most; a Shade Rift-Yard's
+    22-26 m court takes the arch, where law 7's balcony stood 22.5-26.3 m from a haven - AUDIT EG V, lane5 #9);
   - a chokepoint: an arch 6 m wide splitting the floor;
   - a moving hazard: the Caverns' channels surging across the floor in thirds every 20 s;
   - an engine (section 11.10).
@@ -1357,6 +1409,11 @@ archives (section 25).
   - A walker set down off its walk (a charge cut at an arch's wall, a push, a pull, a lord's leap or blink) keeps no way
     on: its next walk is chosen from where it stands, so it never walks straight to a node past a wall. One rule for the
     legion and the lords (`net/egWalkGraph.js` `egWayOn`, EG-ZQ).
+  - A stair joins its two floors: a code-built one at its foot and its top, a hero's at its own edges - its foot the point
+    of its low edge nearest the edge's middle that stands on a floor of its height, its top the same of its high edge
+    (`net/egWalkGraph.js` - AUDIT EG V, lane5 #1: the Eclipse Vault's stairs run along their floor's open chord, so the
+    middle of their low corners hangs 1.5 m off the floor, and its galleries stood cut off from every walker wherever it
+    was laid - a safe perch over the fight).
   - Harriers hover along the graph, never through rock.
   - Lurkers wait at `anchors.lurker`, Casters stand at `anchors.caster` (raised where the chamber has a second floor),
     and rifts open at `anchors.rift`.
@@ -1458,7 +1515,10 @@ archives (section 25).
   | the Wellhead | **the drop-hammer** (the Forge) | a disc of r 3, 50% to adds; once a phase it stuns a lord 2 s |
 
 - **Alcoves.** Zero to two in each passage or chamber, behind a false wall (one blow; a faint gold seam shows within
-  4 m) or past an optional hard jump. Each holds lumen, a Vestige shard or a page of the Annals. Witnesses see them
+  4 m) or past an optional hard jump. A hero's alcove opens off its hero's own floor: its false wall stands in the
+  hero's wall where the line from the alcove back toward the course first meets the floor it opens off, at the alcove's
+  own height and flush along that wall (`world/egHall.js` `egHeroDoor` - AUDIT EG V, lane5 #8: the code-built niche's
+  1.2 m rule stood the Mist Stair's slab over its rim floor and the Clan Pit's on its pit floor). Each holds lumen, a Vestige shard or a page of the Annals. Witnesses see them
   (section 16.5).
 - **The Annals of 3E 398.** Thirty pages, each two sentences, kept in the account's service bits
   (`players.eg_annals`), readable at a Redoubt and in the journal: a Battlemage's last note, the Secretary's
@@ -1824,8 +1884,10 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
 12. **The Wellhead Wyrm** (`wyrm`; Dragonling 34, x5, flying).
     - In an open-sky cavern, it perches on three pillars, breathing lanes (4 m x 16 m, 1.4 s; floor 0.79 s) and cones
       (10 m, 90°, 1.5 s; floor 1.10 s); it takes flight and drops meteors (discs of r 4, 1.8 s; floor 1.08 s).
-    - Each pillar is reached by a side span and broken from on top. With its perch broken it lands, x1.3, for 25 s,
-      until it finds another; with none left standing it stays down.
+    - Each pillar is reached by a side span and broken from on top - from spec law 8 the span a stair from the court up
+      onto the perch's top, 3 m up (AUDIT EG V, lane5 #15: law 7's lay flat at the court's height, under the perch, and
+      a member walked in under it and fell). With its perch broken it lands, x1.3, for 25 s, until it finds another;
+      with none left standing it stays down.
     - Phase 2, **Burning Perches**: the pillar it leaves erupts as its perch breaks under it (a disc of r 6, 2.0 s;
       floor 1.37 s).
     - Phase 3, **Grounded**: no perch; a breath of 180° and 12 m (inscribed r 6; floor 1.37 s; wind-up 1.6 s).
@@ -1843,7 +1905,7 @@ fight of the game again.
 
 | Valkynaz | Redoubt | aspect (`GATE_ASPECTS`) | ground | its own blows | signature | phase 3 |
 |---|---|---|---|---|---|---|
-| **Ilthys of the Galleries** | 5 | Burning | **the Council Rotunda**: a floor of r 24 and three balconies 4 m up, two stairs each | **Spear of the Conquest** (a lane 4 m x 22 m, 1.3 s); **the Muster-Call** (a wave from the balconies) | **the Conquest**: she plants a banner (an errand's object, struck) on each balcony that claims a third of the floor. Claimed ground burns (a pool, told 3.5 s: the longest way off a third of the floor is 20.8 m) until its banner is broken, and while two banners stand they hold her ward (25 s at most) | **the Last Charge**: a third of the floor falls every 20 s, told 5 s ahead, and rises again when the next falls |
+| **Ilthys of the Galleries** | 5 | Burning | **the Council Rotunda**: a floor of r 24 and three balconies 4 m up, two stairs each (from spec law 8, either side of each balcony's middle - AUDIT EG V, lane5 #14: law 7 laid none, and the banners on them stood out of every melee reach) | **Spear of the Conquest** (a lane 4 m x 22 m, 1.3 s); **the Muster-Call** (a wave from the balconies) | **the Conquest**: she plants a banner (an errand's object, struck) on each balcony that claims a third of the floor. Claimed ground burns (a pool, told 3.5 s: the longest way off a third of the floor is 20.8 m) until its banner is broken, and while two banners stand they hold her ward (25 s at most) | **the Last Charge**: a third of the floor falls every 20 s, told 5 s ahead, and rises again when the next falls |
 | **Morvayn of the Cairn** | 10 | Venom-Blooded | **the Soul-Bridge**: two Ossuary crypts (r 14) joined by a rib bridge 30 m long | **Venom Lash** (a cone 8 m, 90°, 1.3 s); **Soul Rend** (a disc of r 4 on a chained pair's midpoint, 1.5 s) | **the Chaining**: pairs of members are bound by soul-chains for 20 s (the stay-close grammar). A pair stretched past 8 m both take 30% (a CHECK), and a blow on one is shared with the other: divided between the chain, a pair's halves (a three's thirds). An odd member, or a member alone, is chained to a Wraith; kill it to break the chain | **the Last Rites**: Wraiths rise at both crypts every 20 s, and chains bind threes |
 | **Seyth of the Shade** | 15 | Rime-Wrought | **the Eclipse Vault** (section 11.2), the Eclipse running | **Frost Lance** (a lane 4 m x 18 m, 1.2 s); **Moonshatter** (three discs of r 2.5 at members' feet, 1.4 s) | **the Mirrorcourt**: two mirror lords fight beside her and throw real blows at half share. Only the true lord casts her ground mark and her bar's pip; the mirrors shimmer (a 2 Hz dither line) and crack audibly when struck. A mirror shatters after 8 s of the company's reference damage and returns 20 s later | **the Long Night**: Gutterdark over the whole vault, while the moon-shafts walk at a fixed 1.5 m/s |
 | **Garoth of the Wellhead** | 20, 25, 30... | each of the four in turn, in `GATE_ASPECTS`' order: Burning at Redoubt 20, Rime-Wrought at 25, Storm-Crowned at 30, Venom-Blooded at 35 | **the Clan Pit** (section 11.2) | **Wellfire** (two lanes 4 m wide crossing at his feet, 1.4 s); **the Kyn's Due** (a disc of r 5 on the top of threat, 1.6 s) | **the Clan Muster**: each phase turn calls an honour duel (one member, the Armsmaster's ring law, r 6, 15 s; none at *n* = 1), at the turn, inside its ward, holding the next threshold until it ends - at the third turn, his fall | one of the three older signatures, by turns from one Garoth Redoubt to the next, under the next aspect, with every decree the circle bears - his own, its card naming it (*The Conquest.*, *The Chaining.*, *The Mirrorcourt.*): the Mirrorcourt's mirrors in his likeness, the Chaining in pairs (chains of three are Morvayn's Last Rites), and never the Eclipse, the Vault's |
@@ -2369,8 +2431,14 @@ It is a departure from DFU, in the Ledger A row.
      (`EG_MASTERS_LESSON_R`), the havens keep their r 13 ring, and the Examination's runes stand on a ring of r 16
      (`EG_MASTERS_RUNE_R`) whatever the ground lays, so neither master's errand stands in the other's burning ground.
      Holding the Twin Court as well, the master is the second;
-   - **The Molten Rim**: the outer 3 m of every disc of a Court is magma (a fight hall's way in and out keeps its
-     edge);
+   - **The Molten Rim**: the outer 3 m of every disc of a Court is magma, and 2 m past its edge (a fight hall's way in
+     and out keeps its edge): every way across it - where the course's last leap lands on the disc, each end of Grath's
+     bridges, each of the Wyrm's stairs, the Twin Lords' bridge - is a gold causeway over the magma, the way's width and a
+     metre, from half a metre inside the magma to half a metre past it (`net/egLaw.js` `egMoltenRim`: a haven, THE HAVEN
+     GRAMMAR's gold on what you stand on), and a screen casts back on the magma only off every causeway (`egRimCastsBack`).
+     The director stands its zones again whenever the fight's newest push them out of its last few (AUDIT EG V, lane1
+     #21: AUDIT EG IV's ring left every Wellhead Court's way in 5.5-6.2 m of leap against the span build's 3.26 m, and
+     Grath's bridges' mouths inside it);
    - **Kyn Champions**: Clan Feud at every Court;
    - **The Hollow Offer**: two Vestige cards instead of three, one of them always a Mastery - a Surplus's reroll deals
      it again by the same law;
@@ -3152,7 +3220,8 @@ The Burning Court and the Hour are re-plugged with their behaviour unchanged.
 | saves (the exit autosave included) | refused | refused | refused |
 | rest, the travel map's journeys | refused | refused | refused |
 | the automap | off | off | off |
-| Mark and Recall | refused | refused | refused |
+| Mark (Recall's mark) | refused | refused | refused |
+| Recall | as today | refused | refused |
 | the Portal Stone | refused | refused | refused |
 | companions (GATE-ALONE, SD-ALONE) | kept out | kept out | kept out |
 | natural regeneration (`courtRules`) | off | off | off |
@@ -3911,7 +3980,8 @@ borrowed host and attacks for the Spire's own words. What layer one leaves is li
   Perilous, the Havoc Wellhead) and their Brinks at circles 6, 11 and 16. The full rhythm: a fight, the traverse (the
   Span, or from circle 3 the Deepway one time in three), the mixed (the Proving Walk or the Athenaeum), a second fight,
   the Court. The five Yard and five Rampart variants are unlocked by band, and a variant is never one of its kind's last
-  min(2, unlocked - 1) draws. The nine twists fall about one hall in four, never on a Court or a Brink, never two
+  min(2, unlocked - 1) draws. The nine twists fall about one hall in four (one trial hall in five, as laid - from spec law 8 one
+  in four, AUDIT EG V lane3 #11), never on a Court or a Brink, never two
   running, and at most one Bargain a circle. The lords are drawn by band (the band's own at weight 2, earlier bands' at
   1), with Grath first, a Valkynaz every fifth Court, and never one of the last drawn. The nineteen decrees come in five
   families, with the week's Proclamation. The span decrees fold into the ground as `geo` (Gale-Swept's rank plus three
@@ -3997,7 +4067,7 @@ Closes layer one's first departure for the pieces.
   left inside its delay, a Rail's travel never closing on its neighbours (`EG_RAIL_CLEAR`), a Vent's platform at least
   4 m, a Drop's landing at least 6 m. `egHallOf` re-lays a refused course from the next sub-seed, at most
   `EG_RELAY_MAX` 8 times, then lays it from the band's first two pieces alone; the spec's `laid` says how often. Over 40
-  seeds, 20 circles and three grounds, 271 of 7,560 courses were re-laid and none fell to the last resort.
+  seeds, 20 circles and three grounds, 271 of 7,560 courses were re-laid and none fell to the last resort (AUDIT EG V, lane5 #5: wider, the Brink into the Cairn fell to it in 13.5% of draws - seeds 1-200, every ground - until spec law 8 stood its island at its last leap's height, section 10.5).
 - **The reach is measured, never guessed.** The page's span build crosses 3.2 m in SD7b's real-motor run. The motor's
   closed form at 95%, as SD7a takes it, gave 2.43 m, which would have refused every honest course. So the reach is the
   closed form plus the capsule over both edges, a drop's gain held to `EG_DROP_GAIN` 0.45 m a metre. That is 3.26 m on
@@ -4072,7 +4142,7 @@ Grath's falling isles, and the solver's median check.
   - THE GROUND AFTER EACH RUN: each step that ends a run carries `after`, the gap to the next still ground, and the
     solver jumps that real gap. Before this, it had assumed the ground began at the step's edge.
   - Proofs run road by road; an alcove's side way (road 2) is never asked of anyone.
-  - Over 5 seeds, 20 circles and three grounds, 47 of 1,500 courses were re-laid and none fell back.
+  - Over 5 seeds, 20 circles and three grounds, 47 of 1,500 courses were re-laid and none fell back (AUDIT EG V, lane5 #5: wider, the Brink into the Cairn fell to it in 13.5% of draws - seeds 1-200, every ground - until spec law 8 stood its island at its last leap's height, section 10.5).
 - **THE FORK** (section 11.4). From circle 2 every span that carries no set piece forks at an island:
   - **The High Road** (road 0) runs two sections, the span decrees' among them. Its Reliquary cache stands on an island
     at its hardest point, and it meets the end plate's height by one Drop.
@@ -5435,7 +5505,7 @@ and the Hollow Trunk among them), and the engines as the page wrote them. Spec l
   - its floors are traversal ground (blows land on none). The law marks its walls `shaft` in `caves` and names it a
     fragment of class `shaft`;
   - THE TIMED SOLVER holds each shaft's own crossing to `EG_SHAFT_MAX_S` 15 s at its median (section 10.5). Measured over
-    12,200 halls (61 seeds, twenty circles, two grounds): every course proven, none on the plain fallback, the longest
+    12,200 halls (61 seeds, twenty circles, two grounds): every course proven, none on the plain fallback (AUDIT EG V, lane5 #5: wider, the Brink into the Cairn fell to it in 13.5% of draws - seeds 1-200, every ground - until spec law 8 stood its island at its last leap's height, section 10.5), the longest
     shaft 7.7 s, the longest hall 153.5 m.
 - **THE ENGINES AS WRITTEN** (`net/egBrain.js`):
   - **the Sluice floods its lane for 6 s** (`EG_ENGINES.sluice.flood`). Its ring tells the flood 1.5 s and bites
@@ -8584,7 +8654,9 @@ them"), layer three's departure and its still-owed item, EG6c's "laying waits" s
   - THE SPAN BUILD's running jump onto each piece comes down at least `EG_HERO_LAND_ROOM_CM` (40 cm since AUDIT EG IV, 20
     cm before) before the piece's far edge. The jump is pressed at the launch edge: the run and the jump's forward push over its time in the air, at the
     height between;
-  - a piece that moves along the course (a Drift, a Rail, a Drum, a Pendulum) is excepted, and so is a step down of more
+  - a piece that moves along the course (a Drift, a Rail, a Drum, a Pendulum - from spec law 8 a Rail and a Drum alone:
+    a Drift swings across the course and a Pendulum's step stands still, so each is landed on as still ground, AUDIT EG V
+    lane5 #17) is excepted, and so is a step down of more
     than 30 cm that the build's run carries it off onto;
   - every code-built landing a piece launches onto leaves at least 0.44 m (measured over the law pin's 800 halls); only one
     launched from still ground, after its run-up, leaves less (0.24 m). The real motor stood on a hero landing 32 cm short
@@ -8620,7 +8692,7 @@ them"), layer three's departure and its still-owed item, EG6c's "laying waits" s
 **Departures, said plainly.**
 
 1. **The registry is part of law 7.** A hero registered after law 7 ships moves law 7's halls, so it is a new spec law
-   (`EG_SPEC` 8, with law 7 kept) and a relay version. The ten heroes must land before law 7 ships, or come with a law of
+   (a new `EG_SPEC`, with the laws before kept - law 8 is AUDIT EG V's) and a relay version. The ten heroes must land before law 7 ships, or come with a law of
    their own.
 2. A hall a hero stands in is laid again with it. Past the hero's slot, its stream draws what the code-built fragment's
    own draws would have moved, so its later pieces are not law 6's. Only a hall with no hero is law 6's byte for byte.
@@ -8705,30 +8777,38 @@ halls lay them, and 24 tests went red. Each failure was decided at its root.
     `why` that `egHeroTrials` says), which a test and an author read and a player never does. They are kept the way
     `net/egFragLaw.js`'s record faults are.
 - **How often each hero is laid.** Every circle of each band was laid, for 25 seeds and the golden seeds (2,800 halls, at
-  the sweep's ground). The table gives each hero's fillable slots, heads and halls laid:
+  the sweep's ground). The table gives each hero's fillable slots, heads and halls laid - under law 7 as it lays since
+  AUDIT EG IV deepened the Stacks' second shelf and raised THE LANDING ROOM to 40 cm, and under spec law 8 (AUDIT EG V,
+  lane5 #13 and lane9 #2: the Stacks' row read 32 heads and none laid, THE LANDING ROOM refusing all 32, until AUDIT EG V
+  measured it again):
 
-  | hero | slots | heads | laid |
-  |---|---|---|---|
-  | the Ossuary (passage) | 152 | 82 | 81 |
-  | the Gloam Thicket (passage) | 184 | 95 | 93 |
-  | the Forge Gut (passage) | 121 | 59 | 44 |
-  | the Oblivion Caverns (passage) | 104 | 43 | 34 |
-  | the Clan Pit (chamber) | 35 | 23 | 23 |
-  | the Eclipse Vault (chamber) | 39 | 20 | 20 |
-  | the Oblivion Caverns, deep (chamber) | 27 | 16 | 15 |
-  | the Mist Stair (shaft) | 29 | 14 | 14 |
-  | the Broken Colonnade (passage) | 33 | 13 | 13 |
-  | the Fallen Stacks (chamber) | 55 | 32 | 0 |
+  | hero | law 7: slots | heads | laid | law 8: slots | heads | laid |
+  |---|---|---|---|---|---|---|
+  | the Ossuary (passage) | 152 | 82 | 81 | 160 | 88 | 87 |
+  | the Gloam Thicket (passage) | 184 | 95 | 93 | 228 | 119 | 106 |
+  | the Forge Gut (passage) | 121 | 59 | 44 | 146 | 69 | 53 |
+  | the Oblivion Caverns (passage) | 104 | 43 | 34 | 108 | 45 | 41 |
+  | the Clan Pit (chamber) | 35 | 23 | 23 | 35 | 23 | 23 |
+  | the Eclipse Vault (chamber) | 39 | 20 | 20 | 39 | 20 | 20 |
+  | the Oblivion Caverns, deep (chamber) | 27 | 16 | 15 | 27 | 16 | 16 |
+  | the Mist Stair (shaft) | 29 | 14 | 14 | 29 | 14 | 14 |
+  | the Broken Colonnade (passage) | 33 | 13 | 13 | 36 | 14 | 14 |
+  | the Fallen Stacks (chamber) | 55 | 32 | 30 | 55 | 32 | 30 |
 
-  The refusals, by reason:
-  - the Stacks', 32 by THE LANDING ROOM;
-  - the Forge Gut's 15 and the Caverns' 2, by a box meeting a step's swept box and its hanging underside;
-  - the Caverns' 7, the Gloam's 2 and the Ossuary's 1, by THE TIMED SOLVER (a sinking flight's wait, a window too narrow);
-  - the deep Caverns' 1, by a Reliquary Vault.
+  Law 8's passages from circle 3 (section 11.4) give the passages more slots. The refusals, by reason, law 7's then law
+  8's:
+  - the Stacks' 2 under both: 1 by a Reliquary Vault, 1 by the hall past 158 m;
+  - by a box meeting a step's swept box and its hanging underside: the Forge Gut's 15 and the Caverns' 2 (law 7), the
+    Forge Gut's 11 and the Caverns' 4 (law 8);
+  - by THE TIMED SOLVER (a sinking flight's wait, a window too narrow; from law 8 a set piece's margin too): the Caverns'
+    7, the Gloam's 2 and the Ossuary's 1 (law 7); the Gloam's 13 (7 of them by the margin of the Forge Line after a
+    Brink's hero), the Forge Gut's 5 and the Ossuary's 1 (law 8);
+  - the deep Caverns' 1, by a Reliquary Vault (law 7).
 - **The sweep**, 25 seeds and the golden seeds on all four bands with the ten heroes: 95, 111, 108 and 109 courses, every
   one crossed.
 - **Pins:**
-  - `test/eghero_lay.test.js` (11). THE LAW PIN, moved: law 7's 800 halls hashed whole (1273544078), each with no hero
+  - `test/eghero_lay.test.js` (11). THE LAW PIN, moved: law 7's 800 halls hashed whole (2018192008 since AUDIT EG IV
+    deepened the Stacks' shelf; 1273544078 at this merge), each with no hero
     laid law 6's but its number, the heroes laid counted, and the Stacks' refusal named. THE FIT AT ITS SLOT now holds THE
     LANDING ROOM;
   - `tools/mutants/eghero_lay.json` (108, every one dead): two records re-aimed by content and ten new. One new survived its
