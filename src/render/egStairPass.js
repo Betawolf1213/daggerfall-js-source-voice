@@ -27,6 +27,7 @@ import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
 import { sdSkyBasisInto } from './sdSky.js';
 import { EG_SKIES } from '../world/egLook.js';
 import { EG_DRESS } from '../world/egBandArt.js';
+import { EG_SKY_MOON } from './egSkyMap.js';   // EG-LOOK: the moon the sky paints
 
 /** The stair's modes (ui/gateVeil.js VEIL_EG_MODE): the full fall, the veil, the plain cut. */
 export const EG_STAIR_MODE = Object.freeze({ fall: 0, veil: 1, cut: 2 });
@@ -38,8 +39,9 @@ export const EG_STAIR_LOOK = Object.freeze({ rate: 0.9, streak: 1.5, veilDim: 0.
  *  `moon`) on a face toward it; the void's haze it melts into (exponential, 1/m); the embers' columns about the eye (a
  *  radian's worth). Stone and metal are structure and do not glow (SD-LOOK): nothing here is lit but by the place. */
 export const EG_UNDERSIDE_LOOK = Object.freeze({ deep: 0.9, side: 0.22, hor: 0.3, zen: 0.5, moon: 0.55, fog: 0.004, azimuth: 2 });
-/** The Shade's moon (render/egSkyPass.js: its colour and where it stands). */
-export const EG_MOON = Object.freeze({ color: Object.freeze([0.62, 0.66, 0.74]), dir: Object.freeze([0.55, 0.42, -0.72]) });
+/** The Shade's moon: its colour, and where it stands - EG-LOOK: the sky's own (render/egSkyMap.js EG_SKY_MOON, on the
+ *  Shade's key light's bearing), so the fall sees the moon the halls do. */
+export const EG_MOON = Object.freeze({ color: Object.freeze([0.62, 0.66, 0.74]), dir: EG_SKY_MOON.dir });
 
 const v3 = (c) => `vec3(${c.map((v) => v.toFixed(4)).join(', ')})`;
 const f4 = (v) => v.toFixed(4);
