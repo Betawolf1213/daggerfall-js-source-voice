@@ -55,7 +55,7 @@ reputation, the 28 days back - "Pace ranks from joining"):
 THE FOUR HOSTS: the guild popup is worldModes.js's alone (openGuildService) - WIRED; world.js hands it `rollPace`
 (its Roll tracker); exterior.js, the offline fixed city, has no Roll and constructs no GuildServiceWindow;
 dungeonContext.js stands no guild hall. Recorded in Port-Ledger section A (ROLL-PACE, beside PROMO-NOW's row). Pinned
-by `test/fb1015c_rollpace.test.js` (6, the end-to-end one over the real service's Roll and the real tracker);
+by `test/fb1015c_rollpace.test.js` (5, the end-to-end one over the real service's Roll and the real tracker);
 `tools/mutants/fb1015c_rollpace.json` (13, all dead). PINS MOVED: `test/audit_chap4.test.js` C3 and
 `test/chap4b_seats.test.js`'s host wiring read `rollPace`; `test/fb1015_promonow.test.js`'s host pin reads the paced
 no-wait; `tools/mutants/chap4b.json` CHAP4B-WM-CEILING and CHAP4B-W-CEILING, `audit_chap4.json` AUDIT-CHAP4-C3-CEILING
@@ -115,6 +115,38 @@ position their senses would have written (TEST THE SHAPE THE PRODUCER MINTS); `e
 
 What the reporter is owed: a monster that cannot see through Invisibility no longer swings at you because you walked in
 front of it. The undead, the vampires and the Daedra still can - they see through it in Daggerfall too.
+
+## CRAFT-FIRST-SHOWN: the first-time bonus said where it is earned (4)
+
+`src/ui/craftXpWords.js` (new) craftXpLine, dishFirstLine, masonWorksFirstLine, craftXpText; `src/ui/profPages.js` the
+station boxes; `src/scenes/world.js` the craft's word (one call). The record of the design: `06-Systems/Professions-Arc.md`
+41.9.
+
+THE REPORT. The first-time craft bonus does not apply to Outfitting; it came once, from a Fishing Net perhaps, and never
+again.
+
+FOUND. Not a fault. AUDIT 32 S1 (`recipeLaw.js` firstCraftPays over `COUNTER_ONLY`; Mac: "Whatever you think is best")
+withholds the 500 (FIRST_CRAFT_XP) from a pattern made wholly of goods only a counter sells - the Weavers' Linen and
+Wool: 152 of the loom's patterns, every Linen or Wool garment but the boots, the rugs, the tapestries and the Fishing Net,
+which never paid (`audit32_law.test.js` lists it). A Linen boot (the bolt and Cured Leather), leather armour, Silk and
+the pelts pay. The account service decides and answers `first`, and nothing in the game said any of it: the anvil, the
+workbench, the loom and the mason's bench showed no XP, the jeweller's and the fire's showed theirs without the first,
+and the craft's word left `first` unread. What paid the reporter once was most likely another of the loom's first
+patterns (Rat skins open beside the net at rank 1). The client holds no record of past crafts (`professions.js`
+profState sends none), so a page can say what a first craft pays, never whether this one's is still owed.
+
+CHANGED (Mac, asked: keep S1 and show it, or pay it - "Keep rule, show it"): every station box says the picked pattern's
+XP and what its first time lays on - or, for the Weavers' cloth, that it lays on none; the mason's works, the fire's
+dishes and a potion of the Apothecaries' goods say theirs; and the craft's word says "with the first-time bonus", or, for
+a first of the Weavers' cloth, why none came. Eight keys, drafted in-session in the thirteen whole languages (the
+alchemy page's `xp` key retired for `xpShop`). Client only: no account or relay version moves.
+
+Pinned by `test/fb1015c_firstcraft.test.js` (3, over the real recipe tables, the real Worker's craft answer read through
+the real profBook, and every station page drawn from it); `tools/mutants/fb1015c_firstcraft.json` (20, all dead). PINS
+MOVED: `craft1_chain` and `prof10_client` read the craft's word through `craftXpText`.
+
+What the reporter is owed: the stations now show each pattern's XP and its 500 first-time bonus, and say plainly that
+pieces made only of the Weavers' Linen and Wool - the Fishing Net among them - earn none.
 
 ## WET-FALL: the skin reads what falls, and how hard (5)
 
