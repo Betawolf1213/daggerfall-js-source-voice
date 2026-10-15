@@ -335,16 +335,17 @@ THE COUNT CHIP, THE RECAP, THE REHEARSAL, RIDDEN POSES, THE SPIRE MIX, ROLE READ
 ## 5. The Weir Key
 
 **The item.** Template **575**, free today (the gate's 570-572 and the Ayleid stones' 573-574 come before it). It is a
-row beside `PORTAL_STONE_TEMPLATES` in `src/systems/gateSpoils.js`:
+row of its own, `WEIR_KEY_ROW` in `src/systems/weirKey.js`:
 
-- `{index:575, baseWeight:0.25, hitPoints:1000, basePrice, rarity:20, bound:true, stackable:true}`, in the miscellany
-  group (`UselessItems2`), never a gem (PORTAL1's lesson: every Gems piece is a crystal a slot takes);
-- its art: a key of black iron and gold, painted in code into the Spire's first pseudo-archive (section 25), which
-  EG1's registry holds. EG2 ships it with that art, never a borrowed record, because Port-Doctrine allows no
-  placeholder shipped silently;
+- `{index:575, baseWeight:0.25, hitPoints:1000, basePrice:500, rarity:20, bound:true, stackable:true}`, in the
+  miscellany group (`UselessItems2`), never a gem (PORTAL1's lesson: every Gems piece is a crystal a slot takes);
+- its art: a Battlemage's key in gold leaf with a blue stone in its bow, painted in code under the Spire's held archive
+  block (`src/world/egKeyArt.js`, EG-ZH), which EG1's registry holds - never a borrowed record, because Port-Doctrine
+  allows no placeholder shipped silently;
 - named in `BOUND_TEMPLATES` (`src/net/realmTradeLaw.js`), so the realm's trade refuses it as the client does;
-- its line: *One of the Spire's portal keys, surrendered to the Kyn in 3E 398. It opens the Weir Gate's road from
-  this side.*
+- its line (`EG_TEXT.keyLine`), on its info card under its name and weight, as the Portal Stone's card is built
+  (`src/systems/itemInfo.js` `survivalInfoTokens` - AUDIT EG V): *One of the Spire's portal keys, surrendered to the Kyn
+  in 3E 398. It opens the Weir Gate's road from this side.*
 
 **The balance is the account's.** Every dungeon drop is the client's own `Math.random`: the Integrity arc's ledger
 (`06-Systems/Integrity-Arc.md`) measures it after the fact and does not enforce. A key from a forged drop would open a
@@ -431,7 +432,9 @@ the Portal Stone's is. Its refusals, in order, each a line of `EG_TEXT`:
 8. no room for the arch: the Portal Stone's `portalPlace` law (ground probe, wall gap) at the arch's clearance,
    `EG_ARCH_CLEAR_M` 8 m: *There is no room for it here.*
 
-Then the **start window** asks where in the Spire:
+Then the **start window** asks where in the Spire. `/breach` with no call of the company's standing opens it too, behind
+the same refusals: a keyless player's door to *Rehearse* (AUDIT EG V). Its preflight is judged again as it lands - a
+screen let go meanwhile, or a refusal come to stand (a step indoors), opens no window:
 
 - **the choices**: *Hall 1*, and every Redoubt the opener may start at (section 16.6), deepest first, each named with
   its band (*Redoubt 12 - the Soul Cairn*);
@@ -629,6 +632,11 @@ as one:
 | **the closing** | each member steps through the door when ready (`down`, said by the screen and accepted by the relay only within `EG_DOOR_REACH_M` 3 m of it - the closing ring's radius, one number and never a pad; the screen says it again each second it stands there - from a fair trail, section 21) | `EG_CLOSING_FIGHT_MS` 20 s; `EG_CLOSING_SPAN_MS` 45 s after a span or the Deepway |
 | **the pull** | at the closing's end, every living member still in the hall is pulled down | after a span, the toll (section 10.6) |
 
+**The gather, as built** (AUDIT EG V): the room tells every screen each member's `here` on the company row (its eleventh,
+`net/egBrain.js` `egCompanyOf`, said again as a pose reaches the plate), so the ring over the plate's rim fills by the
+share of the members the hall waits for (`src/world/egLights.js`, the closing ring's gold) and the stage's line counts
+them, *3 of 6 here.* (`net/egLink.js` `egGatherOf`); a company of one has nothing to gather.
+
 **The breach's first hall** wakes when every company member has said `here`, or when the open window ends
 (`EG_ADMIT_MAX_MIN`); a member not admitted by then is out.
 
@@ -745,9 +753,9 @@ arrival plate to the end plate.
   gains one real minute; past the cap, that minute counts toward a Surplus. A company of one is exempt: its own arrival
   opens the door. A pose-gated credit needs a fair trail from the last island (section 21).
 - **The trail**: once the door opens, the first across's route (from the relay's poses) draws as a faint gold ribbon
-  for the others.
+  for the others. Not built (section 30).
 - **Members never block each other**: peers are not in the collider (`src/net/remotePlayers.js`). Allies draw at 60%
-  opacity on traversal ground, so an ally never hides an edge line.
+  opacity on traversal ground, so an ally never hides an edge line - not built either (section 30).
 
 ### 8.3 The Rampart (`rampart`) - a walkway under fire
 
@@ -1461,8 +1469,10 @@ archives (section 25).
   4 m) or past an optional hard jump. Each holds lumen, a Vestige shard or a page of the Annals. Witnesses see them
   (section 16.5).
 - **The Annals of 3E 398.** Thirty pages, each two sentences, kept in the account's service bits
-  (`players.eg_annals`), readable at a Redoubt and in the journal: a Battlemage's last note, the Secretary's
-  surrender, the apprentice's passage. A lord's first fall adds a page.
+  (`players.eg_annals`): a Battlemage's last note, the Secretary's surrender, the apprentice's passage. A lord's first
+  fall adds a page. They are read anywhere with `/breach annals` (the list) and `/breach annals N` (a page): the
+  account's pages (`/v1/eg/keys` `annals`, read at each answer) with this breach's own gifts (AUDIT EG V). The quest
+  journal (`src/ui/questJournal.js`) holds none of them - it is the save's quests, and the Annals are the account's.
 - **Vignettes.** Each kit places one to three: a Battlemage dead at a barricade, a Kyn shrine, a rack of broken staves.
   The lore of section 3 is told by the halls, not only by this page.
 
@@ -2165,8 +2175,10 @@ last-word time.
 
 **The rest** (`EG_REST_S` 90 s, the count held):
 
-- health, magicka and fatigue restored (the room's word, each client its own body; half under Ashen Vigil). The
-  relay's census is restored with it, outside the mend budget;
+- health, magicka and fatigue restored (the room's word, each client its own body; half under Ashen Vigil - a rest of
+  less than whole gives magicka and fatigue back by the same share, AUDIT EG V). The relay's census is restored with it,
+  outside the mend budget. The rest card - the Spire's HUD's rest line, `ui/egSpireHud.js` `egRestLine` - says the
+  stake and a heal of less than whole with what made it so: *The rest heals 50%: Ashen Vigil.*;
 - the Vestige offer (section 15);
 - the next circle's decrees, chosen by the company's word, and the next lord, both shown on the beacon;
 - **the recall** of the fallen (section 16.5);
@@ -2208,7 +2220,8 @@ none of them that do not pay (the service's `egReliquariesOf`).
 
 ### 16.4 The company's word
 
-**The living ping.** Every living member may ping every 3 s (`lping`): *here*, *danger* or *mine* (an errand claimed),
+**The living ping.** Every living member may ping every 3 s (`lping`, `net/egBrain.js` `EG_PING_MS` - the screen holds the
+same cooldown and says its seconds): *here*, *danger* or *mine* (an errand claimed),
 a blue pillar 6 m tall whose glyph names the kind, with a chime (blue is the company's, section 25.2).
 
 A company choice (the decrees, Dagon's Bargain, a respite, the Ready vote) is a prompt at the beacon or the shrine,
@@ -2267,10 +2280,12 @@ them). A fallen member may watch for an hour, so the seat is built, not improvis
 - **whom**: cycle with Q and E, the pad's shoulders, or a tap on a party row; look input frees the orbit;
 - **the swap**: the stair cross-dissolves with the watched member;
 - **the HUD**: the count, the watched member's name and vitals, and *You will be called back at Redoubt 6* (or *Your
-  Memento lies in Hall 22*);
+  Memento lies in Hall 22*) - built (AUDIT EG V): the stage line reads *Watching II Mara - health 64%.*, the health the
+  party's pose of them;
 - **the witness's sight**: witnesses see Lurkers' anchors, alcoves and the next hall's twist that the living cannot;
 - **the ping**: every 3 s, one of three kinds (*here*, *danger*, *cache*), a blue pillar 6 m tall with a chime, its
-  cooldown shown;
+  cooldown shown - the touch layer's *Ping* button carries its seconds, the pad's up pings, and a press inside it is told
+  them (AUDIT EG V);
 - **the vote**: witnesses answer the company's word (section 16.4);
 - **a bequest**: at the fall, the fallen names one of their Vestiges. It joins the living's offers at the next
   Redoubt as a fourth card;
@@ -2331,7 +2346,8 @@ where no hall's fight stands, since there is nothing to show:
 potions there is no attrition, and without them there is nothing else. So the Spire keeps a `MADE_LEVEL_RULES` row
 (section 24), client-enforced like the Burning Court's no-regeneration rule:
 
-- at most `EG_POTIONS_PER_HALL` (2) restoring potions a hall, refilled at each wake and at the rest;
+- at most `EG_POTIONS_PER_HALL` (2) restoring potions a hall, refilled at each wake and at the rest; the count is kept
+  on the device by its breach, hall and stage (`eg.potions`), so a reload refills nothing (AUDIT EG V);
 - a *Potions 2/2* pip on the HUD;
 - spells are untouched, and magicka comes back at the rest, from a Spire Tonic and from the member's own potions.
 
@@ -3317,7 +3333,9 @@ colours among it) and the large HUD today, and no danger-colour option. The Spir
 - **`port:allyEffects`**: *Full* or *Quiet* (THE QUIET COMPANY);
 - **`port:reducedMotion`**, new: today only the system's `prefers-reduced-motion` is read (`src/ui/windowMotion.js`),
   and the Motion section holds head bobbing, recoil, technique motion, motion blur and the vignette. It, or the
-  system's setting, governs the stair (section 7) and the shakes;
+  system's setting, governs the stair (section 7) and the shakes, and the HUD's motion - the gate's title cards in the
+  Spire with it (a lord's wake, its fall, THE FALL's card: no name flying in, no rule sweeping - `src/ui/gateTitleCard.js`
+  reads it itself, AUDIT EG V); the absent's ring still drains, a count and not a motion;
 - the Examination's order is told by numerals and a chime per rune as well as light;
 - every blow aimed at you gives you a personal sound (THE SPIRE MIX, section 26).
 
@@ -3357,7 +3375,9 @@ HOURWAR1):
 - **One song at a time.** The player plays one song and fades between them, so SPIRECNT REPLACES the song at 2:00,
   except under SPIRVALK and SPIRREDT. The priority table is pinned.
 - **Silence is scored too**: the gather and the closing play the band's ambience alone, and a lord's wake is a 2-bar
-  drum swell before SPIRLRD1.
+  drum swell before SPIRLRD1 - timed from the lord's own wake (the room's `wake`, as the company steps into its ring),
+  with the band's ambience while it sleeps (AUDIT EG V). A fall plays SPIREEND on the fallen's own screen for its time,
+  then the hall's song again.
 - The songs are measured as the Hour's were, by `egScoreProbe.mjs` (under tools/, `tools/sdScoreProbe.mjs`'s law):
   every song sounding, peaks under the ceiling, the war louder by phase, and the end decaying in its time.
 
@@ -3383,8 +3403,9 @@ factor, every part reading `--hud-scale`:
   objective chip; the lord's bar only in a Court;
 - **a phone held upright**: one 18 px tabular chip (the count and the Reliquaries), the decrees collapsed to a
   tappable *4 decrees*;
-- **a phone held sideways**: the count's chip and a 44 px lord's bar; the decrees in the pause sheet and on each
-  arrival card;
+- **a phone held sideways**: the count's chip and a 44 px lord's bar (`EG_LAYOUTS` `lordH`, the bar's own height); the
+  decrees folded to a tappable press, as upright, and on each arrival card (AUDIT EG V: the pause sheet is the port's
+  menu, which holds no breach's readout, and the press is the same words one tap away);
 - the company's state lives on the party rows (section 27.4), never in a second row of pips; the hall and its band
   only on the arrival card.
 
@@ -3415,9 +3436,11 @@ Pinned at 1280x720, 390x844 and 844x390.
 The party panel (`src/ui/partyPanel.js`, PARTY8-B's quiet rows) learns the Spire's states:
 
 - each member's numeral;
+- a dagger for each of their falls (the room's count; AUDIT EG V);
 - a cracked gold sigil on the portrait once their recall is spent: the company must see who is on their last life;
 - a grey row with an eye for a witness; an arch for home; a struck-through name for the forsaken;
-- an amber ring draining the 180 s for an absent body;
+- an amber ring draining the 180 s for an absent body, from the trial's wake as the room counts it (section 6.1);
+- a witness's tap on a living companion's row watches them (section 16.5);
 - the place line reads *High Road* or *Low Road* while the company is split;
 - Fire-touched or Frost-touched as its sigil.
 
@@ -3435,6 +3458,7 @@ Sight, sound and words, for each (`EG_BEATS`, pinned):
 | a niche | a blue alcove, dimmed once used | a soft chime | - |
 | a Memento | a gold mote; carried, it trails the carrier; set, the niche flares | a bell | *<name> carries Mara's Memento.* |
 | THE GOLD RUN | the count's chip | a fanfare | *Gold run. +1:00* |
+| a lord's wake | the lord's card | the score's swell (SPIRWAKE) | *Grath wakes.* in the chat (AUDIT EG V) |
 | a phase turn | the lord's phase card | the drum's turn | its one order |
 | a fall | THE FALL (section 16.5) | a low toll | *<name> falls.* |
 | a recall | a flare at the beacon, a blue pillar | a chime | *<name> is called back.* |
@@ -3456,7 +3480,7 @@ Sight, sound and words, for each (`EG_BEATS`, pinned):
 | an Accord lapses | its chip gone | - | *Kindled Steel lapses.* |
 | resonance reached | the card's blue line before it, the recap's capstones | a chord | *Stone resonates: Rooted.* |
 
-A cast-back and the toll say what they took of the health bar: the quarter's floor, the last point the toll never takes
+The pull's toll rings the bell (clip 107) with its line (AUDIT EG V). A cast-back and the toll say what they took of the health bar: the quarter's floor, the last point the toll never takes
 and Stoneskin's cushion all make it less than the law's share, and a toll that takes nothing says nothing. The Vestiges'
 rows are the holder's alone, on the screen and never in the chat, each on THE SPIRE MIX's critical bus:
 
@@ -3478,14 +3502,18 @@ A run of up to three hours never ends on a receipt alone. On `end`, and for a me
 - the Reliquaries opening one each 400 ms with the Rare chime;
 - the board's line: *The Descent, the Few: 14th*.
 
-The last five runs are kept. At every lord's fall the damage chart shows as the gate's does (FELLED, then the chart,
-`src/ui/gateDamageChart.js`, with its Healed column).
+The strip's falls are the room's - every member's, each on the hall the company stood in - and its log is kept on the
+device with its breach (`eg.log`), so a reload's recap keeps its earlier circles. The recap closes by its own button
+(a tap) as by Enter. The last five runs are kept on the device and read on the boards' sixth tab, *Your last runs*
+(`src/ui/egBoardWindow.js` `egRunsLines`) (AUDIT EG V). At every lord's fall the damage chart shows as the gate's does
+(FELLED, then the chart, `src/ui/gateDamageChart.js`, with its Healed column).
 
 ### 27.7 The first breach
 
 - **The fixed first circle** (section 7): the Caverns, Grath, every system in its first five halls.
-- **First-time lines**, once an account (service bits, `EG_TEXT_FIRST`), each at its first occurrence, never in a card
-  before it applies:
+- **First-time lines**, once an account (service bits, `EG_TEXT_FIRST` - the device keeps each account's own, OR'd in
+  and told the service, so a word lost before a reload never shows a line twice; AUDIT EG V), each at its first
+  occurrence, never in a card before it applies:
   - *The count runs. Take a Redoubt to hold it back.*
   - *The first across opens the door. The others have 45 seconds.*
   - *The void casts you back.*
@@ -3512,10 +3540,19 @@ anywhere in the port. In the Spire:
 - haptics, behind the existing `touchHaptics` setting: 15 ms when the Beat you stand on enters its last 0.4 s, 30 ms
   on a peril; a pad's dual rumble for the same two, behind the same toggle.
 
+The company's word on every input (AUDIT EG V): the pad's focus runs over every choice the panel shows - the cards, a
+Surplus's two, then each open choice's options - up takes the one it stands on, down says no to a yes-or-no; Y (and
+`/breach vote yes`) answers the Ready at a rest, R (`/breach respite`) a respite, which is its own word; a witness's
+shoulders change whom it watches and its up pings; the recap closes by a tap. No line tells a screen in hand to type.
+
 ### 27.9 Words
 
 Lines are short (Mac, WB12: *"less explanatory and less AI"*), in the Elder Scrolls' own voice, and follow WB13b's
-rules. Every player-facing line is a constant in `EG_TEXT`, worded once and pinned.
+rules. Each is worded once: the law's own in `EG_TEXT` (`net/egLaw.js`, in the relay's bundle), the screen's in
+`EG_PRES_TEXT` (`ui/egBeats.js`) and the client modules' own constants, a few still written where they are said. They
+reach a player in English today, whatever language they chose: the Spire's accessibility rows, the refusals the
+account's catalog holds and every line AUDIT EG V added go through the text core (`t(key, en, args)`), and the rest is
+EG-L10N's debt (section 31).
 
 ## 28. The four hosts
 
@@ -3584,14 +3621,15 @@ all four, each wired or flagged.
   machine's window slot, its question on the host's overlay - each slot emptied before its occupant is told, its choice
   made once however many doors call it, and a question put out of its slot unanswered ending it as a cancel
   (`ui/egStartWindow.js` `egStartAsk`, AUDIT EG III). It ends by its own choice, a cancel, or the online frame going
-  (`away`), never by the room's word. The panel is redrawn from the room's state each frame and taken down when the state
+  (`away` - which takes it out of the slot before it closes it, AUDIT EG V), never by the room's word. The panel is redrawn from the room's state each frame and taken down when the state
   holds nothing for it.
 - **ASYNC NEVER DROPS**:
   - the open is single-flight on `rq` - kept on the device before it is asked, and asked again by it when its answer is
     lost (AUDIT EG IV) - and the hub's forward is retried on `ez`;
   - claims are coalesced per (breach, Redoubt, kind);
   - the restack applies the balance in its asks' order, never an older answer over a newer (AUDIT EG IV);
-  - every refusal is checked again when its async answer lands.
+  - every refusal is checked again when its async answer lands - the start window's preflight among them: a window the
+    screen let go of, or one a refusal came to stand over, never opens (AUDIT EG V).
 - **EVERY ALLOCATION HAS AN OWNER**:
   - every exit path (the swap, the tear, the way home, a fall, forsaking, a void, a reload) frees the hall's meshes,
     colliders, riders, telegraph buffers and reverb buffers, its fragments' with them (the court's and the Hour's
@@ -3631,6 +3669,13 @@ all four, each wired or flagged.
   boards a race to scout it. The week's Proclamation (section 20) is a rule, not a seed.
 - **No pause.** The count holds by its own rules and the respite budget, never on a member's word.
 - **Nothing gets faster.** No depth, decree, tide, stratum or fury shortens a wind-up, a piece's timing or a crumble.
+- **No trail.** The first across's route as a gold ribbon (section 8.2) is not drawn: the room keeps one pose a member,
+  never a route, and a screen's own record of a peer's 10 Hz poses on moving pieces is not the fair trail the room judged;
+  THE EDGE LINE's pass (`render/egLinePass.js`) has no dynamic gold kind to draw one with (AUDIT EG V, L3-10).
+- **No translucent allies.** Allies on traversal ground draw whole, not at 60% (section 8.2): the remote bodies' draw
+  (`src/net/remotePlayers.js`, the Morrowind body's skinned pass) has no per-body translucency, and a translucent skinned
+  body wants its own sorted pass. THE QUIET COMPANY's 60% is their spell effects' alone (section 25.4) (AUDIT EG V,
+  L3-10).
 
 ## 31. Slices and their records
 
@@ -3699,6 +3744,20 @@ them through `t()` lowers those counts; until one does, every other word the bre
 
 Each slice's record goes below as it lands: what shipped, its pins and mutant records, the four hosts, the Ledger rows
 it opened or moved, and where it departs from this page.
+
+### EG-L10N - owed (written at AUDIT EG V, 2026-10-15)
+
+The Elite Breach was built beside the localization arc (L10N4) and met its ratchet at the merge: every line it says
+reaches a player in English, whatever language they chose. `test/l10n4_hardcoded.test.js` counts its files' English as
+it arrived and holds each count from rising. Routed so far, each with the thirteen whole languages' rows drafted
+in-session (`tools/l10nInSession.mjs`): the Accessibility tab's three Spire rows and the palettes' names
+(`ui/enhancedMenu.js` `spireAccessRows`, `ui/egAccess.js`), the refusals the account's catalog holds
+(`scenes/egClient.js` `egRefusalText` reads `net/accountClient.js` `REFUSALS`), and every line AUDIT EG V added (the
+`eg.*`, `chat.help.breach` and `menu.spire.*` keys). Owed: the rest - `EG_PRES_TEXT`, `EG_TEXT_FIRST`, `EG_BAND_LINES`
+(`ui/egBeats.js`), the client's own constants and inline lines (`scenes/egClient.js`, `scenes/egFight.js`, `ui/egHud.js`,
+`ui/egSpireHud.js`, `ui/egBoardWindow.js`, `ui/egStartWindow.js`), and `EG_TEXT` (`net/egLaw.js`), whose words are the
+relay's bundle's: a screen reads each through `t()` at the place it says it, the law's English the key's, so the relay's
+law never moves. The ratchet's counts are the debt's measure.
 
 ### EG0 - written 2026-10-11 (the page)
 

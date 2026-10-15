@@ -36,6 +36,9 @@ import { EG_OBJ } from '../net/egLords.js';
 import { EG_ROLE } from '../net/egBodies.js';
 import { egResonance, EG_CAPSTONES, EG_V_FAMILY_NAMES, EG_ACCORDS } from '../net/egVestige.js';   // AUDIT EG III: resonance's beat, the Accords' chips
 import { egRunOfMember, egMemberOf } from '../net/egLink.js';
+import { t } from '../systems/textManager.js';   // AUDIT EG V (c): the words this audit adds, in the player's language
+import { EG_BOSS_KEYS, egBossName } from '../net/egLords.js';   // AUDIT EG V (c, L7-16): the lord a wake names
+import { EG_FL } from '../net/egBodies.js';
 
 /** AUDIT EG III: a share of the health bar as the screen says it - whole percent, never "-0%" for a share that took
  *  something. */
@@ -212,6 +215,10 @@ export const EG_BEATS = Object.freeze({
   accord: Object.freeze({ sight: "the Accord's blue chip while the pair stands", sound: 'softChime', words: (n, t) => EG_PRES_TEXT.accordForms(t ?? '', n), by: null, chat: false }),   // `t` the Accord, `n` the mates
   accordLapse: Object.freeze({ sight: 'its chip gone', sound: null, words: (n, t) => EG_PRES_TEXT.accordLapses(t ?? ''), by: null, chat: false }),
   resonance: Object.freeze({ sight: "the offer card's blue line before it; the recap's capstones", sound: 'chord', words: (n, t) => (EG_CAPSTONES[t] ? EG_PRES_TEXT.resonance(EG_V_FAMILY_NAMES[t], EG_CAPSTONES[t].name) : ''), by: null, chat: false }),   // `t` the family
+  // AUDIT EG V (c, L7-16; the PR's "a lord waking" has its sound and its line): a lord's wake - the gate's title card its sight
+  // (scenes/egFight.js, `by` 'card': it says the name on the screen already), the score's swell its sound (SPIRWAKE), and
+  // its line in the chat, `n` the lord's name
+  wake: Object.freeze({ sight: 'gateTitleCard', sound: 'score', words: (n) => t('eg.beat.wake', '{n} wakes.', { n }), by: 'card', chat: true }),
 });
 export const EG_BEAT_KEYS = Object.freeze(Object.keys(EG_BEATS));
 /** The room's beat lines (`esay`'s `w`) that are beats of the table. AUDIT EG III: Bladestorm's and Deadeye's are their
@@ -234,6 +241,13 @@ export function egBeatPlan(k, { n = '', t = null } = {}) {
   return { sound: S && S.rec != null ? S : null, screen: own ? words : null, chat: words && B.chat && B.by !== 'client' ? words : null };
 }
 
+/** AUDIT EG V (c, L7-16): the lord a wake names - the first true lord of the hall's fight (never a mirror image, never a friend:
+ *  ui/egSpireHud.js egLordBar's choice), by its name; '' with none. Pure. */
+export function egWokeName(E) {
+  if (E?.fight?.h !== E?.h) return '';
+  const L = (E.fight.bodies ?? []).find((b) => b.role === EG_ROLE.lord && (b.fl & (EG_FL.mirror | EG_FL.friend)) === 0);
+  return L ? egBossName(EG_BOSS_KEYS[L.k] ?? '', L.pt) : '';
+}
 /** The watch's memory before anything is heard; how many heard keys it holds before it forgets the ones no longer in
  *  the state (a three-hour run must not grow it without end). */
 export const egBeatMemo = () => ({ primed: false, seen: new Set(), h: 0, woke: 0, rd: 0, end: null, mm: 0 });
@@ -256,6 +270,7 @@ export function egBeatWatch(memo, E, me) {
     if (!fresh(keyOf(`say:${s.w}`, s.at, s.n ?? ''))) continue;
     if (SAY_MINE.has(s.w) && !(me && s.s?.includes(me))) continue;   // AUDIT EG III: a host hit is its striker's to hear
     if (SAY_BEAT[s.w]) beats.push({ k: SAY_BEAT[s.w], n: s.n, t: s.t });
+    if (s.w === 'wake') { const n = egWokeName(E); if (n) beats.push({ k: 'wake', n }); }   // AUDIT EG V (c, L7-16): a lord's wake, said
     if (s.w === 'fury') firsts.push('fury');
   }
   // AUDIT EG III (section 15's resonance): a family's capstone, said once a breach as my run first holds three of it
@@ -362,12 +377,16 @@ export function egRehearsalDue(bits) {
   return (bits | 0) & bit ? { line: null, bits: bits | 0 } : { line: EG_PRES_TEXT.rehearsal, bits: (bits | 0) | bit };
 }
 /** EG-ZF (section 27.7, once an account): THE BITS IN FORCE - the account's (the service's answer, a whole number; null
- *  while it has none: no account, a guest, no answer yet) over the device's own, with the lines this screen has shown
- *  since (`shown`) - a line shown is never shown again while its word to the service is still on its way. Pure. */
-export const egFirstOver = (device, account, shown = 0) => ((Number.isSafeInteger(account) && account >= 0 ? account : device | 0) | (shown | 0));
-/** The device's bits from its store (0 for none or a broken one). */
-export const egFirstRead = (store) => { try { const v = Number.parseInt(store?.getItem?.(EG_FIRST_KEY) ?? '0', 10); return Number.isSafeInteger(v) && v >= 0 ? v : 0; } catch { return 0; } };
-export const egFirstWrite = (store, bits) => { try { store?.setItem?.(EG_FIRST_KEY, String(bits | 0)); } catch { /* the session's alone */ } };
+ *  while it has none: no account, a guest, no answer yet) with the device's own, and the lines this screen has shown
+ *  since (`shown`) - a line shown is never shown again while its word to the service is still on its way. AUDIT EG V (c,
+ *  L7-23): the device's are OR'd in, never dropped once the account answers: a line whose word was lost before a reload
+ *  was shown again; the device's are the account's own (egFirstKey), so another account's never silence it. Pure. */
+export const egFirstOver = (device, account, shown = 0) => ((Number.isSafeInteger(account) && account >= 0 ? account : 0) | (device | 0) | (shown | 0));
+/** AUDIT EG V (c, L7-23): where the device keeps the bits of account `sub` (EG_FIRST_KEY's own for no account). Pure. */
+export const egFirstKey = (sub) => (typeof sub === 'string' && sub ? `${EG_FIRST_KEY}:${sub}` : EG_FIRST_KEY);
+/** The device's bits from its store (0 for none or a broken one) - `key` an account's (egFirstKey). */
+export const egFirstRead = (store, key = EG_FIRST_KEY) => { try { const v = Number.parseInt(store?.getItem?.(key) ?? '0', 10); return Number.isSafeInteger(v) && v >= 0 ? v : 0; } catch { return 0; } };
+export const egFirstWrite = (store, bits, key = EG_FIRST_KEY) => { try { store?.setItem?.(key, String(bits | 0)); } catch { /* the session's alone */ } };
 
 // ── the touch of it (section 27.8) ────────────────────────────────────────────────────────────────────────────
 /** A Beat's warning (s - its last 0.4 s), and each pulse: the phone's milliseconds, the pad's dual rumble. */

@@ -169,10 +169,10 @@ export function foldEg(s, w, now) {
 /** THE COUNT at `now` (the relay's clock): what was left when it last began to run, less the time since - or, held,
  *  what is left. */
 export const egCountAt = (s, now) => (s.ca > 0 ? Math.max(0, s.cl - Math.max(0, now - s.ca)) : s.cl);
-/** The company's row for an account, or null: `{ sub, name, n, alive, home, in, wit, forsaken, falls, recall }`. */
+/** The company's row for an account, or null: `{ sub, name, n, alive, home, in, wit, forsaken, falls, recall, here }`. */
 export function egMemberOf(s, sub) {
   const t = s.co.find((c) => c[0] === sub);
-  return t ? { sub: t[0], name: t[1], n: t[2], alive: t[3] === 1, home: t[4] === 1, in: t[5] === 1, wit: t[6] === 1, forsaken: t[7] === 1, falls: t[8] ?? 0, recall: t[9] === 1 } : null;
+  return t ? { sub: t[0], name: t[1], n: t[2], alive: t[3] === 1, home: t[4] === 1, in: t[5] === 1, wit: t[6] === 1, forsaken: t[7] === 1, falls: t[8] ?? 0, recall: t[9] === 1, here: t[10] === 1 } : null;   // AUDIT EG V (c, L3-10): `here` said in the hall the company stands in
 }
 /** A member's run (`{ rel, lumen, shards, tonics, cant, vs, mast, rw }`), or an empty one - AUDIT EG III: `rw` each Reliquary's
  *  circle (net/egRun.js egRunOf). */
@@ -182,6 +182,13 @@ export function egRunOfMember(s, sub) {
 }
 /** How many of the company live and have entered, and how many have entered at all. */
 export const egLivingCount = (s) => s.co.filter((c) => c[3] === 1 && c[4] === 0 && c[5] === 1).length;
+/** AUDIT EG V (c, L3-10; section 7 - "a ring fills over the plate, *3 of 6 here*"): THE GATHER as the room counts it -
+ *  `{ here, n }`: of the members the hall waits for (the living entrants; before the breach's first wake, the whole company -
+ *  net/egBrain.js's arrive step), how many have said `here` (the company row's eleventh). Pure. */
+export function egGatherOf(s) {
+  const waits = s.wk > 0 ? s.co.filter((c) => c[3] === 1 && c[4] === 0 && c[5] === 1) : s.co.filter((c) => c[3] === 1 && c[4] === 0);
+  return { here: waits.filter((c) => c[10] === 1).length, n: waits.length };
+}
 
 /**
  * THE LINK: `word(w)` folds a word (a receipt handed on to `onReceipt`, a refusal said once), `state()`, `now()` (the

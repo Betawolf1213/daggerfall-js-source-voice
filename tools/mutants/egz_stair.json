@@ -74,8 +74,8 @@
   {
     "name": "EGZ-the-quiet-frame-blinds-the-rest",
     "file": "src/world/egLights.js",
-    "old": "if (E.sg !== 'closing' && E.sg !== 'rest' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
-    "new": "if (E.sg !== 'closing' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
+    "old": "if (E.sg !== 'closing' && E.sg !== 'rest' && E.sg !== 'arrive' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
+    "new": "if (E.sg !== 'closing' && E.sg !== 'arrive' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
     "tests": [
       "test/egz_stair.test.js"
     ]
@@ -83,8 +83,8 @@
   {
     "name": "EGZ-the-quiet-frame-blinds-the-witness",
     "file": "src/world/egLights.js",
-    "old": "if (E.sg !== 'closing' && E.sg !== 'rest' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
-    "new": "if (E.sg !== 'closing' && E.sg !== 'rest' && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
+    "old": "if (E.sg !== 'closing' && E.sg !== 'rest' && E.sg !== 'arrive' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
+    "new": "if (E.sg !== 'closing' && E.sg !== 'rest' && E.sg !== 'arrive' && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
     "tests": [
       "test/egz_stair.test.js"
     ]
@@ -92,8 +92,8 @@
   {
     "name": "EGZ-the-quiet-frame-blinds-the-recall",
     "file": "src/world/egLights.js",
-    "old": "if (E.sg !== 'closing' && E.sg !== 'rest' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
-    "new": "if (E.sg !== 'closing' && E.sg !== 'rest' && !witness && !E.pings?.length) return NO_LIGHTS;",
+    "old": "if (E.sg !== 'closing' && E.sg !== 'rest' && E.sg !== 'arrive' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
+    "new": "if (E.sg !== 'closing' && E.sg !== 'rest' && E.sg !== 'arrive' && !witness && !E.pings?.length) return NO_LIGHTS;",
     "tests": [
       "test/egz_stair.test.js"
     ]
@@ -101,8 +101,8 @@
   {
     "name": "EGZ-the-quiet-frame-blinds-the-pings",
     "file": "src/world/egLights.js",
-    "old": "if (E.sg !== 'closing' && E.sg !== 'rest' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
-    "new": "if (E.sg !== 'closing' && E.sg !== 'rest' && !witness && !E.rises?.length) return NO_LIGHTS;",
+    "old": "if (E.sg !== 'closing' && E.sg !== 'rest' && E.sg !== 'arrive' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;",
+    "new": "if (E.sg !== 'closing' && E.sg !== 'rest' && E.sg !== 'arrive' && !witness && !E.rises?.length) return NO_LIGHTS;",
     "tests": [
       "test/egz_stair.test.js"
     ]

@@ -4,7 +4,8 @@
 //   THE LAYOUTS (`egFormFactor`, pinned at 1280x720, 390x844 and 844x390): a desk - the count's chip and the Reliquaries'
 //     beside the compass, the decrees under them, the potion pip, the objective chip, the lord's bar only in a Court; a
 //     phone held upright - one 18 px tabular chip (the count and the Reliquaries), the decrees folded to a tappable
-//     *4 decrees*; a phone held sideways - the count's chip and a 44 px lord's bar, the decrees on each arrival card.
+//     *4 decrees*; a phone held sideways - the count's chip and a 44 px lord's bar, the decrees on each arrival card and
+//     folded to the same press (AUDIT EG V, c, L7-22).
 //     The company's state is the party rows' (ui/egParty.js), never a second row here; the hall and its band only on the
 //     arrival card. Every part reads `--hud-scale` (the port's own HUD scale, copied off `.hud` as the arena's bar does).
 //   THE COUNT CHIP (`egCountChip`, section 27.2): mm:ss in tabular figures at 18 px - gold above 10:00, white to 2:00,
@@ -54,6 +55,7 @@
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egHallOf, egCircleOfHall, egSlotOfHall, egCountText, egObjectiveOf, EG_LAST_WORD_MS, EG_COUNT_START_MS, EG_REDOUBT_HOLD_MS, EG_BANDS, EG_DECREES, EG_DECREE_BY_KEY, EG_TWIST_LINES, EG_TEXT } from '../net/egLaw.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
+import { egGatherOf } from '../net/egLink.js';   // AUDIT EG V (c, L3-10): the gather, as the room counts it
 import { EG_ROLE, EG_FL } from '../net/egBodies.js';
 import { EG_BOSS_KEYS, egBossName, egTtkRef } from '../net/egLords.js';
 import { egMarkynazDecree } from '../net/egLords.js';   // EG-ZS (section 8.5): the decree the Markynaz lays, named on his card
@@ -66,6 +68,9 @@ import { DEFAULT_TEXT_COLOR, DEFAULT_SHADOW_COLOR } from './nativePanel.js';
 import { PIXEL_FONT_CSS } from './pixelifyFive.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';
 import { egSigilsOf, egEclipseAt, egEclipseChip } from '../world/egTelegraph.js';   // EG-ZG: the marks' sigils, the Eclipse's chip
+import { t } from '../systems/textManager.js';   // AUDIT EG V (c): the words this audit adds, in the player's language
+import { egStakeText } from './egHud.js';   // AUDIT EG V (c, NEW-1): the rest card's stake, on the Spire's own HUD
+import { EG_TIDE_NAMES } from '../net/egRun.js';   // AUDIT EG V (c, L2-9): the Hungering Dark, named on the rest card
 
 // ── the layouts (section 27.1) ────────────────────────────────────────────────────────────────────────────────
 /** A phone is a screen whose short side is this or less (CSS px - the party panel's and the arena's own line). */
@@ -78,11 +83,14 @@ export function egFormFactor({ w = 1280, h = 720 } = {}) {
   return h >= w ? 'upright' : 'sideways';
 }
 /** What each layout shows (pinned): the decrees as a row, folded to a press, or kept for the cards; the lord's bar's
- *  height (px); the Reliquaries in the count's own chip; the potion pip and how many stand, a desk's alone. */
+ *  height (px); the Reliquaries in the count's own chip; the potion pip and how many stand, a desk's alone. AUDIT EG V (c,
+ *  L7-22; section 27.1): a phone held sideways folds its decrees to a press as an upright one does - the page's pause sheet
+ *  is the port's menu, which no breach's readout stands in, and the fold is the same words one tap away without leaving
+ *  the hall; each arrival card says them still. */
 export const EG_LAYOUTS = Object.freeze({
   desktop: Object.freeze({ dec: 'row', lordH: 30, relInChip: false, potion: true, standing: true }),
   upright: Object.freeze({ dec: 'fold', lordH: 30, relInChip: true, potion: false, standing: false }),
-  sideways: Object.freeze({ dec: 'card', lordH: 44, relInChip: false, potion: false, standing: false }),
+  sideways: Object.freeze({ dec: 'fold', lordH: 44, relInChip: false, potion: false, standing: false }),   // AUDIT EG V (c, L7-22): the decrees folded to a press, as upright, besides each arrival card's
 });
 
 // ── THE COUNT CHIP (section 27.2) ─────────────────────────────────────────────────────────────────────────────
@@ -258,10 +266,13 @@ export function egLordBar(E) {
 }
 
 // ── THE STAGE'S LINE ──────────────────────────────────────────────────────────────────────────────────────────
+/** AUDIT EG V (c, L3-10; section 7): the gather's count on the stage's line, as the ring over the plate fills (world/
+ *  egLights.js) - `k` of the `n` the hall waits for said `here`. */
+export const egHereText = (k, n) => t('eg.gather.here', '{k} of {n} here.', { k, n });
 function stageLine(E, now) {
   const left = E.su > 0 ? Math.max(0, E.su - now) : 0;
   switch (E.sg) {
-    case 'arrive': return left > 0 ? `${EG_TEXT.wakes.replace('.', '')} in ${egCountText(left)}.` : 'Gather on the arrival plate.';
+    case 'arrive': { const G = egGatherOf(E), g = G.n > 1 ? ` ${egHereText(G.here, G.n)}` : ''; return left > 0 ? `${EG_TEXT.wakes.replace('.', '')} in ${egCountText(left)}.${g}` : `Gather on the arrival plate.${g}`; }   // AUDIT EG V (c, L3-10): *3 of 6 here*
     case 'closing': return `${EG_TEXT.door} Step through the door.`;
     case 'rest': return left > 0 ? `${EG_TEXT.descend.replace('.', '')} in ${egCountText(left)} - or take the way home.` : EG_TEXT.descend;
     default: return '';
@@ -277,11 +288,14 @@ export function egBridgeLine(E, now, ready = false) {
 }
 
 // ── TOUCH AND THE PAD (section 27.8) ──────────────────────────────────────────────────────────────────────────
-/** The touch buttons a moment asks for (pure): a witness's eye before and after, and forsaking; a Redoubt's way home; AUDIT EG
- *  III (section 15): Spirebridge while its holder may ask it (a gap ahead, unspent this span). */
-export function egTouchButtons({ witness = false, rest = false, bridge = false } = {}) {
+/** AUDIT EG V (c, L7-7): the ping's button and the pad's row - and its cooldown's seconds on the button while it cools. */
+export const egPingLabel = (left = 0) => (left > 0 ? t('eg.touch.pingCool', 'Ping {s}s', { s: Math.ceil(left / 1000) }) : t('eg.touch.ping', 'Ping'));
+/** The touch buttons a moment asks for (pure): a witness's eye before and after, its ping (AUDIT EG V, c, L7-7 - its cooldown
+ *  on it, `ping` the ms left) and forsaking; a Redoubt's way home; AUDIT EG III (section 15): Spirebridge while its holder
+ *  may ask it (a gap ahead, unspent this span). */
+export function egTouchButtons({ witness = false, rest = false, bridge = false, ping = 0 } = {}) {
   const T = EG_PRES_TEXT.touch;
-  if (witness) return [{ id: 'prev', label: T.prev }, { id: 'next', label: T.next }, { id: 'forsake', label: T.forsake }];
+  if (witness) return [{ id: 'prev', label: T.prev }, { id: 'next', label: T.next }, { id: 'ping', label: egPingLabel(ping) }, { id: 'forsake', label: T.forsake }];
   if (rest) return [{ id: 'home', label: T.home }];
   if (bridge) return [{ id: 'bridge', label: T.bridge }];
   return [];
@@ -303,6 +317,7 @@ export function egPadAct(dir, kind, { recap = false, panel = false, witness = fa
   if (panel && kind === 'tap') return dir === 'left' ? { k: 'focus', d: -1 } : dir === 'right' ? { k: 'focus', d: 1 } : dir === 'up' ? { k: 'take' } : { k: 'no' };
   if (witness) {
     if (kind === 'tap' && (dir === 'left' || dir === 'right')) return { k: 'watch', d: dir === 'left' ? -1 : 1 };
+    if (kind === 'tap' && dir === 'up') return { k: 'ping' };   // AUDIT EG V (c, L7-7): a witness's ping, the pad's up
     if (kind === 'hold' && dir === 'down') return { k: 'forsake' };
   }
   if (bridge && !panel && !witness && kind === 'tap' && dir === 'up') return { k: 'bridge' };
@@ -313,9 +328,39 @@ export function egPadPrompts({ recap = false, panel = false, witness = false, br
   const P = EG_PRES_TEXT.pad;
   if (recap) return [[[PAD_OF_DIR.up], P.close]];
   if (panel) return [[[PAD_OF_DIR.left, PAD_OF_DIR.right], P.choose], [[PAD_OF_DIR.up], P.take], [[PAD_OF_DIR.down], P.no]];
-  if (witness) return [[[PAD_OF_DIR.left, PAD_OF_DIR.right], P.watch], [[PAD_OF_DIR.down], P.forsake]];
+  if (witness) return [[[PAD_OF_DIR.left, PAD_OF_DIR.right], P.watch], [[PAD_OF_DIR.up], egPingLabel()], [[PAD_OF_DIR.down], P.forsake]];   // AUDIT EG V (c, L7-7): the ping
   if (bridge) return [[[PAD_OF_DIR.up], P.bridge]];   // AUDIT EG III
   return null;
+}
+
+// ── AUDIT EG V (c): THE WITNESS'S SEAT AND THE REST CARD ────────────────────────────────────────────────────────────
+/** AUDIT EG V (c, L7-7; section 16.5): the member a witness watches, on its stage line - `{ numeral, name, pct }`, their
+ *  health's share where the party's pose says it. '' for none. Pure. */
+export function egWatchLine(watch) {
+  if (!watch?.name) return '';
+  const who = `${watch.numeral ?? ''} ${watch.name}`.trim();
+  return Number.isFinite(watch.pct) ? t('eg.witness.watching', 'Watching {who} - health {pct}%.', { who, pct: Math.round(watch.pct) }) : t('eg.witness.watchingName', 'Watching {who}.', { who });
+}
+/** AUDIT EG V (c, L7-7; sections 16.4 and 16.5 - "its cooldown shown"): a ping asked or shown inside its cooldown (`s` its
+ *  seconds left). */
+export const egPingWait = (s) => t('eg.ping.wait', 'Your ping is ready in {s}s.', { s });
+/**
+ * AUDIT EG V (c): THE REST CARD's line (pure) - the stake (NEW-1: ui/egHud.js egStakeText, AUDIT EG III's rest line, drawn by
+ * the tracker alone, which the Spire's own HUD replaces inside a breach) and, L2-9 (section 14 - "Ashen Vigil: the next rest
+ * heals half; the rest card says so"), a heal of less than whole (`restP`, the room's `eheal` share) with what made it less:
+ * Ashen Vigil (its rank), the Hungering Dark.
+ * @param {any} E @param {any} run mine (net/egLink.js egRunOfMember) @param {number} restP
+ */
+export function egRestLine(E, run, restP = 1) {
+  const stake = egStakeText(run?.rw ?? []);
+  let less = '';
+  if (restP > 0 && restP < 1) {
+    const D = EG_DECREE_BY_KEY.ashen, ash = (E?.dc ?? []).find(([id]) => id === D.id)?.[1] ?? 0;
+    const why = [ash ? `${D.name}${ash >= 2 ? ' II' : ''}` : '', E?.td === 'hungering' ? EG_TIDE_NAMES.hungering : ''].filter(Boolean).join(', ');
+    const pct = Math.round(restP * 100);
+    less = why ? t('eg.rest.less', 'The rest heals {pct}%: {why}.', { pct, why }) : t('eg.rest.lessBare', 'The rest heals {pct}%.', { pct });
+  }
+  return [stake ? `${stake}.` : '', less].filter(Boolean).join(' ');
 }
 
 // ── THE MODEL ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -328,9 +373,13 @@ export function egPadPrompts({ recap = false, panel = false, witness = false, br
  * AUDIT EG III: `held` the holder's chips (`{ k, text }` - ui/egBeats.js egHolderWatch), none for a witness.
  * AUDIT EG III (section 15): `bridge` - whether my Spirebridge may be asked now (the stage's line offers it, the touch layer its
  * button); the company's planks standing in this hall told on the stage's line with their seconds.
- * @param {{ ff?: string, witness?: boolean, potions?: number, gain?: { text: string, blue?: boolean }|null, first?: string, door?: any, live?: string, touch?: boolean, foldOpen?: boolean, held?: { k: string, text: string }[], bridge?: boolean }} [o]
+ * AUDIT EG V (c, L7-7; section 16.5 - "the HUD: the count, the watched member's name and vitals"): `watch` the member a witness
+ * watches (`{ numeral, name, pct }` - their health's share, null unknown) and `ping` what is left of my ping's cooldown (ms),
+ * both on a witness's stage line, the ping's on its button too. AUDIT EG V (c, L2-9, NEW-1): `restP` the rest's heal share
+ * (the room's `eheal`), its line and the stake's on the rest card.
+ * @param {{ ff?: string, witness?: boolean, potions?: number, gain?: { text: string, blue?: boolean }|null, first?: string, door?: any, live?: string, touch?: boolean, foldOpen?: boolean, held?: { k: string, text: string }[], bridge?: boolean, watch?: { numeral: string, name: string, pct: number|null }|null, ping?: number, restP?: number }} [o]
  */
-export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, potions = EG_POTIONS_PER_HALL, gain = null, first = '', door = null, live = '', touch = false, foldOpen = false, held = [], bridge = false } = {}) {
+export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, potions = EG_POTIONS_PER_HALL, gain = null, first = '', door = null, live = '', touch = false, foldOpen = false, held = [], bridge = false, watch = null, ping = 0, restP = 1 } = {}) {
   if (!E?.b || !(E.h > 0) || E.end) return null;
   const L = EG_LAYOUTS[ff] ?? EG_LAYOUTS.desktop;
   const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
@@ -338,7 +387,7 @@ export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, p
   const dec = (E.dc ?? []).map(([id, rank]) => `${EG_DECREES[id]?.name ?? ''}${rank >= 2 ? ' II' : ''}`).filter(Boolean);
   const watching = witness || !!mine?.wit;
   const memento = me ? (E.mm ?? []).find((q) => q[0] === me) : null;
-  const witLine = watching ? (mine?.recall ? (memento ? `Your Memento lies in Hall ${memento[1]}. You will be called back at Redoubt ${egCircleOfHall(E.h)}.` : `You will be called back at Redoubt ${egCircleOfHall(E.h)}.`) : `${EG_TEXT.fallen} /breach forsake leaves for good.`) : '';
+  const witLine = watching ? [egWatchLine(watch), ping > 0 ? egPingWait(Math.ceil(ping / 1000)) : '', mine?.recall ? (memento ? `Your Memento lies in Hall ${memento[1]}. You will be called back at Redoubt ${egCircleOfHall(E.h)}.` : `You will be called back at Redoubt ${egCircleOfHall(E.h)}.`) : `${EG_TEXT.fallen} Forsaking leaves for good.`].filter(Boolean).join(' ') : '';   // AUDIT EG V (c, L7-20): in no one input's words
   const marks = me ? egSigilsOf(E.fight?.mk ?? [], me, now) : [];   // EG-ZG: sigils, never a line of text
   const n = E.co.length;
   return {
@@ -346,12 +395,13 @@ export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, p
     standing: L.standing && n > 1 ? EG_PRES_TEXT.standing(egLivingCount(E), n) : '',
     potion: L.potion ? `${potions}/${EG_POTIONS_PER_HALL}` : '',
     recall: mine && mine.alive && !mine.home && !mine.recall ? EG_PRES_TEXT.recallSpent : '',   // my last life (PARTY8-B's law: a fact when it is actionable)
-    dec: L.dec === 'card' ? [] : dec, decFold: L.dec === 'fold' && dec.length > 0 ? EG_PRES_TEXT.decrees(dec.length) : '', foldOpen,
+    dec, decFold: L.dec === 'fold' && dec.length > 0 ? EG_PRES_TEXT.decrees(dec.length) : '', foldOpen,
     objective: E.sg === 'trial' && !watching ? egObjectiveOf(spec) : '', progress: E.sg === 'trial' && !watching ? egProgressText(spec, E.fight?.pg) : '',
-    stage: watching ? witLine : [stageLine(E, now), egBridgeLine(E, now, bridge && !watching)].filter(Boolean).join(' '), marks, marksSaid: marks.map((m) => `${EG_MARK_NAMES[m.k] ?? ''} ${m.secs}s`).join(' - '),
+    stage: watching ? witLine : [stageLine(E, now), E.sg === 'rest' ? egRestLine(E, run, restP) : '', egBridgeLine(E, now, bridge && !watching)].filter(Boolean).join(' '),   // AUDIT EG V (c, L2-9, NEW-1): the rest card's stake and its heal
+    marks, marksSaid: marks.map((m) => `${EG_MARK_NAMES[m.k] ?? ''} ${m.secs}s`).join(' - '),
     eclipse: E.sg === 'trial' || E.sg === 'closing' ? egEclipseChip(egEclipseAt(spec, now / 1000)) : '',   // EG-ZG (section 25.5): *The Eclipse - 5*, while the place's hazards run (the fight's own stages)
     lord: egLordBar(E)?.court ? egLordBar(E) : null, lordH: L.lordH,   // only in a Court (a Proving Walk's champion has none)
-    gain, first, door, live, touch: touch ? egTouchButtons({ witness: watching, rest: E.sg === 'rest', bridge: bridge && !watching }) : [],
+    gain, first, door, live, touch: touch ? egTouchButtons({ witness: watching, rest: E.sg === 'rest', bridge: bridge && !watching, ping }) : [],
     held: watching ? [] : held,   // AUDIT EG III: the holder's chips
   };
 }
@@ -410,7 +460,7 @@ export const EG_SPIRE_CSS = `
 .eg-lord { position: absolute; left: 50%; top: calc(18px + 28px * var(--s) + 12px); transform: translateX(-50%) scale(var(--s)); transform-origin: top center; width: 460px; max-width: 88vw; display: none; }
 .eg-lord.on { display: block; }
 .eg-lord-name { text-align: center; font-size: 15px; letter-spacing: 0.08em; }
-.eg-lord-track { position: relative; height: 10px; margin-top: 3px; background: rgba(8,6,6,0.8); border: 1px solid #5a2a20; }
+.eg-lord-track { position: relative; height: calc(var(--eg-lord-h, 30px) - 20px); margin-top: 3px; background: rgba(8,6,6,0.8); border: 1px solid #5a2a20; box-sizing: border-box; }
 .eg-lord-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(180deg, #d9463c, #7d1b15); }
 .eg-door { position: absolute; transform: translate(-50%, -50%); display: none; text-align: center; font-size: 12px; color: #e8c473; }
 .eg-door.on { display: block; }
@@ -423,13 +473,12 @@ export const EG_SPIRE_CSS = `
 .eg-spire.upright .eg-count { font-size: 18px; }
 .eg-spire.sideways .eg-col { top: 10px; }
 .eg-spire.sideways .eg-lord { width: 380px; }
-.eg-spire.sideways .eg-lord-track { height: 14px; }
 .eg-spire.still .eg-count.pulse .eg-time, .eg-spire.still .eg-gain.fly { animation: none; }
 ${EG_PARTY_CSS}`;
 
 let root = null, P = null;
 let card = null, cardP = null;
-const SHOWN = () => ({ cls: '', vals: {}, chipCls: '', lordW: '', doorL: '', doorT: '', doorR: '', touchKey: null, decKey: null, gainKey: null, danger: '', scale: '', heldKey: '' });
+const SHOWN = () => ({ cls: '', vals: {}, chipCls: '', lordW: '', lordH: '', doorL: '', doorT: '', doorR: '', touchKey: null, decKey: null, gainKey: null, danger: '', scale: '', heldKey: '' });
 let shown = SHOWN(), cardShown = { key: '', alpha: -1, vis: '', cls: '' };
 
 function ensureStyle(doc) {
@@ -518,6 +567,10 @@ export function drawEgSpireHud(model, { hidden = false, doc = globalThis.documen
   put('lord', P.lordName, L ? `${L.name}${L.phase ? ` - ${L.phase}` : ''}` : '');
   const lw = L ? `${(L.frac * 100).toFixed(1)}%` : '0%';
   if (lw !== shown.lordW) { shown.lordW = lw; P.fill.style.width = lw; }
+  // AUDIT EG V (c, L7-18; section 27.1 - a desk's bar, and "a 44 px lord's bar" on a phone held sideways): the bar's height
+  // the layout's own (EG_LAYOUTS lordH - the name over it, the track the rest), never a sheet's literal
+  const lh = `${Number(model.lordH) || EG_LAYOUTS.desktop.lordH}px`;
+  if (lh !== shown.lordH) { shown.lordH = lh; P.lord.style.setProperty?.('--eg-lord-h', lh); }
   // the door's marker
   const D = model.door;
   const doorCls = `eg-door${D ? ' on' : ''}`;
@@ -530,7 +583,7 @@ export function drawEgSpireHud(model, { hidden = false, doc = globalThis.documen
     put('door', P.doorText, EG_PRES_TEXT.wayDown(D.dist));
   }
   // the touch buttons
-  const tk = model.touch.map((b) => b.id).join(',');
+  const tk = model.touch.map((b) => `${b.id}=${b.label}`).join(',');   // AUDIT EG V (c, L7-7): a label moves too (the ping's seconds)
   if (tk !== shown.touchKey) {
     shown.touchKey = tk;
     P.touch.replaceChildren?.();
@@ -618,7 +671,7 @@ export function drawEgArrivalCard(m, { hidden = false, doc = globalThis.document
     cardShown.key = m.key;
     for (const k of ['kicker', 'main', 'sub', 'lays', 'twist', 'dec', 'band']) cardP[k].textContent = m[k] ?? '';
   }
-  const cls = `wb-title-card eg-card on${m.fresh && !still ? ' in' : ''}`;
+  const cls = `wb-title-card eg-card on${m.fresh && !still ? ' in' : ''}${still ? ' still' : ''}`;   // AUDIT EG V (c, L7-17): the rule never sweeps under reduced motion
   if (cls !== cardShown.cls) { cardShown.cls = cls; card.className = cls; }
   if (m.alpha !== cardShown.alpha) { cardShown.alpha = m.alpha; card.style.opacity = String(m.alpha); }
 }
@@ -661,7 +714,7 @@ export function egFallModel(fall, now, { still = false } = {}) {
   const m = titleCardModel({ kind: 'fall', at: fall.at + S, until: fall.at + C + EG_FALL_DITHER_MS / 2, main: EG_FALL_TEXT.main, sub: fall.final ? EG_FALL_TEXT.final : EG_FALL_TEXT.first }, now);
   return {
     phase, sink: still ? 0 : Math.round(EG_FALL_SINK_M * (1 - (1 - k) ** 3) * 1000) / 1000, sat: Math.round(sat * 1000) / 1000, eye, veil,
-    card: m ? { key: m.key, main: m.main, sub: m.sub, lost: (fall.lost ?? 0) > 0 ? EG_FALL_TEXT.lost(fall.lost) : '', alpha: m.alpha, fresh: m.fresh && !still } : null,
+    card: m ? { key: m.key, main: m.main, sub: m.sub, lost: (fall.lost ?? 0) > 0 ? EG_FALL_TEXT.lost(fall.lost) : '', alpha: m.alpha, fresh: m.fresh && !still, still: !!still } : null,   // AUDIT EG V (c, L7-17): `still` - its rule never sweeps
   };
 }
 /** The cells of an ordered 2x2 dither darkened at `level` (0-1, in quarters), in Bayer's order (pure). */
@@ -715,7 +768,7 @@ export function drawEgFall(m, { hidden = false, doc = globalThis.document, dange
   if (danger && danger !== fallShown.danger) { fallShown.danger = danger; fallP.lost.style.color = danger; }
   if (!C) return;
   for (const k of ['main', 'sub', 'lost']) if (C[k] !== fallShown[k]) { fallShown[k] = C[k]; fallP[k].textContent = C[k]; }   // the room's word can make it the last while it stands
-  const cls = `wb-title-card eg-fall-card on${C.fresh ? ' in' : ''}`;
+  const cls = `wb-title-card eg-fall-card on${C.fresh ? ' in' : ''}${C.still ? ' still' : ''}`;   // AUDIT EG V (c, L7-17)
   if (cls !== fallShown.cls) { fallShown.cls = cls; fallCard.className = cls; }
   if (C.alpha !== fallShown.alpha) { fallShown.alpha = C.alpha; fallCard.style.opacity = String(C.alpha); }
 }

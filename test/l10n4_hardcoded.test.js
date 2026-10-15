@@ -242,7 +242,7 @@ const HARDCODED = {
   'src/scenes/dungeonDivers.js': 15,
   'src/scenes/egArch.js': 2,
   'src/scenes/egCall.js': 1,
-  'src/scenes/egClient.js': 63,
+  'src/scenes/egClient.js': 58,   // AUDIT EG V (c): the usage, the refusals' copies and the Annals' line routed or gone
   'src/scenes/egFight.js': 63,   // AUDIT EG IV (the lords' group): +1, the Rampart's `gateheld` beat (EG_SAY - the march holds the gate)
   'src/scenes/egSpan.js': 5,
   'src/scenes/etherHost.js': 9,
@@ -574,7 +574,6 @@ const HARDCODED = {
   'src/ui/deathScreen.js': 2,
   'src/ui/decorPanel.js': 96,
   'src/ui/duelPrompt.js': 2,
-  'src/ui/egAccess.js': 1,
   'src/ui/egArchMapMark.js': 1,
   'src/ui/egBeats.js': 85,
   'src/ui/egBoardWindow.js': 15,
@@ -596,7 +595,7 @@ const HARDCODED = {
   'src/ui/enhancedInventory.js': 84,
   'src/ui/enhancedLevelUp.js': 17,
   'src/ui/enhancedLevelingChoice.js': 6,
-  'src/ui/enhancedMenu.js': 64,
+  'src/ui/enhancedMenu.js': 58,   // AUDIT EG V (c, L7-10): the Spire's three accessibility rows routed
   'src/ui/enhancedMerchantPanel.js': 1,
   'src/ui/enhancedNotice.js': 1,
   'src/ui/enhancedPlayerTrade.js': 14,

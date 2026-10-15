@@ -37,6 +37,7 @@ import { EG_CANTRIPS } from '../net/egRun.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';
 import { chartShare, chartNumber } from './gateDamageChart.js';   // EG-ZF: the share and the numbers as the gate's chart says them
 import { EG_PRES_TEXT } from './egBeats.js';   // EG-ZF: the board's line and the chart's words
+import { t } from '../systems/textManager.js';   // AUDIT EG V (c): the words this audit adds, in the player's language
 
 /** Under this, THE COUNT burns red; under this it pulses; above this it is gold (ms). */
 export const EG_HUD_LOW_MS = 2 * 60_000;
@@ -168,7 +169,7 @@ export function egHudModel(E, me, now, { inSpire = false, witness = false, potio
     const marks = (E.fight?.mk ?? []).filter((m) => m[0] === me && m[2] > now).map((m) => `${EG_MARK_NAMES[m[1]] ?? ''} ${Math.ceil((m[2] - now) / 1000)}s`);
     const mine = me ? egMemberOf(E, me) : null;
     const memento = me ? (E.mm ?? []).find((q) => q[0] === me) : null;
-    const witLine = witness || (mine && mine.wit) ? (mine && mine.recall ? (memento ? `Your Memento lies in Hall ${memento[1]}. You will be called back at Redoubt ${egCircleOfHall(E.h)}.` : `You will be called back at Redoubt ${egCircleOfHall(E.h)}.`) : `${EG_TEXT.fallen} /breach forsake leaves for good.`) : '';
+    const witLine = witness || (mine && mine.wit) ? (mine && mine.recall ? (memento ? `Your Memento lies in Hall ${memento[1]}. You will be called back at Redoubt ${egCircleOfHall(E.h)}.` : `You will be called back at Redoubt ${egCircleOfHall(E.h)}.`) : `${EG_TEXT.fallen} Forsaking leaves for good.`) : '';   // AUDIT EG V (c, L7-20): in no one input's words
     return {
       kicker: `${E.rh ? `${EG_TEXT.name} - Rehearsal` : EG_TEXT.name}${spec ? ` - ${EG_BANDS[spec.band]?.name ?? ''}` : ''}`,
       title: spec ? `Circle ${egCircleOfHall(E.h)} - Hall ${egSlotOfHall(E.h)}: ${spec.name}` : 'The Battlespire',
@@ -187,7 +188,7 @@ export function egHudModel(E, me, now, { inSpire = false, witness = false, potio
     title: mine ? 'Your breach is opening' : EG_TEXT.call(c.o || 'Your company'),
     count: '', countCls: '',
     line: phase === 'open' ? EG_TEXT.answer(ms(T.admitUntil - now)) : EG_TEXT.sealed(ms(T.openAt - now)),
-    sub: phase === 'open' ? 'Type /breach in chat to step through.' : 'Gather your company. Type /breach once it opens.',
+    sub: phase === 'open' ? 'Answer the call to step through.' : 'Gather your company. Answer the call once it opens.',   // AUDIT EG V (c, L7-20): the prompt answers it - Enter, the pad's A, a tap, or /breach
     company: c.co.length > 1 ? `Company of ${c.co.length}` : '', run: '', dec: '', mark: '',
   };
 }
@@ -266,7 +267,7 @@ export function egRecapModel(E, me, log, now, { whyText = '', board = '', why = 
     reliquaries: run?.rel ?? 0,
     // EG-G1: the page's fields
     depth: { h: E.h, rd: E.rd, band }, whyText,
-    strip: circles.map((hs, j) => (hs ? { c: j + 1, glyphs: hs.map((h) => h.glyph), lord: hs.find((h) => h.lordName)?.lordName ?? '', falls: hs.filter((h) => h.fall).length } : null)).filter(Boolean),
+    strip: circles.map((hs, j) => (hs ? { c: j + 1, glyphs: hs.map((h) => h.glyph), lord: hs.find((h) => h.lordName)?.lordName ?? '', falls: hs.reduce((n, h) => n + (Number.isSafeInteger(h.falls) ? h.falls : h.fall ? 1 : 0), 0) } : null)).filter(Boolean),   // AUDIT EG V (c, L7-8): every member's falls, the room's count (scenes/egClient.js logFrame)
     members: E.co.map((c) => {
       const [, name, n, alive, home, inn, wit, forsaken, falls, recall] = c;
       const t = ds.get(c[0]);   // EG-ZF: their share of the company's damage and what they healed - the room's own count
@@ -369,13 +370,16 @@ export function drawEgHud(model, { hidden = false, doc = globalThis.document } =
  * Draw THE PANEL for a model (null takes it down): its buttons call `onPick(card)`, `onVote(q, y)`, `onSurplus(use)`;
  * rebuilt only when what it shows changes (its key).
  * @param {any} model
- * @param {{ hidden?: boolean, doc?: any, onPick?: (card: number) => void, onVote?: (q: string, y: number) => void, onSurplus?: (use: number) => void, recap?: any, focus?: number, relShown?: number|null, words?: any }} [o]
+ * AUDIT EG V (c, L7-3): `focus` one index over every choice it shows, in its order - the cards, a Surplus's two, then each
+ * choice's options (scenes/egClient.js choices); L7-9: `onClose()` the recap's own close button, `touch` the words of a screen
+ * in hand (a tap, never a key).
+ * @param {{ hidden?: boolean, doc?: any, onPick?: (card: number) => void, onVote?: (q: string, y: number) => void, onSurplus?: (use: number) => void, onClose?: () => void, recap?: any, focus?: number, relShown?: number|null, words?: any, touch?: boolean }} [o]
  */
-export function drawEgPanel(model, { hidden = false, doc = globalThis.document, onPick = () => {}, onVote = () => {}, onSurplus = () => {}, recap = null, focus = -1, relShown = null, words = null } = {}) {
+export function drawEgPanel(model, { hidden = false, doc = globalThis.document, onPick = () => {}, onVote = () => {}, onSurplus = () => {}, onClose = () => {}, recap = null, focus = -1, relShown = null, words = null, touch = false } = {}) {
   const want = !hidden && (!!model || !!recap);
   if (!want) { if (panel) { panel.remove?.(); panel = null; panelKey = ''; } return; }
   if (!doc?.createElement) return;
-  const key = JSON.stringify([model, recap ? recap.title + recap.why + (recap.board ?? '') : '', focus]).replace(/"left":\d+/g, '');   // EG-G1: the pad's focus redraws; EG-ZF: the board's line, when the claim brings it
+  const key = JSON.stringify([model, recap ? recap.title + recap.why + (recap.board ?? '') : '', focus, touch]).replace(/"left":\d+/g, '');   // EG-G1: the pad's focus redraws; EG-ZF: the board's line, when the claim brings it
   const leftOf = (q) => model?.asks?.find((a) => a.q === q)?.left ?? 0;
   if (panel && key === panelKey) {
     for (const el of panel.querySelectorAll?.('[data-left]') ?? []) el.textContent = `${Math.ceil(leftOf(el.getAttribute('data-left')) / 1000)}s`;
@@ -431,17 +435,23 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
       panel.append(sr);
     }
   }
+  // AUDIT EG V (c, L7-3): the pad's focus runs on from the cards (and a Surplus's two) through every choice's options
+  let at = model?.offer ? model.offer.cards.length + (model.offer.surplus > 0 ? 2 : 0) : 0;
   for (const a of model?.asks ?? []) {
     const box = doc.createElement('div'); box.className = 'eg-ask';
     const t = h(a.title); const left = doc.createElement('span'); left.setAttribute('data-left', a.q); left.textContent = `${Math.ceil(a.left / 1000)}s`; t.append(' - ', left);
     box.append(t);
     const row = doc.createElement('div'); row.className = 'eg-cards';
-    a.opts.forEach((label, y) => { const b = doc.createElement('button'); if (!model.offer && a === model.asks.at(-1) && y === focus) b.className = 'eg-focus'; b.textContent = `${a.mine === y ? '> ' : ''}${label}`; b.addEventListener?.('click', () => onVote(a.q, y)); row.append(b); });   // EG-G1: the pad's choice, on the newest
+    const base = at;
+    a.opts.forEach((label, y) => { const b = doc.createElement('button'); if (base + y === focus) b.className = 'eg-focus'; b.textContent = `${a.mine === y ? '> ' : ''}${label}`; b.addEventListener?.('click', () => onVote(a.q, y)); row.append(b); });   // EG-G1: the pad's choice
+    at += a.opts.length;
     box.append(row);
     panel.append(box);
   }
-  const note = doc.createElement('div'); note.className = 'eg-note'; note.textContent = recap ? 'Press Enter to close.' : 'Y/N answers a yes-or-no choice; /breach pick, /breach vote work in chat.';
-  panel.append(note);
+  // AUDIT EG V (c, L7-9): the recap closes by a tap - its own button - and a screen in hand reads no key's words (L7-20)
+  if (recap) { const row = doc.createElement('div'); row.className = 'eg-cards eg-ask'; const b = doc.createElement('button'); b.className = 'eg-close'; b.textContent = t('eg.recap.close', 'Close'); b.addEventListener?.('click', () => onClose()); row.append(b); panel.append(row); }
+  const noteText = recap ? (touch ? '' : 'Press Enter to close.') : touch ? t('eg.panel.noteTouch', 'Tap a card or a choice.') : 'Y: the Ready vote - R: a respite - 1-6: a card or a choice; /breach pick and /breach vote work in chat.';
+  if (noteText) { const note = doc.createElement('div'); note.className = 'eg-note'; note.textContent = noteText; panel.append(note); }
   (doc.body ?? doc.documentElement)?.append(panel);
 }
 

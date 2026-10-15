@@ -12,23 +12,26 @@
 //   `port:telegraphFill` - a danger fill's light, 50-100%: the stage's `uFillK`, the line left whole;
 //   (`port:allyEffects` - Full or Quiet, THE QUIET COMPANY's allies' hit numbers - is not on the shelf: the port draws
 //     only the player's own numbers (ui/hitNumbers.js), so the row would govern nothing);
-//   `port:reducedMotion` - the system's `prefers-reduced-motion` or this row: the count chip's pulse, the gains' flight,
-//     the arrival card's rise and the absent's draining ring stand still (ui/egSpireHud.js), and the stair is a plain cut.
+//   `port:reducedMotion` - the system's `prefers-reduced-motion` or this row: the count chip's pulse, the gains' flight
+//     and the arrival card's rise stand still (ui/egSpireHud.js), the gate's title cards with them - a lord's wake, its
+//     FELLED, THE FALL's card, their rule's sweep (ui/gateTitleCard.js, AUDIT EG V c L7-17) - and the stair is a plain
+//     cut. The absent's ring still drains: it is a count, not a motion.
 // The larger HUD is the port's own `--hud-scale` (port:hudScale), which every part of the Spire's HUD reads; the beats'
 // words go to a polite live region for a screen reader.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { getPref } from '../systems/uiPrefs.js';
+import { t } from '../systems/textManager.js';   // AUDIT EG V (c, L7-10): a palette's name in the player's language, read when it is shown
 
 /** The danger palettes (section 25.7): each its danger edge, its safety gold, its place's hazard, and whether the
  *  Spire stage's double keyline (`keyline` 2) and 45-degree hatch are asked (world/egLook.js egPaletteBits - EG16's
  *  style bit). Standard is the five lights' own (section 25.2): TELEGRAPH_EDGE_DAGON's crimson, the way's gold, the
  *  hazard's white. */
 export const EG_DANGER_PALETTES = Object.freeze({
-  standard: Object.freeze({ key: 'standard', name: 'Standard', danger: Object.freeze([1.0, 0.24, 0.28]), safety: Object.freeze([1.0, 0.82, 0.38]), hazard: Object.freeze([0.95, 0.95, 1.0]), keyline: 1, hatch: 0 }),
-  contrast: Object.freeze({ key: 'contrast', name: 'High contrast', danger: Object.freeze([1.0, 0.15, 0.75]), safety: Object.freeze([1.0, 0.95, 0.7]), hazard: Object.freeze([0.2, 0.95, 1.0]), keyline: 2, hatch: 1 }),
-  deutan: Object.freeze({ key: 'deutan', name: 'Deutan-Protan', danger: Object.freeze([0.62, 0.32, 1.0]), safety: Object.freeze([1.0, 0.86, 0.2]), hazard: Object.freeze([1.0, 1.0, 1.0]), keyline: 1, hatch: 0 }),
-  tritan: Object.freeze({ key: 'tritan', name: 'Tritan', danger: Object.freeze([1.0, 0.12, 0.2]), safety: Object.freeze([0.25, 0.9, 0.85]), hazard: Object.freeze([1.0, 1.0, 1.0]), keyline: 1, hatch: 0 }),
+  standard: Object.freeze({ key: 'standard', get name() { return t('menu.spire.palette.standard', 'Standard'); }, danger: Object.freeze([1.0, 0.24, 0.28]), safety: Object.freeze([1.0, 0.82, 0.38]), hazard: Object.freeze([0.95, 0.95, 1.0]), keyline: 1, hatch: 0 }),
+  contrast: Object.freeze({ key: 'contrast', get name() { return t('menu.spire.palette.contrast', 'High contrast'); }, danger: Object.freeze([1.0, 0.15, 0.75]), safety: Object.freeze([1.0, 0.95, 0.7]), hazard: Object.freeze([0.2, 0.95, 1.0]), keyline: 2, hatch: 1 }),
+  deutan: Object.freeze({ key: 'deutan', get name() { return t('menu.spire.palette.deutan', 'Deutan-Protan'); }, danger: Object.freeze([0.62, 0.32, 1.0]), safety: Object.freeze([1.0, 0.86, 0.2]), hazard: Object.freeze([1.0, 1.0, 1.0]), keyline: 1, hatch: 0 }),
+  tritan: Object.freeze({ key: 'tritan', get name() { return t('menu.spire.palette.tritan', 'Tritan'); }, danger: Object.freeze([1.0, 0.12, 0.2]), safety: Object.freeze([0.25, 0.9, 0.85]), hazard: Object.freeze([1.0, 1.0, 1.0]), keyline: 1, hatch: 0 }),
 });
 export const EG_DANGER_PALETTE_KEYS = Object.freeze(Object.keys(EG_DANGER_PALETTES));
 /** A danger fill's light at least, at most (section 25.7: 50-100%). */

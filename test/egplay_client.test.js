@@ -355,7 +355,7 @@ test('EG-PLAY THE TRACKER: outside, the call for my company - when it opens, the
   assert.equal(sealed.line, 'The breach opens in 4:00.');
   const open = egHudModel(E, ME, T0 + EG_SEALED_MS + 30_000);
   assert.equal(open.line, 'Answer the call - 4:30');
-  assert.match(open.sub, /\/breach/);
+  assert.equal(open.sub, 'Answer the call to step through.');   // PIN MOVED (AUDIT EG V, c: L7-20 - the prompt answers it, Enter, the pad's A, a tap or /breach; no line tells a screen in hand to type)
   assert.equal(egHudModel(E, 'acct-stranger', T0 + 60_000), null, 'a stranger is shown nothing');
   assert.equal(egHudModel(E, ME, T0 + 11 * 60_000), null, 'the call past');
   const inside = { ...E, h: 3, sg: 'trial', wk: T0, cl: 20 * 60_000, ca: T0 + 1000, op: T0, co: [[ME, 'Mac', 1, 1, 0, 1, 0, 0, 0, 1], ['acct-ann', 'Ann', 2, 0, 0, 1, 1, 0, 1, 1]], rd: 0, rh: 0 };
@@ -485,7 +485,7 @@ test('EG-PLAY THE HOSTS WIRED: the world host builds the client online and hears
   assert.match(W, /if \(madeRuleHere\('recall'\) === 'refused'\) \{ madeSay\('recall'\); return; \}/);
   for (const [rule, want] of [['levitate', 'banned'], ['regen', 'off'], ['companions', 'out'], ['mark', 'refused'], ['recall', 'refused'], ['save', 'refused'], ['automap', 'off'], ['rest', 'refused']]) assert.equal(madeLevelRule('spire', rule), want, rule);
   assert.equal(madeLevelSays('spire', 'mark'), EG_TEXT.noRecall, 'the Spire holds you');
-  assert.match(W, /const m = \/\^\\\/breach\(\?:\\s\+\(\\w\+\)\)\?\$\/i\.exec\(text\.trim\(\)\);/);
+  assert.match(W, /\{ const arg = breachCommandOf\(text\); if \(arg != null\) \{/);   // PIN MOVED (AUDIT EG V, c: L7-1 - the one-word door read every two-word /breach command as no command; its words whole, net/chatCommands.js breachCommandOf)
   assert.match(W, /egClient\?\.claimKeys\(\);/);
   assert.match(W, /claim: \(r\) => _accountSds\.claim\(r\)\.then\(weirHeard\),/);
   assert.match(W, /weirHeard\(a\);/);

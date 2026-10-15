@@ -146,7 +146,7 @@ const BOARD = {
 };
 
 test('EG-E2 THE BOARD WINDOW\'S LINES: each tab its name and the season, its ranked rows, `...` then the member\'s own pinned row; a Descent row its company, the hall and its band, the time, the Unfallen\'s flame and its breach\'s Proclamation (the classic list\'s short form the first name and how many more); the Depths the start and the Wager; the Deepest the Redoubt and its day; every tab the week\'s Proclamation and "Your best: Hall 47 - 1:44:12" (mutants: the pin dropped; the clock\'s hours; the flame unread; the short form\'s count)', () => {
-  assert.deepEqual([...EG_BOARD_TABS], ['alone', 'few', 'company', 'depths', 'deepest']);
+  assert.deepEqual([...EG_BOARD_TABS], ['alone', 'few', 'company', 'depths', 'deepest', 'runs']);   // PIN MOVED (AUDIT EG V, c: L7-19 - the sixth tab, this device's last runs)
   assert.deepEqual([egBoardClock(6252), egBoardClock(59), egBoardClock(3600), egBoardClock(-4)], ['1:44:12', '0:59', '1:00:00', '0:00']);
   assert.deepEqual(egBoardLines(BOARD, 'alone'), [
     'The Descent - Alone', 'Season 3, day 12.',

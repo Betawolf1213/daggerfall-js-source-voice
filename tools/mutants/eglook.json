@@ -411,8 +411,8 @@
   {
     "name": "EGLOOK-lab-deutan-safe-like-edge",
     "file": "src/ui/egAccess.js",
-    "old": "deutan: Object.freeze({ key: 'deutan', name: 'Deutan-Protan', danger: Object.freeze([0.62, 0.32, 1.0]), safety: Object.freeze([1.0, 0.86, 0.2])",
-    "new": "deutan: Object.freeze({ key: 'deutan', name: 'Deutan-Protan', danger: Object.freeze([0.62, 0.32, 1.0]), safety: Object.freeze([0.6, 0.34, 0.95])",
+    "old": "deutan: Object.freeze({ key: 'deutan', get name() { return t('menu.spire.palette.deutan', 'Deutan-Protan'); }, danger: Object.freeze([0.62, 0.32, 1.0]), safety: Object.freeze([1.0, 0.86, 0.2])",
+    "new": "deutan: Object.freeze({ key: 'deutan', get name() { return t('menu.spire.palette.deutan', 'Deutan-Protan'); }, danger: Object.freeze([0.62, 0.32, 1.0]), safety: Object.freeze([0.6, 0.34, 0.95])",
     "tests": [
       "test/eglook_lines.test.js",
       "test/egpres_hud.test.js"
@@ -620,8 +620,8 @@
   {
     "name": "EGLOOK-score-hall-at-rest",
     "file": "src/systems/egScore.js",
-    "old": "    hall: fight,",
-    "new": "    hall: true,",
+    "old": "    hall: fight && !sleeping,",
+    "new": "    hall: !sleeping,",
     "tests": [
       "test/eglook_score.test.js"
     ]

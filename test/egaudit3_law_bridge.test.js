@@ -277,7 +277,7 @@ test('AUDIT EG III SPIREBRIDGE - THE PLANK ON THIS SCREEN (sections 15, 25.2, 25
 test('AUDIT EG III SPIREBRIDGE - THE ASK ON THIS SCREEN (sections 15, 27.1 and 27.8): while I hold it, alive in a trial, unspent this span, with a gap ahead of my feet by the room\'s own law, it is offered - the stage\'s line, the touch layer\'s button, the pad\'s up - and taken by B, the button, the pad and `/breach bridge` (`mast`); B is the shoulder\'s own key everywhere else; the room\'s word said on my screen and its plank handed to the spans; a plank of mine spends it (mutants: B taken with nothing to ask; the ask sent with no gap; the word unsaid; the plank not handed on)', () => {
   // the HUD's pure halves
   assert.deepEqual(egTouchButtons({ bridge: true }), [{ id: 'bridge', label: EG_PRES_TEXT.touch.bridge }]);
-  assert.deepEqual(egTouchButtons({ bridge: true, witness: true }).map((b) => b.id), ['prev', 'next', 'forsake'], 'a witness asks nothing');
+  assert.deepEqual(egTouchButtons({ bridge: true, witness: true }).map((b) => b.id), ['prev', 'next', 'ping', 'forsake'], 'a witness asks nothing');   // PIN MOVED (AUDIT EG V, c: L7-7 - a witness's ping and its cooldown on the touch layer, section 16.5)
   assert.equal(egPadUp({ bridge: true }), true);
   assert.deepEqual(egPadAct('up', 'tap', { bridge: true }), { k: 'bridge' });
   assert.equal(egPadAct('down', 'tap', { bridge: true }), null);

@@ -246,8 +246,8 @@
   {
     "name": "EGFULL-the-potions-never-refilled",
     "file": "src/scenes/egClient.js",
-    "old": "potionHall = `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`; potions = EG_POTIONS_PER_HALL; }",
-    "new": "potionHall = `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`; }",
+    "old": "potionHall !== pk) { potionHall = pk; potions = EG_POTIONS_PER_HALL; potionsKeep(); }",
+    "new": "potionHall !== pk) { potionHall = pk; potionsKeep(); }",
     "tests": [
       "test/egfull_client.test.js"
     ]
