@@ -25,8 +25,9 @@
 // rAF's mixed in); the relay's own `at` rides each line for display.
 //
 // Not a DFU member: Daggerfall Unity has no chat. Ledger A row (ONLINE).
-import { CHAT_WORLD_ROOM } from './wire.js';
+import { CHAT_WORLD_ROOM, CHAT_TRADE_ROOM, CHAT_LFG_ROOM } from './wire.js';
 import { validRoll, rollText } from './dice.js';   // DICE1: a roll's line is the dice's own words
+import { t } from '../systems/textManager.js';   // CHAT-TRADE: the new tabs' and notices' words in the player's language, each read when it is shown
 
 /** The tabs, in bar order. A tab is {id, label, room, link, hint}.
  *
@@ -58,6 +59,12 @@ export const CHAT_TABS = Object.freeze([
   // (net/wire.js chatLangRoom), its channel the language the player CHOSE (`chatLang`; /lang), and on the bar only while
   // one is chosen
   Object.freeze({ id: 'lang', label: 'Lang', room: null, link: true, hint: 'Everyone who chose your language channel - /lang picks it', hidden: true }),
+  // CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG" - "without introducing clutter"): the Language tab's shape
+  // twice - a room of its own each (net/wire.js CHAT_TRADE_ROOM, CHAT_LFG_ROOM), on the bar only while the player has
+  // JOINED it (`chatTrade`, `chatLfg`; /join, /leave), so a player who never joins sees no new tab and holds no new socket
+  // (each hint a getter, read when the log is made - after the player chose a language - never at the boot's import)
+  Object.freeze({ id: 'trade', label: 'Trade', room: null, link: true, get hint() { return t('net.chat.tradeHint', 'Everyone in the Trade channel - buying, selling and swapping'); }, hidden: true }),
+  Object.freeze({ id: 'lfg', label: 'LFG', room: null, link: true, get hint() { return t('net.chat.lfgHint', 'Everyone in the LFG channel - looking for a group, or for one more'); }, hidden: true }),
   Object.freeze({ id: 'party', label: 'Party', room: null, link: false, hint: 'Your party alone', hidden: true, peekAll: true }),
   // GUILD1c (Mac: "Do guild1c" - the guild's chat): the Party tab's shape - its lines ride the hub's link with
   // `ch: 'guild'` and reach the guild's members online alone, and the tab is on the bar while the character is in one
@@ -91,6 +98,27 @@ export const LANG_OLD_RELAY_TEXT = 'Language channels need the server\'s next up
 export const NO_LANG_TEXT = 'Choose a language channel: /lang de, /lang en ... (/lang lists them).';
 /** CHAT-LANG: the Language tab's line when it moves - which channel it is now. */
 export const langJoinedText = (name) => `Language channel: ${name}.`;
+/** CHAT-TRADE: the channels a player joins and leaves by choice - each its tab id, its name, the pref that keeps the
+ *  choice and its room. */
+export const OPT_CHANNELS = Object.freeze({
+  trade: Object.freeze({ name: 'Trade', pref: 'chatTrade', room: CHAT_TRADE_ROOM }),
+  lfg: Object.freeze({ name: 'LFG', pref: 'chatLfg', room: CHAT_LFG_ROOM }),
+});
+/** CHAT-TRADE: the words below, each through the text core when it is said (L10N4) - `name` the channel's, `id` its tab's. */
+const optArgs = (id) => ({ name: OPT_CHANNELS[id]?.name ?? id, id });
+/** CHAT-TRADE: the Trade and LFG tabs on a relay from before them (TRADE_CHAN_RELAY_MIN). */
+export const tradeChanOldText = () => t('net.chat.tradeOld', 'The Trade and LFG channels need the server\'s next update.');
+/** CHAT-TRADE: a tab's word while its channel is not joined - and how to join it. */
+export const notJoinedText = (id) => t('net.chat.notJoined', 'You are not in the {name} channel - /join {id} joins it.', optArgs(id));
+/** CHAT-TRADE: the lines a join and a leave leave on the log - and a join a line said to the channel made, whose line
+ *  waits in the field. */
+export const optJoinedText = (id) => t('net.chat.joined', '{name} channel joined. /leave {id} leaves it.', optArgs(id));
+export const optJoinedSayText = (id) => t('net.chat.joinedSay', '{name} channel joined - press Enter to say your line. /leave {id} leaves it.', optArgs(id));
+export const optLeftText = (id) => t('net.chat.left', '{name} channel left.', optArgs(id));
+/** CHAT-TRADE: `/join` of a channel already joined (AUDIT CHAT-TRADE A5: the join's own line read as a join just made). */
+export const alreadyJoinedText = (id) => t('net.chat.already', 'You are already in the {name} channel - /leave {id} leaves it.', optArgs(id));
+/** CHAT-TRADE: a line said to a channel joined but not open yet (the World link's welcome not heard, the socket opening). */
+export const optWaitText = (id) => t('net.chat.wait', 'The {name} channel is still opening - say it again in a moment.', optArgs(id));
 /** PING1 (2026-10-11, the players: "A unique color or alert for @name pings"): does `text` name `name` with an @ - the
  *  whole name, any case, not run on into more of a word ("@Bran" pings Bran, "@Brandon" does not). A name of one letter
  *  or none pings nobody. */
@@ -111,6 +139,15 @@ export const CHAT_SAY_RANGE = 60;
 export const isOocText = (text) => /^\(\(/.test(String(text ?? '').trim());
 /** CHAT-CHAN: `/ooc text`'s line - the text in the mark. */
 export const oocText = (text) => `((${String(text ?? '').trim()}))`;
+/** CHAT-RP (2026-10-14, Mac: "/rp Italicizes and makes text color green. For roleplay purposes"): a line wrapped in
+ *  single asterisks is ROLEPLAY - OOC's kind of mark, the speaker's own, read off their text and never off a field, so
+ *  no relay has to carry it and an older client still reads the line as the tabletop writes it: `*draws her blade*`.
+ *  The whole line: an asterisk at each end, and just inside the last something that is neither one nor a space
+ *  (`**bold**` and `* *` are not roleplay). */
+export const isRpText = (text) => /^\*[\s\S]*[^*\s]\*$/.test(String(text ?? '').trim());
+/** CHAT-RP: `/rp text`'s line - the text in the mark. The whole line is the roleplay, so a mark typed inside it is
+ *  taken out first (AUDIT CHAT-TRADE A3: stripping the ends alone made `/rp *bows* deeply` read `*bows* deeply*`). */
+export const rpText = (text) => `*${String(text ?? '').replace(/\*/g, '').replace(/\s+/g, ' ').trim()}*`;
 /** CHAT-CHAN: is `speaker` within earshot of `listener` - two feet in the scene's frame, measured in the ground's
  *  plane as the name's range is (net/remotePlayers.js namePoints), between the two BODIES: the listener's is the
  *  port's one "where am I" (player.feetAt()), never the camera, which a third-person view stands behind the body. */
@@ -290,7 +327,8 @@ export class ChatLog {
     // TITLE-N: `dm` is the DUNGEON MASTER speaking - RED1's kind of flag for RED1's reason, set here from the relay's
     // own frame type (`t:'dm'`), which a player cannot send; a voice over the game, so a system line too.
     const sys = !!system || !!red || !!dm;
-    const kind = rolled ? 'roll' : sys ? '' : me === true ? 'me' : isOocText(text) ? 'ooc' : '';
+    // CHAT-RP: 'rp', a line of roleplay - the speaker's own *mark*, as OOC's is theirs
+    const kind = rolled ? 'roll' : sys ? '' : me === true ? 'me' : isOocText(text) ? 'ooc' : isRpText(text) ? 'rp' : '';
     return { seq: ++this._seq, id: String(id), name: String(name), text, at: Number.isFinite(at) ? at : now, t: now, mine: !!mine, system: sys, red: !!red, ...(dm ? { dm: true } : {}), kind, tab: tabId, ...(rolled ? { roll: rolled } : {}) };
   }
 

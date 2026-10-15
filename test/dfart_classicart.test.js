@@ -3,15 +3,15 @@
 // player's own ARENA2: a record whole and opaque, a composed wall (a record with another laid in where the model's
 // window or door stands, the window's glass cut out between its leads), a cut record (cropped, mirrored, its clear
 // texels kept, or its window's glass cut - Mac: "windows should always be see through"), a lettered board (Mac: "Bring
-// back the sign text"), the stand-ins on the texture door and which of them are cut-outs, and a record the data lacks
-// left out. No game data here: test/classicArtFake.mjs answers every record with a picture that names it.
+// back the sign text"), the stand-ins on the texture door and which of them are cut-outs, a lit window and its night
+// glow (Mac, of the ships: "See-through by day, lit at night"), and a record the data lacks left out. No game data here: test/classicArtFake.mjs answers every record with a picture that names it.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
   DF, opaque, isPane, isGlass, cutGlass, LEAD_LIGHT, resample, crop, mirrored, tiled, composedPicture, cutPicture, hasGlass,
-  classicPicture, classicPictures, classicStandIns, asPortRows, COMPOSE, SEE_THROUGH_WINDOW,
+  classicPicture, classicPictures, classicStandIns, asPortRows, COMPOSE, SEE_THROUGH_WINDOW, LIT_WINDOW, paneGlow, PANE_GLOW,
 } from '../src/world/classicArt.js';
 import { fakeClassicRgba, texelOf, texel, PANE, LEAD, TIMBER } from './classicArtFake.mjs';
 
@@ -102,6 +102,27 @@ test('DF-ART THE STAND-INS ON THE TEXTURE DOOR: each record of the model\'s arch
   const [plank, window] = await Promise.all(art.entries.map((e) => e.build(ctx)));
   assert.ok(plank.data.every((v, i) => i % 4 !== 3 || v === 255), 'the planking whole');
   assert.ok(window.data.some((v, i) => i % 4 === 3 && v === 0), 'the window\'s glass open');
+});
+
+test('DF-ART A WINDOW LIT AT NIGHT (Mac, of the ships\' stern windows: "See-through by day, lit at night"): LIT_WINDOW is SEE_THROUGH_WINDOW\'s framing with its glass whole; paneGlow lights its glass PANE_GLOW and leaves its leads and frame dark, every texel whole; a stand-in in `glowRecs` keeps its glow as it is built - none before, none for any other record, none after `reset` (mutants: the leads lit, the glow never kept, every record glowing)', async () => {
+  const { glass: _g, ...framing } = SEE_THROUGH_WINDOW;
+  assert.deepEqual({ ...LIT_WINDOW }, framing, 'framed as the window seen through, its glass whole');
+  assert.equal(hasGlass(LIT_WINDOW), false, 'no cut-out');
+  const strip = pic(3, 1, (x) => [...[PANE, LEAD, TIMBER][x], 255]);
+  const g = paneGlow(strip);
+  assert.deepEqual([texel(g, 0, 0), texel(g, 1, 0), texel(g, 2, 0)], [[...PANE_GLOW, 255], [0, 0, 0, 255], [0, 0, 0, 255]], 'its glass lit, its lead and its timber dark');
+  const art = classicStandIns({ archive: 38131, name: 't', sources: { 6: SEE_THROUGH_WINDOW, 106: LIT_WINDOW }, glowRecs: [106] });
+  assert.deepEqual([art.cut(6), art.cut(106)], [true, false]);
+  assert.equal(art.glow(106), null, 'not before it is built');
+  const ctx = { classicRgba: fakeClassicRgba() };
+  const [day, lit] = await Promise.all(art.entries.map((e) => e.build(ctx)));
+  assert.ok(lit.data.every((v, i) => i % 4 !== 3 || v === 255), 'the lit window whole');
+  assert.equal(art.glow(6), null, 'the day window never glows');
+  const glow = art.glow(106);
+  assert.deepEqual([glow.width, glow.height], [day.width, day.height]);
+  for (let i = 0; i < glow.data.length; i += 4) assert.equal(glow.data[i] === PANE_GLOW[0], day.data[i + 3] === 0, 'it glows exactly where the day window is open');
+  art.reset();
+  assert.equal(art.glow(106), null, 'reset');
 });
 
 test('DF-ART THE PORT\'S OWN ROWS: a picture for the yards\', the port\'s and the monument\'s faces handed over as they read it, row 0 its top (their models\' uvs lay it so), in the upload\'s shape (mutants: the rows flipped)', () => {
