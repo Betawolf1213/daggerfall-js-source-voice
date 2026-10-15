@@ -11,6 +11,7 @@
 // (ELITE-GATES).
 import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts } from './egHall.js';
 import { egCircleSpecs } from '../net/egLaw.js';
+import { egBandArt } from './egBandArt.js';
 
 /** The circle a build is for: its breach's seed, its number and its ground (the span decrees' `geo`) - the mode
  *  machine's own key for the level it stands (scenes/worldModes.js standEgHall). */
@@ -29,12 +30,26 @@ export function egCircleGates(seed, c, geo = 0) {
 export function egCircleParts(seed, c, geo = 0) {
   return { key: egCircleKey(seed, c, geo), model: buildEgCircleModel(seed, c, geo), tris: egCircleColliderTris(seed, c, geo), lamps: egCircleLights(seed, c, geo), gates: egCircleGates(seed, c, geo) };
 }
-/** Every buffer a built circle carries - what its worker hands over rather than copies. */
+/**
+ * AUDIT EG V (L6-8, L6-9; Elite-Gates.md section 7): WHAT THE SWAP'S WORKER BUILDS for a `{ seed, c, geo, band }` ask - the
+ * circle's made level (egCircleParts), its five halls' specs as the hall law laid them (`specs` - the page takes them as
+ * given, net/egLaw.js egSpecGive, and lays none again under the veil), and, when the page asks (`band` 0-3), that band's
+ * dress painted (`art` - world/egBandArt.js egBandArt's `[record, { albedo, emission }]`, put up a record a frame of the
+ * Court's rest - scenes/worldModes.js egPrebuild). Pure.
+ * @param {{ seed: number, c: number, geo?: number, band?: number }} m
+ */
+export function egCircleBuild(m) {
+  const geo = m.geo ?? 0, band = Number.isInteger(m.band) && m.band >= 0 && m.band <= 3 ? m.band : -1;
+  return { ...egCircleParts(m.seed, m.c, geo), specs: egCircleSpecs(m.seed, m.c, geo), art: band >= 0 ? egBandArt(band) : null };
+}
+/** Every buffer a built circle carries - what its worker hands over rather than copies (AUDIT EG V L6-9: its band's
+ *  dress's pixels too). */
 export function egCirclePartsTransfers(parts) {
   const out = new Set();
   const take = (a) => { if (ArrayBuffer.isView(a) && a.buffer instanceof ArrayBuffer) out.add(a.buffer); };
   const model = (m) => { for (const v of Object.values(m ?? {})) take(v); };
   model(parts?.model); take(parts?.tris);
   for (const g of parts?.gates ?? []) { model(g.model); take(g.tris); }
+  for (const [, art] of parts?.art ?? []) { take(art?.albedo?.colors); take(art?.emission?.colors); }
   return [...out];
 }

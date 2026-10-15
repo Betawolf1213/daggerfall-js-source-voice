@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
 import {
-  egFightFloors, egClipTris, egShapeYs, egFloorPlan, egPerilOf, egOnFloorAt, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb,
+  egFightFloors, egClipTris, egFloorPlan, egPerilOf, egOnFloorAt, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb,
   egEclipseAt, egEclipseChip, egEclipseDark, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder, egOverDrop,
   EG_FLOOR_DRAWS_MAX, EG_PERIL, EG_CHECK_ORDER, EG_TETHER, EG_POOL_RAMP, EG_ECLIPSE_LOOK, EG_SIGILS, EG_SIGIL_RIM, EG_SIGIL_UP_M, EG_AURA_RING, EG_SHADE_RIM, EG_SHADE_BAND, EG_HEAVY_SHAKE, EG_MINE_ECHO_MS, EG_DROP_THUD,
 } from '../src/world/egTelegraph.js';
@@ -126,7 +126,8 @@ test('EG-ZG THE FLOOR BUDGET (sections 11.7 and 25.4): a blow on the court drawn
   const onCourt = shapeOf({ origin: [bal.x - Math.sign(bal.x) * (bal.r + 1.5), bal.z], r: 4 });   // its bounds reach over the balcony
   const p1 = egFloorPlan([onCourt], floors, null, null);
   assert.ok(p1.draws.length >= 1 && p1.draws.every((d) => d.f.y === 0), 'the court\'s blow on the court alone');
-  assert.deepEqual([...egShapeYs(floors, onCourt)], [0]);
+  // PIN MOVED (AUDIT EG V, e: egShapeYs retired - once the floor plan read a shape's heights in place, L6-4, no producer
+  // read it; the plan's own draws, above and below, pin the heights it lands at)
   const onBal = shapeOf({ origin: [bal.x, bal.z], r: 2 });
   assert.ok(egFloorPlan([onBal], floors, null, null).draws.every((d) => d.f.y === bal.y), 'a balcony\'s on its balcony');
   const all = shapeOf({ kind: TELEGRAPH_KIND.all });

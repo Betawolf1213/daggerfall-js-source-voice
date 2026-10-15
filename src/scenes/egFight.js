@@ -66,7 +66,7 @@ import { setBatchHitFlash, setBatchGlint } from '../systems/hitFlash.js';
 import { groundViewModel, drawGateGround } from '../ui/gateGroundView.js';   // EG-ZG: the peril arrow and the chain's words, the gate's own readout
 import { screenBearing } from './gateCourt.js';   // EG-ZG: the way out as the screen turns it
 import { PHASE_NUMERALS } from './gateCourt.js';   // AUDIT EG V (lane1 #14): the gate's phase card's numerals
-import { egFightFloors, egFloorPlan, egHazardSurface, egPerilOf, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb, egEclipseAt, egEclipseDark, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder,
+import { egFightFloors, egFloorPlan, egFloorPlanKeep, egHazardSurface, egPerilOf, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb, egEclipseAt, egEclipseDark, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder,
   EG_CHECK_ORDER, EG_ECLIPSE_LOOK, EG_SIGIL_UP_M, EG_AURA_RING, EG_DROP_THUD, EG_TETHER } from '../world/egTelegraph.js';   // EG-ZG: THE TELEGRAPHS AS WRITTEN, the law
 import { EG_SHADE_BAND } from '../world/egTelegraph.js';   // AUDIT EG V (lane1 #13): in the dark every foe keeps the Shade's rim light
 import { drawEgSigils } from '../ui/egSpireHud.js';   // EG-ZG: the marks over heads
@@ -125,13 +125,14 @@ const GROUND_COLORS = Object.freeze({ rune: GOLD, gem: [0.65, 0.5, 1.0], haven: 
 const ZONE_COLORS = Object.freeze({ burn: [1.0, 0.42, 0.12], void: [0.35, 0.02, 0.04], soul: [0.6, 0.35, 0.9], haven: GOLD });
 /** A tether's colour (THE FIVE LIGHTS: Dagon red on what binds you). */
 const TETHER_COLOR = Object.freeze([1.0, 0.24, 0.28]);
-/** THE PLACE's colours: a vent's fire, a Pendulum's lane white (SD-LOOK: what moves next is told in white). */
-const VENT_COLOR = Object.freeze([1.0, 0.45, 0.12]);
+/** THE PLACE's colour - section 25.2's white, "the place's own timed hazard" (SD-LOOK: what moves next is told in white):
+ *  a vent ringing (a Rampart's and a span's), a Pendulum's lane, a slag crust's last seconds and every fragment hazard,
+ *  told and landing - the one colour the danger palette's hazard takes (egLookShapes), its element in its grain (the
+ *  style). AUDIT EG V (L5-3): a vent's and a fragment hazard's were the band's fire orange and a red, which no palette
+ *  read. */
 const PEND_COLOR = Object.freeze([0.95, 0.95, 1.0]);
-/** EG-FULL LAYER THREE: a fragment hazard's colour - told in white where it moves (a fire fall's shimmer), burning in
- *  its element; a soul-wisp's violet, the moon-shafts' gold (a CHECK's havens). */
-const HAZ_FIRE = Object.freeze([1.0, 0.45, 0.12]);
-const HAZ_STONE = Object.freeze([1.0, 0.3, 0.2]);
+/** EG-FULL LAYER THREE: a soul-wisp's violet (it drifts - its hold on me is a tether's red); the moon-shafts are gold (a
+ *  CHECK's havens). */
 const HAZ_SOUL = Object.freeze([0.6, 0.35, 0.9]);
 /** A soul-wisp's tether (section 11.2): its drain's tick (ms), how soon one wisp binds again after it lets go (ms). */
 const WISP_TICK_MS = 1000;
@@ -232,6 +233,8 @@ const GLASS_CUE = Object.freeze({ clip: CRYSTAL_CLIPS.shatter, pitch: 2.2, volum
 const EG_FOG_FLOOR_ARR = Object.freeze([EG_FOG_FLOOR.floor, EG_FOG_FLOOR.within, EG_FOG_FLOOR.ease]);
 /** EG-G2: two colours the same (a shape's colour is a table's - read by value, so a copy reads as its table's). */
 const sameRgb = (a, b) => !!a && a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
+/** AUDIT EG V (L6-4): no feet - THE TELEGRAPH BUDGET's order read from the hall's origin (kept, never made a frame). */
+const NO_FEET = /** @type {number[]} */ (Object.freeze([0, 0]));   // read, never written (egShapeOrder)
 /** EG-G2: a rim brightened for the shape aimed at me (section 25.4). */
 const brighter = (c) => [c[0] + (1 - c[0]) * 0.3, c[1] + (1 - c[1]) * 0.3, c[2] + (1 - c[2]) * 0.3];
 const STYLE_OF = Object.freeze({ fire: TELEGRAPH_STYLE.fire, frost: TELEGRAPH_STYLE.frost, shock: TELEGRAPH_STYLE.shock, poison: TELEGRAPH_STYLE.poison });
@@ -439,6 +442,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
    *  pending blows and told hazards (the peril arrow's), the camera's yaw off the last view, the readouts up (the ground's
    *  words, the sigils), the Eclipse's cycles heard (its wind and toll), the pull-apart tethers on me last frame (a snap's
    *  glass), the Drop I am falling onto, a Drop's dust */
+  /** AUDIT EG V (L6-4): the floor plan's own slots (world/egTelegraph.js egFloorPlanKeep), kept for the fight */
+  const planKeep = egFloorPlanKeep();
   let floors = [], floorBuf = null, lastPlan = null, lastPeril = null, lastGround = null, viewYaw = null, groundUp = false, sigilsUp = false, dropFrom = null, dropOn = null;
   /** AUDIT EG III (lane4 #2): whether this fight's title card stands - the card is the gate's own (ui/gateTitleCard.js), and
    *  the Burning Court's frame draws it before the breach's: only a card this fight drew is ever put away here */
@@ -449,6 +454,11 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     if (m || cardUp) { drawGateTitleCard(m, { hidden: hudHidden() }); cardUp = !!m; }
   }
   const _pending = [], _sigils = [], _vp = new Float32Array(16), eclipseHeard = new Set(), dusts = [];
+  /** AUDIT EG V (L6-4; section 11.9, "The frame's lists"): the frame's own collections, kept - each body's newest blow,
+   *  the bodies drawn, the lords, the blows the budget orders and its options, the marked companions, the errands given by
+   *  numeral (each body's list kept) */
+  const _blowBy = new Map(), _live = new Set(), _lordIds = new Set(), _orderIn = [], _subs = new Set(), _given = new Map();
+  const _orderOpts = { lords: _lordIds, aimedAt: (bl) => namesMe(bl) };
   let pullsWas = new Map(), pullsNow = new Map();
   /** EG-ZP (sections 15 and 21): my trail in the hall's frame (the census's own `[t, x, y, z, h]`, its last EG_TRAIL_MS) and
    *  my Lifeline windows (egLifelineOpen) - THE RECEIVER'S VESTIGES read both at a blow on me */
@@ -466,9 +476,33 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   const myFeet = () => { const f = feet(); return f && centre ? [f[0] - centre[0], f[2] - centre[2]] : null; };
   /** EG-ZR: a companion's feet in the hall's frame where this screen draws it (its pose stands at the eye), or null. */
   const peerFeet = (sub) => { const p = peerAt(sub); return p && centre ? [p[0] - centre[0], p[1] - PEER_EYE_M - centre[1], p[2] - centre[2]] : null; };
+  /** AUDIT EG V (L6-4): THE BODIES - one body standing or still falling, drawn as its role is, counted live this frame. */
+  function liveBody(b, t) {
+    _live.add(b.i);
+    if (b.role === EG_ROLE.obj) { const key = OBJ_KEY[b.k] ?? 'rift'; if (STRUCK.has(key)) drawStruck(b, t, key); else drawGround(b, t, key); return; }
+    drawBody(b, t, _blowBy.get(b.i));
+  }
+  /** EG-ZG: a tether's end `x` (a member's sub or a body's number) where this screen stands it, the hall's frame `[x, z]` -
+   *  my feet `f`, a companion as drawn, a body at its place - or null. AUDIT EG V (L6-4): one function, never a closure a
+   *  tether a frame. */
+  function tetherEnd(x, F, t, f, meSub) {
+    if (typeof x === 'string') { if (x === meSub && f) return f; const p = peerAt(x); return p ? [p[0] - centre[0], p[2] - centre[2]] : null; }
+    const b = F.bodies.find((q) => q.i === x);
+    return b ? egBodyPlace(b, t) : null;
+  }
+  /** AUDIT EG V (L6-4): the company where this screen stands it, worked out once a frame - the holder's chips ask every
+   *  Accord of it twice a frame (ui/egBeats.js egHolderNow), and each ask stood the whole company again. */
+  let companyAt = NaN, companyFrame = -1, companyState = null, companyMemo = null, frameNo = 0;
   /** EG-ZR (Shield-Hymn's `rally`), shared by EG-ZS's `accordMates`: the living company the room counts where this screen
-   *  stands it - me at my feet, each companion where it is drawn - as the pair laws read it (`{ sub, vs, x, z }`). */
+   *  stands it - me at my feet, each companion where it is drawn - as the pair laws read it (`{ sub, vs, x, z }`). AUDIT EG V
+   *  (L6-4): the same list for the same frame (the fight's frame, its clock and the room's word unchanged). */
   function companyHere() {
+    const E0 = link.state(), t0 = now();
+    if (companyMemo && t0 === companyAt && frameNo === companyFrame && E0 === companyState) return companyMemo;
+    companyAt = t0; companyFrame = frameNo; companyState = E0;
+    return (companyMemo = companyStood());
+  }
+  function companyStood() {
     const E = link.state(), sub = me(), ms = [];
     for (const c of E.co ?? []) {
       const m = egMemberOf(E, c[0]), q = c[0] === sub ? null : peerFeet(c[0]), p = c[0] === sub ? myFeet() : q && [q[0], q[2]];
@@ -696,7 +730,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (st.st === 'quiet') continue;
         const sh = (_slots[_shapes.length] ??= slot());
         sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = v.x - v.halfW; sh.origin[1] = v.z; sh.end[0] = v.x + v.halfW; sh.end[1] = v.z; sh.halfW = v.d / 2; sh.r = 0;
-        sh.t = st.st === 'warn' ? st.k : 1; sh.flash = st.st === 'fire' ? 1 : 0; sh.alpha = 1; sh.color = VENT_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
+        sh.t = st.st === 'warn' ? st.k : 1; sh.flash = st.st === 'fire' ? 1 : 0; sh.alpha = 1; sh.color = PEND_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
         sh.since = st.st === 'warn' ? (st.k * EG_VENT_WARN_MS) / 1000 : EG_VENT_WARN_MS / 1000; sh.span = EG_VENT_WARN_MS / 1000; sh.after = st.st === 'fire' ? (st.k * EG_VENT_FIRE_MS) / 1000 : -1; sh.court = 0;
         _shapes.push(sh);
         if (st.st === 'warn') _pending.push({ s: [['l', sh.origin[0], sh.origin[1], sh.end[0], sh.end[1], v.d]], at: t + (1 - st.k) * EG_VENT_WARN_MS, wu: EG_VENT_WARN_MS, nm: 'Fire Vent', ch: 0 });   // EG-ZG: the peril arrow's
@@ -714,7 +748,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (!(st.tell > 0) && !st.fire) continue;
         const sh = (_slots[_shapes.length] ??= slot());
         sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = s.x; sh.origin[1] = s.z; sh.r = EG_VENT_R;
-        sh.t = st.fire ? 1 : st.tell; sh.flash = st.fire ? 1 : 0; sh.alpha = 1; sh.color = VENT_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
+        sh.t = st.fire ? 1 : st.tell; sh.flash = st.fire ? 1 : 0; sh.alpha = 1; sh.color = PEND_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
         sh.since = st.tell * EG_VENT_TELL_S; sh.span = EG_VENT_TELL_S; sh.after = st.fire ? 0 : -1; sh.court = 0;
         sh.y = s.y;   // EG-ZG (section 11.7): traversal ground - drawn on its own surface, never a fight floor's
         _shapes.push(sh);
@@ -778,7 +812,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
           if (!fillStamp(sh, p.sh)) continue;
           const told = EG_HAZARDS[hz.kind].tell / 1000;
           sh.t = p.st === 'tell' ? p.k : 1; sh.flash = p.st === 'live' ? 1 : 0; sh.alpha = 1;
-          sh.color = p.st === 'tell' && hz.kind === 'fall' ? PEND_COLOR : p.el === 'fire' ? HAZ_FIRE : HAZ_STONE;
+          sh.color = PEND_COLOR;   // AUDIT EG V (L5-3): the place's white, told and landing - the palette's hazard
           sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = p.el === 'fire' ? TELEGRAPH_STYLE.fire : TELEGRAPH_STYLE.weight;
           sh.since = p.st === 'tell' ? p.k * told : told; sh.span = told; sh.after = p.st === 'live' ? 0 : -1; sh.court = 0;
           sh.y = egHazardSurface(hz);   // EG-ZG (section 11.7): a hazard of the traversal ground on its own surface; EG-ZJ: and the slag's spill, over its crust
@@ -936,15 +970,19 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     if (F && centre) {
       // AUDIT EG IV (lane1 #15; section 13.2): ERRANDS BY NUMERAL - over each errand the room gave (`pg.as`), its member's numeral
       // and name (*III - Mira*), or the numerals of several (a gem's group, a twin's)
-      const given = new Map(), tg = now();
-      for (const [i, n] of F.pg?.as ?? []) given.set(i, [...(given.get(i) ?? []), n]);
+      const given = _given, tg = now();   // AUDIT EG V (L6-4): each body's numerals in its kept list
+      if (given.size > 64) given.clear();
+      for (const ns of given.values()) ns.length = 0;
+      for (const [i, n] of F.pg?.as ?? []) { let ns = given.get(i); if (!ns) given.set(i, (ns = [])); ns.push(n); }
       for (const [i, ns] of given) {
+        if (!ns.length) continue;
         const b = F.bodies.find((x) => x.i === i);
         if (!b || !(b.hp > 0) || b.goneAt) continue;
         const [x, z] = egBodyPlace(b, tg), at = egScreenAt(vp, [centre[0] + x, centre[1] + egBodyHeight(b, tg) + (b.role === EG_ROLE.lord ? EG_GIVEN_UP_LORD_M : EG_GIVEN_UP_M), centre[2] + z]);
         if (at) _sigils.push({ key: `e${i}`, x: at[0], y: at[1], marks: [{ sigil: 'given', text: egGivenWords(ns, E.co) }] });
       }
-      const subs = new Set();
+      const subs = _subs;
+      subs.clear();
       for (const m of F.mk ?? []) if (m[0] !== meSub && typeof m[0] === 'string') subs.add(m[0]);
       const t = now();
       for (const sub of subs) {
@@ -959,6 +997,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   return {
     /** One frame of the hall's fight. */
     frame() {
+      frameNo++;   // AUDIT EG V (L6-4): the company's memo is a frame's
       blowMet.clear();
       const E = link.state(), t = now();
       if (!E.b || !(E.h > 0) || E.end) { if (hall) this.leave(); return; }
@@ -968,7 +1007,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const F = E.fight.h === E.h ? E.fight : null;
       _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0; _barks.length = 0; _pending.length = 0;
       for (const sl of _slots) { sl.mine = false; sl.cut = false; sl.y = NaN; sl.order = Infinity; }   // EG-G2: a slot is mine only when this frame's blow says so; EG-ZD: a cut feint's the same; EG-ZG: its own surface and its rank this frame's
-      [pullsWas, pullsNow] = [pullsNow, pullsWas]; pullsNow.clear();
+      { const pw = pullsWas; pullsWas = pullsNow; pullsNow = pw; pullsNow.clear(); }   // AUDIT EG V (L6-4): swapped in place, no pair made a frame
       stageNow = E.sg;
       place(E, t);
       auraRings(E);   // EG-ZG (section 25.4)
@@ -977,21 +1016,24 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (standing) { trail.push([t, f[0], fy, f[1], hall]); while (trail.length > 1 && trail[1][0] <= t - EG_TRAIL_MS) trail.shift(); }   // EG-ZP: my trail, the census's shape
       if (!F) { groundFrame(t, standing ? f : null, fy, null); snapFrame(); titleFrame(t); return; }
       placeDark(F, t);   // AUDIT EG V (lane1 #13): Gutterdark, the Long Night and the Rails
-      const blowBy = new Map();
+      const blowBy = _blowBy;
+      blowBy.clear();
       for (const bl of F.blows) if (bl.o && (!blowBy.has(bl.o) || blowBy.get(bl.o).at < bl.at) && t < bl.at + 700) blowBy.set(bl.o, bl);
-      // THE BODIES
-      const live = new Set();
-      for (const b of [...F.bodies, ...F.gone.filter((g) => t - g.goneAt < FALL_MS)]) {
-        live.add(b.i);
-        if (b.role === EG_ROLE.obj) { const key = OBJ_KEY[b.k] ?? 'rift'; if (STRUCK.has(key)) drawStruck(b, t, key); else drawGround(b, t, key); continue; }
-        drawBody(b, t, blowBy.get(b.i));
-      }
+      // THE BODIES - the standing, then the gone still falling (AUDIT EG V L6-4: no list joined a frame)
+      const live = _live;
+      live.clear();
+      for (const b of F.bodies) liveBody(b, t);
+      for (const g of F.gone) if (t - g.goneAt < FALL_MS) liveBody(g, t);
       for (const [i, d] of drawn) if (!live.has(i)) { destroy(d); drawn.delete(i); }
       for (const i of crystalSlots.keys()) if (!live.has(i)) crystalSlots.delete(i);
       mix.barks(_barks, cam(), (b) => play3(b.cue, b.at));   // EG-G2: the legion's barks, four a kind, nearest first
       // THE BLOWS - drawn in the budget's order, each judged on my feet at its landing
-      const lordIds = new Set(F.bodies.filter((b) => b.role === EG_ROLE.lord).map((b) => b.i));
-      const order = egShapeOrder(F.blows.filter((bl) => !bl.cut || t - bl.cut < EG_FEINT_FADE_MS), f ?? [0, 0], t, { lords: lordIds, aimedAt: namesMe });   // AUDIT EG IV (lane1 #5): a failure blow naming me is aimed at me
+      const lordIds = _lordIds;
+      lordIds.clear();
+      for (const b of F.bodies) if (b.role === EG_ROLE.lord) lordIds.add(b.i);
+      _orderIn.length = 0;
+      for (const bl of F.blows) if (!bl.cut || t - bl.cut < EG_FEINT_FADE_MS) _orderIn.push(bl);
+      const order = egShapeOrder(_orderIn, f ?? NO_FEET, t, _orderOpts);   // AUDIT EG IV (lane1 #5): a failure blow naming me is aimed at me (namesMe's own law, kept in _orderOpts)
       for (let k = 0; k < order.length; k++) {
         const bl = order[k], mine = bl.on ? bl.on.includes(me()) : !!f && bl.s.some((s) => egInShape(s, f[0], f[1]));   // AUDIT EG IV (lane1 #5): a failure blow is mine when it names me
         drawBlow(bl, t, mine, k);   // EG-ZG: its rank, THE TELEGRAPH BUDGET's order for the floors' draws
@@ -1037,8 +1079,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const meSub = me();
       let chained = null;
       for (const tx of F.tx) {
-        const endOf = (x) => { if (typeof x === 'string') { if (x === meSub && f) return f; const p = peerAt(x); return p ? [p[0] - centre[0], p[2] - centre[2]] : null; } const b = F.bodies.find((q) => q.i === x); return b ? egBodyPlace(b, t) : null; };
-        const a = endOf(tx[0]), b = endOf(tx[1]);
+        const a = tetherEnd(tx[0], F, t, f, meSub), b = tetherEnd(tx[1], F, t, f, meSub);
         if (!a || !b) continue;
         const mineTx = tx[0] === meSub || tx[1] === meSub, d = Math.hypot(a[0] - b[0], a[1] - b[1]);
         if (egTetherKind(tx) === 'pull') pullTether(a, b, egTetherBreak(tx), `${tx[0]}|${tx[1]}|${tx[2]}`, mineTx);
@@ -1051,11 +1092,12 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         }
         if (tx[2] === 0 && tx[1] === meSub && standing && t - drainAt >= EG_TICK_MS && Math.hypot(a[0] - b[0], a[1] - b[1]) <= 8) { drainAt = t; landShare(0.03, 0, null, 'Drain'); }
       }
-      // MY MARKS - a challenge's ring kept, a cage held
-      const mine = F.mk.filter((m) => m[0] === meSub && m[2] > t);
+      // MY MARKS - a challenge's ring kept, a cage held (AUDIT EG V L6-4: read in place, no list made)
+      let challenged = false, caged = false;
+      for (const m of F.mk) if (m[0] === meSub && m[2] > t) { if (m[1] === 6) challenged = true; if (m[1] === 5) caged = true; }
       const R = F.pg.ring;
-      if (R && f) { const inside = mine.some((m) => m[1] === 6); ring(R[0], R[1], R[2], inside); }
-      if (mine.some((m) => m[1] === 5)) hold(250);
+      if (R && f) ring(R[0], R[1], R[2], challenged);
+      if (caged) hold(250);
       // THE PLACE - a gust's push
       if (F.gust && F.gust.at !== gustSeen && t >= F.gust.at) { gustSeen = F.gust.at; if (standing) push(F.gust.dx, F.gust.dz, F.gust.v * (F.gust.ms / 1000)); }
       groundFrame(t, standing ? f : null, fy, chained);   // EG-ZG: the peril arrow, the chain's words
@@ -1106,7 +1148,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (view) viewYaw = egViewYaw(view);
       if (proj && view) sigilsFrame(multiply(proj, view, _vp));
       egLookShapes(_shapes, egAccessNow(), stageNow);   // EG-G1/EG-G2: each shape in the shelf's palette, fill and style bit
-      const plan = (lastPlan = egFloorPlan(_shapes, floors, myFeet(), floorBuf));
+      const plan = (lastPlan = egFloorPlan(_shapes, floors, myFeet(), floorBuf, undefined, planKeep));   // AUDIT EG V (L6-4): its slots kept
       floorBuf = plan.buf; plan.over = floor;
       if (!pass) return drew;
       pass.drawFloors(plan, proj, view, eye, seconds, fog, centre);   // section 25.4: mine on top
@@ -1163,9 +1205,15 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     },
     /** The count's words for a tracker that asks. */
     countText: (ms) => egCountText(ms),
-    /** Out of the breach: everything put away - once (AUDIT EG III lane4 #2: again it is nothing). */
+    /** Out of the breach: everything put away - once (AUDIT EG III lane4 #2: again it is nothing). AUDIT EG V (L6-5): the
+     *  telegraph and crystal passes freed with it (built again the first frame of the next breach's draw). */
     leave() {
       if (!hall && !centre && !cardUp && !groundUp && !sigilsUp && !drawn.size && !fireBatches.size && !ll.length && !trail.length && !hymn) return;   // AUDIT EG III (lane4 #2): nothing held - asked every frame out of the Spire, it touches nothing (never the Burning Court's card)
+      // AUDIT EG V (L6-5; sections 11.9 and 29, EVERY ALLOCATION HAS AN OWNER): the passes' slots emptied before they are freed
+      const p0 = pass, c0 = crystalPass;
+      pass = null; crystalPass = null; passTried = false; crystalTried = false; floorBuf = null;
+      try { p0?.destroy(); } catch { /* gone with its context */ }
+      try { c0?.destroy(); } catch { /* gone with its context */ }
       for (const d of drawn.values()) destroy(d);
       drawn.clear(); crystalSlots.clear();
       dropFire(); toldHeard.clear(); mix.peers(false);   // EG-ZH: the flames freed, the peers as they were

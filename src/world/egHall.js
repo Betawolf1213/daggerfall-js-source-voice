@@ -543,17 +543,28 @@ export function egGateParts(spec) {
   return { model: egBandDress(packRealmFaces(f), spec.band ?? 0), tris: new Float32Array(tris) };
 }
 
+/** AUDIT EG V (L5-16; Elite-Gates.md section 11.9): THE LAMPS' BUDGET - at most `n` lamps stand within `r` m of any lamp of a
+ *  circle, so the renderer's nearest lights (16 - render/renderer.js) never cut one beside the eye and none pops as it moves:
+ *  Grath's three islands and their court stood 24 lamps within 40 m (18 about one), 338 of 1,200 circles past 12. */
+export const EG_LAMP_BUDGET = Object.freeze({ n: 12, r: 40 });
+/** A ring's lamps in the order they keep their place under the budget: each next one as far round from those before as it
+ *  can stand (six: 0, 3, 1, 4, 2, 5 - two facing, then the pairs between), so a thinned ring stays spread. */
+const spreadRank = (k, n) => { const order = [0]; for (let step = n; order.length < n; step = Math.ceil(step / 2)) for (let j = 0; j < n; j += step) if (!order.includes(j)) order.push(j); return order.indexOf(k); };
+
 /** THE CIRCLE'S LAMPS (the light list's shape, the dungeon's frame): two by each plate, round each court's rim, along the
- *  walkway, the fire in each passage's channels; EG-ZL: one before each Drop's far wall (EG_DROP_LAMP). */
+ *  walkway, the fire in each passage's channels; EG-ZL: one before each Drop's far wall (EG_DROP_LAMP). AUDIT EG V (L5-16):
+ *  held to EG_LAMP_BUDGET - a lamp that would stand a 13th within 40 m of itself or of another is let go, the meaningful
+ *  first (a fragment's own lights and a Drop's wall, whose colour says where you are), then each ring's spread order, then
+ *  the walkways', in the order they were laid. */
 export function egCircleLights(seed, c, geo = 0) {
-  const out = [];
-  const lamp = (p, color = EG_LAMP.color, range = Number(EG_LAMP.range)) => out.push({ x: p[0], y: p[1], z: p[2], range, color: [...color] });
+  const out = [], rank = [];
+  const lamp = (p, color = EG_LAMP.color, range = Number(EG_LAMP.range), pr = 0) => { out.push({ x: p[0], y: p[1], z: p[2], range, color: [...color] }); rank.push(pr); };
   for (const spec of egCircleSpecs(seed, c, geo)) {
     for (const d of spec.discs) {
       const n = d.role === 'court' || d.role === 'isle' ? 6 : d.role === 'arrive' || d.role === 'end' ? 2 : d.role === 'bastion' || d.role === 'balcony' || d.role === 'perch' ? 1 : 0;
-      for (let k = 0; k < n; k++) { const a = (k / n) * Math.PI * 2 + Math.PI / 4; lamp(egToDungeon(spec, d.x + Math.cos(a) * (d.r - 1), d.y + EG_LAMP.h, d.z + Math.sin(a) * (d.r - 1))); }
+      for (let k = 0; k < n; k++) { const a = (k / n) * Math.PI * 2 + Math.PI / 4; lamp(egToDungeon(spec, d.x + Math.cos(a) * (d.r - 1), d.y + EG_LAMP.h, d.z + Math.sin(a) * (d.r - 1)), EG_LAMP.color, Number(EG_LAMP.range), 1 + spreadRank(k, n)); }
     }
-    if (spec.walk) for (let z = spec.walk.z0 + 8; z < spec.walk.z1; z += EG_LAMP.pitch) for (const s of [-1, 1]) lamp(egToDungeon(spec, s * (spec.walk.halfW + 0.3), EG_LAMP.h, z));
+    if (spec.walk) for (let z = spec.walk.z0 + 8; z < spec.walk.z1; z += EG_LAMP.pitch) for (const s of [-1, 1]) lamp(egToDungeon(spec, s * (spec.walk.halfW + 0.3), EG_LAMP.h, z), EG_LAMP.color, Number(EG_LAMP.range), 7);
     for (const s of spec.steps) if (s.kind === 'drop') lamp(egToDungeon(spec, s.x, s.y + EG_DROP_LAMP.h, s.z + s.d / 2 - EG_DROP_LAMP.off));   // EG-ZL: a Drop's wall lit
     // EG-FULL LAYER THREE: each fragment's own lights (net/egFragLaw.js) - the lava's orange, the kit's own colour, the moon
     for (const [x, y, z, kind] of spec.lights ?? []) {
@@ -561,7 +572,17 @@ export function egCircleLights(seed, c, geo = 0) {
       lamp(egToDungeon(spec, x, y, z), kind === 'lava' ? EG_LAMP.lava : kind === 'moon' ? EG_LAMP.moon : EG_FRAGS[kit]?.light ?? EG_LAMP.color, kind === 'moon' ? 18 : 10);
     }
   }
-  return out;
+  // AUDIT EG V (L5-16): THE LAMPS' BUDGET, kept greedily in rank order - each lamp's neighbours within r counted with it
+  const { n: N, r: R } = EG_LAMP_BUDGET, order = out.map((_, i) => i).sort((a, b) => rank[a] - rank[b] || a - b);
+  const kept = [], near = new Map();
+  for (const i of order) {
+    const L = out[i], by = kept.filter((j) => Math.hypot(out[j].x - L.x, out[j].y - L.y, out[j].z - L.z) <= R);
+    if (by.length + 1 > N || by.some((j) => near.get(j) + 1 > N)) continue;
+    for (const j of by) near.set(j, near.get(j) + 1);
+    near.set(i, by.length + 1);
+    kept.push(i);
+  }
+  return out.filter((_, i) => near.has(i));
 }
 /** The lamps nearest `eye` first, the arm's own lights before them, in kept arrays (world/sdRealm.js realmLightsWith's
  *  composition, over the circle's own lamps). */

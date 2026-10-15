@@ -685,7 +685,11 @@ old dungeon context (`dungeonTransition` never destroys the context it replaces)
 - **the next circle is built during the Court's rest, off the main thread** (`world/egCircleWorker.js`, scheduled by
   `scenes/egSwap.js`), since a circle is the unit. A 40,000-triangle build costs 41-53 ms and 21-30 MB of garbage on a
   desktop in one task (AUDIT EG II L4-27), so it never runs on the main thread: a build not ready in `EG_SWAP_WAIT_MS`
-  (1.5 s) steps the old way, out under the veil and in again;
+  (1.5 s) steps the old way, out under the veil and in again. The build carries the circle's five hall specs and, for a
+  circle that opens a band, that band's dress painted (`world/egCircleParts.js` `egCircleBuild`, AUDIT EG V); the rest
+  puts the dress up a record a frame and takes the specs as given a hall a frame (`net/egLaw.js` `egSpecGive`), and the
+  swap whatever a short rest left - so nothing under the veil lays a hall again (33 ms a swap, 65 at worst) or paints a
+  band (150-270 ms);
 - at most two circles are resident;
 - pinned: after 20 swaps the live mesh, texture and collider counts are back at their baseline, and no world-cell hello
   was sent.
@@ -1453,7 +1457,11 @@ archives (section 25).
 - **Light.** A fragment's light markers join the hall's list, sorted past the cap by the eye's distance outside each
   light's reach (the Hour's `realmLightsWith`, AUDIT SD III V9), under the renderer's cap (16 in
   `src/render/renderer.js`, `EL_MAX_LIGHTS` 48 in `src/render/enhancedLighting.js`).
-  - At most 12 lights stand within 40 m of any point. Fragment lights cast no shadow except two a hall, and the
+  - At most 12 lamps stand within 40 m of any lamp of a circle (`world/egHall.js` `egCircleLights`, held to
+    `EG_LAMP_BUDGET` - AUDIT EG V): kept in rank, a fragment's own lights and a Drop's wall first, then each court's and
+    island's ring spread (two facing lamps, then those between), then the walkways', so the renderer's nearest 16 never
+    cut one beside the eye. Of 1,200 circles 338 stood more than 12 about one lamp, the worst 18; 2% of
+    the lamps go, none coloured. Fragment lights cast no shadow except two a hall, and the
     point-light caches warm over the 8 s gather instead of in a burst at the wake.
   - Magma glows by emission, never by a light, so the cap is spent on gold (the way) and on the band's own colour.
   - Wherever magma borders a fight floor, its luminance stays at or under 0.45, and a non-emissive basalt kerb 0.6 m
@@ -1486,14 +1494,37 @@ archives (section 25).
   never moves the shadow record: the point-light caches sign themselves over their records' identities, and a draw that
   left the record would make every lantern redraw on every camera turn.
 - **Freed on every exit**: the swap, the tear, the way home, a fall, forsaking, a void and a reload each free the hall's
-  meshes, telegraph buffers and reverb buffers; the band's textures are freed at the breach's end. Pinned: after ten
-  halls and every exit kind, the live mesh and texture counts return to baseline.
-- **The frame's lists** (AUDIT EG III): the breach client's frame keeps its lists - the occluders' pass tries and makes
-  nothing in first person or with nothing dithering, the fight leaves once, the spans' Iron Footing asks the census only
-  of Immovable's holder, and the client's batches, errand objects and holder and the world host's Spire lights are made
-  again only when the room's word moves. Left as they are, a few small objects a frame each: the slag lanes'
-  `realmToDungeon` arrays, `ui/egAccess.js` `egAccessNow`'s answer (asked several times a frame), the mode machine's
-  `extraBillboards` join in a hall, and the occluders' Map entries while a piece dithers.
+  meshes, its fight's telegraph and crystal passes (`scenes/egFight.js` `leave`, AUDIT EG V - they were kept for the
+  session) and reverb buffers; the band's textures are freed at the breach's end; a pass's two shaders go with its
+  program (`render/glProgram.js` `buildProgram` deletes both once the link is read). Pinned (`test/egaudit5_e.test.js`):
+  a screen's breach client - its fight, its look and the spans the dungeon host stands - over a recording GL, ten halls a
+  breach with THE SWAP's recircle, then each way out (the way home, forsaking, the tear, the company's fall, the last
+  hall, a void, the socket lost, a load): every program, vertex array, buffer, texture and shader, every mesh and every
+  billboard batch back at its baseline. The band textures' own pin is EG-ZN's.
+- **The frame's lists** (AUDIT EG III, AUDIT EG V): the breach client's frame keeps its lists - the occluders' pass tries
+  and makes nothing in first person or with nothing dithering, the fight leaves once, the spans' Iron Footing asks the
+  census only of Immovable's holder, and the client's batches, errand objects and holder and the world host's Spire
+  lights are made again only when the room's word moves. AUDIT EG V kept the hot paths' own:
+  - THE TELEGRAPH BUDGET's floor plan keeps its ranks, its draws, its bounds and its strip a fight (`world/egTelegraph.js`
+    `egFloorPlanKeep`), reads the heights a shape lands on in place, and hands no double to a call: a Court's 24 shapes
+    on six fight floors made ~49 KB a frame and make under 1 KB;
+  - the fight's frame keeps its Map of blows, its Sets of the living bodies, the lords and the marked, its list of the
+    blows the budget orders and its options, and reads a tether's ends by one function; the company where this screen
+    stands it is worked out once a frame (the holder's chips asked it for every Accord twice);
+  - the panel stands while what its nodes say stands, read field by field, never the whole model serialised a frame
+    (`ui/egHud.js`), and asks nothing of a breach with no offer or vote;
+  - the dungeon arm keeps the occluders' ray and the witness eye's cast; the look writes the mist's sheets into a kept
+    list; the arch pool answers one empty list each with no arch standing.
+  Measured in node (`--trace-gc` and V8's sampling heap profiler, a Court's fight with a pull-apart tether, a
+  stay-close chain and an aura, 3,000 frames of `frame` and `drawPass`): the breach client's whole Spire frame from
+  ~70 KB to ~43 KB a frame, the fight's own share (`scenes/egFight.js`) from ~23 KB to ~6 KB. What still allocates, a
+  few small objects each: the HUD's models a frame (`ui/egBeats.js` `egHolderNow` and `egBeatWatch`, `ui/egSpireHud.js`
+  `egSpireHudModel`), the client's presence and feet reads and its panel's options (`scenes/egClient.js` `presFrame`,
+  `backFrame`, `feetInHall`), the relay's own pure laws the frame asks (`net/egShape.js` `egShapeOrder`'s order), a
+  cleared Map's or Set's new table (V8 makes one at each `clear`), each drawn shape's small answers (`telegraphField`, a
+  tether's look), the slag lanes' `realmToDungeon` arrays, `ui/egAccess.js` `egAccessNow`'s answer, the mode machine's
+  `extraBillboards` join in a hall, the occluders' Map entries while a piece dithers, and an arch's draws and lights
+  while one stands.
 
 ### 11.10 Engines, alcoves and the Annals
 
@@ -2133,7 +2164,8 @@ every Valkynaz Redoubt; a member holds one at a time, and taking another replace
   side's height to the other's. It stands 6 s, said to the company (`ebridge`).
 - **The fair trail** counts its top as a piece's ground while it stands (`net/egFair.js` `egSupportAt`).
 - **On every screen** (`scenes/egSpan.js`) it draws gold under THE EDGE LINE and stands in the collider from its raising to
-  its end. It lays itself across over 0.25 s and falters through its last second at 2 Hz. Under reduced motion it stands
+  its end - the collider the dungeon host hands the spans (`egSpanCollider`, its plank's bucket taken out at its end;
+  AUDIT EG V: the host's wrapper had no `removeBucket`, and an unseen plank stood for the rest of the circle). It lays itself across over 0.25 s and falters through its last second at 2 Hz. Under reduced motion it stands
   whole and steady.
 - **The solver never sees it.** Every course is proven without it, and running a plank is no faster than jumping its gap.
   So the crossing's bound (section 10.5) is not solved with it: a bridge saves at most a wait, and the bound is a measure
@@ -3356,7 +3388,7 @@ arch's block moved past the bands (`EG_BAND_ARCHIVES`, `EG_ARCH_ARCHIVES`):
 | **gold** | the way, safety, and "it holds" | arrival and end plates, doors, the Redoubt's beacon, islands and waystones, havens, the way home, THE EDGE LINE, a moonlit branch's rim | an enemy's ward |
 | **Dagon red** | his blows, his wards, his marks | every telegraph line (THE SPIRE DANGER EDGE, below), wards and their tethers, lords' marks on members | magma |
 | **Battlemage blue** | yours | a pip, a ring or a pillar over heads and at feet: Vestige auras, numerals, a witness's ping, the Watchfire holder's pip | anything on the floor that hurts |
-| **white** | the place's own timed hazard | vents ringing, Pendulums' lanes, a Beat's last 0.4 s, a fragment's hazards: hatched, and throbbing at most 3 Hz | a haven |
+| **white** | the place's own timed hazard | vents ringing, Pendulums' lanes, a Beat's last 0.4 s, a fragment's hazards (told and landing, their element in their grain - AUDIT EG V): hatched, and throbbing at most 3 Hz | a haven |
 | **the band's own** | where you are | soul-gem violet in the Cairn, moon-silver in the Shade, molten orange in the Wellhead; the Galleries keep marble and gold | a warning |
 
 **THE SPIRE DANGER EDGE.** Every Spire telegraph line is `TELEGRAPH_EDGE_DAGON` ([1.0, 0.24, 0.28], crimson), never
@@ -3389,7 +3421,9 @@ carries a gold line 2 px wide (3 px on phones), its luminance 0.3-0.45, emissive
 (section 25.6), never pulsing. Walls and parapets carry none. The Steps carry a gold line under each rim in their mesh
 (`SD_STEP_LINE`, `src/world/sdStepsArt.js`); the Spire's 2 px line reuses `sdStepsPass`'s line-quad technique (which
 today draws only the ghosts of gone steps) on every edge of every hall. In the Shade's near-black and under the
-mist, it is the only read.
+mist, it is the only read. Its pixels are the world image's (`renderer._worldViewportPx` - Retro Picture Mode's 320x200
+or 640x400 - handed through `scenes/egLookDraw.js` `drawOver`, AUDIT EG V), as the spans' ghosts drawn in the same pass
+are; the canvas's when no world image is set.
 
 ### 25.4 The telegraph pass, THE TELEGRAPH BUDGET, THE QUIET COMPANY
 
@@ -3403,7 +3437,15 @@ gate's own:
 - **lanes**: parallel lanes, a Lattice;
 - **tether**: a line between two bodies, in two grammars (section 25.5).
 
-The callers' caps rise to 24 shapes, and at most 32 shape-floor draws a frame (section 11.7). `TELEGRAPH_POINTS_MAX`
+The callers' caps rise to 24 shapes, and at most 32 shape-floor draws a frame (section 11.7).
+
+**The thin shapes' ground** (AUDIT EG V; FIELD BUGS 2026-10-13e AOE-PERF's law, "a path's or a tether's quad is its own
+strip"): a pull-apart tether and a stay-close chain are strips (`telegraphStrip` - the chain its links' half-width, the
+pull-apart twice its half-width and `TELEGRAPH_TICK_REACH`, its break tick's reach), each fight floor under them cut to
+the strip (`world/egTelegraph.js` `egClipTris`); a Vestige aura's ring draws nothing past `TELEGRAPH_RING_REACH` (0.5 m)
+from its ring - its two pixels whole within ~18 m at a grazing look on a 1080p screen - and its own quad is that square.
+Hall 10's Blood Tether shaded 360 m2 of fight floor for its ~10 m2 strip and shades 12; the chain 310 for 9; an aura's
+ring 85 for 5. `TELEGRAPH_POINTS_MAX`
 (10) and `TELEGRAPH_SPOKES_MAX` (8) stay per-shape limits.
 
 **THE TELEGRAPH BUDGET.** A Court at the legion's cap of 14 adds under Chained Blows, with Pyre-Bound, the Casters'
@@ -3774,7 +3816,8 @@ all four, each wired or flagged.
 - **EVERY ALLOCATION HAS AN OWNER**:
   - every exit path (the swap, the tear, the way home, a fall, forsaking, a void, a reload) frees the hall's meshes,
     colliders, riders, telegraph buffers and reverb buffers, its fragments' with them (the court's and the Hour's
-    meshes are built once and never freed today; the Spire's are not);
+    meshes are built once and never freed today; the Spire's are not) - the fight's telegraph and crystal passes as the
+    breach is left (AUDIT EG V, section 11.9's pin), a Spirebridge's plank out of the collider at its own end;
   - band textures are cached per band and freed at the breach's end;
   - the arch pool owns its arches; the reverb's hold is released on every exit.
 - **SWEEPS THE SOURCE**: the made levels' rules (section 24), the law files' banned functions (section 9) and
@@ -4660,8 +4703,8 @@ is gone, and the later ones moved up one).
      window before a new circle; a hall's closing builds nothing, because a circle is the unit.
    - At most two circles are resident: the stood one and the built one.
    - The 4 ms slicing is not needed, because the build runs off the main thread.
-   - The new circle's hall specs are still drawn on the main thread by the client's law reads as it arrives
-     (`egHallOf`), as before.
+   - The new circle's hall specs come with the build: the worker lays them and the page takes them as given
+     (`net/egLaw.js` `egSpecGive`), a hall a frame of the Court's rest (AUDIT EG V).
 7. Nothing of the swap has run in a browser: there is no Daggerfall data in the build container. The swap in place is
    run from `scenes/worldModes.js`'s and `scenes/dungeonContext.js`'s own source over a counting renderer and the real
    collider. The client is played against the relay's real Room, with the worker run in-process.
@@ -5990,7 +6033,7 @@ arrow. The law is one new module, `world/egTelegraph.js`; the gate's own telegra
 
 **What shipped, by piece.**
 
-- **THE TELEGRAPHS PER FIGHT FLOOR** (`world/egTelegraph.js` `egFightFloors`, `egClipTris`, `egShapeYs`,
+- **THE TELEGRAPHS PER FIGHT FLOOR** (`world/egTelegraph.js` `egFightFloors`, `egClipTris`,
   `egFloorPlan`; `render/gateTelegraph.js` `drawFloors`).
   - Each fight floor (`spec.fl`) is triangulated once a hall: a disc into its drawn rim's 48 sides, a lane into its
     rectangle and two round ends, the floor test's own capsule (`net/egLaw.js` `egOnFight`).
@@ -7032,8 +7075,9 @@ shaft's drop is not built" and EG-G2's "a band's textures stay up for the sessio
     taken (`aimView`, AUDIT CLIMB-ARC F10's order), so the player's aim, the listener and the casts keep the player's look.
 - **THE BAND TEXTURES' OWNER** (`scenes/worldModes.js` `egBandsDown`; section 29: "band textures are cached per band and
   freed at the breach's end"):
-  - each band's dress goes up once a breach - at a circle's stand, or a prebuild while the Court rests (EG-G2's `egBandUp`,
-    unchanged) - and the swap in place uploads nothing;
+  - each band's dress goes up once a breach - at a circle's stand (EG-G2's `egBandUp`), or, for the next circle's new
+    band, painted in the swap's worker and put up a record a frame of the Court's rest (`egSwapFeed`, AUDIT EG V); the
+    swap in place puts up only what the rest left;
   - at the breach's end every band it put up is freed: each record's albedo (`releaseTexture`, every variant) and its
     emission (`evictEmissionTexture`), from GL. It is refused while a circle stands, since its draws still wear them. The
     Hour's own art (`SD_REALM_ARCHIVE` - the Steps' faces, and the Hour's) is kept for the session;
@@ -7706,7 +7750,7 @@ each stale one below, is deleted above.
    census's
    own rule (EG-ZB's census departure: its 8 when this was written, its 6 since EG-ZJ closed its 3).
 7. **The circle goes with its context**, not with the client's word as the band dress does. A way back into the same
-   circle builds it again. The fight's telegraph and crystal passes are a screen's, built once a session and kept. The
+   circle builds it again. The fight's telegraph and crystal passes go as the breach is left (AUDIT EG V). The
    spans' riders and meshes are the dungeon host's own and go at its clear, as before.
 8. **The page's numbers.** Code comments that name a retired EG-H1 departure by number name it as its closing slice found
    it ("EG-H1's departure 3 closed" in `net/egFair.js`, its 11 in `net/bossRef.js`, its 10 and 11 in `net/egBrain.js`).

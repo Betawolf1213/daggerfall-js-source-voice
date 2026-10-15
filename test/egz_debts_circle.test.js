@@ -8,9 +8,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { egCircleSpecs, egBandOfCircle, EG_TEXT } from '../src/net/egLaw.js';
+import { egCircleSpecs, egBandOfCircle, egSpecGive, EG_TEXT } from '../src/net/egLaw.js';
 import { createEgSwap } from '../src/scenes/egSwap.js';
-import { egCircleParts, egCircleGates } from '../src/world/egCircleParts.js';
+import { egCircleBuild, egCircleGates } from '../src/world/egCircleParts.js';
 import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts } from '../src/world/egHall.js';
 import { realmArt } from '../src/world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
@@ -28,8 +28,10 @@ const WM = rd('src/scenes/worldModes.js');
 const DC = rd('src/scenes/dungeonContext.js');
 const between = (src, a, b) => { const i = src.indexOf(a), j = src.indexOf(b, i); assert.ok(i > 0 && j > i, `${a} .. ${b}`); return src.slice(i, j); };
 const lineOf = (src, pred, what) => { const l = src.split('\n').find(pred); assert.ok(l, what); return l; };
+// PIN MOVED (AUDIT EG V, e: L6-8, L6-9 - the worker's build is egCircleBuild: the parts, the circle's five specs, the band's
+// dress when asked)
 const syncWorker = () => {
-  const w = { onmessage: null, onerror: null, postMessage(msg) { w.onmessage?.({ data: { t: 'built', id: msg.id, parts: egCircleParts(msg.seed, msg.c, msg.geo) } }); }, terminate() {} };
+  const w = { onmessage: null, onerror: null, postMessage(msg) { w.onmessage?.({ data: { t: 'built', id: msg.id, parts: egCircleBuild(msg) } }); }, terminate() {} };
   return w;
 };
 
@@ -56,10 +58,10 @@ function rig() {
     releaseTexture: (a, r) => { log.push(['tex', `${a}_${r}`]); return true; }, evictEmissionTexture: (k) => { log.push(['glow', k]); return true; },
   };
   const st = { loc: { egBreach: B, egSeed: SEED, egCircle: 4, egGeo: 0 } };
-  wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'egBeatTellDown', 'st',
+  wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'egBeatTellDown', 'egSpecGive', 'st',
     `let mode = 'dungeon', dungeonLoc = st.loc, dungeonCtx = null;\n${src.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, egCircleDown, egOcc, set ctx(c) { dungeonCtx = c; }, set mode(m) { mode = m; },
       get mesh() { return _egMesh; }, get look() { return _egLookMesh; }, get gates() { return _egGates; }, get lamps() { return _egLamps; }, get key() { return _egMeshKey; }, get draw() { return _egDraw; } };`)(
-    { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, egBeatTellDown,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress
+    { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, egBeatTellDown, egSpecGive,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress
     Object.assign(st, { worker: syncWorker }));
   return { wm, st, live, log, get made() { return made; }, get twice() { return twice; }, get heldAtFree() { return heldAtFree; } };
 }

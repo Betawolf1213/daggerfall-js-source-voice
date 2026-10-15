@@ -261,7 +261,7 @@ import { SD_NO_RIFT } from '../net/sdLaw.js';   // SD4b: the Rift's word when no
 import { isSdRealm, SD_REALM_TEXT, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_THRESHOLD_RIM } from '../world/sdRealm.js';   // SD5a: the Shattered Hour - a made place, its refusals, its way back
 import { isEgHall } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle - a made place (EG-H2: its refusals the made level's law's)
 import { madeLevelOf, madeLevelRule, madeLevelSays } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): THE MADE LEVEL'S RULES - every refusal below asks the one law
-import { createEgSpan } from './egSpan.js';   // EG-PLAY: its spans' steps, ridden before the motor
+import { createEgSpan, egSpanCollider } from './egSpan.js';   // EG-PLAY: its spans' steps, ridden before the motor; AUDIT EG V (L6-10): the collider's doors they use
 import { realmToDungeon } from '../net/sdBrain.js';   // SD5a: the realm's frame
 import { dungeonTier } from '../systems/dungeonTier.js';   // SD4a: the location's tier, the one law (TIER1)
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';
@@ -1947,7 +1947,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!_egSpanStood) {
       _egSpanStood = true;
       const n0 = dynamicDraws.length, keys = (_egSpanKeys = []);
-      egSpan.stand({ dynamicDraws, collider: { addMesh: (...a) => { keys.push(a[0]); return collider.addMesh(...a); } } });
+      egSpan.stand({ dynamicDraws, collider: egSpanCollider(collider, keys) });   // AUDIT EG V (L6-10): a Spirebridge's plank leaves the collider at its end
       _egSpanDraws = new Set(dynamicDraws.slice(n0));
     }
     return egSpan.ride(opts.sdClock?.() ?? performance.now() / 1000, dt, body, live);

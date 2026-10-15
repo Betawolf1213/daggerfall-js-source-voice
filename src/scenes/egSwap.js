@@ -17,7 +17,8 @@
 import { egCircleKey } from '../world/egCircleParts.js';
 
 /** How long the step into a new circle waits on its build still in flight before it steps the old way (ms) - the
- *  arrival holds for a slow machine's loading (section 6.2), and a worker's build is a tenth of this. */
+ *  arrival holds for a slow machine's loading (section 6.2), and a worker's build is a tenth of this (a fifth to a
+ *  quarter when it paints a new band's dress with it - AUDIT EG V L6-9, asked at the rest's start). */
 export const EG_SWAP_WAIT_MS = 1500;
 
 function defaultWorkerFactory() {
@@ -48,17 +49,21 @@ export function createEgSwap({ workerFactory = undefined } = {}) {
   }
   const stateOf = (key) => (!job || job.key !== key ? null : job.parts ? 'ready' : 'building');   // a failed worker holds no job (fail)
   return {
-    /** Ask for circle `c`'s level (`seed`, `geo`) - nothing if it is the one asked already; answers its state. */
-    want(seed, c, geo = 0) {
+    /** Ask for circle `c`'s level (`seed`, `geo`) - nothing if it is the one asked already; answers its state. AUDIT EG V
+     *  (L6-9): `band` (0-3) has the worker paint that band's dress with it (world/egCircleParts.js egCircleBuild); -1 none. */
+    want(seed, c, geo = 0, band = -1) {
       const key = egCircleKey(seed, c, geo);
       if (dead) return null;
       if (job?.key === key) return stateOf(key);
       const w = ensure();
       if (!w) return null;
       job = { key, id: nextId++, parts: null };
-      try { w.postMessage({ t: 'build', id: job.id, seed: seed >>> 0, c, geo: geo || 0 }); } catch { fail(); return null; }
+      try { w.postMessage({ t: 'build', id: job.id, seed: seed >>> 0, c, geo: geo || 0, band }); } catch { fail(); return null; }
       return stateOf(key);   // a worker may have answered already
     },
+    /** AUDIT EG V (L6-8, L6-9): the built level for that circle, read while it waits to be handed over (its specs and its
+     *  dress fed to the page through the rest), or null. */
+    peek(seed, c, geo = 0) { return stateOf(egCircleKey(seed, c, geo)) === 'ready' ? job.parts : null; },
     /** `'ready'` (built), `'building'` (asked, not back) or null (not asked - or no build is offered). */
     state(seed, c, geo = 0) { return stateOf(egCircleKey(seed, c, geo)); },
     /** The built level for that circle, handed over once (null when it is not built). */

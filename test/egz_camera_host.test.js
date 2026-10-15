@@ -10,8 +10,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { buildEgCircleModel, egToDungeon, egCircleColliderTris, egCircleLights, egGateParts } from '../src/world/egHall.js';
-import { egCircleParts } from '../src/world/egCircleParts.js';
-import { egHallOf, egCircleSpecs, egCircleOfHall, egBandOfCircle, EG_TEXT } from '../src/net/egLaw.js';
+import { egCircleBuild } from '../src/world/egCircleParts.js';
+import { egHallOf, egCircleSpecs, egCircleOfHall, egBandOfCircle, egSpecGive, EG_TEXT } from '../src/net/egLaw.js';
 import { createEgOccluders, EG_OCCLUDE_CHEST_M } from '../src/scenes/egOcclude.js';
 import { createEgSwap } from '../src/scenes/egSwap.js';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
@@ -54,8 +54,10 @@ function recordingGl() {
   const canvas = { getContext: () => gl, clientWidth: 320, clientHeight: 200, width: 320, height: 200 };
   return { gl, calls, canvas };
 }
+// PIN MOVED (AUDIT EG V, e: L6-8, L6-9 - the worker's build is egCircleBuild: the parts, the circle's five specs, the band's
+// dress when asked)
 const syncWorker = () => {
-  const w = { onmessage: null, onerror: null, postMessage(msg) { w.onmessage?.({ data: { t: 'built', id: msg.id, parts: egCircleParts(msg.seed, msg.c, msg.geo) } }); }, terminate() {} };
+  const w = { onmessage: null, onerror: null, postMessage(msg) { w.onmessage?.({ data: { t: 'built', id: msg.id, parts: egCircleBuild(msg) } }); }, terminate() {} };
   return w;
 };
 /** The mode machine's circle (its stand, THE SWAP, the band dress and its owner) and the frame's dither pass - its own source -
@@ -77,9 +79,9 @@ function hostRig() {
   const st = { mode: 'dungeon', witness: false, feet: [0, 0, 0] };
   const host = { egGateOpen: () => false, egWitness: () => st.witness };
   const player = { bodyFeetAt: () => st.feet, feetAt: () => st.feet };
-  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'EG_OCCLUDE_CHEST_M', 'player', 'decorTool', 'egBeatTellDown', 'st',
+  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'EG_OCCLUDE_CHEST_M', 'player', 'decorTool', 'egBeatTellDown', 'egSpecGive', 'st',
     `let dungeonLoc = st.loc, dungeonCtx = st.ctx;\nObject.defineProperty(st, 'm', { get: () => mode });\nlet mode = 'dungeon';\nst.setMode = (m) => { mode = m; };\n${region.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\n${pass}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, egOccludeFrame, egOcc, get draw() { return _egDraw; }, get mesh() { return _egMesh; } };`)(
-    host, r, (l) => !!l?.egBreach && l.dungeon?.recordElement?.header?.locationId === 0x7ffff300, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, EG_OCCLUDE_CHEST_M, player, { flying: () => !!st.flying }, egBeatTellDown,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress (scenes/egSpan.js)
+    host, r, (l) => !!l?.egBreach && l.dungeon?.recordElement?.header?.locationId === 0x7ffff300, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, EG_OCCLUDE_CHEST_M, player, { flying: () => !!st.flying }, egBeatTellDown, egSpecGive,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress (scenes/egSpan.js)
     Object.assign(st, { loc, ctx, worker: syncWorker }));
   return { r, calls, wm, ctx, loc, st, shadows, fail, get live() { return live; } };
 }
@@ -182,11 +184,15 @@ test('EG-ZN THE BAND TEXTURES\' OWNER (scenes/worldModes.js egBandsDown, its own
   const per = EG_DRESS_RECORDS.length * 2, hour = hourKeys();
   assert.equal(bandKeys(), per, 'the circle\'s band: its eight records, albedo and emission');
   assert.ok(hour > 0);
-  assert.equal(wm.egPrebuild({ ...eh, c: 6 }), 'ready');
+  // PIN MOVED (AUDIT EG V, e: L6-9 - the next band's dress, painted in the swap's worker, goes up a record a frame of the
+  // Court's rest: a prebuild a rest frame, the rest's frames many)
+  const texUps = () => calls.filter((c) => c[0] === 'texImage2D').length;
+  const rest = (c) => { for (let k = 0; k < EG_DRESS_RECORDS.length + 5; k++) assert.equal(wm.egPrebuild({ ...eh, c }), 'ready'); };
+  rest(6);
   assert.equal(bandKeys(), per * 2, 'the next band up while the Court rests');
-  const ups = calls.filter((c) => c[0] === 'texImage2D').length;
-  for (let c = 6; c <= 12; c++) { if (c > 6) assert.equal(wm.egPrebuild({ ...eh, c }), 'ready'); assert.equal(wm.egSwapCircle({ ...eh, c }), true); }
-  assert.equal(calls.filter((c) => c[0] === 'texImage2D').length, ups + per * 1, 'the swaps in place upload nothing but the third band\'s prebuild');
+  const ups = texUps();
+  for (let c = 6; c <= 12; c++) { if (c > 6) rest(c); const u = texUps(); assert.equal(wm.egSwapCircle({ ...eh, c }), true); assert.equal(texUps(), u, `circle ${c}: the swap in place uploads nothing`); }
+  assert.equal(texUps(), ups + per * 1, 'the swaps\' rests upload nothing but the third band\'s dress');
   assert.equal(bandKeys(), per * 3);
   assert.equal(wm.egBandsDown(), 0, 'refused while a circle stands');
   assert.equal(bandKeys(), per * 3);

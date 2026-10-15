@@ -58,7 +58,10 @@ test('EG-G2 THE WORLD HOST AND THE DUNGEON ARM (scenes/world.js, scenes/worldMod
   const M = read('src/scenes/worldModes.js');
   assert.match(M, /if \(isEgHall\(dungeonLoc\)\) host\.drawEgSky\?\.\(\{ proj, view, eye: mwv\.eye \}\);/);
   assert.ok(!/if \(isEgHall\(dungeonLoc\)\) host\.drawSdSky/.test(M), 'the Hour\'s sky no more over the Spire');
-  assert.match(M, /if \(_egBands\.has\(band\) \|\| !renderer\?\.uploadTexture\) return;\n    _egBands\.add\(band\);\n    try \{ for \(const \[rec, art\] of egBandArt\(band\)\)/, 'a band\'s art painted and uploaded once a session');
+  // PIN MOVED (AUDIT EG V, e: L6-9 - a band's dress goes up a record at a time, the swap's worker painting it; once a
+  // breach a record, painted here only for a band not whole - egBandRec, egBandWhole)
+  assert.match(M, /if \(egBandWhole\(band\) \|\| !renderer\?\.uploadTexture\) return;\n    try \{ for \(const \[rec, art\] of egBandArt\(band\)\) egBandRec\(band, rec, art\);/, 'a band\'s art painted and uploaded once a session');
+  assert.match(M, /if \(up\.has\(rec\) \|\| !renderer\?\.uploadTexture\) return;\n    _egBands\.add\(band\); up\.add\(rec\);/, 'each record once');
   // EG-H3 (merged): THE SWAP stands a new circle in place - its band's dress and its waystones go up with it
   assert.match(M, /egBandUp\(r\.c\); _egLookMesh = egLookBuild\(r\.seed >>> 0, r\.c, \(r\.geo \?\? 0\) \| 0\);/);
   assert.match(M, /gone = new Set\(\[mesh, _egLookMesh, \.\.\.gates\.map/, 'the old circle\'s waystones freed with it');

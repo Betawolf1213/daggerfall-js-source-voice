@@ -355,8 +355,8 @@
   {
     "name": "EGLOOK-mist-over-the-line",
     "file": "src/world/egLook.js",
-    "old": "const top = Math.min(line, EG_MIST.rise - EG_MIST.below);",
-    "new": "const top = EG_MIST.rise - EG_MIST.below;",
+    "old": "const top = Math.min(line, EG_MIST.rise - EG_MIST.below), r = (m.rect ??= sheetOf(m).rect),",
+    "new": "const top = EG_MIST.rise - EG_MIST.below, r = (m.rect ??= sheetOf(m).rect),",
     "tests": [
       "test/eglook_lines.test.js"
     ]
@@ -712,7 +712,7 @@
   {
     "name": "EGLOOK-arm-band-art-every-stand",
     "file": "src/scenes/worldModes.js",
-    "old": "if (_egBands.has(band) || !renderer?.uploadTexture) return;",
+    "old": "if (egBandWhole(band) || !renderer?.uploadTexture) return;",
     "new": "if (!renderer?.uploadTexture) return;",
     "tests": [
       "test/eglook_hosts.test.js"
@@ -721,7 +721,7 @@
   {
     "name": "EGLOOK-client-lines-dropped",
     "file": "src/scenes/egClient.js",
-    "old": "const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette);",
+    "old": "const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette, renderer?._worldViewportPx);",
     "new": "const over = false;",
     "tests": [
       "test/eglook_hosts.test.js"
@@ -748,7 +748,7 @@
   {
     "name": "EGLOOK-swap-band-dress-under-the-veil",
     "file": "src/scenes/worldModes.js",
-    "old": "    egBandUp(r.c);   // EG-G2: the next circle's band's dress up while the Court rests - the swap under the veil uploads nothing\n",
+    "old": "    if (st === 'ready') egSwapFeed(egSwap.peek(r.seed, r.c, r.geo ?? 0), band, 1);\n",
     "new": "",
     "tests": [
       "test/egswap_client.test.js"

@@ -161,7 +161,9 @@ directory by `test/audit18_bible_docs.test.js`:
   program go through (the sky, the rain, the wisps, the clouds and their
   noise, the far ring, the bolts, Dynamic Skies, the grass, the enhanced
   sky); a fault throws the driver's log, a constructor fault the boot probe
-  sees. No imports.
+  sees. Its two shaders are deleted once the link is read, the program
+  with them on a fault (AUDIT EG V - every pass a breach freed left its
+  shaders). No imports.
 - `shadowPass.js` - EL2 THE SHADOW PASS: records what the world pass draws and
   replays it depth-only from the light at the top of the next frame - a
   two-cascade sun map outdoors, a cube map from the nearest lantern indoors -

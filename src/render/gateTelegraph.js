@@ -61,6 +61,12 @@ export const TELEGRAPH_REACH = 4;
  *  draws (his mark; a path or a tether) - a hair, for the rounding of the quad's corners. */
 export const TELEGRAPH_MARK_RING = 0.2;
 export const TELEGRAPH_TIGHT_PAD = 0.05;
+/** AUDIT EG V (L6-2; Elite-Gates.md section 25.4): how far past its radius a Vestige aura's ring (TELEGRAPH_POOL_SPIRE.ring)
+ *  draws - its line's two pixels are cut there at any pixel's size (whole within ~18 m at a grazing look on a 1080p screen;
+ *  past that the ring is a few pixels across) - and how far across its line a pull-apart tether's break tick reaches past
+ *  twice its half-width (the Spire's stage's own `2.0 * uHalfW + 0.1`). Each quad is laid over that ground and no more. */
+export const TELEGRAPH_RING_REACH = 0.5;
+export const TELEGRAPH_TICK_REACH = 0.1;
 /** Burning ground comes up over this long as it lands; a landing's afterglow dies over this long after its span. */
 export const TELEGRAPH_FADE_IN_MS = 150;
 export const TELEGRAPH_FLASH_MS = 350;
@@ -180,26 +186,30 @@ export function poolShapes(pools, now, color, style = TELEGRAPH_STYLE.fire) {
  * WB13a: THE GROUND A SHAPE'S QUAD COVERS - its bounds in the court's frame, [x0, z0, x1, z1], TELEGRAPH_REACH past the
  * shape (its glow, its keyline, its shockwave), or null for a shape over its whole court (the Nova's ring, the Spokes,
  * the whole floor's). Every pass drew the whole 49 m court: a Legion-Lord's frame on a phone shaded 1.65M fragments,
- * most of them to discard. Pure.
- * @param {any} sh
+ * most of them to discard. AUDIT EG V (L6-4): into `out` when given (the Spire's floor plan keeps one), else a new array.
+ * Pure but for `out`.
+ * @param {any} sh @param {number[]|null} [out]
  * @returns {number[]|null}
  */
-export function telegraphBounds(sh) {
+export function telegraphBounds(sh, out = null) {
   const M = TELEGRAPH_REACH;
-  const box = (x0, z0, x1, z1, pad) => [x0 - pad, z0 - pad, x1 + pad, z1 + pad];
+  const b = out ?? [0, 0, 0, 0];
   switch (sh?.kind) {
-    case TELEGRAPH_KIND.cone: case TELEGRAPH_KIND.disc: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r + M);
-    case TELEGRAPH_KIND.mark: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], telegraphMarkReach(sh));   // AOE-PERF: his mark draws no glow
-    case TELEGRAPH_KIND.lane: return box(Math.min(sh.origin[0], sh.end[0]), Math.min(sh.origin[1], sh.end[1]), Math.max(sh.origin[0], sh.end[0]), Math.max(sh.origin[1], sh.end[1]), sh.halfW + M);
+    case TELEGRAPH_KIND.cone: case TELEGRAPH_KIND.disc: return boxInto(b, sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r + (sh.kind === TELEGRAPH_KIND.disc && sh.pool === TELEGRAPH_POOL_SPIRE.ring ? TELEGRAPH_RING_REACH : M));   // AUDIT EG V (L6-2): a Vestige aura's ring draws no glow
+    case TELEGRAPH_KIND.mark: return boxInto(b, sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], telegraphMarkReach(sh));   // AOE-PERF: his mark draws no glow
+    case TELEGRAPH_KIND.lane: return boxInto(b, Math.min(sh.origin[0], sh.end[0]), Math.min(sh.origin[1], sh.end[1]), Math.max(sh.origin[0], sh.end[0]), Math.max(sh.origin[1], sh.end[1]), stripW(sh) || sh.halfW + M);   // AUDIT EG V (L6-2): a path's or a tether's no wider than its strip
     case TELEGRAPH_KIND.discs: {
       if (!sh.points?.length) return null;
       let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
       for (const p of sh.points) { x0 = Math.min(x0, p[0]); z0 = Math.min(z0, p[1]); x1 = Math.max(x1, p[0]); z1 = Math.max(z1, p[1]); }
-      return box(x0, z0, x1, z1, sh.r + M);
+      return boxInto(b, x0, z0, x1, z1, sh.r + M);
     }
     default: return null;
   }
 }
+
+/** AUDIT EG V (L6-4): box `b` set to [x0, z0, x1, z1] `pad` out. */
+function boxInto(b, x0, z0, x1, z1, pad) { b[0] = x0 - pad; b[1] = z0 - pad; b[2] = x1 + pad; b[3] = z1 + pad; return b; }
 
 /**
  * FIELD BUGS 2026-10-13e AOE-PERF: HOW FAR FROM WHERE HE STANDS HIS MARK CAN DRAW ANYTHING - its pass draws its ring
@@ -215,14 +225,28 @@ export const telegraphMarkReach = (sh) => Math.max(sh.r + TELEGRAPH_MARK_RING, M
  * past the capsule's end), its direction, its length and its half-width - or null for any other shape. A path's pass
  * (TELEGRAPH_POOL.path) writes its colour inside the lane alone (`fin`, the dashes flowing to him) and nothing past it at
  * any pixel's size - no line, no glow - so its quad is the strip, laid along it; it was the box about its whole run,
- * TELEGRAPH_REACH past it, and a Sapper walking in from the rim made that a fifth of the screen. Pure.
- * @param {any} sh
+ * TELEGRAPH_REACH past it, and a Sapper walking in from the rim made that a fifth of the screen. AUDIT EG V (L6-2): the
+ * Spire's two tethers are strips too (Elite-Gates.md section 25.5 - the Spire's stage, EG-ZG's pools): a stay-close chain
+ * (TELEGRAPH_POOL_SPIRE.chain) draws its links inside the lane alone, and a pull-apart tether (TELEGRAPH_POOL_SPIRE.pull) its
+ * line inside it and its break tick out to twice its half-width and TELEGRAPH_TICK_REACH - its strip that wide. AUDIT EG V
+ * (L6-4): into `out` when given (its `a` and `u` pairs kept), else a new strip. Pure but for `out`.
+ * @param {any} sh @param {{ a: number[], u: number[], len: number, w: number }|null} [out]
  */
-export function telegraphStrip(sh) {
-  if (!sh || sh.kind !== TELEGRAPH_KIND.lane || sh.pool !== TELEGRAPH_POOL.path) return null;
+export function telegraphStrip(sh, out = null) {
+  const w = stripW(sh);
+  if (!(w > 0)) return null;
   const dx = sh.end[0] - sh.origin[0], dz = sh.end[1] - sh.origin[1], l = Math.hypot(dx, dz);
-  const ux = l > 1e-6 ? dx / l : 0, uz = l > 1e-6 ? dz / l : 1, w = sh.halfW + TELEGRAPH_TIGHT_PAD;
-  return { a: [sh.origin[0] - ux * w, sh.origin[1] - uz * w], u: [ux, uz], len: l + 2 * w, w };
+  const ux = l > 1e-6 ? dx / l : 0, uz = l > 1e-6 ? dz / l : 1;
+  if (!out) return { a: [sh.origin[0] - ux * w, sh.origin[1] - uz * w], u: [ux, uz], len: l + 2 * w, w };
+  out.a[0] = sh.origin[0] - ux * w; out.a[1] = sh.origin[1] - uz * w; out.u[0] = ux; out.u[1] = uz; out.len = l + 2 * w; out.w = w;
+  return out;
+}
+/** AUDIT EG V (L6-2): a path's or a tether's own strip's half-width (telegraphStrip's `w` - its lane's reach, a pull-apart's
+ *  break tick, TELEGRAPH_TIGHT_PAD past it), or NaN for any other shape. Pure. */
+function stripW(sh) {
+  if (!sh || sh.kind !== TELEGRAPH_KIND.lane) return NaN;
+  const across = sh.pool === TELEGRAPH_POOL.path || sh.pool === TELEGRAPH_POOL_SPIRE.chain ? sh.halfW : sh.pool === TELEGRAPH_POOL_SPIRE.pull ? 2 * sh.halfW + TELEGRAPH_TICK_REACH : NaN;
+  return across + TELEGRAPH_TIGHT_PAD;
 }
 
 const wrap = (a) => a - 2 * Math.PI * Math.floor((a + Math.PI) / (2 * Math.PI));
@@ -612,7 +636,7 @@ const EG_ZG_POOLS_GLSL = `  if (uPool == 4) {
       float u = abs(s - 0.5) * tl;
       float onLine = (u <= uR ? 1.0 : 0.0) * fin;
       float chev = step(0.5, fract((u + 1.6 * ld) / 1.2 - uSince * 1.2));
-      float tick = (1.0 - smoothstep(0.06, 0.12, abs(u - uR1))) * (1.0 - smoothstep(2.0 * uHalfW, 2.0 * uHalfW + 0.1, ld));
+      float tick = (1.0 - smoothstep(0.06, 0.12, abs(u - uR1))) * (1.0 - smoothstep(2.0 * uHalfW, 2.0 * uHalfW + ${TELEGRAPH_TICK_REACH.toFixed(2)}, ld));   // AUDIT EG V (L6-2): its reach, its strip's (telegraphStrip)
       o = vec4(uEdgeCol * (onLine * (0.3 + 0.7 * chev) + tick) * f, 0.0);
       return;
     }
@@ -627,8 +651,9 @@ const EG_ZG_POOLS_GLSL = `  if (uPool == 4) {
     return;
   }
   if (uPool == 7) {
-    // EG-ZG (section 25.4): A VESTIGE AURA - one thin blue ring at its holder's feet
-    o = vec4(uColor * core * f, 0.0);
+    // EG-ZG (section 25.4): A VESTIGE AURA - one thin blue ring at its holder's feet; AUDIT EG V (L6-2): its line cut at
+    // TELEGRAPH_RING_REACH from its ring at any pixel's size - the ground its quad covers (telegraphBounds)
+    o = vec4(uColor * core * (edge <= ${TELEGRAPH_RING_REACH.toFixed(2)} ? 1.0 : 0.0) * f, 0.0);
     return;
   }
   if (uPool == 8) {
@@ -717,7 +742,7 @@ export class GateTelegraphRenderer {
     const floorCourts = floor?.courts ?? COURTS, floorR = floor?.r ?? COURT_R;
     this.drawn = 0;
     this.walked = 0;
-    if (!shape || !(shape.alpha > 0.001)) return;
+    if (!shape || !(shape.alpha > 0.001) || !this.gl) return;   // AUDIT EG V (L6-5): a destroyed pass draws nothing
     const gl = this.gl, U = this.u;
     mat4Multiply(this._vp, proj, view);
     gl.useProgram(this.program);
@@ -817,7 +842,7 @@ export class GateTelegraphRenderer {
    */
   drawFloors(plan, proj, view, eye, seconds, fog = null, centre = COURT_CENTRE) {
     this.floorDraws = 0; this.floorTris = 0;
-    if (!this.spire || !plan?.draws?.length) return;
+    if (!this.spire || !plan?.draws?.length || !this.gl) return;
     const gl = this.gl, U = this.u;
     if (plan.n > 0) {
       if (!this.floorVao) {
@@ -857,5 +882,21 @@ export class GateTelegraphRenderer {
       gl.useProgram(this.program);
       gl.uniform1i(U.uOnFloor, 0); gl.uniform1f(U.uFloorY, 0);   // the gate's quad at the hall's floor again, for any plain draw after
     }
+  }
+
+  /**
+   * AUDIT EG V (L6-5; Elite-Gates.md sections 11.9 and 29, EVERY ALLOCATION HAS AN OWNER): every GL object this pass made let
+   * go - its program, its three vertex arrays and their buffers (the quad's, the walkways' strip, EG-ZG's fight floors' growing
+   * DYNAMIC buffer) - once; a destroyed pass draws nothing. The breach's fight frees its own at every way out of the Spire
+   * (scenes/egFight.js leave); the Burning Court's and the Hour's are a screen's, kept.
+   */
+  destroy() {
+    const gl = this.gl;
+    if (!gl) return;
+    this.gl = null;
+    for (const v of [this.vao, this.walkVao, this.floorVao]) if (v) gl.deleteVertexArray(v);
+    for (const b of [this.vbo, this.walkVbo, this.floorVbo]) if (b) gl.deleteBuffer(b);
+    if (this.program) gl.deleteProgram(this.program);
+    this.vao = null; this.walkVao = null; this.floorVao = null; this.vbo = null; this.walkVbo = null; this.floorVbo = null; this.program = null; this.floorCap = 0;
   }
 }

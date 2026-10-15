@@ -158,33 +158,47 @@ export function buildEgLookModel(seed, c, geo = 0) {
  *  violet-grey), the margin a sheet runs past what it covers (m). */
 export const EG_MIST = Object.freeze({ below: 0.3, rise: 3, color: Object.freeze([0.5, 0.5, 0.58]), pad: 3 });
 /**
- * Each mist surge of a circle as a sheet (the hall's frame): `[{ spec, hz, x0, z0, x1, z1 }]` - over its Mist Stair's
- * passage (the cave of kit `mist` its surge begins at), or over the Sinking Stair's flights (the `sink` steps past it).
+ * Each mist surge of a circle as a sheet (the hall's frame): `[{ spec, hz, x0, z0, x1, z1, rect, oy }]` - over its Mist
+ * Stair's passage (the cave of kit `mist` its surge begins at), or over the Sinking Stair's flights (the `sink` steps past
+ * it). AUDIT EG V (L6-4): `rect` its box in the scene's frame and `oy` the frame's height, made once a circle, so a frame's
+ * sheets are only written (egMistSheetsAt).
  */
 export function egMistSheets(specs) {
   const out = [];
   for (const spec of specs) for (const hz of spec.hazards ?? []) {
     if (hz.kind !== 'mist') continue;
     const q = spec.caves.find((c) => c.kit === 'mist' && hz.z >= c.z0 - 1 && hz.z <= c.z1);
-    if (q) { out.push({ spec, hz, x0: q.x - q.halfW, z0: q.z0, x1: q.x + q.halfW, z1: q.z1 }); continue; }
+    if (q) { out.push(sheetOf({ spec, hz, x0: q.x - q.halfW, z0: q.z0, x1: q.x + q.halfW, z1: q.z1 })); continue; }
     const fl = spec.steps.filter((t) => t.kind === 'sink' && t.z >= hz.z - 1);
     if (!fl.length) continue;
     const P = EG_MIST.pad;
-    out.push({ spec, hz, x0: Math.min(...fl.map((t) => t.x - t.w / 2)) - P, z0: Math.min(...fl.map((t) => t.z - t.d / 2)) - P, x1: Math.max(...fl.map((t) => t.x + t.w / 2)) + P, z1: Math.max(...fl.map((t) => t.z + t.d / 2)) + P });
+    out.push(sheetOf({ spec, hz, x0: Math.min(...fl.map((t) => t.x - t.w / 2)) - P, z0: Math.min(...fl.map((t) => t.z - t.d / 2)) - P, x1: Math.max(...fl.map((t) => t.x + t.w / 2)) + P, z1: Math.max(...fl.map((t) => t.z + t.d / 2)) + P }));
   }
   return out;
 }
+/** A sheet with its scene-frame box (`rect`) and the frame's height (`oy`) - once a circle. */
+function sheetOf(m) {
+  const a = egToDungeon(m.spec, m.x0, 0, m.z0), b = egToDungeon(m.spec, m.x1, 0, m.z1);
+  return { ...m, rect: [Math.min(a[0], b[0]), Math.min(a[2], b[2]), Math.max(a[0], b[0]), Math.max(a[2], b[2])], oy: a[1] };
+}
+/** AUDIT EG V (L6-4): each kept list's sheet slots, by the list (so a frame with none risen lets no slot go). */
+const _sheetSlots = new WeakMap();
 /** The sheets at `t` (the shared clock, s) in the scene's frame: `{ rect: [x0, z0, x1, z1], y, alpha }` - its line the
- *  surge's (net/egFragLaw.js egMistAt), never past EG_MIST.below under its landing; none while the mist lies low. */
-export function egMistSheetsAt(sheets, t) {
-  const out = [];
+ *  surge's (net/egFragLaw.js egMistAt), never past EG_MIST.below under its landing; none while the mist lies low. AUDIT EG
+ *  V (L6-4): into `out` when given (scenes/egLookDraw.js keeps it - each sheet's slot written, never made), else a new list.
+ *  Pure but for `out`. */
+export function egMistSheetsAt(sheets, t, out = []) {
+  let pool = _sheetSlots.get(out), n = 0;
+  if (!pool) _sheetSlots.set(out, (pool = []));
   for (const m of sheets) {
     const line = egMistAt(m.hz, t);
     if (!(line > 0.05)) continue;
-    const top = Math.min(line, EG_MIST.rise - EG_MIST.below);
-    const a = egToDungeon(m.spec, m.x0, m.hz.y + top, m.z0), b = egToDungeon(m.spec, m.x1, m.hz.y + top, m.z1);
-    out.push({ rect: [Math.min(a[0], b[0]), Math.min(a[2], b[2]), Math.max(a[0], b[0]), Math.max(a[2], b[2])], y: a[1], alpha: Math.min(1, line / 1.5) });
+    const top = Math.min(line, EG_MIST.rise - EG_MIST.below), r = (m.rect ??= sheetOf(m).rect), s = (pool[n] ??= { rect: [0, 0, 0, 0], y: 0, alpha: 0 });
+    out[n++] = s;
+    s.rect[0] = r[0]; s.rect[1] = r[1]; s.rect[2] = r[2]; s.rect[3] = r[3];
+    s.y = (m.oy ??= sheetOf(m).oy) + m.hz.y + top; s.alpha = Math.min(1, line / 1.5);
   }
+  out.length = n;
   return out;
 }
 

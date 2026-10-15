@@ -113,7 +113,9 @@ test('AUDIT EG III lane4 #1 / lane6 #1 THE WITNESS IS NEVER CAST BACK, AND THE H
   // the dungeon arm: the eye after its own camera, before the view is made of it; the spans ask the witness hook
   const WM = rd('src/scenes/worldModes.js');
   const arm = between(WM, '    const mwv = mwViewFrame({\n      fpEye: cam.pos, feet: player.feetAt(), yaw: cam.yaw, pitch: cam.pitch,', '    const view = betterAmbience.view(lookAt(mwv.eye,');
-  assert.match(arm, /if \(mode === 'dungeon' && isEgHall\(dungeonLoc\)\) host\.egWitnessEye\?\.\(mwv, dt, \(o, r, d, m\) => \{ const h = player\.collider\?\.sphereCast\?\.\(o, r, d, m\)\?\.dist; return Number\.isFinite\(h\) \? h : null; \}\);/);
+  // PIN MOVED (AUDIT EG V, e: L6-4 - the eye's cast is one function of the arm's, never a closure a Spire frame)
+  assert.match(arm, /if \(mode === 'dungeon' && isEgHall\(dungeonLoc\)\) host\.egWitnessEye\?\.\(mwv, dt, egEyeCast\);/);
+  assert.match(WM, /const egEyeCast = \(o, r, d, m\) => \{ const h = player\.collider\?\.sphereCast\?\.\(o, r, d, m\)\?\.dist; return Number\.isFinite\(h\) \? h : null; \};/);
   assert.match(WM, /dungeonCtx\?\.egSpanRide\?\.\(dt, player, !overlayHeld && !host\.egWitness\?\.\(\)\)/);
 });
 
@@ -250,8 +252,9 @@ test('AUDIT EG III lane4 #5 THE EDGE LINE AND THE GHOSTS IN THE DANGER PALETTE (
   assert.deepEqual(G.calls.filter((c) => c[0] === 'uniform3f' && c[1] === 'uColor').at(-1).slice(2), [...SD_GHOST.color], 'the Hour\'s own: its gold');
   // the hands that carry it
   assert.match(rd('src/scenes/egSpan.js'), /vp\?\.\[2\] \?\? 0, vp\?\.\[3\] \?\? 0, egGhostRgb\(access\?\.palette\)\);/);
-  assert.match(rd('src/scenes/egLookDraw.js'), /drawOver\(proj, view, eye, ts, fog = null, pal = null\) \{\n      if \(!key \|\| !lines\) return false;\n      lines\.palette\(pal\);/);
-  assert.match(rd('src/scenes/egClient.js'), /L\?\.drawOver\(proj, view, eye, ts, fog, egAccessNow\(win\)\.palette\)/);
+  // PIN MOVED (AUDIT EG V, e: L6-3 - the look's drawOver takes the world image's rect after the palette)
+  assert.match(rd('src/scenes/egLookDraw.js'), /drawOver\(proj, view, eye, ts, fog = null, pal = null, vp = null\) \{\n      if \(!key \|\| !lines\) return false;\n      lines\.palette\(pal\);/);
+  assert.match(rd('src/scenes/egClient.js'), /L\?\.drawOver\(proj, view, eye, ts, fog, egAccessNow\(win\)\.palette, renderer\?\._worldViewportPx\)/);
 });
 
 // ── lane4 #6, #7: THE LOOK, THE SWAP'S WORKER ───────────────────────────────────────────────────────────────────────

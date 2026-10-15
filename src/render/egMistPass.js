@@ -95,7 +95,8 @@ export class EgMistPass {
     gl.bindVertexArray(this.vao);
     gl.enable(gl.DEPTH_TEST); gl.depthMask(false); gl.disable(gl.CULL_FACE);
     gl.enable(gl.BLEND); gl.blendFuncSeparate(gl.ONE, gl.ONE_MINUS_SRC_ALPHA, gl.ZERO, gl.ONE);
-    for (const s of sheets.slice(0, EG_MIST_MAX)) {
+    for (let k = 0, n = Math.min(sheets.length, EG_MIST_MAX); k < n; k++) {   // AUDIT EG V (L6-4): read in place, never sliced a frame
+      const s = sheets[k];
       if (!(s.alpha > 0)) continue;
       gl.uniform4f(U.uRect, s.rect[0], s.rect[1], s.rect[2], s.rect[3]);
       gl.uniform1f(U.uY, s.y);

@@ -2084,7 +2084,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const under = !!L?.drawUnder(proj, view, eye, ts, fog);
       const drew = !!fight?.drawPass(proj, view, eye, seconds, fog);
       const ghosts = !!modes()?.dungeonCtx?.egSpanDraw?.(proj, view, fog);   // EG-ZL (sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab (scenes/egSpan.js drawPass), under the lines
-      const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette);   // AUDIT EG III (lane4 #5): THE EDGE LINE in the danger palette's safety
+      const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette, renderer?._worldViewportPx);   // AUDIT EG III (lane4 #5): THE EDGE LINE in the danger palette's safety; AUDIT EG V (L6-3): sized in the world image's pixels
       const lit = !!L?.drawLights(proj, view, eye, ts, fog, lightsNow(), stillNow());   // EG-ZE: THE LIGHTS, added over the lines
       return under || drew || ghosts || over || lit;
     },
