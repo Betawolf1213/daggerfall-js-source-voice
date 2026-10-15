@@ -74,9 +74,11 @@ NOT TOUCHED - the same table and byte read by other laws, each that law's own:
 - Come Sail Away's deed (DEED-PORT, `csaIsPortTown`), the merchantmen's water (`navalNearPort`) and the harbour SHIP-LIFE
   sounds (`navalHarbourNear`) read the table and the byte as the mod does: a ship may be put in the water, and a quay is
   sought, at a flagged farm or tomb on the coast.
-- The shipyard law (`isPortTown`) stands a shipyard and a lighthouse in every town on the table - the 31 inland capitals
-  among them, at the town's middle where no sea bears on it (`world/portSites.js` seaField's `middle`). Neither a board's
-  nor a cargo's; left for the owner.
+- The shipyard law (`isPortTown`) stood a shipyard and a lighthouse in every town on the table - the 31 inland capitals
+  among them, at the town's middle where no sea bears on it. Closed by INLAND-PORTS
+  (`01-Overview/Field-Bugs-2026-10-14-inland-ports.md`, a player: "Shipyard & light house near pond" - Ilessan Hills):
+  a port town is one the open sea bears on, and the board's ports are the same towns - 106 of the 155 here, 101 of them
+  taking a cargo.
 - CAPT-WATERS' distance from the nearest port (`navalPortPx`) reads the table's pixels.
 
 `test/fb1013c_porttowns.test.js` (6): the host's port list and port-here lifted off world.js over eight of the table's
