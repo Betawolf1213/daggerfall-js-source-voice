@@ -92,8 +92,8 @@
  {
   "name": "MWNPC17-picks-dropped",
   "file": "src/net/peerBodies.js",
-  "old": "    armor: npc ? withNpcPicks(beastWorn(worn, stub.race), npc) : worn,",
-  "new": "    armor: worn,",
+  "old": "    armor: [...(npc ? withNpcPicks(beastWorn(worn, stub.race), npc) : worn), ...outfitPiece(look, wolf)],",
+  "new": "    armor: [...worn, ...outfitPiece(look, wolf)],",
   "tests": [
    "test/mwnpc17_wardrobe.test.js"
   ]
@@ -110,8 +110,8 @@
  {
   "name": "MWNPC17-key-without-hint",
   "file": "src/net/peerBodies.js",
-  "old": ": lookKey(look)) + npcKeyOf(look);",
-  "new": ": lookKey(look));",
+  "old": ": lookKey(look)) + npcKeyOf(look) + outfitKeyOf(look);",
+  "new": ": lookKey(look)) + outfitKeyOf(look);",
   "tests": [
    "test/mwnpc17_wardrobe.test.js"
   ]
@@ -191,8 +191,8 @@
  {
   "name": "MWNPC17-beast-for-players-too",
   "file": "src/net/peerBodies.js",
-  "old": "    armor: npc ? withNpcPicks(beastWorn(worn, stub.race), npc) : worn,",
-  "new": "    armor: npc ? withNpcPicks(beastWorn(worn, stub.race), npc) : beastWorn(worn, stub.race),",
+  "old": "    armor: [...(npc ? withNpcPicks(beastWorn(worn, stub.race), npc) : worn), ...outfitPiece(look, wolf)],",
+  "new": "    armor: [...(npc ? withNpcPicks(beastWorn(worn, stub.race), npc) : beastWorn(worn, stub.race)), ...outfitPiece(look, wolf)],",
   "tests": [
    "test/mwnpc17_wardrobe.test.js"
   ]

@@ -40,14 +40,6 @@
     "note": "The Casual and Formal Cloak wear Morrowind's robe and hide the armour under eleven slots."
   },
   {
-    "name": "MWCLOAK1-the-hem-swings-half",
-    "file": "tools/bakeCloak.mjs",
-    "old": "top: 86, bottom: 29.28, share: 0.85, centre: 10 }",
-    "new": "top: 86, bottom: 29.28, share: 0.5, centre: 10 }",
-    "tests": ["test/mwcloak1.test.js"],
-    "note": "Half at the hem, the first try: the trailing calf comes through, and the shipped NIFs are not the bake's."
-  },
-  {
     "name": "MWCLOAK1-no-clearance",
     "file": "src/formats/mwCloakFit.js",
     "old": "export const CLOAK_CLEARANCE = 1;",
@@ -100,7 +92,7 @@
     "file": "src/formats/mwCloakFit.js",
     "old": "    const n = Math.floor(Math.hypot(dx, dy, dz) / step);",
     "new": "    const n = 0;",
-    "tests": ["test/mwcloak1.test.js"],
+    "tests": ["test/mwcloak1.test.js", "test/auditmwcloak.test.js"],
     "note": "Fit 1 samples what the cloak covers at its vertices alone: a pauldron's edges cross the sheet between vertices clear of it."
   },
   {

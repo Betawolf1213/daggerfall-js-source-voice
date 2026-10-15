@@ -236,6 +236,8 @@ test('MW-LOAD: the attach fingerprint carries the stored SIZES, so a same-name r
 // ── the build, through the door ──────────────────────────────────────
 import { buildFpArm, armRecordsOf, fpSkeletonPath, FP_CLIP_PATH } from '../src/combat/fpArm.js';
 import { FACE_MATCH_VERSION } from '../src/formats/mwFaceMatch.js';
+import { bodyRec } from './fixtures/mw/bodyRec.mjs';   // AUDIT MW-HEADS1: a head record more, minted as the data's are
+const cat = (...a) => { const out = new Uint8Array(a.reduce((n, b) => n + b.length, 0)); let o = 0; for (const b of a) { out.set(b, o); o += b.length; } return out; };
 
 const fixtureArchive = () => {
   const files = new Map([
@@ -333,10 +335,22 @@ test('MW-LOAD: the face verdict is kept in the derived store against the set, th
   assert.equal(res2.face.head, null);
   assert.ok(res2.face.reasons.includes('the walk stands'), 'measured on this data, and the walk stands');
   assert.deepEqual(stores, [], 'a walk-stands verdict is never kept');
+  // AUDIT MW-HEADS1 (L2-F6): AND THE CANDIDATES MEASURED - the stored set is the player's files, and the pools are not
+  // only theirs (the port's own heads ship with the page, where their archive loaded). One set and one identity, two
+  // pools - here a head record more - ask two keys; the same pools, the same key
+  const asked = [];
+  const poolDeps = (extra, gen) => ({ ...deps, morrowindDataGeneration: () => gen, loadDerivedJson: async (key) => { asked.push(key); return null; },
+    loadMorrowindFile: async () => (extra ? cat(esm, bodyRec('b_n_fprace_m_head_01', 'fixture\\armfphand.nif', 'fprace', 0)) : esm) });
+  for (const [extra, gen] of [[false, 21], [true, 22], [false, 23]]) assert.equal((await buildFpArm({ race: 'fprace', faceIndex: 5, deps: poolDeps(extra, gen) })).ok, true);
+  assert.equal(asked.length, 3);
+  assert.notEqual(asked[0], asked[1], 'another pool is measured anew');
+  assert.equal(asked[0], asked[2], 'the same pool keeps its verdict');
+  assert.deepEqual(asked[0].split(':').slice(0, -1), asked[1].split(':').slice(0, -1), 'the rest of the key the same');
   // source pins: the key and the guard
   const src = rd('src/combat/fpArm.js');
-  assert.match(src, /`mw-face-match:v\$\{FACE_MATCH_VERSION\}:\$\{race\}:\$\{female \? 'f' : 'm'\}:\$\{faceIndex \| 0\}:\$\{fnv\(print\)\}`/,
-    'the key names the matcher version, the identity and the set');
+  // PIN MOVED (AUDIT MW-HEADS1): the key names the pools measured after the set
+  assert.match(src, /`mw-face-match:v\$\{FACE_MATCH_VERSION\}:\$\{race\}:\$\{female \? 'f' : 'm'\}:\$\{faceIndex \| 0\}:\$\{fnv\(print\)\}:\$\{fnv\(measured\)\}`/,
+    'the key names the matcher version, the identity, the set and the candidates');
   assert.match(src, /if \(kept && \(kept\.head \|\| kept\.hair\)\) \{ faceMatch = kept; FACE_MATCH_CACHE\.set\(fkey, kept\); \}/);
   assert.match(src, /if \(dkey && \(faceMatch\.head \|\| faceMatch\.hair\)\) \{\s*\n\s*try \{ await d\.storeDerivedJson\(dkey, faceMatch\); \}/);
   // the measurement decodes level 0 only - MW-TEXTHREAD: in the texture pool, the same decoder off the frame's thread

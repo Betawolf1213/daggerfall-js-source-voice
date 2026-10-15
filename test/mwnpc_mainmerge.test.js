@@ -13,7 +13,7 @@ import { parseNif } from '../src/formats/mwNifFile.js';
 import { flattenNif } from '../src/formats/mwNifMesh.js';
 import { assembleFirstPersonArm, poseAssembly, posePartClocks, ARROW_FALLBACK_NODE } from '../src/formats/mwFirstPerson.js';
 import { skinLayout, skinSamePieces, packSkinStream, writeSkinPalette, skinnedVertex, skinStreamCorner, restreamMovedRows } from '../src/formats/mwGpuSkin.js';
-import { fitCloakOver, fitStowedGear, followCloak, seatCloak } from '../src/formats/mwCloakFit.js';
+import { fitCloakOver, fitStowedGear, followCloak } from '../src/formats/mwCloakFit.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { createFpArm, pieceLanes } from '../src/combat/fpArm.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
@@ -129,9 +129,11 @@ test('MW-BOW1 x MWNPC1: the rig - a third-person body whose part moved on its ow
 });
 
 const GEAR = [['w_claymore_daedric_sh.nif', 'Bip01 LongBladeTwoClose'], ['w_iron_longsword_sh.nif', 'Bip01 LongBladeOneHand']];
-const STRIDES = [{ 'bip01 r thigh': 35, 'bip01 l thigh': -30, 'bip01 l calf': 45 }, { 'bip01 l thigh': 35, 'bip01 r thigh': -30, 'bip01 r calf': 45 }];
+// MW-CAPE-RIGID: the cloak rides the chest alone, so a stride moves none of it and turns no gear - the chest leant back
+// swings its hem onto the hip-hung sword (PIN MOVED: these were the two strides)
+const LEANS = [{ 'bip01 spine2': -10 }, { 'bip01 spine2': -5 }];
 
-test('AUDIT MW-CLOAK x MWNPC1: a seated cloak skins by another batch, so its layout is not the standing one\'s; and the gear goes with the cloak on a GPU pose as on a CPU one - placed by the palette where the CPU places it, the cloak alone skinned for it', async () => {
+test('AUDIT MW-CLOAK x MWNPC1: a cloak whose batch was replaced skins by another batch, so its layout is not the old one\'s; and the gear goes with the cloak on a GPU pose as on a CPU one - placed by the palette where the CPU places it, the cloak alone skinned for it', async () => {
   const asm = await body(ARMOR_MATERIAL.Steel, GEAR);
   fitCloakOver(asm, { isCloak, isUnder });
   const gens = asm.pieces.filter(isGear).map((p) => p.sourceGen | 0);
@@ -140,25 +142,27 @@ test('AUDIT MW-CLOAK x MWNPC1: a seated cloak skins by another batch, so its lay
   const follow = followCloak(asm, { isCloak, isGear });
   assert.ok(follow && follow.groups.length, 'the gear is tied to the cloak');
 
-  // the seat: another batch, another layout; standing again, the first one's
+  // a replaced batch (a fit replaces the cloak's, never writes into it): another layout; the first batch again, the
+  // first one's (MW-CAPE-RIGID: the seat that swapped one is gone - the cloak rides the chest alone, seated or not)
   const L = skinLayout(asm.pieces);
   assert.equal(skinSamePieces(L, asm.pieces), true);
-  assert.equal(seatCloak(asm, true, isCloak), true);
-  assert.equal(skinSamePieces(L, asm.pieces), false, 'seated: the stream\'s weights are the standing cloak\'s - laid out again');
-  seatCloak(asm, false, isCloak);
-  assert.equal(skinSamePieces(L, asm.pieces), true, 'standing: the stream it has');
+  const cloak = asm.pieces.find(isCloak); const laid = cloak.batch;
+  cloak.batch = { ...laid };
+  assert.equal(skinSamePieces(L, asm.pieces), false, 'replaced: the stream\'s weights are the old batch\'s - laid out again');
+  cloak.batch = laid;
+  assert.equal(skinSamePieces(L, asm.pieces), true, 'the batch it was laid out from: the stream it has');
 
-  // the follow, both ways, at each stride - the CPU pose's placed gear is what the palette places
+  // the follow, both ways, at each lean - the CPU pose's placed gear is what the palette places
   let turnedAny = false;
-  for (const stride of STRIDES) {
-    poseAssembly(asm, turned(asm, stride));
+  for (const lean of LEANS) {
+    poseAssembly(asm, turned(asm, lean));
     const cpu = new Map(asm.pieces.filter(isGear).map((p) => [p, Float32Array.from(p.positions)]));
     poseAssembly(asm);   // rest between: the GPU pose must read the cloak where ITS pose puts it
     const before = new Map(asm.pieces.filter(isGear).map((p) => [p, Float32Array.from(p.positions)]));
     let skins = 0;
     const fns = asm.fns;
     asm.fns = { ...fns, skinBatch: (...a) => { skins++; return fns.skinBatch(...a); } };
-    poseAssembly(asm, { ...turned(asm, stride), skin: false });
+    poseAssembly(asm, { ...turned(asm, lean), skin: false });
     asm.fns = fns;
     assert.equal(skins, 1, 'the cloak alone skinned on the CPU, for the follow to read');
     writeSkinPalette(L, asm);
@@ -172,7 +176,7 @@ test('AUDIT MW-CLOAK x MWNPC1: a seated cloak skins by another batch, so its lay
       if (p.followAt && [...p.followAt.a].some((x, i) => Math.abs(x - bare.a[i]) > 1e-4)) turnedAny = true;
     }
   }
-  assert.ok(turnedAny, 'and the follow turned gear at a stride - the pin reads a placement that differs from its bone\'s');
+  assert.ok(turnedAny, 'and the follow turned gear leaning back - the pin reads a placement that differs from its bone\'s');
 
   // a body with no cloak: the follow lets go of every placement it left
   const bare = await assembleFirstPersonArm({ skeletonBytes: retailSkeleton(), parts: [{ slot: 'sheath', bones: ['Bip01 LongBladeOneHand'], bytes: SHEATHED('w_iron_longsword_sh.nif'), bare: true }] });
@@ -235,5 +239,5 @@ test('ORG2 x MWNPC5b: the Morrowind People row stands on the one Settings screen
   const at = whereIs('feat:mw-npc-bodies');
   assert.equal(at?.tab.id, 'combat');
   assert.equal(at.section.id, 'morrowind');
-  assert.deepEqual(at.section.items, ['feat:mod-weapon-sheathing', 'feat:steel-helm', 'feat:mw-spell-effects', 'feat:mw-npc-bodies']);
+  assert.deepEqual(at.section.items, ['feat:mod-weapon-sheathing', 'feat:steel-helm', 'feat:mw-spell-effects', 'feat:mw-npc-bodies', 'feat:mw-billboard-look']);   // PIN MOVED (BODY-CARD): the Billboard Look beside Morrowind People
 });

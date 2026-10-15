@@ -1,5 +1,7 @@
 # Beautiful Villages and Beautiful Cities (WD3, 2026-10-01)
 
+> DF-ART (2026-10-14, `01-Overview/DF-Art.md`): the town's hangings and rugs (archive 38202), drawn here in WD3, are Daggerfall's own tapestries, woven cloth and rug now (`world/townPictures.js` TOWN_PICTURES).
+
 carademono's two town mods, ported 1:1: **Beautiful Villages of Daggerfall
 1.4.2** (7,317 villages, hamlets, farms, manors and temples, and every
 roadside tavern through its blocks) and **Beautiful Cities of Daggerfall

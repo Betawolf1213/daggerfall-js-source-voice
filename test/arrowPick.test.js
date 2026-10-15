@@ -110,5 +110,8 @@ test('MW-D50: a bow that resolves without its arrow says why on the console, onc
   // setTorch's own preload and its one resolve for both rigs (2).
   // HT-WAIST: + the lantern at the waist's four - the body build's preload
   // and resolve, setHipLight's preload and its one resolve (the body alone).
-  assert.equal((src.match(/has: archiveHas\(archives\)/g) || []).length, 17, 'every preload and every resolve - two builds, the tp body, the swap\'s two, the torch\'s six, the hip lantern\'s four - pass the one directory');
+  // PIN MOVED (AUDIT MW-HEADS1): + the face's pools - the port's own heads
+  // stand where that directory carries them (facePools), the match, its
+  // skip and its key read them (the rows read the body build's own `exists`).
+  assert.equal((src.match(/has: archiveHas\(archives\)/g) || []).length, 18, 'every preload and every resolve - two builds, the tp body, the swap\'s two, the torch\'s six, the hip lantern\'s four, the face\'s pools - pass the one directory');
 });

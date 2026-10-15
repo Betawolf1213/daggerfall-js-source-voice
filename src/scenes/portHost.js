@@ -41,8 +41,8 @@
 //
 // A FRAME ALLOCATES NOTHING HERE (AUDIT SHIPYARDS L4-2, PERF-LIGHTS' law): the glows' records and the lights' are each
 // place's own, written in place into one array each; a person's idle record turns its key only as its frame turns; the
-// art is painted a few pictures a frame (L5-5), the meshes made once it is all up - the places stand in the collider
-// meanwhile.
+// art is read from the player's ARENA2 off the frame (DF-ART - L5-5's painting a few pictures a frame went with the
+// painters), the meshes made once it is all up - the places stand in the collider meanwhile.
 //
 // NOTHING HERE IS SAVED OR SENT: where a place stands is the town's layout, who keeps it its map id.
 //
@@ -60,7 +60,9 @@ import { SHIPYARD_TEXT } from '../systems/shipyards.js';
 import { PORT_FOOT } from '../world/portSites.js';
 import { buildShipyardModel, SHIPYARD, shipsSignBox, hullBox, noticesBox, crewSignBox } from '../world/shipyardModel.js';
 import { buildLighthouseModel, buildLighthouseFire, guardBand, LIGHTHOUSE, LIGHTHOUSE_POINTS, doorBox, hatchBox, lanternBox, GALLERY_Y, LANTERN_H } from '../world/lighthouseModel.js';
-import { PORT_PAINTERS, PORT_ARCHIVE, PORT_HOW } from '../world/portArt.js';
+import { PORT_SOURCES, PORT_ARCHIVE, PORT_HOW } from '../world/portArt.js';
+import { classicPictures, asPortRows } from '../world/classicArt.js';   // DF-ART: the port's pictures, Daggerfall's own
+import { classicRgbaOf } from '../systems/textureReplacement.js';
 import { PERSON_TEXTURES, PERSON_IDLE_RECORD, PERSON_IDLE_FPS } from '../characters/mobilePerson.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { folkLookOf } from '../characters/folkBodies.js';
@@ -109,8 +111,6 @@ export const GLOW_ANGLE = 0.012;
 /** A beam's puff fades as the eye comes within BEAM_NEAR_FADE of its own size of its middle - none at half of it (the eye
  *  inside it: the whole screen added at once), whole at that (AUDIT SHIPYARDS L7-12). */
 export const BEAM_NEAR_FADE = 1.5;
-/** The art's painting: pictures a frame while this many ms of it are unspent (one at least). */
-export const ART_BUDGET_MS = 4;
 /** BEACON-TOWER: a picture's upload as a cutout and as its own light (world/portArt.js PORT_HOW), and the flames' draw -
  *  each one record, never a literal a call. */
 const CUTOUT = Object.freeze({ cutout: true }), OWN_LIGHT = Object.freeze({ white: true }), NO_SHADOW = Object.freeze({ noShadow: true });
@@ -262,7 +262,7 @@ export function createPortHost({
   const models = new Map();
   /** @type {Map<string, number[]>} */
   const boxes = new Map();
-  let artAt = 0, artFrame = -1, guardMesh = null;
+  let artState = 'idle', artGen = 0, guardMesh = null;   // DF-ART: the art 'idle', 'reading' or 'up'
   const personTex = new Map();
   let frameN = 0;
   // the arrays handed out, written in place and cut to their count at the end (`length = 0` then pushes trimmed each
@@ -272,19 +272,24 @@ export function createPortHost({
   const MODELS = { shipyard: buildShipyardModel, lighthouse: buildLighthouseModel, fire: buildLighthouseFire };
   /** A kind's model (the beacon's flames their own, `fire`), built once. */
   const modelOf = (kind) => { let m = models.get(kind); if (!m) { m = MODELS[kind](); models.set(kind, m); } return m; };
-  /** The art up, a few pictures a frame - once a frame, whichever place asks (AUDIT SHIPYARDS L5-5) - answers whether it
-   *  is all up. */
+  /** DF-ART: the art up - the port's pictures, Daggerfall's own (world/portArt.js PORT_SOURCES), read from the player's
+   *  ARENA2 once, whichever place asks first, and uploaded together as they land - answers whether it is all up. */
   function paintArt() {
-    if (artAt >= PORT_PAINTERS.length) return true;
-    if (artFrame === frameN) return false;
-    artFrame = frameN;
-    const t0 = now();
-    do {
-      const [rec, paint] = PORT_PAINTERS[artAt++], pic = paint(), how = PORT_HOW[rec];
-      renderer.uploadTexture?.(PORT_ARCHIVE, rec, pic, how?.cutout ? CUTOUT : undefined);   // BEACON-TOWER: the flame a cutout
-      if (how?.glows) renderer.uploadEmissionTexture?.(PORT_ARCHIVE, rec, pic, OWN_LIGHT);   // ...and the fire its own light
-    } while (artAt < PORT_PAINTERS.length && now() - t0 < ART_BUDGET_MS);
-    return artAt >= PORT_PAINTERS.length;
+    if (artState === 'up') return true;
+    if (artState === 'idle') {
+      artState = 'reading';
+      const gen = artGen;
+      classicPictures(PORT_SOURCES, classicRgbaOf).then((pics) => {
+        if (gen !== artGen) return;   // the scene ended while they were read
+        for (const [rec, pic] of pics) {
+          const how = PORT_HOW[rec], rows = asPortRows(pic);
+          renderer.uploadTexture?.(PORT_ARCHIVE, rec, rows, how?.cutout ? CUTOUT : undefined);   // BEACON-TOWER: the flame a cutout
+          if (how?.glows) renderer.uploadEmissionTexture?.(PORT_ARCHIVE, rec, rows, OWN_LIGHT);   // ...and the fire its own light
+        }
+        artState = 'up';
+      }).catch((e) => { if (gen === artGen) artState = 'up'; console.warn('[port] the port\'s pictures would not load', e?.message ?? e); });
+    }
+    return false;
   }
   function meshOf(kind) {
     if (meshes.has(kind)) return meshes.get(kind);
@@ -607,7 +612,7 @@ export function createPortHost({
     dispose() {
       for (const key of [...places.keys()]) takeDown(key);
       for (const m of meshes.values()) if (m) renderer?.destroyMesh?.(m);
-      meshes.clear(); artAt = 0; artFrame = -1;
+      meshes.clear(); artState = 'idle'; artGen++;
     },
   };
 }
