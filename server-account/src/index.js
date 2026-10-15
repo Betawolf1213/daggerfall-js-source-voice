@@ -191,7 +191,7 @@ import {
 } from './accounts.js';
 import { mintToken, mintOrder, mintRenownOrder, mintGuildOrder, mintGuildOutOrder, MAX_TTL_S, TOKEN_V, ID_RE, SEAT_TITLES, CHAPTER_TITLES, TOKEN_MAX_CHARS, TOKEN_BODY_MAX, tokenBodyOf } from '../../src/net/identityToken.js';
 import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, savePathOf, realmPathOf, poiPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded, noteOverload, shedding } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
-import { poiRolesOf, putPoiAsset, getPoiAsset, savePoiDraft, submitPoi, withdrawPoi, requestRetire, reviewPoi, rollbackPoi, listPoi, poiHistory, poiQueue, poiLiveFeed, listShelf, shelfEntry, shelve, unshelve, POI_ASSET_MAX, POI_DRAFT_BODY_MAX } from './poi.js';   // POI-1: the POI store - builders draft, an approver decides, the feed is what is live; POI-4b: the library's shelf
+import { poiRolesOf, putPoiAsset, getPoiAsset, savePoiDraft, submitPoi, withdrawPoi, requestRetire, reviewPoi, rollbackPoi, listPoi, poiHistory, poiQueue, poiLiveFeed, poiHeldVersion, poiFeedTag, listShelf, shelfEntry, shelve, unshelve, POI_ASSET_MAX, POI_DRAFT_BODY_MAX, POI_LIVE_ASSET_MAX_AGE_S } from './poi.js';   // POI-1: the POI store - builders draft, an approver decides, the feed is what is live; POI-4b: the library's shelf
 import { listSaves, putCard, putBlob, getBlob, deleteSave, saveCardOf } from './saves.js';
 import { signingKey, gatePublicKey } from './signing.js';
 import { stakeCards, cashoutCards } from './cards.js';   // CARDS6: a card table's stakes, escrowed
@@ -295,18 +295,24 @@ const json = (body, status = 200, origin = '*') => new Response(JSON.stringify(b
 /** Every refusal is one word and the same shape. A client learns that
  *  it failed and not why somebody else's secret is wrong. */
 const no = (why, status, origin) => json({ error: why }, status, origin);
-/** POI-1: a POI store refusal's status - a role refused 403, a thing not there 404, a state moved 409, a full day 429. */
-const POI_STATUS = { 'poi-not-builder': 403, 'poi-not-approver': 403, 'poi-not-author': 403, 'not-found': 404, 'poi-state': 409, 'poi-pending': 409, 'poi-not-live': 409, 'poi-quota': 429, 'no-storage': 503 };
+/** POI-1: a POI store refusal's status - a role refused 403, a thing not there 404 (taken off the shelf, 410), a state
+ *  moved or a builder's holdings full 409, a full day 429. AUDIT POI: `poi-changed` (S1), `poi-drafts-full` (S10),
+ *  `poi-shelf-full` and `poi-shelf-spent` (S10), `poi-gone` (U13). */
+const POI_STATUS = {
+  'poi-not-builder': 403, 'poi-not-approver': 403, 'poi-not-author': 403, 'not-found': 404, 'poi-gone': 410, 'poi-state': 409, 'poi-changed': 409, 'poi-pending': 409, 'poi-not-live': 409,
+  'poi-drafts-full': 409, 'poi-shelf-full': 409, 'poi-shelf-spent': 409, 'poi-quota': 429, 'no-storage': 503,
+};
 /** POI-1: what one address may ask of the POI store's open reads in a window - a game streaming a town's models at once. */
 const POI_OPEN_MAX = 600;
-/** POI-1: AN ASSET'S BYTES, as stored - a live one cached for good (its name is its hash: it can never change), a draft's
- *  never cached (a builder's business, and it may never go live). */
+/** POI-1: AN ASSET'S BYTES, as stored - a live one cached a day (AUDIT POI S4: its name is its hash, so its bytes never
+ *  change, but it can stop being public - "immutable for a year" had made that impossible to take back), a draft's never
+ *  cached (a builder's business, and it may never go live). */
 const poiAssetResponse = (/** @type {any} */ r, /** @type {string} */ origin) => new Response(r.object.body, {
   status: 200,
   headers: {
     'content-type': r.type,
     'access-control-allow-origin': origin,
-    'cache-control': r.live ? 'public, max-age=31536000, immutable' : 'private, no-store',
+    'cache-control': r.live ? `public, max-age=${POI_LIVE_ASSET_MAX_AGE_S}` : 'private, no-store',
   },
 });
 /** AUDIT ONLINE A17's law, the service's one answer to a throw: LOGGED, not lost, and a player told nothing about it -
@@ -808,15 +814,17 @@ const service = {
       // POI-1: THE LIVE FEED AND A LIVE ASSET NEED NO SESSION - what every approved POI is, and the bytes it names, are
       // every player's to read, the game's included (poi.js). Bounded per address in this isolate's memory, as the yards
       // are; the feed kept in the isolate and answered 304 to a game that already holds its version; an asset by its
-      // hash, so it is cached for good. An asset no live POI names falls through to a builder's session below.
+      // hash, cached a day (AUDIT POI S4: it can stop being public). An asset no live POI names falls through to a builder's session below.
       if (poiPath && request.method === 'GET' && (poiPath.route === 'live' || poiPath.route === 'asset')) {
         const ip = request.headers.get('cf-connecting-ip') || 'unknown';
         if (overAccountRate(`poi:${ip}`, nowS, POI_OPEN_MAX, ACCOUNT_WINDOW_S)) return no('rate', 429, origin);
-        const feed = await poiLiveFeed(env.DB, Date.now());
+        // AUDIT POI S11: the version the game holds, read strong or weak - newer than this isolate's kept feed, the version is asked now
+        const held = poiPath.route === 'live' ? poiHeldVersion(request.headers.get('if-none-match')) : -1;
+        const feed = await poiLiveFeed(env.DB, Date.now(), held);
         if (poiPath.route === 'live') {
-          const etag = `"poi-${feed.v}"`;
+          const etag = poiFeedTag(feed.v);
           const headers = { 'access-control-allow-origin': origin, 'access-control-expose-headers': 'etag', etag, 'cache-control': 'public, max-age=30' };
-          if (request.headers.get('if-none-match') === etag) return new Response(null, { status: 304, headers });
+          if (held === feed.v) return new Response(null, { status: 304, headers });
           return new Response(feed.body, { status: 200, headers: { ...headers, 'content-type': 'application/json; charset=utf-8' } });
         }
         if (feed.live.has(poiPath.sha) || !request.headers.get('authorization')) {
@@ -1907,7 +1915,7 @@ const service = {
           if (route === 'submit') return answer(await submitPoi(pctx, me, env, { id: body.id, rev: body.rev }));
           if (route === 'withdraw') return answer(await withdrawPoi(pctx, me, env, { id: body.id, rev: body.rev }));
           if (route === 'retire') return answer(await requestRetire(pctx, me, env, { id: body.id }));
-          if (route === 'review') return answer(await reviewPoi(pctx, me, env, { id: body.id, rev: body.rev, verdict: body.verdict, note: body.note ?? null }));
+          if (route === 'review') return answer(await reviewPoi(pctx, me, env, { id: body.id, rev: body.rev, verdict: body.verdict, note: body.note ?? null, docSha: body.docSha ?? null }));   // AUDIT POI S1: what the approver saw
           if (route === 'rollback') return answer(await rollbackPoi(pctx, me, env, { id: body.id, rev: body.rev }));
           if (route === 'unshelve') return answer(await unshelve(pctx, me, env, { id: body.id }));
         }

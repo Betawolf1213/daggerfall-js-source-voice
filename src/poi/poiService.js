@@ -50,7 +50,8 @@ async function put(io, path, body, contentType) {
 export const poiMe = (io) => call(io, '/v1/poi/me');
 /** Every POI a builder may see: `{ pois: [{ id, liveRev, liveAt, newestRev, revs: [...] }] }`. @param {PoiIo} io */
 export const poiList = (io) => call(io, '/v1/poi/list');
-/** The approver's queue: every submitted revision, with the live document it would replace. @param {PoiIo} io */
+/** The approver's queue: the oldest submitted revisions, each with the live document it would replace and its own
+ *  document's name (`docSha`) - `{ queue, more }`, `more` when others wait (AUDIT POI S1, S10). @param {PoiIo} io */
 export const poiQueue = (io) => call(io, '/v1/poi/queue');
 /** One POI's every revision, documents and words. @param {PoiIo} io @param {string} id */
 export const poiHistory = (io, id) => call(io, `/v1/poi/doc/${id}`);
@@ -64,8 +65,10 @@ export const poiSubmit = (io, id, rev) => call(io, '/v1/poi/submit', { id, rev }
 export const poiWithdraw = (io, id, rev) => call(io, '/v1/poi/withdraw', { id, rev });
 /** Ask that a live POI come out of the world (the approver decides, as for any revision). @param {PoiIo} io */
 export const poiRetire = (io, id) => call(io, '/v1/poi/retire', { id });
-/** The approver's word on a submission: `verdict` 'approve' or 'reject', with a note. @param {PoiIo} io */
-export const poiReview = (io, id, rev, verdict, note = null) => call(io, '/v1/poi/review', { id, rev, verdict, note });
+/** The approver's word on a submission: `verdict` 'approve' or 'reject', with a note. AUDIT POI S1: `docSha` the name of
+ *  the document the approver looked at (the queue item's) - an approval of a document names it, and the store refuses
+ *  `poi-changed` a revision whose document is no longer that one. @param {PoiIo} io */
+export const poiReview = (io, id, rev, verdict, note = null, docSha = null) => call(io, '/v1/poi/review', { id, rev, verdict, note, ...(typeof docSha === 'string' ? { docSha } : {}) });
 /** The approver puts an earlier approved revision back in the world. @param {PoiIo} io */
 export const poiRollback = (io, id, rev) => call(io, '/v1/poi/rollback', { id, rev });
 

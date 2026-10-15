@@ -150,6 +150,14 @@ const REFUSAL_WORDS = {
   'poi-state': () => t('account.refusal.poiState', 'That revision has changed since you opened it. Refresh and try again.'),
   'poi-not-live': () => t('account.refusal.poiNotLive', 'That POI is not in the world, so it cannot be retired.'),
   'poi-pending': () => t('account.refusal.poiPending', 'A retirement of that POI is already waiting for approval.'),
+  // AUDIT POI: the store's newer words - a submission changed under the approver's look (S1), a builder's holdings full
+  // (S10: a full shelf had been told a full day's uploads), and an entry taken off the shelf (U13: it had been told the
+  // service does not know the request)
+  'poi-changed': () => t('account.refusal.poiChanged', 'That submission has changed since you looked at it. Look at it again before you decide.'),
+  'poi-drafts-full': () => t('account.refusal.poiDraftsFull', 'You have as many drafts and submissions open as one builder may. Send your drafts, or wait for an approver\'s word on what you sent, before starting another.'),
+  'poi-shelf-full': () => t('account.refusal.poiShelfFull', 'Your entries fill the library shelf. Take some you no longer need off it before you keep more.'),
+  'poi-shelf-spent': () => t('account.refusal.poiShelfSpent', 'You have put as many entries in the library as one builder may, those taken off included. Ask a developer to make room.'),
+  'poi-gone': () => t('account.refusal.poiGone', 'That library entry has been taken off the shelf.'),
   email: () => t('account.refusal.email', 'That does not look like an email address.'),
   rate: () => t('account.refusal.rate', 'Too many attempts. Wait a few minutes and try again.'),
   auth: () => t('account.refusal.auth', 'You have been signed out. Sign in again.'),

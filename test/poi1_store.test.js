@@ -211,7 +211,7 @@ test('POI-1 STORE: an upload is named by its own hash and read as the kind it cl
   assert.equal((await upload(dev, 'texture', mesh)).json.error, 'poi-bad-texture', 'a mesh claimed a texture is no image');
 });
 
-test('POI-1 STORE: draft, submit, approve - the feed is live revisions only: a draft and a submission stand nowhere and their assets are a builder\'s alone; approved, the POI is in the feed and its assets anyone\'s, cached for good; the feed answers 304 to the version a game holds (mutants: a draft asset public; a builder decides; the draft saved anew)', async () => {
+test('POI-1 STORE: draft, submit, approve - the feed is live revisions only: a draft and a submission stand nowhere and their assets are a builder\'s alone; approved, the POI is in the feed and its assets anyone\'s, cached a day; the feed answers 304 to the version a game holds (mutants: a draft asset public; a builder decides; the draft saved anew)', async () => {
   const { req, upload, mac, dev, player } = await theStore();
   const m = await upload(dev, 'mesh', encodePoiMesh(quad()));
   const t = await upload(dev, 'texture', PNG);
@@ -249,7 +249,8 @@ test('POI-1 STORE: draft, submit, approve - the feed is live revisions only: a d
   assert.equal(q.json.queue[0].doc.name, 'The Watchtower');
   assert.equal(q.json.queue[0].stale, false);
   assert.equal((await req('POST', '/v1/poi/review', { who: dev, body: { id, rev: 1, verdict: 'approve' } })).status, 403);
-  assert.deepEqual((await req('POST', '/v1/poi/review', { who: mac, body: { id, rev: 1, verdict: 'approve', note: 'Good.' } })).json, { id, rev: 1, state: 'approved' });
+  // PIN MOVED (AUDIT POI S1): an approval names the document the approver saw - the queue's `docSha`
+  assert.deepEqual((await req('POST', '/v1/poi/review', { who: mac, body: { id, rev: 1, verdict: 'approve', note: 'Good.', docSha: q.json.queue[0].docSha } })).json, { id, rev: 1, state: 'approved' });
   assert.equal((await req('POST', '/v1/poi/review', { who: mac, body: { id, rev: 1, verdict: 'reject' } })).status, 409, 'decided once');
 
   const feed1 = await req('GET', '/v1/poi/live');
@@ -261,7 +262,7 @@ test('POI-1 STORE: draft, submit, approve - the feed is live revisions only: a d
   const pub = await req('GET', `/v1/poi/asset/${t.sha}`);
   assert.equal(pub.status, 200);
   assert.equal(pub.res.headers.get('content-type'), 'image/png');
-  assert.equal(pub.res.headers.get('cache-control'), 'public, max-age=31536000, immutable');
+  assert.equal(pub.res.headers.get('cache-control'), 'public, max-age=86400', 'PIN MOVED (AUDIT POI S4): a day, not immutable for a year - a live asset can stop being public');
   assert.deepEqual(new Uint8Array(await pub.res.arrayBuffer()), PNG);
 });
 
@@ -271,7 +272,11 @@ test('POI-1 STORE: rejected with a word; a retirement asked and approved takes t
   const id = 'poi-0000000000aa';
   const save = async (who, name, base = null) => (await req('PUT', '/v1/poi/draft', { who, body: { doc: docOf(id, m.sha, { name }), base } })).json;
   const submit = async (who, rev) => (await req('POST', '/v1/poi/submit', { who, body: { id, rev } })).json;
-  const review = async (rev, verdict, note) => (await req('POST', '/v1/poi/review', { who: mac, body: { id, rev, verdict, note } })).json;
+  // PIN MOVED (AUDIT POI S1): the approver's word names the document seen, as the queue gives it
+  const review = async (rev, verdict, note) => {
+    const seen = (await req('GET', '/v1/poi/queue', { who: mac })).json.queue.find((x) => x.id === id && x.rev === rev);
+    return (await req('POST', '/v1/poi/review', { who: mac, body: { id, rev, verdict, note, docSha: seen?.docSha ?? null } })).json;
+  };
   const live = async () => { forgetPoiFeed(); return (await req('GET', '/v1/poi/live')).json; };
 
   await save(dev, 'First'); await submit(dev, 1); await review(1, 'approve');
@@ -312,7 +317,8 @@ test('POI-1 STORE: rejected with a word; a retirement asked and approved takes t
   const list = (await req('GET', '/v1/poi/list', { who: mapper })).json.pois;
   assert.equal(list[0].name, 'First');
   assert.equal(list[0].liveRev, 1);
-  assert.deepEqual(list[0].revs.map((x) => x.state), ['approved', 'approved', 'rejected', 'draft', 'approved']);
+  // PIN MOVED (AUDIT POI S14): the rollback is a revision of its own, the approver's, approved
+  assert.deepEqual(list[0].revs.map((x) => [x.kind, x.state]), [['doc', 'approved'], ['doc', 'approved'], ['doc', 'rejected'], ['doc', 'draft'], ['retire', 'approved'], ['rollback', 'approved']]);
 });
 
 test('POI-1 STORE: the feed kept in the isolate - asked again inside its keep, no statement; past it, one small read, and the documents only when the version moved (mutant: the feed unkept)', async () => {

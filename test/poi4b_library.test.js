@@ -147,8 +147,9 @@ test('POI-4b THE STORE: the shelf listed to builders alone, newest change first,
   assert.equal((await req('POST', '/v1/poi/unshelve', { who: mapper, body: { id } })).json.error, 'poi-not-author');
   assert.deepEqual((await req('POST', '/v1/poi/unshelve', { who: dev, body: { id } })).json, { id, gone: true });
   assert.deepEqual((await req('GET', '/v1/poi/shelf', { who: dev })).json.items.map((x) => x.id), ['lib-00000000cafe']);
-  assert.equal((await req('GET', `/v1/poi/shelf/${id}`, { who: dev })).status, 404);
-  assert.equal((await req('PUT', '/v1/poi/shelf', { who: dev, body: { item: entryOf(id, m.sha) } })).status, 404, 'not put back over');
+  // PIN MOVED (AUDIT POI U13): taken off is said so - `poi-gone`, 410 - not "the service does not know that request"
+  assert.deepEqual([(await req('GET', `/v1/poi/shelf/${id}`, { who: dev })).status, (await req('GET', `/v1/poi/shelf/${id}`, { who: dev })).json.error], [410, 'poi-gone']);
+  assert.equal((await req('PUT', '/v1/poi/shelf', { who: dev, body: { item: entryOf(id, m.sha) } })).status, 410, 'not put back over');
   assert.equal((await req('POST', '/v1/poi/unshelve', { who: mac, body: { id: 'lib-00000000cafe' } })).status, 200, 'an approver takes any off');
 
   // a builder's count is bounded
@@ -156,7 +157,7 @@ test('POI-4b THE STORE: the shelf listed to builders alone, newest change first,
   const devId = raw.prepare('SELECT id FROM players WHERE handle = ?').get('Dev').id;
   const ins = raw.prepare('INSERT INTO poi_shelf (id, item, name, tags, thumb, parts, triangles, by, by_name, at, updated_at, updated_by) VALUES (?, ?, ?, ?, NULL, 1, 2, ?, ?, 1, 1, ?)');
   for (let i = 0; i < POI_SHELF_MAX; i++) ins.run(`lib-${(0x100000 + i).toString(16).padStart(12, '0')}`, '{}', 'x', '[]', devId, 'Dev', 'Dev');
-  assert.equal((await req('PUT', '/v1/poi/shelf', { who: dev, body: { item: entryOf('lib-0000000f00d0', m.sha) } })).json.error, 'poi-quota');
+  assert.equal((await req('PUT', '/v1/poi/shelf', { who: dev, body: { item: entryOf('lib-0000000f00d0', m.sha) } })).json.error, 'poi-shelf-full', 'PIN MOVED (AUDIT POI U13): a full shelf its own word, not a full day\'s uploads');
   assert.equal((await req('PUT', '/v1/poi/shelf', { who: mapper, body: { item: entryOf('lib-0000000f00d0', m.sha) } })).status, 200, 'another builder\'s own count');
 });
 

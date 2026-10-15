@@ -2,11 +2,12 @@
   {
     "name": "POI1-the-bounds-unchecked",
     "file": "src/poi/poiMesh.js",
-    "old": "  for (let k = 0; k < 3; k++) if (Math.abs(min[k] - boundsMin[k]) > 1e-3 || Math.abs(max[k] - boundsMax[k]) > 1e-3) return { error: 'bounds' };",
+    "old": "  for (let k = 0; k < 3; k++) if (!(Math.abs(min[k] - boundsMin[k]) <= 1e-3 && Math.abs(max[k] - boundsMax[k]) <= 1e-3)) return { error: 'bounds' };",
     "new": "  for (let k = 0; k < 3; k++) if (false) return { error: 'bounds' };",
     "tests": [
       "test/poi1_store.test.js"
-    ]
+    ],
+    "note": "AUDIT POI (lane A): re-aimed by content - S5 wrote the bounds check as the bounds agreeing (a NaN bound refused)."
   },
   {
     "name": "POI1-an-index-past-the-list",
@@ -92,20 +93,22 @@
   {
     "name": "POI1-a-builder-decides",
     "file": "server-account/src/poi.js",
-    "old": "export async function reviewPoi(ctx, player, env, { id, rev, verdict, note = null }) {\n  if (!poiRolesOf(player, env).approver) return { error: 'poi-not-approver' };",
-    "new": "export async function reviewPoi(ctx, player, env, { id, rev, verdict, note = null }) {\n  if (!poiRolesOf(player, env).builder) return { error: 'poi-not-approver' };",
+    "old": "export async function reviewPoi(ctx, player, env, { id, rev, verdict, note = null, docSha = null }) {\n  if (!poiRolesOf(player, env).approver) return { error: 'poi-not-approver' };",
+    "new": "export async function reviewPoi(ctx, player, env, { id, rev, verdict, note = null, docSha = null }) {\n  if (!poiRolesOf(player, env).builder) return { error: 'poi-not-approver' };",
     "tests": [
       "test/poi1_store.test.js"
-    ]
+    ],
+    "note": "AUDIT POI (lane A): re-aimed by content - S1 added the approval's `docSha` to the signature."
   },
   {
     "name": "POI1-a-second-retirement-asked",
-    "file": "server-account/src/poi.js",
-    "old": "  if (await ctx.db.prepare(\"SELECT 1 FROM poi_revs WHERE poi_id = ? AND kind = 'retire' AND state = 'submitted'\").bind(id).first()) return { error: 'poi-pending' };",
-    "new": "  if (false) return { error: 'poi-pending' };",
+    "file": "server-account/migrations/0114_poi.sql",
+    "old": "CREATE UNIQUE INDEX IF NOT EXISTS poi_revs_one_retire",
+    "new": "CREATE INDEX IF NOT EXISTS poi_revs_one_retire",
     "tests": [
       "test/poi1_store.test.js"
-    ]
+    ],
+    "note": "AUDIT POI (lane A): re-aimed by content - S8 made one retirement waiting the database's own unique index (the asked-then-written check is gone)."
   },
   {
     "name": "POI1-a-rollback-to-a-rejected-revision",
@@ -119,28 +122,31 @@
   {
     "name": "POI1-the-stale-unflagged",
     "file": "server-account/src/poi.js",
-    "old": "      stale: r.kind === 'doc' && r.live_rev != null && r.base_rev !== r.live_rev,",
+    "old": "      stale: (r.base_rev ?? null) !== (r.live_rev ?? null),",
     "new": "      stale: false,",
     "tests": [
       "test/poi1_store.test.js"
-    ]
+    ],
+    "note": "AUDIT POI (lane A): re-aimed by content - S12 made stale whatever the live revision is now."
   },
   {
     "name": "POI1-the-feed-unkept",
     "file": "server-account/src/poi.js",
-    "old": "  if (kept && nowMs - kept.checkedMs < POI_FEED_KEEP_MS) return kept;",
+    "old": "  if (kept && kept.v >= atLeast && nowMs - kept.checkedMs < POI_FEED_KEEP_MS) return kept;",
     "new": "  if (false) return kept;",
     "tests": [
       "test/poi1_store.test.js"
-    ]
+    ],
+    "note": "AUDIT POI (lane A): re-aimed by content - S11 added the version the game holds to the keep."
   },
   {
     "name": "POI1-the-draft-saved-anew",
     "file": "server-account/src/poi.js",
-    "old": "  if (mine) {\n    await ctx.db.prepare(\"UPDATE poi_revs",
-    "new": "  if (false) {\n    await ctx.db.prepare(\"UPDATE poi_revs",
+    "old": "    if (over) return { id, rev: over.rev, state: 'draft' };",
+    "new": "    if (false) return { id, rev: over.rev, state: 'draft' };",
     "tests": [
       "test/poi1_store.test.js"
-    ]
+    ],
+    "note": "AUDIT POI (lane A): re-aimed by content - S7 made the save over the author's draft one statement."
   }
 ]
