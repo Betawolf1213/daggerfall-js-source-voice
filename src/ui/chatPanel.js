@@ -160,7 +160,7 @@ import { CHAT_MAX } from '../net/wire.js';
 import { tagOf, findQuery, findLines, playerFound, CHAT_FIND_MAX } from '../net/chat.js';   // CHAT-FIND: the search's own law
 import { guildTagText } from '../net/guildLaw.js';   // GUILD1c: the guild's tag beside a name, as over a head
 import { glyphBadges, glyphSvgNode, cssRgba, TITLE_RGBA } from './playerBadge.js';   // ACC3c: the same table the name over a head reads - a name wears its glyphs everywhere it is drawn (TITLE-C: its title over the head alone, never in the chat); cssRgba comes from HERE and not ui/nameLayer.js, which would pull the whole remote-player pass into this panel
-import { rosterRows, rosterTitle, foundRows, withFound, NO_ROWS } from '../net/roster.js';   // CHAT-R1: who is online, in order (the cap is the model's own - AUDIT-CHATR F4: this file imported it and never used it, and lint could not see that: no-unused-vars is on for server/src and not for src)
+import { rosterRows, rosterTitle } from '../net/roster.js';   // CHAT-R1: who is online, in order (the cap is the model's own - AUDIT-CHATR F4: this file imported it and never used it, and lint could not see that: no-unused-vars is on for server/src and not for src)
 import { PARTY_GREEN_CSS } from '../net/social.js';   // CHAT-CHAN: the Party tab's mark wears the party's one green
 import { SHORTCODE_LIST, findCommandOf } from '../net/chatCommands.js';   // EMOTE1: the picker offers the shortcodes' own emoji, in their order, so a pick and a :code: say the same thing
 import { getPref, setPref } from '../systems/uiPrefs.js';   // CHAT-R2: the hidden state outlives the session
@@ -790,7 +790,6 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
   let query = '';          // CHAT-FIND: the search as it reads (findQuery) - '' is the conversation, as it always was
   let findKey = '';        // CHAT-FIND: what the drawn results were built from (the query, the log's version, the open tab)
   let whoQuerySeen = '';   // CHAT-FIND: the query the roster was last drawn under
-  let whoFoundSeen = NO_ROWS;   // CHAT-FIND-HUB: the hub's found rows the roster was last drawn with
   /** CHAT-FIND: the list's tab while it shows the search's results - no tab's, so the conversation is rebuilt after */
   const FIND_LIST = '\u0000find';
 
@@ -1118,22 +1117,20 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
   const paintWho = () => {
     if (!roster) { who.style.display = 'none'; return; }
     const src = roster();
-    const { rows: all, all: everyone = all, total, shown, label } = rosterRows(src);   // CHAT-FIND-ALL: `everyone` uncut, for the search
     // CHAT-FIND-HUB: past what this client knows (a shard's link, past CHAT_ROSTER_MAX online) the World tab's link asks
     // the hub's own search while the box holds a query (net/online.js askFind - its own clock bounds it; '' lets the
-    // answer go), and the players it found join the column's
+    // answer go), and the players it found ride in `everyone` (net/roster.js)
     src?.askFind?.(query);
-    const found = query ? foundRows(src, query) : NO_ROWS;
+    const { rows: all, all: everyone = all, total, shown, label } = rosterRows(src);   // CHAT-FIND-ALL: `everyone` uncut, for the search
     // PERF-ON3: THE SAME LIST IS NO NEWS. net/roster.js answers the very (frozen) array it answered last frame while
     // nothing it is made of moved, so with the heading's word, the count and the open menu also as they were, the key
     // below could only come out as it did - and building it was a string over every row, every frame the chat is open.
     // CHAT-FIND: and the search as it was - a query is part of what the column draws.
-    if (all === whoRowsSeen && everyone === whoAllSeen && total === whoTotalSeen && label === whoLabelSeen && menuFor === whoMenuSeen && query === whoQuerySeen && found === whoFoundSeen) return;
-    whoRowsSeen = all; whoAllSeen = everyone; whoTotalSeen = total; whoLabelSeen = label; whoMenuSeen = menuFor; whoQuerySeen = query; whoFoundSeen = found;
+    if (all === whoRowsSeen && everyone === whoAllSeen && total === whoTotalSeen && label === whoLabelSeen && menuFor === whoMenuSeen && query === whoQuerySeen) return;
+    whoRowsSeen = all; whoAllSeen = everyone; whoTotalSeen = total; whoLabelSeen = label; whoMenuSeen = menuFor; whoQuerySeen = query;
     // CHAT-FIND: under a search the column is the players it finds - by a piece of the name, or '#' the start of a tag
     // CHAT-FIND-ALL: the search reads EVERY player this client knows, not the first ROSTER_ROWS_MAX the column draws
     const rows = query ? everyone.filter((r) => playerFound(r.name, r.id, query)) : all;
-    const drawn = withFound(rows, found);   // CHAT-FIND-HUB: and everyone online the hub's search found
     // SOC3: the open menu is part of what is DRAWN, so it joins the key - a roster that did not change still has to
     // repaint when a row is opened or closed, and nothing else about this law moved.
     // ACC3c: THE BADGE JOINS THE KEY. This list repaints only when the
@@ -1142,17 +1139,17 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     // reason SOC3 put the open menu in here. TITLE-R: the glyphs alone,
     // as the row draws them.
     // CHAT-CHAN: and the list's own word - a tab change can bring the same people under another heading
-    const key = label + '|' + total + '|' + (menuFor ?? '') + '|' + query + '|' + drawn.map((r) => r.id + ':' + r.name + ':' + (r.me ? 1 : 0) + ':' + (r.glyphs ?? []).join('+') + ':' + (r.gt ?? '')).join(',');   // GUILD1c: and the guild's tag
+    const key = label + '|' + total + '|' + (menuFor ?? '') + '|' + query + '|' + rows.map((r) => r.id + ':' + r.name + ':' + (r.me ? 1 : 0) + ':' + (r.glyphs ?? []).join('+') + ':' + (r.gt ?? '')).join(',');   // GUILD1c: and the guild's tag
     if (key === whoKey) return;
     whoKey = key;
-    whoHead.textContent = query ? `${label} \u2014 ${drawn.length} of ${total}` : rosterTitle(total, label);   // CHAT-FIND: how many the search found, of the room (one line, as the heading always is)
+    whoHead.textContent = query ? `${label} \u2014 ${rows.length} of ${total}` : rosterTitle(total, label);   // CHAT-FIND: how many the search found, of the room (one line, as the heading always is)
     // ROSTER-G (Mac: "the roster naming itself seems hardcoded"): the #tag is the tie-breaker for two players with ONE
     // name (net/roster.js's second sort clause, the chat line's own suffix), and it read as a fixed code stuck to every
     // name. It is drawn only where it does that work - beside a name another row shares.
     const dup = new Set(); const seen = new Set();
-    for (const r of drawn) { const k = r.name.toLowerCase(); if (seen.has(k)) dup.add(k); seen.add(k); }
+    for (const r of rows) { const k = r.name.toLowerCase(); if (seen.has(k)) dup.add(k); seen.add(k); }
     whoNames = [];
-    whoRows = drawn.map((r) => {
+    whoRows = rows.map((r) => {
       // SOC3: a row is a door for everyone but ME - "Add friend" on my own name is the one action that can never mean
       // anything, and net/social.js would refuse it in words a player should not have to read. A host whose picture
       // is not up yet (no account, no hub) offers nothing, and a row with nothing behind it is not a door either.
@@ -1187,7 +1184,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     whoList.replaceChildren(...whoRows);
     // a cut list says so rather than quietly under-reporting the room
     // CHAT-FIND: under a search, a column the search emptied says so in place of the room's overflow
-    whoMore.textContent = query ? (drawn.length ? '' : 'No one here by that name') : total > shown ? '+' + (total - shown) + ' more' : '';
+    whoMore.textContent = query ? (rows.length ? '' : 'No one here by that name') : total > shown ? '+' + (total - shown) + ' more' : '';
     paintNames();   // SOC3: the spans are new, so the colours they wear are asked for once, here
   };
 

@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { ChatLog, tagOf, findQuery, playerFound, lineFound, findLines, CHAT_FIND_MAX } from '../src/net/chat.js';
 import { findCommandOf, FIND_COMMANDS, HELP_LINES, parseChatLine } from '../src/net/chatCommands.js';
 import { createChatPanel } from '../src/ui/chatPanel.js';
-import { foundRows, withFound, NO_ROWS } from '../src/net/roster.js';
+import { rosterRows } from '../src/net/roster.js';
 
 // ─── THE LAW ────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -238,24 +238,22 @@ test('CHAT-FIND panel: /search <name> in the chat field fills the search and sen
 
 // ─── CHAT-FIND-HUB: past what this client knows, the hub's own search ───────────────────────────────────────────────
 
-test('CHAT-FIND-HUB law: the hub\'s answer as rows the query finds - by the box\'s law or the hub\'s fold, never my own, by name, the same frozen array while nothing moved - and merged into the known rows each player once (mutants: the fold unread; my own row listed; the answer unfiltered; a known player twice)', () => {
-  const hubFound = { q: 'o', l: [{ id: 'p-obr', name: "O'Brien" }, { id: 'p-me', name: 'Mac' }, { id: 'p-bor', name: 'Borgrim' }, { id: 'p-zed', name: 'Zed' }, null] };
-  const session = { id: 'p-me', name: 'Mac', hubFound };
-  assert.deepEqual(foundRows(session, 'obrien').map((r) => r.name), ["O'Brien"], 'the hub\'s fold');
-  assert.deepEqual(foundRows(session, 'BOR').map((r) => [r.id, r.name, r.me, r.tag]), [['p-bor', 'Borgrim', false, tagOf('p-bor')]]);
-  assert.deepEqual(foundRows(session, 'o').map((r) => r.name), ['Borgrim', "O'Brien"], 'by name, never mine');
-  assert.equal(foundRows(session, 'o'), foundRows(session, 'o'), 'the same frozen array');
-  assert.ok(Object.isFrozen(foundRows(session, 'o')[0]));
-  assert.equal(foundRows(session, 'mac'), NO_ROWS, 'never my own row - my session lists me');
-  assert.equal(foundRows(session, ''), NO_ROWS);
-  assert.equal(foundRows(session, '#ab'), NO_ROWS, 'a tag is no hub search');
-  assert.equal(foundRows({ id: 'p-me' }, 'o'), NO_ROWS, 'no answer');
-  const known = [{ id: 'p-bor', name: 'Borgrim', tag: tagOf('p-bor') }];
-  assert.equal(withFound(known, NO_ROWS), known);
-  assert.deepEqual(withFound(known, foundRows(session, 'o')).map((r) => r.id), ['p-bor', 'p-obr'], 'each player once');
+test('CHAT-FIND-HUB law: the hub\'s answer to the box (`hubFound`) joins the uncut list the search filters - each player once (mine my session\'s), by name, the same frozen array while nothing moved - and never the drawn rows (mutants: the answer unread; a known player twice; the answer unsorted; a stale memo)', () => {
+  const peers = new Map([['p-bor', { id: 'p-bor', name: 'Borgrim' }]]);
+  const hubFound = { q: 'o', l: [{ id: 'p-obr', name: 'Obrin' }, { id: 'p-me', name: 'Mac' }, { id: 'p-bor', name: 'Borgrim' }, null, { id: 'p-ado', name: 'Adolf' }] };
+  const session = { id: 'p-me', name: 'Mac', peers, hubFound };
+  const r = rosterRows(session);
+  assert.deepEqual(r.all.map((x) => [x.id, x.name, x.me]), [['p-ado', 'Adolf', false], ['p-bor', 'Borgrim', false], ['p-me', 'Mac', true], ['p-obr', 'Obrin', false]], 'each once, by name, mine my own');
+  assert.equal(r.all.find((x) => x.id === 'p-obr').tag, tagOf('p-obr'));
+  assert.ok(Object.isFrozen(r.all) && Object.isFrozen(r.all[0]));
+  assert.deepEqual(r.rows.map((x) => x.name), ['Borgrim', 'Mac'], 'the column draws what this client knows');
+  assert.equal(r.total, 2);
+  assert.equal(rosterRows(session).all, r.all, 'the same frozen array while nothing moved');
+  const none = rosterRows({ id: 'p-me', name: 'Mac', peers });
+  assert.deepEqual(none.all.map((x) => x.name), ['Borgrim', 'Mac'], 'no answer, no more');
 });
 
-test('CHAT-FIND-HUB panel: a name typed on a roster that knows fewer than are online asks the hub (the source\'s askFind), and the players it found join the list and its count; cleared, the ask is let go (mutants: the box never asks; the found rows undrawn; the repaint blind to an answer)', () => {
+test('CHAT-FIND-HUB panel: a name typed on a roster that knows fewer than are online asks the hub (the source\'s askFind), and the players it found join the list and its count; cleared, the ask is let go (mutants: the box never asks; the answer unread)', () => {
   let clock = 1000;
   const log = new ChatLog({ now: () => clock++ });
   const asked = [];

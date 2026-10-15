@@ -39,9 +39,8 @@
 //
 // Not a DFU member: Daggerfall Unity has no chat and no roster.
 // Ledger A row (ONLINE).
-import { tagOf, inEarshot, findQuery, playerFound } from './chat.js';
+import { tagOf, inEarshot } from './chat.js';
 import { sanitizeName, readBadge, readGuildTag } from './wire.js';   // GUILD1c: a row's guild tag, through the wire's own reader
-import { foldFind } from './hubShards.js';   // CHAT-FIND-HUB: the hub's own fold of a name, so a row it found is shown
 
 /** How many rows the panel will hold. The relay's own ROSTER_MAX
  *  bounds what a room reports; this is the drawing's own ceiling, so
@@ -69,7 +68,8 @@ export const ROSTER_ROWS_MAX = 200;
  *             peers?: Map<string, { id?: string|null, name?: string|null, gt?: string|null }>|null,
  *             roomCount?: number|null, label?: string|null,
  *             guildOnline?: Map<string, { id?: string|null, name?: string|null, gt?: string|null }>|null,
- *             hubOnline?: Map<string, { id?: string|null, name?: string|null, gt?: string|null }>|null }} RosterSource
+ *             hubOnline?: Map<string, { id?: string|null, name?: string|null, gt?: string|null }>|null,
+ *             hubFound?: { q?: string, l?: any[] }|null }} RosterSource   // CHAT-FIND-HUB: the hub's answer to the search box
  */
 
 // PERF-ON3 (2026-10-06, Mac: "I wanna look into how we can continue to improve performance, including for online"):
@@ -201,40 +201,32 @@ export function rosterRows(session) {
   // list"): `all` is every row this client knows, sorted and UNCUT - the panel's search filters it, not the first
   // ROSTER_ROWS_MAX the column draws. The same frozen array while nothing moved (PERF-ON3), so the panel's key holds.
   // non-enumerable: the answer's shape (rows, total, shown, label) is what its callers and pins compare; `all` rides beside it
-  return Object.defineProperty({ rows: _lastOut, total, shown: Math.min(rows.length, ROSTER_ROWS_MAX), label }, 'all', { value: _lastAll });
+  // CHAT-FIND-HUB: and the players the hub's own search found (`hubFound`) that this client does not know
+  return Object.defineProperty({ rows: _lastOut, total, shown: Math.min(rows.length, ROSTER_ROWS_MAX), label }, 'all', { value: withHubFound(_lastAll, session) });
 }
 
-/** CHAT-FIND-HUB: no rows found - one frozen array, so the panel's "nothing moved" holds by identity. */
-export const NO_ROWS = Object.freeze(/** @type {RosterRow[]} */ ([]));
-let _foundOf = /** @type {any} */ (null), _foundQ = '', _foundOut = NO_ROWS;
-/** CHAT-FIND-HUB (2026-10-15, Mac: "Even in world tab I try to search for someone and they can't be found cause it only
- *  shows like 25 ppl out of 600"): the players the hub's own search answered (`hubFound`, net/online.js askFind) that
- *  `query` finds - by the box's law (playerFound) or the hub's fold (foldFind: "obrien" finds O'Brien) - as rows, by
- *  name. Any answer's rows are real matches whatever it was asked, so the answer to "jo" serves "joh" until its own
- *  lands. Never my own row (my session lists me). The same frozen array while the answer and the query stand. */
-export function foundRows(session, query) {
+let _hubOf = /** @type {any} */ (null), _hubBase = /** @type {readonly RosterRow[]|null} */ (null), _hubOut = _lastAll;
+/** CHAT-FIND-HUB (2026-10-15, Mac: "player search isnt working properly. Even in world tab I try to search for someone
+ *  and they can't be found cause it only shows like 25 ppl out of 600"): past CHAT_ROSTER_MAX online the hub lets the
+ *  World tab's everyone go (net/online.js sendHubWho) and a shard's link knows its own shard alone, so the search -
+ *  which filters `all` (CHAT-FIND-ALL) - found nobody on the other fifteen. The hub's answer to the box's query
+ *  (net/online.js askFind, `hubFound`) joins `all`: each player once (my own row is my session's), by name.
+ *  The panel's filter is the box's law as ever, so an answer to "jo" serves "joh" until its own lands. `base` itself
+ *  when the hub adds nobody; the same frozen array while the answer and the list stand. */
+function withHubFound(base, session) {
   const f = session?.hubFound;
-  const q = findQuery(query);
-  if (!f || !Array.isArray(f.l) || !q || q.startsWith('#')) return NO_ROWS;
-  if (f === _foundOf && q === _foundQ) return _foundOut;
-  const fq = foldFind(q);
-  const out = [];
+  if (!f || !Array.isArray(f.l) || !f.l.length) return base;
+  if (f === _hubOf && base === _hubBase) return _hubOut;
+  const have = new Set(base.map((r) => r.id));
+  const more = [];
   for (const p of f.l) {
-    if (!p || typeof p.id !== 'string' || p.id === session?.id) continue;
-    if (!playerFound(p.name, p.id, q) && !(fq && foldFind(p.name).includes(fq))) continue;
-    out.push(freezeRow({ id: p.id, name: sanitizeName(p.name), tag: tagOf(p.id), me: false, ...readBadge(p), gt: readGuildTag(p) }));
+    if (!p || typeof p.id !== 'string' || have.has(p.id)) continue;   // my own row is in `base` already
+    have.add(p.id);
+    more.push(freezeRow({ id: p.id, name: sanitizeName(p.name), tag: tagOf(p.id), me: false, ...readBadge(p), gt: readGuildTag(p) }));
   }
-  _foundOf = f; _foundQ = q;
-  _foundOut = out.length ? Object.freeze(out.sort(byNameThenTag)) : NO_ROWS;
-  return _foundOut;
-}
-/** CHAT-FIND-HUB: a search's rows - those this client knows that it finds, and the hub's it does not know - by name.
- *  `known` itself when the hub adds nobody. */
-export function withFound(known, found) {
-  if (!found.length) return known;
-  const have = new Set(known.map((r) => r.id));
-  const more = found.filter((r) => !have.has(r.id));
-  return more.length ? known.concat(more).sort(byNameThenTag) : known;
+  _hubOf = f; _hubBase = base;
+  _hubOut = more.length ? Object.freeze(base.concat(more).sort(byNameThenTag)) : base;
+  return _hubOut;
 }
 
 /** The heading the panel shows: "Online - 3". A roster of one is
