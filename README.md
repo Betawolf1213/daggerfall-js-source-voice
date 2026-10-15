@@ -70,9 +70,10 @@ npm run build && cd app && npm install && npm start
 The app opens on a **launcher** (`app/launcher/`), the game's front
 door: the latest patch notes (what came since you last played marked
 NEW), your game files, saves and update settings, and a big **Play**. It
-checks for an update and installs it before you play (the Windows
-`-setup` install and the Linux AppImage replace themselves; macOS and
-the portable exe are offered their own download), and on first run finds
+checks for an update and brings it before you play - the game's own
+files, only those that changed, on every platform; a release that changes
+the app itself is installed by the Windows `-setup` install and the Linux
+AppImage, and offered as a download on macOS and the portable exe - and on first run finds
 Daggerfall - on Steam, GOG, in Daggerfall Unity's settings, or an
 unpacked DaggerfallGameFiles.zip. An update that lands mid-session is
 told in the game and waits under File > Restart to Update (on macOS and

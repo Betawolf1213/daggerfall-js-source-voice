@@ -148,7 +148,8 @@ until the next merge. Now a `version` job resolves REL3's one number once
 and every job reads it; the three legs only BUILD and hand their files on
 as run artifacts; and `publish` - which runs only when the whole matrix
 passed - checks the set is complete (`scripts/desktopRelease.mjs check`:
-the four downloads, the three manifests, the two blockmaps, by name),
+the four downloads, the three manifests, the two blockmaps - and since DA13
+the game's manifest and pack - by name),
 writes the notes once, stages a DRAFT with every file attached, and
 publishes it in one PATCH. `latest` never names a release that is half
 there, and a hand re-cut of an old build does not take `latest` back
@@ -439,7 +440,8 @@ player's copy.
 apply code silently" was the reason for the notice; DA7 reverses it on
 Mac's word, for the two transports where the swap is the installer's
 own and the player's files never move. DA6's other reason - macOS -
-stands, and macOS keeps the notice.
+stands for the SHELL, and macOS keeps the notice for it; the game's own
+files update themselves there since DA13.
 
 **Pinned** in `test/autoupdate.test.js` (4): the transport table by
 value and DERIVED (every packaged, non-portable, non-mac platform is
@@ -476,11 +478,9 @@ page, so it always answers "current". macOS and the portable exe got a
 modal dialog on nearly every launch. And the first run was a bare OS
 folder dialog before any window.
 
-**Why not a separate launcher program.** The updates are already small:
-the Windows releases' own blockmaps say an update between two of them is
-~4.5 MB of a 208 MB installer (2.0-2.2% across four pairs - the same diff
-electron-updater runs). A second program would make nothing smaller, and
-would be a second thing to install, sign and keep updated. What players
+**Why not a separate launcher program.** A second program would make no
+update smaller (what an update costs, measured, is DA13's), and would be a
+second thing to install, sign and keep updated. What players
 mean by a launcher - a window that is theirs, the update shown and
 applied before play, what changed, the first-run setup, the game always
 current - the shell does in its FIRST WINDOW, the way Discord's does.
@@ -556,10 +556,13 @@ lets Restart to Update through only once the installer has really taken
 over (electron-updater's `before-quit-for-update`, Audit-Install L2-4).
 
 **Network, still honest.** The shell's own requests are the repo's
-read-only releases API and nothing else: `releases/latest` for the
+read-only releases API - `releases/latest` for the
 notice's check, and the recent-release list for the notes, ~~asked only
 when there is an update~~ (DA10: asked at every launch as the news,
-inside the same two gates, and kept in news.json). electron-updater's
+inside the same two gates, and kept in news.json) - and, since DA13, the
+newer release's own game files (its manifest, and ranges of its pack),
+through one door that takes nothing but this repository's release
+downloads (`app/main.cjs` gameFetch). electron-updater's
 own requests are DA7's.
 Pinned exactly (`test/updatecheck.test.js`: every `net.fetch` is one of
 those or a file on disk).
@@ -791,6 +794,122 @@ DA12-14). Read and left, said out loud:
   first.
 - Not driven: a real controller, Playnite itself, and the Windows
   portable exe's forwarding of `--play` to the app it unpacks.
+
+## The game updates itself, a file at a time (DA13, 2026-10-14)
+
+A player, on Discord (2026-10-13, three upvotes): *"Every update downloads around 130 MB and overwrites the entire
+game folder. I believe only the files that have actually changed should be updated, rather than replacing all the game
+files every time."* Mac, of the options (an uncompressed archive in the Windows installer, or a channel of the game's
+own): *"B only: per-file channel."*
+
+**What an update was, measured.** Read off the published blockmaps by electron-updater's own rule (a block whose
+checksum the old map lacks is downloaded): before DA11 a Windows update was 3.0-4.7 MB (app-v0.1.4963 to 0.1.5024,
+1.4-2.3% of the installer); the release that brought DA11 took 94.3 MB (0.1.5024 to 0.1.5026); since then a merge cost
+18-45 MB, and **~128-130 MB** whenever the site's archive changed the length of its header (0.1.8457 to 0.1.8469: 129.4
+MB, 0.1.8469 to 0.1.8478: 127.6) - and a player who updates once a session spans a merge that did (0.1.8014, 0.1.8245
+or 0.1.8457 to 0.1.8548: 127.8-129.8). That is the report's 130 MB: the installer's app.asar is 195.4 MB of files, 134.9
+MB in its 7z. Nothing in the updater was broken - differential download was on, the blockmaps were published and the
+installer cached itself for the next diff. The ARCHIVE was the fault: electron-builder's differential-aware 7z compresses
+each FILE of the install on its own (non-solid, LZMA2, a 1 MB dictionary, ~4 MB blocks), so DA11's 18,354 loose files
+were 18,354 streams and a file that did not change compressed to the same bytes; DA11 made the site one file, and a
+file in it that changes size moves every byte after it - its 5.5 MB header of every file's offset and sha256 moves them
+all - so every block after the first change is new. The AppImage's squashfs (128 KB blocks) does the same: 2.9 MB when
+nothing moved (0.1.8540 to 0.1.8542), 135.6 MB when something did (0.1.8457 to 0.1.8469). And macOS and the portable exe
+have no updater at all: a whole download per release, ~240-260 MB.
+
+**What a release carries now.** Beside the installers, the GAME, a file at a time (`app/lib/gameChannel.cjs`):
+`DFO-Online-game.pack`, every file of the built site compressed ON ITS OWN - brotli, text at quality 11 and the rest at
+5, raw where brotli makes a file no smaller - and laid end to end in path order, so a file that did not change is the
+same bytes in every pack; and `DFO-Online-game.json.gz`, the manifest - each file's path, size and sha256, its offset,
+length and encoding in the pack, the release's version and update number, the SHELL it was built for and the channel's
+generation (`GAME_CHANNEL`, the one field an old shell can always read). Cut once, by the leg whose dist/ the AppImage
+bundles (`scripts/desktopRelease.mjs:"export function packGame("`); every leg indexes the dist/ it bundles into
+`app/game-seed.json` (`scripts/desktopRelease.mjs:"export function gameSeed("`, never committed), which electron-builder
+packs into the shell. The shell's id is the sha256 of the git objects of app/ and of every file its build takes from
+outside it, derived from `app/package.json` (`scripts/desktopRelease.mjs:"export function shellInputs("`), resolved once
+by the `version` job - git objects, so a Windows checkout's line endings are not the commit's. Measured on the
+2026-10-14 build: 20,299 files, 187 MB, packed to 145.7 MB with a 1.1 MB manifest; the update between two real
+releases, file by file, is 2.5-6.8 MB (0.1.8540 to 0.1.8542: 56 files; 0.1.8457 to 0.1.8469: 256).
+
+**How a copy takes it** (`app/main.cjs` askGame). A newer release is asked of the game's channel FIRST - by the
+launcher's check, the hourly re-check, `--play` and File > Check for Updates alike, inside DA6's two gates, on every
+platform and transport. A release whose game was built for another shell, or in another generation, or that failed on
+the channel here, goes the installer's path - DA7's updater on the NSIS install and the AppImage, DA6's notice on macOS
+and the portable exe, both unchanged. Otherwise the copy reads the manifest (over HTTPS from the same release as the
+installers: trusted exactly as electron-updater trusts latest.yml), plans against what it holds - the seed's file at the
+same path and sha256 stays where it is, the same bytes anywhere it holds them are copied, the rest is fetched
+(`planUpdate`) - and fetches with HTTP Range requests against the pack, ONE range a request: GitHub's release-asset host,
+behind github.com's redirect, answers a single range 206 and several ranges at once 501 (read 2026-10-14 off
+app-v0.1.8548's setup.exe: `bytes=100-199` gave 206, `bytes 100-199/240091509`, from release-assets.githubusercontent.com;
+`bytes=0-9,1000-1009` gave 501) - so one pack serves every copy, and packs grouped by stability are not needed.
+Neighbours within 64 KB are one request, none longer than 4 MB, four at a time; an answer that is not that range's 206
+is refused unread (a 200 is the whole pack), a request silent for DOWNLOAD_STALL_MS is let go, and every file is
+decoded and hashed before a byte of it is written (`decodeFile`).
+
+**On the disk** (`app/lib/gameStore.cjs`). A version the channel brings lives in `<userData>/Game/v<version>/`: its
+index of every file, and only the files that differ from the seed - forty changed files are forty files - while the rest
+are served from the install (`handleDagger`, by the version's index: a path it does not name is not served, whatever the
+install holds, so a file a release removed is gone). A version is STAGED while its folder has no index.json (never read,
+and swept), made WHOLE by index.json renamed into place - not by renaming the folder, which Windows refuses while the
+antivirus holds a file just written in it - put ON TRIAL by state.json (temporary name, renamed over: the old state or
+the new, never half) with the version it replaces kept, and PROVED by the game's first boot that comes up: the page
+subscribing to the shell's update news (`app/preload.cjs` onUpdateReady), which `src/main.js` does once its entry, its
+language and two of its own lazily loaded modules have loaded and run. Then the version before it is deleted. A boot
+on trial whose page fails to load, or whose renderer dies, is rolled back at once; one that never came up (the app
+closed or crashed first) at the next launch. A new install starts over: the installer's seed is the game again.
+
+**When it plays.** With no game page running - the launcher open - at once: Play runs it, the status bar says
+"Updated to v...", and nothing installs or restarts. With the game running, it is kept and told on the HUD, and plays
+from the page's next document load: File > Restart to Update reloads onto it now (the game's own Leave/Stay asks first
+where progress is at risk), and the next launch plays it otherwise. The installer runs only for a release that changes
+the shell itself.
+
+**Every failure is the installer's.** A manifest that does not read, a pack that is not the manifest's, a range, a hash,
+the disk, a boot that never came up: the version is remembered (`failed`) and that release goes the installer's path at
+once - its installer downloaded by the updater (a full or blockmap download, as before), or the notice's Download. With
+GitHub's API down and a version of the channel's in use, nothing is asked of the updater: it compares the INSTALLER's
+version, which the game has passed, and would fetch the installer of a release this copy already plays.
+
+**What changed in the record's own words.** DA7 applied code without asking "for the two transports where the swap is
+the installer's own", and kept macOS on the notice. DA13 is Mac's decision ("B only: per-file channel", 2026-10-14): the
+GAME's files are applied from the release on every platform - macOS and the portable exe included - under latest.yml's
+trust and a sha256 for every file; the SHELL still updates only by its installer, and on macOS and the portable exe
+still by the notice.
+
+**The publish step measures it.** Before a release is staged, `scripts/desktopRelease.mjs:"export function judgeDelta("`
+measures the update a player of the current `latest` takes to it, from the two manifests: the files whose content the
+older lacks, their bytes, the share of the pack. It fails the release when the shell's id moved with no shell file
+changed (every update would be the installer's again) or when the channel would re-download more than half the game
+(MAX_UPDATE_SHARE; DA11's regression re-downloaded 53-56% of the installer). A release that truly replaces most of the
+game goes out by the installer: raise GAME_CHANNEL, which is a change to the shell.
+
+**Seen on a machine** (2026-10-14/15, Linux, xvfb). Electron 42.11.8's `net.fetch`, asked for `bytes=100-199` of
+app-v0.1.8548's setup.exe, followed github.com's redirect with the Range kept: 206, `bytes 100-199/240091509`, a
+reader's 100 bytes. The PACKAGED shell (`electron-builder --linux dir` with a seed in it), started with `--play` over a
+userData whose store held a version staged by the real store from a real pack (one changed file, 1,088 bytes):
+served that version's own play/index.html (the page carried its marker), counted the boot, and the page's word ended
+the trial within three seconds; the same over a version whose boot never came up (the page stopped at "WebGL2
+required" with no GPU) was rolled back at the next launch - "never came up - the version before it plays again" in the
+log, the install's own copy served, the version remembered as failed and its folder gone. And
+`tools/appShellProbe.mjs` green on the dev shell.
+
+**Not seen on a machine**, said plainly - only a real release shows these: the first channel update, which only copies
+installed from the first release carrying DA13 can take (every copy before it takes the installer once more); a real
+release's manifest and pack read off GitHub by a real copy; how many of the Windows and macOS legs' own dist/ files
+differ from the Linux leg's that the pack is cut from (each leg builds its own; a differing file is fetched once, at its
+first update - the hashes decide, never the build); the NSIS install, the AppImage and macOS running the channel; and
+Windows Defender reading the new files.
+
+**Pinned** in `test/da13_gamechannel.test.js` (14: the per-file pack from the real producer, the manifest's laws, the
+plan, the ranges, the range answer, a version staged from ranges of the real pack byte for byte, a flipped byte and a
+200 refused with nothing staged, the trial and its rollback, a version that no longer reads, the route, the launcher,
+the shell's wiring and the pipeline's, the release script's commands run); `tools/mutants/da13.json`: 51, all dead.
+Pins moved in `test/updatecheck.test.js` (the channel's one door, the fourth fetch), `test/autoupdate.test.js` (the
+menu's check), `test/da10_launcher.test.js` and `test/da12_directplay.test.js` (the game's version kept as played;
+`--play` asks the channel first), `test/da8_launcher.test.js` (the HUD's one sentence: an update that is here plays
+from the next start - the installer's, run at quit, and the channel's alike), `test/audit_install.test.js` (the landing
+page's promise) and `test/rel4_release.test.js` (the release's set); eight records re-aimed by content in
+`tools/mutants/da7.json`, `da10.json`, `da12.json`, `rel4.json` and `rel6.json`, which run 108 dead.
 
 ## Finding the game files (DA9, 2026-09-29)
 

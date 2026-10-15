@@ -220,8 +220,9 @@ test('L5-15: the Mac build is signed ad hoc after packing, and says why it reads
 test('L5-2/L5-3: the landing page promises what each download does, and a Mac player is sent where the files are', () => {
   const landing = rd('index.html');
   const entry = landing.slice(landing.indexOf('<dt id="desktop">'), landing.indexOf('</dd>', landing.indexOf('<dt id="desktop">')));
-  assert.match(entry, /The Windows installer and the Linux AppImage update themselves before you play; the portable exe and the Mac tell you when a new version is out\./,
-    'the portable exe never updated itself (lib/autoUpdate.cjs: notice)');
+  // PIN MOVED: DA13 - the GAME updates itself on every copy (the files that changed); the app itself as before
+  assert.match(entry, /The game updates itself before you play on every one, downloading only the files that changed; when the app itself changes, the Windows installer and the Linux AppImage update themselves, and the portable exe and the Mac tell you a new version is out\./,
+    'the portable exe\'s and the Mac\'s SHELL never updates itself (lib/autoUpdate.cjs: notice) - their game does (DA13)');
   assert.doesNotMatch(entry, /Steam or GOG/, 'both sell Daggerfall for Windows only');
   assert.match(entry, /on a Mac open it once, then choose Open Anyway under System Settings, Privacy &amp; Security/);
   const mac = L.viewOf(run(fresh({ platform: 'darwin', arena2Dir: null }), { type: 'found', found: [] }));
