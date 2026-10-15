@@ -32,6 +32,8 @@ export function createEgLookDraw({ gl = null } = {}) {
   /** @type {EgLightPass|null} */ let lights = null;   // EG-ZE
   const tried = { lines: false, mist: false, sky: false, lights: false };
   let key = '', band = 0, sections = [], sheets = [], edgeCount = 0, trackCount = 0;
+  /** AUDIT EG V (L3-7): the five halls the circle's look was made from (net/egLaw.js egCircleSpecs - each its own object) */
+  let made = /** @type {any[]} */ ([]);
   const streamers = new Float32Array(EG_STREAMERS_MAX * 6), alphas = new Float32Array(EG_STREAMERS_MAX);
   const build = (name, make) => {
     if (tried[name] || !gl) return null;
@@ -40,12 +42,15 @@ export function createEgLookDraw({ gl = null } = {}) {
   };
   return {
     /** The circle the screen stands in (its seed, number and span decrees): its edges made once, its streamers' and mist's
-     *  places kept. Answers whether it changed. */
+     *  places kept. Answers whether it changed. AUDIT EG V (L3-7; section 22, THE LAW PIN): made again when its halls are no
+     *  longer the ones it was made from - a breach of another law's halls, given by the room after my own law drew the circle
+     *  (net/egLaw.js egSpecGive: egHallOf answers the given hall from then), so THE EDGE LINE, the Gust's streamers and the
+     *  mist stand where the breach's own platforms do. */
     setCircle(seed, c, geo = 0) {
-      const k = `${seed >>> 0}:${c}:${geo | 0}`;
-      if (k === key) return false;
-      key = k; band = egBandOfCircle(c);
-      const specs = egCircleSpecs(seed, c, geo), edges = egCircleEdges(seed, c, geo);
+      const k = `${seed >>> 0}:${c}:${geo | 0}`, specs = egCircleSpecs(seed, c, geo);
+      if (k === key && specs.every((s, j) => s === made[j])) return false;
+      key = k; band = egBandOfCircle(c); made = specs;
+      const edges = egCircleEdges(seed, c, geo);
       sections = egGustSections(specs); sheets = egMistSheets(specs);
       edgeCount = edges.edge.length / 6; trackCount = edges.track.length / 6;
       lines ??= build('lines', () => (gl ? new EgLinePass(gl) : null));
@@ -90,7 +95,7 @@ export function createEgLookDraw({ gl = null } = {}) {
       for (const p of [lines, mist, sky, lights]) { if (p) { try { p.destroy(); } catch { /* gone */ } } }
       lines = null; mist = null; sky = null; lights = null;
       tried.lines = false; tried.mist = false; tried.sky = false; tried.lights = false;
-      key = ''; sections = []; sheets = [];
+      key = ''; sections = []; sheets = []; made = [];
     },
   };
 }

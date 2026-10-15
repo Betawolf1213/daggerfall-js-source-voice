@@ -89,7 +89,7 @@ import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
 import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged at a lord's fall
 import { arenaWeekOf } from './arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
 import { EG_HERALD_TELL_MAX } from './egHerald.js';   // EG-E3: the herald's news, kept on the breach for the hub
-import { orreryOf, orreryFresh, orreryJudge, orreryShortest } from './sdBrain.js';
+import { orreryOf, orreryFresh, orreryJudge, orreryShortest, SD_STONES, SD_HOURS } from './sdBrain.js';
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
 import { HIT_CAP_X, spendPurse } from './gateBrain.js';   // AUDIT EG III: Spillover's carry, within its blow's cap and out of the purse
 import { SAP_HEAL, SAP_FEEDS_MAX } from './gateBrain.js';   // AUDIT EG IV (lane1 #17): a Sapper feeds a lord by the gate's law, its feedings capped
@@ -146,7 +146,21 @@ export const EG_MARCH_EVERY_MS = 12_000;
  *  stands within this of the portcullis (m). */
 export const EG_GATE_HOLD_M = 20;
 export const EG_ESCORT_EVERY_MS = 25_000;
+/** A Kynval Squad (section 8.7) stands in place of a wave: the hall's first wave held this long (ms); on a Rift-Yard its four
+ *  elites stand this far about the yard's heart (m - AUDIT EG V, L3-4: the yard's squad was never stood). */
+export const EG_SQUAD_HOLD_MS = 30_000;
+export const EG_SQUAD_RING_M = 6;
 export const EG_LOCK_EVERY_MS = 15_000;
+/** AUDIT EG V (L3-1; section 8.4) - THE ORRERY'S REACH: the most turns six stones can ever need from any start (each stone's
+ *  way at most half the hours, net/sdBrain.js sdTurnsFor), 36. orreryOf draws the start again until its shortest way lies in
+ *  the range it is asked, so a range past the reach is drawn for ever - the relay's room hung on an Athenaeum from circle 56. */
+export const EG_ORRERY_REACH = SD_STONES.length * (SD_HOURS / 2);
+/** AUDIT EG V (L3-1): THE SPIRE'S TURNS RANGE for an Athenaeum of circle `c` (section 8.4) - 16 to 28 turns, rising by 2 every
+ *  five Redoubts until its top reaches EG_ORRERY_REACH (circle 21 on: 24 to 36), where it stays. Pure. */
+export function egOrreryTurns(c) {
+  const k = Math.max(0, Math.min(Math.floor((c - 1) / 5), (EG_ORRERY_REACH - 28) / 2));
+  return { turnsMin: 16 + 2 * k, turnsMax: 28 + 2 * k };
+}
 /** The rifts a company of n living members faces (section 8.1); the legion's cap is net/egLegion.js's (egLegionCap). */
 export const egRiftsFor = (n) => Math.max(3, Math.min(5, 2 + Math.ceil(n / 3)));
 export { egLegionCap, EG_STANDING_MAX } from './egLegion.js';
@@ -269,15 +283,18 @@ const fairKey = (B, m) => `${B.h}:${m.falls ?? 0}`;
 /** A member's fair trail in this hall and this life, or null (none judged yet - the law judges poses, never their absence). */
 const fairOfMember = (B, sub) => { const m = B.mem[sub], A = m?.fair; return A && A.k === fairKey(B, m) ? A : null; };
 /** EVERY POSE-GATED CREDIT NEEDS A FAIR TRAIL from the last island (section 21): the door, `down`, a cache, THE GOLD RUN, a
- *  niche, a Memento carried, the Reliquary Vault, the High Road's cache (net/egFair.js egFairOk). */
-const fairOf = (B, sub) => egFairOk(fairOfMember(B, sub));
+ *  niche, a Memento carried, the Reliquary Vault, the High Road's cache (net/egFair.js egFairOk). AUDIT EG V (L3-6; section 7 -
+ *  "No member is targeted or judged before their `here`"): and the member's `here` in this hall - its arrival on the plate, or
+ *  its recall where it was called back - for a trail begins there: a member the room never heard arrive was never judged, and
+ *  a screen that stood it first at the end plate opened a span's door on the trial's first beat. */
+const fairOf = (B, sub) => B.mem[sub]?.hereH === B.h && egFairOk(fairOfMember(B, sub));
 /**
  * Who opens an arrival's door (a span, a Brink, a Deepway's way down): a member at the end plate whose trail is fair. After
  * the room was woken mid-hall (`fwake` - its trails the saved ones, egFairWoke), failing that, the first arrival - its
  * measure says so (`wake`): a hall woken after every member passed the last island never deadlocks. Null: no door yet.
  */
 function doorOpener(B, spec, inHall) {
-  const at = inHall.filter((b) => egAtDoor(spec, b.x, b.z));
+  const at = inHall.filter((b) => egAtDoor(spec, b.x, b.z) && B.mem[b.sub]?.hereH === B.h);   // AUDIT EG V (L3-6): a member whose `here` the room heard
   const fair = at.find((b) => fairOf(B, b.sub));
   if (fair || !at.length) return fair ?? null;
   if (!(B.fwake > 0 && B.hw > 0 && B.hw < B.fwake)) return null;
@@ -308,7 +325,10 @@ export function egEnter(B, sub, ez, lv, now) {
   if (B.zs.includes(ez)) return 'the order is spent';
   B.zs = [...B.zs, ez].slice(-64);
   const c = B.co.find((x) => x.sub === sub);
-  if (!B.mem[sub]) B.mem[sub] = { name: c.name, n: c.n, in: 1, lv: clampLv(lv), alive: 1, home: 0, fellAt: 0, falls: 0, recall: 1, wit: 0, forsaken: 0, hereH: 0, downH: 0, dh: 0, dc: 0, act: 0, seenAt: now,
+  // AUDIT EG V (L7-6; section 27.7 - the Rehearsal's "one life"): a Rehearsal's member enters with no recall - it ends at Redoubt 1,
+  // before any rest could call one back, so its fall is final and the FALLEN card, the witness's line and the first-time
+  // lines (which read the fall's `fin` and the company's recall) say so
+  if (!B.mem[sub]) B.mem[sub] = { name: c.name, n: c.n, in: 1, lv: clampLv(lv), alive: 1, home: 0, fellAt: 0, falls: 0, recall: B.rh ? 0 : 1, wit: 0, forsaken: 0, hereH: 0, downH: 0, dh: 0, dc: 0, act: 0, seenAt: now,
     vs: [], mast: -1, shards: 0, tonics: 0, cant: [], lumen: 0, rel: [], kinds: [0, 0, 0], offer: null, picks: 0, newestV: null, bequest: null, x: 0, ...purseOf(clampLv(lv), now) };
   else B.mem[sub].seenAt = now;
   return null;
@@ -322,7 +342,7 @@ export const egStageWord = (B, now) => ({ k: 'sg', h: B.h, sg: B.sg, sa: B.sa, s
 /** The company as the room says it: `[sub, name, numeral, alive, home, in, witness, forsaken, falls, recall, here]`. AUDIT EG V
  *  (c, L3-10; section 7 - "a ring fills over the plate, *3 of 6 here*"): `here` 1 once the member has said `here` in the hall
  *  the company stands in (its pose on the arrival plate - `hereH`), so every screen counts the gather the room counts. */
-export const egCompanyOf = (B) => B.co.map((c) => { const m = B.mem[c.sub]; return [c.sub, c.name, c.n, m ? m.alive : 1, m?.home ? 1 : 0, m?.in ? 1 : 0, m?.wit ? 1 : 0, m?.forsaken ? 1 : 0, m?.falls ?? 0, m ? m.recall : 1, m && B.h > 0 && m.hereH === B.h ? 1 : 0]; });
+export const egCompanyOf = (B) => B.co.map((c) => { const m = B.mem[c.sub]; return [c.sub, c.name, c.n, m ? m.alive : 1, m?.home ? 1 : 0, m?.in ? 1 : 0, m?.wit ? 1 : 0, m?.forsaken ? 1 : 0, m?.falls ?? 0, m ? m.recall : B.rh ? 0 : 1, m && B.h > 0 && m.hereH === B.h ? 1 : 0]; });
 /** The breach's whole state (`st`): the stage, the company, the decrees in force (and the Proclamation, the Wager, the
  *  tide, the strata), each member's run, the cache's kind, the Mementos lying, the respite and the Surplus. */
 export function egStateOf(B, now) {
@@ -415,15 +435,21 @@ export function egFall(B, sub, now, out, at = null) {
   if (!m || !m.alive || m.home || B.end) return;
   m.alive = 0; m.fellAt = now; m.falls = (m.falls ?? 0) + 1; m.wit = 1; m.rel = [];
   const final = !(m.recall > 0) || m.falls >= 2;
+  // AUDIT EG V (L3-15; section 16.5 - "Solo stays literally one life"): a fall that leaves nobody living is the breach's wipe -
+  // nobody can recall the fallen nor carry a Memento, so its word says it is final (its receipt the wipe's, as before)
+  const last = !living(B).length;
+  // AUDIT EG V (L3-22; section 16.5 - "A fall leaves a gold mote where the member fell"): a fall the word names no place of (180 s
+  // absent, a `fell` with no pose, the count's fall off another hall's trail) lies at the member's last pose in this hall
+  const where = at ?? (m.pose && m.pose.h === B.h ? m.pose : null);
   if (final) oweEnd(B, sub, 'fall', now);
-  else if (at) B.mementos.push({ s: sub, h: B.h, x: at.x, z: at.z, by: null });
+  else if (where && !last) B.mementos.push({ s: sub, h: B.h, x: where.x, z: where.z, by: null });
   // a carrier's fall drops the Memento where they fall
   for (const q of B.mementos) if (q.by === sub) { q.by = null; if (at) { q.x = at.x; q.z = at.z; q.h = B.h; } }
   if (B.F) B.F.fellThisHall = (B.F.fellThisHall ?? 0) + 1;
   if (B.F) EG_SEAM.join(egLordsFight(B.F, null, {}, now), sub, m.name, m.lv, now, null, { admits: false });   // EG-ZQ (section 13.2): A FALL RETIRES A SHARE - out of every lord standing, through the seam
   egTallyFall(B.F, sub);   // EG-ZF: on a Court's chart
   B.log.push({ h: B.h, fall: m.name });
-  out.push({ k: 'fall', s: sub, n: m.name, at: now, fin: final ? 1 : 0 }, { k: 'co', co: egCompanyOf(B) });
+  out.push({ k: 'fall', s: sub, n: m.name, at: now, fin: final || last ? 1 : 0 }, { k: 'co', co: egCompanyOf(B) });
 }
 /** A witness forsakes the breach (section 16.5): their recall forfeit, their end receipt owed. */
 export function egForsake(B, sub, now, out) {
@@ -440,7 +466,7 @@ export function egForsake(B, sub, now, out) {
 function recall(B, sub, pct, at, now, out) {
   const m = B.mem[sub];
   if (!m || m.alive || m.forsaken || !(m.recall > 0)) return false;
-  m.alive = 1; m.wit = 0; m.recall = 0; m.seenAt = now; m.roseH = B.h;   // EG-H1: its fair trail begins where it is called back
+  m.alive = 1; m.wit = 0; m.recall = 0; m.seenAt = now; m.roseH = B.h; m.hereH = B.h;   // EG-H1: its fair trail begins where it is called back - AUDIT EG V (L3-6): its `here`
   egLoseNewest(m);
   B.mementos = B.mementos.filter((q) => q.s !== sub);
   out.push({ k: 'rise', to: sub, s: sub, p: pct, x: at[0], z: at[1], h: B.h }, { k: 'co', co: egCompanyOf(B) }, { k: 'esay', w: 'recalled', n: m.name });
@@ -578,6 +604,9 @@ function standFight(B, spec, now, rng, out) {
       P.obj = 'rifts';
     }
     if (spec.twist === 'deserter') { egLegionRaise(F, [EG_KIND.deserter], [[spec.fight.x, spec.fight.z - spec.fight.r + 3]], now, out); F.desClosed = 0; F.coClosed = 0; }
+    // AUDIT EG V (L3-4; section 8.7 - a Kynval Squad "in place of a wave", on a Rift-Yard or a Rampart): its four elites about the
+    // yard's heart on its floor, the rifts' first wave held as the Rampart's march is
+    if (spec.twist === 'squad') { egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, out); F.waveAt = now + EG_SQUAD_HOLD_MS; }
   } else if (spec.kind === 'rampart') {
     const pillars = spec.spots.pillar ?? [];
     const onPillar = (p) => [p.x, p.z, spec.discs.find((d) => d.role === 'pillar' && Math.hypot(d.x - p.x, d.z - p.z) < 0.01)?.y];   // EG-ZJ: a pinned Caster on its pillar's top, never the walkway its plan overlaps
@@ -593,10 +622,10 @@ function standFight(B, spec, now, rng, out) {
       F.waveAt = now + 6000;
       if (v === 'winch') { F.winch = 0; P.obj = 'winch'; P.winch = 0; } else P.obj = 'wards';
     }
-    if (spec.twist === 'squad') { egSquad(F, [[spec.walk.x, spec.walk.z0 + 30], [spec.walk.x + 1.5, spec.walk.z0 + 32], [spec.walk.x - 1.5, spec.walk.z0 + 34], [spec.walk.x, spec.walk.z0 + 36]], now, out); F.waveAt = now + 30_000; }
+    if (spec.twist === 'squad') { egSquad(F, [[spec.walk.x, spec.walk.z0 + 30], [spec.walk.x + 1.5, spec.walk.z0 + 32], [spec.walk.x - 1.5, spec.walk.z0 + 34], [spec.walk.x, spec.walk.z0 + 36]], now, out); F.waveAt = now + EG_SQUAD_HOLD_MS; }
   } else if (spec.kind === 'athenaeum') {
-    const k = Math.floor((spec.c - 1) / 5), s = (egSeed(B.seed, 0x0a7e + spec.h) % 2147483646) + 1;
-    F.orrery = orreryOf(s, { turnsMin: 16 + 2 * k, turnsMax: 28 + 2 * k });
+    const s = (egSeed(B.seed, 0x0a7e + spec.h) % 2147483646) + 1;
+    F.orrery = orreryOf(s, egOrreryTurns(spec.c));   // AUDIT EG V (L3-1): the range held to what six stones can need
     F.lock = orreryFresh(F.orrery); F.lockLast = [0, 0, 0, 0, 0, 0]; F.turns = 0; F.best = orreryShortest(F.orrery, F.lock.st);
     for (const [j, st] of (spec.spots.stone ?? []).entries()) egRaiseObj(F, 'stone', st.x, st.z, 0, now, out, { r: 1, pt: j });
     F.waveAt = now + EG_LOCK_EVERY_MS;
@@ -639,7 +668,7 @@ function standFight(B, spec, now, rng, out) {
   }
   // THE TWISTS (section 8.7) at the wake
   if (spec.twist === 'ghost' && spec.fight) egLegionRaise(F, [EG_KIND.ghost], [[spec.arrive.x + 2, spec.arrive.z + 2]], now, out);
-  if (spec.twist === 'captive') { for (const c of spec.spots.chain ?? []) egRaiseObj(F, 'chain', c.x, c.z, egHpTeam(F, EG_CHAIN_S), now, out, { r: 0.8 }); F.captive = 1; }
+  if (spec.twist === 'captive') captiveStand(F, spec, now, out);
   if (spec.twist === 'bargain' && egBargainOpen(B)) egAsk(B, 'bargain', [1], now, out);
   // KYN'S VIGIL (section 14): the band's champion on the arrival plate with its escort (section 8.5's, doubled at rank II) -
   // AUDIT EG III: in every hall with a trial and no champion or lord of its own: never a Proving Walk's or a Court's, never the
@@ -805,11 +834,55 @@ function hornStep(B, F, spec, now, inHall, rng, out) {
     out.push({ k: 'esay', w: 'hornfoul' });
   }
 }
-/** A Span's twist: the Reliquary Vault's cache. */
+/** A Span's twist: the Reliquary Vault's cache. AUDIT EG V (L3-19; section 8.7 - "any trial hall"): A Battlemage's Ghost at the
+ *  arrival plate, flying with the company over the course (net/egLegion.js - a span's ghost keeps to the air, as its Harriers
+ *  do), and the Captive Battlemage's three chains on the course's islands (egCaptiveSpots) - a span's fight returned before
+ *  the twists of every other hall were stood, so neither ever stood on one. */
 function spanTwist(B, F, spec, now, out) {
   if (spec.twist === 'vault') for (const q of spec.spots.vault ?? []) egRaiseObj(F, 'vault', q.x, q.z, 0, now, out, { r: 3 });
   if (spec.twist === 'bargain' && egBargainOpen(B)) egAsk(B, 'bargain', [1], now, out);
+  if (spec.twist === 'ghost' && spec.arrive) egLegionRaise(F, [EG_KIND.ghost], [[spec.arrive.x + 2, spec.arrive.z + 2]], now, out);
+  if (spec.twist === 'captive') captiveStand(F, spec, now, out);
   F.pg.obj = 'cross';
+}
+/** THE CAPTIVE BATTLEMAGE's chains this many (section 8.7: "three chains, each 4 s of the company's reference damage"). */
+export const EG_CHAINS = 3;
+/**
+ * AUDIT EG V (L3-19; section 8.7) - WHERE THE CAPTIVE'S THREE CHAINS HANG, on the hall's fight ground: the law's spots where it
+ * lays three (about a disc that is its first fight floor - a court, a chamber's); else the director's - a span's (or a Brink's)
+ * on its islands spread along the course (its plates where it has fewer); a Deepway's about its chamber's floor, as the law
+ * lays a court's; else along the hall's first lane (a Rampart's walkway) at its quarters. The law lays one chain where its
+ * first floor is a lane, so a Rampart and most Deepways hung one and a span's hung in the air. `[x, z]` each. Pure.
+ * @param {any} spec
+ * @returns {Array<[number, number]>}
+ */
+export function egCaptiveSpots(spec) {
+  const law = spec.spots?.chain ?? [];
+  if (law.length >= EG_CHAINS) return law.slice(0, EG_CHAINS).map((q) => [q.x, q.z]);
+  const about = (d) => [0, 120, 240].map((deg) => /** @type {[number, number]} */ ([d.x + Math.sin((deg * Math.PI) / 180) * (d.r / 2), d.z + Math.cos((deg * Math.PI) / 180) * (d.r / 2)]));
+  if (spec.kind === 'span' || spec.kind === 'brink') {
+    const fl = egFightView(spec).fl, isles = fl.filter((f) => f.g === 'island').sort((a, b) => a.z - b.z);
+    const ground = isles.length >= EG_CHAINS ? isles : [...isles, ...fl.filter((f) => f.g === 'plate').sort((a, b) => a.z - b.z)];
+    if (ground.length >= EG_CHAINS) return [0, 1, 2].map((j) => { const d = ground[Math.round((j * (ground.length - 1)) / 2)]; return [d.x, d.z]; });
+    if (ground.length) return about(ground[0]);
+  }
+  const ch = spec.spots?.chamber?.[0], disc = ch ? (spec.fl ?? []).find((f) => f.t === 'd' && Math.hypot(f.x - ch.x, f.z - ch.z) <= f.r) : null;
+  if (disc) return about(disc);
+  const lane = (spec.fl ?? []).find((f) => f.t === 'l');
+  if (lane) return [0.25, 0.5, 0.75].map((t) => [lane.ax + (lane.bx - lane.ax) * t, lane.az + (lane.bz - lane.az) * t]);
+  return law.map((q) => [q.x, q.z]);
+}
+/** The Captive's chains stood (section 8.7), each EG_CHAIN_S of the company's reference damage. */
+function captiveStand(F, spec, now, out) {
+  for (const [x, z] of egCaptiveSpots(spec)) egRaiseObj(F, 'chain', x, z, egHpTeam(F, EG_CHAIN_S), now, out, { r: 0.8 });
+  F.captive = 1;
+}
+/** The Captive freed: every chain broken, a Cantrip for each living member (section 17.2), once. */
+function captiveStep(B, F, rng, out) {
+  if (!F.captive || egObjsOf(F, 'chain').length) return;
+  F.captive = 0;
+  for (const [sub, m] of living(B)) { egGive(m, 'cant', 1, rng); out.push({ k: 'egot', to: sub, w: 'cant' }); }
+  out.push({ k: 'esay', w: 'freed' });
 }
 /** Is a Bargain open this circle (once a circle, and only with a family free)? */
 const egBargainOpen = (B) => !(B.bargainDc ?? []).length;
@@ -970,6 +1043,10 @@ function redoubt(B, now, rng, out) {
   clearHall(B, now);
   countPart(B);
   if (B.F) egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out);
+  // THE ANNALS (section 11.10): a lord's first fall adds its page to every living member's - AUDIT EG V (L3-14): a Rehearsal's
+  // too (section 20's EG-E2: "a page is lore, not pay"), so before its end, whose receipts carry it (`an`)
+  const page = egAnnalsLordPage(specOf(B).lord ?? '');
+  if (page >= 0) for (const [sub, m] of living(B)) if (!((m.pages ?? 0) & (2 ** page))) { m.pages = (m.pages ?? 0) + 2 ** page; out.push({ k: 'egot', to: sub, w: 'page', p: page }); }
   if (B.rh) { egEnd(B, 'rehearsal', now, out); return; }
   const dm = egChartOf(B);   // EG-ZF (section 27.6): THE DAMAGE CHART at the lord's fall, said with the Redoubt
   const w = egCircleOfHall(B.h), L = living(B), total = L.reduce((s, [, m]) => s + m.dc, 0), n = Math.max(1, L.length);
@@ -993,14 +1070,15 @@ function redoubt(B, now, rng, out) {
   for (const m of Object.values(B.mem)) { m.mz = null; if (m.fair) m.fair.mzd = 1; }   // the circle's measures begun again for every member (an earner's said above), no trail of this circle folded into the next
   // EG-E3: THE HERALD'S NEWS - a Valkynaz's Redoubt (the hub says every tenth, the first tenth ever as First of the Spire,
   // and a band passed whose seal a deploy lifted), and a Court felled alone, once a member a breach
-  if (valk) heraldOwe(B, now, { k: 'rd', w, h: B.h, t: secs(now - B.wk), o: B.o ?? '', by: earners.map(([, m]) => m.name ?? '') });
+  // AUDIT EG V (L8-7): its seconds are from the breach's first wake - Hall 1's only for a breach begun there, so the start (`ew`)
+  // rides with them and the post says it
+  if (valk) heraldOwe(B, now, { k: 'rd', w, h: B.h, t: secs(now - B.wk), ew: B.ew ?? 0, o: B.o ?? '', by: earners.map(([, m]) => m.name ?? '') });
   if (lone && !L[0][1].lbSaid) { L[0][1].lbSaid = 1; heraldOwe(B, now, { k: 'lb', n: L[0][1].name ?? '', lk, c: entrants(B).length }); }
   if (valk) B.resp += EG_RESPITE_VALK_MS;
-  for (const [, m] of L) { m.dc = 0; m.act = 0; }
+  // AUDIT EG V (L3-3, L8-3; section 16.1 - "an earner, in that circle"): the circle's damage and parts begun again for EVERY
+  // member entered - a witness too, or one recalled at this rest would carry the circle it fell in into the next
+  for (const m of Object.values(B.mem)) { m.dc = 0; m.act = 0; }
   B.log.push({ h: B.h, rd: w, lord: specOf(B).lord });
-  // THE ANNALS (section 11.10): a lord's first fall adds its page to every living member's
-  const page = egAnnalsLordPage(specOf(B).lord ?? '');
-  if (page >= 0) for (const [sub, m] of L) if (!((m.pages ?? 0) & (2 ** page))) { m.pages = (m.pages ?? 0) + 2 ** page; out.push({ k: 'egot', to: sub, w: 'page', p: page }); }
   egStratumAt(B, w);   // AUDIT EG IV (lane10 #11): the season's stratum for this Redoubt
   B.F = null;
   B.sg = 'rest'; B.sa = now; B.su = now + EG_RD_WINDOW_MS + EG_REST_MS; B.hw = 0; B.dn = 0;
@@ -1113,7 +1191,9 @@ export function egStep(B, now, bodies, rng) {
     const all = B.wk ? L.length > 0 && L.every(([, m]) => m.hereH === B.h) : B.co.every((c) => B.mem[c.sub]?.in && B.mem[c.sub].alive && B.mem[c.sub].hereH === B.h);
     if (all && !B.gatherAt) { B.gatherAt = now; B.su = now + EG_GATHER_MS; out.push(egStageWord(B, now)); }
     if (B.gatherAt && now >= B.gatherAt + EG_GATHER_MS) { wake(B, now, rng, out); return out; }
-    if (!B.wk && now >= T.admitUntil) { if (L.length) wake(B, now, rng, out); else egEnd(B, 'empty', now, out); return out; }
+    // AUDIT EG V (L3-13): the open window's end wakes the first hall only when no gather has begun - one begun in it runs its
+    // EG_GATHER_MS whole (AUDIT EG III lane2 #18's rule, below, for the breach's first hall too)
+    if (!B.wk && !B.gatherAt && now >= T.admitUntil) { if (L.length) wake(B, now, rng, out); else egEnd(B, 'empty', now, out); return out; }
     // EG-ZI (section 7): THE LATE WAKE - the wait the members still owed hold it to, its end said as it moves
     const wait = B.wk ? arriveWait(B) : 0;
     if (B.wk && !B.gatherAt && B.su !== B.pulledAt + wait) { B.su = B.pulledAt + wait; out.push(egStageWord(B, now)); }
@@ -1250,6 +1330,7 @@ function trial(B, spec, now, inHall, rng, out) {
     // ground; from the Shade the Divers wait at its islands
     if (span) spanLegion(F, view, now, inHall, egLegionRoom(F), out);
     if (egBodiesOf(F, EG_ROLE.add).length) egLegionStep(F, view, now, here, rng, out, span ? { ...legionCtx, span: 1, shadow: inHall, isles: view.fl.filter((f) => f.g === 'island' || f.g === 'plate') } : legionCtx);
+    captiveStep(B, F, rng, out);   // AUDIT EG V (L3-19): a span's Captive freed
     if (doorOpener(B, spec, inHall)) door(B, spec, now, out, inHall);   // EG-H1: a fair arrival opens it (section 21)
     if (span) { egBlowsStep(F, view, now, here, out, egWatchOf(B)); fightTail(F, now, out); }
     else egMovesOut(F, out);
@@ -1311,7 +1392,7 @@ function trial(B, spec, now, inHall, rng, out) {
       F.pg.left = F.gauntlet.filter((g) => !g.done).length;
       if (!F.pg.left) { door(B, spec, now, out); return; }
     } else if (v === 'winch') {
-      const plates = spec.spots.winch ?? [], need = Math.min(2, F.n);
+      const plates = spec.spots.winch ?? [], need = Math.min(2, living(B).length);   // AUDIT EG V (L3-2; section 8.3): `n` the living company now, never the wake's
       const on = inHall.filter((b) => plates.some((p) => dist(b.x, b.z, p.x, p.z) <= EG_TOUCH_M)).length;
       if (on >= need) F.winch += 250;
       F.pg.winch = Math.min(EG_WINCH_MS, F.winch);
@@ -1377,7 +1458,7 @@ function trial(B, spec, now, inHall, rng, out) {
   if (kind !== 'court' && egLordsOf(F).length) out.push(...EG_SEAM.step(egLordsFight(F, spec, lordCtx, now), now, here, rng));
   if (kind === 'deepway' && F.chamberDone && !F.saidDone) { F.saidDone = 1; out.push({ k: 'esay', w: 'chamberdone' }); }
   if (kind === 'deepway' && F.chamberDone && doorOpener(B, spec, inHall)) { door(B, spec, now, out); return; }   // EG-H1: a fair arrival
-  if (F.captive && !egObjsOf(F, 'chain').length) { F.captive = 0; for (const [sub, m] of living(B)) { egGive(m, 'cant', 1, rng); out.push({ k: 'egot', to: sub, w: 'cant' }); } out.push({ k: 'esay', w: 'freed' }); }
+  captiveStep(B, F, rng, out);
   hazards(B, F, spec, now, here, rng, out);
   legionCtx.hunted = huntStep(B, F, view, spec, now, inHall, out);   // EG-ZB (section 11.7): off the floors past six seconds, hunted
   egLegionStep(F, view, now, here, rng, out, legionCtx);
@@ -1577,7 +1658,7 @@ export function egBlow(B, sub, m, pose, now) {
   const view = egFightView(spec);
   if (!egGroundAt(view, p.x, p.y, p.z, EG_STRIKE_PAD_M) && !(body.role === EG_ROLE.obj && !egGroundAt(view, body.x, NaN, body.z, body.r ?? 1))) return out;
   const here = Object.entries(B.mem).filter(([, x]) => x.alive && x.in && x.pose).map(([s, x]) => ({ sub: s, x: x.pose.x, z: x.pose.z }));
-  mm.pose = p;
+  mm.pose = { x: p.x, z: p.z, h: B.h };   // AUDIT EG V (L3-22): the hall it stood in, as the beat keeps it (a fall's Memento reads it)
   // AUDIT EG IV (lane1 #19): COUNTERSTROKE ARMED AT THE BLOW - a lord's blow landed within EG_COUNTER_M of this member since the
   // beat's census last looked (which arms it for the rest - trial) arms it now, so its 0.6 s are whole from the landing
   for (const bl of F.blows) if (!bl.counted && bl.at <= now && bl.o && egLordsOf(F).some((L) => L.i === bl.o) && egBlowNear(bl, p.x, p.z) <= EG_COUNTER_M) mm.lordLandedAt = Math.max(mm.lordLandedAt ?? -Infinity, bl.at);

@@ -739,7 +739,7 @@
   {
     "name": "EGLOOK-draw-remade-every-frame",
     "file": "src/scenes/egLookDraw.js",
-    "old": "if (k === key) return false;",
+    "old": "if (k === key && specs.every((s, j) => s === made[j])) return false;",
     "new": "if (false) return false;",
     "tests": [
       "test/eglook_hosts.test.js"

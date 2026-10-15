@@ -638,9 +638,13 @@ share of the members the hall waits for (`src/world/egLights.js`, the closing ri
 them, *3 of 6 here.* (`net/egLink.js` `egGatherOf`); a company of one has nothing to gather.
 
 **The breach's first hall** wakes when every company member has said `here`, or when the open window ends
-(`EG_ADMIT_MAX_MIN`); a member not admitted by then is out.
+(`EG_ADMIT_MAX_MIN`); a member not admitted by then is out. A gather begun before the window ends runs its 8 s whole, as
+a later hall's does (AUDIT EG V).
 
-No member is targeted or judged before their `here`. A span's door opens when the FIRST living member stands on its end
+No member is targeted, judged or credited before their `here`: a recall is the `here` of a member called back where
+it rises, and every pose-gated credit asks the member's `here` in the hall beside its fair trail (`net/egBrain.js`
+`fairOf` - AUDIT EG V: a screen that stood its member first at a span's end plate, never on the plate the pull put it
+on, was never judged, so it was believed, and opened the door on the trial's first beat). A span's door opens when the FIRST living member stands on its end
 plate with a fair trail (section 21). The closing then gives the others 45 s to cross, and the pull carries whoever did
 not, at the toll's cost. Skill is paid and nobody is stranded. Nothing waits on the slowest player for ever, and
 nothing is skipped for free.
@@ -787,7 +791,7 @@ A walkway 90-160 m long over the void: 3-4.5 m wide for a company of up to four,
 |---|---|---|
 | **the Siege-Walk** | the Galleries | as above |
 | **the Falling Wall** | the Galleries | 20 s after the wake, the walkway falls behind the company, segment by segment, at a fixed 1.5 m/s. A member caught is cast to the nearest standing segment ahead, at the cast-back's cost |
-| **the Winch** | the Cairn | the portcullis rises only while `min(2, n)` members stand on its winch plates, over 60 s, under the march |
+| **the Winch** | the Cairn | the portcullis rises only while `min(2, n)` members stand on its winch plates, over 60 s, under the march - *n* the living company as it stands, so a pair that loses one raises it alone (AUDIT EG V) |
 | **the Gauntlet** | the Shade | no march: `2 + ceil(n/2)` caster pillars, each silenced by standing 3 s on its side span's plate |
 | **the Forge Bridge** | the Wellhead | the walkway is a conveyor running toward the arrival plate at a fixed 1.0 m/s, under the march and the vents |
 
@@ -800,14 +804,22 @@ The Battlemages' library, its heart an **Orrery** drawn by `orreryOf` (`src/net/
   64-entry cache.
 - **EG4 widens it** to `orreryOf(s, {turnsMin, turnsMax, fray})`. The Hour's call and its golden draw are unchanged;
   the cache is keyed on the seed and the band.
-- **The Spire's knobs**: the turns range starts at 16-28 and rises by 2 every five Redoubts. The fray is the Hour's
-  default unless the circle carries the Hour's decree The Fraying (section 14).
+- **The Spire's knobs**: the turns range starts at 16-28 and rises by 2 every five Redoubts until its top reaches 36,
+  the most turns six stones can ever need from any start (`EG_ORRERY_REACH`: each stone's way is at most half the
+  hours), and stays there: 24-36 from circle 21 (`net/egBrain.js` `egOrreryTurns`). `orreryOf` draws a start again until
+  its shortest way lies in the range it is asked, so a range past the reach is drawn for ever - an Athenaeum from circle
+  56 hung its relay room until AUDIT EG V held it. The fray is the Hour's default unless the circle carries the Hour's
+  decree The Fraying (section 14).
 - **The judge**: EG4 extracts the pure judge, `orreryJudge`, out of `_sdTurn` in `server/src/index.js` (reach,
   settle, rights, `orreryStep`). The Hour's room and the Spire's both call it.
 - **Pressure**: `ceil(n/4)` Harriers rise every 15 s while the lock stands, so the members off the stones guard the
   members on them.
-- **Everyone works**: any member in reach may turn any stone. The rights (`orreryMayTurn`) only hold back a turner who
-  keeps lengthening the road while another turns.
+- **Everyone works**: any member in reach may turn any stone, and the company is one thread: the Spire's judge keeps
+  no rights (`orreryJudge` with none - EG-H3), and a snap lashes every living member a quarter of their health
+  (`fray`). The Hour's rights (`orreryMayTurn`), which hold back a turner who keeps lengthening the road while another
+  turns and lash only the turners who did not bring the Concord nearer (`orreryLashed`), are a public realm's: anyone
+  may walk into a Hollow and turn. A company is the opener's own party, frozen at the open, so the Spire leaves its
+  thread to it (AUDIT EG V, deciding between this sentence and EG-H3's record, which said the two apart).
 - **The reward**: solving it in no more turns than the band's minimum grants every member one free Vestige rank at the
   next Redoubt.
 
@@ -857,12 +869,12 @@ From circle 2, about one hall in four (seeded, never the Court, never two runnin
 |---|---|---|
 | **Reliquary Vault** | a side span to a cache: an extra Reliquary for each member who reaches it with a fair trail, at the count's cost | a Span or a Proving Walk |
 | **Dagon's Bargain** | a shrine on the arrival plate: the company's word (section 16.4) accepts one more decree for the rest of the circle, and each member who voted yes gains one Reliquary if it passes. At most one a circle, and none when no family is free (section 14) | any trial hall |
-| **Kynval Squad** | four Kynval elites in place of a wave, each with one affix: **Searing** (its strike leaves a pool, r 2.5, for 6 s), **Shielded** (a shield of a quarter of its health that only blows from behind break), **Wrathful** (shares +10%, inside the 1.5 cap), **Unshaken** (immune to push and to Fade) | a Rift-Yard or a Rampart |
+| **Kynval Squad** | four Kynval elites in place of a wave, each with one affix: **Searing** (its strike leaves a pool, r 2.5, for 6 s), **Shielded** (a shield of a quarter of its health that only blows from behind break), **Wrathful** (shares +10%, inside the 1.5 cap), **Unshaken** (immune to push and to Fade). On a Rampart they stand on the walkway 30 m in; on a Rift-Yard on its floor 6 m about its heart (AUDIT EG V: the yard's never stood); either way the hall's first wave is held 30 s (`EG_SQUAD_HOLD_MS`) | a Rift-Yard or a Rampart |
 | **The Scriptorium** | a quiet hall: heals 30%, no trial, and the door opens after 30 s (the count runs) | slot 3, in place of its kind |
-| **A Battlemage's Ghost** | a friendly ghost (the relay's host runner, a friendly flag) fights beside the company for the hall | any trial hall |
+| **A Battlemage's Ghost** | a friendly ghost (the relay's host runner, a friendly flag) fights beside the company for the hall; on a Span it flies with the company over the course, as the Span's Harriers do (AUDIT EG V: a span's never stood) | any trial hall |
 | **The Deserter** | a Dremora deserter races the company to close rifts. If the company closes more, each member gains a Vestige shard (section 17.1); otherwise he takes the hall's cache | a Rift-Yard |
 | **The Kyn Mimic** | one cache in eight is a Lurker; its tell is a lid that breathes red | any trial hall |
-| **The Captive Battlemage** | three chains, each 4 s of the company's reference damage; break them all and each member gains a Cantrip (section 17.2) | any trial hall |
+| **The Captive Battlemage** | three chains, each 4 s of the company's reference damage; break them all and each member gains a Cantrip (section 17.2). They hang on the hall's fight ground (`net/egBrain.js` `egCaptiveSpots`): about a court or a chamber that is its first floor as the law lays them; on a Span's islands, spread along the course; about a Deepway's chamber; along a Rampart's walkway at its quarters (AUDIT EG V: the law lays one chain where its first floor is a lane, and a span's stood none) | any trial hall |
 | **The Sutler** | the Kyn quartermaster on the arrival plate, selling for lumen (section 17.3) | any trial hall |
 
 ### 8.8 The Deepway (`deepway`) - a hall of fragments
@@ -923,8 +935,12 @@ sum) would give the relay and a phone different halls. So:
   integers;
 - their trigonometry runs through a polynomial `lawSin`/`lawCos` of their own, exact in integer arithmetic;
 - a source sweep refuses any of the functions above in `net/egLaw.js`, `net/egSpanLaw.js` and `net/egFragLaw.js`;
-- the state frame carries `sd`, an FNV-1a digest of the quantized spec. A client whose own spec disagrees asks
-  `{k:'spec'}` and builds from the relay's bytes, and the mismatch rides the next receipt's measures.
+- the state frame carries `dg`, an FNV-1a digest of the quantized spec of the hall the company stands in
+  (`egSpecDigest`), and only ever that hall's: a new hall's stage lets the last one's go (`net/egLink.js`). A client
+  whose own draw of the hall disagrees asks `{k:'spec'}` for its circle's five halls and builds from the relay's bytes
+  for the rest of the breach, as under another law (`scenes/egClient.js` `digestOff` - AUDIT EG V: the digest was said
+  and never read). The mismatch is written to the console once a hall, not to a receipt: the relay never sees a
+  client's own draw, and a receipt's measures are THE FAIR TRAIL's six (section 21).
 
 **Seeds.** The breach's `seed` is drawn by the relay's CSPRNG when the room accepts the open order, and said in its
 state. A hall's own seed is `egSeed(seed, hall)`, the `sdSeed` mix: `sdSeed` is exported from `src/net/sdBrain.js` and
@@ -2135,7 +2151,10 @@ When a Court's lord falls, the Redoubt is taken for every living member at once.
 - was ACTIVE in at least three of its five halls: dealt at least `1/(8n)` of the hall's damage, healed others for at
   least `1/(8n)` of what the company took, stood 1.5 s in an errand's mark, or crossed a span with a fair trail.
 
-The rule is the seam's `earned(f, sub)`, over the circle. An idle account pulled from hall to hall earns nothing (AUDIT
+The rule is the seam's `earned(f, sub)`, over the circle: at each Redoubt the circle's damage and parts are begun again
+for every member entered, the fallen with the living, so a member recalled at its rest carries nothing of the circle it
+fell in into the next (AUDIT EG V: only the living were begun again, and a recalled member earned the next circle idle).
+An idle account pulled from hall to hall earns nothing (AUDIT
 EG0 A6), and a scripted wiggle is not activity (AUDIT EG II L4-18). Each hall's part is the director's (AUDIT EG III,
 lane2 #3 - `net/egBrain.js` `egActiveIn`, counted at the pull and at the Court's fall): the hall's damage is the
 company's, *n* the living company at the hall's end; what the company took is the census's shares, and a healer's part
@@ -2247,12 +2266,16 @@ nobody decides for eight alone.
 
 - **At the next Redoubt** the living take: they rise at the rest with full health. They earn nothing for the circle
   they were out, and their newest Vestige is lost.
-- **Or sooner, by the Memento.** A fall leaves a gold mote where the member fell. A living member passing within 2 m
+- **Or sooner, by the Memento.** A fall leaves a gold mote where the member fell - a fall that names no place (180 s
+  gone, a `fell` with no pose, the count's fall off another hall's trail) at the member's last pose in the hall (AUDIT
+  EG V). A living member passing within 2 m
   carries it (the relay judges by pose; the carrier's fall drops it where they fall). Carried to a **Battlemage's
   niche**, it spends the fallen's recall there: they return at 50% health, their newest Vestige lost, earning from the
   next hall. Niches stand on the Low Road, in the Scriptorium, in the Deepway's chamber, and on every slot-3 arrival
   plate. If nobody carries it, the Redoubt's recall stands as it was.
-- A second fall is final: *The Spire will not take you back.*
+- A second fall is final: *The Spire will not take you back.* So is a fall with no recall in hand (a Rehearsal's,
+  section 27.7), and a fall that leaves nobody living - the breach's wipe, which no recall or Memento can undo: its card
+  says so and it lays no Memento, its end the wipe's (AUDIT EG V).
 
 **The rest of the law.**
 
@@ -2692,7 +2715,8 @@ away and Back closes it.
 heralds, it posts to the gate's webhook and falls back to the gate's role, pinging no one:
 
 - a company taking Redoubt 10, 20, 30...: *<opener>'s company took Redoubt 10 of the Battlespire (Hall 50) in
-  1:51:20.*
+  1:51:20.* - the time since the breach's first hall woke, so a breach begun deeper says where it began: *... in 20:04,
+  from Redoubt 9.* (the news carries its start, `ew`; First of the Spire's post says it too - AUDIT EG V);
 - a new top of the Descent in any bracket;
 - *First of the Spire*, and *the Lone Beacon*;
 - a band's seal lifted: *The way below the Galleries is open.*
@@ -2906,7 +2930,10 @@ so:
 - **A `force` deploy** voids every live breach. Their stakes are returned, and their Redoubts taken stay taken.
 - **A LAW PIN PER BREACH**: the breach records `egv`, the spec law it was opened under.
   - Both sides keep `EG_LAWS`, every `EG_SPEC` younger than seven days (pinned), for `egHallOf` (the fragments laid
-    with it) and `courseOf`. A client deployed ahead of the relay, or behind it, still draws the breach's own halls.
+    with it) and `courseOf`. A client deployed ahead of the relay, or behind it, still draws the breach's own halls: its
+    circle's look (THE EDGE LINE, the streamers, the mist - `scenes/egLookDraw.js`) and its fight's hall
+    (`scenes/egFight.js`) are made again once the room has given them, as its level is (AUDIT EG V: both were kept from
+    the client's own law's draw).
   - A client that cannot draw its breach's `egv` asks `{k:'spec'}` and builds from the relay's bytes (section 9).
   - CI also sweeps the previous law's courses with the current motor, since the motor reaches clients at once.
   - Frames are self-describing (a full shape stamp), so a brain's tuning needs no pin.
@@ -3088,7 +3115,7 @@ height rides a word the fight already says, so the frames stay as many as they w
 | `{k:'tonic'}` | member -> room | a Spire Tonic drunk (section 17.1): one of the run's spent, and `{k:'eheal', p: 0.25, why: 'tonic'}` to that member alone - its health through the census, its magicka on its screen (AUDIT EG III) |
 | `{k:'mast'}` | member -> room | a Mastery used (Spirebridge, section 15) - no fields: the room reads the asker's own pose |
 | `{k:'wkpaid', w}` | member -> room | the service answered my Redoubt `w`'s receipt paid already this week: that circle's Reliquaries 20 lumen each (section 16.3; AUDIT EG III) |
-| `{k:'st', ...}` | room -> all | the breach: seed, `sd` (the spec's digest), `egv`, hall, kind, variant, slot, twist, stage, the count's end, the respite left, the company (each `m1..`: numeral, alive, witness, home, forsaken, road), each member's Reliquaries (each one's circle with them, AUDIT EG III), Cantrips and lumen, the Mementos lying, the decrees, the Proclamation, the Wager, the arch's site |
+| `{k:'st', ...}` | room -> all | the breach: seed, `dg` (the digest of the hall's spec, section 9), `egv`, hall, kind, variant, slot, twist, stage, the count's end, the respite left, the company (each `m1..`: numeral, alive, witness, home, forsaken, road), each member's Reliquaries (each one's circle with them, AUDIT EG III), Cantrips and lumen, the Mementos lying, the decrees, the Proclamation, the Wager, the arch's site |
 | `{k:'sg', ...}` / `{k:'co', co}` | room -> all | the stage word (the hall, its stage from when to when, the count, the hall's wake, the door's instant) / the company |
 | `{k:'fall', s, n, at, fin}` | room -> all | a member fallen (`fin`: final) |
 | `{k:'rd', w, h, at, cl, g, v, cov, dm}` | room -> all | the Redoubt taken: the count after it and its gain, a Valkynaz's, under the Covenant, the Court's chart (EG-ZF) |
@@ -3524,7 +3551,9 @@ device with its breach (`eg.log`), so a reload's recap keeps its earlier circles
   - *Carry a fallen friend's Memento to a niche.*
   - *Walk home to open your Reliquaries.*
 - **THE REHEARSAL**: once a real day, a keyless breach of Halls 1-5 (`/v1/eg/open` with `rh` in its order: no stake),
-  with the count and one life but no spoils, receipts or boards. It ends at Redoubt 1 (`why:'rehearsal'`), a wipe or
+  with the count and one life but no spoils, receipts or boards. Its members enter with no recall, so a fall is final:
+  its card, the witness's line and the first-time lines say so (AUDIT EG V - a Rehearsal ends at Redoubt 1, before any
+  rest could call one back). It ends at Redoubt 1 (`why:'rehearsal'`), a wipe or
   the tear, and counts against `EG_LIVE_MAX`. It sets `eg_live` for its life, like any breach, and is never the first
   breach's mercy, having no stake. A scarce key is never the price of learning.
 

@@ -178,7 +178,7 @@ test('EG-PLAY THE ROOM: it admits its company alone, inside the open window - a 
   });
 });
 
-test('EG-PLAY ONE LIFE (EG-FULL, section 16.5): a death in the breach is the member\'s fall, said by their own word (`fell` - the death save turned it aside) - said to all with whether it is final, the member a witness with its recall in hand; no member living, the breach ends a wipe, the end receipt (`e1`, kind x, why wipe) minted to its socket, and its room beats no more (mutants: a death that costs nothing; the end never said; a fall said final with a recall in hand)', async () => {
+test('EG-PLAY ONE LIFE (EG-FULL, section 16.5): a death in the breach is the member\'s fall, said by their own word (`fell` - the death save turned it aside) - said to all with whether it is final (a solo member\'s is: nobody living is left to recall it), the member a witness; no member living, the breach ends a wipe, the end receipt (`e1`, kind x, why wipe) minted to its socket, and its room beats no more (mutants: a death that costs nothing; the end never said; the last living member\'s fall said first)', async () => {
   await withBreach(async ({ eg, beat, admit, step }) => {
     const spec = egHallOf(eg.store.get(EG_KEY).seed, 1);
     step(EG_SEALED_MS); await beat(1000);
@@ -193,7 +193,10 @@ test('EG-PLAY ONE LIFE (EG-FULL, section 16.5): a death in the breach is the mem
     assert.deepEqual([rec.mem['acct-mac'].alive, rec.mem['acct-mac'].falls, rec.mem['acct-mac'].wit], [0, 1, 1]);
     assert.equal(rec.end, 'wipe');
     const fall = egs(ws).find((m) => m.k === 'fall' && m.s === 'acct-mac');
-    assert.ok(fall && fall.fin === 0, 'said - not final: the recall is still in hand');
+    // PIN MOVED (AUDIT EG V, a2 - L3-15; section 16.5 "Solo stays literally one life"): a fall that leaves nobody living is said
+    // final - the breach's wipe follows on the same beat, and no recall or Memento can undo it (it read `fin` 0, *The next
+    // Redoubt can call you back.*); a company's first fall is still not final (test/egaudit5_a2.test.js)
+    assert.ok(fall && fall.fin === 1, 'said - final: nobody living is left to recall it');
     assert.ok(egs(ws).some((m) => m.k === 'end' && m.why === 'wipe'));
     const r = egs(ws).find((m) => m.k === 'rcpt');
     assert.ok(r, 'the end receipt minted to its socket');
