@@ -231,7 +231,7 @@
   },
   {
     "name": "OW3D1-said-spawn-a-plate",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "      if (g.found) {\n        if (!g.spawn && `far:${g.row.mapID}` === farEnd) continue;",
     "new": "      if (g.found || g.spawn) {\n        if (!g.spawn && `far:${g.row.mapID}` === farEnd) continue;",
     "tests": [
@@ -241,7 +241,7 @@
   },
   {
     "name": "OW3D1-spawn-end-reads-a-row",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "        if (!g.spawn && `far:${g.row.mapID}` === farEnd) continue;",
     "new": "        if (`far:${g.row.mapID}` === farEnd) continue;",
     "tests": [

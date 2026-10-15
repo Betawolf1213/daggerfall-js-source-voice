@@ -99,6 +99,13 @@ One group per slice, one pull request each, behaviour unchanged:
    its claim and names where the code now lives. A cite into the moved lines
    names the new file (`npm run cites -- --check`, then `citeanchor`).
 4. **Lower the ceiling** to the host's new length plus 250.
+`tools/hostMove.mjs` does 2 and the mechanical half of 3 (HOST-SPLIT 1): it
+decides every name by those rules (by value, live, import, refused), writes the
+module and the host's construction, drops the imports the host no longer reads,
+and points every mutant record and doc anchor that named the moved text at the
+module - in place, the records' own layout kept. The test pins are the half it
+leaves: their assertions are read and moved by hand (`PIN MOVED`).
+
 5. **Prove it**: lint, types, the bible's gates, every test that reads the host
    or the module, `tools/mutate.mjs` over the mutant lists that name the moved
    code - and, since CI has no ARENA2, Mac plays the slice and runs
@@ -113,6 +120,7 @@ CONSTRUCTION SEAM (`Home.md`) for all of them - the slice names all four hosts
 1. HOST-SPLIT 0 - this page, the ceiling, the map. SHIPPED with this page.
 2. HOST-SPLIT 1 (the pilot) - `travelViewMarks`: no writes, one user, three
    tests. It proves the method end to end before anything large moves.
+   SHIPPED - below.
 3. `buildPixelNow` (the world's pixel build, 1,232 lines, 3 writes), then
    `questWorld`, `worldQuickLoad`, and down the map by cost.
 4. `frame` by stage, then the online group's state, owned.
@@ -121,3 +129,21 @@ CONSTRUCTION SEAM (`Home.md`) for all of them - the slice names all four hosts
 
 Each slice records itself here: the group, its numbers before and after, the
 ceiling it lowered to.
+
+## HOST-SPLIT 1 - travelViewMarks (SHIPPED, 2026-10-15)
+
+The pilot. `tvBadgeOf`, `TV_PEER_HEAD_M` and `travelViewMarks` - the Overworld's
+marks, 229 lines, three contiguous members nothing else used - left `bootWorld`
+for `src/scenes/travelViewMarks.js` (`createTravelViewMarks(host)`), moved by
+`tools/hostMove.mjs`:
+
+- 46 names by value - `const`s above the group, never-written `let`s, function
+  declarations; 15 live, read as `host.<name>` - `let`s written elsewhere
+  (`_sharedOffsetMs`, `bountyHost`, `livingRoads`, `online`, `social`...) and one
+  `const` made 230 lines below the group, `navalRaidersOn`, which a copy at
+  construction would have read in its temporal dead zone and thrown at boot.
+- 28 imports came along; the host dropped the 9 it no longer read.
+- 35 mutant records over 20 lists and one doc anchor (`Wild-Zone.md`, PVPGIANT)
+  followed the code; 2 test pins moved by hand (SHIPYARDS-FOUND, YARDS-FOUND -
+  the module's order, and the host handing the yards and the port over live).
+- `bootWorld` 35,251 -> 35,042 lines; its ceiling 35,501 -> 35,292.

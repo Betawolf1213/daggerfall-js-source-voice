@@ -471,23 +471,22 @@ import { groundHit, canvasPoint, classifyPick } from '../player/travelPick.js'; 
 import { planRoute, routeLegs, roadShare, crossesWater, dryLine, SEA_KINDS } from '../systems/travelRoute.js';   // TV2: the way by the roads; OWS2: and over the water
 import { createSeaHelm, seaHelmStep, seaHelmLook, headingOf as seaHeadingOf, squareOnly as seaSquareOnly } from '../systems/seaHelm.js';   // OWS2: the journey's hand on the helm
 import { createLoadGovernor, unbuiltAround } from '../systems/travelGovernor.js';   // TV2: "Cap it to what loads cleanly"
-import { createWildAlert, noticeChance, WILD_MARK, WILD_MARK_S } from '../systems/wildAlert.js';   // WILD-ALERT: the wilderness notices a fast traveller on a stealth check
+import { createWildAlert, noticeChance, WILD_MARK_S } from '../systems/wildAlert.js';   // WILD-ALERT: the wilderness notices a fast traveller on a stealth check
 import { drawWildMarks, WILD_MARK_RANGE } from '../ui/wildMarks.js';   // WILD-ALERT: the "!" over an alerted foe
 import { playerOnPathAt, pathsDataPoint } from '../systems/travelPaths.js';   // RATE-LAW: the traveller on a road's lane or off it
 import { threatCap, foePaced } from '../systems/travelThreat.js';   // OW6: the journey slows as enemies close; ENEMY-PACE's floor, fixed (RATE-LAW)
 import { farPlaces, settlementPixels, farDistanceText, PIXEL_KM, TV_FAR_RANGE } from '../systems/travelFarPlaces.js';   // TV5: the far places, held at the view's edge
-import { TV_DUNGEON_TYPES, dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
+import { dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
 import { routeGround, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE } from '../systems/travelRoute.js';   // OW-MOUNTAINS, OW-ROADSIDE; AUDIT OW3 J4: the drawn route's points; AUDIT OW4 J3: the ground read once
-import { bandsNear, wanderAt, bandSight, bandChaseStep, bandLabel, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
+import { bandsNear, wanderAt, bandSight, bandChaseStep, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
 import { bandWordOf, validBandWord, chaseYields, bandLifeOf, bandNearMe, bandPixelOf, BAND_WORD_MS, BANDS_WIRE_MAX } from '../systems/travelBands.js';   // TV7b: the chase, shared
 import { walkBegin, leaderWalkStep, walkHeard, memberAnswer, memberFollowing, memberStopOf, memberWalkStep, walkAskStands, sameWalkDest, NO_WALK_ANSWER, PARTY_WALK_RADIUS_M } from '../systems/partyWalk.js';   // TV8: group travel, the leader drives (AUDIT OW3: the whole law, pure)
 import { rollGroupComposition, PACK_SPACING, PACK_ALERT_RADIUS } from '../systems/campEncounters.js';   // TV7: a band is a themed group
 import { seededRng } from '../systems/wind.js';   // TV7: a band's make, rolled from its own seed
 import { enemyDisplayName } from '../characters/enemyBasics.js';   // TV7: a band's words
 import { groupCamps } from '../world/campShared.js';   // OW6: the camps on the Overworld
-import { travellerMarkOf, travellerWorldOf, travellerDue, createTravellerBook, isShipMark } from '../systems/travellerMarks.js';   // TV3: the region's travellers; OWS1: at sea, a ship
+import { travellerMarkOf, travellerDue, createTravellerBook, isShipMark } from '../systems/travellerMarks.js';   // TV3: the region's travellers; OWS1: at sea, a ship
 import { RainCurtainsRenderer, curtainsOf, CURTAIN_FOOT_MARGIN_M } from '../render/rainCurtains.js';   // TV4: the weather's curtains, stood in the world for the view
-import { RANGE_PIXELS as TV_BODY_RANGE } from '../net/wire.js';   // TV3: within the pose range a traveller is their body, not a mark
 import { quickLootWheel, quickLootTake, quickLootArm, plaqueActionFor, plaqueActionSelection, plaqueLightFirst, plaqueStep } from '../systems/quickLoot.js'; import { showPickups, showHaul } from '../ui/pickupFeed.js'; import { claimHauls } from '../ui/haulCards.js';   // QUICK-LOOT B4: the wheel, the take, and the two keys that arm what the next activate means; PICKUP-FEED: what a take moved, as cards (the take's `took`)
 import { findHaul } from '../ui/haulCards.js'; import { setSilverFinder, silverFindAt } from '../systems/silverFinds.js';   // SILVER-FINDS: a loot find's card; the finder every host's loot door asks, and a headstone's find
 import { setWalletSilver } from '../systems/walletItem.js';   // WALLET1: the wallet counts the account's silver
@@ -582,7 +581,7 @@ import { facetBand } from '../net/recipeLaw.js';   // PROF10: the facet's attrib
 import { panBand, DISH_LEVEL } from '../net/recipeLaw.js';   // PROF9: the pan's attribute band; a feast's level at the table
 import { COOK_FIRE } from '../net/professionLaw.js';   // PROF9: the fire Cooking is done at - any lit one, no fee
 import { SURVEYOR } from '../net/professionLaw.js';   // MINE-PERKS: Mining 100's Surveyor, whose own word witnesses the ground
-import { lodeMapMarks, lodeLabel, LODE_COMPASS_CSS } from '../ui/lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, on both maps and the Overworld
+import { lodeMapMarks } from '../ui/lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, on both maps and the Overworld
 import { localWhenText } from '../systems/eventTimers.js';   // AUDIT MINE-PERKS: a Motherlode's hour as the timers say a moment - this machine's clock, its weekday where it is not today
 import { setFeastShare, takeFeastGift, shareFeastWith } from '../systems/cookItems.js';   // PROF9: a feast shared with the party at the table
 import { hasSkillet, packSavedFires, CAMP_TEXT } from '../systems/survival/camp.js';   // PROF9: C&C's Skillet widens the pan's window; AUDIT REST II H5: a dungeon save's fires carried out
@@ -653,7 +652,7 @@ import { raycastColliders, rayBoxEntry, colliderPoses, invertAffine, BUILTIN_COL
 import { DECK_STEP, DECK_HEADROOM, intoDeck, outOfDeck, mainLevel } from '../systems/naval/navalDeck.js';   // DECK-WALK: a body off her deck by more than a tread has left it; her deck's frame (AUDIT NAV2 F33: the headroom a deck point's ray starts under)
 import { warmAshesOn, LeaveShip, setWarmAshesHost, onPreFastTravel as warmAshesPreTravel, onPostFastTravel as warmAshesPostTravel, frame as warmAshesFrame, raidAtSea as warmAshesRaidAtSea, raidRefusal as warmAshesRaidRefusal, raidUnderWay as warmAshesRaidUnderWay, WA_RAID_QUESTS, WA_SEA_REGION } from '../systems/warmAshesShips.js';   // WA1: Warm Ashes - Ships, the ambush at sea; OWS3: its raid, seen coming; THE MERGE (NAV-D, OWS3): one raid at a time
 import { laneNetwork, laneWay, packetsAt, packetAt, LANE_PATH_PX, LANE_DWELL_S } from '../systems/naval/seaLanes.js';   // SEA-LANES: the Bay's packets; LW5: where one is, and her dwell
-import { raidersNear, raiderAt, raiderSight, chaseStep as raiderChaseStep, pixelOfNative, NATIVE_PIXEL as RAID_NATIVE_PIXEL, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M, RAIDER_CHASE_MPS, RAIDERS_WIRE_MAX, RAIDER_WORD_MS, raiderWordOf, validRaiderWord, raiderLifeOf, raiderNearMe, RAIDER_LABEL, RAIDER_LIFE_MS } from '../systems/seaRaiders.js';   // OWS3: Warm Ashes' raiders on the Overworld's sea
+import { raidersNear, raiderAt, raiderSight, chaseStep as raiderChaseStep, pixelOfNative, NATIVE_PIXEL as RAID_NATIVE_PIXEL, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M, RAIDER_CHASE_MPS, RAIDERS_WIRE_MAX, RAIDER_WORD_MS, raiderWordOf, validRaiderWord, raiderLifeOf, raiderNearMe, RAIDER_LIFE_MS } from '../systems/seaRaiders.js';   // OWS3: Warm Ashes' raiders on the Overworld's sea
 import { RAIDER_LEAD_S } from '../systems/naval/navalRaiders.js';   // NAV-R: a raider ship steers its seeded course this far on
 import { setRaidingPartiesHost, raidFrame as raidingPartiesFrame, raidState, raidingPartiesOn, raidTypeName as raidKindName, raidDefendingHere, outOfSight as raidOutOfSight, raidWireWord, raidPeerWord, raidRelayWord, raidTownsFor, raidPoolCleared, raidRelayState, RAID_SPAWN_MIN_DISTANCE, RAID_SPAWN_MAX_DISTANCE } from '../systems/raidingParties.js';   // RAID1: World Events - Raiding Parties, the towns' raids
 import { modSaveRecords, restoreModSaveRecords, newGameModSaveRecords, registerModSaveData } from '../systems/modSaveData.js';   // WA1: DFU's per-mod save slot, for the mods after HCC; OH-D: Ocean Holes' OceanHoleSaveData
@@ -808,7 +807,7 @@ import { POSE_STRIKES, isWorldRoom, isCellRoom, cellHaloFor, actFrameFits, share
 import { WILD_DATA_MAX, WILD_ITEMS_MAX, POSE_RIDE } from '../net/wire.js';   // INT9 (AUDIT): a deposit's chunks, bounded by the wire's frame; COATS3D: POSE_RIDE - a peer on a horse rides the 3D one
 import { hasDaggerfallArrows } from '../combat/fpArm.js';   // MAC7 #2: the arrow bit on the wire - weaponRig's own read
 import { drawText } from '../ui/text.js';   // ONLINE1: the session's status line
-import { RemotePlayers, composeLook, createSightCache, NAME_RANGE } from '../net/remotePlayers.js';   // ONLINE1: the others, drawn; NAME1: and the sight test their names take, cached and hysteresised (AUDIT NAME1 F2/F5)
+import { RemotePlayers, composeLook, createSightCache } from '../net/remotePlayers.js';   // ONLINE1: the others, drawn; NAME1: and the sight test their names take, cached and hysteresised (AUDIT NAME1 F2/F5)
 import { createNameLayer, nameLayerWanted } from '../ui/nameLayer.js';   // NAME1 + BUBBLE1: the names and the chat bubbles, in the enhanced face; AUDIT NAME1 F7: and who gets that face
 import { enhancedHudScale, setHudSetChips, enhancedHudBottom, enhancedHudQuick } from '../ui/enhancedHud.js';   // AUDIT NAME1 F3: the player's own HUD scale, which the names wear like every other enhanced surface; SET5: the set powers' chips
 import { makeHitPend } from '../net/hitPend.js';   // AUDIT FOES FOE2: a blow the wire refused waits and goes
@@ -1081,6 +1080,7 @@ import { createSiegeHerald } from '../net/siegeHerald.js';   // AUDIT-SEATS G1: 
 import { siegeBlowKind, siegeCastClamp, siegeSpellNumbers, siegeSpellBarred, SIEGE_SPELL_BARRED_TEXT, SIEGE_DISMOUNT_TEXT } from '../combat/siegeCombat.js';   // AUDIT-SEATS G5: a battle's shafts, spells and saddle
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { startTutorialTour } from '../ui/tutorialPopup.js';   // TUT1: the welcome tour - and the popups' handler, registered by this host (the four hosts' rule)
+import { createTravelViewMarks } from './travelViewMarks.js';   // HOST-SPLIT
 
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
  *  (ThievesGuild.cs:115, DarkBrotherhood.cs:108). %map is the
@@ -32462,238 +32462,29 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     }
     return holder._tvAt;
   }
-  /** OVERWORLD NAMES: a player's badge as their name wears it in play - the relay's stamps, never a frame's own words. */
-  const tvBadgeOf = (p) => ({ title: p.title ?? null, glyphs: Array.isArray(p.glyphs) ? p.glyphs : [], lv: p.lv ?? null, gt: p.gt ?? null, rb: p.rb ?? null });   // AUDIT-SEATS: and a Season's banner ribbon
-  const TV_PEER_HEAD_M = 1.8;   // m: a peer's head when no body layer knows their height
-  /** The readout's marks: the plates (the journey's own end hides its plate), and the end. World points - the view
-   *  projects them through the frame's matrices. */
-  function travelViewMarks() {
-    const live = tvTripLive();
-    if (!live) { tvTrip.plan = null; tvTrip.natives = []; tvTrip.end = null; tvTrip.line = ''; }
-    const endKey = live && tvTrip.plan.summary ? `place:${tvTrip.plan.summary.mapId}` : null;
-    const marks = [];
-    for (const p of travelViewPlaces()) {
-      if (p.key === endKey) continue;
-      const tier = params.has('online') ? tierPhrase(dungeonTierLabel(p.summary.loc)) : '';   // TIER1: a dungeon's tier and size under its name, online
-      // OW-DUNGEON-DOT (2026-10-13, field: "some dungeons appear on the Overworld map as towns"): a found dungeon within the
-      // grid wears TV2's plate (travelViewDungeons leaves it to this list), and every plate here was kind 'place' - a
-      // town's brass dot, and the Towns switch's count. Its kind says so now: the dungeons' arch, the Dungeons switch.
-      const isDungeon = TV_DUNGEON_TYPES.has(p.summary.loc?.mapTableData?.locationType);
-      marks.push({ key: p.key, at: tvSceneKept(p, p.x, p.z, TV_PLACE_LIFT), label: p.summary.name, ...(tier ? { sub: tier } : {}), kind: isDungeon ? 'place dungeon' : 'place', pick: true, hub: carriageTown(p.summary.mapId), tip: seatTipAt(p.summary.mapId) });   // OW-HUBS: a carriage town's wheel; SEAT-TIP: a seat's card
-    }
-    // TV5: the far places, held at the edge with their distance (the journey's own end is the flag's)
-    const farEnd = endKey ? `far:${tvTrip.plan.summary.mapId}` : null;
-    const here = state.worldCoords(player.pos);
-    for (const f of travelViewFarPlaces()) {
-      if (f.key === farEnd) continue;
-      const km = (Math.hypot(f.x - here.x, f.z - here.z) / 32768) * PIXEL_KM;   // native units a pixel (MapsFile.WorldMapTerrainDim)
-      marks.push({ key: f.key, at: tvSceneKept(f, f.x, f.z, TV_PLACE_LIFT), label: f.summary.name, sub: farDistanceText(km), kind: 'far', pick: true, edge: true, hub: carriageTown(f.summary.mapId), tip: seatTipAt(f.summary.mapId) });   // OW-HUBS; SEAT-TIP
-    }
-    // TV6: THE DUNGEONS - a found one past the grid a far plate (within it TV2's plate stands - AUDIT OW3 D3: the list
-    // leaves those out, so they spend none of its twelve), the rest unnamed lairs. AUDIT OW3 D1: a spawn the player has
-    // been told of the same way - named once filed, its plate a walk to its door (travelViewSpawnWalk)
-    for (const g of travelViewDungeons()) {
-      if (g.found) {
-        if (!g.spawn && `far:${g.row.mapID}` === farEnd) continue;
-        const km = (Math.hypot(g.x - here.x, g.z - here.z) / 32768) * PIXEL_KM;
-        const tier = params.has('online') ? tierPhrase(dungeonTierLabel(g.loc)) : '';   // TIER1: the tier and size before the distance, online
-        marks.push({ key: g.key, at: tvSceneKept(g, g.x, g.z, TV_PLACE_LIFT), label: g.loc.name, sub: tier ? `${tier} - ${farDistanceText(km)}` : farDistanceText(km), kind: 'far dungeon', pick: true, edge: true });   // OW-FILTER: 'dungeon' - the look is the first word's, the filter's group the second's
-      } else marks.push({ key: g.key, at: tvSceneKept(g, g.x, g.z, TV_PLACE_LIFT), label: '?', kind: 'lair' });
-    }
-    // LW3: THE ROAD'S PARTIES - a caravan, pilgrims, a pedlar, each where it is and where it is bound (scenes/livingRoads.js)
-    if (livingRoads && livingWorldOn()) {
-      for (const m of livingRoads.marks()) if (markShown({ kind: m.kind })) marks.push({ key: m.key, at: [m.at[0], m.at[1] + 2, m.at[2]], label: m.label, kind: m.kind });
-      // LW12: the hideouts of bands the character has heard of - rumoured, a ring
-      const hereN = state.worldCoords(cam.pos);
-      for (const m of livingHideoutsHostOf().marks(hereN.x, hereN.z, skyMinutes())) if (markShown({ kind: m.kind })) marks.push({ key: m.key, at: [m.at[0], m.at[1] + 2, m.at[2]], label: m.label, kind: m.kind });
-    }
-    // TV7: THE BANDS - each with its kind and number where it walks; one chasing me held at the edge, pointing
-    const bms = bandNowMs();
-    // AUDIT OW4 B6: none drawn where none can come - the camps' own switch off, or the enemy spawns held
-    const shown = getPref('wildernessCamps') === false || playerEntity.preventEnemySpawns ? [] : [...travelViewBands()];
-    for (const c of _bandChase.values()) if (!shown.some((o) => o.id === c.band.id)) shown.push(c.band);   // AUDIT OW3 T7-2: a chaser out of the list still seen
-    for (const b of shown) {
-      if (_bandSpent.has(b.id)) continue;
-      const mk = bandMake(b);
-      if (!mk) continue;
-      const chasing = _bandChase.has(b.id), p = bandPlace(b, bms);
-      marks.push({ key: `band:${b.id}`, at: tvSceneKept(b, p.x, p.z, 2), label: chasing ? `${WILD_MARK} ${bandLabel(mk.name, mk.mobileTypes.length)}` : bandLabel(mk.name, mk.mobileTypes.length), kind: chasing ? 'band chase' : 'band', edge: chasing, pick: true });   // OW6: the band's OWN number, the same for every player (a party it meets brings more - PSCALE1 - where it stands); WILD-ALERT: a chase is a band that noticed me - its mark
-    }
-    // OW6 (2026-09-29, the player: "If a camp is spawned, it should show in the overworld"): THE CAMPS - every group
-    // standing about, a camp, a pack or a band stood: mine, and each peer's by the tags their frames carry
-    // (world/campShared.js) - one mark where its living members stand, with its kind and its number; gone with its last
-    const wildCamps = wildCampKeys();   // WILD-ALERT: a camp a member of which has noticed me wears the mark
-    for (const c of travelViewCamps()) marks.push({ key: `camp:${c.key}`, at: [c.at[0], c.at[1] + 2, c.at[2]], label: wildCamps.has(c.key) ? `${WILD_MARK} ${c.label}` : c.label, kind: 'camp', pick: true }); for (const g of gatherHost?.overworldGroups(walkMode ? player.pos : cam.pos) ?? []) marks.push(g);   // OW-ATTACK: pressable; GATHER-OW: each profession's group of nodes near me, a glyph (scenes/gatherHost.js overworldGroups)
-    // YARDS-FOUND (from play: "The new stable and transport merchant shops dont show on town maps/overworld"): each town's
-    // Stable and Wagon Yard standing about me, its name over its ground and its signboard's emblem (scenes/merchantYardsHost.js
-    // overworldMarks) - with the towns on the Towns switch
-    for (const m of merchantYards?.overworldMarks() ?? []) marks.push(m);
-    // SHIPYARDS-FOUND (Mac: "Everything should show on the map/overworld"): each port town's shipyard and lighthouse
-    // standing about me (scenes/portHost.js overworldMarks), and its docks over the first quay laid (scenes/quayPool.js)
-    for (const m of portHost?.overworldMarks() ?? []) marks.push(m);
-    for (const m of quays?.overworldMarks() ?? []) marks.push(m);
-    // BOUNTY-OVERWORLD (the player: "can the bounties also be shown on the overworld map"): EVERY BOUNTY I HOLD - its
-    // hunt's pixel (the held map's black circle, scenes/bountyHost.js mapMarks), its foes and its distance, held at the
-    // edge off the picture as the journey's end is, so the way to it is always shown
-    const bountyIds = new Set();
-    for (const b of bountyHost?.mapMarks?.() ?? []) {
-      const px = Math.floor(b.cx), py = Math.floor(b.cy);
-      if (!Number.isInteger(px) || !Number.isInteger(py) || !b.id) continue;
-      bountyIds.add(b.id);
-      const o = mapPixelToWorldCoords(px, py);
-      const x = o.x + 16384, z = o.z + 16384;   // the pixel's middle, native units
-      let h = _tvBountyHold.get(b.id);
-      if (!h) { h = {}; _tvBountyHold.set(b.id, h); }
-      const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-      h.snap = { px, py, x, z, place: !!b.place, farmKey: b.farmKey ?? null };   // BOUNTY-SNAP: where its click walks
-      marks.push({ key: `bounty:${b.id}`, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), label: `Bounty: ${b.label}`, sub: farDistanceText(km), kind: 'bounty', edge: true, pick: true });   // BOUNTY-SNAP: pressable, on its ring alone (ui/travelViewHud.js pickBox)
-    }
-    for (const id of [..._tvBountyHold.keys()]) if (!bountyIds.has(id)) _tvBountyHold.delete(id);   // a bounty over lets its point go
-    // HOME-VENDOR: THE TRADER'S WAYPOINT - its town's pixel, in Travel Options' mark's own yellow (`target`), named for
-    // the house and held at the edge off the picture with its distance, as a bounty is
-    {
-      const wp = vendorWaypoint();
-      const t = wp ? _townOfMapId.get(wp.map) : null;
-      if (t) {
-        const o = mapPixelToWorldCoords(t.px, t.py);
-        const x = o.x + 16384, z = o.z + 16384;
-        const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-        marks.push({ key: `vendor:${wp.map}:${wp.buildingKey}`, at: tvSceneKept(_tvVendorHold, x, z, TV_PLACE_LIFT), label: `Trader: ${wp.owner || 'a'}'s house`, sub: `${t.name} · ${farDistanceText(km)}`, kind: 'target', edge: true });
-      }
-    }
-    // AUDIT MINE-PERKS (the cold pass, A8 - the thread: "mark the motherlode spots with a waypoint on the travel map"): A
-    // MOTHERLODE SENSE'S MOTHERLODES on the Overworld too - each at its pixel's middle, its ore and its hour, held at the
-    // edge off the picture with its distance as a bounty is; Mining's glyph in the compass's aqua, under the Gathering
-    // switch, its distance never the nodes' reach (no `dist`)
-    {
-      const keep = new Set();
-      if (lodeSense()) {
-        const nowS = Math.floor((Date.now() + _sharedOffsetMs) / 1000);
-        for (const l of motherlodeBook.sensedAll(_lodesSensed)) {
-          keep.add(l.key);
-          const o = mapPixelToWorldCoords(l.x, l.y);
-          const x = o.x + 16384, z = o.z + 16384;   // the pixel's middle, native units
-          let h = _tvLodeHold.get(l.key);
-          if (!h) { h = {}; _tvLodeHold.set(l.key, h); }
-          const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-          marks.push({ key: `lode:${l.key}`, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), label: lodeLabel(l, nowS, lodeWords), sub: farDistanceText(km), kind: 'gather mining', color: LODE_COMPASS_CSS, edge: true });
-        }
-      }
-      for (const k of [..._tvLodeHold.keys()]) if (!keep.has(k)) _tvLodeHold.delete(k);   // a Motherlode gone lets its point go
-    }
-    // WAYPOINTS (2026-10-06): THE FLAGS - every waypoint the switches show, a small flag in its colour where it lies; a
-    // FOLLOWED one held at the screen's edge with its distance, as a bounty is (the rest only where they are in view).
-    // A click on one is a walk to it; a right-click its menu (onTravelViewContext)
-    {
-      const keep = new Set();
-      for (const w of shownWaypoints()) {
-        const n = mapPointToNative(w.mx, w.my);
-        let h = _tvWaypointHold.get(w.id);
-        if (!h) { h = {}; _tvWaypointHold.set(w.id, h); }
-        keep.add(w.id);
-        const followed = isWaypointFollowed(w.id);
-        const km = (Math.hypot(n.x - here.x, n.z - here.z) / 32768) * PIXEL_KM;
-        marks.push({ key: `wp:${w.id}`, at: tvSceneKept(h, n.x, n.z, 0), label: w.name, ...(followed ? { sub: farDistanceText(km) } : {}),
-          kind: `waypoint ${w.kind}`, color: w.color, wpKind: w.kind, followed, edge: followed, pick: true });
-      }
-      for (const id of [..._tvWaypointHold.keys()]) if (!keep.has(id)) _tvWaypointHold.delete(id);
-    }
-    // AUDIT DEEP2 B-1: THE JOURNEY'S END IS NEVER OFF THE SCREEN UNSEEN - held at the edge as a far place is (a far town's
-    // plate gave way to a flag drawn above the picture, and the destination was gone for the whole journey), a place's
-    // with its distance, and a click on a place's flag is its journey again (after a stop there is no ground to click)
-    if (live && tvTrip.end) {
-      const e = tvTrip.end, place = e.kind === 'dest';
-      const km = place ? (Math.hypot(e.x - here.x, e.z - here.z) / 32768) * PIXEL_KM : NaN;
-      marks.push({ key: 'dest', at: tvSceneKept(e, e.x, e.z, place ? TV_PLACE_LIFT : 0), label: e.label, kind: e.kind, edge: true, ...(place ? { pick: true, sub: farDistanceText(km) } : {}) });
-    }
-    // OVERWORLD NAMES (2026-09-28, Mac: "Full, like in play"): THE PLAYERS DRAWN HERE - within the pose range, their
-    // bodies standing - marked as the region's travellers are, over their heads, NAMED AS THEY ARE IN PLAY (the title
-    // above, the Renown, the name, the guild's tag, the glyphs; my party's in its green). From the view's eye the names
-    // over their heads were past NAME_RANGE (60 m) - the eye stands 40-780 m back (the height over the tilt's tangent;
-    // about 200 m as it opens) - so the players nearest (a party travelling together) went nameless; those names stand
-    // down under the view (drawPeerNames) and these stand for them
-    const near = new Set();
-    const book = travellerBook.live(Date.now());
-    const sharing = new Map();   // the region's travellers by id: the players who share where they are with it
-    for (const t of book) sharing.set(t.id, t);
-    const myGt = myGuildTag();   // OW-KIN: asked once a frame, not once a player
-    // the room's drawable peers, as this frame's onlineFrame sifted them (it runs before the readout): the concealed
-    // (`_hiddenPeers`) and the veiled (`_veils`) are never marked
-    // PVPGIANT: the zone's roaming giants on the Overworld, as the enemies they are (never more than two stand)
-    for (const gf of exteriorFoes.foes) { if (gf.entity?.wildGiant && !(gf.entity.health <= 0) && gf.ai?.feet) marks.push({ key: `giant:${gf.id ?? gf.entity.name ?? marks.length}`, at: [gf.ai.feet[0], gf.ai.feet[1] + 8, gf.ai.feet[2]], label: 'Giant', kind: 'stranger', edge: true }); }
-    for (const d of online?.drawable?.() ?? []) {
-      if (!d?.shown || _hiddenPeers.has(d.id) || _veils.has(d.id)) continue;
-      const f = onlineToScene(_peerMapPoses.get(d.id) ?? d.shown);
-      // WILD3 (the owner: "when other players are near you they are counted as enemies bright red and its called stranger
-      // when you near them Like 600m away"): in the open zone a stranger within WILD_STRANGER_M stands as an enemy
-      if (_wildStrangerIds.has(d.id)) {
-        near.add(d.id);
-        marks.push({ key: `peer:${d.id}`, at: [f[0], f[1] + TV_PEER_HEAD_M, f[2]], label: WILD_TEXT.stranger, kind: 'stranger', edge: true });
-        continue;
-      }
-      // AUDIT NAMES N2-2: THE SWITCH HOLDS - a player who shares nothing with the region ("Show me to travellers" off)
-      // and is not of my party is named only as close as play names them (NAME_RANGE from where I stand) and never held
-      // at the edge; my party, and a player whose mark the region already has, are named wherever they stand
-      const party = !!social?.isPartyPeer(d.id), t = sharing.get(d.id);
-      if (!party && !t && Math.hypot(f[0] - player.pos[0], f[2] - player.pos[2]) > NAME_RANGE) continue;
-      if (wildHidesPlayer({ kin: travellerKin({ friend: !!social?.isFriendPeer(d.id), gt: d.gt }, myGt), wire: [d.shown.x, 0, d.shown.z], party })) continue;   // WILD1: in or near the open zone, my party and my guild alone
-      const h = peerRiders.heightOf(d.id) || peerBodies.heightOf(d.id) || peerWalkers.heightOf(d.id) || TV_PEER_HEAD_M;
-      near.add(d.id);
-      // AUDIT NAMES: and one on a journey (their region mark's `tv`) keeps the arrow they wore from afar
-      marks.push({ key: `peer:${d.id}`, at: [f[0], f[1] + h, f[2]], label: d.name ?? '', kind: `${party ? 'party' : 'traveller'}${isShipMark(t?.p) ? ' ship' : ''}${t?.p.tv ? ' journey' : ''}`, edge: party || !!t, badge: tvBadgeOf(d),
-        kin: travellerKin({ friend: !!social?.isFriendPeer(d.id), gt: d.gt }, myGt), lv: d.lv ?? null });   // OWS1: at sea (their region mark says so), a ship; OW-KIN / OW-WHO: who they are to me, and their Renown
-    }
-    // TV3: THE REGION'S TRAVELLERS - their marks, beyond the pose range (inside it they are the players above); a party
-    // member's in the party's colour; one outside the picture held at its edge, pointing
-    const me = playerTravelPixel();
-    for (const t of book) {
-      if (near.has(t.id) || Math.max(Math.abs(t.p.px - me.x), Math.abs(t.p.py - me.y)) <= TV_BODY_RANGE) continue;
-      const w = (t._w ??= travellerWorldOf(t.p));   // PERF-TV: a book entry is made new by each mark heard, so it is kept on it
-      // AUDIT TV C3: the peer's id, asked of the party's seats (a token's subject is another id space) - AUDIT NAMES N1-10:
-      // as play's names ask it (colorOf), so my own other tab is never my party's green
-      const kind = social?.isPartyPeer(t.id) ? 'party' : 'traveller';
-      if (wildHidesPlayer({ kin: travellerKin({ friend: !!social?.isFriendPeer(t.id), gt: t.gt }, myGt), wire: [w.x, 0, w.z], party: kind === 'party' })) continue;   // WILD1: in or near the open zone, my party and my guild alone
-      const ship = isShipMark(t.p);   // OWS1: at sea, a ship - riding the sea's top
-      marks.push({ key: `trav:${t.id}`, at: tvSceneKept(t, w.x, w.z, 2, ship), label: t.name, kind: `${kind}${ship ? ' ship' : ''}${t.p.tv ? ' journey' : ''}`, edge: true, badge: tvBadgeOf(t),
-        kin: travellerKin({ friend: !!social?.isFriendPeer(t.id), gt: t.gt }, myGt), lv: t.lv ?? null });   // OW-KIN / OW-WHO
-      near.add(t.id);
-    }
-    // AUDIT OW5 P6: MY PARTY, WHEREVER THEY ARE - the held map draws them from the party's own poses (partyMarkers); here
-    // a member past the pose range with "Show me to travellers" off, or over a region's border, stood on no mark at all,
-    // and the one who fell behind a group journey vanished from the leader's view. Their pose's pixel, in the party's
-    // colour, held at the edge - never twice (one marked above, by a body or the region's mark, stands as that)
-    for (const m of social?.others() ?? []) {
-      if (!Number.isInteger(m.p?.px) || !Number.isInteger(m.p?.py) || (m.peers ?? []).some((id) => near.has(id))) continue;
-      const o = mapPixelToWorldCoords(m.p.px, m.p.py);
-      let h = _tvPartyHold.get(m.acct);
-      if (!h) { h = {}; _tvPartyHold.set(m.acct, h); }
-      marks.push({ key: `pty:${m.acct}`, at: tvSceneKept(h, o.x + 16384, o.z + 16384, 2), label: m.name ?? '', kind: 'party', edge: true });
-    }
-    // OWS3: WARM ASHES' RAIDERS - the sails within the grid's reach where they sail, and one giving chase wherever it is,
-    // held at the edge off the picture, pointing
-    // AUDIT OW5b S8: none drawn where none can come - no Come Sail Away, no boat to be at sea in (the bands' own B6)
-    if (warmAshesOn() && csaOn()) {
-      const grid = Math.max(1, state.terrainDistance ?? 3);
-      const listed = travelViewRaiders();
-      for (const r of listed) {
-        const c = tvRaid.chase.get(r.id);
-        const ship = navalRaidersOn() ? naval.raiderShipOf(r.seed) : null;   // NAV-R: stood as a ship of the sea - drawn where she sails
-        if (tvRaid.spent.has(r.id) && !c && !ship) continue;
-        const at = ship ? state.worldCoords(ship.pos) : c ? c.pos : (seaRaidPeerChase(r.id) ?? r);   // OW6: one a peer's chase holds, where they say it sails
-        const chase = ship ? ship.chase : !!c;
-        const px = pixelOfNative(at.x, at.z);
-        if (!chase && Math.max(Math.abs(px.x - me.x), Math.abs(px.y - me.y)) > grid) continue;
-        marks.push({ key: `raid:${r.id}`, at: tvSceneKept(c ?? r, at.x, at.z, 2, true), label: RAIDER_LABEL, kind: chase ? 'raider ship chase' : 'raider ship', edge: chase });
-      }
-      // AUDIT OW5b S3: A CHASE OUT OF THE LIST STILL SEEN - its raider's life turned over (the list is this life's), and it
-      // came alongside unseen: "one giving chase is marked wherever it is" (the bands' own T7-2)
-      for (const [id, c] of tvRaid.chase) {
-        if (listed.some((r) => r.id === id)) continue;
-        marks.push({ key: `raid:${id}`, at: tvSceneKept(c, c.pos.x, c.pos.z, 2, true), label: RAIDER_LABEL, kind: 'raider ship chase', edge: true });
-      }
-    }
-    return marks;
-  }
+  const { travelViewMarks } = createTravelViewMarks({   // HOST-SPLIT: src/scenes/travelViewMarks.js
+    TV_PLACE_LIFT, _bandChase, _bandSpent, _hiddenPeers, _lodesSensed, _peerMapPoses, _townOfMapId, _tvBountyHold,
+    _tvLodeHold, _tvPartyHold, _tvVendorHold, _tvWaypointHold, _veils, _wildStrangerIds, bandMake, bandNowMs,
+    bandPlace, cam, carriageTown, csaOn, exteriorFoes, livingHideoutsHostOf, lodeSense, lodeWords, motherlodeBook,
+    myGuildTag, params, player, playerTravelPixel, seaRaidPeerChase, seatTipAt, state, travelViewBands,
+    travelViewCamps, travelViewDungeons, travelViewFarPlaces, travelViewPlaces, travelViewRaiders, travellerBook,
+    tvRaid, tvSceneKept, tvTrip, tvTripLive, walkMode, wildCampKeys, wildHidesPlayer,
+    get _sharedOffsetMs() { return _sharedOffsetMs; },
+    get bountyHost() { return bountyHost; },
+    get gatherHost() { return gatherHost; },
+    get livingRoads() { return livingRoads; },
+    get merchantYards() { return merchantYards; },
+    get naval() { return naval; },
+    get navalRaidersOn() { return navalRaidersOn; },
+    get online() { return online; },
+    get onlineToScene() { return onlineToScene; },
+    get peerBodies() { return peerBodies; },
+    get peerRiders() { return peerRiders; },
+    get peerWalkers() { return peerWalkers; },
+    get portHost() { return portHost; },
+    get quays() { return quays; },
+    get social() { return social; },
+  });
   // OWS3 (2026-09-28, the player's ask: "The pirate quest system should work like how we're changing enemies and nearby
   // dungeons. Like mount and blade, being able to see other players sailing in the overworld and other enemy ships"):
   // WARM ASHES' RAIDERS, SEEN COMING (systems/seaRaiders.js). The mod's raid is a roll on a fast travel by sea the

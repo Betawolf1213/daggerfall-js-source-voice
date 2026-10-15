@@ -480,8 +480,8 @@
   },
   {
     "name": "LW3-host-marks-unwired",
-    "file": "src/scenes/world.js",
-    "old": "      for (const m of livingRoads.marks()) if (markShown({ kind: m.kind })) marks.push({ key: m.key, at: [m.at[0], m.at[1] + 2, m.at[2]], label: m.label, kind: m.kind });",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "      for (const m of host.livingRoads.marks()) if (markShown({ kind: m.kind })) marks.push({ key: m.key, at: [m.at[0], m.at[1] + 2, m.at[2]], label: m.label, kind: m.kind });",
     "new": "      void markShown;",
     "tests": [
       "test/lw3_roads.test.js"

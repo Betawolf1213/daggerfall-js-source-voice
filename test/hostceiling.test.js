@@ -23,7 +23,7 @@ const ROOM = 250;
  *  code OUT lowers its ceiling in the same change (the second test makes it). Raise one only with the reason written
  *  beside it: the ceiling is the line between wiring a module in and growing the knot. */
 const CEILINGS = [
-  ['src/scenes/world.js', 'bootWorld', 35_501],
+  ['src/scenes/world.js', 'bootWorld', 35_292],   // HOST-SPLIT 1: travelViewMarks out (35,251 -> 35,042)
   ['src/scenes/worldModes.js', 'createWorldModes', 13_755],
   ['src/scenes/dungeonContext.js', 'buildDungeonContext', 10_473],
   ['src/scenes/exterior.js', 'bootExterior', 6_333],
