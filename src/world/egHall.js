@@ -45,7 +45,7 @@
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { faces } from './gateModel.js';
-import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES } from './sdRealm.js';
+import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES, SD_LIP } from './sdRealm.js';
 import { egCircleSpecs, egBandOfCircle, EG_TEXT } from '../net/egLaw.js';
 import { EG_FRAGS } from '../net/egFragLaw.js';
 import { egSlagX, EG_SLAG_SPOUTS } from '../net/egSpanLaw.js';   // EG-ZC: the slag's spouts
@@ -199,15 +199,46 @@ function wallRuns(spec, q, side) {
   return out;
 }
 /** Each alcove's niche box (the dungeon's frame): `{ b: [x0, y0, z0, x1, y1, z1], side, door }` - from its wall's inner
- *  face (its doorway through the wall floored too) out NICHE.d; `door` the doorway's x in the dungeon's frame. */
+ *  face (its doorway through the wall floored too) out NICHE.d; `door` the doorway's x in the dungeon's frame. AUDIT EG V
+ *  (lane5 #8): a HERO's alcove opens off its hero's own floor - its wall's inner face where the line from the alcove back toward
+ *  the course (along x, its `side`) first meets a floor of its hero at or under its own height (egHeroDoor), and `along` that
+ *  floor edge's way (the wall's, so its false wall stands flush in a slanted wall) - never the code-built niche's 1.2 m rule. */
 export function egNicheBoxes(spec) {
   const out = [];
   for (const a of spec.alcoves ?? []) {
-    const side = a.side ?? 1, xw = a.x - side * 1.2, xo = xw + side * (NICHE.d + 0.6);
+    const side = a.side ?? 1, hd = egHeroDoor(spec, a), xw = hd ? hd.x : a.x - side * 1.2, xo = xw + side * (NICHE.d + 0.6);
     const p0 = egToDungeon(spec, Math.min(xw, xo), a.y, a.z - NICHE.w / 2), p1 = egToDungeon(spec, Math.max(xw, xo), a.y + NICHE.h, a.z + NICHE.w / 2);
-    out.push({ b: [Math.min(p0[0], p1[0]), p0[1], Math.min(p0[2], p1[2]), Math.max(p0[0], p1[0]), p1[1], Math.max(p0[2], p1[2])], side, door: egToDungeon(spec, xw + side * 0.3, a.y, a.z), a });
+    out.push({ b: [Math.min(p0[0], p1[0]), p0[1], Math.min(p0[2], p1[2]), Math.max(p0[0], p1[0]), p1[1], Math.max(p0[2], p1[2])], side, door: egToDungeon(spec, xw + side * 0.3, a.y, a.z), a, ...(hd ? { along: hd.along } : {}) });
   }
   return out;
+}
+/** How far (m) a hero alcove's doorway is looked for back toward the course, and how far under its height (m) the floor it
+ *  opens off may stand (the Mist Stair's niche a step over its rim). */
+export const EG_HERO_DOOR_LOOK_M = 8;
+export const EG_HERO_DOOR_UNDER_M = 1.0;
+/**
+ * AUDIT EG V (lane5 #8) - A HERO ALCOVE'S DOORWAY (section 11.10's false wall): for alcove `a` of hall `spec` inside its hero's box,
+ * where its wall's inner face stands - `{ x, along }`, the hall's frame: the first point of a hero floor (at most
+ * EG_HERO_DOOR_UNDER_M under the alcove, never over it by more than a hand) met going from the alcove toward the course along x,
+ * and the unit way of that floor's nearest edge ([x, z]); null for a code-built alcove, or none met within EG_HERO_DOOR_LOOK_M.
+ * Pure.
+ * @param {any} spec @param {any} a
+ */
+export function egHeroDoor(spec, a) {
+  const H = (spec?.heroes ?? []).find((q) => a.x >= q.box[0] && a.x <= q.box[3] && a.z >= q.box[2] && a.z <= q.box[5]);
+  if (!H) return null;
+  const side = a.side ?? 1, floors = H.floors.filter((g) => g.y <= a.y + EG_HERO_GROUND_HAND_M && g.y >= a.y - EG_HERO_DOOR_UNDER_M);
+  for (let k = 0; k * 0.05 <= EG_HERO_DOOR_LOOK_M; k++) {
+    const x = a.x - side * k * 0.05, g = floors.find((f) => egPolyIn(f.poly, x, a.z));
+    if (!g) continue;
+    let best = null, bd = Infinity;
+    for (let i = 0; i < g.poly.length; i++) {
+      const p = g.poly[i], q = g.poly[(i + 1) % g.poly.length], d = segDist(x, a.z, p[0], p[1], q[0], q[1]), L = Math.hypot(q[0] - p[0], q[1] - p[1]);
+      if (L > 0 && d < bd) { bd = d; best = [(q[0] - p[0]) / L, (q[1] - p[1]) / L]; }
+    }
+    return { x, along: best ?? [0, 1] };
+  }
+  return null;
 }
 function caveModel(f, spec, q, occ = whole) {
   const D = (x, y, z) => egToDungeon(spec, x, y, z), yLo = Math.min(q.y, q.yB ?? q.y), yHi = Math.max(q.y, q.yB ?? q.y), w = q.halfW, X = q.x;
@@ -457,6 +488,11 @@ export function egOccluderRuns(model, pieces) {
   });
 }
 
+/** AUDIT EG V (lane5 #15): the floors that stand raised over the ground their ways leave - a Rampart's caster pillar, the Wyrm's
+ *  perches, a chamber's and the Rotunda's balconies: each stands its rim faces in the collider (egCircleColliderTris), but over
+ *  this much (m) beside a stair's top on it. */
+export const EG_RAISED_ROLES = Object.freeze(['pillar', 'perch', 'balcony']);
+export const EG_RAISED_WAY_PAD_M = 0.35;
 /** THE CIRCLE'S FLOORS AND WALLS, FOR THE COLLIDER (the dungeon's frame; both faces are one to the collider): its discs,
  *  its bands, its passages' walls and ceilings, its doors' posts. One bucket. */
 export function egCircleColliderTris(seed, c, geo = 0) {
@@ -489,9 +525,18 @@ export function egCircleColliderTris(seed, c, geo = 0) {
     }
     for (const d of spec.discs) {
       if (egIsleDisc(spec, d)) continue;
+      // AUDIT EG V (lane5 #15): a RAISED floor (a caster's pillar, a perch, a balcony - EG_RAISED_ROLES) stands its rim faces as
+      // deep as its drawn lip (SD_LIP), but where a stair comes up onto it: a body walking at its foot meets its face, never
+      // the underside of its top (nothing walks in under a pillar's top, into its rock, and falls)
+      const way = EG_RAISED_ROLES.includes(d.role) ? (spec.ramps ?? []).filter((q) => Math.abs(q.y1 - d.y) < 0.05 && Math.hypot(q.bx - d.x, q.bz - d.z) <= d.r + 0.5) : null;
       for (let k = 0; k < SD_ISLAND_SIDES; k++) {
         const a0 = (k / SD_ISLAND_SIDES) * Math.PI * 2, a1 = ((k + 1) / SD_ISLAND_SIDES) * Math.PI * 2;
         tri(realmToDungeon(spec.x0 + d.x, d.y, d.z), realmToDungeon(spec.x0 + d.x + Math.cos(a1) * d.r, d.y, d.z + Math.sin(a1) * d.r), realmToDungeon(spec.x0 + d.x + Math.cos(a0) * d.r, d.y, d.z + Math.sin(a0) * d.r));
+        if (!way) continue;
+        const mx = d.x + Math.cos((a0 + a1) / 2) * d.r, mz = d.z + Math.sin((a0 + a1) / 2) * d.r;
+        if (way.some((q) => Math.hypot(mx - q.bx, mz - q.bz) <= q.hw + EG_RAISED_WAY_PAD_M)) continue;
+        const p0 = realmToDungeon(spec.x0 + d.x + Math.cos(a0) * d.r, d.y, d.z + Math.sin(a0) * d.r), p1 = realmToDungeon(spec.x0 + d.x + Math.cos(a1) * d.r, d.y, d.z + Math.sin(a1) * d.r);
+        quad(p0, p1, [p1[0], p1[1] - SD_LIP, p1[2]], [p0[0], p0[1] - SD_LIP, p0[2]]);
       }
       if (d.role === 'end') {
         for (const s of [-1, 1]) { const a = realmToDungeon(spec.x0 + d.x + s * EG_DOOR.halfW - EG_DOOR.post / 2, d.y, d.z - EG_DOOR.post / 2), e = realmToDungeon(spec.x0 + d.x + s * EG_DOOR.halfW + EG_DOOR.post / 2, d.y + EG_DOOR.h, d.z + EG_DOOR.post / 2); box(a[0], a[1], a[2], e[0], e[1], e[2]); }

@@ -249,18 +249,20 @@ export function tubeLidModel(w, d, height) {
 /** A FALSE WALL in an alcove's doorway (section 11.10): a stone slab across the doorway (`door` its foot's middle, the
  *  dungeon's frame; `side` which way the niche runs along x), a faint gold seam down its face - its model and its collider
  *  triangles, both in the dungeon's frame. */
-export function sealParts(door, side, y = door[1]) {
-  const f = faces(), t = 0.2, hw = 1.0, h = 2.6, x0 = door[0] - t, x1 = door[0] + t, z0 = door[2] - hw, z1 = door[2] + hw, y0 = y, y1 = y + h;
-  const P = (a, b, c) => [a, b, c];
+export function sealParts(door, side, y = door[1], along = /** @type {number[]|null} */ (null)) {
+  // AUDIT EG V (lane5 #8): `along` - the wall's way in plan ([x, z], a hero alcove's - world/egHall.js egHeroDoor): the slab stands
+  // flush in it, its thickness across it; a code-built niche's wall runs along z
+  const f = faces(), u = along ?? [0, 1], n = along ? [u[1], -u[0]] : [1, 0], t = 0.2, hw = 1.0, h = 2.6, y0 = y, y1 = y + h;
+  const C = (a, b, yy) => [door[0] + n[0] * a + u[0] * b, yy, door[2] + n[1] * a + u[1] * b];   // `a` across the wall, `b` along it
   const quads = [
-    [P(x0, y0, z0), P(x0, y0, z1), P(x0, y1, z1), P(x0, y1, z0)], [P(x1, y0, z1), P(x1, y0, z0), P(x1, y1, z0), P(x1, y1, z1)],
-    [P(x0, y0, z0), P(x0, y1, z0), P(x1, y1, z0), P(x1, y0, z0)], [P(x1, y0, z1), P(x1, y1, z1), P(x0, y1, z1), P(x0, y0, z1)],
-    [P(x0, y1, z0), P(x0, y1, z1), P(x1, y1, z1), P(x1, y1, z0)],
+    [C(-t, -hw, y0), C(-t, hw, y0), C(-t, hw, y1), C(-t, -hw, y1)], [C(t, hw, y0), C(t, -hw, y0), C(t, -hw, y1), C(t, hw, y1)],
+    [C(-t, -hw, y0), C(-t, -hw, y1), C(t, -hw, y1), C(t, -hw, y0)], [C(t, hw, y0), C(t, hw, y1), C(-t, hw, y1), C(-t, hw, y0)],
+    [C(-t, -hw, y1), C(-t, hw, y1), C(t, hw, y1), C(t, -hw, y1)],
   ];
   for (const q of quads) f.quad(SD_REALM_PILLAR_RECORD, q[0], q[1], q[2], q[3], [0, 0], [1, 0], [1, 1], [0, 1]);
   // the seam: a thin gold line down the face the passage sees (the face away from the niche)
-  const xs = side > 0 ? x0 - 0.004 : x1 + 0.004;
-  f.quad(SD_REALM_EDGE_RECORD, P(xs, y0 + 0.1, door[2] - 0.03), P(xs, y0 + 0.1, door[2] + 0.03), P(xs, y1 - 0.2, door[2] + 0.03), P(xs, y1 - 0.2, door[2] - 0.03), [0, 0], [1, 0], [1, 1], [0, 1]);
+  const as = (side > 0 ? -1 : 1) * (t + 0.004) * (n[0] < 0 ? -1 : 1);
+  f.quad(SD_REALM_EDGE_RECORD, C(as, -0.03, y0 + 0.1), C(as, 0.03, y0 + 0.1), C(as, 0.03, y1 - 0.2), C(as, -0.03, y1 - 0.2), [0, 0], [1, 0], [1, 1], [0, 1]);
   const tris = [];
   for (const q of quads) tris.push(...q[0], ...q[1], ...q[2], ...q[0], ...q[2], ...q[3]);
   return { model: packRealmFaces(f), tris: new Float32Array(tris) };
@@ -704,7 +706,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   }
   /** THE FALSE WALLS (section 11.10): one in each seam alcove's doorway, standing until the relay says it broken */
   const seals = [];
-  for (const spec of specs) for (const nb of egNicheBoxes(spec)) if (nb.a.seal === 'seam') seals.push({ spec, a: nb.a, door: nb.door, side: nb.side, key: `eg:seal:${spec.h}:${nb.a.i}`, T: [0, 0, 0], draw: null, up: true });
+  for (const spec of specs) for (const nb of egNicheBoxes(spec)) if (nb.a.seal === 'seam') seals.push({ spec, a: nb.a, door: nb.door, side: nb.side, along: nb.along ?? null, key: `eg:seal:${spec.h}:${nb.a.i}`, T: [0, 0, 0], draw: null, up: true });   // AUDIT EG V: a hero alcove's wall's way (world/egHall.js egHeroDoor)
   /** A Falling Wall's fallen edge in hall `spec` at `t` (s): -Infinity until its hall wakes. */
   const fallenOf = (spec, t) => { const wk = spireWake(); return wk.h === spec.h && wk.hw > 0 ? egWallFallenZ(spec, wk.hw, t * 1000) : wk.h > spec.h ? Infinity : -Infinity; };
   function poseWalls(t) {
@@ -891,7 +893,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
         try { collider?.addMesh?.(g.key, positions, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] an island\'s collider', e?.message ?? e); }
       }
       for (const g of seals) {
-        const { model, tris } = sealParts(g.door, g.side, g.a.y + 0);
+        const { model, tris } = sealParts(g.door, g.side, g.a.y + 0, g.along);
         const gpu = make(model);
         if (gpu) { meshes.set(g.key, gpu); g.draw = { gpu, object: { matrix: identity() }, noShadow: true, texRemap: null, sphere: meshKitBounds(model.positions) }; draws.push(g.draw); }
         const indices = new Uint16Array(tris.length / 3);

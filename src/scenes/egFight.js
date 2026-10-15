@@ -77,6 +77,7 @@ import { ENEMY_BASICS } from '../characters/enemyBasics.js';
 import { stateAnims, FLY_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED, HURT_ANIM_SPEED } from '../characters/mobileUnit.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { egHallOf, egCountText, egVentAt, egInVent, EG_LORDS, EG_BANDS, EG_VENT_PCT, EG_VENT_WARN_MS, EG_VENT_FIRE_MS } from '../net/egLaw.js';
+import { egRimCastsBack } from '../net/egLaw.js';   // AUDIT EG V (lane1 #21): the magma casts back only off every causeway
 import { egVentState, egInVentDisc, egPendAt, EG_VENT_R, EG_VENT_TELL_S, EG_PEND_REACH, EG_PEND_HALF, EG_PEND_CLEAR_MIN } from '../net/egSpanLaw.js';
 import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../net/egSpanLaw.js';   // EG-ZC: a slag crust's break told
 import { egBodyPlace, egBodyHeight } from '../net/egLink.js';   // EG-ZJ: a body's feet
@@ -949,7 +950,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (z.kind === 'burn') { sh.color = egPoolRgb(band); sh.pool = TELEGRAPH_POOL_SPIRE.pool; }   // EG-ZG (section 25.2): A SPIRE POOL - the band's ramp darkened, its rim dashed
         if (!standing || !egInShape(z.s, f[0], f[1])) continue;
         if (z.kind === 'burn' && t - (zoneTick.get(z.i) ?? 0) >= EG_TICK_MS) { zoneTick.set(z.i, t); landShare(z.p, z.b, z.el, 'Burning ground'); }
-        if (z.kind === 'void' && t - voidAt >= 1500) { voidAt = t; castBack(); }
+        if (z.kind === 'void' && t - voidAt >= 1500 && egRimCastsBack(F.zones, f[0], f[1], t)) { voidAt = t; castBack(); }   // AUDIT EG V: never on a haven (a Molten Rim's causeway)
       }
       // THE TETHERS (EG-ZG, section 25.5): the pull-apart grammar for a drain and a Blood Tether, the stay-close for a chain; a Wraith's drain on me ticks
       const meSub = me();

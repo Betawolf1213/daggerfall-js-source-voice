@@ -38,6 +38,7 @@
 import { shDisc, shLane, egWindupFloorMs, egWidthOk, egInShape } from './egShape.js';
 import { EG_MOON_EVERY_S, EG_DRUM_MPS, EG_SPAN_RUN_MPS, EG_SLAG_TELL_S, EG_SLAG_MOLTEN_S, EG_SLAG_CRUST_S, EG_SLAG_CYCLE_S, EG_SLAG_SPOUTS } from './egSpanLaw.js';
 import { EG_PEND_REACH, EG_PEND_HALF, EG_SINK_GONE_M } from './egSpanLaw.js';   // EG6c: an inner piece's travel (egFragSwept)
+import { EG_SET_MARGIN, EG_HAMMER_LINE, EG_SOLVE_LAW, EG_GAP_MIN_CM } from './egSpanLaw.js';   // AUDIT EG V (spec law 8): the set pieces' margin, the Forge Line's hammers' one home
 
 /** The fragment record's version (a change to a fragment's law is a relay version - section 11.5). */
 export const EG_FRAG_V = 1;
@@ -74,6 +75,9 @@ export const EG_FRAG_PIECES = Object.freeze({
 /** A chamber's play (section 11.4 - "a chamber is never a disc with walls"): a second fight floor on two stairs, a
  *  chokepoint arch, a moving hazard, an engine. */
 export const EG_PLAYS = Object.freeze(['balcony', 'arch', 'surge', 'engine']);
+/** A chamber's balcony (cm): its centre this far past the court's rim, its radius. */
+export const EG_BALCONY_OUT_CM = 250;
+export const EG_BALCONY_R_CM = 450;
 
 /**
  * THE HAZARDS (section 11.2), each on the shared clock: its shape's kind, its tell and its live time (ms), its cycle
@@ -92,10 +96,23 @@ export const EG_HAZARDS = Object.freeze({
   slag: Object.freeze({ tell: EG_SLAG_TELL_S * 1000, live: EG_SLAG_MOLTEN_S * 1000, period: EG_SLAG_CYCLE_S * 1000, crust: EG_SLAG_CRUST_S * 1000, pct: 0.2, el: 'fire', aim: 'fight', name: 'Slag Spill' }),   // EG-ZC: its numbers' one home is the crust's (net/egSpanLaw.js)
   tide: Object.freeze({ tell: 5000, live: 15000, period: 60000, pct: 0.1, el: 'fire', aim: 'fight', name: 'Magma Tide' }),
   eclipse: Object.freeze({ tell: 6000, live: 500, period: 40000, pct: 0.3, el: 'shock', aim: 'check', name: 'The Eclipse', r: 3, mps: 1.5 }),
-  hammerline: Object.freeze({ tell: 1400, live: 300, period: 5000, pct: 0.2, el: null, aim: 'trav', name: 'Forge Hammer' }),
+  hammerline: Object.freeze({ tell: EG_HAMMER_LINE.tell, live: EG_HAMMER_LINE.live, period: EG_HAMMER_LINE.period, pct: 0.2, el: null, aim: 'trav', name: 'Forge Hammer' }),   // AUDIT EG V: its clock's one home is the solver's (net/egSpanLaw.js - spec law 8 proves the Forge Line clear of it)
 });
 /** The Eclipse's moon-shafts: r 3 havens walking a ring at a fixed 1.5 m/s, the nearest never more than 20 m away. */
 export const EG_ECLIPSE_RING_M = 9;
+/** AUDIT EG V (lane5 #9; section 11.2's "the nearest is never more than 20 m away"): the Eclipse's reach (cm) - from spec law
+ *  8 (net/egSpanLaw.js EG_SOLVE_LAW) a code-built Eclipse chamber stands no fight floor farther from its nearest moon-shaft's edge, at the
+ *  shafts' worst moment (egEclipseHolds), and lays no balcony past it (egFragChamber): its havens never cross a 9 m ring to a
+ *  balcony beyond a wide Rift-Yard's rim. */
+export const EG_ECLIPSE_REACH_CM = 2000;
+/** Does every point within `D` cm of a code-built Eclipse chamber's centre stand within EG_ECLIPSE_REACH_CM of its nearest
+ *  moon-shaft's edge, whenever the shafts stand? Three shafts a third of a turn apart on a ring of `ring` cm leave a point `D`
+ *  out at most 60 degrees from one - sqrt(D^2 + ring^2 - D x ring) from its centre, the haven EG_HAZARDS.eclipse.r m in from
+ *  that. Whole centimetres, squared: the law's integers. */
+export const egEclipseHolds = (D, ring = EG_ECLIPSE_RING_M * 100) => {
+  const reach = EG_ECLIPSE_REACH_CM + EG_HAZARDS.eclipse.r * 100;
+  return D * D + ring * ring - D * ring <= reach * reach;
+};
 /** The Collapsing Tube (section 11.3): its fall's pace (m/s - the span build runs 5.47), its length (m), and when it
  *  begins (ms after the hall's wake - the slowest fair arrival at its mouth). */
 export const EG_TUBE_MPS = 4.0;
@@ -335,7 +352,7 @@ export function egFragShaft(kit, r) {
  * A SET PIECE, PLANNED (section 11.3; centimetres and milliseconds, its mouth at z 0): `{ kind, name, len, course,
  * hazards, open, halfW, height, yB, tube }` - the course laid from the mouth, each piece the Steps' record; `tube` the
  * Collapsing Tube's fall (its start, ms after the wake, and its pace).
- * @param {string} kind @param {() => number} r @param {{ short?: boolean }} [o] `short` the Tube at its least (a span
+ * @param {string} kind @param {() => number} r @param {{ short?: boolean, law?: number }} [o] `short` the Tube at its least (a span
  *  that carries its decrees' sections too - the hall stays under its length)
  */
 export function egSetPiece(kind, r, o = {}) {
@@ -359,8 +376,11 @@ export function egSetPiece(kind, r, o = {}) {
     for (let q = 0; q < n; q++) course.push({ k: 'moon', gap: between(r, 140, 200), x: (q % 2 === 0 ? -1 : 1) * 50, dy: 0, amp: 0, period, phase, beatRel: 0 });
     return { kind, name: EG_SET_PIECE_NAMES.moonpath, len: 0, course, hazards, open: 1, halfW: 0, height: 0, yB: 0, tube: null };
   }
-  // THE FORGE LINE: three conveyors through hammer drops into the forge's mouth
-  for (let q = 0; q < 3; q++) course.push({ k: 'rail', gap: 320, x: 0, dy: 0, amp: 200, period: between(r, 60, 80) * 100, phase: q * 2000 + between(r, 0, 9) * 100, hammer: 1 });
+  // THE FORGE LINE: three conveyors through hammer drops into the forge's mouth. AUDIT EG V (lane5 #6) - from spec law 8 they
+  // stand THE ENVELOPE's least gap apart, so each conveyor's window keeps the set piece's margin (a conveyor 3.2 m out closes on
+  // the leap half its cycle: waits of 3.5-4 s, past EG_WAIT_MAX / EG_SET_MARGIN)
+  const g = (o.law ?? 0) >= EG_SOLVE_LAW ? EG_GAP_MIN_CM : 320;
+  for (let q = 0; q < 3; q++) course.push({ k: 'rail', gap: g, x: 0, dy: 0, amp: 200, period: between(r, 60, 80) * 100, phase: q * 2000 + between(r, 0, 9) * 100, hammer: 1 });
   return { kind: 'forgeline', name: EG_SET_PIECE_NAMES.forgeline, len: 0, course, hazards, open: 1, halfW: 0, height: 0, yB: 0, tube: null };
 }
 
@@ -369,7 +389,9 @@ export function egSetPiece(kind, r, o = {}) {
  * `{ kit, cls, play, hazards, floors, ramps, arch, engine, anchors, alcoves, vignettes, lights, wall }` - its play (a second
  * fight floor 3-4 m up on two stairs where Casters stand, a chokepoint arch 6 m wide, the channels surging in thirds every
  * 20 s, an engine), its kit's signature over that.
- * @param {string} kit @param {() => number} r @param {number} R @param {{ play?: string }} [o]
+ * AUDIT EG V (lane5 #9) - from spec law 8 (`o.law`): an Eclipse chamber whose balcony would stand past its
+ * havens' reach (egEclipseHolds - a Rift-Yard's court of 20 m and more) takes the arch in the balcony's place.
+ * @param {string} kit @param {() => number} r @param {number} R @param {{ play?: string, law?: number }} [o]
  */
 export function egFragChamber(kit, r, R, o = {}) {
   const F = EG_FRAGS[kit] ?? EG_FRAGS.caverns;
@@ -378,6 +400,7 @@ export function egFragChamber(kit, r, R, o = {}) {
   const anchors = { caster: [], lurker: [], rift: [] };
   let play = o.play ?? pick(r, kit === 'stacks' ? ['balcony'] : kit === 'deep' ? ['balcony'] : EG_PLAYS);
   if (kit === 'deep') play = 'balcony';   // the tide's two dry floors are its balconies
+  if (kit === 'eclipse' && play === 'balcony' && (o.law ?? 0) >= EG_SOLVE_LAW && !egEclipseHolds(R + EG_BALCONY_OUT_CM + EG_BALCONY_R_CM)) play = 'arch';
   let arch = null, engine = null;
   /** `n` second floors `up` high at the chamber's rim, evenly round from its +x side (bearings 90, 270; or 90, 210, 330 -
    *  sines and cosines times 10,000, the law's integers), each with its stair - a ramp from the floor up to its rim. */
@@ -385,7 +408,7 @@ export function egFragChamber(kit, r, R, o = {}) {
   const balconies = (n, up) => {
     for (const [sn, cs] of BEAR[n - 1]) {
       const at = (rr) => [Math.trunc((rr * sn) / 10000), Math.trunc((rr * cs) / 10000)];
-      const [bx, bz] = at(R + 250), br = 450;
+      const [bx, bz] = at(R + EG_BALCONY_OUT_CM), br = EG_BALCONY_R_CM;
       floors.push({ x: bx, z: bz, r: br, y: up, fight: 1 });
       const [x0, z0] = at(R - 750), [x1, z1] = at(R - 200);
       ramps.push({ ax: x0, az: z0, bx: x1, bz: z1, hw: 150, y0: 0, y1: up });
@@ -520,8 +543,9 @@ export function egTubeEdge(tube, sinceWakeMs) {
   if (!tube || sinceWakeMs < tube.start * 1000) return -Infinity;
   return tube.z0 + tube.mps * (sinceWakeMs / 1000 - tube.start);
 }
-/** Can THE SPAN BUILD outrun the Collapsing Tube with its 25% margin (section 11.3)? */
-export const egTubeFair = (tube) => !!tube && EG_SPAN_RUN_MPS >= 1.25 * tube.mps;
+/** Can THE SPAN BUILD outrun the Collapsing Tube with its 25% margin (section 11.3 - net/egSpanLaw.js EG_SET_MARGIN; AUDIT EG V:
+ *  from spec law 8 THE TIMED SOLVER refuses a tube that cannot, egSpanProof)? */
+export const egTubeFair = (tube) => !!tube && EG_SPAN_RUN_MPS >= EG_SET_MARGIN * tube.mps;
 
 /**
  * THE HAZARD LAW (section 11.2's last paragraph): every aimed part a hazard can say keeps THE WIDTH RULE and its tell
