@@ -102,7 +102,9 @@ test('MARKET-AUDIT: every realm act that pays out of the purse reserves through 
     assert.doesNotMatch(src(f), /reserve: (?:pay > 0 \? )?\(\) => \{ [^}]*\bpay\([^)]*\); return \(\) => [^}]*\b(?:credit|refund)\??\.?\(/, `${f}: a reserve that credits the whole`);
   }
   // the hosts' wallets answer the undo
-  assert.equal((src('src/scenes/world.js').match(/pay: \(n\) => payUndoable\(playerEntity, n, /g) ?? []).length, 3, 'the market\'s, the yards\' and the guild\'s');
+  // FIRM1: and the Firmament's respec, its gold reserved through walletReserve as the guild's founding is
+  assert.match(src('src/net/firmamentBook.js'), /reserve: walletReserve\(w, FIRM_RESPEC_GOLD\)\.reserve/);
+  assert.equal((src('src/scenes/world.js').match(/pay: \(n\) => payUndoable\(playerEntity, n, /g) ?? []).length, 4, 'the market\'s, the yards\', the guild\'s and the Firmament\'s');
   assert.equal((src('src/scenes/worldModes.js').match(/pay: \(n\) => purse\.pay\(n, /g) ?? []).length, 3, 'the decor\'s, a claim\'s and the rent\'s');
 });
 

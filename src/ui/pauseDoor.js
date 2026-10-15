@@ -52,6 +52,7 @@
 
 import { isEnhanced } from '../systems/uiSkin.js';
 import { mountEnhancedChunk } from './enhancedChunk.js';   // MENU1: the one lazy-chunk door
+import { firmamentOver } from './firmamentOver.js';   // FIRM1: the Firmament, swapped in over the Stats page
 import { createCharSheetWindow } from './charSheetDoor.js';   // ASCEND-ANYTIME: a level OWED is answered by the sheet key's own door
 import { playerEntity } from '../characters/playerEntity.js';   // the shared entity the Stats page already reads (enhancedMenu's sheetModel)
 import { usesVirtueLeveling } from '../systems/oblivionLeveling.js';   // ORL1: which bar the Ascension reads
@@ -278,8 +279,17 @@ function enhancedPauseOverlay(show, base) {
     // (ui/charSheetDoor.js) always did - this one never did, so the same page reached through Tab (the dial's
     // character arm) or Escape had no way in. A function declaration below: it is hoisted, so this line may name it.
     openAscend: () => openAscend(),
+    // FIRM1: THE FIRMAMENT'S BUTTON beside Ascend - online alone (firmamentOver.js: no book, no button); a getter, so the
+    // page asks it each time it draws (the book is the host's, made once the world boots)
+    get openFirmament() { return firm.hook; },
   };
 
+  // FIRM1: the sky over this window, as the Ascension is - the window's keyboard given up first, the window back on Stats
+  const firm = firmamentOver({
+    alive: () => !fired,
+    below: () => { try { view?.unmount(); } catch { /* already gone */ } view = null; },
+    back: () => { if (!fired && seams) view = seams.mountEnhancedMenu(host, { mode: 'pause', hooks, onAction: act, at: 'stats' }); },
+  });
   const host = document.createElement('div');
   host.id = 'enhanced-pause';
   host.setAttribute?.('data-dom-focus', '');   // AUDIT LEGACY II U3: Tab walks its controls (ui/input.js isDomFocusWalk)
@@ -324,7 +334,7 @@ function enhancedPauseOverlay(show, base) {
 
   const close = () => {
     if (fired) return;
-    dropAscend();   // ASCEND-ANYTIME: whatever is on top of this window goes with it
+    dropAscend(); firm.drop();   // ASCEND-ANYTIME: whatever is on top of this window goes with it - FIRM1: the Firmament too
     document.removeEventListener?.('keydown', tabIn, true);
     view?.unmount();
     view = null;

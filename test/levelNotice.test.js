@@ -24,7 +24,7 @@ import { audio } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { loadOrCreateBindings, codeForAction, actionForCode } from '../src/systems/inputActions.js';
 import {
-  LevelNotices, levelNotices, announceLevelUp, announceSkillRaise, announceMastery,
+  LevelNotices, levelNotices, announceLevelUp, announceSkillRaise, announceMastery, announceRenownRise, NOTICE_RENOWN,
   drawLevelNotices, destroyLevelNotices, levelOwed, sheetKeyText,
   ANNOUNCE_MS, MAX_ROWS, NOTICE_LEVEL, NOTICE_SKILL, NOTICE_MASTERY,
   RISEN_TITLE, AWAITS_TITLE, MASTERED_TITLE, LEVEL_NOTICE_ID,
@@ -655,4 +655,19 @@ test('LV3 by source: an UNBOUND sheet action presses nothing and shows no button
   assert.doesNotMatch(m, /readyToLevelUp/, 'the Stats page never reads the flag: WHICH screen the door opens is the door\'s question');
   assert.doesNotMatch(m, /doors\.unshift\(\['Level up'/, 'and there is no second, conditional door for the same window');
   assert.match(m, /b\.onclick = \(\) => \{ onAction\('handoff'\); if \(fn\(\) === false\) onAction\('resume'\); \};/, 'the pause window goes down first for the doors that LEAVE this page - a handoff, ESC-BOOK: nothing relocks under the window they open');
+});
+
+test('FIRM1: A RENOWN LEVEL IS SAID AS A LEVEL IS - the fanfare, "You have risen" with the Renown and its new Stars on the strip, and gone as news goes (it owes nothing); the classic lane says it in a line', () => {
+  const q = new LevelNotices();
+  q.announceRenown(12, 2, 1000);
+  const [row] = q.frame(1000, { owed: false });
+  assert.deepEqual([row.kind, row.title, row.sub, row.standing], [NOTICE_RENOWN, RISEN_TITLE, 'Renown 12 · 2 new Stars', false]);
+  assert.equal(q.frame(1000 + ANNOUNCE_MS, { owed: false }).length, 0, 'news, never a reminder');
+  const said = [];
+  const real = audio.playOneShot;
+  const played = [];
+  audio.playOneShot = (i) => { played.push(i); return 0.1; };
+  try { announceRenownRise(7, { stars: 2, say: (t) => said.push(t), doc: null }); } finally { audio.playOneShot = real; }
+  assert.deepEqual(played, [SOUND.LevelUp]);
+  assert.deepEqual(said, ['You have risen to Renown 7! 2 new Stars shine in your Firmament.']);
 });

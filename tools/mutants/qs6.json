@@ -277,8 +277,8 @@
   {
     "name": "QS6-the-spell-chip-is-never-drawn",
     "file": "src/ui/enhancedHud.js",
-    "old": "  cap.append(cornerWord, spellChip, readied);",
-    "new": "  cap.append(cornerWord, readied);",
+    "old": "  cap.append(temp, cornerWord, spellChip, readied);",
+    "new": "  cap.append(temp, cornerWord, readied);",
     "tests": [
       "test/qs3_hud.test.js"
     ]

@@ -406,7 +406,8 @@ test('AUDIT RENOWN1 UI-5/UI-7/WIRE-2c: the answer\'s plan - the order carried WH
   const w = src('src/scenes/world.js');
   assert.match(w, /const a = renownAnswer\(data, sent, renownSaid\);/);
   assert.match(w, /if \(a\.order\) online\?\.sendRenownOrder\?\.\(a\.order, a\.level\);/, 'the order carried on the plan\'s word alone');
-  assert.match(w, /if \(a\.announce !== null\) \{ renownSaid = a\.announce; townTalk\.say\(`Your Renown is now \$\{a\.announce\}\.`\); \}/);
+  assert.match(w, /if \(a\.announce !== null\) renownRose\(a\.announce\);/);   // FIRM1: said as a level is
+  assert.match(w, /const renownRose = \(level\) => \{\n    const was = renownSaid \?\? level - 1;\n    renownSaid = level;/, 'the rise said once, against what was said');
   assert.match(w, /if \(renownNow !== null && level <= renownNow\) return renownNow;/, 'the page\'s own level only rises (UI-7 W2)');
   assert.match(w, /onStop: \(error\) => tradeSay\(`\$\{accountRefusalText\(error\)\} This character is earning no Renown\.`\),/, 'UI-4: a refusal that ends reporting is said');
 });

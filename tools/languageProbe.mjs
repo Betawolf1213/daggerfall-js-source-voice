@@ -64,7 +64,7 @@ async function closeAccount(page) {
   await closeAccount(page);
 
   // THE SETTINGS ROW: the language chosen, switched at once, labelled while machine-made
-  await page.locator('.px-menu .door-settings').click();
+  await page.locator(':is(.px-menu, .px-foot) .door-settings').click();
   await page.locator('#enhanced-menu .subbtn').filter({ hasText: /^Interface/ }).first().click();
   const sel = page.locator('#enhanced-menu .row select');
   check('settings: the language row is on the Interface pane', (await sel.count()) === 1);

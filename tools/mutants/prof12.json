@@ -922,8 +922,8 @@
   {
     "name": "PROF12-svc-dis-xp-doubled",
     "file": "server-account/src/alchemy.js",
-    "old": "  const xp = disenchantXp(r, rank, base);",
-    "new": "  const xp = disenchantXp(r, rank, essence);",
+    "old": "  const xp = scaleXp(disenchantXp(r, rank, base),",
+    "new": "  const xp = scaleXp(disenchantXp(r, rank, essence),",
     "tests": [
       "test/prof12_service.test.js"
     ]
@@ -1023,8 +1023,8 @@
   {
     "name": "PROF12-svc-dish-steps-unread",
     "file": "server-account/src/professions.js",
-    "old": "const xp = r.kind === 'dish' ? cookXp(rank, { clean: clean === true, steps: halls }) :",
-    "new": "const xp = r.kind === 'dish' ? cookXp(rank, { clean: clean === true, steps: 0 }) :",
+    "old": "const xp = scaleXp(r.kind === 'dish' ? cookXp(rank, { clean: clean === true, steps: halls }) :",
+    "new": "const xp = scaleXp(r.kind === 'dish' ? cookXp(rank, { clean: clean === true, steps: 0 }) :",
     "tests": [
       "test/prof12_apothecary.test.js"
     ]
