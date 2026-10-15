@@ -3,7 +3,7 @@
 // POI-2 (2026-10-14) - THE APPROVED POIS, AS THE GAME KNOWS THEM.
 //
 // The account service's open feed (server-account/src/poi.js poiLiveFeed: every POI's approved, live revision) and the
-// assets it names (GET /v1/poi/asset/<sha>, immutable) - read by every game, signed in or not, online or offline
+// assets it names (GET /v1/poi/asset/<sha>, cached a day - AUDIT POI S4) - read by every game, signed in or not, online or offline
 // (bible/06-Systems/POI-Editor-Arc.md). Mac: "I need to be able to approve changes": what is here is what an approver
 // let into the world, and nothing else.
 //

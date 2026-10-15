@@ -315,15 +315,6 @@
     ]
   },
   {
-    "name": "AUDITPOI-U13-taken-off-since-the-ask-a-refusal",
-    "file": "src/poi/poiTransfer.js",
-    "old": "r.error !== 'poi-not-author' && r.error !== 'poi-gone') return r;",
-    "new": "r.error !== 'poi-not-author') return r;",
-    "tests": [
-      "test/auditpoi_packs.test.js"
-    ]
-  },
-  {
     "name": "AUDITPOI-L12-the-checks-one-step",
     "file": "src/poi/poiMesh.js",
     "old": "  const why = yield* poiMeshErrorSteps(mesh);",

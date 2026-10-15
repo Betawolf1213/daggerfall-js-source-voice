@@ -107,8 +107,8 @@ async function shelveOne(entry, { shelfEntry, shelve, rand }) {
     if (had.error !== 'not-found') return had;
     const r = await shelve(k < 0 ? entry : { ...entry, id });
     if (r.ok) return { ok: true, id, copied: k >= 0, already: false };
-    // taken off the shelf (kept, never put over), or put there since it was asked: the next id
-    if (r.error !== 'not-found' && r.error !== 'poi-not-author' && r.error !== 'poi-gone') return r;
+    // taken off the shelf since it was asked (kept, never put over - 'poi-gone'), or put there by another: the next id
+    if (r.error !== 'poi-not-author' && r.error !== 'poi-gone') return r;
   }
   return { ok: false, error: 'poi-not-author' };
 }

@@ -254,7 +254,7 @@
   {
     "name": "AUDITPOI-P4-a-taken-off-entry-not-passed",
     "file": "src/poi/poiTransfer.js",
-    "old": "    if (r.error !== 'not-found' && r.error !== 'poi-not-author') return r;",
+    "old": "    if (r.error !== 'poi-not-author' && r.error !== 'poi-gone') return r;",
     "new": "    if (r.error !== 'poi-not-author') return r;",
     "tests": ["test/auditpoi_packs.test.js"]
   },
@@ -387,7 +387,7 @@
   {
     "name": "AUDITPOI-T5-the-history-not-drawn-again",
     "file": "src/ui/poiReviewPanel.js",
-    "old": "    await openHistory(h.id);\n  }\n",
+    "old": "    await loadHistory(h.id);\n  }\n",
     "new": "  }\n",
     "tests": ["test/poi6_review.test.js"]
   },

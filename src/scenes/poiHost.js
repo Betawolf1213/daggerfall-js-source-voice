@@ -37,9 +37,9 @@
 // mirror it (its faces wound for the other hand).
 //
 // THE FOUR HOSTS (bible/Home.md): scenes/world.js - WIRED (made beside the LeFay monument; framed, drawn in the world
-// pass, the translucent after the water, its lights in the scene's selection, its marks on the travel map, taken down
-// at a re-anchor, a load and a change of mode). scenes/worldModes.js - its interiors stand no street; a POI is
-// outdoors, and nothing here reaches them.
+// pass, the translucent after the water and the world's depth-writing flats (AUDIT POI R4), its lights in the scene's
+// selection, its marks on the travel map, taken down at a re-anchor, a load and a change of mode).
+// scenes/worldModes.js - its interiors stand no street; a POI is outdoors, and nothing here reaches them.
 // scenes/exterior.js - FLAGGED: the fixed-city bench (`?exterior`, `?region&loc`) has no feed; a POI stands in the streamed world.
 // scenes/dungeonContext.js - stands no street: nothing here reaches it.
 //

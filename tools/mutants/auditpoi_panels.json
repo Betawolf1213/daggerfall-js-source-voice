@@ -142,8 +142,8 @@
   {
     "name": "AUDITPOI-U7-closed-twice",
     "file": "src/ui/poiUvPanel.js",
-    "old": "function close() { if (closed) return; closed = true; root.remove?.(); onClose(); }",
-    "new": "function close() { closed = true; root.remove?.(); onClose(); }",
+    "old": "function close() { if (closed) return; closed = true; ed.dispose(); root.remove?.(); onClose(); }",
+    "new": "function close() { closed = true; ed.dispose(); root.remove?.(); onClose(); }",
     "tests": ["test/auditpoi_panels.test.js"]
   },
   {
@@ -464,7 +464,7 @@
   {
     "name": "AUDITPOI-U13-a-accessor",
     "file": "src/poi/poiText.js",
-    "old": "'This model refers to {what, select, accessor {an accessor} bufferView {a buffer view} buffer {a buffer} image {an image} texture {a texture} node {a node} other {a piece of itself}} that is not there.'",
+    "old": "'This model refers to {what, select, accessor {an accessor} bufferView {a buffer view} buffer {a buffer} image {an image} texture {a texture} node {a node} skin {a skin} joint {a joint} vertex {a vertex} other {a piece of itself}} that is not there.'",
     "new": "'This model refers to a {what} that is not there.'",
     "tests": ["test/auditpoi_panels.test.js"]
   },
