@@ -103,7 +103,7 @@ export function createEgCircleHost({ renderer, host, wm }) {
     if (!up) _egBandRecs.set(band, (up = new Set()));
     if (up.has(rec) || !renderer?.uploadTexture) return;
     _egBands.add(band); up.add(rec);
-    try { renderer.uploadTexture(egBandArchive(band), rec, art.albedo); renderer.uploadEmissionTexture?.(egBandArchive(band), rec, art.emission, { white: true }); } catch (e) { console.warn('[eg] the band\'s art would not upload', e?.message ?? e); }
+    try { renderer.uploadTexture(egBandArchive(band), rec, art.albedo, art.cutout ? { cutout: true } : undefined); renderer.uploadEmissionTexture?.(egBandArchive(band), rec, art.emission, { white: true }); } catch (e) { console.warn('[eg] the band\'s art would not upload', e?.message ?? e); }   // EG-LOOK: a cutout picture (the banner's torn foot, the fixture's flames) asks for its holes
   }
   /** AUDIT EG V (L6-9): is band `band`'s dress up whole this breach? */
   const egBandWhole = (band) => (_egBandRecs.get(band)?.size ?? 0) >= EG_BAND_RECORDS.length;
