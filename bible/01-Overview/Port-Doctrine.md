@@ -9,14 +9,14 @@ Mac, 2026-10-14: "We now longer are trying to have DFU 1:1 parity, we are our ow
 DFO Online is its own game. Parity with Daggerfall Unity is no longer the goal, and a difference from DFU is no longer a defect in itself. DFU stays the reference:
 
 - **Look there first.** Before building a system DFU has, read DFU's version and grep the tree for its name AND its constants (`Home.md`, ONE DFU MEMBER, ONE EXPORT). It is a decade of work and usually the right place to start.
-- **Readers stay exact.** The player's ARENA2 is the data DFU reads. The format readers (BSA, TEXTURE, IMG/CIF, ARCH3D, BLOCKS, MAPS, sound and music) read it exactly as DFU does, and their corpus gates stand.
-- **Name the departure.** A change that leaves DFU's behaviour says so where it is recorded: the DFU member it departs from (`FormulaHelper.CalculateX`, `StaticNPC.cs:309`) and why. A cite to DFU stays when we move past it - it is how the next reader finds the original.
+- **Readers stay exact.** The player's ARENA2 is the data DFU reads. Every format reader (`02-Formats/Readers-Arc.md`: BSA, the palettes, TEXTURE, IMG/CIF, ARCH3D, BLOCKS, MAPS, sound and music, and the readers added since the arc closed - SKY, GFX, FLIC, FLATS.CFG, CFA and the rest) reads it exactly as DFU does, and their corpus gates stand.
+- **Name the departure.** A change that leaves DFU's behaviour says so where it is recorded: the DFU member it departs from (`FormulaHelper.CalculateX`, `StaticNPC.cs:309`) and why. A cite to DFU stays when we move past it - it is how the next reader finds the original. A departure from a member DFU has takes its row in `Port-Ledger.md` section A (Approved departures), approved via the arc that made it, as departures always have.
 - **A pin follows the rule we chose.** A test that pins a DFU law (`Home.md`, A PIN MUST FAIL) pins it because we still follow it. A deliberate change edits the pin and its doc in the same change - it is not blocked by them - and the pins that stay keep their mutation guarantee.
 - **The ledger is a map, not a debt.** `Port-Ledger.md` section C records what DFU has that we do not - an option for a later slice, not an obligation. `Road-To-1-1.md` closes with this section.
-- **Where a Process rule asks for a DFU source** (THE NATIVE-WINDOW RULE, ONE DFU MEMBER, ONE EXPORT), it governs the work that follows DFU. A window or system we design ourselves cites its own design record instead.
+- **THE NATIVE-WINDOW RULE binds the windows that keep DFU's layout.** Every drawn element of such a window still cites its DFU source before it ships. A window redesigned on purpose cites its own design record instead, and says so where it is recorded - `Home.md` carries the same sentence beside the rule. ONE DFU MEMBER, ONE EXPORT is unchanged: grep the tree for a DFU member and its constants before porting it, and keep one copy.
 - **Older pages are history.** "1:1", "faithful" and "parity" across the arc pages and audits describe the goal they were written under. They are not rewritten; this section governs new work.
 
-What does not change: the non-negotiables below (no ARENA2, and no render of it, in the repo), Attribution, and every other Process rule in `Home.md`.
+What does not change: the non-negotiables below (no ARENA2 in the repo, and no render of it beyond the exceptions they name), Attribution, and every other Process rule in `Home.md`.
 
 ## Ported from DFU - the foundation (built 1:1 before SCOPE1)
 

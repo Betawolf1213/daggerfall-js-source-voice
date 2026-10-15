@@ -176,7 +176,9 @@ the DFU value is unknown, the element does not draw until it is
 looked up. And native-window screenshots are eyeballed against the
 CLASSIC layout (the art's own frames are the ruler - an icon
 crossing a baked slot border is a positioning bug even when the
-code "looks right").
+code "looks right"). SCOPE1 (2026-10-14): this binds the windows that
+keep DFU's layout; a window redesigned on purpose cites its own design
+record instead (`01-Overview/Port-Doctrine.md`, Scope).
 
 **THE ONE CONSTRUCTION SEAM** (AUDIT 17i). When two hosts build the
 same object, every dependency it grows must be remembered twice - and
