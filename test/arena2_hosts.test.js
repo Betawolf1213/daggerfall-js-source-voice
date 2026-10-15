@@ -11,9 +11,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
-const W = rd('src/scenes/world.js'), M = rd('src/scenes/worldModes.js'), D = rd('src/scenes/dungeonContext.js'), X = rd('src/scenes/exterior.js');
+const W = hostText('src/scenes/world.js'), M = rd('src/scenes/worldModes.js'), D = rd('src/scenes/dungeonContext.js'), X = rd('src/scenes/exterior.js');
 
 test('ARENA2 hosts - world.js: one driver, ticked before the modal return, its stages the city\'s and the instance\'s', () => {
   assert.match(W, /const arenaBouts = createArenaBouts\(\{/);

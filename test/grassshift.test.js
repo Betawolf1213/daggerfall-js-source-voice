@@ -19,9 +19,10 @@ import { fileURLToPath } from 'node:url';
 import * as G from '../src/render/labGrass.js';   // a namespace, so a seam that is missing fails ITS pin and not the file
 import { surfaceHeightAt, TERRAIN_TILE_DIM } from '../src/world/terrainSurface.js';
 import { TERRAIN_SIZE, HEIGHTMAP_DIMENSION } from '../src/world/terrainSampler.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const WORLD = readFileSync(join(root, 'src/scenes/world.js'), 'utf8');
+const WORLD = hostText('src/scenes/world.js');
 
 /** A WebGL2 that answers what the grass renderer's constructor asks and
  *  counts the rest; `rec` collects each drawn slot's decode frame. */

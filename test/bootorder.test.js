@@ -32,8 +32,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parse } from 'acorn';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
-const src = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
+const src = hostText('src/scenes/world.js');
 const ast = parse(src, { ecmaVersion: 'latest', sourceType: 'module' });
 const lineOf = (p) => src.slice(0, p).split('\n').length;
 const kids = (n) => {

@@ -77,6 +77,7 @@ import { MOD_SETTINGS, colorKeyRgba, colorKeyHex, isColorKey, modSetting, _reset
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { mapPixelToWorldCoords } from '../src/world/streamingWorld.js';
 import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 /** PACE-DIALS (2026-10-06): x100 is chosen, on a road - the dial set there as the panels set it (the default is x60, and
  *  leaving a road takes it back to x60: test/pacedials.test.js). These pins hold the LANES' law at the dial's top. */
 const dialAtTop = () => { _resetTravelPace(); setPaceGround(true); setTravelPace('speed', 100); };
@@ -1245,7 +1246,7 @@ test('TO1: IsPlayerControlledTravel - the whole decision, as a truth table', () 
 // ─── the wiring, by source ────────────────────────────────────────────
 
 test('TO1: the wiring - one construction, the fork on the popup\'s word, the panel on the HUD layer, and the paths gated on HIS network', () => {
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   // the mod is built once, and only while its switch is on
   assert.equal((w.match(/createTravelOptions\(\{/g) || []).length, 1, 'ONE construction');
   assert.match(w, /const travelOptionsOn = modSetting\(TRAVEL_OPTIONS_VENDOR, 'Enabled'\);/);
@@ -1439,7 +1440,7 @@ test('AUDIT-TO1 F2: a walked journey costs a Cast-When-Held item no durability a
   assert.match(e, /if \(ctx\?\.travelUIShowing\?\.\(\)\) return;/);
   const h = read('src/scenes/hostEnchant.js');
   assert.match(h, /travelUIShowing = \(\) => false,/, 'every host but one answers false');
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /travelUIShowing: \(\) => !!_travelUIHolder\.ui\?\.isShowing,/);
   assert.match(w, /_travelUIHolder\.ui = travelControlUI;/);
   resetSyntheticTimeIncrease();
@@ -1640,13 +1641,13 @@ test('AUDIT-TO1 F1/L7: the junction disc outlives the bar on the enhanced lane, 
   assert.match(e, /title="\$\{T\.TipMap\}"/, 'and the two tooltips the mod carries reach the DOM (H3)');
   const css = read('src/ui/enhancedStyle.js');
   assert.match(css, /\.travelpanel-bar\.hidden \{ display: none; \}/);
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /covered: townTalk\.hudCovered \|\| \(modes\?\.hudCovered \?\? false\) \|\| gamePaused\(\),\s*\n\s*destination: travelControlUI\?\.destinationName/);
   assert.match(w, /minutesLeft: travelOptions\?\.minutesLeft \?\? null,/);
 });
 
 test('AUDIT-TO1 B1/B2/B3: the location rects come off the BUILT terrain, and the mod\'s five Start subscriptions have callers', () => {
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.ok(!/maps\.getLocationAt/.test(w), 'the method MapsFile never had is gone');
   assert.match(w, /const r = built\.get\(`\$\{pixel\.x\},\$\{pixel\.y\}`\)\?\.locationRect \?\? null;/, 'DaggerfallTerrain.MapData.locationRect, off the built record');
   assert.match(w, /tileRect: \{ x: r\.xMin, y: r\.yMin, width: r\.xMax - r\.xMin, height: r\.yMax - r\.yMin \},/);
@@ -1664,7 +1665,7 @@ test('AUDIT-TO1 B1/B2/B3: the location rects come off the BUILT terrain, and the
 });
 
 test('AUDIT-TO1 G1/G2/G3/I2/I3/I4/I6/J1/K2/H1/H2: the host seams the sweep found dead, each wired and named', () => {
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   // G1: a load clears the destination and the scale. The window is generous
   // because ONLINE-LOAD1's refusal now stands between the latch guard and the
   // clear, with its reasoning - and it belongs THERE, ahead of it: a load that
@@ -1762,7 +1763,7 @@ test('AUDIT-TO1 (mutant): a pixel carrying BOTH a road and a track shows the ROA
 // which is every ordinary save - died on it. The bindings the stream
 // reads stand above the stream now, null until the mod is built.
 test('BOOT-TDZ: every Travel Options binding the STREAM reads is declared above the boot\'s own first pixel build - a const read in its temporal dead zone killed the boot, and `?.` is not a guard against one (mutants: travel-options-declared-late, region-seen-declared-late, holder-declared-late)', () => {
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   const lines = w.split('\n');
   const at = (re, what) => {
     const i = lines.findIndex((l) => re.test(l));
@@ -1828,7 +1829,7 @@ test('BOOT-TDZ: every Travel Options binding the STREAM reads is declared above 
 // wrong - the port does run the mod's continuous accelerated journey, as
 // its own readme describes it, and never teleports on that path.
 test('TO-FIELD: the accelerated journey waits for the ground; TO-FIELD3 took the needs back off the mod\'s clock (mutants: travel-drive-ungated)', () => {
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
 
   // 1. THE WALK WAITS. The journey drives the motor at up to sixty times
   // walking pace across a streamer that builds one pixel per call, and

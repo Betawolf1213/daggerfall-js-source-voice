@@ -25,6 +25,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider, onFloatingFrame } from '../src/player/collider.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const I = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 const at = (x, y, z) => [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1];
@@ -145,7 +146,7 @@ test('PERF-COL2: the work - a short probe asks the buckets round it and the fram
 });
 
 test('PERF-COL2: the world host marks every streamed pixel\'s bucket as riding its state - the town\'s models, mills and boards, the gates, World of Daggerfall\'s pieces, Privateer\'s Hold, the ocean holes - and no mover\'s; Deep Waters\' walls and a bounty farm ride the frame the host hands them (mutants: a pixel\'s bucket unmarked; the walls unmarked; a farm unmarked; the frame not handed)', () => {
-  const w = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
+  const w = hostText('src/scenes/world.js');
   assert.ok(w.includes("import { onFloatingFrame } from '../player/collider.js';"), 'the mark imported');
   const lines = w.split('\n');
   const pix = lines.filter((l) => /\(\(o\) => \(\) => state\.pixelTranslation\(px, py, o\)\)\(\[0, 0, 0\]\)/.test(l) && !l.includes('collider.cover.add('));

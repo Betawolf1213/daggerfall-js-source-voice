@@ -15,9 +15,10 @@ import {
   makeResolver, reader, trackedSets, relayFiles, forbidAt, ESCAPED_NUM_CITE, SELF_DOCS, QUOTE_MIN, tokenEdge, codeOpenAt,
   struckSpans, headOwns, balanced, opensBlock, bracesAt, ANCHOR,
 } from '../tools/citeAnchor.mjs';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const readFile = (f) => readFileSync(join(root, f), 'utf8');
+const readFile = (f) => hostText(f);
 
 test('CA1: every anchor in the docs names one line - its quote stands once in the file, outside the anchors (a quote that stops being true goes red in the change that made it so, at the doc and the quote)', () => {
   const { docs, code } = trackedSets(root);

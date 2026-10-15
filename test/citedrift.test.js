@@ -47,9 +47,10 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { dfuFile, missingDfu } from './dfuRoot.mjs';   // PY1: DFU_PATH, then the in-tree sparse clone
 import { resolveAnchor, maskAnchors, citedLines, anchorLine, bracesAt, forbidAt } from '../tools/citeAnchor.mjs';   // CITE-ANCHOR: the gate's own resolver
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const read = (rel) => readFileSync(join(root, rel), 'utf8');
+const read = (rel) => hostText(rel);
 /** The tracked files under a directory - test/doctrine.test.js's own
  *  population, so a walk here and a walk there see the same tree. */
 const tracked = (dir) => execFileSync('git', ['ls-files', dir], { cwd: root, encoding: 'utf8' })

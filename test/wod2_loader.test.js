@@ -28,10 +28,11 @@ import { generatePixelTerrain } from '../src/world/terrainGen.js';
 import { HEIGHTMAP_DIMENSION, generateSamples } from '../src/world/terrainSampler.js';
 import { generateTileData } from '../src/world/terrainTiles.js';
 import { StaticBatchBuilder } from '../src/render/staticBatch.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const V = join(ROOT, 'vendor/world-of-daggerfall');
-const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
+const rd = (p) => hostText(p);
 const f32 = Math.fround;
 
 /** The shipped files, off the disk, in the sources shape the browser's glob doors answer. */
@@ -385,7 +386,7 @@ test('WOD2: the tiles are the UNflattened ground\'s - on a shore, flattening fir
 // ── the host ────────────────────────────────────────────────────────
 
 test('WOD2: the streaming host wires the loader where DFU does - decision before the kernel, objects after, pixel-local, lights at every hour', () => {
-  const w = rd('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /const wod = wodOn\(\) \? openWodWorld\(\{ online: params\.has\('online'\) \}\) : null;/);
   assert.match(w, /wod\.noteRegion\(maps\.getRegionIndexAt\(here\.x, here\.y\)\);\s*await wod\.settle\(\);/);
   assert.match(w, /mapRegionIndex: dfLocation \? dfLocation\.regionIndex : -1,/, 'GetMapPixelData\'s -1 off a location');

@@ -19,6 +19,7 @@ import { circleLine, circleSlots, slotSpoken, exchangeScript } from '../src/syst
 import { createLivingRoads } from '../src/scenes/livingRoads.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { CLASSIC_MINUTES_PER_SECOND } from '../src/systems/worldTick.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const RATE = CLASSIC_MINUTES_PER_SECOND;
@@ -357,7 +358,7 @@ test('LW7 the road\'s deeds: a traveller struck down (`slain`) - the hand\'s tur
 });
 
 test('LW7 the streaming host: every resident\'s place by the lives (`livingCycleOf` - a traveller\'s placeCycle, a townsperson\'s own cycleOf; the newcomer the census\'s own mint with their home), a hand\'s death and the player\'s (`livingDeadAt`, `livingSlay`), the trouble never taking a hand\'s dead, a trip\'s hand deaths, the news of fights the player turned, a crew\'s holders; the town\'s options; the swing\'s civilian pool through the deeds (`livingStruckPool` - the watch struck, anyone else struck down; the guard it stands watched), the trample\'s too, a swing at the road\'s travellers (`livingStrikeRoad` - reach, a wall, the blood, the Brotherhood\'s five, the racial hit); a question\'s tone through `livingTone` (mutants: each seam)', () => {
-  const w = rd('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /if \(res\.roll !== 't'\) return cycleOf\(res, day, livingScale\(\)\)\.k;/, 'a townsperson\'s own cycle');
   assert.match(w, /return placeCycle\(roster\.find\(\(r\) => r\.slot === res\.slot\) \?\? res, roster, day, livingScale\(\)\);/, 'a traveller\'s place cycle');
   assert.match(w, /if \(!turns\.slain\.size && !turns\.died\.size && !turns\.killed\.size\) return false;[^\n]*\n\s*const h = livingPlaceOf\(res, livingCycleOf\(res, Math\.floor\(\(t - 240\) \/ 1440\)\)\)\.hand;\n\s*return h != null && h <= t;/);

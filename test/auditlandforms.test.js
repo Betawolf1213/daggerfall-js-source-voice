@@ -24,6 +24,7 @@ import { TRANSPORT_MODES } from '../src/systems/transport.js';
 import { createDroppedLoot } from '../src/scenes/droppedLoot.js';
 import { natureStandsAt, layoutNature, groundAt } from '../src/world/terrainNature.js';
 import { sampleHeight, blendLocationTerrain, calcAvgMaxHeight, generateTileData } from '../src/world/terrainTiles.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const H = HEIGHTMAP_DIMENSION;
 const UNIT = MAX_TERRAIN_HEIGHT;
@@ -38,7 +39,7 @@ const RELIEF = createLandforms({ woods });
 const LF_BARE = createLandforms({ woods, roads: NET, hills: false }), RELIEF_BARE = createLandforms({ woods, hills: false });
 const dry = new Uint8Array(NET.roads.length);
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-const WORLD = src('src/scenes/world.js');
+const WORLD = hostText('src/scenes/world.js');
 const between = (from, to) => { const i = WORLD.indexOf(from), j = WORLD.indexOf(to, i); assert.ok(i > 0 && j > i, from); return WORLD.slice(i, j); };
 // auditrest3's harness: a host's own function lifted off world.js by its AST and mounted over stubs
 const fnOf = (name) => {

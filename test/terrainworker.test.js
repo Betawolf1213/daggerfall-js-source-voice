@@ -16,6 +16,7 @@ import { assignTiles, blendLocationTerrain, calcAvgMaxHeight, generateTileData }
 import { layoutNature } from '../src/world/terrainNature.js';
 import { generatePixelTerrain } from '../src/world/terrainGen.js';
 import { TerrainGenClient, terrainThreadDisabled } from '../src/world/terrainGenClient.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 // The distantland fake woods (the real reader's orientations - the
 // large heightmap's y DESCENDS), grown the third method layoutNature's
@@ -261,7 +262,7 @@ test('EV7: the worker shell imports only pure modules and spells the Worker URL 
 });
 
 test('EV7: the world host rides the client and the pinned build contracts stand', () => {
-  const world = readFileSync('src/scenes/world.js', 'utf8');
+  const world = hostText('src/scenes/world.js');
   assert.ok(world.includes('const terrainGen = new TerrainGenClient({ woods, woodsBytes })'),
     'one client, built beside the reader it falls back to');
   assert.ok(world.includes('await terrainGen.generate({'), 'buildPixel awaits the kernel');

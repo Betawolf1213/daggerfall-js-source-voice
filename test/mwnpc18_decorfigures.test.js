@@ -13,9 +13,10 @@ import { figureLook, figureRole, DAEDRA_PRINCES_ARCHIVE, FIGURE_ROLE_WORDS } fro
 import { offerDecorFigures } from '../src/scenes/decorRoom.js';
 import { wornByRole, WARDROBE_ROLES } from '../src/characters/wardrobe.js';
 import { decorIsFigure } from '../src/net/decorLaw.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const ROOT = new URL('../', import.meta.url).pathname;
-const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
+const rd = (p) => hostText(p);
 const walk = (dir) => readdirSync(join(ROOT, dir)).flatMap((n) => {
   const p = `${dir}/${n}`;
   return statSync(join(ROOT, p)).isDirectory() ? walk(p) : p.endsWith('.js') ? [p] : [];
@@ -174,7 +175,7 @@ test('MWNPC18d EVERY DECOR ROOM\'S FIGURES ARE OFFERED - the rooms\' on the inte
   const hosts = walk('src').filter((p) => /[=(,]\s*createDecorRoom\(/.test(rd(p))).sort();   // a call, not its definition
   assert.deepEqual(hosts, ['src/scenes/homeYards.js', 'src/scenes/worldModes.js'], 'the hosts that stand decor rooms');
   assert.match(rd('src/scenes/decorRoom.js'), /const figures = \(\) => \{ figOut\.length = 0; for \(const e of figs\) if \(e\.batch\) figOut\.push\(e\); return figOut; \};/);
-  const modes = rd('src/scenes/worldModes.js'), world = rd('src/scenes/world.js');
+  const modes = rd('src/scenes/worldModes.js'), world = hostText('src/scenes/world.js');
   const o = modes.indexOf('offerDecorFigures(interiorDecor.figures(), peopleBodies, _peopleOn, figureCtx, mwv.eye, dt);');
   assert.ok(o > 0 && o < modes.indexOf('    peopleBodies.draw(canvas, proj, view, mwv.eye, dt);'), 'a room\'s, before its people draw');
   assert.match(rd('src/scenes/homeYards.js'), /figures: \(\) => \{\n      yardFigs\.length = 0;\n      const eye = deps\.eye\?\.\(\) \?\? null;\n      for \(const y of yards\.values\(\)\) if \(nearEye\(y, eye\)\) for \(const e of y\.pool\.figures\(\)\) yardFigs\.push\(e\);\n      return yardFigs;\n    \},/, 'one list kept; only a yard within its reach, as its flats are (YARD-RANGE)');   // PIN MOVED (main's YARD-RANGE merged: a yard's flats are drawn only within its reach, and its figures stand only there)

@@ -12,6 +12,7 @@ import {
 } from '../src/render/labGrass.js';
 import { glslFunctions } from './glsl.mjs';
 import { FOG_GLSL } from '../src/render/fogGlsl.js';   // AUDIT 68: fogFactorAt's one home
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -69,7 +70,7 @@ test('DISC20-A: the grass\'s fog is the terrain\'s - its fogFactorAt is TERRAIN_
   const grass = rd('src/render/labGrass.js');
   for (const n of ['uFogColor', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos']) assert.ok(grass.includes(`'${n}'`), `${n} is looked up`);
   assert.match(grass, /gl\.uniform1i\(u\.uFogMode, fog \? fog\.mode : 0\);/, 'no fog handed, mode 0 - the lab\'s picture');
-  assert.match(rd('src/scenes/world.js'), /\{ fog: \{ mode: renderer\._fogMode, density: renderer\._fogDensity, range: renderer\._fogRange, color: renderer\._fogColor, camPos: renderer\._camPos, dw: renderer\._dwFog \},/);   // DW-C: the sea's fog rides with the frame's
+  assert.match(hostText('src/scenes/world.js'), /\{ fog: \{ mode: renderer\._fogMode, density: renderer\._fogDensity, range: renderer\._fogRange, color: renderer\._fogColor, camPos: renderer\._camPos, dw: renderer\._dwFog \},/);   // DW-C: the sea's fog rides with the frame's
 });
 
 // ── DISC20-E: "The weapon widget default toggle under diverse weapons should be set to off by default" ──
@@ -513,7 +514,7 @@ test('DISC20-C: a crossing that leaves the parked wagon\'s pixel takes its box a
 });
 
 test('DISC20-C: the world host asks the pool to re-stand over every pixel it builds, bound once the pool exists (the boot\'s first pixel builds before it)', () => {
-  const s = rd('src/scenes/world.js');
+  const s = hostText('src/scenes/world.js');
   const decl = s.indexOf('let hccGroundMoved = null;');
   const first = s.indexOf('const playerPixel = await awaitedBuild(first.px, first.py);');
   const pool = s.indexOf('const hcc = createHorseCartPool({');
@@ -543,5 +544,5 @@ test('AUDIT pre-merge I-B executed: a concealed owner\'s team is concealed with 
   // PIN MOVED (WAGONS3): the horse is its owner's TEAM now (a pair draws two) - posed by poseTeam with the owner's look
   assert.match(src, /if \(p\.hidden\) \{ dropTeamBatches\(owner\); _teams\.delete\(owner\); \} else poseTeam\(owner, teamOf\(owner, null, dt\), cameraPos, p\.look\);/, 'the horse: nowhere for a hidden owner, in its look for a concealed one');
   assert.match(src, /if \(b\) \{ poseHorseBatch\(b, cameraPos, h, h\.g, lookOfOwner\(owner\)\); if \(owner\) b\.conceal = conceal; \}/, 'each of the team in its owner\'s look');   // COATS1: and in its owner's horse look
-  assert.match(readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8'), /hcc\.setPeerLook\(\(id\) => \(_hiddenPeers\.has\(id\) \? 'hidden' : \(_veils\.get\(id\) \?\? null\)\)\);/, 'the host hands the peers\' looks');
+  assert.match(hostText('src/scenes/world.js'), /hcc\.setPeerLook\(\(id\) => \(_hiddenPeers\.has\(id\) \? 'hidden' : \(_veils\.get\(id\) \?\? null\)\)\);/, 'the host hands the peers\' looks');
 });

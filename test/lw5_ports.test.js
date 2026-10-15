@@ -15,6 +15,7 @@ import { ResidentWalker } from '../src/characters/residentWalker.js';
 import { DAY_MIN } from '../src/systems/livingWorld/dayPlan.js';
 import { CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';
 import { NAV_CELL } from '../src/world/cityNavigation.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const port = (id) => ({ id, name: `P${id}`, px: id, py: 0, region: 1 });
@@ -164,7 +165,7 @@ test('LW5 the town reads the ships: a sailor at sea or ashore abroad is in no st
   town._crewsNow();
   assert.notEqual(town.planOf(far, 50), plan, 'her arrival moved: planned again');
   // the host
-  const w = rd('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /const livingSailing = \(\) => !!naval\?\.enabled && !!mapDict;/);
   // PIN MOVED (BOOT-TDZ II): the lanes asked only once they stand, ahead of the rest
   assert.match(w, /if \(\(typeof _lanesReady !== 'undefined' && !_lanesReady\) \|\| res\.job !== 'sailor' \|\| res\.town !== town\?\.mapId \|\| !town\?\.port \|\| !livingSailing\(\)\) return null;/, 'its own sailors alone: a visiting crew is the crews\' own');

@@ -26,9 +26,10 @@ import { decodeRegionPack } from '../src/world/wodLocationPack.js';
 import { loadLocationPrefab } from '../src/world/wodLocationData.js';
 import { pathsDataPoint } from '../src/systems/travelPaths.js';
 import { wodSiteClear } from '../src/world/roadClearance.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
+const rd = (p) => hostText(p);
 const site = (day, px, py, x, z) => ({ day, px, py, spot: [x, z] });
 
 test('GATE-CLEAR: the clearing holds the gate and its way home (BROKER-CAGE: the Broker\'s cage the circle\'s), and is a gate site\'s pixel and spot', () => {
@@ -246,7 +247,7 @@ test('GATE-CLEAR over the shipped lists: a gate\'s spot DOES land in the mod\'s 
 });
 
 test('GATE-CLEAR by source: the build reads the clearing once and asks it at the pick, of each piece and flat before it stands, and remembers what it cost; the sweep runs between builds; the clearing is the omen\'s own roll, online alone', () => {
-  const w = rd('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   assert.equal(w.match(/_gateClearNow\(\)/g)?.length, 3, 'read by the build, by the sweep and by the hub\'s word of the site (DISCORD-GATES) - nowhere else');
   assert.match(w, /const gateClear = _gateClearNow\(\);\n\s*const gateLedger = \{ refused: false, reach: \[\] \};[^\n]*\n\s*const gateSite = gateSiteTest\(gateClear, px, py, gateLedger\);\n\s*if \(wod && onTheBay\(px, py\) && await wodOpened\) \{/, 'read once, before the pick');   // PIN MOVED (AUDIT CAPTAIN'S SEA G8): the pick the Bay's alone
   assert.match(w, /\}, wodPathsPoint, \(name, prefab, rect\) => wodSiteClear\(terrainGen\.roads\(\), px, py, name, prefab, rect\) && gateSite\(name, prefab, rect\)\);/, 'the road asked first, then the gate');

@@ -16,6 +16,7 @@ import { Renderer, CLOUD_SHADOW_UNIT, SKY_CLEAR } from '../src/render/renderer.j
 import { PrecipitationRenderer } from '../src/render/precipitation.js';
 import { warmPrograms } from '../src/render/warmPrograms.js';
 import { TEXTURE_SLOTS } from '../src/systems/dynamicSkies.js';   // AUDIT 65 RS-3: the nine slots the reserved unit has to clear
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 function countingRenderer(counts) {
   const stub = new Proxy({}, {
@@ -160,7 +161,7 @@ test('EV6: the skies neither query CURRENT_PROGRAM nor restore - the hosts mark 
 
 test('EV6: both exterior hosts sort their draw lists by mesh at build', () => {
   assert.ok(readFileSync('src/scenes/exterior.js', 'utf8').includes('drawList.sort((a, b) => a.order - b.order)'));
-  assert.ok(readFileSync('src/scenes/world.js', 'utf8').includes('models.sort((a, b) => a._order - b._order)'));
+  assert.ok(hostText('src/scenes/world.js').includes('models.sort((a, b) => a._order - b._order)'));
 });
 
 // ═══ AUDIT 65: the same stub, grown a LOG and REAL enum NUMBERS ═════

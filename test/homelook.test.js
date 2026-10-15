@@ -18,6 +18,7 @@ import { createOnlineHomes } from '../src/systems/onlineHomes.js';
 import { REFUSALS } from '../src/net/accountClient.js';
 import { decorLookText, decorLookStart } from '../src/ui/decorPanel.js';
 import { toolRig, settle, all } from './decorFakes.mjs';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -179,7 +180,7 @@ test('HOME-LOOK the painter, in the yard\'s panel: "Exterior" lists the four par
 });
 
 test('HOME-LOOK the world host by source: a town\'s homes are asked before its buildings are merged, a home stands out of the merge with its own table, drawn (and its shadow) with it; a look landed or changed repaints it where it stands, the older ask never over a newer; a merged home painted later rebuilds its pixel; the painter\'s preview is the owner\'s screen alone (mutants: the home merged; the draw on the pixel\'s table; the rebuild unmarked)', () => {
-  const w = src('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   // AUDIT: a town heard before is never waited for again (a rebuild stalled a second and a half)
   assert.match(w, /if \(onlineHomes\.known\(homeTown\)\) onlineHomes\.ensure\(homeTown\)\.catch\(\(\) => \{\}\);\n\s*else \{ try \{ await onlineHomes\.waitFor\(homeTown, HOME_LOOK_BUILD_WAIT_MS\); \}/);
   // AUDIT: only a painted home, or this account's, leaves the merge - and an unpainted one draws with the pixel's table

@@ -29,6 +29,7 @@ import { npcServiceKind } from '../src/systems/guildServices.js';
 import { GUILD_GROUPS } from '../src/formats/factionFile.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { RACES } from '../src/systems/races.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const src = (f) => readFileSync(join(process.cwd(), f), 'utf8');
 
@@ -249,7 +250,7 @@ test('E3: a host with no quest machine is C-sharp\'s empty-machine answer - ever
 });
 
 test('E3: the wiring - world.js runs the pass at layout and stands only the ACTIVE billboards', () => {
-  const w = src('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   // the pass runs where RMBLayout runs it: at layout, per pixel,
   // BEFORE the billboards are batched
   assert.ok(w.includes('setupExteriorQuestStaticNpcs(entry.npcs, machine, makeStaticNpcHost)'),

@@ -15,6 +15,7 @@ import { join } from 'node:path';
 import { wodRockUvs, pieceStretch, WOD_ROCK_STRETCH_MIN } from '../src/world/wodRockUv.js';
 import { objectMatrix } from '../src/world/wodLocationObjects.js';
 import { StaticBatchBuilder } from '../src/render/staticBatch.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const ARENA2 = process.env.ARENA2_PATH;
 const skipReal = !ARENA2 || !existsSync(ARENA2) ? 'ARENA2_PATH not set or missing - real-data spire skipped' : false;
@@ -169,7 +170,7 @@ test('FB1001-WODROCK: a mirrored piece (a negative scale) keeps the density too'
 });
 
 test('FB1001-WODROCK: the streaming host re-maps each WoD piece as it reads its model - one call, the mod\'s loop alone', () => {
-  const w = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
+  const w = hostText('src/scenes/world.js');
   assert.match(w, /^import [^\n]*; import \{ wodRockUvs \} from '\.\.\/world\/wodRockUv\.js';/m);
   // the piece's model is read through it, before its box, its batch and its collider: the batch draws the new UVs,
   // and the box and the collider read the same positions and indices (a dfMeshToModel pebble's own arrays - below)

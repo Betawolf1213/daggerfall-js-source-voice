@@ -9,9 +9,10 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createBreather, BUILD_SLICE_MS } from '../src/systems/buildBreather.js';
+import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const read = (p) => readFileSync(join(root, p), 'utf8');
+const read = (p) => hostText(p);
 
 test('PERF7 createBreather: resolves at once inside the slice, awaits one frame once the budget is spent, and a reset starts a fresh slice (mutant: the yield unconditional, or the slice never restarted)', async () => {
   let t = 0;
@@ -52,7 +53,7 @@ test('PERF7 createBreather: resolves at once inside the slice, awaits one frame 
 });
 
 test('PERF7 pins: the world host keeps one breather for the stream, resets it at each build, and breathes after every placed model (mutant: the call dropped, or reset dropped so a long earlier await eats the first slice)', () => {
-  const w = read('src/scenes/world.js');
+  const w = hostText('src/scenes/world.js');
   // PERF-EXT24: the breather takes the frame clock's budget and lends its slices back (test/buildslice.test.js)
   assert.match(w, /const breather = createBreather\(\{[^\n]*\n(    [^\n]*\n)+  \}\);\n\s+async function buildPixelNow\(px, py, \{ roadsRetry = false \} = \{\}\) \{\n\s+breather\.reset\(\);/, 'one breather, reset per build');
   assert.match(w, /entry\._batched = true; \}[^\n]*\n\s+await breather\.breathe\(\);/, 'after each model, inside the placements loop');
