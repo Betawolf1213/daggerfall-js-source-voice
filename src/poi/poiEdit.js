@@ -205,6 +205,8 @@ export function createPoiEdit({ rand = (b) => { globalThis.crypto.getRandomValue
   /** @type {{ id: string, label: string, start: string, selBefore: PoiSelection } | null} */
   let drag = null;
   let gen = 0;
+  /** POI-6: what this screen shows in a POI's place instead (showAs). @type {Map<string, any>} */
+  const shown = new Map();
   const listeners = new Set();
   const changed = () => { gen++; for (const fn of listeners) { try { fn(); } catch (e) { console.warn('[poi] an editor listener threw', e); } } };
 
@@ -383,12 +385,20 @@ export function createPoiEdit({ rand = (b) => { globalThis.crypto.getRandomValue
     },
 
     /** The working set as the feed's overlay (poi/poiFeed.js setOverlay): every open document, drawn on this screen in
-     *  place of its live revision. */
+     *  place of its live revision - unless it is SHOWN AS another (`showAs`: a document, or null for nothing there). */
     overlay() {
       const out = new Map();
       for (const [id, e] of docs) out.set(id, { doc: e.doc, rev: e.rev ?? 0 });
+      for (const [id, d] of shown) out.set(id, d === null ? null : { doc: d, rev: 0 });
       return out;
     },
+    /** POI-6: what this screen shows for a POI, whatever is open or live - `doc` that document, `null` nothing (a POI not
+     *  yet in the world, a retirement), `undefined` as it would be. The approver's before and after; no step, no save. */
+    showAs(/** @type {string} */ id, /** @type {any} */ d) {
+      if (d === undefined) shown.delete(id); else shown.set(id, d === null ? null : structuredClone(d));
+      changed();
+    },
+    shownAs: (/** @type {string} */ id) => shown.get(id),
   };
   return api;
 }

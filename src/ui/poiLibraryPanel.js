@@ -69,9 +69,11 @@ export const tagsOf = (text) => [...new Set(String(text ?? '').split(',').map((s
  *   act: (fn: (io: any) => Promise<any>) => Promise<any>, say: (text: string, kind?: string) => void, refusal: (r: any) => string,
  *   editor: { placeAsset: (asset: any, fallbackName?: string) => void },
  *   decodeImage?: ((bytes: Uint8Array) => Promise<any>) | null, rand?: (b: Uint8Array) => Uint8Array,
- * }} deps `host` the element the dialogs are laid in; `act` the panel's door to the store (its busy count)
+ *   exportGlb?: ((model: { name: string, parts: any[], lights: any[] }) => any) | null,
+ * }} deps `host` the element the dialogs are laid in; `act` the panel's door to the store (its busy count); `exportGlb`
+ *   the panel's own .glb writer (POI-6)
  */
-export function createPoiLibrary({ doc = document, host, io, feed, me, act, say, refusal, editor, decodeImage = null, rand = (b) => { globalThis.crypto.getRandomValues(/** @type {any} */ (b)); return b; } }) {
+export function createPoiLibrary({ doc = document, host, io, feed, me, act, say, refusal, editor, decodeImage = null, rand = (b) => { globalThis.crypto.getRandomValues(/** @type {any} */ (b)); return b; }, exportGlb = null }) {
   injectPoiLibraryStyle(doc);
   const el = (tag, cls = '', text = null) => { const n = doc.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const btn = (text, onClick, cls = 'dfpoi-btn') => { const b = el('button', cls, text); b.type = 'button'; b.addEventListener('click', (e) => { e.stopPropagation?.(); onClick(); }); return b; };
@@ -156,6 +158,7 @@ export function createPoiLibrary({ doc = document, host, io, feed, me, act, say,
     words.append(el('div', 'dfpoi-shelf-meta', t('poi.library.facts', 'by {by} · {parts, plural, one {# part} other {# parts}} · {triangles, plural, one {# triangle} other {# triangles}}', { by: it.by, parts: it.parts, triangles: it.triangles })));
     const acts = el('div', 'dfpoi-shelf-acts');
     acts.append(btn(t('poi.library.place', 'Place'), () => place(it)));
+    if (exportGlb) acts.append(btn(t('poi.export.glbShort', 'Save as .glb'), () => saveGlb(it)));
     if (mayChange(it)) {
       acts.append(btn(t('poi.library.change', 'Change...'), () => beginEdit(it)));
       acts.append(btn(dropping === it.id ? t('poi.library.dropSure', 'Take it off the shelf?') : t('poi.library.drop', 'Take off the shelf'), () => drop(it)));
@@ -171,6 +174,13 @@ export function createPoiLibrary({ doc = document, host, io, feed, me, act, say,
     close();
     editor.placeAsset({ name: item.name, parts: item.parts, lights: item.lights ?? [] }, t('poi.editor.newName', 'New place'));
     say(t('poi.editor.placeModel', 'Click where it stands. Esc to stop.'));
+  }
+  /** POI-6: an entry's model as a .glb, by the panel's writer. */
+  async function saveGlb(it) {
+    const r = await act((i) => poiShelfEntry(i, it.id));
+    if (!r) return;
+    if (!r.ok) { say(refusal(r), 'bad'); return; }
+    await exportGlb?.({ name: r.data.item.name, parts: r.data.item.parts, lights: r.data.item.lights ?? [] });
   }
   async function beginEdit(it) {
     const r = await act((i) => poiShelfEntry(i, it.id));

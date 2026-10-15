@@ -26404,7 +26404,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       win?.activateTeleportationTravel();
       if (win) townTalk.showOverlay(win);
     }
-    panel = createPoiEditorPanel({ edit, editor, feed: poiFeed, io, me, onExit: exit, onEnter: enter, onJump: jump, decodeImage: decodePoiImage });
+    /** POI-6: the eye to a POI's place (the approver's look) - the body taken there by the same door as the map's jump,
+     *  the eye south of the place and above it, looking north and down at it. */
+    function goTo(place) {
+      if (!place) return;
+      _teleportToPixel(place.px, place.py, [place.x, player.pos[1] + 1, place.z], { grounded: true }).then(() => { cam.pos = [player.pos[0], player.pos[1] + 25, player.pos[2] - 35]; cam.yaw = 0; cam.pitch = -0.6; }, (e2) => console.warn('[poi] going there', e2?.message ?? e2));
+    }
+    panel = createPoiEditorPanel({ edit, editor, feed: poiFeed, io, me, onExit: exit, onEnter: enter, onJump: jump, decodeImage: decodePoiImage, goTo });
     document.body.append(panel.root);
     poiEditor = editor;
     enter();

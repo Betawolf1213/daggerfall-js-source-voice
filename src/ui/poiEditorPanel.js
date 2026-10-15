@@ -20,6 +20,12 @@
 //     too, unless the builder says not (POI-4b).
 //   - THE LIBRARY (POI-4b, ui/poiLibraryPanel.js): the bar's Library - every model the builders keep, to place again; a
 //     POI or a part kept in it from its inspector.
+//   - APPROVALS AND HISTORY (POI-6, ui/poiReviewPanel.js): an approver's queue - what each submission changes, the
+//     law's report, before and after where it stands, approve or send back with a word; a POI's every revision, to open
+//     again or (an approver) put back in the world.
+//   - OUT AND BACK IN (POI-6, poi/poiTransfer.js): a POI's model - or a library entry's - written as a .glb for the
+//     builder's own modelling tool; the POIs open in the editor written as a PACK (a .zip with every asset they name),
+//     and a pack read back - checked whole, its assets uploaded, its POIs opened as changes to what the store holds.
 //
 // A REFUSAL IS A SENTENCE: the store's word through the account client's own table (accountRefusalText); a problem
 // through the law's. TEXT, NEVER MARKUP: every name a builder typed is written with `textContent`. The panel takes no
@@ -33,11 +39,14 @@ import { t } from '../systems/textManager.js';   // L10N4: the words through the
 import { accountRefusalText } from '../net/accountClient.js';
 import { poiDocProblems, poiAssetProblems, POI_LIMITS, POI_ALPHA, POI_WRAP, POI_FILTER } from '../poi/poiLaw.js';
 import { eulerOfQuat, quatOfEuler, lawName, newLight } from '../poi/poiEdit.js';
-import { problemText, problemWhere, gltfErrorText, gltfWarningText, meshErrorText, imageErrorText } from '../poi/poiText.js';
-import { poiSaveDraft, poiSubmit, poiWithdraw, poiRetire, poiList, poiHistory, poiPutAsset } from '../poi/poiService.js';
+import { problemText, problemWhere, gltfErrorText, gltfWarningText, meshErrorText, imageErrorText, packErrorText } from '../poi/poiText.js';
+import { poiSaveDraft, poiSubmit, poiWithdraw, poiRetire, poiList, poiHistory, poiPutAsset, poiShelve } from '../poi/poiService.js';
 import { decodePoiMesh, encodePoiMesh } from '../poi/poiMesh.js';
 import { createPoiUvPanel } from './poiUvPanel.js';   // POI-5: the UV editor
 import { createPoiLibrary } from './poiLibraryPanel.js';   // POI-4b: the library's shelf
+import { createPoiReview } from './poiReviewPanel.js';   // POI-6: the approver's queue, a POI's history
+import { exportModel, exportPack, importPack, fileNameOf } from '../poi/poiTransfer.js';   // POI-6: out and back in
+import { readPack } from '../poi/poiPack.js';
 import { poiImageMetaOf } from '../poi/poiImage.js';
 import { readGltf, bakeGltf } from '../poi/gltfImport.js';
 import { prepareImport, uploadImport } from '../poi/poiImport.js';
@@ -74,6 +83,7 @@ export const POI_PANEL_CSS = `
 .dfpoi-ok { color: #a9d39a; }
 .dfpoi-dialog { pointer-events: auto; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(520px, calc(100vw - 16px)); max-height: calc(100vh - 32px); overflow: auto; padding: 10px; background: rgba(14, 16, 19, .97); border: 1px solid #6b5230; border-radius: 6px; }
 .dfpoi-warn { color: #e8cf8a; margin: 2px 0; }
+.dfpoi-review { padding: 6px 4px; border-bottom: 1px solid #3a2f20; }
 .dfpoi[data-on="0"] .dfpoi-dock, .dfpoi[data-on="0"] .dfpoi-dialog { display: none; }
 .dfpoi-launch { pointer-events: auto; position: absolute; left: 8px; bottom: 8px; display: none; }
 .dfpoi[data-on="0"] .dfpoi-launch { display: block; }
@@ -152,12 +162,13 @@ export function createAssetFacts(fetchAsset, onLearned = () => {}) {
  *   io: () => (import('../poi/poiService.js').PoiIo | null), me: { handle: string | null, builder: boolean, approver: boolean },
  *   onExit: (how: 'back' | 'here') => void, onEnter?: () => void, onJump?: () => void, readFile?: (f: any) => Promise<Uint8Array>,
  *   decodeImage?: ((bytes: Uint8Array) => Promise<{ width: number, height: number, data: Uint8Array | Uint8ClampedArray }>) | null,
- *   rand?: (b: Uint8Array) => Uint8Array,
+ *   rand?: (b: Uint8Array) => Uint8Array, goTo?: (place: any) => void, download?: (name: string, bytes: Uint8Array, type: string) => void,
  * }} deps `onEnter` the launcher's press (the editor opened again after an exit); `decodeImage` a picture decoded (the UV
  *   editor draws the material's under its UVs, the library a model's picture - poi/poiImageDecode.js); `rand` fills bytes
- *   (a library entry's id)
+ *   (a library entry's id); `goTo` takes the eye to a document's place (the approver's look); `download` hands the
+ *   builder a file
  */
-export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, me, onExit, onEnter = () => {}, onJump = () => {}, readFile = async (f) => new Uint8Array(await f.arrayBuffer()), decodeImage = null, rand = (b) => { globalThis.crypto.getRandomValues(/** @type {any} */ (b)); return b; } }) {
+export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, me, onExit, onEnter = () => {}, onJump = () => {}, readFile = async (f) => new Uint8Array(await f.arrayBuffer()), decodeImage = null, rand = (b) => { globalThis.crypto.getRandomValues(/** @type {any} */ (b)); return b; }, goTo = () => {}, download = downloadIn(doc) }) {
   injectPoiPanelStyle(doc);
   const el = (tag, cls = '', text = null) => { const n = doc.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const btn = (text, onClick, cls = 'dfpoi-btn') => { const b = el('button', cls, text); b.type = 'button'; b.addEventListener('click', (e) => { e.stopPropagation?.(); onClick(); }); return b; };
@@ -176,12 +187,18 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   let search = '';
   let closing = null;        // the POI whose close asks again (it holds unsaved changes)
   let busy = 0;   // the store's acts in flight (a picture's upload may overlap a save)
-  const facts = createAssetFacts((sha) => feed.asset(sha, { auth: io()?.secret ?? null }), () => schedule());
+  // an asset's facts learnt: the inspector drawn again, and the approver's queue (its law reports) - `review` made below
+  /** @type {any} */
+  let review = null;
+  const facts = createAssetFacts((sha) => feed.asset(sha, { auth: io()?.secret ?? null }), () => { schedule(); review?.learned(); });
 
   const say = (text, kind = 'ok') => { status.textContent = text; status.dataset.kind = kind; };
   const refusal = (r) => (r?.error ? accountRefusalText(r.error) : t('poi.editor.failed', 'That did not go through.'));
   // POI-4b: the library's dialogs, laid in the panel, through its own door to the store
-  const library = createPoiLibrary({ doc, host: root, io, feed, me, act: (fn) => act(fn), say, refusal, editor, decodeImage, rand });
+  const library = createPoiLibrary({ doc, host: root, io, feed, me, act: (fn) => act(fn), say, refusal, editor, decodeImage, rand, exportGlb: (model) => exportGlb(model) });
+  // POI-6: the approver's queue and a POI's history, laid in the panel the same way
+  review = createPoiReview({ doc, host: root, me, act: (fn) => act(fn), say, refusal, edit, facts, goTo });
+  const dialogsClosed = () => { closeDialog(); library.close(); review.close(); };
 
   // ── RENDERING ────────────────────────────────────────────────────
   let queued = false;
@@ -226,7 +243,10 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
       el('span', 'dfpoi-sep'), undo, redo, el('span', 'dfpoi-sep'), speed, el('span', 'dfpoi-sep'),
       btn(t('poi.editor.newPoi', 'New POI'), () => { editor.placeNew(t('poi.editor.newName', 'New place')); say(t('poi.editor.placeHint', 'Click the ground where it stands. Esc to stop.')); }),
       btn(t('poi.editor.import', 'Import model'), () => openImport()),
-      btn(t('poi.library.title', 'Library'), () => { closeDialog(); library.open(); }),
+      btn(t('poi.library.title', 'Library'), () => { dialogsClosed(); library.open(); }),
+      btn(t('poi.pack.export', 'Export pack'), () => exportOpenPack()),
+      btn(t('poi.pack.import', 'Import pack...'), () => choosePack()),
+      ...(me.approver ? [btn(t('poi.review.title', 'Approvals'), () => { dialogsClosed(); review.openQueue(); })] : []),
       btn(t('poi.editor.map', 'Map'), () => onJump()),
       el('span', 'dfpoi-sep'), exitBack, exitHere,
     );
@@ -345,6 +365,11 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     out.push(btn(t('poi.editor.addLight', 'Add a light'), () => edit.edit(d.id, 'light', (x) => { x.lights = [...(x.lights ?? []), newLight()]; }, { id: d.id, part: null, light: (d.lights?.length ?? 0) })));
     // POI-4b: its parts and lights kept in the library, from the POI's own origin
     if (d.parts.length) out.push(el('div', 'dfpoi-h', t('poi.library.title', 'Library')), btn(t('poi.library.keepPoi', 'Keep it in the library...'), () => { closeDialog(); library.keep({ name: d.name, parts: structuredClone(d.parts), lights: structuredClone(d.lights ?? []) }); }));
+    // POI-6: its revisions (once the store has it), and its model out as a .glb
+    const more = el('div', 'dfpoi-row');
+    if (edit.entryOf(d.id)?.state !== 'new' || edit.entryOf(d.id)?.saved) more.append(btn(t('poi.review.history', 'History...'), () => { dialogsClosed(); review.openHistory(d.id); }));
+    if (d.parts.length) more.append(btn(t('poi.export.glb', 'Export model (.glb)'), () => exportGlb({ name: d.name, parts: d.parts, lights: d.lights ?? [] })));
+    out.push(more);
     return out;
   }
 
@@ -608,9 +633,85 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     });
   }
 
+  // ── OUT AND BACK IN (POI-6) ──────────────────────────────────────
+  const fetchAsset = (sha) => feed.asset(sha, { auth: io()?.secret ?? null });
+  /** A model - a POI's or a library entry's - as a .glb the builder saves. */
+  async function exportGlb(model) {
+    const r = await act(() => exportModel(model, fetchAsset));
+    if (!r) return false;
+    if (!r.ok) { say(t('poi.export.failed', 'A model or picture would not load: nothing was saved.'), 'bad'); return false; }
+    download(fileNameOf(model.name, 'glb'), r.bytes, 'model/gltf-binary');
+    say(t('poi.export.saved', 'Saved {file}.', { file: fileNameOf(model.name, 'glb') }));
+    return true;
+  }
+  /** Every POI open in the editor, as it stands on this screen, written as a pack. */
+  async function exportOpenPack() {
+    const pois = edit.ids().map((id) => structuredClone(edit.docOf(id)));
+    if (!pois.length) { say(t('poi.pack.nothingOpen', 'Open the POIs to pack first.'), 'bad'); return false; }
+    const r = await act(() => exportPack({ pois }, fetchAsset));
+    if (!r) return false;
+    if (!r.ok) { say(t('poi.export.failed', 'A model or picture would not load: nothing was saved.'), 'bad'); return false; }
+    const file = fileNameOf(pois.length === 1 ? pois[0].name : `poi-pack-${pois.length}`, 'zip');
+    download(file, r.bytes, 'application/zip');
+    say(t('poi.pack.saved', 'Packed {n, plural, one {# POI} other {# POIs}} into {file}.', { n: pois.length, file }));
+    return true;
+  }
+  function choosePack() {
+    const input = el('input');
+    input.type = 'file'; input.accept = '.zip,application/zip';
+    input.addEventListener('change', async () => { const f = input.files?.[0]; if (f) await openPack(await readFile(f)); });
+    input.click?.();
+  }
+  /** A pack read and checked whole, then shown: what it holds, and Upload and open. */
+  async function openPack(bytes) {
+    const { readZipEntries } = await import('../scenes/dataSource.js');   // the port's own zip reader, stored and deflated
+    let pack;
+    try {
+      pack = await readPack(await readZipEntries({ arrayBuffer: async () => bytes.slice().buffer }));
+    } catch { pack = { ok: false, code: 'pack-not-a-pack' }; }
+    if (!pack.ok) { say(packErrorText(pack), 'bad'); return false; }
+    dialogsClosed();
+    const box = el('div', 'dfpoi-dialog');
+    for (const ty of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'wheel', 'contextmenu', 'touchstart']) box.addEventListener(ty, swallow);
+    const list = el('div', 'dfpoi-sub');
+    for (const d of pack.pois) list.append(el('div', '', d.name));
+    for (const d of pack.shelf) list.append(el('div', '', t('poi.pack.entryNamed', 'Library: {name}', { name: d.name })));
+    const go = btn(t('poi.pack.uploadOpen', 'Upload and open'), () => importOpened(pack));
+    const acts = el('div', 'dfpoi-row');
+    acts.append(go, btn(t('poi.editor.cancel', 'Cancel'), () => closeDialog()));
+    box.append(el('div', 'dfpoi-h', t('poi.pack.title', 'Import a pack')),
+      el('div', '', t('poi.pack.holds', '{pois, plural, one {# POI} other {# POIs}}, {entries, plural, one {# library entry} other {# library entries}}, {assets, plural, one {# model or picture} other {# models and pictures}}.', { pois: pack.pois.length, entries: pack.shelf.length, assets: pack.assets.size })),
+      list, acts);
+    dialog = box;
+    root.append(box);
+    return true;
+  }
+  async function importOpened(pack) {
+    const r = await act((i) => importPack(pack, {
+      putAsset: (b, k) => poiPutAsset(i, b, k), history: (id) => poiHistory(i, id), shelve: (item) => poiShelve(i, item), rand,
+      progress: (n, of) => say(t('poi.editor.uploading', 'Uploading {n} of {of}...', { n, of })),
+    }));
+    if (!r) return false;
+    if (!r.ok) { say(refusal(r), 'bad'); return false; }
+    for (const [sha, a] of pack.assets) facts.put(sha, a.kind === 'mesh' ? { kind: 'mesh', submeshes: a.submeshes } : { kind: 'texture', w: a.w, h: a.h });
+    let opened = 0, kept = 0;
+    for (const o of r.open) {
+      // changes of the builder's own to that POI are never thrown away for a pack's
+      if (edit.has(o.id) && edit.dirty(o.id)) { kept++; continue; }
+      if (edit.has(o.id)) edit.close(o.id);
+      edit.open(o.id, { doc: structuredClone(o.doc), saved: o.saved, base: o.base, rev: null, state: o.state });
+      opened++;
+    }
+    closeDialog();
+    if (r.open[0] && edit.has(r.open[0].id)) edit.select({ id: r.open[0].id, part: null });
+    say(t('poi.pack.opened', 'Opened {n, plural, one {# POI} other {# POIs}}; {entries, plural, one {# library entry} other {# library entries}} kept. Save each as a draft to send it.', { n: opened, entries: r.shelved })
+      + (kept ? ` ${t('poi.pack.keptOpen', '{n, plural, one {# POI was} other {# POIs were}} left as you had them (unsaved changes).', { n: kept })}` : ''));
+    return true;
+  }
+
   // ── THE IMPORT ───────────────────────────────────────────────────
   function openImport() {
-    closeDialog(); library.close();
+    dialogsClosed();
     const box = el('div', 'dfpoi-dialog');
     for (const ty of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'wheel', 'contextmenu', 'touchstart']) box.addEventListener(ty, swallow);
     const files = el('input');
@@ -693,11 +794,27 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     refreshList: () => refreshList(),
     /** POI-4b: the library's dialogs (the bar's button, the inspectors' and the import's keeping). */
     library,
+    /** POI-6: the approver's queue and a POI's history; a model out as a .glb; a pack out, and one read back from bytes. */
+    review,
+    exportGlb: (model) => exportGlb(model),
+    exportPack: () => exportOpenPack(),
+    openPack: (bytes) => openPack(bytes),
     /** Whether a press landed on the panel (the world leaves it alone). */
     owns: (target) => !!target && typeof root.contains === 'function' && root.contains(target),
-    destroy() { offEdit(); closeDialog(); library.close(); uvDialog?.close(); root.remove?.(); },
+    destroy() { offEdit(); dialogsClosed(); uvDialog?.close(); root.remove?.(); },
   };
 }
+
+/** A file handed to the builder: a link to its bytes, pressed. @param {Document} doc */
+export const downloadIn = (doc) => (name, bytes, type) => {
+  const url = URL.createObjectURL(new Blob([bytes.slice()], { type }));
+  const a = doc.createElement('a');
+  a.href = url; a.download = name;
+  doc.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+};
 
 /** The alpha modes as the builder reads them. */
 export const alphaText = (a) => (a === 'opaque' ? t('poi.editor.alphaOpaque', 'opaque') : a === 'cutout' ? t('poi.editor.alphaCutout', 'cutout') : t('poi.editor.alphaBlend', 'see-through'));

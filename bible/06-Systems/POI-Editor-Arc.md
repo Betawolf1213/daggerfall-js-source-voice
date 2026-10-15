@@ -43,7 +43,7 @@ the glTF reader is the port's own and every model draws through `Renderer.create
 | POI-3 | The editor mode: the role gate, a free camera, the map to fly to, place / move / rotate / scale with gizmos and ground snap, an outliner and inspector, undo and redo, drafts saved and submitted | built (POI-3a the core, POI-3b the world and the panel) |
 | POI-4 | The glTF 2.0 / GLB importer: accessors (sparse too), the node tree baked, materials, embedded and side-by-side images, samplers, KHR_texture_transform; the frame turned to the game's; the asset library | built - the reader (POI-4), the import and its upload (POI-3b), the library shared between builders (POI-4b) |
 | POI-5 | The material editor and the full UV editor: selection by vertex, edge, face and island; move, rotate, scale; seams; LSCM unwrap; island packing; projections; texel density | built |
-| POI-6 | The approver's queue in the editor (before and after, at the place, with the law's report), history and rollback; export and import of a POI pack; a GLB back out for a round trip | planned |
+| POI-6 | The approver's queue in the editor (before and after, at the place, with the law's report), history and rollback; export and import of a POI pack; a GLB back out for a round trip | built |
 
 ## POI-1 - the format and the store (2026-10-14, acct133)
 
@@ -341,3 +341,42 @@ Mac, asked what "UV map" covers: **"Full UV editor"**.
   uploads it by its new name and the part wears it - one step of the POI's undo; closing lets it all go.
 
 Pinned by `test/poi5_uv.test.js` (7) and `test/poi5_panel.test.js` (2); `tools/mutants/poi5.json` 19, all dead.
+
+## POI-6 - approvals, history, and out and back in (2026-10-14)
+
+Mac: **"I need to be able to approve changes"**; "the ability to import models ... a tool my developers can use without
+having to access the codebase".
+
+- **APPROVALS** (`src/ui/poiReviewPanel.js`; the bar's **Approvals**, an approver's alone): every submission, oldest
+  first - its name, who sent it and how long ago, new, a change or a retirement, and whether it was made from a revision
+  no longer live (approving it puts back over what went live since). **What it changes** against the live one
+  (`src/poi/poiDiff.js`: renamed, moved so many metres, turned so many degrees - a quaternion's other sign no turn -
+  resized, its ground; a part added, taken away or changed and how, matched by its key; its lights, its mark, its words),
+  in the approver's language (`poiText.js` diffText). **The law**'s report: its problems, its assets' once every one is
+  known (drawn again as each is learnt, never while a word is being typed). **Look at it** opens the submission in the
+  editor and takes the eye there (`world.js` goTo: the map's own door, the eye south of the place and above it); **Show
+  the live one** / **Show the submission** in turn where it stands (`poiEdit.js` showAs - this screen's alone, no step,
+  no save; nothing there for a new POI's before or a retirement's after). **Approve**, or **Send back** with a word (a
+  word is asked: the builder is told why). The look closes with the verdict.
+- **HISTORY** (a POI's inspector, once the store has it): every revision, newest first - its state, author, how long
+  ago, the reviewer's word, which is in the world now. **Open this one**: that revision as the working document, saved
+  as the live one is - so a revision that is not the live one opens as a change to save and send. An approver **puts
+  back** an earlier approved revision as the live one, asked twice.
+- **A MODEL BACK OUT** (`src/poi/gltfExport.js`; **Export model (.glb)** in a POI's inspector, **Save as .glb** on a
+  library entry): one .glb a builder opens in their own tool. The importer's conversion turned back - X mirrored
+  (positions, normals, translations; a rotation (x, -y, -z, w)), every winding reversed - one node a part with its
+  offset, turn and size, one mesh a part and a primitive a submesh; materials as the importer reads them (base colour
+  and picture, glow normalised with KHR_materials_emissive_strength past one, cut, both sides, metallic 0 and roughness
+  1, the picture's offset, repeats and turn as KHR_texture_transform), pictures embedded as stored (WebP by
+  EXT_texture_webp, required), lights as KHR_lights_punctual. Read back by the editor's own importer, every corner where
+  it stood (to 1e-5 m), in the same winding, with the same normals.
+- **A PACK** (`src/poi/poiPack.js`, `src/poi/poiTransfer.js`; **Export pack** and **Import pack...**): the POIs open in
+  the editor as one .zip - `pack.json` (`{ v: 1, kind: 'poi-pack', pois, shelf }`) and every asset they name under
+  `assets/<sha>.mesh|png|jpg|webp` - written STORED (`saveTransfer.js` zipStore) and read by the port's own zip reader
+  (`dataSource.js` readZipEntries: stored or deflated). Read, nothing is trusted: each asset hashed against its name and
+  read as its kind, each document and entry held to the law, each name used present - refused whole by code otherwise
+  (`poiText.js` packErrorText). Imported: what it holds shown first; then every asset uploaded by its name, every library
+  entry put (under a new id where the store keeps another builder's), and every POI opened - as a change to the live
+  one where the store knows it, else as new; a POI the builder has open with unsaved changes is left as it is, and said.
+
+Pinned by `test/poi6_review.test.js` (8); `tools/mutants/poi6.json` 21, all dead.

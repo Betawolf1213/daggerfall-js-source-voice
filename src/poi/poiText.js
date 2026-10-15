@@ -116,6 +116,46 @@ const IMAGE = {
   webp: () => t('poi.image.webp', 'The WebP file is damaged.'),
 };
 
+/** POI-6: what a submission changes (poi/poiDiff.js codes). @type {Record<string, (a: any) => string>} */
+const DIFF = {
+  new: (a) => t('poi.diff.new', 'A new POI: {parts, plural, one {# part} other {# parts}}, {lights, plural, one {# light} other {# lights}}.', a),
+  retire: () => t('poi.diff.retire', 'Takes it out of the world.'),
+  name: (a) => t('poi.diff.name', 'Renamed from "{from}" to "{to}".', a),
+  about: () => t('poi.diff.about', 'Its description changed.'),
+  tags: (a) => t('poi.diff.tags', 'Its tags are now: {to}.', a),
+  moved: (a) => t('poi.diff.moved', 'Moved {m, number} m.', a),
+  ground: (a) => (a.to === 'snap' ? t('poi.diff.groundSnap', 'Now stands on the ground.') : t('poi.diff.groundAbsolute', 'Now stands at a fixed height.')),
+  turned: (a) => t('poi.diff.turned', 'Turned {deg, number}°.', a),
+  sized: (a) => t('poi.diff.sized', 'Resized from {from, number} to {to, number}.', a),
+  'part-added': (a) => t('poi.diff.partAdded', 'Part added: {name}.', a),
+  'part-removed': (a) => t('poi.diff.partRemoved', 'Part taken away: {name}.', a),
+  'part-changed': (a) => t('poi.diff.partChanged', 'Part {name}: {what}.', { name: a.name, what: a.what.map((w) => PART_WHAT[w]?.() ?? w).join(', ') }),
+  lights: (a) => t('poi.diff.lights', 'Its lights changed ({from} to {to}).', a),
+  marker: (a) => (a.show ? t('poi.diff.markerShown', 'Its mark on the map: shown, "{label}".', a) : t('poi.diff.markerHidden', 'Its mark on the map: hidden.')),
+};
+/** What changed in a part, in a word each. */
+const PART_WHAT = {
+  model: () => t('poi.diff.what.model', 'its model'),
+  moved: () => t('poi.diff.what.moved', 'moved'),
+  turned: () => t('poi.diff.what.turned', 'turned'),
+  sized: () => t('poi.diff.what.sized', 'resized'),
+  materials: () => t('poi.diff.what.materials', 'its materials'),
+  solidity: () => t('poi.diff.what.solidity', 'its solidity or shadow'),
+  name: () => t('poi.diff.what.name', 'its name'),
+};
+
+/** POI-6: a pack refused (poi/poiPack.js codes). @type {Record<string, (a: any) => string>} */
+const PACK = {
+  'pack-not-a-pack': () => t('poi.pack.notAPack', 'This is not a POI pack.'),
+  'pack-version': () => t('poi.pack.version', 'This pack was made by another version of the editor.'),
+  'pack-too-large': () => t('poi.pack.tooLarge', 'This pack holds too much to read at once.'),
+  'pack-bad-poi': (a) => t('poi.pack.badPoi', 'A POI in the pack falls short of the law ({name}).', a),
+  'pack-bad-entry': (a) => t('poi.pack.badEntry', 'A library entry in the pack falls short of the law ({name}).', a),
+  'pack-asset-hash': () => t('poi.pack.assetHash', 'A model or picture in the pack is not what its name says.'),
+  'pack-asset-bad': () => t('poi.pack.assetBad', 'A model or picture in the pack is damaged.'),
+  'pack-missing-asset': () => t('poi.pack.missingAsset', 'The pack names a model or picture it does not carry.'),
+};
+
 const said = (table, fallback) => (code, args = {}) => {
   const f = table[code];
   return f ? f(args ?? {}) : fallback(code);
@@ -132,6 +172,10 @@ const MESH_MAX = { 'too-many-vertices': POI_MESH_LIMITS.vertices, 'too-many-indi
 /** A mesh's refusal (poiMesh.js poiMeshError / decodePoiMesh's bare code): the limits by name, with their numbers;
  *  every other a damaged model. @param {string} code */
 export const meshErrorText = (code) => said(MESH, () => t('poi.mesh.malformed', 'A part\'s model is malformed.'))(code, { max: MESH_MAX[code] });
+/** POI-6: a change a submission makes, as the approver reads it. @param {{ code: string, [k: string]: any }} c */
+export const diffText = (c) => said(DIFF, unknownCode)(c.code, c);
+/** POI-6: a pack's refusal. @param {{ code: string, [k: string]: any }} r */
+export const packErrorText = (r) => said(PACK, unknownCode)(r.code, r);
 /** A picture's refusal (poiImage.js poiImageMetaOf's). @param {string} code */
 export const imageErrorText = (code) => said(IMAGE, unknownCode)(code, { max: POI_IMAGE_LIMITS.side });
 

@@ -10179,6 +10179,121 @@
   "tr": "4a49de55d730",
   "by": "claude-in-session"
  },
+ "poi.diff.about": {
+  "en": "bb665c2abed8",
+  "tr": "b7f768388867",
+  "by": "claude-in-session"
+ },
+ "poi.diff.groundAbsolute": {
+  "en": "85ab0ebd55b5",
+  "tr": "a90a05a22d6f",
+  "by": "claude-in-session"
+ },
+ "poi.diff.groundSnap": {
+  "en": "0b17457f9afa",
+  "tr": "c23c1298213d",
+  "by": "claude-in-session"
+ },
+ "poi.diff.lights": {
+  "en": "63922ba57779",
+  "tr": "fed9ebb8929f",
+  "by": "claude-in-session"
+ },
+ "poi.diff.markerHidden": {
+  "en": "5e51b41fe2b0",
+  "tr": "92910228c52e",
+  "by": "claude-in-session"
+ },
+ "poi.diff.markerShown": {
+  "en": "2e063612d48b",
+  "tr": "90215d3699e8",
+  "by": "claude-in-session"
+ },
+ "poi.diff.moved": {
+  "en": "d0606418e284",
+  "tr": "e2d6fd9842a5",
+  "by": "claude-in-session"
+ },
+ "poi.diff.name": {
+  "en": "0fe8a781794b",
+  "tr": "c479c832b771",
+  "by": "claude-in-session"
+ },
+ "poi.diff.new": {
+  "en": "6c7496daa9eb",
+  "tr": "4f788ba40d41",
+  "by": "claude-in-session"
+ },
+ "poi.diff.partAdded": {
+  "en": "6b8e43398311",
+  "tr": "48ce8546852a",
+  "by": "claude-in-session"
+ },
+ "poi.diff.partChanged": {
+  "en": "b8698daa6a82",
+  "tr": "13b142aca266",
+  "by": "claude-in-session"
+ },
+ "poi.diff.partRemoved": {
+  "en": "fafd81659abd",
+  "tr": "5a48b0daba1d",
+  "by": "claude-in-session"
+ },
+ "poi.diff.retire": {
+  "en": "377ff656bd3b",
+  "tr": "5a25c0702a98",
+  "by": "claude-in-session"
+ },
+ "poi.diff.sized": {
+  "en": "8807e2ce9df9",
+  "tr": "60eed4737bbb",
+  "by": "claude-in-session"
+ },
+ "poi.diff.tags": {
+  "en": "10e6a34485c5",
+  "tr": "01fb00758d1f",
+  "by": "claude-in-session"
+ },
+ "poi.diff.turned": {
+  "en": "b42eaa340811",
+  "tr": "94c6d998f499",
+  "by": "claude-in-session"
+ },
+ "poi.diff.what.materials": {
+  "en": "8107900b5653",
+  "tr": "17b1150c03e7",
+  "by": "claude-in-session"
+ },
+ "poi.diff.what.model": {
+  "en": "7cb334a75471",
+  "tr": "02142d5cfa8d",
+  "by": "claude-in-session"
+ },
+ "poi.diff.what.moved": {
+  "en": "5e142a4b65eb",
+  "tr": "d92af299d0d4",
+  "by": "claude-in-session"
+ },
+ "poi.diff.what.name": {
+  "en": "041bea769a37",
+  "tr": "ccebc4d57645",
+  "by": "claude-in-session"
+ },
+ "poi.diff.what.sized": {
+  "en": "f26d1f67b0df",
+  "tr": "e2b2c8796faa",
+  "by": "claude-in-session"
+ },
+ "poi.diff.what.solidity": {
+  "en": "b5e48f456893",
+  "tr": "45791378d20c",
+  "by": "claude-in-session"
+ },
+ "poi.diff.what.turned": {
+  "en": "406cc7e81a75",
+  "tr": "4477b3aafdcf",
+  "by": "claude-in-session"
+ },
  "poi.editor.about": {
   "en": "55f8ebc805e6",
   "tr": "7fda3970598e",
@@ -10919,6 +11034,26 @@
   "tr": "69820d08768a",
   "by": "claude-in-session"
  },
+ "poi.export.failed": {
+  "en": "6d8f05ec501e",
+  "tr": "9c5a22ba0696",
+  "by": "claude-in-session"
+ },
+ "poi.export.glb": {
+  "en": "367a8ae6ccd4",
+  "tr": "1c718ba3a32e",
+  "by": "claude-in-session"
+ },
+ "poi.export.glbShort": {
+  "en": "fc32582c03f6",
+  "tr": "fac6f3044ef7",
+  "by": "claude-in-session"
+ },
+ "poi.export.saved": {
+  "en": "a9d8670946e9",
+  "tr": "b5133099d4bf",
+  "by": "claude-in-session"
+ },
  "poi.gltf.accessorType": {
   "en": "ecbc4e16f2e9",
   "tr": "ba40827497b0",
@@ -11229,6 +11364,96 @@
   "tr": "f5d9cadf9ac0",
   "by": "claude-in-session"
  },
+ "poi.pack.assetBad": {
+  "en": "f05944327bf2",
+  "tr": "c432373ef00e",
+  "by": "claude-in-session"
+ },
+ "poi.pack.assetHash": {
+  "en": "919e75194477",
+  "tr": "549afc91cec5",
+  "by": "claude-in-session"
+ },
+ "poi.pack.badEntry": {
+  "en": "5cfa9d3617c0",
+  "tr": "b650ef853833",
+  "by": "claude-in-session"
+ },
+ "poi.pack.badPoi": {
+  "en": "9afd49606ad3",
+  "tr": "bd7b4866c366",
+  "by": "claude-in-session"
+ },
+ "poi.pack.entryNamed": {
+  "en": "af490cf2402e",
+  "tr": "e3be7d8320b8",
+  "by": "claude-in-session"
+ },
+ "poi.pack.export": {
+  "en": "64acf86201b0",
+  "tr": "b08036c0715a",
+  "by": "claude-in-session"
+ },
+ "poi.pack.holds": {
+  "en": "fd522e63e9cb",
+  "tr": "3c6e8372ee49",
+  "by": "claude-in-session"
+ },
+ "poi.pack.import": {
+  "en": "6fab071b7b18",
+  "tr": "6d7aa2b68169",
+  "by": "claude-in-session"
+ },
+ "poi.pack.keptOpen": {
+  "en": "5fe17b77e5de",
+  "tr": "5d041bc2c27c",
+  "by": "claude-in-session"
+ },
+ "poi.pack.missingAsset": {
+  "en": "1699e20f5c05",
+  "tr": "f120443a59da",
+  "by": "claude-in-session"
+ },
+ "poi.pack.notAPack": {
+  "en": "38abc08611e7",
+  "tr": "6172f805dd90",
+  "by": "claude-in-session"
+ },
+ "poi.pack.nothingOpen": {
+  "en": "2f01ed8a4f95",
+  "tr": "62bdc1595773",
+  "by": "claude-in-session"
+ },
+ "poi.pack.opened": {
+  "en": "293ddff6297c",
+  "tr": "b00c66ef9e50",
+  "by": "claude-in-session"
+ },
+ "poi.pack.saved": {
+  "en": "c977b77a6923",
+  "tr": "9c1a30a38fd8",
+  "by": "claude-in-session"
+ },
+ "poi.pack.title": {
+  "en": "ff2b95f0f5ce",
+  "tr": "cf35ee58d04b",
+  "by": "claude-in-session"
+ },
+ "poi.pack.tooLarge": {
+  "en": "7544b5e24b55",
+  "tr": "95a8fb1edf8c",
+  "by": "claude-in-session"
+ },
+ "poi.pack.uploadOpen": {
+  "en": "baea853b1a41",
+  "tr": "0ddd66b2f6ea",
+  "by": "claude-in-session"
+ },
+ "poi.pack.version": {
+  "en": "84af70da231f",
+  "tr": "4748a6dcd4c1",
+  "by": "claude-in-session"
+ },
  "poi.problem.about": {
   "en": "0e4cbbc1581a",
   "tr": "07467107a944",
@@ -11457,6 +11682,196 @@
  "poi.problem.wrap": {
   "en": "880b3bfac8ef",
   "tr": "2f93fd281afc",
+  "by": "claude-in-session"
+ },
+ "poi.review.approve": {
+  "en": "7b2c7f146aba",
+  "tr": "c2505ac98eb3",
+  "by": "claude-in-session"
+ },
+ "poi.review.approved": {
+  "en": "c9560d94ee19",
+  "tr": "4a160f3bed4d",
+  "by": "claude-in-session"
+ },
+ "poi.review.approvedName": {
+  "en": "5ced998147e4",
+  "tr": "ad0a0eb222fe",
+  "by": "claude-in-session"
+ },
+ "poi.review.changes": {
+  "en": "d0a86be5fb88",
+  "tr": "53a53601f26b",
+  "by": "claude-in-session"
+ },
+ "poi.review.close": {
+  "en": "bbfa773e5a63",
+  "tr": "4b0816bbd5e9",
+  "by": "claude-in-session"
+ },
+ "poi.review.decidedBy": {
+  "en": "4bc0b226395a",
+  "tr": "b968ce30ffd7",
+  "by": "claude-in-session"
+ },
+ "poi.review.hint": {
+  "en": "90a8daa517d8",
+  "tr": "c6f4f6dad757",
+  "by": "claude-in-session"
+ },
+ "poi.review.history": {
+  "en": "7e60238d64a9",
+  "tr": "80744aef136f",
+  "by": "claude-in-session"
+ },
+ "poi.review.historyTitle": {
+  "en": "f8558a38ec63",
+  "tr": "cef7a8ef09d1",
+  "by": "claude-in-session"
+ },
+ "poi.review.kindChange": {
+  "en": "abf66761c57b",
+  "tr": "345ddeec1184",
+  "by": "claude-in-session"
+ },
+ "poi.review.kindNew": {
+  "en": "c2a6b03f190d",
+  "tr": "5043f762841a",
+  "by": "claude-in-session"
+ },
+ "poi.review.kindRetire": {
+  "en": "486bb108952f",
+  "tr": "227b0b33f12c",
+  "by": "claude-in-session"
+ },
+ "poi.review.law": {
+  "en": "410ea1ad42e2",
+  "tr": "f007c2a79369",
+  "by": "claude-in-session"
+ },
+ "poi.review.lawOk": {
+  "en": "6bb3cb9748ae",
+  "tr": "f3c1e899ea2f",
+  "by": "claude-in-session"
+ },
+ "poi.review.live": {
+  "en": "a92133592af4",
+  "tr": "7b69d9582152",
+  "by": "claude-in-session"
+ },
+ "poi.review.look": {
+  "en": "a538246e5eec",
+  "tr": "c2d3ce626679",
+  "by": "claude-in-session"
+ },
+ "poi.review.needWord": {
+  "en": "14b054130138",
+  "tr": "21a5d512a484",
+  "by": "claude-in-session"
+ },
+ "poi.review.noChange": {
+  "en": "4c46628c043d",
+  "tr": "e60a58815d43",
+  "by": "claude-in-session"
+ },
+ "poi.review.none": {
+  "en": "a0d9069460f5",
+  "tr": "f02f6dcd82d5",
+  "by": "claude-in-session"
+ },
+ "poi.review.notePlaceholder": {
+  "en": "a5b55d597172",
+  "tr": "9855ce930cda",
+  "by": "claude-in-session"
+ },
+ "poi.review.openDirty": {
+  "en": "040084906250",
+  "tr": "e7c9013dcf7a",
+  "by": "claude-in-session"
+ },
+ "poi.review.openRev": {
+  "en": "8ac9a3e69f2f",
+  "tr": "b1c6f359053e",
+  "by": "claude-in-session"
+ },
+ "poi.review.opened": {
+  "en": "fdfec224452a",
+  "tr": "62b1f05bb59d",
+  "by": "claude-in-session"
+ },
+ "poi.review.putBack": {
+  "en": "9263cb49c1bd",
+  "tr": "5410fa6a3815",
+  "by": "claude-in-session"
+ },
+ "poi.review.putBackDone": {
+  "en": "ab55fb4f4e76",
+  "tr": "a1600663a165",
+  "by": "claude-in-session"
+ },
+ "poi.review.putBackSure": {
+  "en": "7103b620e59c",
+  "tr": "696408c465ec",
+  "by": "claude-in-session"
+ },
+ "poi.review.reject": {
+  "en": "0aa2a5cc3f18",
+  "tr": "fda85136f496",
+  "by": "claude-in-session"
+ },
+ "poi.review.rejectedName": {
+  "en": "b990926ab09b",
+  "tr": "e1effb5e01ff",
+  "by": "claude-in-session"
+ },
+ "poi.review.rev": {
+  "en": "9e007da7371b",
+  "tr": "bf7836a2b27d",
+  "by": "claude-in-session"
+ },
+ "poi.review.revMeta": {
+  "en": "95144e2b2323",
+  "tr": "ab4314043f7c",
+  "by": "claude-in-session"
+ },
+ "poi.review.sent": {
+  "en": "c0b87fb1b049",
+  "tr": "f3cfd663cd64",
+  "by": "claude-in-session"
+ },
+ "poi.review.showAfter": {
+  "en": "a31cb61ed5f6",
+  "tr": "273d69ef8137",
+  "by": "claude-in-session"
+ },
+ "poi.review.showBefore": {
+  "en": "e75df2517efa",
+  "tr": "8a3f7c218899",
+  "by": "claude-in-session"
+ },
+ "poi.review.showingAfter": {
+  "en": "8fdf13db3714",
+  "tr": "f1fe55d86c71",
+  "by": "claude-in-session"
+ },
+ "poi.review.showingBefore": {
+  "en": "fae17a1baa50",
+  "tr": "dbd5aa08fc9e",
+  "by": "claude-in-session"
+ },
+ "poi.review.stale": {
+  "en": "1e7d2bb36608",
+  "tr": "cb94c5e345c7",
+  "by": "claude-in-session"
+ },
+ "poi.review.title": {
+  "en": "deb9d03cf06d",
+  "tr": "20719683e746",
+  "by": "claude-in-session"
+ },
+ "poi.review.word": {
+  "en": "dab77bd11850",
+  "tr": "dab77bd11850",
   "by": "claude-in-session"
  },
  "poi.text.unknownCode": {
