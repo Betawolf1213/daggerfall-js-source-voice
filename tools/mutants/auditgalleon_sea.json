@@ -47,12 +47,12 @@
   {
     "name": "AUDIT-GN-T4b-her-glass-never-cut",
     "file": "src/scenes/comeSailAwayPool.js",
-    "old": "{ opaque: true, cutout: cutOf(sm.textureArchive, sm.textureRecord) }); }\n          catch (e)",
-    "new": "{ opaque: true }); }\n          catch (e)",
+    "old": "pipeline.uploadRecord(archive, record, { opaque: true, cutout: cutOf(archive, record) });",
+    "new": "pipeline.uploadRecord(archive, record, { opaque: true });",
     "tests": [
       "test/auditgalleon_sea.test.js"
     ],
-    "why": "DF-ART (re-aimed: her windows seen through, not lit): her stern windows uploaded whole - nothing seen through them"
+    "why": "DF-ART (re-aimed: her windows seen through by day): her stern windows uploaded whole - nothing seen through them"
   },
   {
     "name": "AUDIT-GN-T4c-berthing-to-a-boat-under-way",

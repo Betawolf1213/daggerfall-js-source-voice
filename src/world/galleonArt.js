@@ -8,9 +8,9 @@
 // noise. Her records, her liveries' bands and her tiles are unchanged, so no face of her moves: a band (BANDS) is a whole
 // Daggerfall picture now, where it was a 64-row slice of one painted livery - the oxblood strake, the gilt pin-stripes
 // and the painted panels are gone, as Mac chose. Her stern gallery is Daggerfall's leaded window, its glass seen
-// through into her great cabin (Mac: "windows should always be see through" - classicArt.js SEE_THROUGH_WINDOW; the
-// panes' night glow went with the glass). Not a DFU member. Ledger A (GALLEON).
-import { DF, SEE_THROUGH_WINDOW, classicStandIns } from './classicArt.js';
+// through into her great cabin (Mac: "windows should always be see through" - classicArt.js SEE_THROUGH_WINDOW) by day,
+// and lit at night (Mac: "See-through by day, lit at night" - NIGHT_RECORD_OFFSET). Not a DFU member. Ledger A (GALLEON).
+import { DF, SEE_THROUGH_WINDOW, LIT_WINDOW, classicStandIns } from './classicArt.js';
 
 /** The galleon's pseudo-archive: past the gate's 38101, the court's 38111 and the spoils' 38121. */
 export const GALLEON_ARCHIVE = 38131;
@@ -55,9 +55,23 @@ export const GALLEON_SOURCES = Object.freeze({
   [TEX.underDeck]: DF.underDeck,
 });
 
-const _art = classicStandIns({ archive: GALLEON_ARCHIVE, name: 'galleon', sources: GALLEON_SOURCES });
+/** THE STERN WINDOWS LIT (Mac, of "you removed the backlit windows from the ship..": "See-through by day, lit at
+ *  night"): a window record's NIGHT TWIN is this far past it - the same window with its glass whole and glowing
+ *  (classicArt.js LIT_WINDOW, paneGlow), the record her stern gallery is drawn as while the lanterns are lit
+ *  (scenes/comeSailAwayPool.js draw). Past every record a ship of the port's wears. */
+export const NIGHT_RECORD_OFFSET = 100;
+/** Her see-through records' night twins, by record (the stern gallery's). */
+export const GALLEON_NIGHT = Object.freeze(Object.fromEntries(BANDS.sternWindows.recs.map((r) => [r, r + NIGHT_RECORD_OFFSET])));
+
+const _art = classicStandIns({
+  archive: GALLEON_ARCHIVE, name: 'galleon',
+  sources: { ...GALLEON_SOURCES, ...Object.fromEntries(Object.values(GALLEON_NIGHT).map((r) => [r, LIT_WINDOW])) },
+  glowRecs: Object.values(GALLEON_NIGHT),
+});
 /** Whether a record of hers holds glass to see through - her stern gallery's (the pool uploads it a cut-out). */
 export const galleonCut = (/** @type {number} */ record) => _art.cut(record);
+/** A night twin's glow (its emission mask, its glass lit), cut as the twin is built; null for any other record. */
+export const galleonGlow = (/** @type {number} */ record) => _art.glow(record);
 
 let _registered = false;
 /**
@@ -72,5 +86,5 @@ export function registerGalleonArt(addVendorTextures) {
   _registered = true;
   return addVendorTextures(_art.entries);
 }
-/** Test seam: unregistered (AUDIT GN2-PF3). */
-export function _resetGalleonArt() { _registered = false; }
+/** Test seam: unregistered, her glow uncut (AUDIT GN2-PF3). */
+export function _resetGalleonArt() { _registered = false; _art.reset(); }
