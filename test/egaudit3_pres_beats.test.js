@@ -230,7 +230,7 @@ test('AUDIT EG III THE HOLDER\'S CHIPS AND THEIR BEATS (ui/egBeats.js egHolderWa
   destroyEgSpireHud();
   const C = rd('src/scenes/egClient.js');
   assert.match(C, /const held = egHolderWatch\(holdMemo, egHolderNow\(witness \? null : fight, E, me\(\), spireWeaveReady\(\)\), t, E\.h\);\n\s*for \(const b of held\.beats\) beatNow\(b\.k, b\);/);
-  assert.match(C, /foldOpen: pres\.foldOpen, held: held\.chips, bridge: bridgeGap\(\) >= 0 \}\);/);   // PIN MOVED (AUDIT EG III's merge with the law group): Spirebridge's offer after the chips
+  assert.match(C, /foldOpen: pres\.foldOpen, held: held\.chips, bridge: bridgeGap\(\) >= 0,/);   // PIN MOVED (AUDIT EG III's merge with the law group): Spirebridge's offer after the chips; PIN MOVED (AUDIT EG V, c: L7-7 and L2-9 - the witness's seat and the rest's share follow it)
   assert.match(C, /for \(const n of spireVestigeNews\(\)\) beatNow\(n\.k, n\);/);
 });
 

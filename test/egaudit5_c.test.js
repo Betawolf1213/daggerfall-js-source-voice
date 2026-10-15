@@ -31,7 +31,7 @@ import { accountRefusalText } from '../src/net/accountClient.js';
 import { maxFatigue } from '../src/systems/statMods.js';
 import { egFirstOver, egFirstKey, egFirstRead, EG_FIRST_KEY } from '../src/ui/egBeats.js';
 import { drawEgPanel, destroyEgHud, egPanelModel, EG_POTIONS_PER_HALL } from '../src/ui/egHud.js';
-import { egPadAct, egPadPrompts } from '../src/ui/egSpireHud.js';
+import { egPadAct, egPadPrompts, destroyEgSpireHud } from '../src/ui/egSpireHud.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T0 = 1_800_000_000_000, ME = 'acct-0', BID = '0123456789abcdef';
@@ -293,6 +293,12 @@ test('AUDIT EG V L2-9 A REST THAT HEALS LESS THAN WHOLE GIVES MAGICKA AND FATIGU
   assert.equal(R.entity.magicka, 10 + 25, 'half the magicka back');
   assert.equal(R.entity.fatigue, 5 + Math.round(fm * 0.5), 'half the fatigue back');
   assert.equal(R.entity.health, 20 + 50, 'and half the health');
+  // the rest card says so, off the room's own heal word (the client's frame, its HUD drawn)
+  globalThis.document = fakeDocument();
+  try {
+    R.client.frame();
+    assert.match(find(globalThis.document.body, 'eg-stage')[0].textContent, /The rest heals 50%: Ashen Vigil\./);
+  } finally { destroyEgSpireHud(); destroyEgHud(); delete globalThis.document; }
   // never past the whole
   const e = { magicka: 45, maxMagicka: 50, fatigue: fm - 1, stats: R.entity.stats };
   egRestVitals(e, 0.5);

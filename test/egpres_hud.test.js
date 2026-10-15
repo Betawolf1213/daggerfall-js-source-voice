@@ -12,7 +12,7 @@ import {
   egArrivalCard, egArrivalShown, EG_CARD_MS, egDoorMarker, egLordBar, egSpireHudModel, drawEgSpireHud, drawEgArrivalCard, destroyEgSpireHud, egTouchButtons, egPadAct, egPadPrompts, egPadUp,
   EG_PAD_DIRS, EG_CLASSIC_TEXT_CSS, EG_CLASSIC_SHADOW_CSS, EG_SPIRE_CSS,
 } from '../src/ui/egSpireHud.js';
-import { EG_BEATS, EG_BEAT_KEYS, EG_BEAT_SOUNDS, egRuneChime, egBeatPlan, egBeatMemo, egBeatWatch, EG_TEXT_FIRST, EG_FIRST_KEYS, egFirstDue, egRehearsalDue, egFirstRead, EG_FIRST_KEY, EG_PRES_TEXT, EG_HAPTICS, egBuzz, egBeatUnder, egPerilsNew, EG_BEAT_WARN_S } from '../src/ui/egBeats.js';
+import { EG_BEATS, EG_BEAT_KEYS, EG_BEAT_SOUNDS, egRuneChime, egBeatPlan, egBeatMemo, egBeatWatch, EG_TEXT_FIRST, EG_FIRST_KEYS, egFirstDue, egRehearsalDue, egFirstRead, egFirstKey, EG_FIRST_KEY, EG_PRES_TEXT, EG_HAPTICS, egBuzz, egBeatUnder, egPerilsNew, EG_BEAT_WARN_S } from '../src/ui/egBeats.js';
 import { egAbsentStep, egPartyRows, egPartyDeco, egRoadOf, EG_NUMERALS } from '../src/ui/egParty.js';
 import { EG_DANGER_PALETTES, EG_DANGER_PALETTE_KEYS, egCvdDistance, egReducedMotion, egFillOf } from '../src/ui/egAccess.js';
 import { egRecapModel, egRecapKeep, egRecapsKept, EG_RECAPS_KEPT, drawEgPanel, egPanelModel } from '../src/ui/egHud.js';
@@ -101,7 +101,7 @@ test('EG-G1 THE LAYOUTS (section 27.1): a desk at 1280x720, a phone held upright
   assert.equal(egFormFactor({ w: 600, h: 900 }), 'desktop', 'a short side past 560 is no phone');
   assert.deepEqual(EG_FORM_FACTORS, ['desktop', 'upright', 'sideways']);
   assert.deepEqual(Object.fromEntries(Object.entries(EG_LAYOUTS).map(([k, L]) => [k, [L.dec, L.lordH, L.relInChip, L.potion, L.standing]])),
-    { desktop: ['row', 30, false, true, true], upright: ['fold', 30, true, false, false], sideways: ['card', 44, false, false, false] });
+    { desktop: ['row', 30, false, true, true], upright: ['fold', 30, true, false, false], sideways: ['fold', 44, false, false, false] });   // PIN MOVED (AUDIT EG V, c: L7-22 - a phone held sideways folds its decrees to a press, besides each arrival card's)
   const E = stateAt({ dc: [[EG_DECREE_BY_KEY.pack.id, 1], [EG_DECREE_BY_KEY.ashfall.id, 2]], ms: [[ME, 3, 10, 0, 0, [], [], -1]] });
   const now = T0 + 120_000;
   const desk = egSpireHudModel(E, ME, now, { ff: 'desktop' }), up = egSpireHudModel(E, ME, now, { ff: 'upright' }), side = egSpireHudModel(E, ME, now, { ff: 'sideways' });
@@ -115,7 +115,7 @@ test('EG-G1 THE LAYOUTS (section 27.1): a desk at 1280x720, a phone held upright
   assert.equal(up.decFold, '2 decrees', 'folded to a press');
   assert.equal(up.relInChip, true);
   assert.equal(up.potion, '');
-  assert.deepEqual(side.dec, [], 'on the card');
+  assert.equal(side.decFold, '2 decrees', 'folded to a press, and on the card');   // PIN MOVED (AUDIT EG V, c: L7-22)
   assert.equal(side.lordH, 44);
   assert.equal(desk.objective, egHallOf(77, 3).objective);
   // the drawing: one root, its layout and skin its classes, the chip in place, the scale read
@@ -303,9 +303,9 @@ test('EG-G1 THE PARTY ROWS (section 27.4): each member\'s numeral in Battlemage 
 
 test('EG-G1 EVERY EVENT IS SEEN, HEARD AND SAID (section 27.5, EG_BEATS pinned): the twenty-eight events in the table\'s order (AUDIT EG III, PIN MOVED: the Vestiges\' eleven rows after the seventeen), each its sight, its sound off DAGGER.SND and its words; a fight\'s words are the fight\'s own beat lines; a beat\'s line said once - by the fight, the client\'s chat or itself; THE WATCH hears each new word once and replays nothing it saw at its first look (mutants: a sound dropped; a line said twice; the watch replaying a reload\'s old words)', () => {
   assert.deepEqual(EG_BEAT_KEYS, ['castBack', 'pull', 'door', 'cache', 'fork', 'niche', 'memento', 'goldRun', 'phase', 'fall', 'recall', 'redoubt', 'key', 'orrery', 'twist', 'home', 'lastWord',
-    'secondWind', 'rally', 'lifeline', 'shieldHymn', 'spellweave', 'rallyingCry', 'bladestorm', 'deadeye', 'accord', 'accordLapse', 'resonance']);
+    'secondWind', 'rally', 'lifeline', 'shieldHymn', 'spellweave', 'rallyingCry', 'bladestorm', 'deadeye', 'accord', 'accordLapse', 'resonance', 'wake']);   // PIN MOVED (AUDIT EG V, c: L7-16 - a lord's wake said, after the twenty-eight)
   assert.deepEqual(EG_BEAT_KEYS.map((k) => EG_BEATS[k].sound), ['rewind', 'veil', 'door', 'chime', null, 'softChime', 'bell', 'fanfare', 'drum', 'lowToll', 'chime', 'score', 'rare', 'chord', null, null, 'toll',
-    'chime', 'chime', 'softChime', 'softChime', 'softChime', 'chime', 'sweep', 'pierce', 'softChime', null, 'chord']);
+    'chime', 'chime', 'softChime', 'softChime', 'softChime', 'chime', 'sweep', 'pierce', 'softChime', null, 'chord', 'score']);
   assert.deepEqual(Object.fromEntries(Object.entries(EG_BEAT_SOUNDS).map(([k, v]) => [k, v.rec ?? v.by])), { rewind: 66, veil: 'veil', door: 25, chime: 364, softChime: 364, bell: 107, fanfare: 32, drum: 374, lowToll: 107, toll: 107, rare: 364, chord: 365, score: 'score', sweep: 105, pierce: 3 });
   // the fight's own words
   assert.equal(EG_BEATS.door.words(), EG_SAY.door());
@@ -424,9 +424,10 @@ test('EG-G1 THE FIRST BREACH (section 27.7): the nine lines, each at its first o
   assert.equal(P.said.filter((t) => t === EG_TEXT_FIRST.void).length, 1, 'once');
   assert.equal(P.mids.filter((t) => t === '-10%').length, 1, 'the cost where one was taken - under a quarter, none');
   assert.equal(P.played.filter((p) => p.rec === EG_BEAT_SOUNDS.rewind.rec).length, 2, 'the rewind each time');
-  const bits = egFirstRead(P.store);
+  const bits = egFirstRead(P.store, egFirstKey(ME));   // PIN MOVED (AUDIT EG V, c: L7-23 - the device keeps each account's own bits)
   assert.ok(bits & (1 << EG_FIRST_KEYS.indexOf('void')) && bits & (1 << EG_FIRST_KEYS.indexOf('count')), 'kept on the device');
-  assert.equal(P.store.getItem(EG_FIRST_KEY), String(bits));
+  assert.equal(P.store.getItem(egFirstKey(ME)), String(bits));
+  assert.equal(EG_FIRST_KEY, 'eg.first');
   // a second breach on this device says neither again
   const Q = inBreach({ h: 2, store: P.store });
   Q.client.frame(); Q.client.frame(); Q.entity.health = 80; Q.client.castBack();
@@ -450,7 +451,7 @@ test('EG-G1 TOUCH AND THE PAD (section 27.8): the d-pad is the Spire\'s while it
   assert.deepEqual(egPadAct('left', 'tap', { recap: true, panel: true }), { k: 'close' });
   assert.deepEqual(egPadPrompts({ panel: true }).map((r) => r[1]), ['Choose', 'Take', 'No']);
   assert.equal(egPadPrompts({}), null);
-  assert.deepEqual(egTouchButtons({ witness: true }).map((b) => b.id), ['prev', 'next', 'forsake']);
+  assert.deepEqual(egTouchButtons({ witness: true }).map((b) => b.id), ['prev', 'next', 'ping', 'forsake']);   // PIN MOVED (AUDIT EG V, c: L7-7 - a witness's ping, section 16.5)
   assert.deepEqual(egTouchButtons({ rest: true }).map((b) => b.id), ['home']);
   assert.deepEqual(egTouchButtons({}), []);
   assert.deepEqual(Object.values(EG_PAD_DIRS), ['up', 'down', 'left', 'right']);

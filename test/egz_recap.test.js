@@ -21,7 +21,7 @@ import { mintEgReceipt, egCompanyTag } from '../src/net/egReceipt.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { EG_STATE_EMPTY, foldEg } from '../src/net/egLink.js';
 import { egRecapModel, egRecapMemberLine, egRankText, egBoardLine, egRecapBoardKeep, egRecapKeep, egRecapsKept, egChartFell, drawEgPanel, destroyEgHud } from '../src/ui/egHud.js';
-import { EG_PRES_TEXT, EG_TEXT_FIRST, EG_FIRST_KEYS, EG_FIRST_REHEARSAL_BIT, egFirstOver, egFirstRead, EG_FIRST_KEY } from '../src/ui/egBeats.js';
+import { EG_PRES_TEXT, EG_TEXT_FIRST, EG_FIRST_KEYS, EG_FIRST_REHEARSAL_BIT, egFirstOver, egFirstRead, egFirstKey, EG_FIRST_KEY } from '../src/ui/egBeats.js';
 import { damageChartModel, drawGateDamageChart, destroyGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../src/ui/gateDamageChart.js';
 import { createEgClient, EG_HEAL_SEND_MS } from '../src/scenes/egClient.js';
 import { fakeRoom } from './fakeRoom.mjs';
@@ -533,7 +533,7 @@ test('EG-ZF client: THE RECAP WHOLE (section 27.6) - each member\'s share of the
 
 test('EG-ZF client: THE FIRST-TIME LINES OVER THE ACCOUNT (section 27.7) and THE HEAL WORD OUT - the account\'s bits read over the device\'s (a line the account has heard is not said on a new device); a line newly said told the account; with no account\'s answer the device\'s own; what companions healed in me said to the room by peer id, whole points, the rest kept, never outside the Spire (mutants: the device read over the account; the account never told; the heal word never sent; its fractions sent)', async () => {
   const bit = (k) => 1 << EG_FIRST_KEYS.indexOf(k);
-  assert.equal(egFirstOver(bit('void'), bit('count')), bit('count'), 'the account over the device');
+  assert.equal(egFirstOver(bit('void'), bit('count')), bit('void') | bit('count'), 'the account with the device');   // PIN MOVED (AUDIT EG V, c: L7-23 - the device's bits are OR'd in, never dropped once the account answers: a line whose word was lost before a reload was shown again)
   assert.equal(egFirstOver(bit('void'), null), bit('void'), 'no account: the device\'s');
   assert.equal(egFirstOver(bit('void'), null, bit('home')), bit('void') | bit('home'), 'and what this screen showed');
   assert.equal(egFirstOver(0, bit('count'), bit('fork')), bit('count') | bit('fork'));
@@ -547,7 +547,7 @@ test('EG-ZF client: THE FIRST-TIME LINES OVER THE ACCOUNT (section 27.7) and THE
   assert.equal(P.said.filter((s) => s === EG_TEXT_FIRST.void).length, 1, 'a line the account never heard: said');
   await tick();
   assert.deepEqual(P.firsts, [bit('count') | bit('void')], 'and the account told');
-  assert.equal(egFirstRead(P.store), bit('void'), 'the device keeps what it showed');
+  assert.equal(egFirstRead(P.store, egFirstKey(ME)), bit('void'), 'the device keeps what it showed');   // PIN MOVED (AUDIT EG V, c: L7-23 - under the account's own key)
   // no account's answer: the device's own
   const mem = new Map([[EG_FIRST_KEY, String(bit('count'))]]);
   const Q = inBreach({ h: 2, store: { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)) } });

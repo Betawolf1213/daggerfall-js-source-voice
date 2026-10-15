@@ -734,8 +734,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       onChoose: (c) => { startWin = null; const no2 = openRefusal(); if (no2) { say(no2); return; } open(!!c.rh, { ew: c.ew | 0, wg: c.wg ?? [] }); say(EG_TEXT.opening); },
       onCancel: () => { startWin = null; } }) ?? null;
   }
-  /** AUDIT EG V (c, L7-14): whether a call of my company's stands for me (rising, sealed or open - not past). */
-  const callMine = (E) => !!E.call && E.call.co.some((r) => r[0] === me()) && egPhase({ openedAt: E.call.op }, now()) !== 'ended';
+  /** AUDIT EG V (c, L7-14): whether a call of my company's stands for me (any phase the link still holds - answered late, it
+   *  says the late line). */
+  const callMine = (E) => !!E.call && E.call.co.some((r) => r[0] === me());
   /** AUDIT EG V (c, L7-14; sections 5 and 27.7): THE START WINDOW WITHOUT A KEY - `/breach` with no call standing asks where
    *  in the Spire as the key does (its refusals first); a keyless player is offered the day's Rehearsal there. */
   function startOpen() {
@@ -1484,8 +1485,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   }
   /** EG-ZF (section 27.7): THE FIRST-TIME BITS IN FORCE - the account's over the device's, with what this screen showed. */
   /** AUDIT EG V (c, L7-23): the device's bits for the account signed in (its own key - another account on this device never
-   *  silences mine), or the device's own with none. */
-  const firstDevice = () => egFirstRead(store, egFirstKey(me()));
+   *  silences mine), with the device's own (the lines shown with no account, and every line before the accounts' keys). */
+  const firstDevice = () => egFirstRead(store, egFirstKey(me())) | egFirstRead(store);
   const firstBits = () => egFirstOver(firstDevice(), pres.acct, pres.shown);
   /** EG-ZF: lines newly shown - kept on the device, and told the account (signed in: the service ORs them, so a word lost
    *  is carried by the next, or by the next balance's answer - AUDIT EG V (c, L7-23): or, past a reload, by the device's). */

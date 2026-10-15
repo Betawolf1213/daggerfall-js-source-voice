@@ -29,12 +29,13 @@ import { validEgOut } from '../src/net/wire.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { foldEg, EG_STATE_EMPTY, egGatherOf, egMemberOf } from '../src/net/egLink.js';
 import { egAbsentStep, egPartyRows, egPartyDeco, EG_ROW_MARKS, EG_PARTY_CSS } from '../src/ui/egParty.js';
-import { egSpireHudModel, drawEgSpireHud, destroyEgSpireHud, egTouchButtons, egWatchLine, egRestLine, egHereText, egFormFactor, EG_LAYOUTS, EG_SPIRE_CSS } from '../src/ui/egSpireHud.js';
+import { egSpireHudModel, drawEgSpireHud, destroyEgSpireHud, egTouchButtons, egWatchLine, egRestLine, egHereText, egFormFactor, EG_LAYOUTS, EG_SPIRE_CSS, drawEgArrivalCard, drawEgFall, egFallModel } from '../src/ui/egSpireHud.js';
+import { setPref } from '../src/systems/uiPrefs.js';
 import { egHudModel, drawEgPanel, destroyEgHud, egRecapModel, egRecapKeep, egRecapsKept, egStakeText } from '../src/ui/egHud.js';
 import { egBeatMemo, egBeatWatch, egBeatPlan, EG_BEATS, EG_BEAT_SOUNDS, EG_PRES_TEXT } from '../src/ui/egBeats.js';
 import { spireScoreFor, SPIRE_SONGS, SPIRE_SCORE_SILENCE, SPIRE_WAKE_MS, SPIRE_END_MS } from '../src/systems/egScore.js';
 import { drawGateTitleCard, destroyGateTitleCard, TITLE_CARD_CSS } from '../src/ui/gateTitleCard.js';
-import { egRunsLines, egBoardLines, EG_BOARD_TABS, EG_BOARD_TAB_TEXT, createEgBoardPanel } from '../src/ui/egBoardWindow.js';
+import { egRunsLines, egBoardLines, EG_BOARD_TABS, EG_BOARD_TAB_TEXT, createEgBoardPanel, openEgBoard } from '../src/ui/egBoardWindow.js';
 import { egSpireLights, EG_LIGHT_KIND } from '../src/world/egLights.js';
 import { EG_DANGER_PALETTES } from '../src/ui/egAccess.js';
 import { itemInfoRows } from '../src/systems/itemInfo.js';
@@ -118,7 +119,15 @@ test('AUDIT EG V L7-7 THE WITNESS\'S SEAT (section 16.5 - "the HUD: the count, t
   R.client.frame();
   drawEgSpireHud(egSpireHudModel(R.client.state(), ME, R.now(), { witness: true, watch: { numeral: 'II', name: 'Ann', pct: 64 }, touch: true }), { doc });
   assert.equal(find(doc.body, 'eg-touch-ping').length, 1, 'the ping\'s button drawn');
+  drawEgSpireHud(egSpireHudModel(R.client.state(), ME, R.now(), { witness: true, ping: 2100, touch: true }), { doc });
+  assert.equal(find(doc.body, 'eg-touch-ping')[0].textContent, 'Ping 3s', 'its seconds drawn as they move');
   destroyEgSpireHud();
+  // the client's own frame hands the HUD the member it watches, with the party pose's health
+  globalThis.document = fakeDocument();
+  try {
+    R.client.frame();
+    assert.match(find(globalThis.document.body, 'eg-stage')[0].textContent, /^Watching II Ann - health 64%\./);
+  } finally { destroyEgSpireHud(); destroyEgHud(); delete globalThis.document; }
   assert.match(rd('src/scenes/egClient.js'), /watch: witness \? watchedOf\(E\) : null, ping: witness \? pingLeft\(\) : 0/);
   // the shoulders and Q/E move the eye along the living
   R.client.key({ code: 'JoystickButton5' }); R.client.frame();
@@ -148,19 +157,20 @@ test('AUDIT EG V L7-8 THE RECAP\'S STRIP MARKS THE ROOM\'S FALLS, KEPT PAST A RE
   const walk = (h) => { R.B.h = h; R.tell(egStateOf(R.B, R.now())); R.client.frame(); R.step(100); };
   walk(2); walk(3);
   const out = []; egFall(R.B, 'acct-1', R.now(), out, null); for (const w of out) R.tell(w); R.client.frame();
+  out.length = 0; egFall(R.B, 'acct-2', R.now(), out, null); for (const w of out) R.tell(w); R.client.frame();
   walk(4);
   out.length = 0; egFall(R.B, ME, R.now(), out, null); for (const w of out) R.tell(w); R.client.frame();
   walk(6); walk(7);
   const kept = JSON.parse(store.getItem(EG_LOG_KEY));
   assert.equal(kept.b, BID);
-  assert.deepEqual(kept.l.filter(([, f]) => f > 0), [[3, 1], [4, 1]], 'each fall on its hall');
+  assert.deepEqual(kept.l.filter(([, f]) => f > 0), [[3, 2], [4, 1]], 'each fall on its hall, two in one');
   // a reload: the same store, the company in hall 9
   const Q = spire(t, { n: 3, h: 9, store });
-  Q.B.mem['acct-1'].falls = 1; Q.B.mem[ME].falls = 1; Q.B.mem['acct-1'].alive = 0; Q.B.mem['acct-1'].wit = 1;
+  Q.B.mem['acct-1'].falls = 1; Q.B.mem['acct-2'].falls = 1; Q.B.mem[ME].falls = 1; Q.B.mem['acct-1'].alive = 0; Q.B.mem['acct-1'].wit = 1;
   Q.tell(egStateOf(Q.B, Q.now())); Q.client.frame();
   Q.B.end = 'last'; Q.tell(egStateOf(Q.B, Q.now())); Q.client.frame();
   const recap = egRecapsKept(store).at(-1);
-  assert.deepEqual(recap.strip.map((c) => [c.c, c.glyphs.length, c.falls]), [[1, 5, 2], [2, 4, 0]], 'circle 1 whole, kept through the reload, both falls on it; circle 2 to hall 9');
+  assert.deepEqual(recap.strip.map((c) => [c.c, c.glyphs.length, c.falls]), [[1, 5, 3], [2, 4, 0]], 'circle 1 whole, kept through the reload, its three falls on it; circle 2 to hall 9');
   // another breach: its own log
   store.setItem(EG_LOG_KEY, JSON.stringify({ b: 'ffffffffffffffff', l: [[1, 3]], f: { 'acct-1': 3 } }));
   const O = spire(t, { n: 2, h: 12, store });
@@ -217,6 +227,13 @@ test('AUDIT EG V L7-12 / L7-13 THE SCORE HEARS THE LORD\'S WAKE AND MY FALL (sec
   assert.equal(song(), SPIRE_SONGS.end);
   R.step(2000);
   assert.equal(song(), SPIRE_SONGS.lord1);
+  // a fall this device saw already (a return as a witness - the way back's record, `wf`) plays no end again
+  const back = memStore();
+  back.setItem('eg.back', JSON.stringify({ b: BID, seed: 77, op: T0, geo: 0, ew: 0, rh: 0, h: 5, in: 1, li: null, wf: 1 }));
+  const S = spire(t, { n: 2, h: 5, store: back });
+  S.tell(egStateOf(S.B, S.now())); S.client.frame();
+  S.client.fallSave(); S.client.frame();
+  assert.notEqual(spireScoreFor(S.client.scoreView().place), SPIRE_SONGS.end, 'a seen fall');
   // pure: a sleeping Court, a woken one, a fall
   const base = { band: 0, sg: 'trial', kind: 'court', lord: 'grath', valk: false, phase: 1, countLeft: NaN, set: false, end: false };
   assert.equal(spireScoreFor({ ...base, asleep: true, sinceWake: Infinity }), SPIRE_SCORE_SILENCE);
@@ -273,6 +290,21 @@ test('AUDIT EG V L7-17 REDUCED MOTION STILLS THE GATE\'S TITLE CARDS IN THE SPIR
   drawGateTitleCard({ key: 'wake@1:Grath', kicker: '', main: 'Grath', sub: '', color: null, alpha: 1, fresh: true }, { doc: moving, still: false });
   assert.match(find(moving.body, 'wb-title-card')[0].className, /\bin\b/);
   destroyGateTitleCard();
+  // the port's row read by the card itself (scenes/egFight.js passes nothing)
+  setPref('reducedMotion', true);
+  try {
+    const own = fakeDocument();
+    drawGateTitleCard({ key: 'fell@2:Grath', kicker: '', main: 'Grath', sub: 'Felled', color: null, alpha: 1, fresh: true }, { doc: own });
+    assert.match(find(own.body, 'wb-title-card')[0].className, /\bstill\b/, 'the row, read by the card');
+    destroyGateTitleCard();
+  } finally { setPref('reducedMotion', false); }
+  // the Spire's own cards: the arrival card and THE FALL's
+  const cards = fakeDocument();
+  drawEgArrivalCard({ key: 'a', kicker: 'k', main: 'm', sub: 's', twist: '', dec: '', band: '', lays: '', alpha: 1, fresh: true }, { doc: cards, still: true });
+  assert.match(find(cards.body, 'eg-card')[0].className, /\bstill\b/);
+  drawEgFall(egFallModel({ at: 0, final: false, lost: 1 }, 2000, { still: true }), { doc: cards });
+  assert.match(find(cards.body, 'eg-fall-card')[0].className, /\bstill\b/);
+  destroyEgSpireHud();
   assert.match(TITLE_CARD_CSS, /\.wb-title-card\.still \.wb-title-rule \{ transition: none; \}/);
   assert.match(TITLE_CARD_CSS, /@media \(prefers-reduced-motion: reduce\) \{ \.wb-title-rule \{ transition: none; \} \.wb-title-card\.in \.wb-title-main \{ animation: none; \} \}/);
   assert.match(rd('src/ui/gateTitleCard.js'), /export function drawGateTitleCard\(model, \{ hidden = false, doc = globalThis\.document, still = egReducedMotion\(\) \} = \{\}\)/);
@@ -319,6 +351,11 @@ test('AUDIT EG V L7-19 THE LAST FIVE RUNS ARE READ (section 27.6 - "The last fiv
   panel.render({ error: 'offline' }, 'runs');
   assert.ok(find(doc.body, 'line').some((n) => n.textContent === lines[1]));
   panel.destroy();
+  const doc2 = fakeDocument();
+  doc2.defaultView = { addEventListener() {}, removeEventListener() {} };
+  const open = openEgBoard({ doc: doc2, fetchBoard: () => new Promise(() => {}), tab: 'runs', runs: () => egRecapsKept(store) });
+  assert.ok(find(doc2.body, 'line').some((n) => n.textContent === lines[1]), 'the opener hands its runs to the panel');
+  open.close();
   assert.match(rd('src/scenes/world.js'), /runs: \(\) => egRecapsKept\(appStorage\(\)\), \.\.\.o \}\)/);
 });
 
@@ -365,6 +402,9 @@ test('AUDIT EG V L3-10 THE GATHER\'S RING AND *1 OF 2 HERE* (section 7 - "a ring
   assert.equal(ring.length, 1);
   assert.equal(ring[0].f, 0.5, 'half the company here');
   assert.equal(ring[0].r, spec.arrive.r);
+  // before the breach's first wake the hall waits for the whole company, entered or not (net/egBrain.js's arrive step)
+  assert.deepEqual(egGatherOf({ wk: 0, co: [[ME, 'Mac', 1, 1, 0, 1, 0, 0, 0, 1, 1], ['acct-1', 'Ann', 2, 1, 0, 0, 0, 0, 0, 1, 0]] }), { here: 1, n: 2 });
+  assert.deepEqual(egGatherOf({ wk: 1, co: [[ME, 'Mac', 1, 1, 0, 1, 0, 0, 0, 1, 1], ['acct-1', 'Ann', 2, 1, 0, 0, 0, 0, 0, 1, 0]] }), { here: 1, n: 1 }, 'past it, the living entrants');
   // the wire: a row of ten taken, an eleventh 0 or 1 alone
   const row10 = [ME, 'Mac', 1, 1, 0, 1, 0, 0, 0, 1];
   assert.ok(validEgOut({ k: 'co', co: [row10] }));

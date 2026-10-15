@@ -375,7 +375,7 @@ export function spireScoreFor(place) {
   if (!place) return null;
   const key = spireScoreKey(place);
   if (key === 'ambience') return SPIRE_SCORE_SILENCE;
-  if (key === 'end') return !place.end || (place.sinceEnd ?? 0) < SPIRE_END_MS ? SPIRE_SONGS.end : SPIRE_SCORE_SILENCE;   // AUDIT EG V (c, L7-13): a fall's end is its own SPIRE_END_MS (spireScoreKey)
+  if (key === 'end') return (place.sinceEnd ?? 0) < SPIRE_END_MS ? SPIRE_SONGS.end : SPIRE_SCORE_SILENCE;   // AUDIT EG V (c, L7-13): a fall's end is its own SPIRE_END_MS (spireScoreKey), `sinceEnd` 0 with no end standing
   if (key === 'hall') return SPIRE_BAND_SONGS[Math.max(0, Math.min(3, place.band | 0))];
   if (key === 'lord') return SPIRE_SONGS[`lord${Math.max(1, Math.min(3, place.phase | 0 || 1))}`];
   return SPIRE_SONGS[key];

@@ -178,7 +178,7 @@ test('EG-ZM THE BOARDS\' ONE DOOR (ui/egBoardWindow.js createEgBoardDoor; scenes
   assert.equal(eClosed, 1, 'the panel standing closed first');
   // THE HOST: the one door, and its three ways in
   const w = rd('src/scenes/world.js');
-  assert.match(w, /const egBoardDoor = createEgBoardDoor\(\{\n\s*open: \(o\) => openEgBoard\(\{ doc: document, classic: !isEnhancedPlus\(\), fetchBoard: \(\) => _accountEg\.board\(\), listPickerReady: listPickerArtLoaded, \.\.\.o \}\),\n\s*slot: \{ top: \(\) => modes\?\.topWindow\?\.\(\) \?\? null, mount: \(w\) => modes\?\.mountWindow\?\.\(w\), close: \(w\) => modes\?\.closeWindow\?\.\(w\) \},/);
+  assert.match(w, /const egBoardDoor = createEgBoardDoor\(\{\n\s*open: \(o\) => openEgBoard\(\{ doc: document, classic: !isEnhancedPlus\(\), fetchBoard: \(\) => _accountEg\.board\(\), listPickerReady: listPickerArtLoaded, runs: \(\) => egRecapsKept\(appStorage\(\)\), \.\.\.o \}\),[^\n]*\n\s*slot: \{ top: \(\) => modes\?\.topWindow\?\.\(\) \?\? null, mount: \(w\) => modes\?\.mountWindow\?\.\(w\), close: \(w\) => modes\?\.closeWindow\?\.\(w\) \},/);   // PIN MOVED (AUDIT EG V, c: L7-19 - the boards' door carries this device's last runs, their sixth tab)
   assert.match(w, /board: \(\) => egBoardDoor\(\),   \/\/ EG-E2: `\/breach board`/);
   assert.match(w, /doors: egClient \? \{ board: \(\) => egBoardDoor\(\) \} : null,/);
   assert.match(w, /const egStartWindow = \(o\) => openEgStartWindow\(\{\n\s*\.\.\.o,\n\s*board: \(onClosed\) => egBoardDoor\(onClosed\),/);
