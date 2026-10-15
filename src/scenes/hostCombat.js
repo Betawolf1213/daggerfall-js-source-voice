@@ -8,7 +8,7 @@
 // FormulaHelper.cs, DaggerfallUnityItem.cs, PlayerActivate.cs
 // (MIT, Daggerfall Workshop).
 
-import { plainFoeLootRule, capFoeLoot, plainFoeRarityWeights } from '../systems/foeLootCap.js';   // FOE-CAP: a plain foe's cap and ladder (RENOWN-LOOT: at the roller's Renown)
+import { plainFoeLootRule, capFoeLoot, plainFoeRarityWeights, capLootList } from '../systems/foeLootCap.js';   // FOE-CAP: a plain foe's cap and ladder (RENOWN-LOOT: at the roller's Renown)
 import { renownLootQuarters, lootEased } from '../systems/renownLoot.js';   // RENOWN-LOOT: LOOT-EASE's buff by the roller's Renown
 import { SKILLS, tallySkill, skillValue, SKILL_NAMES } from '../systems/skills.js';
 import { effectiveLevel } from '../systems/mentorMode.js';   // SOFTCAP2: mentor mode - the level the world is built around
@@ -28,9 +28,10 @@ import { isAmmunition } from '../systems/itemTemplates.js';   // LOOT7: a champi
 import { enemyLootSpawned } from '../characters/enemyEntity.js';   // OH-E: EnemyEntity.OnLootSpawned
 import { conditionBasedPricesOn, randomConditionLootItems } from '../systems/rriRealism.js';   // RRI2: EnemyEntity.OnLootSpawned's subscriber
 import { isHumanoid } from '../systems/survival/loot.js';   // MOD: the same humanoid test SURV2's corpse food already draws its line with
-import { rollCorpseLoot, lootRarityOn, rarityRank, RARITIES, rarityEligible, applyRarity, lastPass } from '../systems/lootRarity.js';   // RF2: and the port's, after it; LOOT7: a champion's guarantee
+import { rollCorpseLoot, lootRarityOn, rarityRank, RARITIES, rarityEligible, applyRarity, lastPass, stampWonWeapons } from '../systems/lootRarity.js';   // RF2: and the port's, after it; LOOT7: a champion's guarantee
 import { championOf } from '../systems/champions.js';   // LOOT7: the champions' traits register at import
-import { isGoldPieces } from '../systems/inventory.js';   // PLAIN-LOOT: a plain foe's gold all of it
+import { isGoldPieces, ARROW_TEMPLATE } from '../systems/inventory.js';   // PLAIN-LOOT: a plain foe's gold all of it; PARTY-LOOT: a shaft is never counted under the cap
+import { bonusShare, rollBonusSupplies, ROOM_BASE_QUARTERS } from '../systems/roomLoot.js';   // PARTY-LOOT: a player's own layer over a room's shared base
 import { wildFoeLoot } from '../systems/wildZone.js';   // WILD1: the open zone's gold (wildLootAfter)
 import { liveStat, FATIGUE_DRAIN_SCALE } from '../systems/statMods.js';   // RF2: the player's live luck for the roll   // AUDIT 58: ItemHelper's EquipItem half - a foe's equip table is what DamageEquipment's struck side reads
 import { GLOBAL_SCALE } from '../world/meshReader.js';
@@ -143,14 +144,20 @@ export const plainFoeLootKeep = (quarters = renownLootQuarters()) => lootEased(P
 const eliteLooted = (entity) => !!(entity?.eliteFoe || entity?.elite || championOf(entity));
 // ELITE: `lootDropMult` scales every item category's chance (gold untouched, as the humanoid cut);
 // `lootQualityMult` scales the rarity ladder's odds. Both 1 everywhere but an elite dungeon.
-export function spawnEnemyLoot(entity, mobileType, basics, player, { rolls = Math.random, lootDropMult = 1, lootQualityMult = 1, where = null } = {}) {
+// PARTY-LOOT (2026-10-14, Mac: "Shared base + personal bonus"): EVERY TERM OF THE ROLL IS AN ARGUMENT. A room's shared
+// base (systems/roomLoot.js) is this chain run on the room's dice and the room's terms - the party's level and gender in
+// `player`, Luck 50, RENOWN-LOOT's first stage - so nothing here may read the roller's page behind the caller's back:
+// the dice reach every draw (the table's, the kit's variant and its poison were Math.random), and `quarters`, `luck` and
+// `find` default to the roller's own (renownLootQuarters, the live Luck, legendaryFindMult) only when the caller names
+// none. `rejects`, when given, receives the pieces PLAIN-LOOT's keep let go - the personal bonus's own draw.
+export function spawnEnemyLoot(entity, mobileType, basics, player, { rolls = Math.random, lootDropMult = 1, lootQualityMult = 1, where = null, quarters = renownLootQuarters(), luck = liveStat(player, 'luck'), find = undefined, rejects = null } = {}) {
   const itemChanceScale = (isHumanoid(entity) ? HUMANOID_LOOT_ITEM_SCALE : 1) * lootDropMult;
-  const ease = renownLootQuarters();   // RENOWN-LOOT: the roller's Renown, read once for the keep and the ladder alike
-  entity.items = generateItems(enemyLootTableKey(mobileType, basics?.lootTableKey ?? '-'), { level: effectiveLevel(player), gender: player.gender }, undefined, { itemChanceScale, mobileType });
+  const ease = quarters;   // RENOWN-LOOT: the roller's Renown, read once for the keep and the ladder alike (PARTY-LOOT: the caller's terms)
+  entity.items = generateItems(enemyLootTableKey(mobileType, basics?.lootTableKey ?? '-'), { level: effectiveLevel(player), gender: player.gender }, rolls, { itemChanceScale, mobileType });   // PARTY-LOOT: on the caller's dice (it rolled Math.random whatever `rolls` said)
   const eq = equipEnemy(entity, mobileType, effectiveLevel(player), rolls, { player });   // SOFTCAP2: a mentor's foes carry the GROUP's loot and gear
-  addEnemyLootExtras(entity.items, basics, rolls);
+  addEnemyLootExtras(entity.items, basics, rolls, { quarters: ease });
   const keep = plainFoeLootKeep(ease);
-  if (!eliteLooted(entity)) entity.items = entity.items.filter((it) => isGoldPieces(it) || rolls() < keep);   // PLAIN-LOOT: three pieces in four (LOOT-EASE; RENOWN-LOOT: by the roller's Renown), on the host's stream as the kit's cut is
+  if (!eliteLooted(entity)) entity.items = entity.items.filter((it) => { if (isGoldPieces(it) || rolls() < keep) return true; rejects?.push(it); return false; });   // PLAIN-LOOT: three pieces in four (LOOT-EASE; RENOWN-LOOT: by the roller's Renown), on the host's stream as the kit's cut is; PARTY-LOOT: what it let go, for the bonus
   // RRI2: EnemyEntity.OnLootSpawned (EnemyEntity.cs:399) fires here, after
   // the trio and with the kit already in Items - the mod's
   // RandomConditionEnemyItems (RoleplayRealismItemsMod.cs:222-245) wears
@@ -158,18 +165,45 @@ export function spawnEnemyLoot(entity, mobileType, basics, player, { rolls = Mat
   // walked too: DFU's Items holds all of it, the port's droppable cut
   // (above) does not, and a foe's cuirass is worn either way.
   if (conditionBasedPricesOn()) randomConditionLootItems([...new Set([...entity.items, ...(eq?.worn ?? [])])], rolls);
-  enemyLootSpawned.raise({ mobileType, lootTableKey: enemyLootTableKey(mobileType, basics?.lootTableKey ?? '-'), items: entity.items, worn: eq?.worn ?? [], where });   // OH-E: ...and every other subscriber, in the one list (the worn set is Items' too, as above)
+  enemyLootSpawned.raise({ mobileType, lootTableKey: enemyLootTableKey(mobileType, basics?.lootTableKey ?? '-'), items: entity.items, worn: eq?.worn ?? [], where, rolls, roller: player });   // PARTY-LOOT: the roll's dice and roller ride the event, so a subscriber draws on the caller's terms   // OH-E: ...and every other subscriber, in the one list (the worn set is Items' too, as above)
   // FOE-CAP (systems/foeLootCap.js): a plain foe - no title, no boss - rolls the plain ladder (outside an Elite Dungeon)
   // and carries at most its cap, gold included; the stamp rides the entity so the death's handlers are capped too
   const plain = plainFoeLootRule(entity, basics);
   if (plain) entity.lootCap = plain.cap;
-  rollCorpseLoot(entity, basics, { rolls, luck: liveStat(player, 'luck'), qualityMult: lootQualityMult, weights: plain?.plainLadder ? plainFoeRarityWeights(ease) : null });
+  rollCorpseLoot(entity, basics, { rolls, luck, find, qualityMult: lootQualityMult, weights: plain?.plainLadder ? plainFoeRarityWeights(ease) : null });   // PARTY-LOOT: the caller's Luck and finders
   capFoeLoot(entity);
   return entity.items;
 }
 
 /** WILD1 (systems/wildZone.js, the owner's "twice gold" - WILD2: at its ring's multiplier): a foe of the open zone's coin - after its chain
  *  (spawnEnemyLoot, given wildLootOpts), so the cap, which folds and keeps the gold whole, has had its word. */
+/** PARTY-LOOT (bible/06-Systems/Online-Arc.md PARTY-LOOT; Mac: "Shared base + personal bonus"): A PLAYER'S OWN LAYER OVER
+ *  A ROOM'S SHARED BASE, read at their own RENOWN-LOOT stage and their Luck - the knobs' one home, as the base's are
+ *  spawnEnemyLoot's - on the dice the caller hands (`rolls`, seeded by the base's name and the character). A BODY's:
+ *  each piece PLAIN-LOOT's keep let go at the base's stage (`rejects`) kept at the step between the two keeps
+ *  (roomLoot.js bonusShare - the base's keep and the bonus's together the player's own), the supplies' share above the
+ *  base's for a foe with a table, then the plain ladder at the player's Luck, finders and stage, the sigils at the
+ *  fight's count, and the cap's room above the base (`lootCap` less the base's counted pieces - a shaft never counted).
+ *  A deep PILE's: the supplies' share alone (it has no keep). Answers the pieces, none of them the room's. */
+export function rollRoomBonus({ rolls, player, pile = false, deepPile = false, rejects = [], basics = null, mobileType = null, champion = null, level = 1, lootCap = null, baseItems = [], fighters = 1 }) {
+  const own = renownLootQuarters();
+  let pieces = [];
+  if (!pile) {
+    const share = bonusShare(plainFoeLootKeep(ROOM_BASE_QUARTERS), plainFoeLootKeep(own));
+    for (const r of rejects) if (rolls() < share) pieces.push(structuredClone(r));
+    const key = basics?.lootTableKey;
+    if (key && key !== '-') rollBonusSupplies(pieces, 'enemy', ROOM_BASE_QUARTERS, own, rolls);   // addEnemyLootExtras' own gate: a foe with a table
+    if (pieces.length) {
+      const body = { items: pieces, level, mobileType, champion };
+      rollCorpseLoot(body, basics, { rolls, luck: liveStat(player, 'luck'), weights: Number.isInteger(lootCap) ? plainFoeRarityWeights(own) : null });
+      pieces = body.items;
+    }
+  } else if (deepPile) rollBonusSupplies(pieces, 'pile', ROOM_BASE_QUARTERS, own, rolls);
+  stampWonWeapons(pieces, fighters, { rolls });
+  if (Number.isInteger(lootCap)) capLootList(pieces, Math.max(0, lootCap - baseItems.filter((it) => !(it?.group === 'Weapons' && it.templateIndex === ARROW_TEMPLATE)).length));   // FOE-CAP: the body's cap is the base's and the bonus's together (STUCK-ARROWS: a shaft is never counted)
+  return pieces;
+}
+
 export function wildLootAfter(entity) {
   const m = wildFoeLoot(entity);   // WILD2: its ring's - x1.25 the outer to x2 the heart
   if (m === 1) return;
@@ -196,7 +230,7 @@ export function wildLootAfter(entity) {
  *  fights at its real armour and swings its real weapon - it is worn,
  *  just not always left behind. */
 export function equipEnemy(entity, mobileType, playerLevel, rolls = Math.random, { player = null } = {}) {
-  const variant = equipmentVariantFor(entity.careerIndex, entity.isClass);
+  const variant = equipmentVariantFor(entity.careerIndex, entity.isClass, rolls);   // PARTY-LOOT: the caller's dice (Range(0, 2) rolled Math.random)
   if (variant === null) return null;
   const eq = assignEnemyStartingEquipment(entity, variant, playerLevel, { player, rolls });   // RRI2: EnemyEntity.AssignEnemyEquipment, the delegate (a mod's arm first)
   entity.armorValues = eq.armorValues;
@@ -204,7 +238,7 @@ export function equipEnemy(entity, mobileType, playerLevel, rolls = Math.random,
   // S19b: ItemHelper's poisoned-weapon roll rides the spawn -
   // class enemies + Orc/Centaur/OrcSergeant, 5% (Assassin 60%)
   if (entity.weapon) {
-    const pt = rollEnemyWeaponPoison(mobileType, playerLevel);
+    const pt = rollEnemyWeaponPoison(mobileType, playerLevel, rolls);   // PARTY-LOOT: and its poison
     if (pt != null) entity.weapon.poisonType = pt;
   }
   // AssignEnemyStartingEquipment adds every equipped piece to the

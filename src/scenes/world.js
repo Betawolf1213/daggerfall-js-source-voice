@@ -4666,12 +4666,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   if (ohAbyss) {
     // AUDIT OH-F B3: the dungeon's loot alone - DFU's build is one synchronous call and the exterior is off inside, so
     // ShouldUpgradeLoot never meets another host's roll; the port's build awaits, and the street runs meanwhile
-    const ohUpgrade = (key, items, worn = [], where = null) => {
+    // PARTY-LOOT: the raiser's dice and roller when it hands them (a room's shared base rolls on the room's - the party's
+    // level and gender, the room's stream), else the player's, as before
+    const ohUpgrade = (key, items, worn = [], where = null, rolls = Math.random, roller = playerEntity) => {
       if (where !== 'dungeon' || !ohAbyss.shouldUpgradeLoot()) return;
       addBonusMagicLoot(lootMatrix(key).MI, items, () => {   // ItemBuilder.CreateRandomMagicItem(Level, Gender, Race)
         const t = getMagicItemTemplates();
-        return t ? mintCondition(setItemFields(createRegularMagicItem(t, playerEntity.level, playerEntity.gender))) : null;
-      });
+        return t ? mintCondition(setItemFields(createRegularMagicItem(t, roller.level, roller.gender, rolls))) : null;
+      }, rolls);
       upgradeLoot(worn.length ? [...new Set([...items, ...worn])] : items, {   // the bonus in: UpgradeLoot walks the whole of Items after it
         remintWeapon: (ti, m) => weaponOfMaterial(ti, m),
         remintArmor: (ti, m, v) => armorOfMaterial(ti, m, v),   // ApplyArmorSettings(the player's gender and race, the variant kept)
@@ -4679,8 +4681,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         isEnchanted,
       });
     };
-    const offTable = tableLootSpawned.add((e) => ohUpgrade(e.key, e.items, [], e.where));
-    const offEnemy = enemyLootSpawned.add((e) => ohUpgrade(e.lootTableKey, e.items, e.worn, e.where));
+    const offTable = tableLootSpawned.add((e) => ohUpgrade(e.key, e.items, [], e.where, e.rolls ?? Math.random, e.roller ?? playerEntity));
+    const offEnemy = enemyLootSpawned.add((e) => ohUpgrade(e.lootTableKey, e.items, e.worn, e.where, e.rolls ?? Math.random, e.roller ?? playerEntity));
     _ohLootOff = () => { offTable(); offEnemy(); };
   }
   /** OH-C: BuildPit's children that need a machine of their own - the miasma's particles and the entrance's BoxCollider,
@@ -28705,13 +28707,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       key: k, rec: k ? getDungeonAutomap(k) : null, nowMs });
     if (f && socialLink()?.shareAutomap(f.k, f.r)) _partyMapSender.commit(f, nowMs);
   };
+  // SOFTCAP1: the other members' levels off their poses (`cl`; a relay from before world131 strips it), none at all
+  // when I am in no party - ONE HOME for MENTOR MODE's partners and PARTY-LOOT's party level (a room container's base
+  // is minted at the group's reference level, systems/roomLoot.js roomBaseLevel)
+  const partyMateLevels = () => (social?.party ? social.others().filter((m) => m.online !== false && Number.isInteger(m.p?.cl)).map((m) => m.p.cl) : []);
   const partyFrame = (nowMs) => {
     playerEntity._online = isOnlinePage();   // SOFTCAP3: Master Skills is in force only online (systems/masterSkills.js)
-    // SOFTCAP1: MENTOR MODE follows the party every frame - the other members'
-    // levels off their poses (`cl`; a relay from before world131 strips it and
-    // mentoring simply stays off), none at all when I am in no party, so
-    // leaving the group hands my real character back the same frame.
-    const mentorLevels = social?.party ? social.others().filter((m) => m.online !== false && Number.isInteger(m.p?.cl)).map((m) => m.p.cl) : [];
+    // SOFTCAP1: MENTOR MODE follows the party every frame - so leaving the group hands my real character back the same frame.
+    const mentorLevels = partyMateLevels();
     const mentorWord = refreshMentor(playerEntity, mentorLevels);
     if (mentorWord) {
       const text = mentorWord === 'on' ? mentorStatusText(playerEntity) : 'Mentoring ended - your real level, skills, attributes and gear are back.';
@@ -30341,6 +30344,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // so before the next joiner reads a snapshot that predates the claim and un-empties the chest for everyone. The
     // publish clock is reset, not the publish forced: the frame's own worldPublish sends it this same frame.
     onLootClaimed: () => { _worldPublishedAt = -Infinity; },
+    partyLevels: () => partyMateLevels(),   // PARTY-LOOT: my party's levels, for the level a room container's base is minted at
+    roomHost: () => online?.host ?? null,   // PARTY-LOOT: the relay's seat - whose word a room container's state is (the host grants the takes)
     peers: peersNear,
     postItem: (text) => postItemInChat(text), canPostItem: () => canPostItemInChat(),   // CHAT-POST: the building's and the dungeon's packs post too
     partyNear: () => partyOnMaps(), professionMarks: (feet) => professionMarks(feet),   // DISC23-A: the party's bodies, for the dungeon's and the building's plans (AUDIT pre-merge I-E: those drawn here); NODE-MARKS: the dungeon's veins (and a body the knife may skin) on its compass, at its own feet

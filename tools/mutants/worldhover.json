@@ -48,7 +48,7 @@
   {
     "name": "WORLD-HOVER-signature-drops-the-stack-count",
     "file": "src/systems/worldHover.js",
-    "old": "  const rows = f.rows.map((r) => `${r.name}\\u0002${r.stack}\\u0002${r.rarity ?? ''}`).join('\\u001f');",
+    "old": "  const rows = f.rows.map((r) => `${r.name}\\u0002${r.stack}\\u0002${r.rarity ?? ''}${r.mine ? '\\u0002m' : ''}`).join('\\u001f');",
     "new": "  const rows = f.rows.map((r) => `${r.name}`).join('\\u001f');",
     "tests": [
       "test/worldhover.test.js"
@@ -978,8 +978,8 @@
   {
     "name": "AUDIT-WH2-two-rows-run-together",
     "file": "src/systems/worldHover.js",
-    "old": "  const rows = f.rows.map((r) => `${r.name}\\u0002${r.stack}\\u0002${r.rarity ?? ''}`).join('\\u001f');",
-    "new": "  const rows = f.rows.map((r) => `${r.name}\\u0002${r.stack}\\u0002${r.rarity ?? ''}`).join('');",
+    "old": "  const rows = f.rows.map((r) => `${r.name}\\u0002${r.stack}\\u0002${r.rarity ?? ''}${r.mine ? '\\u0002m' : ''}`).join('\\u001f');",
+    "new": "  const rows = f.rows.map((r) => `${r.name}\\u0002${r.stack}\\u0002${r.rarity ?? ''}${r.mine ? '\\u0002m' : ''}`).join('');",
     "tests": [
       "test/worldhover.test.js"
     ]

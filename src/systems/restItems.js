@@ -265,6 +265,7 @@ export const isDeepPileKey = (key) => { const a = String(key ?? '').charCodeAt(0
 /** The piles' and the foes' hooks, subscribed last (scenes/shared.js, after Foraging's): a draw taken here is after
  *  every other subscriber's, so none of theirs moves. */
 export function installRestItemLoot() {
-  registerTabledLootHandler('REST', ({ key, items, rolls }) => { if (isDeepPileKey(key)) rollRestLoot(items, restLootChances(REST_PILE_CHANCES), rolls); });
-  registerEnemyLootExtra('REST', ({ items, rolls }) => { rollRestLoot(items, restLootChances(REST_FOE_CHANCES), rolls); });
+  // PARTY-LOOT: at the roll's own RENOWN-LOOT share when the raiser names one (a room's base), else the roller's
+  registerTabledLootHandler('REST', ({ key, items, rolls, quarters }) => { if (isDeepPileKey(key)) rollRestLoot(items, restLootChances(REST_PILE_CHANCES, quarters), rolls); });
+  registerEnemyLootExtra('REST', ({ items, rolls, quarters }) => { rollRestLoot(items, restLootChances(REST_FOE_CHANCES, quarters), rolls); });
 }
