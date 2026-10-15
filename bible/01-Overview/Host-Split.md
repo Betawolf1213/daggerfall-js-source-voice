@@ -1,6 +1,6 @@
 # HOST-SPLIT - taking the hosts apart
 
-Opened 2026-10-15, off AUDIT DEPS1 (`Audit-Log.md`). Mac: *"Refactor time?"*, then
+Opened 2026-10-15, off the codebase audit of 2026-10-14 (AUDIT DEPS1). Mac: *"Refactor time?"*, then
 *"I wanna take all of this head on and do this right"*, then *"Continue"* on the plan
 below.
 
@@ -39,20 +39,32 @@ the one that stops the growth.
 
 ## THE HOSTS DO NOT GROW
 
-New behaviour goes into a module the host wires - the 31 `*Host.js` modules
-already in `src/scenes/` are the shape (`fishHost.js`, `navalHost.js`,
-`merchantYardsHost.js`): the module owns its state and its frame, the host
-constructs it once and calls it. The host's own function gains the wiring, not
-the feature.
+New behaviour goes into a module the host wires - `fishHost.js` and
+`merchantYardsHost.js` are the shape: the module owns its state and its frame,
+the host constructs it once and calls it. The host's own function gains the
+wiring, not the feature. (Not every one of the 28 `*Host.js` modules is that
+shape: `navalHost.js`'s `createNavalHost` is itself a single scope of 4,865
+lines - the same knot, one size down, with no ceiling of its own yet.) On the
+relay the new code goes into a Room method of its own, as the SCALE5 arms did.
 
-`test/hostceiling.test.js` holds it: each host function has a ceiling, its
-length when this arc opened plus 250 lines - a fix's room, not a feature's. A
-change that pushes a host over fails with where to put the code instead. A fix
+`test/hostceiling.test.js` holds it: each host function - the four hosts and
+the relay's `_message` - has a ceiling in CODE lines, its length when measured
+plus 250 - a fix's room, not a feature's. Comments and blank lines do not count
+(AUDIT HOST-SPLIT 0: a third of bootWorld is the bible's own explanation, and a
+ceiling on raw lines made deleting it the cheapest room). A change that pushes
+a host over fails with where to put the code instead. A fix
 that truly cannot live elsewhere raises the ceiling with its reason written
 beside it, in the same change, where review sees it. And a ceiling comes down
 with its host: a slice that moves code out lowers it in the same change (the
 suite fails a ceiling left more than 500 lines over its host), so the room a
 slice frees never becomes room to grow back into.
+
+THE CEILING GATES A CHANGE, NEVER A DEPLOY. Every open pull request is measured
+against the base it last saw, so two that each fit can land together and
+overflow - and the deploys run the suite. So the ceiling holds on a pull request
+and on a contributor's machine, and stands aside on the push that deploys: an
+overflow on main is the next pull request's to fix, by moving code out or by a
+raise with its reason, never a held deploy.
 
 ## The map
 
@@ -61,18 +73,23 @@ statement of the host function's body is a member; for a member or a group it
 counts what the group READS from the host's scope, the host `let`s it WRITES
 (shared mutable state - the hard part of a cut), and the members that USE what
 it declares. Few writes and a small used-by make a cheap cut. It matches names by
-spelling, so shadowing over-counts: a cut it calls cheap is cheap.
+spelling, so shadowing over-counts reads; its writes are the assignments,
+updates and for-in/of heads it sees, and a parameter or a hoisted `var` counts
+as host state (AUDIT HOST-SPLIT 0 added those three). It is a map for choosing a
+cut - what is live and what is a copy is decided by the move itself, by scope
+(the method, below). Read the group before moving it.
 
-The first reading of `bootWorld` (2026-10-14):
+The first reading of `bootWorld` (2026-10-14, main at 911429f13b; lines raw;
+tests are the test files that hold the name as a word, `git grep -lw`):
 
 | Group | Lines | Reads | Writes | Used by | Tests naming it |
 |---|---|---|---|---|---|
-| `travelViewMarks` | 227 | 63 (13 `let`s) | 0 | 1 | 3 |
-| `questWorld` | 370 | 46 (9 `let`s) | 1 | 4 | 12 |
-| `buildPixelNow` | 1,232 | 111 (18 `let`s) | 3 | 1 | 11 |
-| `worldQuickLoad` | 307 | 75 (18 `let`s) | 6 | 5 | 34 |
-| `onlineStart` + `chatStart` + `socialStart` + `onlineFrame` | 1,214 | 291 | **68** | 1 | 24 |
-| `frame` | 3,204 | 553 | 60 | 18 | 11 |
+| `travelViewMarks` | 227 | 63 | 0 | 1 | 3 |
+| `questWorld` | 370 | 46 | 1 | 4 | 15 |
+| `buildPixelNow` | 1,232 | 111 | 3 | 1 | 11 |
+| `worldQuickLoad` | 307 | 75 | 6 | 5 | 34 |
+| `onlineStart` + `chatStart` + `socialStart` + `onlineFrame` | 1,214 | 291 | **68** | 1 | 29 |
+| `frame` | 3,204 | 553 | 60 | 18 | (too common a word to count) |
 
 The online group is NOT a move: it writes 68 of the host's `let`s, so cutting it
 out is a redesign of who owns that state, and it waits until the cheaper cuts
@@ -87,9 +104,11 @@ One group per slice, one pull request each, behaviour unchanged:
 1. **Read the map** for the group: its reads, writes and users.
 2. **Move the code verbatim** into a module (`src/scenes/<name>.js`) exporting a
    constructor that takes the host's handles - `createX(host)`, as
-   `createWorldModes(host)` already does. A `const` or function the group reads
-   is handed over as itself. A `let` it reads or writes is handed over LIVE - a
-   getter (and a setter, for a write) on the handles object - never a copy:
+   `createWorldModes(host)` already does. A `const` the group reads, a function
+   declaration nothing reassigns, and a `let` nothing ever reassigns (a constant
+   in all but name) are handed over as themselves. A binding anyone writes is
+   handed over LIVE - a getter (and a setter, for a write) on the handles
+   object - never a copy:
    the code moved from a scope where it saw every assignment, and an async
    member sees them across its awaits. The handles object is built where the
    host builds it today, and a getter reads at the call, never at construction,
@@ -98,7 +117,7 @@ One group per slice, one pull request each, behaviour unchanged:
    `world.js` reads the new module instead, in the same change - the pin keeps
    its claim and names where the code now lives. A cite into the moved lines
    names the new file (`npm run cites -- --check`, then `citeanchor`).
-4. **Lower the ceiling** to the host's new length plus 250.
+4. **Lower the ceiling** to the host's new length in code lines plus 250.
 5. **Prove it**: lint, types, the bible's gates, every test that reads the host
    or the module, `tools/mutate.mjs` over the mutant lists that name the moved
    code - and, since CI has no ARENA2, Mac plays the slice and runs

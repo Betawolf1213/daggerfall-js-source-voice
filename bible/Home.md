@@ -224,12 +224,14 @@ named `Update <n>` and the game shows it beside the commit
 
 THE HOSTS DO NOT GROW (HOST-SPLIT, 2026-10-15). bootWorld, createWorldModes,
 buildDungeonContext and bootExterior each keep their whole state in one
-function's scope, and bootWorld grew from 8,897 lines to 35,251 in a month. New
-behaviour goes into a module the host wires - the `*Host.js` modules are the
-shape - not into the host's own function. `test/hostceiling.test.js` holds each
-host to a ceiling (its length when HOST-SPLIT opened, plus a fix's 250 lines),
-and a slice that moves code out lowers it in the same change. The method and
-the map are `01-Overview/Host-Split.md`.
+function's scope, and world.js grew from 8,897 lines to 36,374 in a month. New
+behaviour goes into a module the host wires (`fishHost.js` is the shape) - and
+on the relay into a Room method of its own, not into `_message` - never into the
+host's own function. `test/hostceiling.test.js` holds each to a ceiling in code
+lines (comments are no weight; a fix's 250 lines of room), on a pull request
+and on a contributor's machine, never on a deploy; a slice that moves code out
+lowers it in the same change. The method and the map are
+`01-Overview/Host-Split.md`.
 
 ## Sections
 
