@@ -452,7 +452,7 @@
   {
     "name": "EGZ-the-span-unjudged",
     "file": "src/net/bossRef.js",
-    "old": "if (caughtWhile(test, b.tr, a.bt[b.sub] ?? a.at, upto, F.h, spec, ys, { free })) { a.bh.push(b.sub); out.push(hit); }",
+    "old": "if (caughtWhile(test, b.tr, from, upto, F.h, spec, ys, { free })) { a.bh.push(b.sub); out.push(hit); }",
     "new": "",
     "tests": [
       "test/egz_legion.test.js"
