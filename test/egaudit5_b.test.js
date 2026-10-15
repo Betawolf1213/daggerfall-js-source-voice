@@ -617,7 +617,10 @@ test('AUDIT EG V L1-26 THE HAVEN NOVA OVER A FLOOR OF MANY PIECES (sections 13.2
       for (let x = cx - R; x <= cx + R; x += 0.5) for (let z = cz - R; z <= cz + R; z += 0.5) if (egOnFight(spec, x, z)) { let d = Infinity; for (const [hx, hz, hr] of havens) d = Math.min(d, Math.max(0, Math.hypot(x - hx, z - hz) - hr)); far = Math.max(far, d); }
     }
     assert.ok(nova.wu >= egErrandMs(far), `${key}: its wind-up ${nova.wu} ms, the straight route's floor ${egErrandMs(far)} ms`);
-    const base = havens.slice(0, 3), H = egHavenFloor(spec, base, egHavenRouteM(base, spec.fl.find((f) => f.t === 'd')));   // four members: three havens a court would lay, then the floor's
+    // PIN MOVED (AUDIT EG V, h - B NEW-3): the court a single court's havens are measured on is the master's own (the island or
+    // court the first three stand on, net/egLords.js mainDisc), never the ground's first
+    const own = spec.fl.find((f) => f.t === 'd' && Math.hypot(havens[0][0] - f.x, havens[0][1] - f.z) <= f.r);
+    const base = havens.slice(0, 3), H = egHavenFloor(spec, base, egHavenRouteM(base, own));   // four members: three havens a court would lay, then the floor's
     assert.deepEqual([nova.wu, havens], [egErrandMs(H.routeM), H.havens], `${key}: the walked route's errand floor`);
   }
   // the route WALKED: two courts 20 m apart joined only by a road round three sides (the fight floor's own pieces' shapes)

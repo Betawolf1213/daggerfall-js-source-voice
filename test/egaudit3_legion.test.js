@@ -80,7 +80,7 @@ test('AUDIT EG III A RIFT HOLDS ITS WAVE (section 8.1: "A rift whose wave would 
   assert.equal(foes(B.F).length, 2 * k + 3 * (k + 1));
 });
 
-test('AUDIT EG III EVERY WAVE WITHIN THE CAP (section 8.1, through net/egLegion.js egWaveKinds and egSquad): a wave\'s kinds are held to the room the cap leaves, its first kinds kept - so a lord\'s fury wave (net/egLords.js, untouched) raises nothing into a full legion; a Kynval squad keeps its first affixes to the room; the room is the cap less the standing foes (a friend none), halved in a Deepway\'s rift chamber (mutants: the clamp dropped; a friend counted; the half cap unread; the squad uncapped)', () => {
+test('AUDIT EG III EVERY WAVE WITHIN THE CAP (section 8.1, through net/egLegion.js egWaveKinds and egSquad): a wave\'s kinds are held to the room the cap leaves, its first kinds kept - so a lord\'s fury wave (net/egLords.js, untouched) raises nothing into a full legion; a Kynval squad, a mechanic\'s body, stands whole whatever the room and counts against it after (AUDIT EG V, h); the room is the cap less the standing foes (a friend none), halved in a Deepway\'s rift chamber (mutants: the clamp dropped; a friend counted; the half cap unread; the squad held to the room)', () => {
   const spec = egHallOf(1, 1, 0), rng = seeded(3);
   const F = egFightNew(spec, T0, [40, 40, 40]);
   assert.equal(egLegionCapOf(F), egLegionCap(3, 1));
@@ -89,9 +89,10 @@ test('AUDIT EG III EVERY WAVE WITHIN THE CAP (section 8.1, through net/egLegion.
   assert.equal(egLegionRoom(F), 1, 'one more: the Battlemage\'s Ghost is no foe');
   assert.equal(egWaveKinds(F, rng, 5).length, 1, 'a wave held to the room');
   assert.equal(egWaveKinds(F, rng, 5, { room: 3 }).length, 3, 'or the room it is given');
+  // PIN MOVED (AUDIT EG V, h - A2 NEW-1; sections 8.7 and 12): a squad held to the room stood three of its four for a company of
+  // three (seed 19, Hall 16) - it is a mechanic's body now, as the Honour Horn's Kynval: whole into a room of one, counted after
   const sq = egSquad(F, [[spec.fight.x, spec.fight.z]], T0, []);
-  assert.equal(sq.length, 1, 'a squad\'s first affix alone');
-  assert.ok(egHas(sq[0], EG_FL.searing));
+  assert.deepEqual(sq.map((b) => [EG_FL.searing, EG_FL.shielded, EG_FL.wrathful, EG_FL.unshaken].findIndex((f) => egHas(b, f))), [0, 1, 2, 3], 'a squad stands whole, an affix each');
   assert.equal(egLegionRoom(F), 0);
   F.halfCap = 1;
   assert.equal(egLegionCapOf(F), Math.floor(egLegionCap(3, 1) / 2), 'the chamber\'s half');

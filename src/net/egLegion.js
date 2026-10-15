@@ -546,12 +546,14 @@ export function egAddSlain(F, spec, a, sub, now, here, out, ctx = {}) {
   }
   if (D.soulpools && ctx.pool) ctx.pool(a.x, a.z, D.soulpools >= 2 ? 3.5 : 2.5, now, 8000, 0, 0, null, 'soul');
 }
-/** A Kynval squad (section 8.7): four elites in place of a wave, each with one affix - AUDIT EG III: held to the room under
- *  the legion's cap as a wave is (egLegionRoom), its first affixes kept. */
+/** A Kynval squad (section 8.7): four elites in place of a wave, each with one affix - AUDIT EG V (h, A2 NEW-1; section 12): a
+ *  mechanic's body, as the Honour Horn's Kynval is (egLegionSummon `need`): all four stand whatever the room the legion's cap
+ *  leaves, and count against it after. AUDIT EG III had held it to the room, its first affixes kept - a company of three's
+ *  Rampart stood three of the four section 8.7 names (seed 19, Hall 16). */
 export function egSquad(F, spots, now, out) {
-  return EG_AFFIXES.slice(0, egLegionRoom(F)).map((af, j) => {
+  return EG_AFFIXES.map((af, j) => {
     const flag = { searing: EG_FL.searing, shielded: EG_FL.shielded, wrathful: EG_FL.wrathful, unshaken: EG_FL.unshaken }[af];
-    const [b] = egLegionRaise(F, [EG_KIND.kynval], [spots[j % spots.length]], now, out, { fl: EG_FL.elite | flag });
+    const [b] = egLegionSummon(F, [EG_KIND.kynval], [spots[j % spots.length]], now, out, { need: 1, fl: EG_FL.elite | flag });
     if (b && af === 'shielded') b.shield = Math.round(b.max / 4);
     return b;
   }).filter(Boolean);

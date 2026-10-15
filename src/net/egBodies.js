@@ -32,7 +32,7 @@ import { HIT_KINDS, MELEE_REACH, POSE_SLACK, MOVE_RESAY_M, MOVE_RESAY_MS, HP_SEN
 import { egKeepOnFight, egOnFight, egFloorTest, EG_BANDS } from './egLaw.js';
 import { egBlowOf, egInBlow, egBlowOn, EG_BLOWS_MAX } from './egShape.js';
 import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from './egFloor.js';
-import { egZoneLandings, egFloorLess } from './egFloor.js';   // AUDIT EG V (lane1 #10): the fight's own zones in the set   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
+import { egZoneLandings, egFloorLess, egBurnsIn } from './egFloor.js';   // AUDIT EG V (lane1 #10): the fight's own zones in the set   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
 import { egFightView, egFeetAt } from './egWalkGraph.js';   // EG-ZJ: the fight ground a body's feet stand on
 
 /** A body's role. */
@@ -251,10 +251,10 @@ export function egAim(F, spec, o, here, now, out, lead = 0) {
 function egSay(F, spec, blow, here, now, out, told) {
   blow.at = Math.max(blow.at, now + blow.wu + (blow.ol ?? 0));   // AUDIT EG V (lane1 #18): a chained shape's outline lead kept whole too - its fill from the first's landing, however late their word
   if (!blow.ch && here.length) {
-    const onFloor = egFloorLess(egFloorTest(spec), F.zones, now, blow.at), pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egPlaceLandings(spec, F.wokeAt, now, blow.at), ...egZoneLandings(F.zones, now, blow.at)];
+    const onFloor = egFloorLess(egFloorTest(spec), F.zones, now, blow.at), burns = egBurnsIn(F.zones, now, blow.at), pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egPlaceLandings(spec, F.wokeAt, now, blow.at), ...egZoneLandings(F.zones, now, blow.at)];
     for (const m of here) {
       if (!blow.s.some((s) => s[0] === 'a' || s[0] === 'h' || (s.length >= 3 && Math.hypot(m.x - s[1], m.z - s[2]) < 40))) continue;
-      if (egUnionHolds(pending, blow, m.x, m.z, now, onFloor)) {
+      if (egUnionHolds(pending, blow, m.x, m.z, now, onFloor, burns)) {
         for (const sub of told) out.push({ k: 'untell', to: sub, i: blow.i });
         F.held.push({ b: blow, ticks: 0, at: now });
         return false;
