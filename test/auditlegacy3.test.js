@@ -1605,10 +1605,12 @@ test('AUDIT LEGACY III A11/F10/U7/U9/P17: THE CARD SAYS WHAT THE HOUSE KEEPS - n
   assert.equal(factsOf(oc).Died, undefined, 'one gone from the realm died on no day of ours');
   assert.ok(chipsOf(oc).includes('Gone from the realm'));
   // one pose for every window: the meeting's card asks it too (ui/legacySuccession.js face)
-  assert.deepEqual(facePose(spouse), { race: 'Breton', gender: 'male', face: 0, common: 20 });
+  // PIN MOVED (PORTRAIT3D): and their census id beside it - the seed their Morrowind head is walked off, as their body's
+  assert.deepEqual(facePose(spouse), { race: 'Breton', gender: 'male', face: 0, common: 20, resident: 'L120.9' });
   assert.deepEqual(facePose(me), { race: me.race, gender: me.gender, face: me.face });
   assert.match(rd('src/ui/legacySuccession.js'), /faces\(facePose\(who\)\)/);
-  assert.match(rd('src/ui/familyPages.js'), /faces\(facePose\(p\)\)/);
+  // PIN MOVED (MW-HEADS2): and whether they are the one played - a member not played is one of the people
+  assert.match(rd('src/ui/familyPages.js'), /faces\(facePose\(p, \{ currentId: _provider\?\.family\?\.\(\)\?\.currentId \?\? null \}\)\)/);
   // the loader draws it from the talk window's own CommonFaces archive
   assert.equal(COMMON_FACES_FILE, PORTRAIT_ARCHIVE.CommonFaces);
 });

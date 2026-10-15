@@ -42,7 +42,7 @@ test('CHAT-COLOURS hues: the four the players named keep their colours, every ch
 
 test('CHAT-COLOURS sheets: Plus colours a plain line\'s words by its channel under the switch, the kinds keep theirs; Grimoire writes the page\'s pair over its ink, the light pair over the world, the chat on the cream page', () => {
   const rule = channelRules('.x', 'light');
-  assert.match(rule, /\.x \.dfchat-line\[data-ch="region"\]:not\(\.system\):not\(\.red\):not\(\.dm\):not\(\.ooc\):not\(\.me\):not\(\.roll\) \.dfchat-text \{ color: #8fe28f; \}/);
+  assert.match(rule, /\.x \.dfchat-line\[data-ch="region"\]:not\(\.system\):not\(\.red\):not\(\.dm\):not\(\.ooc\):not\(\.me\):not\(\.roll\):not\(\.rp\) \.dfchat-text \{ color: #8fe28f; \}/);   // PIN MOVED: CHAT-RP - a line of roleplay keeps its own green
   assert.ok(CHAT_CSS.includes(channelRules('.dfchat[data-colours="on"]', 'light')));
   assert.ok(CHAT_CSS.includes(pipRules('.dfchat[data-colours="on"]', 'light')));
   assert.match(CHAT_CSS, /\.dfchat-name \{ color: #f4b86c; font-weight: 600; \}/, 'NAME-INK: a stranger\'s name in its brass, never the bone of the words');
@@ -106,7 +106,7 @@ test('CHAT-LANG wire: one channel per language, keyed by its code under its own 
   assert.equal(LANG_RELAY_MIN, 196);   // world192 on its branch, renumbered past main's world192-world195 at the port
   assert.equal(relaySupportsLang('world195'), false);
   assert.equal(relaySupportsLang('world196'), true);
-  assert.equal(RELAY_VERSION, 'world200');   // PIN MOVED: world200, PEER-ACTS (the pose carries a gathering act - the act, its beats and the throw of the net; world199 on its branch, renumbered past the AUDIT ETHER-OW world199 of main at the merge); PIN MOVED: world199, AUDIT ETHER-OW C2-1 (one home for the ground the Watch mints on - watchPixelOk, its answers as they were); PIN MOVED: world198, SPAWN-REBIRTH (a cell keeps the row of a spawned dungeon until it stands again, never sixty real days); PIN MOVED: world197, BAL8 (the PvP referee and its one harm ceiling) over world196, CHAT-LANG
+  assert.equal(RELAY_VERSION, 'world202');   // PIN MOVED: world202, FIVE-ASKS (the dungeon respawn half an hour, I Love Lamp a title the relay knows; world201 on its branch, renumbered past the CHAT-TRADE world201 of main at the merge); PIN MOVED: world201, CHAT-TRADE (the Trade and LFG channels, `chat:trade` and `chat:lfg`, joined CHAT_ROOMS); PIN MOVED: world200, PEER-ACTS (the pose carries a gathering act - the act, its beats and the throw of the net; world199 on its branch, renumbered past the AUDIT ETHER-OW world199 of main at the merge); PIN MOVED: world199, AUDIT ETHER-OW C2-1 (one home for the ground the Watch mints on - watchPixelOk, its answers as they were); PIN MOVED: world198, SPAWN-REBIRTH (a cell keeps the row of a spawned dungeon until it stands again, never sixty real days); PIN MOVED: world197, BAL8 (the PvP referee and its one harm ceiling) over world196, CHAT-LANG
   assert.match(rd('src/net/online.js'), /if \(primary\) this\.langOk = relaySupportsLang\(relayV\);/);
 });
 

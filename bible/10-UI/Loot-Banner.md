@@ -81,6 +81,25 @@ Materials Bag tells the listeners as if it were new. So the pack is watched, not
 - **Classic skin.** Nothing is built - no node, no sheet (AUDIT 39's law). The watcher still reads and marks.
 - **Reduced motion:** no slide, no sweep, no glow.
 
+## 3b. A title or an aura (HONOUR-BANNER, 2026-10-14)
+
+Mac: *"The title/aura in the abyss dungeon should also have a loot popup"*, and of the lamp keeper's title: *"ensure
+there is a loot popup for obtaining the title"*. A title or an aura is no piece in the pack, so the watcher never sees
+one: its grant's own door pushes it (`lootBanner.js:"export function announceHonour(kind, key, { doc = docOf() } = {}) {"`).
+The Hour's (`net/sdClaims.js` - Hourbreaker and The Turning Hour, when the account service answers a claim with the
+grant) and the lamp's (`systems/lampKeeper.js`, I Love Lamp) are its two doors.
+
+- **The entry** (`honourEntry`, pure): the word as `ui/playerBadge.js` names it (`TITLE_TEXT`, `AURA_TEXT`), the kicker
+  "New Title" or "New Aura", and under it "Wear it from your account card". It takes the top tier's place (`gilded`):
+  it waits first, stands big and plays the fanfare. Its words go through the text core (`lootBanner.honour.*`).
+- **Its colour is the title's own.** The rarity's custom properties are laid over the tier's from the title's colour
+  (`honourVars` - its gradient's middle where it is a gradient title), the word is painted as it is worn over a head
+  (`titlePaint`; an aura in the paint of the title it is family to, `AURA_PAINT`), and the well holds the port's own mark
+  in that colour - a laurel for a title, a ring of light for an aura.
+- **Held by the account.** It is never dropped as "no longer held" - the pack's test is for a piece.
+- **The chat line stays.** The banner is the popup; the line is the record, said on every skin. On the classic skin
+  `announceHonour` answers false and nothing is built.
+
 ## 4. The pickup feed and the codex
 
 - **The pickup feed** (`ui/pickupFeed.js`) no longer cards a piece the banner will announce - one new to the player in
@@ -105,7 +124,9 @@ Materials Bag tells the listeners as if it were new. So the pack is watched, not
 ## Pins
 
 `test/lootbanner.test.js` (the watcher, the cards, the baselines and the wire, the law, the face, the top tiers, the
-codex, the wiring); the pickup feed's hand-off in `test/pickupfeed.test.js`. `tools/mutants/lootbanner.json`: 33, all dead.
+codex, the wiring; HONOUR-BANNER's entry and face, and the Hour's door - world.js's and `sdClaims.js`'s, raised only for
+a newly held honour); the lamp's door in `test/lampkeeper2.test.js` (AUDIT FIVE-ASKS E7); the pickup feed's hand-off in
+`test/pickupfeed.test.js`. `tools/mutants/lootbanner.json`: 33, all dead; HONOUR-BANNER's in `tools/mutants/honour_banner.json`.
 PROBE: `node tools/lootBannerProbe.mjs` - the real banners over the real HUD and a notice toast in Chromium at a desktop,
 a laptop and a phone: at the right edge, under the notices, no sideways scroll, every name in its tier's colour, the top
 tiers big and taller, the best of a burst standing first. 183 checks.

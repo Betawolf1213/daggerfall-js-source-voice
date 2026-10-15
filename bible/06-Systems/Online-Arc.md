@@ -4468,7 +4468,7 @@ after it last drained - and the country's foes were rolls that needed
 no law. Now:
 
 **THE LAW: A DEATH AND A TAKE ARE STAMPED, AND AN HOUR LATER THE THING
-IS DUE BACK.** `RESPAWN_MS` (one real hour) and `respawnDue(stamp,
+IS DUE BACK.** `RESPAWN_MS` (one real hour; half of one since RESPAWN-30, 2026-10-14) and `respawnDue(stamp,
 now)` in `wire.js`, one home at both ends; the stamp is the relay's
 clock (a wall millisecond - the wire's inverse `wallMsForClassicMinutes`
 over the shared world minute, no offset subtracted, since AUDIT
@@ -4478,7 +4478,7 @@ keeps its dead, DFU's own).
 DUNGEON-RESPAWN (2026-10-08, the owner, in the Wrothgarian zone's merge):
 a dungeon's hour is its own now - a normal dungeon's twenty minutes, an
 elite one's forty, the open zone's halls and a Super dungeon keeping
-`RESPAWN_MS`; each foe and container still on its own clock
+`RESPAWN_MS` (half an hour since RESPAWN-30, 2026-10-14, Mac: "I meant the chest and foe respawn"); each foe and container still on its own clock
 (`src/systems/dungeonRespawn.js`, `11-Multiplayer/Wild-Zone.md` section 21).
 
 - **A foe.** The one corpse door stamps `_diedAt`; the memory's record
@@ -10064,7 +10064,8 @@ home's alone - they are about other players.
 - **The service** (`homes.js` setHomeLook over `migrations/0038_home_look.sql` - `homes.look`; `/v1/homes/look`): the
   owner's character's alone, free, a decorator's write against the hour; the town answer carries each home's look.
 - **Drawn** (`scenes/world.js`): a town's pixel asks its homes before its buildings are merged (a moment -
-  HOME_LOOK_BUILD_WAIT_MS), and a player's home stands OUT of the pixel's static batch with its own texture table (the
+  HOME_LOOK_BUILD_WAIT_MS; the boot's own two - its start's and a realm save's place - asked at once beforehand, as the
+  save's character, BOOT-OVERLAP in `07-Rendering/Performance-Priority.md`), and a player's home stands OUT of the pixel's static batch with its own texture table (the
   pixel's climate swaps and its look over them - a new table each time, since the renderer caches a sub-mesh's texture
   against the table's identity); its shadow too. `refreshHomeLooks` repaints a home where it stands whenever the
   registry moves or the painter tries a look (the older ask never lands over a newer); a home the build merged that is

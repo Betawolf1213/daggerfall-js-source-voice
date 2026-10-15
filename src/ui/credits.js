@@ -13,7 +13,7 @@
 //
 // Two kinds of row, kept apart on the screen because they are owed
 // differently:
-//   - BUILT ON: the game itself and the source the port is a 1:1 of.
+//   - BUILT ON: the game itself and the source the game began as a 1:1 port of (SCOPE1: now its reference).
 //   - MODS: a modder's own work, carried with the author's permission
 //     (never without - the roads were removed whole for exactly that).
 //     `vendor` names the folder whose README records the permission.
@@ -44,7 +44,7 @@ export const CREDITS = Object.freeze({
     Object.freeze({
       title: 'Daggerfall Unity',
       get author() { return t('credits.author.andContributors', '{name} and contributors', { name: 'Gavin Clayton (Interkarma)' }); },
-      get what() { return t('credits.dfu.what', 'The source this port is a 1:1 translation of. Its quest scripts, book index, settings tables, TEXT.RSC string table, interaction-mode icons and mouse cursor are vendored verbatim (MIT License).'); },
+      get what() { return t('credits.dfu.what', 'The source this game began as a 1:1 translation of, and still reads as its reference. Its quest scripts, book index, settings tables, TEXT.RSC string table, interaction-mode icons and mouse cursor are vendored verbatim (MIT License).'); },
       vendor: Object.freeze(['dfu-quests', 'dfu-books', 'dfu-settings', 'dfu-text', 'dfu-icons', 'dfu-cursor']),
       link: 'https://github.com/Interkarma/daggerfall-unity',
     }),

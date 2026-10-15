@@ -42,6 +42,10 @@ YARD-MERGE (2026-10-12, a capture of the draws in Daggerfall) merges a settled y
 flats of one picture into one batch: the draws cut by 17-18% where furnished yards stand in view. Its section is after
 YARD-RANGE.
 
+PERF-HIDE (2026-10-12, a capture of a player's client standing still for four minutes after entering the world: the
+frame rate climbs for some twenty seconds) dyes a horse look's pictures in under half the CPU, byte for byte the same
+pictures. Its section is after PERF-DYE.
+
 ## How the pass was run
 
 NOT IN THE REAL GAME. The frame probe (`tools/frameProbe.mjs`, PERF-NEXT's recipe) needs the freeware ARENA2, and its
@@ -684,6 +688,57 @@ the views before the walk frames, each once, worn in the frame of the last; befo
 are; a look let go halfway gives back exactly what was dyed. `coats1_horsecoats.test.js`' two pool pins count frames
 by `HORSE_DYE_PICTURES` (PIN MOVED). Mutants: `tools/mutants/perfdye.json`, 7, all dead.
 
+## PERF-HIDE — a picture's hide is found once, and the dye allocates nothing a pixel
+
+*A player's live client (2026-10-12), launched and left standing for four minutes after entering the world.*
+
+**Found.** The frame rate climbed for some twenty seconds after the world came up: 37-60 FPS for the first five,
+95-100 for the next fifteen, then 115-120. The first five were the world's own catch-up - the grass laid around the
+player, the living towns' trips and walks, and 0.9 s of the main thread dyeing the wagon pool's horse looks
+(`horseCoats.js recolorHorse`, PERF-DYE's `HORSE_DYE_PICTURES` a frame). A look is 45 pictures, and each was dyed from
+nothing: the warm pixels found, gathered into regions, the horse's kept and the shadow specks beside them, the hide's
+frame measured - all of it the PICTURE's (its pixels and `tack`), none of it the look's - and only then the coat and
+the pattern laid. The pattern's own pass made a fresh array for every answer (`hsv`, `warp`, `nearest2`'s and
+`markingAt`'s, `nearest2` swapping through one nine times a pixel), and asked a lattice cell's nine points again at
+every pixel in it.
+
+**The fix.** The hide is found once a picture and kept with it (`hideOf`, a WeakMap on the picture's pixels' array,
+one hide a `tack`): the pixels the dye moves, in order, and their frame. Every look after is the dye's own pass over
+those pixels. The kept art is read and never written (the pool's views and walk frames, the riders' decoded sheets; a
+riding frame is a new array each decode), so the kept hide cannot go stale. The helpers answer into scratch
+(`Float64Array`s, so every value is the double the array held) and `nearest2` keeps the nine points of the last cell
+it was asked (`_cells`, keyed by the cell, the seed and the stretch). The arithmetic is the same, step for step: every
+sprite and every 3D horse is byte for byte the picture it was.
+
+**Measured.** Node 22, the 45 real pictures of Horse Cart and Cargo (121x95), 70 looks across every coat, pattern and
+legs, each picture once per look (3150 dyes), three runs each, the outputs hashed:
+
+| | before | after |
+|---|---|---|
+| a picture, every look | 0.83 ms | 0.375 ms (-55%) |
+| solid | 0.18 ms + finding the hide | 0.115 ms |
+| pinto | 0.43 ms + | 0.26 ms |
+| appaloosa | 0.96 ms + | 0.57 ms |
+| dapples | 2.0 ms + | 0.62 ms |
+| roan | 0.77 ms + | 0.19 ms |
+| outputs | | identical (sha256 of all 3150) |
+
+(the per-pattern "before" is with the hide already kept: the first cut alone took the average to 0.61 ms.) The 3D
+horse's dye (`recolorHorseTexels`, 90 looks on a 256x256 body) is identical too, and 18% faster (5.2 s -> 4.3 s).
+
+Then the live client (the local build of main with #854 and #855, vsync on, one launch each way, the same character
+standing in the same place for four minutes after the world came up, CPU profile at 1 ms): the dye 866 -> 384 ms of
+the main thread. Over the first 7.5 s in the world, the frames over 20 ms 161 -> 116, 41 -> 55 FPS from 2.5 to 5 s
+and 76 -> 102 from 5 to 7.5 s; the rate steady from some 17.5 s instead of 20. One run each way, so the frame counts
+are a direction, not a measure; the dye's own time is. What is left of the climb is the grass laid around the player
+(about 1 s), the towns' trips (0.65 s) and the streaming ring's pixels (2.3 s, spread on purpose over twenty seconds).
+
+Pins: `test/perfhide.test.js` (5): the digest of 60 sprites (four pictures, every pattern, the pool's, the riders' and
+the riding sprite's ways) and of 15 3D dyes, each the one before PERF-HIDE; a picture's hide kept - one a `tack`, a
+copy of its pixels found again and the same, another picture's never; a dye cold or warm the same whatever came
+between; the kept lattice cells found again for another seed or stretch (`latticeNearest`, `nearest2`'s door).
+Mutants: `tools/mutants/perfhide.json`, 8, all dead.
+
 ## OWN-HULL-RANGE — my own sea's ship far off stands no hull either
 
 *A player's live client (2026-10-12), main with every open performance fix built in, travelling the overworld along
@@ -954,6 +1009,54 @@ as before. Nothing outside a tick changes.
 
 Pins: `test/roadmiss.test.js` (2) - an unready day asked at most once a tick over five ticks, asked again on later ticks,
 and once ready kept by the day; a read outside a tick (`peopleOf`) asks again. Mutants: `tools/mutants/roadmiss.json`, 2, both dead.
+## BOOT-OVERLAP — the boot's network, asked beside its work
+
+*A player (2026-10-12): "vamos checar se da para melhorar o loading, eu vou abrir o jogo e voce mede o tempo que
+demorou e por que" - the installed client (0.1.8217, an online character) captured from the process's launch into the
+world through the debugging port: browser Tracing on one connection, the page's CPU profile, network and console on
+another, the window's title (the boot's steps) read off the page.*
+
+**Found.** From the character's click to the boot's last step took 12.2 s, and the main thread stood idle, waiting on
+the account service, 7.5 s of it - every call one after the other, each answered in ~1 s or more:
+1. the join (1.5 s) and the realm save (2.0 s) - the save needs the join's lease, and nothing of the world needs either;
+2. then the realm's lines (0.8 s), then the account's roster (0.6 s) - neither needs the other, and their one reader,
+   Project Legacy's host, is made long after (LEGACY7: before any save is restored);
+3. then the data's read, and only after it WD3's ask for the homes' layouts - waited on 0.7 s at the first build;
+4. then each town the boot builds waiting on its homes (HOME-LOOK, up to `HOME_LOOK_BUILD_WAIT_MS`): the start's
+   (1.4 s idle) and, at the load's arrival, the realm save's own place (0.7 s idle).
+
+**The fix.** The calls asked beside the work, nothing asked that was not asked before:
+- the lines and the roster are asked at once at the join (`legacyRealmRead`) and read behind the boot; the boot waits
+  for them where Project Legacy's host is made - still above the load door, so a death another device wrote stands
+  before any save is restored;
+- the homes' door (`homesApi`) and WD3's layouts ask (`bootHomeLayoutsAsk`) stand above the data's read, once
+  `online` is settled (the realm's refusal and the Test Room's drop) - the first build's wait reads that ask;
+- the towns the boot builds - its start and a realm save's own place (`locationKey` 'world') - are asked at once as
+  soon as the start is known, as the save's character (`characterId`, the realm's id): `onlineHomes.ensure` takes a
+  `character` for it, so the tenancies that ride the town's answer are the ones the arrival would have asked for (the
+  start's was asked before as a character id minted on the unrestored entity, which rents nothing).
+
+**Measured.** A live A/B: two local builds of the same main (f5a7f183d), one with this change, each launched fresh
+and booted into the world with the same online character on the same machine, the same capture; times from the realm
+save's GET (the join's answer - its own 2.03 s on both runs):
+
+| | main | BOOT-OVERLAP |
+|---|---|---|
+| the lines, then the roster | 2.04 -> 3.48 s, awaited | asked at 2.04 beside the data's read, read behind it |
+| the data's read begins | 3.54 s | 2.06 s |
+| the first build begins | 5.97 s | 3.77 s |
+| the main thread idle at the start's town | ~1.4 s | ~0.5 s (its map id is only known once the data is read) |
+| the save's town at the load | ~0.7 s idle | none (heard by then) |
+| **save GET -> the boot's last step** | **10.71 s** | **7.31 s** (−3.4 s) |
+
+One run each; the account service's answers vary run to run (0.6 to 2 s a call), so the saving is read off the
+timeline - the waits that went - as much as off the total. Left: the join and the save, 3.5 s of the service's own
+(the server's ~1 s a call against a ~340 ms round trip - Server-Timing would say where), and the start's town.
+
+Pins: `test/bootoverlap.test.js` (3) - `ensure` asks as the character named, or the one playing; a town asked early is
+the build's (one ask); the boot's wiring by source. Mutants: `tools/mutants/bootoverlap.json`, 7, all dead;
+`housing.json`'s HOME-RENT-the-character-unsent re-aimed (killed by the new pins too); `home1`, `legacy7_online` and
+`wd3_online`'s source pins moved with the code.
 
 ## For the owner
 

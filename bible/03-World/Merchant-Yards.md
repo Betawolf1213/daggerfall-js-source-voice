@@ -1,5 +1,7 @@
 # The Stables and the Wagon Yards (MERCHANT-YARDS)
 
+> DF-ART (2026-10-14, `01-Overview/DF-Art.md`): the yards' pictures, painted here from noise, are Daggerfall's own records now (`world/merchantYardArt.js` YARD_SOURCES); each board Daggerfall's planks with its word lettered on it as before (Mac: "Bring back the sign text"), the Joinery's with Daggerfall's axe-and-sword shop sign (333_18) beside JOINERY.
+
 THE PORT'S OWN (2026-10-10). Asked: *"I want to add 2 new merchants to each town without removing player's homes or
 breaking anything. 1. The stable where you can purchase horses 2. Transport merchant where you can purchase
 transports. These new places should get detailed locations, signs, sprites, etc that set them apart from other
@@ -34,7 +36,10 @@ lane's water table as LEFAY1's monument reads it, and over it what the town's bl
 - a **palace's block** left whole (no yard in a castle's court - a palace read off the block's real buildings,
   `talkTopics.js` `blockBuildingCount`), the **colosseum's** block too (`world/arenaCity.js` `ARENA_BLOCK` - its model
   is built over the player's own, so it is never measured here), and LEFAY1's **monument** its own ground
-  (`MONUMENT_KEEP_M`).
+  (`MONUMENT_KEEP_M`) - kept for a town that stands it; since HOLD-MONUMENT (2026-10-14) it stands outside Privateer's
+  Hold, which has no yard, so no town's yards read it now. Gothway Garden's yards (a hamlet's) may stand in the 8 m the
+  monument kept there, keyed by kind as every yard is (`YARD_KEY_SLOT`) - so a player who knew them may find its Stable,
+  Wagon Yard or joinery a few metres from where it was (AUDIT FIVE-ASKS B6).
 
 The measures are read off a layout laid out the same on every lane (the enhanced skin's, the mills stood - the pixel
 build's own where it is that one), so a classic client and an enhanced one stand each yard on one spot; the sites are

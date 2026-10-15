@@ -11,6 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { setPref, _resetForTests, PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
@@ -644,7 +645,7 @@ test('TECHFX1 THE FRAME MAKES NOTHING (L2 F9\'s measure, in a child with a 64 MB
     const v = FX.techniqueView(), h = FX.techniqueHands();
     console.log(JSON.stringify({ out, live: FX.techniqueFxLive(), waiting, down, moving: [v.pitch, v.roll, v.eye[1], v.fov, h.y].every((x) => x !== 0), acc: lens.every((x) => Number.isFinite(x) && x !== 0) && V[6] !== 0 }));
   `;
-  const run = spawnSync(process.execPath, ['--expose-gc', '--min-semi-space-size=64', '--max-semi-space-size=64', '--input-type=module', '-e', script], { encoding: 'utf8' });
+  const run = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', script], { encoding: 'utf8' });
   assert.equal(run.status, 0, run.stderr);
   const r = JSON.parse(run.stdout.trim().split('\n').pop());
   assert.ok(r.live && r.moving && r.acc, 'every spring in flight through the last measure, and the view and the lens moved by it');
