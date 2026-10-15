@@ -338,11 +338,14 @@ draws neither). The reporter's machine and settings.
 
 THE SHADOW PASS, COUNTED AFTER (2026-10-14). The probe timed the telegraph and the crowd after `beginFrame`; the shadow
 maps are drawn inside it. `tools/courtShadowProbe.mjs` counts them: a still court draws none, but his glow and every
-landing flash are composed as lamps (`world/gateArena.js` withCourtLights marks none carried), so while he walks among a
-crowd 12 cube faces and 6 lo faces a frame are drawn for his glow alone, and a Hellfire landing on five draws 36 faces a
-frame (66 at worst) over its 27 lit frames and the two after, replaying the bodies about him (0.43M corners a frame).
-Composed carried, as a spell's impact light and a peer's torch are, all of it is 0 - and they would cast no shadow and
-throw no glare, so nothing is changed: For Mac, 8. `07-Rendering/Performance-Rig.md` AOE-PERF has the table.
+landing flash are composed as lamps (`world/gateArena.js` withCourtLights marks none carried), so while he walked among
+a crowd 12 cube faces, 6 lo faces and 6 copies a frame were drawn for his glow alone, and a Hellfire landing on five
+draws 36 faces a frame (66 at worst) over its 27 lit frames and the two after, replaying the bodies about him (0.43M
+corners a frame). Composed carried they would cost nothing and cast no shadow; Mac kept the shadows and asked for the
+engine fixed (2026-10-14, "Engine fix (Recommended)"): LIGHT-ID (`07-Rendering/Enhanced-Lighting-Arc.md`) names each
+light by its producer's record, so his glow moving draws its cube whole - 6 faces, no lo face, no copy - and a light
+holding a 512 map draws no lo map (the landing's worst lo frame 126 faces to 54). The look is the same byte for byte
+(`tools/lightIdLookProbe.mjs`). `07-Rendering/Performance-Rig.md` AOE-PERF has the table.
 
 `test/fb1013e_aoeperf.test.js` (4); `tools/mutants/fb1013e_aoeperf.json` (11, all dead; wb4's and wb13a's campaigns re-run,
 62 of 62 dead). No pin moved. `07-Rendering/Performance-Rig.md` AOE-PERF, `11-Multiplayer/World-Bosses.md` WB13a.
@@ -367,11 +370,6 @@ throw no glare, so nothing is changed: For Mac, 8. `07-Rendering/Performance-Rig
 7. **Not this batch's.** `audit_wb9.json`'s AUDIT-WB9-flown-over-the-collider-alone (`src/scenes/spoilsPool.js`,
    untouched here) survives - found in AOE-PERF's campaign run, and re-judged on main's `ab8d3640` alone: it survives
    there too, so the law it names is checked by nothing on main today.
-8. **His lights' shadows (7).** In the court every light casts (everyLightCasts), his own included: his glow follows him
-   and each landing's flash stands its 450 ms, and each takes a shadow cube and a lo map like a brazier, redrawn as he
-   moves and replaying every body in its reach - the whole of the court's shadow work in a fight about him
-   (`tools/courtShadowProbe.mjs`). Composed carried, like a spell's impact light or a peer's torch, it is none, and those
-   lights still light, unshadowed and with no glare. Which they should be is a look to choose.
 
 ## THE FOUR HOSTS
 

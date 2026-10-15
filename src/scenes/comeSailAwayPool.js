@@ -57,6 +57,7 @@ import { registerCarrackArt, CARRACK_ARCHIVE, carrackGlow, BANDS as CARRACK_BAND
 import { registerLargeBoatArt, LARGE_BOAT_ARCHIVE } from '../world/largeBoatArt.js';   // and the new large boat's
 import { toColor32 } from '../formats/color32Order.js';
 import { addVendorTextures } from '../systems/textureReplacement.js';
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a lantern's light named by its lantern
 
 /** DungeonLightHandler.CheckLight's reach: UnscaledBlockRange x MeshReader.GlobalScale. */
 export const LANTERN_HANDLER_REACH = DUNGEON_LIGHT_HANDLER.unscaledBlockRange * GLOBAL_SCALE;
@@ -760,11 +761,11 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
       for (const l of boat.Lights) {
         if (!l.enabled || !l.node.activeInHierarchy) continue;
         const p = l.node.position;
-        out.push({ x: p[0], y: p[1], z: p[2], range: l.range, color: [l.color[0] * l.intensity, l.color[1] * l.intensity, l.color[2] * l.intensity], _d: eye ? Math.hypot(p[0] - eye[0], p[1] - eye[1], p[2] - eye[2]) : 0 });
+        out.push({ x: p[0], y: p[1], z: p[2], range: l.range, color: [l.color[0] * l.intensity, l.color[1] * l.intensity, l.color[2] * l.intensity], _d: eye ? Math.hypot(p[0] - eye[0], p[1] - eye[1], p[2] - eye[2]) : 0, _src: l });
       }
     }
     out.sort((a, b) => a._d - b._d);
-    return out.slice(0, CSA_LIGHTS_MAX).map(({ _d, ...l }) => l);
+    return out.slice(0, CSA_LIGHTS_MAX).map(({ _d, _src, ...l }) => adoptLight(l, _src));   // LIGHT-ID: each lantern her own, as she sails
   }
 
   /** FloatingOrigin moved the world: every boat's root follows (CSA-C restates OnPositionUpdate's boat arm whole). */

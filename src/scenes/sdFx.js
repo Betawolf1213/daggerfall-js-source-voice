@@ -33,6 +33,7 @@ import { SD_REM_SINK_MS } from './sdRemnant.js';
 import { SD_SLIP_FRAC } from './sdRemnantVoice.js';
 import { clearOfPillars } from './sdSpoils.js';
 import { sdEndingOf } from '../net/sdMarks.js';
+import { adoptLight, relight } from '../render/lightId.js';   // LIGHT-ID: the pool's entries named by their bursts
 /** SD18c: the Hearts' and the stun's light - its Hollow's Ending's (net/sdMarks.js), else the Mantella's. */
 export const sdHeartColorOf = (s) => sdEndingOf(s?.mk)?.light ?? SD_FX_COLOR.heart;
 
@@ -120,16 +121,19 @@ export function createSdFx({ link, feet = () => null, shake = () => {}, arrived 
    *  (a caller reads them that frame, never later) */
   const lit = [], litPool = [];
   let nLit = 0;
-  const putLight = (x, y, z, range, r, g, b) => {
+  // LIGHT-ID: each pooled entry is `src`'s light this frame (a burst's, the Ending's flash) - the pool is filled in order
+  const putLight = (src, x, y, z, range, r, g, b) => {
     let o = litPool[nLit];
     if (!o) { o = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] }; litPool[nLit] = o; }
     o.x = x; o.y = y; o.z = z; o.range = range; o.color[0] = r; o.color[1] = g; o.color[2] = b;
+    adoptLight(o, src);
     lit[nLit++] = o;
   };
+  const FLASH_LIGHT = {};   // LIGHT-ID: the Ending's flash, one light
   const where = (x, y, z) => realmToDungeon(SD_ARENA.x + x, y, SD_ARENA.z + z);
   const add = (p, at0, kd, color, floor = SD_FX_FLOOR_Y) => {   // AUDIT SD III (V1): on the arena's floor
     let b = bursts.length < FX_BURSTS_MAX ? null : bursts.reduce((o, q) => (q.at0 < o.at0 ? q : o));
-    if (!b) { b = { at: [0, 0, 0], at0: 0, t: 0, kind: kd, color, floor: NaN, edge: SD_FX_EDGE }; bursts.push(b); } else b.edge = SD_FX_EDGE;   // AUDIT SD IV (R3): the arena's edge (SD-LOOK S9: a slot a rewind had, given back its arena's - the rewind says its own)
+    if (!b) { b = { at: [0, 0, 0], at0: 0, t: 0, kind: kd, color, floor: NaN, edge: SD_FX_EDGE }; bursts.push(b); } else { b.edge = SD_FX_EDGE; relight(b); }   // AUDIT SD IV (R3): the arena's edge (SD-LOOK S9: a slot a rewind had, given back its arena's - the rewind says its own); LIGHT-ID: and its light another burst's
     b.at[0] = p[0]; b.at[1] = p[1]; b.at[2] = p[2]; b.at0 = at0; b.kind = kd; b.color = color; b.floor = floor;
     return b;
   };
@@ -289,9 +293,9 @@ export function createSdFx({ link, feet = () => null, shake = () => {}, arrived 
         if (!L || !(dt >= 0 && dt < FX_LIGHT_MS)) continue;
         const f = L[0] * (1 - dt / FX_LIGHT_MS);
         const rw = b.kind === SD_FX_REWIND, g = rw ? L[0] - f : f;   // SD-LOOK S9: the rewind's swells to its end, where its sparks gather
-        putLight(b.at[0], b.at[1] + (rw ? 0 : 1), b.at[2], L[1], b.color[0] * g, b.color[1] * g, b.color[2] * g);
+        putLight(b, b.at[0], b.at[1] + (rw ? 0 : 1), b.at[2], L[1], b.color[0] * g, b.color[1] * g, b.color[2] * g);
       }
-      if (t >= flashAt && t - flashAt < SD_FX_FLASH_MS) { const f = 4 * (1 - (t - flashAt) / SD_FX_FLASH_MS); putLight(FLASH_AT[0], FLASH_AT[1], FLASH_AT[2], 40, f, f * 0.9, f * 0.7); }
+      if (t >= flashAt && t - flashAt < SD_FX_FLASH_MS) { const f = 4 * (1 - (t - flashAt) / SD_FX_FLASH_MS); putLight(FLASH_LIGHT, FLASH_AT[0], FLASH_AT[1], FLASH_AT[2], 40, f, f * 0.9, f * 0.7); }
       lit.length = nLit;
       return lit;
     },

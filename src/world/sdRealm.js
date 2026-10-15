@@ -24,6 +24,7 @@ import { SD_REALM_ORIGIN, SD_THRESHOLD, SD_WALK, SD_ORRERY, SD_ARENA, SD_PILLAR_
 import { faces } from './gateModel.js';
 import { SD_HALL_GLOW_RECORD } from './sdHallArt.js';   // AUDIT SD II (L2 F14): the lamps' heads wear the hands' brass glow
 import { pillarVisual } from './sdPillarModel.js';   // SD-LOOK S7: the pillars dressed, inside their squares
+import { lightList, lightListView, packLight, copyLights } from '../render/lightId.js';   // LIGHT-ID: the Hour's lights into the frame's list through the one seam
 
 /** The realm's own textures (`realmArt`), a pseudo-archive beside the court's. */
 export const SD_REALM_ARCHIVE = 38151;
@@ -576,7 +577,7 @@ export function realmLightsNear(eye) {
  *  its carried mask), then `extra` (the spoils' light), then the lamps nearest `eye` - in arrays made once and grown
  *  when a frame wants more, each length's views kept: world/gateArena.js withCourtLights' composition, which the court
  *  keeps (it made three arrays and an array a lamp, every frame). Pinned equal to it. */
-const _hourLit = { cap: 0, data: new Float32Array(0), colors: new Float32Array(0), carried: new Uint8Array(0), views: new Map() };
+const _hourLit = { cap: 0, data: lightList(0), colors: new Float32Array(0), carried: new Uint8Array(0), views: new Map() };   // LIGHT-ID: the data a lightList, its identities beside it
 /** AUDIT SD III (V9): the lights a frame lights at the least (render/renderer.js's classic cap): past it, the Hour's own
  *  (the spoils', the landings' flashes, the Ending's stone) and its lamps are sorted in together by how far the eye
  *  stands outside each one's reach - every flash went first, and a busy moment put out the lamps nearest the player. */
@@ -592,10 +593,10 @@ export function realmLightsWith(lit, extra, eye, dim = null) {
   const dk = dim ? dim[0] : 1, n = lit.data.length / 4, lamps = realmLightsNear(eye), m = n + extra.length + lamps.length, H = _hourLit;
   if (m > H.cap) {
     H.cap = Math.max(m, H.cap * 2, 32);
-    H.data = new Float32Array(H.cap * 4); H.colors = new Float32Array(H.cap * 3); H.carried = new Uint8Array(H.cap);
+    H.data = lightList(H.cap); H.colors = new Float32Array(H.cap * 3); H.carried = new Uint8Array(H.cap);
     H.views.clear();
   }
-  for (let j = 0; j < n * 4; j++) H.data[j] = lit.data[j];
+  copyLights(H.data, 0, lit.data, 0, n);   // LIGHT-ID: the arm's own lights, their identities with them
   for (let j = 0; j < n * 3; j++) H.colors[j] = lit.colors[j];
   const lc = lit.data.carried;
   for (let j = 0; j < m; j++) H.carried[j] = j < n && lc ? lc[j] : 0;
@@ -612,14 +613,13 @@ export function realmLightsWith(lit, extra, eye, dim = null) {
   for (let i = n; i < m; i++) {
     const q = sorted ? _litIdx[i - n] : i - n;
     const l = q < extra.length ? extra[q] : lamps[q - extra.length];
-    H.data[i * 4] = l.x; H.data[i * 4 + 1] = l.y; H.data[i * 4 + 2] = l.z; H.data[i * 4 + 3] = l.range;
+    packLight(H.data, i, l);   // LIGHT-ID: the one seam
     const k = dk < 1 && q >= extra.length && arenaLamp(l) ? dk : 1;   // SD-LOOK S7: the Reset's dimming, the arena's lamps alone
     H.colors[i * 3] = l.color[0] * k; H.colors[i * 3 + 1] = l.color[1] * k; H.colors[i * 3 + 2] = l.color[2] * k;
   }
   let v = H.views.get(m);
   if (!v) {
-    /** @type {Float32Array & { carried?: Uint8Array }} */
-    const data = H.data.subarray(0, m * 4), carried = H.carried.subarray(0, m);
+    const data = lightListView(H.data, m), carried = H.carried.subarray(0, m);
     data.carried = carried;
     v = { data, colors: H.colors.subarray(0, m * 3), carried };
     H.views.set(m, v);

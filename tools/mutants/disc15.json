@@ -47,8 +47,8 @@
   {
     "name": "DISC15-no-rebuild-budget",
     "file": "src/render/shadowPass.js",
-    "old": "if (!fresh && rebuilds > 0) {",
-    "new": "if (!fresh) {",
+    "old": "      if (!fresh && (!minded || rebuilds > 0)) {",
+    "new": "      if (!fresh) {",
     "tests": [
       "test/disc15.test.js"
     ]
