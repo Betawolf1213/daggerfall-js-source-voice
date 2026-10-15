@@ -151,5 +151,15 @@
     "tests": [
       "test/gilded2_world.test.js"
     ]
+  },
+  {
+    "name": "GILDED2-the-law-unmoved",
+    "file": "src/systems/itemLaw.js",
+    "old": "export const ITEM_LAW_VERSION = 5;",
+    "new": "export const ITEM_LAW_VERSION = 4;",
+    "tests": [
+      "test/int1_itemlaw.test.js",
+      "test/tech1_roster.test.js"
+    ]
   }
 ]

@@ -877,7 +877,10 @@ for rung, in `server-account/src/serpents.js`:
 **Said and popped** (`net/serpentClaims.js`): a counted kill that granted one says "The Bay names you Coilbreaker." /
 "The Maelstrom turns about you." in the chat, and - when it is new - hands the loot banner's honour door
 (`ui/lootBanner.js` `announceHonour`, HONOUR-BANNER) `SERPENT_HONOUR_KEYS`, wired by the world host beside the Hour's.
-A re-roll of a held one is said, never popped as "New"; a service from before acct135 says neither.
+A re-roll of a held one is said, never popped as "New"; a service from before acct135 says neither. THE FOUR HOSTS:
+the carrier is `scenes/world.js`'s alone, and so is its one new line - the serpent is fought at sea from the streaming
+world; `scenes/exterior.js` (the single-town bench), `scenes/worldModes.js` (interiors) and `scenes/dungeonContext.js`
+carry no serpent claims, before this or after.
 
 **The words and the colours** (`ui/playerBadge.js`): *Coilbreaker* drawn the open sea into the tide into the foam
 (`COIL_SEA` #2a8fa6, `COIL_TIDE` #1fae8c, `COIL_FOAM` #d8f9ef), edged in black for its near-white end, its one colour the

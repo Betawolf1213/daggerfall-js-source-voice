@@ -203,7 +203,7 @@ at the end of `systems/gateSpoils.js` `rollSpoils`, `rollSunkenSovereign` at the
 `rollSerpentSpoils` (a ship that DEALT; one that stood draws nothing, as it draws no set piece, card or gem). One in a
 hundred each: a gate opens every two hours and a serpent rises every four, where the Hour - the Hourlock's one in fifty -
 comes a few times a week. Every pin that read "the last draw" moved with them, each saying so: WB5's roll, SET6's drop,
-LOOT4's seeded doors and GEM2's (the Oath set aside, as the technique is).
+LOOT4's seeded doors, LOOT2's Exalted, GEM2's and TECH1's (the Oath and the Sovereign set aside, as the technique is).
 
 **The look.** Named as an artifact is; its card the tier, its four lines, its power and its lore; its own codex row
 under the Hourlock's, unfound by its OWN hint (`hint` on the record - "Said to fall from the Warden of the Burning Gate"
@@ -218,7 +218,11 @@ listed in their make's own art; a gilding of the classic frames at load (the met
 ramp - `combat/fpsWeapon.js` `frameToColor32`'s dye seam) and of the Morrowind meshes is the next slice's, to be looked
 at against the player's own data.
 
+**The item law moves with it** (`systems/itemLaw.js` ITEM_LAW_VERSION 5, the account service's acct135): the two records
+are lawful from law 5 on, so a finding a law of 4 made against one - an Oath dropped on a site that shipped before its
+judge - is asked again (TECH1's LAW_SERVICE names law 5 acct135's).
+
 **The pins.** `test/gilded2_world.test.js` - the records, the mint, the drops, Dragonfire, Undertow and the look.
-`tools/mutants/gilded2.json`: 17, all dead. GILDED1's own pins that read one record moved (`gilded1_gilded.test.js`'s
+`tools/mutants/gilded2.json`: 18, all dead (the law's version among them). GILDED1's own pins that read one record moved (`gilded1_gilded.test.js`'s
 record and codex, `loot10_codex.test.js`'s count), and GILDED1's mutant on the Hourlock's first line was re-aimed by
 content (the Sovereign's first line is the same text).
