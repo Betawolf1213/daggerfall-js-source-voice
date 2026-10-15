@@ -100,10 +100,12 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
   you will get waaay to many stat points just add stats with raw numbers to the key nodes and percentages to the
   smaller ones"): the starts, the notables and the keystones keep their raw points; every small star and road says its
   attribute, skill, Health and Spell Points as a share of the character's own (`pct.<attribute>`, `skillPct.<skill>`,
-  `hpPct`, `mpPct` - twice the old points as a percent, Health and Spell Points half over; `firmamentTree.js
+  `hpPct`, `mpPct` - one for one since FIRM2 (they were doubled), Health and Spell Points half over; `firmamentTree.js
   smallStats`), and its Armor Rating as a percent less damage from blows. A share is of the permanent value - Ascend's
   points in it - floored, so Ascend's points are never matched point for point. Resistances read as the percent chance
   they are on the saving throw's hundred.
+
+- **FIRM2 (2026-10-15) - every star counts, and the sky may lift a stat past 100** (the lead dev: "lower the values"): the caps stay; the stars came down. Summed over one sign's whole sky (`tools/firmamentRebalance.mjs` prints the check), 43 channels passed their cap, 29 of them still once the small stars went one for one - a path star at +6% and a chain at +4% meant a Mage's `pct.intelligence` stood at 36 against a 15 cap, so a third of its stars bought nothing. Small stars' attribute and skill shares are now one for one - a star's authored points as a percent, where they had been doubled (+1% to +4% a star) - and the notables, keystones and life stars were scaled down in whole numbers until no channel of any sign sums past its cap (`test/firm2_balance.test.js` holds it). And the sky's attribute bonus lifts the attribute ceiling by what it adds - FIRM-MAX's `statMax` (4.1 below): a 100 Strength with the sky's whole +15 reads 115 (`test/audit_uicalm_firm1.test.js`), and Ascend's points alone stop at 100.
 
 ### 4.1 The budget - why PvE stays where it is
 
@@ -112,6 +114,16 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
    (`firmamentPowers.js` capAt - AUDIT UICALM-FIRM1 L1 H1: capped apart they made +21 Strength and +86 Health): an
    attribute +15, a combat skill +15, a spell's damage +30%, its price 25% off at most, casting speed +15%, blows at most 15% lighter, +75 health and
    magicka, a 10% chance to evade a blow ...
+   **An attribute's gain lands on a maxed stat** (FIRM-MAX, 2026-10-15, asked of the port: "normaly nodes like +6% speed
+   and someone has 100speed already should count additionally to 100 speed ... all nodes should also work on maxed out
+   stats"): the gain lifts that attribute's live ceiling by itself (`firmamentPowers.js` firmamentFold writes it on
+   `entityMods.js` statMax, which `statMods.js liveStat` reads into its maxValue as it reads DFU's StatMaxMods), so The
+   Steed's +2 Speed and the Path of the Sign's +2% (FIRM2's one for one; +6% before it) on a 100 read 104. A Fortify fills the lift and never passes it, and
+   with the sky asleep the ceiling is `MaxStatValue` again. Skills needed nothing: their mods already sat on top of the
+   softcap unclamped. A departure from `DaggerfallStats.GetLiveStatValue`'s ceiling for the sky's own gains alone. The siege's
+   run ceiling still holds it: 115 Speed, the sky's whole +15, runs 15.3 m/s under `siegeRef.js` SIEGE_SPEED's 18 (its
+   own comment derives 18 from a Speed of 100 and is left alone: `siegeRef.js` is in the relay's bundle, and a comment
+   there is a new RELAY_VERSION).
 2. **The blow's channels are capped again as a group** at the moment of the blow (`blowPct`): any weapon, melee, the
    weapon's family and the foe's kind together at most +30%; its conditions (an unaware foe, a wounded wielder) after
    that, and the whole at most +50%. The spell's price likewise (`castCostPct`).
@@ -246,7 +258,8 @@ lends the whole guild) are the next slice (section 10).
 `test/firm1_law.test.js` (16: the build code, the trades take nothing away, the sky's shape and spacing, the keys'
 hash, the law, the purses, the budget whole), `test/firm1_service.test.js` (8: the respec, the switch, the purses, a
 change judged whole, Craft for the life ring alone, a repeat, the refund's silver, the harvest's XP),
-`test/firm1_powers.test.js` (9: raw on the key stars, the Wrothgarian zone, offline, the fold, the duel and the mentor,
+`test/firm1_powers.test.js` (10: raw on the key stars, a maxed stat (FIRM-MAX), the Wrothgarian zone, offline, the fold, the duel and the mentor,
 the blow, the spell, the damage and the layer, the acts), `test/firm1_book.test.js` (4: the respec, the read, a change
-coalesced, a lost answer kept), and the audit's `test/audit_uicalm_firm1.test.js` (`01-Overview/Audit-UICalm-Firm1.md`). The lab: `firmament.html`
+coalesced, a lost answer kept), `test/firm2_balance.test.js` (3: FIRM2 - no channel of a sign sums past its cap, a small star
+one for one, the lift past 100), and the audit's `test/audit_uicalm_firm1.test.js` (`01-Overview/Audit-UICalm-Firm1.md`). The lab: `firmament.html`
 (`?dress=grimoire` for the Grimoire, `?fresh=1`, `?renown=`, `?ranks=`).

@@ -87,9 +87,9 @@ const SKY = {
   // ══ THE MAGE - Intelligence: destruction, magicka, the price and pace of a spell, wards ══
   mg: {
     start: { intelligence: 2 },
-    roads: { s1: { intelligence: 3 }, s2: { intelligence: 3 }, g: { intelligence: 4 }, r1: { mp: 12 }, r2: { spellPower: 2 }, k1: { castCost: 2 } },
+    roads: { s1: { intelligence: 2 }, s2: { intelligence: 2 }, g: { intelligence: 3 }, r1: { mp: 9 }, r2: { spellPower: 2 }, k1: { castCost: 2 } },
     combat: [
-      { id: 'c1', tpl: 'wheel', n: 5, small: { mp: 6 }, notables: [N('Deep Wells', { mp: 15, intelligence: 3 }), N('Font of Magnus', { mpRegen: 2, mp: 8 })] },
+      { id: 'c1', tpl: 'wheel', n: 5, small: { mp: 4 }, notables: [N('Deep Wells', { mp: 15, intelligence: 3 }), N('Font of Magnus', { mpRegen: 2, mp: 8 })] },
       { id: 'c2', tpl: 'fork', n: 3, small: { spellPower: 2 }, notables: [N('Searing Will', { spellPower: 5, 'skill.Destruction': 6 }), N('Sundering Word', { spellPower: 3, spellPierce: 4 })] },
       { id: 'c3', tpl: 'wheel', n: 5, small: { castCost: 2 }, notables: [N('Efficient Incantation', { castCost: 5 }), N('Synod Discipline', { 'castCost.Destruction': 6, 'skill.Destruction': 4 })] },
       { id: 'c4', tpl: 'chain', n: 4, small: { castSpeed: 2 }, notables: [N('Words Unspoken', { castSpeed: 5, intelligence: 3 })] },
@@ -98,129 +98,129 @@ const SKY = {
       { id: 'c7', tpl: 'wheel', n: 4, small: { intelligence: 2 }, notables: [N("Apprentice's Study", { intelligence: 4, 'skill.Destruction': 3, mp: 5 })] },
     ],
     keystone: K("Atronach's Pact", { spellPower: 12, castCost: 8, blowTaken: 7 }, 'Your spells strike harder and cost less, but blows strike you a little harder.'),
-    life: { ring: [{ 'xp.enchanting': 3 }, { 'xp.provisioning': 3 }], lr1: { 'xp.enchanting': 4 }, lr2: { 'skill.Medical': 3 }, la: { 'xp.enchanting': 4 } },
+    life: { ring: [{ 'xp.enchanting': 1 }, { 'xp.provisioning': 2 }], lr1: { 'xp.enchanting': 1 }, lr2: { 'skill.Medical': 3 }, la: { 'xp.enchanting': 2 } },
     lifeClusters: [
-      { id: 'l1', tpl: 'wheel', n: 5, small: { 'xp.enchanting': 4 }, notables: [N('Runic Fluency', { 'xp.enchanting': 10 }), N('Soul-Gem Cutter', { 'xp.enchanting': 6, 'xp.smithing': 3 })] },
-      { id: 'l2', tpl: 'wheel', n: 5, small: { 'skill.Medical': 3 }, notables: [N("Physician's Hand", { 'skill.Medical': 8, fatigueLess: 4 }), N('Field Surgeon', { 'skill.Medical': 5, 'xp.provisioning': 4 })] },
-      { id: 'l3', tpl: 'fork', n: 3, small: { 'xp.provisioning': 4 }, notables: [N('Alembic Master', { 'xp.provisioning': 10 }), N('Distilled Insight', { 'xp.provisioning': 5, 'xp.enchanting': 5 })] },
-      { id: 'l4', tpl: 'chain', n: 4, small: [{ 'xp.smithing': 2, 'xp.outfitting': 2 }, { 'xp.building': 2, 'xp.enchanting': 2 }], notables: [N('Lorekeeper', { 'xp.smithing': 4, 'xp.building': 4, 'xp.outfitting': 4, 'xp.provisioning': 4, 'xp.enchanting': 4 })] },
+      { id: 'l1', tpl: 'wheel', n: 5, small: { 'xp.enchanting': 2 }, notables: [N('Runic Fluency', { 'xp.enchanting': 5 }), N('Soul-Gem Cutter', { 'xp.enchanting': 3, 'xp.smithing': 3 })] },
+      { id: 'l2', tpl: 'wheel', n: 5, small: { 'skill.Medical': 3 }, notables: [N("Physician's Hand", { 'skill.Medical': 8, fatigueLess: 4 }), N('Field Surgeon', { 'skill.Medical': 5, 'xp.provisioning': 3 })] },
+      { id: 'l3', tpl: 'fork', n: 3, small: { 'xp.provisioning': 3 }, notables: [N('Alembic Master', { 'xp.provisioning': 8 }), N('Distilled Insight', { 'xp.provisioning': 4, 'xp.enchanting': 2 })] },
+      { id: 'l4', tpl: 'chain', n: 4, small: [{ 'xp.smithing': 2, 'xp.outfitting': 2 }, { 'xp.building': 2, 'xp.enchanting': 1 }], notables: [N('Lorekeeper', { 'xp.smithing': 4, 'xp.building': 4, 'xp.outfitting': 4, 'xp.provisioning': 3, 'xp.enchanting': 2 })] },
     ],
-    lifeKeystone: K("Scholar's Seclusion", { 'xp.smithing': 15, 'xp.building': 15, 'xp.outfitting': 15, 'xp.provisioning': 15, 'xp.enchanting': 15 }, 'Every craft of the workshop teaches you more.'),
+    lifeKeystone: K("Scholar's Seclusion", { 'xp.smithing': 5, 'xp.building': 5, 'xp.outfitting': 5, 'xp.provisioning': 5, 'xp.enchanting': 5 }, 'Every craft of the workshop teaches you more.'),
   },
   // ══ THE SHADOW - Agility and Intelligence: stealth, the unseen blow, illusion, the short blade ══
   sh: {
     start: { agility: 1, intelligence: 1 },
-    roads: { s1: { agility: 3 }, s2: { intelligence: 3 }, g: { agility: 2, intelligence: 2 }, r1: { 'skill.Stealth': 4 }, r2: { unawareDmg: 4 }, k1: { 'skill.Illusion': 4 } },
+    roads: { s1: { agility: 3 }, s2: { intelligence: 3 }, g: { agility: 2, intelligence: 2 }, r1: { 'skill.Stealth': 4 }, r2: { unawareDmg: 2 }, k1: { 'skill.Illusion': 4 } },
     combat: [
-      { id: 'c1', tpl: 'wheel', n: 5, small: { 'skill.Stealth': 3 }, notables: [N('Shroud of Night', { 'skill.Stealth': 8, 'skill.Illusion': 4 }), N('Unheard', { 'skill.Stealth': 5, evade: 2 })] },
-      { id: 'c2', tpl: 'fork', n: 3, small: { unawareDmg: 4 }, notables: [N('Throat-Cutter', { unawareDmg: 10, 'skill.Backstabbing': 6 }), N('Sacrament of Sithis', { unawareDmg: 6, killHeal: 2 })] },
+      { id: 'c1', tpl: 'wheel', n: 5, small: { 'skill.Stealth': 3 }, notables: [N('Shroud of Night', { 'skill.Stealth': 7, 'skill.Illusion': 4 }), N('Unheard', { 'skill.Stealth': 4, evade: 2 })] },
+      { id: 'c2', tpl: 'fork', n: 3, small: { unawareDmg: 3 }, notables: [N('Throat-Cutter', { unawareDmg: 6, 'skill.Backstabbing': 6 }), N('Sacrament of Sithis', { unawareDmg: 4, killHeal: 2 })] },
       { id: 'c3', tpl: 'wheel', n: 5, small: { 'skill.Illusion': 3 }, notables: [N('Veil of Mirrors', { 'castCost.Illusion': 8, 'skill.Illusion': 5 }), N('Glamoured Blade', { spellPower: 4, 'skill.ShortBlade': 4 })] },
       { id: 'c4', tpl: 'chain', n: 4, small: { 'skill.CriticalStrike': 3 }, notables: [N('Exploit Weakness', { 'skill.CriticalStrike': 8, weaponDmg: 4 })] },
       { id: 'c5', tpl: 'wheel', n: 5, small: { shortDmg: 3 }, notables: [N('Dagger Dance', { shortDmg: 6, 'skill.ShortBlade': 5 }), N('Quick Fingers', { speed: 3, 'skill.ShortBlade': 4 })] },
       { id: 'c6', tpl: 'fork', n: 3, small: [{ mp: 5 }, { intelligence: 2 }], notables: [N('Siphon Will', { killMana: 3, mp: 8 }), N('Twilight Mind', { 'skill.Mysticism': 5, 'resist.magic': 6 })] },
       { id: 'c7', tpl: 'wheel', n: 4, small: [{ agility: 2 }, { intelligence: 2 }], notables: [N('Child of the Shadow', { 'skill.Stealth': 4, agility: 2, intelligence: 2 })] },
     ],
-    keystone: K("Night Mother's Embrace", { unawareDmg: 30, weaponDmg: -5 }, 'Blows against the unwary are deadly. In open battle your weapons are a little weaker.'),
-    life: { ring: [{ 'skill.Mercantile': 3 }, { 'skill.Streetwise': 3 }], lr1: { personality: 2 }, lr2: { carry: 4 }, la: { 'skill.Mercantile': 4 } },
+    keystone: K("Night Mother's Embrace", { unawareDmg: 19, weaponDmg: -5 }, 'Blows against the unwary are deadly. In open battle your weapons are a little weaker.'),
+    life: { ring: [{ 'skill.Mercantile': 3 }, { 'skill.Streetwise': 3 }], lr1: { personality: 2 }, lr2: { carry: 3 }, la: { 'skill.Mercantile': 4 } },
     lifeClusters: [
-      { id: 'l1', tpl: 'wheel', n: 5, small: { 'skill.Mercantile': 3 }, notables: [N('Silver Tongue', { 'skill.Mercantile': 8, personality: 3 }), N("Bargainer's Eye", { 'skill.Mercantile': 6, 'skill.Etiquette': 4 })] },
-      { id: 'l2', tpl: 'wheel', n: 5, small: { carry: 4 }, notables: [N('Pack Mule', { carry: 10 }), N('Road-Hardened Trader', { carry: 6, fatigueLess: 8 })] },
-      { id: 'l3', tpl: 'fork', n: 3, small: [{ 'skill.Streetwise': 3 }, { 'skill.Pickpocket': 3 }], notables: [N("Fence's Ledger", { 'skill.Streetwise': 8, 'skill.Mercantile': 3 }), N('Light Fingers', { 'skill.Pickpocket': 8, 'skill.Lockpicking': 5 })] },
+      { id: 'l1', tpl: 'wheel', n: 5, small: { 'skill.Mercantile': 3 }, notables: [N('Silver Tongue', { 'skill.Mercantile': 4, personality: 3 }), N("Bargainer's Eye", { 'skill.Mercantile': 3, 'skill.Etiquette': 4 })] },
+      { id: 'l2', tpl: 'wheel', n: 5, small: { carry: 3 }, notables: [N('Pack Mule', { carry: 8 }), N('Road-Hardened Trader', { carry: 5, fatigueLess: 8 })] },
+      { id: 'l3', tpl: 'fork', n: 3, small: [{ 'skill.Streetwise': 3 }, { 'skill.Pickpocket': 3 }], notables: [N("Fence's Ledger", { 'skill.Streetwise': 8, 'skill.Mercantile': 2 }), N('Light Fingers', { 'skill.Pickpocket': 8, 'skill.Lockpicking': 5 })] },
       { id: 'l4', tpl: 'chain', n: 4, small: { 'skill.Etiquette': 3 }, notables: [N('Friend of Every Court', { standing: 4, 'skill.Etiquette': 6, personality: 3 })] },
     ],
-    lifeKeystone: K('Merchant Prince', { 'skill.Mercantile': 20, 'skill.Etiquette': 10 }, 'Every merchant in the Iliac Bay knows your name, and every noble house your manners.'),
+    lifeKeystone: K('Merchant Prince', { 'skill.Mercantile': 11, 'skill.Etiquette': 6 }, 'Every merchant in the Iliac Bay knows your name, and every noble house your manners.'),
   },
   // ══ THE THIEF - Agility: the bow, the dodge, the run, the beast-hunter ══
   th: {
     start: { agility: 2 },
-    roads: { s1: { agility: 3 }, s2: { agility: 3 }, g: { agility: 4 }, r1: { bowDmg: 3 }, r2: { 'skill.Dodging': 4 }, k1: { bowDmg: 3 } },
+    roads: { s1: { agility: 2 }, s2: { agility: 2 }, g: { agility: 3 }, r1: { bowDmg: 1 }, r2: { 'skill.Dodging': 4 }, k1: { bowDmg: 3 } },
     combat: [
-      { id: 'c1', tpl: 'wheel', n: 5, small: { bowDmg: 2 }, notables: [N('Deadeye', { bowDmg: 6, 'skill.Archery': 6 }), N('Long Shot', { bowDmg: 5, agility: 3 })] },
-      { id: 'c2', tpl: 'fork', n: 3, small: { 'skill.Dodging': 3 }, notables: [N('Acrobat', { evade: 3, 'skill.Dodging': 5, 'skill.Jumping': 5 }), N("Wind's Grace", { evade: 2, speed: 3 })] },
+      { id: 'c1', tpl: 'wheel', n: 5, small: { bowDmg: 2 }, notables: [N('Deadeye', { bowDmg: 5, 'skill.Archery': 6 }), N('Long Shot', { bowDmg: 4, agility: 3 })] },
+      { id: 'c2', tpl: 'fork', n: 3, small: { 'skill.Dodging': 3 }, notables: [N('Acrobat', { evade: 2, 'skill.Dodging': 5, 'skill.Jumping': 5 }), N("Wind's Grace", { evade: 2, speed: 3 })] },
       { id: 'c3', tpl: 'wheel', n: 5, small: [{ 'skill.Running': 3 }, { speed: 2 }], notables: [N('Quicksilver', { speed: 5, 'skill.Running': 5 }), N('Second Wind', { hpRegen: 2, endurance: 3 })] },
       { id: 'c4', tpl: 'chain', n: 4, small: { beastDmg: 4 }, notables: [N('Beastbane', { beastDmg: 10, bowDmg: 3 })] },
       { id: 'c5', tpl: 'wheel', n: 5, small: { 'skill.CriticalStrike': 3 }, notables: [N('Vital Shot', { bowDmg: 4, 'skill.CriticalStrike': 6 }), N('Steady Hands', { 'skill.Archery': 6, agility: 2 })] },
       { id: 'c6', tpl: 'fork', n: 3, small: { armor: 1 }, notables: [N('Leather and Luck', { armor: 2, luck: 4 }), N('Hard to Pin Down', { blowTaken: -3, agility: 2 })] },
       { id: 'c7', tpl: 'wheel', n: 4, small: { agility: 2 }, notables: [N("The Lover's Kiss", { agility: 3, luck: 3 })] },
     ],
-    keystone: K('Wind Runner', { evade: 8, speed: 5, armor: -3 }, 'Blows often miss you entirely, but heavy armor sits poorly on you.'),
-    life: { ring: [{ 'yield.hunting': 2 }, { 'xp.outfitting': 3 }], lr1: { 'xp.hunting': 4 }, lr2: { 'skill.Climbing': 3 }, la: { 'yield.hunting': 3 } },
+    keystone: K('Wind Runner', { evade: 6, speed: 4, armor: -3 }, 'Blows often miss you entirely, but heavy armor sits poorly on you.'),
+    life: { ring: [{ 'yield.hunting': 1 }, { 'xp.outfitting': 1 }], lr1: { 'xp.hunting': 3 }, lr2: { 'skill.Climbing': 3 }, la: { 'yield.hunting': 1 } },
     lifeClusters: [
-      { id: 'l1', tpl: 'wheel', n: 5, small: { 'yield.hunting': 3 }, notables: [N('Clean Skinner', { 'yield.hunting': 8 }), N('Game Warden', { 'xp.hunting': 10 })] },
-      { id: 'l2', tpl: 'wheel', n: 5, small: { 'xp.outfitting': 4 }, notables: [N('Master Tailor', { 'xp.outfitting': 10 }), N('Hidebinder', { 'xp.outfitting': 6, 'yield.hunting': 3 })] },
-      { id: 'l3', tpl: 'fork', n: 3, small: { 'xp.hunting': 4 }, notables: [N('Trail Reader', { 'xp.hunting': 8, 'yield.hunting': 4 }), N('Stalker of the Wilds', { 'yield.hunting': 6, 'xp.hunting': 4 })] },
+      { id: 'l1', tpl: 'wheel', n: 5, small: { 'yield.hunting': 1 }, notables: [N('Clean Skinner', { 'yield.hunting': 4 }), N('Game Warden', { 'xp.hunting': 8 })] },
+      { id: 'l2', tpl: 'wheel', n: 5, small: { 'xp.outfitting': 4 }, notables: [N('Master Tailor', { 'xp.outfitting': 9 }), N('Hidebinder', { 'xp.outfitting': 5, 'yield.hunting': 1 })] },
+      { id: 'l3', tpl: 'fork', n: 3, small: { 'xp.hunting': 3 }, notables: [N('Trail Reader', { 'xp.hunting': 6, 'yield.hunting': 2 }), N('Stalker of the Wilds', { 'yield.hunting': 3, 'xp.hunting': 3 })] },
       { id: 'l4', tpl: 'chain', n: 4, small: [{ 'skill.Climbing': 3 }, { fallLess: 6 }], notables: [N("Cat's Landing", { fallLess: 15, 'skill.Climbing': 6 })] },
     ],
-    lifeKeystone: K('Lord of the Hunt', { 'yield.hunting': 20, 'xp.hunting': 15 }, 'The finest hides are yours, and every kill teaches you more.'),
+    lifeKeystone: K('Lord of the Hunt', { 'yield.hunting': 8, 'xp.hunting': 6 }, 'The finest hides are yours, and every kill teaches you more.'),
   },
   // ══ THE STEED - Speed and Strength: the long blade, the charge, the fist, the stamina; the sea and the road ══
   st: {
     start: { speed: 2 },
-    roads: { s1: { speed: 3 }, s2: { strength: 3 }, g: { speed: 2, strength: 2 }, r1: { meleeDmg: 3 }, r2: { 'skill.LongBlade': 4 }, k1: { meleeDmg: 3 } },
+    roads: { s1: { speed: 2 }, s2: { strength: 3 }, g: { speed: 1, strength: 2 }, r1: { meleeDmg: 3 }, r2: { 'skill.LongBlade': 4 }, k1: { meleeDmg: 3 } },
     combat: [
-      { id: 'c1', tpl: 'wheel', n: 5, small: { longDmg: 2 }, notables: [N('Riposte', { longDmg: 6, 'skill.LongBlade': 6 }), N('Blade Dancer', { longDmg: 4, speed: 3 })] },
-      { id: 'c2', tpl: 'fork', n: 3, small: { meleeDmg: 2 }, notables: [N('Momentum', { meleeDmg: 5, speed: 3 }), N('Cavalier', { meleeDmg: 4, hp: 12 })] },
+      { id: 'c1', tpl: 'wheel', n: 5, small: { longDmg: 2 }, notables: [N('Riposte', { longDmg: 6, 'skill.LongBlade': 6 }), N('Blade Dancer', { longDmg: 4, speed: 2 })] },
+      { id: 'c2', tpl: 'fork', n: 3, small: { meleeDmg: 2 }, notables: [N('Momentum', { meleeDmg: 5, speed: 2 }), N('Cavalier', { meleeDmg: 4, hp: 12 })] },
       { id: 'c3', tpl: 'wheel', n: 5, small: [{ endurance: 2 }, { hp: 5 }], notables: [N('Iron Lungs', { endurance: 5, hp: 10 }), N('Unflagging', { hpRegen: 2, endurance: 3 })] },
-      { id: 'c4', tpl: 'chain', n: 4, small: { speed: 2 }, notables: [N('Lightning Reflexes', { speed: 5, evade: 2 })] },
-      { id: 'c5', tpl: 'wheel', n: 5, small: { fistDmg: 4 }, notables: [N('Pankration', { fistDmg: 10, 'skill.HandToHand': 8 }), N('Iron Knuckles', { fistDmg: 6, strength: 3 })] },
+      { id: 'c4', tpl: 'chain', n: 4, small: { speed: 1 }, notables: [N('Lightning Reflexes', { speed: 3, evade: 2 })] },
+      { id: 'c5', tpl: 'wheel', n: 5, small: { fistDmg: 3 }, notables: [N('Pankration', { fistDmg: 8, 'skill.HandToHand': 8 }), N('Iron Knuckles', { fistDmg: 5, strength: 3 })] },
       { id: 'c6', tpl: 'fork', n: 3, small: { 'skill.CriticalStrike': 3 }, notables: [N('Precision', { weaponDmg: 4, 'skill.CriticalStrike': 5 }), N("Fencer's Footwork", { 'skill.Dodging': 6, evade: 2 })] },
-      { id: 'c7', tpl: 'wheel', n: 4, small: { speed: 2 }, notables: [N("The Steed's Stride", { speed: 4, 'skill.Running': 4 })] },
+      { id: 'c7', tpl: 'wheel', n: 4, small: { speed: 1 }, notables: [N("The Steed's Stride", { speed: 3, 'skill.Running': 4 })] },
     ],
-    keystone: K("Steed's Charge", { meleeDmg: 15, speed: 5, blowTaken: 5 }, 'You strike fast and hard, and leave yourself a little open.'),
-    life: { ring: [{ sailSpeed: 2 }, { 'yield.fishing': 2 }], lr1: { fatigueLess: 4 }, lr2: { 'skill.Swimming': 3 }, la: { sailSpeed: 2 } },
+    keystone: K("Steed's Charge", { meleeDmg: 9, speed: 3, blowTaken: 5 }, 'You strike fast and hard, and leave yourself a little open.'),
+    life: { ring: [{ sailSpeed: 1 }, { 'yield.fishing': 2 }], lr1: { fatigueLess: 4 }, lr2: { 'skill.Swimming': 3 }, la: { sailSpeed: 1 } },
     lifeClusters: [
-      { id: 'l1', tpl: 'wheel', n: 5, small: { sailSpeed: 2 }, notables: [N('Fair Winds', { sailSpeed: 6 }), N('Old Salt', { sailSpeed: 3, 'skill.Swimming': 6 })] },
+      { id: 'l1', tpl: 'wheel', n: 5, small: { sailSpeed: 1 }, notables: [N('Fair Winds', { sailSpeed: 3 }), N('Old Salt', { sailSpeed: 1, 'skill.Swimming': 6 })] },
       { id: 'l2', tpl: 'wheel', n: 5, small: [{ 'yield.fishing': 3 }, { 'act.fishing': 5 }], notables: [N('Patient Line', { 'act.fishing': 15, 'xp.fishing': 5 }), N('Bountiful Nets', { 'yield.fishing': 8 })] },
       { id: 'l3', tpl: 'fork', n: 3, small: { fatigueLess: 4 }, notables: [N('Road Legs', { fatigueLess: 12 }), N('Sure Stride', { fallLess: 10, fatigueLess: 4 })] },
-      { id: 'l4', tpl: 'chain', n: 4, small: { 'skill.Swimming': 3 }, notables: [N('Child of Kynareth', { 'skill.Swimming': 8, sailSpeed: 3, 'xp.fishing': 4 })] },
+      { id: 'l4', tpl: 'chain', n: 4, small: { 'skill.Swimming': 3 }, notables: [N('Child of Kynareth', { 'skill.Swimming': 8, sailSpeed: 1, 'xp.fishing': 4 })] },
     ],
-    lifeKeystone: K('Master and Commander', { sailSpeed: 10, 'xp.fishing': 10 }, 'Your ship answers the wind as no other, and the sea gives up its fish to you.'),
+    lifeKeystone: K('Master and Commander', { sailSpeed: 3, 'xp.fishing': 3 }, 'Your ship answers the wind as no other, and the sea gives up its fish to you.'),
   },
   // ══ THE WARRIOR - Strength and Endurance: the axe, the hammer, armour, health, the fury ══
   wr: {
     start: { strength: 1, endurance: 1 },
-    roads: { s1: { strength: 3 }, s2: { endurance: 3 }, g: { strength: 2, endurance: 2 }, r1: { hp: 10 }, r2: { blowTaken: -1 }, k1: { armor: 1 } },
+    roads: { s1: { strength: 3 }, s2: { endurance: 3 }, g: { strength: 2, endurance: 2 }, r1: { hp: 2 }, r2: { blowTaken: -1 }, k1: { armor: 1 } },
     combat: [
       { id: 'c1', tpl: 'wheel', n: 5, small: { axeDmg: 2 }, notables: [N('Cleaver', { axeDmg: 6, 'skill.Axe': 6 }), N('Headsman', { axeDmg: 4, strength: 3 })] },
       { id: 'c2', tpl: 'fork', n: 3, small: { armor: 1 }, notables: [N('Walking Fortress', { armor: 3, blowTaken: -3 }), N('Shield Wall', { blowTaken: -2, hp: 10 })] },
       { id: 'c3', tpl: 'wheel', n: 5, small: { bluntDmg: 2 }, notables: [N('Crushing Blows', { bluntDmg: 6, 'skill.BluntWeapon': 6 }), N('Bonebreaker', { bluntDmg: 4, meleeDmg: 2 })] },
       { id: 'c4', tpl: 'chain', n: 4, small: { meleeDmg: 2 }, notables: [N('Warlord', { meleeDmg: 5, strength: 4 })] },
-      { id: 'c5', tpl: 'wheel', n: 5, small: { hp: 6 }, notables: [N("Troll's Blood", { hpRegen: 3, hp: 8 }), N("Giant's Heart", { hp: 18, endurance: 3 })] },
-      { id: 'c6', tpl: 'fork', n: 3, small: { killHeal: 1 }, notables: [N('Carnage', { killHeal: 3, meleeDmg: 3 }), N('Reaver', { rageDmg: 8, strength: 2 })] },
+      { id: 'c5', tpl: 'wheel', n: 5, small: { hp: 4 }, notables: [N("Troll's Blood", { hpRegen: 3, hp: 8 }), N("Giant's Heart", { hp: 18, endurance: 3 })] },
+      { id: 'c6', tpl: 'fork', n: 3, small: { killHeal: 1 }, notables: [N('Carnage', { killHeal: 2, meleeDmg: 3 }), N('Reaver', { rageDmg: 7, strength: 2 })] },
       { id: 'c7', tpl: 'wheel', n: 4, small: { strength: 2 }, notables: [N("The Lady's Favour", { endurance: 4, hp: 8 })] },
     ],
-    keystone: K("Berserker's Fury", { rageDmg: 20, armor: -2 }, 'Below half Health you strike far harder, though your armor guards you a little less.'),
-    life: { ring: [{ 'yield.mining': 2 }, { 'xp.smithing': 3 }], lr1: { 'xp.mining': 4 }, lr2: { 'yield.logging': 2 }, la: { 'xp.building': 4 } },
+    keystone: K("Berserker's Fury", { rageDmg: 18, armor: -2 }, 'Below half Health you strike far harder, though your armor guards you a little less.'),
+    life: { ring: [{ 'yield.mining': 1 }, { 'xp.smithing': 2 }], lr1: { 'xp.mining': 4 }, lr2: { 'yield.logging': 1 }, la: { 'xp.building': 4 } },
     lifeClusters: [
-      { id: 'l1', tpl: 'wheel', n: 5, small: { 'yield.mining': 3 }, notables: [N('Motherlode Instinct', { 'yield.mining': 8 }), N('Deep Seams', { 'xp.mining': 8, 'yield.mining': 3 })] },
-      { id: 'l2', tpl: 'wheel', n: 5, small: { 'xp.smithing': 4 }, notables: [N("Anvil's Song", { 'xp.smithing': 10 }), N('Quench and Temper', { 'xp.smithing': 6, carry: 4 })] },
-      { id: 'l3', tpl: 'fork', n: 3, small: { 'xp.building': 4 }, notables: [N('Master Builder', { 'xp.building': 10 }), N('Hall-Raiser', { 'xp.building': 6, 'xp.smithing': 4 })] },
+      { id: 'l1', tpl: 'wheel', n: 5, small: { 'yield.mining': 2 }, notables: [N('Motherlode Instinct', { 'yield.mining': 6 }), N('Deep Seams', { 'xp.mining': 8, 'yield.mining': 2 })] },
+      { id: 'l2', tpl: 'wheel', n: 5, small: { 'xp.smithing': 3 }, notables: [N("Anvil's Song", { 'xp.smithing': 8 }), N('Quench and Temper', { 'xp.smithing': 5, carry: 4 })] },
+      { id: 'l3', tpl: 'fork', n: 3, small: { 'xp.building': 4 }, notables: [N('Master Builder', { 'xp.building': 10 }), N('Hall-Raiser', { 'xp.building': 6, 'xp.smithing': 3 })] },
       { id: 'l4', tpl: 'chain', n: 4, small: { 'yield.logging': 3 }, notables: [N('Feller of Giants', { 'yield.logging': 8, 'xp.logging': 6 })] },
     ],
-    lifeKeystone: K("Stonebreaker's Oath", { 'yield.mining': 15, 'yield.logging': 15 }, 'Stone and timber yield more to your pick and axe.'),
+    lifeKeystone: K("Stonebreaker's Oath", { 'yield.mining': 9, 'yield.logging': 9 }, 'Stone and timber yield more to your pick and axe.'),
   },
   // ══ THE RITUAL - Willpower and Strength: restoration, the undead and the daedra, the spellsword, wards ══
   rt: {
     start: { willpower: 2 },
-    roads: { s1: { willpower: 3 }, s2: { strength: 3 }, g: { willpower: 2, strength: 2 }, r1: { 'skill.Restoration': 4 }, r2: { hpRegen: 1 }, k1: { undeadDmg: 4 } },
+    roads: { s1: { willpower: 2 }, s2: { strength: 3 }, g: { willpower: 1, strength: 2 }, r1: { 'skill.Restoration': 4 }, r2: { hpRegen: 1 }, k1: { undeadDmg: 4 } },
     combat: [
       { id: 'c1', tpl: 'wheel', n: 5, small: { 'skill.Restoration': 3 }, notables: [N('Laying of Hands', { 'skill.Restoration': 6, hpRegen: 2 }), N("Mara's Grace", { 'castCost.Restoration': 10, willpower: 3 })] },
       { id: 'c2', tpl: 'fork', n: 3, small: [{ undeadDmg: 4 }, { daedraDmg: 4 }], notables: [N('Purifier', { undeadDmg: 10, daedraDmg: 5 }), N('Daedra-Bane', { daedraDmg: 10, undeadDmg: 5 })] },
       { id: 'c3', tpl: 'wheel', n: 5, small: [{ meleeDmg: 2 }, { spellPower: 2 }], notables: [N("Battlemage's Focus", { meleeDmg: 4, spellPower: 4 }), N('Runed Blade', { longDmg: 4, 'skill.Alteration': 5 })] },
       { id: 'c4', tpl: 'chain', n: 4, small: { 'skill.Alteration': 3 }, notables: [N('Stoneskin', { armor: 3, 'skill.Alteration': 5 })] },
-      { id: 'c5', tpl: 'wheel', n: 5, small: { willpower: 2 }, notables: [N('Unbreakable Will', { willpower: 5, 'resist.magic': 6 }), N('Clarity', { mpRegen: 2, mp: 8 })] },
+      { id: 'c5', tpl: 'wheel', n: 5, small: { willpower: 1 }, notables: [N('Unbreakable Will', { willpower: 5, 'resist.magic': 6 }), N('Clarity', { mpRegen: 2, mp: 8 })] },
       { id: 'c6', tpl: 'fork', n: 3, small: [{ 'resist.poison': 3 }, { 'resist.magic': 3 }], notables: [N('Antidote Blood', { 'resist.poison': 10 }), N('Spell Turning', { spellTaken: -4, 'resist.magic': 4 })] },
-      { id: 'c7', tpl: 'wheel', n: 4, small: { willpower: 2 }, notables: [N("The Lord's Mail", { willpower: 3, hpRegen: 1, 'resist.magic': 3 })] },
+      { id: 'c7', tpl: 'wheel', n: 4, small: { willpower: 1 }, notables: [N("The Lord's Mail", { willpower: 3, hpRegen: 1, 'resist.magic': 3 })] },
     ],
     keystone: K("Martyr's Vow", { hpRegen: 6, weaponDmg: -4, spellPower: -4 }, 'Your wounds close of their own accord, but your weapons and spells are a little weaker.'),
-    life: { ring: [{ 'yield.herbalism': 2 }, { coldDegrees: 2 }], lr1: { 'xp.herbalism': 4 }, lr2: { 'xp.provisioning': 3 }, la: { 'act.herbalism': 5 } },
+    life: { ring: [{ 'yield.herbalism': 1 }, { coldDegrees: 1 }], lr1: { 'xp.herbalism': 4 }, lr2: { 'xp.provisioning': 2 }, la: { 'act.herbalism': 5 } },
     lifeClusters: [
-      { id: 'l1', tpl: 'wheel', n: 5, small: [{ 'yield.herbalism': 3 }, { 'act.herbalism': 5 }], notables: [N('Green Thumb', { 'yield.herbalism': 8 }), N('Gentle Hands', { 'act.herbalism': 15, 'xp.herbalism': 4 })] },
-      { id: 'l2', tpl: 'wheel', n: 5, small: { 'xp.provisioning': 4 }, notables: [N('Master Brewer', { 'xp.provisioning': 10 }), N('Camp Cook', { 'xp.provisioning': 5, fatigueLess: 6 })] },
-      { id: 'l3', tpl: 'fork', n: 3, small: [{ coldDegrees: 2 }, { heatDegrees: 2 }], notables: [N('Child of Winter', { coldDegrees: 6, warmth: 2 }), N('Sun-Walker', { heatDegrees: 6, dry: 10 })] },
-      { id: 'l4', tpl: 'chain', n: 4, small: { 'xp.herbalism': 4 }, notables: [N("Druid's Path", { 'xp.herbalism': 10, 'yield.herbalism': 4 })] },
+      { id: 'l1', tpl: 'wheel', n: 5, small: [{ 'yield.herbalism': 2 }, { 'act.herbalism': 5 }], notables: [N('Green Thumb', { 'yield.herbalism': 6 }), N('Gentle Hands', { 'act.herbalism': 15, 'xp.herbalism': 4 })] },
+      { id: 'l2', tpl: 'wheel', n: 5, small: { 'xp.provisioning': 3 }, notables: [N('Master Brewer', { 'xp.provisioning': 8 }), N('Camp Cook', { 'xp.provisioning': 4, fatigueLess: 6 })] },
+      { id: 'l3', tpl: 'fork', n: 3, small: [{ coldDegrees: 2 }, { heatDegrees: 2 }], notables: [N('Child of Winter', { coldDegrees: 5, warmth: 2 }), N('Sun-Walker', { heatDegrees: 6, dry: 10 })] },
+      { id: 'l4', tpl: 'chain', n: 4, small: { 'xp.herbalism': 4 }, notables: [N("Druid's Path", { 'xp.herbalism': 10, 'yield.herbalism': 3 })] },
     ],
-    lifeKeystone: K("Hermit's Covenant", { 'yield.herbalism': 20, 'xp.provisioning': 10 }, 'The wilds give up every leaf to you, and your kitchen makes the most of them.'),
+    lifeKeystone: K("Hermit's Covenant", { 'yield.herbalism': 10, 'xp.provisioning': 5 }, 'The wilds give up every leaf to you, and your kitchen makes the most of them.'),
   },
 };
 
@@ -265,8 +265,8 @@ const ATTRS = Object.freeze(['strength', 'intelligence', 'willpower', 'agility',
  * RAW ON THE KEY STARS, PERCENT ON THE SMALL (the lead dev, 2026-10-13: "combined with the ascend system you will get
  * waaay to many stat points just add stats with raw numbers to the key nodes and percentages to the smaller ones"). The
  * starts, the notables and the keystones keep their raw points; a small star or a road's are said as a share of what
- * the character has - an attribute's or a skill's points twice over as a percent of its own (+2 Strength is +4% of the
- * character's Strength), Health and Spell Points half over as a percent of the maximum (+10 Health is +5%), a point of
+ * the character has - an attribute's or a skill's points as a percent of its own (FIRM2: one for one - +2 Strength is +2%
+ * of the character's Strength; FIRM1 doubled them and a sign's stars summed to twice the cap), Health and Spell Points half over as a percent of the maximum (+10 Health is +5%), a point of
  * Armor Rating a percent less damage from blows.
  * @param {Record<string, number>} stats
  */
@@ -275,8 +275,8 @@ export function smallStats(stats) {
   const out = {};
   const put = (k, v) => { out[k] = (out[k] ?? 0) + v; };
   for (const [k, v] of Object.entries(stats)) {
-    if (ATTRS.includes(k)) put(`pct.${k}`, v * 2);
-    else if (k.startsWith('skill.')) put(`skillPct.${k.slice(6)}`, v * 2);
+    if (ATTRS.includes(k)) put(`pct.${k}`, v);
+    else if (k.startsWith('skill.')) put(`skillPct.${k.slice(6)}`, v);
     else if (k === 'hp') put('hpPct', Math.max(1, Math.round(v / 2)));
     else if (k === 'mp') put('mpPct', Math.max(1, Math.round(v / 2)));
     else if (k === 'armor') put('blowTaken', -v);

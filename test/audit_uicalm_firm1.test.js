@@ -130,12 +130,23 @@ test('AUDIT UICALM-FIRM1 L1 H1: a key star\'s raw points and a small star\'s sha
   assert.ok(c.strength > 0 && c['pct.strength'] > 0 && c.hp > 0 && c.hpPct > 0, 'the build carries both kinds of each');
   const p = structuredClone(FRESH);
   createCharacter(p, career, -1, { rolls: () => 0.5 });
-  p.level = 30; p.activeEffects = []; p.rawMaxHealth = 300; p.health = p.maxHealth;
+  p.level = 30; p.activeEffects = []; p.rawMaxHealth = 600; p.health = p.maxHealth;   // FIRM2: the stars sum under the cap now - a Health big enough for the share to pass it
   setRenownLayer(p, 50);
   const s0 = liveStat(p, 'strength'), h0 = p.maxHealth;
   setFirmamentOnline(true); setFirmamentTree(t); computeEntityMods(p); firmamentLayer(p);
   assert.equal(liveStat(p, 'strength') - s0, statDef('strength').max, 'Strength +15');
   assert.equal(p.maxHealth - h0, statDef('hp').max, 'Health +75');
+});
+
+test('FIRM2: a Strength already at 100 still takes the stars\' points, up to the sky\'s own +15 and no further', () => {
+  const t = walk('wr.start', 'wr.c7.2', named('Warlord'), named('Headsman'), named("Giant's Heart"), named("Troll's Blood"), named('Shield Wall'), named("The Lady's Favour"), named('Reaver'));
+  const p = structuredClone(FRESH);
+  createCharacter(p, career, -1, { rolls: () => 0.5 });
+  p.level = 30; p.activeEffects = []; p.stats.strength = 100;
+  setRenownLayer(p, 50);
+  assert.equal(liveStat(p, 'strength'), 100, 'Ascend\'s points alone stop at 100');
+  setFirmamentOnline(true); setFirmamentTree(t); computeEntityMods(p); firmamentLayer(p);
+  assert.equal(liveStat(p, 'strength'), 100 + statDef('strength').max, 'the sky takes it to 115, its own cap');
 });
 
 test('AUDIT UICALM-FIRM1 L1 M1: a mastered skill\'s share is held by the same budget - Stealth 200 (read 140) gains +15, not +53', () => {
@@ -381,11 +392,9 @@ test('AUDIT UICALM-FIRM1 L2 L3: a temper\'s XP takes the tree\'s hand, as the an
   const s = await stand();
   const p = await s.registered('Mac', { renown: 50 });
   s.setXp(p, 'smithing', xpForRank(10));
-  let best = null;
-  for (const [k, n] of FIRM_NODES) if (n.stats['xp.smithing']) for (const st of ['wr.start', 'mg.start', 'th.start', 'st.start', 'sh.start', 'rt.start', 'sp.start']) {
-    const t = walk(st, k);
-    if (t.keys.length && (!best || t.keys.length < best.keys.length)) best = t;
-  }
+  // FIRM2: the stars came down under their caps, so one small star's few percent of a temper's XP floors to nothing -
+  // the anvil's own notable is the walk (Anvil's Song)
+  const best = walk('wr.start', named("Anvil's Song"));
   assert.equal((await s.set(p, best)).status, 200);
   s.raw.prepare("INSERT INTO prof_stores (player, char_id, material, origin, qty) VALUES (?, ?, 'ingot:steel', 'own', 10)").run(p.id, p.character);
   const r = await s.call('/v1/prof/temper', { character: p.character, recipe: 'longsword:steel', quality: 1, provenance: null, rid: rid() }, p.secret);
@@ -476,7 +485,9 @@ test('AUDIT UICALM-FIRM1 L5 H4: THE TREE\'S HAND ON A HARVEST\'S YIELD - the qua
   const seeded = (seed) => { let x = seed >>> 0; globalThis.crypto.getRandomValues = (b) => { for (let i = 0; i < b.length; i++) { x = (Math.imul(x, 1103515245) + 12345) >>> 0; b[i] = x; } return b; }; };
   try {
     const s = await stand();
-    const tree = walk('rt.start', named("Hermit's Covenant"));   // the herb's yield, a life keystone's 20%
+    // the herb's yield: a life keystone's 10%, a notable's 6, another's 3 and the stars on the way (FIRM2: the keystone's
+    // 20% came down to 10, and a share that small hid a tripled yield in the floor - the walk takes the herb's whole wheel)
+    const tree = walk('rt.start', named("Hermit's Covenant"), named('Green Thumb'), named("Druid's Path"));
     const pct = treeStats(tree)['yield.herbalism'];
     assert.ok(pct > 0);
     const bare = await s.registered('Bare', { renown: 50 }), sky = await s.registered('Sky', { renown: 50 });
