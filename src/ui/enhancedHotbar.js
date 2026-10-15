@@ -621,10 +621,22 @@ function showCaption(text, bad = false) {
 /** UXB1-S: the slot a key's actions name - the first of them that is one, so a SHARED key (a slot and anything else)
  *  still presses its slot. -1 when none is. */
 const slotOfActions = (acts) => acts.map((a) => HOTBAR_SLOT_ACTIONS.indexOf(a)).find((i) => i >= 0) ?? -1;
+// AUDIT POI E1: THE BAR'S KEYS HELD. Its listener is on the window's capture phase from the HUD's first frame, so a
+// surface that owns the keyboard later (the POI editor, scenes/world.js) cannot stop it with its own - under the editor
+// a digit used the body's item or spell, and was stopped before the UV dialog's 1-4 ever reached it. A hold stands the
+// keys down while it stands; holds are counted and each release is its own (player/pointerLock.js holdCursor's shape).
+const keyHolds = new Set();
+/** The bar's keys stood down until the release this answers is called (once is enough; twice changes nothing). */
+export function holdHotbarKeys() {
+  const hold = {};
+  keyHolds.add(hold);
+  return () => { keyHolds.delete(hold); };
+}
 function onKey(e) {
   // AUDIT CONTRIB H1: gated on the GAME's pause, not the HUD's visibility - with the HUD toggled off the keys fell
   // through to the diamond the hotbar replaces (1 drank the diamond's potion), and 5-0 did nothing
   if (!bar || !hotbarMode() || dropOwners.size || lastPaused) return;
+  if (keyHolds.size) return;   // AUDIT POI E1: a surface that owns the keys is up
   if (e.metaKey || isTextEntryTarget(e.target)) return;
   // KB1: THE SLOTS ARE REGISTRY ACTIONS. This read `Digit1`-`Digit0` off the event and stepped aside for any digit
   // someone else held - a table of its own beside the controls pane's. The slot is whatever the key MEANS now: a
