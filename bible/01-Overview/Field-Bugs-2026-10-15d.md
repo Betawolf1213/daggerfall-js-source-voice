@@ -9,7 +9,7 @@ DaggerfallGameFiles, `tools/fetch-data.sh`, outside the tree).
 |---|---|---|---|
 | 1 | "exploit where you do easy quests for a guild and then ask to join it to farm 100 rep in 1 minute" | nothing mints reputation: a stranger's quests bank DFU's +5 a quest with the guild, and since PROMO-NOW the first review online turned it into every rank it covered at once | fixed (ROLL-PACE), Mac's call: "Pace ranks from joining" |
 | 2 | "True Invisibility not working inside dungeons" - "monsters still spot and attack me immediately while the spell is active" | the senses were right; a foe's melee START faced the target's live feet, where DFU's faces the last position it detected - so a foe that never saw the invisible player swung at the one in front of it | fixed (INVIS-SWING) |
-| 3 | "The entrance to The School of Julianos in Makehda is blocked" - "The Akatosh Chantry in Merdale also has some small issues" | TEMPLE-STEPS, below | fixed (TEMPLE-STEPS) |
+| 3 | "The entrance to The School of Julianos in Makehda is blocked" - "The Akatosh Chantry in Merdale also has some small issues" | Makehda: the RMB Resource Pack's foundation and landing stood in at the FBX node's scale - a 16 m block, sunk 2.4 m, that buried the temple's stairs under a six-metre wall (TEMPASF1 in 57 villages, TEMPASH4 in 66 Kynareth temples); Merdale: HILL-SEAT's pads banked grass over the Chantry's flight | fixed (TEMPLE-STEPS) |
 | 4 | "The first time craft bonus is not applying to the outfitting. I got somehow it once from...Fishing net?" | not a fault: AUDIT 32 S1 withholds the first-craft bonus from a pattern made only of the counter's cloth - 152 outfitting patterns, the Fishing Net among them - and nothing in the game said so | shown (CRAFT-FIRST-SHOWN), Mac's call: "Keep rule, show it" |
 | 5 | "Player is getting wet despite it not raining. Possibly an oversight in reducing the rain?" | the soak read the sim's word at the downpour's rate - RAIN-HEART made most rain a sprinkle, and the front holds a rain word dry before its first drop | fixed (WET-FALL) |
 
@@ -116,6 +116,67 @@ position their senses would have written (TEST THE SHAPE THE PRODUCER MINTS); `e
 
 What the reporter is owed: a monster that cannot see through Invisibility no longer swings at you because you walked in
 front of it. The undead, the vampires and the Daedra still can - they see through it in Daggerfall too.
+
+## TEMPLE-STEPS: the pack's pieces at their own size, and a pad buries nothing the author left in the open (3)
+
+`src/world/townStandIns.js` the RMB Resource Pack stand-ins (rmbrpBlock, RMBRP_BLOCK_SCALE, the rocks' boxes and
+RMBRP_ROCK_SCALE, the stalls) and blockHillPatch; `src/world/curatedPlacements.js` DOOR_APPROACH_M;
+`tools/townSolidsSweep.mjs` (new). The record of the design: `03-World/Beautiful-Towns.md`.
+
+THE REPORT. "The entrance to The School of Julianos in Makehda is blocked. Seen this same problem before with another
+temple but forgot where." Then: "The Akatosh Chantry in Merdale also has some small issues." The screenshot: a temple at
+night, a sheer stone wall before its door and a pale stair beam crossing it.
+
+FOUND - MAKEHDA. Makehda (Beautiful Villages, `location-1-672`) lays TEMPASF1: the temple 6.1 m up on three foundations
+(53170), reached by a landing (53160), a stair (21728), a second landing, the door. Each prefab's MeshFilter names its
+mesh, so Unity never applies the FBX node's own Lcl Scaling (250, 125) - MeshReplacement keeps the prefab's scale and
+nothing more, as the port already reads the domes. The landing is 3.2 x 1.6 x 3.2 m and the foundation (prefab scale 2)
+6.4 x 3.2 x 6.4 m, both centred - the author's own layout agrees (TEMPASH4 tiles its foundations 256 units apart, and a
+real landing's top is the stair's foot and the temple's floor). The stand-ins read the node's scale: 4 x 2 x 4 and
+16 x 8 x 16 m, and AUDIT WD3 T1 sank the foundation 2.4 m so its top cleared the door point - a cure for the symptom
+that kept the footprint. Walked out from the door on the real ARENA2: the landing stood 0.2 m proud of the step, and the
+foundation was a shelf at 6.13 m running 4.5 m out that buried the stair's treads (5.82 to 3.00 m) by up to 3.1 m and
+dropped as a sheer wall over the lower landing - the reporter's wall, and the beam through it the stair. The same fault
+stands TEMPASH4's 66 Kynareth temples behind theirs: the "other temple".
+
+FOUND - MERDALE. TEMPASD1 has no foundation. Its temple stands 7.35 m up on the pack's hills, reached by four stair
+pieces. HILL-SEAT's pads (`Field-Bugs-2026-10-13e.md`, merged the day of the follow-up, which listed "whether a bank buries
+a neighbour's door" NOT SEEN) banked a 45-degree bank from under a 0.25 m post (43733) over the flight by up to 1.25 m,
+and the third piece's pad covered the second's treads. The hill stand-ins cover the bottom piece's sunk foot by 0.36-0.54
+m - the pack's own hills by 0.30-0.39, the author's.
+
+FOUND BESIDE IT, measured the same way over every RMB Resource Pack stand-in: the domes, the docks and the city wall were
+right; the rocks were the mesh alone, without their prefab's scale (2-8), so 143 of the 245 the packs lay stood wholly
+under the ground; the market stalls were at scale 1, 2.35 m off their origin.
+
+CHANGED:
+
+- **The pack's sizes.** The landing and the foundation are the pack's box at each prefab's scale, centred, and T1's sink
+  is gone (a real foundation's top IS the temple's floor). The rocks stand over each mesh's own box at its prefab's
+  scale (2 of 245 now underground, where the author laid them so); the stalls at 0.75, in Unity's mirrored-x frame.
+- **A pad buries nothing the author left in the open.** blockHillPatch skips a model whose pad top would cover another's
+  exposed vertex, and its bank steepens (at most 8:1) to pass 0.05 m under every exposed vertex and under every door's
+  step and DOOR_APPROACH_M (4 m, HILL-HOUSE's rule) out - the doors read off the meshes the hosts already pass in.
+- **The law, swept.** `tools/townSolidsSweep.mjs` (the ARENA2 gate in `test/wd3_standins.test.js`, 820 blocks, 10,269
+  doors) holds three laws: a stand-in that is the pack's mesh exactly holds only what the pack's own meshes hold (HELD);
+  no pad over anything left in the open (PADS); every door's approach clear of every port-made solid but the author's
+  own (APPROACH). Before: HELD 31, PADS 7, APPROACH 6. After: 10, 0 and 6, each named in the test - the ten the pack's own
+  overlaps, five of the six approaches the author's own hills and rocks (TVRNAS00 house 125's back door under 1.14 m of
+  the pack's hill, which the old one-point sweep missed), and one a boulder's rim 0.13 m into a door's approach at
+  DARKAA02. HILL-SEAT's own ARENA2 sweep reads the stand-ins the hosts draw now, and counts the author's models under a
+  footprint as support; two still hang, named: Merdale's third stair piece 0.43 m at its foot (the pack's hill holds it)
+  and TEMPASH4's temple back edge 2.14 m (the pack's hill leaves 2.27 m there too).
+
+THE FOUR HOSTS: world.js and exterior.js lay the town blocks through these stand-ins and blockHillPatch - WIRED,
+unchanged (the doors are read off the meshes they already pass in); worldModes.js and dungeonContext.js lay out no town
+block. Pinned by `test/fb1015d_templesteps.test.js` (7); `tools/mutants/fb1015d_templesteps.json` (21, all dead - three
+need ARENA2_PATH). PINS MOVED: `test/wd3_standins.test.js`'s sizes for 53160, 53170, the rocks and the stalls, and its
+door sweep rewritten as the three laws; `test/fb1013e_hillseat.test.js`'s ARENA2 sweep reads the producer's meshes;
+`tools/mutants/auditwd3.json` AWD3-FOUNDATION-CENTRED re-aimed. Audit-WD3's T1 retired; Field-Bugs-2026-10-13e's NOT SEEN
+narrowed; Port-Ledger's HILL-SEAT row narrowed.
+
+What the reporter is owed: the School of Julianos, and every temple built the same way, stands on its own foundation
+again - you walk up its steps to the door. Merdale's Chantry steps are clear of the grass banks.
 
 ## CRAFT-FIRST-SHOWN: the first-time bonus said where it is earned (4)
 
