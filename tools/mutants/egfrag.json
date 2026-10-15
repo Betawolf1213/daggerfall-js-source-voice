@@ -285,8 +285,8 @@
   {
     "name": "EGFRAG-a-page-given-twice",
     "file": "src/net/egBrain.js",
-    "old": "if (page >= 0) for (const [sub, m] of L) if (!((m.pages ?? 0) & (2 ** page))) {",
-    "new": "if (page >= 0) for (const [sub, m] of L) if (true) {",
+    "old": "if (page >= 0) for (const [sub, m] of living(B)) if (!((m.pages ?? 0) & (2 ** page))) {",
+    "new": "if (page >= 0) for (const [sub, m] of living(B)) if (true) {",
     "tests": [
       "test/egfrag_relay.test.js"
     ]

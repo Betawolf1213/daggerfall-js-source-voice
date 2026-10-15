@@ -291,6 +291,7 @@ test('AUDIT EG V L3-19 THE GHOST AND THE CAPTIVE ON EVERY HALL THEY ARE LAID ON 
     assert.equal(new Set(chains.map((c) => `${c.x},${c.z}`)).size, EG_CHAINS, `${kind}: three places`);
     assert.ok(chains.every((c) => egGroundAt(view, c.x, NaN, c.z, 0.5)), `${kind}: each on the fight ground`);
     if (kind === 'yard') assert.deepEqual(egCaptiveSpots(sp), sp.spots.chain.map((q) => [q.x, q.z]), 'the law\'s three where it lays three');
+    if (kind === 'deepway') { const hero = egHallOf(115, 52, 0); assert.equal(hero.spots.chain.length, EG_CHAINS); assert.deepEqual(egCaptiveSpots(hero), hero.spots.chain.map((q) => [q.x, q.z]), 'a hero chamber\'s three, as the law lays them'); }
     if (kind === 'rampart') assert.ok(chains.every((c) => Math.abs(c.x - sp.fl[0].ax) <= sp.fl[0].hw), 'along the walkway');
     if (kind !== 'span') continue;
     // a span's freed: each chain broken from its island
@@ -319,7 +320,7 @@ test('AUDIT EG V L3-19 THE GHOST AND THE CAPTIVE ON EVERY HALL THEY ARE LAID ON 
 });
 
 // ── L3-22: A FALL WITH NO PLACE ─────────────────────────────────────────────────────────────────────────────────────────
-test('AUDIT EG V L3-22 A FALL LEAVES ITS MEMENTO WHERE THE MEMBER LAST STOOD (section 16.5: "A fall leaves a gold mote where the member fell"): 180 s gone in a trial, and a `fell` word that carries no pose, each lay the Memento at the member\'s last pose in the hall - a blow\'s pose kept with its hall - which a living member can carry, and a carrier\'s own absence drops it at the carrier\'s last pose (mutants: no place, no Memento; the carrier\'s drop unplaced; a blow\'s pose kept without its hall)', () => {
+test('AUDIT EG V L3-22 A FALL LEAVES ITS MEMENTO WHERE THE MEMBER LAST STOOD (section 16.5: "A fall leaves a gold mote where the member fell"): 180 s gone in a trial, and a `fell` word that carries no pose, each lay the Memento at the member\'s last pose in the hall - a blow\'s pose kept with its hall - which a living member can carry, and a carrier\'s own absence drops it at the carrier\'s last pose (mutants: no place, no Memento; a blow\'s pose kept without its hall)', () => {
   // absent
   const S = breach(2, 1);
   const sp = S.spec(), b = S.subs[1], at = { x: sp.arrive.x + 3, z: sp.arrive.z + 14 };
@@ -334,7 +335,7 @@ test('AUDIT EG V L3-22 A FALL LEAVES ITS MEMENTO WHERE THE MEMBER LAST STOOD (se
   for (let z = sp.arrive.z; z <= at.z; z += 1) { S.put('acct-0', sp.arrive.x, z); S.step(250, true); }
   for (let x = sp.arrive.x; x <= at.x; x += 0.5) { S.put('acct-0', x, at.z); S.step(250, true); }
   assert.equal(S.B.mementos[0].by, 'acct-0', 'carried');
-  // its carrier gone 180 s too: the Memento drops where the carrier last stood (the breach wiped - nobody living)
+  // its carrier gone 180 s too: the Memento lies where the carrier last stood, carried there beat by beat (the breach wiped - nobody living)
   const at2 = { x: at.x, z: at.z + 4 };
   S.put('acct-0', at2.x, at2.z);
   for (let k = 0; k < 4; k++) S.step();

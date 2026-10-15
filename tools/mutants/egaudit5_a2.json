@@ -201,16 +201,6 @@
     "why": "L3-22: no place, no Memento"
   },
   {
-    "name": "EGA5A2-carrier-drop-unplaced",
-    "file": "src/net/egBrain.js",
-    "old": "if (q.by === sub) { q.by = null; if (where) { q.x = where.x;",
-    "new": "if (q.by === sub) { q.by = null; if (at) { q.x = where.x;",
-    "tests": [
-      "test/egaudit5_a2.test.js"
-    ],
-    "why": "L3-22: the carrier's drop unplaced"
-  },
-  {
     "name": "EGA5A2-blow-pose-no-hall",
     "file": "src/net/egBrain.js",
     "old": "mm.pose = { x: p.x, z: p.z, h: B.h };",

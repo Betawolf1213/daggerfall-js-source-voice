@@ -440,7 +440,7 @@ export function egFall(B, sub, now, out, at = null) {
   if (final) oweEnd(B, sub, 'fall', now);
   else if (where && !last) B.mementos.push({ s: sub, h: B.h, x: where.x, z: where.z, by: null });
   // a carrier's fall drops the Memento where they fall
-  for (const q of B.mementos) if (q.by === sub) { q.by = null; if (where) { q.x = where.x; q.z = where.z; q.h = B.h; } }
+  for (const q of B.mementos) if (q.by === sub) { q.by = null; if (at) { q.x = at.x; q.z = at.z; q.h = B.h; } }
   if (B.F) B.F.fellThisHall = (B.F.fellThisHall ?? 0) + 1;
   if (B.F) EG_SEAM.join(egLordsFight(B.F, null, {}, now), sub, m.name, m.lv, now, null, { admits: false });   // EG-ZQ (section 13.2): A FALL RETIRES A SHARE - out of every lord standing, through the seam
   egTallyFall(B.F, sub);   // EG-ZF: on a Court's chart

@@ -85,7 +85,7 @@ const HARDCODED = {
   'src/net/egBrain.js': 10,
   'src/net/egFeats.js': 19,
   'src/net/egFragLaw.js': 85,
-  'src/net/egHerald.js': 13,
+  'src/net/egHerald.js': 14,   // AUDIT EG V (a2, L8-7): +1, a deeper breach's start on the herald's Redoubt posts (', from Redoubt N') - the Discord channel's English, as every herald post is
   'src/net/egLaw.js': 189,   // EG-HERO-LAY: +16, the hero fit's refusals (net/egLaw.js egHeroTrials' `why`) - the relay's law read by a test and a hero's author, never said to a player, kept as egFragLaw.js's record faults are
   'src/net/egLegion.js': 10,
   'src/net/egLords.js': 55,   // AUDIT EG IV (the lords' group): +2, Garoth's third-phase card names the older signature he borrows (EG_GAROTH_SIG_CARDS - three names for the one 'The older signature.') - the arc's English, owed its localization wave with the rest
