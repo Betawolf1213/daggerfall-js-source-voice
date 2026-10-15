@@ -27,6 +27,15 @@
     ]
   },
   {
+    "name": "AUDITPOI-L1-the-destroyed-panel-drawn",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "    if (gone) return;\n    const pressed = Date.now() - pressAt;",
+    "new": "    const pressed = Date.now() - pressAt;",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
     "name": "AUDITPOI-L2-the-unwrap-on-this-thread",
     "file": "src/ui/poiUvPanel.js",
     "old": "      ed.unwrapOffThread().then((n) => {",

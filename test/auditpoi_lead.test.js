@@ -107,8 +107,11 @@ document.activeElement = document.body;
 
 // ── L1: A PRESS HOLDS THE DOCKS ───────────────────────────────────────
 
-test('AUDIT POI L1 A PRESS HOLDS THE DOCKS UNTIL IT ENDS: a name typed, then Save pressed - the field\'s change in the press\'s mousedown draws nothing under the pointer, so the button pressed is the one there at its release (its click comes), and the dock is drawn again just after; a release never heard holds it PRESS_HOLD_MS at most (mutants: the press unheard; the release unheard; the hold unbounded)', async () => {
+test('AUDIT POI L1 A PRESS HOLDS THE DOCKS UNTIL IT ENDS: a name typed, then Save pressed - the field\'s change in the press\'s mousedown draws nothing under the pointer, so the button pressed is the one there at its release (its click comes), and the dock is drawn again just after; a release never heard holds it PRESS_HOLD_MS at most; a panel destroyed draws nothing more (mutants: the press unheard; the release unheard; the hold unbounded; the destroyed panel drawn)', async () => {
   const P = await over();
+  try { await pressHeld(P); } finally { P.panel.destroy(); }
+});
+async function pressHeld(P) {
   const id = P.edit.create({ px: 1, py: 1, x: 5, z: 5, name: 'Camp' });
   P.edit.edit(id, 'add part', (d) => { d.parts.push(newPart(d, { mesh: P.sha, submeshes: 1, name: 'Hut' })); });
   P.edit.select({ id, part: null });
@@ -138,8 +141,17 @@ test('AUDIT POI L1 A PRESS HOLDS THE DOCKS UNTIL IT ENDS: a name typed, then Sav
   await until(() => !rightOf(P).contains(save2), 'drawn again, unreleased', 3 * PRESS_HOLD_MS);
   const took = Date.now() - at;
   assert.ok(took >= PRESS_HOLD_MS - 20 && took < PRESS_HOLD_MS + 500, `drawn again after ${took} ms`);
+  // destroyed while a press holds it: its release draws nothing into the panel let go of
+  const save3 = button(rightOf(P), 'Save draft (Ctrl+S)');
+  const dock = rightOf(P);
+  P.root.dispatch('pointerdown', {});
+  P.edit.edit(id, 'rename', (d) => { d.name = 'Camp by the road'; });
+  await flush();
   P.panel.destroy();
-});
+  P.root.dispatch('pointerup', {});
+  await sleep(5); await flush();
+  assert.ok(dock.contains(save3), 'nothing drawn after it was destroyed');
+}
 
 // ── L2, L3: THE UV DIALOG ─────────────────────────────────────────────
 

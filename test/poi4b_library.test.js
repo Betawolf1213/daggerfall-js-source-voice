@@ -424,7 +424,8 @@ test('POI-4b RECORDS: the shelf in the migration and the routes in the service; 
   assert.match(index, /if \(route === 'unshelve'\) return answer\(await unshelve\(pctx, me, env, \{ id: body\.id \}\)\);/);
   const panel = src('src/ui/poiEditorPanel.js');
   assert.match(panel, /const keepToo = check\(true, \(\) => \{\}\);/);
-  assert.match(panel, /if \(keepToo\.checked\) \{[\s\S]{0,400}await library\.keepNow\(\{ name: r\.asset\.name, parts: r\.asset\.parts, lights: \[\], meshes \}\);/);
+  // PIN MOVED (AUDIT POI L7): kept with the lights it read (they were left behind, `lights: []`)
+  assert.match(panel, /if \(keepToo\.checked\) \{[\s\S]{0,600}await library\.keepNow\(\{ name: r\.asset\.name, parts: r\.asset\.parts, lights: r\.asset\.lights \?\? \[\], meshes \}\);/);
   assert.match(panel, /library\.keep\(\{ name: d\.name, parts: structuredClone\(d\.parts\), lights: structuredClone\(d\.lights \?\? \[\]\) \}\)/);
   assert.match(panel, /library\.keep\(\{ name: part\.name \|\| part\.key, parts: \[\{ \.\.\.structuredClone\(part\), t: \[0, 0, 0\] \}\], lights: \[\] \}\)/);
 });

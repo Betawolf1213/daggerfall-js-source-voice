@@ -223,11 +223,13 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   // first), and never longer than PRESS_HOLD_MS - a release the panel never hears (let go outside the window) cannot
   // freeze it.
   let pressAt = -Infinity;
+  let gone = false;   // destroyed: a hold's timer, or a draw queued before, draws nothing more
   root.addEventListener('pointerdown', () => { pressAt = Date.now(); }, true);
   const released = () => { setTimeout(() => { pressAt = -Infinity; schedule(); }, 0); };
   root.addEventListener('pointerup', released, true);
   root.addEventListener('pointercancel', released, true);
   function render() {
+    if (gone) return;
     const pressed = Date.now() - pressAt;
     if (pressed < PRESS_HOLD_MS) { setTimeout(() => schedule(), PRESS_HOLD_MS - pressed + 1); return; }
     if (!typingIn(bar)) renderBar();
@@ -950,7 +952,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     openPack: (bytes) => openPack(bytes),
     /** Whether a press landed on the panel (the world leaves it alone). */
     owns: (target) => !!target && typeof root.contains === 'function' && root.contains(target),
-    destroy() { offEdit(); dialogsClosed(); uvDialog?.close(); root.remove?.(); },
+    destroy() { gone = true; offEdit(); dialogsClosed(); uvDialog?.close(); root.remove?.(); },
   };
 }
 

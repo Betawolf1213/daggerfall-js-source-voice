@@ -261,7 +261,9 @@ test('POI-3 WORDS: every code the law, the glTF reader, the mesh and the picture
   for (const c of new Set([...gl.matchAll(/warn\('([a-z0-9-]+)'/g)].map((m) => m[1]))) assert.ok(!unknown(gltfWarningText(c)), `glTF warning ${c} unsaid`);
   for (const c of new Set([...src('src/poi/poiImage.js').matchAll(/error: '([a-z0-9-]+)'/g)].map((m) => m[1]))) assert.ok(!unknown(imageErrorText(c)), `picture code ${c} unsaid`);
   assert.match(meshErrorText('too-many-vertices'), /262,144/);
-  assert.match(meshErrorText('index-range'), /malformed/, 'every other mesh code a damaged model');
+  // PIN MOVED (AUDIT POI L8): the two a damaged file meets have words of their own; every other mesh code is a damaged model
+  assert.match(meshErrorText('index-range'), /names a vertex it does not have/);
+  assert.match(meshErrorText('submesh-run'), /malformed/, 'every other mesh code a damaged model');
   assert.match(problemText({ code: 'never-heard' }), /never-heard/);
   const doc = { parts: [{ key: 'a' }, { key: 'roof', name: 'Roof' }] };
   assert.equal(problemWhere('parts[1].materials[2].alpha', doc), 'Part Roof · material 3');
