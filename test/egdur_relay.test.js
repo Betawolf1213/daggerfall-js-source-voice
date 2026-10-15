@@ -238,11 +238,13 @@ test('EG-H2 THE LAW PIN (section 22): a member\'s `spec` answered with its hall 
   }, { party: false });
   // PIN MOVED (EG-ZC): spec law 5 (the last fragments) became the law on 2026-10-12, and law 4 is kept beside it its seven days.
   // PIN MOVED (AUDIT EG III): spec law 6 (the span decrees on every span) became the law on 2026-10-13, laws 4 and 5 kept beside it
-  // PIN MOVED (EG-HERO-LAY): spec law 7 (the heroes laid) became the law on 2026-10-13 too, laws 4, 5 and 6 kept beside it
-  assert.equal(EG_LAWS[EG_SPEC], '2026-10-13', 'this build draws its own law');
+  // PIN MOVED (EG-HERO-LAY): spec law 7 (the heroes laid) became the law on 2026-10-13 too, laws 4, 5 and 6 kept beside it.
+  // PIN MOVED (AUDIT EG V, f): spec law 8 (the ways laid) became the law on 2026-10-15, laws 4 to 7 kept beside it
+  assert.equal(EG_LAWS[EG_SPEC], '2026-10-15', 'this build draws its own law');
   assert.equal(EG_LAWS[EG_SPEC - 1], '2026-10-13', 'and the law before, kept');
-  assert.equal(EG_LAWS[EG_SPEC - 2], '2026-10-12', 'and the one before it, inside its seven days');
-  assert.equal(EG_LAWS[EG_SPEC - 3], '2026-10-11', 'and the one before that, inside its seven days');
+  assert.equal(EG_LAWS[EG_SPEC - 2], '2026-10-13', 'and the one before it, inside its seven days');
+  assert.equal(EG_LAWS[EG_SPEC - 3], '2026-10-12', 'and the one before that, inside its seven days');
+  assert.equal(EG_LAWS[EG_SPEC - 4], '2026-10-11', 'and the first, inside its seven days');
   assert.equal(EG_LAW_KEEP_DAYS, 7);
   assert.deepEqual([egLawKnown(EG_SPEC), egLawKnown(EG_SPEC - 1), egLawKnown(999), egLawKnown('4')], [true, true, false, false]);
   // a woken room whose law this build does not draw: the breach a void

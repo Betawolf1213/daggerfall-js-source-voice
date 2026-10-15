@@ -17,8 +17,9 @@ test('EG6a THE SWEEP (section 10.5): every course of a seed\'s circle in each ba
   const kinds = new Set();
   let courses = 0, forks = 0;
   // PIN MOVED (AUDIT EG III): spec law 6 draws seed 2's Wellhead circle (Gale-Swept II - two Gust sections) with no Vent left on
-  // its courses; seed 6's circle crosses one in place of seed 1's (whose pieces seeds 2 and 6 cross too)
-  for (const [band, seed] of [[0, 1], [0, 3], [0, 5], [1, 1], [1, 2], [1, 5], [2, 1], [3, 6], [3, 2]]) {
+  // its courses; seed 6's circle crosses one in place of seed 1's (whose pieces seeds 2 and 6 cross too). PIN MOVED (AUDIT EG V,
+  // f): spec law 8 draws seed 1's Shade circle with no Pendulum on its swept roads - seed 9's crosses one beside it
+  for (const [band, seed] of [[0, 1], [0, 3], [0, 5], [1, 1], [1, 2], [1, 5], [2, 1], [2, 9], [3, 6], [3, 2]]) {
     for (const r of sweepSeed(seed, band)) {
       assert.ok(r.ok, `band ${band}: seed ${r.seed} hall ${r.h} road ${r.road} step ${r.step} - ${r.why}`);
       courses++;
@@ -105,8 +106,9 @@ test('EG6a THE SWEEP\'S HARD COURSES (found sweeping seeds 1 to 500 of every ban
   // the hall's own ground at the step's height across the gap before it: a vault's side lane, from the course's line
   const vault = crossed(362, 0, 12), g3 = vault.steps.find((q) => q.i === 3), lane = vault.lanes.find((l) => l.role === 'side');
   assert.ok(lane && Math.abs(lane.ax) < 1e-9 && lane.y === g3.y && lane.az + lane.hw > g3.z - g3.d / 2 - g3.gap && lane.az - lane.hw < g3.z - g3.d / 2, 'the side lane lies across the gap');
-  // two Rails side by side whose travels meet
-  const rails = crossed(470, 2, 52), r2 = rails.steps.find((q) => q.i === 2), r3 = rails.steps.find((q) => q.i === 3);
+  // two Rails side by side whose travels meet. PIN MOVED (AUDIT EG V, f): spec law 8 lays seed 470's Hall 52 through a passage
+  // on the way to its fork - seed 22's Hall 62 keeps two such Rails (its steps 4 and 5)
+  const rails = crossed(22, 2, 62), r2 = rails.steps.find((q) => q.i === 4), r3 = rails.steps.find((q) => q.i === 5);
   assert.deepEqual([r2.kind, r3.kind], ['rail', 'rail']);
   assert.ok(r2.amp + r3.amp > r3.gap, `their travels meet (${r2.amp} + ${r3.amp} over a gap of ${r3.gap})`);
 });

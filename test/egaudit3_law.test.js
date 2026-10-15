@@ -56,10 +56,11 @@ const courtOf = (spec) => {
 
 test('AUDIT EG III LAW 6 - THE LAW PIN (section 22): spec law 6 is the law, laws 4 and 5 kept beside it their seven days each, byte for byte (their 800 halls hashed whole); law 6 laid byte for byte as this audit laid it; a hall of no span decree is law 5\'s whole but its number; a breach opened records law 6, and one of law 5 draws law 5\'s halls (mutants: law 6 not in the table; the law before forgotten; law 6 laid on plain ground)', () => {
   // PIN MOVED (EG-HERO-LAY): spec law 7 (the heroes laid) is the build's law now, law 6 kept beside it its seven days and still
-  // laid byte for byte as this audit laid it (test/eghero_lay.test.js pins law 7)
-  assert.deepEqual([EG_SPEC, EG_DECREE_LAW], [7, 6]);
-  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13' });
-  assert.deepEqual([4, 5, 6, 7, 3].map(egLawKnown), [true, true, true, true, false]);
+  // laid byte for byte as this audit laid it (test/eghero_lay.test.js pins law 7). PIN MOVED (AUDIT EG V, f): spec law 8 (the ways
+  // laid) is the build's law, laws 4 to 7 kept beside it (test/egaudit5_f.test.js pins law 8)
+  assert.deepEqual([EG_SPEC, EG_DECREE_LAW], [8, 6]);
+  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15' });
+  assert.deepEqual([4, 5, 6, 7, 8, 3].map(egLawKnown), [true, true, true, true, true, false]);
   const days = (a, b) => (Date.parse(EG_LAWS[b]) - Date.parse(EG_LAWS[a])) / 86_400_000;
   assert.ok(days(4, 6) <= EG_LAW_KEEP_DAYS && days(5, 6) <= EG_LAW_KEEP_DAYS, 'every law before inside its keep');
   assert.equal(hash(4), 1228307904, 'law 4, byte for byte');
@@ -70,12 +71,12 @@ test('AUDIT EG III LAW 6 - THE LAW PIN (section 22): spec law 6 is the law, laws
     const a = egHallOf(77, h, 0, 5), b = egHallOf(77, h, 0, 6);
     assert.equal(JSON.stringify({ ...b, v: 5 }), JSON.stringify(a), `hall ${h}: law 6 on plain ground is law 5's`);
   }
-  // the director: a breach opened now is of the build's law (PIN MOVED, EG-HERO-LAY: law 7), one of law 6 draws law 6's halls,
-  // and one of law 5 law 5's (its stage's digest)
+  // the director: a breach opened now is of the build's law (PIN MOVED, EG-HERO-LAY: law 7; AUDIT EG V, f: law 8), one of law 6
+  // draws law 6's halls, and one of law 5 law 5's (its stage's digest)
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'a', o: 'A', ew: 0, rh: 0, seed: 77, op: 1_800_000_000_000, co: [['a', 'A', 1]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
-  assert.equal(B.egv, 7, 'the breach records the law it opened under');
+  assert.equal(B.egv, 8, 'the breach records the law it opened under');
   B.h = 2;
-  assert.equal(egStateOf(B, 1_800_000_000_000).dg, egSpecDigest(egHallOf(77, 2, 0, 7)));
+  assert.equal(egStateOf(B, 1_800_000_000_000).dg, egSpecDigest(egHallOf(77, 2, 0, 8)));
   B.egv = 6;
   assert.equal(egStateOf(B, 1_800_000_000_000).dg, egSpecDigest(egHallOf(77, 2, 0, 6)), 'law 6\'s breach, law 6\'s hall');
   B.egv = 5;

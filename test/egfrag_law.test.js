@@ -14,6 +14,7 @@ import { egHallOf, egCircleSpecs, egFirstHallOf, egTubeCircle, egOnFight, egAtDo
 import { EG_ANNALS, EG_ANNALS_FOUND, EG_ANNALS_LORDS, egAnnalsLordPage, egAnnalsNext } from '../src/net/egAnnals.js';
 import { EG_BOSS_KEYS } from '../src/net/egLords.js';
 import { egWindupFloorMs, shLane, shDisc, egPolyIn } from '../src/net/egShape.js';
+import { egFightView } from '../src/net/egWalkGraph.js';   // AUDIT EG V: a caster pillar's stair climbs to the fight ground
 
 const SEEDS = [77, 0xbeef, 3, 0x51ee, 12345];
 /** Every hall over the seeds and twenty circles (the plain ground and one of each span decree). */
@@ -217,10 +218,12 @@ test('EG-FULL LAYER THREE THE CHAMBERS (section 11.4): a chamber is never a disc
     // every second floor in a chamber has its stair
     for (const b of s.discs.filter((d) => d.role === 'balcony' && s.frags.some((f) => f.cls === 'chamber'))) assert.ok(s.ramps.some((q) => Math.abs(q.y1 - b.y) < 1e-9 && Math.hypot(q.bx - b.x, q.bz - b.z) <= b.r + 0.5), `hall ${s.h}: a balcony with its stair`);
     for (const q of s.ramps) {
-      // EG-HERO-LAY (spec law 7): a hero's stair climbs to one of its fight floors - a polygon
-      const top = s.fl.find((x) => Math.abs(x.y - q.y1) < 1e-9 && (x.t === 'd' ? Math.hypot(q.bx - x.x, q.bz - x.z) <= x.r + 0.5 : x.t === 'p' && egPolyIn(x.poly, q.bx, q.bz, 0.5)));
+      // EG-HERO-LAY (spec law 7): a hero's stair climbs to one of its fight floors - a polygon. PIN MOVED (AUDIT EG V, f: spec law
+      // 8 lays a Rampart's caster pillar its stair from the walkway, 2 m up - the fight ground the walk graph's view stands beside
+      // the fight floor, net/egWalkGraph.js egFightView)
+      const top = egFightView(s).fl.find((x) => Math.abs(x.y - q.y1) < 1e-9 && (x.t === 'd' ? Math.hypot(q.bx - x.x, q.bz - x.z) <= x.r + 0.5 : x.t === 'p' && egPolyIn(x.poly, q.bx, q.bz, 0.5)));
       assert.ok(top, `hall ${s.h}: a ramp climbs to a fight floor`);
-      assert.ok(q.y1 - q.y0 >= 2.5 && q.y1 - q.y0 <= 4, 'a second floor 2.5-4 m up');
+      assert.ok(q.y1 - q.y0 >= (top.g === 'pillar' ? 2 : 2.5) && q.y1 - q.y0 <= 4, 'a second floor 2.5-4 m up (a caster pillar 2 m)');
       assert.ok(Math.atan2(q.y1 - q.y0, Math.hypot(q.bx - q.ax, q.bz - q.az)) < (60 * Math.PI) / 180, 'walkable');
     }
     for (const d of s.deco.filter((x) => x.t === 'arch')) assert.equal(d.w, 6, 'the arch 6 m wide');

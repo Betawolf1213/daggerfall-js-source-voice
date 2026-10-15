@@ -1143,12 +1143,12 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC, hero = /** @type {{ n
    * course (the Steps' records carry their `road`), proven road by road; both end on the end plate, at the Low Road's height.
    * AUDIT EG V - LAW 8 (section 11.4's "how many", lane5 #11): from circle 3 the way to the fork runs through a passage of the
    * band's library in place of its run - one span in two, every span from circle 11 - so both roads pass through a fragment and
-   * the hall keeps its length; from circle 11, one span in two, the Low Road's still ground is a second passage where the hall
+   * the hall keeps inside EG_HALL_LEN_MAX (never under three ranks of the span decrees, whose sections take its room); from circle 11, one span in two, the Low Road's still ground is a second passage where the hall
    * has room (EG_FORK_THIRD_CM); and a Reliquary Vault (section 8.7, lane3 #18) stands off the fork's island, across from the
    * Low Road's bridge, where either road's company reaches it.
    */
   function fork(two, extra) {
-    const trunk = L8 && c >= 3 && (c >= 11 || r() < 0.5);
+    const trunk = L8 && c >= 3 && extra <= 2 && (c >= 11 || r() < 0.5);
     if (trunk) cave(); else run(two[0], extra > 0 ? 2 : between(r, 3, 4));
     const zc = island(trunk ? between(r, 200, 260) : gap()), yF = y, zF = edge;
     spot('fork', X, zc);

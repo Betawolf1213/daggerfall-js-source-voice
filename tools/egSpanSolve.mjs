@@ -277,7 +277,9 @@ export function sweepCourse(S, spec, road, t0, trace = null) {
     const pair = pairs[pi], { a, b } = pair, at = b ? b.i : a ? `${a.i}>ground` : 'ground';
     // the Low Road's first launch: across the fork's bridge to its island first
     if (road === 1 && spec.fork && (b ?? a)?.road === 1 && (pi === 0 || ((pairs[pi - 1].b ?? pairs[pi - 1].a)?.road ?? 0) === 0)) {
-      const err = walkTo(spec.fork.x, spec.fork.z - 3) ?? walkTo(spec.fork.lowX, spec.fork.z - 3);   // the fork's island's middle, then the bridge
+      // the fork's island's middle, then the bridge - AUDIT EG V (spec law 8): over the still ground's gaps (a passage on the way to
+      // the fork leaves its far floor 2-2.6 m short of the island, as every passage leaves the island after it)
+      const err = crossGround(spec.fork.x, spec.fork.z - 3) ?? walkTo(spec.fork.lowX, spec.fork.z - 3);
       if (err) return fail(at, `${err} on the fork's bridge`);
     }
     // a riser is run up (CLIMB3's wall run at skill 0 - the online page's parkour), never jumped onto
