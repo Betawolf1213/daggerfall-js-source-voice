@@ -38,8 +38,8 @@
   {
     "name": "POI4-the-normal-by-the-plain-matrix",
     "file": "src/poi/gltfImport.js",
-    "old": "            n = norm3(xformDir(N, n));",
-    "new": "            n = norm3(xform(linearOf(M), n));",
+    "old": "            n = norm3(xformDir(Nv, n));",
+    "new": "            n = norm3(xform(linearOf(Mv), n));",
     "tests": [
       "test/poi4_gltf.test.js"
     ]
@@ -65,7 +65,7 @@
   {
     "name": "POI4-the-flat-normals-unflipped",
     "file": "src/poi/gltfImport.js",
-    "old": "            const e0 = at(t), e1 = at(flip ? t + 2 : t + 1), e2 = at(flip ? t + 1 : t + 2);",
+    "old": "            const e0 = at(t), e1 = at(f ? t + 2 : t + 1), e2 = at(f ? t + 1 : t + 2);",
     "new": "            const e0 = at(t), e1 = at(t + 1), e2 = at(t + 2);",
     "tests": [
       "test/poi4_gltf.test.js"

@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { poiDiff, quatAngleDeg } from '../src/poi/poiDiff.js';
 import { diffText, packErrorText } from '../src/poi/poiText.js';
 import { writeGlb, mirrorQuatX } from '../src/poi/gltfExport.js';
-import { readGltf, bakeGltf } from '../src/poi/gltfImport.js';
+import { readGltf, bakeGltf, poiMaterialOf } from '../src/poi/gltfImport.js';
 import { writePack, readPack, packAssetName } from '../src/poi/poiPack.js';
 import { exportModel, exportPack, importPack, fileNameOf } from '../src/poi/poiTransfer.js';
 import { readZipEntries } from '../src/scenes/dataSource.js';
@@ -110,7 +110,10 @@ test('POI-6 BACK OUT AS glTF: a part written as a node with its offset, turn and
   assert.equal(json.extensions.KHR_lights_punctual.lights[0].range, 6);
   assert.deepEqual(json.nodes[1].rotation, mirrorQuatX(r));
   const model = readGltf(glb);
-  assert.deepEqual(model.warnings, [{ code: 'camera-light' }], 'the importer sets the light aside, saying so');
+  // PIN MOVED (AUDIT POI G7): the importer reads a point light back now (gltfImport.js poiLightOf) - it was set aside,
+  // said as `camera-light`
+  assert.deepEqual(model.warnings, [], 'the light read back, nothing set aside');
+  assert.equal(model.lights.length, 1);
   const [back] = bakeGltf(model, { split: 'nodes' });
   assert.deepEqual(back.position, [2, 1, -3]);
   assert.deepEqual(back.mesh.submeshes, m.submeshes);
@@ -137,7 +140,9 @@ test('POI-6 BACK OUT AS glTF: a part written as a node with its offset, turn and
   assert.deepEqual(m0.color, [1, 0, 0, 1]);
   assert.deepEqual([...model.images[m0.base.image].bytes], [...PNG], 'its picture embedded');
   assert.deepEqual([m1.alpha, m1.cutoff, m1.twoSided], ['cutout', 0.3, true]);
-  assert.deepEqual(m1.emissiveColor, [4, 2, 0], 'the glow past one, by its strength');
+  // PIN MOVED (AUDIT POI R10): the glow is written linear with its strength apart - the game's [4, 2, 0] is the POI
+  // material poiMaterialOf turns it back to, not readGltf's factor
+  assert.deepEqual(poiMaterialOf(m1).emissiveColor, [4, 2, 0], 'the glow past one, by its strength');
   // a WebP picture: the extension required (there is no fallback)
   const web = writeGlb({ name: 'W', parts: [{ ...parts[0], materials: [{ ...DEFAULT_MATERIAL, texture: webSha }, { ...DEFAULT_MATERIAL }] }], pictures: new Map([[webSha, { bytes: WEBP, format: 'webp' }]]) });
   const wj = JSON.parse(new TextDecoder().decode(web.subarray(20, 20 + new DataView(web.buffer).getUint32(12, true))));
