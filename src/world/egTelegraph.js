@@ -18,7 +18,7 @@
 //     drawn as one quad at their own height, never clipped onto a fight floor near them.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { telegraphBounds, telegraphField, TELEGRAPH_KIND, TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
+import { telegraphBounds, telegraphField, telegraphStrip, TELEGRAPH_KIND, TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
 import { egInShape, segDist, egPieceIn } from '../net/egShape.js';
 import { egHazardParts, EG_HAZARDS } from '../net/egFragLaw.js';
 import { egFightFloorAt } from '../net/egFair.js';
@@ -111,25 +111,56 @@ function cutPoly(src, n, dst, ax, at, sign) {
   }
   return m;
 }
+/** AUDIT EG V (L6-2): one polygon (x, z flat in `src`, `n` points) cut to the side of the line where nx * x + nz * z >= `c`,
+ *  into `dst`. Answers its points. */
+function cutLine(src, n, dst, nx, nz, c) {
+  let m = 0;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n, da = nx * src[i * 2] + nz * src[i * 2 + 1] - c, db = nx * src[j * 2] + nz * src[j * 2 + 1] - c;
+    if (da >= 0) { dst[m * 2] = src[i * 2]; dst[m * 2 + 1] = src[i * 2 + 1]; m++; }
+    if ((da >= 0) !== (db >= 0)) {
+      const k = da / (da - db);
+      dst[m * 2] = src[i * 2] + (src[j * 2] - src[i * 2]) * k; dst[m * 2 + 1] = src[i * 2 + 1] + (src[j * 2 + 1] - src[i * 2 + 1]) * k; m++;
+    }
+  }
+  return m;
+}
 /**
  * A floor's triangles (`tris`, x, z pairs) clipped to `box` [x0, z0, x1, z1] (null: whole) into `out` from float `at` -
- * each triangle cut to the box's four sides (Sutherland-Hodgman) and fanned back to triangles. `out` must hold five
+ * each triangle cut to the box's four sides (Sutherland-Hodgman) and fanned back to triangles. AUDIT EG V (L6-2): with a
+ * `strip` (render/gateTelegraph.js telegraphStrip - a tether's own ground, `box` about it), cut to the strip's four sides
+ * instead, so a tether laid across a floor shades its own strip and not the square about it. `out` must hold five
  * triangles a triangle more. Answers the next float. Pure but for `out`.
  * @param {Float32Array|number[]} tris @param {number[]|null} box @param {Float32Array} out @param {number} at
+ * @param {{ a: number[], u: number[], len: number, w: number }|null} [strip]
  */
-export function egClipTris(tris, box, out, at) {
+export function egClipTris(tris, box, out, at, strip = null) {
   let w = at;
+  // the strip's four sides: along it from its start to its length, across it either side of its line (its vertex stage's
+  // own frame - render/gateTelegraph.js TELEGRAPH_VS, `vec2(uWalkU.y, -uWalkU.x)`)
+  const ux = strip ? strip.u[0] : 0, uz = strip ? strip.u[1] : 0, vx = uz, vz = -ux;
+  const ua = strip ? ux * strip.a[0] + uz * strip.a[1] : 0, va = strip ? vx * strip.a[0] + vz * strip.a[1] : 0;
+  const inStrip = (x, z) => { const s = ux * x + uz * z - ua, q = vx * x + vz * z - va; return s >= 0 && s <= strip.len && q >= -strip.w && q <= strip.w; };
   for (let t = 0; t + 5 < tris.length; t += 6) {
     if (!box) { for (let k = 0; k < 6; k++) out[w++] = tris[t + k]; continue; }
     let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
     for (let k = 0; k < 6; k += 2) { x0 = Math.min(x0, tris[t + k]); x1 = Math.max(x1, tris[t + k]); z0 = Math.min(z0, tris[t + k + 1]); z1 = Math.max(z1, tris[t + k + 1]); }
     if (x1 < box[0] || x0 > box[2] || z1 < box[1] || z0 > box[3]) continue;
-    if (x0 >= box[0] && x1 <= box[2] && z0 >= box[1] && z1 <= box[3]) { for (let k = 0; k < 6; k++) out[w++] = tris[t + k]; continue; }
+    const whole = strip ? inStrip(tris[t], tris[t + 1]) && inStrip(tris[t + 2], tris[t + 3]) && inStrip(tris[t + 4], tris[t + 5]) : x0 >= box[0] && x1 <= box[2] && z0 >= box[1] && z1 <= box[3];
+    if (whole) { for (let k = 0; k < 6; k++) out[w++] = tris[t + k]; continue; }
     for (let k = 0; k < 6; k++) _pa[k] = tris[t + k];
-    let n = cutPoly(_pa, 3, _pb, 0, box[0], 1);
-    n = cutPoly(_pb, n, _pa, 0, box[2], -1);
-    n = cutPoly(_pa, n, _pb, 1, box[1], 1);
-    n = cutPoly(_pb, n, _pa, 1, box[3], -1);
+    let n;
+    if (strip) {
+      n = cutLine(_pa, 3, _pb, ux, uz, ua);
+      n = cutLine(_pb, n, _pa, -ux, -uz, -(ua + strip.len));
+      n = cutLine(_pa, n, _pb, vx, vz, va - strip.w);
+      n = cutLine(_pb, n, _pa, -vx, -vz, -(va + strip.w));
+    } else {
+      n = cutPoly(_pa, 3, _pb, 0, box[0], 1);
+      n = cutPoly(_pb, n, _pa, 0, box[2], -1);
+      n = cutPoly(_pa, n, _pb, 1, box[1], 1);
+      n = cutPoly(_pb, n, _pa, 1, box[3], -1);
+    }
     for (let k = 1; k + 1 < n; k++) { out[w++] = _pa[0]; out[w++] = _pa[1]; out[w++] = _pa[k * 2]; out[w++] = _pa[k * 2 + 1]; out[w++] = _pa[k * 2 + 2]; out[w++] = _pa[k * 2 + 3]; }
   }
   return w;
@@ -199,7 +230,7 @@ export function egFloorPlan(shapes, floors, feet, buf, max = EG_FLOOR_DRAWS_MAX)
       if (B && (B[2] < f.box[0] || B[0] > f.box[2] || B[3] < f.box[1] || B[1] > f.box[3])) continue;
       if (out.length < n + f.tris.length * 5) { const grown = new Float32Array(Math.max(out.length * 2, n + f.tris.length * 5)); grown.set(out.subarray(0, n)); out = grown; }
       const at = n;
-      n = egClipTris(f.tris, B, out, n);
+      n = egClipTris(f.tris, B, out, n, telegraphStrip(sh));   // AUDIT EG V (L6-2): a tether's floor cut to its own strip
       if (n > at) draws.push({ sh, f, first: at / 2, count: (n - at) / 2, over: null, i: r.i });
     }
   }

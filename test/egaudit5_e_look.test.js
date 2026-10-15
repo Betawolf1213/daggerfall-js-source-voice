@@ -1,0 +1,163 @@
+// AUDIT EG V (2026-10-15; bible/11-Multiplayer/Elite-Gates.md sections 10.3, 11.9, 25.2 and 25.4) - FIX GROUP E, "render":
+// the look's laws, pinned on the shapes the breach client's fight mints (scenes/egFight.js under createEgClient, fed the
+// director's own words) and on the code the GPU runs (test/glsl.mjs over the Spire's stage):
+//   L6-2   AOE-PERF's tight quads reach the Spire's thin shapes: a pull-apart tether's and a stay-close chain's floor draws
+//          are their own strips (render/gateTelegraph.js telegraphStrip; world/egTelegraph.js egClipTris), a Vestige aura's
+//          ring its own small square (TELEGRAPH_RING_REACH) - each holding every fragment its pool writes.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { glslFunctions, GlslDiscard } from './glsl.mjs';
+import { egHallOf, egCircleSpecs, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
+import { egBreachNew, egEnter, egStep, egStateOf } from '../src/net/egBrain.js';
+import { egTethersOut } from '../src/net/egBodies.js';
+import { EG_VESTIGES } from '../src/net/egVestige.js';
+import { validEgOut } from '../src/net/wire.js';
+import { createEgClient } from '../src/scenes/egClient.js';
+import { createEgFight } from '../src/scenes/egFight.js';
+import { egHallCentre } from '../src/world/egHall.js';
+import { egFightFloors, egFloorPlan, EG_AURA_RING } from '../src/world/egTelegraph.js';
+import { realmToDungeon } from '../src/net/sdBrain.js';
+import { lookAt, perspective } from '../src/world/mat4.js';
+import {
+  GateTelegraphRenderer, TELEGRAPH_FS_SPIRE, TELEGRAPH_KIND, TELEGRAPH_POOL_SPIRE, TELEGRAPH_POINTS_MAX, TELEGRAPH_REACH, TELEGRAPH_RING_REACH, TELEGRAPH_TICK_REACH, TELEGRAPH_TIGHT_PAD,
+  telegraphBounds, telegraphStrip, telegraphQuadOver,
+} from '../src/render/gateTelegraph.js';
+
+const ME = 'acct-0', PEER = 'acct-1';
+
+/** The first Court of seeds 1.. with a fight floor disc of 12 m or more (the lane's probe's), its disc. */
+function courtWithDisc() {
+  for (let seed = 1; seed <= 60; seed++) for (let c = 1; c <= 12; c++) for (const s of egCircleSpecs(seed, c, 0)) if (s.kind === 'court' && (s.fl ?? []).some((f) => f.t === 'd' && f.r >= 12)) return { seed, spec: s, F: s.fl.find((f) => f.t === 'd' && f.r >= 12) };
+  throw new Error('no court');
+}
+
+/** A breach of two woken in `spec`'s hall, me and my companion on its fight floor 9 m apart along a diagonal, my run holding
+ *  a Vestige aura, the fight told a Blood Tether and Morvayn's chain between us (net/egBodies.js egTethersOut - the
+ *  director's own word); the client's fight's frame and draw run over a recording GL. Answers its shapes and the GL's calls. */
+function fightOnFloor() {
+  const { seed, spec, F } = courtWithDisc();
+  const calls = [];
+  const gl = new Proxy({ drawingBufferWidth: 1920, drawingBufferHeight: 1080 }, { get(t, k) {
+    if (k in t) return t[k];
+    if (typeof k !== 'string') return undefined;
+    if (k === 'getProgramParameter' || k === 'getShaderParameter') return () => true;
+    if (k === 'getUniformLocation') return (_p, n) => n;
+    if (k.toUpperCase() === k) return 1;
+    return (...a) => { calls.push([k, ...a.map((x) => (ArrayBuffer.isView(x) ? Array.from(x) : x))]); return {}; };
+  } });
+  const renderer = { gl, _worldViewportPx: null, createBillboardBatch: () => ({ origin: [0, 0, 0] }), destroyBillboardBatch: () => {} };
+  const centre = egHallCentre(spec), at = (x, z) => [centre[0] + x, centre[1] + (F.y ?? 0), centre[2] + z];
+  const mine = [F.x - 4.5, F.z - 4.5], theirs = [F.x + 4.5, F.z + 4.5];
+  const player = { pos: at(...mine), height: 1.8, grounded: true, collider: { move: () => {} } };
+  const peerEye = at(...theirs); peerEye[1] += 1.6;
+  const entity = { level: 30, health: 80, maxHealth: 100, magicka: 10, maxMagicka: 50, fatigue: 0, stats: {}, items: [] };
+  let clock = 1_800_000_000_000;
+  const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: ME, o: 'Mac', ew: 0, rh: 0, seed, op: clock - EG_SEALED_MS - 60_000, co: [[ME, 'Mac', 1], [PEER, 'Ann', 2]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
+  for (const sub of [ME, PEER]) egEnter(B, sub, `ord${sub}`.padEnd(20, 'x'), 30, clock);
+  const aura = EG_VESTIGES.find((v) => /** @type {any} */ (v).aura > 0);
+  B.mem[ME].vs = [[aura.id, 1]];
+  B.h = spec.h; B.sg = 'arrive'; B.wk = clock; B.cnt = { left: 1_500_000, at: clock }; B.pulledAt = clock; B.gatherAt = clock - EG_GATHER_MS; B.su = clock;
+  const modes = { mode: 'dungeon', egHallBreach: () => B.b, egHallCircle: () => spec.c, egPlace: () => true, egLeave: () => true, egHallReturn: () => null, dungeonCtx: { exitDoors: [] } };
+  const online = { welcomes: 1, terminal: false, error: null, sendEg: () => true };
+  let fight = null;
+  const client = createEgClient({ modes: () => modes, online: () => online, hub: () => null, now: () => clock, entity, player, cam: { pos: [0, 0, 0], yaw: 0 }, renderer,
+    account: { me: () => ME, guest: () => false, keys: async () => ({ ok: false }) }, say: () => {}, mid: () => {}, site: () => ({}), wire: () => null, landAt: () => true, hurt: () => {}, peers: () => [{ sub: PEER, pos: peerEye }], store: null,
+    fight: (link) => (fight = createEgFight({ renderer, gl, link, me: () => ME, player: () => entity, feet: () => player.pos, peerAt: (sub) => (sub === PEER ? peerEye : null) })), win: { innerWidth: 1920, innerHeight: 1080, matchMedia: () => ({ matches: false }) } });
+  const tell = (w) => { if (w.to && w.to !== ME) return; const v = validEgOut(JSON.parse(JSON.stringify(w))); if (v) client.word(v); };
+  tell(egStateOf(B, clock));
+  let s = 3;
+  const rng = () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; };
+  const poses = () => [[ME, mine], [PEER, theirs]].map(([sub, p]) => ({ sub, sx: spec.x0 + p[0], z: p[1], dead: false, at: clock }));
+  for (let k = 0; k < 3; k++) { clock += 100; for (const w of egStep(B, clock, poses(), rng)) tell(w); tell(egStateOf(B, clock)); }
+  assert.equal(B.sg, 'trial', 'the hall woke');
+  B.F.tethers.push([ME, PEER, 1, 1400], [ME, PEER, 2, 800]);   // a Blood Tether breaking at 14 m, Morvayn's chain (net/egLords.js's own tuples)
+  const out = [];
+  egTethersOut(B.F, out);
+  for (const w of out) tell(w);
+  client.frame();
+  const proj = perspective(new Float32Array(16), 1.2, 16 / 9, 0.1, 2000), eye = [player.pos[0], player.pos[1] + 5, player.pos[2] - 8];
+  calls.length = 0;
+  client.drawPass(proj, lookAt(new Float32Array(16), eye, player.pos, [0, 1, 0]), eye, clock / 1000, null);
+  return { spec, F, fight, calls, floors: egFightFloors(spec) };
+}
+
+/** The Spire's fragment stage for shape `sh` (top-down, its floor's court), every derivative `fw`: (x, z) => rgba, or null
+ *  where it discards. */
+function spireFragOf(sh, fw, court) {
+  const fns = glslFunctions(TELEGRAPH_FS_SPIRE, {
+    uKind: sh.kind, uOrigin: [...sh.origin], uYaw: sh.yaw ?? 0, uR: sh.r, uHalfArc: sh.halfArc ?? 0, uBody: sh.body ?? 0, uEnd: [...sh.end], uHalfW: sh.halfW, uR0: sh.r0 ?? 0, uR1: sh.r1 ?? 0,
+    uPts: Array.from({ length: TELEGRAPH_POINTS_MAX }, (_, i) => sh.points?.[i] ?? [0, 0]), uCount: sh.points?.length ?? 0,
+    uT: sh.t, uFlash: sh.flash, uAlpha: Math.min(1, sh.alpha), uColor: [...sh.color], uEdgeCol: [...sh.edge], uCourt: [...court.courts[0]], uFloorR: court.r,
+    uStyle: sh.style ?? 0, uSince: sh.since ?? 0, uSpan: sh.span ?? 1, uAfter: sh.after ?? -1, uPool: sh.pool | 0, uRunS: sh.runS ?? 0, uLineW: 1.6,
+    uFogMode: 0, uFogDensity: 0, uFogRange: [0, 1], uCamPos: [0, 0, 0], uOnWalk: 0, uWalkC0: [0, 0], uWalkC1: [0, 0], uFogFloor: [0, 0, 1], uFillK: 1, uLook: 0,
+    vCourt: [0, 0], vWorld: [0, 0.05, 0], o: [0, 0, 0, 0], fwidth: (x) => (Array.isArray(x) ? x.map(() => fw) : fw),
+  });
+  const G = fns.globals;
+  return (x, z) => { G.vCourt = [x, z]; G.vWorld = [x, 0.05, z]; try { fns.main(); return [...G.o]; } catch (e) { if (e instanceof GlslDiscard) return null; throw e; } };
+}
+const writes = (o) => !!o && (o[0] !== 0 || o[1] !== 0 || o[2] !== 0 || o[3] !== 0);
+function* grid(q, step) { for (let x = q[0]; x <= q[2] + 1e-9; x += step) for (let z = q[1]; z <= q[3] + 1e-9; z += step) yield [x, z]; }
+const inBox = (q, [x, z], e = 0) => x >= q[0] - e && x <= q[2] + e && z >= q[1] - e && z <= q[3] + e;
+/** Is (x, z) inside strip `st` (render/gateTelegraph.js telegraphStrip - the vertex stage's own frame), `e` m slack? */
+const inStrip = (st, [x, z], e = 0) => { const s = st.u[0] * (x - st.a[0]) + st.u[1] * (z - st.a[1]), q = st.u[1] * (x - st.a[0]) - st.u[0] * (z - st.a[1]); return s >= -e && s <= st.len + e && Math.abs(q) <= st.w + e; };
+const triArea = (b, i) => Math.abs((b[i + 2] - b[i]) * (b[i + 5] - b[i + 1]) - (b[i + 4] - b[i]) * (b[i + 3] - b[i + 1])) / 2;
+/** The pixel sizes the stage is read at: near, a far rim's at a grazing look, and past it. */
+const PIXELS = [0.002, 0.08, 4];
+
+test('AUDIT EG V L6-2 THE SPIRE\'S THIN SHAPES DRAW ON THEIR OWN GROUND (section 25.4; FIELD BUGS 2026-10-13e AOE-PERF\'s law, "a path\'s or a tether\'s quad is its own strip"): on the shapes the breach client\'s fight mints - a Blood Tether (the pull-apart grammar, pool 5), Morvayn\'s chain (the stay-close, pool 6) and a Vestige aura\'s ring (pool 7) - every fragment the Spire\'s stage writes, at every pixel\'s size, lies inside the tether\'s strip (twice its half-width and TELEGRAPH_TICK_REACH across a pull-apart\'s, its half-width a chain\'s) and inside the ring\'s square (TELEGRAPH_RING_REACH past it); the floor plan cuts each tether\'s fight floor to that strip and lays the ring\'s quad over that square - a fraction of the box TELEGRAPH_REACH about each (mutants: no strip for a tether; the tick\'s reach narrower than the shader\'s; the strip unread by the floor\'s clip; the ring\'s reach back to TELEGRAPH_REACH; the ring\'s line uncut)', () => {
+  const { F, fight, calls, floors } = fightOnFloor();
+  const shapes = fight.shapes();
+  const pull = shapes.find((s) => s.pool === TELEGRAPH_POOL_SPIRE.pull), chain = shapes.find((s) => s.pool === TELEGRAPH_POOL_SPIRE.chain), ring = shapes.find((s) => s.pool === TELEGRAPH_POOL_SPIRE.ring);
+  assert.ok(pull && chain && ring, 'the fight minted all three');
+  assert.equal(pull.kind, TELEGRAPH_KIND.lane); assert.equal(chain.kind, TELEGRAPH_KIND.lane); assert.equal(ring.kind, TELEGRAPH_KIND.disc);
+  assert.equal(ring.r, EG_AURA_RING.r);
+  const court = { r: F.r, courts: [[F.x, F.z]] };
+  // the strips and the ring's square: their widths the shader's own reach
+  const sp = telegraphStrip(pull), sc = telegraphStrip(chain);
+  assert.ok(Math.abs(sp.w - (2 * pull.halfW + TELEGRAPH_TICK_REACH + TELEGRAPH_TIGHT_PAD)) < 1e-12, 'a pull-apart\'s strip: its break tick\'s reach');
+  assert.ok(Math.abs(sc.w - (chain.halfW + TELEGRAPH_TIGHT_PAD)) < 1e-12, 'a chain\'s: its links\'');
+  for (const [sh, st] of [[pull, sp], [chain, sc]]) {   // their bounds (THE TELEGRAPH BUDGET's nearest, the floors' reach) the strip's, never the glow's
+    assert.deepEqual(telegraphBounds(sh), [Math.min(sh.origin[0], sh.end[0]) - st.w, Math.min(sh.origin[1], sh.end[1]) - st.w, Math.max(sh.origin[0], sh.end[0]) + st.w, Math.max(sh.origin[1], sh.end[1]) + st.w]);
+  }
+  const rb = telegraphBounds(ring);
+  assert.deepEqual(rb, [ring.origin[0] - ring.r - TELEGRAPH_RING_REACH, ring.origin[1] - ring.r - TELEGRAPH_RING_REACH, ring.origin[0] + ring.r + TELEGRAPH_RING_REACH, ring.origin[1] + ring.r + TELEGRAPH_RING_REACH]);
+  // every fragment written lies on that ground, at every pixel's size: searched finely about it (a band 1 m past each side
+  // of a strip, in its own frame) and coarsely over the whole box it was laid over, TELEGRAPH_REACH about it
+  const wide = (sh) => [Math.min(sh.origin[0], sh.end[0]) - sh.halfW - TELEGRAPH_REACH, Math.min(sh.origin[1], sh.end[1]) - sh.halfW - TELEGRAPH_REACH, Math.max(sh.origin[0], sh.end[0]) + sh.halfW + TELEGRAPH_REACH, Math.max(sh.origin[1], sh.end[1]) + sh.halfW + TELEGRAPH_REACH];
+  const about = function* (st) { for (let s = -1; s <= st.len + 1; s += 0.1) for (let q = -st.w - 1; q <= st.w + 1; q += 0.04) yield [st.a[0] + st.u[0] * s + st.u[1] * q, st.a[1] + st.u[1] * s - st.u[0] * q]; };
+  const pts = (box, step, near) => [...grid(box, step), ...near];
+  for (const [label, sh, inside, points] of [['the Blood Tether', pull, (p) => inStrip(sp, p), pts(wide(pull), 0.37, about(sp))], ['the chain', chain, (p) => inStrip(sc, p), pts(wide(chain), 0.37, about(sc))],
+    ['the aura\'s ring', ring, (p) => inBox(rb, p), pts([ring.origin[0] - ring.r - TELEGRAPH_REACH, ring.origin[1] - ring.r - TELEGRAPH_REACH, ring.origin[0] + ring.r + TELEGRAPH_REACH, ring.origin[1] + ring.r + TELEGRAPH_REACH], 0.06, [])]]) {
+    let drawn = 0;
+    for (const fw of PIXELS) {
+      const frag = spireFragOf(sh, fw, court);
+      for (const p of points) {
+        if (!writes(frag(p[0], p[1]))) continue;
+        drawn++;
+        assert.ok(inside(p), `${label} drawn at ${p.map((v) => v.toFixed(2))} (a pixel ${fw} m) - outside its own ground`);
+      }
+    }
+    assert.ok(drawn > 20, `${label} drawn (${drawn})`);
+  }
+  // the floor plan: each tether's floor cut to its strip - every vertex in it, a sliver of the box about it
+  const plan = fight.plan();
+  for (const [label, sh, st] of [['the Blood Tether', pull, sp], ['the chain', chain, sc]]) {
+    const ds = plan.draws.filter((d) => d.sh === sh && d.f);
+    assert.ok(ds.length >= 1, `${label} drawn on its floor`);
+    let area = 0;
+    for (const d of ds) for (let i = d.first * 2; i < (d.first + d.count) * 2; i += 6) { area += triArea(plan.buf, i); for (let k = 0; k < 6; k += 2) assert.ok(inStrip(st, [plan.buf[i + k], plan.buf[i + k + 1]], 1e-3), `${label}: a vertex of its floor's draw outside its strip`); }
+    const was = egFloorPlan([{ ...sh, pool: 0 }], floors, null, null);   // the same lane as a blow, which keeps its glow's box
+    let wasArea = 0;
+    for (const d of was.draws) for (let i = d.first * 2; i < (d.first + d.count) * 2; i += 6) wasArea += triArea(was.buf, i);
+    assert.ok(area <= st.len * 2 * st.w * 1.001 && area > 0.5 * st.len * 2 * st.w, `${label}: its strip's ground (${area.toFixed(1)} m2 of ${(st.len * 2 * st.w).toFixed(1)})`);
+    assert.ok(area < wasArea / 10, `${label}: a tenth of the box it was (${area.toFixed(1)} of ${wasArea.toFixed(1)} m2)`);
+  }
+  // the ring: its own surface's quad, laid over its square (the pass's uLo/uHi)
+  const rd = plan.draws.find((d) => d.sh === ring);
+  assert.ok(rd && !rd.f, 'the ring is its own quad');
+  const q = telegraphQuadOver(ring, 0, rd.over.courts, rd.over.r);
+  assert.deepEqual(q.map((v) => +v.toFixed(9)), rb.map((v) => +v.toFixed(9)), 'laid over its square');
+  const lo = calls.filter((c) => c[0] === 'uniform2f' && c[1] === 'uLo').map((c) => c.slice(2).map((v) => +v.toFixed(6)));
+  assert.ok(lo.some((v) => v[0] === +rb[0].toFixed(6) && v[1] === +rb[1].toFixed(6)), 'and the pass laid it so');
+  assert.ok(GateTelegraphRenderer, 'the pass');
+});
