@@ -178,7 +178,7 @@ test('EG-PLAY THE ROOM: it admits its company alone, inside the open window - a 
   });
 });
 
-test('EG-PLAY ONE LIFE (EG-FULL, section 16.5): a death in the breach is the member\'s fall, said by their own word (`fell` - the death save turned it aside) - said to all with whether it is final (a solo member's is: nobody living is left to recall it), the member a witness; no member living, the breach ends a wipe, the end receipt (`e1`, kind x, why wipe) minted to its socket, and its room beats no more (mutants: a death that costs nothing; the end never said; the last living member's fall said first)', async () => {
+test('EG-PLAY ONE LIFE (EG-FULL, section 16.5): a death in the breach is the member\'s fall, said by their own word (`fell` - the death save turned it aside) - said to all with whether it is final (a solo member\'s is: nobody living is left to recall it), the member a witness; no member living, the breach ends a wipe, the end receipt (`e1`, kind x, why wipe) minted to its socket, and its room beats no more (mutants: a death that costs nothing; the end never said; the last living member\'s fall said first)', async () => {
   await withBreach(async ({ eg, beat, admit, step }) => {
     const spec = egHallOf(eg.store.get(EG_KEY).seed, 1);
     step(EG_SEALED_MS); await beat(1000);
