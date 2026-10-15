@@ -19,7 +19,7 @@ import {
 } from '../src/world/egLook.js';
 import { EG_LINE_FS, egLineVertices, EG_LINE_FLOATS } from '../src/render/egLinePass.js';
 import { EG_MIST_FS } from '../src/render/egMistPass.js';
-import { EG_SKY_FS } from '../src/render/egSkyPass.js';
+import { EG_SKY_PAINT_FS } from '../src/render/egSkyMap.js';   // PIN MOVED (EG-LOOK): the sky painted, a painter a band
 import { TELEGRAPH_FS, TELEGRAPH_FS_SPIRE, TELEGRAPH_KIND, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL, TELEGRAPH_POOL_HAVEN, spireTelegraphFs } from '../src/render/gateTelegraph.js';
 import { egCircleSpecs, egBandOfCircle, EG_BRINK_HALLS } from '../src/net/egLaw.js';
 import { egToDungeon, egIsleDisc, EG_HALL_FOG } from '../src/world/egHall.js';
@@ -158,24 +158,24 @@ test('EG-G2 THE LINES\' SHADER (sections 25.3 and 25.6): the edge line its gold,
   assert.deepEqual([...v.subarray(6 * EG_LINE_FLOATS + 6, 6 * EG_LINE_FLOATS + 10)], [-1, 0, EG_LINE_KIND.track, 1]);
 });
 
-test('EG-G2 THE STAIR AND THE SKIES (section 7; EG16\'s "the Spire\'s underside in every sky, smaller each band"): the full fall at each band\'s first hall, the veil elsewhere, a plain cut under reduced motion; the dither 0.8 s; each band\'s sky its own and the underside smaller each band; the sky\'s shader black where the underside hangs and the band\'s void beside it, the deep below the horizon lit, the Shade\'s moon (mutants: the fall every hall; the underside growing; the shader drawing no underside)', () => {
+test('EG-G2 THE STAIR AND THE SKIES (section 7; EG16\'s "the Spire\'s underside in every sky, smaller each band"): the full fall at each band\'s first hall, the veil elsewhere, a plain cut under reduced motion; the dither 0.8 s; each band\'s sky its own and the underside smaller each band; the sky\'s painters\' void overhead (EG-LOOK, PIN MOVED: the underside the wreck\'s model, never painted), the deep below the horizon lit, the Shade\'s moon (mutants: the fall every hall; the underside growing; the deep unlit)', () => {
   assert.deepEqual([...EG_STAIR.bandFirst], [1, ...EG_BRINK_HALLS]);
   assert.equal(egStairOf(1), 'fall'); assert.equal(egStairOf(26), 'fall'); assert.equal(egStairOf(2), 'veil'); assert.equal(egStairOf(27), 'veil');
   assert.equal(egStairOf(26, true), 'cut'); assert.equal(egStairOf(2, true), 'cut');
   assert.equal(EG_STAIR.dither, 0.8);
   for (let i = 1; i < 4; i++) assert.ok(EG_SKIES[i].underside < EG_SKIES[i - 1].underside, `band ${i}: smaller`);
   assert.equal(egSkyOf(1), EG_SKIES[0]); assert.equal(egSkyOf(6), EG_SKIES[1]); assert.equal(egSkyOf(16), EG_SKIES[3]);
-  const sky = (band, ray) => { const f = glslFunctions(EG_SKY_FS, { vRay: ray, uBand: band, uTime: 3, uHaze: [0.05, 0.04, 0.04], uGain: 1, uSteps: 10, gl_FragCoord: [3, 4, 0, 1], o: [0, 0, 0, 0] }); f.main(); return [...f.globals.o]; };
+  // PIN MOVED (EG-LOOK, Elite-Gates-Look.md sections 4 and 6): the sky is painted a band at a time (render/egSkyMap.js) and
+  // the Spire's underside is the wreck's model at EG_SKIES' size, never painted (one underside, never two) - so the zenith
+  // is the band's void (its own test: test/eglook_sky.test.js), the deep below lit, the Shade's moon on its key's bearing
+  const sky = (band, ray) => { const n = Math.hypot(...ray), f = glslFunctions(EG_SKY_PAINT_FS[band], { uTime: 3 }); const t = f.skyAt(ray.map((v) => v / n), [3, 4]); return [t[0], t[1], t[2]]; };
   for (let b = 0; b < 4; b++) {
-    const S = EG_SKIES[b], axis = [0, Math.cos(S.lean), Math.sin(S.lean)];
-    const under = sky(b, axis), beside = sky(b, [Math.sin(S.underside * 1.6), Math.cos(S.lean + 0) * Math.cos(S.underside * 1.6), Math.sin(S.lean)]);
-    assert.ok(lumLin(under) < 0.03, `band ${b}: the underside black overhead`);
-    const deep = sky(b, [0, -0.35, 1]);
-    if (b !== 2) assert.ok(lumLin(deep) > lumLin(under) + 0.05, `band ${b}: the deep lit below`);
-    assert.ok(beside.every(Number.isFinite));
+    const zen = sky(b, [0, 1, 0.05]), deep = Math.max(...Array.from({ length: 24 }, (_, k) => lumLin(sky(b, [Math.sin(k * 0.26), -0.6, Math.cos(k * 0.26)]))));   // the realm's light somewhere below
+    if (b !== 2) assert.ok(deep > lumLin(zen) + 0.05, `band ${b}: the deep lit below`);
+    assert.ok(zen.every(Number.isFinite) && lumLin(zen) < 0.04, `band ${b}: the void overhead`);
   }
-  const moon = sky(2, [0.55, 0.42, -0.72]);
-  assert.ok(lumLin(moon) > 0.4, 'the Shade\'s moon');
+  const moon = sky(2, [-0.55, 0.3, 0.7]);
+  assert.ok(lumLin(moon) > 0.15, 'the Shade\'s moon');
 });
 
 test('EG-G2 THE SPIRE\'S TELEGRAPH (sections 25.6 and 25.7): the gate\'s own stage the same text, the Spire\'s made from it with every needle found; THE FOG FLOOR keeps a shape 0.85 within 30 m (the gate\'s fades it); the fill at the shelf\'s opacity, the line never thinned; the high-contrast palette\'s double keyline outside the first and its hatch through the fill (mutants: the floor dropped; the fill thinning the line; the hatch on every shape)', () => {

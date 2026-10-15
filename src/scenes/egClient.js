@@ -2173,13 +2173,15 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     drawPass(proj, view, eye, seconds, fog) {
       if (!inSpire()) return false;
       // EG-G2 (section 25.6): the mist first, the hall's fight over it, THE EDGE LINE and the tells last - on the shared clock
-      const L = lookCircle(link.state()), ts = now() / 1000;
+      const L = lookCircle(link.state()), ts = now() / 1000, vp = renderer?._worldViewportPx ?? null, lane = !!renderer?.lightingLane, still = stillNow(), shining = lightsNow();
+      const painted = !!L?.paintSky(vp, lane, ts);   // EG-LOOK (Elite-Gates-Look.md section 6): the band's sky map's next quadrant, for the sky slot's fetch
       const under = !!L?.drawUnder(proj, view, eye, ts, fog);
+      const air = !!L?.drawAir(proj, view, eye, ts, fog, lane, still, shining, vp?.[3] ?? 0);   // EG-LOOK (section 5): THE AIR - the band's motes about the eye's hall (held under reduced motion) and the halos of the lamps and the way's beams
       const drew = !!fight?.drawPass(proj, view, eye, seconds, fog);
       const ghosts = !!modes()?.dungeonCtx?.egSpanDraw?.(proj, view, fog);   // EG-ZL (sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab (scenes/egSpan.js drawPass), under the lines
       const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette, renderer?._worldViewportPx, trail.n ? trail.segs : null, trail.n);   // AUDIT EG III (lane4 #5): THE EDGE LINE in the danger palette's safety; AUDIT EG V (L6-3): sized in the world image's pixels; (h) THE TRAIL with them
-      const lit = !!L?.drawLights(proj, view, eye, ts, fog, lightsNow(), stillNow());   // EG-ZE: THE LIGHTS, added over the lines
-      return under || drew || ghosts || over || lit;
+      const lit = !!L?.drawLights(proj, view, eye, ts, fog, shining, still);   // EG-ZE: THE LIGHTS, added over the lines
+      return painted || under || air || drew || ghosts || over || lit;
     },
     /** EG-G2: THE SPIRE'S SKY (render/egSkyPass.js) in the host's sky slot - the band's void and the Spire's underside. */
     drawSky(proj, view, eye, seconds, fog, gain = 1) { return inSpire() ? !!lookCircle(link.state())?.drawSky(proj, view, seconds, fog, gain) : false; },

@@ -1,28 +1,39 @@
 // @ts-check
-// EG-G2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections 7 and 25 - EG16's
-// "the skies (the Spire's underside in every sky, smaller each band)"): THE SPIRE'S SKIES - each band's own void over its
-// halls, where EG-PLAY drew the Hour's (its clock-face and the Bay's cities hanging in it were the Hour's story, not the
-// Spire's):
-//   THE BROKEN GALLERIES - the Deadlands' red overhead, the fire-sea glowing below the horizon, embers rising;
-//   THE SOUL CAIRN - violet-grey, the sea of mist below, a few slow motes;
-//   THE SHADE PERILOUS - near-black, its moon and a scatter of cold stars, the dark below;
-//   THE HAVOC WELLHEAD - smoke over molten light, sparks thick in it.
-// In every one, THE SPIRE'S UNDERSIDE hangs overhead - the torn academy the halls fell from, a black mass with a ragged
-// rim lit from below by the band's deep - smaller each band (world/egLook.js EG_SKIES `underside`, an angular radius), so
-// a company sees how far down the legions' road it has fallen.
+// EG-G2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections 7 and 25): THE SPIRE'S
+// SKIES - each band's own void over its halls, where EG-PLAY drew the Hour's (its clock-face and the Bay's cities hanging in
+// it were the Hour's story, not the Spire's).
 //
-// The Hour's law (render/sdSky.js): one triangle at the far plane, drawn only where nothing nearer has (PERF2), every
-// pixel posterized through the ordered dither (render/orderedDither.js SD_PIXEL_GLSL - the pixel law), its colours scaled
-// by the realm's `gain` against its fog (render/deadlands.js skyGain) and the horizon meeting the fog's own colour. The
-// void stays dark and structure does not glow (SD-LOOK's rules): the underside is black but for its rim.
+// EG-LOOK (2026-10-15, Mac: "Literally everything, and no band aids"; bible/11-Multiplayer/Elite-Gates-Look.md section 6):
+// THE FETCH over a painted sky - SD5b's law (render/sdSky.js SdSkyRenderer). The band's realm is painted into an
+// octahedral map a quadrant a frame (render/egSkyMap.js - the Deadlands, the Soul Cairn, the Evergloam, the Havoc
+// Wellhead), and this pass is one triangle at the far plane, drawn only where nothing nearer has (PERF2). Each pixel:
+//   THE SKY'S OWN PIXEL - the ray snapped to a world-fixed cell of Daggerfall's own sky pixel (render/skyRenderer.js
+//     SKY_ANGLE_PER_PIXEL, pi/512) on the port's ring grid (render/orderedDither.js ringSnap: rows of constant elevation),
+//     so the sky's pixels stand square to the horizon (the octahedral map's own texels lie at 45 degrees to it there, and
+//     read as a lattice of diamonds), and one NEAREST tap of the map at the cell's centre;
+//   THE HAZE - the frame's own fog (the renderer's colour, either lane) mixed over the realm by the share the map holds:
+//     the line is the fog itself, so the far wreck (world/egVista.js) melts into it;
+//   THE REALM'S LIGHT - behind the haze at the band's gain against its fog (render/deadlands.js skyGain - the lane's dungeon
+//     fog against the band's) taken to EG_SKY_LIGHT.pow: the lane falls the void's ambient by the gain, but the fire-sea,
+//     the moon and the eruptions are light, not ambient, and fall by its root;
+//   THE PIXEL LAW - the whole through SD_PIXEL_GLSL at the cell, in the square root of its value and squared back (a
+//     palette's ramp: its dark steps close, so the void dithers between dark steps and never speckles).
+// The gradient sky and its painted disc for the Spire's underside are gone: the underside is the wreck's model (one,
+// never two). The map is painted outside the sky slot (`paint` - scenes/egLookDraw.js paintSky, from the breach client's
+// pass with the world viewport in hand), and the fetch draws nothing until the map holds its band whole: a frame with no
+// sky is the level's clear (under the veil - a band's first frame).
 //
-// A foreign pass: it owns its program and its state; the host marks it. Not a DFU member. Ledger A (ELITE-GATES).
+// A foreign pass: it owns its program, its state and its map; the host marks it. Not a DFU member. Ledger A (ELITE-GATES).
 import { buildProgram } from './glProgram.js';
-import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
-import { sdSkyBasisInto } from './sdSky.js';
-import { EG_SKIES } from '../world/egLook.js';
+import { sdSkyBasisInto, SD_OCT_GLSL } from './sdSky.js';
+import { DITHER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
+import { SKY_ANGLE_PER_PIXEL } from './skyRenderer.js';
+import { EgSkyMap, EG_SKY_MAP, EG_SKY_STEPS } from './egSkyMap.js';
 
-const v3 = (c) => `vec3(${c.map((v) => v.toFixed(4)).join(', ')})`;
+/** THE REALM'S LIGHT behind the haze: the host's gain (the band's fog against the frame's) taken to `pow`. */
+export const EG_SKY_LIGHT = Object.freeze({ pow: 0.5 });
+/** The realm's light at the host's `gain` (1 on the classic set). Pure - the fetch's uLift. */
+export const egSkyLift = (gain) => Math.pow(Math.max(0, gain), EG_SKY_LIGHT.pow);
 
 export const EG_SKY_VS = `#version 300 es
 precision highp float;
@@ -33,70 +44,46 @@ out vec3 vRay;
 void main() {
   vRay = uRight * ((aPos.x + uProj.z) / uProj.x) + uUp * ((aPos.y + uProj.w) / uProj.y) + uFwd;
   gl_Position = vec4(aPos, 1.0, 1.0); }`;
+/** THE FETCH: `egSkyFetch(d)` the sky's colour along d - its cell, its tap, the frame's fog over the realm's light, the
+ *  pixel law. */
 export const EG_SKY_FS = `#version 300 es
 precision highp float;
 in vec3 vRay;
-uniform int uBand;       // 0 the Galleries, 1 the Cairn, 2 the Shade, 3 the Wellhead
-uniform float uTime;     // s, wrapped
-uniform vec3 uHaze;      // the frame's fog colour - the horizon meets it
-uniform float uGain;
-uniform float uSteps;
+uniform sampler2D uSkyMap;
+uniform float uLift;     // the realm's light at this lane (egSkyLift of the host's gain)
+uniform vec3 uFog;       // the frame's own fog: the haze over the realm, and the line itself
+uniform float uSteps;    // the pixel law's steps (EG_SKY_STEPS)
 out vec4 o;
-${BAYER_GLSL}${SD_PIXEL_GLSL}
-const vec3 ZEN[4] = vec3[4](${EG_SKIES.map((s) => v3(s.zenith)).join(', ')});
-const vec3 HOR[4] = vec3[4](${EG_SKIES.map((s) => v3(s.horizon)).join(', ')});
-const vec3 DEEP[4] = vec3[4](${EG_SKIES.map((s) => v3(s.deep)).join(', ')});
-const float UNDER[4] = float[4](${EG_SKIES.map((s) => s.underside.toFixed(4)).join(', ')});
-const float LEAN[4] = float[4](${EG_SKIES.map((s) => s.lean.toFixed(4)).join(', ')});
-const float EMBERS[4] = float[4](${EG_SKIES.map((s) => s.embers.toFixed(4)).join(', ')});
-float h21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-float vn(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(h21(i), h21(i + vec2(1.0, 0.0)), f.x), mix(h21(i + vec2(0.0, 1.0)), h21(i + vec2(1.0, 1.0)), f.x), f.y); }
-void main() {
-  vec3 d = normalize(vRay);
-  int b = clamp(uBand, 0, 3);
-  float e = d.y, az = atan(d.x, d.z);
-  // the void: the deep below the horizon (the fire-sea, the mist, the dark, the molten), the band's own overhead
-  vec3 c = e < 0.0 ? mix(HOR[b], DEEP[b], 1.0 - smoothstep(-0.4, 0.0, e)) : mix(HOR[b], ZEN[b], smoothstep(0.0, 0.55, e));
-  c = mix(c, uHaze, (1.0 - smoothstep(0.0, 0.12, abs(e))) * 0.6);   // the horizon meets the fog
-  // the deep's slow churn, below the horizon
-  if (e < 0.0) c *= 0.8 + 0.4 * vn(vec2(az * 6.0, e * 30.0 + uTime * 0.05));
-  // embers and motes rising (the Galleries' and the Wellhead's sparks, the Cairn's few motes)
-  if (EMBERS[b] > 0.0 && e > -0.2 && e < 0.7) {
-    vec2 g = vec2(az * 40.0, e * 60.0 - uTime * 0.6);
-    vec2 cell = floor(g);
-    float r = h21(cell);
-    if (r > 1.0 - 0.04 * EMBERS[b] && length(fract(g) - 0.5) < 0.18) c += DEEP[b] * (0.6 + 0.4 * sin(uTime * 3.0 + r * 40.0));
-  }
-  // the Shade's moon and its cold stars
-  if (b == 2) {
-    vec3 mdir = normalize(vec3(0.55, 0.42, -0.72));
-    float m = dot(d, mdir);
-    c += vec3(0.62, 0.66, 0.74) * smoothstep(0.9985, 0.9991, m) + vec3(0.05, 0.055, 0.07) * smoothstep(0.985, 0.9985, m);
-    vec2 sg = floor(vec2(az * 90.0, e * 90.0));
-    if (e > 0.05 && h21(sg) > 0.996) c += vec3(0.35, 0.37, 0.42);
-  }
-  // THE SPIRE'S UNDERSIDE: a black mass overhead leaning toward the course, its ragged rim lit from below by the deep
-  vec3 axis = normalize(vec3(0.0, cos(LEAN[b]), sin(LEAN[b])));
-  float ang = acos(clamp(dot(d, axis), -1.0, 1.0));
-  vec3 side = normalize(cross(axis, vec3(1.0, 0.0, 0.0))), up2 = cross(side, axis);
-  float around = atan(dot(d, side), dot(d, up2));
-  float ragged = UNDER[b] * (1.0 + 0.16 * (vn(vec2(around * 3.0, 0.0)) - 0.5) + 0.08 * (vn(vec2(around * 11.0, 4.0)) - 0.5));
-  if (ang < ragged) {
-    float rim = smoothstep(ragged - 0.012, ragged, ang);
-    vec3 under = vec3(0.012, 0.010, 0.012) * (0.8 + 0.4 * vn(vec2(around * 8.0, ang * 60.0)));
-    c = under + DEEP[b] * 0.22 * rim;
-  }
-  o = vec4(sdPixel(c * uGain, floor(gl_FragCoord.xy), uSteps), 1.0);
-}`;
+const float MAP = ${EG_SKY_MAP.toFixed(1)};
+const float CELL = ${SKY_ANGLE_PER_PIXEL.toFixed(8)};
+${DITHER_GLSL}${SD_PIXEL_GLSL}${SD_OCT_GLSL}
+// what the map holds at a direction: the realm's colour (kept in its square root) and the haze's share
+vec4 egSkyTap(vec3 c) {
+  ivec2 tx = clamp(ivec2(floor(octEncode(c) * MAP)), ivec2(0), ivec2(int(MAP) - 1));
+  vec4 t = texelFetch(uSkyMap, tx, 0);
+  return vec4(t.rgb * t.rgb, t.a);
+}
+// the haze over the realm's light
+vec3 egSkyHazed(vec4 t) { return mix(t.rgb * uLift, uFog, t.a); }
+vec3 egSkyFetch(vec3 d) {
+  vec2 cell;
+  vec3 c = ringSnap(normalize(d), CELL, cell);
+  vec3 s = sdPixel(sqrt(max(egSkyHazed(egSkyTap(c)), vec3(0.0))), floor(cell), uSteps);
+  return s * s;
+}
+void main() { o = vec4(egSkyFetch(vRay), 1.0); }`;
 
-/** The pass. */
+/** A fog colour for a draw that hands none. */
+const NO_FOG = new Float32Array(3);
+
+/** The pass: the fetch and the map it owns. */
 export class EgSkyPass {
-  /** @param {WebGL2RenderingContext} gl */
-  constructor(gl) {
+  /** @param {WebGL2RenderingContext} gl @param {{ lite?: boolean }} [o] */
+  constructor(gl, { lite = false } = {}) {
     this.gl = gl;
     this.program = buildProgram(gl, EG_SKY_VS, EG_SKY_FS, 'eg sky');
     this.u = {};
-    for (const n of ['uRight', 'uUp', 'uFwd', 'uProj', 'uBand', 'uTime', 'uHaze', 'uGain', 'uSteps']) this.u[n] = gl.getUniformLocation(this.program, n);
+    for (const n of ['uRight', 'uUp', 'uFwd', 'uProj', 'uSkyMap', 'uLift', 'uFog', 'uSteps']) this.u[n] = gl.getUniformLocation(this.program, n);
     this.vao = gl.createVertexArray();
     gl.bindVertexArray(this.vao);
     this.vbo = gl.createBuffer();
@@ -105,20 +92,28 @@ export class EgSkyPass {
     gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 8, 0);
     gl.bindVertexArray(null);
     this._b = { right: new Float32Array(3), up: new Float32Array(3), fwd: new Float32Array(3), lens: new Float32Array(4) };
+    /** EG-LOOK: the painted map (render/egSkyMap.js) */
+    this.map = new EgSkyMap(gl, { lite });
     this.drawn = false;
   }
-  /** Paint band `band`'s sky where nothing nearer has drawn - `seconds` any clock, `fog` the frame's, `gain` the realm's
-   *  light against its own. Answers true. */
-  draw(proj, view, band, seconds, fog = null, gain = 1, steps = 10) {
+  /** Band `band`'s map's next quadrant at `seconds` on the sky's clock, `viewport` handed back (render/egSkyMap.js
+   *  EgSkyMap.paint). Answers whether it painted. */
+  paint(band, seconds, viewport = null) { return this.map.paint(band, seconds, viewport); }
+  /** Fetch band `band`'s sky where nothing nearer has drawn: `gain` the band's fog against the frame's (the realm's light
+   *  at egSkyLift of it), `fog` the frame's fog colour (the haze), `steps` the pixel law's - nothing (false) until its map
+   *  is painted whole.
+   *  @param {ArrayLike<number>} proj @param {ArrayLike<number>} view @param {number} band @param {number} [gain] @param {Float32Array|number[]|null} [fog] @param {number} [steps] */
+  draw(proj, view, band, gain = 1, fog = null, steps = /** @type {number} */ (EG_SKY_STEPS.lane)) {
+    this.drawn = false;
+    if (!this.program || !this.map.holds(band | 0)) return false;
     const gl = this.gl, U = this.u, b = sdSkyBasisInto(view, proj, this._b);
     gl.disable(gl.BLEND); gl.disable(gl.CULL_FACE);
     gl.useProgram(this.program);
     gl.uniform3fv(U.uRight, b.right); gl.uniform3fv(U.uUp, b.up); gl.uniform3fv(U.uFwd, b.fwd); gl.uniform4fv(U.uProj, b.lens);
-    gl.uniform1i(U.uBand, band | 0);
-    gl.uniform1f(U.uTime, seconds % 3600);
-    gl.uniform3fv(U.uHaze, fog?.color ?? NO_HAZE);
-    gl.uniform1f(U.uGain, gain);
+    gl.uniform1f(U.uLift, egSkyLift(gain));
+    gl.uniform3fv(U.uFog, fog ?? NO_FOG);
     gl.uniform1f(U.uSteps, steps);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.map.texture); gl.uniform1i(U.uSkyMap, 0);
     gl.depthMask(false);
     gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);   // PERF2: only where nothing nearer has drawn - z is the far plane
     gl.bindVertexArray(this.vao);
@@ -129,6 +124,12 @@ export class EgSkyPass {
     this.drawn = true;
     return true;
   }
-  destroy() { const gl = this.gl; gl.deleteBuffer(this.vbo); gl.deleteVertexArray(this.vao); gl.deleteProgram(this.program); }
+  /** Every GL object it made - the fetch's and the map's - freed once. */
+  destroy() {
+    const gl = this.gl;
+    if (!this.program) return;
+    this.map.release();
+    gl.deleteBuffer(this.vbo); gl.deleteVertexArray(this.vao); gl.deleteProgram(this.program);
+    this.program = /** @type {any} */ (null);
+  }
 }
-const NO_HAZE = new Float32Array(3);

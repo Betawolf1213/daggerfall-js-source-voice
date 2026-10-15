@@ -8,6 +8,9 @@
 // out of it, and the edge lines and the telegraphs draw after it (section 25.6 - scenes/egLookDraw.js). One quad a sheet,
 // its texture value noise drifting on the shared clock, posterized through the ordered dither (the Hour's pixel law),
 // fogged as the world is, premultiplied over what lies under it. Sight only - nothing here is judged.
+// EG-LOOK (2026-10-15, Elite-Gates-Look.md section 5): and THE CAIRN'S MIST under every rim (render/egMotes.js
+// egRimMists) - the same sheet, held still at its own height; a sheet that says `round` fades to the circle inside its
+// box (under a disc), any other to its box's edges as before.
 //
 // A foreign pass: it owns its program and its state; the host marks it. Not a DFU member. Ledger A (ELITE-GATES).
 import { buildProgram } from './glProgram.js';
@@ -38,6 +41,7 @@ uniform vec3 uColor;
 uniform float uAlpha;    // the surge's share (0 lying low, 1 risen)
 uniform float uTime;
 uniform float uSteps;
+uniform float uRound;    // EG-LOOK: 1 - the sheet is the circle inside its box (a rim's mist under a disc)
 uniform int uFogMode;
 uniform float uFogDensity;
 uniform vec2 uFogRange;
@@ -49,7 +53,7 @@ float vn(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
 void main() {
   vec2 p = vWorld.xz * 0.35 + vec2(uTime * 0.11, uTime * 0.07);
   float n = 0.6 * vn(p) + 0.3 * vn(p * 2.3 - uTime * 0.05) + 0.1 * vn(p * 5.1);
-  float rim = smoothstep(0.0, 0.08, vQ.x) * smoothstep(0.0, 0.08, 1.0 - vQ.x) * smoothstep(0.0, 0.06, vQ.y) * smoothstep(0.0, 0.06, 1.0 - vQ.y);
+  float rim = uRound > 0.5 ? 1.0 - smoothstep(0.72, 1.0, length(vQ * 2.0 - 1.0)) : smoothstep(0.0, 0.08, vQ.x) * smoothstep(0.0, 0.08, 1.0 - vQ.x) * smoothstep(0.0, 0.06, vQ.y) * smoothstep(0.0, 0.06, 1.0 - vQ.y);
   float a = uAlpha * rim * (0.62 + 0.3 * n);
   if (a <= 0.004) discard;
   vec3 c = sdPixel(uColor * (0.75 + 0.35 * n), floor(gl_FragCoord.xy), uSteps) * fogFactorAt(vWorld);
@@ -63,7 +67,7 @@ export class EgMistPass {
     this.gl = gl;
     this.program = buildProgram(gl, EG_MIST_VS, EG_MIST_FS, 'eg mist');
     this.u = {};
-    for (const n of ['uVP', 'uRect', 'uY', 'uColor', 'uAlpha', 'uTime', 'uSteps', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos']) this.u[n] = gl.getUniformLocation(this.program, n);
+    for (const n of ['uVP', 'uRect', 'uY', 'uColor', 'uAlpha', 'uTime', 'uSteps', 'uRound', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos']) this.u[n] = gl.getUniformLocation(this.program, n);
     this.vao = gl.createVertexArray();
     gl.bindVertexArray(this.vao);
     this.vbo = gl.createBuffer();
@@ -75,7 +79,7 @@ export class EgMistPass {
     this.drawn = 0;
   }
   /**
-   * Draw `sheets` ([{ rect: [x0, z0, x1, z1], y, alpha }] in the scene's frame - scenes/egLookDraw.js) in `color`
+   * Draw `sheets` ([{ rect: [x0, z0, x1, z1], y, alpha, round? }] in the scene's frame - scenes/egLookDraw.js) in `color`
    * (linear), `seconds` the shared clock. Answers whether any drew.
    */
   draw(proj, view, eye, sheets, color, seconds, fog = null, steps = 10) {
@@ -101,6 +105,7 @@ export class EgMistPass {
       gl.uniform4f(U.uRect, s.rect[0], s.rect[1], s.rect[2], s.rect[3]);
       gl.uniform1f(U.uY, s.y);
       gl.uniform1f(U.uAlpha, Math.min(1, s.alpha));
+      gl.uniform1f(U.uRound, s.round ? 1 : 0);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       this.drawn++;
     }

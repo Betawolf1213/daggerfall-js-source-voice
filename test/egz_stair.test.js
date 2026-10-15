@@ -486,7 +486,10 @@ test('EG-ZE THE LOOK\'S SEAM (scenes/egLookDraw.js): the lights drawn after the 
   const C = rd('src/scenes/egClient.js');
   const body = C.slice(C.indexOf('    drawPass(proj, view, eye, seconds, fog) {'), C.indexOf('    /** EG-G2: THE SPIRE\'S SKY'));
   assert.ok(body.indexOf('L?.drawOver(') < body.indexOf('L?.drawLights(') && body.indexOf('L?.drawLights(') > 0, 'over the lines');
-  assert.match(body, /L\?\.drawLights\(proj, view, eye, ts, fog, lightsNow\(\), stillNow\(\)\)/, 'this frame\'s lights on the shared clock, reduced motion read');
+  // PIN MOVED (EG-LOOK, Elite-Gates-Look.md section 5): the frame's lights asked once and handed to the air's halos (the
+  // door's beam's foot) and to the lights alike, reduced motion read once with them
+  assert.match(body, /still = stillNow\(\), shining = lightsNow\(\);/, 'this frame\'s lights and reduced motion, asked once');
+  assert.match(body, /L\?\.drawLights\(proj, view, eye, ts, fog, shining, still\)/, 'this frame\'s lights on the shared clock, reduced motion read');
 });
 
 /** The breach client played between the relay's own words (each through the wire) and a mode machine, a veil, a renderer

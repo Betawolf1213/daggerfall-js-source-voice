@@ -713,7 +713,7 @@
   {
     "name": "EGZ-the-lights-unwired",
     "file": "src/scenes/egClient.js",
-    "old": "const lit = !!L?.drawLights(proj, view, eye, ts, fog, lightsNow(), stillNow());",
+    "old": "const lit = !!L?.drawLights(proj, view, eye, ts, fog, shining, still);",
     "new": "const lit = false;",
     "tests": [
       "test/egz_stair.test.js"
@@ -740,8 +740,8 @@
   {
     "name": "EGZ-the-lights-kept-past-release",
     "file": "src/scenes/egLookDraw.js",
-    "old": "for (const p of [lines, mist, sky, lights]) { if (p) { try { p.destroy(); } catch { /* gone */ } } }\n      lines = null; mist = null; sky = null; lights = null;",
-    "new": "for (const p of [lines, mist, sky]) { if (p) { try { p.destroy(); } catch { /* gone */ } } }\n      lines = null; mist = null; sky = null;",
+    "old": "for (const p of [lines, mist, sky, lights, motes, halo]) { if (p) { try { p.destroy(); } catch { /* gone */ } } }\n      lines = null; mist = null; sky = null; lights = null; motes = null; halo = null;",
+    "new": "for (const p of [lines, mist, sky, motes, halo]) { if (p) { try { p.destroy(); } catch { /* gone */ } } }\n      lines = null; mist = null; sky = null; motes = null; halo = null;",
     "tests": [
       "test/egz_stair.test.js"
     ]
