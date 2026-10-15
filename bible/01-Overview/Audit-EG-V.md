@@ -291,7 +291,7 @@ list cannot be lost as EG IV's was. Each fix is named in its pin's test title by
 | L9-9 | MED | departures of EG-ZG, EG-ZB and EG-ZI stale since EG-HERO-LAY | FIXED (words) | G: narrowed to code-built halls |
 | L9-10 | LOW | EG-H2's departure 4 names laws 4-6 alone; EG-G1's departure 4 gives a stale reason | FIXED (words) | G |
 | L9-11 | LOW | records' mutant counts disagree with their lists (`egz_state`, `egz_telegraph`, `egz_stair`) | FIXED (words) | G: 97, 75 and 84; AOE-PERF's floor strip recorded in EG-ZG |
-| L9-12 | LOW | Testing.md rows say migration 0111 and `drawAuras` | FIXED (words) | G: 0113 (0116 since), and `auraFrame` |
+| L9-12 | LOW | Testing.md rows say migration 0111 and `drawAuras` | FIXED (words) | G: 0113 (0117 since), and `auraFrame` |
 | L9-13 | LOW | section 31's intro says `net/egHost.js` and `net/egLord.js` were never built | FIXED (words) | G: built by EG-PLAY and retired by layer one |
 | L9-14 | LOW | Active-Arcs has no line for the EG-HERO wave or EG-HERO-LAY, and the Page-Index line lags | FIXED (words) | G |
 | L9-15 | LOW | the Accounts arc misses AUDIT EG IV's account half | FIXED (words) | G: a bullet for it |
@@ -406,7 +406,7 @@ Pages: 6.2, 8.1, 8.4, 8.7, 12, 14, 15, 16.3, 16.4, 17.2 and 23's `st` row. Its N
   until a Valkynaz. Item 3.
 
 **D, the net** (`server/src/index.js`; `server-account/src/eg.js`, `server-account/src/egEconomy.js`, `server-account/src/egHonours.js`, migration
-0113, 0116 since; net/: `bossRef.js`, `egBrain.js`, `egDurable.js`, `egFair.js`, `egHerald.js`, `egLink.js`, `egPay.js`,
+0113, 0117 since; net/: `bossRef.js`, `egBrain.js`, `egDurable.js`, `egFair.js`, `egHerald.js`, `egLink.js`, `egPay.js`,
 `wire.js`; scenes/: `egArch.js`, `egClient.js`, `egFight.js`, `world.js`; systems/: `egSpoils.js`, `sigilSetPowers.js`;
 `ui/egBoardWindow.js`). It took:
 
@@ -711,6 +711,15 @@ the coordinator merged it once more:
   own lines (to 21,921 and 7,350), with the reason beside it in `test/hostceiling.test.js`, and records the move as
   owed: `tools/hostMove.mjs` refuses the circle's group (its state is `let`s), and the method's last step - Mac plays
   the slice and runs `npm run perf` - is his.
+
+## At the third merge of main
+
+Main moved once more before the push could be verified: POI-1 and AUDIT POI (the POI editor's store) took `acct135` and
+migration `0116_poi.sql`, and the relay stayed `world204`. The arc's account half renumbered past them -
+`ACCOUNT_VERSION` `acct136`, the migration `0117_elite_breach.sql` - with every account pin chain, the wrangler line,
+the tables pin and the mutant records on the version lines; `RELAY_VERSION` stays `world205`. POI-3's editor lines joined
+the world host's foreign passes beside the arc's two (30 call sites; 37 host call sites across the passes), and the held
+map's legend reads the arch and the POIs both.
 
 ## Still owed
 

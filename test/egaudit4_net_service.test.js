@@ -70,7 +70,7 @@ test('AUDIT EG IV lane3 #4 / lane9 #24 THE LAUNCH GIFT\'S LETTER (section 5): mi
   const breaker = await S.registered('Breaker'), riter = await S.registered('Riter'), none = await S.registered('Nobody');
   await S.claim(breaker, 700, now());
   S.env.DB._raw.prepare("INSERT INTO gate_kills (day, account, boss, earned, at) VALUES (701, ?, 'ruhn', 'rite', ?)").run(riter.id, now());
-  const mig = rd('server-account/migrations/0116_elite_breach.sql');
+  const mig = rd('server-account/migrations/0117_elite_breach.sql');
   const gift = mig.slice(mig.indexOf('-- THE LAUNCH GIFT (section 5)'), mig.indexOf('-- EG-E2 (2026-10-12'));
   assert.match(gift, /INSERT OR IGNORE INTO server_post/, 'the send rides the gift');
   const q = (s) => s.replace(/'/g, "''");

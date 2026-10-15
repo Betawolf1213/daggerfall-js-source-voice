@@ -107,6 +107,7 @@ import { SERPENT_RING_MAP_CSS, SERPENT_LEGEND_TEXT } from './serpentMapMark.js';
 import { SD_RING_MAP_CSS, SD_LEGEND_TEXT } from './sdMapMark.js';   // SD2c: the Super dungeon's ring once it is found, in its omen's brass
 import { EG_ARCH_RING_CSS, EG_ARCH_LEGEND_TEXT } from './egArchMapMark.js';   // EG-F: my company's Elite arch, in its gold
 import { LODE_RING_CSS, LODE_LEGEND_TEXT, lodeLegendText } from './lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, read by the bounty's reader
+import { POI_RING_CSS, POI_MARKS_MAX, poiLegendText } from './poiMapMark.js';   // POI-2: the approved POIs' marks, read by the bounty's reader
 import { readBountyMarks, bountyMarksKey, BOUNTY_RING_CSS, BOUNTY_LEGEND_TEXT, BOUNTY_LEGEND_RIM_CSS, REVENANT_RING_CSS, REVENANT_LEGEND_TEXT } from './bountyMapMark.js';   // BOUNTY1: held bounties' black circles, read as the gate's ring is
 import { readRaidMarks, raidMarksKey, placeTip, tipKey, readTip, RAID_MARK_CSS, RAID_LEGEND_TEXT, RAID_HIT_PX, SEAT_TIP_TEXT_MAX } from './eventMapMarks.js';   // EVENT-TIP: the raided towns, and the card a world event answers a hover with
 import { readVendorMark, vendorMarkKey, VENDOR_MARK_CSS, VENDOR_RIM_CSS, VENDOR_LEGEND_TEXT } from './vendorMapMark.js';   // HOME-VENDOR: the trader's waypoint
@@ -688,6 +689,8 @@ export class HeldMapWindow {
     this._revenantsKey = '';
     this._lodes = [];   // MINE-PERKS: a Motherlode Sense's day's Motherlodes - the host's `lodes`, read on the same poll
     this._lodesKey = '';
+    this._pois = [];   // POI-2: the approved POIs' marks - the host's `pois`, read on the same poll
+    this._poisKey = '';
     // EVENT-TIP: the raided towns (the host's `raids`, on the same poll), and the card under the pointer
     this._raids = [];
     this._raidsKey = '';
@@ -1325,6 +1328,7 @@ export class HeldMapWindow {
           bounties: this._bounties,   // BOUNTY1
           revenants: this._revenants,   // RVN7c
           lodes: this._lodes,   // MINE-PERKS
+          pois: this._pois,   // POI-2
           raids: this._raids,   // EVENT-TIP: the towns under attack
           quests: this._quests,   // GUIDE5: where the quests point
           vendor: this._vendor,   // HOME-VENDOR: the trader's waypoint
@@ -2023,6 +2027,10 @@ export class HeldMapWindow {
     const lodes = readBountyMarks(this.deps.lodes, this._size, LODE_LEGEND_TEXT);
     const mKey = bountyMarksKey(lodes);
     if (mKey !== this._lodesKey) { this._lodesKey = mKey; this._lodes = lodes; gateMoved = true; this._dirty = true; }
+    // POI-2: and the approved POIs - one approved, moved or retired with the map open
+    const pois = readBountyMarks(this.deps.pois, this._size, poiLegendText(), POI_MARKS_MAX);   // AUDIT POI R7: every marked POI, past the bounty's eight
+    const pKey = bountyMarksKey(pois);
+    if (pKey !== this._poisKey) { this._poisKey = pKey; this._pois = pois; gateMoved = true; this._dirty = true; }
     // EVENT-TIP: the raided towns ride the same poll (a raid begins, withdraws or is cleansed while the map stands
     // open), and the card under a still pointer follows the marks - a countdown's second, a town cleansed under it
     const raids = readRaidMarks(this.deps.raids, this._size);
@@ -2072,7 +2080,7 @@ export class HeldMapWindow {
     if (!leg) return;
     leg.innerHTML = '';
     const trav = this._trav.filter((t) => playerShown(t));   // OW-WHO: the legend speaks for the players the sheet draws
-    if (!this._party.length && !this._gate && !this._serpent && !this._sd && !this._arch && !this._bounties.length && !this._revenants.length && !this._raids.length && !trav.length && !this._quests.length && !this._vendor && !this._lodes.length) { leg.classList.toggle('open', false); leg.style.display = 'none'; return; }
+    if (!this._party.length && !this._gate && !this._serpent && !this._sd && !this._arch && !this._bounties.length && !this._revenants.length && !this._raids.length && !trav.length && !this._quests.length && !this._pois.length && !this._vendor && !this._lodes.length) { leg.classList.toggle('open', false); leg.style.display = 'none'; return; }
     if (this._party.length) {
       const dot = el('span', 'hmlegdot');
       dot.style.background = this._party.some((m) => m.online) ? PARTY_MARK_CSS : PARTY_OFFLINE_CSS;
@@ -2125,6 +2133,11 @@ export class HeldMapWindow {
       const dot = el('span', 'hmlegdot');
       dot.style.background = LODE_RING_CSS;
       leg.append(dot, el('span', 'hmlegtext', lodeLegendText()));
+    }
+    if (this._pois.length) {   // POI-2: and a POI's violet circle
+      const dot = el('span', 'hmlegdot');
+      dot.style.background = POI_RING_CSS;
+      leg.append(dot, el('span', 'hmlegtext', poiLegendText()));
     }
     if (this._raids.length) {   // EVENT-TIP: and a raided town
       const dot = el('span', 'hmlegdot');

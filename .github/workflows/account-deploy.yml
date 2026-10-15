@@ -345,6 +345,9 @@ on:
       - "vendor/iliac-puddle-no-more/ItemTemplates.json"
       - ".github/workflows/account-deploy.yml"
       - "src/systems/legacy/revived.js"
+      - "src/poi/poiLaw.js"
+      - "src/poi/poiMesh.js"
+      - "src/poi/poiImage.js"
   workflow_dispatch:
 
 permissions:

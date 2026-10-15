@@ -44,6 +44,7 @@ import { SERPENT_MAP_INK } from './serpentMapMark.js';   // SERPENT1: the sea se
 import { SD_MAP_INK } from './sdMapMark.js';   // SD2c: the Super dungeon's ring, in its omen's brass
 import { EG_ARCH_MAP_INK } from './egArchMapMark.js';   // EG-F: my company's Elite arch, in its gold
 import { LODE_RING_CSS, LODE_FILL_CSS } from './lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's Motherlodes, in the compass's aqua
+import { POI_RING_CSS, POI_FILL_CSS } from './poiMapMark.js';   // POI-2: the approved POIs, in their violet
 import { BOUNTY_RING_CSS, BOUNTY_FILL_CSS, REVENANT_RING_CSS, REVENANT_FILL_CSS } from './bountyMapMark.js';   // BOUNTY1: a held bounty's black circle; RVN7c: a revenant's lair in blood red
 import { RAID_MARK_CSS } from './eventMapMarks.js';   // EVENT-TIP: a town under attack
 import { QUEST_MARK_CSS, QUEST_MARK_LIFT } from './questMarks.js';   // GUIDE5: where a quest points
@@ -1119,6 +1120,8 @@ export function paintInkOverlay(ctx, view, opts) {
   for (const b of opts.revenants ?? []) if (visible(b.cx, b.cy, b.r + 2)) paintBountyRing(ctx, view, b, pulse, REVENANT_INK);
   // MINE-PERKS: a Motherlode Sense's day's Motherlodes - the same circle in the compass's aqua, its ore and its hour over it
   for (const b of opts.lodes ?? []) if (visible(b.cx, b.cy, b.r + 2)) paintBountyRing(ctx, view, b, pulse, LODE_INK);
+  // POI-2: the approved POIs - the same circle in their violet, each its label
+  for (const b of opts.pois ?? []) if (visible(b.cx, b.cy, b.r + 2)) paintBountyRing(ctx, view, b, pulse, POI_INK);
   // EVENT-TIP: the towns under attack, over the ring and under the party - a member standing in one reads over it
   for (const m of opts.raids ?? []) if (visible(m.x, m.y)) paintRaidMark(ctx, view, m, pulse);
   // GUIDE5: where the quests point, over the raids and under the party - the diamond above its place, the followed
@@ -1227,6 +1230,7 @@ export function paintGateRing(ctx, view, g, pulse = 0, ink = null) {   // SERPEN
 const BOUNTY_INK = Object.freeze({ ring: BOUNTY_RING_CSS, fill: BOUNTY_FILL_CSS });
 const REVENANT_INK = Object.freeze({ ring: REVENANT_RING_CSS, fill: REVENANT_FILL_CSS });
 const LODE_INK = Object.freeze({ ring: LODE_RING_CSS, fill: LODE_FILL_CSS });
+const POI_INK = Object.freeze({ ring: POI_RING_CSS, fill: POI_FILL_CSS });   // POI-2
 /**
  * BOUNTY1 (Mac: "board quests can be a green circle", then black - green is the party's): a held bounty's pixel - a dark wash inside a black ring, the
  * beasts' name over its top. The radius is in MAP pixels with a floor of eight paper pixels, as the gate's ring is.
