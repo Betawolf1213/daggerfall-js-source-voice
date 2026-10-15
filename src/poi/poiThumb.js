@@ -32,8 +32,6 @@ export const POI_THUMB_SIZE = 128;
 const SUPER = 2;
 /** The view: from the model's front (+Z, the way an imported model faces), 30 degrees round to its right, 25 above. */
 const VIEW_YAW = (30 * Math.PI) / 180, VIEW_PITCH = (25 * Math.PI) / 180;
-/** The lights, as directions TOWARDS them: a key from above the eye's left shoulder, a fill from the right, low. */
-const KEY = norm([-0.45, 0.8, 0.55]), FILL = norm([0.7, 0.2, 0.4]);
 const AMBIENT = 0.32, KEY_K = 0.62, FILL_K = 0.22;
 /** The share of the side left clear round the model. */
 const PAD = 0.06;
@@ -50,6 +48,17 @@ export function thumbEye() {
   const up = norm(cross(f, right));
   return { f, right, up };
 }
+
+/** A light's direction TOWARDS it, given in the eye's own frame: `r` along its right, `u` its up, `b` back towards it (-f). */
+function fromEye(r, u, b) {
+  const e = thumbEye();
+  return norm([0, 1, 2].map((a) => r * e.right[a] + u * e.up[a] - b * e.f[a]));
+}
+/** The lights, as directions TOWARDS them: a key from above the eye's left shoulder, a fill from its right, low.
+ *  AUDIT POI M8: written as numbers in the model's frame they stood mirrored - the key on the eye's right, the fill on its
+ *  left - a right-handed reading of a left-handed frame (the eye looks back at the model's front, so its right is the
+ *  model's -X); set in the eye's frame, the words are what they say. */
+export const THUMB_KEY = fromEye(-0.45, 0.8, 0.55), THUMB_FILL = fromEye(0.7, 0.2, 0.4);
 
 /** A picture's texel where (u, v) falls - v down from its top row, as the mesh keeps UVs - wrapped as the material says. */
 function wrapCoord(x, mode) {
@@ -126,6 +135,38 @@ export function renderThumb(pieces, { size = POI_THUMB_SIZE } = {}) {
   return downsample(rgba, W, size);
 }
 
+/**
+ * The pixels a triangle covers on a `W`-square buffer, by their centres, either winding: `visit(x, y, w0, w1, w2)` with
+ * its barycentres (w0 a's). A centre inside it, or on an edge that is its TOP or its LEFT. AUDIT POI M12: a centre on an
+ * edge was every triangle's on it, so a centre on an edge two triangles share was drawn twice - a see-through surface
+ * laid twice along its own seams. The top-left rule gives it to the one whose inside lies to the edge's right (or, the
+ * edge level, below it - the screen's y runs down): each edge function is the exact negative of its twin's, so exactly
+ * one of the two takes it.
+ */
+export function thumbRaster(ax, ay, bx, by, cx, cy, W, visit) {
+  const area = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+  if (!(Math.abs(area) > 1e-12)) return;
+  const sg = area > 0 ? 1 : -1;
+  // an edge's inward gradient (gx, gy): does a centre exactly on it belong to this triangle?
+  const owns = (gx, gy) => gx > 0 || (gx === 0 && gy > 0);
+  const own0 = owns(sg * (by - cy), sg * (cx - bx)), own1 = owns(sg * (cy - ay), sg * (ax - cx)), own2 = owns(sg * (ay - by), sg * (bx - ax));
+  const minX = Math.max(0, Math.floor(Math.min(ax, bx, cx))), maxX = Math.min(W - 1, Math.ceil(Math.max(ax, bx, cx)));
+  const minY = Math.max(0, Math.floor(Math.min(ay, by, cy))), maxY = Math.min(W - 1, Math.ceil(Math.max(ay, by, cy)));
+  for (let y = minY; y <= maxY; y++) {
+    for (let x = minX; x <= maxX; x++) {
+      const px = x + 0.5, py = y + 0.5;
+      // each corner's weight times the area: the edge opposite it, as cross(P - p, Q - p) - its twin's exact negative
+      const e0 = (bx - px) * (cy - py) - (by - py) * (cx - px);
+      const e1 = (cx - px) * (ay - py) - (cy - py) * (ax - px);
+      const e2 = (ax - px) * (by - py) - (ay - py) * (bx - px);
+      const s0 = sg * e0, s1 = sg * e1, s2 = sg * e2;
+      if (s0 < 0 || s1 < 0 || s2 < 0) continue;
+      if ((s0 === 0 && !own0) || (s1 === 0 && !own1) || (s2 === 0 && !own2)) continue;
+      visit(x, y, e0 / area, e1 / area, e2 / area);
+    }
+  }
+}
+
 /** One triangle into the buffers: culled when it faces away (unless two-sided), its pixels by their barycentres. */
 function drawTriangle(q, mat, t, toPx, rgba, depth, W, blend) {
   const idx = q.p.mesh.indices;
@@ -139,46 +180,37 @@ function drawTriangle(q, mat, t, toPx, rgba, depth, W, blend) {
   const front = (area > 0) !== q.mirrored;
   if (!front && !mat.twoSided) return;
   const side = front ? 1 : -1;
-  const minX = Math.max(0, Math.floor(Math.min(ax, bx, cx))), maxX = Math.min(W - 1, Math.ceil(Math.max(ax, bx, cx)));
-  const minY = Math.max(0, Math.floor(Math.min(ay, by, cy))), maxY = Math.min(W - 1, Math.ceil(Math.max(ay, by, cy)));
   const base = mat.color ?? [1, 1, 1, 1];
   const uvs = q.p.mesh.uvs;
   const tt = mat.uv && (mat.uv.rotation || mat.uv.offset[0] || mat.uv.offset[1] || mat.uv.scale[0] !== 1 || mat.uv.scale[1] !== 1) ? mat.uv : null;
   const tex = [1, 1, 1, 1];
-  for (let y = minY; y <= maxY; y++) {
-    for (let x = minX; x <= maxX; x++) {
-      const px = x + 0.5, py = y + 0.5;
-      const w0 = ((bx - px) * (cy - py) - (by - py) * (cx - px)) / area;
-      const w1 = ((cx - px) * (ay - py) - (cy - py) * (ax - px)) / area;
-      const w2 = 1 - w0 - w1;
-      if (w0 < 0 || w1 < 0 || w2 < 0) continue;
-      const z = w0 * q.sz[va] + w1 * q.sz[vb] + w2 * q.sz[vc];
-      const at = y * W + x;
-      if (z >= depth[at]) continue;
-      let a = base[3] ?? 1, r = base[0], g = base[1], b = base[2];
-      if (mat.picture) {
-        let u = w0 * uvs[va * 2] + w1 * uvs[vb * 2] + w2 * uvs[vc * 2], v = w0 * uvs[va * 2 + 1] + w1 * uvs[vb * 2 + 1] + w2 * uvs[vc * 2 + 1];
-        if (tt) [u, v] = applyTextureTransform(tt, u, v);
-        sample(mat.picture, mat.wrap, u, v, tex);
-        r *= tex[0]; g *= tex[1]; b *= tex[2]; a *= tex[3];
-      }
-      if (mat.alpha === 'cutout' && a < (mat.cutoff ?? 0.5)) continue;
-      if (mat.alpha !== 'blend') a = 1;
-      // the normal across the face, from its own side
-      const n = norm([0, 1, 2].map((c) => side * (w0 * q.nor[va * 3 + c] + w1 * q.nor[vb * 3 + c] + w2 * q.nor[vc * 3 + c])));
-      const lit = AMBIENT + KEY_K * Math.max(0, dot(n, KEY)) + FILL_K * Math.max(0, dot(n, FILL));
-      r = Math.min(1, r * lit); g = Math.min(1, g * lit); b = Math.min(1, b * lit);
-      const o = at * 4;
-      if (blend) {
-        // laid over what is behind it, premultiplied; it writes no depth (what is behind still shows through)
-        rgba[o] = r * a + rgba[o] * (1 - a); rgba[o + 1] = g * a + rgba[o + 1] * (1 - a); rgba[o + 2] = b * a + rgba[o + 2] * (1 - a);
-        rgba[o + 3] = a + rgba[o + 3] * (1 - a);
-      } else {
-        rgba[o] = r; rgba[o + 1] = g; rgba[o + 2] = b; rgba[o + 3] = 1;
-        depth[at] = z;
-      }
+  thumbRaster(ax, ay, bx, by, cx, cy, W, (x, y, w0, w1, w2) => {
+    const z = w0 * q.sz[va] + w1 * q.sz[vb] + w2 * q.sz[vc];
+    const at = y * W + x;
+    if (z >= depth[at]) return;
+    let a = base[3] ?? 1, r = base[0], g = base[1], b = base[2];
+    if (mat.picture) {
+      let u = w0 * uvs[va * 2] + w1 * uvs[vb * 2] + w2 * uvs[vc * 2], v = w0 * uvs[va * 2 + 1] + w1 * uvs[vb * 2 + 1] + w2 * uvs[vc * 2 + 1];
+      if (tt) [u, v] = applyTextureTransform(tt, u, v);
+      sample(mat.picture, mat.wrap, u, v, tex);
+      r *= tex[0]; g *= tex[1]; b *= tex[2]; a *= tex[3];
     }
-  }
+    if (mat.alpha === 'cutout' && a < (mat.cutoff ?? 0.5)) return;
+    if (mat.alpha !== 'blend') a = 1;
+    // the normal across the face, from its own side
+    const n = norm([0, 1, 2].map((c) => side * (w0 * q.nor[va * 3 + c] + w1 * q.nor[vb * 3 + c] + w2 * q.nor[vc * 3 + c])));
+    const lit = AMBIENT + KEY_K * Math.max(0, dot(n, THUMB_KEY)) + FILL_K * Math.max(0, dot(n, THUMB_FILL));
+    r = Math.min(1, r * lit); g = Math.min(1, g * lit); b = Math.min(1, b * lit);
+    const o = at * 4;
+    if (blend) {
+      // laid over what is behind it, premultiplied; it writes no depth (what is behind still shows through)
+      rgba[o] = r * a + rgba[o] * (1 - a); rgba[o + 1] = g * a + rgba[o + 1] * (1 - a); rgba[o + 2] = b * a + rgba[o + 2] * (1 - a);
+      rgba[o + 3] = a + rgba[o + 3] * (1 - a);
+    } else {
+      rgba[o] = r; rgba[o + 1] = g; rgba[o + 2] = b; rgba[o + 3] = 1;
+      depth[at] = z;
+    }
+  });
 }
 
 /** The drawn buffer averaged down by SUPER - alpha-weighted (it is premultiplied), so a clear pixel tints no edge. */

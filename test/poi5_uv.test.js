@@ -193,18 +193,22 @@ test('POI-5 PACKING AND DENSITY: every island inside the square with its margin,
 
 import { orderByDissection, cholesky, solveCholesky, upperCsc } from '../src/poi/sparseCholesky.js';
 
+// PIN MOVED (AUDIT POI M13): the solver is HERMITIAN now - the conformal map's own complex form, one column a vertex
+// where the real form had two (four times the entries) - so the system below is complex (an off-diagonal coupling with an
+// imaginary part, its twin the conjugate), its answer complex, and upperCsc takes the imaginary parts beside the real and
+// conjugates what it mirrors. The pin is the same claim, made harder: a real symmetric system is the case Az = 0.
 test('POI-5 THE DIRECT SOLVE: a sparse positive-definite system factored and solved as a dense one solves it; the order a permutation of every vertex, a cut\'s vertices after both its halves; a matrix that is not positive definite refused (the unwrap falls back) (mutants: the separator first; a diagonal summed twice)', () => {
-  // a grid Laplacian plus a little of the identity, its right-hand side known
+  // a grid Laplacian with complex couplings, plus a little of the identity, its right-hand side known
   const k = 12, N = k * k;
   const pts = [], nb = Array.from({ length: N }, () => []);
   for (let j = 0; j < k; j++) for (let i = 0; i < k; i++) pts.push([i, 0, j]);
-  const I = [], J = [], V = [];
+  const I = [], J = [], V = [], Z = [];
   const at = (i, j) => j * k + i;
   for (let j = 0; j < k; j++) for (let i = 0; i < k; i++) {
     const a = at(i, j);
-    I.push(a); J.push(a); V.push(4.1);
+    I.push(a); J.push(a); V.push(4.6); Z.push(0);
     for (const [di, dj] of [[1, 0], [0, 1]]) {
-      if (i + di < k && j + dj < k) { const b = at(i + di, j + dj); I.push(a); J.push(b); V.push(-1); nb[a].push(b); nb[b].push(a); }
+      if (i + di < k && j + dj < k) { const b = at(i + di, j + dj); I.push(a); J.push(b); V.push(-1); Z.push(di ? 0.3 : -0.2); nb[a].push(b); nb[b].push(a); }
     }
   }
   const order = orderByDissection(pts, nb, 8);
@@ -212,23 +216,24 @@ test('POI-5 THE DIRECT SOLVE: a sparse positive-definite system factored and sol
   // the first cut: the last vertices ordered are its separator - a column of the grid between two halves
   const last = [...order.slice(-k)].map((v) => pts[v][0]);
   assert.ok(last.every((x) => x === last[0]), `the separator a single column, ordered last (${last})`);
-  // renumbered by the order, factored, solved
+  // renumbered by the order (a triple whose row now ranks after its column is mirrored, conjugated), factored, solved
   const rank = new Int32Array(N); order.forEach((v, r) => { rank[v] = r; });
-  const { Ap, Ai, Ax } = upperCsc(N, Int32Array.from(I.map((v) => rank[v])), Int32Array.from(J.map((v) => rank[v])), Float64Array.from(V), V.length);
-  const L = cholesky(N, Ap, Ai, Ax);
+  const { Ap, Ai, Ar, Az } = upperCsc(N, Int32Array.from(I.map((v) => rank[v])), Int32Array.from(J.map((v) => rank[v])), Float64Array.from(V), Float64Array.from(Z), V.length);
+  const L = cholesky(N, Ap, Ai, Ar, Az);
   assert.ok(L);
-  const truth = Float64Array.from({ length: N }, (_, i) => Math.sin(i));
-  // b = M truth, M the full symmetric matrix
-  const b = new Float64Array(N);
-  for (let t = 0; t < V.length; t++) { const r = rank[I[t]], c = rank[J[t]]; b[r] += V[t] * truth[c]; if (r !== c) b[c] += V[t] * truth[r]; }
-  const x = solveCholesky(L, b);
-  for (let i = 0; i < N; i++) near(x[i], truth[i], 1e-9, `x[${i}]`);
+  const tr = Float64Array.from({ length: N }, (_, i) => Math.sin(i)), tz = Float64Array.from({ length: N }, (_, i) => Math.cos(i * 0.7));
+  // b = H truth, H the full Hermitian matrix: H(a, b) = V + iZ above, its conjugate below
+  const br = new Float64Array(N), bz = new Float64Array(N);
+  const madd = (r, c, hr, hz) => { br[r] += hr * tr[c] - hz * tz[c]; bz[r] += hr * tz[c] + hz * tr[c]; };
+  for (let t = 0; t < V.length; t++) { const r = rank[I[t]], c = rank[J[t]]; madd(r, c, V[t], Z[t]); if (r !== c) madd(c, r, V[t], -Z[t]); }
+  const x = solveCholesky(L, br, bz);
+  for (let i = 0; i < N; i++) { near(x.re[i], tr[i], 1e-9, `x[${i}].re`); near(x.im[i], tz[i], 1e-9, `x[${i}].im`); }
   // not positive definite: refused
-  const bad = upperCsc(2, Int32Array.from([0, 1, 0]), Int32Array.from([0, 1, 1]), Float64Array.from([1, 1, 2]), 3);
-  assert.equal(cholesky(2, bad.Ap, bad.Ai, bad.Ax), null);
-  // duplicates summed, a triple below the diagonal mirrored above it
-  const d = upperCsc(2, Int32Array.from([1, 0, 0]), Int32Array.from([0, 1, 0]), Float64Array.from([2, 3, 1]), 3);
-  assert.deepEqual([...d.Ap], [0, 1, 2]); assert.deepEqual([...d.Ai], [0, 0]); assert.deepEqual([...d.Ax], [1, 5]);
+  const bad = upperCsc(2, Int32Array.from([0, 1, 0]), Int32Array.from([0, 1, 1]), Float64Array.from([1, 1, 2]), null, 3);
+  assert.equal(cholesky(2, bad.Ap, bad.Ai, bad.Ar, bad.Az), null);
+  // duplicates summed, a triple below the diagonal mirrored above it - conjugated
+  const d = upperCsc(2, Int32Array.from([1, 0, 0]), Int32Array.from([0, 1, 0]), Float64Array.from([2, 3, 1]), Float64Array.from([0.5, 0.25, 0]), 3);
+  assert.deepEqual([...d.Ap], [0, 1, 2]); assert.deepEqual([...d.Ai], [0, 0]); assert.deepEqual([...d.Ar], [1, 5]); assert.deepEqual([...d.Az], [0, -0.25]);
 });
 
 test('POI-5 THE UNWRAP AT SIZE: a curved sheet of 7,200 triangles laid flat by the direct solve - true to its area within the pins\' own two per cent, every face unmirrored (mutants: the direct solve unread)', () => {
