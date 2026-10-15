@@ -329,16 +329,15 @@ test('AUDIT MW-NPC C5: a watchman\'s look follows his number on the wire once he
   assert.deepEqual(foeLook(a), foeLook(b), 'the encounter pool\'s foe and its puppet one person');
 });
 
-test('AUDIT MW-NPC C6: under a window both dungeon hosts draw the flats and return before drawFoes (the only place a body is drawn) - so the corpse flats are shown first, none left cast-only by the last frame (by source)', () => {
-  const ctx = rd('src/scenes/dungeonContext.js');
-  assert.ok(ctx.includes('    showBodyFlats: () => { for (const f of foes) if (f.corpseBatch) f.corpseBatch.castOnly = false; },'));
-  for (const [file, show, draw, ret] of [
-    ['src/scenes/worldModes.js', '      if (dungeonCtx.uiOverlayActive) dungeonCtx.showBodyFlats?.();', '      renderer.drawBillboards([...dungeonCtx.billboardBatches,', 'if (dungeonCtx.uiOverlayActive) { dungeonCtx.hideHudText?.();'],
-    ['src/scenes/dungeon.js', '    if (ctx.uiOverlayActive) ctx.showBodyFlats?.();', '    renderer.drawBillboards([...ctx.billboardBatches,', 'ctx.hideHudText?.(); hideWorldPlaque(); ctx.tickOverlay(dt); ctx.drawOverlay(canvas);'],
-  ]) {
-    const s = rd(file), a = s.indexOf(show), b = s.indexOf(draw, a), c = s.indexOf(ret, b);
-    assert.ok(a > 0 && b > a && b - a < 600 && !s.slice(a, b).includes('drawBillboards(') && c > b, `${file}: shown just before the flats are drawn, ahead of the window's return`);   // worldModes holds it above BLOOD1a's marks: that pin keeps the marks within 400 of the flats
-  }
+// PIN MOVED (FB1015 LOOT-BODY, test/fb1015_lootbody.test.js): the window's frame draws the bodies drawFoes last synced as
+// well as showing the corpse flats - this pin holds C6's own half, every corpse flat shown before the mark, by the door
+test('AUDIT MW-NPC C6: under a window both dungeon hosts draw the flats and return before drawFoes - so every corpse flat is shown first, none left cast-only by the last frame, and only a body standing marks its own again (by source; the hosts\' order is FB1015\'s pin)', () => {
+  const fb = rd('src/characters/foeBodies.js');
+  const door = fb.slice(fb.indexOf('export function drawBodiesUnderWindow('));
+  const show = door.indexOf('  for (const f of foes) { const b = corpseFlat(f); if (b) b.castOnly = false; }');
+  const mark = door.indexOf("if (b) b.castOnly = lane.has('foe', idOf(f)); }");
+  assert.ok(show > 0 && mark > show, 'every flat shown, then a standing body\'s marked');
+  assert.ok(rd('src/scenes/dungeonContext.js').includes('drawBodiesUnderWindow(_npcLane, foes, _npcStood, { idOf: foeId, corpseFlat: (f) => f.corpseBatch,'));
 });
 
 test('AUDIT MW-NPC B3 (the slot): in an NPC lane a newcomer within the cut takes the slot of a body past it at once - never the dwell a visible body waits out - and an unseen far body gives its slot up before a visible one held past the range, even where the visible one is farther', async () => {
