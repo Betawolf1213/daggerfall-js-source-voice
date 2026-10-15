@@ -65,7 +65,6 @@ import {
   pickLanternRecord, hangAnchor, hookOnBone, hangAffine,   // HT-WAIST: the lantern at the waist, and the part that hangs
   tpAnimSources, TP_BASE_MODEL, playerBodyRows, werewolfHeadRows, MW_UNITS_PER_METER, resolveBodyParts, ARM_PARTS, raceRecords, armorRecords, clothingRecords,
   facePools, meshBounds, curatedAnswersFace,   // AUDIT MW-HEADS1: the match stands down where the curated table answers
-  shapeMatchesBone,   // PORTRAIT3D: a head part's shapes, as the binder keeps them
   movementAnimState, composeMovementGroup, MOVEMENT_FALLBACK_SPEED, MOVEMENT_SPEED_CAP, turnAnimSpeed,
   jumpAnimState,
   sourcesKeyTime, sourceVelocityOf,
@@ -1903,6 +1902,7 @@ async function buildTpBody({
   skin = null,   // SHADOW-FANG (AUDIT D2): the wolf's skin, painted here
   vampire = false,   // MWNPC14: a vampire - the race's vampire head (getVampireHead)
   walk = null,   // MWNPC17: an NPC's own head and hair, walked off its seed ({ head, hair } - playerBodyRows)
+  ownHeads = false,   // MW-HEADS2: a player's body - the port's own heads where its race has them
 }) {
   const exists = (p) => archives.some((a) => a.has(p));
   const settingsSkeleton = tpSkeletonPath({ female, beast, werewolf });
@@ -1915,7 +1915,7 @@ async function buildTpBody({
     const skeletonBytes = nifBytes(skelArc, skeletonPath);
 
     // WEREWOLF1: the wolf's head and hair, by id - every other skin slot is empty, the robe is the body
-    const rows = werewolf ? werewolfHeadRows(parts) : playerBodyRows(parts, race, female, { beast, faceIndex, faceMatch, vampire, walk, has: exists });   // MWNPC14: a vampire's head; MWNPC17: an NPC's own; AUDIT MW-HEADS1: the port's own heads where these archives carry them
+    const rows = werewolf ? werewolfHeadRows(parts) : playerBodyRows(parts, race, female, { beast, faceIndex, faceMatch, vampire, walk, has: exists, ownHeads });   // MWNPC14: a vampire's head; MWNPC17: an NPC's own; AUDIT MW-HEADS1: the port's own heads where these archives carry them
     const missing = [];
     // MW-D29/D31: the worn verdicts arrive COMPOSED - one arbitration
     // in buildFpArm serves both rigs. shadowSkinRows applies the
@@ -2204,7 +2204,8 @@ async function faceMatchOf({ race, female, faceIndex, werewolf = false, npcFace 
   } else if (!d.fetchArena2Bytes) {
     faceMatch = { head: null, hair: null, reasons: ['no Daggerfall data door - the walk stands'] };
   } else {
-    const fkey = `${gen}:${race}:${female ? 'f' : 'm'}:${faceIndex | 0}`;
+    const measured = [...pools.heads, ...pools.hairs].map((r) => r.id).join('\n');
+    const fkey = `${gen}:${race}:${female ? 'f' : 'm'}:${faceIndex | 0}:${fnv(measured)}`;   // MW-HEADS2: and the pools - a player's (the port's own) and an escort's (the data's) are two
     faceMatch = FACE_MATCH_CACHE.get(fkey);
     // MW-LOAD: AND KEPT ACROSS PAGE LOADS. The verdict is a function
     // of the stored set (every archive's heads and hairs), the
@@ -2221,7 +2222,6 @@ async function faceMatchOf({ race, female, faceIndex, werewolf = false, npcFace 
     // port's own, named no head of them, and the walk stood. The
     // ids measured are the key's, so another pool is measured anew.
     const print = typeof d.morrowindDataFingerprint === 'function' ? d.morrowindDataFingerprint() : null;
-    const measured = [...pools.heads, ...pools.hairs].map((r) => r.id).join('\n');
     const dkey = print !== null && typeof d.loadDerivedJson === 'function' && typeof d.storeDerivedJson === 'function'
       ? `mw-face-match:v${FACE_MATCH_VERSION}:${race}:${female ? 'f' : 'm'}:${faceIndex | 0}:${fnv(print)}:${fnv(measured)}` : null;
     if (!faceMatch && dkey) {
@@ -2246,22 +2246,25 @@ async function faceMatchOf({ race, female, faceIndex, werewolf = false, npcFace 
 
 
 // PORTRAIT3D (2026-10-15, the owner, of the faces: "can we do the other races with 3d portraits also?", then "#2 is
-// exactly I wanted. Which also affects the talk window for npcs"): THE FACE IS A PICTURE OF THE MORROWIND HEAD. With
-// Morrowind's data attached, a face Daggerfall paints - the player's portrait, an NPC's in the talk window - is drawn
-// as the head and hair the body wears: the same pools, the same curated table and measured match (faceMatchOf), the
-// same walk off an NPC's seed (playerBodyRows), so the portrait and the body are one face. It reads its own catalogue
-// (the archives and the .esm's BODY records, by the derived door the build takes), so it stands before any body is
-// built - at character creation and on the title screen's saves. Head and hair are RIGID parts in the head bone's own
-// frame (+Y the face, +Z the crown - mwFaceMatch headFeatures), so the two meshes render together with no skeleton,
-// each its shapes as the binder keeps them (the hair's filtered on "hair", npcanimation.cpp:801), face-on under an
-// orthographic camera, lit as the inventory's figure is (renderCharacterSpriteImage's studio). One picture per head
-// and hair per data generation, the promise shared; a miss is not kept (AUDIT 32 F3's law), and a caller holds the
-// classic portrait until a picture lands, or for good when none does.
+// exactly I wanted. Which also affects the talk window for npcs"; of what it left out: "Stop half assing this"): THE
+// FACE IS A PICTURE OF THE MORROWIND HEAD - the head the body wears, as the body wears it. With Morrowind's data
+// attached, a face Daggerfall paints - the player's portrait, an NPC's in the talk window - is the head, the hair and
+// what is worn on them, assembled on the body's own skeleton through the body's own doors: the face (faceMatchOf - the
+// curated table, the measured match, the walk; an NPC's walked off its seed), the curse (a vampire's head - getVampireHead;
+// the transformed werewolf's Bloodmoon head and hair, its skin), the helm and the hood (composeWornArmor over what is
+// worn, the shadows it casts on the skin rows, HEAD-HELD's bare head where a helm bound nothing). It reads its own
+// catalogue (the archives, every .esm's BODY, ARMO and RACE records by the derived door the build takes), so it stands
+// before any body is built - at character creation and on the title screen's saves. The assembly stands at rest and is
+// framed face-on round the head, mirrored and lit as the inventory's figure is (figure(): x negated; the studio light of
+// renderCharacterSpriteImage), read back once per skeleton, rows, worn parts, form and size per data generation, the
+// promise shared; a miss is not kept (AUDIT 32 F3's law), and a caller holds the classic portrait until a picture lands,
+// or for good when none does.
 const HEAD_PORTRAIT_CACHE = new Map();
 /** PORTRAIT3D: the catalogue the portraits read, one per data generation - `{ gen, promise }`. */
 let headCatalog = null;
 
-/** PORTRAIT3D: the archives and every .esm's BODY records, in load order - what facePools and playerBodyRows read. */
+/** PORTRAIT3D: the archives and every .esm's BODY, ARMO and RACE records, in load order (the last race record wins, as
+ *  the build reads it) - what facePools, playerBodyRows and composeWornArmor read. */
 function headCatalogOf(d) {
   const gen = adoptMemoGeneration(d.morrowindDataGeneration);
   if (gen !== null && headCatalog && headCatalog.gen === gen) return headCatalog.promise;
@@ -2270,12 +2273,15 @@ function headCatalogOf(d) {
     if (!archives.length) return null;
     const esmNames = esmLoadOrder((await d.storedMorrowindNames()).filter((n) => /\.esm$/i.test(n)));
     if (!esmNames.length) return null;
-    const parts = [];
+    const parts = [], armors = [], races = new Map();
     for (const n of esmNames) {
       const records = typeof d.loadMorrowindArmRecords === 'function' ? await d.loadMorrowindArmRecords(n) : null;
-      parts.push(...(records ? armRecordsOf(records, 'parts') : bodyParts(await d.loadMorrowindFile(n))));
+      const bytes = records ? null : await d.loadMorrowindFile(n);
+      parts.push(...(records ? armRecordsOf(records, 'parts') : bodyParts(bytes)));
+      armors.push(...((records ? armRecordsOf(records, 'armors') : armorRecords(bytes)) ?? []));
+      for (const [k, v] of (records ? (records.races ? armRecordsOf(records, 'races') : new Map()) : raceRecords(bytes))) races.set(k, v);
     }
-    return { archives, parts, gen };
+    return { archives, parts, armors, races, gen };
   })();
   const forget = () => { if (headCatalog && headCatalog.promise === promise) headCatalog = null; };
   if (gen !== null) headCatalog = { gen, promise };
@@ -2283,13 +2289,13 @@ function headCatalogOf(d) {
   return promise;
 }
 
-/** PORTRAIT3D: THE PORTRAIT'S FRAME - face-on to a head and hair in the pass frame (NIF_TO_PASS stands the crown up and
- *  turns the face to -Z), the orthographic window fitted to the projected corners with a little air, `aspect` (width
- *  over height) wide - a classic portrait's own shape, so no well stretches it. Pure; pinned. */
+/** PORTRAIT3D: THE PORTRAIT'S FRAME - face-on to a head in the pass frame (the body at rest faces +Z there, as the
+ *  inventory's figure is seen), the orthographic window fitted to the projected corners with a little air, `aspect`
+ *  (width over height) wide - a classic portrait's own shape, so no well stretches it. Pure; pinned. */
 export function headFrame(bounds, { air = 1.08, aspect = 1 } = {}) {
   const c = [(bounds.minX + bounds.maxX) / 2, (bounds.minY + bounds.maxY) / 2, (bounds.minZ + bounds.maxZ) / 2];
   const span = Math.hypot(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY, bounds.maxZ - bounds.minZ) || 1;
-  const eye = [c[0], c[1], c[2] - span * 2];
+  const eye = [c[0], c[1], c[2] + span * 2];
   const view = lookAt(eye, c, [0, 1, 0]);
   let hw = 0; let hh = 0;
   for (const x of [bounds.minX, bounds.maxX]) for (const y of [bounds.minY, bounds.maxY]) for (const z of [bounds.minZ, bounds.maxZ]) {
@@ -2301,39 +2307,71 @@ export function headFrame(bounds, { air = 1.08, aspect = 1 } = {}) {
   return { view, proj: ortho(halfH * a, halfH, 0.1, span * 8), eye };
 }
 
-/** PORTRAIT3D: the head and hair records `rows` name, rendered to a picture `pw` x `ph` - `{ width, height, data }`
- *  top-down RGBA, transparent round the head - or null when a mesh or a texture is not in hand. */
-async function renderHeadRows(renderer, cat, rows, pw, ph) {
-  const pieces = [];
-  for (const row of rows) {
-    if (!row.record || !row.record.model) continue;
-    const path = `meshes/${row.record.model}`;
-    await loadFromArchives(cat.archives, [path]);
-    const arc = cat.archives.find((a) => a.has(path));
-    if (!arc || (typeof arc.loaded === 'function' && !arc.loaded(path))) return null;
-    let batches;
-    try { batches = flattenNif(parseNif(arc.get(path).slice())); } catch { return null; }
-    const filter = row.slot === 'hair' ? 'hair' : 'head';
-    const kept = batches.filter((b) => b.positions && b.indices && (!String(b.name || '').trim() || shapeMatchesBone(b.name, filter)));
-    for (const b of kept) pieces.push({ ...b, slot: row.slot, mirrored: false });
-  }
-  if (!pieces.some((p) => p.slot === 'head')) return null;
-  await preloadArmTextures(pieces, cat.archives, cat.gen);
-  if (texturesUnread(pieces, cat.archives, cat.gen)) return null;   // a texture whose bytes never came is no portrait (AUDIT DYE-ICON r3 2's law)
-  const u = 1 / MW_UNITS_PER_METER;
-  const model = multiply(trs(0, 0, 0, 0, 0, 0, u, u, u), NIF_TO_PASS);
-  let minX = Infinity, minY = Infinity, minZ = Infinity, maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+/** PORTRAIT3D: the model a portrait's assembly is drawn under - figure()'s own, x negated, in metres, Z-up stood Y-up. */
+export const headPortraitModel = () => multiply(trs(0, 0, 0, 0, 0, 0, -1 / MW_UNITS_PER_METER, 1 / MW_UNITS_PER_METER, 1 / MW_UNITS_PER_METER), NIF_TO_PASS);
+
+/** PORTRAIT3D: the box a portrait frames, in the pass frame - the head's pieces (`heads`, by slot: the skin's head and
+ *  hair, a helm's parts) and, of a part that also hides the head and hangs from more than it (a townsperson's hooded
+ *  outfit), only what lies round the head. Pure; pinned. */
+export function headBounds(pieces, model, heads, hoods) {
+  const box = () => ({ minX: Infinity, minY: Infinity, minZ: Infinity, maxX: -Infinity, maxY: -Infinity, maxZ: -Infinity });
+  const grow = (b, q) => {
+    if (q[0] < b.minX) b.minX = q[0]; if (q[0] > b.maxX) b.maxX = q[0];
+    if (q[1] < b.minY) b.minY = q[1]; if (q[1] > b.maxY) b.maxY = q[1];
+    if (q[2] < b.minZ) b.minZ = q[2]; if (q[2] > b.maxZ) b.maxZ = q[2];
+  };
+  const b = box();
   for (const p of pieces) {
+    if (!heads.has(p.slot)) continue;
+    for (let i = 0; i < p.positions.length; i += 3) grow(b, transformPoint(model, p.positions[i], p.positions[i + 1], p.positions[i + 2]));
+  }
+  if (!(b.maxX > b.minX)) return null;
+  const c = [(b.minX + b.maxX) / 2, (b.minY + b.maxY) / 2, (b.minZ + b.maxZ) / 2];
+  const r = 0.75 * Math.hypot(b.maxX - b.minX, b.maxY - b.minY, b.maxZ - b.minZ);
+  for (const p of pieces) {
+    if (!hoods.has(p.slot)) continue;
     for (let i = 0; i < p.positions.length; i += 3) {
       const q = transformPoint(model, p.positions[i], p.positions[i + 1], p.positions[i + 2]);
-      if (q[0] < minX) minX = q[0]; if (q[0] > maxX) maxX = q[0];
-      if (q[1] < minY) minY = q[1]; if (q[1] > maxY) maxY = q[1];
-      if (q[2] < minZ) minZ = q[2]; if (q[2] > maxZ) maxZ = q[2];
+      if (Math.hypot(q[0] - c[0], q[1] - c[1], q[2] - c[2]) < r) grow(b, q);
     }
   }
-  if (!(maxX > minX)) return null;
+  return b;
+}
+
+/** PORTRAIT3D: the head as the body wears it - its skin rows, the parts worn on it, assembled on the skeleton at rest -
+ *  rendered to a picture `pw` x `ph` (`{ width, height, data }` top-down RGBA, transparent round the head), or null when
+ *  the skeleton, a mesh or a texture is not in hand or nothing of the head stands. */
+async function renderHeadAssembly(renderer, cat, { skeletonPath, skinRows, heads, rows, worn, werewolf, skin }, pw, ph) {
+  const find = (p) => cat.archives.find((a) => a.has(p)) ?? null;
+  await loadFromArchives(cat.archives, [skeletonPath, ...[...skinRows, ...heads].map((r) => `meshes/${r.model}`), ...heads.flatMap((a) => ownBodyPaths(a, rows)).map((b) => b.path)]);
+  const skelArc = find(skeletonPath);
+  if (!skelArc) return null;
+  const skeletonBytes = nifBytes(skelArc, skeletonPath);
+  const partOf = (row) => {
+    const path = `meshes/${row.model}`, arc = find(path);
+    return arc ? { slot: row.slot, partName: row.partName, bones: row.bones, bytes: nifBytes(arc, path), ...ownBodyPart(row, rows, find) } : null;
+  };
+  const parts = [...skinRows, ...heads].map(partOf).filter(Boolean);
+  let arm = await assembleFirstPersonArm({ skeletonBytes, parts, parseNif: parseNifOnce });
+  if (!arm.ok) return null;
+  // HEAD-HELD: a helm that bound nothing gives back the head and hair it hid - never a headless portrait
+  const given = bareHeadRows(rows, worn, arm.pieces, werewolf);
+  if (given.length) {
+    await loadFromArchives(cat.archives, given.map((r) => `meshes/${r.model}`));
+    const again = await assembleFirstPersonArm({ skeletonBytes, parts: [...parts, ...given.map(partOf).filter(Boolean)], parseNif: parseNifOnce });
+    if (again.ok) arm = again;
+  }
+  poseAssembly(arm);   // the rest
+  const pieces = arm.pieces.filter((p) => p.positions && p.indices);
+  const model = headPortraitModel();
+  const headSlots = new Set(['head', 'hair', ...heads.filter((a) => !(a.hides ?? []).length).map((a) => a.slot)]);
+  const hoodSlots = new Set(heads.filter((a) => (a.hides ?? []).length).map((a) => a.slot));
+  const bounds = headBounds(pieces, model, headSlots, hoodSlots);
+  if (!bounds) return null;
+  await preloadArmTextures(pieces, cat.archives, cat.gen);
+  if (texturesUnread(pieces, cat.archives, cat.gen)) return null;   // a texture whose bytes never came is no portrait (AUDIT DYE-ICON r3 2's law)
   const w = Math.min(CHAR_SPRITE_RT_SIZE, Math.max(16, pw | 0)), h = Math.min(CHAR_SPRITE_RT_SIZE, Math.max(16, ph | 0));
-  const { view, proj } = headFrame({ minX, minY, minZ, maxX, maxY, maxZ }, { aspect: w / h });
+  const { view, proj } = headFrame(bounds, { aspect: w / h });
   const packed = packFpArm(pieces);
   const mesh = renderer.createCharacterMesh(packed.packed, { uv: true });
   mesh.ranges = packed.ranges;
@@ -2342,7 +2380,7 @@ async function renderHeadRows(renderer, cat, rows, pw, ph) {
     const entry = r.textureFile ? textures.get(r.textureFile) : null;
     if (!entry) continue;
     const m = r.piece.material;
-    r.tex = acquireCharacterTexture(renderer, entry.image.mips, wrapModes(m ? m.clampMode : 3));
+    r.tex = acquireCharacterTexture(renderer, skin ? skinnedMipsOf(entry.image, skin, skinUseOf(r.piece, r.textureFile)) : entry.image.mips, wrapModes(m ? m.clampMode : 3));   // SHADOW-FANG: the wolf in its skin
     r.alphaCut = m && m.alphaTest ? (m.alphaThreshold || 0) / 255 : 0;
   }
   try {
@@ -2358,25 +2396,38 @@ async function renderHeadRows(renderer, cat, rows, pw, ph) {
 
 /** PORTRAIT3D: THE PORTRAIT OF A MORROWIND HEAD - the face of a race and sex as the body wears it: the player's by its
  *  portrait (`faceIndex`: the curated table, the measured match, the walk), an NPC's walked off its seed (`npcFace`,
- *  characters/wardrobe.js npcFaceOf), a vampire's head where the race has one. `{ width, height, data }` or null (no
- *  data attached, no renderer, no head for the race, a mesh or a texture not in hand).
- *  @param {{ renderer?: any, race?: string|null, female?: boolean, faceIndex?: number, npcFace?: { head: number, hair: number }|null, vampire?: boolean, px?: number, ph?: number, deps?: any }} [opts] */
-export async function headPortrait({ renderer, race, female = false, faceIndex = 0, npcFace = null, vampire = false, px = 128, ph = px, deps = null } = {}) {
+ *  characters/wardrobe.js npcFaceOf); a vampire's head (`vampire`), the transformed werewolf's (`werewolf`, in its
+ *  `skin`); and what is worn on it (`armor`, the build's own list - a helm, a hooded outfit); a player's (`ownHeads`) the
+ *  port's own heads where its race has them, as a player's body wears them (MW-HEADS2). `{ width, height, data }`
+ *  or null (no data attached, no renderer, no head for the race, the skeleton or a mesh or a texture not in hand).
+ *  @param {{ renderer?: any, race?: string|null, female?: boolean, faceIndex?: number, npcFace?: { head: number, hair: number }|null, ownHeads?: boolean, vampire?: boolean, werewolf?: boolean, skin?: string|null, armor?: any[]|null, px?: number, ph?: number, deps?: any }} [opts] */
+export async function headPortrait({ renderer, race, female = false, faceIndex = 0, npcFace = null, vampire = false, werewolf = false, skin = null, armor = null, ownHeads = false, px = 128, ph = px, deps = null } = {}) {
   if (!renderer || !race) return null;
   const d = deps || await import('../scenes/dataSource.js');
   const cat = await headCatalogOf(d);
   if (!cat) return null;
-  const has = archiveHas(cat.archives);
-  const pools = npcFace ? null : facePools(cat.parts, race, female, { has });
-  const faceMatch = await faceMatchOf({ race, female, faceIndex, npcFace, pools, archives: cat.archives, gen: cat.gen, d });
-  const rows = playerBodyRows(cat.parts, race, female, { faceIndex, faceMatch, vampire, walk: npcFace, has }).filter((r) => r.slot === 'head' || r.slot === 'hair');
-  const head = rows.find((r) => r.slot === 'head')?.record;
-  if (!head) return null;
-  const hair = rows.find((r) => r.slot === 'hair')?.record ?? null;
-  const key = `${cat.gen}:${head.id}:${hair ? hair.id : '-'}:${px | 0}x${ph | 0}`;
+  const exists = archiveHas(cat.archives);
+  const raceRec = cat.races.get(String(race).toLowerCase());
+  const beast = !!(raceRec && raceRec.radt && raceRec.beast);   // AUDIT MW-A F1: the race record's own bit, as the build reads it
+  const pools = werewolf || npcFace ? null : facePools(cat.parts, race, female, { has: exists, own: ownHeads });
+  const faceMatch = await faceMatchOf({ race, female, faceIndex, werewolf, npcFace, pools, archives: cat.archives, gen: cat.gen, d });
+  const rows = (werewolf ? werewolfHeadRows(cat.parts) : playerBodyRows(cat.parts, race, female, { beast, faceIndex, faceMatch, vampire, walk: npcFace, has: exists, ownHeads }))
+    .filter((r) => r.slot === 'head' || r.slot === 'hair');
+  if (!rows.some((r) => r.slot === 'head' && r.record)) return null;
+  // what is worn on the head, composed as the body composes it - the wolf wears nothing (WEREWOLF1), and the clothes
+  // are no head's (a cloak, a robe: their dyes are measured for the body alone)
+  const pieces = werewolf ? [] : (armor ?? []).filter((p) => p && p.kind !== 'clothing');
+  const worn = pieces.length
+    ? composeWornArmor({ pieces, armors: cat.armors, clothes: [], bodyPool: cat.parts, female, helmStyle: getPref('mwSteelHelm') })
+    : { adds: [], shadows: [], notes: [] };
+  const heads = worn.adds.filter((a) => capsHead(a) || (a.bones ?? []).some((b) => /^head$/i.test(b)));
+  let skinRows = shadowSkinRows(rows.filter((r) => r.record).map((r) => ({ slot: r.slot, bones: PART_BONES[r.slot] ?? [], model: r.record.model })), worn.shadows);
+  if (werewolf && worn.shadows.includes('head')) skinRows = skinRows.filter((r) => r.slot !== 'hair');
+  const skeletonPath = correctActorModelPath(tpSkeletonPath({ female, beast, werewolf }), exists);
+  const key = [cat.gen, skeletonPath, ...skinRows.map((r) => r.model), ...heads.map((a) => `${a.slot}=${a.model}`), werewolf ? 'wolf' : '', skin ?? '', `${px | 0}x${ph | 0}`].join(':');
   const hit = HEAD_PORTRAIT_CACHE.get(key);
   if (hit) return hit;
-  const picture = renderHeadRows(renderer, cat, rows, px, ph).catch(() => null);
+  const picture = renderHeadAssembly(renderer, cat, { skeletonPath, skinRows, heads, rows, worn, werewolf, skin }, px, ph).catch(() => null);
   HEAD_PORTRAIT_CACHE.set(key, picture);
   picture.then((img) => { if (!img && HEAD_PORTRAIT_CACHE.get(key) === picture) HEAD_PORTRAIT_CACHE.delete(key); });
   return picture;
@@ -2394,6 +2445,7 @@ export async function buildFpArm({
   vampire = false,   // MWNPC14: a vampire's face - the race's vampire head
   flies = false,   // AUDIT MW-NPC II K5: a creature body that must fly (its CREA record's Flies flag)
   npcFace = null,   // MWNPC17: an NPC's head and hair, each walked off its seed ({ head, hair } - characters/wardrobe.js npcFaceOf): no portrait to match
+  ownHeads = false,   // MW-HEADS2 (the owner: "only the player Britons should recieve the new heads, not npcs"): a player's body - the local player's (weaponRig.js armBuildOptsOf) and a peer's (net/peerBodies.js playerBuildOpts) - wears the port's own heads; every other the data's
 } = {}) {
   if (creature) return buildCreatureBody({ creature, flies, deps });   // MWNPC9
   const d = deps || await import('../scenes/dataSource.js');
@@ -2604,7 +2656,7 @@ export async function buildFpArm({
         ? 'werewolfrobe: Bloodmoon.esm is attached and no CLOT record here names it'
         : 'werewolfrobe: no CLOT record carries it - Bloodmoon.esm does, and it is not attached');
     }
-    const pools = werewolf || npcFace ? null : facePools(parts, race, female, { has: archiveHas(archives) });
+    const pools = werewolf || npcFace ? null : facePools(parts, race, female, { has: archiveHas(archives), own: ownHeads });
     const faceMatch = await faceMatchOf({ race, female, faceIndex, werewolf, npcFace, pools, archives, gen, d });   // PORTRAIT3D: one seam, the head portrait's too
 
     // WEREWOLF1: no race rows - getBodyParts answers nothing for a werewolf, in first person too
@@ -2728,7 +2780,7 @@ export async function buildFpArm({
     catalog.magic = magic;   // MW-SPELLFX1: and the magic the world's spell effects draw with
     // MW-D24: the THIRD-PERSON BODY, while the same archives are open.
     // Its refusal is a note on the card, never the arm's refusal.
-    const tpBody = (wornNow) => buildTpBody({ race, female, beast, faceIndex, faceMatch, weapon, hasAmmo, worn: wornNow, archives, parts, allWeapons, find, gen, torch, allLights, sheathing, ammoCount, hipLight, werewolf, skin: werewolf ? skin : null, vampire: !!vampire, walk: npcFace });   // (the wolf's rows read no face)   // MW-D51; WS1; HT-WAIST; WEREWOLF1; SHADOW-FANG; MWNPC14; MWNPC17
+    const tpBody = (wornNow) => buildTpBody({ race, female, beast, faceIndex, faceMatch, weapon, hasAmmo, worn: wornNow, archives, parts, allWeapons, find, gen, torch, allLights, sheathing, ammoCount, hipLight, werewolf, skin: werewolf ? skin : null, vampire: !!vampire, walk: npcFace, ownHeads: !!ownHeads });   // (the wolf's rows read no face)   // MW-D51; WS1; HT-WAIST; WEREWOLF1; SHADOW-FANG; MWNPC14; MWNPC17
     let third = arm.ok ? await tpBody(worn) : null;
     // AUDIT MW-FOLK1 (L2-F2): AN OUTFIT THAT BOUND NOTHING HIDES NOTHING AND DRESSES NOTHING. Its `hides` took the skin
     // under it and its `covers` stood the modesty shirt down at the composition, before its mesh was read; one whose mesh
@@ -3259,6 +3311,7 @@ export function createFpArm() {
   let castFxGen = 0;   // bumped by a teardown: a glow still loading lands dead
   let pendingWorn = null;        // PX25: the worn table that arrived mid-build
   let pendingWerewolf = null;    // WEREWOLF1: the form that arrived mid-build
+  let pendingVampire = null;     // PORTRAIT3D: the curse's face that arrived mid-build
   let pendingWeapon = null;      // PX26: the hand that arrived mid-build
   let pendingTorch = null;       // MW-D51: the light that arrived mid-build
   let pendingBuild = null;       // AUDIT MW-TORCH F6: the BUILD that arrived mid-build - an identity (a load over a load) is not dropped
@@ -4579,11 +4632,12 @@ export function createFpArm() {
    */
   function flushPending() {
     if (pendingBuild) {   // AUDIT MW-TORCH F6: a queued build supersedes what was queued for the rig it replaces
-      const o = pendingBuild; pendingBuild = null; pendingWorn = null; pendingWeapon = null; pendingTorch = null; pendingHipLight = null; pendingWerewolf = null;
+      const o = pendingBuild; pendingBuild = null; pendingWorn = null; pendingWeapon = null; pendingTorch = null; pendingHipLight = null; pendingWerewolf = null; pendingVampire = null;
       api.build(o);
       return;
     }
     if (pendingWerewolf !== null) { const w = pendingWerewolf; pendingWerewolf = null; api.setWerewolf(w.want, { skin: w.skin }); }   // WEREWOLF1: the form first - the table below waits on its build
+    if (pendingVampire !== null) { const v = pendingVampire; pendingVampire = null; api.setVampire(v); }   // PORTRAIT3D: and the curse's face
     if (pendingWorn) { const p = pendingWorn; pendingWorn = null; api.setWorn(p); }
     if (pendingWeapon) { const w = pendingWeapon; pendingWeapon = null; api.setWeapon(w.item, { hasAmmo: w.hasAmmo, ammoCount: w.ammoCount }); }   // AUDIT 68 X7-pendingweapon-drops-ammocount: the quiver's count rides the queue
     if (pendingTorch !== null) { const l = pendingTorch; pendingTorch = null; api.setTorch(l); }   // MW-D51
@@ -4601,7 +4655,7 @@ export function createFpArm() {
      *  and `ready()` alone says only that SOME arm stands - an
      *  Argonian save loaded over a human's standing arm kept the
      *  human's body until the pack was toggled off and on. */
-    builtFor() { return built && built.ok && lastBuildOpts ? { race: lastBuildOpts.race ?? null, female: !!lastBuildOpts.female, faceIndex: lastBuildOpts.faceIndex | 0, werewolf: !!lastBuildOpts.werewolf } : null; },   // WEREWOLF1: and the form   // AUDIT MW-TORCH: null when nothing stands - an unloaded or refused rig was built for no one
+    builtFor() { return built && built.ok && lastBuildOpts ? { race: lastBuildOpts.race ?? null, female: !!lastBuildOpts.female, faceIndex: lastBuildOpts.faceIndex | 0, werewolf: !!lastBuildOpts.werewolf, vampire: !!lastBuildOpts.vampire } : null; },   // WEREWOLF1: and the form; PORTRAIT3D: and the curse's face   // AUDIT MW-TORCH: null when nothing stands - an unloaded or refused rig was built for no one
     /** MW-EARLY: WHO THE ARM IS BEING BUILT FOR - the identity third of
      *  the build that will stand once the queue drains (the queued one,
      *  else the one in flight), or null when no build is under way. The
@@ -4612,7 +4666,7 @@ export function createFpArm() {
      *  queueing a second of the same body behind it. */
     buildingFor() {
       const o = pendingBuild ?? buildingOpts;
-      return o ? { race: o.race ?? null, female: !!o.female, faceIndex: o.faceIndex | 0, werewolf: !!o.werewolf } : null;   // WEREWOLF1 (the merge): and the form
+      return o ? { race: o.race ?? null, female: !!o.female, faceIndex: o.faceIndex | 0, werewolf: !!o.werewolf, vampire: !!o.vampire } : null;   // WEREWOLF1 (the merge): and the form; PORTRAIT3D: and the curse's face
     },
     get frames() { return frames; },
 
@@ -4718,6 +4772,7 @@ export function createFpArm() {
       torchLit = false; torchState = null; torchSource = null; torchGroup = null; torchMissRig = null;   // MW-D51
       hipLit = false; pendingHipLight = null; Object.assign(hipSwing, createLanternSwing()); hipYaw = null;   // HT-WAIST
       pendingWerewolf = null;   // WEREWOLF1
+      pendingVampire = null;   // PORTRAIT3D
       reason = 'unloaded';
       for (const fn of listeners) { try { fn(); } catch { /* see build() */ } }
     },
@@ -4861,6 +4916,23 @@ export function createFpArm() {
       if (!lastBuildOpts) return false;
       if (want === !!lastBuildOpts.werewolf && wantSkin === (lastBuildOpts.skin ?? null)) return false;
       return this.build({ ...lastBuildOpts, werewolf: want, skin: wantSkin });
+    },
+    /**
+     * PORTRAIT3D (the owner: "Do this" - the curse's face): THE FACE FOLLOWS THE CURSE. A vampire's body wears the
+     * race's vampire head (MWNPC14, getVampireHead), the cure gives the face back - setWerewolf's law: one boolean
+     * compare against the last build's opts, a change one build; asked mid-build, a queued build takes it, else it
+     * waits for the build in flight.
+     */
+    setVampire(on) {
+      const want = !!on;
+      if (busy) {
+        if (pendingBuild) pendingBuild = { ...pendingBuild, vampire: want };
+        else pendingVampire = want;
+        return false;
+      }
+      if (!lastBuildOpts) return false;
+      if (want === !!lastBuildOpts.vampire) return false;
+      return this.build({ ...lastBuildOpts, vampire: want });
     },
     setWeapon(item, { hasAmmo = false, ammoCount = null } = {}) {
       if (!built || !built.ok) return false;

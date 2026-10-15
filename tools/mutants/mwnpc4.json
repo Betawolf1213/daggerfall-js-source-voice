@@ -335,8 +335,8 @@
  {
   "name": "MWNPC4-host-peers-ungated",
   "file": "src/scenes/world.js",
-  "old": "generation: morrowindDataGeneration, collider: () => collider, gate: BODY_BUILD_GATE, horses: () => horseRigFor(renderer) });   // MWA4",
-  "new": "generation: morrowindDataGeneration, collider: () => collider, horses: () => horseRigFor(renderer) });   // MWA4",
+  "old": "generation: morrowindDataGeneration, collider: () => collider, gate: BODY_BUILD_GATE, horses: () => horseRigFor(renderer), buildOpts: playerBuildOpts });   // MW-HEADS2",
+  "new": "generation: morrowindDataGeneration, collider: () => collider, horses: () => horseRigFor(renderer), buildOpts: playerBuildOpts });   // MW-HEADS2",
   "tests": [
    "test/mwnpc4_npclane.test.js"
   ]

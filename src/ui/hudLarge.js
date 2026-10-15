@@ -148,7 +148,7 @@ import { BssFile } from '../formats/bssFile.js';
 // module's two GEOMETRY CONSTANTS, which travel as arguments here too:
 // see drawHudLarge's barFill.
 import { bitmapToColor32, toScreenOrder } from '../formats/color32Order.js';
-import { morrowindDataCount, morrowindDataGeneration } from '../scenes/dataSource.js';   // PORTRAIT3D: the head reloads as Morrowind's data comes and goes
+import { playerHeadImage, playerHeadKey } from '../characters/headPortraits.js';   // PORTRAIT3D: the Morrowind head's key - the data, the helm
 import { largeHudBar, activeSpellIconsPlaced } from './hud.js';   // BUFF-END: and the spell icons it placed this frame
 import { activeSpellAt, hudPointer } from './hudActiveSpells.js';   // BUFF-END: the tooltip's own hit
 import { endBundle, endedSpellText } from '../systems/mysticism.js';   // BUFF-END
@@ -397,6 +397,13 @@ export async function loadHudLarge({ fetchBytes, palette, renderer }, entity = n
 let _mwHeadSeq = 0;
 export async function loadHudLargeHead({ fetchBytes, palette, renderer }, entity) {
   try {
+    // PORTRAIT3D (2026-10-15, the owner: "#2 is exactly I wanted", and of the curse's heads: "Do this"): with Morrowind's
+    // data attached, the head is the Morrowind head the player's body wears - the vampire's head, the transformed
+    // werewolf's, the helm worn - its picture the head rect's own shape at four times its pixels. Where none is drawn
+    // (no data, the wereboar - Morrowind has no boar) Daggerfall's stand, the curse's override first.
+    const [rw, rh] = [LARGE_HUD_RECTS.head[2], LARGE_HUD_RECTS.head[3]];
+    const mw = await playerHeadImage(entity, { px: rw * 4, ph: rh * 4, renderer }).catch(() => null);
+    if (mw) return { tex: renderer.uploadTexture('img', `mwhead#hud#${++_mwHeadSeq}`, toScreenOrder(mw)), w: mw.width, h: mw.height };
     // V5: the override head first (GetCustomHeadImageData's slot).
     // WERE0*I0 are IMGs (one bitmap); VAMP00I0 is a CIF indexed by
     // gender + birth race. A load failure falls to the racial head -
@@ -419,13 +426,6 @@ export async function loadHudLargeHead({ fetchBytes, palette, renderer }, entity
         }
       } catch { console.warn('[hudLarge] override head art unavailable - the racial head stands in'); }
     }
-    // PORTRAIT3D (2026-10-15, the owner: "#2 is exactly I wanted"): with Morrowind's data attached, the head is the
-    // Morrowind head the player's body wears - its picture the head rect's own shape at four times its pixels; the
-    // racial record where none is drawn. The curse's override heads above stand first, as DFU's order has them.
-    const [rw, rh] = [LARGE_HUD_RECTS.head[2], LARGE_HUD_RECTS.head[3]];
-    const { playerHeadImage } = await import('../characters/headPortraits.js');
-    const mw = await playerHeadImage(entity, { px: rw * 4, ph: rh * 4, renderer }).catch(() => null);
-    if (mw) return { tex: renderer.uploadTexture('img', `mwhead#hud#${++_mwHeadSeq}`, toScreenOrder(mw)), w: mw.width, h: mw.height };
     const name = headArchiveFor(entity);
     const cif = new CifRciFile();
     cif.load(await fetchBytes(name), name, palette);
@@ -686,7 +686,7 @@ export const activeMouseOverLargeHUD = () =>
  *  null-and-re-read, as a key change. */
 const headKeyFor = (entity) => {
   const ov = racialOverrideHeadArt(entity);
-  return `${entity?.race ?? 'Breton'}|${entity?.gender ?? 'male'}|${entity?.faceIndex ?? 0}|${ov ? `${ov.file}#${ov.record}` : ''}|mw${morrowindDataCount() > 0 ? morrowindDataGeneration() : 0}`;   // PORTRAIT3D
+  return `${entity?.race ?? 'Breton'}|${entity?.gender ?? 'male'}|${entity?.faceIndex ?? 0}|${ov ? `${ov.file}#${ov.record}` : ''}|mw${playerHeadKey(entity)}`;   // PORTRAIT3D: the data, and the helm
 };
 
 export function largeHudOptions(deps, entity) {
