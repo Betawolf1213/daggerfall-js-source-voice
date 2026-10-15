@@ -163,8 +163,13 @@ test('AUDIT EG III lane1 #4 FIRE-TOUCHED AND FROST-TOUCHED (section 13.3, the Tw
   wakeCourt(S);
   const twins = egLordsOf(S.B.F), vael = twins.find((L) => L.pt === 0), isk = twins.find((L) => L.pt === 1);
   S.at('acct-0', vael.x + 1.5, vael.z); S.at('acct-1', isk.x + 1.5, isk.z);
+  // PIN MOVED (AUDIT EG V, b: lane1 #25 - the touch is minted off the census's own hits at the seam's judge, so the room's beat is
+  // driven as the room drives it: the census over each member's trail (egCount), then the director's beat)
+  const trails = Object.fromEntries(S.subs.map((s) => [s, []]));
+  const census = () => { for (const s of S.subs) trails[s].push([S.now(), S.pos[s].sx - S.spec.x0, 0, S.pos[s].z, S.B.h]); egCount(S.B, S.now(), S.subs.map((s) => ({ sub: s, tr: trails[s] })), LINE, false); };
   let mk = null, eb = [];
   for (let k = 0; k < 4 * 60 && !mk; k++) {
+    census();
     const o = S.step();
     eb = eb.concat(o.filter((f) => f.k === 'eb' && (f.o === vael.i || f.o === isk.i)));
     mk = o.find((f) => f.k === 'emk' && f.m.some((m) => m[1] === EG_MARK_FIRE || m[1] === EG_MARK_FROST)) ?? null;
@@ -294,7 +299,7 @@ test('AUDIT EG III lane1 #12 THE CHAINING\'S SHARED BLOW (section 13.4, Morvayn)
   assert.deepEqual(census(a, 'Test Blow').th, { [a]: 200, [b]: 200, [odd]: 0 }, 'a 0.4 blow on one of a pair: 0.2 each');
   assert.deepEqual(F.cg['Test Blow'], [a], 'the blow caught the struck member alone');
   assert.deepEqual(census(odd, 'Odd Blow').th, { [a]: 0, [b]: 0, [odd]: 400 }, 'chained to a Wraith: shared with no body');
-  assert.deepEqual(census(a, 'Away Blow', { away: [b] }).th, { [a]: 400, [b]: 0, [odd]: 0 }, 'a mate the census does not hold in the hall takes none');
+  assert.deepEqual(census(a, 'Away Blow', { away: [b] }).th, { [a]: 200, [b]: 0, [odd]: 0 }, 'a mate the census does not hold in the hall is counted none of its part - the struck member its own half, as its screen divides it over the chain');   // PIN MOVED (AUDIT EG V, b: lane1 #8 - the census divides over the chain as its tethers say it, the struck screen's own rule; a fallen or homeward mate is unchained at the seam's join)
   assert.deepEqual(census(a, 'Venom Blow', { el: 'poison' }).n, { [a]: 1, [b]: 0, [odd]: 0 }, 'an element\'s blow is seen on the struck alone: it divides nothing');
   // the Last Rites: chains bind threes
   M.hp = M.max * 0.3;

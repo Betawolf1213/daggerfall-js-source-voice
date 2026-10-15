@@ -65,8 +65,10 @@ import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../ui/gateTitl
 import { setBatchHitFlash, setBatchGlint } from '../systems/hitFlash.js';
 import { groundViewModel, drawGateGround } from '../ui/gateGroundView.js';   // EG-ZG: the peril arrow and the chain's words, the gate's own readout
 import { screenBearing } from './gateCourt.js';   // EG-ZG: the way out as the screen turns it
+import { PHASE_NUMERALS } from './gateCourt.js';   // AUDIT EG V (lane1 #14): the gate's phase card's numerals
 import { egFightFloors, egFloorPlan, egHazardSurface, egPerilOf, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb, egEclipseAt, egEclipseDark, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder,
   EG_CHECK_ORDER, EG_ECLIPSE_LOOK, EG_SIGIL_UP_M, EG_AURA_RING, EG_DROP_THUD, EG_TETHER } from '../world/egTelegraph.js';   // EG-ZG: THE TELEGRAPHS AS WRITTEN, the law
+import { EG_SHADE_BAND } from '../world/egTelegraph.js';   // AUDIT EG V (lane1 #13): in the dark every foe keeps the Shade's rim light
 import { drawEgSigils } from '../ui/egSpireHud.js';   // EG-ZG: the marks over heads
 import { EG_NUMERALS } from '../ui/egParty.js';   // AUDIT EG IV (lane1 #15): the company's numerals, an errand's member drawn by its
 import { egMemberOf } from '../net/egLink.js';
@@ -85,6 +87,7 @@ import { EG_ROLE, EG_FL, EG_FEINT_AT } from '../net/egBodies.js';
 import { egKindLook, EG_LEGION_KINDS } from '../net/egLegion.js';
 import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../net/egLords.js';
 import { EG_MARK_FIRE, EG_MARK_FROST, EG_TOUCH_X } from '../net/egLords.js';   // AUDIT EG III (lane1 #4): the Touched marks and their weight - the lords' one home
+import { egLordPhase, moonShafts } from '../net/egLords.js';   // AUDIT EG V (lane1 #13, #14): the phase cards; the Long Night's moon-shafts kept lit
 import { egHallCentre, egFireFallFlames, EG_FIRE_FALL } from '../world/egHall.js';   // EG-ZH: the fire falls' flames
 import { GENERAL_FPS } from '../render/flatAnimation.js';   // EG-ZH: DaggerfallBillboard's framesPerSecond - the fire falls' frames
 import { egHazardParts, egHazardBites, egWispAt, EG_HAZARDS } from '../net/egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' hazards
@@ -137,6 +140,8 @@ const WISP_AGAIN_MS = 6000;
 export const EG_WIND_GRACE_MS = 150;
 /** EG-H1 (section 15): Watchfire's early outline - a PULSING solid red line (a dashed line is a feint's), its pulse (ms). */
 const TOLD_PULSE_MS = 180;
+/** AUDIT EG V (lane1 #18): a chained shape's dim outline before its fill (its alpha). */
+export const EG_OUTLINE_DIM = 0.4;
 /** EG-ZD (section 13.2): a cut feint's mark fades out dashed over this (ms - Feud-Arc section 7.3's TELL_FEINT_FADE). */
 export const EG_FEINT_FADE_MS = Math.round(TELL_FEINT_FADE * 1000);
 /** EG-ZH (section 26): where WATCHFIRE'S TELL is heard - the told blow's first stamp that has an origin (a disc's, a lane's,
@@ -362,6 +367,28 @@ export function egChainMates(tx, me) {
 }
 
 /**
+ * AUDIT EG V (lane1 #14; sections 13.2 and 27.5) - A LORD'S PHASE CARD, the gate's (scenes/gateCourt.js courtPhaseCard): its
+ * numeral, the phase's name and its one order (net/egLords.js egLordPhase - Garoth's third the signature he borrows at circle
+ * `c`), or null (a first phase, a champion). Pure.
+ * @param {string} key @param {number} ph @param {number} c
+ */
+export function egPhaseCard(key, ph, c) {
+  const P = egLordPhase(key, ph, c);
+  return P ? { kicker: PHASE_NUMERALS[ph - 1], main: P.name, sub: P.order } : null;
+}
+/** AUDIT EG V (lane1 #13; sections 13.3 and 25.6): how deep the place's dark lies (Gutterdark, the Long Night - `edark` until
+ *  `until`) at `t`: the Eclipse's depth, eased in and out over EG_DARK_EASE_MS. Pure. */
+export const EG_DARK_EASE_MS = 600;
+export const egDarkAt = (until, t, from = -Infinity) => (t < until ? EG_ECLIPSE_LOOK.deep * Math.max(0, Math.min(1, (until - t) / EG_DARK_EASE_MS, (t - from) / EG_DARK_EASE_MS)) : 0);
+/** AUDIT EG V (lane1 #13; section 13.3, the Bound Colossus): THE RAILS while they stand - two gold lanes along its flanks, its
+ *  hearts' sides, `[ax, az, bx, bz]` each (the hall's frame) about its feet (x, z). Pure. */
+export const EG_RAIL_SIDE_M = 3.6;
+export const EG_RAIL_HALF_M = 5;
+export const egRailsAt = (x, z) => [-1, 1].map((k) => [x + k * EG_RAIL_SIDE_M, z - EG_RAIL_HALF_M, x + k * EG_RAIL_SIDE_M, z + EG_RAIL_HALF_M]);
+/** AUDIT EG V (lane1 #12): the Night-Stalker's look, whose WIND the true umbra glints with. */
+const STALKER_MOBILE = egBossLook('stalker').mobile;
+
+/**
  * @param {{ renderer?: any, gl?: any, getTexture?: any, uploadRecordFrame?: any, audio?: any, link: any, now: () => number,
  *   cam?: () => number[]|null, feet?: () => number[]|null, player?: () => any, me?: () => string|null, save?: (e: any, el: string) => number,
  *   strike?: (dmg: number, o: { fire?: boolean, el?: string|null, name?: string }) => void, say?: (t: string) => void,
@@ -377,7 +404,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   // EG-H1: the fight runs on the breach's link's clock where it keeps one (scenes/egClient.js - the shared clock, corrected)
   if (typeof link?.now === 'function') now = link.now;
   let hall = 0, spec = null, centre = null, floor = null, band = 0;
-  let beat = null, saysSeen = 0, wokeSeen = 0, fellSeen = new Set(), phaseSeen = new Set(), gustSeen = 0;
+  let beat = null, saysSeen = 0, wokeSeen = 0, fellSeen = new Set(), phaseSeen = new Set(), gustSeen = 0, darkFrom = -Infinity, darkUntil = 0;
+  let darkNow = 0;   // AUDIT EG V (lane1 #13): the place's dark this frame (egDarkAt)
   let blowSeq = 0;
   const blowMet = new Set();
   /** AUDIT WB11 W3's law: a blow is one sequence over every body it meets in a frame. */
@@ -492,7 +520,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     floor = spec.fight ? { r: spec.fight.r + 6, courts: [[spec.fight.x, spec.fight.z]] } : { r: 40, courts: [[0, spec.len / 2]] };
     floors = egFightFloors(spec);   // EG-ZG (section 11.7): each fight floor triangulated once
     eclipseHeard.clear(); dusts.length = 0; dropFrom = null; dropOn = null; pullsWas = new Map();
-    beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
+    beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0; darkFrom = -Infinity; darkUntil = 0;
   }
   /** A blow on me landed - its share of my health and its base, through my saving throw against its element. EG-ZP: less
    *  the share `dr` my company's Vestiges spare a blow (spared). EG-ZR: its share of my body without Stoneskin's points.
@@ -531,7 +559,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     const sz = mobileBillboardSize(T.tex, fr.record), w = sz.w * look.scale, h = sz.h * look.scale;
     if (!d.batch) { d.batch = renderer.createBillboardBatch(T.archive, rkey, { w, h }, [[0, 0, 0]]); d.batch.origin = [0, 0, 0]; }
     setBatchHitFlash(d.batch, egBodyFlash(b, t));   // EG-ZG (section 25.8): my blows flash it fully, anyone else's at 0.4
-    setBatchGlint(d.batch, b.fellAt ? null : egRimOf(band, b.fl | 0));   // EG-ZG (section 25.6): THE SHADE'S RIM LIGHT
+    setBatchGlint(d.batch, b.fellAt ? null : egRimOf(darkNow > 0 ? EG_SHADE_BAND : band, b.fl | 0));   // EG-ZG (section 25.6): THE SHADE'S RIM LIGHT - AUDIT EG V (lane1 #13): every foe's in the place's dark
     d.batch.record = rkey; d.batch.size = { w: fr.flip ? -w : w, h };
     if (d.batch.bounds) d.batch.bounds[3] = Math.hypot(w, h) * 0.5;
     d.batch.origin[0] = d.at[0]; d.batch.origin[1] = d.at[1]; d.batch.origin[2] = d.at[2];
@@ -574,20 +602,51 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     sh.color = GROUND_COLORS[key] ?? GOLD; sh.edge = key === 'umbra' || key === 'isle' ? TELEGRAPH_EDGE_DAGON : TELEGRAPH_EDGE_SAFE;
     sh.pool = TELEGRAPH_POOL.ground; sh.t = 1; sh.flash = 0; sh.alpha = key === 'rune' && !(b.st & 1) ? 0.35 : key === 'isle' ? (b.st === 1 ? 0.9 : 0.6) : 0.85;
     sh.style = key === 'isle' ? TELEGRAPH_STYLE.fire : TELEGRAPH_STYLE.weight; sh.since = (t % 60_000) / 1000; sh.span = 1; sh.after = -1; sh.court = 0;
+    // AUDIT EG V (lane1 #12; section 13.3, "the true one glints with its WIND"): the umbra the room says glints (`st` 1) - lit and
+    // pulsing, and the Night-Stalker's WIND heard from it once
+    if (key === 'umbra' && b.st === 1) {
+      sh.color = brighter(sh.color); sh.flash = 0.5 + 0.5 * Math.sin(t / 90); sh.alpha = 1;
+      if (!cued.has(`u${b.i}`)) { cued.add(`u${b.i}`); _barks.push({ kind: STALKER_MOBILE, at: toDungeon(b.x, 1, b.z), cue: hostCue('windup', STALKER_MOBILE), critical: true }); }
+    }
     _shapes.push(sh);
+  }
+  /** AUDIT EG V (lane1 #13; sections 13.3 and 25.6) - THE PLACE'S DARK: Gutterdark (the Mother of Dusk's) and the Long Night
+   *  (Seyth's) lay the telegraph pass's dark pool over every fight floor (the Eclipse's own, egDarkAt's depth) - every telegraph
+   *  keeps its light above it, every foe its rim (drawBody) - and the Long Night keeps the moon-shafts lit; and THE RAILS along
+   *  the Colossus's flanks stand gold while they rise (`erail` - its hearts open to blows meanwhile). */
+  function placeDark(F, t) {
+    if (F.dark !== darkUntil) { darkUntil = F.dark; darkFrom = t; }
+    darkNow = egDarkAt(darkUntil, t, darkFrom);
+    if (darkNow > 0) {
+      const sh = (_slots[_shapes.length] ??= slot()), S = spec.lord === 'seyth' ? spec.spots?.shafts?.[0] : null;
+      sh.kind = TELEGRAPH_KIND.all; sh.points.length = 0; sh.n = 0; sh.r = S ? 3 : 0;
+      if (S) for (const q of moonShafts(S, t)) sh.points.push([q[0], q[1]]);
+      sh.t = darkNow; sh.flash = 0; sh.alpha = 1; sh.color = DARK_EDGE; sh.edge = DARK_EDGE; sh.pool = TELEGRAPH_POOL_SPIRE.dark; sh.style = TELEGRAPH_STYLE.weight; sh.since = 0; sh.span = 1; sh.after = -1; sh.court = 0;
+      _shapes.push(sh);
+    }
+    const C = F.rail > t ? F.bodies.find((b) => b.role === EG_ROLE.lord && EG_BOSS_KEYS[b.k] === 'colossus' && !b.fellAt) : null;
+    if (C) {
+      const [x, z] = egBodyPlace(C, t);
+      for (const [ax, az, bx, bz] of egRailsAt(x, z)) {
+        const sh = (_slots[_shapes.length] ??= slot());
+        sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = ax; sh.origin[1] = az; sh.end[0] = bx; sh.end[1] = bz; sh.halfW = 0.6; sh.r = Math.hypot(bx - ax, bz - az) / 2; sh.r1 = 0;
+        sh.color = GOLD; sh.edge = TELEGRAPH_EDGE_SAFE; sh.pool = TELEGRAPH_POOL.ground; sh.t = 1; sh.flash = 0; sh.alpha = Math.min(1, (F.rail - t) / 400); sh.style = TELEGRAPH_STYLE.weight; sh.since = (t % 60_000) / 1000; sh.span = 1; sh.after = -1; sh.court = 0;
+        _shapes.push(sh);
+      }
+    }
   }
   /** A blow's shape, refilled into a slot: its line in THE SPIRE DANGER EDGE, its fill climbing through its wind-up. EG-ZG:
    *  `rank` its place in THE TELEGRAPH BUDGET (net/egShape.js egShapeOrder's), its CHECK's havens beside it. */
   function drawBlow(bl, t, aimedAtMe, rank = Infinity) {
     const from = bl.at - bl.wu, span = Math.max(1, bl.sp ?? 0);
-    if (t < from || t > bl.at + span + LINGER_MS) return;
+    if (t < from - (bl.ol ?? 0) || t > bl.at + span + LINGER_MS) return;   // AUDIT EG V (lane1 #18): a chained shape's dim outline from the first's word
     for (let j = 0; j < bl.s.length; j++) {
       const s = bl.s[j], sh = (_slots[_shapes.length] ??= slot());
       if (!fillStamp(sh, s)) continue;
       if (bl.on && s[0] === 'd') { const at = targetFeet(bl.on[j] ?? bl.on[0]); if (at) { sh.origin[0] = at[0]; sh.origin[1] = at[1]; } }   // AUDIT EG IV (lane1 #5): a failure blow's mark rides the member it names
       sh.order = rank;
       sh.t = Math.max(0, Math.min(1, ((bl.cut ? Math.min(t, bl.cut) : t) - from) / Math.max(1, bl.wu))); sh.flash = t >= bl.at ? 1 : 0;   // EG-ZD: a feint's fill frozen where it was cut
-      sh.alpha = bl.cut ? Math.max(0, 1 - (t - bl.cut) / EG_FEINT_FADE_MS) : t > bl.at + span ? 1 - (t - bl.at - span) / LINGER_MS : aimedAtMe ? 1 : 0.85;
+      sh.alpha = bl.cut ? Math.max(0, 1 - (t - bl.cut) / EG_FEINT_FADE_MS) : t > bl.at + span ? 1 - (t - bl.at - span) / LINGER_MS : t < from ? EG_OUTLINE_DIM : aimedAtMe ? 1 : 0.85;
       sh.cut = !!bl.cut;   // EG-ZD (section 13.2): dashed as it fades
       sh.color = COLOR_OF[bl.el] ?? COLOR_OF.null; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.court = 0; sh.mine = aimedAtMe;
       sh.style = bl.ch ? TELEGRAPH_STYLE.dagon : STYLE_OF[bl.el] ?? TELEGRAPH_STYLE.weight;
@@ -600,7 +659,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** EG-H1 - WATCHFIRE'S EARLY OUTLINE (section 15): a told blow's stamps as a PULSING solid red line - no fill, never blue -
    *  from its lead (`sh`) before its wind-up (or its hearing) until its word (`eb`) takes it over or its `untell` takes it off. */
   function drawTold(bl, t) {
-    const from = Math.max(bl.heard ?? -Infinity, bl.at - bl.wu - (bl.sh ?? 0));
+    const from = Math.max(bl.heard ?? -Infinity, bl.at - bl.wu - (bl.ol ?? 0) - (bl.sh ?? 0));
     if (t < from || t >= bl.at) return;
     for (const s of bl.s) {
       const sh = (_slots[_shapes.length] ??= slot());
@@ -778,7 +837,17 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       play3(BOSS_CUES.roar, toDungeon(L0.x, (L0.y ?? 0) + 3, L0.z));
     }
     for (const f of F.fells) if (!fellSeen.has(f.i)) { fellSeen.add(f.i); const b = F.bodies.find((x) => x.i === f.i) ?? F.gone.find((x) => x.i === f.i); beat = { kind: 'fall', at: t, until: t + TITLE_HOLD_MS, kicker: b ? egLookOf(b, band)?.name ?? '' : '', main: 'FELLED', sub: '' }; }
-    for (const p of F.phases) { const key = `${p.i}:${p.ph}`; if (!phaseSeen.has(key)) { phaseSeen.add(key); play3(BOSS_CUES.growl, L0 ? toDungeon(L0.x, (L0.y ?? 0) + 3, L0.z) : null); } }
+    // AUDIT EG V (lane1 #14; section 13.2, "turns each phase with the gate's phase card"): each lord's turn its card (egPhaseCard -
+    // the numeral, the phase's name, its order), once a fight for a lord's key and phase (the Twins turn each their own), its growl
+    for (const p of F.phases) {
+      const L = F.bodies.find((b) => b.i === p.i), key = L ? `${EG_BOSS_KEYS[L.k]}:${p.ph}` : `${p.i}:${p.ph}`;
+      if (phaseSeen.has(key)) continue;
+      phaseSeen.add(key);
+      const card = L && (L.fl & EG_FL.mirror) === 0 ? egPhaseCard(EG_BOSS_KEYS[L.k] ?? '', p.ph, spec.c ?? 1) : null;
+      if (card) beat = { kind: 'phase', at: t, until: t + TITLE_HOLD_MS, ...card };
+      const at = L ?? L0;
+      play3(BOSS_CUES.growl, at ? toDungeon(at.x, (at.y ?? 0) + 3, at.z) : null);
+    }
     for (let k = saysSeen; k < F.says.length; k++) { const s = F.says[k], fn = EG_SAY[s.w]; const text = fn ? fn(s.n, s.t) : ''; if (s.w === 'scent' && !s.s?.includes(me())) continue; if (text) say(text); }
     saysSeen = F.says.length;
   }
@@ -895,6 +964,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const f = myFeet(), e = player(), standing = !!f && !!e && e.health > 0, d0f = feet(), fy = d0f && centre ? d0f[1] - centre[1] : 0;
       if (standing) { trail.push([t, f[0], fy, f[1], hall]); while (trail.length > 1 && trail[1][0] <= t - EG_TRAIL_MS) trail.shift(); }   // EG-ZP: my trail, the census's shape
       if (!F) { groundFrame(t, standing ? f : null, fy, null); snapFrame(); titleFrame(t); return; }
+      placeDark(F, t);   // AUDIT EG V (lane1 #13): Gutterdark, the Long Night and the Rails
       const blowBy = new Map();
       for (const bl of F.blows) if (bl.o && (!blowBy.has(bl.o) || blowBy.get(bl.o).at < bl.at) && t < bl.at + 700) blowBy.set(bl.o, bl);
       // THE BODIES
@@ -919,7 +989,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       for (const bl of F.told ?? []) {
         drawTold(bl, t);   // EG-H1: Watchfire's early outlines
         // EG-ZH (section 26): WATCHFIRE'S TELL - heard once a blow, as its outline first shows, where it will land
-        if (!toldHeard.has(bl.i) && t >= Math.max(bl.heard ?? -Infinity, bl.at - bl.wu - (bl.sh ?? 0)) && t < bl.at) { toldHeard.add(bl.i); const at = egToldAt(bl, f); if (at) mix.tell(toDungeon(at[0], 1, at[1])); }
+        if (!toldHeard.has(bl.i) && t >= Math.max(bl.heard ?? -Infinity, bl.at - bl.wu - (bl.ol ?? 0) - (bl.sh ?? 0)) && t < bl.at) { toldHeard.add(bl.i); const at = egToldAt(bl, f); if (at) mix.tell(toDungeon(at[0], 1, at[1])); }
       }
       const motion = egShakeMotion(egReducedMotion(), getPref('techniqueMotion'));   // EG-ZG (section 25.7): the shakes under reduced motion and Technique camera motion
       // AUDIT EG III (lane1 #12): MORVAYN'S CHAINING - a blow on any of my chain split over all of it (egChainMates; none: mine whole)
@@ -1035,6 +1105,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       floors: floors.length, draws: lastPlan?.draws.length ?? 0, heard: mix.heard(), fires: fireBatches.size }),   // EG-ZG: the hall's fight floors, the last frame's shape-floor draws; EG-ZH: the mix's heard, the fire falls' batches
     /** EG-G2: the frame's shapes as the pass will draw them (tests): each one's look laid on. */
     shapes: () => _shapes,
+    /** AUDIT EG V (lane1 #14): the title card the frame shows (tests) - a lord's wake, its phase card, its fall. */
+    card: () => titleCardModel(beat, now()),
     /** EG-ZD (section 26): THE SPIRE MIX this fight holds (over the host's music) - the breach's client plays the HUD's beats
      *  on its critical bus (scenes/egClient.js). */
     mix: () => mix,

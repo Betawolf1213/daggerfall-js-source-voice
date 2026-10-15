@@ -18,9 +18,15 @@
 //     ever shares their set - said, not tested.
 //   HOW NEAR A BLOW (egBlowNear): the least distance from a point to a blow's stamps (0 inside) - Watchfire's 12 m
 //     (section 15, net/egBodies.js egTellTo).
+//   AUDIT EG V (lane1 #10) - THE LORDS' PLACE IN THE SET: the fight's own zones (net/egLords.js zoneOut) join it - a burning or
+//     fallen ground told and not yet down (the Conquest's thirds, Both Courts Burn, the Last Charge's third, a Last Lesson's
+//     ring) lands in the set at its onset (egZoneLandings), and the floor gone (a void: a fallen island, a fallen third, the
+//     Molten Rim) is no ground to flee to while it stands (egFloorLess); the lords' place blows (a Burning Bridge, the Floor
+//     Falls) are pending landings like any blow. A new blow is held only if IT empties the set: a set the landings already
+//     empty without it (a court burning whole) holds nothing more.
 //
 // Pure. In the relay bundle (net/egBodies.js imports it). Not a DFU member. Ledger A (ELITE-GATES).
-import { egInBlow, segDist, EG_ESCAPE_MPS, EG_REACT_S } from './egShape.js';
+import { egInBlow, egInShape, segDist, EG_ESCAPE_MPS, EG_REACT_S } from './egShape.js';
 import { egVentAt, EG_VENT_FIRE_MS } from './egLaw.js';
 import { egHazardParts, EG_HAZARDS } from './egFragLaw.js';
 
@@ -41,8 +47,13 @@ export const EG_PLACE_STEP_MS = 100;
  * @param {any[]} pending @param {any} next @param {number} px @param {number} pz @param {number} now @param {(x: number, z: number) => boolean} onFloor
  */
 export function egUnionHolds(pending, next, px, pz, now, onFloor) {
-  const blows = [...pending, next].filter((b) => b && !b.ch && b.at > now).sort((a, b) => a.at - b.at);
-  if (!blows.length || next.ch) return false;
+  if (!next || next.ch || !emptied([...pending, next], px, pz, now, onFloor)) return false;
+  return !emptied(pending, px, pz, now, onFloor);   // AUDIT EG V (lane1 #10): held only if the new blow is what empties it
+}
+/** Does the set over landings `list` empty (egUnionHolds's search)? */
+function emptied(list, px, pz, now, onFloor) {
+  const blows = list.filter((b) => b && !b.ch && b.at > now).sort((a, b) => a.at - b.at);
+  if (!blows.length) return false;
   const C = EG_UNION_CELL, R = Math.ceil(EG_UNION_R / C), side = 2 * R + 1;
   const ix = (i, j) => (i + R) * side + (j + R);
   const floor = new Uint8Array(side * side);
@@ -78,6 +89,24 @@ export function egUnionHolds(pending, next, px, pz, now, onFloor) {
     if (!any) return true;
   }
   return false;
+}
+
+// ── AUDIT EG V (lane1 #10): THE FIGHT'S ZONES IN THE SET ───────────────────────────────────────────────────────
+/**
+ * The fight's zones (`F.zones` - net/egLords.js zoneOut's `{ kind, s, from, until }`) that come down in (`now`, `until`]: each
+ * burning or fallen ground told and not yet down, a pending landing at its onset (`{ s, at, sp, ch: 0, o: 0, i: 0 }`). Pure.
+ * @param {any[]|undefined} zones @param {number} now @param {number} until
+ */
+export const egZoneLandings = (zones, now, until) => (zones ?? []).filter((z) => (z.kind === 'burn' || z.kind === 'void') && z.from > now && z.from <= until && z.until > z.from)
+  .map((z) => ({ s: [z.s], at: z.from, sp: z.until - z.from, ch: 0, o: 0, i: 0 }));
+/**
+ * The member's fight floor `onFloor` less the floor gone over (`now`, `until`]: every void zone standing in it (a fallen
+ * island, a fallen third, the Molten Rim) is no ground to flee to. Pure; answers `onFloor` itself when none stands.
+ * @param {(x: number, z: number) => boolean} onFloor @param {any[]|undefined} zones @param {number} now @param {number} until
+ */
+export function egFloorLess(onFloor, zones, now, until) {
+  const gone = (zones ?? []).filter((z) => z.kind === 'void' && z.from <= until && z.until > now);
+  return gone.length ? (x, z) => onFloor(x, z) && !gone.some((q) => egInShape(q.s, x, z)) : onFloor;
 }
 
 // ── THE PLACE'S LANDINGS (section 13.2: "Pendulums, vents and the place's hazards are tested in the same set") ──

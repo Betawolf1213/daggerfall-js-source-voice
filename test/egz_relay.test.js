@@ -223,7 +223,7 @@ test('EG-ZQ THE COLOSSAL\'S SIZE ON THE WIRE (section 14, Colossal; EG5\'s depar
     assert.equal(L.sz, sz, `its size (${sz})`);
     assert.equal(L.r, Math.max(0.8, (1.8 * (look.scale * size)) / 3), 'its body\'s radius at that size');
     const rows = rowsOf(S.frames, L.i);
-    assert.ok(rows.length > 0 && rows.every((t) => t.length === 18 && t[17] === sz), 'every row of it says its size');
+    assert.ok(rows.length > 0 && rows.every((t) => t.length === 19 && t[17] === sz), 'every row of it says its size');   // PIN MOVED (AUDIT EG V, b: a body's facing on the wire - its row's nineteenth, a walk's tenth)
     // the screen: every word through the wire, folded
     let E = { ...EG_STATE_EMPTY, h: S.B.h };
     for (const f of S.frames) { const w = validEgOut(JSON.parse(JSON.stringify(f))); if (w) E = foldEg(E, w, S.now()); }
@@ -234,11 +234,12 @@ test('EG-ZQ THE COLOSSAL\'S SIZE ON THE WIRE (section 14, Colossal; EG5\'s depar
     assert.equal(Math.max(0.8, (1.8 * seen.scale) / 3), L.r, 'its reach to him the relay\'s own radius');
   }
   // the wire's bounds
-  const row = [1, EG_ROLE.lord, 0, 0, 0, 40, 900, 1000, 0, 0, 40, 0, T0, 0, 0, 1, T0, 1250], efs = (r) => ({ k: 'efs', h: 5, wk: T0, b: [r], bl: [], tx: [], mk: [], pg: {} });
-  assert.ok(validEgOut(efs(row)) && validEgOut(efs([...row.slice(0, 17), 0])));
-  for (const bad of [EG_SIZE_WIRE_MIN - 1, EG_SIZE_WIRE_MAX + 1, 1250.5, -1250, '1250']) assert.equal(validEgOut(efs([...row.slice(0, 17), bad])), null, `a size of ${bad}`);
-  assert.deepEqual([validEgOut(efs([...row.slice(0, 17), EG_SIZE_WIRE_MIN])) !== null, validEgOut(efs([...row.slice(0, 17), EG_SIZE_WIRE_MAX])) !== null], [true, true]);
-  assert.equal(validEgOut(efs(row.slice(0, 17))), null, 'a row cut short');
+  const row = [1, EG_ROLE.lord, 0, 0, 0, 40, 900, 1000, 0, 0, 40, 0, T0, 0, 0, 1, T0, 1250, 3.14], efs = (r) => ({ k: 'efs', h: 5, wk: T0, b: [r], bl: [], tx: [], mk: [], pg: {} });   // PIN MOVED (AUDIT EG V, b: a body's facing on the wire - its row's nineteenth, a walk's tenth)
+  const sized = (v) => [...row.slice(0, 17), v, row[18]];
+  assert.ok(validEgOut(efs(row)) && validEgOut(efs(sized(0))));
+  for (const bad of [EG_SIZE_WIRE_MIN - 1, EG_SIZE_WIRE_MAX + 1, 1250.5, -1250, '1250']) assert.equal(validEgOut(efs(sized(bad))), null, `a size of ${bad}`);
+  assert.deepEqual([validEgOut(efs(sized(EG_SIZE_WIRE_MIN))) !== null, validEgOut(efs(sized(EG_SIZE_WIRE_MAX))) !== null], [true, true]);
+  assert.equal(validEgOut(efs(row.slice(0, 18))), null, 'a row cut short');
   // every size the law folds (only Colossal names one) inside the wire's bounds
   for (const D of EG_DECREES) for (const L of D.law ?? []) if (L.sizeX != null) assert.ok(L.sizeX >= EG_SIZE_WIRE_MIN && L.sizeX <= EG_SIZE_WIRE_MAX, `${D.key}: ${L.sizeX}`);
 });

@@ -17,6 +17,9 @@
 // mid-fight sees what the company sees at once.
 // EG-ZQ (2026-10-12; sections 13.2 and 14): a lord's SIZE on the wire (`sz` - Colossal's, net/egLords.js stand), and the fight
 // keeps the company it woke with by account (`subs`) - each lord's fighters, whose shares its health is.
+// AUDIT EG V (lane1 #7; sections 8.5 and 21): a body's FACING on the wire (`yw` - its row's nineteenth, a walk's tenth, and a turn
+// said as a walk of its own, egFace): the relay judges the Kynreeve's Shield-Wall and a Shielded elite's back by it, and every
+// screen draws the body facing it, so a member flanks by what their screen shows.
 //
 // A BODY: `{ i, role (0 lord, 1 add, 2 object), k (the lord's, the kind's, the object's number), pt (a part: the twin, a
 // mirror, a rune's numeral), x, z, y (EG-ZJ: its feet), mv, hp, max, fl (flags), r (its radius), ws/wsAt (EG-ZJ: its state as
@@ -28,7 +31,8 @@
 import { HIT_KINDS, MELEE_REACH, POSE_SLACK, MOVE_RESAY_M, MOVE_RESAY_MS, HP_SEND_MS, HOST_HP_MIN, dpsRef, spendBlow, spendPurse } from './gateBrain.js';
 import { egKeepOnFight, egOnFight, egFloorTest, EG_BANDS } from './egLaw.js';
 import { egBlowOf, egInBlow, egBlowOn, EG_BLOWS_MAX } from './egShape.js';
-import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from './egFloor.js';   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
+import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from './egFloor.js';
+import { egZoneLandings, egFloorLess } from './egFloor.js';   // AUDIT EG V (lane1 #10): the fight's own zones in the set   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
 import { egFightView, egFeetAt } from './egWalkGraph.js';   // EG-ZJ: the fight ground a body's feet stand on
 
 /** A body's role. */
@@ -99,20 +103,24 @@ export function egWalkY(m, now) {
 }
 /** Every body carried to `now` (its place set from its walk; EG-ZJ: and its height). */
 export function egCarry(F, now) { for (const b of F.bodies) if (b.mv) { const [x, z] = egBodyAt(b, now); b.x = x; b.z = z; b.y = egWalkY(b.mv, now); } }
+/** AUDIT EG V (lane1 #7): a body's facing as the relay judges it (net/egLegion.js egFromFront and egFromBehind read `yaw ?? 0`),
+ *  in hundredths of a radian as the wire says it. */
+export const egYawOf = (b) => r2(Number.isFinite(b?.yaw) ? b.yaw : 0);
 /**
- * A body's array on the wire: `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz]`. EG-ZJ (sections 22 and
+ * A body's array on the wire: `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz, yw]`. EG-ZJ (sections 22 and
  * 23): `y` its feet and `ty` its walk's end's (whole centimetres - the wire's heights are the law's), `st` its state as the room
  * last said it and `sa` since when (`ws`, `wsAt` - egSaid: an object's `eob`, a lord's phase and its fall; 0 for none). With
  * `now` (the whole fight's word) its walk is said carried to that instant - its place and height then, its `at` now - so a
  * screen that hears it there draws it where the room holds it, never its walk's head start again. EG-ZQ (section 14): `sz`
- * its size, thousandths of its look's (a Colossal lord's 1250, at rank II 1400 - net/egLords.js stand; 0 its look's own).
+ * its size, thousandths of its look's (a Colossal lord's 1250, at rank II 1400 - net/egLords.js stand; 0 its look's own). AUDIT EG V
+ * (lane1 #7): `yw` its facing (egYawOf).
  * @param {any} b @param {number} [now]
  */
 export function egBodyWire(b, now = 0) {
   const m = b.mv, live = !!m && now > 0;
   const [x, z] = live ? egBodyAt(b, now) : [b.x, b.z], y = live ? egWalkY(m, now) : b.y ?? 0;
   return [b.i, b.role, b.k, b.pt ?? 0, r2(x), r2(z), Math.max(0, Math.ceil(b.hp)), Math.ceil(b.max), b.fl | 0, m ? m.tx : r2(x), m ? m.tz : r2(z), m ? m.v : 0, m ? (live ? now : m.at) : 0,
-    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0, b.sz ?? 0];
+    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0, b.sz ?? 0, egYawOf(b)];
 }
 /** EG-ZJ (section 22): A BODY'S STATE as the room says it, kept on the body (`ws`, and since when, `wsAt`) so the whole fight
  *  carries it to a member who joins (egBodyWire): an object's (`eob` - a Grath island cracked 1 and fallen 2, a soul-gem's
@@ -150,7 +158,7 @@ export function egRaise(F, role, k, spots, hp, now, out, o = {}) {
  *  carries the body's height (`y`) and the height it ends at (`ty` - the caller's: a graph walker's next floor, a flier's
  *  mark; else the fight ground under its goal, net/egWalkGraph.js egFeetAt), and is said again when that end's height moves
  *  past EG_Y_RESAY_M or the body's feet left the walk's own line (a lip stepped off). `emv` says each
- *  `[i, x, z, tx, tz, v, at, y, ty]`. */
+ *  `[i, x, z, tx, tz, v, at, y, ty, yw]` - AUDIT EG V (lane1 #7): its facing the tenth. */
 export function egWalk(F, b, gx, gz, stop, speed, now, spec, inset = b.r ?? 0.6, free = false, ty = NaN) {
   const dx = gx - b.x, dz = gz - b.z, d = Math.hypot(dx, dz), go = Math.max(0, d - stop);
   let tx = b.x + (d > 0 ? (dx / d) * go : 0), tz = b.z + (d > 0 ? (dz / d) * go : 0);
@@ -162,21 +170,31 @@ export function egWalk(F, b, gx, gz, stop, speed, now, spec, inset = b.r ?? 0.6,
   b.mv = { x: r2(b.x), z: r2(b.z), tx: r2(tx), tz: r2(tz), v: speed, at: now, y, ty: toY };
   b.x = b.mv.x; b.z = b.mv.z; b.y = y;
   if (d > 0) b.yaw = Math.atan2(dx, dz);
-  F.moves.push([b.i, b.mv.x, b.mv.z, b.mv.tx, b.mv.tz, speed, now, y, toY]);
+  F.moves.push([b.i, b.mv.x, b.mv.z, b.mv.tx, b.mv.tz, speed, now, y, toY, egYawOf(b)]);
 }
 /** A body stood still where it is. */
 export function egStop(F, b, now) {
   if (!b.mv) return;
   b.mv = null;
   b.x = r2(b.x); b.z = r2(b.z); b.y = r2(b.y ?? 0);
-  F.moves.push([b.i, b.x, b.z, b.x, b.z, 0, now, b.y, b.y]);
+  F.moves.push([b.i, b.x, b.z, b.x, b.z, 0, now, b.y, b.y, egYawOf(b)]);
 }
 /** A body set down at (x, z) at once (a leap's landing, a blink, a rift's wander) - said as a walk of no speed. EG-ZJ: on the
  *  fight ground there (egFeetAt - by the band about where it stood: a leap onto a higher island lands on it). */
 export function egPlace(F, b, x, z, now) {
   b.mv = null; b.x = r2(x); b.z = r2(z);
   b.y = F.view ? egFeetAt(F.view, x, z, b.y ?? NaN, b.y ?? 0) : r2(b.y ?? 0);
-  F.moves.push([b.i, b.x, b.z, b.x, b.z, 0, now, b.y, b.y]);
+  F.moves.push([b.i, b.x, b.z, b.x, b.z, 0, now, b.y, b.y, egYawOf(b)]);
+}
+/** AUDIT EG V (lane1 #7; section 8.5, the Kynreeve "turns to the top of threat"): A BODY TURNED to `yaw` - said (`emv`) as its walk
+ *  again with the new facing (a body standing, where it stands), once it turns past a hundredth of a radian, so every screen draws
+ *  it facing what the relay judges its blows by. */
+export function egFace(F, b, yaw, now) {
+  const was = egYawOf(b);
+  b.yaw = yaw;
+  if (egYawOf(b) === was) return;
+  const m = b.mv;
+  F.moves.push(m ? [b.i, m.x, m.z, m.tx, m.tz, m.v, m.at, m.y, m.ty, egYawOf(b)] : [b.i, r2(b.x), r2(b.z), r2(b.x), r2(b.z), 0, now, r2(b.y ?? 0), r2(b.y ?? 0), egYawOf(b)]);
 }
 /** The beat's walks in one word. */
 export function egMovesOut(F, out) { if (F.moves.length) { out.push({ k: 'emv', m: F.moves }); F.moves = []; } }
@@ -233,7 +251,7 @@ export function egAim(F, spec, o, here, now, out, lead = 0) {
 function egSay(F, spec, blow, here, now, out, told) {
   blow.at = Math.max(blow.at, now + blow.wu);
   if (!blow.ch && here.length) {
-    const onFloor = egFloorTest(spec), pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egPlaceLandings(spec, F.wokeAt, now, blow.at)];
+    const onFloor = egFloorLess(egFloorTest(spec), F.zones, now, blow.at), pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egPlaceLandings(spec, F.wokeAt, now, blow.at), ...egZoneLandings(F.zones, now, blow.at)];
     for (const m of here) {
       if (!blow.s.some((s) => s[0] === 'a' || s[0] === 'h' || (s.length >= 3 && Math.hypot(m.x - s[1], m.z - s[2]) < 40))) continue;
       if (egUnionHolds(pending, blow, m.x, m.z, now, onFloor)) {
