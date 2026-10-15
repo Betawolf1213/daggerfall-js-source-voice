@@ -421,7 +421,8 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
         for (const f of foes) { const d = Math.hypot(f.x - a.x, f.z - a.z); if (d < bd) { bd = d; best = f; } }
         if (!best) { egStop(F, a, now); break; }
         if (bd <= 2.5) { egStop(F, a, now); if (now >= (a.next ?? 0)) { a.next = now + 1500; ctx.ghostHit?.(a, best); } break; }
-        walkGraph(F, spec, a, best.x, best.z, 1.5, K.speed, now);
+        if (ctx.span) walkAir(F, spec, a, best.x, best.z, 1.5, K.speed, now, best);   // AUDIT EG V (L3-19): a span's ghost keeps to the air, as its Harriers do (its islands are not joined)
+        else walkGraph(F, spec, a, best.x, best.z, 1.5, K.speed, now);
         break;
       }
       case EG_KIND.deserter: {
