@@ -106,6 +106,7 @@ export const TITLE_TEXT = Object.freeze({
   formermaster: 'Former Master',
   highmaster: 'High Master',      // CHAP6e: a Master's in its chapter's Ascendancy - GUILD3e: while its chapter stands Ascendant
   seasonmaster: 'Season Master',  // CHAP6e: a Season's Master's, kept for good
+  ilovelamp: 'I Love Lamp',       // LAMP-KEEPER II (2026-10-14, Mac: "the 'I Love Lamp' title"): a lamp keeper spoken to
 });
 
 /** WB9g (2026-09-30, Mac: "an animated burning ground aura that circles the ground where your character stands"): AN
@@ -259,6 +260,9 @@ export const TITLE_RGBA = Object.freeze({
   // aged to slate, the colour of a banner kept on a hall's wall
   highmaster: Object.freeze([0.365, 0.612, 0.925, 1]),      // #5d9cec
   seasonmaster: Object.freeze([0.435, 0.561, 0.722, 1]),    // #6f8fb8
+  // LAMP-KEEPER II (no colour named): LAMPLIGHT - the warm amber of a wick behind glass, deeper and redder than the
+  // Founder's gold and the Hour's, lighter than the Dungeon Master's orange
+  ilovelamp: Object.freeze([1, 0.698, 0.376, 1]),           // #ffb260
 });
 
 /** SHADOW-FANG: A TITLE DRAWN AS A GRADIENT - its stops, RGBA 0..1, left

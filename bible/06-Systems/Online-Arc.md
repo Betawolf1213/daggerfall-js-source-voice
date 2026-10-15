@@ -4468,7 +4468,7 @@ after it last drained - and the country's foes were rolls that needed
 no law. Now:
 
 **THE LAW: A DEATH AND A TAKE ARE STAMPED, AND AN HOUR LATER THE THING
-IS DUE BACK.** `RESPAWN_MS` (one real hour) and `respawnDue(stamp,
+IS DUE BACK.** `RESPAWN_MS` (one real hour; half of one since RESPAWN-30, 2026-10-14) and `respawnDue(stamp,
 now)` in `wire.js`, one home at both ends; the stamp is the relay's
 clock (a wall millisecond - the wire's inverse `wallMsForClassicMinutes`
 over the shared world minute, no offset subtracted, since AUDIT
@@ -4478,7 +4478,7 @@ keeps its dead, DFU's own).
 DUNGEON-RESPAWN (2026-10-08, the owner, in the Wrothgarian zone's merge):
 a dungeon's hour is its own now - a normal dungeon's twenty minutes, an
 elite one's forty, the open zone's halls and a Super dungeon keeping
-`RESPAWN_MS`; each foe and container still on its own clock
+`RESPAWN_MS` (half an hour since RESPAWN-30, 2026-10-14, Mac: "I meant the chest and foe respawn"); each foe and container still on its own clock
 (`src/systems/dungeonRespawn.js`, `11-Multiplayer/Wild-Zone.md` section 21).
 
 - **A foe.** The one corpse door stamps `_diedAt`; the memory's record
