@@ -171,6 +171,11 @@ export function applyLocalOffsetToWorld(originX, originZ, forward, localX, local
 
 // ─── THE SAVE RECORD (WagonSaveData) ───────────────────────────────────────────────────────────────────────────
 
+/** The record's slot in a save's `modData` (DFU's per-mod save data, IHasModSaveData - the mod's own name, under which
+ *  the world host and the dungeon's save it). CART-AWAY (2026-10-15): the zone's death reads the wagon's record by it,
+ *  on the account service too (systems/wildDropLaw.js wildCartRecordOf). */
+export const HCC_VENDOR = 'horse-cart-and-cargo';
+
 /** WagonSaveData..ctor [IL_c6c3]: Version 7, the headings +Z, the horse None, an empty name. WAGON-STABLED (2026-10-15,
  *  the port's own, no IL twin): and two words of the port's - the wagon and the horse SENT TO THE STABLE
  *  (systems/horseCart.js sendTransportAway), which the mod's WithPlayer alone cannot tell from "beside the player on
