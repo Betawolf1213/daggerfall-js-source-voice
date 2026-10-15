@@ -181,7 +181,7 @@ of a quest arm that had no offer. Pinned by `test/fb1014_summonoffer.test.js`, w
 bridge in one crafted region with a palace and the same region without one; on the old law all four of its tests fail
 (`tools/mutants/fb1014_summonoffer.json`, 7, dead).
 
-THE PLAYER'S SAVE - SUMMON-REPAIR (2026-10-15, acct134 - acct133 on its branch, one bump past LAMP-KEEPER II at the merge; Mac, asked: "Operator tool"). The fix stops new cases; it does
+THE PLAYER'S SAVE - SUMMON-REPAIR (2026-10-15, acct136 - acct133 on its branch, one bump past LAMP-KEEPER II at the merge, and acct134 on the integration, renumbered past main's KG6 acct134 and POI-1 acct135 at the merge of main; Mac, asked: "Operator tool"). The fix stops new cases; it does
 not mend a save that already holds the flag. Nothing in a save tells this flag from a summoning whose offer the player
 refused - DFU sets it either way and never clears it (`factionRep.js` setFlag: OR only), and a refusal leaves no record,
 so a load-time repair that clears Summoned where the prince's quest is not live would hand every player who refused an
@@ -192,7 +192,7 @@ the developers' list like every review act and written among the character's fin
 does not hold and a bit that is not set, so a repair aimed at the wrong character mends and gives nothing. The record is
 seized one sequence on, the rollback's way: the tab playing it cannot write over it, and its next join plays the mended
 record. Pinned by `test/fb1014_summonrepair.test.js` (`tools/mutants/fb1014_summonrepair.json`, 16, dead). For the
-reporter, once acct134 is live, signed in as a developer (DAGGER_HANDLE and DAGGER_PASSWORD), the first command naming
+reporter, once acct136 is live, signed in as a developer (DAGGER_HANDLE and DAGGER_PASSWORD), the first command naming
 the character's id for the second:
 
 ```sh
@@ -202,8 +202,8 @@ node tools/realmReview.mjs repair <the id it names> fb1014-summon-offer 8 0x40 1
 
 ## PVP-LOOT: the killer's worn piece is the order's, never the friend law's (11)
 
-`src/net/wildLaw.js` remainsNamedFor, takeFrom; `server/src/index.js` `_wildWord` (relay world203, world201 on its branch); then Mac's two
-decisions: `src/net/wildRef.js` wildKin, the escrow (`server-account/src/wild.js`, acct134, acct133 on its branch). Read on main's `7c291d36`.
+`src/net/wildLaw.js` remainsNamedFor, takeFrom; `server/src/index.js` `_wildWord` (relay world205, world201 on its branch and world203 on the integration); then Mac's two
+decisions: `src/net/wildRef.js` wildKin, the escrow (`server-account/src/wild.js`, acct136, acct133 on its branch and acct134 on the integration). Read on main's `7c291d36`.
 
 THE REPORT. A player killed another in the open zone (`11-Multiplayer/Wild-Zone.md`), searched the body and chose one of
 its worn pieces: it left the fallen and never came to the killer.
@@ -230,7 +230,7 @@ FIXED. The friend law is the drop's. `remainsNamedFor` (`wildLaw.js:"export cons
 record is for - the killer's worn piece its order's killer, every other record nobody in particular - and the room asks
 the friend law only of a record named for nobody (`server/src/index.js:"if (rec && !remainsNamedFor(rec, d.i) && rec.os"`);
 takeFrom keeps the named piece its killer's alone, by the same member. The drop stays the fallen's and her foes': a
-guildmate or a party member of hers is refused every record of it. Relay world203 (world201 on its branch, one bump past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge; the deploy drops every player once). Pinned by `test/fb1014_pvploot.test.js`, end to end through the real account service, the real
+guildmate or a party member of hers is refused every record of it. Relay world205 (world201 on its branch, one bump past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge; world203 on the integration, renumbered past main's KG-SET world203 and KG5 world204 at the merge of main; the deploy drops every player once). Pinned by `test/fb1014_pvploot.test.js`, end to end through the real account service, the real
 relay room and the killer's own book, over the game's own pieces: a stranger, a guildmate and a party member each get the
 longsword unequipped, as it was minted, under the service's fresh id; the drop is refused to her friends and taken by a
 stranger; a stranger asking first for the named piece is refused (`tools/mutants/fb1014_pvploot.json`, 5, dead - the
@@ -257,12 +257,16 @@ DECIDED (Mac, 2026-10-14), asked what this fix left open:
   `test/fb1014_pvpescrow.test.js` - a guildmate's blow lands nothing; the piece commits to its killer only on the
   collect; uncollected, it comes back to its fallen; a collect carried three times hands one piece; a room woken
   mid-escrow, a batch that failed either side of its landing and a game closed while one was held each end with exactly
-  one owner (`tools/mutants/fb1014_pvpescrow.json`, 17, dead). Relay world203 (world201 on its branch, re-hashed in place
-  undeployed, then one bump past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge); `ACCOUNT_VERSION`
-  acct134, migration 0115 (acct133 and 0113 on its branch, renumbered past LAMP-KEEPER II's 0113_lamp_title and
-  SUMMON-REPAIR's 0114_realm_repairs at the merge). Deploy the relay before the account service: a tab asks the escrow
-  only of a room whose relay says world203 or later (`relaySupportsWildCollect`; WILD_COLLECT_RELAY_MIN moved 201 -> 203
-  at the merge, since main's world201 and world202 hand the record - pinned, and its mutant dead).
+  one owner (`tools/mutants/fb1014_pvpescrow.json`, 18, dead). Relay world205 (world201 on its branch, re-hashed in place
+  undeployed, then one bump past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge; world203 on the
+  integration, renumbered past main's KG-SET world203 and KG5 world204 at the merge of main); `ACCOUNT_VERSION`
+  acct136, migration 0118 (acct133 and 0113 on its branch, renumbered past LAMP-KEEPER II's 0113_lamp_title and
+  SUMMON-REPAIR's 0114_realm_repairs at the merge; acct134 and 0115 on the integration, renumbered past main's KG6
+  acct134, POI-1 acct135 and their 0114-0116, and SUMMON-REPAIR's 0117, at the merge of main). Deploy the relay before
+  the account service: a tab asks the escrow only of a room whose relay says world205 or later
+  (`relaySupportsWildCollect`; WILD_COLLECT_RELAY_MIN moved 201 -> 203 at the merge, since main's world201 and world202
+  hand the record, and 203 -> 205 at the merge of main, since its world203 and world204 hand it too - pinned, and the
+  mutants at 201 and 204 dead).
 
 THE FOUR HOSTS, the escrow. `scenes/world.js` WIRED - the fall's and the seizure's `collect`, the killer's collect
 carried and the fallen's piece taken back on the zone's frame (`world.js:"const wildEscrowFrame = () =>"`), the death
@@ -301,7 +305,7 @@ every town's homes by building as well: `homes`, `[mapId, [buildingKey, ...]]` a
 guild's hall and a deed held - read beside the towns and kept with them under the generation read before both
 (STORM-SHED 2's `homes_gen`); a town's homes were any session's to read already (homesInTown). The registry keeps it beside the towns
 it asks (`hearEveryTown`), and the quest machine's `isPlayerHome` asks `homeStands`: a player's home in any town. The
-service is acct134 (acct133 on its branch, one bump past LAMP-KEEPER II at the merge; no migration); a client on an older service hears no `homes` and keeps what it knew. A quest made
+service is acct136 (acct133 on its branch, one bump past LAMP-KEEPER II at the merge, acct134 on the integration, renumbered past main's KG6 and POI-1 at the merge of main; no migration); a client on an older service hears no `homes` and keeps what it knew. A quest made
 before the fix whose site is a home is chosen again (below) - restarting it chooses afresh.
 
 CLOSED BOTH (Mac, 2026-10-15: "Close both", of the two limits the boot's read left - a house bought after a page's read,
@@ -310,7 +314,7 @@ claim, a deed held or sold, a hall bought or sold, an arena move, a sale, a char
 (`server-account/src/index.js` homeOrdersOf over each act's `moved`, `src/net/homeLaw.js` homeMoved): a home order
 signed with the identity key (`src/net/identityToken.js` kind `home` - `bm` the town, `bu` its buildings homes now, `bd`
 homes no more). The client's one door hands every one to the page's ear (`src/net/accountClient.js` onHomeOrders), the
-page's hub link carries it (`src/net/online.js` sendHomeOrder, once the hub's welcome names world203 - HOME_RELAY_MIN, 201 on its branch: main's world201 and world202 know no home frame and close the socket on one), and the hub -
+page's hub link carries it (`src/net/online.js` sendHomeOrder, once the hub's welcome names world205 - HOME_RELAY_MIN, 201 on its branch and 203 on the integration: main's world201, world202, world203 and world204 know no home frame and close the socket on one), and the hub -
 the one room every online player holds a socket to - checks it with the key it holds and fans `{t:'home', l:[...]}` to
 every hub socket, a shard's by the bus, holding the words of the last ten minutes for a page whose boot read went out
 before them and whose link opened after (`server/src/index.js` the `home` arm, _hubHelloWords; HOME_WORDS_KEY). Every
@@ -337,7 +341,7 @@ over a real hub room and the real client session on its hub link, and the report
 the boot's read; the reporter's region; the wiring; the home order and word; the live list (a house bought after a
 page's boot read never holds a quest picked after it, a page that joins later hears the held word, a sale says the
 house a house again); the re-pick (a site not reached chosen again in its own town, its link and name following; a
-reached one kept) - `tools/mutants/fb1014_questhome.json`, 24, all dead (the 24th, HOME_RELAY_MIN back at 201, added at the merge). PIN MOVED in `test/wd3_online.test.js` (the
+reached one kept) - `tools/mutants/fb1014_questhome.json`, 25, all dead (the 24th, HOME_RELAY_MIN back at 201, added at the merge; the 25th, at 204 - main's KG5 room - at the merge of main). PIN MOVED in `test/wd3_online.test.js` (the
 read's `homes`), `test/home1.test.js` (the seam; the claim's order), `test/arena4b_homes.test.js` (the move's order),
-`test/guild1c.test.js` and `test/renown1.test.js` (ORDER_KINDS), the account service's version pins (acct134, acct133 on its branch) and the
-relay's (world203, world201 on its branch, `test/relayversion.test.js` its law row - `src/net/homeLaw.js` joins the relay's bundle).
+`test/guild1c.test.js` and `test/renown1.test.js` (ORDER_KINDS), the account service's version pins (acct136, acct133 on its branch and acct134 on the integration) and the
+relay's (world205, world201 on its branch and world203 on the integration, `test/relayversion.test.js` its law row - `src/net/homeLaw.js` joins the relay's bundle).

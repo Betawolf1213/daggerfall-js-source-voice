@@ -5,10 +5,16 @@
 # builds the same installers as run artifacts, for trying a build
 # without cutting a release.
 #
-# The house gate rides in front: the `gate` job runs `npm run check`
-# whole, and every OS leg `needs` it (a red suite never ships an
-# installer any more than it ships the site). AUDIT 68: it was a step
-# inside the ubuntu leg, and the windows/macos legs never waited for it.
+# The house gate rides in front: the `gate` job runs the whole check,
+# and every OS leg `needs` it (a red suite never ships an installer any
+# more than it ships the site). AUDIT 68: it was a step inside the
+# ubuntu leg, and the windows/macos legs never waited for it.
+# REL-FAST (2026-10-15, Mac: "Yes, thats insanely slow" - a release took
+# 33 minutes, 27.4 of them `npm run check` in series on one runner): the
+# gate is verify.yml, the check the PR's and the deploy's run - lint and
+# the types, every test file in four balanced shards, the build - its
+# jobs at once, on the release's own commit. `npm run check` is exactly
+# those four parts, so nothing is skipped and nothing is weaker.
 #
 # Doctrine unchanged: the installers carry the built site and the
 # shell, NO game data - the app asks for the player's own ARENA2
@@ -138,19 +144,12 @@ jobs:
           echo "shell=$SHELL_ID" >> "$GITHUB_OUTPUT"
           echo "release tag: '${TAG:-<none - artifacts only>}'"
 
+  # REL-FAST: the whole check before any leg packages - verify.yml's
+  # parallel jobs, pinned to the commit the legs build
   gate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Install site dependencies
-        run: npm ci
-      - name: Gate (the whole suite, before any leg packages)
-        run: npm run check
+    uses: ./.github/workflows/verify.yml
+    with:
+      ref: ${{ github.sha }}
 
   build:
     needs: [version, gate]

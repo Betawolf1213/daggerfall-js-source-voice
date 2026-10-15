@@ -25,7 +25,7 @@ import { mintCondition, setItemFields, itemUseHandler } from '../src/systems/ite
 import { UPKEEP_ITEM } from '../src/systems/upkeepItemRows.js';
 import { tradeCost, saleConditionPercentage } from '../src/systems/tradeModes.js';
 import { conditionBasedPricesOn } from '../src/systems/rriRealism.js';
-import { saddleMeters, saddleHint } from '../src/ui/enhancedSaddle.js';
+import { saddleMeters, saddleHint, saddleAlert } from '../src/ui/enhancedSaddle.js';
 import { wagonMeterTone } from '../src/ui/holdingsPages.js';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
@@ -200,6 +200,10 @@ test('WAGON-TIERS NO RED WHERE WEAR COSTS NOTHING, AND EACH TIER\'S WORDS: on Bo
   assert.deepEqual(read(false), { tone: 'warn', hint: '', bar: '' }, 'Boons: amber, no lost pace said, rickety\'s plain bar');
   assert.deepEqual(read(true), { tone: 'low', hint: 'The caravan is failing - mend it to get its pace back', bar: 'blood' }, 'Hard: red, and the pace to get back');
   assert.deepEqual(read(undefined), read(true), 'a read that does not say is the system as it stood');
+  // THE MERGE of main's UI-CALM: the panel's one-line note stands for what needs the rider (saddleAlert) - on Boons a
+  // worn wagon's wear takes nothing, so it raises none (its note would say a pace to get back it never lost)
+  const alertFor = (stateKey, wearSlows) => saddleAlert({ mode: 'Cart', horse: null, wagon: { name: 'Caravan', state: stateKey, stateKey, share: 0.07, wearSlows }, load: null });
+  assert.deepEqual([false, true, undefined].flatMap((ws) => ['rickety', 'failing'].map((k) => alertFor(k, ws))), [null, null, 'wagon', 'wagon', 'wagon', 'wagon'], 'Boons: no note; Hard, or a read that does not say: the wagon');
   onPage(false, () => {
     const said = [];
     const w = wagon('cart', 430);

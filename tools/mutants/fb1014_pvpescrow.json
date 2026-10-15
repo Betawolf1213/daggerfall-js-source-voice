@@ -137,8 +137,17 @@
   {
     "name": "ESCROW-the-collect-asked-of-main's-world201",
     "file": "src/net/wire.js",
-    "old": "export const WILD_COLLECT_RELAY_MIN = 203;",
+    "old": "export const WILD_COLLECT_RELAY_MIN = 205;",
     "new": "export const WILD_COLLECT_RELAY_MIN = 201;",
+    "tests": [
+      "test/fb1014_pvpescrow.test.js"
+    ]
+  },
+  {
+    "name": "ESCROW-the-collect-asked-of-main's-world204",
+    "file": "src/net/wire.js",
+    "old": "export const WILD_COLLECT_RELAY_MIN = 205;",
+    "new": "export const WILD_COLLECT_RELAY_MIN = 204;",
     "tests": [
       "test/fb1014_pvpescrow.test.js"
     ]

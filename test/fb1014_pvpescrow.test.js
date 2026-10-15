@@ -382,9 +382,10 @@ test('A RESTART MID-ESCROW RESOLVES TO EXACTLY ONE OWNER: the room woken before 
 
 test('THE HANDOFF\'S DOORS: a tab asks the escrow only for a room that signs collects (online.js wildCollectAt over relaySupportsWildCollect - an older room hands the record, and the escrow would hand it twice); a tab that does not ask it never escrows (and a record the judge holds keeps the piece outright - test/int9_wild_ref.test.js); the host carries a collect and watches its escrows on the zone\'s frame (mutants: the escrow asked of any room; the held record\'s piece taken)', () => withClock(async () => {
   assert.equal(relaySupportsWildCollect(RELAY_VERSION), true);
-  // FIELD BUGS 2026-10-14's one relay bump: world203 signs the collect (world201 on its branch) - main's world201
-  // (CHAT-TRADE) and world202 (FIVE-ASKS) are rooms that hand the record, so a tab on either never asks the escrow
-  assert.deepEqual(['world200', 'world201', 'world202', 'world203'].map(relaySupportsWildCollect), [false, false, false, true]);
+  // FIELD BUGS 2026-10-14's one relay bump: world205 signs the collect (world201 on its branch, world203 on the
+  // integration) - main's world201 (CHAT-TRADE), world202 (FIVE-ASKS), world203 (KG-SET) and world204 (KG5) are rooms
+  // that hand the record, so a tab on any of them never asks the escrow
+  assert.deepEqual(['world200', 'world201', 'world202', 'world203', 'world204', 'world205'].map(relaySupportsWildCollect), [false, false, false, false, false, true]);
   const z = await stand();
   const { rc } = await fightAndPick(z);
   const d = await herDrop(z, rc, { collect: false });

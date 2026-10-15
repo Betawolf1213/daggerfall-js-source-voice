@@ -94,6 +94,12 @@ test('HARD4: a row\'s version and author are the shipped manifest\'s, not a memo
     checked.push(dir);
     assert.equal(row.version, mf.ModVersion,
       `${dir}: the registry says version ${row.version}, the vendored manifest says ${mf.ModVersion}`);
+    // KG3: a manifest that names NO author (The King's Gambit's carries no ModAuthor) is the authority for that too -
+    // the row says the bundle names none, never a name from memory
+    if (typeof mf.ModAuthor !== 'string' || !mf.ModAuthor.trim()) {
+      assert.match(row.upstream, /names no author/, `${dir}: the manifest names no author and the row's upstream cell does not say so`);
+      continue;
+    }
     const surname = mf.ModAuthor.split(/\s+and\s+|,\s*/)[0];
     assert.ok(row.upstream.includes(surname),
       `${dir}: the manifest's author is "${mf.ModAuthor}" and the row's upstream cell does not name them`);

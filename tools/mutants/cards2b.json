@@ -290,7 +290,7 @@
   {
     "name": "SB-host-escape-pauses",
     "file": "src/scenes/worldModes.js",
-    "old": "    if (mode === 'interior' && cardSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) { standFromCardTable(); e.preventDefault(); return; }",
+    "old": "    if (mode === 'interior' && cardSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) {\n      // AUDIT KG II C1: every key bound to Escape (the pad's Start among them) is the board's cancel while a King's Gambit\n      // battle is under way - Stand up asked twice, as the raw Escape the cloth takes is - never a stake lost at one press\n      if (gambitGame?.playing()) { gambitGame.key('Escape'); e.preventDefault(); return; }\n      standFromCardTable(); e.preventDefault(); return;\n    }",
     "new": "",
     "tests": [
       "test/cards2b_seated.test.js"

@@ -762,8 +762,8 @@
   {
     "name": "CSAL-pad-bare-dpad",
     "file": "src/ui/gamepadInput.js",
-    "old": "        if (bare && !lootUp && !helmUp) {",
-    "new": "        if (bare && !lootUp) {",
+    "old": "        if (bare && !lootUp && !helmUp && !boardUp) {",
+    "new": "        if (bare && !lootUp && !boardUp) {",
     "tests": [
       "test/csa_together.test.js"
     ]
@@ -771,8 +771,8 @@
   {
     "name": "CSAL-pad-bare-hold",
     "file": "src/ui/gamepadInput.js",
-    "old": "        if (now && !P.xbPrev.has(code)) { st.t = set === null && !lootUp && !helmUp ? 0 : -1; st.fired = false; }\n        if (st.t >= 0 && (set !== null || lootUp || helmUp)) st.t = -1;",
-    "new": "        if (now && !P.xbPrev.has(code)) { st.t = set === null && !lootUp ? 0 : -1; st.fired = false; }\n        if (st.t >= 0 && (set !== null || lootUp)) st.t = -1;",
+    "old": "        if (now && !P.xbPrev.has(code)) { st.t = set === null && !lootUp && !helmUp && !boardUp ? 0 : -1; st.fired = false; }\n        if (st.t >= 0 && (set !== null || lootUp || helmUp || boardUp)) st.t = -1;",
+    "new": "        if (now && !P.xbPrev.has(code)) { st.t = set === null && !lootUp && !boardUp ? 0 : -1; st.fired = false; }\n        if (st.t >= 0 && (set !== null || lootUp || boardUp)) st.t = -1;",
     "tests": [
       "test/csa_together.test.js"
     ]

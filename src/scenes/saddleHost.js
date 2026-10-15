@@ -16,7 +16,7 @@
 // and the gait it took (HORSE-TIERS: the motor's own `rideWalking` - a gallop asked and refused rides DFU's pace in
 // Boons and walks in Hard, which only the motor knows), and `frame` whether the panel may stand: Enhanced Plus, walking,
 // outdoors - and what covers it.
-import { drawEnhancedSaddle, hideEnhancedSaddle, enhancedSaddleMounted } from '../ui/enhancedSaddle.js';
+import { drawEnhancedSaddle, hideEnhancedSaddle, enhancedSaddleMounted, toggleSaddlePanel } from '../ui/enhancedSaddle.js';
 import { upkeepReach } from '../systems/upkeepRuntime.js';
 import { activeWagonItem } from '../systems/wagonKinds.js';
 import { wagonWord } from '../systems/wagonUpkeep.js';
@@ -79,11 +79,14 @@ export function createSaddleHost({ upkeep, runtime, items, wagonKg, wagonLimit, 
 
   /**
    * The panel's frame: `show` the host's gate (Enhanced Plus, walking, outdoors), `mode` the transport, `covered` a
-   * window, a pause or a journey over the HUD; `touch`, `mouseFree`, `freeKey` and `keyOf` the helm's own.
-   * @param {{ show: boolean, mode: string, covered?: boolean, touch?: boolean, mouseFree?: boolean, freeKey?: string, keyOf?: (a: string) => string }} f
+   * window, a pause or a journey over the HUD; `touch`, `mouseFree`, `freeKey` and `keyOf` the helm's own. UI-CALM:
+   * `toggle` the panel's key pressed this frame (the host's edge of 'SaddlePanel') - it puts the panel up or away, in
+   * the saddle and with nothing over the HUD.
+   * @param {{ show: boolean, mode: string, covered?: boolean, touch?: boolean, mouseFree?: boolean, freeKey?: string, keyOf?: (a: string) => string, toggle?: boolean }} f
    */
-  function frame({ show, mode, covered = false, touch = false, mouseFree = true, freeKey = 'Y', keyOf }) {
+  function frame({ show, mode, covered = false, touch = false, mouseFree = true, freeKey = 'Y', keyOf, toggle = false }) {
     const s = show ? read(mode) : null;
+    if (s && toggle && !covered) toggleSaddlePanel();
     shown = s;
     if (!s) { speed = 0; galloping = false; walking = false; if (enhancedSaddleMounted()) hideEnhancedSaddle(); return null; }
     return drawEnhancedSaddle({ saddle: s, covered, touch, mouseFree, freeKey, keyOf }, hooks);

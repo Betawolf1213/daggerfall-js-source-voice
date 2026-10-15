@@ -250,7 +250,7 @@ it traded with and what each gave - a trade is witnessed on both rows, so no fin
 among the character's findings with who did it, and moves the row's `judge_rev`. The cron sweeps findings past 90 days
 and the hours past 30.
 
-SUMMON-REPAIR (2026-10-15, acct134, migration 0114 - acct133 and 0113 on its branch, renumbered past LAMP-KEEPER II's at the merge; Mac, asked how to mend the save FIELD BUGS 2026-10-14 SUMMON-OFFER
+SUMMON-REPAIR (2026-10-15, acct136, migration 0117 - acct133 and 0113 on its branch, renumbered past LAMP-KEEPER II's at the merge, then acct134 and 0114 on the integration, renumbered past main's KG6 and POI-1 (acct134, acct135) and FIRMAMENT-ON's, KG6's and POI-1's 0114-0116 at the merge of main; Mac, asked how to mend the save FIELD BUGS 2026-10-14 SUMMON-OFFER
 left stuck: "Operator tool") added two. `realm-characters { name }` lists an account's realm characters by its handle -
 the id every act names, the dead said so. `realm-repair { id, ticket, faction, flag, gold, note? }` mends one: one of
 FactionFile's flag bits (`formats/factionFile.js` FACTION_FLAGS, moved there from `systems/factionRep.js`, which hands

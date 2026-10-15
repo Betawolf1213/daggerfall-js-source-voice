@@ -165,8 +165,10 @@ test('CARDS2b by source: the pose the seat says, the request to the peers\' rigs
   has(wm, "    cardSeat = { table: i, seat: k, eye: st.eye.slice(), feet: st.feet.slice(), yaw: st.yaw, top: st.top, free: ");
   // PIN MOVED (AUDIT CARDS-6 B4): a blow - never a round of damage over time, told from inside the player's minute pass
   has(wm, "  registerPlayerHurtListener('cards-seat', (_e, hurt) => { if (cardSeat && hurt.after < hurt.before && !tickInFlight()) standFromCardTable(); });", 'a hit stands you up');
-  const esc = wm.indexOf("    if (mode === 'interior' && cardSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) { standFromCardTable(); e.preventDefault(); return; }");   // KB1: the registry's Escape, never its raw code
+  // PIN MOVED (AUDIT KG II C1): the arm is a block now - at a King's Gambit battle the Escape action is the board's cancel
+  const esc = wm.indexOf("    if (mode === 'interior' && cardSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) {");   // KB1: the registry's Escape, never its raw code
   assert.ok(esc > 0 && esc < wm.indexOf('    // U43: THE ONE DISPATCH.'), 'Escape stands you up, spent above the one dispatch');
+  assert.ok(wm.slice(esc, wm.indexOf('\n    }\n', esc)).includes('      standFromCardTable(); e.preventDefault(); return;'), 'and stands you up');
   has(wm, "    seatPose: () => (mode === 'interior' && cardSeat ? { feet: cardSeat.feet, yaw: cardSeat.yaw, st: seatTopByte(cardSeat.top) } : null),");
   const arm = read('src/combat/fpArm.js');
   has(arm, '  function thirdClimb(cw, cam) {\n    if (cam && cam.seat) { climbLast = null; return thirdSeat(cam); }', 'AUDIT CARDS D5: the seat wins the climb\'s slot, over any climb\'s tail');

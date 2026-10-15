@@ -5,6 +5,8 @@ this section owns renderer specifics.
 
 Current (`src/render/`) - one bullet per module, pinned against the real
 directory by `test/audit18_bible_docs.test.js`:
+- `poiGizmoPass.js` - POI-3 THE EDITOR'S LINES (2026-10-14, `06-Systems/POI-Editor-Arc.md`): the POI editor's gizmo, a selection's boxes and the placing mark as screen-width quads (sdStepsPass.js's law, never GL_LINES), feathered at their edges, each segment its own colour, one dynamic buffer grown and never shrunk; a batch on top (no depth test) or in the world (tested), never writing depth, straight alpha over, the state put back. A foreign pass.
+- `meshAlpha.js` - POI-2 A POI'S MATERIALS (2026-10-14, Mac: "I want it to be the best it can be. No short cuts or band aids"; `06-Systems/POI-Editor-Arc.md`): the two mesh programs' one alpha law (`MESH_ALPHA_GLSL` - `uMeshAlpha` 0 for every opaque draw, the texel's own alpha times it for a translucent one) and a texture's own sampler (`samplerParams`, `samplerKey` - wrap per axis and the filter, keyed apart so one picture under two samplers is two textures). `renderer.drawMesh`'s `translucent` draws a blended material after the water with no depth write and no shadow.
 - `portraitRenderer.js` - PORTRAIT3D (2026-10-15, the owner: "#2 is exactly I wanted"): the game's Renderer, handed in by the entry at boot behind a door, for the faces whose wells hold none - the menu's save tiles, profile, account card and chargen grid draw the Morrowind head through it (`04-Characters/Head-Portraits.md`). A leaf: it imports nothing.
 - `horizonHaze.js` - FAR-SEA1 THE HORIZON'S HAZE (2026-10-10, Mac: "Anyway we can fix the draw distance for oceans without affecting performance?"): `HORIZON_HAZE_GLSL`, one law for every surface past the streamed grid's fog - the world fog's linear ramp CAPPED at the far ring's hold (min(ramp, hold); the ring had scaled it, hold * ramp) and closed over the ring's rim; the water takes its half that reaches the streamed sea, the world's own factor floored at 1 - hold (`uSeaHaze`, the sea's band only, on a frame the host draws the ring). AUDIT FAR-SEA1: `SEA_LOOK_GLSL`, the open sea's own light - Fresnel, reflected sky, the light into its body, the glints' lobes, `seaSky` - one text the water surface's fragment shader calls and the ring's sea calls with the water's body; `RING_SEA_GLSL` (`ringSea`), what both lanes' far-ring fragment shaders read for their sea; `SEA_HAZE_BAND`, the sea's band about its level. So the streamed sea and the ring's sea meet at one haze and one look. No GL, no imports. `07-Rendering/Water-Arc.md` FAR-SEA1 and AUDIT FAR-SEA1.
 - `realWindows.js` - RW1 REAL WINDOWS (2026-10-09, Mac: "The implementation of the real window overhaul, allowing players to see inside/outside of house windows"): from the street a fake room behind every house window (interior mapping in both mesh shaders, a room a building, lit at night), from inside the real street through the glass (the view out: the exterior host's street drawn into a target of its own, cropped to the glass's rectangle, painted behind the interior's glass); the Real windows row. `07-Rendering/Real-Windows.md`.
@@ -208,6 +210,23 @@ directory by `test/audit18_bible_docs.test.js`:
   holding's painted face (`iliacCardFaces.js`), the back and the stock, and a
   plate a card made the first time it is drawn (`cardTableDraw.js` plateModel's
   shape); every plate and the atlas freed with the game.
+- `gambitTableDraw.js` - KG3 THE KING'S GAMBIT ON THE CLOTH (2026-10-13,
+  `11-Multiplayer/Kings-Gambit.md` sections 14.8 and 16): the board a flat mat
+  painted on a canvas from the law's own board (the layout's floor tones, a
+  wall's block, a pillar's top, water's ripples, a hazard's mark, a warning's
+  ring) and every piece its card's picture lying on its cell (the Iliac set's
+  PICTURE mode, the Bay deck's Kings) on one atlas; the house's marks laid over
+  it - a side by its ring's shape, the chosen brass, reach a wash, range an
+  outline, a target the blood ring - each edged in the kit's outline. Made as
+  the battle is drawn, freed with the game. KG4 (2026-10-14, section 17) BUILDS
+  it: the mat a slab with its water recessed, the walls stone blocks, the
+  pillars columns, the water's ripples drifting; the cards stand in turned
+  stands, standees with their faces read from either chair, their health a
+  bar turned to the viewer; the hazards' flames, spikes, bubbles and warnings,
+  the numbers in a glyph strip painted in code and the shot's four squares on
+  an effects' atlas (a cutout); a hurt card drawn red and a healed one green
+  through the texture remap onto the atlas's tints. Its poses are
+  `world/gambitMotion.js`'s.
 - `lightClusters.js` - LC1 CLUSTERED LIGHTS (2026-09-23): the frustum cut into
   16 x 9 x 24 cells once a frame on the CPU, each light written into the cells
   its view-space box touches, uploaded as two integer textures (the grid's

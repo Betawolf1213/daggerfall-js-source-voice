@@ -1426,8 +1426,15 @@ export const incompleteArena2Text = (missing) =>
  *  ones to inflate, so a caller's filter runs BEFORE any bytes are
  *  decompressed, the skip-before-inflate readZip has always done.
  *  Answers `[{ name, data }]` in archive order, `data` an ArrayBuffer;
- *  directory entries and methods other than 0/8 are skipped. */
-export async function readZipEntries(file, { pick = (names) => names, onProgress } = {}) {
+ *  directory entries and methods other than 0/8 are skipped.
+ *  AUDIT POI P5: `limit(name, size)`, when a caller gives one, bounds
+ *  what each picked entry may become - asked of every one, with the
+ *  size the directory declares, BEFORE any is inflated (a declared size
+ *  past its bound refuses the archive), and held while each inflates (an
+ *  entry that inflates past what it declared is stopped there). A
+ *  refusal throws an Error whose `code` is 'zip-too-large'. Without one,
+ *  nothing below changes. */
+export async function readZipEntries(file, { pick = (names) => names, onProgress, limit = null } = {}) {
   const buf = new Uint8Array(await file.arrayBuffer());
   const dv = new DataView(buf.buffer);
   // EOCD: scan the tail for PK\x05\x06 (comment can pad up to 64KB)
@@ -1443,16 +1450,19 @@ export async function readZipEntries(file, { pick = (names) => names, onProgress
     if (dv.getUint32(off, true) !== 0x02014b50) throw new Error('bad central directory');
     const method = dv.getUint16(off + 10, true);
     const compSize = dv.getUint32(off + 20, true);
+    const size = dv.getUint32(off + 24, true);
     const nameLen = dv.getUint16(off + 28, true);
     const extraLen = dv.getUint16(off + 30, true);
     const commentLen = dv.getUint16(off + 32, true);
     const localOff = dv.getUint32(off + 42, true);
     const name = new TextDecoder().decode(buf.subarray(off + 46, off + 46 + nameLen));
-    if (!name.endsWith('/')) dirs.push({ name, method, compSize, localOff });
+    if (!name.endsWith('/')) dirs.push({ name, method, compSize, size, localOff });
     off += 46 + nameLen + extraLen + commentLen;
   }
   const wanted = new Set(pick(dirs.map((d) => d.name)));
   const picked = dirs.filter((d) => wanted.has(d.name));
+  // AUDIT POI P5: every bound asked before a byte is inflated (a stored entry is its own size: one longer lies)
+  if (limit) for (const d of picked) if (!(d.size <= limit(d.name, d.size)) || (d.method === 0 && d.compSize > d.size)) throw zipTooLarge(d.name);
   const entries = [];
   let seen = 0;
   for (const d of picked) {
@@ -1465,12 +1475,31 @@ export async function readZipEntries(file, { pick = (names) => names, onProgress
       entries.push({ name: d.name, data: data.slice().buffer });
     } else if (d.method === 8) {
       const ds = new DecompressionStream('deflate-raw');
-      const out = await new Response(new Blob([data]).stream().pipeThrough(ds)).arrayBuffer();
+      const out = limit ? await inflatedTo(new Blob([data]).stream().pipeThrough(ds), d.size, d.name)
+        : await new Response(new Blob([data]).stream().pipeThrough(ds)).arrayBuffer();
       entries.push({ name: d.name, data: out });
     }
     // other methods: skip (classic zips are 0/8 only)
   }
   return entries;
+}
+const zipTooLarge = (name) => Object.assign(new Error(`zip entry past its bound: ${name}`), { code: 'zip-too-large' });
+/** AUDIT POI P5: an inflating entry read to its end - and stopped, refused, the moment it passes `max` bytes. */
+async function inflatedTo(stream, max, name) {
+  const reader = stream.getReader();
+  const chunks = [];
+  let n = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    n += value.byteLength;
+    if (n > max) { await reader.cancel().catch(() => {}); throw zipTooLarge(name); }
+    chunks.push(value);
+  }
+  const out = new Uint8Array(n);
+  let at = 0;
+  for (const c of chunks) { out.set(c, at); at += c.byteLength; }
+  return out.buffer;
 }
 
 /** The ARENA2 ingest over the walk above: the arena2/ folder alone when

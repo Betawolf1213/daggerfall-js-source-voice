@@ -136,6 +136,28 @@ const REFUSAL_WORDS = {
   'bad-login': () => t('account.refusal.badLogin', 'That username and password do not match.'),
   'bad-code': () => t('account.refusal.badCode', 'That username and recovery code do not match.'),
   'codes-moved': () => t('account.refusal.codesMoved', 'Your recovery codes changed while that was asked. Try again.'),   // RECOVERY-SET: two presses raced (accounts.js newRecoveryCodes)
+  // POI-1: the POI store's refusals (server-account/src/poi.js) - the editor's, said to a builder or an approver
+  'poi-not-builder': () => t('account.refusal.poiNotBuilder', 'Only builders can do that. Ask a developer to add your username to the builders.'),
+  'poi-not-approver': () => t('account.refusal.poiNotApprover', 'Only an approver can decide what goes into the world.'),
+  'poi-not-author': () => t('account.refusal.poiNotAuthor', 'Only the builder who made that draft can do that.'),
+  'poi-sha': () => t('account.refusal.poiSha', 'That upload was not named the way the editor names files. Reload the editor and try again.'),
+  'poi-sha-mismatch': () => t('account.refusal.poiShaMismatch', 'That upload arrived damaged. Try again.'),
+  'poi-kind': () => t('account.refusal.poiKind', 'That file is not the kind it was sent as.'),
+  'poi-bad-mesh': () => t('account.refusal.poiBadMesh', 'That model could not be read. Import it again.'),
+  'poi-bad-texture': () => t('account.refusal.poiBadTexture', 'That texture is not a PNG, JPEG or WebP image of at most 4096 pixels a side.'),
+  'poi-quota': () => t('account.refusal.poiQuota', 'You have uploaded all you can today. Try again tomorrow.'),
+  'poi-doc': () => t('account.refusal.poiDoc', 'This POI has problems to fix first - the editor lists them.'),
+  'poi-state': () => t('account.refusal.poiState', 'That revision has changed since you opened it. Refresh and try again.'),
+  'poi-not-live': () => t('account.refusal.poiNotLive', 'That POI is not in the world, so it cannot be retired.'),
+  'poi-pending': () => t('account.refusal.poiPending', 'A retirement of that POI is already waiting for approval.'),
+  // AUDIT POI: the store's newer words - a submission changed under the approver's look (S1), a builder's holdings full
+  // (S10: a full shelf had been told a full day's uploads), and an entry taken off the shelf (U13: it had been told the
+  // service does not know the request)
+  'poi-changed': () => t('account.refusal.poiChanged', 'That submission has changed since you looked at it. Look at it again before you decide.'),
+  'poi-drafts-full': () => t('account.refusal.poiDraftsFull', 'You have as many drafts and submissions open as one builder may. Send your drafts, or wait for an approver\'s word on what you sent, before starting another.'),
+  'poi-shelf-full': () => t('account.refusal.poiShelfFull', 'Your entries fill the library shelf. Take some you no longer need off it before you keep more.'),
+  'poi-shelf-spent': () => t('account.refusal.poiShelfSpent', 'You have put as many entries in the library as one builder may, those taken off included. Ask a developer to make room.'),
+  'poi-gone': () => t('account.refusal.poiGone', 'That library entry has been taken off the shelf.'),
   email: () => t('account.refusal.email', 'That does not look like an email address.'),
   rate: () => t('account.refusal.rate', 'Too many attempts. Wait a few minutes and try again.'),
   auth: () => t('account.refusal.auth', 'You have been signed out. Sign in again.'),
@@ -711,6 +733,17 @@ const REFUSAL_WORDS = {
   'piece-legacy': () => t('account.refusal.pieceLegacy', 'That came into the realm from a classic save through customs. It stays yours, and the realm does not trade it.'),
   'service-moved': () => t('account.refusal.serviceMoved', 'The realm moved that character\'s record since its last clean save, so it cannot be rolled back to it.'),   // INT6: staff's
   'no-clean': () => t('account.refusal.noClean', 'That character has no save the realm judged clean to roll back to.'),   // INT6: the review's rollback (tools/realmReview.mjs)
+  // FIRM1 (bible/06-Systems/Firmament.md): the Firmament's own (server-account/src/firmament.js)
+  'firm-closed': () => t('account.refusal.firmClosed', 'The Firmament is closed to you for now.'),
+  'firm-character': () => t('account.refusal.firmCharacter', 'This character could not be named to the Firmament.'),
+  'firm-rid': () => t('account.refusal.firmRid', 'That request could not be read. Try again.'),
+  'firm-key': () => t('account.refusal.firmKey', 'One of those stars is unknown.'),
+  'firm-start': () => t('account.refusal.firmStart', 'Choose a birthsign first.'),
+  'firm-path': () => t('account.refusal.firmPath', 'A star has no path back to your birthsign.'),
+  'firm-points': () => t('account.refusal.firmPoints', 'You lack the points for that.'),
+  'firm-rate': () => t('account.refusal.firmRate', 'Too many changes this hour. Try again later.'),
+  'firm-stale': () => t('account.refusal.firmStale', 'Your stars were changed elsewhere. Look again.'),
+  'firm-respec-empty': () => t('account.refusal.firmRespecEmpty', 'Nothing is learned yet.'),
   'repair-no-faction': () => t('account.refusal.repairNoFaction', 'That character\'s record holds no such faction, so nothing was repaired.'),   // SUMMON-REPAIR: the review's repair (tools/realmReview.mjs)
   'repair-not-set': () => t('account.refusal.repairNotSet', 'That faction does not carry that flag on this character, so nothing was repaired - is it the right character?'),   // SUMMON-REPAIR: a repair aimed at the wrong character mends nothing
 };
@@ -1844,6 +1877,18 @@ export function accountProf({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   };
 }
 
+/** FIRM1: THE FIRMAMENT'S DOOR (server-account/src/firmament.js) - a character's tree and purses read, and the whole tree
+ *  it wants asked under its own id. Every answer is `call`'s shape; each is waited for ACCOUNT_ACT_WAIT_MS at most. */
+export function accountFirmament({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    account: () => storedSession(storage)?.id ?? null,
+    state: (character) => post('/v1/firmament/state', { character }),
+    set: (character, tree, rid) => post('/v1/firmament/set', { character, tree, rid }),
+    respec: (character, rid, realm = null, region = null) => post('/v1/firmament/respec', { character, rid, ...(realm ? { realm } : {}), ...(Number.isSafeInteger(region) ? { region } : {}) }),   // the whole sky back for gold
+  };
+}
+
 /** PROF5: the market's door (server-account/src/market.js) - the Market tab's views and every act, each with the
  *  board's region and the hubs this client derived (the courier's road, witnessed - PROF0 26). */
 export function accountMarket({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
@@ -1894,6 +1939,17 @@ export function accountIliac({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
     board: () => post('/v1/iliac/board', {}),
     me: () => storedSession(storage)?.id ?? null,
     guest: () => storedSession(storage)?.kind === 'guest',   // AUDIT CARDS-6 E14: a guest's account plays no ranked game (iliac.js deckOrderOf)
+  };
+}
+
+/** KG6 (bible/11-Multiplayer/Kings-Gambit.md section 19): THE KING'S GAMBIT'S SEASON - its rated results carried to the
+ *  service (server-account/src/gambit.js claimGambit) and its board read (gambitBoardOf). */
+export function accountGambit({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    claim: (receipt) => post('/v1/gambit/claim', { receipt }),
+    board: () => post('/v1/gambit/board', {}),
+    me: () => storedSession(storage)?.id ?? null,
   };
 }
 

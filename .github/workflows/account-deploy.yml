@@ -79,6 +79,8 @@ on:
       - "src/net/motherlodeLaw.js"
       - "src/net/boardLaw.js"
       - "src/net/professionLaw.js"
+      - "src/net/firmamentLaw.js"
+      - "src/net/firmamentTree.js"
       - "src/net/nodeLaw.js"
       - "src/world/ethericSea.js"
       - "src/net/skyLaw.js"
@@ -128,6 +130,11 @@ on:
       - "src/net/iliacHand.js"
       - "src/net/iliacCards.js"
       - "src/net/iliacReceipt.js"
+      - "src/net/gambitTable.js"
+      - "src/net/gambitStakes.js"
+      - "src/net/gambitReceipt.js"
+      - "src/net/kingsGambit.js"
+      - "src/systems/mathf.js"
       - "src/net/cardWorthLaw.js"
       - "src/net/realmTradeLaw.js"
       - "src/net/bagLaw.js"
@@ -223,6 +230,7 @@ on:
       - "src/systems/harmMark.js"
       - "src/systems/horseCartLaw.js"
       - "src/systems/iliacItems.js"
+      - "src/systems/iliacCardWords.js"
       - "src/systems/inventory.js"
       - "src/systems/inventorySession.js"
       - "src/systems/itemDye.js"
@@ -318,6 +326,9 @@ on:
       - "vendor/iliac-puddle-no-more/ItemTemplates.json"
       - ".github/workflows/account-deploy.yml"
       - "src/systems/legacy/revived.js"
+      - "src/poi/poiLaw.js"
+      - "src/poi/poiMesh.js"
+      - "src/poi/poiImage.js"
   workflow_dispatch:
 
 permissions:

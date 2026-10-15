@@ -148,6 +148,7 @@
 // }
 
 import { Boat, setLights, HULL_NAMES, HULL_PRICES, packedHullWeight, CARGO_CONTAINER_IMAGE, TRIGGER_MODEL, goModelName, meshLocalBounds, colliderBounds, animatorOf, boatAnimators, boatParticleSystems, nodeOf, AUDIO_CLIPS, SAIL_ANIMATION_SPEED } from './comeSailAwayBoat.js';
+import { firmStat } from './firmamentLive.js';   // FIRM1: the Firmament's helmsman (sailSpeed)
 import { constantCurve, twoConstantsCurve, SPACE } from '../world/unityParticles.js';
 import { quatEuler } from '../world/unityAnimator.js';
 import { quatLookRotation, quatRotate, quatAngleAxis, quatMultiply, quatSlerp } from '../world/quat.js';
@@ -1167,11 +1168,15 @@ export function createComeSailAwayRuntime(deps) {
    *  the wind on her quarter, about half dead into it, never astern - no tack), in the sea's bounded wind (seaWind), at
    *  her pace (SAIL_FREE.pace). The mod's GetSailPower times the wind under Classic. */
   function sailDrive(boat) { return freeDrive(canvasPull(), boat); }
+  /** FIRM1: the Firmament's `sailSpeed` as a multiplier - under either helm (AUDIT UICALM-FIRM1 L1 L1: the Classic helm's
+   *  drive had never read it, so the star said +15% and did nothing there) */
+  const firmSail = () => 1 + firmStat('sailSpeed') / 100;
   /** SAIL-FREE: `canvas` drawing by the point of sail at her heading, in the sea's wind, at her pace (sailDrive's law). */
   function freeDrive(canvas, boat) {
     const offRun = Math.abs(vSignedAngle(flat(forwardOf(boat.GameObject)), flat(state.windVectorCurrent), V_UP));
     // SERPENT4: in a gale on her quarter whatever her heading, at its wind (galeWind)
-    return f(f(f(canvas * f(state.gale ? 1 : pointOfSail(offRun))) * f(galeWind(seaWind(vMagnitude(state.windVectorCurrent))))) * f(SAIL_FREE.pace));
+    // FIRM1 (bible/06-Systems/Firmament.md): her pace the Firmament's `sailSpeed` more - the sea wedge's helmsman, online alone
+    return f(f(f(canvas * f(state.gale ? 1 : pointOfSail(offRun))) * f(galeWind(seaWind(vMagnitude(state.windVectorCurrent))))) * f(SAIL_FREE.pace * firmSail()));
   }
   /** AUDIT SHIPS A4 (2026-10-06): HER WAY UNDER SAIL as she lies (m/s) - every sail she has drawing, at her heading in this
    *  wind, at her pace under sail, whether they are set or not: SAIL-FREE's drive under the responsive helm (freeDrive),
@@ -1180,7 +1185,7 @@ export function createComeSailAwayRuntime(deps) {
    *  galleon's crew rowed her at 1 m/s where her sails made four. */
   function sailWayOf(boat) {
     if (!boat || boat !== state.CurrentBoat || boat.Sails.length < 1) return 0;
-    const drive = responsive() ? freeDrive(GetSailPower(sailCrest, true), boat) : f(GetSailPower(null, true) * vMagnitude(state.windVectorCurrent));
+    const drive = responsive() ? freeDrive(GetSailPower(sailCrest, true), boat) : f(f(GetSailPower(null, true) * vMagnitude(state.windVectorCurrent)) * f(firmSail()));
     return f(drive * sailSpeed(boat, wayHurt(true)));
   }
   /** AUDIT SHIPS A4: her way under oars (m/s), her oars pulling whole - what sailWayOf is weighed against. */
@@ -1400,7 +1405,7 @@ export function createComeSailAwayRuntime(deps) {
       }
       if (trimAuto()) autoTrim(boat, num6);
     }
-    const num17 = f(GetSailPower() * vMagnitude(state.windVectorCurrent));
+    const num17 = f(f(GetSailPower() * vMagnitude(state.windVectorCurrent)) * f(firmSail()));   // FIRM1: the Firmament's helmsman under Classic too
     let num18 = 0;
     if (has('MoveRight')) num18 = 1;
     else if (has('MoveLeft')) num18 = -1;

@@ -101,6 +101,9 @@ export const GROUP_ORDER = Object.freeze(['sight', 'interface', 'sound', 'world'
  *  defaults - the other direction closes a cycle and the shelf loads
  *  before the row exists. */
 export const WINDMILLS_KEY = 'windmills';
+/** KG3: The King's Gambit's switch key - declared here with its row, as the Windmills' is (the game reads it through
+ *  `uiPrefs`, which reads this page's defaults). */
+export const KINGS_GAMBIT_KEY = 'kingsGambit';
 
 /** Where a control's value lives. */
 export const STORES = Object.freeze(['prefs', 'settings', 'mods']);
@@ -388,6 +391,13 @@ export const FEATURES = Object.freeze([
     control: Object.freeze({
       store: 'prefs', key: 'horseCare', initial: 'boons', online: 'player',   // systems/upkeepSwitch.js HORSE_CARE_PREF; HORSE-TIERS: upkeepTiers.js HORSE_CARE_DEFAULT
       tiers: Object.freeze([tier(false, OFF), tier('boons', () => t('features.horseCare.boons', 'Boons')), tier('hard', () => t('features.horseCare.hard', 'Hard'))]),
+      // UI-CALM (2026-10-14): when the saddle panel stands (ui/enhancedSaddle.js saddleShown) - the player's own, offline
+      // and online: When needed (its key, F2; a need; the first seconds in the saddle), Always (STEED-UI's), Off
+      also: Object.freeze([Object.freeze({ store: 'prefs', key: 'saddlePanel', initial: 'auto', online: 'player' })]),
+      parts: Object.freeze([Object.freeze({
+        key: 'saddlePanel', get label() { return t('features.horseCare.saddlePanel', 'Saddle panel'); },
+        get tiers() { return [['auto', t('features.horseCare.saddleAuto', 'When needed')], ['always', t('features.horseCare.saddleAlways', 'Always')], ['off', OFF()]]; },
+      })]),
     }),
   }),
   // WAGONS4 (2026-10-11, the owner: "Wagons have durability and require upkeep to keep from breaking down and becoming
@@ -1003,6 +1013,21 @@ export const FEATURES = Object.freeze([
     kinds: Object.freeze(['mod']),
     control: Object.freeze({ store: 'prefs', key: WINDMILLS_KEY, initial: true, online: 'player' }),
   }),
+  // KG3 (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md section 10.7): THE KING'S GAMBIT, the card table's third game.
+  // The bundle ships no settings file, so the row is declared for the mod by id, as the Windmills' is; on by default (MO1,
+  // "All mods should be enabled by default"); off, no card table offers it. In the world's group: the record's "Gameplay
+  // tab" is a settings tab, no Features group (FOUND AT KG3). Read as a table's panel is painted - at once.
+  Object.freeze({
+    id: 'mod-kings-gambit',
+    group: 'world',
+    // the mod's own name and its author, as every mod row carries them (AUDIT SURV E) - the bundle names none, so the
+    // credits' own unnamed form (ui/credits.js), as Oblivion Remaster Like Leveling's row names its source
+    get title() { return t('features.mod.title', '{title} by {author}', { title: 'The King\u2019s Gambit', author: t('credits.author.unnamed', 'Unnamed ({source})', { source: 'thekingsgambit.dfmod' }) }); },
+    get note() { return t('features.mod.kingsGambit.note', 'Armies and kings at a tavern\'s card table, against a regular or another player, for gold or fun. Off, the tables offer Hold\'em and Iliac Hand alone.'); },
+    get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
+    kinds: Object.freeze(['mod']),
+    control: Object.freeze({ store: 'prefs', key: KINGS_GAMBIT_KEY, initial: true, online: 'player' }),
+  }),
   modFeature('seasons-iliac-bay', () => t('features.effect.worldLoads', 'Takes effect when the world next loads.'), 'sight'),   // FT18: was world
   modFeature('low-poly-trees', () => t('features.effect.worldLoads', 'Takes effect when the world next loads.'), 'sight'),   // LPT1: read once, as the world loads
   modFeature('heat-haze', () => t('features.effect.atOnce', 'Takes effect at once.'), 'sight'),   // HAZE1: the exterior hosts read its switch every frame (the enhanced outdoors')
@@ -1252,6 +1277,18 @@ export const FEATURES = Object.freeze([
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['classic']),
     control: Object.freeze({ store: 'settings', key: 'Enhancements/CombatVoices' }),
+  }),
+  // UI-CALM (2026-10-14, a player: "Not everything needs to be visible constantly. Show information when it's
+  // relevant."): THE CALM HUD (ui/enhancedHud.js HUD_CALM_PREF) - the vitals rest while full and untouched, and come
+  // back with the first point lost or spent. On by default; the player's own, online too.
+  Object.freeze({
+    id: 'calm-hud',
+    group: 'interface',
+    get title() { return t('features.calmHud.title', 'Calm HUD'); },
+    get note() { return t('features.calmHud.note', 'Your health, fatigue and magicka bars fade away while all three are full, and come back the moment one changes.'); },
+    get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
+    kinds: Object.freeze(['enhanced']),
+    control: Object.freeze({ store: 'prefs', key: 'hudCalm', initial: true, online: 'player' }),
   }),
   Object.freeze({
     id: 'near-death-warning',

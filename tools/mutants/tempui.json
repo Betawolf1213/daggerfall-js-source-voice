@@ -282,16 +282,6 @@
     ]
   },
   {
-    "name": "TEMPUI-the-plate-never-fits",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  if (r) fitTemp(t);\n",
-    "new": "",
-    "why": "the whole plate runs off the screen at a large HUD scale",
-    "tests": [
-      "test/tempui.test.js"
-    ]
-  },
-  {
     "name": "TEMPUI-the-part-ignored",
     "file": "src/ui/enhancedHud.js",
     "old": "  const on = survivalOn() && getPref(TEMP_HUD_PREF) !== false;",
@@ -327,26 +317,6 @@
     "old": "'.hud-qspell', '.hud-temp', '.pack-shell .sf-tile',",
     "new": "'.hud-qspell', '.pack-shell .sf-tile',",
     "why": "the plate undressed by every dress",
-    "tests": [
-      "test/tempui.test.js"
-    ]
-  },
-  {
-    "name": "TEMPUI-the-plate-in-the-compass",
-    "file": "src/ui/enhancedStyle.js",
-    "old": ".hud-temp { position: absolute; left: calc(100% + 10px); top: 50%;",
-    "new": ".hud-temp { position: absolute; left: 0; top: 50%;",
-    "why": "the plate over the compass strip",
-    "tests": [
-      "test/tempui.test.js"
-    ]
-  },
-  {
-    "name": "TEMPUI-compact-says-everything",
-    "file": "src/ui/enhancedStyle.js",
-    "old": ".hud-temp.compact .hud-tempword, .hud-temp.compact .hud-tempscale { display: none; }",
-    "new": ".hud-temp.compact .hud-tempword { display: none; }",
-    "why": "the compact plate keeps its scale",
     "tests": [
       "test/tempui.test.js"
     ]

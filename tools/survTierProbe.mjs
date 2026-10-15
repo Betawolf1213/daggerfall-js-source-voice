@@ -38,7 +38,7 @@ const open = async (shelf = null) => {
     await page.locator('.px-acctstage').click({ position: { x: 5, y: 5 } });
     await page.waitForSelector('.px-acctstage', { state: 'detached' });
   }
-  await page.locator('.doorbtn.door-settings').first().click();   // ORG2: the Features rows are Settings' tabs
+  await page.locator(':is(.doorbtn, .px-homelink).door-settings').first().click();   // UI-CALM II: the foot's plaque on the enhanced door. ORG2: the Features rows are Settings' tabs
   await page.locator('#enhanced-menu .subbtn').filter({ hasText: /^Gameplay/ }).first().click();
   await page.waitForSelector('.ft-tile');
   const tile = page.locator('.ft-tile').filter({ hasText: 'Climates & Calories' }).first();

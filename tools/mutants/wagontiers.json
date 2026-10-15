@@ -232,5 +232,14 @@
     "tests": [
       "test/wagontiers.test.js"
     ]
+  },
+  {
+    "name": "WAGON-TIERS-the-note-on-boons",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "  if (w && (w.stateKey === 'rickety' || w.stateKey === 'failing') && w.wearSlows !== false) return 'wagon';",
+    "new": "  if (w && (w.stateKey === 'rickety' || w.stateKey === 'failing')) return 'wagon';",
+    "tests": [
+      "test/wagontiers.test.js"
+    ]
   }
 ]

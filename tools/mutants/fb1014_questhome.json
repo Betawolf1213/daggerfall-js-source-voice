@@ -92,8 +92,17 @@
   {
     "name": "QUEST-HOME-the-order-sent-to-main's-world201",
     "file": "src/net/wire.js",
-    "old": "export const HOME_RELAY_MIN = 203;",
+    "old": "export const HOME_RELAY_MIN = 205;",
     "new": "export const HOME_RELAY_MIN = 201;",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-order-sent-to-main's-world204",
+    "file": "src/net/wire.js",
+    "old": "export const HOME_RELAY_MIN = 205;",
+    "new": "export const HOME_RELAY_MIN = 204;",
     "tests": [
       "test/fb1014_questhome.test.js"
     ]
