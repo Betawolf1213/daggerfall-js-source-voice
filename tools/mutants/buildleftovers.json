@@ -2,7 +2,7 @@
   {
     "name": "BUILD-LEFTOVERS-every-ineffective-dynamic-import-quiet",
     "file": "vite.config.js",
-    "old": "if (log.code === 'INEFFECTIVE_DYNAMIC_IMPORT' && /[\\\\/]src[\\\\/]ui[\\\\/]revenantCard\\.js$/.test(log.id ?? '')\n          && /\\bdynamically imported by (?:\\S*[\\\\/])?src[\\\\/]ui[\\\\/]hudLayout\\.js but\\b/.test(log.message)) return;",
+    "old": "if (log.code === 'INEFFECTIVE_DYNAMIC_IMPORT' && (log.id ?? '').replace(/\\\\/g, '/') === `${process.cwd().replace(/\\\\/g, '/')}/src/ui/revenantCard.js`\n          && /\\bdynamically imported by (?:\\.[\\\\/])?src[\\\\/]ui[\\\\/]hudLayout\\.js but\\b/.test(log.message)\n          && !/statically imported by [^\\n]*\\bsrc[\\\\/]ui[\\\\/]hudLayout\\.js/.test(log.message)) return;",
     "new": "if (log.code === 'INEFFECTIVE_DYNAMIC_IMPORT') return;",
     "tests": [
       "test/buildwarn.test.js"
@@ -11,7 +11,7 @@
   {
     "name": "BUILD-LEFTOVERS-the-pair-quiet-by-its-file-name-alone",
     "file": "vite.config.js",
-    "old": "/[\\\\/]src[\\\\/]ui[\\\\/]revenantCard\\.js$/.test(log.id ?? '')\n          && /\\bdynamically imported by (?:\\S*[\\\\/])?src[\\\\/]ui[\\\\/]hudLayout\\.js but\\b/.test(log.message)",
+    "old": "(log.id ?? '').replace(/\\\\/g, '/') === `${process.cwd().replace(/\\\\/g, '/')}/src/ui/revenantCard.js`\n          && /\\bdynamically imported by (?:\\.[\\\\/])?src[\\\\/]ui[\\\\/]hudLayout\\.js but\\b/.test(log.message)\n          && !/statically imported by [^\\n]*\\bsrc[\\\\/]ui[\\\\/]hudLayout\\.js/.test(log.message)",
     "new": "/revenantCard\\.js$/.test(log.id ?? '')",
     "tests": [
       "test/buildwarn.test.js"
@@ -38,10 +38,46 @@
   {
     "name": "BUILD-LEFTOVERS-the-importer-anchored-to-the-message-start",
     "file": "vite.config.js",
-    "old": "/\\bdynamically imported by (?:\\S*[\\\\/])?src[\\\\/]ui[\\\\/]hudLayout\\.js but\\b/.test(log.message)",
+    "old": "/\\bdynamically imported by (?:\\.[\\\\/])?src[\\\\/]ui[\\\\/]hudLayout\\.js but\\b/.test(log.message)",
     "new": "/^src\\/ui\\/revenantCard\\.js is dynamically imported by src\\/ui\\/hudLayout\\.js but\\b/.test(log.message)",
     "tests": [
       "test/buildwarn.test.js"
+    ]
+  },
+  {
+    "name": "BUILD-LEFTOVERS-the-importer-clause-dropped",
+    "file": "vite.config.js",
+    "old": "\n          && /\\bdynamically imported by (?:\\.[\\\\/])?src[\\\\/]ui[\\\\/]hudLayout\\.js but\\b/.test(log.message)",
+    "new": "",
+    "tests": [
+      "test/buildwarn.test.js"
+    ]
+  },
+  {
+    "name": "BUILD-LEFTOVERS-the-static-list-unread",
+    "file": "vite.config.js",
+    "old": "\n          && !/statically imported by [^\\n]*\\bsrc[\\\\/]ui[\\\\/]hudLayout\\.js/.test(log.message)) return;",
+    "new": ") return;",
+    "tests": [
+      "test/buildwarn.test.js"
+    ]
+  },
+  {
+    "name": "BUILD-LEFTOVERS-the-stamp-written-on-import",
+    "file": "scripts/buildTag.mjs",
+    "old": "if (isMain(import.meta.url)) {",
+    "new": "{",
+    "tests": [
+      "test/audit68_tools.test.js"
+    ]
+  },
+  {
+    "name": "BUILD-LEFTOVERS-the-probe-stamps-another-spelling",
+    "file": "tools/staleChunkProbe.mjs",
+    "old": "  writeFileSync(TAG, tagSource(sha, null));",
+    "new": "  writeFileSync(TAG, `export const BUILD_TAG='${sha}';\\n`);",
+    "tests": [
+      "test/rel8_updates.test.js"
     ]
   }
 ]

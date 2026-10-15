@@ -32,19 +32,26 @@ const pair = (dir, dyn, stat) => ({
   [`${dir}/${stat}.js`]: `export const tag = '${stat}';\n`,
 });
 
-test('BUILD-LEFTOVERS THE BUILD\'S WARNINGS STAY WORTH READING: built by Vite through vite.config.js\'s own onLog, hudLayout -> revenantCard\'s ineffective dynamic import (the edge that keeps them out of a cycle) is quiet and another pair\'s still warns (mutants: every ineffective dynamic import quiet; the pair quiet by its file name alone)', async () => {
+/** The HUD's own shape (AUDIT BUILD-LEFTOVERS, the second read - the pair above was hudLayout importing the card
+ *  statically too, which the real tree never does and the filter must not quiet): hudLayout.js loads revenantCard.js
+ *  dynamically, the cycle's edge, and hud.js imports it statically. */
+const HUD = {
+  'src/ui/hudLayout.js': "export const load = () => import('./revenantCard.js');\n",
+  'src/ui/hud.js': "import { tag } from './revenantCard.js';\nexport const use = () => tag;\n",
+  'src/ui/revenantCard.js': "export const tag = 'card';\n",
+};
+
+/** Built by Vite through the config's own onLog, FROM its tree: each ineffective dynamic import it printed, as
+ *  `<module> <- <its dynamic importers>`. `main` is src/main.js's imports. */
+async function warnings(files, main) {
   const dir = mkdtempSync(join(tmpdir(), 'buildwarn-'));
   try {
-    const files = {
+    const all = {
       'index.html': '<!doctype html><script type="module" src="./src/main.js"></script>\n',
-      'src/main.js': "import { use } from './ui/hudLayout.js';\nimport { use as other } from './x/caller.js';\nconsole.log(use(), other());\n",
-      ...pair('src/ui', 'hudLayout', 'revenantCard'),
-      ...pair('src/x', 'caller', 'callee'),
-      // the same file name under another caller is another pair - it warns
-      ...pair('src/y', 'notHudLayout', 'revenantCard'),
+      'src/main.js': main.map(([what, from], i) => `import { ${what} as m${i} } from '${from}';\nconsole.log(m${i});\n`).join(''),
+      ...files,
     };
-    files['src/main.js'] += "import { use as third } from './y/notHudLayout.js';\nconsole.log(third());\n";
-    for (const [p, text] of Object.entries(files)) { mkdirSync(dirname(join(dir, p)), { recursive: true }); writeFileSync(join(dir, p), text); }
+    for (const [p, text] of Object.entries(all)) { mkdirSync(dirname(join(dir, p)), { recursive: true }); writeFileSync(join(dir, p), text); }
     const warned = [];
     // AUDIT BUILD-LEFTOVERS: built FROM the tree, as a real build runs from the repo - so the warning names its paths bare,
     // as the real one does (a tree built from elsewhere names them `../../tmp/...`, and the filter was only ever tried so)
@@ -56,10 +63,25 @@ test('BUILD-LEFTOVERS THE BUILD\'S WARNINGS STAY WORTH READING: built by Vite th
       root: dir, configFile: false, logLevel: 'warn', customLogger: logger,
       build: { outDir: join(dir, 'dist'), rollupOptions: { onLog: onLog() } },
     }).finally(() => process.chdir(cwd));
-    const ineffective = [...warned.join('\n').matchAll(/(src\/\w+\/\w+\.js) is dynamically imported by (src\/\w+\/\w+\.js)/g)].map((m) => `${m[1]} is dynamically imported by ${m[2]}`);
-    assert.deepEqual(ineffective.sort(), [
-      'src/x/callee.js is dynamically imported by src/x/caller.js',
-      'src/y/revenantCard.js is dynamically imported by src/y/notHudLayout.js',
-    ], `the warnings the build printed:\n${warned.join('\n')}`);
+    return [...warned.join('\n').matchAll(/(src\/\w+\/\w+\.js) is dynamically imported by ([^\n]*?) but/g)]
+      .map((m) => `${m[1]} <- ${m[2].split(', ').sort().join(', ')}`).sort();
   } finally { rmSync(dir, { recursive: true, force: true }); }
+}
+
+const HUD_MAIN = [['load', './ui/hudLayout.js'], ['use', './ui/hud.js']];
+
+test('BUILD-LEFTOVERS THE BUILD\'S WARNINGS STAY WORTH READING: built by Vite through vite.config.js\'s own onLog, hudLayout -> revenantCard\'s ineffective dynamic import (the edge that keeps them out of a cycle) is quiet - and another pair\'s still warns, the same file name under another caller\'s, the card loaded by a second importer, and the card imported statically by hudLayout too (mutants: every ineffective dynamic import quiet; the pair quiet by its file name alone; the importer anchored to the message\'s start; the importer clause dropped; the static list unread)', async () => {
+  assert.deepEqual(await warnings({
+    ...HUD,
+    ...pair('src/x', 'caller', 'callee'),
+    ...pair('src/y', 'notHudLayout', 'revenantCard'),   // the same file name under another caller is another pair - it warns
+  }, [...HUD_MAIN, ['use', './x/caller.js'], ['use', './y/notHudLayout.js']]), [
+    'src/x/callee.js <- src/x/caller.js',
+    'src/y/revenantCard.js <- src/y/notHudLayout.js',
+  ], 'the HUD\'s pair quiet, every other warning printed');
+  // AUDIT BUILD-LEFTOVERS, the second read: the importer and the static list are the filter's, not decoration
+  assert.deepEqual(await warnings({ ...HUD, 'src/ui/other.js': "export const load = () => import('./revenantCard.js');\n" }, [...HUD_MAIN, ['load', './ui/other.js']]),
+    ['src/ui/revenantCard.js <- src/ui/hudLayout.js, src/ui/other.js'], 'a second dynamic importer of the card warns');
+  assert.deepEqual(await warnings({ ...HUD, ...pair('src/ui', 'hudLayout', 'revenantCard') }, [...HUD_MAIN, ['use', './ui/hudLayout.js']]),
+    ['src/ui/revenantCard.js <- src/ui/hudLayout.js'], 'hudLayout importing the card statically too - mwFirstPerson\'s mistake, and the cycle back - warns');
 });

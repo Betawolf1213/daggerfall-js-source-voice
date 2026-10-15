@@ -110,7 +110,11 @@ test('REL8 (BUILD-LEFTOVERS, 2026-10-15) ONE STAMP: every name the game imports 
   for (const f of walk('src')) for (const m of rd(f).matchAll(/^import \{([^}]*)\} from '[./]*buildTag\.js';/gm)) for (const n of m[1].split(',')) imported.add(n.trim());
   assert.ok(imported.has('BUILD_TAG') && imported.has('UPDATE'), `the walk found the game\'s imports: ${[...imported]}`);
   assert.deepEqual([...imported].filter((n) => !stamped.has(n)), [], 'imported from src/buildTag.js and not stamped');
-  const strays = [...walk('tools'), ...walk('scripts')].filter((f) => f !== join('scripts', 'buildTag.mjs') && /export const BUILD_TAG = /.test(rd(f)));
+  // (AUDIT BUILD-LEFTOVERS, the second read: any spelling of the assignment, in every script a build or a release runs -
+  // the shell steps, the desktop app's and the workflows' too; one spelling in two folders let a stamp of its own by)
+  const scriptsOf = (dir) => readdirSync(join(ROOT, dir), { recursive: true }).map(String).filter((f) => /\.(m?js|cjs|sh|ya?ml)$/.test(f) && !/(^|[\\/])node_modules[\\/]/.test(f)).map((f) => join(dir, f));
+  const strays = [...scriptsOf('tools'), ...scriptsOf('scripts'), ...scriptsOf('app'), ...scriptsOf('.github/workflows'), 'package.json']
+    .filter((f) => f !== join('scripts', 'buildTag.mjs') && /\bBUILD_TAG\s*=(?!=)/.test(rd(f)));
   assert.deepEqual(strays, [], 'a stamp of its own - write src/buildTag.js through tagSource');
 });
 

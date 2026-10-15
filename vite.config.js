@@ -162,12 +162,15 @@ export default defineConfig({
     // opposite mistake and just as quiet.
     assetsInlineLimit: (filePath) => (/[\\/]vendor[\\/]/.test(filePath) ? false : undefined),
     // BUILD-LEFTOVERS (2026-10-15): THE CHUNK-SIZE WARNING IS A LINE AGAIN.
-    // At Vite's 500 kB it fired on every build - the world chunk is
-    // bootWorld, 2,446 kB, and HOST-SPLIT (bible/01-Overview/Host-Split.md)
-    // is what takes it apart - so it said nothing. Set just over today's
-    // largest chunk, it speaks when a chunk grows past the world; lower it
-    // as HOST-SPLIT brings the world chunk down.
-    chunkSizeWarningLimit: 2_500,
+    // At Vite's 500 kB it fired on every build - the world chunk, world.js
+    // and all it imports statically, is 2,662 kB - so it said nothing. Set
+    // just over today's largest chunk, it speaks when a chunk grows past the
+    // world. (AUDIT BUILD-LEFTOVERS, the second read: 2,500 sat over the
+    // world's 2,446 when written, and main's POI editor took it to 2,662 by
+    // the merge. And HOST-SPLIT does not shrink it: a module the host imports
+    // statically joins the host's chunk - pixelBuild.js is in it. Only a
+    // dynamic import takes code out; lower this when one does.)
+    chunkSizeWarningLimit: 2_750,
     // EVERY ROOT PAGE: the game, the voxel editor (viewer.html), the labs
     // and the prototypes. None carries game data - a page that draws the
     // game's art asks for the user's own ARENA2. AUDIT 68: a root page
@@ -184,9 +187,14 @@ export default defineConfig({
       // whose paths are the working directory's and come after a colour code
       // (AUDIT BUILD-LEFTOVERS: a filter anchored to the message's start never
       // matched a real build). Either separator, for a Windows build.
+      // AUDIT BUILD-LEFTOVERS, the second read: THIS tree's revenantCard.js
+      // (the build runs from the repository), hudLayout.js its only dynamic
+      // importer - and never a static one too, the mistake mwFirstPerson's was
+      // (the filter read any prefix and any static list, and quieted both)
       onLog(level, log, handler) {
-        if (log.code === 'INEFFECTIVE_DYNAMIC_IMPORT' && /[\\/]src[\\/]ui[\\/]revenantCard\.js$/.test(log.id ?? '')
-          && /\bdynamically imported by (?:\S*[\\/])?src[\\/]ui[\\/]hudLayout\.js but\b/.test(log.message)) return;
+        if (log.code === 'INEFFECTIVE_DYNAMIC_IMPORT' && (log.id ?? '').replace(/\\/g, '/') === `${process.cwd().replace(/\\/g, '/')}/src/ui/revenantCard.js`
+          && /\bdynamically imported by (?:\.[\\/])?src[\\/]ui[\\/]hudLayout\.js but\b/.test(log.message)
+          && !/statically imported by [^\n]*\bsrc[\\/]ui[\\/]hudLayout\.js/.test(log.message)) return;
         handler(level, log);
       },
       input: {
