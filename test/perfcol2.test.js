@@ -153,7 +153,8 @@ test('PERF-COL2: the world host marks every streamed pixel\'s bucket as riding i
   for (const l of pix) assert.ok(l.includes('onFloatingFrame(state, ((o) => () => state.pixelTranslation(px, py, o))([0, 0, 0]))'), `marked: ${l.trim().slice(0, 120)}`);
   assert.ok(w.includes('collider.addMesh(h.bucket, pos, idx, _ohIdentity, onFloatingFrame(state, () => state.pixelTranslation(entry.px, entry.py, o)));'), 'the ocean holes\' bucket marked');
   const marks = (w.match(/onFloatingFrame\(/g) ?? []).length;
-  assert.equal(marks, 7 + 1, 'and nothing else marked (a boat, a wagon, a gate\'s own mover ride no pixel)');   // PIN MOVED (FIELD BUGS 2026-10-13e HILL-SEAT): the pads' bucket provider
+  assert.ok(w.includes('ride = onFloatingFrame(state, () => state.pixelTranslation(px, py, o)); _poiRides.set(k, ride);'), 'a POI\'s parts\' buckets marked - one provider a pixel (scenes/poiHost.js riding)');   // POI-2
+  assert.equal(marks, 7 + 1 + 1, 'and nothing else marked (a boat, a wagon, a gate\'s own mover ride no pixel)');   // PIN MOVED (FIELD BUGS 2026-10-13e HILL-SEAT): the pads' bucket provider; PIN MOVED (POI-2): a POI's, riding the pixel it stands on
   // AUDIT: the two hosts that lay a pixel's bucket of their own are handed the frame, and mark with it
   assert.ok(w.includes('    collider, pixelTranslation: (px, py, o) => state.pixelTranslation(px, py, o), floatingFrame: () => state,'), 'Deep Waters handed the frame');
   assert.ok(w.includes('    pixelTranslation: (px, py) => state.pixelTranslation(px, py), floatingFrame: () => state,'), 'the bounty farms handed the frame');

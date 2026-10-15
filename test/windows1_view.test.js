@@ -342,7 +342,10 @@ test('RW1 view V7: a cutout picture - { cutout: true } marks the texture (a late
   // INCIDENT 2026-09-04's law stands for every other picture: the model shader's only alpha cut is the flag's
   const fs = rd('src/render/renderer.js');
   const model = fs.slice(fs.indexOf('const FS = `'), fs.indexOf('const CHAR_FS = `'));
-  assert.ok(!/tex\.a/.test(model) && model.split('${RW_MAIN_CUTOUT}').length === 2, 'the classic FS reads no alpha but through the block\'s one line, behind its flag');
+  // PIN MOVED (POI-2, render/meshAlpha.js): and the translucent draw's output alpha - `meshAlphaOf(tex.a)`, alpha one but
+  // behind `uMeshAlpha` - which cuts nothing: no discard on alpha but the flag's
+  const reads = model.match(/tex\.a/g) ?? [];
+  assert.ok(reads.length === 1 && model.includes('meshAlphaOf(tex.a)') && !/discard[^;]*tex\.a|tex\.a[^;]*discard/.test(model) && model.split('${RW_MAIN_CUTOUT}').length === 2, 'the classic FS reads no alpha but through the block\'s one line, behind its flag');
 });
 
 test('RW1 view V8 (GLASS-ALL): which interior texels are glass - a building set\'s window wall (record 2, its twin record 1; the castles apart) in a climate an interior is laid out in, its new art against the twin in the glass ramp, the panes kept and the lead, the frame, the wall\'s speckle, a half-repainted wall and a stray blob left; the pipeline asks it after the emissive arm, of a pack\'s picture too (mutants: windows1.json GLASS-ALL-*)', () => {
