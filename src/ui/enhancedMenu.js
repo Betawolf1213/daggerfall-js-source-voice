@@ -337,6 +337,10 @@ let hooks = {};
 // game. 'top' is the two doors (Online, Offline); 'offline' the offline doors (HOME_OFFLINE) and the way back. Every
 // visit opens on 'top'; a section an offline door opened backs out to 'offline', where its press was made.
 let homeLevel = 'top';
+/** AUDIT UICALM-FIRM1 L3 L1: the keyboard's place after a level changes - the door named, else the level's first. */
+function focusDoor(id) {
+  globalThis.requestAnimationFrame?.(() => (app?.querySelector?.(`.px-menu .door-${id}`) ?? app?.querySelector?.('.px-menu .doorbtn'))?.focus?.());
+}
 let keyHandler = null;
 // ACC1f (Mac: "The online details itself will live as a popup on main
 // menu startup and a new profile icon"): whether the account window is
@@ -4204,7 +4208,7 @@ function go(id) {
   // two questions; from a page both levels show (Tutorials, Screenshots, About) the level it was opened from
   if (id === 'home' && mode === 'boot') {
     if (offlineSection(section)) homeLevel = 'offline';
-    else if (section === 'online' || HOME_LINKS.some((l) => idOf(l) === section)) homeLevel = 'top';
+    else if (section === 'online') homeLevel = 'top';   // AUDIT UICALM-FIRM1 L3 N1: Settings and Overhauls stand in the foot of both levels, so they keep the level they were opened from, as Tutorials does
   }
   pickedFeature = null;   // ORG2: a walk away drops the picked Features row, as it drops pickedKey
   section = id; pickedKey = null; sheetOpen = false; confirming = null; cloudArm = null; render();   // 0927b B5: an armed press never outlives its pane
@@ -4398,7 +4402,9 @@ function doorBtn(id, label, sub, onClick) {
   word.append(el('span', 'door-name', label));
   if (sub) word.append(el('span', 'door-sub', sub));
   b.append(dia(), word, dia());
-  b.onclick = onClick;
+  // AUDIT UICALM-FIRM1 L3 M2: a double click's second click is no door's - a door drawn under the pointer by the first
+  // (Offline's level: Load Game stood where Offline was) took it
+  b.onclick = (e) => { if (e?.detail > 1) return; onClick(e); };
   return b;
 }
 
@@ -4455,7 +4461,7 @@ function appendPxFoot(home) {
   // TUT1: the tutorials' plaque stands over the build line, at the LEFT - the book a new player reads before the game. A
   // third plaque in About's box ran into the menu's column on a 1280x720 screen, and three stacked overran a phone's foot.
   if (mode !== 'pause' && sections.includes('Tutorials')) {
-    const tuts = el('button', 'px-about px-tuts door-tutorials', 'Tutorials');
+    const tuts = el('button', 'px-about px-tuts door-tutorials', RAIL_TEXT.tutorials());   // AUDIT UICALM-FIRM1 L3 N3: the player's language, as About beside it
     tuts.onclick = () => go('tutorials');
     const left = el('div', 'px-footleft');
     build.remove();
@@ -4466,7 +4472,7 @@ function appendPxFoot(home) {
   // runs under the menu's last rows on a 720-pixel screen. The door's face only: the pause window's System rail carries
   // it as a row (SYSTEM_PANES).
   if (mode !== 'pause' && sections.includes('Screenshots')) {
-    const shots = el('button', 'px-about px-shots', 'Screenshots');
+    const shots = el('button', 'px-about px-shots', RAIL_TEXT.screenshots());
     shots.onclick = () => go('screenshots');
     const right = el('div', 'px-footright');
     about.remove();
@@ -5864,9 +5870,9 @@ function onKey(e) {
     : confirming ? () => { confirming = null; render(); }
     : sheetOpen ? () => { sheetOpen = false; render(); }
       : controlsPromptOpen() ? () => dismissControlsPrompt()   // AUDIT KB1: the Controls pane's own prompt answers No first - it never leaves the section with the staged binds
-      : section !== 'home' ? () => go('home')   // PX1/PX2: a section backs out to the face
+      : section !== 'home' ? () => { const from = section; go('home'); if (mode !== 'pause') focusDoor(from); }   // PX1/PX2: a section backs out to the face (AUDIT L3 L1: the keyboard on its door)
         : mode === 'pause' ? () => onAction('resume')   // Escape on the pause face resumes
-          : homeLevel !== 'top' && twoQuestionDoor() ? () => { homeLevel = 'top'; render(); }   // UI-CALM: the offline doors back out to the two questions
+          : homeLevel !== 'top' && twoQuestionDoor() ? () => { const from = homeLevel; homeLevel = 'top'; render(); focusDoor(from); }   // UI-CALM: the offline doors back out to the two questions (AUDIT L3 L1: the keyboard back on Offline)
             : null;
   if (!back) return;
   e.preventDefault();

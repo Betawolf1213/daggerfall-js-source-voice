@@ -196,7 +196,13 @@ function mapPane() {
     plates.forEach((q, i) => { q.tag.style.left = `${at[i].x}px`; q.tag.style.top = `${at[i].y}px`; });
   };
   globalThis.requestAnimationFrame?.(lay);
-  if (typeof globalThis.ResizeObserver === 'function') new globalThis.ResizeObserver(() => lay()).observe(box);
+  // AUDIT UICALM-FIRM1 L3 M6: each plate watched too - a dress's face that arrives late widens the names after the first
+  // lay, and laid once they touched and left the map (its left and top move no plate's size, so no loop)
+  if (typeof globalThis.ResizeObserver === 'function') {
+    const ro = new globalThis.ResizeObserver(() => lay());
+    ro.observe(box);
+    for (const q of plates) ro.observe(q.tag);
+  }
   wrap.append(box);
   return wrap;
 }
@@ -411,7 +417,7 @@ function classQuestionsStage() {
       if (text?.trim()) card.append(el('p', null, text));
     }
     const a = el('div', 'acts');
-    const yes = el('button', 'act primary', `Play as a ${named}`);
+    const yes = el('button', 'act primary', `Play as ${/^[aeiou]/i.test(named) ? 'an' : 'a'} ${named}`);   // AUDIT UICALM-FIRM1 L3 N2: an Acrobat
     yes.onclick = () => { flow.applyHit({ confirmQClass: true }); paint(); };
     const no = el('button', 'act', 'Choose again');
     no.onclick = () => { flow.applyHit({ cancelQClass: true }); paint(); };
@@ -463,7 +469,8 @@ export const CLASS_WAYS = Object.freeze([
   Object.freeze(['Stealth', Object.freeze(['Bard', 'Burglar', 'Rogue', 'Acrobat', 'Thief', 'Assassin'])]),
   Object.freeze(['Combat', Object.freeze(['Monk', 'Archer', 'Ranger', 'Barbarian', 'Warrior', 'Knight'])]),
 ]);
-/** UI-CALM: the way a class walks, by its name - null for one Daggerfall does not ship (a custom class). */
+/** UI-CALM: the way a class walks, by its career's KEY (CLASS*.CFG's own name, never the shown one - a translated name
+ *  matched no way and every head went; AUDIT UICALM-FIRM1 L3 M3) - null for one Daggerfall does not ship (a custom class). */
 export const classWayOf = (name) => CLASS_WAYS.find(([, names]) => names.includes(name))?.[0] ?? null;
 /** UI-CALM: a career's two strongest attributes, by name, strongest first (ties in the sheet's order). */
 export function leadingAttributes(career, n = 2) {
@@ -495,7 +502,9 @@ function classProfile(career) {
   for (const p of [skills('Primary', career.primarySkills), skills('Major', career.majorSkills)]) if (p) box.append(p);
   if (Number.isFinite(career.hitPointsPerLevel)) {
     const hp = el('p', 'cprof-skills');
-    hp.append(el('span', 'cprof-label', 'Health'), document.createTextNode(`up to ${career.hitPointsPerLevel} a level`));
+    // AUDIT UICALM-FIRM1 L3 L2: a level's roll is half the career's to all of it, Endurance's modifier on top
+    // (systems/chargen.js hitPointsPerLevelUp) - "up to N" undersold every hardy character
+    hp.append(el('span', 'cprof-label', 'Health'), document.createTextNode(`${Math.trunc(career.hitPointsPerLevel / 2)}-${career.hitPointsPerLevel} a level, more with Endurance`));
     box.append(hp);
   }
   return box;
@@ -510,7 +519,7 @@ function classStage() {
     const name = flow.classRowName(i);
     const custom = i === flow.careers.length;
     // UI-CALM: a head where the way changes (the careers stand in the ways' own order, CLASS00..17)
-    const w = custom ? 'Your own' : classWayOf(name);
+    const w = custom ? 'Your own' : classWayOf(flow.careers[i]?.name);   // AUDIT UICALM-FIRM1 L3 M3: by the career's own key - its shown name is the player's language's
     if (w && w !== way) list.append(el('div', 'classway', w));
     way = w;
     const row = el('div', `row${i === flow.classListIndex ? ' on' : ''}`);
@@ -534,7 +543,7 @@ function classStage() {
   const d = el('div', 'dcard');
   const picked = flow.classRowName(flow.classListIndex);
   d.append(el('h3', null, picked));
-  const pickedWay = flow.classListIndex === flow.careers.length ? null : classWayOf(picked);
+  const pickedWay = flow.classListIndex === flow.careers.length ? null : classWayOf(flow.careers[flow.classListIndex]?.name);
   if (pickedWay) d.append(el('div', 'cprof-way', pickedWay));
   if (flow.classConfirm) {
     const body = el('div', 'dscroll');   // UI-CALM: the words scroll, the presses stand (the race's card, above)
@@ -549,7 +558,7 @@ function classStage() {
     }
     flush();
     const a = el('div', 'acts');
-    const yes = el('button', 'act primary', `Play as a ${picked}`);
+    const yes = el('button', 'act primary', `Play as ${/^[aeiou]/i.test(picked) ? 'an' : 'a'} ${picked}`);   // AUDIT UICALM-FIRM1 L3 N2: an Archer, an Assassin
     yes.onclick = () => { flow.applyHit({ confirmClass: true }); paint(); };
     const no = el('button', 'act', 'Choose again');
     no.onclick = () => { flow.applyHit({ cancelClass: true }); paint(); };

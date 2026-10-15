@@ -30,21 +30,33 @@ panels full of text constantly pull me out of that world."
   lies behind it; **Settings** and **Overhauls** (`HOME_LINKS`) are plaques in the foot's box (see 7).
 - **Offline** opens the offline doors - Continue, New Game, Load Game, the Test Room (`HOME_OFFLINE`) - and a way
   **Back**. A pane one of them opened backs out to them (Escape, the wordmark); Escape on them backs out to the two
-  questions. Every visit opens on the two questions.
-- The shell's rail stands in the same order: Online first, Offline's four under their word (`.railgroup`).
+  questions. Every visit opens on the two questions. Settings and Overhauls back out to the level they were opened
+  from, as Tutorials does (AUDIT UICALM-FIRM1 L3 N1).
+- A double click is one door's: its second click is no door's (`doorBtn`), where it had opened Load Game, drawn under
+  the pointer by the first (AUDIT UICALM-FIRM1 L3 M2). Escape puts the keyboard back on the door it came from - Offline,
+  or the section's own door (`focusDoor`; L3 L1).
+- The shell's rail stands in the same order: Online first, Offline's four under their word (`.railgroup`). On a phone
+  the word takes a row of its own, never a door's slot (L3 L4), and DFO Grimoire's phone rail is its page, its word
+  the deep red whole (L3 M8: the rail had stood on the dark under the page's ink, "Main menu" at 1.29:1).
 - DFO Grimoire writes the two questions on the book's two leaves - *The Realm* (Online) and *Thine Own Tale* (Offline) -
-  and the offline doors on the left leaf with the Test Room and the way back on the right; on a narrow screen or over
-  the map, one page held up, in the page's ink.
+  and the offline doors on the left leaf with the Test Room and the way back on the right; on a narrow or a short
+  screen (the book wants 561px of height - its fixed type ran "Thine Own Tale" into "Offline" at 932x430; AUDIT
+  UICALM-FIRM1 L3 M1) or over the map, one page held up, in the page's ink.
 - The classic skin's door keeps its one list (Begin, Online, ...): `twoQuestionDoor` is the enhanced boot rail's alone.
 
 ### 2. Character creation shows the class before it is read about (`ui/enhancedChargen.js`)
 
 - The class list stands in Daggerfall's three ways - Magic, Stealth, Combat (`CLASS_WAYS`, its manual's mages, thieves
-  and warriors) - each under its head; each row says the two attributes the class leans on (`leadingAttributes`).
+  and warriors) - each under its head; each row says the two attributes the class leans on (`leadingAttributes`). A
+  class's way is found by its career's own key, never its shown name, so a translation pack keeps the heads (AUDIT
+  UICALM-FIRM1 L3 M3).
 - The card beside it is the class's profile from its own CLASS*.CFG numbers: eight attribute bars, its primary and
-  major skills, its hit points a level - before TEXT.RSC's description is asked for.
+  major skills, its hit points a level as the roll gives them ("3-6 a level, more with Endurance" - half the career's to
+  all of it, `hitPointsPerLevelUp`; "up to N" undersold it, L3 L2) - before TEXT.RSC's description is asked for.
+  "Play as an Acrobat", "an Archer" (L3 N2).
 - **Begin your life** is the action bar's primary, at its far end, where every stage's way on stands; Start over stands
-  beside Back (see 7).
+  beside Back (see 7). On a phone the bar wraps and the way on keeps no floor, so its three presses keep the screen
+  (L3 M4).
 
 ### 3. Menus with a hierarchy (`ui/holdingsPages.js`, the pause window)
 
@@ -59,9 +71,12 @@ panels full of text constantly pull me out of that world."
 - The quiet ink (`--dim`) a step lighter under Plus: #b9b2a1 for #9a9486.
 - A type floor of 12px for every word a player must read - the Settings screen's chips, segments, counts and tags, the
   Overhauls cards' labels, the tutorials' "new", the pack's shelf and empty-slot words (the empty slot's word was
-  #333c47 on the dark; now 4:1). The Stable card's words go from 11px grey to 14px.
+  #333c47 on the dark; now 4:1). The Stable card's words go from 11px grey to 14px. The Settings screen's All off and
+  Reset, the walk's pool heads and a phone's map names were left at 11px by the first pass (AUDIT UICALM-FIRM1 L3 L3).
 - Every colour the sheet says is Plus's alone (`P`, `:root:not([data-plus-dress="grimoire"])`): DFO Grimoire inks every
-  sheet into its own pages' colours, and a colour said for the dark ground would be inked onto the paper.
+  sheet into its own pages' colours, and a colour said for the dark ground would be inked onto the paper. The class
+  card's bars had stood for both - their dark and amber on the Grimoire's page - and are now each dress's own, the
+  Grimoire's in its ink and red (AUDIT UICALM-FIRM1 L5 L3; uicalm's pin reads the sheet rule by rule).
 
 ### 5. The gameplay HUD
 
@@ -115,10 +130,12 @@ the summary board looks cut off ... massively polish all this and do the same fo
   into Hammerfell. Each name is now a small plate in the screen's pixels at its province's label point, and names that
   would touch are moved apart up and down (never across), the Imperial Province's - which no one can choose - first and
   alone. The land and its name light together, whichever the pointer is on (`.hot`); the chosen one is the red plate
-  (Grimoire) or the brass one (Plus).
+  (Grimoire) or the brass one (Plus). The plates are laid again whenever one grows - a dress's face that arrives late
+  widened them after the first lay, and they touched and left the map (AUDIT UICALM-FIRM1 L3 M6).
 - **A confirm card scrolls its words and keeps its presses** (`.dcard.confirm .dscroll`): TEXT.RSC's longest ran past
   the card's foot and took "Play as ..." with it. The class's description flows as the race's does (a blank line is
-  the paragraph's end).
+  the paragraph's end). On a phone the sheet it rides in bounds it, so the presses stand on the screen (AUDIT
+  UICALM-FIRM1 L3 M7).
 - **The walk's page** (`uiCalmStyle.js` CHARGEN_CSS): on a desk a stage's column is at most 760px with its card beside
   it at the column's top (the map's stage takes the wider column); the card's column has no ground of its own; the class
   profile's eight bars start at one edge (one grid, not eight). Two choices (sex, how to choose a class) are cards one
@@ -130,9 +147,13 @@ the summary board looks cut off ... massively polish all this and do the same fo
   pack's frame. One scroll - the stage's - and none on a list that fits (sized to its rows it rounded a pixel over its
   own box and drew a bar beside eight rows); a needed one is thin, in the frame's colours. The chosen row is a lit bar at
   its edge and a warmer ground, its name lit - not a box drawn round the row and its presses. A way on that waits ("18
-  left to spend") reads, not greyed to nothing.
+  left to spend") reads, not greyed to nothing: an ink of its own under Plus, 0.85 of the page's under the Grimoire
+  (AUDIT UICALM-FIRM1 L3 M5 - the first pass's opacity over the disabled grey read at 1.46:1).
 - **The front door's foot**: Settings and Overhauls are plaques in the foot's box beside Screenshots and About
-  (`appendPxFoot`), so the book's two leaves hold the two questions and nothing else.
+  (`appendPxFoot`), so the book's two leaves hold the two questions and nothing else. The foot says its height
+  (`--px-foot-h`, measured) and the stage ends there: the two plaques wrapped the foot past the stage's fixed reserve,
+  and a tap on Offline, Load or Back opened Settings (AUDIT UICALM-FIRM1 L3 H1). A phone's and a short screen's
+  plaques share one wrapped row; every plaque in the player's language (Tutorials and Screenshots were English; L3 N3).
 - **The Settings screen reads as one list** (`SETTINGS_CSS`): a Features row and a plain row are the same line; the tags
   under a name are words ("Enhanced · DFU Classic"), not boxed capitals; the card beside the list stands clear of the
   screen's top.

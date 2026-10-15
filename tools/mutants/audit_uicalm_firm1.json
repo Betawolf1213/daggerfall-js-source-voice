@@ -882,5 +882,321 @@
     "tests": [
       "test/audit_uicalm_firm1.test.js"
     ]
+  },
+  {
+    "name": "AUF-L3H1-foot-unmeasured",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "if (h > 0) home.style?.setProperty?.('--px-foot-h', `${h}px`); };",
+    "new": "if (h > 0) void h; };",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3H1-foot-unwatched",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "footObs = new globalThis.ResizeObserver(reserve); footObs.observe(foot);",
+    "new": "footObs = null;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3H1-stage-fixed-reserve",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": ".px-home:not(.px-over)[style*=\"--px-foot-h\"] > .px-stage:not(.px-acctstage) { height: calc(100% - var(--px-foot-h)); padding-bottom: 12px; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3H1-plaques-stand-four-high",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "  .px-home:not(.px-over) .px-footright, .px-home:not(.px-over) .px-footleft { display: contents; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M1-book-at-any-height",
+    "file": "src/ui/grimoireDress.js",
+    "old": " and (min-height: 561px)';",
+    "new": "';",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M2-double-click-two-doors",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "b.onclick = (e) => { if (e?.detail > 1) return; onClick(e); };",
+    "new": "b.onclick = onClick;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M3-way-by-shown-name",
+    "file": "src/ui/enhancedChargen.js",
+    "old": "const w = custom ? 'Your own' : classWayOf(flow.careers[i]?.name);",
+    "new": "const w = custom ? 'Your own' : classWayOf(name);",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M3-picked-way-by-shown-name",
+    "file": "src/ui/enhancedChargen.js",
+    "old": "null : classWayOf(flow.careers[flow.classListIndex]?.name);",
+    "new": "null : classWayOf(picked);",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M4-bar-runs-off",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "  .wizard .actionbar { flex-wrap: wrap; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M4-way-on-floor",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "  .wizard .actionbar .act.primary { min-width: 0; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M5-waiting-way-faded",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "${P} .wizard .act.primary[disabled] { opacity: 1; color: #bdb4a0; }",
+    "new": "${P} .wizard .act.primary[disabled] { opacity: 0.72; }",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M5-grim-waiting-way-faded",
+    "file": "src/ui/grimoireDress.js",
+    "old": "${G} .wizard :is(.actionbar, .choose .acts, .skillpane .acts) .act.primary:disabled { opacity: 0.85 !important; }",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M6-plates-unwatched",
+    "file": "src/ui/enhancedChargen.js",
+    "old": "    for (const q of plates) ro.observe(q.tag);\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M7-sheet-unbounded",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "  .wizard .stagebody > .detail.wizsheet:has(> .dcard.confirm) { display: flex; flex-direction: column; overflow: hidden; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M7-card-runs-on",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "  .wizard .stagebody > .detail.wizsheet > .dcard.confirm { flex: 1 1 auto; min-height: 0; max-height: none; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M8-phone-rail-dark",
+    "file": "src/ui/grimoireDress.js",
+    "old": "@media (max-width: 860px), (pointer: coarse) { ${G} .shell:not(.wizard) .rail { background: ${PAGE} !important; } }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3M8-rail-head-faded",
+    "file": "src/ui/grimoireDress.js",
+    "old": "color: ${T.redDeep}; border-bottom: 1px solid rgba(43,26,12,0.25);",
+    "new": "color: ${T.redDeep}; opacity: 0.85; border-bottom: 1px solid rgba(43,26,12,0.25);",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3L1-section-focus-lost",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "go('home'); if (mode !== 'pause') focusDoor(from); }",
+    "new": "go('home'); void from; }",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3L1-level-focus-lost",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "homeLevel = 'top'; render(); focusDoor(from); }",
+    "new": "homeLevel = 'top'; render(); void from; }",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3L2-health-up-to",
+    "file": "src/ui/enhancedChargen.js",
+    "old": "`${Math.trunc(career.hitPointsPerLevel / 2)}-${career.hitPointsPerLevel} a level, more with Endurance`",
+    "new": "`up to ${career.hitPointsPerLevel} a level`",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3L3-tools-under-floor",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": ".opt-tools .act, .wizard .poolk { font-size: 12px; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3L3-maplabel-under-floor",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "  .wizard .maplabel { font-size: 12px; padding: 2px 5px; }",
+    "new": "  .wizard .maplabel { font-size: 11px; padding: 2px 5px; }",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3L4-rail-head-in-a-slot",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "@media (max-width: 860px), (pointer: coarse) { .shell:not(.wizard) .rail .railgroup { flex: 0 0 100%; margin: 8px 12px 0; } }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3N1-links-reset-level",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "else if (section === 'online') homeLevel = 'top';",
+    "new": "else if (section === 'online' || HOME_LINKS.some((l) => idOf(l) === section)) homeLevel = 'top';",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M9-offline-doors-untranslated",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "games.append(doorBtn(idOf(label), railLabel(label), ''",
+    "new": "games.append(doorBtn(idOf(label), label, ''",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M9-elsewhere-doors-untranslated",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "more.append(doorBtn(idOf(label), railLabel(label), ''",
+    "new": "more.append(doorBtn(idOf(label), label, ''",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3N3-tutorials-english",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "'px-about px-tuts door-tutorials', RAIL_TEXT.tutorials());",
+    "new": "'px-about px-tuts door-tutorials', 'Tutorials');",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3N3-screenshots-english",
+    "file": "src/ui/enhancedMenu.js",
+    "old": "'px-about px-shots', RAIL_TEXT.screenshots());",
+    "new": "'px-about px-shots', 'Screenshots');",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5L3-bar-dark-for-both",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": ".wizard .cprof-bar { position: relative; height: 8px; box-sizing: border-box; border: 1px solid transparent; }",
+    "new": ".wizard .cprof-bar { position: relative; height: 8px; box-sizing: border-box; border: 1px solid #050608; background: rgba(5,6,8,0.6); }",
+    "tests": [
+      "test/uicalm.test.js",
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5L3-fill-amber-for-both",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": ".wizard .cprof-fill { position: absolute; left: 0; top: 0; bottom: 0; }",
+    "new": ".wizard .cprof-fill { position: absolute; left: 0; top: 0; bottom: 0; background: #c08a3e; }",
+    "tests": [
+      "test/uicalm.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5L3-way-rule-for-both",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "text-transform: uppercase; border-bottom: 1px solid transparent; }",
+    "new": "text-transform: uppercase; border-bottom: 1px solid rgba(192,138,62,0.45); }",
+    "tests": [
+      "test/uicalm.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5L3-grim-bar-unlined",
+    "file": "src/ui/grimoireDress.js",
+    "old": "${G} .wizard .cprof-bar { border-color: rgba(43,26,12,0.55); background: rgba(43,26,12,0.12); }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5L3-grim-fill-unfilled",
+    "file": "src/ui/grimoireDress.js",
+    "old": "${G} .wizard .cprof-fill { background: ${T.redDeep}; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3N2-a-acrobat",
+    "file": "src/ui/enhancedChargen.js",
+    "old": "`Play as ${/^[aeiou]/i.test(named) ? 'an' : 'a'} ${named}`",
+    "new": "`Play as a ${named}`",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L3N2-a-archer",
+    "file": "src/ui/enhancedChargen.js",
+    "old": "`Play as ${/^[aeiou]/i.test(picked) ? 'an' : 'a'} ${picked}`",
+    "new": "`Play as a ${picked}`",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
   }
 ]

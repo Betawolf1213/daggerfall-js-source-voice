@@ -1734,9 +1734,12 @@ ${G} .px-home:not(.px-over):not(.lv-sky) .px-rule { display: none; }
 ${G}[data-grim-backdrop="map"] .px-home:not(.px-over):not(.lv-sky) .px-menu { background: ${PAGE}; padding: 22px 26px; gap: 4px;
   border: 2px solid; border-image: ${v('frame')} ${FRAME_ART.band} / ${FRAME_ART.band}px / ${FRAME_ART.band - 14}px round; box-shadow: 6px 10px 26px rgba(0,0,0,0.65); }
 ${G} .px-home:not(.px-over):not(.lv-sky) .px-menu .doorbtn .px-c { display: none; }
+/* AUDIT UICALM-FIRM1 L3 M8: a phone's rail is the page it is written on - the shell's phone rule laid it on the dark,
+   under the page's ink ("Main menu" read at 1.29:1) */
+@media (max-width: 860px), (pointer: coarse) { ${G} .shell:not(.wizard) .rail { background: ${PAGE} !important; } }
 /* UI-CALM: the shell's rail - Offline's word a small head in the page's red over its four, never read as a door */
 ${G} .rail .railgroup { margin: 18px 24px 2px; font-family: ${GRIMOIRE_STACK}; font-size: 16px; letter-spacing: 0.04em; text-transform: none;
-  color: ${ink3}; opacity: 0.85; border-bottom: 1px solid rgba(43,26,12,0.25); padding-bottom: 2px; }
+  color: ${T.redDeep}; border-bottom: 1px solid rgba(43,26,12,0.25); padding-bottom: 2px; }   /* AUDIT UICALM-FIRM1 L3 M8: the deep red, whole - its 0.85 of the red read at 3.4:1 */
 /* UI-CALM II (2026-10-14, a player: "cheap letters, overlapping, dotted lines everywhere, the highlighting of words is
    bad, the summary board looks cut off"): THE WALK IN THE PACK'S OWN HAND. A question's answers are leaves of the
    pack's parchment in its frame, the word in ink and the chosen one in its red with a red line inside the frame -
@@ -1764,6 +1767,7 @@ ${G} .wizard :is(.actionbar, .choose .acts, .skillpane .acts) .act.primary { bor
 ${G} .wizard :is(.actionbar, .choose .acts, .skillpane .acts) .act:hover:not(:disabled), ${G} .wizard :is(.actionbar, .choose .acts, .skillpane .acts) .act:focus-visible {
   background: rgba(70,42,18,0.85) !important; border-color: ${T.cream} !important; color: #fff6dc !important; outline: none !important; }
 ${G} .wizard :is(.actionbar, .choose .acts, .skillpane .acts) .act:disabled { opacity: 0.45 !important; }
+${G} .wizard :is(.actionbar, .choose .acts, .skillpane .acts) .act.primary:disabled { opacity: 0.85 !important; }   /* AUDIT UICALM-FIRM1 L3 M5: a way on that waits reads ("18 left to spend") */
 ${G} .wizard .actionbar { background: rgba(20,12,5,0.72) !important; border-top: 2px solid rgba(239,220,174,0.16) !important; }
 ${G} .wizard .dcard .acts .act, ${G} .wizard .dcard .acts .act[data-grim-on] { background: none !important; border: 2px solid rgba(92,56,24,0.55) !important;
   border-image: none !important; color: ${T.ink} !important; text-decoration: none !important; text-shadow: none !important;
@@ -1796,6 +1800,10 @@ ${G} .wizard .stagebody.solo > .skillpane { background: ${WOOD(0.32)}; }
 ${G} .wizard .row-name { color: ${T.cream} !important; text-shadow: 0 1px 0 rgba(0,0,0,0.6) !important; }
 ${G} .wizard .row-sub { color: #d6b98a !important; text-shadow: none !important; }
 ${G} .wizard .classlist .classway { color: ${T.yellow} !important; border-bottom: 2px solid rgba(200,165,42,0.4) !important; text-shadow: none !important; }
+/* the class's bars in the page's own ink and red (AUDIT UICALM-FIRM1 L5 L3: the calm sheet's dark bar and its amber
+   stood on the page) */
+${G} .wizard .cprof-bar { border-color: rgba(43,26,12,0.55); background: rgba(43,26,12,0.12); }
+${G} .wizard .cprof-fill { background: ${T.redDeep}; }
 /* the map of Tamriel: its lands parchment-pale on the desk, the chosen one in the red; the names parchment tags */
 ${G} .wizard .prov { fill: rgba(227,201,149,0.2); stroke: rgba(239,220,174,0.5); stroke-width: 0.7; }
 ${G} .wizard .prov.hot:not(.inert), ${G} .wizard .prov:not(.inert):hover { fill: rgba(227,201,149,0.38); stroke: ${T.cream}; }

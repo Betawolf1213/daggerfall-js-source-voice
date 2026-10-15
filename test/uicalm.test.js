@@ -28,7 +28,8 @@ test('UI-CALM the front door asks which world first: Online and Offline the two 
   assert.ok(doors.indexOf("doorBtn('online'") > 0 && doors.indexOf("doorBtn('online'") < doors.indexOf("doorBtn('offline'"), 'Online first');
   assert.match(doors, /more\.append\(doorBtn\('back', t\('menu\.home\.back', 'Back'\), '', level\('top'\)\)\);/, 'a way back from the offline doors');
   assert.match(menu, /if \(offlineSection\(section\)\) homeLevel = 'offline';/, 'a game\'s pane backs out to the offline doors');
-  assert.match(menu, /: homeLevel !== 'top' && twoQuestionDoor\(\) \? \(\) => \{ homeLevel = 'top'; render\(\); \}/, 'Escape on the offline doors: the two questions');
+  // PIN MOVED (AUDIT UICALM-FIRM1 L3 L1): and the keyboard back on the door it came from
+  assert.match(menu, /: homeLevel !== 'top' && twoQuestionDoor\(\) \? \(\) => \{ const from = homeLevel; homeLevel = 'top'; render\(\); focusDoor\(from\); \}/, 'Escape on the offline doors: the two questions');
   assert.match(menu, /homeLevel = 'top';   \/\/ UI-CALM: every visit asks which world first/);
   assert.match(menu, /const SECTIONS_BOOT = \['Online', 'Continue', 'New Game', 'Load Game', 'Test Room',/);
   assert.match(menu, /const twoQuestionDoor = \(\) => mode === 'boot' && sections === SECTIONS_BOOT;/, 'the enhanced front door alone: the classic skin keeps its list');
@@ -95,8 +96,13 @@ test('UI-CALM the windows read: the quiet ink a step lighter and the type floor 
   assert.equal(P, ':root:not([data-plus-dress="grimoire"])');
   assert.match(UI_CALM_CSS, new RegExp(`\\${P.replace(/[[\]().]/g, (c) => `\\${c}`)} \\{ --dim: #b9b2a1; \\}`));
   assert.equal(CALM_INK.quiet, '#bdb4a0');
-  // no colour rule under the sheet without Plus's prefix (a font-size, a gap, a width may stand for both dresses)
-  const bare = UI_CALM_CSS.split('\n').filter((l) => /^[.:@]/.test(l) && !l.startsWith(P) && /[^-]color:/.test(l));
+  // no colour rule under the sheet without Plus's prefix (a font-size, a gap, a width may stand for both dresses).
+  // PIN MOVED (AUDIT UICALM-FIRM1 L5 L3): rule by rule, every colour - a background, a border, a shadow, a line a rule
+  // runs on to - where the line-start `color:` it read let the class bars' dark and amber stand on the Grimoire's page
+  const COLOUR = /(?:^|[;\s{])(?:color|background(?:-color)?|border(?:-[a-z]+)*|box-shadow|text-shadow|outline(?:-color)?|fill|stroke):[^;}]*(?:#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(|\b(?:white|black)\b)/i;
+  const rules = [...UI_CALM_CSS.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+  assert.ok(rules.length > 100, 'the sheet read rule by rule');
+  const bare = rules.filter(([, sel, body]) => COLOUR.test(body) && sel.split(',').some((s) => !s.trim().startsWith(P))).map(([, sel]) => sel.trim());
   assert.deepEqual(bare, [], 'a colour said for both dresses');
   assert.match(rd('src/ui/enhancedStyle.js'), /applyPlusTheme\(doc\);   \/\/ PLUS2: the stored colour\n    injectUiCalmStyle\(doc\);/);
   const hold = rd('src/ui/holdingsPages.js');

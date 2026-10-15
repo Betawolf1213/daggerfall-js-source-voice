@@ -754,3 +754,70 @@ test('AUDIT UICALM-FIRM1 L4 H1, M4, M5, L1-L4 (text pins - the window wants a ca
   // the type floor: no word of the window under 12px
   assert.deepEqual([...w.matchAll(/font-size: (\d+)px/g)].map((m) => Number(m[1])).filter((n) => n < 12), []);
 });
+
+test('AUDIT UICALM-FIRM1 L3 H1, M1-M8, L1-L4, N1 (text pins - the door and the walk want a screen; each was proven by a probe): the stage ends at the measured foot, the book stands where it is tall enough, a double click is one door, a class\'s way by its key, the walk\'s bar and sheet keep the screen, a waiting way on reads, the map\'s plates re-laid as they grow, the Grimoire\'s phone rail on its page, the keyboard back on its door', () => {
+  const menu = read('src/ui/enhancedMenu.js');
+  const calm = read('src/ui/uiCalmStyle.js');
+  const grim = read('src/ui/grimoireDress.js');
+  const gen = read('src/ui/enhancedChargen.js');
+  // H1: the foot says its height, the stage ends there; a phone's plaques wrap
+  assert.match(menu, /const reserve = \(\) => \{ const h = Math\.ceil\(foot\.getBoundingClientRect\?\.\(\)\.height \?\? 0\); if \(h > 0\) home\.style\?\.setProperty\?\.\('--px-foot-h', `\$\{h\}px`\); \};\n\s+reserve\(\);\n\s+try \{ footObs = new globalThis\.ResizeObserver\(reserve\); footObs\.observe\(foot\); \}/);
+  assert.match(calm, /\.px-home:not\(\.px-over\)\[style\*="--px-foot-h"\] > \.px-stage:not\(\.px-acctstage\) \{ height: calc\(100% - var\(--px-foot-h\)\); padding-bottom: 12px; \}/);
+  assert.match(calm, /\.px-home:not\(\.px-over\) \.px-footright, \.px-home:not\(\.px-over\) \.px-footleft \{ display: contents; \}/);
+  // M1: the book needs the height its type was set for
+  assert.match(grim, /const BOOK_MQ = '\(min-width: 900px\) and \(min-aspect-ratio: 5\/4\) and \(min-height: 561px\)';/);
+  // M2: a double click's second click opens no door
+  assert.match(menu, /b\.onclick = \(e\) => \{ if \(e\?\.detail > 1\) return; onClick\(e\); \};/);
+  // M3: a class's way by the career's own key, never its shown (translated) name
+  assert.match(gen, /const w = custom \? 'Your own' : classWayOf\(flow\.careers\[i\]\?\.name\);/);
+  assert.match(gen, /const pickedWay = flow\.classListIndex === flow\.careers\.length \? null : classWayOf\(flow\.careers\[flow\.classListIndex\]\?\.name\);/);
+  assert.doesNotMatch(gen, /classWayOf\((name|picked)\)/);
+  // M4: a phone's action bar wraps, its way on with no floor
+  assert.match(calm, /@media \(max-width: 860px\) \{\n\s+\.wizard \.actionbar \{ flex-wrap: wrap; \}\n\s+\.wizard \.actionbar \.act\.primary \{ min-width: 0; \}/);
+  // M5: a waiting way on in an ink of its own, both dresses
+  assert.match(calm, /\$\{P\} \.wizard \.act\.primary\[disabled\] \{ opacity: 1; color: #bdb4a0; \}/);
+  assert.match(grim, /\$\{G\} \.wizard :is\(\.actionbar, \.choose \.acts, \.skillpane \.acts\) \.act\.primary:disabled \{ opacity: 0\.85 !important; \}/);
+  // M6: every plate watched, so a late face re-lays them
+  assert.match(gen, /ro\.observe\(box\);\n\s+for \(const q of plates\) ro\.observe\(q\.tag\);/);
+  // M7: a phone's sheet bounds its confirm card - its words scroll, its presses stand
+  assert.match(calm, /\.wizard \.stagebody > \.detail\.wizsheet:has\(> \.dcard\.confirm\) \{ display: flex; flex-direction: column; overflow: hidden; \}/);
+  assert.match(calm, /\.wizard \.stagebody > \.detail\.wizsheet > \.dcard\.confirm \{ flex: 1 1 auto; min-height: 0; max-height: none; \}/);
+  // M8: the Grimoire's phone rail on its page, its head in the whole deep red
+  assert.match(grim, /@media \(max-width: 860px\), \(pointer: coarse\) \{ \$\{G\} \.shell:not\(\.wizard\) \.rail \{ background: \$\{PAGE\} !important; \} \}/);
+  assert.match(grim, /\$\{G\} \.rail \.railgroup \{ margin: 18px 24px 2px;[^\n]*\n\s+color: \$\{T\.redDeep\}; border-bottom: 1px solid rgba\(43,26,12,0\.25\); padding-bottom: 2px; \}/);
+  // L1: the keyboard back on the door a level or a section was left by
+  assert.match(menu, /: section !== 'home' \? \(\) => \{ const from = section; go\('home'\); if \(mode !== 'pause'\) focusDoor\(from\); \}/);
+  assert.match(menu, /focusDoor\(from\); \}   \/\/ UI-CALM: the offline doors back out to the two questions/);
+  // L2: a level's health as the roll gives it
+  assert.match(gen, /`\$\{Math\.trunc\(career\.hitPointsPerLevel \/ 2\)\}-\$\{career\.hitPointsPerLevel\} a level, more with Endurance`/);
+  // L3: the floor's 11px words
+  assert.match(calm, /\.opt-tools \.act, \.wizard \.poolk \{ font-size: 12px; \}/);
+  assert.match(calm, /\.wizard \.maplabel \{ font-size: 12px; padding: 2px 5px; \}/);
+  // L4: a phone's rail head takes a row of its own
+  assert.match(calm, /\.shell:not\(\.wizard\) \.rail \.railgroup \{ flex: 0 0 100%; margin: 8px 12px 0; \}/);
+  // N1: Settings and Overhauls keep the level they were opened from
+  assert.match(menu, /else if \(section === 'online'\) homeLevel = 'top';/);
+  assert.doesNotMatch(menu, /HOME_LINKS\.some\(\(l\) => idOf\(l\) === section\)\) homeLevel = 'top'/);
+});
+
+test('AUDIT UICALM-FIRM1 L5 M9, L5 L3, L3 N2, N3 (text pins): the enhanced door\'s offline doors and the foot\'s plaques in the player\'s language; the class bars\' colours each dress\'s own; an Acrobat', () => {
+  const menu = read('src/ui/enhancedMenu.js');
+  const calm = read('src/ui/uiCalmStyle.js');
+  const grim = read('src/ui/grimoireDress.js');
+  const gen = read('src/ui/enhancedChargen.js');
+  // L5 M9: the two-question door's offline doors by railLabel (the L10N1b pin reads the classic list's loop alone)
+  assert.match(menu, /for \(const label of HOME_OFFLINE\.slice\(0, 3\)\) games\.append\(doorBtn\(idOf\(label\), railLabel\(label\), '', \(\) => go\(idOf\(label\)\)\)\);/);
+  assert.match(menu, /for \(const label of HOME_OFFLINE\.slice\(3\)\) more\.append\(doorBtn\(idOf\(label\), railLabel\(label\), '', \(\) => go\(idOf\(label\)\)\)\);/);
+  assert.match(menu, /\.append\(doorBtn\('online', railLabel\('Online'\), t\('menu\.home\.onlineSub', /);
+  assert.match(menu, /\.append\(doorBtn\('offline', t\('menu\.home\.offline', 'Offline'\), t\('menu\.home\.offlineSub', /);
+  // L3 N3: the foot's two plaques
+  assert.match(menu, /const tuts = el\('button', 'px-about px-tuts door-tutorials', RAIL_TEXT\.tutorials\(\)\);/);
+  assert.match(menu, /const shots = el\('button', 'px-about px-shots', RAIL_TEXT\.screenshots\(\)\);/);
+  // L5 L3: the bars' dark and amber Plus's (uicalm's rule-by-rule scope pin), the Grimoire's in its ink and red
+  assert.match(calm, /\$\{P\} \.wizard \.cprof-bar \{ border-color: #050608; background: rgba\(5,6,8,0\.6\); box-shadow: 0 0 0 1px #5a5446; \}\n\$\{P\} \.wizard \.cprof-fill \{ background: #c08a3e; \}/);
+  assert.match(grim, /\$\{G\} \.wizard \.cprof-bar \{ border-color: rgba\(43,26,12,0\.55\); background: rgba\(43,26,12,0\.12\); \}\n\$\{G\} \.wizard \.cprof-fill \{ background: \$\{T\.redDeep\}; \}/);
+  // L3 N2: Play as an Acrobat
+  assert.match(gen, /`Play as \$\{\/\^\[aeiou\]\/i\.test\(named\) \? 'an' : 'a'\} \$\{named\}`/);
+  assert.match(gen, /`Play as \$\{\/\^\[aeiou\]\/i\.test\(picked\) \? 'an' : 'a'\} \$\{picked\}`/);
+  assert.doesNotMatch(gen, /Play as a \$\{/);
+});

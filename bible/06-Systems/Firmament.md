@@ -242,8 +242,10 @@ lends the whole guild) are the next slice (section 10).
 
 ## 11. Pins
 
-`test/firm1_law.test.js` (14: the sky's shape and spacing, the keys' hash, the law, the purses, the budget whole),
-`test/firm1_service.test.js` (7: the switch, the purses, a change judged whole, Craft for the life ring alone, a repeat,
-the refund's silver, the harvest's XP), `test/firm1_powers.test.js` (7: offline, the fold, the duel and the mentor, the
-blow, the spell, the damage and the layer, the acts), `test/firm1_book.test.js` (3). The lab: `firmament.html`
+`test/firm1_law.test.js` (16: the build code, the trades take nothing away, the sky's shape and spacing, the keys'
+hash, the law, the purses, the budget whole), `test/firm1_service.test.js` (8: the respec, the switch, the purses, a
+change judged whole, Craft for the life ring alone, a repeat, the refund's silver, the harvest's XP),
+`test/firm1_powers.test.js` (9: raw on the key stars, the Wrothgarian zone, offline, the fold, the duel and the mentor,
+the blow, the spell, the damage and the layer, the acts), `test/firm1_book.test.js` (4: the respec, the read, a change
+coalesced, a lost answer kept), and the audit's `test/audit_uicalm_firm1.test.js` (`01-Overview/Audit-UICalm-Firm1.md`). The lab: `firmament.html`
 (`?dress=grimoire` for the Grimoire, `?fresh=1`, `?renown=`, `?ranks=`).

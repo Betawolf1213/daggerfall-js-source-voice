@@ -86,6 +86,9 @@ ${P} .px-menu[data-level="offline"] .px-page-games .px-pagenote { color: ${CALM_
 .rail .railbtn.railhome .rk::before { content: '\\2039'; display: inline-block; margin-right: 10px; }
 /* the shell's rail: Offline's doors under their word, as on the door */
 .rail .railgroup { display: block; margin: 14px 24px 2px; font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase; }
+/* a phone's rail wraps its rows - the head takes a whole row of its own, never a slot beside a door (AUDIT UICALM-FIRM1
+   L3 L4) */
+@media (max-width: 860px), (pointer: coarse) { .shell:not(.wizard) .rail .railgroup { flex: 0 0 100%; margin: 8px 12px 0; } }
 ${P} .rail .railgroup { color: #9c937d; }
 `;
 
@@ -140,6 +143,9 @@ const SETTINGS_CSS = `
    where it applies in words ("Enhanced · DFU Classic"). The card beside the list stands clear of the screen's top. */
 .opt-tools { padding: 12px 20px 10px; gap: 8px 12px; }
 .opt-filters .chip, .opt-tools .act { letter-spacing: 0.03em; }
+/* AUDIT UICALM-FIRM1 L3 L3: the floor's words the first pass left at 11px - the Settings screen's All off and Reset, the
+   walk's pool heads ("points to spend"), a phone's map names */
+.opt-tools .act, .wizard .poolk { font-size: 12px; }
 .sec-jump { padding: 6px 20px 14px; gap: 6px; }
 .sec-jumpbtn { letter-spacing: 0.03em; text-transform: none; }
 .sec-head { padding: 28px 20px 8px; }
@@ -161,9 +167,9 @@ const CHARGEN_CSS = `
 /* UI-CALM: THE CLASS LIST IN ITS THREE WAYS, each under its head across the list's columns, a row its name and the two
    attributes it leans on; the card beside it the class's profile (ui/enhancedChargen.js classStage) */
 .wizard .classlist .classway { grid-column: 1 / -1; margin: 14px 0 4px; padding: 0 0 4px 2px; font-size: 13px; letter-spacing: 0.22em;
-  text-transform: uppercase; border-bottom: 1px solid rgba(192,138,62,0.45); }
+  text-transform: uppercase; border-bottom: 1px solid transparent; }
 .wizard .classlist .classway:first-child { margin-top: 2px; }
-${P} .wizard .classlist .classway { color: #f3cf86; text-shadow: 2px 2px 0 rgba(0,0,0,0.7); }
+${P} .wizard .classlist .classway { color: #f3cf86; text-shadow: 2px 2px 0 rgba(0,0,0,0.7); border-bottom-color: rgba(192,138,62,0.45); }
 .wizard .classlist .row-sub { font-size: 13px; }
 .wizard .dcard .cprof-way { margin: -4px 0 10px; font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; }
 ${P} .wizard .dcard .cprof-way { color: #f3cf86; }
@@ -173,18 +179,27 @@ ${P} .wizard .dcard .cprof-way { color: #f3cf86; }
 .wizard .cprof-attrs { display: grid; grid-template-columns: max-content minmax(40px, 1fr) 2.4em; align-items: center; gap: 4px 10px; }
 .wizard .cprof-attr { display: contents; font-size: 13px; }
 .wizard .cprof-name { white-space: nowrap; }
-.wizard .cprof-bar { position: relative; height: 8px; box-sizing: border-box; border: 1px solid #050608; background: rgba(5,6,8,0.6); }
-.wizard .cprof-fill { position: absolute; left: 0; top: 0; bottom: 0; background: #c08a3e; }
+.wizard .cprof-bar { position: relative; height: 8px; box-sizing: border-box; border: 1px solid transparent; }
+.wizard .cprof-fill { position: absolute; left: 0; top: 0; bottom: 0; }
 .wizard .cprof-v { text-align: right; font-variant-numeric: tabular-nums; }
 .wizard .cprof-skills { display: grid; grid-template-columns: 5.6em minmax(0, 1fr); gap: 10px; margin: 0; font-size: 13px; line-height: 1.4; }
 .wizard .cprof-label { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; }
 ${P} .wizard .cprof-name, ${P} .wizard .cprof-label { color: #bdb4a0; }
 ${P} .wizard .cprof-v, ${P} .wizard .cprof-skills { color: #ddd5bd; }
-${P} .wizard .cprof-bar { box-shadow: 0 0 0 1px #5a5446; }
+/* a bar's colours are Plus's, as every colour here (AUDIT UICALM-FIRM1 L5 L3: they stood for both dresses - the
+   Grimoire inks its own, grimoireDress.js) */
+${P} .wizard .cprof-bar { border-color: #050608; background: rgba(5,6,8,0.6); box-shadow: 0 0 0 1px #5a5446; }
+${P} .wizard .cprof-fill { background: #c08a3e; }
 /* a phone keeps the card to the class's name and its door: the list is what it must scroll (chargenPhoneProbe) */
 @media (max-width: 860px), (max-height: 500px) { .wizard .cprofile { display: none; } }
 /* every stage's way on stands at the action bar's far end, Back at its near one - the eye ends on it */
 .wizard .actionbar .act.primary { margin-left: auto; min-width: 180px; }
+/* ...and on a phone it keeps the screen: no floor under it, and a bar of three that does not fit wraps, the way on to
+   the far end of its own row (AUDIT UICALM-FIRM1 L3 M4: Back, Start over and Begin your life ran past a 360px screen) */
+@media (max-width: 860px) {
+  .wizard .actionbar { flex-wrap: wrap; }
+  .wizard .actionbar .act.primary { min-width: 0; }
+}
 
 /* UI-CALM II (2026-10-14, a player: "it looks in general cheap - letters overlapping, dotted lines everywhere, the
    highlighting of words is bad, the summary board looks cut off ... massively polish all this"). THE WALK'S PAGE: what a
@@ -224,6 +239,13 @@ ${P} .wizard .cprof-bar { box-shadow: 0 0 0 1px #5a5446; }
 .wizard .dcard.confirm { display: flex; flex-direction: column; overflow: hidden; }
 .wizard .dcard.confirm .dscroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 4px; }
 .wizard .dcard.confirm .acts { flex: none; margin-top: 12px; }
+/* ...and on a phone the sheet it rides in is a column that bounds it, so its words scroll and its presses stand on the
+   screen (AUDIT UICALM-FIRM1 L3 M7: the sheet grew to the card and "Play as" stood a screen below) */
+@media (max-width: 860px) {
+  .wizard .stagebody > .detail.wizsheet:has(> .dcard.confirm) { display: flex; flex-direction: column; overflow: hidden; }
+  .wizard .stagebody > .detail.wizsheet > .sheet-close { flex: none; }
+  .wizard .stagebody > .detail.wizsheet > .dcard.confirm { flex: 1 1 auto; min-height: 0; max-height: none; }
+}
 .wizard .dcard .acts { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* THE MAP: its own aspect, as large as the stage lets it be, the names laid over it as small plates (enhancedChargen.js
@@ -266,7 +288,7 @@ ${P} .wizard .bigchoice .bigbtn.on { border-color: #e0b062; box-shadow: inset 0 
 .wizard .choose .acts { display: flex; justify-content: center; gap: 10px; }
 .wizard .namebox { text-align: center; }
 @media (max-width: 860px) {
-  .wizard .maplabel { font-size: 11px; padding: 2px 5px; }
+  .wizard .maplabel { font-size: 12px; padding: 2px 5px; }
   .wizard .bigchoice, .wizard .bigchoice.tall { grid-template-columns: minmax(0, 1fr); }
   .wizard .bigchoice .bigbtn { min-height: 84px; }
 }
@@ -287,7 +309,7 @@ ${P} .wizard .stagebody > .detail > .dcard { padding: 20px 22px 22px; }
 ${P} .wizard .list .row.on, ${P} .wizard .skillpane .row.on { background: linear-gradient(90deg, rgba(224,176,98,0.18), rgba(224,176,98,0.03) 70%); box-shadow: inset 3px 0 0 #e0b062; }
 ${P} .wizard .list .row.on .row-name, ${P} .wizard .skillpane .row.on .row-name { color: #fff3cf; }
 /* a way on that waits ("18 left to spend") is read, not hidden: it says what is left */
-${P} .wizard .act.primary[disabled] { opacity: 0.72; }
+${P} .wizard .act.primary[disabled] { opacity: 1; color: #bdb4a0; }   /* AUDIT UICALM-FIRM1 L3 M5: an ink of its own - the opacity alone over the shell's disabled grey read at 1.46:1 */
 /* a scroll that is needed is a thin one in the frame's own colours - a ::-webkit-scrollbar one (CURSOR-EDGE: the
    standard pair only where that is not, or Chromium draws the native one and its OS arrow) */
 @media (any-pointer: fine) {
