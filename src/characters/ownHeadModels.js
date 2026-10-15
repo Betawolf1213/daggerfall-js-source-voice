@@ -35,8 +35,8 @@ const pools = (race, female, heads, hairs) => Object.freeze({
 /**
  * The port's own heads and hairs, by race (a RACE record's id, lowercased - BODY records name it so) and sex, each pool
  * in id order (facePools' order - a save's face walks the same records on every machine). MW-HEADS1: the Breton men's
- * three heads (the paintings h04, h0411 and h0423 - h0423 the eyepatch) and three hairs (01, 0111 - the red headband -
- * and the widow's peak).
+ * three heads (the paintings h04, h0411 and h0423 - h0411 the eyepatch, MW-HEADS3) and three hairs (01, 0111 - the red
+ * headband - and the widow's peak).
  */
 export const OWN_HEADS = Object.freeze({
   breton: Object.freeze({

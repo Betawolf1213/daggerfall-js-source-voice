@@ -112,7 +112,7 @@ test('PORTRAIT3D: headPortrait draws the head and hair the body wears, assembled
   assert.equal(r.c.shots.length, 1);
   const shot = r.c.shots[0];
   assert.deepEqual(shot.slots, ['hair', 'head'], 'the head and its hair, nothing else');
-  assert.deepEqual(shot.textures, ['breton_m_hair_0111.dds', 'breton_m_head_h0423.dds'], 'portrait 6\'s pair, the eyepatch');
+  assert.deepEqual(shot.textures, ['breton_m_hair_01.dds', 'breton_m_head_h0411.dds'], 'portrait 6\'s pair, the eyepatch (MW-HEADS3)');
   assert.ok(shot.textured, 'every textured range held its texture for the picture');
   assert.deepEqual([shot.w, shot.h], [132, 120]);
   assert.deepEqual(Array.from(shot.model), Array.from(headPortraitModel()));
@@ -162,7 +162,7 @@ test('PORTRAIT3D: the curse\'s face - a vampire wears the race\'s vampire head (
   const deps = depsOf(archive, ++gen, [vamp, ...wolf]);
   await headPortrait({ renderer: r, race: 'breton', ownHeads: true, faceIndex: 6, vampire: true, deps });
   assert.ok(r.c.shots.at(-1).textures.includes('breton_m_head_h04.dds'), 'the vampire\'s head over the eyepatch the portrait names');
-  assert.ok(r.c.shots.at(-1).textures.includes('breton_m_hair_0111.dds'), 'the hair the face\'s own');
+  assert.ok(r.c.shots.at(-1).textures.includes('breton_m_hair_01.dds'), 'the hair the face\'s own');
   await headPortrait({ renderer: r, race: 'breton', ownHeads: true, faceIndex: 6, werewolf: true, armor: HELM(ARMOR_MATERIAL.Steel), deps });
   const w = r.c.shots.at(-1);
   assert.deepEqual(w.textures, ['breton_m_hair_widow.dds', 'breton_m_head_h0411.dds'], 'the wolf\'s head and hair, and no helm (WEREWOLF1: the wolf wears nothing)');
@@ -229,7 +229,7 @@ test('PORTRAIT3D: an NPC\'s face is walked off its seed over the same pools in t
   const escort = await asked(false);
   assert.ok(escort.length && escort.every((p) => p.startsWith('meshes/b/b_n_breton_m_')), `an escort's face the data's (${escort})`);
   const player = await asked(true);
-  assert.deepEqual(player.filter((p) => !p.startsWith('meshes/b/')), ['meshes/breton_m_head_h0423.nif', 'meshes/breton_m_hair_0111.nif'], 'a player\'s the port\'s own, portrait 6 the eyepatch');
+  assert.deepEqual(player.filter((p) => !p.startsWith('meshes/b/')), ['meshes/breton_m_head_h0411.nif', 'meshes/breton_m_hair_01.nif'], 'a player\'s the port\'s own, portrait 6 the eyepatch');
   assert.equal(await headPortrait({ renderer: null, race: 'breton', ownHeads: true, deps }), null);
   assert.equal(await headPortrait({ renderer: r, race: null, deps }), null);
   assert.equal(await headPortrait({ renderer: r, race: 'breton', ownHeads: true, deps: depsOf(null, ++gen) }), null, 'no archive attached');
