@@ -1,4 +1,4 @@
-# FIELD BUGS 2026-10-15b - threads from the bug-reports channel
+# FIELD BUGS 2026-10-15c - threads from the bug-reports channel
 
 Five Discord threads from 2026-10-14, handed over as screenshots, read on the code as it stands at main's `bd385fc6`.
 Each is traced on the real modules first; the fixes are pinned one to a tag, and the decisions are Mac's (2026-10-15).
@@ -11,7 +11,30 @@ Each is traced on the real modules first; the fixes are pinned one to a tag, and
 | 4 | "Right Arm armor disappearing" - "The armor for my right arm has disappeared between logging in and logging out, but the rest of my gear is saved fine" (Thatweirdphoenix) | not reproduced: slot 13 (RightArm) came back from every save and load tried, offline and online; DFU's own law (every shield covers the left arm, none the right) breaks a shield-bearer's right pauldron first, and a broken piece comes off | asked of the player |
 | 5 | "I think the issue can be tied to the fact I reforged lines and honed them in the mages guild ... I sold one blade, which was unmodded" (Boar; the thread's title not handed over) | not decided: the thread's own complaint is not in the screenshot | asked of the player |
 
-<!-- WAGON-STABLED -->
+## WAGON-STABLED: a pair sent away stays at the stable (1)
+
+`src/systems/horseCart.js` sendTransportAway, handlePreTransition, leaveStable; `src/systems/horseCartLaw.js`
+newSaveData; `src/ui/holdingsPages.js` stableWords; `src/systems/upkeepRuntime.js` horseWhereOf.
+
+THE REPORT. "I keep sending my wagon away, but every time I enter a building or dungeon it appears outside again ... it
+wasn't happening a few days ago."
+
+FOUND. Send away (HOLDINGS, 10155e299a, 2026-10-03) reset the pair to the mod's WithPlayer - the same record as a wagon
+beside a player on foot - and HandlePreTransition [IL_98f0] parks every such wagon at a door and leaves every such
+horse waiting there; mounting the horse laid the stabled wagon behind as well. Reproduced at a building's door and a
+dungeon's. No commit in the reported days moved it: STEED-UI (2026-10-11) put a Stable button on the saddle panel, and
+Send away became an everyday act.
+
+FIXED. Two save words of the port's own (`WagonStabled`, `HorseStabled`), set by Send away and let go by a summon, a
+park, a mount, or a record laid afresh. A stabled pair is parked at no door, left behind by no mount and taken on no
+journey; a pair driven or ridden through a door parks the mod's way, and WithPlayer never sent keeps every mod law. An
+old save loads not stabled. The Stable's card says Stabled only for a pair sent away and With you otherwise (the next
+door leaves it outside), and horse care's keep follows the card: a horse never sent is with its owner. THE FOUR HOSTS:
+worldModes.js runs every interior and dungeon entry through handlePreTransition; world.js and exterior.js reach it
+through createWorldModes; dungeonContext.js has no door from outdoors, and its save seams carry the words. Pinned by
+`test/fb1015_wagonstabled.test.js` (`tools/mutants/fb1015_wagonstabled.json`, 27, dead); PINS MOVED: hcc_law (the
+record's field count, 15 to 17), holdings (the Stable's view and words), steed1_horsecare (the keep's view), wagons2
+(the journey's source).
 
 ## MEND-TIERS: worn first, the piece that wears itself next, the pack last (2)
 

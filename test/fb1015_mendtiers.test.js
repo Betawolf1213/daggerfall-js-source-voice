@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-15b MEND-TIERS (Unconquerable, "Repair Regression": "worn items should always repair before
+// FIELD BUGS 2026-10-15c MEND-TIERS (Unconquerable, "Repair Regression": "worn items should always repair before
 // backpack items. If you wear a Cast When Held ring or Item Deteriorates armor and pick up 20 damaged axes, bows, and
 // shoes off dungeon mobs to sell in town, the game decides those 20 pieces of vendor trash are more important than the
 // ring on your finger"). MEND-STARVE (2026-10-14) put a worn piece that wears itself on the round the tick mends - Cast
@@ -7,7 +7,7 @@
 // then the pack - and MEND-WORN's mend order within a tier. Through the round's own payloads (enchantmentMagicRound,
 // AllowMagicRepairs on as online forces it), every piece from its producer: the item maker's rows (applyEnchantments
 // over enchantmentSettings), the mobs' iron and leather (weaponOfMaterial, armorOfMaterial) at Roleplay & Realism's
-// found-loot 20-75% (randomConditionLootItems), put on by equipItem. bible/01-Overview/Field-Bugs-2026-10-15b.md.
+// found-loot 20-75% (randomConditionLootItems), put on by equipItem. bible/01-Overview/Field-Bugs-2026-10-15c.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { enchantmentMagicRound, repairsObjectsTarget } from '../src/systems/enchantments.js';

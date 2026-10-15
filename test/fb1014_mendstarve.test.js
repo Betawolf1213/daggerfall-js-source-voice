@@ -4,7 +4,7 @@
 // +1 and -1 on the same round: its share never rose, it stayed first, and it took every tick. Nothing else - worn or
 // in the pack - was ever mended again (AllowMagicRepairs is the port's default and forced on online, so the enchanted
 // piece is always eligible). Through the round's own payloads. bible/01-Overview/Field-Bugs-2026-10-14.md.
-// MEND-TIERS (FIELD BUGS 2026-10-15b, Mac's call) keeps it behind the rest of what is worn and holds it AHEAD of the
+// MEND-TIERS (FIELD BUGS 2026-10-15c, Mac's call) keeps it behind the rest of what is worn and holds it AHEAD of the
 // pack, where this fix had put it last of all - test/fb1015_mendtiers.test.js; the one pin that said "then the pack" moved.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -35,7 +35,7 @@ test('MEND-STARVE: a worn piece that wears itself as the tick mends is mended af
   assert.equal(cuirass.currentCondition, cuirass.maxCondition, 'the worn cuirass mended whole, a point a tick');
   assert.equal(boots.currentCondition, b0, 'the worn first');
   assert.equal(rot.currentCondition, r0 - cuirassWants, 'the helm wore its point a tick while the cuirass mended');
-  // PIN MOVED (MEND-TIERS, FIELD BUGS 2026-10-15b, Mac's call): MEND-STARVE mended the carried boots next, "then the
+  // PIN MOVED (MEND-TIERS, FIELD BUGS 2026-10-15c, Mac's call): MEND-STARVE mended the carried boots next, "then the
   // pack", and left the worn helm to wear a point a tick behind them. The worn helm is held ahead of the pack now, and
   // the boots wait (test/fb1015_mendtiers.test.js).
   const held = rot.currentCondition;

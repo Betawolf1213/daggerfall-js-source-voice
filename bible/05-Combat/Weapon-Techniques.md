@@ -177,7 +177,7 @@ When a cooldown runs out with that technique in hand, the message line says "`<n
 has no chips to say it.
 
 **KICK-AIR - the Flying Kick from the air** (Mac's call, 2026-10-15, on the field report "Flying kick doesn't work ...
-tried doing it mid-air, off ledges"; the Field Bugs record of 2026-10-15, KICK-AIR). The Flying Kick is the one
+tried doing it mid-air, off ledges"; `01-Overview/Field-Bugs-2026-10-15c.md`, KICK-AIR). The Flying Kick is the one
 exception to "in the air": the roster marks it `airborne` (`combat/techniqueRoster.js`) and the gate reads the mark, on the press and
 again on the release - so a kick goes from a jump, a fall, a step off a ledge, or pressed on the ground and let go after
 the takeoff. Every other leap and dash stays on the ground, and every other refusal (climbing, on a wall, mid-vault,
