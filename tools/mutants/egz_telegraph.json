@@ -47,8 +47,8 @@
   {
     "name": "EGZ-ys-any-floor",
     "file": "src/world/egTelegraph.js",
-    "old": "  return ys.size ? ys : null;\n}",
-    "new": "  return null;\n}",
+    "old": "  return !any;\n}",
+    "new": "  return true;\n}",
     "tests": [
       "test/egz_telegraph.test.js"
     ]
@@ -56,8 +56,8 @@
   {
     "name": "EGZ-ys-always-ground",
     "file": "src/world/egTelegraph.js",
-    "old": "for (const f of floors) if (anchorOn(f, sh)) ys.add(f.y);",
-    "new": "for (const f of floors) if (anchorOn(f, sh)) ys.add(0);",
+    "old": "if (floors[k].y === y) return true;",
+    "new": "if (0 === y) return true;",
     "tests": [
       "test/egz_telegraph.test.js"
     ]

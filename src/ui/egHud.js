@@ -457,7 +457,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
  *  Surplus, each ask (its question, title, choices and my vote) - every field the nodes show but the seconds left? Reads
  *  in place, makes nothing. */
 function panelSame(k, model, recap, focus) {
-  if (!k || k.focus !== focus || k.recap !== recap) return false;
+  if (!k || k.focus !== focus || !k.recap !== !recap) return false;   // a recap's words, never its object (a new one each Reliquary opened)
   if (recap && (k.title !== recap.title || k.why !== recap.why || k.board !== (recap.board ?? ''))) return false;
   const a = k.model, b = model;
   if (a === b) return true;

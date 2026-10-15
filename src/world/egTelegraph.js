@@ -181,19 +181,6 @@ export function egClipTris(tris, box, out, at, strip = null) {
   return w;
 }
 
-/**
- * The fight floors' heights a shape lands on - those whose plan holds its anchor within EG_FLOOR_NEAR_M (its centre; a
- * lane's two ends; each of a discs' points) - as the relay judges a blow (net/bossRef.js floorsUnder); null: any (the
- * whole floor's, the spokes', or an anchor over no floor's plan). Pure.
- * @param {ReturnType<typeof egFightFloors>} floors @param {any} sh
- * @returns {Set<number>|null}
- */
-export function egShapeYs(floors, sh) {
-  if (!pinsFloors(sh)) return null;
-  const ys = new Set();
-  for (const f of floors) if (anchorOn(f, sh)) ys.add(f.y);
-  return ys.size ? ys : null;
-}
 /** Does a shape land on chosen floors at all (never the whole floor's or the spokes')? */
 const pinsFloors = (sh) => sh.kind !== TELEGRAPH_KIND.all && sh.kind !== TELEGRAPH_KIND.spokes;
 /** Does fight floor `f`'s plan hold an anchor of shape `sh` within EG_FLOOR_NEAR_M (its centre; a lane's two ends; each of a
@@ -203,8 +190,13 @@ function anchorOn(f, sh) {
   if (sh.kind === TELEGRAPH_KIND.discs) { for (let j = 0; j < sh.points.length; j++) if (holds(f.piece, sh.points[j][0], sh.points[j][1], M)) return true; return false; }
   return holds(f.piece, sh.origin[0], sh.origin[1], M) || (sh.kind === TELEGRAPH_KIND.lane && holds(f.piece, sh.end[0], sh.end[1], M));
 }
-/** AUDIT EG V (L6-4): egShapeYs's answer read in place for floor height `y` - whether the shape lands at `y` (any height when
- *  no floor holds an anchor of it, or it is a whole floor's) - so the floor plan keeps no Set a shape a frame. */
+/**
+ * Does a shape land at fight floor height `y`? At the heights the relay judges it at: those floors whose plan holds its
+ * anchor within EG_FLOOR_NEAR_M (its centre; a lane's two ends; each of a discs' points - net/bossRef.js floorsUnder's
+ * rule); at any height when no floor's plan holds an anchor of it, and for the whole floor's and the spokes'. Pure; read in
+ * place, a floor a shape (AUDIT EG V, L6-4: no Set of heights a shape a frame).
+ * @param {ReturnType<typeof egFightFloors>} floors @param {any} sh @param {number} y
+ */
 function landsAt(floors, sh, y) {
   if (!pinsFloors(sh)) return true;
   let any = false;
@@ -267,7 +259,7 @@ export function egFloorPlan(shapes, floors, feet, buf, max = EG_FLOOR_DRAWS_MAX,
     for (let k = 0; k < floors.length; k++) {
       const f = floors[k];
       if (draws.length >= max) break;
-      if (!landsAt(floors, sh, f.y)) continue;   // the heights it lands on (egShapeYs), read in place
+      if (!landsAt(floors, sh, f.y)) continue;   // only the heights it lands on
       if (B && (B[2] < f.box[0] || B[0] > f.box[2] || B[3] < f.box[1] || B[1] > f.box[3])) continue;
       if (out.length < n + f.tris.length * 5) { const grown = new Float32Array(Math.max(out.length * 2, n + f.tris.length * 5)); grown.set(out.subarray(0, n)); out = grown; }
       const at = n;

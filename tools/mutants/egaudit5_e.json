@@ -383,7 +383,7 @@
     "name": "EGA5E-plan-heights-a-set",
     "file": "src/world/egTelegraph.js",
     "old": "      if (!landsAt(floors, sh, f.y)) continue;",
-    "new": "      { const ys = egShapeYs(floors, sh); if (ys && !ys.has(f.y)) continue; }",
+    "new": "      { const ys = new Set(); if (pinsFloors(sh)) for (const g of floors) if (anchorOn(g, sh)) ys.add(g.y); if (ys.size && !ys.has(f.y)) continue; }",
     "tests": [
       "test/egaudit5_e_alloc.test.js"
     ]
@@ -580,8 +580,8 @@
   {
     "name": "EGA5E-panel-focus-unread",
     "file": "src/ui/egHud.js",
-    "old": "  if (!k || k.focus !== focus || k.recap !== recap) return false;",
-    "new": "  if (!k || k.recap !== recap) return false;",
+    "old": "  if (!k || k.focus !== focus || !k.recap",
+    "new": "  if (!k || !k.recap",
     "tests": [
       "test/egaudit5_e_alloc.test.js"
     ]
@@ -597,12 +597,11 @@
     ]
   },
   {
-    "name": "EGA5E-plan-heights-any-floor",
-    "file": "src/world/egTelegraph.js",
-    "old": "  return !any;\n}",
-    "new": "  return true;\n}",
+    "name": "EGA5E-panel-recap-object",
+    "file": "src/ui/egHud.js",
+    "old": "k.focus !== focus || !k.recap !== !recap)",
+    "new": "k.focus !== focus || k.recap !== recap)",
     "tests": [
-      "test/egz_telegraph.test.js",
       "test/egaudit5_e_alloc.test.js"
     ]
   }

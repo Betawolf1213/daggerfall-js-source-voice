@@ -5744,7 +5744,7 @@ arrow. The law is one new module, `world/egTelegraph.js`; the gate's own telegra
 
 **What shipped, by piece.**
 
-- **THE TELEGRAPHS PER FIGHT FLOOR** (`world/egTelegraph.js` `egFightFloors`, `egClipTris`, `egShapeYs`,
+- **THE TELEGRAPHS PER FIGHT FLOOR** (`world/egTelegraph.js` `egFightFloors`, `egClipTris`,
   `egFloorPlan`; `render/gateTelegraph.js` `drawFloors`).
   - Each fight floor (`spec.fl`) is triangulated once a hall: a disc into its drawn rim's 48 sides, a lane into its
     rectangle and two round ends, the floor test's own capsule (`net/egLaw.js` `egOnFight`).

@@ -22,7 +22,9 @@ import { egHallCentre } from '../src/world/egHall.js';
 import { egFightFloors, egFloorPlan, egFloorPlanKeep } from '../src/world/egTelegraph.js';
 import { egMistSheets, egMistSheetsAt } from '../src/world/egLook.js';
 import { egMistAt } from '../src/net/egFragLaw.js';
-import { drawEgPanel, destroyEgHud } from '../src/ui/egHud.js';
+import { drawEgPanel, destroyEgHud, egRecapModel } from '../src/ui/egHud.js';
+import { EG_STATE_EMPTY } from '../src/net/egLink.js';
+import { EG_PRES_TEXT } from '../src/ui/egBeats.js';
 import { EG_OCCLUDE_CHEST_M } from '../src/scenes/egOcclude.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
 import { TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_EDGE_DAGON, telegraphBounds } from '../src/render/gateTelegraph.js';
@@ -151,7 +153,7 @@ test('AUDIT EG V L6-4 THE FIGHT\'S FRAME KEEPS ITS LISTS (section 11.9; scenes/e
   assert.ok(bytes < 11 * 1024, `the fight's frame allocates ${Math.round(bytes)} bytes a frame`);
 });
 
-test('AUDIT EG V L6-4 THE MIST, THE ARCHES, THE OCCLUDERS AND THE PANEL KEEP THEIRS (section 11.9): the mist\'s sheets are written into the look\'s kept list - the same list and slots each frame, the law\'s own line (world/egLook.js egMistSheetsAt; scenes/egLookDraw.js); with no arch standing the arch pool answers its one empty list for the draws, the lights, the targets and the clearings, every frame (scenes/egArch.js); the dungeon arm hands the occluders one kept ray - the eye, the focal and my chest - and the witness eye one kept cast (scenes/worldModes.js); the panel stands, never serialised, while what its nodes say stands, and is drawn anew when a card\'s words, the focus or the recap change (ui/egHud.js) (mutants: a new sheet list a frame; the arches\' empty lists made anew; the ray made a frame; the panel rebuilt every frame; the panel kept past a new card)', () => {
+test('AUDIT EG V L6-4 THE MIST, THE ARCHES, THE OCCLUDERS AND THE PANEL KEEP THEIRS (section 11.9): the mist\'s sheets are written into the look\'s kept list - the same list and slots each frame, the law\'s own line (world/egLook.js egMistSheetsAt; scenes/egLookDraw.js); with no arch standing the arch pool answers its one empty list for the draws, the lights, the targets and the clearings, every frame (scenes/egArch.js); the dungeon arm hands the occluders one kept ray - the eye, the focal and my chest - and the witness eye one kept cast (scenes/worldModes.js); the panel stands, never serialised, while what its nodes say stands, and is drawn anew when a card\'s words, the focus or the recap change (ui/egHud.js) (mutants: a new sheet list a frame; the arches\' empty lists made anew; the ray made a frame; the panel rebuilt every frame; the panel kept past a new card; the recap redrawn at each new object)', () => {
   // the mist
   let sheets = [];
   for (const seed of [1, 2, 3, 4, 5, 7]) for (let c = 6; c <= 10 && !sheets.length; c++) sheets = egMistSheets(egCircleSpecs(seed, c, 0));
@@ -215,5 +217,17 @@ test('AUDIT EG V L6-4 THE MIST, THE ARCHES, THE OCCLUDERS AND THE PANEL KEEP THE
     const p2 = doc.body.children.at(-1);
     drawEgPanel(model('Fire on a blow, more.', 7000), { doc, focus: 0 });
     assert.notEqual(doc.body.children.at(-1), p2, 'the focus moved: drawn anew');
+    // the recap: its words, never its object - the client makes a new one at each Reliquary opened (relShown, in place)
+    // and at the board's line arriving (scenes/egClient.js)
+    const ME = 'acct-0', T0 = 1_800_000_000_000;
+    const E = { ...EG_STATE_EMPTY, b: '0123456789abcdef', seed: 77, op: T0, wk: T0 + 1000, h: 7, rd: 1, end: 'home', co: [[ME, 'Mac', 1, 1, 1, 1, 0, 0, 0, 1]], ds: [[ME, 3000, 0]] };
+    const R = egRecapModel(E, ME, [], T0 + 60_000, { board: '' });
+    drawEgPanel(null, { doc, recap: R, relShown: 0, words: EG_PRES_TEXT });
+    const p3 = doc.body.children.at(-1);
+    drawEgPanel(null, { doc, recap: { ...R, opened: 1, reliquaries: 1 }, relShown: 1, words: EG_PRES_TEXT });
+    assert.equal(doc.body.children.at(-1), p3, 'a Reliquary opened: the same recap, its count written in place');
+    drawEgPanel(null, { doc, recap: { ...R, board: 'The Depths: 2nd' }, relShown: 1, words: EG_PRES_TEXT });
+    assert.notEqual(doc.body.children.at(-1), p3, 'the board\'s line arrived: drawn anew');
+    assert.equal(serialised, 0, 'never serialised');
   } finally { JSON.stringify = stringify; destroyEgHud(); }
 });
