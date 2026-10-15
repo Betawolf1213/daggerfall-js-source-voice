@@ -121,13 +121,14 @@ const GROUND_COLORS = Object.freeze({ rune: GOLD, gem: [0.65, 0.5, 1.0], haven: 
 const ZONE_COLORS = Object.freeze({ burn: [1.0, 0.42, 0.12], void: [0.35, 0.02, 0.04], soul: [0.6, 0.35, 0.9], haven: GOLD });
 /** A tether's colour (THE FIVE LIGHTS: Dagon red on what binds you). */
 const TETHER_COLOR = Object.freeze([1.0, 0.24, 0.28]);
-/** THE PLACE's colours: a vent's fire, a Pendulum's lane white (SD-LOOK: what moves next is told in white). */
-const VENT_COLOR = Object.freeze([1.0, 0.45, 0.12]);
+/** THE PLACE's colour - section 25.2's white, "the place's own timed hazard" (SD-LOOK: what moves next is told in white):
+ *  a vent ringing (a Rampart's and a span's), a Pendulum's lane, a slag crust's last seconds and every fragment hazard,
+ *  told and landing - the one colour the danger palette's hazard takes (egLookShapes), its element in its grain (the
+ *  style). AUDIT EG V (L5-3): a vent's and a fragment hazard's were the band's fire orange and a red, which no palette
+ *  read. */
 const PEND_COLOR = Object.freeze([0.95, 0.95, 1.0]);
-/** EG-FULL LAYER THREE: a fragment hazard's colour - told in white where it moves (a fire fall's shimmer), burning in
- *  its element; a soul-wisp's violet, the moon-shafts' gold (a CHECK's havens). */
-const HAZ_FIRE = Object.freeze([1.0, 0.45, 0.12]);
-const HAZ_STONE = Object.freeze([1.0, 0.3, 0.2]);
+/** EG-FULL LAYER THREE: a soul-wisp's violet (it drifts - its hold on me is a tether's red); the moon-shafts are gold (a
+ *  CHECK's havens). */
 const HAZ_SOUL = Object.freeze([0.6, 0.35, 0.9]);
 /** A soul-wisp's tether (section 11.2): its drain's tick (ms), how soon one wisp binds again after it lets go (ms). */
 const WISP_TICK_MS = 1000;
@@ -626,7 +627,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (st.st === 'quiet') continue;
         const sh = (_slots[_shapes.length] ??= slot());
         sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = v.x - v.halfW; sh.origin[1] = v.z; sh.end[0] = v.x + v.halfW; sh.end[1] = v.z; sh.halfW = v.d / 2; sh.r = 0;
-        sh.t = st.st === 'warn' ? st.k : 1; sh.flash = st.st === 'fire' ? 1 : 0; sh.alpha = 1; sh.color = VENT_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
+        sh.t = st.st === 'warn' ? st.k : 1; sh.flash = st.st === 'fire' ? 1 : 0; sh.alpha = 1; sh.color = PEND_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
         sh.since = st.st === 'warn' ? (st.k * EG_VENT_WARN_MS) / 1000 : EG_VENT_WARN_MS / 1000; sh.span = EG_VENT_WARN_MS / 1000; sh.after = st.st === 'fire' ? (st.k * EG_VENT_FIRE_MS) / 1000 : -1; sh.court = 0;
         _shapes.push(sh);
         if (st.st === 'warn') _pending.push({ s: [['l', sh.origin[0], sh.origin[1], sh.end[0], sh.end[1], v.d]], at: t + (1 - st.k) * EG_VENT_WARN_MS, wu: EG_VENT_WARN_MS, nm: 'Fire Vent', ch: 0 });   // EG-ZG: the peril arrow's
@@ -644,7 +645,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (!(st.tell > 0) && !st.fire) continue;
         const sh = (_slots[_shapes.length] ??= slot());
         sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = s.x; sh.origin[1] = s.z; sh.r = EG_VENT_R;
-        sh.t = st.fire ? 1 : st.tell; sh.flash = st.fire ? 1 : 0; sh.alpha = 1; sh.color = VENT_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
+        sh.t = st.fire ? 1 : st.tell; sh.flash = st.fire ? 1 : 0; sh.alpha = 1; sh.color = PEND_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
         sh.since = st.tell * EG_VENT_TELL_S; sh.span = EG_VENT_TELL_S; sh.after = st.fire ? 0 : -1; sh.court = 0;
         sh.y = s.y;   // EG-ZG (section 11.7): traversal ground - drawn on its own surface, never a fight floor's
         _shapes.push(sh);
@@ -708,7 +709,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
           if (!fillStamp(sh, p.sh)) continue;
           const told = EG_HAZARDS[hz.kind].tell / 1000;
           sh.t = p.st === 'tell' ? p.k : 1; sh.flash = p.st === 'live' ? 1 : 0; sh.alpha = 1;
-          sh.color = p.st === 'tell' && hz.kind === 'fall' ? PEND_COLOR : p.el === 'fire' ? HAZ_FIRE : HAZ_STONE;
+          sh.color = PEND_COLOR;   // AUDIT EG V (L5-3): the place's white, told and landing - the palette's hazard
           sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = p.el === 'fire' ? TELEGRAPH_STYLE.fire : TELEGRAPH_STYLE.weight;
           sh.since = p.st === 'tell' ? p.k * told : told; sh.span = told; sh.after = p.st === 'live' ? 0 : -1; sh.court = 0;
           sh.y = egHazardSurface(hz);   // EG-ZG (section 11.7): a hazard of the traversal ground on its own surface; EG-ZJ: and the slag's spill, over its crust

@@ -261,5 +261,41 @@
     "tests": [
       "test/egaudit5_e_look.test.js"
     ]
+  },
+  {
+    "name": "EGA5E-rampart-vent-in-fire",
+    "file": "src/scenes/egFight.js",
+    "old": "sh.t = st.st === 'warn' ? st.k : 1; sh.flash = st.st === 'fire' ? 1 : 0; sh.alpha = 1; sh.color = PEND_COLOR;",
+    "new": "sh.t = st.st === 'warn' ? st.k : 1; sh.flash = st.st === 'fire' ? 1 : 0; sh.alpha = 1; sh.color = [1.0, 0.45, 0.12];",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-span-vent-in-fire",
+    "file": "src/scenes/egFight.js",
+    "old": "sh.t = st.fire ? 1 : st.tell; sh.flash = st.fire ? 1 : 0; sh.alpha = 1; sh.color = PEND_COLOR;",
+    "new": "sh.t = st.fire ? 1 : st.tell; sh.flash = st.fire ? 1 : 0; sh.alpha = 1; sh.color = st.fire ? [1.0, 0.45, 0.12] : PEND_COLOR;",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fragment-hazard-in-element",
+    "file": "src/scenes/egFight.js",
+    "old": "          sh.color = PEND_COLOR;   // AUDIT EG V (L5-3)",
+    "new": "          sh.color = p.st === 'tell' && hz.kind === 'fall' ? PEND_COLOR : p.el === 'fire' ? [1.0, 0.45, 0.12] : [1.0, 0.3, 0.2];   // AUDIT EG V (L5-3)",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fragment-hazard-live-in-element",
+    "file": "src/scenes/egFight.js",
+    "old": "          sh.color = PEND_COLOR;   // AUDIT EG V (L5-3)",
+    "new": "          sh.color = p.st === 'live' ? [1.0, 0.45, 0.12] : PEND_COLOR;   // AUDIT EG V (L5-3)",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
   }
 ]

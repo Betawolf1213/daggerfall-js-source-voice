@@ -4,6 +4,8 @@
 //   L6-2   AOE-PERF's tight quads reach the Spire's thin shapes: a pull-apart tether's and a stay-close chain's floor draws
 //          are their own strips (render/gateTelegraph.js telegraphStrip; world/egTelegraph.js egClipTris), a Vestige aura's
 //          ring its own small square (TELEGRAPH_RING_REACH) - each holding every fragment its pool writes.
+//   L5-3   the place's timed hazards - a Rampart's and a span's vents, every fragment hazard - told and landing in the
+//          place's white, so the danger palettes recolour every one (scenes/egFight.js PEND_COLOR, egLookShapes).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
@@ -12,6 +14,9 @@ import { egBreachNew, egEnter, egStep, egStateOf } from '../src/net/egBrain.js';
 import { egTethersOut } from '../src/net/egBodies.js';
 import { EG_VESTIGES } from '../src/net/egVestige.js';
 import { validEgOut } from '../src/net/wire.js';
+import { shDisc, shLane } from '../src/net/egShape.js';
+import { EG_ACCESS_PREFS, egPaletteOf } from '../src/ui/egAccess.js';
+import { getPref, setPref } from '../src/systems/uiPrefs.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { createEgFight } from '../src/scenes/egFight.js';
 import { egHallCentre } from '../src/world/egHall.js';
@@ -31,12 +36,11 @@ function courtWithDisc() {
   throw new Error('no court');
 }
 
-/** A breach of two woken in `spec`'s hall, me and my companion on its fight floor 9 m apart along a diagonal, my run holding
- *  a Vestige aura, the fight told a Blood Tether and Morvayn's chain between us (net/egBodies.js egTethersOut - the
- *  director's own word); the client's fight's frame and draw run over a recording GL. Answers its shapes and the GL's calls. */
-function fightOnFloor() {
-  const { seed, spec, F } = courtWithDisc();
-  const calls = [];
+/** A breach of two woken in hall `h` of `seed` - me at `mine` and my companion at `theirs` (the hall's frame, on `y`), my
+ *  run holding Vestiges `vs` - over a recording GL; the director stepped and its words told the breach client as the relay
+ *  says them to me. Answers `{ B, spec, client, fight(), calls, step(ms), draw(), tell }`. */
+function breachAt({ seed, h, mine, theirs, y = 0, vs = [] }) {
+  const spec = egHallOf(seed, h, 0), calls = [];
   const gl = new Proxy({ drawingBufferWidth: 1920, drawingBufferHeight: 1080 }, { get(t, k) {
     if (k in t) return t[k];
     if (typeof k !== 'string') return undefined;
@@ -46,16 +50,14 @@ function fightOnFloor() {
     return (...a) => { calls.push([k, ...a.map((x) => (ArrayBuffer.isView(x) ? Array.from(x) : x))]); return {}; };
   } });
   const renderer = { gl, _worldViewportPx: null, createBillboardBatch: () => ({ origin: [0, 0, 0] }), destroyBillboardBatch: () => {} };
-  const centre = egHallCentre(spec), at = (x, z) => [centre[0] + x, centre[1] + (F.y ?? 0), centre[2] + z];
-  const mine = [F.x - 4.5, F.z - 4.5], theirs = [F.x + 4.5, F.z + 4.5];
+  const centre = egHallCentre(spec), at = (x, z) => [centre[0] + x, centre[1] + y, centre[2] + z];
   const player = { pos: at(...mine), height: 1.8, grounded: true, collider: { move: () => {} } };
   const peerEye = at(...theirs); peerEye[1] += 1.6;
   const entity = { level: 30, health: 80, maxHealth: 100, magicka: 10, maxMagicka: 50, fatigue: 0, stats: {}, items: [] };
   let clock = 1_800_000_000_000;
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: ME, o: 'Mac', ew: 0, rh: 0, seed, op: clock - EG_SEALED_MS - 60_000, co: [[ME, 'Mac', 1], [PEER, 'Ann', 2]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
   for (const sub of [ME, PEER]) egEnter(B, sub, `ord${sub}`.padEnd(20, 'x'), 30, clock);
-  const aura = EG_VESTIGES.find((v) => /** @type {any} */ (v).aura > 0);
-  B.mem[ME].vs = [[aura.id, 1]];
+  B.mem[ME].vs = vs;
   B.h = spec.h; B.sg = 'arrive'; B.wk = clock; B.cnt = { left: 1_500_000, at: clock }; B.pulledAt = clock; B.gatherAt = clock - EG_GATHER_MS; B.su = clock;
   const modes = { mode: 'dungeon', egHallBreach: () => B.b, egHallCircle: () => spec.c, egPlace: () => true, egLeave: () => true, egHallReturn: () => null, dungeonCtx: { exitDoors: [] } };
   const online = { welcomes: 1, terminal: false, error: null, sendEg: () => true };
@@ -68,17 +70,28 @@ function fightOnFloor() {
   let s = 3;
   const rng = () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; };
   const poses = () => [[ME, mine], [PEER, theirs]].map(([sub, p]) => ({ sub, sx: spec.x0 + p[0], z: p[1], dead: false, at: clock }));
-  for (let k = 0; k < 3; k++) { clock += 100; for (const w of egStep(B, clock, poses(), rng)) tell(w); tell(egStateOf(B, clock)); }
+  const step = (ms = 100) => { clock += ms; for (const w of egStep(B, clock, poses(), rng)) tell(w); tell(egStateOf(B, clock)); };
+  const proj = perspective(new Float32Array(16), 1.2, 16 / 9, 0.1, 2000);
+  const draw = () => { const eye = [player.pos[0], player.pos[1] + 5, player.pos[2] - 8]; calls.length = 0; client.drawPass(proj, lookAt(new Float32Array(16), eye, player.pos, [0, 1, 0]), eye, clock / 1000, null); };
+  for (let k = 0; k < 3; k++) step();
   assert.equal(B.sg, 'trial', 'the hall woke');
-  B.F.tethers.push([ME, PEER, 1, 1400], [ME, PEER, 2, 800]);   // a Blood Tether breaking at 14 m, Morvayn's chain (net/egLords.js's own tuples)
+  return { B, spec, client, fight: () => fight, calls, step, draw, tell };
+}
+
+/** A breach of two woken in a Court with a broad fight floor, me and my companion on it 9 m apart along a diagonal, my run
+ *  holding a Vestige aura, the fight told a Blood Tether and Morvayn's chain between us (net/egBodies.js egTethersOut - the
+ *  director's own word); one frame drawn. Answers its shapes and the GL's calls. */
+function fightOnFloor() {
+  const { seed, spec, F } = courtWithDisc();
+  const aura = EG_VESTIGES.find((v) => /** @type {any} */ (v).aura > 0);
+  const R = breachAt({ seed, h: spec.h, mine: [F.x - 4.5, F.z - 4.5], theirs: [F.x + 4.5, F.z + 4.5], y: F.y ?? 0, vs: [[aura.id, 1]] });
+  R.B.F.tethers.push([ME, PEER, 1, 1400], [ME, PEER, 2, 800]);   // a Blood Tether breaking at 14 m, Morvayn's chain (net/egLords.js's own tuples)
   const out = [];
-  egTethersOut(B.F, out);
-  for (const w of out) tell(w);
-  client.frame();
-  const proj = perspective(new Float32Array(16), 1.2, 16 / 9, 0.1, 2000), eye = [player.pos[0], player.pos[1] + 5, player.pos[2] - 8];
-  calls.length = 0;
-  client.drawPass(proj, lookAt(new Float32Array(16), eye, player.pos, [0, 1, 0]), eye, clock / 1000, null);
-  return { spec, F, fight, calls, floors: egFightFloors(spec) };
+  egTethersOut(R.B.F, out);
+  for (const w of out) R.tell(w);
+  R.client.frame();
+  R.draw();
+  return { spec, F, fight: R.fight(), calls: R.calls, floors: egFightFloors(spec) };
 }
 
 /** The Spire's fragment stage for shape `sh` (top-down, its floor's court), every derivative `fw`: (x, z) => rgba, or null
@@ -160,4 +173,46 @@ test('AUDIT EG V L6-2 THE SPIRE\'S THIN SHAPES DRAW ON THEIR OWN GROUND (section
   const lo = calls.filter((c) => c[0] === 'uniform2f' && c[1] === 'uLo').map((c) => c.slice(2).map((v) => +v.toFixed(6)));
   assert.ok(lo.some((v) => v[0] === +rb[0].toFixed(6) && v[1] === +rb[1].toFixed(6)), 'and the pass laid it so');
   assert.ok(GateTelegraphRenderer, 'the pass');
+});
+
+// ── L5-3 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/** The place's timed hazards of `spec` as the fight stamps them: each its name and its stamp's kind and first point
+ *  (net/egFragLaw.js egHazardParts's stamps - a lane's start, a disc's centre; a span Vent's disc; a Rampart vent's lane). */
+function placeHazards(spec) {
+  const out = [];
+  const lane = (q, w) => shLane(q[0], q[1], q[2], q[3], w);
+  for (const s of spec.steps ?? []) if (s.kind === 'vent') out.push({ what: 'a span Vent', st: shDisc(s.x, s.z, 1) });
+  for (const v of spec.vents ?? []) out.push({ what: 'a Rampart\'s vent', st: shLane(v.x - v.halfW, v.z, v.x + v.halfW, v.z, v.d) });
+  for (const hz of spec.hazards ?? []) {
+    if (hz.kind === 'mist' || hz.kind === 'wisp' || hz.kind === 'eclipse') continue;
+    if (hz.kind === 'cascade') for (const q of hz.lanes ?? []) out.push({ what: hz.kind, st: lane(q, hz.w) });
+    else if (hz.kind === 'tide') out.push({ what: hz.kind, st: shDisc(hz.x, hz.z, hz.r) });
+    else if (hz.spots?.length) for (const p of hz.spots) out.push({ what: hz.kind, st: shDisc(p[0], p[1], hz.r) });
+    else if (hz.sh) out.push({ what: hz.kind, st: lane(hz.sh, hz.w) });
+  }
+  return out.map((q) => ({ what: q.what, kind: q.st[0] === 'd' ? TELEGRAPH_KIND.disc : TELEGRAPH_KIND.lane, at: [q.st[1], q.st[2]] }));
+}
+
+test('AUDIT EG V L5-3 THE PLACE\'S HAZARDS ARE TOLD IN THE PLACE\'S WHITE (section 25.2: white is "the place\'s own timed hazard: vents ringing, Pendulums\' lanes, a Beat\'s last 0.4 s, a fragment\'s hazards"; section 10.3: a span Vent "a white ring closing over 1.0 s"; section 25.7: the danger palettes recolour it): on the shapes the breach client\'s fight mints over fifteen seconds of each hall (a minute of the tide\'s) - a Rampart\'s vents, a span\'s Vents and the fragments\' magma surges, fire falls, falling basalt, cascades, the Forge Line\'s hammers, the hammers, the slag spill and the tide - every one, told and landing, is drawn in the palette\'s hazard: white under the Standard, High contrast\'s cyan under it (mutants: a vent in fire; a span Vent in fire; a fragment hazard in its element\'s colour)', () => {
+  const was = getPref(EG_ACCESS_PREFS.palette), seen = new Map();
+  try {
+    for (const [h, ms] of [[2, 150], [4, 150], [7, 150], [76, 150], [77, 150], [82, 600]]) {   // seed 1's halls: a cascade; a Rampart; fire falls, a surge and basalt; a span Vent and the Forge Line; the slag spill and hammers; the tide (its minute)
+      const spec = egHallOf(1, h, 0), arrive = spec.arrive ? [spec.arrive.x, spec.arrive.z] : [0, 0];
+      const R = breachAt({ seed: 1, h, mine: arrive, theirs: [arrive[0] + 1, arrive[1]] });
+      const want = placeHazards(spec);
+      assert.ok(want.length > 0, `hall ${h} stands its hazards`);
+      for (let k = 0; k < 100; k++) {
+        const key = k % 2 ? 'contrast' : 'standard';
+        setPref(EG_ACCESS_PREFS.palette, key);
+        R.step(ms); R.client.frame(); R.draw();
+        for (const sh of R.fight().shapes()) {
+          const q = want.find((w) => w.kind === sh.kind && w.at[0] === sh.origin[0] && w.at[1] === sh.origin[1]);
+          if (!q) continue;
+          seen.set(q.what, (seen.get(q.what) ?? 0) + 1);
+          assert.deepEqual([...sh.color], [...egPaletteOf(key).hazard], `hall ${h}: ${q.what} in the ${key} palette's hazard (t ${((k * ms) / 1000).toFixed(1)} s, its flash ${sh.flash})`);
+        }
+      }
+    }
+  } finally { setPref(EG_ACCESS_PREFS.palette, was); }
+  for (const what of ['a Rampart\'s vent', 'a span Vent', 'surge', 'fall', 'basalt', 'cascade', 'hammerline', 'hammer', 'slag', 'tide']) assert.ok(seen.get(what) > 0, `${what} drawn (${JSON.stringify([...seen])})`);
 });
