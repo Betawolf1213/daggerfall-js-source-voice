@@ -1542,9 +1542,15 @@ carried the host's whole pile list - so a joiner's own loot was
 replaced wholesale by the host's, fifteen seconds stale, and a chest
 one player emptied could refill for another.
 
-THE LAW, in one breath: a container nobody has opened stays each
-client's own and the room knows nothing of it; the moment anyone OPENS
-one it becomes the room's, and stays the room's.
+THE LAW, in one breath (PARTY-LOOT, 2026-10-14 - Mac: "I want a
+delicate balance... the best of both worlds", then "Shared base +
+personal bonus"): a dungeon room's container is ONE base list for
+everyone in it - every client computes it, on dice seeded by the
+container's name and on the room's terms (the party's level fixed at
+its birth) - the room's word about it is the TAKES against that list,
+and each player's own Luck and Renown roll a bonus layer over it that
+only they see and take. The rest of this section is WORLD4 as it
+shipped; PARTY-LOOT, below, is the law.
 
 - **The wire** (`src/net/wire.js`): nothing new. The loot rides
   WORLD3's `{t:'act', data}` frame as a second half beside the doors -
@@ -1559,12 +1565,12 @@ one it becomes the room's, and stays the room's.
   `corpse:<i>` a layout foe's body, bounded by `_layoutFoes` exactly as
   the stream and the hit are: a quest spawn's or a summon's body is the
   player's own, and so is a DROPPED pile (AUDIT WORLD B3 - a drop is
-  the dropper's). `publishLoot` says the container is the room's TWICE:
-  on the OPEN, which CLAIMS it (a second reader opening the same chest
-  a moment later adopts the first's list rather than their own roll),
-  and on the CLOSE, which says what is left - the same moment DFU's own
-  law frees an emptied container's flat, and the moment the taking is
-  finished rather than half done. `applyLoot` lands another's word
+  the dropper's). `publishLoot` says what is left on the CLOSE - the
+  same moment DFU's own law frees an emptied container's flat, and the
+  moment the taking is finished rather than half done - and a searched
+  find and a revenant's body, which keep WORLD4's word, are CLAIMED on
+  the open too; a pile, a layout body and an encounter's body say their
+  takes against the room's base, and an open says nothing (PARTY-LOOT). `applyLoot` lands another's word
   through the projection and IN PLACE (`held.length = 0`, then push),
   ~~so a window already open on that container updates under the
   reader's hands~~ - AUDIT WORLD4 C1: it does not, and could not: the
@@ -1586,9 +1592,10 @@ one it becomes the room's, and stays the room's.
   a COPY: no reference off the wire reaches the pack. An EMPTY list is
   valid and is the commonest word a room says about a container.
 - **The memory** (`sharedWorld`): the piles' blanket contents are gone
-  and the opened containers stand in their place, so an untouched pile
-  is every client's own roll as it was before anyone arrived, and a
-  joiner is told about exactly the chests somebody has been into.
+  and the room's words stand in their place - a room container's terms
+  and takes (PARTY-LOOT), a searched find's list - so a joiner computes
+  the room's own base for every pile and body and lands what has been
+  taken from it.
   (AUDIT WORLD4 D4: true of the piles and false of the CORPSES until
   the audit - every layout body's item list rode the foes half of the
   same envelope, opened or not, so the law held for half its own
@@ -1597,11 +1604,7 @@ one it becomes the room's, and stays the room's.
   takes. The SAVE keeps its whole pile list, untouched:
   `collectWorld`/`applyWorld` are the save's and did not move.
 
-What it does not do: the take is seen by the room when the window
-CLOSES, not per item, so two players who open the same untouched chest
-in the same breath both take it and both keep it (the claim on the open
-narrows that window to the time between two opens, and the room's list
-is then whoever closed last); a player's own dropped pile is still
+What it does not do: a player's own dropped pile is still
 theirs alone, so handing an item to a friend by dropping it does not
 work yet; gold, the wagon and the quest reward pile are each player's
 own; a container in a town, a cell or a building is nobody's yet
@@ -1704,11 +1707,11 @@ its owner's own.
   written before WORLD4 (the relay keeps one for `WORLD_TTL_MS`) still
   blanket-replaced a joiner's own rolls - the very thing the slice
   removed - and any host that sent the field could do it deliberately.
-- **C5, recorded and not fixed:** a shooter's arrows recovered from a
-  corpse the room has opened are destroyed by the room's next word
-  about it, because the word is the whole list. Per-item takes are
-  slice 4's known cost (see "what it does not do"), and this is that
-  cost in its sharpest form.
+- **C5, paid by PARTY-LOOT:** a shooter's arrows recovered from a
+  corpse were destroyed by the room's next word about it, because the
+  word was the whole list. The word is the takes against the room's
+  base now, and a shaft that reached the body alive is a stored piece
+  of it, said with the body's birth.
 - **D6/D7 the pins and the record.** Three of `test/world4.test.js`'s
   source pins had `[\s\S]*?` gaps wide enough for a mutation to walk
   through, and the mint itself was unpinned; the quickload sentence
@@ -4496,15 +4499,16 @@ elite one's forty, the open zone's halls and a Super dungeon keeping
 - **A container.** The room's word about a container carries a stamp
   (`t` on the loot record - set on this client's own claim, kept from
   the record on an apply, now for a record without one). A record past
-  the hour is not applied and the room's word forgotten: this client's
-  own roll stands. A treasure pile the sweep forgets is rolled again
-  through the build's own roll, one home now (`rollPileItems`); a
-  window this player has open is theirs until they close it (AUDIT
-  WORLD4 C1's law).
+  the hour is not applied and the room's word forgotten. A room pile
+  the room EMPTIED is then a new generation of the room's base, minted
+  for everyone, and one with a remainder keeps it (PARTY-LOOT); a pile
+  of no room's is rolled again through the build's own roll, one home
+  (`rollPileItems`); a window this player has open is theirs until
+  they close it (AUDIT WORLD4 C1's law).
 - **The sweep** runs once a second in the foe pass: the HOST rebuilds
   its layout's foes dead past the hour (the stream carries the rest);
-  every client forgets the containers past the hour and rolls its
-  piles.
+  every client forgets the containers past the hour, and a room pile
+  emptied past it waits for its next generation's terms (PARTY-LOOT).
 
 **What it does not do.** The country's foes are rolls (DFU's
 encounter law, by the world clock) and come and go on their own; a
@@ -4639,9 +4643,9 @@ where a rig reaches, by source where it cannot.
 - **C9 (note, paid):** the Ledger's WORLD5 sentence stamped superseded.
 - **C5/C11 (note, recorded):** the loot record grew by a stamp - a few
   kilobytes at most against the memory's half-megabyte; the memory's
-  total is still uncapped (pre-existing). Per-client divergence after
-  the hour is WORLD4's own law (each client its own roll until the next
-  claim).
+  total is still uncapped (pre-existing). After the hour no client
+  rolls its own: an emptied pile past it is a new generation of the
+  room's base, minted once for everyone (PARTY-LOOT).
 - **C10/B11 (note, recorded):** the dungeon context has no executed
   harness; the loot and foe halves stay source-pinned. The clock law
   and the wire's laws are executed.
@@ -9335,8 +9339,8 @@ The readers now take the count off LIVE records alone, and a body keeps the figh
 reads too.
 
 **Known limits, taken knowingly.**
-- Each copy of a dungeon body or pile rolls its own sigils, as its list is its own roll (WORLD4); the room adopts the
-  first opener's list, sigils and all.
+- A dungeon body's or pile's sigils are its base's, rolled on the room's dice at the fight's count (PARTY-LOOT) - the
+  same on every copy; a player's own bonus pieces roll theirs on that player's dice.
 - A sigil is the item's, carried in a save the player holds, and a forged save can carry a forged sigil as it can a
   forged affix. What a sigil GIVES is held by the wielder's Renown, which the account service signs.
 - The weapon in my hand when a kill pays drinks its XP, whatever landed the last blow (a spell, an ally).
@@ -13318,7 +13322,7 @@ The rebuild's landing now applies the room's record for that body alone, once `p
 (`bodyRecords`). The rest of the list is not landed again, since a container taken from since the restore would fill
 back up. The same restore renumbered foe records: a record `validSharedFoe` refused was removed with `filter(Boolean)`,
 so every later record landed on the next foe (ONCRASH1 read the foes like the actions, but a foe record's key is its
-index). A refused record is a hole now. Unopened bodies are unchanged (each copy's own roll).
+index). A refused record is a hole now. A body the room has said nothing of waits for its terms (PARTY-LOOT).
 
 Not closed: the memory is the host's alone and publishes every WORLD_PUBLISH_MS. A non-host who takes, leaves and
 re-enters inside that window reads the older memory, and a backgrounded host publishes nothing. A live loot word about a body whose rebuild is still loading its art is skipped too (no container yet), so that body takes the memory's record. That needs a design
@@ -15683,3 +15687,120 @@ visit.
 
 - **Pinned**: `test/fb1007_hallfolk.test.js` (4) - over the account service's own answer and the real mode machine;
   `tools/mutants/fb1007hallfolk.json` (4, all killed).
+
+## PARTY-LOOT (2026-10-14, the field - "Loot | Data Sync Bug?"; Mac: "Shared base + personal bonus") - a room's container is one list for everyone, and a bonus of each player's own
+
+**The report**, from the Discord: *"In a dungeon with multiple people OR party, each of us DO NOT see the same loot on
+Mobs/Containers/Floor etc. Example: Person A sees: Sword, Boots, 15 Gold. Person B sees: Dagger, 25 Gold, Potion. Person
+B loots 'their' Sword (i.e. B takes the first item) -> THEN Person A now sees: Boots, 15 Gold (A's loot). AND IF Person B
+loots their Dagger -> Person A now sees 25 Gold, Potion."* Reproduced through the real doors before anything moved: two
+peers at different levels, mounted over the dungeon host's own plaque, quick door and loot word, saw `[60 gold, Buckler,
+Left Pauldron]` and `[32 gold, Helm]` on one body; B took the gold and A then saw `[Helm]`.
+
+**Why.** No take was ever synced by place: WORLD4's word was the WHOLE list. What diverged was the ROLL. Every client
+rolled a dungeon's piles and bodies itself - `Math.random`, its own player's level and gender, its Luck, its Renown
+(RENOWN-LOOT's "the roller's own"), its finders, its own mod switches - and WORLD4 made a container the room's at its
+first OPEN, the opener's roll adopted by everyone else. That was safe only while nobody could see a container before
+opening it. The plaque (PX21c) lists what an unopened container holds, and Quick Loot (QUICK-LOOT B4) takes from one with
+no window, so each player read their own roll, and the first take sent the taker's leftovers to the room, which landed
+them over everyone's list whole: both halves of the report are that one word, from whichever peer spoke first.
+
+**Mac's call** (asked, the base shared or each player's own): *"I want a delicate balance... the best of both worlds"*,
+then **"Shared base + personal bonus"**.
+
+### The law (systems/roomLoot.js, scenes/dungeonContext.js)
+
+- **THE BASE.** A dungeon room's container - a layout pile (`loot:<i>`), a layout foe's body (`corpse:<i>`), a rest
+  encounter's body (`enc:<n>`) - has ONE base list, and every client COMPUTES it: the container's own chain on dice
+  seeded by its NAME (`roomContainerName`: the room's key, the container's canonical key and its generation) and on the
+  ROOM'S TERMS, never a player's - the party's level fixed at the container's birth, a gender drawn off the name, Luck
+  50, RENOWN-LOOT's first stage, no finder's multiplier. A pile's chain is `rollPileItems` (the table, the pile trio and
+  its subscribers, the ladder, the sigils); a body's is SetEnemyCareer's whole loot chain and its death's
+  (`roomBodyBase`: `spawnEnemyLoot`, the kit's ladder, the sigils at the fight's count, OnEnemyDeath's subscribers and the
+  cap) over the fallen foe's own entity, handed back without touching what the foe wore or fought with. It is rolled
+  AS THE ROOM (`onlineLane.js` `asTheRoom`): REALM P0.2's own read widened, for the length of the roll, to every mod -
+  each reads its shipped default, so one player's switch (Foraging off, say) cannot make their base another list. Every
+  term of the chain is an argument now: the table's roll, a kit's variant and its poison drew `Math.random` whatever dice
+  the caller held (`hostCombat.js` `spawnEnemyLoot`, `equipEnemy`); the Renown share (`quarters`), the Luck and the
+  finders reach the keep, the plain ladder, the healing and rest supplies' subscribers and the kit's ladder from the
+  caller (`loot.js` `addPileLootExtras` and `addEnemyLootExtras`, `healingSupply.js`, `restItems.js`, `foeLootCap.js`
+  `rollKitPieces`, `lootRarity.js` `rollLootRarity`); Foraging's subscribers drew on a captured `Math.random` and take the
+  raiser's dice; Unleveled Loot's death subscriber the raiser's Luck and level; the Ocean Hole's (`world.js` `ohUpgrade`)
+  the raiser's dice and roller. Each defaults to the roller's own, so offline nothing moved. Online a random pile's
+  picture is drawn off its place in the room too.
+- **THE PARTY'S LEVEL.** `roomBaseLevel`: SOFTCAP1's group reference (`mentorMode.js` `groupReferenceLevel`, the harmonic
+  mean that leans to the lowest member) of the minter's own level and its party's online members' levels (their poses'
+  `cl` - `world.js` `partyMateLevels`, MENTOR MODE's own list), rounded, 1 to 100. It is fixed in the container's TERMS
+  and carried in the room's word, so no client computes it from a list that could differ from another's.
+- **THE TERMS ARE MINTED ONCE** - `g` the generation, `lv`, `n` the fight's count, `tm` the relay's clock - by the room's
+  host at the container's birth: a body's at its death (`roomBodyBorn` from the one corpse door, `spawnCorpse`), a pile's
+  once the room's memory has had its moment (`ROOM_TERMS_WAIT_HOST_MS`, the once-a-second sweep). Another client mints
+  only when no word has come in `ROOM_TERMS_WAIT_PEER_MS` (an older host, a dropped frame), and two mints for one
+  container keep one by `roomTermsBeat` - a newer generation, then the earlier mint, then the lower level - a total order,
+  so every client that hears both keeps the same. A restore lands the room's words before anything mints over them
+  (`_roomMintHold`); a later memory lands the words of containers this client has heard nothing of.
+- **UNBORN.** A room container standing here with no terms has nothing to show and nothing to take: the plaque names
+  nothing (`lootContents`), the ray stands no target (`lootTargets`), the door opens nothing (`takeLoot`), Physical Items
+  lays no piece round the body - and it HOLDS nothing, because none of a copy's own roll is the room's: online the build
+  rolls no pile of its own (the pile loop's `onlineRoom() ? [] :`), and a fallen copy's own list is emptied at its fall
+  (`roomBodyBorn`), so a reader no gate stands before - LOOT11's line of light over a find (`lootFinds`), Hunting's body
+  key (`corpseKeyOf`), the save - finds none of it either.
+- **THE WORD IS THE TAKES.** The room's word about a room container is no longer its list: `{k, g, lv, n, tm, h, x, c,
+  s, t}` - its terms, its base's signature (`h`), the base places gone (`x`, a set that only grows), a base stack's count
+  where it was drawn down (`c`, a count that only falls), the pieces players have stored in it (`s`, full records through
+  WORLD4's projection, WORLD4's own last writer) and WORLD8's stamp. `mergeRoomWord` lands two words the same in either
+  order, so two players taking different pieces in one breath both see both gone, and no word a peer says overwrites a
+  list: the list is composed (`composeRoomContainer`) from the base, the takes, the stored pieces and the player's own
+  layer, in place. An OPEN says nothing (`sayRoomWord`): the base is every client's already, so WORLD4's claim has
+  nothing to claim. A word whose signature is not this client's own computation (another build's chain) is AUDIT SETS
+  M2's unreadable word, never a list landed. AUDIT WORLD4 C1 stands: a container you have open is yours until you close
+  it, and your close is then the room's newest takes.
+- **THE BONUS.** Each player's own Renown and Luck - "the roller's own" - roll a layer over the base on dice seeded by the
+  base's name and the CHARACTER (`roomBonusOf`, its roll `hostCombat.js` `rollRoomBonus` - beside `spawnEnemyLoot`, the
+  one home of the keep's and the ladders' knobs): the pieces PLAIN-LOOT's keep let go at the base's first stage that the
+  player's own stage keeps (`bonusShare`, so the base's keep and the bonus's together are the player's own keep), the
+  supplies their stage's share adds over the first's (`rollBonusSupplies` - the healing and Restore Power potions, the
+  rest supplies, each one more draw at the step between the two chances), each piece on their own ladder (their Luck,
+  their finders, their stage's plain weights) and the sigils at the fight's count, inside the cap's room above the base.
+  It is rolled outside the room's scope (the player's own switches decide what is theirs), marked theirs (`markPersonal`)
+  so the plaque and the classic loot panel tag its rows "yours", never said to the room and never in another's list. What
+  a character has taken of it is kept in the character's save (the `RoomLootBonus` record), so a reload or a walk back
+  in rolls nothing again. A player at the first stage has no bonus: the base is the floor, and nobody's share of the
+  shared list is less than it.
+- **WHAT REACHED THE BODY ALIVE** - a shaft lodged in it (STUCK-ARROWS; a joiner's arrow lands on the host's copy, WORLD3)
+  - is the room's: the minter says it with the body's birth as stored pieces (`lifeAddsOf`, against the list the build
+  left, `_lootBuilt`). AUDIT WORLD4 C5 (a shooter's recovered arrows destroyed by the room's next whole-list word) is
+  paid by it: the word is takes, and the shafts are stored pieces like any other.
+- **WORLD8.** A room pile EMPTIED past the hour is a new generation (its emptying stamp, past the last), minted as any
+  unborn pile; one with a remainder keeps it (C4). A room body's life is its foe's: the rebuild and the un-death forget
+  it (`forgetRoomContainer`), and its next death is a new container.
+- **THE OLD WORDS, MIGRATED.** A WORLD4 list about a room container - an older build's word, or a memory written before
+  PARTY-LOOT (the relay keeps one WORLD_TTL_MS) - is the room's word in the old law, so `landLegacyList` lands it the same
+  on every client: terms no mint can beat (generation 0, the first level, minted at nought), every base piece gone, the
+  list the stored pieces. A save's list never lands over a room container online (`applyWorld`'s pile arm; the room's
+  word recomposes a body a load laid its own list on). The save still writes the lists it holds.
+
+**The four hosts.** `scenes/dungeonContext.js` WIRED (the dungeon is the only room with a world of containers);
+`scenes/world.js` hands it the party's levels (`partyLevels`, the one home MENTOR MODE reads too); `scenes/worldModes.js`
+passes them through to the dungeon and leaves its interiors as WORLD5 built them - a building's shelves and containers
+are rolled at the OPEN and never shown before it, so the claim WORLD5 makes is still the first anyone sees; its treasure
+markers' piles and its foes' bodies are each player's own; `scenes/exterior.js` is the offline bench, with no room.
+
+**What it does not do.** Two players who take the SAME piece in the same breath, before either hears the other, both
+keep it (the window is the word's flight); a revenant's body keeps WORLD4's word (RVN8: its list holds a player's own
+pieces); a quest spawn's, a summon's and a party member's own foe's body are their player's, as before; the street's
+bodies are their foe's owner's roll taken under the owner's grant (WORLD6b-iii(c)); a foe's worn kit is its copy's own
+(MW-NPC K2), so the kit a foe fought with need not be the one its body holds; the death's subscribers run where a body's
+base is composed, so Physical Items throws a body's pieces out on every client, a body the memory lays included; an
+older build in the room reads the new word as M2's newer word ("Reload to open it"), and its own WORLD4 list still
+lands for everyone, migrated. Not seen with two real players from this container.
+
+- **Pinned**: `test/partyloot.test.js` (7) - two peers mounted over the dungeon host's real loot doors and the real
+  producers, at different levels, Luck, Renown, dice and Foraging switches, joined by a queuing relay: one base on every
+  body and pile; a take removing the same piece for everyone; two takes in one breath both landing; each player's bonus
+  their own (marked, unsaid, the same at every compose, spent through the save); the base one list under any player's
+  terms with `Math.random` trapped inside the roll; the source's laws; the word's projection, its merge in either order,
+  and the WORLD4 migration on both machines; an unborn container's line of light and body key reading nothing. Run
+  against the dungeon host before PARTY-LOOT, 6 of the 7 fail - the four two-peer tests by their assertions (each peer's
+  own roll; A's list replaced by B's leftovers), two because the block is not there. `tools/mutants/partyloot.json`
+  (16, all killed).

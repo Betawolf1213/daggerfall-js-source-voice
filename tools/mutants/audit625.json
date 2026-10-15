@@ -22,8 +22,8 @@
   {
     "name": "AUDIT625-L3-the-boss-ladder",
     "file": "src/systems/foeLootCap.js",
-    "old": "entity.level, entity.mobileType), boss: false, weights: plainFoeRarityWeights() };",
-    "new": "entity.level, entity.mobileType), weights: plainFoeRarityWeights() };",
+    "old": "entity.level, entity.mobileType), boss: false, weights: plainFoeRarityWeights(quarters) };",
+    "new": "entity.level, entity.mobileType), weights: plainFoeRarityWeights(quarters) };",
     "why": "a boss's kit on its multiplied ladder",
     "tests": [
       "test/audit625_loot.test.js"
@@ -142,8 +142,8 @@
   {
     "name": "AUDIT625-L6-the-keep-edge",
     "file": "src/scenes/hostCombat.js",
-    "old": "isGoldPieces(it) || rolls() < keep);",
-    "new": "isGoldPieces(it) || rolls() <= keep);",
+    "old": "if (isGoldPieces(it) || rolls() < keep) return true;",
+    "new": "if (isGoldPieces(it) || rolls() <= keep) return true;",
     "why": "a roll on the keep's own threshold kept",
     "tests": [
       "test/renownloot.test.js"

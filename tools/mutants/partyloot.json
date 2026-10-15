@@ -1,0 +1,146 @@
+[
+  {
+    "name": "PARTY-LOOT-pile-base-reads-the-players-luck",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const t = { rolls, level: terms.lv, gender, luck: ROOM_BASE_LUCK, quarters: ROOM_BASE_QUARTERS, find: ROOM_BASE_FIND };",
+    "new": "    const t = { rolls, level: terms.lv, gender, luck: liveStat(playerEntity, 'luck'), quarters: ROOM_BASE_QUARTERS, find: ROOM_BASE_FIND };",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-pile-base-at-the-players-level",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const t = { rolls, level: terms.lv, gender, luck: ROOM_BASE_LUCK, quarters: ROOM_BASE_QUARTERS, find: ROOM_BASE_FIND };",
+    "new": "    const t = { rolls, level: effectiveLevel(playerEntity), gender, luck: ROOM_BASE_LUCK, quarters: ROOM_BASE_QUARTERS, find: ROOM_BASE_FIND };",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-body-base-on-math-random",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      spawnEnemyLoot(e, f.mobileType, ENEMY_BASICS[f.mobileType], roller, { ...eliteLootOpts(f.src), where: 'dungeon', ...o, rejects });",
+    "new": "      spawnEnemyLoot(e, f.mobileType, ENEMY_BASICS[f.mobileType], roller, { ...eliteLootOpts(f.src), where: 'dungeon', ...o, rolls: Math.random, rejects });",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-base-rolled-under-the-players-mods",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    asTheRoom(() => {\n      if (h.pile) items = roomPileBase(h, terms, rolls, gender);",
+    "new": "    ((fn) => fn())(() => {\n      if (h.pile) items = roomPileBase(h, terms, rolls, gender);",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-word-overwrites-the-state",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const { state, changed } = mergeRoomWord(st, w);\n    _roomState.set(canon, state);\n    _lootUnreadable.delete(canon);",
+    "new": "    const { state, changed } = mergeRoomWord(null, w);\n    _roomState.set(canon, state);\n    _lootUnreadable.delete(canon);",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-bonus-said-to-the-room",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      ? roomTakesOf(st, base.items, base.full, holderList(h), isPersonalLoot)",
+    "new": "      ? roomTakesOf(st, base.items, base.full, holderList(h), () => false)",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-minted-at-the-minters-own-level",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const lv = roomBaseLevel(playerEntity?.level ?? 1, opts.partyLevels?.() ?? []);",
+    "new": "    const lv = roomBaseLevel(playerEntity?.level ?? 1, []);",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-joiner-shows-its-own-roll-unborn",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      if ((kind === 'loot' || kind === 'corpse') && roomUnborn(key)) return null;   // PARTY-LOOT: a room container with no terms yet names nothing - its list is the room's, not this copy's\n",
+    "new": "",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-joiner-keeps-its-own-roll-on-the-body",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    f.entity.items.length = 0;   // UNBORN holds nothing: this copy's own roll is no reader's (LOOT11's light, Hunting's body key, the save); the sweep counts its wait from here (mintUnbornRoom)\n",
+    "new": "",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-no-bonus-at-all",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const key = `${base.name}|${who}`;\n    const was = _roomBonus.get(canon);",
+    "new": "    const key = `${base.name}|${who}`;\n    const was = _roomBonus.get(canon);\n    if (who) return { key, pieces: [], composed: false };",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-spent-never-settled",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (!b || !b.composed || b.list !== list) return;   // a list a load replaced holds copies, and says nothing of what was taken",
+    "new": "    if (b) return;   // a list a load replaced holds copies, and says nothing of what was taken",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-legacy-list-landed-over-the-base",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    base.items.forEach((_, i) => st.taken.add(i));\n    st.stored = items;",
+    "new": "    st.stored = items;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-take-counts-only-rise",
+    "file": "src/systems/roomLoot.js",
+    "old": "  for (const [i, n] of w.c ?? []) { const was = st.counts.get(i); if (was === undefined || n < was) { st.counts.set(i, n); changed = true; } }",
+    "new": "  for (const [i, n] of w.c ?? []) { st.counts.set(i, n); changed = true; }",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-spawn-table-on-math-random",
+    "file": "src/scenes/hostCombat.js",
+    "old": "{ level: effectiveLevel(player), gender: player.gender }, rolls, { itemChanceScale, mobileType });",
+    "new": "{ level: effectiveLevel(player), gender: player.gender }, undefined, { itemChanceScale, mobileType });",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-room-scope-never-raised",
+    "file": "src/systems/onlineLane.js",
+    "old": "  if (_roomRoll > 0) return true;   // PARTY-LOOT: while a room's base rolls, every mod is the room's whole (asTheRoom, below)\n",
+    "new": "",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-build-rolls-its-own-pile-online",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "        const items = onlineRoom() ? [] : rollPileItems();",
+    "new": "        const items = rollPileItems();",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  }
+]

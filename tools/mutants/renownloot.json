@@ -92,7 +92,7 @@
   {
     "name": "RENOWN-LOOT-spawn-at-whole",
     "file": "src/scenes/hostCombat.js",
-    "old": "  const ease = renownLootQuarters();   // RENOWN-LOOT",
+    "old": "  const ease = quarters;   // RENOWN-LOOT",
     "new": "  const ease = 4;   // RENOWN-LOOT",
     "why": "the spawn read at LOOT-EASE's whole",
     "tests": [
@@ -135,7 +135,7 @@
   {
     "name": "RENOWN-LOOT-kit-ladder-whole",
     "file": "src/systems/foeLootCap.js",
-    "old": "weights: plainFoeRarityWeights() };   // RENOWN-LOOT",
+    "old": "weights: plainFoeRarityWeights(quarters) };   // RENOWN-LOOT",
     "new": "weights: plainFoeRarityWeights(4) };   // RENOWN-LOOT",
     "why": "the kit's ladder never read at the Renown",
     "tests": [
@@ -205,7 +205,7 @@
   {
     "name": "RENOWN-LOOT-foe-hook-whole",
     "file": "src/systems/healingSupply.js",
-    "old": "{ const { enemy } = healingSupplyChances(); maybeAddHealingPotion",
+    "old": "{ const { enemy } = healingSupplyChances(quarters); maybeAddHealingPotion",
     "new": "{ const { enemy } = healingSupplyChances(4); maybeAddHealingPotion",
     "why": "the foe's hook at LOOT-EASE's whole",
     "tests": [
@@ -215,7 +215,7 @@
   {
     "name": "RENOWN-LOOT-pile-hook-whole",
     "file": "src/systems/healingSupply.js",
-    "old": "{ const { pile } = healingSupplyChances(); maybeAddHealingPotion",
+    "old": "{ const { pile } = healingSupplyChances(quarters); maybeAddHealingPotion",
     "new": "{ const { pile } = healingSupplyChances(4); maybeAddHealingPotion",
     "why": "the pile's hook at LOOT-EASE's whole",
     "tests": [
@@ -235,7 +235,7 @@
   {
     "name": "RENOWN-LOOT-rest-foe-hook-whole",
     "file": "src/systems/restItems.js",
-    "old": "rollRestLoot(items, restLootChances(REST_FOE_CHANCES), rolls); });",
+    "old": "rollRestLoot(items, restLootChances(REST_FOE_CHANCES, quarters), rolls); });",
     "new": "rollRestLoot(items, REST_FOE_CHANCES, rolls); });",
     "why": "the foe's supplies at LOOT-EASE's whole",
     "tests": [
@@ -245,7 +245,7 @@
   {
     "name": "RENOWN-LOOT-rest-pile-hook-whole",
     "file": "src/systems/restItems.js",
-    "old": "rollRestLoot(items, restLootChances(REST_PILE_CHANCES), rolls); });",
+    "old": "rollRestLoot(items, restLootChances(REST_PILE_CHANCES, quarters), rolls); });",
     "new": "rollRestLoot(items, REST_PILE_CHANCES, rolls); });",
     "why": "the pile's supplies at LOOT-EASE's whole",
     "tests": [
