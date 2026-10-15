@@ -73,9 +73,9 @@ test('EG-PLAY THE WIRE (EG-FULL): a breach\'s words each way, projected and boun
   assert.equal(validEgOut({ k: 'call', b: B, o: 'Mac', os: 'acct-mac', seed: 7, op: T0, rh: 0, co: co(9), site: SITE }), null, 'a company of nine');
   assert.ok(validEgOut({ k: 'co', co: [['acct-mac', 'Mac', 1, 1, 0, 1, 0, 0, 0, 1]] }));
   assert.equal(validEgOut({ k: 'co', co: [['acct-mac', 'Mac', 1, 1, 0, 1]] }), null, 'the company\'s full row is ten');
-  const body = [1, 0, 3, 0, 2.5, 40, 900, 1000, 1, 2.5, 40, 0, T0, 2.3, 2.3, 1, T0, 0];   // PIN MOVED (EG-ZJ): a body's feet, its walk's end's height, its state and since when - seventeen; PIN MOVED (EG-ZQ): its size, eighteen
+  const body = [1, 0, 3, 0, 2.5, 40, 900, 1000, 1, 2.5, 40, 0, T0, 2.3, 2.3, 1, T0, 0, 0];   // PIN MOVED (EG-ZJ): a body's feet, its walk's end's height, its state and since when - seventeen; PIN MOVED (EG-ZQ): its size, eighteen; PIN MOVED (AUDIT EG V, b: a body's facing on the wire - its row's nineteenth, a walk's tenth)
   assert.ok(validEgOut({ k: 'efs', h: 3, wk: T0, b: [body], bl: [], tx: [], mk: [], pg: {} }));
-  assert.equal(validEgOut({ k: 'efs', h: 3, wk: T0, b: [body.slice(0, 17)], bl: [], tx: [], mk: [], pg: {} }), null, 'a body\'s row cut short');
+  assert.equal(validEgOut({ k: 'efs', h: 3, wk: T0, b: [body.slice(0, 18)], bl: [], tx: [], mk: [], pg: {} }), null, 'a body\'s row cut short');
   const blow = { k: 'eb', i: 4, o: 1, s: [['d', 2, 40, 3]], at: T0 + 1500, wu: 1500, p: 0.2, b: 4, el: 'fire', nm: 'Fire-fall', ch: 0, pu: 0, sp: 0 };
   assert.ok(validEgOut(blow));
   assert.equal(validEgOut({ ...blow, s: [['d', 2, 999, 3]] }), null, 'a stamp past the hall\'s bound');

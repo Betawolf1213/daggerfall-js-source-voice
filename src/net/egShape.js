@@ -189,20 +189,28 @@ export function egChainGapMs(wu, stamps) {
 /** A lone runner's route at the escape build plus the errand floor's 1.5 s (THE ERRAND FLOOR, section 13.2), ms. */
 export const egErrandMs = (routeM) => Math.ceil(((routeM / EG_ESCAPE_MPS + 1.5) * 1000) / 10) * 10;
 
+/** AUDIT EG V (lane1 #18; sections 13.2 and 14): the longest a chained shape's dim outline stands before its fill (ms). */
+export const EG_OUTLINE_MAX_MS = 30_000;
 /**
  * A BLOW AS THE RELAY SAYS IT: `i` its number (the fight's), `o` who throws it (a body's number, 0 the place), `s` its
  * stamps, `at` when it lands (relay ms), `wu` its wind-up (the word went out `at - wu`), `p` the share of the struck body's
  * own maximum health and `b` the points beside it, `el` its element (null plain), `nm` its name, `ch` a CHECK, `pu` its push
  * (m), `sp` how long its landing lasts (ms - a charge's run, a fire-fall's burn), `ft` a feint (cut at FEINT_AT - never
  * said: the relay sends the cut). AUDIT EG IV (lane1 #5): `on` the members a CHECK names (egBlowOn) - its stamps then only
- * mark them; absent, it lands where its stamps lie.
- * @param {{ i: number, o?: number, s: any[], at: number, wu: number, p: number, b?: number, el?: string|null, nm?: string, ch?: number|boolean, pu?: number, sp?: number, ft?: number, on?: string[]|null }} blow
+ * mark them; absent, it lands where its stamps lie. AUDIT EG V (lane1 #18): `ol` a chained shape's DIM OUTLINE's lead (ms) - its
+ * outline stands that long before its fill begins (`at - wu`), from the first shape's word: the gate's "dim outline at once"
+ * grammar, its fill starting when the first lands.
+ * @param {{ i: number, o?: number, s: any[], at: number, wu: number, p: number, b?: number, el?: string|null, nm?: string, ch?: number|boolean, pu?: number, sp?: number, ft?: number, on?: string[]|null, ol?: number }} blow
  */
-export function egBlowOf({ i, o = 0, s, at, wu, p, b = 0, el = null, nm = '', ch = 0, pu = 0, sp = 0, on = null }) {
+export function egBlowOf({ i, o = 0, s, at, wu, p, b = 0, el = null, nm = '', ch = 0, pu = 0, sp = 0, on = null, ol = 0 }) {
   const blow = { i, o, s, at, wu: egFloorWindup(wu, s, !!ch), p, b, el, nm, ch: ch ? 1 : 0, pu, sp };
   if (on?.length) blow.on = [...on];
+  if (ol > 0) blow.ol = Math.min(EG_OUTLINE_MAX_MS, Math.round(ol));
   return blow;
 }
+/** AUDIT EG V (lane1 #18): when a blow's outline first stands (relay ms) - its word, a chained shape's dim outline's lead before
+ *  its fill. */
+export const egBlowOutlineFrom = (blow) => blow.at - blow.wu - (blow.ol ?? 0);
 /** Its word's instant (relay ms): the wind-up's start. */
 export const egBlowFrom = (blow) => blow.at - blow.wu;
 

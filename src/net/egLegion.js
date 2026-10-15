@@ -33,6 +33,7 @@
 // Ledger A (ELITE-GATES).
 import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egBodyWire, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpMean, egHpTeam, egBodiesOf, egShareX } from './egBodies.js';
 import { egCut } from './egBodies.js';   // AUDIT EG IV: a spotted add's wind-up cut
+import { egFace } from './egBodies.js';   // AUDIT EG V (lane1 #7): an add's turn said
 import { shDisc, shLaneAt, shCone, egChainGapMs } from './egShape.js';
 import { egKeepOnFight, egOnFight } from './egLaw.js';
 import { egWalkNext, egAirNext, egAirKeep, egArchCut, egGroundAt, egWalkFeet, egFeetAt, egWayOn, EG_PIECE_TOUCH_M } from './egWalkGraph.js';   // EG-ZB: the walk graph and the air; EG-ZJ: the feet on it; EG-ZQ: the way on kept only while walked
@@ -239,13 +240,14 @@ function addBlow(F, spec, a, tx, tz, now, here, out, { chain = 0, twin = 0, atFe
   const first = egAim(F, spec, { ...base, s: [stamp(a.x, a.z)], at: now + B.wu }, here, now, out);
   if (!first) return null;
   a.atk = { i: first.i, at: first.at, until: first.at + (first.sp ?? 0) + (B.rec ?? 600) };
-  a.yaw = yaw;
+  egFace(F, a, yaw, now);   // AUDIT EG V (lane1 #7): its turn said - a Shielded elite's back is judged by the facing every screen draws
   let at = first.at;
   for (let c = 0; c < chain; c++) {
     const ox = tx + Math.sin(yaw) * 3 * (c + 1), oz = tz + Math.cos(yaw) * 3 * (c + 1);
     const s = B.t === 'l' ? shLaneAt(tx, tz, yaw, B.len, B.w) : shDisc(ox, oz, B.t === 'd' ? B.r : 3);
-    at += egChainGapMs(first.wu, [s]);   // AUDIT EG III: the floor + 0.3 s term kept (net/egShape.js - one rule with fury's chain)
-    egAim(F, spec, { ...base, s: [s], at, wu: at - now, nm: `${B.nm} (chained)` }, here, now, out);
+    const gap = egChainGapMs(first.wu, [s]);   // AUDIT EG III: the floor + 0.3 s term kept (net/egShape.js - one rule with fury's chain)
+    at += gap;
+    egAim(F, spec, { ...base, s: [s], at, wu: gap, ol: at - gap - now, nm: `${B.nm} (chained)` }, here, now, out);   // AUDIT EG V (lane1 #18): its fill from the shape before it lands, its dim outline from the word
   }
   for (let c = 0; c < twin; c++) {
     at += 1200;

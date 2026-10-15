@@ -416,7 +416,7 @@ function play({ n = 2, seed = 77, start = 5, until = () => false, each = () => {
       const p = pos[sub], sp = egHallOf(Bx.seed, Bx.h, 0);
       const live = Bx.F.bodies.filter((t) => t.hp > 0 && !(t.fl & (2 | 16 | 128)));
       const tgt = live.filter((t) => t.role === 1)[0] ?? live.sort((a, c) => Math.hypot(a.x - (p.sx - sp.x0), a.z - p.z) - Math.hypot(c.x - (p.sx - sp.x0), c.z - p.z))[0];
-      if (tgt) egBlow(Bx, sub, { k: 'hit', i: tgt.i, q: Math.floor(now / 250), d: sub === co[0][0] ? 300 : 100, r: 1 }, { sx: p.sx, z: p.z }, now);
+      if (tgt) egBlow(Bx, sub, { k: 'hit', i: tgt.i, q: Math.floor(now / 250), d: sub === co[0][0] ? 300 : 20, r: 1 }, { sx: p.sx, z: p.z }, now);   // PIN MOVED (AUDIT EG V, b: NEW-1 - a lord no longer stands frozen by a company inside its body, so the lighter hand is one the bucket never caps: 100 a blow was capped as 300 was, the shares even within a thousandth)
     }
   }
   return { B: Bx, now: () => now, co };

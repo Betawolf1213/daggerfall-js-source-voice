@@ -28,11 +28,17 @@ test('EG-E THE FEATS (section 19): every lord three - Unbroken, Swift and its ow
   assert.equal(egFeatBits('hound', F({ lordAt: now - EG_FEAT_SWIFT_MS - 1 }), { now }), 0b001, 'past its par, not Swift');
   assert.equal(egFeatBits('spellmaster', F({ said: { passed: 2, failed: 1 } }), { now }) & 4, 0, 'a failed Examination');
   assert.equal(egFeatBits('spellmaster', F({ said: { passed: 2 } }), { now }) & 4, 4);
-  assert.equal(egFeatBits('twins', F({ mem: { twinFellAt: now - EG_FEAT_TWINS_MS } }), { now }) & 4, 4, 'within 3 s');
-  assert.equal(egFeatBits('twins', F({ mem: { twinFellAt: now - EG_FEAT_TWINS_MS - 1 } }), { now }) & 4, 0);
+  // PIN MOVED (AUDIT EG V, b: lane1 #6 - the Twins' falls read off their own bodies, `fellAt` as net/egLords.js egLordHit sets it on
+  // a lord body of `key` 'twins', never the Redoubt's beat; test/egaudit5_b.test.js drives them through the director)
+  const twins = (gap) => ({ bodies: [{ key: 'twins', pt: 0, fellAt: now - gap }, { key: 'twins', pt: 1, fellAt: now }] });
+  assert.equal(egFeatBits('twins', F(twins(EG_FEAT_TWINS_MS)), { now }) & 4, 4, 'within 3 s');
+  assert.equal(egFeatBits('twins', F(twins(EG_FEAT_TWINS_MS + 1)), { now }) & 4, 0);
   assert.equal(egFeatBits('garoth', F(), { now, covenant: 1 }) & 4, 0, 'after the Covenant pressed');
-  assert.equal(egFeatBits('colossus', F({ said: { phase: 2 } }), { now }) & 4, 4);
-  assert.equal(egFeatBits('colossus', F({ said: { phase: 2, relit: 1 } }), { now }) & 4, 0, 'a heart relit');
+  // PIN MOVED (AUDIT EG V, b: lane1 #4 - the Breakdown read off the Colossus's own body, its kneel as net/egLords.js's phase sets it)
+  const knelt = { bodies: [{ key: 'colossus', kneelUntil: now - 1000 }] };
+  assert.equal(egFeatBits('colossus', F(knelt), { now }) & 4, 4);
+  assert.equal(egFeatBits('colossus', F({ ...knelt, said: { relit: 1 } }), { now }) & 4, 0, 'a heart relit');
+  assert.equal(egFeatBits('colossus', F({ said: { phase: 2 } }), { now }) & 4, 0, 'no Breakdown of its own: another lord\'s phase words earn nothing');
   assert.deepEqual([0, 1, 2].map((k) => egFeatName('wyrm', k)), ['Unbroken', 'Swift', 'Brought to Earth']);
   const held = Object.fromEntries(EG_FEAT_BANDS[0].map((k) => [k, 7]));
   assert.equal(egBandMastered(held, 0), true);

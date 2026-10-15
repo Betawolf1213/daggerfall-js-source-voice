@@ -5476,6 +5476,9 @@ export function validSdFoundTell(b) {
 // EG-ZQ (2026-10-12; section 14, Colossal): a body's row carries its size (`sz`, thousandths of its look's - a Colossal lord's),
 // so every screen draws the lord at the size the relay judges it by.
 //
+// AUDIT EG V (2026-10-15, lane1 #7; sections 8.5 and 21): a body's row and each walk carry its FACING (`yw`), so every screen draws
+// the Kynreeve facing the way his Shield-Wall is judged; and a blow its dim outline's lead (`ol`, lane1 #18 - a chained shape's).
+//
 // AUDIT EG III (2026-10-13, lane 1 #7 / lane 3 #10; sections 15 and 23): SPIREBRIDGE ON THE WIRE - a holder's ask (`mast`, no
 // fields: the room reads the asker's own pose) and the room's word to the company (`ebridge` - the hall, its gap's number
 // in the hall's chain, when the plank stands and until when, who raised it), its life at most EG_SB_WIRE_MS.
@@ -5604,14 +5607,22 @@ function egStage(m) {
  *  imports no law of the Spire's). */
 export const EG_SIZE_WIRE_MIN = 500;
 export const EG_SIZE_WIRE_MAX = 2000;
-/** A body (net/egBodies.js egBodyWire): `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz]` - EG-ZJ: its feet
- *  and its walk's end's height (a coordinate's bound, whole centimetres on the room's side), its state as said (an object's
- *  `eob`, a lord's phase) and since when; EG-ZQ: its size (0, or EG_SIZE_WIRE_MIN..EG_SIZE_WIRE_MAX thousandths). */
+/** AUDIT EG V (lane1 #18): the longest dim outline's lead a blow says (ms - net/egShape.js EG_OUTLINE_MAX_MS, pinned equal:
+ *  wire.js imports no law of the Spire's). */
+export const EG_OUTLINE_WIRE_MAX = 30_000;
+/** AUDIT EG V (lane1 #7): a body's facing on the wire (radians, hundredths - net/egBodies.js egYawOf), within a turn either way. */
+export const EG_YAW_WIRE_MAX = 7;
+const egYaw = (v) => finite(v) && Math.abs(v) <= EG_YAW_WIRE_MAX;
+/** A body (net/egBodies.js egBodyWire): `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz, yw]` - EG-ZJ: its
+ *  feet and its walk's end's height (a coordinate's bound, whole centimetres on the room's side), its state as said (an object's
+ *  `eob`, a lord's phase) and since when; EG-ZQ: its size (0, or EG_SIZE_WIRE_MIN..EG_SIZE_WIRE_MAX thousandths); AUDIT EG V
+ *  (lane1 #7): its facing, which the relay judges a flank by. */
 function egBody(t) {
-  if (!Array.isArray(t) || t.length !== 18 || !intIn(t[0], 1, 1e9) || !intIn(t[1], 0, 2) || !intIn(t[2], 0, 99) || !intIn(t[3], 0, 99)) return null;
+  if (!Array.isArray(t) || t.length !== 19 || !intIn(t[0], 1, 1e9) || !intIn(t[1], 0, 2) || !intIn(t[2], 0, 99) || !intIn(t[3], 0, 99)) return null;
   if (!egXZ(t[4]) || !egXZ(t[5]) || !intIn(t[6], 0, EG_HP_MAX) || !intIn(t[7], 1, EG_HP_MAX) || !intIn(t[8], 0, 0xffff) || !egXZ(t[9]) || !egXZ(t[10]) || !finite(t[11]) || t[11] < 0 || t[11] > 30 || !egMs(t[12])) return null;
   if (!egXZ(t[13]) || !egXZ(t[14]) || !intIn(t[15], 0, 99) || !egMs(t[16])) return null;
   if (t[17] !== 0 && !intIn(t[17], EG_SIZE_WIRE_MIN, EG_SIZE_WIRE_MAX)) return null;
+  if (!egYaw(t[18])) return null;
   return [...t];
 }
 const egBodies = (a, max = EG_WIRE_BODIES_MAX) => { if (!Array.isArray(a) || a.length > max) return null; const out = a.map(egBody); return out.every(Boolean) ? out : null; };
@@ -5623,7 +5634,8 @@ function egBlowW(m) {
   if (m.el != null && !['fire', 'frost', 'shock', 'poison', 'magic'].includes(m.el)) return null;
   if (!(m.ch === 0 || m.ch === 1) || !finite(m.pu) || m.pu < 0 || m.pu > 20 || !intIn(m.sp, 0, 60_000)) return null;
   if (m.on != null && !(Array.isArray(m.on) && m.on.length >= 1 && m.on.length <= 8 && m.on.every(egId))) return null;   // AUDIT EG IV (lane1 #5): the members a failure blow names (net/egShape.js egBlowOn)
-  return { i: m.i, o: m.o, s: m.s.map((s) => [...s]), at: m.at, wu: m.wu, p: m.p, b: m.b, el: m.el ?? null, nm: egText(m.nm ?? '', 48) ?? '', ch: m.ch, pu: m.pu, sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}) };
+  if (m.ol != null && !intIn(m.ol, 1, EG_OUTLINE_WIRE_MAX)) return null;   // AUDIT EG V (lane1 #18): a chained shape's dim outline's lead
+  return { i: m.i, o: m.o, s: m.s.map((s) => [...s]), at: m.at, wu: m.wu, p: m.p, b: m.b, el: m.el ?? null, nm: egText(m.nm ?? '', 48) ?? '', ch: m.ch, pu: m.pu, sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}), ...(m.ol != null ? { ol: m.ol } : {}) };
 }
 /** A zone (net/egLords.js zoneOut). */
 function egZone(m) {
@@ -5785,7 +5797,7 @@ export function validEgOut(m) {
       return b && bl && tx && mk && zs && intIn(m.h, 1, EG_HALL_WIRE_MAX) && egMs(m.wk) ? { k: 'efs', h: m.h, wk: m.wk, b, bl, tx, mk, pg: egProgress(m.pg), zs } : null;
     }
     case 'ead': { const a = egBodies(m.a, 24); return a && gateMs(m.at) ? { k: 'ead', a, at: m.at } : null; }
-    case 'emv': { const mv = egList(m.m, (t) => (Array.isArray(t) && t.length === 9 && intIn(t[0], 1, 1e9) && egXZ(t[1]) && egXZ(t[2]) && egXZ(t[3]) && egXZ(t[4]) && finite(t[5]) && t[5] >= 0 && t[5] <= 30 && gateMs(t[6]) && egXZ(t[7]) && egXZ(t[8]) ? [...t] : null), EG_WIRE_BODIES_MAX); return mv ? { k: 'emv', m: mv } : null; }   // EG-ZJ: each walk's height and its end's
+    case 'emv': { const mv = egList(m.m, (t) => (Array.isArray(t) && t.length === 10 && intIn(t[0], 1, 1e9) && egXZ(t[1]) && egXZ(t[2]) && egXZ(t[3]) && egXZ(t[4]) && finite(t[5]) && t[5] >= 0 && t[5] <= 30 && gateMs(t[6]) && egXZ(t[7]) && egXZ(t[8]) && egYaw(t[9]) ? [...t] : null), EG_WIRE_BODIES_MAX); return mv ? { k: 'emv', m: mv } : null; }   // EG-ZJ: each walk's height and its end's; AUDIT EG V (lane1 #7): its facing
     case 'ehp': { const h = egList(m.h, (t) => (Array.isArray(t) && t.length === 2 && intIn(t[0], 1, 1e9) && intIn(t[1], 0, EG_HP_MAX) ? [...t] : null), EG_WIRE_BODIES_MAX); return h ? { k: 'ehp', h } : null; }
     case 'edie': return Array.isArray(m.is) && m.is.length >= 1 && m.is.length <= EG_WIRE_BODIES_MAX && m.is.every((i) => intIn(i, 1, 1e9)) && intIn(m.w, 0, 2) && gateMs(m.at) ? { k: 'edie', is: [...m.is], w: m.w, n: egText(m.n ?? '', 48) ?? '', at: m.at } : null;
     case 'efl': return intIn(m.i, 1, 1e9) && intIn(m.fl, 0, 0xffff) ? { k: 'efl', i: m.i, fl: m.fl } : null;

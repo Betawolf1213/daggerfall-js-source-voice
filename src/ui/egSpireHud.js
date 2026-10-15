@@ -257,14 +257,20 @@ export function egDoorMarker(me, door, yaw) {
 
 // ── THE LORD'S BAR ────────────────────────────────────────────────────────────────────────────────────────────
 /** The lord's bar in a Court (pure): its name, its epithet, its health's share and its phase - the first true lord
- *  awake (never a mirror image, never a friend). Null elsewhere. */
-export function egLordBar(E) {
-  if (!E?.b || !(E.h > 0) || E.fight?.h !== E.h) return null;
-  const L = (E.fight.bodies ?? []).find((b) => b.role === EG_ROLE.lord && b.ph > 0 && (b.fl & (EG_FL.mirror | EG_FL.friend)) === 0);
-  if (!L) return null;
-  const key = EG_BOSS_KEYS[L.k] ?? '';
+ *  standing awake (never a mirror, a friend, one still asleep). AUDIT EG V (lane1 #22): never one FALLEN - in a Court of two
+ *  lords (Clan Feud's champion, THE TWIN COURT's and THE OLD MASTERS' second) the bar is the lord still standing, never the first
+ *  at nought (egLordBars). */
+export function egLordBar(E) { return egLordBars(E)[0] ?? null; }
+/** AUDIT EG V (lane1 #22): the bars of every true lord standing awake, in the fight's order (the Court's own first), at most
+ *  EG_LORD_BARS_MAX - each `{ name, court, frac, phase }`. Pure. */
+export const EG_LORD_BARS_MAX = 2;
+/** The model's lord bars: the first (`lord`) and a second lord standing (`lord2`), in a Court alone. Pure. */
+const egLordBarsOf = (E) => { const bars = egLordBars(E); return bars[0]?.court ? { lord: bars[0], lord2: bars[1] ?? null } : { lord: null, lord2: null }; };
+export function egLordBars(E) {
+  if (!E?.b || !(E.h > 0) || E.fight?.h !== E.h) return [];
   const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
-  return { name: egBossName(key, L.pt), court: spec.kind === 'court', frac: L.max > 0 ? Math.round(Math.max(0, Math.min(1, L.hp / L.max)) * 1000) / 1000 : 0, phase: ['', 'I', 'II', 'III'][L.ph] ?? '' };
+  return (E.fight.bodies ?? []).filter((b) => b.role === EG_ROLE.lord && b.ph > 0 && (b.fl & (EG_FL.mirror | EG_FL.friend)) === 0 && b.hp > 0).slice(0, EG_LORD_BARS_MAX)   // standing: a fall says its nought (`efell`, `ehp`), a raise its health
+    .map((L) => ({ name: egBossName(EG_BOSS_KEYS[L.k] ?? '', L.pt), court: spec.kind === 'court', frac: L.max > 0 ? Math.round(Math.max(0, Math.min(1, L.hp / L.max)) * 1000) / 1000 : 0, phase: ['', 'I', 'II', 'III'][L.ph] ?? '' }));
 }
 
 // ── THE STAGE'S LINE ──────────────────────────────────────────────────────────────────────────────────────────
@@ -402,7 +408,7 @@ export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, p
     stage: watching ? witLine : [stageLine(E, now), E.sg === 'rest' ? egRestLine(E, run, restP) : '', egNextCircleText(E), egBridgeLine(E, now, bridge && !watching)].filter(Boolean).join(' '),   // AUDIT EG V (c, L2-9, NEW-1): the rest card's stake and its heal; (a1, L2-11): the next circle named
     marks, marksSaid: marks.map((m) => `${EG_MARK_NAMES[m.k] ?? ''} ${m.secs}s`).join(' - '),
     eclipse: E.sg === 'trial' || E.sg === 'closing' ? egEclipseChip(egEclipseAt(spec, now / 1000)) : '',   // EG-ZG (section 25.5): *The Eclipse - 5*, while the place's hazards run (the fight's own stages)
-    lord: egLordBar(E)?.court ? egLordBar(E) : null, lordH: L.lordH,   // only in a Court (a Proving Walk's champion has none)
+    ...egLordBarsOf(E), lordH: L.lordH,   // only in a Court (a Proving Walk's champion has none); AUDIT EG V (lane1 #22): a second lord standing its own bar
     gain, first, door, live, touch: touch ? egTouchButtons({ witness: watching, rest: E.sg === 'rest', bridge: bridge && !watching, ping }) : [],
     held: watching ? [] : held,   // AUDIT EG III: the holder's chips
   };
@@ -464,6 +470,8 @@ export const EG_SPIRE_CSS = `
 .eg-lord-name { text-align: center; font-size: 15px; letter-spacing: 0.08em; }
 .eg-lord-track { position: relative; height: calc(var(--eg-lord-h, 30px) - 20px); margin-top: 3px; background: rgba(8,6,6,0.8); border: 1px solid #5a2a20; box-sizing: border-box; }
 .eg-lord-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(180deg, #d9463c, #7d1b15); }
+.eg-lord-two { display: none; margin-top: 6px; }
+.eg-lord.two .eg-lord-two { display: block; }
 .eg-door { position: absolute; transform: translate(-50%, -50%); display: none; text-align: center; font-size: 12px; color: #e8c473; }
 .eg-door.on { display: block; }
 .eg-door-arrow { display: block; font-size: 22px; line-height: 22px; }
@@ -480,7 +488,7 @@ ${EG_PARTY_CSS}`;
 
 let root = null, P = null;
 let card = null, cardP = null;
-const SHOWN = () => ({ cls: '', vals: {}, chipCls: '', lordW: '', lordH: '', doorL: '', doorT: '', doorR: '', touchKey: null, decKey: null, gainKey: null, danger: '', scale: '', heldKey: '' });
+const SHOWN = () => ({ cls: '', vals: {}, chipCls: '', lordW: '', lordW2: '', lordH: '', doorL: '', doorT: '', doorR: '', touchKey: null, decKey: null, gainKey: null, danger: '', scale: '', heldKey: '' });
 let shown = SHOWN(), cardShown = { key: '', alpha: -1, vis: '', cls: '' };
 
 function ensureStyle(doc) {
@@ -510,7 +518,9 @@ function build(doc) {
   const stage = el('div', 'eg-stage'), marks = el('div', 'eg-marks'), first = el('div', 'eg-first');
   col.append(chips, gain, dec, fold, obj, stage, marks, first);
   const lord = el('div', 'eg-lord'), lordName = el('div', 'eg-lord-name'), track = el('div', 'eg-lord-track'), fill = el('div', 'eg-lord-fill');
-  track.append(fill); lord.append(lordName, track);
+  track.append(fill);
+  const two = el('div', 'eg-lord-two'), lordName2 = el('div', 'eg-lord-name'), track2 = el('div', 'eg-lord-track'), fill2 = el('div', 'eg-lord-fill');   // AUDIT EG V (lane1 #22): the second lord's
+  track2.append(fill2); two.append(lordName2, track2); lord.append(lordName, track, two);
   const door = el('div', 'eg-door'), arrow = el('span', 'eg-door-arrow'), doorText = el('span', 'eg-door-text');
   arrow.textContent = '▲';
   door.append(arrow, doorText);
@@ -518,7 +528,7 @@ function build(doc) {
   live.setAttribute?.('aria-live', 'polite');
   root.append(col, lord, door, touch, live);
   (doc.body ?? doc.documentElement)?.append(root);
-  P = { col, chips, count, glyph, time, why, rel, standing, potion, recall, eclipse, held, gain, dec, fold, obj, objLine, prog, stage, marks, first, lord, lordName, fill, door, arrow, doorText, touch, live };
+  P = { col, chips, count, glyph, time, why, rel, standing, potion, recall, eclipse, held, gain, dec, fold, obj, objLine, prog, stage, marks, first, lord, lordName, fill, lordName2, fill2, door, arrow, doorText, touch, live };
 }
 
 /**
@@ -563,8 +573,8 @@ export function drawEgSpireHud(model, { hidden = false, doc = globalThis.documen
   const mh = (model.marks ?? []).map(egSigilHtml).join('');
   if (shown.vals.marks !== mh) { shown.vals.marks = mh; P.marks.innerHTML = mh; P.marks.setAttribute?.('aria-label', model.marksSaid ?? ''); }
   // the lord's bar
-  const L = model.lord;
-  const lordCls = `eg-lord${L ? ' on' : ''}`;
+  const L = model.lord, L2 = model.lord2 ?? null;
+  const lordCls = `eg-lord${L ? ' on' : ''}${L && L2 ? ' two' : ''}`;
   if (P.lord.className !== lordCls) P.lord.className = lordCls;
   put('lord', P.lordName, L ? `${L.name}${L.phase ? ` - ${L.phase}` : ''}` : '');
   const lw = L ? `${(L.frac * 100).toFixed(1)}%` : '0%';
@@ -573,6 +583,9 @@ export function drawEgSpireHud(model, { hidden = false, doc = globalThis.documen
   // the layout's own (EG_LAYOUTS lordH - the name over it, the track the rest), never a sheet's literal
   const lh = `${Number(model.lordH) || EG_LAYOUTS.desktop.lordH}px`;
   if (lh !== shown.lordH) { shown.lordH = lh; P.lord.style.setProperty?.('--eg-lord-h', lh); }
+  put('lord2', P.lordName2, L2 ? `${L2.name}${L2.phase ? ` - ${L2.phase}` : ''}` : '');   // AUDIT EG V (lane1 #22): the second lord standing
+  const lw2 = L2 ? `${(L2.frac * 100).toFixed(1)}%` : '0%';
+  if (lw2 !== shown.lordW2) { shown.lordW2 = lw2; P.fill2.style.width = lw2; }
   // the door's marker
   const D = model.door;
   const doorCls = `eg-door${D ? ' on' : ''}`;

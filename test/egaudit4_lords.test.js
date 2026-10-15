@@ -234,7 +234,7 @@ test('AUDIT EG IV lane1 #11 A CHAMPION WAKES AT ITS COURT\'S RING (sections 8.5 
   D.at('acct-0', dr.x, dr.z);
   D.step();
   assert.ok(DL.up2, 'woken at its chamber\'s ring');
-  assert.ok(EG_CHAMP_RING_M > 4);
+  assert.equal(EG_CHAMP_RING_M, 13);   // PIN MOVED (AUDIT EG V, b: L9-7 - the constant itself, never a bound it could slide under; its no-floor ring driven in test/egaudit5_b.test.js)
 });
 
 // ── lane 1 #19: COUNTERSTROKE ARMED AT THE BLOW ───────────────────────────────────────────────────────────────────────

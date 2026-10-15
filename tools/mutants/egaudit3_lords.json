@@ -119,8 +119,8 @@
   {
     "name": "EGA3-touch-everyone",
     "file": "src/net/egLords.js",
-    "old": "KITS[by.key]?.landed?.(F, by, bl, egStruck(bl, here));",
-    "new": "KITS[by.key]?.landed?.(F, by, bl, here);",
+    "old": "if (bl) KITS[by.key].landed(F, by, bl, [{ sub: h.sub }]);",
+    "new": "if (bl) KITS[by.key].landed(F, by, bl, (F.subs ?? []).map((sub) => ({ sub })));",
     "tests": [
       "test/egaudit3_lords.test.js"
     ]
@@ -281,8 +281,8 @@
   {
     "name": "EGA3-mate-away-shares",
     "file": "src/net/egLords.js",
-    "old": "c.filter((s) => s !== h.sub && live.some((b) => b.sub === s))",
-    "new": "c.filter((s) => s !== h.sub)",
+    "old": "...mates.filter((s) => live.some((b) => b.sub === s)).map((s) => ({ ...h, sub: s, share: part, nm: '' })));",
+    "new": "...mates.map((s) => ({ ...h, sub: s, share: part, nm: '' })));",
     "tests": [
       "test/egaudit3_lords.test.js"
     ]
@@ -299,8 +299,8 @@
   {
     "name": "EGA3-judge-unshared",
     "file": "src/net/egLords.js",
-    "old": "judge: (f, bodies, now) => egChainShared(f.F, judgeShapes(f.F, bodies, now, f.spec), bodies),",
-    "new": "judge: (f, bodies, now) => judgeShapes(f.F, bodies, now, f.spec),",
+    "old": "egLordsJudged(f.F, hits); return egChainShared(f.F, hits, bodies); },",
+    "new": "egLordsJudged(f.F, hits); return hits; },",
     "tests": [
       "test/egaudit3_lords.test.js"
     ]
@@ -335,8 +335,8 @@
   {
     "name": "EGA3-element-kept",
     "file": "src/net/egLords.js",
-    "old": "const elOf = (F, el) => (el != null && F.mem.asp ? gateAspectOf(F.mem.asp)?.el ?? el : el);",
-    "new": "const elOf = (F, el) => el;",
+    "old": "const elOf = (L, el) => (el != null && L?.asp ? gateAspectOf(L.asp)?.el ?? el : el);",
+    "new": "const elOf = (L, el) => el;",
     "tests": [
       "test/egaudit3_lords.test.js"
     ]
@@ -344,7 +344,7 @@
   {
     "name": "EGA3-meteor-name-kept",
     "file": "src/net/egLords.js",
-    "old": "  const nm = (B.ak && F.mem.asp && gateAspectOf(F.mem.asp)?.names?.[B.ak]) || B.nm;",
+    "old": "  const nm = (B.ak && L.asp && gateAspectOf(L.asp)?.names?.[B.ak]) || B.nm;",
     "new": "  const nm = B.nm;",
     "tests": [
       "test/egaudit3_lords.test.js"
@@ -353,8 +353,8 @@
   {
     "name": "EGA3-fight-unaspected",
     "file": "src/net/egLords.js",
-    "old": "  if (asp) F.mem.asp = asp.id;",
-    "new": "  if (asp) F.mem.aspect = asp.id;",
+    "old": "  if (asp) L.asp = asp.id;",
+    "new": "  if (asp) L.aspect = asp.id;",
     "tests": [
       "test/egaudit3_lords.test.js"
     ]

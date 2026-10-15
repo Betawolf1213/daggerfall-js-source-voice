@@ -247,7 +247,10 @@ function floorsUnder(spec, s) {
  * EG-ZB (sections 11.7, 19 and 21): each hit says its blow's landing, thrower and name (`at`, `o`, `nm` - the census's
  * Vestiges and the feats read them); a blow with a span (`sp` - a charge's run, a burning bridge) also catches a body that
  * steps into it while it lasts; a hunted member's Bite (`hn`) is judged off the floors. `spec` the hall's fight ground
- * (net/egWalkGraph.js egFightView).
+ * (net/egWalkGraph.js egFightView). AUDIT EG V (lane1 #9; section 13.2's CHECK class): a blow that NAMES its members (`on` - an
+ * errand's failure blow: the Chain Snaps, a Soul Burst, the Cage Closes; net/egShape.js egBlowOn) is counted on exactly those
+ * members, wherever their trail stands at its landing (in the hall, a pose near it - the time law), and on no one else: its
+ * marks only ride them, so where they lie decides nothing - the screen's own verdict (egBlowVerdict).
  * @param {any} F the hall's fight @param {Array<{sub: string, tr?: number[][]}>} bodies the living members, each its trail
  * (`[t, x, y, z, h]` - the hall's frame, shared ms) @param {number} now @param {any} spec the hall
  * @returns {Array<{sub: string, share: number, i: number, k: number, at: number, o: number, nm: string}>}
@@ -263,6 +266,13 @@ export function judgeShapes(F, bodies, now, spec) {
       if (a.bh.includes(b.sub)) continue;   // caught, or judged at its landing
       // EG-ZB (section 11.7): a Harrier's Bite on a member it HUNTS (`hn`) is judged off the floors for that member alone
       const free = a.hn === b.sub, hit = { sub: b.sub, share, i: a.i, k: 0, at: a.at, o: a.o ?? 0, nm: a.nm ?? '' };
+      if (a.on) {   // AUDIT EG V (lane1 #9): the members it names, wherever they stand - never another
+        if (!a.on.includes(b.sub)) { a.bh.push(b.sub); continue; }
+        if (!egTrailReady(b.tr, a.at, now)) continue;
+        a.bh.push(b.sub);
+        if (egTrailNear(b.tr, a.at) && egTrailAt(b.tr, a.at)?.[4] === F.h) out.push(hit);
+        continue;
+      }
       if (sp > 0) {
         // EG-ZB (section 21): A LINGERING FIELD (a charge's run, a burning bridge) catches at its landing as a blow does, or by
         // any pose sent inside it while it lasts - the screens' own verdict (net/egShape.js egBlowVerdict's span)
