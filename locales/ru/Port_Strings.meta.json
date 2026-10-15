@@ -7784,6 +7784,36 @@
   "tr": "34a9161a44b2",
   "by": "claude-in-session"
  },
+ "guild.rankNeeds.high": {
+  "en": "a1baa03c371e",
+  "tr": "7bf135b90430",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.highBest": {
+  "en": "e19b51f3b047",
+  "tr": "2def88221c25",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.next": {
+  "en": "0f2038dee524",
+  "tr": "7465b447b185",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.reputation": {
+  "en": "1e2c1afb0b95",
+  "tr": "6a511489cd1c",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.second": {
+  "en": "128193ee04ec",
+  "tr": "fa77d139f758",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.skills": {
+  "en": "52aa2bb51d9d",
+  "tr": "d9fd346d29e4",
+  "by": "claude-in-session"
+ },
  "holdings.horse.boons.hungry": {
   "en": "7456bcdd5990",
   "tr": "875389fb3931",

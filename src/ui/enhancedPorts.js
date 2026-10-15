@@ -47,9 +47,10 @@ const guild = {
   view(w) {
     const member = !!w.hooks.member?.();
     const press = (r) => at(w, r, GUILD_X, GUILD_Y);
+    const needs = member ? (w.hooks.rankNeeds?.() ?? null) : null;   // PROMO-NOW: what the next rank asks, online
     return {
       title: w.hooks.title?.() ?? 'Guild Hall', sub: member ? 'Member' : 'Not a member', size: 'narrow',
-      blocks: [{ type: 'actions', layout: 'column', items: [
+      blocks: [...(needs ? [{ type: 'text', rows: needs }] : []), { type: 'actions', layout: 'column', items: [
         ...(member ? [] : [{ label: 'Join guild', act: press(GUILD_RECTS.join), primary: true }]),
         { label: 'Talk', act: press(GUILD_RECTS.talk) },
         { label: serviceLabel(w.hooks.service?.()) || 'Service', act: press(GUILD_RECTS.service), primary: member },
