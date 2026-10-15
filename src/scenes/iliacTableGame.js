@@ -55,7 +55,7 @@ export function iliacEventLine(/** @type {any} */ e, /** @type {string[]} */ nam
 /** CARDS10: the relay's refusals of an Iliac word, as the panel says them. */
 export const ILIAC_ONLINE_REFUSALS = Object.freeze({
   taken: 'Someone sits in that chair.', full: 'Two already play at this table.', seated: 'You already sit here.', 'bad deck': 'The table will not take that deck.',
-  'other game': 'Hold\'em is being played at this table.', 'account seated': 'Your account already sits at a table here.', busy: 'The room is busy - try again.',
+  'other game': 'Another game is being played at this table.', 'account seated': 'Your account already sits at a table here.', busy: 'The room is busy - try again.',
   'table differs': 'That table is laid differently.', 'deck refused': 'The realm could not vouch for that deck.', 'ranked closed': 'Ranked games are closed here.',
   'no game': 'No game is under way.', 'not seated': 'You do not sit in this game.', 'no table': 'Nobody sits at this table.',
   stale: 'Too late - that turn had already turned over.',   // AUDIT CARDS-6 C3: a commit for a turn gone

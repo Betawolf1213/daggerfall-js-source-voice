@@ -25,7 +25,7 @@ test('CHAT-TRADE wire: the Trade and LFG channels are two whitelisted rooms of t
   assert.equal(relaySupportsTradeChan('world200'), false);
   assert.equal(relaySupportsTradeChan('world201'), true);
   assert.equal(relaySupportsTradeChan('world2010x'), false);
-  assert.equal(RELAY_VERSION, 'world202');   // PIN MOVED: world202, KG-SET (the Iliac catalog without its words, and nine cards more - Kings-Gambit.md section 10.3; world201 on its branch, renumbered past CHAT-TRADE's world201 at the merge)
+  assert.equal(RELAY_VERSION, 'world203');   // PIN MOVED: world203, KG5 (the relay runs The King's Gambit - a gambit frame, four files more in the bundle); PIN MOVED: world202, KG-SET (the Iliac catalog without its words, and nine cards more - Kings-Gambit.md section 10.3; world201 on its branch, renumbered past CHAT-TRADE's world201 at the merge)
   const online = rd('src/net/online.js');
   assert.match(online, /if \(primary\) this\.tradeChanOk = relaySupportsTradeChan\(relayV\);   \/\/ CHAT-TRADE/);
   assert.match(online, /this\.tradeChanOk = false;/);

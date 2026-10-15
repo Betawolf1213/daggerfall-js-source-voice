@@ -30,17 +30,22 @@ export const GAMBIT_CARD_LIFT = 0.0015;
  * height, `right` and `toHost` the columns' and the rows' unit directions on the ground (x, z), `at(c, r)` a cell's
  * centre on the mat, `cellAt(p)` the cell under a point of the table (or null off the board), `corners` the board's four
  * corners on the mat (the host's left foot first, round to the head).
+ * KG5 (section 18): `flip` lays the board for the GUEST of an online game, who reads the relay's board turned about its
+ * middle (net/gambitTable.js flipGambitState) - its rows and columns run the other way, so every turned cell lands on
+ * the felt where the host's own lies: one board on the cloth, each player's king's row at its own foot.
  * @param {{centre: number[], axisYaw: number}} frame  world/cardTables.js tableFrame
  * @param {number[]} hostFeet  the host's feet in their chair
+ * @param {{flip?: boolean}} [o]
  */
-export function gambitPlaces(frame, hostFeet) {
+export function gambitPlaces(frame, hostFeet, { flip = false } = {}) {
   const along = [Math.sin(frame.axisYaw), Math.cos(frame.axisYaw)];
   const across = [Math.cos(frame.axisYaw), -Math.sin(frame.axisYaw)];
   const dx = hostFeet[0] - frame.centre[0], dz = hostFeet[2] - frame.centre[2];
   const da = dx * along[0] + dz * along[1], dq = dx * across[0] + dz * across[1];
   const end = Math.abs(da) > Math.abs(dq);
   const sign = (/** @type {number} */ v) => (v < 0 ? -1 : 1);
-  const toHost = end ? [along[0] * sign(da), along[1] * sign(da)] : [across[0] * sign(dq), across[1] * sign(dq)];
+  const way = flip ? -1 : 1;   // the guest's rows run from the host's foot to its head
+  const toHost = end ? [along[0] * sign(da) * way, along[1] * sign(da) * way] : [across[0] * sign(dq) * way, across[1] * sign(dq) * way];
   // the host faces the board, -toHost; the host's right is (fz, -fx) - the world's own handedness (x right, z forward)
   const right = [-toHost[1], toHost[0]];
   const cell = end ? GAMBIT_FELT_SHORT / KG_COLS : GAMBIT_FELT_SHORT / KG_ROWS;

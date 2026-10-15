@@ -357,7 +357,8 @@ export function logLine(e, x) {
     case 'warning': return t('cards.kingsGambit.log.warning', 'A warning: {kind, select, fire {fire is} spikes {spikes are} other {poison is}} coming to {n, plural, one {# cell} other {# cells}}.', { kind: e.kind, n: e.cells.length });
     case 'turn': return e.side === 0 ? t('cards.kingsGambit.log.turnMine', 'Round {round}: your turn.', { round: e.round }) : t('cards.kingsGambit.log.turnTheirs', 'Round {round}: {name}\'s turn.', { round: e.round, name: x.regular });
     case 'end': return mine ? t('cards.kingsGambit.log.endMine', 'You end your turn.') : t('cards.kingsGambit.log.endTheirs', '{name} ends the turn.', { name: x.regular });
-    case 'forfeit': return t('cards.kingsGambit.log.forfeit', 'You forfeit the game.');
+    case 'forfeit': return e.side === 1 ? t('cards.kingsGambit.log.forfeitTheirs', '{name} forfeits the game.', { name: x.regular }) : t('cards.kingsGambit.log.forfeit', 'You forfeit the game.');
+    case 'timeout': return mine ? t('cards.kingsGambit.log.timeoutMine', 'Your time runs out: your turn ends.') : t('cards.kingsGambit.log.timeoutTheirs', '{name}\'s time runs out: the turn ends.', { name: x.regular });   // KG5: the relay's clock
     case 'decided': return e.by === 'void' ? t('cards.kingsGambit.log.void', 'The game cannot go on: no contest.') : e.winner === 0 ? t('cards.kingsGambit.log.won', 'You win.') : t('cards.kingsGambit.log.lost', '{name} wins.', { name: x.regular });
     default: return null;
   }
@@ -405,3 +406,65 @@ export function resultGold(over, stake, name) {
 }
 /** A regular whose night ran out: the next game is for fun. */
 export const nightSpent = (/** @type {string} */ name) => t('cards.kingsGambit.result.nightSpent', '{name} has paid out all they will tonight: the next game is for fun.', { name });
+
+// ── KG5: ONLINE (section 18) - another player across the board ───────────────────────────────────────────────────
+
+/** The online presses' words. */
+export const GAMBIT_ONLINE_PRESS = Object.freeze({
+  get sit() { return t('cards.kingsGambit.online.press.sit', 'Sit at the board'); },
+  get ready() { return t('cards.kingsGambit.online.press.ready', 'Ready'); },
+  get unready() { return t('cards.kingsGambit.online.press.unready', 'Not ready'); },
+  get leave() { return t('cards.kingsGambit.online.press.leave', 'Leave the board'); },
+  get regulars() { return t('cards.kingsGambit.online.press.regulars', 'Play a regular instead'); },
+  get online() { return t('cards.kingsGambit.online.press.online', 'Play another player'); },
+});
+/** The board's two seats, as the setup lists them. */
+export const onlineHead = () => t('cards.kingsGambit.online.head', 'At this board');
+/** A seat, by its player: who sits, and whether they are ready; or an empty seat. @param {{name: string, ready?: boolean}|null} s */
+export function onlineSeat(s) {
+  if (!s) return t('cards.kingsGambit.online.seatEmpty', 'An empty seat');
+  return s.ready ? t('cards.kingsGambit.online.seatReady', '{name} - ready', { name: s.name }) : t('cards.kingsGambit.online.seat', '{name}', { name: s.name });
+}
+/** The turn's clock, as a chip: the seconds the turn has left. @param {number} n */
+export const clockChip = (n) => t('cards.kingsGambit.online.clock', '{n, plural, one {# second} other {# seconds}} left', { n });
+/**
+ * THE NEXT STEP ONLINE (14.4's law 1): 'sit', 'alone', 'ready', 'theirReady', 'readyWait', 'aloneReady', 'dealing',
+ * 'watch', 'full', 'over'. @param {string} s @param {{name?: string, a?: string, b?: string}} [x]
+ */
+export function onlineStep(s, x = {}) {
+  switch (s) {
+    case 'sit': return t('cards.kingsGambit.online.next.sit', 'Sit at the board to play another player at this table, or play a regular instead.');
+    case 'alone': return t('cards.kingsGambit.online.next.alone', 'Build your army while you wait for another player to sit down.');
+    case 'ready': return t('cards.kingsGambit.online.next.ready', 'Build your army, then press Ready. {name} sits across the board.', { name: x.name ?? '' });
+    case 'theirReady': return t('cards.kingsGambit.online.next.theirReady', '{name} is ready: build your army, then press Ready.', { name: x.name ?? '' });
+    case 'readyWait': return t('cards.kingsGambit.online.next.readyWait', 'You are ready. Waiting for {name}.', { name: x.name ?? '' });
+    case 'aloneReady': return t('cards.kingsGambit.online.next.aloneReady', 'You are ready. Waiting for another player to sit down.');
+    case 'dealing': return t('cards.kingsGambit.online.next.dealing', 'Both are ready: the board is being laid.');
+    case 'watch': return t('cards.kingsGambit.online.next.watch', 'You are watching {a} play {b}.', { a: x.a ?? '', b: x.b ?? '' });
+    case 'full': return t('cards.kingsGambit.online.next.full', 'Two players sit at this board. Wait for a seat, or play a regular instead.');
+    default: return t('cards.kingsGambit.online.next.over', 'Press Play again to build your army for another game, or play a regular instead.');
+  }
+}
+/** A watched game's headline: who won it. @param {string} name */
+export const watchWin = (name) => t('cards.kingsGambit.online.watchWin', '{name} wins', { name });
+/** Why an online game ended, beside its headline: the other player gone, away, or giving it up. @param {{winner: number|null, how?: string}} over @param {string} name */
+export function onlineEnd(over, name) {
+  if (over.how === 'left' && over.winner === 0) return t('cards.kingsGambit.online.end.left', '{name} left the board.', { name });
+  if (over.how === 'idle') return over.winner === 0 ? t('cards.kingsGambit.online.end.idleTheirs', '{name} let the clock run out three turns running.', { name }) : t('cards.kingsGambit.online.end.idleMine', 'You let the clock run out three turns running.');
+  if (over.how === 'forfeit' && over.winner === 0) return t('cards.kingsGambit.online.end.forfeit', '{name} gave up the game.', { name });
+  return null;
+}
+/** The relay's refusals of the room's own (a sit, a Ready), as the panel says them - the law's are refusalWords'. @param {string} word */
+export function onlineRefusal(word) {
+  switch (word) {
+    case 'link': return t('cards.kingsGambit.online.refuse.link', 'The table cannot hear you - try again in a moment.');
+    case 'other game': return t('cards.kingsGambit.online.refuse.otherGame', 'Another game is being played at this table.');
+    case 'taken': return t('cards.kingsGambit.online.refuse.taken', 'That seat is taken.');
+    case 'full': return t('cards.kingsGambit.online.refuse.full', 'Two players already sit at this board.');
+    case 'busy': return t('cards.kingsGambit.online.refuse.busy', 'The room is busy - try again.');
+    case 'account seated': return t('cards.kingsGambit.online.refuse.accountSeated', 'Your account already sits at a table here.');
+    case 'gold table': return t('cards.kingsGambit.online.refuse.goldTable', 'This is the gold table: play another player at the other table.');
+    case 'in a game': case 'stale': return t('cards.kingsGambit.online.refuse.inGame', 'A game is under way at this board.');
+    default: return refusalWords(word);
+  }
+}

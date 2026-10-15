@@ -185,10 +185,12 @@ import { validArenaIn, validArenaOut } from './arenaLaw.js';   // ARENA4: the ar
 import { readHouse } from './houseLaw.js';   // LEGACY7 part two: a house rides a row - houseLaw.js imports nothing, so the worker's graph stays flat
 import { validHoldemIn, validHoldemOut } from './holdemTable.js';   // CARDS5: the relay's card table's words both ways - holdemTable.js imports only cardLaw.js, which imports only dice.js (already the bundle's)
 import { validIliacIn, validIliacOut } from './iliacTable.js';   // CARDS10: the relay's Iliac table's words both ways - iliacTable.js imports the rules (iliacHand.js, iliacCards.js) and Hold'em's bounds
+import { validGambitIn, validGambitOut } from './gambitTable.js';   // KG5: the relay's King's Gambit table's words both ways - gambitTable.js imports the law (kingsGambit.js, which brings enemyBasics.js and mathf.js) and Hold'em's bounds
 import { validGateMods, GATE_FEEDS_MAX } from './gateMods.js';   // WB8b: the Warden's marks on a gate's state - gateMods.js imports nothing, so the worker's graph stays flat
 export { validRollSpec, validRoll, rollDice, ROLL_DICE_MAX, ROLL_SIDES_MAX, ROLL_MOD_MAX };
 export { validHoldemIn, validHoldemOut };
 export { validIliacIn, validIliacOut };
+export { validGambitIn, validGambitOut };
 
 /** WORLD5: the instant the online world stood at the classic game start - 2026-09-14T00:00:00Z. */
 export const ONLINE_EPOCH_MS = Date.UTC(2026, 8, 14, 0, 0, 0);
@@ -1367,7 +1369,8 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world202';   // KG-SET (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md section 10.3; NOT YET DEPLOYED; world201 on its branch, renumbered past main's CHAT-TRADE world201 at the merge): THE ILIAC SET'S RULES WITHOUT ITS WORDS, AND NINE CARDS MORE - net/iliacCards.js, the relay's catalog, keeps each card's rules and canonical name and no longer its rules text or flavor (said in the player's language by systems/iliacCardWords.js, which the relay never carries), and holds the nine units The King's Gambit's roster brought into the set (the Grizzly Bear, the Sabretooth Tiger, the Spider, the Slaughterfish, the Mummy, the Frost and the Fire Daedra, the Archer and the Ranger). A deck holding one of the nine is a deck an older relay refuses ('bad deck'), so a new bundle, a new name (SLAM8).
+export const RELAY_VERSION = 'world203';   // KG5 (2026-10-15, bible/11-Multiplayer/Kings-Gambit.md sections 5.8 and 18; NOT YET DEPLOYED): THE RELAY RUNS THE KING'S GAMBIT - a room keeps King's Gambit tables at the cloth's index beside Hold'em's and Iliac Hand's (net/gambitTable.js), one game a cloth: two seats, each army said at Ready and dealt by the relay's own board and dice, the law's commands, a 60 s turn clock and its idle stand-up, a stand or a socket gone forfeiting; the green table only, friendly. A `gambit` frame, so a new bundle (net/gambitTable.js, net/kingsGambit.js, characters/enemyBasics.js and systems/mathf.js joined it) and a new name (SLAM8).
+// world202:   KG-SET (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md section 10.3; NOT YET DEPLOYED; world201 on its branch, renumbered past main's CHAT-TRADE world201 at the merge): THE ILIAC SET'S RULES WITHOUT ITS WORDS, AND NINE CARDS MORE - net/iliacCards.js, the relay's catalog, keeps each card's rules and canonical name and no longer its rules text or flavor (said in the player's language by systems/iliacCardWords.js, which the relay never carries), and holds the nine units The King's Gambit's roster brought into the set (the Grizzly Bear, the Sabretooth Tiger, the Spider, the Slaughterfish, the Mummy, the Frost and the Fire Daedra, the Archer and the Ranger). A deck holding one of the nine is a deck an older relay refuses ('bad deck'), so a new bundle, a new name (SLAM8).
 // world201:   CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG"; bible/06-Systems/Community-Arc.md CHAT-TRADE; NOT YET DEPLOYED): the Trade and LFG channels, `chat:trade` and `chat:lfg`, joined CHAT_ROOMS - the relay opens them as it opens a language's; nothing else in the law moved. The client's Trade and LFG tabs wait for this relay (TRADE_CHAN_RELAY_MIN)
 // world200:   PEER-ACTS (2026-10-13, GATHER-FEEL II; Mac: "Do the not done" - bible/06-Systems/Professions-Arc.md 5.1 "Others see it" and section 45; NOT YET DEPLOYED; world199 on its branch, renumbered past main's AUDIT ETHER-OW world199 at the merge): THE POSE CARRIES A GATHERING ACT - `ga` the act (POSE_GATHER_ACTS: the axe at a trunk, the pick at a stone, a kneel by hand, with the sickle, with the Basket, with the knife, the net wound, flying, waiting, tugged, hauled) and `gm` the net's throw in whole metres, absent off an act; `gb` the beats (a count and the last beat's kind), on its own as `hk` is; validPose bounds them (a code past the table no act, a count of none no beat), poseChanged sends them at once. An older relay's validPose drops them: the others see and hear nothing of an act, as before.
 // world199:   AUDIT ETHER-OW C2-1 (2026-10-13, bible/01-Overview/Audit-Ether-OW.md; NOT YET DEPLOYED): THE WATCH'S GROUND, ONE HOME - the relay's mint asks net/watchReceipt.js watchPixelOk (the Bay's map, whole pixels) where it wrote the bounds itself; the account service's receipt check and the Motherlodes' site read the same law, so a Motherlode stands only where a receipt can name its pixel. The relay's answers are as they were: a new bundle, so a new name (SLAM8).
@@ -1878,7 +1881,7 @@ export function inRangeOf(roomKey, from) {
   return (to) => !!to && Math.max(Math.abs(fx - Math.floor(to.x / PIXEL_UNITS)), Math.abs(fy - Math.floor(to.z / PIXEL_UNITS))) <= RANGE_PIXELS;
 }
 
-/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'renown'|'guild'|'guildout'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'wild'|'wdun'|'holdem'|'iliac', ...}
+/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'renown'|'guild'|'guildout'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'wild'|'wdun'|'holdem'|'iliac'|'gambit', ...}
  *  or {error} - the caller closes on an error. INSPECT1: every arm below, named - this line had fallen seven behind
  *  (test/auditworld2.test.js derives the list from the arms now, so it cannot fall behind again - the merge with
  *  main's HCC-PARK was its first catch: the park arm, unnamed). */
@@ -2119,6 +2122,16 @@ export function parseClient(text, { hasHello = false } = {}) {
     if (!w) return { error: 'bad iliac' };
     return { t: 'iliac', ...w };
   }
+  if (m.t === 'gambit') {
+    // KG5: A WORD TO THE ROOM'S KING'S GAMBIT TABLE - sit with a crown, ready with an army, act (the law's command in the
+    // game the panel showed), forfeit, stand, or look (net/gambitTable.js, both ends). The relay builds the board, rolls
+    // every die and runs the clock.
+    if (!hasHello) return { error: 'gambit before hello' };
+    if (text.length > GAMBIT_FRAME_MAX) return { error: 'frame too large' };
+    const w = validGambitIn(m);
+    if (!w) return { error: 'bad gambit' };
+    return { t: 'gambit', ...w };
+  }
   if (m.t === 'roll') {
     // DICE1: A ROLL ASKED OF THE RELAY - how many dice, how many sides, what to add, inside the dice's own bounds
     // (net/dice.js). The relay rolls them; nothing on this frame is a result. A channel is the chat line's law.
@@ -2307,6 +2320,9 @@ export const holdemGate = (bucket, nowMs) => tokenGate(bucket, nowMs, HOLDEM_HZ_
 /** CARDS10: an Iliac sit carries thirty card ids and the service's deck order (net/iliacTable.js ILIAC_ORDER_MAX); its
  *  words a second are Hold'em's (holdemGate, a bucket of their own). */
 export const ILIAC_FRAME_MAX = 2400;
+/** KG5: a King's Gambit word's longest is a Ready - twelve roster ids and a crown; its words a second are Hold'em's
+ *  (holdemGate, a bucket of their own), and its sits spend the room's one sit budget (holdemSitRoomGate). */
+export const GAMBIT_FRAME_MAX = 400;
 /** AUDIT CARDS-3 A4: the room's sits a second, every socket together - a sit fans the whole table to every socket in the
  *  room and writes the room's tables, and a socket's own gate let ten sockets toggling sit and stand push a megabyte
  *  a second into a room of sixty. A sit past it is refused 'busy'; acts and looks are the seat's own (one a turn, and
@@ -3171,6 +3187,9 @@ export const HOLDEM_RELAY_MIN = 178;
 /** CARDS10: the relay that first deals Iliac Hand (an older one CLOSES the socket on an iliac frame). */
 export const ILIAC_RELAY_MIN = 182;   // world179 on its branch - renumbered at the merges past main's HOURS-FIRST world179, TAVERN-TABLES world180 and TV-BEYOND world181, none of which deals Iliac Hand (an `iliac` frame to them closes the socket)
 export const relaySupportsIliac = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= ILIAC_RELAY_MIN; };
+/** KG5: the relay that first runs The King's Gambit (an older one CLOSES the socket on a gambit frame). */
+export const GAMBIT_RELAY_MIN = 203;
+export const relaySupportsGambit = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= GAMBIT_RELAY_MIN; };
 export const relaySupportsHoldem = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= HOLDEM_RELAY_MIN; };
 export const relaySupportsRoll = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= ROLL_RELAY_MIN; };
 /** CHAT-CHAN: the relay that first routes a party's line and opens the region channels. An older one would take a

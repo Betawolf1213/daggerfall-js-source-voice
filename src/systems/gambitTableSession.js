@@ -20,11 +20,13 @@
 //
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import { gambitAct, finishTurn } from '../net/kingsGambit.js';
+import { GAMBIT_TURN_END_MS } from '../net/gambitTable.js';
 import { dealRegular, regularStep } from './gambitPatrons.js';
 import { SUIT_CROWNS } from '../render/cardFaces.js';   // the Bay deck's four crowns - pure, its painters take a canvas
 
-/** THE MOD'S BEATS (2.10): the turn's end after its last action, the regular's pause before each action, the result. */
-export const GAMBIT_TURN_END_MS = 900;
+/** THE MOD'S BEATS (2.10): the turn's end after its last action (KG5: its one home the relay's table's, which runs it
+ *  online too), the regular's pause before each action, the result. */
+export { GAMBIT_TURN_END_MS };
 export const GAMBIT_REGULAR_PAUSE_MS = 1200;
 export const GAMBIT_RESULT_MS = 1300;
 /** The mod's three bets: the tier's least stake times one of these. */

@@ -331,11 +331,11 @@ test('AUDIT CARDS-6 E8: a Hold\'em sit at a cloth that plays Iliac Hand - the re
   assert.deepEqual(c.sent.map((w) => w.op), ['sit'], 'the Hold\'em sit said');
   await c.pump();
   assert.ok(c.ws.sent.some((m) => m.t === 'holdem' && m.error === 'other game'), 'the relay\'s own word');
-  assert.ok(c.said.includes('Iliac Hand is being played at this table.'), `said: ${c.said}`);
+  assert.ok(c.said.includes('Another game is being played at this table.'), `said: ${c.said}`);
   for (let k = 1; k <= 4; k++) { local.ms += 1600; await c.pump(); }
   assert.deepEqual(c.sent, [], 'never asked again - it was every 1.5 s for as long as the game went on');
   assert.ok(!r.room._holdem?.get(0)?.seats.some((s) => s?.id === 'peer-c'), 'no seat at the relay');
-  assert.match(c.shown(), /Iliac Hand is being played at this table\./, 'the panel says it');
+  assert.match(c.shown(), /Another game is being played at this table\./, 'the panel says it');
   const offer = c.buttons();
   assert.equal(offer.length, 4, `${offer}`);   // PIN MOVED (KG3): the third game offered beside the second
   assert.equal(offer[0], 'Play Iliac Hand', 'and offers the game played there');

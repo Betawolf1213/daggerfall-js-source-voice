@@ -191,7 +191,7 @@
  {
   "name": "KG4-G-lean-phase",
   "file": "src/scenes/gambitTableGame.js",
-  "old": "const want = g.phase === 'battle' ? 1 : 0;",
+  "old": "const want = g.phase === 'battle' && !watching() ? 1 : 0;",
   "new": "const want = 1;",
   "tests": [
    "test/kg3_host.test.js"

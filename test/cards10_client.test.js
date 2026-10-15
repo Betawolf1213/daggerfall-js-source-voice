@@ -197,7 +197,7 @@ test('CARDS10 online on two fake pages over the relay\'s table: a look on openin
   assert.equal(iliacOnlineLine({ t: 'commit', seat: 0, timeout: true }, ['Ann', 'Bob'], 0), 'Your time runs out - you pass.');
   assert.equal(lastLineOf({ winner: null }), 'The game is drawn.');
   assert.equal(lastLineOf({ winner: 1, how: 'power', names: ['Ann', 'Bob'] }), 'Bob beats Ann on power.');
-  assert.equal(ILIAC_ONLINE_REFUSALS['other game'], 'Hold\'em is being played at this table.');
+  assert.equal(ILIAC_ONLINE_REFUSALS['other game'], 'Another game is being played at this table.');   // PIN MOVED (KG5): a cloth's other game may be Hold'em or The King's Gambit
 });
 
 test('CARDS10 ranked online: the realm\'s order asked first and carried in the sit; a refusal said, no sit; the regulars instead when alone; the host\'s wiring (mutants: the order carried; the regulars; the frames routed)', async () => {

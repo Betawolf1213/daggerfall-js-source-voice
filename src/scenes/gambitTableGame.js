@@ -43,6 +43,17 @@
 // cloth through `play` - the room's 3D sound - never through the flat one-shot PEERFX1 observes, which reads Hit1..Hit5
 // at volume 1 as the player struck and tells the room (section 5.6's trap).
 //
+// KG5 (2026-10-15, sections 5.8, 10.7 and 18): ANOTHER PLAYER ACROSS THE BOARD. With a relay that runs the game (`online`
+// - the friendly table only; the red table's gold is KG6's), the setup offers the board's two seats: sit, build an army,
+// say Ready; once both are, the relay deals and the battle is played as against a regular - the same panel, cloth, log
+// and motion, through the online session (systems/gambitRemoteTable.js RemoteGambitSession: the law's check here, the
+// command to the relay, the other side's actions shown GAMBIT_REMOTE_GAP_MS apart, the relay's clock on a chip). The
+// guest reads the board turned about its middle and the cloth lays it where the host's lies (gambitPlaces `flip`), each
+// player's king's row at its own foot. Unseated, a game under way is watched - the host's side as side 0, nothing
+// pressed but the regulars and Stand up, no lean. Play a regular instead turns to the regulars (standing up from the
+// board); a new welcome asks the table again; every road off the seat stands up from the board, forfeiting a game under
+// way (the mod's FORFEIT online).
+//
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import { GambitTableSession, gambitNightLeft, gambitPursesAfter, stakeOf, gambitCrownRestore, crownIndex, GAMBIT_CROWNS, GAMBIT_LOG_MAX, GAMBIT_STAKE_MULTS, GAMBIT_RESULT_MS } from '../systems/gambitTableSession.js';
 import { tierFor, GAMBIT_TIERS } from '../systems/gambitPatrons.js';
@@ -50,8 +61,9 @@ import { KG_POINT_BUDGET, KG_COLS, KG_ROWS, KG_KING_CELL, armyRefusal, armyCost,
 import { gambitHudModel, createGambitTableHud, boardCursorStep, gambitBoardKey } from '../ui/gambitTableHud.js';
 import {
   pieceName, unitJoined, unitLeft, unitTooDear, armyFull, refusalWords, logLine, resultGold,
-  dealLine, barkInvite, barkEnd,
+  dealLine, barkInvite, barkEnd, onlineRefusal,
 } from '../ui/gambitTableWords.js';
+import { RemoteGambitTable, RemoteGambitSession } from '../systems/gambitRemoteTable.js';
 import { gambitPlaces, gambitPressCell, gambitLean, gambitCardHeight, GAMBIT_CARD_FOOT } from '../world/gambitCloth.js';
 import { createGambitMotion } from '../world/gambitMotion.js';
 import { prefersReducedMotion } from '../systems/hitFlash.js';
@@ -118,7 +130,10 @@ export const gambitRegulars = (regulars) => regulars.map((r) => ({ ...r, tier: t
  * @param {{doc?: any, renderer: any, entity: any, say: (t: string) => void, holdCursor: () => (() => boolean), relock?: () => void,
  *   rand32: () => number, now: () => number, day: number|(() => number), key: string, friendly: boolean,
  *   regulars: {name: string, seed: number, chair: number}[], frame: any, mySeatFeet: number[], touch?: () => boolean,
- *   onHoldem: () => void, onIliac: () => void, onStand: () => void, play?: (clip: number, at: number[]) => void}} d
+ *   onHoldem: () => void, onIliac: () => void, onStand: () => void, play?: (clip: number, at: number[]) => void,
+ *   online?: {send: (w: any) => boolean, myId: () => string|null, now: () => number, table: number, chairs: number,
+ *     chair: number, chairFeet: (k: number) => number[]|null, welcomes?: () => number}|null}} d
+ *   `online` KG5: the relay's King's Gambit table at this cloth (its index, its chairs, the player's chair), or null.
  */
 export function openGambitTableGame(d) {
   const today = () => (typeof d.day === 'function' ? d.day() : d.day);
@@ -134,6 +149,11 @@ export function openGambitTableGame(d) {
     barks: new Map(), places: gambitPlaces(d.frame, d.mySeatFeet), look: /** @type {any} */ (null), cam: /** @type {any} */ (null),
     draw: createGambitTableDraw(d.renderer, { doc: d.doc }), hud: /** @type {any} */ (null), release: d.holdCursor(),
     motion: createGambitMotion({ pick: (n) => (d.rand32() >>> 0) % Math.max(1, n) }), leanK: 0, leanAt: /** @type {number|null} */ (null),
+    // KG5: the board's two seats online - the relay's table as told, the last word sent (its refusal is the room's or the
+    // law's), the socket's welcomes (a new one asks the table again), the clock's last second shown
+    mode: /** @type {'online'|'regulars'} */ (d.online ? 'online' : 'regulars'),
+    remote: d.online ? new RemoteGambitTable({ myId: d.online.myId() }) : null, lastOp: /** @type {string|null} */ (null),
+    welcomes: d.online?.welcomes?.() ?? 0, clockShown: /** @type {number|null} */ (null),
   };
   g.motion.lay(g.places.end);
   /** A sound of the table's own, now or `after` ms on, from the board's middle (the motion's clock plays it). */
@@ -157,9 +177,28 @@ export function openGambitTableGame(d) {
     return gold > 0 && gold <= purse() && gold <= r.nightLeft ? gold : null;
   };
   const nameOf = (/** @type {number} */ id) => g.game?.names.get(id) ?? '?';
+  /** KG5: the online board's own - my seat at it (-1 unseated), whether I watch a game under way. */
+  const online = () => g.mode === 'online' && !!g.remote;
+  const mySeat = () => (online() ? g.remote.seat() : -1);
+  const watching = () => online() && mySeat() < 0 && !!g.session;
+  /** KG5: the board's two seats as the panel reads them (section 18), or null with the regulars. */
+  const onlineModel = () => {
+    if (!online()) return null;
+    const st = g.remote.state, me = mySeat();
+    const seats = [0, 1].map((k) => { const x = st?.seats?.[k]; return x ? { name: x.name, ready: !!x.ready, mine: k === me } : null; });
+    const other = me >= 0 ? seats[1 - me] : null, ready = me >= 0 && !!seats[me]?.ready;
+    const step = me < 0 ? (st?.game ? 'watch' : seats.every(Boolean) ? 'full' : 'sit')
+      : ready ? (other ? (other.ready ? 'dealing' : 'readyWait') : 'aloneReady') : other ? (other.ready ? 'theirReady' : 'ready') : 'alone';
+    return {
+      seats, names: seats.map((x) => x?.name ?? ''), canSit: me < 0 && !st?.game && !seats.every(Boolean), ready, step,
+      stepArgs: { name: other?.name ?? '', a: seats[0]?.name ?? '', b: seats[1]?.name ?? '' }, watching: watching(),
+      clock: g.session && st?.game ? g.remote.clockLeft(d.online.now()) : null,
+    };
+  };
   const model = () => {
     const s = g.session;
     return gambitHudModel({
+      online: onlineModel(), canOnline: !!d.online,
       phase: g.phase, regulars: rows(), regular: g.regular, friendly: d.friendly, purse: purse(), stakeMult: g.stakeMult, crown: g.crown,
       army: g.army, pressed: g.pressed, said: g.said,
       game: s && g.game ? { state: s.state, crowns: g.game.crowns, name: g.game.name, stake: g.game.stake, over: s.shown ? s.over : null, dealt: g.game.dealt, nightSpent: g.game.nightSpent } : null,
@@ -224,12 +263,14 @@ export function openGambitTableGame(d) {
     if (!s) return false;
     const events = s.drain();
     if (events.length) g.motion.feed(events, now, s.state);   // KG4: the pieces' motion, from the law's own words
+    const watched = watching();   // KG5: a watcher's log would call the host's pieces "yours" - the board says it
     for (const e of events) {
-      const line = logLine(e, { regular: g.game.name, names: nameOf });
+      const line = watched ? null : logLine(e, { regular: g.game.name, names: nameOf });
       if (line) g.log.push(line);
       if (e.t === 'decided') {
         settle(now);
         // FinishMatch: the fanfare and the coins, or the groan, at the result's beat
+        if (watched) continue;
         if (e.winner === 0) { sound(SOUND.ArenaFanfareLevelUp, GAMBIT_RESULT_MS); if (g.game?.stake > 0) sound(SOUND.GoldPieces, GAMBIT_RESULT_MS + 600); }
         else if (e.winner === 1) sound(SOUND.Groan, GAMBIT_RESULT_MS);
       }
@@ -258,6 +299,7 @@ export function openGambitTableGame(d) {
       d.entity.gambitPurses = gambitPursesAfter(d.entity.gambitPurses, d.key, today(), r.name, gold.net);
       r.nightSpent = gold.net > 0 && gambitNightLeft(d.entity.gambitPurses, d.key, today(), r.name, r.tier) < r.tier.stake;
     }
+    if (online()) { if (s.over.by !== 'void' && !watching()) setPref('gambitPlayed', true); return; }   // KG5: no gold, no regular's word
     if (s.over.by !== 'void') d.say(resultGold(s.over, r.stake, r.name));
     if (s.over.winner !== null) bark(r.name, barkEnd(s.over.winner === 1, (d.rand32() >>> 0) / 2 ** 32), now);
     if (s.over.by === 'king' || s.over.by === 'forfeit') setPref('gambitPlayed', true);
@@ -270,7 +312,7 @@ export function openGambitTableGame(d) {
     const target = cmd.target != null ? nameOf(cmd.target) : '';
     const no = s.act(cmd, now);
     g.staged = null;
-    if (no) { g.why = refusalWords(no, { piece, target }); return; }
+    if (no) { g.why = no === 'link' ? onlineRefusal(no) : refusalWords(no, { piece, target }); return; }
     g.why = null;
     pump(now);
   }
@@ -285,7 +327,7 @@ export function openGambitTableGame(d) {
     if (!st || g.phase !== 'battle') return;
     const [c, r] = cell;
     g.cursor = [c, r];
-    const mine = s.playing() && st.turn === 0 && !st.ending;
+    const mine = s.playing() && st.turn === 0 && !st.ending && !watching();   // KG5: a watcher presses nothing of the game's
     const sel = g.selected != null ? pieceById(st, g.selected) : null;
     const pc = pieceAt(st, c, r);
     if (pc && pc.side === 0) {
@@ -327,6 +369,8 @@ export function openGambitTableGame(d) {
       return;
     }
     g.why = null;
+    if (online() && onlinePress(id, value, now)) { paint(); return; }
+    if (id === 'online' && d.online) { toOnline(); paint(); return; }
     if (g.phase === 'setup') setupPress(id, value, now);
     else if (g.phase === 'army') armyPress(id, value, now);
     else if (g.phase === 'battle') battlePress(id, value, now);
@@ -383,6 +427,119 @@ export function openGambitTableGame(d) {
     if (id === 'again') { g.phase = 'army'; deal(now); if (g.phase === 'army') g.phase = 'setup'; }   // a stake that no longer stands is chosen again
     else if (id === 'army') { g.phase = 'army'; g.session = null; g.game = null; g.look = null; }
     else if (id === 'regulars') { g.phase = 'setup'; g.session = null; g.game = null; g.look = null; g.stakeMult = null; }
+  }
+
+  // ── KG5: THE BOARD ONLINE ──────────────────────────────────────────────────────────────────────────────────────
+
+  /** A word to the relay's table at this cloth: false, and said, when the link will not carry it. @param {any} w */
+  function send(w) {
+    if (!d.online) return false;
+    g.lastOp = w.op;
+    const ok = d.online.send({ ...w, table: d.online.table });
+    if (!ok && w.op !== 'look' && w.op !== 'stand') g.why = onlineRefusal('link');
+    return ok;
+  }
+  /** The online board's presses; true when the press was the board's. */
+  function onlinePress(/** @type {string} */ id, /** @type {any} */ value, /** @type {number} */ now) {
+    const me = mySeat();
+    if (id === 'regulars') { toRegulars(); return true; }
+    if (g.phase === 'setup') {
+      if (id === 'sit') { if (me < 0) send({ op: 'sit', chair: d.online.chair, chairs: d.online.chairs, crown: crownIndex(g.crown) }); return true; }
+      if (id === 'crown' && Number.isInteger(value) && GAMBIT_CROWNS[value]) { g.crown = GAMBIT_CROWNS[value]; d.entity.gambitCrown = g.crown; return true; }
+      return id === 'next' || id === 'regular' || id === 'stake';   // the regulars' presses are not the board's
+    }
+    if (g.phase === 'army') {
+      const ready = me >= 0 && g.remote.ready(me);
+      if (id === 'leave') { send({ op: 'stand' }); g.phase = 'setup'; return true; }
+      if (id === 'ready') {
+        const no = armyRefusal(g.army);
+        if (no) { g.why = refusalWords(no); return true; }
+        if (me >= 0) send({ op: 'ready', army: g.army.slice(), crown: crownIndex(g.crown) });
+        return true;
+      }
+      if (id === 'unready') { if (ready) send({ op: 'unready' }); return true; }
+      // a change to a ready army takes the Ready back first (the relay keeps the army it was told)
+      if (ready && ['unit', 'remove', 'autofill', 'clear'].includes(id)) send({ op: 'unready' });
+      if (id === 'start' || id === 'back') return true;   // the regulars' - online, Ready and Leave the board
+      return false;
+    }
+    if (g.phase === 'battle' && watching()) return true;   // a watcher's presses are the regulars and Stand up
+    if (g.phase === 'over') {
+      if (id === 'again') { g.phase = 'army'; g.session = null; g.game = null; g.look = null; g.motion.reset?.(); return true; }
+      return id === 'army';
+    }
+    return false;
+  }
+  /** Play a regular instead: up from the board (a game under way forfeited), the regulars' setup. */
+  function toRegulars() {
+    if (mySeat() >= 0) send({ op: 'stand' });
+    g.mode = 'regulars';
+    g.phase = 'setup'; g.session = null; g.game = null; g.look = null; g.armed = null;
+    g.places = gambitPlaces(d.frame, d.mySeatFeet);
+    g.motion.lay(g.places.end);
+  }
+  /** Play another player: the board's seats, asked of the relay. */
+  function toOnline() {
+    if (g.session?.playing()) return;
+    g.mode = 'online';
+    g.phase = 'setup'; g.session = null; g.game = null; g.look = null;
+    send({ op: 'look' });
+  }
+  /** The game the relay dealt (or the one under way, told by a look), opened as this seat reads it - a watcher the
+   *  host's side. @param {any} st the relay's table @param {number} now */
+  function openOnline(st, now) {
+    const me = mySeat(), side = me === 1 ? 1 : 0;
+    const host = st.seats[0], guest = st.seats[1];
+    g.places = gambitPlaces(d.frame, d.online.chairFeet(host?.chair ?? d.online.chair) ?? d.mySeatFeet, { flip: side === 1 });
+    g.motion.reset?.();
+    g.motion.lay(g.places.end);
+    const session = new RemoteGambitSession({
+      side, game: st.game, gameNo: st.gameNo, now,
+      send: (cmd) => send({ op: 'act', gameNo: st.gameNo, cmd }), forfeit: () => send({ op: 'forfeit', gameNo: st.gameNo }),
+    });
+    const crownOf = (/** @type {any} */ x) => GAMBIT_CROWNS[x?.crown] ?? GAMBIT_CROWNS[0];
+    const crowns = side === 1 ? [crownOf(guest), crownOf(host)] : [crownOf(host), crownOf(guest)];
+    const name = (side === 1 ? host?.name : guest?.name) ?? '?';
+    const view = session.state;
+    g.session = /** @type {any} */ (session);
+    g.settled = false;
+    g.game = {
+      stake: 0, regular: name, name, tier: null, crowns,
+      dealt: [0, 1].map((k) => view.pieces.filter((p) => p.side === k).length),
+      names: new Map(view.pieces.map((p) => [p.id, pieceName(p, crowns)])), nightSpent: false,
+    };
+    g.phase = 'battle';
+    g.selected = null; g.staged = null; g.info = null; g.why = null; g.armed = null; g.more = false; g.log = [];
+    const king = view.pieces.find((p) => p.side === 0 && p.king);
+    g.cursor = king ? [king.col, king.row] : KG_KING_CELL.slice();
+    if (me >= 0) d.say(dealLine(name, 0));
+    pump(now);
+  }
+  /** A FRAME OF THE RELAY'S for this table (scenes/worldModes.js routes them): the table told, a game opened or fed, the
+   *  seats' changes read into the phase, a refusal said. @param {any} f */
+  function relay(f) {
+    if (g.closed || !d.online || f?.table !== d.online.table) return;
+    const now = d.now();
+    const events = g.remote.apply(f, d.online.now());
+    if (typeof f.error === 'string') {
+      // the law's word for a command, the room's for the rest ('full' is both - a sit's and a full health's)
+      g.why = g.lastOp === 'act' ? refusalWords(f.error) : onlineRefusal(f.error);
+      if (g.session instanceof RemoteGambitSession) g.session.sentAt = null;
+      if (online()) paint();
+      return;
+    }
+    if (!online()) return;   // playing the regulars: the board's frames are told, and wait for the online setup
+    const st = g.remote.state;
+    const me = mySeat();
+    const dealt = events.some((/** @type {any} */ e) => e.t === 'game');
+    const s = g.session instanceof RemoteGambitSession ? g.session : null;
+    if (st?.game && (dealt || !s || s.gameNo !== st.gameNo)) openOnline(st, now);
+    else if (s && s.gameNo === (st?.game ? st.gameNo : st?.last?.gameNo)) s.feed(events, st);
+    if (!g.session) {
+      if (me >= 0 && g.phase === 'setup') g.phase = 'army';
+      else if (me < 0 && g.phase === 'army') g.phase = 'setup';   // stood up by the relay (the clock, another table)
+    }
+    paint();
   }
 
   // ── THE CLOTH AND THE KEYS ─────────────────────────────────────────────────────────────────────────────────────
@@ -463,6 +620,12 @@ export function openGambitTableGame(d) {
     let changed = false;
     if (g.armed && now - g.armedAt >= GAMBIT_ARM_MS) { g.armed = null; changed = true; }
     if (g.session) { g.session.tick(now); changed = pump(now) || changed; }
+    if (online()) {
+      const w = d.online?.welcomes?.() ?? 0;
+      if (w !== g.welcomes) { g.welcomes = w; send({ op: 'look' }); }   // a new socket: the relay stood the old one up - ask again
+      const c = g.remote.state?.game ? g.remote.clockLeft(d.online.now()) : null;
+      if (c !== g.clockShown) { g.clockShown = c; changed = true; }
+    }
     // THE SOUNDS come due, each played at the cloth (the board's middle for the table's own)
     for (const c of g.motion.sounds(now)) d.play?.(c.clip, c.cell ? g.places.at(c.cell[0], c.cell[1]) : g.places.at((KG_COLS - 1) / 2, (KG_ROWS - 1) / 2));
     if (changed) paint();
@@ -471,9 +634,10 @@ export function openGambitTableGame(d) {
   const pieceLook = (/** @type {any} */ p) => ({ id: p.id, side: p.side, col: p.col, row: p.row, king: p.king, unit: p.unit });
   g.hud = createGambitTableHud({ onPress: press, doc: d.doc });
   sound(SOUND.DiceRoll);   // OpenChallenge
+  if (online()) send({ op: 'look' });   // KG5: the board as the relay keeps it
   paint();
   return {
-    g, press, frame, pointer, key,
+    g, press, frame, pointer, key, relay,
     /** The cloth's picture this frame (the room's own pass, after the decor): the board and its pieces; `cam` the
      *  frame's lens, kept for the next press on the cloth. */
     draw(/** @type {number} */ _now, /** @type {{proj: any, view: any, eye: number[]}} */ cam) {
@@ -491,7 +655,7 @@ export function openGambitTableGame(d) {
      */
     lean(now, view, seat) {
       if (g.closed) return null;
-      const want = g.phase === 'battle' ? 1 : 0;
+      const want = g.phase === 'battle' && !watching() ? 1 : 0;   // KG5: a watcher keeps the seat's own view
       const dt = g.leanAt === null ? 0 : Math.max(0, (now - g.leanAt) / 1000);
       g.leanAt = now;
       g.leanK = prefersReducedMotion() ? want : want > g.leanK ? Math.min(want, g.leanK + dt / GAMBIT_LEAN_S) : Math.max(want, g.leanK - dt / GAMBIT_LEAN_S);
@@ -513,12 +677,15 @@ export function openGambitTableGame(d) {
     playing: () => !g.closed && !!g.session?.playing(),
     /** Whether gold is down on the table - a stake held: the save waits on it, as on the Hold'em chips (5.7). */
     staked: () => !g.closed && !!g.session?.playing() && (g.game?.stake ?? 0) > 0,
+    /** KG5: whether this player sits at the relay's board here. */
+    seatedOnline: () => !g.closed && mySeat() >= 0,
     /** The game closes: a battle under way forfeited (the stake the regular's - every road off the seat), the panel,
      *  the draw and the cursor let go. `concede` false is a load's road: nothing settles (the save predates the deal).
      *  Once. */
     close({ concede = true } = {}) {
       if (g.closed) return;
-      if (concede && g.session?.playing()) { g.session.forfeit(d.now()); pump(d.now()); }
+      if (mySeat() >= 0) send({ op: 'stand' });   // KG5: up from the relay's board - a game under way is the other player's
+      else if (concede && g.session?.playing() && !online()) { g.session.forfeit(d.now()); pump(d.now()); }
       g.closed = true;
       g.hud?.destroy();
       g.draw?.destroy();

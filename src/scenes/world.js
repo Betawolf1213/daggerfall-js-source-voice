@@ -22509,6 +22509,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     online.onChat = (line) => { if (localLineHeard(line, peersNear(), player.feetAt())) chatLog.push('local', line); };
     online.onRoll = (line) => { if (localLineHeard(line, peersNear(), player.feetAt())) chatLog.push('local', line); };   // DICE1: a roll at the table is heard as a line is
     online.onIliac = (f) => modes?.iliacOnlineFrame?.(f);   // CARDS10: the relay's Iliac table, to the room's host
+    online.onGambit = (f) => modes?.gambitOnlineFrame?.(f);   // KG5: the relay's King's Gambit table, to the room's host
     online.onHoldem = (f) => modes?.cardOnlineFrame?.({ ...f, at: performance.now() });   // CARDS5: the relay's card table, to the room's host - AUDIT CARDS-3 D1: on the cloth's clock (the session's own `now` is the epoch's)
     for (const tab of chatLog.tabs) {
       if (!tab.link) continue;   // CHAT-CHAN: the Party and Local tabs ride the hub's link and the presence session's room
@@ -29952,6 +29953,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     cardStakes,   // CARDS6: a realm character's stakes at a relay's gold table (null off the realm)
     // CARDS10: the relay that deals Iliac Hand - a word to the room's Iliac table, who I am at it; a ranked seat's deck
     // vouched for by the service (a realm character's own cards, the record checkpointed first); the results carried
+    gambitOnline: { ok: () => !!online?.gambitOk, send: (w) => !!online?.sendGambit(w), id: () => online?.id ?? null, now: () => Date.now() + _sharedOffsetMs, welcomes: () => online?.holdemWelcomes ?? 0 },   // KG5: the relay's King's Gambit table - Iliac Hand's hooks, its own send
     iliacOnline: { ok: () => !!online?.iliacOk, send: (w) => !!online?.sendIliac(w), id: () => online?.id ?? null, now: () => Date.now() + _sharedOffsetMs, welcomes: () => online?.holdemWelcomes ?? 0 },   // AUDIT CARDS-6 E5: my socket's welcomes (the card tables' one count)
     iliacRanked: {
       // AUDIT CARDS-6 E14: a guest's account is offered no ranked seat - it was, and every vouch it asked failed

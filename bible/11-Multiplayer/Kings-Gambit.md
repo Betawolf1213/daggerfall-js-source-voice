@@ -459,6 +459,7 @@ structure ours.
   the pins that name the version (`wire.js:"export const ILIAC_RELAY_MIN = 182;"` is the minimum's pattern); the client's
   send, its welcome gate and its frames in `net/online.js` and `scenes/world.js`; the alarm, the socket's close and the
   room's sweep.
+- BUILT (KG5, section 18): every seam above, the table's law `net/gambitTable.js`, relay world203.
 - LATER (KG6, section 10.7): gold tables through the realm's escrow (CARDS6's stake orders and receipts - an arm of their
   own in `server-account/src/cards.js`, whose escrow checks Hold'em's buy-ins in big blinds; AUDIT KG C24) and a season
   board (CARDS10's, the Arena's way).
@@ -510,7 +511,7 @@ Each ships alone and is verifiable without the next.
 | **KG-SET** SHIPPED (section 15) | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
 | **KG3** SHIPPED (section 16) | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - in the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS) and the roles, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in the thirteen whole languages (L10N6's rule, the twelve drafting owing them - section 16.5; the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
 | **KG4** SHIPPED (section 17) | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press on the built board (14.3); the cloth's marks in the house's coat (14.8); the lab (`cards.html` with a King's Gambit table) and its probes - the panel's at a desktop's and a phone's size (`tools/cardPanelsProbe.mjs`, the three panels' one probe - 14.9); the frame cost on the phone probe, as CARDS3c measured it. |
-| **KG5** | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
+| **KG5** SHIPPED (section 18) | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
 | **KG6** | Gold tables online (the realm's escrow) and a season board with its title (section 10.7). |
 
 ## 9. Questions for the owner (ANSWERED 2026-10-13 - section 10)
@@ -1571,3 +1572,92 @@ SpellImpactPoison 87, SpellImpactFire 89, Hit3-5 110-112, PainSound 299, Groan 4
   result's groan at its beat, the 3D sound) and the win's fanfare and coins in KG3's game played by presses. MUTANTS:
   `tools/mutants/kg4.json`'s KG4b records, 11, all dead.
 
+## 18. KG5 (2026-10-15): online - the relay runs the game
+
+The owner: "Download daggerfall if you need to implement things. Fucking finish everything. Weve worked on this for
+days." Section 5.8's decisions, built: a King's Gambit table in the relay beside Hold'em's and Iliac Hand's, the client's
+mirror, spectators, the clock; friendly.
+
+- THE TABLE'S LAW (`net/gambitTable.js`, pure and plain data - the relay checkpoints it whole, Iliac Hand's table's
+  twin): two seats of a cloth's chairs, the first the law's host (side 0, its king's row the board's foot at its chair);
+  a sit names its chair and its crown (`gambitSitRefusal`'s words asked first); READY carries the army (roster ids,
+  the law's `armyRefusal`) and, again, the crown - kept by the relay, never told: the room hears only that the seat is
+  ready, and both ready deal GAMBIT_FIRST_MS on (`newGambit` from the relay's own CSPRNG, both armies on the board in
+  the open). A COMMAND is the law's (`gambitAct`, its refusal in its own word), in the game the panel showed ('stale'
+  past it); a turn ends GAMBIT_TURN_END_MS after its last action (`finishTurn` on the alarm). THE CLOCK (10.7):
+  GAMBIT_TURN_MS, 60 s a turn - a turn run out ends as End turn does (`timeout`), and a seat whose turn it ended
+  GAMBIT_IDLE_TURNS times running is stood up, the game the other's ('idle'); an action of its own starts its count
+  again. A FORFEIT keeps its chair; a STAND - or a socket gone - leaves it; both give the game to the other seat
+  (`result` with `how`: 'king', 'forfeit', 'idle', 'left', or 'void' when the relay's source broke or the room drained).
+  After a game both seats are ready again only by saying so. The room's events and the whole table go to every socket in
+  the building (`gambitPublicView` - nothing of a dealt game is hidden, section 11), so the tavern watches the board.
+- FOUND: the law's own `end` (End turn) and the table's end of a game were one event name - the client's check refused
+  every End turn frame; the table's is `result` now, the law's `end` the turn's.
+- THE STORED TABLE, CHECKED (AUDIT KG A4): `gambitTableValid` / `validGambitState` - every field the law's steps read, of
+  its type and in its range: the board and its hazards, each piece a roster unit or a king on the board's floor, one a
+  cell, numbered apart, its health within its whole; the turn, the actions, the round, the potions, the end; a game with
+  an empty seat, an unlawful army at Ready. The room drops a table this refuses as it loads it, and says so on the
+  console (`server/src/index.js:"          if (gambitTableValid(v)) this._gambit.set(Number(k), v);"`).
+- THE RELAY'S SEAMS (`server/src/index.js`, Iliac Hand's one by one): the `gambit` storage key and a `Map` a room
+  (`_gambitOf`, `_gambitSave` - the alarm armed at the soonest clock); the `gambit` arm in the socket's dispatch, its
+  gate bucket of its own (holdemGate's rate); `_gambitWord`'s ops; the alarm's third table (`gheld`); the socket's close
+  (`_gambitLeave` - a socket gone forfeits); the room's sweep (`_gambitGhosts` - a drained room's game no contest, every
+  seat stood). ONE CLOTH, ONE GAME, ALL WAYS: each game's sit refuses 'other game' while either other holds that index,
+  and a sit at any one stands the player up from the other two. 10.7's GREEN TABLE: a sit at the realm's gold table is
+  refused 'gold table' until KG6 brings gold. No table in a layer ('busy'); none outside an interior. FOUND: Hold'em's
+  and Iliac Hand's own words for 'other game' named each other ("Iliac Hand is being played at this table.") - with a
+  third game they say "Another game is being played at this table."
+- THE WIRE (`net/wire.js`): `parseClient`'s `gambit` arm after a hello only, GAMBIT_FRAME_MAX (a Ready at its longest
+  - twelve ids and a crown - fits); `validGambitIn` (each op's fields, a command's numbers in range) and
+  `validGambitOut` (a refusal, the room's events by kind, the table and its game the law's). GAMBIT_RELAY_MIN 203 and
+  `relaySupportsGambit` - an older relay closes the socket on the frame. RELAY world203: `net/gambitTable.js`,
+  `net/kingsGambit.js`, `characters/enemyBasics.js` and `systems/mathf.js` joined the bundle (`test/relayversion.test.js`
+  RELAY_GRAPH); world202 is KG-SET's, renumbered past main's CHAT-TRADE world201 at the merge.
+- THE CLIENT: `net/online.js` - `sendGambit` through its own gate to a relay that runs the game, `gambitOk` at the
+  welcome, a frame heard from the room the player stands in and checked by the table's law; `scenes/world.js` -
+  `online.onGambit` to the modes, `host.gambitOnline` (Iliac Hand's hooks, its own send).
+- THE MIRROR (`systems/gambitRemoteTable.js`): `RemoteGambitTable` - the seats, readiness, the relay's clock through the
+  skew; `RemoteGambitSession` - one dealt game with the offline session's own face (`state`, `act`, `tick`, `forfeit`,
+  `drain`, `playing`, `over`, `shown`, `settlement`), so the panel, the log, the motion and the cloth read it as a game
+  with a regular. THE GUEST'S EYE: seat 1 reads the board turned about its middle (`flipGambitState`; the four layouts
+  are point-symmetric), its commands turned back (`unflipCommand`), so it is side 0 at its own foot. A command is checked
+  by the law here first (a refusal said at once), then sent - one on its way at a time, let go after GAMBIT_SENT_MS
+  unanswered. The other side's actions shown GAMBIT_REMOTE_GAP_MS apart (10.7, the mod's RemoteActionGap). The relay's
+  `result` decides the game, shown after GAMBIT_RESULT_MS; friendly, it pays nothing.
+- THE BOARD ON THE CLOTH, ONE FOR BOTH (`world/gambitCloth.js` gambitPlaces `flip`): laid from the host's chair for
+  everyone - the guest's turned, so every cell lands on the felt where the host's lies, each king's row at its own
+  player's edge.
+- THE SEAT (`scenes/gambitTableGame.js`): with a relay that runs the game, at the friendly table, the setup offers the
+  board's two seats - Sit at the board, the crown, Play a regular instead; seated, the army and Ready (Not ready takes it
+  back; a change to a ready army takes the Ready back first; Leave the board); the deal opens the battle as with a
+  regular; a game under way watched by a player at the cloth unseated - the host's side as side 0, both sides named by
+  their players, no log, no press of the game's, no lean; the result's own line (the other gone, away, giving up); Play
+  again builds the army for another game. A new welcome asks the table again; every road off the seat stands up from the
+  board, forfeiting a game under way. The panel's words through the text core, 37 keys drafted in every language the
+  catalog keeps (`ui/gambitTableWords.js`: GAMBIT_ONLINE_PRESS, onlineSeat, clockChip, onlineStep, onlineEnd,
+  onlineRefusal, watchWin; the log's `timeout` and the other side's forfeit), the turn's clock on a chip.
+- THE TAVERN WATCHES (`scenes/worldModes.js`): a King's Gambit table within CARD_WATCH_M is asked once each approach and
+  its board drawn on its cloth from the host's chair (`gambitOnlineFrame`, `gambitWatchFrame`, `gambitWatchDraw`), let
+  go walked away from, sat at, or with the interior.
+- MEASURE (KG5, 10.7): the 60 s clock stands until a table's games are timed - the mod's own peer timeout is 40 s and
+  Iliac Hand's turn 45 s; a turn of two actions read off the board with the panel's help sits well inside it.
+
+### 18.1 Pins and mutants
+
+`test/kg5_table.test.js` (9): the seats and their refusals; the armies at Ready, never told, the deal's pause and the
+relay's dice; the commands, stale and refused, the turn's end on its beat and the other side's own clock; the clock's
+timeouts and idle stand-up, the count started again by an action; a forfeit and a stand; a whole game at the relay to a
+king's fall, every frame the client takes; the stored table checked; the wire both ways; the guest's eye (twice the
+board, the law reading the turned board as the board). `test/kg5_relay.test.js` (5): the relay itself on the fake room -
+two seated and a watcher, the alarm's deal and clock, a hibernation; a socket gone, the gold table, a hallway; one cloth
+one game all ways; the stored table dropped and the sweep; the wire's arm and the version. `test/kg5_client.test.js`
+(5): the room's table on the client; the online session (the guest's eye, the check, one command at a time, the gap,
+the result's beat); the guest's board on the cloth; the client's session (the gate, the room); two pages and a watcher
+over the relay - sit, Ready, the deal, a move on both boards in one place, the turn round, the watcher's board and keys,
+a forfeit and its words, Play again, Play a regular instead, every mesh freed. PINS MOVED: every pin that names the
+relay version (world203); `cards10_client` and `auditcards6_e`'s 'other game' words. Mutants: `tools/mutants/kg5.json`,
+49, all dead; `kg3.json`'s KG3-S-beat-turn-end (the beat's one home moved to the table's law), KG3-H-concession and
+KG3-H-loads-road, `kg4.json`'s KG4-G-lean-phase and `worldhover.json`'s setMode pair re-aimed by content, dead.
+
+- **Not yet:** gold online and the season board (KG6).
+- **Ledger:** section A row THE KING'S GAMBIT - ONLINE.

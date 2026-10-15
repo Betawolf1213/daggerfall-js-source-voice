@@ -245,6 +245,7 @@ import { raidWordFits, raidWordSane, raidSig, raidLedgerId, raidEvictPick, newRa
 import { mintRaidReceipt, readRaidReceipt } from '../../src/net/raidReceipt.js';
 import { mintWatchReceipt, watchDue, watchPixelOk } from '../../src/net/watchReceipt.js';
 import { newIliacTable, iliacSit, iliacStand, iliacCommit, iliacTick as iliacTableTick, iliacNextAt, iliacEmpty, iliacLook, iliacSeatOf, iliacSitRefusal, iliacVouch, iliacGone, iliacBack, iliacVoid } from '../../src/net/iliacTable.js';   // CARDS10: THE RELAY DEALS ILIAC HAND - iliacTable.js imports the rules (iliacHand.js, iliacCards.js) and Hold'em's bounds; AUDIT CARDS-6: a sit's refusal asked first, a vouch again, a seat kept for a blink
+import { newGambitTable, gambitSit, gambitSitRefusal, gambitReady, gambitUnready, gambitCommand, gambitForfeit, gambitStand, gambitVoid, gambitTick as gambitTableTick, gambitNextAt, gambitEmpty, gambitLook, gambitSeatOf, gambitTableValid } from '../../src/net/gambitTable.js';   // KG5: THE RELAY RUNS THE KING'S GAMBIT - gambitTable.js imports the law (kingsGambit.js, which brings enemyBasics.js and mathf.js) and Hold'em's bounds
 import { mintIliacReceipt, ILIAC_RECEIPT_TTL_S } from '../../src/net/iliacReceipt.js';   // CARDS10: a ranked game's result - the relay's signature again; AUDIT CARDS-6 C1: kept owed for its life
 import { mintCardReceipt, CARD_RECEIPT_TTL_S } from '../../src/net/cardReceipt.js';   // CARDS6: a staked seat's cash-out - the relay's fourth signature   // SEAT1b: the Watch's tick and its rhythm - the relay's third signature
 // DISCORD-GATES (2026-09-28, Mac: "Discord live gates?" - the omen, 15 minutes before, pinging an opt-in role, and the
@@ -1805,6 +1806,8 @@ export class Room {
     if (tables.size && this._holdemGhosts(tables, Date.now(), true)) await this._holdemSave();
     const iliac = await this._iliacOf();   // CARDS10: and no Iliac seat either
     if (iliac.size && this._iliacGhosts(iliac, Date.now(), true)) await this._iliacSave();
+    const gambit = await this._gambitOf();   // KG5: and no King's Gambit seat - a game under way is no contest
+    if (gambit.size && this._gambitGhosts(gambit, Date.now(), true)) await this._gambitSave();
     // CARDS6: a spent stake remembered past the oldest order a void takes, then forgotten
     // AUDIT CARDS-4 B6: read a page at a time (AUDIT SOC A4), and an account's owed cash-outs all past their life go too
     const nowS = Math.floor(Date.now() / 1000), old = nowS - HOLDEM_STAKE_KEEP_S;
@@ -2250,8 +2253,9 @@ export class Room {
     if (await this._arenaTick()) return;   // ARENA4: a bout's beat, or the hall's queue
     const held = await this._holdemTick();   // CARDS5: a card table's seat clock, or its next deal
     const iheld = await this._iliacTick();   // CARDS10: an Iliac table's turn clock, or its next game
+    const gheld = await this._gambitTick();   // KG5: a King's Gambit table's turn clock, its turn's end, or its deal
     if (this._dead.size) await this._reap();   // AUDIT CARDS-3 A3: a send the tick failed closed its socket - no close comes for it
-    if (held || iheld) return;
+    if (held || iheld || gheld) return;
     if (await this._sdFightTick()) return;   // SD8b: a realm's alarm is its Remnant's beat while its fight lives
     // SERPENT1: A CELL WITH A SERPENT'S FIGHT beats it - and its other duties (a rite's tell, its raids' ends) still run,
     // every SERPENT_REST_MS while the fight beats and on every firing once it is over, under one alarm: the soonest of the
@@ -3798,6 +3802,18 @@ export class Room {
       await this._iliacWord(ws, a, m, now);
       return;
     }
+    if (m.t === 'gambit') {
+      // ═══ KG5 — THE RELAY RUNS THE KING'S GAMBIT ═══════════════════════
+      //
+      // Kings-Gambit.md section 5.8: "a King's Gambit table in the relay beside Hold'em's and Iliac Hand's" - the relay
+      // builds the board and rolls every die from its own CSPRNG, a command is the law's, the room told every event, a
+      // turn clock (net/gambitTable.js). An interior's room only; the green table only (the red one's gold is KG6's).
+      const now = Date.now();
+      if (!String(a.key ?? '').startsWith('interior:')) return;
+      if (!this._spend(ws, now, holdemGate, 'gambitBucket', 'gambitDrops', 'too many card words', CHAT_STRIKES_MAX)) return;
+      await this._gambitWord(ws, a, m, now);
+      return;
+    }
     if (m.t === 'roll') {
       // ═══ DICE1 — THE RELAY ROLLS ════════════════════════════════════
       //
@@ -4091,6 +4107,7 @@ export class Room {
     if (isSocialRoom(a.key) && a.acct) { try { await this._leaveAccount(ws, a, Date.now()); } catch (e) { console.warn('[hub] leave failed', e?.message ?? e); } }   // SOC1: last seen stamped, the friends and the party told
     if (a.id && String(a.key ?? '').startsWith('interior:')) { try { await this._holdemLeave(a, Date.now()); } catch (e) { console.warn('[holdem] leave failed', e?.message ?? e); } }   // CARDS5: folded out of turn, stood up at the hand's end
     if (a.id && String(a.key ?? '').startsWith('interior:')) { try { await this._iliacLeave(a, Date.now()); } catch (e) { console.warn('[iliac] leave failed', e?.message ?? e); } }   // CARDS10: a game under way conceded
+    if (a.id && String(a.key ?? '').startsWith('interior:')) { try { await this._gambitLeave(a, Date.now()); } catch (e) { console.warn('[gambit] leave failed', e?.message ?? e); } }   // KG5: a socket gone forfeits (the mod's FORFEIT)
     if (isArenaRoom(a.key) && a.sub) { try { await this._arenaLeave(ws, a, Date.now()); } catch (e) { console.warn('[arena] leave failed', e?.message ?? e); } }   // ARENA4: out of the queue, off the sand, out of the stands
   }
 
@@ -4175,6 +4192,8 @@ export class Room {
       if (a.sub && this._holdemAccountSeated(tables, a)) { await no('account seated'); return; }   // AUDIT CARDS-3 A2: one seat an account - two tabs never see two hands
       const ili = (await this._iliacOf()).get(m.table);
       if (ili && !iliacEmpty(ili)) { await no('other game'); return; }   // CARDS10: a cloth plays one game at a time
+      const kg = (await this._gambitOf()).get(m.table);
+      if (kg && !gambitEmpty(kg)) { await no('other game'); return; }   // KG5: and The King's Gambit's
       const fresh = !t;
       if (fresh) { t = newTable({ chairs: m.chairs, bb: m.bb, gold: !!stake }); if (!t) { await no('bad table'); return; } }   // CARDS6: the first sitter's stake makes it a gold table
       // AUDIT CARDS-6 C2: the sit's own refusals asked BEFORE the room's budget is spent (nothing awaits between this and
@@ -4189,6 +4208,7 @@ export class Room {
       if (fresh) tables.set(m.table, t);
       for (const [k, other] of tables) if (k !== m.table) { const up = holdemStand(other, { id: a.id, now }); if (up.length) this._holdemSend(k, up, now); }   // one seat in a room at a time, once this one took
       if (await this._iliacUp(a.id, now)) await this._iliacSave();   // CARDS10: and off an Iliac table
+      if (await this._gambitUp(a.id, now)) await this._gambitSave();   // KG5: and off a King's Gambit table
       msgs = r;
     } else if (!t) { refuse('no table'); return; }
     else if (m.op === 'stand') msgs = holdemStand(t, { id: a.id, now });
@@ -4461,6 +4481,8 @@ export class Room {
       if (t && t.chairs !== m.chairs) { refuse('table differs'); return; }
       const hold = (await this._holdemOf()).get(m.table);
       if (hold && !holdemEmpty(hold)) { refuse('other game'); return; }   // a cloth plays one game at a time
+      const kg = (await this._gambitOf()).get(m.table);
+      if (kg && !gambitEmpty(kg)) { refuse('other game'); return; }   // KG5: The King's Gambit's too
       if (a.sub && [...this._all()].some(([, b]) => b.id && b.id !== a.id && b.sub === a.sub && [...tables.values()].some((x) => iliacSeatOf(x, b.id) >= 0))) { refuse('account seated'); return; }   // one seat an account
       // AUDIT CARDS-6 C2: the sit's own refusals asked BEFORE the room's budget is spent - one socket's refused sits
       // ('seated' at his own chair, four a second) kept every card table in the room 'busy'; only a sit that seats spends
@@ -4479,6 +4501,7 @@ export class Room {
       let stood = false;
       for (const [k, other] of holdem) { const up = holdemStand(other, { id: a.id, now }); if (up.length) { stood = true; this._holdemSend(k, up, now); } }
       if (stood) await this._holdemSave();
+      if (await this._gambitUp(a.id, now)) await this._gambitSave();   // KG5: and off a King's Gambit table
       msgs = r;
     } else if (!t) { refuse('no table'); return; }
     else if (m.op === 'stand') msgs = iliacStand(t, { id: a.id, now, gameNo: m.gameNo });   // AUDIT CARDS-6 E13: the game his panel showed
@@ -4592,6 +4615,130 @@ export class Room {
     this._iliacGhosts(tables, now);
     for (const [k, t] of tables) { const msgs = iliacTableTick(t, now, rand32); if (msgs.length) this._iliacSend(k, msgs, now); }
     await this._iliacSave();
+    return tables.size > 0;
+  }
+  // ═══ KG5 — THE ROOM'S KING'S GAMBIT TABLES ══════════════════════════════════════════════════════════════════════
+  /** The room's King's Gambit tables (index -> table), read from storage once a wake - a hibernated room keeps its
+   *  games - and CHECKED (AUDIT KG A4): the law's steps trust the state they are handed and throw on a malformed one, so
+   *  a stored table the law did not mint (net/gambitTable.js gambitTableValid) is dropped, and said on the console. */
+  async _gambitOf() {
+    if (!this._gambit) {
+      const kept = await this.state.storage.get('gambit');
+      this._gambit = new Map();
+      if (kept && typeof kept === 'object') {
+        for (const [k, v] of Object.entries(kept)) {
+          if (gambitTableValid(v)) this._gambit.set(Number(k), v);
+          else console.warn('[gambit] a stored table the law did not mint, dropped', k);
+        }
+      }
+    }
+    return this._gambit;
+  }
+  /** The tables checkpointed (the empty ones forgotten), the alarm armed at the soonest clock. */
+  async _gambitSave() {
+    const tables = this._gambit;
+    if (!tables) return;
+    for (const [k, t] of tables) if (gambitEmpty(t)) tables.delete(k);
+    if (tables.size) await this.state.storage.put('gambit', Object.fromEntries(tables));
+    else await this.state.storage.delete('gambit');
+    let at = Infinity;
+    for (const t of tables.values()) { const n = gambitNextAt(t); if (n != null) at = Math.min(at, n); }
+    if (Number.isFinite(at)) await this._boutArm(Date.now(), at);
+  }
+  /** A table's messages sent: the room's to every socket in it (the tavern watches the board), a player's to his alone. */
+  _gambitSend(index, msgs, now) {
+    for (const { to, frame } of msgs) {
+      const out = JSON.stringify({ t: 'gambit', table: index, now, ...frame });
+      for (const [w, b] of this._all()) if (b.id && (to == null || b.id === to)) this._send(w, out);
+    }
+  }
+  /** Up from every King's Gambit table in the room (a game under way forfeited) - true when a seat moved. */
+  async _gambitUp(id, now) {
+    const tables = await this._gambitOf();
+    let moved = false;
+    for (const [k, t] of tables) { const up = gambitStand(t, { id, now }); if (up.length) { moved = true; this._gambitSend(k, up, now); } }
+    return moved;
+  }
+  /** One player's word to a King's Gambit table: sit (a chair and a crown), ready (an army), unready, act (the law's
+   *  command), forfeit, stand, look. Each refusal is the table's own word, said to the asker alone. */
+  async _gambitWord(ws, a, m, now) {
+    const tables = await this._gambitOf();
+    const refuse = (error) => this._send(ws, JSON.stringify({ t: 'gambit', table: m.table, now, error }));
+    let t = tables.get(m.table);
+    let msgs;
+    if (m.op === 'look') msgs = t ? gambitLook(t, a.id) : [];
+    else if (m.op === 'sit') {
+      // AUDIT SCALE II R3-3 (c)'s law: no table in a layer (its place is full - 'busy', the client's own word)
+      if (a.ly) { refuse('busy'); return; }
+      // 10.7: online, the green table - the red one is the realm's gold table, and plays The King's Gambit only once KG6
+      // brings gold (Hold'em's own word for a sit with no stake there)
+      if (holdemGoldTable(m.table)) { refuse('gold table'); return; }
+      if (t && t.chairs !== m.chairs) { refuse('table differs'); return; }   // the first sitter never decides another cloth's chairs
+      const hold = (await this._holdemOf()).get(m.table), ili = (await this._iliacOf()).get(m.table);
+      if ((hold && !holdemEmpty(hold)) || (ili && !iliacEmpty(ili))) { refuse('other game'); return; }   // a cloth plays one game at a time
+      if (a.sub && [...this._all()].some(([, b]) => b.id && b.id !== a.id && b.sub === a.sub && [...tables.values()].some((x) => gambitSeatOf(x, b.id) >= 0))) { refuse('account seated'); return; }   // one seat an account
+      const fresh = !t;
+      if (fresh) { t = newGambitTable({ chairs: m.chairs }); if (!t) { refuse('bad table'); return; } }
+      // AUDIT CARDS-6 C2's law: the sit's own refusals asked BEFORE the room's one sit budget is spent
+      const no = gambitSitRefusal(t, { id: a.id, chair: m.chair, crown: m.crown });
+      if (no) { refuse(no); return; }
+      const gate = holdemSitRoomGate(this._holdemSitBucket ?? null, now);   // the room's sits, every game's one budget
+      this._holdemSitBucket = gate.bucket;
+      if (!gate.pass) { refuse('busy'); return; }
+      const r = gambitSit(t, { id: a.id, name: a.name ?? '', chair: m.chair, crown: m.crown, now });
+      if (typeof r === 'string') { refuse(r); return; }
+      if (fresh) tables.set(m.table, t);
+      for (const [k, other] of tables) if (k !== m.table) { const up = gambitStand(other, { id: a.id, now }); if (up.length) this._gambitSend(k, up, now); }   // one seat in a room at a time
+      const holdem = await this._holdemOf();
+      let stood = false;
+      for (const [k, other] of holdem) { const up = holdemStand(other, { id: a.id, now }); if (up.length) { stood = true; this._holdemSend(k, up, now); } }
+      if (stood) await this._holdemSave();
+      if (await this._iliacUp(a.id, now)) await this._iliacSave();
+      msgs = r;
+    } else if (!t) { refuse('no table'); return; }
+    else if (m.op === 'stand') msgs = gambitStand(t, { id: a.id, now });
+    else {
+      const r = m.op === 'ready' ? gambitReady(t, { id: a.id, army: m.army, crown: m.crown, now })
+        : m.op === 'unready' ? gambitUnready(t, { id: a.id, now })
+        : m.op === 'forfeit' ? gambitForfeit(t, { id: a.id, gameNo: m.gameNo, now })
+        : gambitCommand(t, { id: a.id, cmd: m.cmd, gameNo: m.gameNo, now, rand32 });   // the game his panel showed; the relay's own dice
+      if (typeof r === 'string') { refuse(r); return; }
+      msgs = r;
+    }
+    if (!msgs.length) return;
+    this._gambitSend(m.table, msgs, now);
+    if (m.op !== 'look') await this._gambitSave();
+  }
+  /** A seat whose player is gone from the room stands (its game the other's - friendly, no seat is kept). `everyone`:
+   *  the room drained - every game under way had both its players gone: no contest, and every seat stands. */
+  _gambitGhosts(tables, now, everyone = false) {
+    const here = new Set(everyone ? [] : [...this._all()].filter(([, b]) => b.id).map(([, b]) => b.id));
+    let moved = false;
+    for (const [k, t] of tables) {
+      if (everyone && t.game) { moved = true; this._gambitSend(k, gambitVoid(t, now), now); }
+      for (const s of [...t.seats]) {
+        if (!s || here.has(s.id)) continue;
+        const up = gambitStand(t, { id: s.id, now });
+        if (up.length) { moved = true; this._gambitSend(k, up, now); }
+      }
+    }
+    return moved;
+  }
+  /** A player gone from the room: up from every King's Gambit table - a stand or a socket gone forfeits (5.8). */
+  async _gambitLeave(a, now) {
+    const tables = await this._gambitOf();
+    if (!tables.size) return;
+    if (await this._gambitUp(a.id, now)) await this._gambitSave();
+  }
+  /** The alarm's turn at the King's Gambit tables: a turn's end on its beat, a turn run out, a table's deal. True when
+   *  the room keeps a table. */
+  async _gambitTick() {
+    const tables = await this._gambitOf();
+    if (!tables.size) return false;
+    const now = Date.now();
+    this._gambitGhosts(tables, now);
+    for (const [k, t] of tables) { const msgs = gambitTableTick(t, now, rand32); if (msgs.length) this._gambitSend(k, msgs, now); }
+    await this._gambitSave();
     return tables.size > 0;
   }
   /** An arena word to one socket. */
