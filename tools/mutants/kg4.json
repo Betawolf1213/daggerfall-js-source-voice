@@ -313,5 +313,104 @@
   "tests": [
    "test/kg4_board.test.js"
   ]
+ },
+ {
+  "name": "KG4b-M-archers",
+  "file": "src/world/gambitMotion.js",
+  "old": "if (e.shot && GAMBIT_ARCHER_CLASSES.includes(a.unit)) {",
+  "new": "if (e.shot && false) {",
+  "tests": [
+   "test/kg4_board.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-M-swing",
+  "file": "src/world/gambitMotion.js",
+  "old": "cue(a.unit >= GAMBIT_CALLING_FROM ? one(GAMBIT_SWING_CLIPS) : monsterClip(a.unit, 'attackSound'), from, A);",
+  "new": "cue(monsterClip(a.unit, 'attackSound'), from, A);",
+  "tests": [
+   "test/kg4_board.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-M-bark",
+  "file": "src/world/gambitMotion.js",
+  "old": "else cue(t.unit >= GAMBIT_CALLING_FROM ? SOUND.PainSound : monsterClip(t.unit, 'barkSound'), hit + 0.1 * MS, T);",
+  "new": "else cue(SOUND.PainSound, hit + 0.1 * MS, T);",
+  "tests": [
+   "test/kg4_board.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-M-fall-wait",
+  "file": "src/world/gambitMotion.js",
+  "old": "if (e.killed) cue(SOUND.BodyFall, hit + 0.3 * MS, T);",
+  "new": "if (e.killed) cue(SOUND.BodyFall, hit, T);",
+  "tests": [
+   "test/kg4_board.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-M-hazard-clip",
+  "file": "src/world/gambitMotion.js",
+  "old": "fire: SOUND.SpellImpactFire, spikes: SOUND.Hit3",
+  "new": "fire: SOUND.Hit3, spikes: SOUND.SpellImpactFire",
+  "tests": [
+   "test/kg4_board.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-M-move-second",
+  "file": "src/world/gambitMotion.js",
+  "old": "if (steps > 1) cue(walk, from + (steps / GAMBIT_WALK_CELLS_S) * 0.5 * MS, e.to);",
+  "new": "",
+  "tests": [
+   "test/kg4_board.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-M-once",
+  "file": "src/world/gambitMotion.js",
+  "old": "      cues = cues.filter((c) => c.at > now);\n",
+  "new": "",
+  "tests": [
+   "test/kg4_board.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-G-result",
+  "file": "src/scenes/gambitTableGame.js",
+  "old": "else if (e.winner === 1) sound(SOUND.Groan, GAMBIT_RESULT_MS);",
+  "new": "else if (e.winner === 1) sound(SOUND.Groan, 0);",
+  "tests": [
+   "test/kg3_host.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-G-coins",
+  "file": "src/scenes/gambitTableGame.js",
+  "old": "if (g.game?.stake > 0) sound(SOUND.GoldPieces, GAMBIT_RESULT_MS + 600);",
+  "new": "",
+  "tests": [
+   "test/kg3_host.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-G-click",
+  "file": "src/scenes/gambitTableGame.js",
+  "old": "if (g.selected === pc.id) sound(SOUND.ButtonClick);",
+  "new": "",
+  "tests": [
+   "test/kg3_host.test.js"
+  ]
+ },
+ {
+  "name": "KG4b-W-3d",
+  "file": "src/scenes/worldModes.js",
+  "old": "play: (clip, at) => audio?.play3d?.(clip, at, 1, { maxDistance: 16 }),",
+  "new": "play: (clip) => audio?.playOneShot?.(clip, 1),",
+  "tests": [
+   "test/kg3_host.test.js"
+  ]
  }
 ]

@@ -668,6 +668,7 @@ export function createWorldModes(host) {
       onHoldem: () => { closeGambitGame(); if (cardSeat) openCardGame((cardSeat.free?.length ?? 0) + 1); },
       onIliac: () => openIliacGame(),
       onStand: () => standFromCardTable(),
+      play: (clip, at) => audio?.play3d?.(clip, at, 1, { maxDistance: 16 }),   // KG4b: the table's sounds at the cloth - the room's 3D sound, never PEERFX1's observed one-shot (Kings-Gambit.md 5.6)
     });
     gg.regulars = new Map(seeds.map((r, i) => [names[i], r]));   // CARDS4b's look for each regular in their chair (cardRegularsNow)
     gambitGame = gg;

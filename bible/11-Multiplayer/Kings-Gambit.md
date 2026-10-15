@@ -1521,9 +1521,8 @@ cards, as sections 5.3, 5.4, 10.1, 10.7, 14.3, 14.7 and 14.8 decided.
 - THE PRESS AND THE SNAP AT THE HOST: two mutants survived the first run - the flat press, and the snap at the cell's
   centre - for no host pin told them from the built board's. Each has its own now (a card's upper face over another cell
   of the mat; a point beside a card, near its middle and past its cell's centre).
-- SOUND (5.6) stays out of KG4: the record names the table's clips and their trap, and none of the slices took them; the
-  clips past `systems/soundClips.js`'s named ones are named from SoundClips.cs by the slice that plays them, and no copy
-  of it is in the tree. RECORD OPEN.
+- SOUND (5.6) had been left out of KG4 for want of SoundClips.cs to name the clips; the owner: "Download daggerfall if you
+  need to implement things". Taken: section 17.4.
 
 ### 17.3 Pins and mutants
 
@@ -1537,5 +1536,38 @@ textures) and `kg3_host` (the press's finger by a card's middle; the muster befo
 `tools/mutants/kg4.json`, 35, all dead; `kg3.json`'s KG3-D-triangle and KG3-D-scale re-aimed (the builder's winding, the
 standing card's scale), dead.
 
-- **Not yet:** online (KG5); gold online and the season board (KG6); the table's sounds (5.6, RECORD OPEN).
+- **Not yet:** online (KG5); gold online and the season board (KG6).
 - **Ledger:** section A row THE KING'S GAMBIT - THE BOARD ON THE CLOTH.
+
+### 17.4 THE SOUNDS (KG4b, 2026-10-15)
+
+The owner: "Download daggerfall if you need to implement things. Fucking finish everything." Daggerfall Unity's
+`Assets/Scripts/SoundClips.cs` (master 2343305d) names the clips the mod's IL plays by number, and
+`systems/soundClips.js` carries the ones it now plays: SpookyMid 1, ArrowHit 4, CastSpell1-5 81-85, SpellImpactMagic 86,
+SpellImpactPoison 87, SpellImpactFire 89, Hit3-5 110-112, PainSound 299, Groan 458.
+
+- WHERE THE MOD PLAYS THEM, read off its IL - PlaySound (now, or scheduled seconds on), PlayAttackSounds, HazardSoundOf,
+  MovePiece, Heal, ApplyHazards, HazardTick, FinishMatch, TryAdd, AutoFill, OnCellClicked, EndTurnClicked,
+  StartBattle, OpenChallenge, DrawChallenge:
+  - a monster's walk: its own move clip as it sets off, and again at steps / 3.5 x 0.5 s when it walks more than a
+    cell; a calling's walk none (a clip only for an id under 128 - PlayMonsterSound plays only a clip above 0);
+  - a blow: a shot by an archer (ArcherClasses 141, 142) ArrowShoot at its impact and ArrowHit as it lands, by a mage
+    one of CastSpell1..5 and SpellImpactMagic; a melee blow a calling's swing (SwingLowPitch, SwingMediumPitch,
+    SwingHighPitch) or a monster's own attack clip as the order is given, and one of Hit1..Hit5 as it lands; then the
+    struck - BodyFall 0.3 s after it lands if it fell, else a monster's bark or a calling's PainSound 0.1 s after;
+  - a potion MakePotion; a hazard's bite its kind's clip (fire SpellImpactFire, spikes Hit3, poison SpellImpactPoison)
+    and BodyFall 0.3 s on if it killed; a new warning pair SpookyMid; the deal DrawWeapon;
+  - the table: opening the game DiceRoll; a stake put down GoldPieces; a unit joining, Auto-fill, a piece chosen and End
+    turn (when the player can act) ButtonClick; the result at its 1.3 s beat - a win ArenaFanfareLevelUp and, with gold
+    down, GoldPieces 0.6 s after; a loss (a forfeit's too) the Groan.
+- ON THE MOTION'S CLOCK (`world/gambitMotion.js` - `cue`, `sounds`): every one of the game's cued against the same
+  schedule the pieces move by, so a blow rings when it lands on the cloth and a queued order's sounds wait with it; the
+  table's own cued there too by the host. A pick among a set is the table's own source's (`createGambitMotion`'s `pick`).
+- AT THE CLOTH (5.6's trap): `scenes/gambitTableGame.js` plays each through its `play`, which the interior host lays on
+  the room's 3D sound at the cue's cell, or the board's middle for the table's own
+  (`worldModes.js:"      play: (clip, at) => audio?.play3d?.(clip, at, 1, { maxDistance: 16 }),"`) - never the flat
+  one-shot PEERFX1's observer reads, where Hit1..Hit5 at volume 1 would tell the room the player was struck.
+- PINS: `test/kg4_board.test.js` KG4b (the game's sounds on the clock), `test/kg3_host.test.js` KG4b (the table's, the
+  result's groan at its beat, the 3D sound) and the win's fanfare and coins in KG3's game played by presses. MUTANTS:
+  `tools/mutants/kg4.json`'s KG4b records, 11, all dead.
+

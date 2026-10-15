@@ -12,7 +12,8 @@ import { openGambitTableGame, regularCrown, gambitRegulars, gambitTableOn, GAMBI
 import { GAMBIT_CURSOR_KEYS, gambitBoardKey } from '../src/ui/gambitTableHud.js';
 import { GAMBIT_TIERS, tierFor, regularAction } from '../src/systems/gambitPatrons.js';
 import { GAMBIT_RESULT_MS, GAMBIT_NIGHT_MULT, GAMBIT_CROWNS, gambitNightPaid, gambitCrownRestore } from '../src/systems/gambitTableSession.js';
-import { KG_POINT_BUDGET, KG_KING_CELL, pieceById, pieceAt, reachable } from '../src/net/kingsGambit.js';
+import { KG_POINT_BUDGET, KG_KING_CELL, KG_COLS, KG_ROWS, pieceById, pieceAt, reachable } from '../src/net/kingsGambit.js';
+import { SOUND } from '../src/systems/soundClips.js';
 import { barkInvite } from '../src/ui/gambitTableWords.js';
 import { CARD_TABLE_W, CARD_TABLE_D } from '../src/world/cardTableProp.js';
 import { perspective, mirrorProjectionX, lookAt } from '../src/world/mat4.js';
@@ -80,6 +81,7 @@ function rig(o = {}) {
     rand32: xorshift(o.seed ?? 7), now: () => now, day: () => o.day ?? 100, key: 'town:7:0', friendly: !!o.friendly, regulars,
     frame: FRAME, mySeatFeet: FEET, touch: () => !!o.touch,
     onHoldem: () => roads.push('holdem'), onIliac: () => roads.push('iliac'), onStand: () => { roads.push('stand'); g.close(); },
+    play: o.play,
   });
   const tick = (ms = 100) => { now += ms; g.frame(now); };
   return { g, entity, said, roads, relocked, made, freed, released, drawn, tick, get now() { return now; }, get holds() { return holds; }, doc };
@@ -194,8 +196,11 @@ test('KG3 A GAME PLAYED BY PRESSES to a win and to a loss: the pot paid and the 
   // a win off the Amateur (Ana), a loss to the Veteran (Cael) - a careful player wins the one nearly always and loses
   // to the other more often than not (section 12's measure)
   let win = null, loss = null;
+  const heard = new Map();   // KG4b: each game's sounds, by its rig
   for (let seed = 1; seed < 40 && !win; seed++) {
-    const r = rig({ gold: 1000, seed });
+    const ears = [];
+    const r = rig({ gold: 1000, seed, play: (clip) => ears.push([clip, r.now]) });
+    heard.set(r, ears);
     toBattle(r, { regular: 0, mult: 1 });
     if (playByPresses(r, seed + 500)?.winner === 0) win = r;
   }
@@ -205,6 +210,9 @@ test('KG3 A GAME PLAYED BY PRESSES to a win and to a loss: the pot paid and the 
     if (playByPresses(r, seed + 900)?.winner === 1) loss = r;
   }
   assert.ok(win && loss, 'both ends played');
+  // KG4b (5.6): the win's fanfare at the result's beat and its coins after it - FinishMatch's ArenaFanfareLevelUp, GoldPieces
+  const won = [...heard.get(win).map((x) => x[0]), ...win.g.g.motion.sounds(Infinity).map((c) => c.clip)];   // played, and still to come
+  assert.ok(won.includes(SOUND.ArenaFanfareLevelUp) && won.lastIndexOf(SOUND.GoldPieces) > won.indexOf(SOUND.ArenaFanfareLevelUp) && !won.includes(SOUND.Groan), 'the win: the fanfare, then the coins, no groan');
   const [ana, cael] = [GAMBIT_TIERS[0].stake, GAMBIT_TIERS[2].stake];
   assert.equal(win.entity.goldPieces, 1000 - ana + 2 * ana, 'the pot: the stake back and as much again');
   assert.equal(gambitNightPaid(win.entity.gambitPurses, 'town:7:0', 100, 'Ana'), ana, 'the regular paid out tonight');
@@ -464,7 +472,7 @@ function cardHost({ friendly = false } = {}) {
     isOnlinePage: () => false, mwViewFirstPerson: () => {}, homeTownOf: (b) => b?.townMapId || 0, worldMinutes: () => 0, MINUTES_PER_DAY: 1440,
     RemoteCardTable, mode: 'interior', regularsToStand, regularBark, BARK_MS, showdownWinners: hudm.showdownWinners, HOLDEM_REFUSALS: hudm.HOLDEM_REFUSALS,
     cardPackPrice, buyCardPack, openIliacTableGame: (o) => openIliacTableGame({ ...o, doc }), iliacGrade, skillValue, SKILLS, liveStat,
-    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false, gambitBoardKey,
+    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false, gambitBoardKey, audio: null,
     canvas: { clientWidth: W, clientHeight: H, getBoundingClientRect: () => ({ left: 0, top: 0 }), setPointerCapture() {} }, ...hand, CARD_W, CARD_L, chipDiscs, cardMatrix,
     worldViewportRect: () => null, rayDirFromScreen, projectToScreen, performance,
     // the cloth's listeners want a window: the page's own, faked - and the two things that silence them, quiet
@@ -636,4 +644,38 @@ test('KG4 THE PRESS ON THE BUILT BOARD, AT THE HOST (14.3): a fine pointer on a 
   assert.ok(side, 'a point beside a card, near its middle');
   r.g.pointer(side.q, side.view, { touch: true });
   assert.equal(r.g.g.selected, side.pc.id, 'snapped to the piece by its card\'s middle');
+});
+
+test('KG4b THE TABLE\'S SOUNDS AT THE HOST (5.6, 17.4): opening the game DiceRoll, a stake GoldPieces, a unit joining and Auto-fill ButtonClick, the deal DrawWeapon, a piece chosen ButtonClick - each played at the cloth; a forfeit\'s loss the Groan at the result\'s beat; the interior host plays them in 3D, never through the observed one-shot (mutants: the result\'s clip; the click; the 3D sound)', () => {
+  const heard = [];
+  const r = rig({ gold: 1000, play: (clip, at) => heard.push([clip, at]) });
+  const clips = () => heard.map((x) => x[0]);
+  r.tick(10);
+  assert.deepEqual(clips(), [SOUND.DiceRoll], 'the challenge opened');
+  r.g.press('regular', 1); r.g.press('stake', 2);
+  r.tick(10);
+  assert.equal(clips().at(-1), SOUND.GoldPieces, 'the stake put down');
+  r.g.press('next');
+  r.g.press('autofill');
+  r.tick(10);
+  assert.equal(clips().at(-1), SOUND.ButtonClick, 'the army filled');
+  r.g.press('start');
+  r.tick(10);
+  assert.equal(clips().at(-1), SOUND.DrawWeapon, 'the deal');
+  const mid = r.g.g.places.at((KG_COLS - 1) / 2, (KG_ROWS - 1) / 2);
+  assert.ok(heard.every(([, at]) => Array.isArray(at) && at.length === 3), 'each at a point of the room');
+  assert.deepEqual(heard.at(-1)[1], mid, 'the table\'s own from the board\'s middle');
+  r.tick(5000);
+  const st = r.g.g.session.state, mine = st.pieces.find((p) => p.side === 0);
+  r.g.press('cell', [mine.col, mine.row]);
+  r.tick(10);
+  assert.equal(clips().at(-1), SOUND.ButtonClick, 'a piece chosen');
+  r.g.press('forfeit'); r.g.press('forfeit');
+  const n = heard.length;
+  r.tick(GAMBIT_RESULT_MS - 50);
+  assert.equal(heard.length, n, 'nothing before the result\'s beat');
+  r.tick(100);
+  assert.deepEqual(clips().slice(n), [SOUND.Groan], 'the loss groans at the beat - no fanfare, no coins');
+  const WM = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
+  assert.match(WM, /play: \(clip, at\) => audio\?\.play3d\?\.\(clip, at, 1, \{ maxDistance: 16 \}\),/, 'the room\'s 3D sound, at the cloth');
 });

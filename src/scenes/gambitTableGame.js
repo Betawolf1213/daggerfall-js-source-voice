@@ -36,8 +36,15 @@
 // eased in and out over GAMBIT_LEAN_S (at once under reduced motion); the setup, the army and the result keep the seat's
 // own view.
 //
+// KG4b (sections 5.6 and 17.4): THE SOUNDS - the mod's own clips at its own moments: the game's on the motion's clock
+// (world/gambitMotion.js), the table's here - opening the game DiceRoll (OpenChallenge), a stake put down GoldPieces, a
+// unit joining, an Auto-fill, a piece chosen and End turn ButtonClick, the result's ArenaFanfareLevelUp with the coins
+// 0.6 s after it when gold was down, or the Groan, at the result's own beat (FinishMatch). Every one is played at the
+// cloth through `play` - the room's 3D sound - never through the flat one-shot PEERFX1 observes, which reads Hit1..Hit5
+// at volume 1 as the player struck and tells the room (section 5.6's trap).
+//
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
-import { GambitTableSession, gambitNightLeft, gambitPursesAfter, stakeOf, gambitCrownRestore, crownIndex, GAMBIT_CROWNS, GAMBIT_LOG_MAX, GAMBIT_STAKE_MULTS } from '../systems/gambitTableSession.js';
+import { GambitTableSession, gambitNightLeft, gambitPursesAfter, stakeOf, gambitCrownRestore, crownIndex, GAMBIT_CROWNS, GAMBIT_LOG_MAX, GAMBIT_STAKE_MULTS, GAMBIT_RESULT_MS } from '../systems/gambitTableSession.js';
 import { tierFor, GAMBIT_TIERS } from '../systems/gambitPatrons.js';
 import { KG_POINT_BUDGET, KG_COLS, KG_ROWS, KG_KING_CELL, armyRefusal, armyCost, canRecruit, autoFill, rosterUnit, pieceById, pieceAt, reachable, foesInRange } from '../net/kingsGambit.js';
 import { gambitHudModel, createGambitTableHud, boardCursorStep, gambitBoardKey } from '../ui/gambitTableHud.js';
@@ -48,6 +55,7 @@ import {
 import { gambitPlaces, gambitPressCell, gambitLean, gambitCardHeight, GAMBIT_CARD_FOOT } from '../world/gambitCloth.js';
 import { createGambitMotion } from '../world/gambitMotion.js';
 import { prefersReducedMotion } from '../systems/hitFlash.js';
+import { SOUND } from '../systems/soundClips.js';
 import { createGambitTableDraw } from '../render/gambitTableDraw.js';
 import { tablePoint } from '../world/cardHand.js';
 import { BARK_MS } from '../world/cardRegulars.js';
@@ -110,7 +118,7 @@ export const gambitRegulars = (regulars) => regulars.map((r) => ({ ...r, tier: t
  * @param {{doc?: any, renderer: any, entity: any, say: (t: string) => void, holdCursor: () => (() => boolean), relock?: () => void,
  *   rand32: () => number, now: () => number, day: number|(() => number), key: string, friendly: boolean,
  *   regulars: {name: string, seed: number, chair: number}[], frame: any, mySeatFeet: number[], touch?: () => boolean,
- *   onHoldem: () => void, onIliac: () => void, onStand: () => void}} d
+ *   onHoldem: () => void, onIliac: () => void, onStand: () => void, play?: (clip: number, at: number[]) => void}} d
  */
 export function openGambitTableGame(d) {
   const today = () => (typeof d.day === 'function' ? d.day() : d.day);
@@ -125,9 +133,11 @@ export function openGambitTableGame(d) {
     wordsOpen: false, armiesOpen: false, more: false, log: /** @type {string[]} */ ([]),
     barks: new Map(), places: gambitPlaces(d.frame, d.mySeatFeet), look: /** @type {any} */ (null), cam: /** @type {any} */ (null),
     draw: createGambitTableDraw(d.renderer, { doc: d.doc }), hud: /** @type {any} */ (null), release: d.holdCursor(),
-    motion: createGambitMotion(), leanK: 0, leanAt: /** @type {number|null} */ (null),
+    motion: createGambitMotion({ pick: (n) => (d.rand32() >>> 0) % Math.max(1, n) }), leanK: 0, leanAt: /** @type {number|null} */ (null),
   };
   g.motion.lay(g.places.end);
+  /** A sound of the table's own, now or `after` ms on, from the board's middle (the motion's clock plays it). */
+  const sound = (/** @type {number} */ clip, after = 0) => g.motion.cue(clip, d.now() + after, null);
   // HOW IT WORKS stands open until the player - not the character: a preference - has finished one game; their own
   // fold or unfold holds from then on (14.4)
   const guideOpen = () => { const v = getPref('gambitGuideOpen'); return typeof v === 'boolean' ? v : !getPref('gambitPlayed'); };
@@ -217,7 +227,12 @@ export function openGambitTableGame(d) {
     for (const e of events) {
       const line = logLine(e, { regular: g.game.name, names: nameOf });
       if (line) g.log.push(line);
-      if (e.t === 'decided') settle(now);
+      if (e.t === 'decided') {
+        settle(now);
+        // FinishMatch: the fanfare and the coins, or the groan, at the result's beat
+        if (e.winner === 0) { sound(SOUND.ArenaFanfareLevelUp, GAMBIT_RESULT_MS); if (g.game?.stake > 0) sound(SOUND.GoldPieces, GAMBIT_RESULT_MS + 600); }
+        else if (e.winner === 1) sound(SOUND.Groan, GAMBIT_RESULT_MS);
+      }
     }
     g.log = g.log.slice(-GAMBIT_LOG_MAX);
     if (events.length) {
@@ -276,6 +291,7 @@ export function openGambitTableGame(d) {
     if (pc && pc.side === 0) {
       g.info = { piece: pc.id }; g.staged = null;
       g.selected = mine ? (g.selected === pc.id ? null : pc.id) : null;
+      if (g.selected === pc.id) sound(SOUND.ButtonClick);   // OnCellClicked: a piece chosen
       return;
     }
     if (pc && sel && mine && foesInRange(st, sel).some((x) => x.id === pc.id)) {
@@ -320,14 +336,14 @@ export function openGambitTableGame(d) {
   function setupPress(/** @type {string} */ id, /** @type {any} */ value, /** @type {number} */ now) {
     if (id === 'regular' && Number.isInteger(value) && g.regs[value]) {
       if (g.regular !== value) { g.regular = value; g.stakeMult = null; bark(g.regs[value].name, barkInvite(), now); }
-    } else if (id === 'stake' && GAMBIT_STAKE_MULTS.includes(value)) g.stakeMult = value;
+    } else if (id === 'stake' && GAMBIT_STAKE_MULTS.includes(value)) { g.stakeMult = value; sound(SOUND.GoldPieces); }   // DrawChallenge: the stake put down
     else if (id === 'crown' && Number.isInteger(value) && GAMBIT_CROWNS[value]) { g.crown = GAMBIT_CROWNS[value]; d.entity.gambitCrown = g.crown; }
     else if (id === 'next' && stakeNow() !== null) g.phase = 'army';
   }
   function armyPress(/** @type {string} */ id, /** @type {any} */ value, /** @type {number} */ now) {
     if (id === 'unit' && rosterUnit(value)) {
       g.pressed = value;
-      if (canRecruit(g.army, value)) { g.army = [...g.army, value]; g.said = unitJoined(value); return; }
+      if (canRecruit(g.army, value)) { g.army = [...g.army, value]; g.said = unitJoined(value); sound(SOUND.ButtonClick); return; }   // TryAdd
       // why not, as the law words it: a thirteenth unit, or points the army no longer has
       g.said = armyRefusal([...g.army, value]) === 'units' ? armyFull() : unitTooDear(value, KG_POINT_BUDGET - armyCost(g.army));
       g.why = g.said;
@@ -337,7 +353,7 @@ export function openGambitTableGame(d) {
       g.said = unitLeft(gone);
     } else if (id === 'autofill') {
       const filled = autoFill(g.army, KG_POINT_BUDGET, d.rand32);
-      if (filled) { g.army = filled; g.said = null; } else g.why = refusalWords('rand');
+      if (filled) { g.army = filled; g.said = null; sound(SOUND.ButtonClick); } else g.why = refusalWords('rand');   // AutoFill
     } else if (id === 'clear') { g.army = []; g.said = null; }
     else if (id === 'back') g.phase = 'setup';
     else if (id === 'start') deal(now);
@@ -353,7 +369,7 @@ export function openGambitTableGame(d) {
     else if (id === 'strike' && g.staged?.kind === 'attack' && g.selected != null) act({ type: 'attack', piece: g.selected, target: g.staged.target }, now);
     else if (id === 'cancel') { if (g.staged) g.staged = null; else { g.selected = null; g.info = null; } }
     else if (id === 'drink' && g.selected != null) act({ type: 'potion', piece: g.selected }, now);
-    else if (id === 'end') act({ type: 'end' }, now);
+    else if (id === 'end') { if (s.playing() && st.turn === 0 && !st.ending) sound(SOUND.ButtonClick); act({ type: 'end' }, now); }   // EndTurnClicked, when the player can act
     else if (id === 'more') g.more = !g.more;
     else if (id === 'forfeit') {
       if (!s.playing()) return;
@@ -447,11 +463,14 @@ export function openGambitTableGame(d) {
     let changed = false;
     if (g.armed && now - g.armedAt >= GAMBIT_ARM_MS) { g.armed = null; changed = true; }
     if (g.session) { g.session.tick(now); changed = pump(now) || changed; }
+    // THE SOUNDS come due, each played at the cloth (the board's middle for the table's own)
+    for (const c of g.motion.sounds(now)) d.play?.(c.clip, c.cell ? g.places.at(c.cell[0], c.cell[1]) : g.places.at((KG_COLS - 1) / 2, (KG_ROWS - 1) / 2));
     if (changed) paint();
   }
 
   const pieceLook = (/** @type {any} */ p) => ({ id: p.id, side: p.side, col: p.col, row: p.row, king: p.king, unit: p.unit });
   g.hud = createGambitTableHud({ onPress: press, doc: d.doc });
+  sound(SOUND.DiceRoll);   // OpenChallenge
   paint();
   return {
     g, press, frame, pointer, key,

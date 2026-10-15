@@ -27,9 +27,24 @@
 // A piece's motions queue: a second order given while the first still moves it waits for it, and a blow's foe is struck
 // after its attacker has come.
 //
+// KG4b (sections 5.6 and 17.4): THE SOUNDS ride the same clock - each the mod's own clip at the moment its IL plays it,
+// cued against the motion so a blow rings when it lands on the cloth (`sounds(now)` hands the host the cues come due):
+//   - a monster's walk its own move clip as it sets off, and again half way past its first cell when it walks more
+//     (MovePiece: at once, and at steps / 3.5 x 0.5 s);
+//   - a blow (PlayAttackSounds): a shot - an archer's (ArcherClasses 141, 142) ArrowShoot at the impact and ArrowHit as
+//     it lands, a mage's one of CastSpell1..5 and SpellImpactMagic; a melee blow - a calling's one of the three swings, a
+//     monster's own attack clip - as the order is given, and one of Hit1..Hit5 as it lands; then the struck: BodyFall
+//     0.3 s after it lands if it fell, else a monster's bark or a calling's PainSound 0.1 s after;
+//   - a potion MakePotion; a hazard's bite its kind's clip (HazardSoundOf: fire SpellImpactFire, spikes Hit3, poison
+//     SpellImpactPoison) and BodyFall 0.3 s on if it killed; a new warning SpookyMid; the deal DrawWeapon (StartBattle).
+// The table's own (the presses, the result's fanfare or groan and its coins) are the host's (scenes/gambitTableGame.js),
+// cued here through `cue`. A pick among a set is the host's source's (`pick`); none given, the first.
+//
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import { KG_COLS, KG_ROWS, reachPath } from '../net/kingsGambit.js';
 import { ILIAC_THROW_S } from './iliacCloth.js';
+import { ENEMY_BASICS } from '../characters/enemyBasics.js';
+import { SOUND } from '../systems/soundClips.js';
 
 /** MoveSpeed: cells a second. */
 export const GAMBIT_WALK_CELLS_S = 3.5;
@@ -60,6 +75,23 @@ export const GAMBIT_MUSTER_BEAT_S = 0.12;
 /** Where a thrown card comes from: this many cells past its owner's edge of the board. */
 export const GAMBIT_THROW_FROM = 2.5;
 
+/** THE MOD'S SOUND SETS (its statics, read off the IL): the blows' hits, the callings' swings, the mages' casts; the
+ *  callings that shoot arrows; a hazard's bite by its kind. */
+export const GAMBIT_HIT_CLIPS = Object.freeze([SOUND.Hit1, SOUND.Hit2, SOUND.Hit3, SOUND.Hit4, SOUND.Hit5]);
+export const GAMBIT_SWING_CLIPS = Object.freeze([SOUND.SwingLowPitch, SOUND.SwingMediumPitch, SOUND.SwingHighPitch]);
+export const GAMBIT_SPELL_CLIPS = Object.freeze([SOUND.CastSpell1, SOUND.CastSpell2, SOUND.CastSpell3, SOUND.CastSpell4, SOUND.CastSpell5]);
+export const GAMBIT_ARCHER_CLASSES = Object.freeze([141, 142]);
+export const GAMBIT_HAZARD_CLIPS = Object.freeze({ fire: SOUND.SpellImpactFire, spikes: SOUND.Hit3, poison: SOUND.SpellImpactPoison });
+/** A unit is a calling (a class, a king) from this id up, else a monster with its own clips (the mod's `id >= 128`). */
+export const GAMBIT_CALLING_FROM = 128;
+/** A monster's own clip of `kind` ('moveSound', 'barkSound', 'attackSound'), or null for a calling or a clip it has none
+ *  of (PlayMonsterSound plays only a clip above 0). @param {number} unit @param {string} kind */
+export const monsterClip = (unit, kind) => {
+  if (!(unit < GAMBIT_CALLING_FROM)) return null;
+  const c = /** @type {any} */ (ENEMY_BASICS)[String(unit)]?.[kind];
+  return Number.isInteger(c) && c > 0 ? c : null;
+};
+
 const MS = 1000;
 const clamp01 = (/** @type {number} */ x) => Math.max(0, Math.min(1, x));
 /** The sideways of a step: a direction's unit vector in cells, or none. */
@@ -87,7 +119,8 @@ export function gambitPileStep(end, side) {
  * The motion of one game's pieces. `feed(events, now, state)` takes what the session said (its events, each with its
  * clock `at`; `state` the law's state after them); `poses(state, now, opts)` answers the picture; `reset()` forgets it all.
  */
-export function createGambitMotion() {
+/** @param {{pick?: (n: number) => number}} [opts] */
+export function createGambitMotion({ pick = () => 0 } = {}) {
   /** What each piece was when last seen: the board before the next events. @type {Map<number, any>} */
   const known = new Map();
   /** @type {any} */ let tiles = null;
@@ -99,6 +132,10 @@ export function createGambitMotion() {
   const throws = new Map();
   /** @type {any[]} */ let floats = [];
   /** @type {any[]} */ let shots = [];
+  /** The sounds to come: `{clip, at, cell}` (the cell the sound is heard from, or null for the board's middle). @type {any[]} */
+  let cues = [];
+  const cue = (/** @type {number|null} */ clip, /** @type {number} */ at, /** @type {number[]|null} */ cell = null) => { if (Number.isInteger(clip) && /** @type {number} */ (clip) >= 0) cues.push({ clip, at, cell }); };
+  const one = (/** @type {readonly number[]} */ set) => set[Math.max(0, Math.min(set.length - 1, pick(set.length) | 0))];
   const piles = [0, 0];
   /** @type {boolean} */ let end = false;
   /** When a piece's last motion ends (ms). */
@@ -129,8 +166,9 @@ export function createGambitMotion() {
         const at = Number.isFinite(e.at) ? e.at : now;
         if (e.t === 'game') {
           // THE MUSTER: each side's king first, then its units in the deployment's order - the law's own
-          known.clear(); moves.clear(); fallen.clear(); throws.clear(); floats = []; shots = []; piles[0] = piles[1] = 0;
+          known.clear(); moves.clear(); fallen.clear(); throws.clear(); floats = []; shots = []; cues = []; piles[0] = piles[1] = 0;
           see(state);
+          cue(SOUND.DrawWeapon, at);   // StartBattle
           for (const side of [0, 1]) {
             const mine = (state?.pieces ?? []).filter((/** @type {any} */ p) => p.side === side);
             const order = [...mine.filter((/** @type {any} */ p) => p.king), ...mine.filter((/** @type {any} */ p) => !p.king)];
@@ -144,6 +182,9 @@ export function createGambitMotion() {
           const path = (tiles && reachPath(board, { ...p, col: e.from[0], row: e.from[1] }, e.to[0], e.to[1])) ?? [e.from, e.to];
           const from = Math.max(at, busy(p.id));
           push(p.id, { kind: 'walk', from, until: from + ((path.length - 1) / GAMBIT_WALK_CELLS_S) * MS, path });
+          const steps = path.length - 1, walk = monsterClip(p.unit, 'moveSound');   // MovePiece's two
+          if (steps > 0) cue(walk, from, e.from);
+          if (steps > 1) cue(walk, from + (steps / GAMBIT_WALK_CELLS_S) * 0.5 * MS, e.to);
           p.col = e.to[0]; p.row = e.to[1];
         } else if (e.t === 'attack') {
           const a = known.get(e.piece), t = known.get(e.target);
@@ -154,17 +195,32 @@ export function createGambitMotion() {
           push(a.id, { kind: 'lunge', from: impact - GAMBIT_LUNGE_LEAD_S * MS, until: impact - GAMBIT_LUNGE_LEAD_S * MS + GAMBIT_LUNGE_S * MS, dir, reach: e.shot ? GAMBIT_LUNGE_SHOT : GAMBIT_LUNGE_MELEE });
           const lands = e.shot ? impact + GAMBIT_SHOT_S * MS : impact;
           if (e.shot) shots.push({ from: [a.col, a.row], to: [t.col, t.row], at: impact });
-          strike(t.id, Math.max(lands, busy(t.id)), dir, e.damage, !!e.killed);
+          const hit = Math.max(lands, busy(t.id)), A = [a.col, a.row], T = [t.col, t.row];
+          // PlayAttackSounds: the blow's own, then the struck's
+          if (e.shot && GAMBIT_ARCHER_CLASSES.includes(a.unit)) { cue(SOUND.ArrowShoot, impact, A); cue(SOUND.ArrowHit, hit, T); }
+          else if (e.shot) { cue(one(GAMBIT_SPELL_CLIPS), impact, A); cue(SOUND.SpellImpactMagic, hit, T); }
+          else {
+            cue(a.unit >= GAMBIT_CALLING_FROM ? one(GAMBIT_SWING_CLIPS) : monsterClip(a.unit, 'attackSound'), from, A);
+            cue(one(GAMBIT_HIT_CLIPS), hit, T);
+          }
+          if (e.killed) cue(SOUND.BodyFall, hit + 0.3 * MS, T);
+          else cue(t.unit >= GAMBIT_CALLING_FROM ? SOUND.PainSound : monsterClip(t.unit, 'barkSound'), hit + 0.1 * MS, T);
+          strike(t.id, hit, dir, e.damage, !!e.killed);
         } else if (e.t === 'potion') {
           const p = known.get(e.piece);
           if (!p) continue;
           const from = Math.max(at, busy(p.id));
           push(p.id, { kind: 'glow', from, until: from + GAMBIT_GLOW_S * MS });
+          cue(SOUND.MakePotion, from, [p.col, p.row]);   // Heal
           floats.push({ col: p.col, row: p.row, text: `+${e.healed}`, at: from });
         } else if (e.t === 'hazard') {
           const p = known.get(e.piece);
-          if (p) strike(p.id, Math.max(at, busy(p.id)), [0, 0], e.damage, !!e.killed);
-        }
+          if (!p) continue;
+          const bite = Math.max(at, busy(p.id));
+          cue(/** @type {any} */ (GAMBIT_HAZARD_CLIPS)[e.kind] ?? null, bite, [p.col, p.row]);   // ApplyHazards
+          if (e.killed) cue(SOUND.BodyFall, bite + 0.3 * MS, [p.col, p.row]);
+          strike(p.id, bite, [0, 0], e.damage, !!e.killed);
+        } else if (e.t === 'warning') cue(SOUND.SpookyMid, at, e.cells?.[0] ?? null);   // HazardTick
       }
       see(state);
     },
@@ -232,7 +288,15 @@ export function createGambitMotion() {
       for (const f of fallen.values()) if (now < f.at + (GAMBIT_TOPPLE_S + GAMBIT_PILE_SLIDE_S) * MS) return true;
       return floats.some((f) => now < f.at + GAMBIT_FLOAT_S * MS) || shots.some((s) => now < s.at + GAMBIT_SHOT_S * MS);
     },
+    /** The sounds come due by `now`, in their order - each handed once. @param {number} now */
+    sounds(now) {
+      const due = cues.filter((c) => c.at <= now).sort((x, y) => x.at - y.at);
+      cues = cues.filter((c) => c.at > now);
+      return due;
+    },
+    /** A sound of the table's own (the host's: a press, the result), on the same clock. @param {number|null} clip @param {number} at @param {number[]|null} [cell] */
+    cue,
     /** Forget the game (a new deal starts from its own muster). */
-    reset() { known.clear(); moves.clear(); fallen.clear(); throws.clear(); floats = []; shots = []; piles[0] = piles[1] = 0; tiles = null; },
+    reset() { known.clear(); moves.clear(); fallen.clear(); throws.clear(); floats = []; shots = []; cues = []; piles[0] = piles[1] = 0; tiles = null; },
   };
 }

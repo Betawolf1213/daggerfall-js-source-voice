@@ -11,7 +11,9 @@ import {
   createGambitMotion, gambitPile, gambitPileStep, GAMBIT_WALK_CELLS_S, GAMBIT_IMPACT_S, GAMBIT_LUNGE_LEAD_S, GAMBIT_LUNGE_S,
   GAMBIT_LUNGE_MELEE, GAMBIT_LUNGE_SHOT, GAMBIT_SHOT_S, GAMBIT_HIT_S, GAMBIT_GLOW_S, GAMBIT_FLOAT_S, GAMBIT_FLOAT_RISE,
   GAMBIT_FALL_AFTER_S, GAMBIT_TOPPLE_S, GAMBIT_PILE_SLIDE_S, GAMBIT_MUSTER_BEAT_S, GAMBIT_SHAKE,
+  GAMBIT_HIT_CLIPS, GAMBIT_SWING_CLIPS, GAMBIT_SPELL_CLIPS, GAMBIT_ARCHER_CLASSES, GAMBIT_HAZARD_CLIPS,
 } from '../src/world/gambitMotion.js';
+import { SOUND } from '../src/systems/soundClips.js';
 import { ILIAC_THROW_S } from '../src/world/iliacCloth.js';
 import {
   gambitPlaces, gambitPressCell, gambitLean, gambitCardHeight, GAMBIT_CARD_FOOT, GAMBIT_WALL_H, GAMBIT_LEAN_PITCH, GAMBIT_LEAN_FILL,
@@ -411,4 +413,57 @@ test('KG4 A GAME PLAYED ON: the motion follows a whole seeded game - every piece
   }
   assert.deepEqual(pic.piles, [fell[0].length, fell[1].length]);
   assert.ok(fell[0].length + fell[1].length > 0, 'the game took some');
+});
+
+test('KG4b THE SOUNDS ON THE MOTION\'S CLOCK (5.6, 17.4; the mod\'s IL): a monster\'s walk its move clip at once and half way on; a melee blow the attacker\'s own (a monster\'s attack clip, a calling\'s swing) as ordered and a hit as it lands, the struck\'s bark or PainSound 0.1 s after, BodyFall 0.3 s after a death; an archer\'s ArrowShoot and ArrowHit, a mage\'s cast and SpellImpactMagic; a potion, each hazard\'s bite, a warning, the deal; each handed once, in order (mutants: the archers; the swing; the bark; the fall\'s wait; the hazard\'s clip; the move\'s second; handed twice)', () => {
+  const tiles = floor();
+  const rat = { id: 1, side: 0, unit: 0, king: false, col: 4, row: 6, hp: 30, maxHp: 30 };
+  const mage = { id: 2, side: 0, unit: 128, king: false, ranged: true, col: 4, row: 10, hp: 30, maxHp: 30 };
+  const archer = { id: 3, side: 0, unit: 141, king: false, ranged: true, col: 8, row: 10, hp: 30, maxHp: 30 };
+  const foe = { id: 4, side: 1, unit: 3, king: false, col: 8, row: 6, hp: 80, maxHp: 80 };   // a giant bat: 124, 125, 126
+  const king = { id: 5, side: 0, unit: 145, king: true, col: 1, row: 1, hp: 70, maxHp: 70 };
+  const st = { tiles, hazards: [], pieces: [rat, mage, archer, foe, king] };
+  const m = createGambitMotion({ pick: () => 1 });
+  m.feed([{ t: 'game', at: 0 }], 0, st);
+  const all = (now) => m.sounds(now).map((c) => [c.clip, c.at]);
+  assert.deepEqual(all(5000), [[SOUND.DrawWeapon, 0]], 'the deal: DrawWeapon');
+  assert.deepEqual(all(6000), [], 'handed once');
+  const walked = { ...st, pieces: [{ ...rat, col: 7, row: 6 }, mage, archer, foe, king] };
+  m.feed([{ t: 'move', side: 0, piece: 1, from: [4, 6], to: [7, 6], at: 10000 }], 10000, walked);
+  const half = 10000 + (3 / GAMBIT_WALK_CELLS_S) * 0.5 * 1000;
+  assert.deepEqual(all(20000), [[115, 10000], [115, half]], 'a rat\'s move clip at once and half way on');
+  // a melee blow: the rat's own attack clip as ordered, a hit as it lands, the bat's bark 0.1 s after
+  m.feed([{ t: 'attack', side: 0, piece: 1, target: 4, damage: 5, killed: false, shot: false, at: 30000 }], 30000, walked);
+  const lands = 30000 + GAMBIT_IMPACT_S * 1000;
+  assert.deepEqual(all(40000), [[117, 30000], [GAMBIT_HIT_CLIPS[1], lands], [125, lands + 100]]);
+  // a calling's blow swings; a calling struck cries PainSound
+  m.feed([{ t: 'attack', side: 1, piece: 4, target: 5, damage: 5, killed: false, shot: false, at: 50000 }], 50000, walked);
+  assert.deepEqual(all(60000).map((x) => x[0]), [126, GAMBIT_HIT_CLIPS[1], SOUND.PainSound], 'a monster strikes a king: its attack clip, a hit, the king\'s pain');
+  // a calling's melee blow: one of the three swings (pick 1: SwingMediumPitch), the bat's bark
+  const kingNear = { ...walked, pieces: walked.pieces.map((p) => (p.id === 5 ? { ...p, col: 8, row: 7 } : p)) };
+  m.feed([{ t: 'move', side: 0, piece: 5, from: [1, 1], to: [1, 2], at: 60500 }], 60500, kingNear);
+  all(60900);
+  m.feed([{ t: 'attack', side: 0, piece: 5, target: 4, damage: 5, killed: false, shot: false, at: 62000 }], 62000, kingNear);
+  assert.deepEqual(all(65000).map((x) => x[0]), [SOUND.SwingMediumPitch, GAMBIT_HIT_CLIPS[1], 125], 'a king swings; the bat barks');
+  // shots: the archer's arrow, the mage's spell
+  m.feed([{ t: 'attack', side: 0, piece: 3, target: 4, damage: 5, killed: false, shot: true, at: 70000 }], 70000, walked);
+  const si = 70000 + GAMBIT_IMPACT_S * 1000, sl = si + GAMBIT_SHOT_S * 1000;
+  assert.deepEqual(all(80000), [[SOUND.ArrowShoot, si], [SOUND.ArrowHit, sl], [125, sl + 100]]);
+  m.feed([{ t: 'attack', side: 0, piece: 2, target: 4, damage: 5, killed: true, shot: true, at: 90000 }], 90000, { ...walked, pieces: walked.pieces.filter((p) => p.id !== 4) });
+  const mi = 90000 + GAMBIT_IMPACT_S * 1000, ml = mi + GAMBIT_SHOT_S * 1000;
+  assert.deepEqual(all(100000), [[GAMBIT_SPELL_CLIPS[1], mi], [SOUND.SpellImpactMagic, ml], [SOUND.BodyFall, ml + 300]], 'a mage\'s cast, its impact, the fall 0.3 s on');
+  // a potion, the hazards' bites, a warning
+  const last = { ...walked, pieces: walked.pieces.filter((p) => p.id !== 4) };
+  m.feed([{ t: 'potion', side: 0, piece: 5, healed: 10, at: 110000 }], 110000, last);
+  m.feed([{ t: 'hazard', side: 0, piece: 1, kind: 'fire', damage: 8, killed: false, at: 120000 }, { t: 'hazard', side: 0, piece: 2, kind: 'spikes', damage: 6, killed: false, at: 120000 }, { t: 'hazard', side: 0, piece: 3, kind: 'poison', damage: 5, killed: true, at: 120000 }], 120000, last);
+  m.feed([{ t: 'warning', kind: 'fire', cells: [[2, 2], [12, 10]], at: 130000 }], 130000, last);
+  assert.deepEqual(all(140000).map((x) => x[0]), [SOUND.MakePotion, SOUND.SpellImpactFire, SOUND.Hit3, SOUND.SpellImpactPoison, SOUND.BodyFall, SOUND.SpookyMid]);
+  assert.equal(GAMBIT_HAZARD_CLIPS.spikes, 110);
+  assert.deepEqual([...GAMBIT_ARCHER_CLASSES], [141, 142]);
+  assert.deepEqual([...GAMBIT_SWING_CLIPS], [105, 347, 106]);
+  // a single step: the move clip once; a calling's walk: none
+  const m2 = createGambitMotion();
+  m2.feed([], 0, st);
+  m2.feed([{ t: 'move', side: 0, piece: 1, from: [4, 6], to: [5, 6], at: 0 }, { t: 'move', side: 0, piece: 5, from: [1, 1], to: [2, 1], at: 0 }], 0, st);
+  assert.deepEqual(m2.sounds(10000).map((c) => c.clip), [115]);
 });
