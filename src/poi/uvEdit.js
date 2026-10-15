@@ -69,6 +69,7 @@ export function createUvEdit(mesh, { sub = 0, workerFactory = undefined, undoByt
   let uvGen = 0;    // the UVs or the seams changed (a drag's moves are not counted until it ends: they move whole UV vertices)
   let busy = false;   // AUDIT POI M13: an unwrap is out on the worker - the UVs wait for it
   let thread = null;
+  let disposed = false;   // let go (the panel closed): an unwrap still out is dropped, never run here instead
   const shownFaces = () => { const out = []; for (let f = 0; f < s.faces; f++) if (s.triSub[f] === shownSub) out.push(f); return out; };
   const uv = (c) => [s.cornerUv[c * 2], s.cornerUv[c * 2 + 1]];
 
@@ -289,7 +290,7 @@ export function createUvEdit(mesh, { sub = 0, workerFactory = undefined, undoByt
      * pieces it laid.
      */
     async unwrapOffThread() {
-      if (busy) return 0;
+      if (busy || disposed) return 0;
       const fs = selectedFaces();
       thread ??= createUnwrapThread(mesh, { workerFactory });
       const seams = [];
@@ -298,6 +299,9 @@ export function createUvEdit(mesh, { sub = 0, workerFactory = undefined, undoByt
       let r = null;
       try { r = await thread.unwrap(fs, seams); }
       finally { busy = false; gen++; }
+      // AUDIT POI (the lead's): the dialog closed while it was out - the worker let go answers it null, and the whole
+      // unwrap ran on this thread after all, into an editor no one has (the freeze M13 took off the thread)
+      if (disposed) return 0;
       if (!r) {
         // the old path: this thread, the same unwrap over the same faces
         let pieces = [];
@@ -360,8 +364,8 @@ export function createUvEdit(mesh, { sub = 0, workerFactory = undefined, undoByt
     faceUvs(f) { return [uv(f * 3), uv(f * 3 + 1), uv(f * 3 + 2)]; },
     /** Whether a face's side is a seam (the panel draws it red). */
     isSeam(f, i) { return s.seams.has(edgeKey(s.weld[s.tris[f * 3 + i]], s.weld[s.tris[f * 3 + (i + 1) % 3]])); },
-    /** Let the unwrap's worker go (the panel's close). */
-    dispose() { thread?.close(); thread = null; },
+    /** Let the unwrap's worker go (the panel's close); an unwrap still out lays nothing. */
+    dispose() { disposed = true; thread?.close(); thread = null; },
   };
   return api;
 }

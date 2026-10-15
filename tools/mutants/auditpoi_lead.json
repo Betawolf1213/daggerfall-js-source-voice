@@ -1,0 +1,191 @@
+[
+  {
+    "name": "AUDITPOI-L1-the-press-unheard",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "  root.addEventListener('pointerdown', () => { pressAt = Date.now(); }, true);",
+    "new": "  root.addEventListener('pointerdown', () => {}, true);",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L1-the-release-unheard",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "  const released = () => { setTimeout(() => { pressAt = -Infinity; schedule(); }, 0); };",
+    "new": "  const released = () => { setTimeout(() => { schedule(); }, 0); };",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L1-the-hold-unbounded",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "    if (pressed < PRESS_HOLD_MS) { setTimeout(() => schedule(), PRESS_HOLD_MS - pressed + 1); return; }",
+    "new": "    if (pressAt > -Infinity) { setTimeout(() => schedule(), PRESS_HOLD_MS); return; }",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L2-the-unwrap-on-this-thread",
+    "file": "src/ui/poiUvPanel.js",
+    "old": "      ed.unwrapOffThread().then((n) => {",
+    "new": "      Promise.resolve(ed.unwrap()).then((n) => {",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L2-apply-unheld",
+    "file": "src/ui/poiUvPanel.js",
+    "old": "    apply.disabled = applying || ed.busy();",
+    "new": "    apply.disabled = applying;",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L2-applys-press-unguarded",
+    "file": "src/ui/poiUvPanel.js",
+    "old": "    if (applying || ed.busy()) return;",
+    "new": "    if (applying) return;",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L2-the-worker-kept-at-close",
+    "file": "src/ui/poiUvPanel.js",
+    "old": "closed = true; ed.dispose(); root.remove?.();",
+    "new": "closed = true; root.remove?.();",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L2-the-answer-said-after-close",
+    "file": "src/ui/poiUvPanel.js",
+    "old": "        if (closed) return;\n        say(t('poi.uv.unwrapped'",
+    "new": "        say(t('poi.uv.unwrapped'",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L2-the-let-go-unwrap-run-here",
+    "file": "src/poi/uvEdit.js",
+    "old": "      if (disposed) return 0;\n      if (!r) {",
+    "new": "      if (!r) {",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L2-a-let-go-editor-unwraps-again",
+    "file": "src/poi/uvEdit.js",
+    "old": "      if (busy || disposed) return 0;",
+    "new": "      if (busy) return 0;",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L3-lit-by-the-tools-corners",
+    "file": "src/ui/poiUvPanel.js",
+    "old": "    if (mode === 'vertex' && ed.selection().size) {",
+    "new": "    if (mode === 'vertex') {",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L4-openpack-inflating-the-whole-archive",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "      pack = await readPackBytes(bytes);",
+    "new": "      pack = await (await import('../poi/poiPack.js')).readPack(await (await import('../scenes/dataSource.js')).readZipEntries({ arrayBuffer: async () => bytes.slice().buffer }));",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L5-the-problems-undrawn",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "    for (const p of (r.problems ?? []).slice(0, 12)) {",
+    "new": "    for (const p of [].slice(0, 12)) {",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L5-the-service-dropping-them",
+    "file": "src/poi/poiService.js",
+    "old": "      ...(Array.isArray(data?.problems) ? { problems: data.problems } : {}), status: res.status };",
+    "new": "      status: res.status };",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L6-the-bound-unasked",
+    "file": "src/poi/gltfImport.js",
+    "old": "  if (split === 'nodes' && model.instances.length > POI_LIMITS.parts) fail(",
+    "new": "  if (split === 'nodes' && model.instances.length > Infinity) fail(",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L6-the-lists-change-outside-the-refusal",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "(v) => { split = v; if (lastRead) shown(lastRead); });",
+    "new": "(v) => { split = v; if (lastRead) show(lastRead); });",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L6-the-words-unsaid",
+    "file": "src/poi/poiText.js",
+    "old": "  'too-many-parts': (a) => t('poi.gltf.tooManyParts',",
+    "new": "  'too-many-parts-unsaid': (a) => t('poi.gltf.tooManyParts',",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L7-the-lights-unlisted",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "      if (prep.lights?.length) rows.push(",
+    "new": "      if (prep.lights?.length < 0) rows.push(",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L7-kept-without-them",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "lights: r.asset.lights ?? [], meshes });",
+    "new": "lights: [], meshes });",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L8-not-finite-unsaid",
+    "file": "src/poi/poiText.js",
+    "old": "  'not-finite': () => t('poi.mesh.notFinite',",
+    "new": "  'not-finite-unsaid': () => t('poi.mesh.notFinite',",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L8-index-range-unsaid",
+    "file": "src/poi/poiText.js",
+    "old": "  'index-range': () => t('poi.mesh.indexRange',",
+    "new": "  'index-range-unsaid': () => t('poi.mesh.indexRange',",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  }
+]

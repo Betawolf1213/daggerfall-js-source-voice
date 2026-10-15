@@ -782,8 +782,9 @@ test('AUDIT POI U13 THE WORDS: counts in their plurals; glTF\'s object names sai
   assert.equal(gltfErrorText('missing', { what: 'accessor', index: 3 }), 'This model refers to an accessor that is not there.');
   assert.equal(gltfErrorText('missing', { what: 'bufferView', index: 0 }), 'This model refers to a buffer view that is not there.');
   assert.equal(gltfErrorText('past-end', { what: 'accessor' }), 'This model\'s data is cut short: an accessor runs past its end.');
-  assert.equal(diffText({ code: 'tags', to: '' }), 'Its tags were all taken off.');
-  assert.equal(diffText({ code: 'tags', to: 'stone, old' }), 'Its tags are now: stone, old.');
+  // PIN MOVED (AUDIT POI, the lead's join): poiDiff hands the tags themselves (`tags`), never an English-joined `to`
+  assert.equal(diffText({ code: 'tags', tags: [] }), 'Its tags were all taken off.');
+  assert.equal(diffText({ code: 'tags', tags: ['stone', 'old'] }), 'Its tags are now: stone, old.');
   assert.equal(diffText({ code: 'tags', tags: ['stone', 'old', 'small'] }), 'Its tags are now: stone, old, small.');
   assert.equal(diffText({ code: 'marker', show: true, label: '' }), 'Its mark on the map: shown, with no label.');
   assert.equal(diffText({ code: 'marker', show: true, label: 'Tower' }), 'Its mark on the map: shown, "Tower".');

@@ -106,7 +106,7 @@ test('AUDIT POI T2 + P12 WHAT IT CHANGES, EVERY WAY: a part turned, resized and 
   after.place.s = 1;
   const d = poiDiff(before, after);
   assert.deepEqual(d.map((c) => c.code), ['about', 'tags', 'sized', 'part-changed', 'part-changed', 'part-changed', 'part-changed']);
-  assert.deepEqual(d.find((c) => c.code === 'tags').to, 'stone, ruin');
+  assert.deepEqual(d.find((c) => c.code === 'tags').tags, ['stone', 'ruin']);   // PIN MOVED (AUDIT POI, the lead's join): the tags themselves, listed in the reader's language by diffText
   assert.deepEqual([d.find((c) => c.code === 'sized').from, d.find((c) => c.code === 'sized').to], [2, 1], 'shrunk');
   assert.deepEqual(d.filter((c) => c.code === 'part-changed').map((c) => [c.name, c.what]), [['tower', ['turned']], ['door', ['sized']], ['gate', ['solidity']], ['flag', ['solidity']]]);
   // a part grown on one side and shrunk on another

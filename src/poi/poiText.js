@@ -87,6 +87,7 @@ const GLTF = {
   // AUDIT POI G3: a file that asks for more than any POI could hold, a node of two parents, and anything else malformed
   'too-large': () => t('poi.gltf.tooLarge', 'This model is too large to import. Simplify it, or import it in pieces.'),
   'node-parents': () => t('poi.gltf.nodeParents', 'This model\'s node tree is not a tree: an object in it has two parents.'),
+  'too-many-parts': (a) => t('poi.gltf.tooManyParts', 'This model has {n, number} objects, and a POI holds at most {max} parts. Make it one part, or import it in pieces.', a),
   malformed: () => t('poi.gltf.malformed', 'This model\'s file is damaged or does not follow glTF 2.0. Export it again.'),
 };
 
@@ -115,6 +116,9 @@ const MESH = {
   'too-many-submeshes': (a) => t('poi.mesh.tooManySubmeshes', 'A part has too many materials (at most {max}).', a),
   'too-large': (a) => t('poi.mesh.tooLarge', 'A part is too large (at most {max} m from its origin).', a),
   'too-many-bytes': () => t('poi.mesh.tooManyBytes', 'A part\'s model is too large a file.'),
+  // AUDIT POI (the lead's; lane E's note): the two an import can meet in a damaged file, said as what they are
+  'not-finite': () => t('poi.mesh.notFinite', 'A part\'s model holds a number that is not a number (NaN or infinite). Export it again.'),
+  'index-range': () => t('poi.mesh.indexRange', 'A part\'s model names a vertex it does not have. Export it again.'),
 };
 
 /** @type {Record<string, (a: any) => string>} */
@@ -134,9 +138,9 @@ const DIFF = {
   name: (a) => t('poi.diff.name', 'Renamed from "{from}" to "{to}".', a),
   about: () => t('poi.diff.about', 'Its description changed.'),
   // AUDIT POI U13: none left is said in words of its own ("Its tags are now: ." no more); a list of them as the reader's
-  // language lists (poiDiff's `tags`, when it hands them over; its `to` as written otherwise)
+  // language lists (poiDiff's `tags`)
   tags: (a) => {
-    const to = Array.isArray(a.tags) ? listText(a.tags) : String(a.to ?? '');
+    const to = listText(Array.isArray(a.tags) ? a.tags : []);
     return to ? t('poi.diff.tags', 'Its tags are now: {to}.', { to }) : t('poi.diff.tagsNone', 'Its tags were all taken off.');
   },
   moved: (a) => t('poi.diff.moved', 'Moved {m, number} m.', a),

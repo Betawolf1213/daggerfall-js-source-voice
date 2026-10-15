@@ -112,7 +112,18 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
     btn(t('poi.uv.fit', 'Fit to the square'), () => ed.fit()),
     btn(t('poi.uv.markSeam', 'Mark seam'), () => { if (!ed.seams(true)) say(t('poi.uv.seamHint', 'Select edges first (2).')); }),
     btn(t('poi.uv.clearSeam', 'Clear seam'), () => { if (!ed.seams(false)) say(t('poi.uv.seamHint', 'Select edges first (2).')); }),
-    btn(t('poi.uv.unwrap', 'Unwrap'), () => { const n = ed.unwrap(); say(t('poi.uv.unwrapped', 'Unwrapped {n, plural, one {# island} other {# islands}}.', { n })); }, t('poi.uv.unwrapHint', 'Lay the selection flat, keeping its angles - its seams cut it open.')),
+    // AUDIT POI M13 (the lead's wiring): the unwrap off the page's thread (poi/uvEdit.js unwrapOffThread) - the dialog
+    // paints and pans while it works; its answer lands as one step, and is let go if the dialog closed meanwhile
+    btn(t('poi.uv.unwrap', 'Unwrap'), () => {
+      if (ed.busy()) return;
+      say(t('poi.uv.unwrapping', 'Unwrapping...'));
+      draw();
+      ed.unwrapOffThread().then((n) => {
+        if (closed) return;
+        say(t('poi.uv.unwrapped', 'Unwrapped {n, plural, one {# island} other {# islands}}.', { n }));
+        draw();
+      });
+    }, t('poi.uv.unwrapHint', 'Lay the selection flat, keeping its angles - its seams cut it open.')),
     undoBtn, redoBtn,
   );
   const proj = el('div', 'dfpoi-uv-row');
@@ -130,11 +141,13 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
     el('span', 'dfpoi-sep'), densityOut, densityIn,
     btn(t('poi.uv.setDensity', 'Set density'), () => { if (picW) ed.setDensity(Number(densityIn.value) || 256, picW, picH); else say(t('poi.uv.noPicture', 'This material has no picture: its density has no pixels to count.')); }));
   const acts = el('div', 'dfpoi-uv-row');
+  let applying = false;
   const apply = btn(t('poi.uv.apply', 'Apply to the part'), async () => {
-    apply.disabled = true;
+    if (applying || ed.busy()) return;   // AUDIT POI M13: never the UVs from before an unwrap still out
+    applying = true; draw();
     const ok = await onApply(ed.result());
-    apply.disabled = false;
-    if (ok) close();
+    applying = false;
+    if (ok) close(); else draw();
   });
   acts.append(apply, btn(t('poi.editor.cancel', 'Cancel'), () => close()), status);
   root.append(el('div', 'dfpoi-h', title), modes, tools, proj, pack, canvas, acts);
@@ -145,6 +158,7 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
     for (const [m, b] of Object.entries(modeBtns)) b.setAttribute('aria-pressed', String(ed.mode() === m));
     for (const [m, b] of Object.entries(toolBtns)) b.setAttribute('aria-pressed', String(tool === m));
     undoBtn.disabled = !ed.canUndo(); redoBtn.disabled = !ed.canRedo();
+    apply.disabled = applying || ed.busy();
     densityOut.textContent = picW ? t('poi.uv.density', '{px, number} px/m', { px: Math.round(ed.density(picW, picH)) }) : '';
     if (!ctx) return;
     const W = canvas.width, H = canvas.height;
@@ -172,7 +186,8 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
         ctx.beginPath(); ctx.moveTo(p[i][0], p[i][1]); ctx.lineTo(p[(i + 1) % 3][0], p[(i + 1) % 3][1]); ctx.stroke();
       }
     }
-    if (mode === 'vertex') {
+    // the selected vertices lit - none when none is selected (selectedCorners() is the whole material then, for the tools)
+    if (mode === 'vertex' && ed.selection().size) {
       ctx.fillStyle = '#ffb43c';
       for (const c of ed.selectedCorners()) { const [u, v] = [ed.session.cornerUv[c * 2], ed.session.cornerUv[c * 2 + 1]]; const [x, y] = view.toPx(u, v); ctx.fillRect(x - 2.5, y - 2.5, 5, 5); }
     }
@@ -275,7 +290,7 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
   // AUDIT POI U7: closed once - Cancel, then the Apply that answers after it, close one dialog and tell the editor once (a
   // second word let go of its handle to a UV editor opened since, and dialogs stacked); `closed` says so to the Apply out
   let closed = false;
-  function close() { if (closed) return; closed = true; root.remove?.(); onClose(); }
+  function close() { if (closed) return; closed = true; ed.dispose(); root.remove?.(); onClose(); }   // the unwrap's worker let go (M13)
   draw();
   return { root, edit: ed, view, draw, close, closed: () => closed, setTool: (m) => { tool = m; draw(); } };
 }

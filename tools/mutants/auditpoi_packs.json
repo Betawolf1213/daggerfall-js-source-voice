@@ -23,7 +23,7 @@
   {
     "name": "AUDITPOI-T2-the-tags-unread",
     "file": "src/poi/poiDiff.js",
-    "old": "  if (!same(before.tags ?? [], after.tags ?? [])) out.push({ code: 'tags', to: (after.tags ?? []).join(', ') });\n",
+    "old": "  if (!same(before.tags ?? [], after.tags ?? [])) out.push({ code: 'tags', tags: [...(after.tags ?? [])] });\n",
     "new": "\n",
     "tests": ["test/auditpoi_packs.test.js"]
   },

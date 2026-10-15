@@ -45,7 +45,9 @@ export function poiDiff(before, after) {
   const out = [];
   if (before.name !== after.name) out.push({ code: 'name', from: before.name, to: after.name });
   if ((before.about ?? '') !== (after.about ?? '')) out.push({ code: 'about' });
-  if (!same(before.tags ?? [], after.tags ?? [])) out.push({ code: 'tags', to: (after.tags ?? []).join(', ') });
+  // the tags themselves (AUDIT POI U13, the lead's join): the reader's language lists them (poiText.js diffText), never an
+  // English ', '
+  if (!same(before.tags ?? [], after.tags ?? [])) out.push({ code: 'tags', tags: [...(after.tags ?? [])] });
   const p0 = before.place, p1 = after.place;
   const moved = dist3(mapSpot(p0), mapSpot(p1));
   if (moved > MOVE_EPS) out.push({ code: 'moved', m: Math.round(moved * 100) / 100 });

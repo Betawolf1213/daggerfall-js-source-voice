@@ -47,7 +47,7 @@ import { createPoiUvPanel } from './poiUvPanel.js';   // POI-5: the UV editor
 import { createPoiLibrary } from './poiLibraryPanel.js';   // POI-4b: the library's shelf
 import { createPoiReview } from './poiReviewPanel.js';   // POI-6: the approver's queue, a POI's history
 import { exportModel, exportPack, importPack, fileNameOf } from '../poi/poiTransfer.js';   // POI-6: out and back in
-import { readPack } from '../poi/poiPack.js';
+import { readPackBytes } from '../poi/poiPack.js';
 import { poiImageMetaOf } from '../poi/poiImage.js';
 import { readGltf, bakeGltf } from '../poi/gltfImport.js';
 import { prepareImport, uploadImport } from '../poi/poiImport.js';
@@ -216,7 +216,20 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   // inspector kept a POI's fields with its new light selected.
   const UNTYPED = new Set(['checkbox', 'radio', 'color', 'file', 'range', 'button', 'submit', 'reset']);
   const typingIn = (n) => { const a = /** @type {any} */ (doc.activeElement); return isTextEntryTarget(a) && !UNTYPED.has(a.type) && typeof n.contains === 'function' && n.contains(a); };
+  // AUDIT POI (the lead's; lane D's note): A PRESS HOLDS THE REDRAW UNTIL IT ENDS. A field typed in, then a button pressed:
+  // the field's focusout and change come during the press's own mousedown, and a dock drawn again then took the button
+  // out from under the pointer - its click never came, and the first press after typing did nothing. Held from the
+  // press (the root's capture: before a dock swallows it) to just after its release (the click the release makes runs
+  // first), and never longer than PRESS_HOLD_MS - a release the panel never hears (let go outside the window) cannot
+  // freeze it.
+  let pressAt = -Infinity;
+  root.addEventListener('pointerdown', () => { pressAt = Date.now(); }, true);
+  const released = () => { setTimeout(() => { pressAt = -Infinity; schedule(); }, 0); };
+  root.addEventListener('pointerup', released, true);
+  root.addEventListener('pointercancel', released, true);
   function render() {
+    const pressed = Date.now() - pressAt;
+    if (pressed < PRESS_HOLD_MS) { setTimeout(() => schedule(), PRESS_HOLD_MS - pressed + 1); return; }
     if (!typingIn(bar)) renderBar();
     renderLeft();
     // a field being typed in keeps its text: the inspector is drawn again once it lets go of the keyboard
@@ -743,10 +756,11 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   }
   /** A pack read and checked whole, then shown: what it holds, and Upload and open. */
   async function openPack(bytes) {
-    const { readZipEntries } = await import('../scenes/dataSource.js');   // the port's own zip reader, stored and deflated
+    // AUDIT POI P5 (C6): read through the pack's own bounded reader - only what a pack holds inflated, each file to its
+    // kind's bound, the whole to the pack's (poi/poiPack.js readPackBytes); a zip bomb is refused before it inflates
     let pack;
     try {
-      pack = await readPack(await readZipEntries({ arrayBuffer: async () => bytes.slice().buffer }));
+      pack = await readPackBytes(bytes);
     } catch { pack = { ok: false, code: 'pack-not-a-pack' }; }
     if (!pack.ok) { say(packErrorText(pack), 'bad'); return false; }
     dialogsClosed();
@@ -822,7 +836,9 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     files.type = 'file'; files.multiple = true; files.accept = '.glb,.gltf,.bin,.png,.jpg,.jpeg,.webp';
     let split = 'whole';
     let uploading = false;
-    const splitSel = select(split, [['whole', t('poi.editor.splitWhole', 'One part')], ['nodes', t('poi.editor.splitNodes', 'A part for each object')]], (v) => { split = v; if (lastRead) show(lastRead); });
+    // AUDIT POI (the lead's; lane E's note): a model shown again for another "Make" is read inside the same refusal as
+    // the first - a split that cannot be made says so, and the place button is held, never a throw out of the select
+    const splitSel = select(split, [['whole', t('poi.editor.splitWhole', 'One part')], ['nodes', t('poi.editor.splitNodes', 'A part for each object')]], (v) => { split = v; if (lastRead) shown(lastRead); });
     const body = el('div');
     let lastRead = null, prep = null;
     const cancel = btn(t('poi.editor.cancel', 'Cancel'), () => closeDialog());
@@ -842,12 +858,18 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
       for (const f of list) if (f !== main) side.set(f.name, await readFile(f));
       try {
         lastRead = readGltf(await readFile(main), { files: side });
-        show(lastRead);
       } catch (e) {
-        lastRead = null; prep = null; place.disabled = true;
-        body.replaceChildren(el('div', 'dfpoi-problem', e?.code ? gltfErrorText(e.code, e.args) : t('poi.editor.importFailed', 'The file could not be read.')));
+        lastRead = null; refused(e);
+        return;
       }
+      shown(lastRead);
     });
+    /** The import refused, in its own words; nothing to place. */
+    function refused(e) {
+      prep = null; place.disabled = true;
+      body.replaceChildren(el('div', 'dfpoi-problem', e?.code ? gltfErrorText(e.code, e.args) : t('poi.editor.importFailed', 'The file could not be read.')));
+    }
+    function shown(model) { try { show(model); } catch (e) { refused(e); } }
     function show(model) {
       // AUDIT POI U10: never while the parts go up - "Make" or the files changed then re-armed the button and replaced the
       // parts the keeping read after it (a TypeError, nothing kept); both are held until it is done
@@ -856,6 +878,8 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
       const rows = [el('div', 'dfpoi-h', t('poi.editor.importParts', 'Parts'))];
       // AUDIT POI U13: each count in its plural ("1 materials" no more)
       for (const p of prep.parts) rows.push(el('div', 'dfpoi-sub', t('poi.editor.importPart', '{name}: {vertices, plural, one {{vertices, number} vertex} other {{vertices, number} vertices}}, {triangles, plural, one {{triangles, number} triangle} other {{triangles, number} triangles}}, {materials, plural, one {# material} other {# materials}}', { name: p.name || '-', vertices: p.vertices, triangles: p.triangles, materials: p.submeshes })));
+      // AUDIT POI G7 (the lead's; lane E's note): the model's lights read from it, placed and kept with it
+      if (prep.lights?.length) rows.push(el('div', 'dfpoi-sub', t('poi.editor.importLights', '{n, plural, one {# light} other {# lights}}, placed with it', { n: prep.lights.length })));
       for (const r of prep.refused) rows.push(el('div', 'dfpoi-problem', `${r.name || '-'}: ${meshErrorText(r.code)}`));
       for (const w of prep.warnings) rows.push(el('div', 'dfpoi-warn', gltfWarningText(w.code, w)));
       body.replaceChildren(...rows);
@@ -884,7 +908,8 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
         // its meshes as the import holds them - the picture is drawn from them, none fetched back
         const meshes = new Map();
         r.asset.parts.forEach((part, i) => { const d = decodePoiMesh(parts.parts[i].bytes); if (!('error' in d)) meshes.set(part.mesh, d.mesh); });
-        await library.keepNow({ name: r.asset.name, parts: r.asset.parts, lights: [], meshes });
+        // its lights kept with it (AUDIT POI G7, the lead's: they were left behind, `lights: []`)
+        await library.keepNow({ name: r.asset.name, parts: r.asset.parts, lights: r.asset.lights ?? [], meshes });
       }
     }
     dialog = box;
@@ -939,6 +964,9 @@ export const downloadIn = (doc) => (name, bytes, type) => {
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 };
+
+/** How long a press holds the panel's redraw at most, in milliseconds (a release it never hears lets go then). */
+export const PRESS_HOLD_MS = 1500;
 
 /** The alpha modes as the builder reads them. */
 export const alphaText = (a) => (a === 'opaque' ? t('poi.editor.alphaOpaque', 'opaque') : a === 'cutout' ? t('poi.editor.alphaCutout', 'cutout') : t('poi.editor.alphaBlend', 'see-through'));

@@ -485,8 +485,8 @@
   {
     "name": "AUDITPOI-U13-the-tags-joined-in-english",
     "file": "src/poi/poiText.js",
-    "old": "const to = Array.isArray(a.tags) ? listText(a.tags) :",
-    "new": "const to = Array.isArray(a.tags) ? a.tags.join(', ') :",
+    "old": "const to = listText(Array.isArray(a.tags) ? a.tags : []);",
+    "new": "const to = (Array.isArray(a.tags) ? a.tags : []).join(', ');",
     "tests": ["test/auditpoi_panels.test.js"]
   },
   {

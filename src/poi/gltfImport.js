@@ -31,6 +31,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { POI_MESH_LIMITS } from './poiMesh.js';
+import { POI_LIMITS } from './poiLaw.js';
 import { linearToSrgb } from '../systems/dynamicSkies.js';   // AUDIT POI R10: Unity's Mathf.LinearToGammaSpace, its one home
 
 const GLB_MAGIC = 0x46546c67;     // 'glTF'
@@ -494,6 +495,9 @@ export function bakeGltf(model, opts = {}) {
 
 /** @param {ReturnType<typeof readGltf>} model @param {{ split?: 'whole' | 'nodes' }} [opts] */
 function bakeModel(model, { split = 'whole' } = {}) {
+  // AUDIT POI (the lead's; lane E's residual G3 risk): a part for each object, more objects than a POI holds parts -
+  // refused before one is baked (a small file naming one great mesh from a thousand nodes baked a thousand of it)
+  if (split === 'nodes' && model.instances.length > POI_LIMITS.parts) fail('too-many-parts', { n: model.instances.length, max: POI_LIMITS.parts });
   const groups = split === 'nodes' ? model.instances.map((inst) => [inst]) : [model.instances];
   const used = new Map();   // primitive -> usedVertices, found once however many instances draw it
   const parts = [];
