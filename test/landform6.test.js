@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
 import { generateSamples, HEIGHTMAP_DIMENSION, MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../src/world/terrainSampler.js';
-import { createLandforms, landformClimates, landformSites, hillsAt, hillsTopOf, HILLS_TOP, LANDFORM_KNEE, LANDFORM_CEILING, LANDFORM_DIALS, reliefLift, peakField, PEAK_MEAN } from '../src/world/landforms.js';
+import { createLandforms, landformClimates, landformSites, hillsAt, hillsTopOf, HILLS_TOP, LANDFORM_KNEE, LANDFORM_CEILING, LANDFORM_DIALS, reliefLift, peakField, PEAK_MEAN, PEAK_MEAN_SHARP } from '../src/world/landforms.js';
 import { generatePixelTerrain, restrideGrid } from '../src/world/terrainGen.js';
 import { CLIMATES } from '../src/formats/mapsTables.js';
 import { syntheticWoodsBytes, network } from './landformWorld.mjs';
@@ -189,28 +189,77 @@ test('LANDFORM6: the climates ride every kernel - the worker keeps the posted ta
   assert.match(world, /terrainGen\.setLandformTables\(\{ sites: _landformSites, climates: _landformClimates \}\);/, 'handed to both kernels with the sites');
 });
 
-test('LANDFORM8 (WOD-PEAKS): the mountain lands stand rounded peaks where World of Daggerfall\'s spires stood - a bell from summit to foot, no taller than its land\'s `peaks.high`, 550 m to a kilometre across its radius, centred so the land\'s mean is its own, and no other land wears one', () => {
+test('LANDFORM8 (WOD-PEAKS) + MOUNTAINS-SHARP: the mountain woods stand rounded peaks where World of Daggerfall\'s spires stood - a bell from summit to foot - and the mountains (the Dragontail and the Wrothgarian) SHARP ones twice as tall, (1 - q)^2 from summit to foot; 550 m to a kilometre across their radius, centred so each land\'s mean is its own, and no other land wears one', () => {
   const L = LANDFORM_DIALS.lands;
   assert.deepEqual(Object.keys(L).filter((k) => L[k].peaks), ['mountainWoods', 'mountain'], 'the mountains and their woods alone');
-  assert.ok(L.mountain.peaks.high * 1.25 <= 200 && L.mountainWoods.peaks.high * 1.25 <= 140, 'not super huge: 200 m and 140 m at the most');
-  // the field: 0..1, round on top (the summit is a smooth maximum), easing to nothing at the foot
-  const { cell, fill } = L.mountain.peaks;
-  let best = { v: 0, x: 0, y: 0 }, sum = 0, n = 0;
-  for (let y = 0; y < 6 * cell; y += 4) for (let x = 0; x < 6 * cell; x += 4) {
-    const v = peakField(x, y, cell, fill);
-    assert.ok(v >= 0 && v <= 1);
-    if (v > best.v) best = { v, x, y };
-    sum += v; n++;
-  }
-  assert.ok(best.v > 0.3, 'peaks stand');
-  const s = 2;   // the summit: no crease - the field falls by about the same either side of it, and slowly
-  const around = [[s, 0], [-s, 0], [0, s], [0, -s]].map(([dx, dy]) => best.v - peakField(best.x + dx, best.y + dy, cell, fill));
-  assert.ok(Math.max(...around) < 0.01, `a round top (${around.map((d) => d.toFixed(4)).join(', ')})`);
+  // PIN MOVED (MOUNTAINS-SHARP, 2026-10-14, the owner: "Mountains shape (Dragontail/Wrothgarian). More pointy, less rounded (sharp), more height"): the mountains' peaks 400 m and sharp
+  // (they were 200 m bells - LANDFORM8's "not super huge"), their ridges 1.4 times as tall; the woods' 140 m bells stand
+  assert.equal(L.mountain.peaks.high * 1.25, 400, 'the mountains\' peaks 400 m at the most');
+  assert.equal(L.mountain.high, 112, 'on ridges 1.4 times as tall');
+  assert.ok(L.mountainWoods.peaks.high * 1.25 <= 140, 'the woods\' 140 m at the most');
+  assert.deepEqual([L.mountain.peaks.sharp, !!L.mountainWoods.peaks.sharp], [true, false], 'the mountains sharp, their woods round');
+  const fieldOf = (land, sharp) => {
+    const { cell, fill } = land.peaks;
+    let best = { v: 0, x: 0, y: 0 }, sum = 0, n = 0;
+    for (let y = 0; y < 6 * cell; y += 4) for (let x = 0; x < 6 * cell; x += 4) {
+      const v = peakField(x, y, cell, fill, sharp);
+      assert.ok(v >= 0 && v <= 1);
+      if (v > best.v) best = { v, x, y };
+      sum += v; n++;
+    }
+    const s = 2;
+    const around = [[s, 0], [-s, 0], [0, s], [0, -s]].map(([dx, dy]) => best.v - peakField(best.x + dx, best.y + dy, cell, fill, sharp));
+    return { best, mean: sum / n / fill, around, cell };
+  };
+  // the bell (the woods' peaks), on the mountains' cells and fill - enough of them to measure: round on top (the
+  // summit a smooth maximum), easing to nothing at the foot
+  const bells = fieldOf(L.mountain, false);
+  assert.ok(bells.best.v > 0.3, 'peaks stand');
+  assert.ok(Math.max(...bells.around) < 0.01, `a round top (${bells.around.map((d) => d.toFixed(4)).join(', ')})`);
   // the steepest a bell's flank stands: high x pi / 2 over its narrowest radius, at most some 30 degrees
-  const slope = (L.mountain.peaks.high * 1.25 * Math.PI / 2) / (0.24 * cell * 6.4);
-  assert.ok(Math.atan(slope) * 180 / Math.PI < 31, `the steepest flank ${(Math.atan(slope) * 180 / Math.PI).toFixed(1)} degrees`);
+  const bellSlope = (L.mountainWoods.peaks.high * 1.25 * Math.PI / 2) / (0.24 * L.mountainWoods.peaks.cell * 6.4);
+  assert.ok(Math.atan(bellSlope) * 180 / Math.PI < 31, `the steepest flank ${(Math.atan(bellSlope) * 180 / Math.PI).toFixed(1)} degrees`);
   // centred: PEAK_MEAN is the field's own mean per unit of fill, within a twentieth
-  assert.ok(Math.abs(sum / n / fill - PEAK_MEAN) / PEAK_MEAN < 0.05, `the mean ${(sum / n / fill).toFixed(4)} against PEAK_MEAN ${PEAK_MEAN.toFixed(4)}`);
+  assert.ok(Math.abs(bells.mean - PEAK_MEAN) / PEAK_MEAN < 0.05, `the mean ${bells.mean.toFixed(4)} against PEAK_MEAN ${PEAK_MEAN.toFixed(4)}`);
+  // the mountains' sharp peaks: the same places, girths, heights and leans - a sharp peak stands wherever its bell does
+  // and nowhere else, never over it ((1 - q)^2 under (1 + cos(pi q)) / 2) - and a point on top: two samples off the
+  // summit every way the field has already fallen by more than a hundredth (the bell's by under one)
+  const sharp = fieldOf(L.mountain, true);
+  const { cell, fill } = L.mountain.peaks;
+  for (let y = 0; y < 6 * cell; y += 12) for (let x = 0; x < 6 * cell; x += 12) {
+    const b = peakField(x, y, cell, fill, false), v = peakField(x, y, cell, fill, true);
+    assert.ok(v <= b + 1e-12 && (v > 0) === (b > 0), `(${x}, ${y}): sharp ${v.toFixed(4)}, bell ${b.toFixed(4)}`);
+  }
+  assert.ok(Math.min(...sharp.around) > 0.01, `a point on top (${sharp.around.map((d) => d.toFixed(4)).join(', ')})`);
+  // and the law on one peak's own axis: v = h (1 - q)^2 where its bell is h (1 + cos(pi q)) / 2 - h read off the bell at
+  // the summit's sample, q off the bell at a quarter, half and three quarters of the way to its foot
+  const h = peakField(sharp.best.x, sharp.best.y, cell, fill, false);
+  let dx = 0;
+  while (peakField(sharp.best.x + dx + 1, sharp.best.y, cell, fill, true) < peakField(sharp.best.x + dx, sharp.best.y, cell, fill, true) && dx < cell) dx++;
+  assert.ok(dx > 40, `a radius of ${dx} samples`);
+  for (const f of [0.25, 0.5, 0.75]) {
+    const x = sharp.best.x + Math.round(f * dx);
+    const q = Math.acos(Math.max(-1, Math.min(1, 2 * peakField(x, sharp.best.y, cell, fill, false) / h - 1))) / Math.PI;
+    const v = peakField(x, sharp.best.y, cell, fill, true);
+    assert.ok(Math.abs(v - h * (1 - q) * (1 - q)) < 0.01 * h, `at ${f}: ${(v / h).toFixed(3)} against (1 - q)^2 ${((1 - q) * (1 - q)).toFixed(3)}`);
+  }
+  // the steepest a sharp peak's flank stands: at its summit, 2 high over its narrowest radius - some 55 degrees, under
+  // the motor's 70 (player/motor.js SLOPE_LIMIT_DEG: past it a walker slides)
+  const sharpSlope = (2 * L.mountain.peaks.high * 1.25) / (0.24 * cell * 6.4);
+  assert.ok(Math.atan(sharpSlope) * 180 / Math.PI < 56, `the steepest flank ${(Math.atan(sharpSlope) * 180 / Math.PI).toFixed(1)} degrees`);
+  assert.ok(Math.abs(sharp.mean - PEAK_MEAN_SHARP) / PEAK_MEAN_SHARP < 0.05, `the mean ${sharp.mean.toFixed(4)} against PEAK_MEAN_SHARP ${PEAK_MEAN_SHARP.toFixed(4)}`);
+  // and on the ground itself (hillsAt, every land's law at once): the sharpest summit over 5 km - the most negative
+  // Laplacian, a value every 4 samples - is a point in the mountains (54.7 units; their bells stood 11) and round in
+  // the mountain woods (8.2; made sharp they stand 24)
+  const sharpest = (climate) => {
+    const t = filled(climate), n = 200, F = new Float64Array(n * n);
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) F[y * n + x] = hillsAt(400 * 128 + x * 4, 200 * 128 + y * 4, 400, 600, null, t);
+    let worst = 0;
+    for (let y = 1; y < n - 1; y++) for (let x = 1; x < n - 1; x++) worst = Math.max(worst, 4 * F[y * n + x] - F[y * n + x + 1] - F[y * n + x - 1] - F[(y + 1) * n + x] - F[(y - 1) * n + x]);
+    return worst;
+  };
+  assert.ok(sharpest(CLIMATES.Mountain) > 30, `the mountains' sharpest summit ${sharpest(CLIMATES.Mountain).toFixed(1)}`);
+  assert.ok(sharpest(CLIMATES.MountainWoods) < 14, `the mountain woods' sharpest ${sharpest(CLIMATES.MountainWoods).toFixed(1)} - round`);
   // the land wears them: over a broad sweep of all-mountain country the hills reach past anything the ridges alone can
   // stand (their tallest is high x upland), and the land's mean stays at its own height - the peaks centred
   const cl = landformClimates(() => CLIMATES.Mountain);
