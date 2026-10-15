@@ -220,7 +220,7 @@ test('AUDIT EG V L5-3 THE PLACE\'S HAZARDS ARE TOLD IN THE PLACE\'S WHITE (secti
 });
 
 // ── L5-16 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
-test('AUDIT EG V L5-16 THE LAMPS\' BUDGET (section 11.9: "At most 12 lights stand within 40 m of any point"): every circle of seeds 1 and 2 (seven of them stood 13 to 18, Grath\'s islands and their court the most) stands at most EG_LAMP_BUDGET\'s 12 lamps within 40 m of any of its lamps, the budget met where it was passed; the meaningful kept - every fragment\'s own light and every Drop\'s wall lamp - and each court\'s and island\'s ring thinned spread, never emptied (mutants: no budget; the budget counted about the new lamp alone; the meaningful let go first; a ring thinned from one side)', () => {
+test('AUDIT EG V L5-16 THE LAMPS\' BUDGET (section 11.9: "At most 12 lamps stand within 40 m of any lamp of a circle" - it said "lights ... of any point", and nothing held it): every circle of seeds 1 and 2 (seven of them stood 13 to 18, Grath\'s islands and their court the most) stands at most EG_LAMP_BUDGET\'s 12 lamps within 40 m of any of its lamps, the budget met where it was passed; the meaningful kept - every fragment\'s own light and every Drop\'s wall lamp - and each court\'s and island\'s ring thinned spread, never emptied (mutants: no budget; the budget counted about the new lamp alone; the meaningful let go first; a ring thinned from one side)', () => {
   assert.deepEqual(EG_LAMP_BUDGET, { n: 12, r: 40 });
   const near = (a, b) => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z) <= EG_LAMP_BUDGET.r;
   const at = (L, p) => L.find((q) => Math.hypot(q.x - p[0], q.y - p[1], q.z - p[2]) < 1e-6);
