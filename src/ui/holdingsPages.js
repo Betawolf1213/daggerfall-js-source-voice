@@ -229,14 +229,23 @@ function steedLines(el, meter, h, care, act) {
 }
 /** STEED-UI: a wagon's state's bar tone - sound and worn the kit's verdigris, rickety its plain, failing blood. */
 const WAGON_METER_TONE = Object.freeze({ sound: 'verdigris', worn: 'verdigris', rickety: '', failing: 'blood' });
+/** WAGON-TIERS: NO RED where wear costs nothing (Boons - Climates & Calories' RED MEANS IT COSTS): a failing wagon's bar
+ *  is rickety's plain. A read that does not say (`wearSlows` absent) is the system as it stood. */
+export const wagonMeterTone = (w) => (w.wearSlows === false && w.stateKey === 'failing' ? WAGON_METER_TONE.rickety : WAGON_METER_TONE[w.stateKey] ?? 'verdigris');
+/** WAGON-TIERS: Boons' words for a worn-down wagon - it rolls at its pace (the yard's price follows, mendLine). */
+const WAGON_ADVICE_BOONS = Object.freeze({   // in the player's language (L10N4's ratchet), read as it is shown
+  get rickety() { return t('holdings.wagon.boons.rickety', 'Rickety - it still rolls at its pace.'); },
+  get failing() { return t('holdings.wagon.boons.failing', 'Failing - it still rolls at its pace.'); },
+});
 /** STEED-UI: what a Wagon Yard asks to make it whole - at the yard, and with its wright going out to it. */
 export const mendLine = (w) => (w.mend > 0 ? `A Wagon Yard makes it whole for ${w.mend} gold - ${w.mendAway} if its wright must go out to it.` : 'A town’s Wagon Yard mends it.');
 /** WAGONS4: the wagon's soundness on its card - its condition, its state's word, and a kit's act. STEED-UI: its bar in
  *  its state's tone, and the yard's price. */
 function wagonLines(el, meter, w, care, act) {
   const out = [];
-  out.push(holdingMeter(el, meter, 'Repair', w.share * 100, 100, WAGON_METER_TONE[w.stateKey] ?? 'verdigris'));
-  const advice = w.stateKey === 'failing' ? 'Failing - its team pulls it at its slowest.'
+  out.push(holdingMeter(el, meter, 'Repair', w.share * 100, 100, wagonMeterTone(w)));
+  const advice = w.wearSlows === false && (w.stateKey === 'failing' || w.stateKey === 'rickety') ? WAGON_ADVICE_BOONS[w.stateKey]   // WAGON-TIERS: Boons says no slowness
+    : w.stateKey === 'failing' ? 'Failing - its team pulls it at its slowest.'
     : w.stateKey === 'rickety' ? 'Rickety - its team pulls it slower.' : w.stateKey === 'worn' ? 'Worn - a Wagon Yard can make it whole.' : 'Sound.';
   out.push(el('span', `hld-sub${w.tone ? ' hld-why' : ''}`, `${advice} ${mendLine(w)}`));
   if (w.kitWorks) {

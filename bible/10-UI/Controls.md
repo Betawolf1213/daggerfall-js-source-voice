@@ -207,8 +207,9 @@ Options' bar) hides it. It spends NO key of its own and adds no binding.
   Caravan's second horse starving drags the team's Strength as its lead would), amber at most on Boons, where hunger
   costs nothing (HORSE-TIERS: no red where nothing costs); its Bond a bar to the next word; the
   wagon's state and share of whole, and its load against its limit. The line under the title says what the horse
-  needs first (winded, starving, a wagon failing), else the gallop's key while ridden and, while the look holds the
-  mouse, how to free it (`FreeMouse`, Y).
+  needs first (winded, starving, a wagon failing - on wagon upkeep's Hard, where a failing wagon is slow; on its Boons
+  the wagon's chip stops at amber and the line says nothing of a pace it has, WAGON-TIERS), else the gallop's key while
+  ridden and, while the look holds the mouse, how to free it (`FreeMouse`, Y).
 - **Every button is a door that already stands** (`scenes/saddleHost.js`, one glue for `world.js` and `exterior.js`):
   Feed oats and Apple are the Stable page's acts, to the horse the panel shows hungry; Repair kit is the kit's Use
   (where a kit would mend); Cargo is a press on the wagon (`systems/horseCart.js openWagonCargo` - the load opened

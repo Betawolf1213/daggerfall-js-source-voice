@@ -1,7 +1,7 @@
 [
   {
     "name": "HORSE-TIERS-the-default-the-old-system",
-    "file": "src/systems/horseCareTiers.js",
+    "file": "src/systems/upkeepTiers.js",
     "old": "export const HORSE_CARE_DEFAULT = 'boons';",
     "new": "export const HORSE_CARE_DEFAULT = 'hard';",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "HORSE-TIERS-a-tiers-field",
-    "file": "src/systems/horseCareTiers.js",
+    "file": "src/systems/upkeepTiers.js",
     "old": "    paceFloor: true,         // the ride's pace is never under DFU's",
     "new": "    paceFloor: false,         // the ride's pace is never under DFU's",
     "tests": [

@@ -21,14 +21,14 @@
 //    at a walk or standing, half as fast under a rider at the ride's own pace, slower hungry.
 //
 // HORSE-TIERS (2026-10-15, Mac: "Allow turn off. Rework this system to be more in line with how we handle climates and
-// calories boons."): what the horse PAYS is its tier's (systems/horseCareTiers.js - Boons, the default: nothing below
+// calories boons."): what the horse PAYS is its tier's (systems/upkeepTiers.js - Boons, the default: nothing below
 // DFU's plain horse; Hard: the system above as it stood). The laws that charge take the tier's rules as an argument -
 // steedStats, stepBreath, steedSpeedScale, teamDraftScale, feedHorse and tendHorses - and a law handed none runs HARD,
 // so every pin written before the tiers still pins it. Everything else here is the world's, in every tier.
 
 import { isHorseItem } from './horseCoats.js';
 import { UPKEEP_ITEM } from './upkeepItemRows.js';
-import { HORSE_CARE_HARD } from './horseCareTiers.js';   // HORSE-TIERS: what a law handed no rules runs
+import { HORSE_CARE_HARD } from './upkeepTiers.js';   // HORSE-TIERS: what a law handed no rules runs
 
 export const STEED_STATS = Object.freeze(['speed', 'stamina', 'endurance', 'strength']);
 export const STEED_STAT_TEXT = Object.freeze({ speed: 'Speed', stamina: 'Stamina', endurance: 'Endurance', strength: 'Strength' });

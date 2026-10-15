@@ -7,7 +7,7 @@
 // item's law, fields and card; the Stable page; and the hosts wiring it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HORSE_CARE_HARD as HARD } from '../src/systems/horseCareTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
+import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import {
   bornStats, horseBornStats, STEED_STATS, STEED_BORN_MIN, STEED_BORN_MAX, bondTier, bondBonus, BOND_TIERS, BOND_STEP, BOND_TENTHS_MAX,
@@ -372,7 +372,7 @@ test('STEED1 AN INVENTORY\'S USE: the Sack of Oats feeds the horse ridden - out 
   const items = [h], wagon = [oats(2)];
   let care = true;
   const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => (care ? HARD : null) });
-  registerUpkeepUses(u, { reach: () => ({ near: true, stabled: false, wagonNear: true, who: 'Your horse' }), pass: () => {}, horseCare: () => (care ? HARD : null), wagonUpkeep: () => true });
+  registerUpkeepUses(u, { reach: () => ({ near: true, stabled: false, wagonNear: true, who: 'Your horse' }), pass: () => {}, horseCare: () => (care ? HARD : null), wagonUpkeep: () => WHARD });
   const use = itemUseHandler(UPKEEP_ITEM.Oats);
   assert.equal(use.usable(), true);
   const r = use(wagon[0], wagon);
@@ -477,7 +477,7 @@ test('STEED1 THE HOSTS (world.js, exterior.js): the upkeep built before the mod\
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = rd(host);
     assert.ok(s.indexOf('const upkeep = createUpkeep({') > 0 && s.indexOf('const upkeep = createUpkeep({') < s.indexOf('const hccRuntime = createHorseCartRuntime({'), `${host}: before the runtime`);
-    assert.match(s, /horseCare: horseCareRules, wagonUpkeep: wagonUpkeepOn,\n\s*where: \(\) => horseWhereOf\(hccRuntimeOn\(\)\?\.stableView\(\) \?\? null\),/, host);   // HORSE-TIERS (PIN MOVED): the one accessor
+    assert.match(s, /horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,\n\s*where: \(\) => horseWhereOf\(hccRuntimeOn\(\)\?\.stableView\(\) \?\? null\),/, host);   // HORSE-TIERS / WAGON-TIERS (PIN MOVED): the one accessor each
     assert.match(s, /setGallopGate\(\(mode, mods\) => upkeep\.gallopGate\(mode, mods\)\);\n\s*registerUpkeepUses\(upkeep, \{/, host);
     assert.match(s, /player\.rideSpeedScale = upkeep\.rideScale\(player\.transportMode, wagonLoadShare\(\)\);[^\n]*\n\s*playerBlowFrame\(\{ motor: player,[^\n]*\n\s*if \(_overlayHeld[^\n]*player\.holdFrame\(\);/, `${host}: the pace before the step (and before its blow frame - TELL6e's and DISC8-G's order kept)`);
     assert.match(s, /_surfPath = !!_surf\.path;\n[\s\S]{0,400}?const odo = player\.odometer\?\.h \?\? 0, metres = _upkeepOdo == null \? 0 : Math\.max\(0, odo - _upkeepOdo\);/, `${host}: the metres off the odometer, after the surface`);

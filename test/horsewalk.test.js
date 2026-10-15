@@ -9,7 +9,7 @@
 // Features row, the Horses tutorial and the four hosts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HORSE_CARE_HARD as HARD } from '../src/systems/horseCareTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
+import { HORSE_CARE_HARD as HARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import { PNG } from 'pngjs';
 import { PlayerMotor } from '../src/player/motor.js';

@@ -1,3 +1,6 @@
+// THE TWO UPKEEP SWITCHES' TIERS, AS DATA - horse care's (HORSE-TIERS, below) and wagon upkeep's (WAGON-TIERS, at the
+// end): systems/upkeepSwitch.js's two Features rows, each one key with Off, Boons (the default) and Hard on it.
+//
 // HORSE-TIERS (2026-10-15, Mac: "Allow turn off. Rework this system to be more in line with how we handle climates and
 // calories boons.") - HORSE CARE'S TIERS, AS DATA (bible/06-Systems/Horse-Care.md). Climates & Calories' model
 // (survival/difficulty.js, SURV-TIERS and SURV-BOONS) laid over the horse: ONE KEY, THREE ANSWERS -
@@ -86,3 +89,54 @@ export const HORSE_CARE_RULES = deepFreeze({
 export const HORSE_CARE_HARD = HORSE_CARE_RULES.hard;
 /** A tier's rules, or null for Off and for anything that is not a tier. */
 export const horseCareRulesForTier = (tier) => (typeof tier === 'string' && Object.hasOwn(HORSE_CARE_RULES, tier) ? HORSE_CARE_RULES[tier] : null);
+
+// ── WAGON-TIERS ─────────────────────────────────────────────────────
+// WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers") - WAGON UPKEEP'S TIERS, AS DATA (bible/06-Systems/Wagon-Upkeep.md),
+// horse care's model on the wagon's own key, `wagonUpkeep`:
+//
+//   OFF    DFU's plain wagon: it never wears, rolls at its team's pace, and sells as a whole one.
+//   BOONS  THE DEFAULT: the same world - it wears by the road, a journey and the watch, its states are said, a Wagon
+//          Yard and a kit mend it - and NOTHING IS EVER TAKEN: a worn wagon rolls at DFU's pace (`wearSlows`) and a
+//          counter buys it as a whole one (`wearPrices`), so it is never worse than DFU's plain wagon. NO RED where wear
+//          costs nothing (ui/enhancedSaddle.js, ui/holdingsPages.js read `wearSlows`). WAGONS4 has no earning to keep -
+//          a kept wagon earns nothing over DFU's, on any tier - so Boons is Hard with its costs taken out.
+//   HARD   WAGONS4 and WAGON-MEND as they shipped: a Rickety wagon rolls at 0.85 of its pace, a Failing one at 0.7, and
+//          a counter prices it by its condition (Roleplay & Realism: Items' conditionCostBase).
+//
+// Every reader asks the tier through systems/upkeepSwitch.js wagonUpkeepRules (null for Off), and the laws take the
+// rules as an argument (systems/wagonUpkeep.js) - a law handed none runs HARD.
+
+export const WAGON_UPKEEP_OFF = 'off';
+/** The tiers in the Features bar's order, as horse care's. */
+export const WAGON_UPKEEP_TIER_IDS = Object.freeze([WAGON_UPKEEP_OFF, 'boons', 'hard']);
+export const WAGON_UPKEEP_DEFAULT = 'boons';
+/** What each tier is STORED as - horse care's values: OFF KEEPS THE OLD SWITCH'S OWN `false`, Hard by name, the default
+ *  never stored (uiPrefs.js PREF1). */
+export const WAGON_UPKEEP_STORED = Object.freeze({ off: false, boons: 'boons', hard: 'hard' });
+const WAGON_TIER_OF_STORED = new Map(Object.entries(WAGON_UPKEEP_STORED).map(([tier, v]) => [v, tier]));
+/** Whether a stored value names a wagon upkeep tier. */
+export const isStoredWagonUpkeep = (v) => WAGON_TIER_OF_STORED.has(v);
+/** THE OLD SWITCH'S ON, stored: wagon upkeep as it stood is Hard (uiPrefs.js loadPrefs moves it there, once) - the old
+ *  default was never stored, so a player who never touched the switch plays the new default. */
+export const WAGON_UPKEEP_OLD_ON = true;
+export const WAGON_UPKEEP_OLD_ON_TIER = 'hard';
+/** The tier a stored value names; anything else reads as the default (the shelf drops it at the load). */
+export const wagonUpkeepTierOfStored = (v) => WAGON_TIER_OF_STORED.get(v) ?? WAGON_UPKEEP_DEFAULT;
+
+/** What each tier charges - a field only where the tiers differ (the world's numbers live in wagonUpkeep.js). */
+export const WAGON_UPKEEP_RULES = deepFreeze({
+  boons: {
+    id: 'boons',
+    wearSlows: false,    // a Rickety or Failing wagon rolls at its state's pace (WAGON_STATES), under DFU's
+    wearPrices: false,   // a counter prices a wagon by its condition, under a whole one's
+  },
+  hard: {
+    id: 'hard',
+    wearSlows: true,
+    wearPrices: true,
+  },
+});
+/** The system as it stood: what a law runs when it is handed no rules. */
+export const WAGON_UPKEEP_HARD = WAGON_UPKEEP_RULES.hard;
+/** A tier's rules, or null for Off and for anything that is not a tier. */
+export const wagonUpkeepRulesForTier = (tier) => (typeof tier === 'string' && Object.hasOwn(WAGON_UPKEEP_RULES, tier) ? WAGON_UPKEEP_RULES[tier] : null);

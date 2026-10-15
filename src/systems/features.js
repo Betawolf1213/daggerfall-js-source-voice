@@ -373,7 +373,7 @@ export const FEATURES = Object.freeze([
   // HORSE-TIERS (2026-10-15, Mac: "Allow turn off. Rework this system to be more in line with how we handle climates and
   // calories boons."): TIERS ON THE ONE KEY, as Climates & Calories' row has them - Off (DFU's horse, stored as the old
   // switch's own `false`), Boons (the default, never stored - BOONS-DEFAULT's way) and Hard (the system as it stood, by
-  // name); systems/horseCareTiers.js HORSE_CARE_STORED and HORSE_CARE_DEFAULT, which test/horsetiers.test.js holds the
+  // name); systems/upkeepTiers.js HORSE_CARE_STORED and HORSE_CARE_DEFAULT, which test/horsetiers.test.js holds the
   // row to. The player's online, every tier, as every Climates & Calories tier is (MODS-ONLINE-3's reading: a tier
   // decides only what THIS player's horse pays) - the lane forced it on there until Mac's word.
   Object.freeze({
@@ -386,21 +386,28 @@ export const FEATURES = Object.freeze([
     get effect() { return t('features.horseCare.effect', 'Takes effect at once. Online, each player picks their own.'); },
     kinds: Object.freeze(['enhanced']),
     control: Object.freeze({
-      store: 'prefs', key: 'horseCare', initial: 'boons', online: 'player',   // systems/upkeepSwitch.js HORSE_CARE_PREF; HORSE-TIERS: horseCareTiers.js HORSE_CARE_DEFAULT
+      store: 'prefs', key: 'horseCare', initial: 'boons', online: 'player',   // systems/upkeepSwitch.js HORSE_CARE_PREF; HORSE-TIERS: upkeepTiers.js HORSE_CARE_DEFAULT
       tiers: Object.freeze([tier(false, OFF), tier('boons', () => t('features.horseCare.boons', 'Boons')), tier('hard', () => t('features.horseCare.hard', 'Hard'))]),
     }),
   }),
   // WAGONS4 (2026-10-11, the owner: "Wagons have durability and require upkeep to keep from breaking down and becoming
-  // unusable"): WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md, systems/wagonUpkeep.js). On by default; forced on online.
+  // unusable"): WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md, systems/wagonUpkeep.js).
+  // WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers"): horse care's model on its own key - Off (DFU's plain wagon, stored
+  // as the old switch's own `false`), Boons (the default, never stored: it wears and is mended, and wear costs nothing)
+  // and Hard (the system as it stood, by name); systems/upkeepTiers.js WAGON_UPKEEP_STORED and WAGON_UPKEEP_DEFAULT,
+  // which test/wagontiers.test.js holds the row to. The player's online, every tier (MODS-ONLINE-3's reading).
   Object.freeze({
     id: 'wagon-upkeep',
     group: 'world',
-    title: 'Wagon upkeep',
-    note: 'Your wagon wears as it rolls and on long journeys, and worn out it breaks down until a Wagon Yard or a Wagon '
-      + 'Repair Kit mends it. Online it is always on.',
-    effect: 'Takes effect at once.',
+    get title() { return t('features.wagonUpkeep.title', 'Wagon upkeep'); },
+    get note() { return t('features.wagonUpkeep.note', 'Your wagon wears as it rolls and on long journeys, and a Wagon Yard or a Wagon Repair Kit mends it. '
+      + 'On Boons wear costs nothing; on Hard a worn wagon is slower and sells for less; Off is the classic wagon.'); },
+    get effect() { return t('features.wagonUpkeep.effect', 'Takes effect at once. Online, each player picks their own.'); },
     kinds: Object.freeze(['enhanced']),
-    control: Object.freeze({ store: 'prefs', key: 'wagonUpkeep', initial: true, online: true }),   // systems/upkeepSwitch.js WAGON_UPKEEP_PREF
+    control: Object.freeze({
+      store: 'prefs', key: 'wagonUpkeep', initial: 'boons', online: 'player',   // systems/upkeepSwitch.js WAGON_UPKEEP_PREF; WAGON-TIERS: upkeepTiers.js WAGON_UPKEEP_DEFAULT
+      tiers: Object.freeze([tier(false, OFF), tier('boons', () => t('features.wagonUpkeep.boons', 'Boons')), tier('hard', () => t('features.wagonUpkeep.hard', 'Hard'))]),
+    }),
   }),
   // FT2 (2026-09-14): LAND VIEW DISTANCE - the first CONDENSED row. Two
   // controls for one radius: the pref (LV1, the enhanced lane's 1..6)

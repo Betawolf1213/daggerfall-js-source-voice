@@ -16,8 +16,9 @@ every tier: it is the ride's, and Off it shows the gait and its doors alone.
 > Mac: *"Allow turn off. Rework this system to be more in line with how we handle climates and calories boons."*
 
 Climates & Calories' model (`06-Systems/Climates-Calories.md` - SURV-TIERS, SURV-BOONS, BOONS-DEFAULT, AUDIT C&C) laid
-over the horse: **one key, three answers**, the tiers written out as data in `systems/horseCareTiers.js` (an
-import-free leaf, as `survival/difficulty.js` is).
+over the horse: **one key, three answers**, the tiers written out as data in `systems/upkeepTiers.js` (an
+import-free leaf, as `survival/difficulty.js` is - wagon upkeep's tiers stand beside them since WAGON-TIERS,
+`06-Systems/Wagon-Upkeep.md`).
 
 | Tier | Stored (the `horseCare` pref) | What the horse pays |
 |---|---|---|
@@ -39,8 +40,8 @@ differ on it:
    asked and refused rides DFU's own pace, never the walk (`refusedRunWalks`; the motor tells the walk whether Run is
    asked - `systems/transport.js` rideWalks' `runAsked`): with Run held a Boons horse is never slower than DFU's. With Run
    let go it walks - HORSE-WALK's way to ride, the owner's, every caring tier's, and no price of neglect (a tended horse
-   walks too). That is the one place a Boons rider goes slower than DFU's horse, and only by asking to: a reading for
-   Mac's eye.
+   walks too). Mac, 2026-10-15: *"Keep the walk"* - DECIDED: Boons' "never below DFU's horse" is the pace with Run held;
+   the walk with Run let go stands on every caring tier.
 4. **No red** (Climates & Calories' rule 4, RED MEANS IT COSTS). Where hunger costs nothing its chip stops at amber - the
    saddle panel's (`ui/enhancedSaddle.js`) and the Stable card's (`ui/holdingsPages.js` hungerTone) - and the Stable
    page says only what Boons charges: "Hungry - it costs nothing yet.", "Starving - no gallop until it eats. Feed it."

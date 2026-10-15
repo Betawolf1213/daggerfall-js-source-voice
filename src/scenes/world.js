@@ -679,7 +679,7 @@ import { totalWeight } from '../systems/inventory.js';   // HCC: PlayerEntity.Wa
 import { planTake, cannotCarryText } from '../systems/itemTransfer.js';   // SET7: the Broker's sale asks the pack's own carry gate
 import { createUpkeep, horseWhereOf, upkeepReach, registerUpkeepUses } from '../systems/upkeepRuntime.js';   // STEED1/WAGONS4: horse care and wagon upkeep, a frame at a time
 import { mendWagon, wagonWord, WAGON_UPKEEP_TEXT } from '../systems/wagonUpkeep.js';   // WAGONS4: the Wagon Yard's wright
-import { horseCareRules, wagonUpkeepOn } from '../systems/upkeepSwitch.js';   // STEED1/WAGONS4: their Features switches; HORSE-TIERS: horse care's tier through its one accessor
+import { horseCareRules, wagonUpkeepRules } from '../systems/upkeepSwitch.js';   // STEED1/WAGONS4: their Features switches; HORSE-TIERS: horse care's tier through its one accessor; WAGON-TIERS: and wagon upkeep's through its own
 import { setGallopGate, setRideWalk } from '../systems/transport.js';   // STEED1: horse care's word on a gallop; HORSE-WALK: and on the walk
 import { wagonKgFor, activeWagonItem, activeWagonKind, WAGON_KINDS, horseCountOf, wagonTeamShort } from '../systems/wagonKinds.js';   // WAGONS1: HCC's ItemHelper.WagonKgLimit, the driven wagon's
 import { SEATED_EYE_HEIGHT } from '../player/seatPose.js';   // WAGONS3: the driver's seated eye
@@ -8596,7 +8596,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // before the runtime below, whose `teamShort` asks it why a broken wagon goes nowhere.
   const upkeep = createUpkeep({
     items: () => playerEntity.items ?? [], now: () => ownMinutes(),
-    horseCare: horseCareRules, wagonUpkeep: wagonUpkeepOn,
+    horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,
     where: () => horseWhereOf(hccRuntimeOn()?.stableView() ?? null),
     stores: () => (upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()).wagonNear ? playerEntity.wagonItems ?? [] : []),   // the wagon's load, where it is in reach
     say: (l) => townTalk.say(l),
@@ -8613,7 +8613,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   setRideWalk((mode, runAsked) => !rideOnTheRoad() && upkeep.rideWalks(mode, runAsked));   // HORSE-WALK: horse care's horse walks unless it gallops - never on the road (bible/06-Systems/Horse-Care.md)
   setGallopGate((mode, mods) => upkeep.gallopGate(mode, mods));
   registerUpkeepUses(upkeep, {   // the inventory's Use on the oats and the kit
-    reach: () => upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()), horseCare: horseCareRules, wagonUpkeep: wagonUpkeepOn,
+    reach: () => upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()), horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,
     pass: upkeepPass,
   });
   /** WAGONS4/STEED1: the driven wagon's load, a share of its limit. */
@@ -26269,7 +26269,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  canAccessWagonInventory): a wright goes out to it, so a wagon broken down far off is never stranded. Asked, then
    *  paid. Answers true (the press handled). */
   function mendAtYard() {
-    if (!wagonUpkeepOn()) { setMidScreenText('The wright has no work for you.'); return true; }
+    if (!wagonUpkeepRules()) { setMidScreenText('The wright has no work for you.'); return true; }   // WAGON-TIERS: Off, DFU's plain wagon - nothing to mend; Boons and Hard mend alike
     const w = activeWagonItem(playerEntity.items ?? []);
     if (!w) { townTalk.say(WAGON_UPKEEP_TEXT.noWagon); return true; }
     const rt = hccRuntimeOn();

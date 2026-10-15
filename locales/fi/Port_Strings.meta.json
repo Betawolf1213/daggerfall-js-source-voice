@@ -4199,6 +4199,31 @@
   "tr": "fef8afc9c1dd",
   "by": "claude-in-session"
  },
+ "features.wagonUpkeep.boons": {
+  "en": "b0e0ff22a34e",
+  "tr": "36560a321ef8",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.effect": {
+  "en": "70f7bfca0841",
+  "tr": "de6a32a5cc9f",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.hard": {
+  "en": "20a89915f18c",
+  "tr": "e16bb9c419e7",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.note": {
+  "en": "9458d5e9bb8b",
+  "tr": "9367270da963",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.title": {
+  "en": "a9e06dd27985",
+  "tr": "8376d966ee83",
+  "by": "claude-in-session"
+ },
  "features.waterQuality.full": {
   "en": "10b28a8c1e44",
   "tr": "a68f90943891",
@@ -4267,6 +4292,16 @@
  "holdings.horse.boons.starving": {
   "en": "77a85e079362",
   "tr": "fe41a5ae7199",
+  "by": "claude-in-session"
+ },
+ "holdings.wagon.boons.failing": {
+  "en": "06e939886c0d",
+  "tr": "9072476cffcc",
+  "by": "claude-in-session"
+ },
+ "holdings.wagon.boons.rickety": {
+  "en": "bae94e2a5f4e",
+  "tr": "738d880dbe80",
   "by": "claude-in-session"
  },
  "lang.offer": {
@@ -10947,6 +10982,16 @@
  "stats.weapon": {
   "en": "ead533685e26",
   "tr": "0f2e39acf81b",
+  "by": "claude-in-session"
+ },
+ "wagon.upkeep.boons.failing": {
+  "en": "5e6a68b53a69",
+  "tr": "bb1f06bee61d",
+  "by": "claude-in-session"
+ },
+ "wagon.upkeep.boons.rickety": {
+  "en": "8dcc1fe1e4b7",
+  "tr": "3881bd259145",
   "by": "claude-in-session"
  }
 }

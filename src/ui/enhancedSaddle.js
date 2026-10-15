@@ -54,6 +54,10 @@ const HUNGER_TONE = Object.freeze({ fed: 'ok', hungry: 'warn', starving: 'low' }
 /** HORSE-TIERS: NO RED where hunger costs nothing (Boons - Climates & Calories' RED MEANS IT COSTS): its chip stops at
  *  amber. A read that does not say (`hungerCosts` absent) is the system as it stood, which costs. */
 const hungerTone = (h) => { const tone = HUNGER_TONE[h.hungerKey] ?? 'ok'; return h.hungerCosts === false && tone === 'low' ? 'warn' : tone; };
+/** WAGON-TIERS: the same for the wagon - where its wear slows nothing (Boons) a failing wagon's chip stops at amber. */
+const wagonTone = (w) => { const tone = WAGON_TONE[w.stateKey] ?? 'ok'; return w.wearSlows === false && tone === 'low' ? 'warn' : tone; };
+/** WAGON-TIERS: a failing wagon slows its team only where its wear slows it (Hard; a read that does not say is Hard). */
+const failingSlows = (w) => w?.stateKey === 'failing' && w.wearSlows !== false;
 
 /**
  * The gait's word: standing, galloping, else the ride's own pace - a horse horse care walks walks (HORSE-WALK), DFU's
@@ -102,7 +106,7 @@ export function saddleMeters(s) {
     out.push({ key: 'bond', label: 'Bond', share: Math.max(0, Math.min(1, share)), text: h.tier, tone: 'bond', title: h.next ? `${Math.floor(h.bond)} of ${h.next.at} to ${h.next.name}` : `${h.tier} - the bond is whole` });
   }
   const w = s.wagon;
-  if (w) out.push({ key: 'wagon', label: w.name, share: w.share, text: `${w.state} ${pct(w.share)}`, tone: WAGON_TONE[w.stateKey] ?? 'ok' });
+  if (w) out.push({ key: 'wagon', label: w.name, share: w.share, text: `${w.state} ${pct(w.share)}`, tone: wagonTone(w) });
   const ld = s.load;
   if (ld && ld.limit > 0) {
     const share = ld.kg / ld.limit;
@@ -148,7 +152,7 @@ export function saddleHint(s, state = {}) {
   const h = s.horse, w = s.wagon;
   if (h?.winded) return 'Winded - ease off and let it breathe';
   if (h?.hungerKey === 'starving') return s.mode === 'Horse' ? 'Starving - it will not gallop until it eats' : 'Starving - feed your horse';
-  if (w?.stateKey === 'failing') return `The ${w.name.toLowerCase()} is failing - mend it to get its pace back`;
+  if (failingSlows(w)) return `The ${w.name.toLowerCase()} is failing - mend it to get its pace back`;   // WAGON-TIERS: on Boons it has its pace
   if (state.touch) return '';
   const parts = [];
   const run = state.keyOf?.(SADDLE_ACTIONS.run) ?? '';
@@ -334,7 +338,7 @@ function paintSaddle(doc, parts, last, state, hooks) {
   const gait = [saddleGait(s.mode, s.speed, s.galloping, s.walks), saddleSpeedText(s.speed)].filter(Boolean).join(' · ');
   if (last.gait !== gait) { last.gait = gait; parts.gait.textContent = gait; }
   const hint = saddleHint(s, state);
-  const hintWarn = !!(s.horse?.winded || s.horse?.hungerKey === 'starving' || s.wagon?.stateKey === 'failing');
+  const hintWarn = !!(s.horse?.winded || s.horse?.hungerKey === 'starving' || failingSlows(s.wagon));
   if (last.hint !== hint || last.hintWarn !== hintWarn) { last.hint = hint; last.hintWarn = hintWarn; parts.hint.textContent = hint; parts.hint.className = `saddlepanel-hint${hintWarn ? ' warn' : ''}`; }
   // the meters: made again only when their set changes (a bar becoming a chip is a new set)
   const meters = saddleMeters(s);
