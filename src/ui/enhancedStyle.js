@@ -2176,17 +2176,19 @@ ${badgeCss()}
 .ctl-head.ctl-asking { border-color: var(--brass); box-shadow: 0 6px 18px rgba(0,0,0,0.45); }
 .ctl-row .ctl { position: relative; }
 .ctl-tooltip {
-  position: absolute; z-index: 30; right: 0; bottom: calc(100% + 10px);
+  position: fixed; z-index: 30; inset: auto; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); margin: 0; box-sizing: border-box;
   width: min(420px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow-y: auto;
-  padding: 16px 18px; border: 2px solid var(--brass); background: #0d1014;
+  padding: 16px 18px; border: 2px solid var(--brass); background: #0d1014; color: inherit;
   box-shadow: 0 8px 28px rgba(0,0,0,0.7); text-align: left;
 }
+.ctl-tooltip::backdrop { background: transparent; }
 .ctl-key.ctl-tip-anchor { anchor-name: --ctl-key-in-use-anchor; }
 @supports (position-anchor: --ctl-key-in-use-anchor) {
   .ctl-tooltip {
-    position: fixed; position-anchor: --ctl-key-in-use-anchor;
-    position-area: bottom span-left; position-try-fallbacks: flip-block, flip-inline;
-    right: auto; bottom: auto; margin-block: 10px;
+    position-anchor: --ctl-key-in-use-anchor; position-area: bottom span-left;
+    position-try-fallbacks: flip-block, flip-inline;
+    top: auto; left: auto; transform: none; margin-block: 10px;
   }
 }
 .ctl-tooltip h3 { margin: 0 0 8px; }

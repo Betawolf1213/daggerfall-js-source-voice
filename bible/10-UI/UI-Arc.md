@@ -18751,8 +18751,11 @@ Fifteen items in five groups, each answered on both skins where both have the sc
   (LevitateMotor.cs:86-89; every motor host passes the pair). So the page says it - Float up and Float down carry "Jump
   (SPACE) rises too while you swim or levitate", in the live keys - and giving Jump's key to Float up is answered "you
   need neither". The conflict itself is highlighted where it is decided: KEY-IN-USE-TIP (2026-10-15) moved the replace
-  question from the sticky head into a viewport-fitted tooltip beside the binding being changed, the row the key would
-  go to edged in brass and the row that holds it in red; the list stays in place and inert until the answer.
+  question from the sticky head into a viewport-fitted modal tooltip for the binding being changed. It lives in the
+  browser's top layer, outside either Settings scrollport: its no-anchor fallback centres in the viewport, and CSS
+  anchors keep it beside the binding and flip it above or below to fit where they exist. Its first answer takes focus,
+  the page behind is inert, and the binding takes focus back after the answer. The row the key would go to is edged in
+  brass and the row that holds it in red.
 - **S - and then: "So you wont add multiple key bindings even when asked? I dont care if it goes against daggerfall."**
   So it is added, and recorded as a departure. The held-key question has a third answer, USE FOR BOTH (a button on the
   enhanced page, B in the classic grid and its ADVANCED popup), offered wherever every holder holds this very key: the

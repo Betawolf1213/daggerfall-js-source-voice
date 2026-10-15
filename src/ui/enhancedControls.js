@@ -144,8 +144,23 @@ let pendingDefaults = false;   // KB1: Defaults is staged; Confirm commits it wi
 let notice = null;         // the multipleAssignments line, or the saved note
 let edited = new Set();    // UNSAVED-MARK: the shown dict's rows a Confirm still owes - read at each paint
 let repaint = () => {};
+let focusAfterPrompt = null;   // the binding that owns focus again once its modal question closes
+const PROMPT_FOCUS = Symbol('promptFocus');
 
 const refresh = () => { dupes = checkDuplicates(unsaved); };
+
+function afterPaint(fn) {
+  if (typeof globalThis.requestAnimationFrame === 'function') globalThis.requestAnimationFrame(fn);
+  else fn();
+}
+
+function openConflictTooltip(tip) {
+  afterPaint(() => {
+    if (tip.isConnected === false) return;
+    if (typeof tip.showModal === 'function' && !tip.open) tip.showModal();
+    tip[PROMPT_FOCUS]?.focus?.({ preventScroll: true });
+  });
+}
 
 function stage() {
   if (!unsaved) {
@@ -287,6 +302,7 @@ export function discardControlsStaging() {
   pendingDefaults = false;
   notice = null;
   repaint = () => {};
+  focusAfterPrompt = null;
 }
 
 // ── THE ACTS ─────────────────────────────────────────────────────
@@ -310,6 +326,7 @@ function clearBinding(action) {
 function answerPrompt(yes) {
   const p = prompt;
   prompt = null;
+  if (p?.kind === 'replace') focusAfterPrompt = p.action;
   if (yes === 'share' && p?.kind === 'replace' && canShareKey(unsaved, p.action, p.code, p.holders)) {
     stageShare(unsaved, p.action, p.code);   // UXB1-S: the bind lands, and every holder keeps the key
     refresh();
@@ -411,6 +428,10 @@ function keyRow(action, label) {
     return false;
   };
   ctl.append(key);
+  if (!prompt && focusAfterPrompt === action) {
+    focusAfterPrompt = null;
+    afterPaint(() => key.focus?.({ preventScroll: true }));
+  }
 
   const clear = el('button', 'act ctl-clear', '✕');
   clear.setAttribute('type', 'button');
@@ -427,6 +448,7 @@ function keyRow(action, label) {
     key.setAttribute('aria-expanded', 'true');
     key.setAttribute('aria-controls', 'ctl-key-in-use');
     ctl.append(tip);
+    openConflictTooltip(tip);
   }
 
   row.append(ctl);
@@ -434,12 +456,13 @@ function keyRow(action, label) {
 }
 
 function promptCard(asTooltip = false) {
-  const c = el('div', `ctl-prompt${asTooltip ? ' ctl-tooltip' : ''}`);
+  const c = el(asTooltip ? 'dialog' : 'div', `ctl-prompt${asTooltip ? ' ctl-tooltip' : ''}`);
   if (asTooltip) {
     c.id = 'ctl-key-in-use';
     c.setAttribute('role', 'dialog');
     c.setAttribute('aria-modal', 'true');
     c.setAttribute('aria-labelledby', 'ctl-key-in-use-title');
+    c.oncancel = (e) => { e.preventDefault?.(); answerPrompt(false); };
   }
   const title = el('h3', null, prompt.kind === 'defaults' ? 'Default controls' : 'Key in use');
   if (asTooltip) title.id = 'ctl-key-in-use-title';
@@ -452,6 +475,10 @@ function promptCard(asTooltip = false) {
   const acts = el('div', 'acts');
   const yes = el('button', 'act primary', 'Yes');
   yes.onclick = () => answerPrompt(true);
+  if (asTooltip) {
+    yes.setAttribute('autofocus', '');
+    c[PROMPT_FOCUS] = yes;
+  }
   const no = el('button', 'act', 'No');
   no.onclick = () => answerPrompt(false);
   acts.append(yes, no);
@@ -570,4 +597,14 @@ export function paneControls(body, { render = () => {} } = {}) {
   cont2.onclick = act(applyAndSave);
   foot.append(cont2);
   body.append(foot);
+
+  // A native modal dialog makes the whole document inert. The explicit
+  // attributes keep the same keyboard law in a browser that has <dialog>
+  // but no showModal(): only this question's answers remain in the tab order.
+  if (prompt?.kind === 'replace') {
+    const tip = body.querySelector?.('.ctl-tooltip');
+    if (tip) for (const button of body.querySelectorAll?.('button') ?? []) {
+      if (!tip.contains(button)) button.setAttribute('inert', '');
+    }
+  }
 }

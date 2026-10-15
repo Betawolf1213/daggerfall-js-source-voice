@@ -450,8 +450,11 @@ buttons on its fixed art, Slide's among them, unbound.
 
 - Every group above, a vendored mod's only while the mod is on.
 - A row's button arms a capture; the next key or mouse button binds (Ctrl, Shift or Alt held binds the combo).
-- A held key asks (law 4). The question stands in a viewport-fitted tooltip beside the binding being changed: the row
-  the key would go to is edged in brass, the row that holds it in red, and the list is inert until it is answered
+- A held key asks (law 4). The question stands in a viewport-fitted modal tooltip for the binding being changed: its
+  top-layer fallback escapes the Settings scrollport and centres in the viewport, while browsers with CSS anchors keep
+  it beside the binding and flip it above or below to fit. The first answer takes focus, the page behind is inert, and
+  the binding takes focus back after the answer. The row the key would go to is edged in brass and the row that holds it
+  in red
   (UXB1-D, 2026-09-25; KEY-IN-USE-TIP, 2026-10-15 - it first replaced the list, then stood in its sticky head; both
   made a player leave the row to answer a question about it).
 - Right-click or the row's ✕ CLEARS a binding at once - no question, staged like every other edit, so leaving the
