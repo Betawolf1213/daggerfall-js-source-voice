@@ -154,7 +154,9 @@ test('PORT-TOWNS: the void is said in the player\'s language - the text core\'s 
 });
 
 test('PORT-TOWNS: the world hands the harbour office its port list and the sea it sets its sites by', () => {
-  assert.match(W, /\n {4}ports: \(\) => navalPortList\(\),\n {4}seaAt: \(x, y\) => \(tamrielLand \|\| \(x >= 0 && y >= 0 && x < MAP_WIDTH && y < MAP_HEIGHT\)\) && seaPixel\(x, y\),/);
+  // PIN MOVED (FIELD BUGS 2026-10-14 INLAND-PORTS, Mac: "Fix harbour seaAt too"): the sea it sets its sites by is the open
+  // sea (world.js openSea - B10's edge its own; run by test/fb1014_inlandports.test.js)
+  assert.match(W, /\n {4}ports: \(\) => navalPortList\(\),\n {4}seaAt: openSea, {3}\/\//);
 });
 
 // ─── THE REAL MAP ────────────────────────────────────────────────────────────────────────────────────────────────────

@@ -26,6 +26,8 @@ import { BlocksFile } from '../src/formats/blocksFile.js';
 import { buildMapDict } from '../src/systems/mapDirectory.js';
 import { isWaterPixel } from '../src/ui/overworldModel.js';
 import { crownOf } from '../src/systems/naval/navalShips.js';
+import { boardFor, deliveryPort, SITE_PX } from '../src/systems/naval/harbourBoard.js';
+import { chartSite } from '../src/systems/naval/treasureCharts.js';
 import { layoutLocation } from '../src/world/locationLayout.js';
 import { NAV_CELLS_PER_BLOCK, tileWeight } from '../src/world/cityNavigation.js';
 
@@ -103,17 +105,17 @@ test('INLAND-PORTS THE TOWNS (the report): a city the byte\'s 0x10 marks, on Tra
 });
 
 /** The host's open sea, lifted off world.js and run over a map of the test's (`isWater`) and the ether's switch. */
-function hostOpenSea({ isWater, width, height, ether = false, inEther = () => false }) {
+function hostOpenSea({ isWater, width, height, ether = false, inEther = () => false, tamriel = false }) {
   const m = /\n {2}(let _openSea = null;\n {2}const openSea = \(x, y\) => \{\n[\s\S]*?\n {2}\};)\n/.exec(W);
   assert.ok(m, 'the host\'s open sea moved');
   let asked = 0;
   const seaPixel = (x, y) => { asked++; return isWater(x, y); };
   // eslint-disable-next-line no-new-func
-  const openSea = new Function('etherSea', 'inEther', 'seaPixel', 'MAP_WIDTH', 'MAP_HEIGHT', 'openSeaOf', `${m[1]}\nreturn openSea;`)(ether, inEther, seaPixel, width, height, openSeaOf);
+  const openSea = new Function('etherSea', 'inEther', 'seaPixel', 'MAP_WIDTH', 'MAP_HEIGHT', 'openSeaOf', 'tamrielLand', `${m[1]}\nreturn openSea;`)(ether, inEther, seaPixel, width, height, openSeaOf, tamriel);
   return { openSea, asked: () => asked };
 }
 
-test('INLAND-PORTS THE HOST\'S OPEN SEA, run: a pixel of the Bay\'s map is the flood\'s - flooded once, the first time it is asked; past the Veil the Eltheric Ocean\'s own water round its isles; off both none (mutants: the ether\'s arm dropped, the map\'s bounds unasked)', () => {
+test('INLAND-PORTS THE HOST\'S OPEN SEA, run: a pixel of the Bay\'s map is the flood\'s - flooded once, the first time it is asked; past the Veil the Eltheric Ocean\'s own water round its isles; past the map\'s edge the continent\'s sea only where the land beyond the Bay stands (AUDIT CAPTAIN\'S SEA B10), else none (mutants: the ether\'s arm dropped, the map\'s bounds unasked, B10\'s edge dropped)', () => {
   const rows = ['~.....', '~..~..', '~.....'];
   const { openSea, asked } = hostOpenSea({ isWater: raster(rows), width: 6, height: 3 });
   assert.equal(asked(), 0, 'nothing flooded before a town asks');
@@ -130,6 +132,11 @@ test('INLAND-PORTS THE HOST\'S OPEN SEA, run: a pixel of the Bay\'s map is the f
   assert.equal(ether.openSea(10, -50), false, 'the isle\'s land');
   assert.equal(ether.asked(), 2, 'no flood for the ether');
   assert.equal(hostOpenSea({ isWater: () => true, width: 6, height: 3, ether: false, inEther: () => true }).openSea(1, -5), false, 'the switch off: no ether, off the map');
+  // B10: past the map's edge, the continent's water where the land beyond the Bay stands - and nothing else there
+  const beyond = (x, y) => (x < 0 ? y !== 1 : raster(rows)(x, y));   // west of the map: the sea, a headland at row 1
+  const tam = hostOpenSea({ isWater: beyond, width: 6, height: 3, tamriel: true });
+  assert.deepEqual([tam.openSea(-3, 0), tam.openSea(-3, 1), tam.openSea(3, 1)], [true, false, false], 'the continent\'s sea, its land, and the Bay\'s pond still none');
+  assert.equal(hostOpenSea({ isWater: beyond, width: 6, height: 3 }).openSea(-3, 0), false, 'the land beyond the Bay off: nothing streams past the edge');
 });
 
 /** The host's port list (the harbour board's), lifted off world.js and run over a map directory and an open sea of the
@@ -164,6 +171,43 @@ test('INLAND-PORTS THE HOST: the pixel\'s build and the town\'s places ask portO
   assert.equal(openSea(px[1].x + 1, px[1].y), false, 'the village\'s pond is no sea');
   assert.deepEqual(hostPortList({ dict, maps, openSea }).map((p) => p.name), ['Shore']);
   assert.deepEqual(hostPortList({ dict, maps, openSea: () => true }).map((p) => p.name), names, 'the sea all round: every town');
+});
+
+/** The harbour office's `seaAt` as the host hands it (world.js's office deps), over the host's open sea and a one water
+ *  law of the test's (`isWater`) - lifted and run. */
+function hostSeaAt({ isWater, width, height }) {
+  const m = /\n {4}seaAt: (.+?), {3}\/\//.exec(W);
+  assert.ok(m, 'the harbour office\'s seaAt moved');
+  const { openSea } = hostOpenSea({ isWater, width, height });
+  // eslint-disable-next-line no-new-func
+  return new Function('openSea', 'seaPixel', 'tamrielLand', 'MAP_WIDTH', 'MAP_HEIGHT', `return (${m[1]});`)(openSea, isWater, false, width, height);
+}
+
+test('INLAND-PORTS SEAAT (Mac, 2026-10-15: "Fix harbour seaAt too"): the harbour office\'s sea is the open sea - 300 days of a board\'s bounties and salvages, and the treasure charts off its port, never sited on a lake inland that lies within their reach, though the lake holds open water all round; a port beside a lake takes no cargo (mutant: seaAt the one water law again)', () => {
+  // the sea down the map's west edge (x 12 and under); a lake of five by five inland, its middle seven pixels east of the port
+  const W2 = 60, H2 = 40;
+  const lake = (x, y) => x >= 19 && x <= 23 && y >= 18 && y <= 22;
+  const isWater = (x, y) => x >= 0 && y >= 0 && x < W2 && y < H2 && (x <= 12 || lake(x, y));
+  const seaAt = hostSeaAt({ isWater, width: W2, height: H2 });
+  const HOME = { key: '14,20', name: 'Home', px: 14, py: 20, region: 17, crown: 'Daggerfall' };
+  assert.ok(SITE_PX.near <= 6 && SITE_PX.far >= 8, 'the lake\'s open middle lies within a site\'s reach');
+  assert.deepEqual([seaAt(21, 20), seaAt(2, 20), seaAt(-1, 20)], [false, true, false], 'the lake no sea, the edge\'s sea, nothing past the map');
+  let sited = 0, west = 0;
+  for (let day = 0; day < 300; day++) {
+    for (const o of boardFor({ port: HOME, crown: 'Daggerfall', day, level: 5, ports: [HOME], seaAt })) {
+      if (!o.target) continue;
+      sited++;
+      assert.equal(lake(o.target.px, o.target.py), false, `${o.kind} on day ${day} sited on the lake (${o.target.px}, ${o.target.py})`);
+      if (o.target.px <= 12) west++;
+    }
+  }
+  assert.ok(sited > 20 && west === sited, `every site on the open sea (${west} of ${sited})`);
+  for (let seed = 0; seed < 200; seed++) {
+    const c = chartSite(seed, [HOME], seaAt);
+    assert.ok(c && !lake(c.px, c.py), `a chart's cache on the lake (seed ${seed})`);
+  }
+  assert.equal(deliveryPort({ px: 24, py: 20 }, seaAt), false, 'a port by the lake: no cargo goes there');
+  assert.equal(deliveryPort({ px: 13, py: 20 }, seaAt), true);
 });
 
 // ─── THE REAL MAP ────────────────────────────────────────────────────────────────────────────────────────────────────

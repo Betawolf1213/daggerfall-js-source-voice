@@ -4034,13 +4034,16 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  build, three thousand lines before its old place ran. */
   const seaPixel = (x, y) => isWaterPixel(maps.getClimateIndex(x, y), woods.getHeightMapValue(x, y));
   /** FIELD BUGS 2026-10-14 INLAND-PORTS: THE OPEN SEA - a pixel of the Bay's map whose water reaches the map's border
-   *  (world/portSites.js openSeaOf over seaPixel, flooded the first time a town asks: every lake and pond the map draws
+   *  (world/portSites.js openSeaOf over seaPixel, flooded the first time it is asked: every lake and pond the map draws
    *  inland left out); past the Veil, the Eltheric Ocean's water round its isles (the ether's own ground - each isle a
-   *  hill of land in open water, ethericSea.js isleByte). Anywhere else, none. */
+   *  hill of land in open water, ethericSea.js isleByte); past the map's edge, only where the land beyond the Bay stands
+   *  (AUDIT CAPTAIN'S SEA B10, the harbour's sites' law, moved here: else nothing streams there) - the continent's sea,
+   *  its land a province's and no lake in it (world/tamrielGround.js authoredHeightByte). The one set the port towns, the
+   *  harbour board's ports and the harbour office's sites, cargoes and charts ask. */
   let _openSea = null;
   const openSea = (x, y) => {
     if (etherSea && inEther(x, y)) return seaPixel(x, y);
-    if (!(x >= 0 && y >= 0 && x < MAP_WIDTH && y < MAP_HEIGHT)) return false;
+    if (!(x >= 0 && y >= 0 && x < MAP_WIDTH && y < MAP_HEIGHT)) return tamrielLand && seaPixel(x, y);
     _openSea ??= openSeaOf(seaPixel, MAP_WIDTH, MAP_HEIGHT);
     return _openSea[y * MAP_WIDTH + x] === 1;
   };
@@ -10538,7 +10541,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     notorietyOf: (crown) => naval?.notorietyOf?.(crown) ?? 0,
     port: () => navalPortHere(),
     ports: () => navalPortList(),
-    seaAt: (x, y) => (tamrielLand || (x >= 0 && y >= 0 && x < MAP_WIDTH && y < MAP_HEIGHT)) && seaPixel(x, y),   // AUDIT CAPTAIN'S SEA B10: past the map's edge only where the land beyond the Bay stands (else nothing streams there - a site out of every reach)
+    seaAt: openSea,   // INLAND-PORTS (Mac, 2026-10-15: "Fix harbour seaAt too"): the open sea - a bounty's or a salvage's site, a chart's cache and a cargo's port never by a lake inland; AUDIT CAPTAIN'S SEA B10's edge is openSea's own
     waters: () => { const p = playerTravelPixel(); return etherSea && inEther(p.x, p.y) ? null : navalCrownOf(p.x, p.y, navalCapitals(), _questRegionIndex()).name; },   // ETHER-SEA: no crown's waters past the Veil
     carrack: (price, port) => { const deed = mintDeed(4, 0, csaNewItemUid(), price); return !!titleDeed(deed, { port: { name: port.name } }); },
     stow: (hold, item) => addItem(hold, item),   // CAPT-TRADE: goods into her hold
@@ -32848,7 +32851,11 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   const LANE_LIST_MS = 2000, LANE_NEAR_PX = 4;
   let _laneAt = -Infinity, _laneNet = null;
   const _laneWays = new Map();
-  /** A map pixel of the open sea - the ocean's water, never a lake's - the lanes' and the roadsteads' water. */
+  /** A map pixel of the lanes' water - the Ocean climate's at the shore's byte - the lanes' and the roadsteads' water.
+   *  NOT the open sea (FIELD BUGS 2026-10-14 INLAND-PORTS measured it): 331 pixels of the map's lakes carry the Ocean
+   *  climate, so the towns on a lake run their packets on it - the lake harbours' own traffic, which stays (Mac,
+   *  2026-10-15: the lake harbours are kept). The serpent's site asks a 3 x 3 of it, which no lake of the real map holds
+   *  (none in 3,650 days); a reader that means the open sea asks `openSea`. */
   const laneOpen = (px, py) => px >= 0 && py >= 0 && px < 1000 && py < 500 && tvWater(px, py) && maps.getClimateIndex(px, py) === CLIMATES.Ocean;
   const laneOpenNative = (x, z) => { if (!(x >= 0 && z >= 0 && x < 1000 * RAID_NATIVE_PIXEL && z < 500 * RAID_NATIVE_PIXEL)) return false; const p = pixelOfNative(x, z); return laneOpen(p.x, p.y); };
   _lanesReady = true;   // BOOT-TDZ II: every binding the lanes read stands from here (raidNowMs above it)

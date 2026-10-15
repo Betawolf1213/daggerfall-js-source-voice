@@ -335,7 +335,9 @@ is ended; gone down by another hand - no blow of the captain's charged her end -
 no regard lost (`quarryGone` - AUDIT CAPTAIN'S SEA B4: she came back whole and her casks floated anew each time). A held
 salvage's casks float there (SITE_CASK_LIFE each, its own lot - `SITE_LOT`), again if they sank unhauled, each on open
 water (D2). A boat of mine lying to a port's quay at her helm is the berth a delivery asks after. A site lies past the
-map's edge only where the land beyond the Bay stands (`world.js seaAt` - B10: with it off nothing streams there).
+map's edge only where the land beyond the Bay stands (B10: with it off nothing streams there), and never on a lake
+inland: the office's sea is the open sea (`world.js:"seaAt: openSea,"` - the map's water that reaches its border, the
+continent's past it; INLAND-PORTS, `01-Overview/Field-Bugs-2026-10-14-inland-ports.md`, Mac: "Fix harbour seaAt too").
 
 THE LETTERS: a crown's LETTER OF MARQUE (CAPT-MARQUE above) for MARQUE_PRICE, MARQUE_DAYS of the captain's clock, to its
 Privateers, one crown's at a time (`marqueOffer`); THE ADMIRALTY'S CARRACK - the one Carrack the Bay sells, Come Sail

@@ -88,29 +88,62 @@ Daggerfall building holds: the town map letters the places that stand (`ports: b
 never counts it (`travelMapOptions.js` locationInfoRows asks IsNamedBuilding). Online, no service holds a port's place:
 every client stands the same ones. Nothing to migrate.
 
-NOT TOUCHED - the same data read by other laws, each that law's own:
+THE HARBOUR OFFICE'S SEA (2026-10-15, Mac: "Fix harbour seaAt too"). The office's `seaAt` - a bounty's and a
+salvage's site in open water off the board's port (`harbourBoard.js siteFor`), a treasure chart's cache
+(`treasureCharts.js chartSite`), the sea beside a cargo's port (`deliveryPort`) and a held cargo's void - read the one
+water law, lakes and all. It is the open sea now (`world.js:"seaAt: openSea,"`), and AUDIT CAPTAIN'S SEA B10's edge -
+past the map only where the land beyond the Bay stands, the continent's sea, no lake in it (`tamrielGround.js
+authoredHeightByte`: a province's land is SHORE_BYTE and up) - is the open sea's own
+(`world.js:"if (!(x >= 0 && y >= 0 && x < MAP_WIDTH && y < MAP_HEIGHT)) return tamrielLand"`). On the real map, with the
+board's ports the 106, no site, cache or cargo port lay on a lake already (21,200 sites and 3,000 charts drawn, none);
+the law asked a lake's water, and it no longer can.
+
+EVERY READER OF THE SEA, read for the same fault (a lake taken for the sea):
+
+- CHANGED: the shipyard law and the harbour board's ports (above); the harbour office's `seaAt` (above).
+- CHECKED, NO LAKE ON THE REAL MAP: a raider's birth (`world.js` tvRaidOpen) and the serpent's site
+  (`systems/serpentSite.js` over the lanes' water) ask a three by three of Ocean-climate water, which no lake holds - none
+  of 174,723 birth pixels and none of 3,650 days' sites lies on one. Left as they stand.
+- LEFT, THE LAKE HARBOURS (Mac, 2026-10-15: kept): the packet lanes' water (`world.js` laneOpen - the Ocean climate at
+  the shore's byte) admits the 331 lake pixels that carry the Ocean climate, so the towns on a lake run packets on it (26
+  lanes sail a lake, Morascubia's and Isfeho's among them) - their harbours' own traffic; its comment said "never a
+  lake's" and says what it is now. Routing it through the open sea would drop 72 lanes - the 26 on a lake, and 46 that
+  pair a lake's roadstead with another and were never sailed - and add 8 on the coast. The seats' Harbour (`net/fortLaw.js` coastalAt over the
+  one water law, or a port of the mod's) - a members' harbour, a lake harbour where the water is a lake's (on the real
+  map Eastcastle alone is coastal by a lake), and a funded work the account service holds.
+- LEFT, NOT A SEA TEST: the maps' and the far ring's water drawn (`inkMap.js`, `farRing.js`, `overworldModel.js` - a lake
+  is water to see), the Oblivion gate's land (`gateSite.js` - a lake is no land either), the crossing's distance to land
+  (`world.js` crossLandPx - CROSS_LAND_PX, 20, is more than any lake's breadth), the Bay fitted to the picture
+  (fitBayToPicture), the ships' own water (`navalIsWater`, the terrain's - a lake harbour's boats sail it), DFU's ship
+  travel time and the professions' sea (`systems/travel.js`, `foragingLaw.js`, `net/nodeLaw.js haulAtSea` - CLIMATE.PAK's
+  Ocean, the service's law too), and Deep Waters' encounters (already the ocean's: `isOceanConnected`).
+
+DECIDED NO (Mac, 2026-10-15) - each that law's own, and to stay so:
 
 - Travel Options' table: the travel map's PORTS filter and its ship travel, the held map's anchors (PORT-MAP,
   `heldMap.js:"isPort: (s) => hasPort(s?.mapID ?? s?.mapId),"` - the anchor in the report's first screenshot) - the
-  mod's own harbours, 1:1. Ilessan Hills keeps its anchor and its passage by ship; whether the mod's table should drop the
-  36 is a departure from it, and the owner's call.
-- Come Sail Away's port (`world.js:"const csaIsPortTown = (x, y) => {"`, DEED-PORT): a deed placed, the merchantmen's
-  water, the harbour book's soundings - so a lake town's harbour may still be sounded and a quay laid on its lake, where
-  the terrain holds one; the docks row comes with it. An inland capital's has no water within reach and none is sounded.
-- DFU's bank (above), the seats' Harbour (`net/fortLaw.js coastalAt`), the harbour office's sites (`seaAt`, the one
-  water law).
+  mod's own harbours, 1:1. Ilessan Hills keeps its anchor and its passage by ship.
+- The lake harbours: Come Sail Away's port (`world.js:"const csaIsPortTown = (x, y) => {"`, DEED-PORT) - a deed
+  placed, the merchantmen's water, the harbour book's soundings - so a lake town's harbour is sounded and a quay laid on
+  its lake where the terrain holds one, the docks row with it, and its packets sail the lake (above). An inland
+  capital's has no water within reach and none is sounded.
+- DFU's bank (above).
 
 THE FOUR HOSTS. `scenes/world.js` decides and stands the port's places (wired, above); `scenes/exterior.js`, the
 single-town bench, stands no port (its own FLAGGED line in `scenes/portHost.js`); `scenes/worldModes.js` (interiors)
 reads DFU's byte for the bank's ship alone (untouched); `scenes/dungeonContext.js` stands no town.
 
-`test/fb1014_inlandports.test.js` (6): the open sea's flood (a channel round a corner the sea, a lake and a pond not,
+`test/fb1014_inlandports.test.js` (7): the open sea's flood (a channel round a corner the sea, a lake and a pond not,
 every edge seeded); the ring (two off the sea, three not, its own pixel); the report's town - a capital on the table with
 a pond beside it no port, Daggerfall's shape a port, a lake village none, a tomb on the sea none; the host's open sea
-lifted off world.js and run (flooded once, the ether's water past the Veil, nothing off the map); the host's wiring and
-the board's list lifted and run; and on the real map (ARENA2_PATH) the counts above, the 49 by name, the kept towns'
+lifted off world.js and run (flooded once, the ether's water past the Veil, the continent's past the edge only with the
+land beyond the Bay, nothing off the map else); the host's wiring and the board's list lifted and run; the harbour
+office's `seaAt` lifted and run - 300 days of a board's bounties and salvages and 200 charts off a port with a lake in
+their reach, never on it, and no cargo for a port by the lake; and on the real map (ARENA2_PATH) the counts above, the 49 by name, the kept towns'
 bearings, and Ilessan Hills' old field - the town's middle - and its ponds. `test/fb1013c_porttowns.test.js` and
 `test/shipyards1_found.test.js` PIN MOVED (the board's ports and the shipyard law's towns the open sea's; the host's
-words). `tools/mutants/fb1014_inlandports.json` 14/14 dead; `shipyards1_audit`'s AUDIT-SHIPYARDS-the-host-asks-no-data
+words), and `test/auditcaptsea.test.js` (B10's edge the open sea's). `tools/mutants/fb1014_inlandports.json` 15/15 dead
+(`auditcaptsea`'s ACS-B10-sea-at re-aimed at the open sea's edge, dead, and the 11 other records of `captboard`,
+`capttrade`, `fb1013c_porttowns` and `shipyards1_audit` on the office's sea and the host's port test run again, dead); `shipyards1_audit`'s AUDIT-SHIPYARDS-the-host-asks-no-data
 and -the-docks-wait-the-yards-test re-aimed by content, and the 26 records of `shipyards1`, `shipyards1_audit`,
 `fb1013c_porttowns` and `carpyard1` aimed at the files this changed run again: all dead.
