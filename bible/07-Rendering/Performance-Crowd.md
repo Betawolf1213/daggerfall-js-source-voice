@@ -265,7 +265,15 @@ matrices.*
 Same answer: every pose 118 animators of ten ships of every hull and rig write over 900 frames (the controllers' own
 bools and floats turned, crossfades, plays at a time, a frame held, animators off and on, then every rudder rowing a
 second) - one sha256 on origin/main d8ccf7fd6 and here; and PERF-SAILS3's digest of the pool, the ropes' bakes in it,
-unchanged. Pins: `test/perfsails4.test.js` (3; the ropes' bakes against their nodes' own matrices, free and hung under a
+unchanged.
+
+Live, the owner's client online at the same spot, origin/main d8ccf7fd6 then PERF-SAILS3 + PERF-SAILS4 (a second pair,
+another hour of the same town - its draws 1,975 and 1,966 a frame): the pool's frame 0.99 -> 0.33 ms, its draw 0.37 ->
+0.09, navalHost's poseShip 0.41 -> 0.07 (the animators 0.23 -> 0.02), the ropes' holders 0.36 -> 0.11 - the ships'
+1.77 -> 0.49 ms a frame; what the frame allocates under the pool 1,408 -> 262 KB, the whole frame's 4.0 -> 2.5 MB; the
+world's frame 10.5 -> 8.3 ms, 101 -> 112 FPS.
+
+Pins: `test/perfsails4.test.js` (3; the ropes' bakes against their nodes' own matrices, free and hung under a
 turned node), `tools/mutants/perfsails4.json` (6, 6 dead).
 
 ## PERF-SKY1 — the stars are a night's (the port takes this part alone)
