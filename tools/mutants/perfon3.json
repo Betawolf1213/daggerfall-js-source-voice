@@ -94,8 +94,8 @@
   {
     "name": "PERF-ON3-n-the-panel-blind-to-the-open-row",
     "file": "src/ui/chatPanel.js",
-    "old": " && menuFor === whoMenuSeen && query === whoQuerySeen) return;",
-    "new": " && query === whoQuerySeen) return;",
+    "old": " && menuFor === whoMenuSeen && query === whoQuerySeen && found === whoFoundSeen) return;",
+    "new": " && query === whoQuerySeen && found === whoFoundSeen) return;",
     "tests": ["test/perfon3.test.js"]
   }
 ]

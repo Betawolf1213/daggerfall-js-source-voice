@@ -12,6 +12,7 @@ import assert from 'node:assert/strict';
 import { ChatLog, tagOf, findQuery, playerFound, lineFound, findLines, CHAT_FIND_MAX } from '../src/net/chat.js';
 import { findCommandOf, FIND_COMMANDS, HELP_LINES, parseChatLine } from '../src/net/chatCommands.js';
 import { createChatPanel } from '../src/ui/chatPanel.js';
+import { foundRows, withFound, NO_ROWS } from '../src/net/roster.js';
 
 // ─── THE LAW ────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -233,4 +234,48 @@ test('CHAT-FIND panel: /search <name> in the chat field fills the search and sen
   assert.equal(r.panel.find('ann'), 'ann');
   assert.equal(r.log.open, true, 'find() opens the chat on it');
   r.panel.destroy();
+});
+
+// ─── CHAT-FIND-HUB: past what this client knows, the hub's own search ───────────────────────────────────────────────
+
+test('CHAT-FIND-HUB law: the hub\'s answer as rows the query finds - by the box\'s law or the hub\'s fold, never my own, by name, the same frozen array while nothing moved - and merged into the known rows each player once (mutants: the fold unread; my own row listed; the answer unfiltered; a known player twice)', () => {
+  const hubFound = { q: 'o', l: [{ id: 'p-obr', name: "O'Brien" }, { id: 'p-me', name: 'Mac' }, { id: 'p-bor', name: 'Borgrim' }, { id: 'p-zed', name: 'Zed' }, null] };
+  const session = { id: 'p-me', name: 'Mac', hubFound };
+  assert.deepEqual(foundRows(session, 'obrien').map((r) => r.name), ["O'Brien"], 'the hub\'s fold');
+  assert.deepEqual(foundRows(session, 'BOR').map((r) => [r.id, r.name, r.me, r.tag]), [['p-bor', 'Borgrim', false, tagOf('p-bor')]]);
+  assert.deepEqual(foundRows(session, 'o').map((r) => r.name), ['Borgrim', "O'Brien"], 'by name, never mine');
+  assert.equal(foundRows(session, 'o'), foundRows(session, 'o'), 'the same frozen array');
+  assert.ok(Object.isFrozen(foundRows(session, 'o')[0]));
+  assert.equal(foundRows(session, 'mac'), NO_ROWS, 'never my own row - my session lists me');
+  assert.equal(foundRows(session, ''), NO_ROWS);
+  assert.equal(foundRows(session, '#ab'), NO_ROWS, 'a tag is no hub search');
+  assert.equal(foundRows({ id: 'p-me' }, 'o'), NO_ROWS, 'no answer');
+  const known = [{ id: 'p-bor', name: 'Borgrim', tag: tagOf('p-bor') }];
+  assert.equal(withFound(known, NO_ROWS), known);
+  assert.deepEqual(withFound(known, foundRows(session, 'o')).map((r) => r.id), ['p-bor', 'p-obr'], 'each player once');
+});
+
+test('CHAT-FIND-HUB panel: a name typed on a roster that knows fewer than are online asks the hub (the source\'s askFind), and the players it found join the list and its count; cleared, the ask is let go (mutants: the box never asks; the found rows undrawn; the repaint blind to an answer)', () => {
+  let clock = 1000;
+  const log = new ChatLog({ now: () => clock++ });
+  const asked = [];
+  const session = { id: 'p-me', name: 'Mac', roomCount: 600, hubFound: null, peers: new Map([['p-ann', { id: 'p-ann', name: 'Annalise' }]]), askFind(q) { asked.push(q); if (!q) this.hubFound = null; } };
+  const doc = fakeDocument(), win = fakeWindow(1280);
+  const panel = createChatPanel({ log, onSend: () => true, roster: () => session, action: () => null, doc, win, touch: false });
+  const root = doc.body.children[0];
+  panel.open(); panel.render({});
+  type(one(root, 'dfchat-search'), 'ann');
+  panel.render({});
+  assert.equal(asked.at(-1), 'ann', 'the box asks');
+  assert.deepEqual(find(root, 'dfchat-who-name').map((n) => n.textContent), ['Annalise'], 'the shard\'s own, until the hub answers');
+  session.hubFound = { q: 'ann', l: [{ id: 'p-anx', name: 'Annabeth' }, { id: 'p-ann', name: 'Annalise' }] };
+  panel.render({});
+  assert.deepEqual(find(root, 'dfchat-who-name').map((n) => n.textContent), ['Annabeth', 'Annalise'], 'everyone online the hub found, once each');
+  assert.equal(one(root, 'dfchat-whohead').textContent, 'Online — 2 of 600');
+  assert.equal(one(root, 'dfchat-who-more').textContent, '');
+  one(root, 'dfchat-find-clear').fire('click');
+  panel.render({});
+  assert.equal(asked.at(-1), '', 'cleared: the answer let go');
+  assert.deepEqual(find(root, 'dfchat-who-name').map((n) => n.textContent), ['Annalise', 'Mac'], 'the list as it was');
+  panel.destroy();
 });

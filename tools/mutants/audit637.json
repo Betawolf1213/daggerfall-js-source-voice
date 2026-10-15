@@ -112,7 +112,7 @@
   {
     "name": "AUDIT637-A1a-the-panel-short-circuit-gone",
     "file": "src/ui/chatPanel.js",
-    "old": "    if (all === whoRowsSeen && everyone === whoAllSeen && total === whoTotalSeen && label === whoLabelSeen && menuFor === whoMenuSeen && query === whoQuerySeen) return;\n",
+    "old": "    if (all === whoRowsSeen && everyone === whoAllSeen && total === whoTotalSeen && label === whoLabelSeen && menuFor === whoMenuSeen && query === whoQuerySeen && found === whoFoundSeen) return;\n",
     "new": "",
     "tests": [
       "test/audit637_roster.test.js",

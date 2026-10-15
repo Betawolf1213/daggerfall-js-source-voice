@@ -72,7 +72,7 @@ import { relaySupportsFoeInventory } from './wire.js';
 // Not a DFU member: Daggerfall Unity has no multiplayer. Ledger A row.
 import { validStaffTeleportIn, validStaffTeleportOut, staffTeleportSupported } from './staffTeleport.js';
 import { validRelayCfgIn, validRelayCfgOut, relayCfgSupported } from './relayCfg.js';   // SCALE5b: the relay's settings, a developer's
-import { hubHopOf, isChannelShard, channelOf, hubShardsSupported, HUB_FIND_MAX, HUB_FIND_Q_MAX, HUB_GUILD_WHO_MS, HUB_GUILD_WHO_MAX, HUB_WHO_MS } from './hubShards.js';   // SCALE5c: the hub, sixteen ways
+import { hubHopOf, isChannelShard, channelOf, hubShardsSupported, HUB_FIND_MAX, HUB_FIND_Q_MAX, HUB_GUILD_WHO_MS, HUB_GUILD_WHO_MAX, HUB_WHO_MS, HUB_FIND_ASK_MS, HUB_FIND_FRESH_MS } from './hubShards.js';   // SCALE5c: the hub, sixteen ways
 import { CHAT_ROSTER_MAX } from './wire.js';   // SCALE5c: the World tab's list while the hub is small
 import { isLayered, LAYERS_MAX } from './wire.js';   // SCALE5d: a crowded place's layers
 import { layoutRoomKey } from '../world/interiorShared.js';   // WD3 (AUDIT WD3 B3): an interior's room is its layout's
@@ -524,7 +524,10 @@ export class OnlineSession {
     this._guildWhoAt = -Infinity; // SCALE5c: when the hub was last asked
     this.hubOnline = new Map();   // SCALE5c: id -> everyone online on every shard, as the bus last said (`sendHubWho`) - the World tab's list while the hub is small
     this._hubWhoAt = -Infinity;
-    this._shardMiss = 0;          // SCALE5c: a shard's socket that never opened, in a row (a relay before the shards refuses its key)
+    this.hubFound = null;         // CHAT-FIND-HUB: { q, l, at } - the hub's last answer to a search, the chat's search box reads it (`askFind`)
+    this._boxAsks = new Map();    // CHAT-FIND-HUB: q -> when the search box asked it, until its answer (that answer is the box's, not a line)
+    this._boxAskAt = -Infinity;
+    this._shardMiss = 0;         // SCALE5c: a shard's socket that never opened, in a row (a relay before the shards refuses its key)
     this._opened = new WeakSet(); // AUDIT SCALE II C-2: every socket that fired `open` - a shard's that never did is the miss above
     this._statusAtError = new WeakMap();   // AUDIT SCALE II C-2: my room's socket -> its status when the browser's `error` overwrote it (the `close` after reads it)
     this._hubBus = false;         // SCALE5c: the hub link fell back to the bus - it offers the shards no more this session
@@ -1052,6 +1055,7 @@ export class OnlineSession {
   _forgetHubLists() {
     this.hubOnline = new Map(); this._hubWhoAt = -Infinity;
     this.guildOnline = new Map(); this._guildWhoAt = -Infinity;
+    this.hubFound = null; this._boxAsks = new Map(); this._boxAskAt = -Infinity;   // CHAT-FIND-HUB: a search's answer is the room's too
   }
   _openHalo(room, backoff = BACKOFF_MIN_MS) {
     if (!this.url || !this._WS) return;
@@ -2458,7 +2462,31 @@ export class OnlineSession {
   sendFind(q) {
     if (!this.findOk || !isSocialRoom(this.room) || typeof q !== 'string') return false;
     const t = q.trim().slice(0, HUB_FIND_Q_MAX);
+    this._boxAsks.delete(t);   // CHAT-FIND-HUB: a /find of the box's own query - its answer is said as a line
     return !!t && this._send({ t: 'find', q: t });
+  }
+  /** CHAT-FIND-HUB (2026-10-15, Mac: "player search isnt working properly. Even in world tab I try to search for someone
+   *  and they can't be found cause it only shows like 25 ppl out of 600"): THE SEARCH BOX ASKS THE HUB. Past
+   *  CHAT_ROSTER_MAX online the hub lets `hubOnline` go (sendHubWho) and this link knows its own shard alone, so the box -
+   *  which filters what this client knows (CHAT-FIND-ALL) - found nobody on the other fifteen. Asked of the hub's own
+   *  search (`find`, /find's) while the box holds a query and this link knows fewer than are online: once a query moves,
+   *  again when its answer is HUB_FIND_FRESH_MS old, never closer than HUB_FIND_ASK_MS (the relay drops a search past its
+   *  bucket and closes a socket that keeps on). The answer is `hubFound`, never a line. '' (the box cleared) lets the
+   *  answer go. A '#' query is a tag, which the hub does not search. False when not asked. */
+  askFind(q) {
+    const t = String(q ?? '').trim().toLowerCase().slice(0, HUB_FIND_Q_MAX).trim();
+    if (!t) { this.hubFound = null; return false; }
+    if (t.startsWith('#') || !this.findOk || !isSocialRoom(this.room) || !this._ws || !this._welcomed.has(this._ws)) return false;
+    if (this.roomCount == null || this.roomCount <= this.peers.size + this.hubOnline.size + 1) return false;   // everyone is known here: the box filters them
+    const now = this._now();
+    if (now - this._boxAskAt < HUB_FIND_ASK_MS) return false;
+    if (this.hubFound?.q === t && now - this.hubFound.at < HUB_FIND_FRESH_MS) return false;
+    for (const [k, at] of this._boxAsks) if (now - at >= HUB_FIND_FRESH_MS) this._boxAsks.delete(k);   // an ask the relay dropped is never answered
+    if (this._boxAsks.has(t)) return false;   // asked, the answer on its way
+    if (!this._send({ t: 'find', q: t })) return false;
+    this._boxAskAt = now;
+    this._boxAsks.set(t, now);
+    return true;
   }
   /** SCALE5c (Mac's decision 2): everyone online on every shard - asked at most every HUB_WHO_MS by a hub link on a
    *  shard (the World tab asks while it is drawn), and only while the hub's count is no more than a roster says
@@ -3318,7 +3346,9 @@ export class OnlineSession {
       if (m.all === 1) { this.hubOnline = new Map(read(CHAT_ROSTER_MAX).map((p) => [p.id, p])); return; }   // the World tab's, while the hub is small
       if (typeof m.q !== 'string') return;
       const l = read(HUB_FIND_MAX);
-      this._deliver('found', () => this.onFound?.({ q: m.q, l, busy: m.busy === 1 }));
+      const box = this._boxAsks.delete(m.q);   // CHAT-FIND-HUB: the search box's ask - its answer is the box's, never a line
+      if (m.busy !== 1) this.hubFound = { q: m.q, l, at: this._now() };   // a busy hub answered nothing: the box asks again
+      if (!box) this._deliver('found', () => this.onFound?.({ q: m.q, l, busy: m.busy === 1 }));
     } else if (m.t === 'cfg') {
       // SCALE5b: the hub's answer to a relay setting - from the hub alone
       if (!primary || !isSocialRoom(room)) return;
