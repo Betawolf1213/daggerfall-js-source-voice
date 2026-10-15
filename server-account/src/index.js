@@ -258,7 +258,7 @@ import { grantSpoils } from './budget.js';   // INT5: a signed win's spoils fill
 import { reviewAct } from './review.js';   // INT6: the review of the judge's verdicts
 import { isGzip, gzipSizeOf, gunzipText, REALM_TEXT_MAX_BYTES } from '../../src/net/realmSaveCodec.js';   // REALM-GZIP: a save rides packed
 import { tradeRealm, REALM_TRADE_BODY_MAX } from './realmTrade.js';   // REALM P2.1: a trade, settled here
-import { wildFall } from './wild.js';   // INT9: a death in the open zone's drop, taken off the record
+import { wildFall, wildCollect, wildReclaim, wildEscrows } from './wild.js';   // INT9: a death in the open zone's drop, taken off the record; MAC (2026-10-14): its killer's piece in escrow - collected, taken back, listed
 import { listLineages, putLineage, realmDie, realmWed, listUnions, LINEAGE_BODY_MAX, isTombstone } from './legacy.js';   // LEGACY7: Project Legacy's lines and the tombstone
 import { measured, heartbeatPartsOf } from './metrics.js';   // SCALE1: every request counted (Workers Analytics Engine); AUDIT SCALE II A-3: a heartbeat's parts, of the body the route read
 import { runCron } from './cron.js';   // SCALE4b: the service's own clock
@@ -318,7 +318,7 @@ const overloaded = (origin) => {
 const JUDGE_STATUS = Object.freeze({ 'trade-held': 409, 'record-unjudged': 409, 'piece-dupe': 409, 'piece-claimed': 409, 'piece-legacy': 409 });
 /** INT9: a death's drop's refusals - no key to verify or sign with 503, a receipt not the caller's 403, the fallen's own
  *  grace or the room's falls 409; the record's own (REALM_STATUS) after them, a bad shape 400 (the default). */
-const WILD_STATUS = Object.freeze({ 'no-gate-key': 503, 'no-signing-key': 503, 'not-yours': 403, grace: 409, nonce: 400 });
+const WILD_STATUS = Object.freeze({ 'no-gate-key': 503, 'no-signing-key': 503, 'not-yours': 403, grace: 409, nonce: 400, 'no-escrow': 404, 'escrow-wait': 409, 'escrow-late': 409, 'escrow-moved': 409, 'escrow-collected': 409, 'escrow-returned': 409 });   // MAC (2026-10-14): the escrow's
 /** HOME-RENT: a room's refusals - a bad shape 400 (the default). */
 const RENT_STATUS = Object.freeze({
   ...JUDGE_STATUS,
@@ -1037,6 +1037,18 @@ const service = {
         if (!('error' in r)) return json(r, 200, origin);
         if (r.error === 'seq') return json({ error: 'seq', seq: r.seq }, 409, origin);   // the record moved: its tab checkpoints and asks again
         return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, WILD_STATUS[r.error] ?? REALM_STATUS[r.error] ?? 400, origin);
+      }
+
+      if ((path === '/v1/wild/collect' || path === '/v1/wild/reclaim' || path === '/v1/wild/escrows') && request.method === 'POST') {
+        // MAC'S DECISION (2026-10-14, the two-phase handoff - wild.js): the killer's worn piece the fall put in ESCROW -
+        // collected into the killer's record against the room's signed collect (`g1`, the gate's key), taken back into the
+        // fallen's once its killer could no longer collect it, or listed for the fallen's tab
+        const wctx = { ...ctx, bucket: env.SAVES };
+        const r = path === '/v1/wild/collect' ? await wildCollect(wctx, who.player, body, { gateKey: await gatePublicKey(env, subtle) })
+          : path === '/v1/wild/reclaim' ? await wildReclaim(wctx, who.player, body) : await wildEscrows(wctx, who.player, body);
+        if (!('error' in r)) return json(r, 200, origin);
+        if (r.error === 'seq') return json({ error: 'seq', seq: r.seq }, 409, origin);
+        return json({ error: r.error, ...(r.why ? { why: r.why } : {}), ...(Number.isSafeInteger(r.wait) ? { wait: r.wait } : {}) }, WILD_STATUS[r.error] ?? REALM_STATUS[r.error] ?? 400, origin);
       }
 
       if (path === '/v1/duel/record' && request.method === 'POST') {

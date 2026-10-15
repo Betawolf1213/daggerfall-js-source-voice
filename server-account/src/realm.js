@@ -664,7 +664,8 @@ export function realmAtOf(/** @type {any} */ v) {
  * row's `witnessed` takes it in the same step, so the budget never charges a gain the service itself made. INT6: the
  * last checkpoint judged clean is never `prev` to drop.
  * @param {any} ctx @param {string} playerId @param {{ id: string, lease: string, seq: number }} at
- * @param {(save: any) => string | null} change @param {{ outbound?: boolean }} [opts]
+ * @param {(save: any) => string | null} change @param {{ outbound?: boolean, escrow?: boolean | Set<string>, seize?: boolean }} [opts]
+ *   `escrow`: the pieces leaving in the service's hands (ledger.js ledgerMoves - true all, a Set those keys)
  */
 export async function prepareRealmRecord({ db, bucket, rand, nowS }, playerId, at, change, { outbound = false, escrow = false, seize = false } = {}) {
   if (!bucket) return { error: 'no-storage' };
@@ -725,7 +726,7 @@ export async function prepareRealmRecord({ db, bucket, rand, nowS }, playerId, a
  * join reads the new one (the staff rollback's way, review.js). Answers prepareRealmRecord's `{ steps, key, prev, seq }`,
  * guarded on the sequence it read, or `{ error }`.
  * @param {any} ctx @param {string} playerId @param {string} charId
- * @param {(save: any) => string | null} change @param {{ escrow?: boolean }} [opts]
+ * @param {(save: any) => string | null} change @param {{ escrow?: boolean | Set<string> }} [opts]
  */
 export async function seizeRealmRecord(ctx, playerId, charId, change, { escrow = true } = {}) {
   const row = await ctx.db.prepare('SELECT seq, lease FROM realm_characters WHERE id = ? AND player = ? AND dead_at IS NULL').bind(charId, playerId).first();

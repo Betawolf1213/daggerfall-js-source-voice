@@ -10,6 +10,11 @@
 // take, was refused: the fallen had lost the piece, and it lay in the remains for nobody until they went. The friend law
 // is the drop's alone now (net/wildLaw.js remainsNamedFor). `01-Overview/Field-Bugs-2026-10-14.md`.
 //
+// Mac's decisions of 2026-10-14 since: a guildmate is kin at the referee, so it never fights the fallen, and a piece in
+// escrow is a collect the friend law never reads (test/fb1014_pvpescrow.test.js). Here is the room's old take - a tab
+// whose room signs no collect - where the named piece still meets the friend law: a guild or a party joined between the
+// fall and the take (the fall is signed as the relay signs one, its referee long done).
+//
 // Every piece here is the game's own: the starting kit's worn clothes (startingGear.js), a Magic longsword as the
 // ladder rolls one (enemyEquipment.js createWeapon, lootRarity.js applyRarity) worn through equip.js equipItem, ids
 // stamped as the realm checkpoint stamps them, the record as the save writes it (save.js snapshotPlayer) - through the
@@ -45,8 +50,9 @@ const LONGSWORD = 121, STEEL = 3;
 
 /** THE FALL, END TO END: the fallen (Riadne, her guild's founder) wears what the game dressed and armed her in; the killer
  *  (Borin) picks her Magic longsword off her body; the service takes it off her record; her game takes it out of her pack
- *  and lays the remains; Borin's own book asks for it. `guildmate`: Borin wears her guild's tag; `party`: the two share a
- *  party by the take (one made after the fall - the referee let the blows land); `strangerFirst`: a stranger in the cell
+ *  and lays the remains; Borin's own book asks for it. `guildmate`: Borin wears her guild's tag by the take (one joined
+ *  after the fall - the referee counts a guildmate kin); `party`: the two share a party by the take (one made after the
+ *  fall - the referee let the blows land); `strangerFirst`: a stranger in the cell
  *  asks for the named piece before Borin's book does. */
 async function fall({ guildmate = false, party = false, strangerFirst = false } = {}) {
   const world = fakeRooms();

@@ -217,8 +217,8 @@ import { riteNear, riteHeard, riteStands, cageStands, RITE_HELPERS_MAX } from '.
 import { isSiegeRoom, newFighter, armsOk, SIEGE_HIT, ROYAL_RING, isSiegeNpcId, siegeNpcFoe, siegeNpcPose, siegeNpcFell, siegeNpcInReach, siegeNpcProvoked, refereeBlow, refereeCast, refereeStep, siegeHeld, siegeNextWave, siegeRise, SIEGE_WAVE_MS, SIEGE_FIGHTERS_MAX, SIEGE_SPECTATORS_MAX, SIEGE_OPENS_MS, SIEGE_TICK_MS, siegeNextBeat, fieldOf, newBattle, battleStep, honoured, siegeCampPose, siegeFieldFrame, isBattleRoom, isRoyalRoom, battleOfRoom, royalAsk, royalAccept, royalMarks, royalMayStrike, royalStepOk, royalEnd, royalStep, royalLadder, royalNextBeat, ROYAL_RC_KEEP, siegePlaceFree, siegeReturn, royalPrune, worksOf, refereeWorkBlow, siegeWaveMs, siegeRamDown, siegeBreach, SIEGE_WORK_IDS, SIEGE_GATEHOUSE, SIEGE_RAM, siegeGroundOf, siegeOffGround, siegeStepLevel, royalLevel, SIEGE_HEIGHT_M } from '../../src/net/siegeRef.js';   // PVP-REF: a siege's referee - siegeRef.js imports nothing, so the worker's graph stays flat   // SEAT2a: and its battle   // AUDIT-SEATS T3/R5: a side's places, a fighter's return, a tourney's records   // SEAT2b part two (b): the works in battle
 import { mintSiegeReceipt, SIEGE_RECEIPT_TTL_S, mintRoyalReceipt } from '../../src/net/siegeReceipt.js';   // SEAT2a: the relay's fourth signature - a fighter's result and Honours
 import { newDuelRef, duelNote, duelOpen, duelBoutOf, duelBlow, duelPose, duelEnd, duelForfeit, duelStep, duelVitals } from '../../src/net/duelRef.js';   // INT8: the duel refereed
-import { newWildRef, wildZone, wildPose, wildBlow, wildPick, wildSigned, wildStep, wildVitals, wildGone, wildCarry, wildCarryOf, wildSignNow, wildFallOf, WILD_FALL_PREFIX, WILD_REF } from '../../src/net/wildRef.js';   // INT9: the open zone refereed
-import { mintWildReceipt } from '../../src/net/wildReceipt.js';   // INT9: a fall, signed
+import { newWildRef, wildZone, wildPose, wildBlow, wildKin, sameGuild, wildPick, wildSigned, wildStep, wildVitals, wildGone, wildCarry, wildCarryOf, wildSignNow, wildFallOf, WILD_FALL_PREFIX, WILD_REF } from '../../src/net/wildRef.js';   // INT9: the open zone refereed
+import { mintWildReceipt, mintWildCollect } from '../../src/net/wildReceipt.js';   // INT9: a fall, signed; MAC (2026-10-14): and a killer's collect
 import { mintDuelReceipt } from '../../src/net/duelReceipt.js';   // INT8: a duel won, signed
 import { newFight, joinFight, applyHit, applyCrystalHit, applyHostHit, applyHeal, healRef, stepBrain, stateOf, earned, earnedBy, COURT_CENTRE, BRAIN_TICK_MS, CHECKPOINT_MS, GATE_FIGHTERS_MAX } from '../../src/net/gateBrain.js';
 import { mintReceipt, importReceiptKey, readReceipt, RECEIPT_TTL_S } from '../../src/net/gateReceipt.js';
@@ -288,7 +288,7 @@ import { newTable, topUp as holdemTopUp, sit as holdemSit, sitRefusal as holdemS
 // WILD1 (2026-10-07, the owner: "Wrothgarian mountains need to be turned into a open pvp zone"): ONE FILE JOINS THE
 // BUNDLE - net/wildLaw.js (a place room's REMAINS: what a body in the open zone dropped, kept here so the room alone
 // decides who takes each record - it imports wire.js alone). bible/11-Multiplayer/Wild-Zone.md.
-import { newRemains, foldFall, takeFrom, remainsNamedFor, remainsWords, remainsLive, remainsEmpty, remainsSpent, remainsTakeover, remainsEvict, remainsOf, wildRemainsKey, WILD_REMAINS_PREFIX } from '../../src/net/wildLaw.js';
+import { newRemains, foldFall, takeFrom, remainsNamedFor, collectAsk, remainsWords, remainsLive, remainsEmpty, remainsSpent, remainsTakeover, remainsEvict, remainsOf, wildRemainsKey, WILD_REMAINS_PREFIX } from '../../src/net/wildLaw.js';
 import { wildGate, wildDirected, WILD_HZ_MAX, WDUN_HZ_MAX, WDUN_HERE_MS, WDUN_INTERNAL_RESET, WDUN_INTERNAL_KIN, WDUN_INTERNAL_GONE, WILD_INTERNAL_VIT, wdunRoomKey, wdunHall, WILD_REMAINS_MS as WDUN_PILE_MS } from './relay.js';
 import { WDUN_KEY, wdunOf, wdunPrune, wdunEnter, wdunHere, wdunLeave, wdunDie, wdunGone, wdunState, wdunCrows, wdunBound, wdunGiantDie, wdunGiants } from '../../src/net/wildLaw.js';   // PVPDUNGEONS: the zone's halls, kept by the hub
 import { validSdRecord, sdRelayGate, validSdFoundTell, chatRegionRoom, SD_INTERNAL_CENSUS, SD_INTERNAL_FOUND, SD_INTERNAL_LIVE, SD_TELL_RETRY_MS, SD_KEY, SD_FOUND_KEY, SD_REALM_KEY, sdDeadKey, SD_REGION_COUNT, SD_FIGHTERS_MAX, sdPzRelayGate, SD_ORRERY_KEY, sdFightRelayGate, SD_BRAIN_MIN, SD_NO_WORDS, SD_FIGHT_KEY, SD_INTERNAL_FELL, validSdFellTell, SD_RC_PREFIX, sdReceiptKey, SD_HERE_HOLD_MS, SD_SLOT_KEY, SD_HELD_KEY } from './relay.js';   // SD3: the Super dungeon's frame, its record and its doors (the wire's, through relay.js)
@@ -8008,7 +8008,7 @@ export class Room {
         const old = remainsEvict(map, now);
         if (old === '') return;   // INT9 (AUDIT): a room full of young tombstones lays nothing
         if (old) await this._wildDrop(map, old);
-        rec = newRemains({ r: d.r, os: c.s, oid: a.id, nm: a.sub === c.s ? (a.name ?? '') : '', p: d.p, now, gi: c.wg ?? null, wh: c.wh, wn: c.wn, wk: c.wk ?? null, wi: c.wi ?? -1 });   // PVPDUNGEONS: the fallen's guild, so no guildmate takes from it - INT9 (AUDIT): the order's word, whoever carries it (the killer's own guild was written)
+        rec = newRemains({ r: d.r, os: c.s, oid: a.id, nm: a.sub === c.s ? (a.name ?? '') : '', p: d.p, now, gi: c.wg ?? null, wh: c.wh, wn: c.wn, wk: c.wk ?? null, wi: c.wi ?? -1, we: c.we === 1 });   // MAC (2026-10-14): `we` - the killer's piece the service's, in escrow   // PVPDUNGEONS: the fallen's guild, so no guildmate takes from it - INT9 (AUDIT): the order's word, whoever carries it (the killer's own guild was written)
         map.set(rec.r, rec);
       }
       if (rec.wh !== c.wh) { this._junk(ws); return; }
@@ -8024,12 +8024,31 @@ export class Room {
       return;
     }
     const rec = map.get(d.r);
+    // MAC'S DECISION (2026-10-14, the two-phase handoff): THE KILLER'S COLLECT of the piece the service holds in escrow
+    // (net/wildLaw.js collectAsk) - no record handed over: the room signs the collect once (net/wildReceipt.js `g1`), the
+    // record let go from the remains, and says the same collect to its killer each time it asks; its tab carries it to
+    // the service, which commits the piece to the killer's record once (server-account/src/wild.js wildCollect)
+    const ask = rec ? collectAsk(rec, d.i, a.sub ?? null) : null;
+    if (ask) {
+      if (ask === 'mint') {
+        const cr = await this._wildCollectMint(rec, a, now);
+        if (!cr) { this._send(ws, JSON.stringify({ t: 'wild', k: 'no', r: d.r, i: d.i })); return; }
+        const n = Math.max(1, Number.isInteger(rec.items[d.i]?.stackCount) ? rec.items[d.i].stackCount : 1);
+        rec.wc = cr; rec.items[d.i] = null;
+        if (remainsEmpty(rec)) this._wdunTellGone(rec.os);
+        await this.state.storage.put(wildRemainsKey(rec.r), rec);
+        this._wildFan({ t: 'wild', k: 'rm', r: d.r, i: d.i, n });
+      }
+      this._send(ws, JSON.stringify({ t: 'wild', k: 'cr', r: d.r, i: d.i, cr: rec.wc }));
+      if (ask === 'mint' && remainsSpent(rec)) this._wildFan({ t: 'wild', k: 'gone', r: d.r });
+      return;
+    }
     // PVPDUNGEONS (the owner: "Party/guildmembers cant pick it up"): a fallen's remains are theirs and their foes', never
     // their friends' - a guildmate is read off the sockets' own verified guilds, a party member asked of the hub. PVP-LOOT
     // (FIELD BUGS 2026-10-14): the DROP's law - the record the order names (the killer's worn piece, net/wildLaw.js
     // remainsNamedFor) is its account's by the service's word, and takeFrom judges it; the friend law read over it too, a
     // guildmate's kill left the piece the service had taken off the fallen in the remains for nobody
-    if (rec && !remainsNamedFor(rec, d.i) && rec.os && a.sub !== rec.os && ((rec.gi && a.gi && rec.gi === a.gi) || (a.sub && await this._wdunKinOf(a.sub, rec.os, now)))) {
+    if (rec && !remainsNamedFor(rec, d.i) && rec.os && a.sub !== rec.os && (sameGuild(rec.gi, a.gi) || (a.sub && await this._wdunKinOf(a.sub, rec.os, now)))) {
       this._send(ws, JSON.stringify({ t: 'wild', k: 'no', r: d.r, i: d.i }));
       return;
     }
@@ -8042,6 +8061,13 @@ export class Room {
     this._send(ws, JSON.stringify({ t: 'wild', k: 'got', r: d.r, i: d.i, it: got.it }));
     this._wildFan({ t: 'wild', k: 'rm', r: d.r, i: d.i, n: got.n });
     if (remainsSpent(rec)) this._wildFan({ t: 'wild', k: 'gone', r: d.r });
+  }
+
+  /** MAC (2026-10-14): A KILLER'S COLLECT SIGNED (net/wildReceipt.js `g1`) - for the realm character its socket plays (the
+   *  token's `ci`, the record the service commits the piece to), with the key the falls are signed with. Null with none. */
+  async _wildCollectMint(rec, a, now) {
+    if (!a.sub || typeof a.ci !== 'string' || !a.ci) return null;
+    try { return await mintWildCollect({ r: rec.r, k: a.sub, c: a.ci }, await this._receiptKeyOf(), { subtle: globalThis.crypto.subtle, nowS: Math.floor(now / 1000) }); } catch (e) { console.warn('[wild] collect failed', e?.message ?? e); return null; }
   }
 
   // ───────────────────────────── INT9: THE OPEN ZONE REFEREED (net/wildRef.js) ─────────────────────────────
@@ -8080,7 +8106,10 @@ export class Room {
     // INT9 (AUDIT): what the referee refuses anyway is refused before the hub is asked (a blow a frame asked it)
     if (!fa || !ft || !fa.zone || !ft.zone || fa.down || ft.down) return;
     const duel = this._duelRef ? duelBoutOf(this._duelRef, a.sub) : null;
-    const kin = (duel && (duel.a.sub === tb.sub || duel.b.sub === tb.sub)) || await this._wdunKinOf(a.sub, tb.sub, now);
+    // MAC'S DECISION (2026-10-14, "Guildmates are friends"): KIN is net/wildRef.js wildKin - a duel's two, and one guild
+    // (the two sockets' verified guilds) read here; the party and its truce asked of the hub only when neither is
+    const duelKin = !!duel && (duel.a.sub === tb.sub || duel.b.sub === tb.sub);
+    const kin = wildKin({ duel: duelKin, guilds: [a.gi, tb.gi] }) || wildKin({ party: await this._wdunKinOf(a.sub, tb.sub, now) });
     let look = null;
     if (d.k === 'strike') {
       look = this._looks.get(a.id) ?? null;

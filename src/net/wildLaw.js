@@ -35,10 +35,12 @@ export const wildRemainsKey = (r) => `${WILD_REMAINS_PREFIX}${r}`;
 
 /** A new remains - nothing in it yet; its first `fall` fills it. INT9: `wh`, `wn` the order's digest and count (the room
  *  opens it to takes only when its records match), `wk`, `wi` the killer and its piece's place (theirs alone); `lastAt`
- *  its carrier's last chunk (a deposit stalled half-way is another carrier's to lay - remainsTakeover). */
-export function newRemains({ r, os = null, oid = null, nm = '', p, now, gi = null, wh = null, wn = 0, wk = null, wi = -1 }) {
+ *  its carrier's last chunk (a deposit stalled half-way is another carrier's to lay - remainsTakeover). MAC (2026-10-14,
+ *  the two-phase handoff): `we` the order's word that the service holds the killer's piece in escrow (its take is a
+ *  collect - collectAsk), `wc` the collect this room signed for it (said again to its killer, never minted twice). */
+export function newRemains({ r, os = null, oid = null, nm = '', p, now, gi = null, wh = null, wn = 0, wk = null, wi = -1, we = false }) {
   return { r, gi: typeof gi === 'string' && gi ? gi : null, os: typeof os === 'string' && os ? os : null, oid: typeof oid === 'string' && oid ? oid : null, nm: sanitizeName(nm ?? ''), p: [p[0], p[1], p[2]], at: now, lastAt: now, open: true, items: [],
-    wh: typeof wh === 'string' ? wh : null, wn: Number.isSafeInteger(wn) ? wn : 0, wk: typeof wk === 'string' && wk ? wk : null, wi: Number.isSafeInteger(wi) ? wi : -1, ok: false };
+    wh: typeof wh === 'string' ? wh : null, wn: Number.isSafeInteger(wn) ? wn : 0, wk: typeof wk === 'string' && wk ? wk : null, wi: Number.isSafeInteger(wi) ? wi : -1, we: we === true && typeof wk === 'string' && !!wk, wc: null, ok: false };
 }
 /** INT9 (AUDIT): the most one record's JSON may weigh in a remains - a realm trade's own bound (net/realmTradeLaw.js
  *  REALM_TRADE_RECORD_MAX, pinned equal): a chunk of WILD_ITEMS_MAX of them and its order fit the wire's frame (net/wire.js
@@ -121,6 +123,23 @@ export function foldFall(rec, { oid, items, last }, now = null) {
 export const remainsNamedFor = (rec, i) => (rec?.wk && i === rec.wi ? rec.wk : null);
 
 /**
+ * MAC'S DECISION (2026-10-14, "Yes, build it" - the two-phase handoff): THE KILLER'S COLLECT. Where the service holds the
+ * named piece in ESCROW (`we` - server-account/src/wild.js), the fallen loses it only once its killer has it: the room
+ * hands no record for it, it signs the killer's collect (net/wildReceipt.js `g1`), and the killer's tab carries that to
+ * the service, which commits the piece to the killer's record once. Answers what a take of record `i` by account `sub` is:
+ * 'mint' (the named piece, asked by its killer the first time - the collect to sign, the record let go from the remains),
+ * 'again' (asked by its killer once more - the collect already signed, said again; never a second one), or null (no
+ * collect: another record, another taker, or a remains the service escrowed nothing of - takeFrom judges it).
+ */
+export function collectAsk(rec, i, sub) {
+  if (!rec?.ok || !rec.we) return null;
+  const named = remainsNamedFor(rec, i);
+  if (!named || sub !== named) return null;
+  if (typeof rec.wc === 'string' && rec.wc) return 'again';
+  return rec.items?.[i] ? 'mint' : null;
+}
+
+/**
  * A take: `n` of record `i`, the whole record when `n` reaches its stack. Answers the record as its taker gets it (the
  * stored one whole, or a copy at the count taken) and how many left - or null when there is nothing there to take.
  */
@@ -167,7 +186,8 @@ export function remainsEvict(map, now = Infinity) {
 export function remainsOf(v) {
   if (!v || typeof v !== 'object' || typeof v.r !== 'string' || !Array.isArray(v.items) || !Array.isArray(v.p) || v.p.length !== 3 || !Number.isFinite(v.at)) return null;
   return { r: v.r, gi: typeof v.gi === 'string' && v.gi ? v.gi : null, os: typeof v.os === 'string' ? v.os : null, oid: typeof v.oid === 'string' ? v.oid : null, nm: typeof v.nm === 'string' ? v.nm : '', p: [Number(v.p[0]) || 0, Number(v.p[1]) || 0, Number(v.p[2]) || 0], at: v.at, lastAt: Number.isFinite(v.lastAt) ? v.lastAt : v.at, open: v.open === true, items: v.items.map((it) => (it && typeof it === 'object' ? it : null)),   // INT9 (AUDIT): the guild kept too - a woken room let the fallen's guildmates take
-    wh: typeof v.wh === 'string' ? v.wh : null, wn: Number.isSafeInteger(v.wn) ? v.wn : 0, wk: typeof v.wk === 'string' ? v.wk : null, wi: Number.isSafeInteger(v.wi) ? v.wi : -1, ok: v.ok === true };   // INT9
+    wh: typeof v.wh === 'string' ? v.wh : null, wn: Number.isSafeInteger(v.wn) ? v.wn : 0, wk: typeof v.wk === 'string' ? v.wk : null, wi: Number.isSafeInteger(v.wi) ? v.wi : -1, ok: v.ok === true,   // INT9
+    we: v.we === true, wc: typeof v.wc === 'string' && v.wc ? v.wc : null };   // MAC (2026-10-14): the escrow's word and its collect, kept through a restart
 }
 
 
