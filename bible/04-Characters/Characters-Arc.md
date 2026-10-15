@@ -2863,7 +2863,9 @@ doorways, and DFU's counterpart to SetupDemoEnemy's height - EnemyMotor
 - was not ported, so every one walked into the lintel for good. It is
 now (`enemyMotor.js:"this._heightAdjust(FIXED_DT);"`): `height` is DFU's
 originalHeight, which the probes read; `controllerHeight` the one every
-Move sweeps.
+Move sweeps, and nothing else reads it (Mac, 2026-10-15: "Keep full
+height" - missiles, touches, sight, the crosshair, the lock-on and the
+bars keep the whole body; Port-Ledger A).
 
 ### REVIEW 2026-09-05 - the adversarial round over PR #55
 

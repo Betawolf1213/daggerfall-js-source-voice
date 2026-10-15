@@ -73,15 +73,14 @@ FIXED, HeightAdjust verbatim and what it needs:
 SQUEEZE1's sentence (`01-Overview/Field-Bugs-2026-09-26b.md`), "a doorway's lintel already stopped such a body, like
 DFU's CharacterController", holds for one step: DFU's motor ducks the body on the next, and the port's does now.
 
-NOT CARRIED - Mac's call, asked on the pull request:
-
-- DFU's own side effect of the duck, which its source names: "while the enemy is shortened, projectiles will not
-  collide with the top of the enemy for the difference in height" (:1451) - and EnemySenses' eye, built off the live
-  controller (`controller.center` + `controller.height / 3`, EnemySenses.cs:891-893), drops with it, as does the height
-  another foe hunting it aims by (GetDestination's `targetController.height`, EnemyMotor.cs:532). The port's missiles,
-  touches, crosshair, eye, foe-on-foe aim and health bars read `height`, the body, so for the half second a foe ducks a
-  shot at its head still lands and it sees from where it stood. Carrying them is every one of those readers reading
-  `controllerHeight`; the bars and the lock-on would bob half a metre each time a companion brushes a wall.
+KEEP FULL HEIGHT - Mac's call, 2026-10-15: "Keep full height". While a foe ducks, only its movement reads the duck:
+every Move of both motors and the pushes that keep foes apart. Projectiles (`spellcast.js` missileHitsFoe), touch
+spells (pickTouchTarget), its sight (`enemyMotor.js` _senses, and the target pass's in `enemyTargets.js`), a foe
+hunting it (_targetHeight), the crosshair (`activate.js` foeAabb), the lock-on (`lockOn.js` chestPoint) and the
+health bars read `height`, its whole body. DFU's own side effect of the duck is not carried - "while the enemy is
+shortened, projectiles will not collide with the top of the enemy for the difference in height" (:1451), the eye
+EnemySenses builds off the live controller (EnemySenses.cs:891-893) and the height a hunter aims by (EnemyMotor.cs:532)
+all drop with it there. Port-Ledger A records the departure.
 
 STILL AS DFU HAS IT: a body so tall its obstacle probe's capped top (0.36 of its height plus 1.0 m) clears the lintel -
 past about 3.4 m, which nothing in the vanilla roster on land reaches - meets the lintel in the probe, and detours rather
@@ -89,10 +88,15 @@ than ducking. Found on the way and not this bug: ObstacleCheck is still cast at 
 item), and over a made doorway 1.0 m wide and 0.8 m deep, narrower than any dungeon door, a lone foe approaching off its
 line paces the wall beside it - DFU's detour, which the port runs verbatim.
 
-Pins: `test/fb1014b_doorjam.test.js` (6; the sixth on the player's ARENA2, skipped without it - six real 2.25 m doorways
+Pins: `test/fb1014b_doorjam.test.js` (8; the last on the player's ARENA2, skipped without it - six real 2.25 m doorways
 and three Mages through each). Without the duck the report's corridor holds all three foes at the lintel on both lanes,
-and on N0000000.RDB not one Mage comes through a door. `tools/mutants/fb1014b_doorjam.json`, 18: 17 dead, 1 recorded
-equivalent (the strict 1.65 gate - a body of exactly 1.65 ducked to 1.65 sweeps what it had). Re-aimed at
+and on N0000000.RDB not one Mage comes through a door. KEEP FULL HEIGHT's two: a ducking Mage-height foe is hit by a
+missile and found by a touch at its head over the crouch, met by the crosshair and held by the lock-on whole, aimed at
+by a hunter at 2.475, and sees over a 1.6 m parapet a 1.65 eye cannot; and a sweep of `src/` in which every
+`.controllerHeight` and every sweepHeight call is one of the seven Moves, the six push sites or the duck's own state.
+`tools/mutants/fb1014b_doorjam.json`, 26: 25 dead, 1 recorded equivalent (the strict 1.65 gate - a body of exactly 1.65
+ducked to 1.65 sweeps what it had); eight of them switch a reader - the lock-on, the crosshair, the missile, the touch,
+the hunter's aim, the eye, a companion's bar, the target pass's eye - to the duck. Re-aimed at
 `controllerHeight`: `test/incident_ceiling_bats.test.js`'s and `test/squeeze1.test.js`'s Move pins and
 `tools/mutants/fbsea.json`'s walker record.
 

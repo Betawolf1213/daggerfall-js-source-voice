@@ -10,8 +10,9 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { join, relative, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { setPref } from '../src/systems/uiPrefs.js';
 import { Collider, SIDE_CONTACT } from '../src/player/collider.js';
 import { EnemyAI, DOOR_CROUCHING_HEIGHT, HEIGHT_CHANGE_SECONDS, foeFrameDt } from '../src/characters/enemyMotor.js';
@@ -203,6 +204,74 @@ test('DOOR-JAM by source: HeightAdjust runs after every fixed step\'s moves (Fix
     const moves = [...s.matchAll(/const (\w+) = this\.collider\.move\(this\.feet,[^;]*\);[^\n]*\n\s*this\.isGrounded = \1\.grounded;[^\n]*\n\s*this\.collidedSides = !!\1\.sides;/g)].length;
     assert.equal(moves, [...s.matchAll(/this\.collider\.move\(this\.feet,/g)].length, `${f}: every Move keeps its CollidedSides`);
   }
+});
+
+// ── KEEP FULL HEIGHT (Mac, 2026-10-15) ──────────────────────────────
+// "Keep full height": while a foe ducks, only its movement sweeps the duck. Projectiles, touch spells, its sight, a
+// foe hunting it, the crosshair, the lock-on and the health bars keep its full height - DFU's own side effect of the
+// duck ("projectiles will not collide with the top of the enemy", EnemyMotor.cs:1451) is not carried (Port-Ledger A).
+
+/** A Mage-height foe, ducked under a doorway: its controller at the crouch, its body its own. */
+function ducked(c = new Collider(() => 0), at = [0, 0, 0]) {
+  const ai = new EnemyAI(c, at, Math.PI / 2, { height: 2.475, centreOffset: 1.2375 });
+  ai.controllerHeight = DOOR_CROUCHING_HEIGHT; ai._resetHeight = true; ai._heightChangeTimer = 10;
+  return { ai, dead: false };
+}
+
+test('KEEP FULL HEIGHT: a ducking foe is still hit, touched, aimed at, picked and sighted at its full height - and it sees from where it stands', async () => {
+  const { missileHitsFoe, pickTouchTarget } = await import('../src/systems/spellcast.js');
+  const { foeAabb } = await import('../src/player/activate.js');
+  const { chestPoint, CHEST_FRACTION } = await import('../src/player/lockOn.js');
+  const f = ducked();
+  assert.equal(f.ai.controllerHeight, DOOR_CROUCHING_HEIGHT, 'it is ducking');
+  assert.equal(missileHitsFoe([0, 2.2, 0], f), true, 'a missile at its head, over the crouch, hits it');
+  const eye = [-2, 1.9, 0];
+  assert.equal(pickTouchTarget(eye, [1, 0, 0], [f]), f, 'a touch at its head, over the crouch, finds it');
+  assert.ok(Math.abs(foeAabb(f).max[1] - 2.475) < 1e-9, 'the crosshair meets its whole body');
+  assert.ok(Math.abs(chestPoint(f)[1] - 2.475 * CHEST_FRACTION) < 1e-9, 'the lock-on holds its chest');
+  // a foe hunting it aims by its full capsule (GetDestination's targetController.height)
+  const hunter = new EnemyAI(new Collider(() => 0), [6, 0, 0], 0, { height: 2.1 });
+  hunter._armedTargeting = true; hunter._targetCandidate = { ai: f.ai, isPlayer: false };
+  assert.equal(hunter._targetHeight(), 2.475);
+  // its eye: over a 1.6 m parapet halfway to the player it sees from its full height - a 1.65 body's eye does not
+  const c = new Collider(() => 0);
+  c.addMesh('wall', new Float32Array([3, 0, -5, 3, 0, 5, 3, 1.6, 5, 3, 1.6, -5]), new Uint32Array([0, 1, 2, 0, 2, 3, 0, 2, 1, 0, 3, 2]), I);
+  const looker = ducked(c);
+  looker.ai._senses([6, 0, 0], senses());
+  assert.equal(looker.ai.inSight, true, 'the ducking foe sees over the parapet');
+  const small = new EnemyAI(c, [0, 0, 0], Math.PI / 2, { height: DOOR_CROUCHING_HEIGHT, centreOffset: DOOR_CROUCHING_HEIGHT / 2 });
+  small._senses([6, 0, 0], senses());
+  assert.equal(small.inSight, false, 'the parapet hides the player from an eye at the crouch - the case is a real one');
+});
+
+test('KEEP FULL HEIGHT by source: the duck is read by movement alone - every `.controllerHeight` and every sweepHeight in src/ is a Move, a push or the duck\'s own bookkeeping', () => {
+  const files = [];
+  const walk = (d) => { for (const e of readdirSync(d, { withFileTypes: true })) { const p = join(d, e.name); if (e.isDirectory()) walk(p); else if (e.name.endsWith('.js')) files.push(p); } };
+  const root = fileURLToPath(new URL('..', import.meta.url));
+  walk(join(root, 'src'));
+  const MOVE = /this\.collider\.move\(this\.feet,[^;]*, this\.controllerHeight[,)]/;
+  const KEEP = /^\s*this\.controllerHeight = (?:height|DOOR_CROUCHING_HEIGHT|this\.height);/;
+  const bad = [];
+  let moves = 0, pushes = 0;
+  for (const p of files) {
+    const rel = relative(root, p).split(sep).join('/');
+    readFileSync(p, 'utf8').split('\n').forEach((line, i) => {
+      const at = `${rel}:${i + 1}`;
+      if (/\.controllerHeight\b/.test(line)) {
+        if (MOVE.test(line)) moves++;
+        else if (rel === 'src/characters/enemyMotor.js' && KEEP.test(line)) { /* the duck's own state */ }
+        else if (rel === 'src/characters/foeSpacing.js' && /^export const sweepHeight = \(ai\) => ai\.controllerHeight \?\? ai\.height \?\? CAPSULE_HEIGHT;$/.test(line)) { /* the pushes' one door */ }
+        else bad.push(`${at} ${line.trim()}`);
+      }
+      if (/\bsweepHeight\(/.test(line) && !/^export const sweepHeight/.test(line)) {
+        if (rel === 'src/characters/foeSpacing.js' && (/collider\.move\(feet, px, 0, pz, sweepHeight\(ai\), !airborne\);/.test(line) || /h[ab] = sweepHeight\(/.test(line))) pushes++;
+        else bad.push(`${at} ${line.trim()}`);
+      }
+    });
+  }
+  assert.deepEqual(bad, [], 'a reader of the duck that is not movement - Mac\'s call keeps the full height everywhere else');
+  assert.equal(moves, 7, 'the seven Moves of both motors sweep it');
+  assert.equal(pushes, 6, 'and the pushes: spaceFoes\' and spaceAcross\' overlaps, spaceFoes\' push, the nudge');
 });
 
 // ── on the player's own data ────────────────────────────────────────
