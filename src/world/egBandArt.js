@@ -245,10 +245,11 @@ function pillarArt(band) {
 const PAINTERS = Object.freeze({
   [EG_DRESS.floor]: floorArt, [EG_DRESS.brass]: metalArt, [EG_DRESS.root]: rootArt, [EG_DRESS.arena]: arenaArt,
   [EG_DRESS.cobble]: walkArt, [EG_DRESS.edge]: edgeArt, [EG_DRESS.molten]: moltenArt, [EG_DRESS.pillar]: pillarArt,
-  // EG-LOOK (section 8): the kit's records
+  // EG-LOOK (section 8): the kit's records (placeholders until the band art paints its own)
   [EG_KIT_RECORD.shaft]: pillarArt, [EG_KIT_RECORD.moulding]: metalArt, [EG_KIT_RECORD.voussoir]: pillarArt, [EG_KIT_RECORD.relief]: pillarArt,
   [EG_KIT_RECORD.banner]: arenaArt, [EG_KIT_RECORD.coffer]: rootArt, [EG_KIT_RECORD.statue]: pillarArt, [EG_KIT_RECORD.fixture]: metalArt,
-  [EG_KIT_RECORD.found]: rootArt, [EG_KIT_RECORD.wreck]: pillarArt, [EG_KIT_RECORD.crystal]: moltenArt, [EG_KIT_RECORD.chain]: metalArt,
+  [EG_KIT_RECORD.found]: rootArt, [EG_KIT_RECORD.wreck]: pillarArt, [EG_KIT_RECORD.crystal]: moltenArt, [EG_KIT_RECORD.inlay]: arenaArt,
+  [EG_KIT_RECORD.chain]: metalArt,
 });
 /** Every picture band `band` (0-3) wears, by record: `[record, { albedo, emission }]` - what a host uploads under the
  *  band's archive (egBandArchive) before it draws the band's halls. Pure: the same pixels every call. */

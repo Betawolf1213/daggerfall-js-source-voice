@@ -6,7 +6,7 @@
 //
 //   THE RECORDS - each band paints every one of them into its own archive (world/pseudoArchives.js EG_BAND_ARCHIVES), so
 //     a builder names a record and the band's dress picks the picture: the ground's eight (EG_DRESS - the Hour's numbers
-//     and the liquid's 33) and the kit's twelve (section 8's table).
+//     and the liquid's 33) and the kit's thirteen (section 8's table).
 //   THE STYLE - each band's forms, by name: its column, capital, cornice, arch, statue, fixture, foundations, banner sigil
 //     and its wreck's wings (section 1). A builder reads the name and lays the band's own shape.
 //
@@ -26,6 +26,7 @@ export const EG_KIT_RECORD = Object.freeze({
   found: 68,      // the foundations' strata, top to tip (v down)
   wreck: 69,      // the far wings' stone
   crystal: 70,    // soul-gem, black glass, basalt prisms
+  inlay: 71,      // the courts' sigil mosaics and the rims' borders: tesserae in the band's accent and metal, laid in the floor
   chain: 81,      // the band's metal in links
 });
 /** @type {ReadonlyArray<number>} */

@@ -184,7 +184,7 @@ test('EG-ZN THE BAND TEXTURES\' OWNER (scenes/worldModes.js egBandsDown, its own
   R.loc.egCircle = 5;
   wm.standEgHall(ctx, eh);
   const per = EG_BAND_RECORDS.length * 2, hour = hourKeys();
-  assert.equal(bandKeys(), per, 'the circle\'s band: its twenty records - the ground\'s eight and the kit\'s twelve (EG-LOOK, PIN MOVED), albedo and emission');
+  assert.equal(bandKeys(), per, 'the circle\'s band: its twenty-one records - the ground\'s eight and the kit\'s thirteen (EG-LOOK, PIN MOVED), albedo and emission');
   assert.ok(hour > 0);
   // PIN MOVED (AUDIT EG V, e: L6-9 - the next band's dress, painted in the swap's worker, goes up a record a frame of the
   // Court's rest: a prebuild a rest frame, the rest's frames many)

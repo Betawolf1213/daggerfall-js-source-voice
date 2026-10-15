@@ -44,10 +44,10 @@ test('EG-G2 THE BANDS\' RAMPS (section 25.1): five steps or more each, dark to l
   assert.deepEqual([0, 1, 2, 3].map(egBandArchive), [...EG_BAND_ARCHIVES]);
 });
 
-test('EG-G2 THE ART, PAINTED (Port-Doctrine: painted in code, never a render of game data): every band paints its twenty records - the ground\'s eight and the kit\'s twelve (EG-LOOK, PIN MOVED), the same pixels every call, opaque, every albedo texel in the band\'s own palette; structure does not glow - the floor, the undersides, the courts, the walks and the walls black, the metal lit on its rubbed rows alone at the Hour\'s share, the edge line at the Hour\'s; the liquid lit, its every texel at or under 0.45 (mutants: a texel painted off the palette; the floor glowing; the liquid past its cap)', () => {
+test('EG-G2 THE ART, PAINTED (Port-Doctrine: painted in code, never a render of game data): every band paints its twenty-one records - the ground\'s eight and the kit\'s thirteen (EG-LOOK, PIN MOVED), the same pixels every call, opaque, every albedo texel in the band\'s own palette; structure does not glow - the floor, the undersides, the courts, the walks and the walls black, the metal lit on its rubbed rows alone at the Hour\'s share, the edge line at the Hour\'s; the liquid lit, its every texel at or under 0.45 (mutants: a texel painted off the palette; the floor glowing; the liquid past its cap)', () => {
   for (let b = 0; b < 4; b++) {
     const art = egBandArt(b), again = egBandArt(b), pal = egBandPalette(b);
-    assert.deepEqual(art.map(([r]) => r), [...EG_BAND_RECORDS], `band ${b}: its twenty records - the ground\'s eight and the kit\'s twelve (EG-LOOK, PIN MOVED)`);
+    assert.deepEqual(art.map(([r]) => r), [...EG_BAND_RECORDS], `band ${b}: its twenty-one records - the ground\'s eight and the kit\'s thirteen (EG-LOOK, PIN MOVED)`);
     for (const [k, [rec, { albedo, emission }]] of art.entries()) {
       assert.deepEqual(albedo.colors, again[k][1].albedo.colors, `band ${b} record ${rec}: the same pixels`);
       assert.deepEqual(emission.colors, again[k][1].emission.colors);

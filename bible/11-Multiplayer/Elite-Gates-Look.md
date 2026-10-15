@@ -271,6 +271,7 @@ dress picks the picture. The records the ground wears today (`EG_DRESS`: floor 0
 | 68 | `found` | the foundations' strata, top to tip: courses, rubble, the band's deep stone, the haze |
 | 69 | `wreck` | the far wings' stone: the band's stone a step darker, its windows dark |
 | 70 | `crystal` | soul-gem (the Cairn's own light), black glass, basalt prisms |
+| 71 | `inlay` | the courts' sigil mosaics and the rims' borders: tesserae in the band's accent and metal, laid IN the floor (the floor's own top cut into regions - never a decal over it) |
 | 81 | `chain` | the band's metal in links (the Hour's record 81, the band's own) |
 
 ## 9. THE LORDS, OVERSIZED (`scenes/egFight.js`)
@@ -293,7 +294,7 @@ size is the client's alone: nothing on the wire moves.
 | THE SKY | 1 triangle | 1 |
 
 GL draws a frame stay at or under the Hour's 82 (`Elite-Gates.md` section 11.9 - measured mean 25.5 today). Lights are
-unchanged (the lamps' budget). Textures: the twelve kit records a band at 64 px (128 under Vanilla Enhanced), about
+unchanged (the lamps' budget). Textures: the thirteen kit records a band at 64 px (128 under Vanilla Enhanced), about
 200 KB a band. The ruin and the wreck are built off the main thread or once a band, never in a frame.
 
 ## 11. The lab (`spire.html`, `tools/spireLabProbe.mjs`)
