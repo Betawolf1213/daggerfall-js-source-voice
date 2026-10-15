@@ -554,7 +554,11 @@ test('AUDIT 46 A10: the network is posted before any terrain job can be', async 
   const host = hostText('src/scenes/world.js');
   const made = host.indexOf('new TerrainGenClient({ woods, woodsBytes })');
   const roads = host.indexOf('terrainGen.setRoads(settlementsOf(maps)');
-  const firstGen = host.indexOf('terrainGen.generate(');
+  // AUDIT HOST-SPLIT 2, the second read: the first generate call is the build's, in the module the join appends after
+  // all of world.js - so it stands, for the order, where the host constructs the build
+  const built = host.indexOf('const { buildPixelNow } = createPixelBuild(');
+  const gen = host.indexOf('terrainGen.generate(');
+  const firstGen = gen < 0 ? -1 : built > 0 && built < gen ? built : gen;
   assert.ok(made > 0 && roads > made, 'setRoads follows the client\'s construction');
   assert.ok(firstGen < 0 || roads < firstGen, 'and precedes the first generate call in the file');
   const gap = host.slice(made, roads);

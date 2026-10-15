@@ -334,3 +334,13 @@ the build since. Found:
     It reads the host whole.
   Three mutants in `tools/mutants/hostseam.json`, dead; LANDFORM4's is a move of
   two sites, which a record cannot hold, and was run by hand.
+- AND FOUR MORE OF THE SAME TWO KINDS. LANDFORMS II H1's census of raw height
+  writers (`test/auditlandforms.test.js`) read `- state.compensation[1]` alone,
+  blind to the build's `host.state`; GRASS-LIT2's slice (`test/grasslit2.test.js`)
+  ended at a line now in the module, so it ran to the end of world.js; GATE-CLEAR
+  (`test/gateclear.test.js`) and AUDIT 46 A10 (`test/roads.test.js`) ordered a
+  declaration before text the join appends, which held nothing. Each reads both
+  spellings, ends inside world.js, or orders against the build's construction.
+  The first three proved by a mutant that passed the rewritten pin and failed
+  the fixed one (H1's recorded in `hostseam.json`; the other two are moves);
+  A10's move is failed by its own no-await check as well.

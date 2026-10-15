@@ -79,5 +79,14 @@
     "tests": [
       "test/audit_waternext.test.js"
     ]
+  },
+  {
+    "name": "LANDFORMS-H1-HOSTSPLIT2-a-height-the-build-sheds-raw",
+    "file": "src/scenes/pixelBuild.js",
+    "old": "    const made = {};   // BUILD-FAIL1: this build's ledger, until publish hands it to the entry\n",
+    "new": "    const made = {};   // BUILD-FAIL1: this build's ledger, until publish hands it to the entry\n    const shedY = (y) => y - host.state.compensation[1];\n",
+    "tests": [
+      "test/auditlandforms.test.js"
+    ]
   }
 ]

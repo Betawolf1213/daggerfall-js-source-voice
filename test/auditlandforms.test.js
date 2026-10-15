@@ -1099,7 +1099,8 @@ test('AUDIT LANDFORMS II H1: THE ONE CONSTRUCTION SEAM for C1 - every height wor
     ['restandSceneHeight: (y, x, z, was) => restandHeight(y - state.compensation[1], x, z, was) + state.compensation[1],', 'the read side'],
     ['toWire: (feet) => [feet[0], feet[1] - state.compensation[1], feet[2]],', 'the wire'],
   ]);
-  const raw = WORLD.split('\n').map((l) => l.trim()).filter((l) => /-\s*state\.compensation\[1\]/.test(l) && !/groundFrame(Height|Native)\(/.test(l));
+  // AUDIT HOST-SPLIT 2, the second read: and as a moved module spells it, host.state - the pixel build is the host's too
+  const raw = WORLD.split('\n').map((l) => l.trim()).filter((l) => /-\s*(?:host\.)?state\.compensation\[1\]/.test(l) && !/groundFrame(Height|Native)\(/.test(l));
   assert.deepEqual(raw.filter((l) => !TRANSIENT.has(l)), [], 'an exterior height shed raw - into DFU\'s frame (groundFrameHeight / groundFrameNative), or named here with its why');
   for (const l of TRANSIENT.keys()) assert.ok(raw.includes(l), `a transient named here that the host no longer has: ${l}`);
 });
