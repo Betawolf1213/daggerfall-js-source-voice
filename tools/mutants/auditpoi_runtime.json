@@ -2,7 +2,7 @@
   {
     "name": "AUDITPOI-R1-every-document-placed-again",
     "file": "src/scenes/poiHost.js",
-    "old": "if (!samePlace(s.doc, e.doc)) s.place = null;",
+    "old": "if (!sameStand(s.doc, e.doc)) s.place = null;",
     "new": "s.place = null;",
     "tests": [
       "test/auditpoi_runtime.test.js"

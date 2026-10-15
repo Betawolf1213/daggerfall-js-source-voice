@@ -45,7 +45,7 @@ export const POI_STEP_UNITS = 65_536;
 
 /** A step generator driven to its end, synchronously - its return value. Every yield it makes is a bare one (a step's
  *  end); the host's own runner (scenes/poiHost.js) is the one that waits on a promise. @param {Iterator<any>} it */
-export function runSteps(it) {
+function runSteps(it) {
   let r = it.next();
   while (!r.done) r = it.next();
   return r.value;

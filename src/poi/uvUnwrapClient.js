@@ -61,11 +61,11 @@ export function createUnwrapThread(mesh, { workerFactory = undefined, idleMs = U
     idle = setTimeout(() => { idle = null; if (!jobs.size) letGo(); }, idleMs);
     idle.unref?.();   // node: an idle worker never holds the process open
   };
-  const fail = (why) => { console.warn('[poi] the UV unwrap worker is unavailable; unwrapping on the main thread -', why); dead = true; letGo(); };
+  const fail = (why) => { console.warn('[poi] the UV unwrap worker is unavailable; unwrapping on the main thread -', why ?? 'the worker failed'); dead = true; letGo(); };
   const open = () => {
     try {
       w = factory();
-      w.onerror = (e) => fail(e?.message ?? 'the worker failed');
+      w.onerror = (e) => fail(e?.message);
       w.onmessage = (ev) => {
         const m = ev.data ?? {};
         const r = jobs.get(m.id);

@@ -169,7 +169,7 @@ the branch, renumbered past LAMP-KEEPER II's at the merge).
   answers, it waits unseen and uncollided. A part's collider is HELD while the player's feet are inside its box (never
   walled in - an approval may land on a player) and stood once they leave; one standing round the body when its part
   must move is CARRIED - filed again in that frame where the part now stands (AUDIT POI R1: it was taken down, and a
-  body inside lost its floor). A revision that moves nothing (`samePlace` - the feed read again after an approval
+  body inside lost its floor). A revision that moves nothing (`sameStand` - the feed read again after an approval
   anywhere hands every POI a new document) only takes its document and revision, its colliders standing; a height within
   `POI_Y_EPS` (1e-4 m) is the same height, so a recentre's ulp moves nothing (R1). A revision that only MOVES the POI,
   or a part's own scale (`sameBuild`: the same parts' meshes, materials, colliders and shadows), is placed again, not

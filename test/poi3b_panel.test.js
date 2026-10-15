@@ -256,7 +256,8 @@ test('POI-3b THE IMPORT: a model\'s parts held to the mesh law - one past a limi
   assert.equal(r.asset.name, 'Shrine');
   assert.deepEqual(r.asset.parts.map((p) => [p.name, p.t, p.materials[0].texture]), [['Base', [1, 0, 0], pngSha], ['Roof', [0, 2, 0], pngSha]]);
   assert.equal(r.asset.parts[0].mesh, await sha256(prep.parts[0].bytes));
-  assert.deepEqual(r.metas.get(pngSha), { kind: 'texture', w: 1, h: 1 });
+  // PIN MOVED (AUDIT POI L9): the store's meta and the bytes put - the facts the budgets read
+  assert.deepEqual(r.metas.get(pngSha), { kind: 'texture', w: 1, h: 1, bytes: PNG.byteLength });
   assert.equal(r.asset.parts[0].materials[0].color.length, DEFAULT_MATERIAL.color.length);
   let n = 0;
   const stop = await uploadImport(prep, async (bytes, kind) => (kind === 'mesh' && ++n === 2 ? { ok: false, error: 'poi-quota' } : { ok: true, data: { sha: await sha256(bytes), kind, meta: {} } }));

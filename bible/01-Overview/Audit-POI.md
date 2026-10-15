@@ -87,7 +87,7 @@ as a whole (S6).
 
 | # | Sev | Finding | Verdict |
 |---|---|---|---|
-| R1 | HIGH | poiHost's sameBuild branch set `s.place = null`, and place() took the collider down and filed it again only when the feet were outside its box: a player inside a POI building lost floor and walls at ANY approval anywhere (the feed's fresh documents differ from every held one), at a floating-origin recentre (an ulp of `y`), or as the ground changed; and every approval filed every POI's colliders again in one frame (addMesh 53-194 ms on 200k triangles) | FIXED: poiHost.js:"export function samePlace(a, b) {" - a revision that moves nothing swaps the document and revision alone; the height compared within poiHost.js:"export const POI_Y_EPS = 1e-4;"; a collider standing round the body when its part must move is CARRIED - filed again in the same frame where the part now stands. **Mac's call**: the carry rule |
+| R1 | HIGH | poiHost's sameBuild branch set `s.place = null`, and place() took the collider down and filed it again only when the feet were outside its box: a player inside a POI building lost floor and walls at ANY approval anywhere (the feed's fresh documents differ from every held one), at a floating-origin recentre (an ulp of `y`), or as the ground changed; and every approval filed every POI's colliders again in one frame (addMesh 53-194 ms on 200k triangles) | FIXED: poiHost.js:"export function sameStand(a, b) {" - a revision that moves nothing swaps the document and revision alone; the height compared within poiHost.js:"export const POI_Y_EPS = 1e-4;"; a collider standing round the body when its part must move is CARRIED - filed again in the same frame where the part now stands. **Mac's call**: the carry rule |
 | R2 | MED | load() made each part's GPU meshes in its loop but freed them only at the final `if (s.gone)`: the two early returns and the catch leaked every built part - on every retry of a POI whose second asset failed, once a minute for good, and for a POI taken down mid-load | FIXED: `loadSteps` frees on every exit that does not stand (try/finally); `cancel()` closes the job of a POI taken down mid-load |
 | R3 | MED | holdLook(): a look whose `ready` rejected stayed in `looks` while another POI held it - two POIs sharing a picture that failed at different moments never tried again | FIXED: a failed look let go at once; `dropLook` never releases the texture record a successor look holds |
 | R4 | MED | The world drew POI glass before frameGrass(), frameBanners() and Windfall, which write depth; the glass writes none, so grass and banners behind a pane drew over it untinted (the GRASS-PORTAL class) | FIXED: world.js:"poiHost?.drawTranslucent(renderer, mwv.eye, yardCull);" stands just after `renderer.drawHeld` - after grass, banners, Windfall and haze, rain still after it; the editor's lines moved with it, over the glass |
@@ -227,7 +227,11 @@ poiDiff's tags change carrying the tags themselves (lane D's U13 lists them the 
 `auditpoi_panels` PIN MOVED); and two pins red on the frozen head, the arc's own: `oncrash1` C2 (a hand-rolled angle
 wrap - uvMesh.js:"ang[k] = ang[ref] + wrapAngle(ang[k] - ang[ref]);" now, the port's one wrap in one step) and
 `travelmap` U41 (POI-2's re-anchor line, `poiHost?.destroyAll()`, stood the fast-travel core's last needle past its
-window: PIN MOVED, 13000 to 13400 - 12,881 on main, 12,981 on the branch).
+window: PIN MOVED, 13000 to 13400 - 12,881 on main, 12,981 on the branch). The whole suite at the merge found three
+more, each the lanes' own: `audit24` wave24's one-home ratchet (lane B's poiHost `samePlace`, a name shadowPass.js
+already exports for another law, is `sameStand`; poiRuntime's `runSteps` its module's own, lowPolyTrees.js's the one
+exported), L10N4's ratchet (the unwrap client's fallback reason inside its console line, never a player's), and POI-3b
+THE IMPORT (the import's metas carry the bytes put - L9's, PIN MOVED).
 
 ## The pins and the lists
 
@@ -269,7 +273,8 @@ with no warning and its glow through poiMaterialOf (G7, R10), A PACK's damaged m
 check, INTO THE STORE's copy under its own id (P4), T5 and T6, WHAT IT CHANGES's tags themselves (the lead's join);
 `test/auditpoi_panels.test.js` - the tags (the lead's join); `test/cursortoggle.test.js` and
 `test/tv1_travel_view.test.js` - the cursor toggle's check with the editor, and `test/fb0929_overworld_mouse.test.js` -
-`poiEditor: null` in its scope (E1); `test/travelmap.test.js` U41 - the core's window 13400 (POI-2's teardown line).
+`poiEditor: null` in its scope (E1); `test/travelmap.test.js` U41 - the core's window 13400 (POI-2's teardown line); `test/poi3b_panel.test.js` THE IMPORT - the
+metas with their bytes (L9).
 
 The words: every new sentence goes through `t()` - A's ten (five refusals in `accountClient.js`, five
 `poi.problem.budget*`), C's `poi.editor.hereNoGround`, D's twelve new keys and the five whose English U13 named, E's

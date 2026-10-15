@@ -124,7 +124,7 @@ export function sameBuild(a, b) {
 /** AUDIT POI R1: do two documents of one build stand it in the same place - the place, every part's transform and the
  *  lights alike (a name or a marker may differ)? Then the second only replaces the first: nothing is placed again and
  *  no collider is touched. Pure. */
-export function samePlace(a, b) {
+export function sameStand(a, b) {
   const at = (d) => JSON.stringify([d.place, d.parts.map((p) => [p.t, p.r, p.s]), d.lights ?? []]);
   return at(a) === at(b);
 }
@@ -485,7 +485,7 @@ export function createPoiHost({
         if (s.status === 'ready' && sameBuild(s.doc, e.doc)) {
           // AUDIT POI R1: the same place too (any approval re-reads every document: a new object, the same POI) - the
           // document replaced and nothing else; the colliders where they stand
-          if (!samePlace(s.doc, e.doc)) s.place = null;
+          if (!sameStand(s.doc, e.doc)) s.place = null;
           s.doc = e.doc; s.rev = e.rev;
           for (let i = 0; i < s.parts.length; i++) s.parts[i].part = e.doc.parts[i];
           if (e.doc.place.px !== s.px || e.doc.place.py !== s.py) { unstand(s); s.px = e.doc.place.px; s.py = e.doc.place.py; s.ground = NaN; s.place = null; }
