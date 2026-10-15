@@ -1,4 +1,34 @@
 {
+ "account.refusal.escrowCollected": {
+  "en": "1667bb71b802",
+  "tr": "12b41f876b3e",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowLate": {
+  "en": "26942c23f890",
+  "tr": "75e728495f83",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowMoved": {
+  "en": "839ba849d942",
+  "tr": "2c0f41bcb55f",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowReturned": {
+  "en": "a4adc340b27f",
+  "tr": "1e0750e1827b",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowWait": {
+  "en": "42075bb12f2c",
+  "tr": "8b85290b285d",
+  "by": "claude-in-session"
+ },
+ "account.refusal.noEscrow": {
+  "en": "e750eef2dab2",
+  "tr": "91a67a0ff4a4",
+  "by": "claude-in-session"
+ },
  "account.refusal.repairNoFaction": {
   "en": "40e9bc6ef338",
   "tr": "41e1bfa163f3",

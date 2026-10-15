@@ -524,6 +524,36 @@
   "tr": "76d9a3941f53",
   "by": "claude-in-session"
  },
+ "account.refusal.escrowCollected": {
+  "en": "1667bb71b802",
+  "tr": "1713a33318e2",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowLate": {
+  "en": "26942c23f890",
+  "tr": "9a60ab926e53",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowMoved": {
+  "en": "839ba849d942",
+  "tr": "a78a83026f96",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowReturned": {
+  "en": "a4adc340b27f",
+  "tr": "7dbac4cfaf5a",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowWait": {
+  "en": "42075bb12f2c",
+  "tr": "008afcb3ca02",
+  "by": "claude-in-session"
+ },
+ "account.refusal.noEscrow": {
+  "en": "e750eef2dab2",
+  "tr": "7ec3fdc429ec",
+  "by": "claude-in-session"
+ },
  "account.refusal.repairNoFaction": {
   "en": "40e9bc6ef338",
   "tr": "4ae3936d12f5",

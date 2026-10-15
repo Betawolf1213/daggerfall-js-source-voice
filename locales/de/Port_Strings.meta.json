@@ -1234,6 +1234,31 @@
   "tr": "b048d35866af",
   "by": "claude-in-session"
  },
+ "account.refusal.escrowCollected": {
+  "en": "1667bb71b802",
+  "tr": "03153c6659b8",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowLate": {
+  "en": "26942c23f890",
+  "tr": "83b3e704def4",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowMoved": {
+  "en": "839ba849d942",
+  "tr": "f182d1068973",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowReturned": {
+  "en": "a4adc340b27f",
+  "tr": "b1f81aca1e13",
+  "by": "claude-in-session"
+ },
+ "account.refusal.escrowWait": {
+  "en": "42075bb12f2c",
+  "tr": "4535549c14ff",
+  "by": "claude-in-session"
+ },
  "account.refusal.fortBuilding": {
   "en": "076781bd6643",
   "tr": "fd0a94acb40d",
@@ -1972,6 +1997,11 @@
  "account.refusal.noDeed": {
   "en": "75ef6399a956",
   "tr": "4c07b4910795",
+  "by": "claude-in-session"
+ },
+ "account.refusal.noEscrow": {
+  "en": "e750eef2dab2",
+  "tr": "decbce1868a3",
   "by": "claude-in-session"
  },
  "account.refusal.noEvent": {

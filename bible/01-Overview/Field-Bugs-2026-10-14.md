@@ -269,6 +269,12 @@ carried and the fallen's piece taken back on the zone's frame (`world.js:"const 
 screen's word on it; `scenes/dungeonContext.js` and `scenes/worldModes.js` name no piece (above), so they hold none in
 escrow; `scenes/exterior.js`, offline, NOT WIRED on purpose.
 
+AT THE MERGE (the field-bugs pull request's full suite): the escrow's six refusal words - `no-escrow`, `escrow-moved`,
+`escrow-collected`, `escrow-returned`, `escrow-late`, `escrow-wait` (`server-account/src/wild.js`) - had no sentence, and
+ACC1e (`test/accountflow.test.js`) walks every word the service can say. The world host settles them without a word to
+the player, but a word the service can say is a word with a sentence: `src/net/accountClient.js` REFUSAL_WORDS holds the
+six (`account.refusal.noEscrow` and the five beside it), drafted in the 25 languages (`tools/l10nInSession.mjs`).
+
 ## QUEST-HOME: no quest picks a player's home, in any town (12)
 
 `server-account/src/homes.js` homeLayouts; `src/systems/onlineHomes.js` hearEveryTown, homeStands; `src/scenes/world.js`

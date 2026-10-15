@@ -309,6 +309,15 @@ const REFUSAL_WORDS = {
   grace: () => t('account.refusal.grace', 'The fallen still has a moment to settle their own fall. It is tried again shortly.'),
   nonce: () => t('account.refusal.nonce', 'That fall could not be read. Try again.'),
   room: () => t('account.refusal.room', 'That fall named no place its remains could lie. Try again.'),
+  // PVP-ESCROW (FIELD BUGS 2026-10-14, the two-phase handoff - server-account/src/wild.js wildCollect, wildReclaim,
+  // wildEscrows): the world host's collect and reclaim say nothing of these to the player - it keeps what they do not
+  // settle and lets go of what they do - but a word the service can say is a word with a sentence (ACC1e)
+  'no-escrow': () => t('account.refusal.noEscrow', 'That piece is not held for this character.'),
+  'escrow-moved': () => t('account.refusal.escrowMoved', 'That piece moved meanwhile. It is looked at again.'),
+  'escrow-collected': () => t('account.refusal.escrowCollected', 'That piece has already been collected.'),
+  'escrow-returned': () => t('account.refusal.escrowReturned', 'That piece has already gone back to the one who fell.'),
+  'escrow-late': () => t('account.refusal.escrowLate', 'That piece was collected too late - it goes back to the one who fell.'),
+  'escrow-wait': () => t('account.refusal.escrowWait', 'That piece is still held for its killer. It comes back to you shortly.'),
   // MARKS1: Marks, the server's currency (server-account/src/marks.js)
   'marks-need-account': () => t('account.refusal.marksNeedAccount', 'Silver is kept by registered accounts. Add a username to hold it.'),
   'marks-closed': () => t('account.refusal.marksClosed', 'The counting-houses are not striking silver yet.'),

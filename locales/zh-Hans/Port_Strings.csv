@@ -1,4 +1,10 @@
 Key,Value
+account.refusal.escrowCollected,"那件物品已被领取。"
+account.refusal.escrowLate,"那件物品领取得太晚了 - 它将归还给倒下的人。"
+account.refusal.escrowMoved,"那件物品在此期间已被移动。正在重新查看。"
+account.refusal.escrowReturned,"那件物品已归还给倒下的人。"
+account.refusal.escrowWait,"那件物品仍在为击杀者保管。它很快会归还给你。"
+account.refusal.noEscrow,"那件物品并非为这个角色保管。"
 account.refusal.repairNoFaction,"该角色的记录中没有这个派系，因此未作任何修复。"
 account.refusal.repairNotSet,"该角色的这个派系没有那个标记，因此未作任何修复——是正确的角色吗？"
 chair.bench,"长椅"

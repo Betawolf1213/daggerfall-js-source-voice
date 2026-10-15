@@ -25,7 +25,7 @@ test('CHAT-TRADE wire: the Trade and LFG channels are two whitelisted rooms of t
   assert.equal(relaySupportsTradeChan('world200'), false);
   assert.equal(relaySupportsTradeChan('world201'), true);
   assert.equal(relaySupportsTradeChan('world2010x'), false);
-  assert.equal(RELAY_VERSION, 'world202');   // PIN MOVED: world202, FIVE-ASKS (the dungeon respawn half an hour, I Love Lamp a title the relay knows) - the Trade and LFG channels opened at world201 and stay open
+  assert.equal(RELAY_VERSION, 'world203');   // PIN MOVED: world203, PVP-LOOT + QUEST-HOME (the friend law is the law of the drop alone - the worn piece a killer picks is theirs whoever the guild or party of the fallen counts them; the hub fans a home the service signed as moved to every page online and holds its word for a page that joins after; world201 on each branch, one bump past FIVE-ASKS at the merge); PIN MOVED: world202, FIVE-ASKS (the dungeon respawn half an hour, I Love Lamp a title the relay knows) - the Trade and LFG channels opened at world201 and stay open
   const online = rd('src/net/online.js');
   assert.match(online, /if \(primary\) this\.tradeChanOk = relaySupportsTradeChan\(relayV\);   \/\/ CHAT-TRADE/);
   assert.match(online, /this\.tradeChanOk = false;/);

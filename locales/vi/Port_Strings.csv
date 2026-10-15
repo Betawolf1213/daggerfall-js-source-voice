@@ -1,4 +1,10 @@
 Key,Value
+account.refusal.escrowCollected,"Món đồ đó đã được nhận rồi."
+account.refusal.escrowLate,"Món đồ đó được nhận quá muộn - nó trở về với người đã ngã xuống."
+account.refusal.escrowMoved,"Món đồ đó đã bị di chuyển trong lúc này. Nó đang được xem lại."
+account.refusal.escrowReturned,"Món đồ đó đã trở về với người đã ngã xuống."
+account.refusal.escrowWait,"Món đồ đó vẫn đang được giữ cho kẻ đã giết. Nó sẽ sớm trở về với bạn."
+account.refusal.noEscrow,"Món đồ đó không được giữ cho nhân vật này."
 account.refusal.repairNoFaction,"Hồ sơ của nhân vật đó không có phe phái này, nên không có gì được sửa."
 account.refusal.repairNotSet,"Phe phái đó không mang cờ này ở nhân vật này, nên không có gì được sửa - có đúng nhân vật không?"
 chair.bench,"Ghế dài"

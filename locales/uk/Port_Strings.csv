@@ -1,4 +1,10 @@
 Key,Value
+account.refusal.escrowCollected,"Цей предмет уже забрали."
+account.refusal.escrowLate,"Цей предмет забрали надто пізно - він повертається до полеглого."
+account.refusal.escrowMoved,"Цей предмет тим часом перемістився. Його перевіряють знову."
+account.refusal.escrowReturned,"Цей предмет уже повернувся до полеглого."
+account.refusal.escrowWait,"Цей предмет досі зберігається для вбивці. Незабаром він повернеться до вас."
+account.refusal.noEscrow,"Цей предмет не зберігається для цього персонажа."
 account.refusal.repairNoFaction,"У записі цього персонажа немає такої фракції, тож нічого не виправлено."
 account.refusal.repairNotSet,"У цього персонажа ця фракція не має такого прапорця, тож нічого не виправлено - це той персонаж?"
 chair.bench,"Лава"
