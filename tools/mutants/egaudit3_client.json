@@ -135,19 +135,55 @@
     ]
   },
   {
-    "name": "EGA3C-law-worker-at-step",
+    "name": "EGA3C-law-worker-before-given",
     "file": "src/scenes/egClient.js",
-    "old": "const built = lawForeign(E) ? null : modes()?.egPrebuild?.(r) ?? null;",
-    "new": "const built = modes()?.egPrebuild?.(r) ?? null;",
+    "old": "    return given === null ? null : modes()?.egPrebuild?.(",
+    "new": "    return modes()?.egPrebuild?.(",
     "tests": [
       "test/egaudit3_client.test.js"
     ]
   },
   {
-    "name": "EGA3C-law-worker-at-rest",
+    "name": "EGA3C-law-next-not-asked-at-rest",
     "file": "src/scenes/egClient.js",
-    "old": "c === M.egHallCircle?.() && !lawForeign(E)) M.egPrebuild",
-    "new": "c === M.egHallCircle?.()) M.egPrebuild",
+    "old": "last = (E.sg === 'rest' ? c + 1 : c) * 5; h <= last; h++) {",
+    "new": "last = c * 5; h <= last; h++) {",
+    "tests": [
+      "test/egaudit3_client.test.js"
+    ]
+  },
+  {
+    "name": "EGA3C-law-halls-not-handed",
+    "file": "src/scenes/egClient.js",
+    "old": "seed: E.seed, c, geo: E.geo ?? 0, given }) ?? null;",
+    "new": "seed: E.seed, c, geo: E.geo ?? 0 }) ?? null;",
+    "tests": [
+      "test/egaudit3_client.test.js"
+    ]
+  },
+  {
+    "name": "EGA3C-law-stood-from-given-built-again",
+    "file": "src/scenes/egClient.js",
+    "old": "    if (went && lawForeign(E) && lawGiven(E, c)) lawBuilt = `${E.b}:${c}`;",
+    "new": "    if (false) lawBuilt = `${E.b}:${c}`;",
+    "tests": [
+      "test/egaudit3_client.test.js"
+    ]
+  },
+  {
+    "name": "EGA3C-law-given-of-any-ground",
+    "file": "src/scenes/egClient.js",
+    "old": "    lawGot.add(`${E.b}:${w.h}:${(w.sp.geo ?? 0) | 0}`);",
+    "new": "    lawGot.add(`${E.b}:${w.h}:${(E.geo ?? 0) | 0}`);",
+    "tests": [
+      "test/egaudit3_client.test.js"
+    ]
+  },
+  {
+    "name": "EGA3C-law-given-under-another-ground",
+    "file": "src/scenes/egClient.js",
+    "old": "    for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) if (!lawGot.has(`${E.b}:${h}:${geo}`)) return null;",
+    "new": "    for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) if (!lawGot.has(`${E.b}:${h}:0`)) return null;",
     "tests": [
       "test/egaudit3_client.test.js"
     ]

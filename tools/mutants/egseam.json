@@ -389,7 +389,7 @@
   {
     "name": "EGSWAP-asked-again-built-again",
     "file": "src/scenes/egSwap.js",
-    "old": "      if (job?.key === key) return stateOf(key);\n",
+    "old": "      if (job?.key === key && job.g === g) return stateOf(key);\n",
     "new": "",
     "tests": [
       "test/egswap_client.test.js"
@@ -551,8 +551,8 @@
   {
     "name": "EGSWAP-the-build-never-asked",
     "file": "src/scenes/egClient.js",
-    "old": "    if (E.sg === 'rest' && c === M.egHallCircle?.() && !lawForeign(E)) M.egPrebuild?.(",
-    "new": "    if (false) M.egPrebuild?.(",
+    "old": "    if (E.sg === 'rest' && c === M.egHallCircle?.()) prebuild(E, c + 1);",
+    "new": "    if (false) prebuild(E, c + 1);",
     "tests": [
       "test/egswap_client.test.js"
     ]

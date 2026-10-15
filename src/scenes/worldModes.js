@@ -9705,14 +9705,15 @@ export function createWorldModes(host) {
     ctx.collider.addMesh(`eg:gate:${h}`, parts.tris, gi, identity(), () => g.T);
     _egGates.push(g);
   }
-  /** The next circle's level asked of the swap's build (`r` { b, seed, c, geo }) - only inside that breach's circle;
-   *  answers its state ('ready', 'building', or null: none offered - the step will be the old way). */
+  /** The next circle's level asked of the swap's build (`r` { b, seed, c, geo, given } - AUDIT EG V, E NEW-2: `given` a breach
+   *  of another law's halls, the worker's to build from) - only inside that breach's circle; answers its state ('ready',
+   *  'building', or null: none offered - the step will be the old way). */
   function egPrebuild(r) {
     if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !r || r.b !== dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return null;
     // EG-G2: the next circle's band's dress up while the Court rests. AUDIT EG V (L6-9): painted in the swap's worker with
     // the circle (never here - a band's paint was a frame of 100-270 ms in the rest, its beacon and hymn running) and put up
     // a record a frame; L6-8: then its halls' specs taken as the worker laid them, a hall a frame (egSwapFeed)
-    const band = egBandOfCircle(r.c), st = egSwap.want(r.seed, r.c, r.geo ?? 0, egBandWhole(band) ? -1 : band);
+    const band = egBandOfCircle(r.c), st = egSwap.want(r.seed, r.c, r.geo ?? 0, egBandWhole(band) ? -1 : band, r.given);
     if (st === 'ready') egSwapFeed(egSwap.peek(r.seed, r.c, r.geo ?? 0), band, 1);
     return st;
   }

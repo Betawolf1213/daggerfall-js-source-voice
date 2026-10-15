@@ -223,7 +223,7 @@
   {
     "name": "EG5D-L4-3-asks-unbounded",
     "file": "src/scenes/egClient.js",
-    "old": "    if (admitAsking || (admitAsks.get(b) ?? 0) >= EG_ADMIT_ASKS) return;",
+    "old": "    if (admitAsking || admitAsked(b) >= EG_ADMIT_ASKS) return;",
     "new": "    if (admitAsking) return;",
     "tests": [
       "test/egaudit5_d_client.test.js"
@@ -241,8 +241,17 @@
   {
     "name": "EG5D-L4-3-the-refusal-said-while-asked-again",
     "file": "src/scenes/egClient.js",
-    "old": "      return inSpire() && !!b && (admitAsks.get(b) ?? 0) < EG_ADMIT_ASKS;",
+    "old": "      return inSpire() && !!b && admitAsked(b) < EG_ADMIT_ASKS;",
     "new": "      return false;",
+    "tests": [
+      "test/egaudit5_d_client.test.js"
+    ]
+  },
+  {
+    "name": "EG5D-NEW4-the-count-carried",
+    "file": "src/scenes/egClient.js",
+    "old": "    admitAsks.n = admitAsked(b) + 1; admitAsks.b = b;",
+    "new": "    admitAsks.n = admitAsks.n + 1; admitAsks.b = b;",
     "tests": [
       "test/egaudit5_d_client.test.js"
     ]

@@ -11,7 +11,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createEgClient, egWitnessOrbit, egWitnessClear, egWitnessDamp, EG_WITNESS_DAMP_S, EG_WITNESS_SNAP_M, EG_WITNESS_BACK, EG_WITNESS_UP, EG_START_ASKING_TEXT, EG_CLAIM_RETRY_MS } from '../src/scenes/egClient.js';
-import { egHallOf, egCircleSpecs, egCircleOfHall, egSpecForget, EG_SPEC, EG_SEALED_MS } from '../src/net/egLaw.js';
+import { egHallOf, egCircleSpecs, egCircleOfHall, egSpecForget, EG_SPEC, EG_SEALED_MS, EG_DECREES } from '../src/net/egLaw.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { validEgOut } from '../src/net/wire.js';
 import { mintEgReceipt } from '../src/net/egReceipt.js';
@@ -164,27 +164,78 @@ test('AUDIT EG III lane6 #1 THE WITNESS\'S ORBIT, DAMPED AND COLLIDING (section 
 });
 
 // ── lane4 #3: THE LAW PIN'S REBUILD ─────────────────────────────────────────────────────────────────────────────────
-test('AUDIT EG III lane4 #3 THE LAW PIN\'S REBUILD THROUGH A HOST THAT OFFERS THE SWAP (section 22, EG-H2 departure 4): under another law no worker\'s build is asked - not at the rest, not at the step (its module never holds the halls given) - and once all five halls of the circle standing are given it is built again under the veil from this thread\'s halls; a step that does not go is asked again by the next frame and the rebuild counted once it runs; under my own law the swap is asked as before (mutants: the worker asked under another law; the rebuild counted before its step; the rebuild never asked again)', async () => {
+test('AUDIT EG III lane4 #3 THE LAW PIN\'S REBUILD THROUGH A HOST THAT OFFERS THE SWAP (section 22, EG-H2 departure 4; AUDIT EG V, E NEW-2 - PIN MOVED: the worker builds under another law from the halls the room gave): under another law no worker\'s build is asked while a hall of the circle is not given; once all five halls of the circle standing are given it is built again under the veil from them - the worker handed them with the ask; a step that does not go is asked again by the next frame and the rebuild counted once it runs; while the Court rests the next circle\'s halls are asked of the room and handed to the worker, and the step into that circle, stood from them, is never built again; under my own law the swap is asked as before (mutants: the worker asked before the halls are given; the halls not handed; the rebuild counted before its step; the rebuild never asked again; the next circle not asked at the rest; the circle stood from the halls given built again)', async () => {
   const yard = egCircleSpecs(77, 1, 0)[1];
-  const P = inBreach({ h: yard.h, egv: EG_SPEC - 1, modes: { egPrebuild: (r) => { P.L.prebuilt.push(r.c); return 'building'; } } });
+  const P = inBreach({ h: yard.h, egv: EG_SPEC - 1, modes: { egPrebuild: (r) => { P.L.prebuilt.push({ c: r.c, laid: r.given?.map((s) => s.laid) ?? null }); return null; } } });
+  const roomGives = (hs) => { for (const h of hs) P.tell({ k: 'spec', egv: P.B.egv, h, sp: { ...JSON.parse(JSON.stringify(egHallOf(77, h, 0))), laid: 90 + h } }); };
+  const asked = () => P.L.sent.filter((f) => f.k === 'spec').map((f) => f.h);
   try {
     P.L.stepGo.push(false);   // the first rebuild's step does not go
     P.client.frame(); P.client.frame();
-    for (const h of [1, 2, 3, 4, 5]) P.tell({ k: 'spec', egv: P.B.egv, h, sp: { ...JSON.parse(JSON.stringify(egHallOf(77, h, 0))), laid: 90 + h } });
+    assert.deepEqual(asked(), [1, 2, 3, 4, 5], 'the circle\'s halls asked of the room');
+    roomGives([1, 2, 3, 4]);
+    await settle();
+    P.client.frame(); await settle();
+    assert.deepEqual(P.L.prebuilt, [], 'no worker\'s build while a hall is not given');
+    roomGives([5]);
     await settle();
     for (let i = 0; i < 6; i++) { P.step(500); P.client.frame(); await settle(); }
-    assert.deepEqual(P.L.prebuilt, [], 'no worker\'s build under another law');
+    assert.ok(P.L.prebuilt.length >= 1 && P.L.prebuilt.every((p) => p.c === 1 && String(p.laid) === '91,92,93,94,95'), `the worker handed the five halls given: ${JSON.stringify(P.L.prebuilt)}`);
     assert.equal(P.L.steps, 2, 'the step that did not go asked again, and the rebuild ran once');
     assert.equal(P.L.enter.length, 1, 'built again from the halls given');
     assert.equal(P.L.exits, 1);
-    // the rest under another law: no next circle asked of the worker
+    // the rest under another law: the next circle's halls asked of the room, then handed to the worker
+    P.L.prebuilt.length = 0;
     P.B.sg = 'rest'; P.tell(egStateOf(P.B, P.now())); P.client.frame();
-    assert.deepEqual(P.L.prebuilt, []);
+    assert.deepEqual(asked().slice(5), [6, 7, 8, 9, 10], 'the next circle\'s halls asked while the Court rests');
+    assert.deepEqual(P.L.prebuilt, [], 'not built before they are given');
+    roomGives([6, 7, 8, 9, 10]);
+    await settle();
+    P.client.frame();
+    assert.deepEqual(P.L.prebuilt, [{ c: 2, laid: [96, 97, 98, 99, 100] }], 'the next circle built from the halls the room gave');
+    // the step into it: stood from them (the worker's, or the old step's from this thread's halls) - never built again
+    P.B.h = 6; P.B.sg = 'arrive'; P.tell(egStateOf(P.B, P.now()));
+    for (let i = 0; i < 6; i++) { P.step(500); P.client.frame(); await settle(); }
+    assert.deepEqual(P.L.enter.map((r) => r.c), [1, 2], 'the next circle stood once');
+    assert.equal(P.L.steps, 3);
   } finally { egSpecForget(); }
-  // under my own law the rest asks the worker as before
-  const Q = inBreach({ h: 5, sg: 'rest', modes: { egPrebuild: (r) => { Q.L.prebuilt.push(r.c); return 'building'; } } });
+  // under my own law the rest asks the worker as before, with no halls given
+  const Q = inBreach({ h: 5, sg: 'rest', modes: { egPrebuild: (r) => { Q.L.prebuilt.push([r.c, r.given]); return 'building'; } } });
   Q.client.frame();
-  assert.deepEqual(Q.L.prebuilt, [2], 'the next circle built while the Court rests');
+  assert.deepEqual(Q.L.prebuilt, [[2, undefined]], 'the next circle built while the Court rests');
+  assert.ok(!Q.L.sent.some((f) => f.k === 'spec'), 'and nothing asked of the room');
+});
+
+test('AUDIT EG V E NEW-2 THE HALLS GIVEN ARE THEIR GROUND\'S (section 22, THE LAW PIN; section 14 - the span decrees lay a circle on its own ground): under another law the next circle\'s halls the room gave while the Court rested, under the ground then in force, build nothing once that circle stands on another - the step is the old one, its halls asked again under its own ground, a late answer under the old one counts for nothing, and the circle is built again once its own five are given (mutants: a hall counted under the ground in force rather than its own; the halls looked up under no ground)', async () => {
+  const P = inBreach({ h: 5, sg: 'rest', egv: EG_SPEC - 1, modes: { egPrebuild: (r) => { P.L.prebuilt.push({ c: r.c, geo: r.geo, laid: r.given?.map((s) => s.laid) ?? null }); return null; } } });
+  const roomGives = (hs, geo, mark) => { for (const h of hs) P.tell({ k: 'spec', egv: P.B.egv, h, sp: { ...JSON.parse(JSON.stringify(egHallOf(77, h, geo))), laid: mark + h } }); };
+  const asked = () => P.L.sent.filter((f) => f.k === 'spec').map((f) => f.h);
+  try {
+    P.client.frame();
+    assert.deepEqual(asked(), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 'the circle\'s halls and the next\'s asked while the Court rests');
+    roomGives([1, 2, 3, 4, 5], 0, 90); await settle();
+    roomGives([6, 7, 8, 9, 10], 0, 90); await settle();
+    P.client.frame(); await settle();
+    assert.deepEqual(P.L.prebuilt.at(-1), { c: 2, geo: 0, laid: [96, 97, 98, 99, 100] });
+    assert.deepEqual(P.L.enter.map((r) => r.c), [1]);
+    // the next circle stands on another ground (a span decree in force): its step is the old one, its halls asked again
+    const gale = EG_DECREES.find((D) => D.key === 'gale').id;
+    P.B.dc = [[gale, 1]]; P.B.h = 6; P.B.sg = 'arrive'; P.tell(egStateOf(P.B, P.now()));
+    const geo = P.client.link.state().geo, n0 = P.L.prebuilt.length;
+    assert.ok(geo > 0, 'another ground');
+    P.client.frame(); await settle();
+    assert.equal(P.L.prebuilt.length, n0, 'nothing built from the halls of the old ground');
+    assert.deepEqual(P.L.enter.slice(1).map((r) => [r.c, r.geo]), [[2, geo]], 'the old step');
+    assert.deepEqual(asked().slice(10), [6, 7, 8, 9, 10], 'its halls asked under its own ground');
+    roomGives([6, 7, 8, 9, 10], 0, 150); await settle();
+    for (let i = 0; i < 3; i++) { P.step(500); P.client.frame(); await settle(); }
+    assert.equal(P.L.prebuilt.length, n0, 'a late answer under the old ground: nothing');
+    assert.equal(P.L.enter.length, 2);
+    roomGives([6, 7, 8, 9, 10], geo, 200); await settle();
+    for (let i = 0; i < 3; i++) { P.step(500); P.client.frame(); await settle(); }
+    assert.deepEqual(P.L.prebuilt.slice(n0), [{ c: 2, geo, laid: [206, 207, 208, 209, 210] }], 'its own five handed to the worker');
+    assert.deepEqual(P.L.enter.slice(1).map((r) => [r.c, r.geo]), [[2, geo], [2, geo]], 'and the circle built again from them, once');
+  } finally { egSpecForget(); }
 });
 
 // ── lane4 #4, #5: THE BEATS' PICTURES, THE PALETTE ──────────────────────────────────────────────────────────────────

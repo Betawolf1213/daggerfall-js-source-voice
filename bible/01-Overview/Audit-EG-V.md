@@ -429,7 +429,7 @@ Pages: 5, 6.1, 6.3, 6.4, 10.8, 15, 16.1, 16.3, 19-23, and Sigil-Sets 6e and 8. I
 - **NEW-2**: the hub still calls a whole frozen company. Recorded in 6.1.
 - **NEW-3**: a receiver still believes a hub-signed arch's site within 40 m, though the collider is withheld. Recorded
   in 6.3 with L4-6.
-- **NEW-4**: `admitAsks` holds one entry per breach a session. Still owed (small).
+- **NEW-4**: `admitAsks` held one entry per breach a session. Built after the third merge ("The two small items, built").
 
 **B, the lords** (net/: `bossRef.js`, `egBodies.js`, `egFeats.js`, `egFloor.js`, `egLegion.js`, `egLink.js`,
 `egLords.js`, `egShape.js`, `wire.js`; `scenes/egFight.js`; `ui/egSpireHud.js`). It took lane 1, all but the hall law's
@@ -469,7 +469,8 @@ glProgram line. Its NEW items:
 
 - **NEW-1**: `egSpecForget` is never called, so the given halls (up to 32) stay for the session, against its doc. Went
   to H (item 5).
-- **NEW-2**: the worker builds only under the build's own law, and an older law takes the old step. Still owed.
+- **NEW-2**: the worker built only under the build's own law, and an older law took the old step. Built after the third
+  merge ("The two small items, built").
 
 **F, the law** (net/: `egBrain.js`, `egDurable.js`, `egFragLaw.js`, `egLaw.js`, `egSpanLaw.js`, `egWalkGraph.js`;
 scenes/: `egFight.js`, `egSpan.js`; `world/egHall.js`; `tools/egSpanSolve.mjs`). It took lane 5's law, the walk graph
@@ -722,6 +723,32 @@ the world host's foreign passes beside the arc's two (30 call sites; 37 host cal
 map's legend reads the arch and the POIs both. CI's whole gate found POI-1's `POI_TEXTURE_ARCHIVE` (600000,
 `poi/poiRuntime.js`) in no row of EG-G2's registry: registered.
 
+## The two small items, built
+
+After the third merge, the two items this page left owed as small were built (2026-10-15):
+
+- **D NEW-4, the asks are the one breach's.** `scenes/egClient.js` counted the asks my hall made of the service in a map
+  by breach: an entry for every breach a session stood in. It holds the one breach's count now (`admitAsks` `{ b, n }`,
+  read through `admitAsked`), begun again by the next breach. Pinned in `egaudit5_d_client` (D NEW-4: each breach its own
+  EG_ADMIT_ASKS). Mutant `EG5D-NEW4-the-count-carried` is dead, and the two L4-3 records on the changed lines were
+  re-aimed.
+- **E NEW-2, the worker builds under another law.** Under another law the client asked the room for a circle's halls only
+  once it stood in that circle, and offered the swap's worker nothing (its module holds no hall the page was given), so
+  every circle of such a breach stepped the old way: out and in again, the circle built on this thread. Now:
+  - the next circle's halls are asked while the Court rests (the room gives this circle's or the next's);
+  - once all five are given they go to the worker with the ask (`scenes/egSwap.js` `want`'s `given`, through the mode
+    machine's egPrebuild), and `world/egCircleParts.js` egCircleBuild takes them as given before anything is laid; a
+    build asked with them is another build of the circle than one asked without;
+  - a hall given is counted under its own ground (`b:h:geo`): a next circle whose span decrees move its ground has its
+    halls asked again under it, and steps the old way meanwhile;
+  - a circle stood from its five given halls is the breach's own and is never built again.
+
+  Section 22's THE LAW PIN and EG-H2's departure 4 say so. Pins: `egaudit3_client` (lane4 #3, PIN MOVED: the worker under
+  another law builds from the halls given; E NEW-2: the halls given are their ground's), `egaudit5_e_swap` (E NEW-2: the
+  worker builds from the halls given, and the swap and the mode machine hand them on), and `egswap_client`'s pin of the
+  rest's ask (PIN MOVED). Mutants: eight new (four in `egaudit3_client.json`, four in `egaudit5_e.json`) and six re-aimed (two in each of
+  those and in `egseam.json`), all dead; the six lists around the touched lines ran 418 dead and 1 equivalent as recorded.
+
 ## Still owed
 
 - **EG-L10N**: the arc's own words through the text core, skipped at Mac's word (group L, above).
@@ -743,8 +770,6 @@ map's legend reads the arch and the POIs both. CI's whole gate found POI-1's `PO
   - the client's presence, feet and panel options;
   - `egShapeOrder` and the Map and Set clear tables;
   - `telegraphField`'s answers and the tethers' looks.
-- **Two small items**: the worker builds only under the build's own law (E NEW-2); `admitAsks` holds an entry per breach
-  a session (D NEW-4).
 - **The lanes' unverified items no group settled**:
   - lane 1:
     - whether a held absent body can be a lord's target or Scent;

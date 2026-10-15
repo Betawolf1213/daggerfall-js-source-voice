@@ -141,6 +141,17 @@ test('AUDIT EG V L4-3 IN MY HALL, A DEAD ORDER IS ASKED AGAIN (section 6.1, "The
 });
 
 // ── L4-4 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+test('AUDIT EG V D NEW-4 THE ASKS ARE THE ONE BREACH\'S (section 6.1): the asks my hall makes of the service are counted for the breach I stand in alone - the next breach begins its own EG_ADMIT_ASKS, and the count is never a record of every breach a session stood in (mutant: the count carried into the next breach)', async (t) => {
+  const R = rig(t, { answer: () => ({ ok: false, error: 'the breach is closed' }) });
+  for (const b of [Y, X]) {
+    R.st.hall = b;
+    const { B } = breach(b, { inMe: false });
+    R.client.word(wire(egStateOf(B, R.now())), `eg:${b}`);
+    for (let k = 0; k < EG_ADMIT_ASKS + 2; k++) { R.client.frame(); await settle(); }
+    assert.equal(R.L.asks.filter((a) => a === b).length, EG_ADMIT_ASKS, `${b}: its own EG_ADMIT_ASKS, then none`);
+  }
+});
+
 test('AUDIT EG V L4-4 A CALL TO ANOTHER BREACH NEVER WIPES THE ONE I STAND IN (section 6.1, "one breach at a time"): my screen holds breach Y\'s trial (its room\'s words - the director\'s state and its whole fight); the hub calls me into X (the opener\'s whole frozen company) - Y, its hall, its stage, its company and its fight stand, X\'s call kept beside them; Y\'s next word keeps it; once Y ends, a call replaces the state, and leaving it stands the kept call for its answer (mutants: the call\'s fold unchanged; the live test reading the call)', () => {
   const { B, t } = breach(Y);
   const spec = egHallOf(SEED, 2, 0);

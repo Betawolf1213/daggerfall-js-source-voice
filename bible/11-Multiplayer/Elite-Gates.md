@@ -5179,7 +5179,8 @@ re-aimed by content, every one dead.
   woken room whose `egv` is not among them ends its breach with `why: 'void'`: the entered members' end receipts return
   the stake, the opener who never entered is handed a `v`, and the Redoubts taken stay. A member's `spec` is answered
   with that hall in the breach's own law's bytes (this circle or the next). A client whose law is not its breach's asks
-  each hall of its circle once and is told once. The halls given are read before any draw (net/egLaw.js `egSpecGive`),
+  each hall of its circle once and is told once, and while the Court rests the next circle's too (AUDIT EG V, E NEW-2).
+  A hall given is its ground's: asked and counted under the ground it was laid on. The halls given are read before any draw (net/egLaw.js `egSpecGive`),
   and the circle standing is built again once all five have come. They are forgotten on every way out of the breach -
   the walk out, the frame's way out and away (`egSpecForget`, `scenes/egClient.js` lawForget; AUDIT EG V).
 - **Secret, deterministic receipts.** The room draws `rs` (32 bytes) at the open and never sends it. A receipt's seed is
@@ -5198,10 +5199,13 @@ re-aimed by content, every one dead.
 4. **Every law's generator is kept.** `net/egLaw.js` `egHallOf(seed, h, geo, law)` builds each law in `EG_LAWS`
    (`net/egDurable.js`: law 4 then; EG-ZC kept law 4's beside law 5, AUDIT EG III's law 6 joined them, EG-HERO-LAY's law
    7 after it, and every law since joins the same way), so a breach keeps its own halls through a later spec. A client
-   that does not know its breach's law rebuilds a circle drawn before its given halls came, under the veil. Its next circle draws from them at once. Under another law the client offers
-   no worker's build (AUDIT EG III): the swap's worker (`world/egCircleWorker.js`) never holds the halls given, so every
-   circle of such a breach steps the old way, from this thread's halls, and the rebuild is counted done only once its
-   step has run.
+   that does not know its breach's law rebuilds a circle drawn before its given halls came, under the veil. Its next circle draws from them at once. Under another law the swap's
+   worker builds a circle only from its five halls as the room gave them, handed over with the ask (AUDIT EG V, E NEW-2:
+   `world/egCircleParts.js` egCircleBuild takes them as given before anything is laid - the worker's module holds no hall
+   this thread was given), so the next circle, its halls asked while the Court rests, swaps in place as a circle of this
+   build's own law does. A circle whose five are not all given under its ground (the next circle's span decrees moved it)
+   steps the old way, from this thread's halls. A circle stood from its five given halls is the breach's own and is never
+   built again; the rebuild is counted done only once its step has run.
 
 (Its fifth and sixth departures are closed and gone: THE FAIR TRAIL, the clock correction and the ridden poses by EG-H1;
 the open's retry, the client's void, the unknown room's tombstone and the `force` deploy by EG-ZA; the Ledger row names

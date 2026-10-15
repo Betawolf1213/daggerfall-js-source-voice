@@ -517,9 +517,11 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** an open in flight: its request id, the service's order, whether the hub took it */
   let opening = null;
   /** my admission to the breach I answered: `{ b, z, at }` (AUDIT EG V: `at` when it came, this device's clock); the welcome
-   *  it went to the room under; AUDIT EG V (lane4 L4-3): the asks my hall made of the service, by breach, and one in flight */
+   *  it went to the room under; AUDIT EG V (lane4 L4-3): the asks my hall made of the service, and one in flight - (D NEW-4)
+   *  the one breach's count (`b`, `n`), begun again by the next breach: a session held an entry for every breach it stood in */
   let admit = null, inFor = -1, admitAsking = false;
-  const admitAsks = new Map();
+  const admitAsks = { b: '', n: 0 };
+  const admitAsked = (b) => (admitAsks.b === b ? admitAsks.n : 0);
   /** AUDIT EG V (lane4 L4-3): do I hold an admit order for breach `b` young enough to go to its room (EG_ADMIT_FRESH_MS)? */
   const admitFresh = (b) => admit?.b === b && !!admit.z && Date.now() - admit.at < EG_ADMIT_FRESH_MS;
   let answering = false, swapping = false, leaving = false;
@@ -911,7 +913,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       // breach, and every later answer said a shut Spire); in my hall it is asked again at once, nothing said meanwhile
       const b = admit?.b ?? link.state().b;
       admit = null; inFor = -1;
-      return inSpire() && !!b && (admitAsks.get(b) ?? 0) < EG_ADMIT_ASKS;
+      return inSpire() && !!b && admitAsked(b) < EG_ADMIT_ASKS;
     }
     return false;
   }
@@ -924,14 +926,14 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
    */
   function admitIn(b, o) {
     if (admitFresh(b)) { if (o?.welcomes !== inFor && o?.sendEg?.('in', { z: admit.z, lv: Math.max(1, entity.level | 0) })) inFor = o.welcomes; return; }
-    if (admitAsking || (admitAsks.get(b) ?? 0) >= EG_ADMIT_ASKS) return;
+    if (admitAsking || admitAsked(b) >= EG_ADMIT_ASKS) return;
     admitAsking = true;
-    admitAsks.set(b, (admitAsks.get(b) ?? 0) + 1);
+    admitAsks.n = admitAsked(b) + 1; admitAsks.b = b;
     (async () => {
       let a = null;
       try { a = await account.admit(b); } catch { a = null; }
       if (a?.ok && a.data?.order) { admit = { b, z: a.data.order, at: Date.now() }; inFor = -1; }
-      else if (a && !a.ok && (admitAsks.get(b) ?? 0) >= EG_ADMIT_ASKS) say(egRefusalText(a.error));
+      else if (a && !a.ok && admitAsked(b) >= EG_ADMIT_ASKS) say(egRefusalText(a.error));
     })().finally(() => { admitAsking = false; });
   }
 
@@ -1143,7 +1145,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   async function swapTo(E, c) {
     if (swapping || answering) return false;
     const r = { b: E.b, seed: E.seed, c, geo: E.geo ?? 0 };
-    const built = lawForeign(E) ? null : modes()?.egPrebuild?.(r) ?? null;   // AUDIT EG III (lane4 #3): under another law no worker's build (its module never holds the halls given) - the old step, from the halls this thread holds
+    const built = prebuild(E, c);   // AUDIT EG V (E NEW-2): under another law the worker's build from the halls the room gave, once all five are given - else the old step, from the halls this thread holds
     if (built === 'building') { if (!swapWaitAt) swapWaitAt = now(); if (now() - swapWaitAt < EG_SWAP_WAIT_MS) return false; }
     swapWaitAt = 0;
     swapping = true;
@@ -1162,6 +1164,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       }, step.look, step.opts);
       if (modes()?.egHallCircle?.() === c) circleSeed = E.seed >>> 0;   // EG-ZD: the circle standing is the breach's own now
     } finally { swapping = false; }
+    if (went && lawForeign(E) && lawGiven(E, c)) lawBuilt = `${E.b}:${c}`;   // AUDIT EG V (E NEW-2): stood from the five halls the room gave - the breach's own, never built again
     return went;   // AUDIT EG III (lane4 #3): whether the step ran - THE LAW PIN's rebuild is done only then
   }
   /** One frame in the Spire. */
@@ -1199,7 +1202,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (!potionHall.startsWith(`${E.b}:`)) { potionHall = `${E.b}:0:t`; potions = EG_POTIONS_PER_HALL; potionsKeep(); }
     if ((E.sg === 'trial' || E.sg === 'rest') && potionHall !== pk) { potionHall = pk; potions = EG_POTIONS_PER_HALL; potionsKeep(); }
     const c = egCircleOfHall(E.h);
-    if (E.sg === 'rest' && c === M.egHallCircle?.() && !lawForeign(E)) M.egPrebuild?.({ b: E.b, seed: E.seed, c: c + 1, geo: E.geo ?? 0 });   // EG-H3 (EG10): THE SWAP'S BUILD - the next circle's level made while the Court rests (AUDIT EG III lane4 #3: never under another law)
+    if (E.sg === 'rest' && c === M.egHallCircle?.()) prebuild(E, c + 1);   // EG-H3 (EG10): THE SWAP'S BUILD - the next circle's level made while the Court rests (AUDIT EG V, E NEW-2: under another law from the halls the room gave)
     // EG-ZD (section 22): a circle - or a seed - my record had wrong is rebuilt in place on a return, as a new circle is
     if (c !== M.egHallCircle?.() || (circleSeed != null && circleSeed !== E.seed >>> 0)) { if (E.sg === 'arrive' || returning === E.b) swapTo(E, c); return; }
     // EG-ZD (section 22): BACK IN - resumed at my last island in a trial (the dropped socket's rule), at the hall's arrival
@@ -1813,14 +1816,17 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   }
 
   // ── EG-H2 (section 22, THE LAW PIN): a breach opened under another law than mine ─────────────────────────────
-  /** the halls asked (`b:h` -> when), the halls given, the breach told, the circle built again from its given halls */
+  /** the halls asked (`b:h:geo` -> when), the halls given (AUDIT EG V, E NEW-2: by their ground too - the next circle's are
+   *  asked while the Court rests, under the ground then in force), the breach told, the circle built again from its given
+   *  halls; a circle's five given, as the swap's worker is handed them (lawGiven) */
   const lawAsked = new Map(), lawGot = new Set();
   let lawSaid = '', lawBuilt = '';
+  const givenMemo = { k: '', v: /** @type {any[] | null} */ (null) };
   /** AUDIT EG V (h, E NEW-1; section 22, THE LAW PIN: "A few circles' worth are kept") - THE HALLS GIVEN FORGOTTEN WITH THE BREACH,
    *  on every way out (walkOut, the frame's way out, away): the halls the room gave and the swap's build gave (net/egLaw.js
    *  egSpecForget - kept for the session before, up to 32, against its own doc) and what I asked and was given of them, so a
    *  way back into the breach asks again what it is not given. */
-  function lawForget() { egSpecForget(); lawGot.clear(); lawAsked.clear(); lawBuilt = ''; digestSeen.k = ''; trailForget(); }
+  function lawForget() { egSpecForget(); lawGot.clear(); lawAsked.clear(); lawBuilt = ''; givenMemo.k = ''; givenMemo.v = null; digestSeen.k = ''; trailForget(); }
 
   // ── AUDIT EG V (h; lane3 L3-10 (b) and (c), section 8.2) - THE TRAIL, AND THE ALLIES ON TRAVERSAL GROUND ─────────────────
   /** each living member's route through the span or Brink I stand in (`routes`: sub -> its points, world/egLook.js egRibbonPush,
@@ -1879,15 +1885,17 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     return digestSeen.off;
   }
   /** Each hall of my circle the room has not given me asked (`{k:'spec'}`), EG_SPEC_ASK_MS apart - once my law is not the
-   *  breach's (`st`'s `egv`), or a hall of it came out otherwise under mine (digestOff). Said once a breach of another law. */
+   *  breach's (`st`'s `egv`), or a hall of it came out otherwise under mine (digestOff). Said once a breach of another law.
+   *  AUDIT EG V (E NEW-2): while the Court rests, the next circle's too (the room gives this circle's or the next's), so the
+   *  swap's worker builds it from them as it builds a circle of my own law. */
   function lawFrame(E) {
     if (!E.b || !(E.h > 0) || E.end) return;
     if (!lawForeign(E) && digestOff(E)) lawOff.add(E.b);
     if (!lawForeign(E)) return;
     if (lawSaid !== E.b) { lawSaid = E.b; if (!lawOff.has(E.b)) say(EG_LAW_TEXT); }
-    const c = egCircleOfHall(E.h), o = online();
-    for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) {
-      const k = `${E.b}:${h}`;
+    const c = egCircleOfHall(E.h), o = online(), geo = (E.geo ?? 0) | 0;
+    for (let h = (c - 1) * 5 + 1, last = (E.sg === 'rest' ? c + 1 : c) * 5; h <= last; h++) {
+      const k = `${E.b}:${h}:${geo}`;
       if (lawGot.has(k) || Date.now() - (lawAsked.get(k) ?? -Infinity) < EG_SPEC_ASK_MS) continue;
       if (o?.sendEg?.('spec', { h })) lawAsked.set(k, Date.now());
     }
@@ -1898,7 +1906,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   function lawTook(w) {
     const E = link.state();
     if (!E.b || w.egv !== E.egv || w.sp?.seed !== E.seed || !egSpecGive(w.sp)) return;
-    lawGot.add(`${E.b}:${w.h}`);
+    lawGot.add(`${E.b}:${w.h}:${(w.sp.geo ?? 0) | 0}`);
     lawRebuild(E);
   }
   /** AUDIT EG III (lane4 #3): THE LAW PIN'S REBUILD - the circle standing, once all five of its halls are given, built again
@@ -1907,8 +1915,24 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   async function lawRebuild(E) {
     const c = egCircleOfHall(E.h), key = `${E.b}:${c}`;
     if (lawBuilt === key || !inSpire() || modes()?.egHallCircle?.() !== c || swapping || answering) return;
-    for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) if (!lawGot.has(`${E.b}:${h}`)) return;
+    if (!lawGiven(E, c)) return;
     if (await swapTo(E, c)) lawBuilt = key;
+  }
+  /** AUDIT EG V (E NEW-2): circle `c`'s five halls as breach `E`'s room gave them (under the ground in force), or null while
+   *  any is not given - kept once whole, so a frame of the rest makes nothing. */
+  function lawGiven(E, c) {
+    const geo = (E.geo ?? 0) | 0;
+    for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) if (!lawGot.has(`${E.b}:${h}:${geo}`)) return null;
+    const k = `${E.b}:${c}:${geo}`;
+    if (givenMemo.k !== k) { givenMemo.k = k; givenMemo.v = []; for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) givenMemo.v.push(egHallOf(E.seed, h, geo)); }
+    return givenMemo.v;
+  }
+  /** EG-H3 (EG10): circle `c`'s level asked of the swap's build - its state, or null (none offered: the old step). AUDIT EG
+   *  V (E NEW-2): under another law only once the room has given its five halls, handed over with the ask - the worker's
+   *  module holds no hall this thread was given. */
+  function prebuild(E, c) {
+    const given = lawForeign(E) ? lawGiven(E, c) : undefined;
+    return given === null ? null : modes()?.egPrebuild?.({ b: E.b, seed: E.seed, c, geo: E.geo ?? 0, given }) ?? null;
   }
 
   /** AUDIT EG III (lane4 #10): the frame's batch list (batches), and the errand objects as last made with the state they

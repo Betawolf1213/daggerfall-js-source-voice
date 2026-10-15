@@ -10,7 +10,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { egCircleSpecs, egBandOfCircle, egSpecGive, EG_TEXT } from '../src/net/egLaw.js';
+import { egCircleSpecs, egBandOfCircle, egSpecGive, egSpecForget, egHallOf, EG_SPEC, EG_TEXT } from '../src/net/egLaw.js';
 import { createEgSwap } from '../src/scenes/egSwap.js';
 import { egCircleParts, egCircleBuild, egCirclePartsTransfers } from '../src/world/egCircleParts.js';
 import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts } from '../src/world/egHall.js';
@@ -91,6 +91,42 @@ test('AUDIT EG V L6-8, L6-9 THE WORKER\'S BUILD (world/egCircleParts.js egCircle
     assert.equal(got.length, 1);
     assert.deepEqual([got[0].t, got[0].id, got[0].parts.specs.length, got[0].parts.art.length], ['built', 3, 5, EG_DRESS_RECORDS.length]);
   } finally { W.restore(); }
+});
+
+test('AUDIT EG V E NEW-2 UNDER ANOTHER LAW THE WORKER BUILDS FROM THE HALLS GIVEN (section 22, THE LAW PIN; EG-H2 departure 4): a build asked with a breach of another law\'s halls (`given`, as its room gave them) takes them as given before anything is laid - its specs and its made level are that law\'s, not the worker\'s own - and the swap hands them to the worker; the same circle asked without them is another build (mutants: the halls given never taken; the swap never hands them; a build with them taken for one without)', async () => {
+  const c = 2, law = EG_SPEC - 1, hs = [6, 7, 8, 9, 10];
+  try {
+    const own = egCircleBuild({ seed: SEED, c, geo: 0 });
+    const theirs = hs.map((h) => ({ ...JSON.parse(JSON.stringify(egHallOf(SEED, h, 0, law))), laid: 90 + h }));
+    const m = egCircleBuild({ seed: SEED, c, geo: 0, given: theirs });
+    assert.deepEqual(m.specs.map((s) => s.laid), [96, 97, 98, 99, 100], 'its five halls, the room\'s');
+    egSpecForget();
+    for (const s of theirs) egSpecGive(s);
+    assert.deepEqual([...m.model.positions], [...egCircleParts(SEED, c, 0).model.positions], 'built from them');
+    egSpecForget();
+    assert.notDeepEqual([...m.model.positions], [...own.model.positions], 'not the worker\'s own law\'s');
+    // the swap hands them over; asked again without them, it is another build
+    const W = await workerOf();
+    try {
+      const swap = createEgSwap({ workerFactory: W.factory });
+      assert.equal(swap.want(SEED, c, 0, -1, theirs), 'ready');
+      assert.deepEqual(W.lastAsk().given.map((s) => s.laid), [96, 97, 98, 99, 100], 'handed with the ask');
+      const id = W.lastAsk().id;
+      assert.equal(swap.want(SEED, c, 0, -1, theirs), 'ready');
+      assert.equal(W.lastAsk().id, id, 'asked again with them: the build held');
+      assert.deepEqual(swap.peek(SEED, c, 0).specs.map((s) => s.laid), [96, 97, 98, 99, 100]);
+      egSpecForget();
+      assert.equal(swap.want(SEED, c, 0), 'ready');
+      assert.ok(W.lastAsk().id > id && W.lastAsk().given === null, 'without them: built again');
+      assert.deepEqual(swap.peek(SEED, c, 0).specs.map((s) => s.laid), hs.map((h) => egHallOf(SEED, h, 0).laid), 'the worker\'s own law\'s');
+      swap.drop();
+      egSpecForget();
+      // the mode machine's own prebuild hands them on (scenes/worldModes.js egPrebuild)
+      const R = rig(W.factory);
+      assert.equal(R.wm.egPrebuild({ ...eh(c), given: theirs }), 'ready');
+      assert.deepEqual(W.lastAsk().given.map((s) => s.laid), [96, 97, 98, 99, 100], 'the host hands them on');
+    } finally { W.restore(); }
+  } finally { egSpecForget(); }
 });
 
 test('AUDIT EG V L6-9 THE NEXT BAND\'S DRESS, PAINTED IN THE WORKER AND PUT UP A RECORD A FRAME (section 25.1; EG-ZN): while the Court of a band\'s last circle rests, each prebuild puts up one record of the next band\'s dress the worker painted - none painted on this thread - until it is whole; THE SWAP after puts up nothing more; a rest too short to put it all up leaves the swap to put up the rest, still painting nothing; a band already up asks no dress of the worker; and with no worker nothing is painted in the rest - the old step\'s stand paints it under the veil (mutants: the dress painted here at the prebuild; the whole dress put up in one frame; the swap leaving records unput; the dress asked of a band already up; a band whole at its first record; a record put up twice; the built level unread in the rest)', async () => {

@@ -655,8 +655,8 @@
   {
     "name": "EGA5E-swap-band-unposted",
     "file": "src/scenes/egSwap.js",
-    "old": "geo: geo || 0, band });",
-    "new": "geo: geo || 0 });",
+    "old": "geo: geo || 0, band, given: given ?? null });",
+    "new": "geo: geo || 0, given: given ?? null });",
     "tests": [
       "test/egaudit5_e_swap.test.js"
     ]
@@ -691,8 +691,44 @@
   {
     "name": "EGA5E-prebuild-dress-asked-when-up",
     "file": "src/scenes/worldModes.js",
-    "old": "egBandWhole(band) ? -1 : band);",
-    "new": "band);",
+    "old": "egBandWhole(band) ? -1 : band, r.given);",
+    "new": "band, r.given);",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-NEW2-given-never-taken",
+    "file": "src/world/egCircleParts.js",
+    "old": "  for (const s of Array.isArray(m.given) ? m.given : []) egSpecGive(s);\n",
+    "new": "",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-NEW2-swap-never-hands",
+    "file": "src/scenes/egSwap.js",
+    "old": "band, given: given ?? null });",
+    "new": "band, given: null });",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-NEW2-with-taken-for-without",
+    "file": "src/scenes/egSwap.js",
+    "old": "if (job?.key === key && job.g === g) return",
+    "new": "if (job?.key === key) return",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-NEW2-host-never-hands",
+    "file": "src/scenes/worldModes.js",
+    "old": "-1 : band, r.given);",
+    "new": "-1 : band);",
     "tests": [
       "test/egaudit5_e_swap.test.js"
     ]

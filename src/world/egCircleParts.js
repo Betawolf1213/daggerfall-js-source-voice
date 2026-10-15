@@ -10,7 +10,7 @@
 // so a level built here is the level built there, byte for byte (test/egswap_client.test.js). Not a DFU member. Ledger A
 // (ELITE-GATES).
 import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts } from './egHall.js';
-import { egCircleSpecs } from '../net/egLaw.js';
+import { egCircleSpecs, egSpecGive } from '../net/egLaw.js';
 import { egBandArt } from './egBandArt.js';
 
 /** The circle a build is for: its breach's seed, its number and its ground (the span decrees' `geo`) - the mode
@@ -35,10 +35,13 @@ export function egCircleParts(seed, c, geo = 0) {
  * circle's made level (egCircleParts), its five halls' specs as the hall law laid them (`specs` - the page takes them as
  * given, net/egLaw.js egSpecGive, and lays none again under the veil), and, when the page asks (`band` 0-3), that band's
  * dress painted (`art` - world/egBandArt.js egBandArt's `[record, { albedo, emission }]`, put up a record a frame of the
- * Court's rest - scenes/worldModes.js egPrebuild). Pure.
- * @param {{ seed: number, c: number, geo?: number, band?: number }} m
+ * Court's rest - scenes/worldModes.js egPrebuild). AUDIT EG V (E NEW-2; section 22, THE LAW PIN): `given` - a breach of
+ * another law's halls as its room gave them - taken as given first (net/egLaw.js egSpecGive), so the worker builds that
+ * breach's own circle: its module holds no hall the page was given. Pure but for the halls given.
+ * @param {{ seed: number, c: number, geo?: number, band?: number, given?: any[] | null }} m
  */
 export function egCircleBuild(m) {
+  for (const s of Array.isArray(m.given) ? m.given : []) egSpecGive(s);
   const geo = m.geo ?? 0, band = Number.isInteger(m.band) && m.band >= 0 && m.band <= 3 ? m.band : -1;
   return { ...egCircleParts(m.seed, m.c, geo), specs: egCircleSpecs(m.seed, m.c, geo), art: band >= 0 ? egBandArt(band) : null };
 }
