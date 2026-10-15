@@ -17,6 +17,9 @@
 //   ?mist            a circle with a Mist Stair or the Sinking Stair, the camera over its sheet, the clock at its surge
 //   ?grey            the frame in grey (the lab check's)  ?nopanel the panel hidden (probes)
 //   ?frames=<n>      draw n frames and rest (a probe reads the last - tools/spireLabProbe.mjs)
+//   ?view=swatch (or ?swatch)   EG-LOOK: THE BAND'S PICTURES on a wall in the void beside the arrival plate - every record
+//                    the band paints on a quad at its intended texels a metre, the right way up (world/egBandArt.js
+//                    EG_KIT_MAP), lit by the band's own light and three of its lamps; ?rec=<record> the eye 5 m before one
 // `window.__frame` counts drawn frames (the probes frame-sync on it - bible/Home.md's Process); `window.__lab` answers a
 // probe's questions (the batch's stats, the look's state).
 import { Renderer, WORLD_FRAME, INTERIOR_CLEAR } from '../render/renderer.js';
@@ -28,7 +31,9 @@ import { realmArt } from '../world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../world/sdRealm.js';
 import { buildEgCircleModel, egCircleLights, egLightsWith, egHallLighting, egHallFog, egHallGrade, egToDungeon, egHallCentre } from '../world/egHall.js';
 import { createEgGroundLook } from '../scenes/egGroundLook.js';   // EG-LOOK: the ruin and the wreck, as the circle's host stands them
-import { egBandArt, egBandArchive } from '../world/egBandArt.js';
+import { egBandArt, egBandArchive, EG_BAND_RECORDS, EG_KIT_MAP, EG_DRESS } from '../world/egBandArt.js';
+import { createMeshKit } from '../world/meshKit.js';   // EG-LOOK: the swatch wall
+import { egAtmosOf } from '../world/egAtmos.js';
 import { buildEgLookModel, egMistSheets } from '../world/egLook.js';
 import { egPaletteOf, egFillOf } from '../ui/egAccess.js';   // the shelf's palette and fill, their one home
 import { createEgSpan } from '../scenes/egSpan.js';
@@ -61,7 +66,7 @@ const MIST = params.has('mist') ? egMistSheets(SPECS)[0] ?? null : null;
 const SLOT = MIST ? SPECS.indexOf(MIST.spec) : Math.max(0, Math.min(4, Number(params.get('h') ?? 0)));
 const SPEC = SPECS[SLOT];
 for (const [rec, art] of realmArt()) { renderer.uploadTexture(SD_REALM_ARCHIVE, rec, art.albedo); renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, { white: true }); }
-for (const [rec, art] of egBandArt(BAND)) { renderer.uploadTexture(egBandArchive(BAND), rec, art.albedo); renderer.uploadEmissionTexture?.(egBandArchive(BAND), rec, art.emission, { white: true }); }
+for (const [rec, art] of egBandArt(BAND)) { renderer.uploadTexture(egBandArchive(BAND), rec, art.albedo, art.cutout ? { cutout: true } : {}); renderer.uploadEmissionTexture?.(egBandArchive(BAND), rec, art.emission, { white: true }); }   // EG-LOOK: a cutout picture's holes asked (the host's way)
 const circleMesh = renderer.createMesh(buildEgCircleModel(SEED, C, 0));
 const lookModel = buildEgLookModel(SEED, C, 0), lookMesh = lookModel ? renderer.createMesh(lookModel) : null;
 const lamps = egCircleLights(SEED, C, 0);
@@ -73,6 +78,32 @@ for (const d of ground.stand(SEED, C, 0)) dynamicDraws.push(d);
 const look = createEgLookDraw({ gl });
 look.setCircle(SEED, C, 0);
 const telegraph = new GateTelegraphRenderer(gl, { spire: true });
+
+// ── EG-LOOK: THE SWATCH WALL - every picture the band paints, on a quad, as its builders lay it ──────────────────────
+const SWATCH = params.get('view') === 'swatch' || params.has('swatch') || params.has('rec');
+/** The wall: in the void left of the arrival plate (x), facing +x, its records in rows of `cols` (the hall's frame). */
+const SW = Object.freeze({ x: -34, z: (SPEC.arrive?.z ?? 0) + 4, y: 1, col: 4.6, row: 5.2, cols: 7 });
+/** Repeats a quad shows of each record (u, v): a tiling picture twice (its seams seen), a laid-out one once. */
+const SW_REP = Object.freeze({ [EG_DRESS.edge]: [8, 8], [EG_DRESS.molten]: [3, 3], [EG_DRESS.root]: [1, 1], 61: [2, 1], 63: [1, 1], 64: [1, 1], 67: [1, 1], 68: [1, 1], 69: [1, 1], 71: [1, 1], 81: [3, 3] });
+/** Which way a record's v runs up the quad: the kit's own (EG_KIT_MAP), the walls' up (world/egHall.js), the rest from its top. */
+const swUp = (rec) => (EG_KIT_MAP[rec] ? EG_KIT_MAP[rec].v === 'up' : rec === EG_DRESS.pillar);
+/** Where record k's quad stands: its centre in the hall's frame. */
+const swAt = (k) => [SW.x, SW.y + (2 - Math.floor(k / SW.cols)) * SW.row + 2.3, SW.z + ((k % SW.cols) - (SW.cols - 1) / 2) * SW.col];
+let swatchMesh = null;
+if (SWATCH) {
+  const kit = createMeshKit(), arts = new Map(egBandArt(BAND));
+  EG_BAND_RECORDS.forEach((rec, k) => {
+    const { albedo } = arts.get(rec), [ru, rv] = SW_REP[rec] ?? [2, 2], w = (albedo.width / 32) * ru, h = (albedo.height / 32) * rv, [cx, cy, cz] = swAt(k);
+    const P = (dz, dy) => egToDungeon(SPEC, cx + 0.02, cy + dy, cz + dz), up = swUp(rec);
+    const vb = up ? 0 : rv, vt = up ? rv : 0;   // v at the quad's bottom and top
+    kit.quad(rec, P(w / 2, -h / 2), P(-w / 2, -h / 2), P(-w / 2, h / 2), P(w / 2, h / 2), [1, 0, 0], true, [[0, vb], [ru, vb], [ru, vt], [0, vt]]);
+    const b0 = egToDungeon(SPEC, cx - 0.3, cy - h / 2 - 0.15, cz - w / 2 - 0.15), b1 = egToDungeon(SPEC, cx, cy + h / 2 + 0.15, cz + w / 2 + 0.15);
+    kit.box(EG_DRESS.pillar, b0, b1, { skip: ['px'] });   // its frame, the academy's wall
+  });
+  swatchMesh = renderer.createMesh(kit.pack(egBandArchive(BAND)));
+  const tint = egAtmosOf(BAND).lamp;
+  for (const dz of [-11, 0, 11]) { const p = egToDungeon(SPEC, SW.x + 4.5, SW.y + SW.row * 1.6, SW.z + dz); lamps.push({ x: p[0], y: p[1], z: p[2], range: 16, color: [...tint] }); }
+}
 
 /** The cameras, in hall SPEC's frame (x across, y up, z along the course; yaw 0 down the course, degrees). */
 const court = SPEC.fight ?? SPEC.discs.find((d) => d.role === 'court') ?? SPEC.end ?? SPEC.arrive;
@@ -86,10 +117,11 @@ const VIEWS = {
   mist: MIST ? { at: [(MIST.x0 + MIST.x1) / 2, MIST.hz.y + 6.5, MIST.z0 - 3], yaw: 0, pitch: -38 } : null,
   under: { at: [court.x + (court.r ?? 12) + 14, (court.y ?? 0) - 9, court.z - 6], yaw: -110, pitch: 18 },   // EG-LOOK: the court's foundations, from a span below its rim
   wide: { at: [-70, 26, (SPEC.len ?? 80) * 0.15], yaw: 55, pitch: 4 },   // EG-LOOK: the wreck drifting, the Spire overhead
+  swatch: SWATCH ? (params.has('rec') ? (() => { const k = Math.max(0, EG_BAND_RECORDS.indexOf(Number(params.get('rec')))), c = swAt(k); return { at: [c[0] + 5.2, c[1], c[2]], yaw: -90, pitch: 0 }; })() : { at: [SW.x + 15.5, SW.y + SW.row * 1.5 + 0.8, SW.z], yaw: -90, pitch: 0 }) : null,   // EG-LOOK: the band's pictures
 };
 const viewSel = $('view');
 for (const k of Object.keys(VIEWS)) if (VIEWS[k]) { const o = document.createElement('option'); o.value = o.textContent = k; viewSel.append(o); }
-viewSel.value = VIEWS[params.get('view')] ? params.get('view') : MIST ? 'mist' : 'plate';
+viewSel.value = VIEWS[params.get('view')] ? params.get('view') : SWATCH ? 'swatch' : MIST ? 'mist' : 'plate';
 if (params.get('lane') === 'off') $('lane').checked = false;
 if (params.has('still') || params.has('t')) $('still').checked = true;
 const cam = { pos: [0, 0, 0], yaw: 0, pitch: 0 };
@@ -177,6 +209,7 @@ function frame(now) {
   renderer.drawMesh(circleMesh, identity(), null);
   span.cull(proj, view);   // the dungeon arm's own line, before its draws
   if (lookMesh) renderer.drawMesh(lookMesh, identity(), null, NO_SHADOW);
+  if (swatchMesh) renderer.drawMesh(swatchMesh, identity(), null, NO_SHADOW);   // EG-LOOK: the band's pictures
   for (const d of dynamicDraws) if (!d.hidden && !d.culled) renderer.drawMesh(d.gpu, d.object.matrix, d.texRemap ?? null, d.noShadow ? NO_SHADOW : WITH_SHADOW);
   if (look.drawSky(proj, view, clock, courtFogNow(), skyGain(renderer._fogColor, egHallFog(C).color))) renderer.markForeignPass();
   // the fight's pass: the mist, the telegraphs, the lines last (scenes/egClient.js drawPass)
