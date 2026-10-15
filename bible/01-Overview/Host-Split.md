@@ -170,10 +170,13 @@ for `src/scenes/travelViewMarks.js` (`createTravelViewMarks(host)`), moved by
   host hands one over, a second pin that it does). Three were HOST RUNS - the
   boat markers, the raiders, the party - that lift the marks' code out of the
   file and run it against stubs; they lift it from the module now, with `host`
-  standing for the stubs, and they pass: the move is proven by what the code
-  does, not only by how it reads. Two pinned the host's own imports
+  standing for the stubs, and they pass - the moved code still does what it
+  did. What they cannot see is the seam itself: a stub hands every name over
+  the same way, so a live name handed over as a copy passes them (AUDIT
+  HOST-SPLIT 1, below). Two pinned the host's own imports
   (`NAME_RANGE`, `TV_DUNGEON_TYPES`) and follow their one reader.
-- `bootWorld` 35,251 -> 35,042 lines; its ceiling 35,501 -> 35,292.
+- `bootWorld` 21,589 -> 21,445 code lines (35,251 -> 35,042 raw); its ceiling
+  21,839 -> 21,695.
 - The full suite on the slice: 27,336 pass, 0 fail.
 
 WHAT THE PILOT MEASURED: the code moved itself, by rule; the pins did not. 229
@@ -183,3 +186,25 @@ slice, in proportion, and the order above stands on it: a group the map calls
 cheap is cheap to move; whether it is cheap to land is how many pins quote it.
 The next slice counts its pins first (the pins-to-lines ratio beside the map's
 numbers), and a group with many pins and few lines waits.
+
+AUDIT HOST-SPLIT 1 (2026-10-15) read the move against the original - the module
+equal to the moved lines but for the 19 rewrites of the 15 live names, every
+by-value name written nowhere in bootWorld, the construction reading exactly the
+46 it destructures - and found the move sound and two things around it not:
+
+- THE SEAM WAS UNPINNED. `host` is `any` to lint and types, so a live name
+  handed over as a copy (`get social()` -> `social,` - null at construction,
+  the party's marks gone for good) or a name dropped passed the whole suite.
+  `test/hostseam.test.js` now holds every module the tool moved, found by the
+  header it writes, to its construction: each settled name handed over, each
+  live read a getter, each write a setter, nothing handed over unread.
+- THE TOOL had holes the pilot did not fall into and a bigger move would: a
+  for-in/of head's write and a reassigned function or class declaration missed
+  (a stale copy), an inner binding named `host` capturing the rewrites, a
+  parameter default resolved in the body's scope, a host `var` in a block, a
+  shorthand with a default and `new.target` rewritten into syntax errors, an
+  import dropped with its neighbour on one line, a mutant record found by
+  position and an anchor matched inside a longer file name. Each is fixed and
+  is a fixture of `test/hostmove.test.js`: the fixture moved for real and both
+  versions run, the same answer. After the fixes the tool reproduces the
+  pilot's module and world.js byte for byte from the pre-move tree.

@@ -45,6 +45,36 @@ function bound(p, out = []) {
 const isFn = (n) => n.type === 'FunctionDeclaration' || n.type === 'FunctionExpression' || n.type === 'ArrowFunctionExpression';
 const childKeys = (n) => Object.keys(n).filter((k) => k !== 'loc' && k !== 'start' && k !== 'end' && k !== 'type');
 
+/** Every identifier a subtree names - references and bindings alike, never a non-computed key. */
+function namesIn(roots) {
+  const out = new Set();
+  const walk = (n, parent, key) => {
+    if (!n || typeof n.type !== 'string') return;
+    if (n.type === 'Identifier') {
+      const isKey = (parent?.type === 'MemberExpression' && key === 'property' && !parent.computed)
+        || ((parent?.type === 'Property' || parent?.type === 'MethodDefinition' || parent?.type === 'PropertyDefinition') && key === 'key' && !parent.computed && !parent.shorthand);
+      if (!isKey) out.add(n.name);
+      return;
+    }
+    for (const k of childKeys(n)) { const v = n[k]; if (Array.isArray(v)) v.forEach((c) => walk(c, n, k)); else walk(v, n, k); }
+  };
+  for (const r of roots) walk(r, null, null);
+  return out;
+}
+
+/** Whether a function's own body reads `this` (an arrow inside it reads the same `this`; a nested function does not). */
+function readsThis(fnNode) {
+  let found = false;
+  const walk = (n) => {
+    if (!n || typeof n.type !== 'string' || found) return;
+    if (n.type === 'ThisExpression') { found = true; return; }
+    if (n !== fnNode && (n.type === 'FunctionDeclaration' || n.type === 'FunctionExpression')) return;
+    for (const k of childKeys(n)) { const v = n[k]; if (Array.isArray(v)) v.forEach(walk); else walk(v); }
+  };
+  walk(fnNode);
+  return found;
+}
+
 /** Names a block (or function body / program) declares directly: let/const/class at block level; var and function
  *  declarations hoisted to the nearest function - over-approximated here as the block that holds them, which only
  *  ever shadows MORE, so a host reference is never wrongly left as a local one by it... except a `var` declared in an
@@ -62,7 +92,7 @@ function blockDecls(stmts) {
  *  inside the group, by scope. `own` are the group's own top-level names (resolved in the module, left alone). */
 function hostRefs(roots, own) {
   const refs = [];
-  let varInBlock = false;
+  let varInBlock = false, keyedNext = false;
   const walk = (n, parent, key, scopes) => {
     if (n.type === 'Identifier') {
       const isKey = (parent?.type === 'MemberExpression' && key === 'property' && !parent.computed)
@@ -70,18 +100,27 @@ function hostRefs(roots, own) {
         || (parent?.type === 'LabeledStatement' || parent?.type === 'BreakStatement' || parent?.type === 'ContinueStatement');
       if (isKey) return;
       if (own.has(n.name) || scopes.some((s) => s.has(n.name))) return;
-      refs.push({ node: n, name: n.name, parent, key });
+      refs.push({ node: n, name: n.name, parent, key, keyed: keyedNext });
+      keyedNext = false;
+      return;
+    }
+    if (n.type === 'MetaProperty') return;   // new.target, import.meta - no binding
+    if (n.type === 'Property' && n.shorthand && n.value?.type === 'AssignmentPattern' && n.value.left.type === 'Identifier') {
+      keyedNext = true;   // the default's own target, next: it keeps its key when rewritten
+      walk(n.value.left, n.value, 'left', scopes);
+      keyedNext = false;
+      walk(n.value.right, n.value, 'right', scopes);
       return;
     }
     let inner = scopes;
     if (isFn(n)) {
-      const s = new Set(n.params.flatMap((p) => bound(p)));
-      if (n.id && n.type === 'FunctionExpression') s.add(n.id.name);
-      if (n.body.type === 'BlockStatement') for (const d of blockDecls(n.body.body)) s.add(d);
-      inner = [...scopes, s];
-      // params' defaults, the body - walked with the function's scope; the declaration's own id is the outer scope's
-      for (const p of n.params) walkPattern(p, inner);
-      walk(n.body, n, 'body', inner);
+      const ps = new Set(n.params.flatMap((p) => bound(p)));
+      if (n.id && n.type === 'FunctionExpression') ps.add(n.id.name);
+      const pscopes = [...scopes, ps];
+      // the parameters' defaults in the parameters' scope; the body in its own, inside it. The declaration's own id
+      // is the outer scope's.
+      for (const p of n.params) walkPattern(p, pscopes);
+      walk(n.body, n, 'body', [...pscopes, n.body.type === 'BlockStatement' ? blockDecls(n.body.body) : new Set()]);
       return;
     }
     if (n.type === 'BlockStatement' || n.type === 'Program' || n.type === 'StaticBlock') inner = [...scopes, blockDecls(n.body)];
@@ -163,7 +202,7 @@ export function planMove({ hostFile, fn, names, toFile, ctor, handle = 'host' })
 
   const { refs, varInBlock } = hostRefs(group.map((m) => m.stmt), own);
   if (varInBlock) refuse.push('the group declares a `var` inside a block - its scope is the function, and this tool resolves by block; move it by hand');
-  if (refs.some((r) => r.name === handle) || own.has(handle)) refuse.push(`the group already uses the name \`${handle}\` - pass --handle`);
+  if (namesIn(group.map((m) => m.stmt)).has(handle) || own.has(handle)) refuse.push(`the group already uses the name \`${handle}\` (a reference or an inner binding would capture the rewrite) - pass --handle`);
 
   const byValue = new Set(), live = new Set(), writes = new Set(), mod = new Map(), stray = new Set();
   for (const r of refs) {
@@ -173,7 +212,7 @@ export function planMove({ hostFile, fn, names, toFile, ctor, handle = 'host' })
       const neverWritten = !writtenAnywhere.has(n);
       const above = d && d.m.i < first.i;
       const settled = d
-        ? (d.kind === 'function') || (above && (d.kind === 'const' || d.kind === 'class' || ((d.kind === 'let' || d.kind === 'var') && neverWritten && d.m.stmt.declarations?.every((x) => x.init))))
+        ? (d.kind === 'function' && neverWritten) || (above && (d.kind === 'const' || (d.kind === 'class' && neverWritten) || ((d.kind === 'let' || d.kind === 'var') && neverWritten && d.m.stmt.declarations?.every((x) => x.init))))
         : neverWritten;   // a parameter
       (settled ? byValue : live).add(n);
     } else if (imports.has(n)) mod.set(n, imports.get(n));
@@ -184,6 +223,12 @@ export function planMove({ hostFile, fn, names, toFile, ctor, handle = 'host' })
   for (const m of group) for (const n of m.wrote) if (!own.has(n) && (declAt.has(n) || params.includes(n)) && refs.some((r) => r.name === n)) writes.add(n);
   for (const n of writes) { byValue.delete(n); live.add(n); }
   for (const n of stray) refuse.push(`${n} is a top-level declaration of ${hostFile} - move it to a module both can import first`);
+  for (const n of live) {
+    if (!refs.some((r) => r.name === n && r.parent?.type === 'CallExpression' && r.key === 'callee')) continue;
+    const d = declAt.get(n);
+    const fnNode = d?.kind === 'function' ? d.m.stmt : d?.m.stmt.declarations?.find((x) => x.id.type === 'Identifier' && x.id.name === n)?.init;
+    if (fnNode && fnNode.type !== 'ArrowFunctionExpression' && isFn(fnNode) && readsThis(fnNode)) refuse.push(`${n} is called live, and \`${handle}.${n}()\` would make \`this\` the handles object - its function reads \`this\`; move it by hand`);
+  }
 
   // what the rest of the host uses of the group, and whether any of it is used above the group
   const exported = new Set(), above = [];
@@ -212,7 +257,7 @@ export function renderMove(p) {
   const { src, start, end, refs, byValue, live, writes, mod, exported, handle, hostFile, toFile, ctor, host } = p;
   // the module: the group's text, every live reference read through the handle
   const edits = refs.filter((r) => live.has(r.name)).map((r) => {
-    const shorthand = r.parent?.type === 'Property' && r.parent.shorthand && r.key === 'value';
+    const shorthand = (r.parent?.type === 'Property' && r.parent.shorthand && r.key === 'value') || r.keyed;
     return { from: r.node.start, to: r.node.end, text: shorthand ? `${r.name}: ${handle}.${r.name}` : `${handle}.${r.name}` };
   }).sort((a, b) => b.from - a.from);
   let body = src.slice(start, end);
@@ -272,7 +317,8 @@ export function renderMove(p) {
   const lastImport = [...hostText.matchAll(/^import [^;]+;[^\n]*\n/gm)].pop();
   const spec = `./${relative(dirname(hostFile), toFile).replace(/\\/g, '/')}`;
   const line = `import { ${ctor} } from '${spec.startsWith('./..') ? spec.slice(2) : spec}';   // HOST-SPLIT\n`;
-  hostText = hostText.slice(0, lastImport.index + lastImport[0].length) + line + hostText.slice(lastImport.index + lastImport[0].length);
+  const at = lastImport ? lastImport.index + lastImport[0].length : 0;
+  hostText = hostText.slice(0, at) + line + hostText.slice(at);
   return { moduleText, hostText, importLines, construction };
 }
 
@@ -307,8 +353,13 @@ export function dropImports(hostText, names) {
     if (s.type !== 'ImportDeclaration') continue;
     const keep = s.specifiers.filter((sp) => !names.includes(sp.local.name));
     if (keep.length === s.specifiers.length) continue;
-    const lineEnd = hostText.indexOf('\n', s.end) + 1;
-    if (!keep.length) { edits.push({ from: s.start, to: lineEnd, text: '' }); continue; }
+    if (!keep.length) {
+      const lineStart = hostText.lastIndexOf('\n', s.start - 1) + 1, lineEnd = hostText.indexOf('\n', s.end) + 1 || hostText.length;
+      const alone = !hostText.slice(lineStart, s.start).trim() && /^\s*(\/\/[^\n]*)?\n?$/.test(hostText.slice(s.end, lineEnd));
+      if (alone) edits.push({ from: lineStart, to: lineEnd, text: '' });
+      else edits.push({ from: s.start, to: s.end + (/^ +/.exec(hostText.slice(s.end))?.[0].length ?? 0), text: '' });
+      continue;
+    }
     const named = keep.filter((sp) => sp.type === 'ImportSpecifier').map((sp) => { const im = sp.imported.name ?? sp.imported.value; return im === sp.local.name ? im : `${im} as ${sp.local.name}`; });
     const def = keep.find((sp) => sp.type === 'ImportDefaultSpecifier')?.local.name;
     const ns = keep.find((sp) => sp.type === 'ImportNamespaceSpecifier')?.local.name;
@@ -327,6 +378,21 @@ const asMoved = (text, live, handle) => {
 };
 const count = (hay, needle) => hay.split(needle).length - 1;
 
+/** Each element of a JSON array of objects, as [start, end) of its own braces - a scan that knows strings, so a brace
+ *  in a quoted value is no brace, and a record's fields are found in whatever order it wrote them. */
+function recordSpans(text) {
+  const spans = [];
+  let depth = 0, inString = false, from = -1;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inString) { if (c === '\\') i++; else if (c === '"') inString = false; continue; }
+    if (c === '"') inString = true;
+    else if (c === '[' || c === '{') { depth++; if (c === '{' && depth === 2) from = i; }
+    else if (c === ']' || c === '}') { if (c === '}' && depth === 2) spans.push([from, i + 1]); depth--; }
+  }
+  return spans;
+}
+
 /** THE RECORDS MOVE WITH THE CODE: every mutant record (tools/mutants/*.json) and every doc anchor (bible/**, the
  *  CITE-ANCHOR form - a file's name, a colon, the quoted line) that named moved text in the host is pointed at the module - verbatim where the
  *  text moved verbatim, through the handle where a live name was rewritten. What it cannot place once, it reports. */
@@ -343,8 +409,8 @@ export function retargetRecords({ hostFile, toFile, handle = 'host', write = fal
     // edited IN PLACE, never re-serialised: each list keeps its own layout, and the diff is the three strings that moved.
     // A record opens with its "name" (every list's shape; a quote inside a value is escaped, so the key cannot stand in
     // one), so a record's text runs from its name to the next.
-    const starts = [...text.matchAll(/"name"\s*:\s*"/g)].map((x) => x.index);
-    if (starts.length !== list.length) { if (list.some((m) => m.file === hostFile && !host.includes(m.old))) report.unplaced.push(`${f}: records do not each open with "name" - by hand`); continue; }
+    const spans = recordSpans(text);
+    if (spans.length !== list.length) { if (list.some((m) => m.file === hostFile && !host.includes(m.old))) report.unplaced.push(`${f}: its records could not be told apart - by hand`); continue; }
     let out = text;
     for (let k = list.length - 1; k >= 0; k--) {
       const m = list[k];
@@ -352,7 +418,7 @@ export function retargetRecords({ hostFile, toFile, handle = 'host', write = fal
       const old = count(mod, m.old) === 1 ? m.old : asMoved(m.old, live, handle);
       if (count(mod, old) !== 1) { report.unplaced.push(`${f}::${m.name}`); continue; }
       const nw = old === m.old ? m.new : asMoved(m.new, live, handle);
-      const from = starts[k], to = k + 1 < starts.length ? starts[k + 1] : out.length;
+      const [from, to] = spans[k];   // the record's own braces - its fields and nobody else's
       let span = out.slice(from, to);
       const swaps = [[m.file, toFile], [m.old, old], [m.new, nw]].filter(([a, b]) => a !== b);
       if (!swaps.every(([a]) => count(span, JSON.stringify(a)) === 1)) { report.unplaced.push(`${f}::${m.name} (its strings are not written as JSON writes them)`); continue; }
@@ -369,7 +435,7 @@ export function retargetRecords({ hostFile, toFile, handle = 'host', write = fal
   const docs = [];
   const walkDocs = (d) => { for (const e of readdirSync(d, { withFileTypes: true })) { if (e.isDirectory()) walkDocs(`${d}/${e.name}`); else if (e.name.endsWith('.md')) docs.push(`${d}/${e.name}`); } };
   walkDocs(`${root}/bible`);
-  const anchor = new RegExp(`((?:[\\w./-]*/)?)${hostBase.replace('.', '\\.')}:"((?:[^"\\\\]|\\\\.)+)"`, 'g');
+  const anchor = new RegExp(`(?<![\\w.-])((?:[\\w./-]*/)?)${hostBase.replace('.', '\\.')}:"((?:[^"\\\\]|\\\\.)+)"`, 'g');
   for (const path of docs) {
     const text = readFileSync(path, 'utf8');
     let changed = false;

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "HOSTSEAM-a-live-name-handed-over-as-a-copy",
+    "file": "src/scenes/world.js",
+    "old": "    get social() { return social; },\n",
+    "new": "    social,\n",
+    "tests": [
+      "test/hostseam.test.js"
+    ]
+  },
+  {
+    "name": "HOSTSEAM-a-settled-name-dropped",
+    "file": "src/scenes/world.js",
+    "old": "tvRaid, tvSceneKept, tvTrip,",
+    "new": "tvSceneKept, tvTrip,",
+    "tests": [
+      "test/hostseam.test.js"
+    ]
+  }
+]
