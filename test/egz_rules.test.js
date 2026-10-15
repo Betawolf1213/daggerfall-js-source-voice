@@ -21,6 +21,8 @@ import { bodyStruck } from '../src/net/bossBody.js';
 import { EG_VESTIGES, EG_DR_MAX } from '../src/net/egVestige.js';
 import { BRAIN_TICK_MS } from '../src/net/gateBrain.js';
 import { createEgClient, EG_HEAL_SEND_MS } from '../src/scenes/egClient.js';
+/** PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen - the room's record of a cast from the healer to the member (server/src/index.js _egCastSaw). */
+const CAST_SEEN = () => true;
 import { EG_PRES_TEXT } from '../src/ui/egBeats.js';
 
 const T0 = 1_800_000_000_000;
@@ -299,7 +301,7 @@ test('EG-ZI LIFELINE IN THE CENSUS (sections 15 and 21; EG-ZB\'s departure 8 clo
   B.mem[healer].vs = [[vId('lifeline'), 1]];
   const t = S.now();
   bodyStruck(B.mem[me], 0.75, t, LINE);
-  assert.ok(egHeal(B, me, [[healer, 40]], t, LINE) > 0, 'believed');
+  assert.ok(egHeal(B, me, [[healer, 40]], t, LINE, undefined, CAST_SEEN) > 0, 'believed');
   assert.deepEqual(B.mem[me].ll, [[t - EG_HEAL_WORD_MS, t + EG_LIFELINE_MS, 0.2]]);
   assert.deepEqual([t - EG_HEAL_WORD_MS - 1, t - EG_HEAL_WORD_MS, t + 2000, t + EG_LIFELINE_MS, t + EG_LIFELINE_MS + 1].map((at) => dr(me, at)), [0, 0.2, 0.2, 0.2, 0], 'Lifeline I, inside its window');
   // the census applies it to the count: a plain blow of 0.4 inside the window counts 0.32
@@ -311,7 +313,7 @@ test('EG-ZI LIFELINE IN THE CENSUS (sections 15 and 21; EG-ZB\'s departure 8 clo
   // the strongest healer of a word's; two windows at once - the strongest, never summed; inside the census's 30% (PIN MOVED, AUDIT
   // EG III: every heal from here a window's worth - net/egBrain.js EG_LIFELINE_MIN)
   B.mem[other].vs = [[vId('lifeline'), 2]];
-  egHeal(B, me, [[healer, 40], [other, 40]], t + 100, LINE);
+  egHeal(B, me, [[healer, 40], [other, 40]], t + 100, LINE, undefined, CAST_SEEN);
   assert.equal(B.mem[me].ll.at(-1)[2], 0.25, 'Lifeline II of the two');
   B.mem[me].ll = [[t, t + 3000, 0.2], [t, t + 3000, 0.2]];
   assert.equal(dr(me, t + 10), 0.2, 'the strongest window, not their sum');
@@ -320,29 +322,29 @@ test('EG-ZI LIFELINE IN THE CENSUS (sections 15 and 21; EG-ZB\'s departure 8 clo
   // a healer without it, a heal not believed, a member not under 30%
   B.mem[me].ll = [];
   B.mem[other].vs = [];
-  egHeal(B, me, [[other, 40]], t + 200, LINE);
+  egHeal(B, me, [[other, 40]], t + 200, LINE, undefined, CAST_SEEN);
   assert.deepEqual(B.mem[me].ll, [], 'a healer without Lifeline: none');
-  egHeal(B, me, [['nobody', 40]], t + 200, LINE);
+  egHeal(B, me, [['nobody', 40]], t + 200, LINE, undefined, CAST_SEEN);
   assert.deepEqual(B.mem[me].ll, [], 'no healer of the breach: none');
   B.mem[me].vs = [[vId('lifeline'), 2]];
-  assert.ok(egHeal(B, me, [[me, 40], [other, 40]], t + 200, LINE) > 0, 'the companion\'s heal believed');
+  assert.ok(egHeal(B, me, [[me, 40], [other, 40]], t + 200, LINE, undefined, CAST_SEEN) > 0, 'the companion\'s heal believed');
   assert.deepEqual(B.mem[me].ll, [], 'the member\'s own Lifeline, its own heal never believed: none');
   B.mem[me].vs = [];
   B.mem[me].hb = 0; B.mem[me].hbAt = t + 300;
-  assert.equal(egHeal(B, me, [[healer, 40]], t + 300, LINE), 0, 'the heal bucket empty');
+  assert.equal(egHeal(B, me, [[healer, 40]], t + 300, LINE, undefined, CAST_SEEN), 0, 'the heal bucket empty');
   assert.deepEqual(B.mem[me].ll, [], 'a heal not believed: none');
-  assert.equal(egHeal(B, other, [[healer, 40]], t + 300, LINE) > 0, true);
+  assert.equal(egHeal(B, other, [[healer, 40]], t + 300, LINE, undefined, CAST_SEEN) > 0, true);
   assert.equal(B.mem[other].ll, undefined, 'a member whole: none');
   // under 30% by its own word, though the count stands higher: within the word's second and a beat, and not after
   const tl = t + 5000;
   assert.equal(egBodyWord(B, low, 250, tl, LINE), false, 'a word under the count claims nothing');
   assert.equal(B.mem[low].lowAt, tl);
-  egHeal(B, low, [[healer, 40]], tl + EG_LIFELINE_LOOK_MS, LINE);
+  egHeal(B, low, [[healer, 40]], tl + EG_LIFELINE_LOOK_MS, LINE, undefined, CAST_SEEN);
   assert.equal(B.mem[low].ll?.length, 1, 'its word said under 30% a second and a beat before');
   egBodyWord(B, other, 600, tl, LINE);
   assert.equal(B.mem[other].lowAt, undefined, 'a word over 30% notes nothing');
   egBodyWord(B, other, 299, tl, LINE);
-  egHeal(B, other, [[healer, 40]], tl + EG_LIFELINE_LOOK_MS + 1, LINE);
+  egHeal(B, other, [[healer, 40]], tl + EG_LIFELINE_LOOK_MS + 1, LINE, undefined, CAST_SEEN);
   assert.equal(B.mem[other].ll, undefined, 'and not a moment later');
   // the count seen low at a beat (egCount), raised since by its own word: a heal within the look finds it
   const B2 = breach(2, 1), q = B2.B;
@@ -356,14 +358,14 @@ test('EG-ZI LIFELINE IN THE CENSUS (sections 15 and 21; EG-ZB\'s departure 8 clo
   assert.deepEqual([q.mem['acct-0'].lowAt, q.mem['acct-1'].lowAt], [tc, undefined], 'the count under 30% noted at its beat');
   egBodyWord(q, 'acct-0', 900, tc + 100, LINE);
   assert.ok(q.mem['acct-0'].bd.v > EG_LIFELINE_UNDER, 'its word stood it up');
-  egHeal(q, 'acct-0', [['acct-1', 40]], tc + 1000, LINE);
+  egHeal(q, 'acct-0', [['acct-1', 40]], tc + 1000, LINE, undefined, CAST_SEEN);
   assert.equal(q.mem['acct-0'].ll.at(-1)[2], 0.3, 'Lifeline III from the count seen low');
   // the windows let go once no blow in them can still be judged, and four kept at most
   const tw = tc + 1000;
-  for (let k = 1; k <= 5; k++) egHeal(q, 'acct-0', [['acct-1', 40]], tw + k * 10, LINE);
+  for (let k = 1; k <= 5; k++) egHeal(q, 'acct-0', [['acct-1', 40]], tw + k * 10, LINE, undefined, CAST_SEEN);
   assert.equal(q.mem['acct-0'].ll.length, 4, 'four at most');
   bodyStruck(q.mem['acct-0'], 0.9, tw, LINE);
-  egHeal(q, 'acct-0', [['acct-1', 40]], tw + EG_LIFELINE_MS + EG_TRAIL_MS + 100, LINE);
+  egHeal(q, 'acct-0', [['acct-1', 40]], tw + EG_LIFELINE_MS + EG_TRAIL_MS + 100, LINE, undefined, CAST_SEEN);
   assert.equal(q.mem['acct-0'].ll.length, 1, 'the old windows let go');
 });
 

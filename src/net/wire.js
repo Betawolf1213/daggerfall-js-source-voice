@@ -5537,8 +5537,10 @@ export const EG_HUB_BURST = 8;
 export const egHubGate = (bucket, nowMs) => tokenGate(bucket, nowMs, EG_HUB_HZ_MAX, EG_HUB_BURST);
 /** The breach words the hub takes (anywhere else junk) - the rest are a breach room's. */
 export const EG_HUB_KINDS = Object.freeze(['open', 'void', 'claimed']);
-/** The first relay that opens an Elite Breach - an older one closes the socket on the frame, so none is sent it. */
-export const EG_RELAY_MIN = 197;
+/** The first relay that opens an Elite Breach - an older one closes the socket on the frame, so none is sent it. AUDIT EG V
+ *  (lane4 L4-8): the arc's own number, RELAY_VERSION's (`world201`) - 197 was its branch's first, and main's world197 to
+ *  world200 carry no breach: a client meeting one believed it could open, and the relay closed the socket on the `eg`. */
+export const EG_RELAY_MIN = 201;
 export const relaySupportsEg = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= EG_RELAY_MIN; };
 /** The door the hub opens a breach's room through (HCC-PARK's doors' law - the public worker forwards /room/<key> alone). */
 export const EG_INTERNAL_OPEN = '/internal/eg/open';

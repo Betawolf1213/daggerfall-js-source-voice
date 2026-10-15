@@ -373,23 +373,26 @@ test('EG-H1 RIDDEN POSES (section 10.8): a body on a Drift, a Rail or a Drum rid
   assert.ok(Math.abs(back[0] - (s0.x + q.dx + 0.4)) < 1e-9 && Math.abs(back[2] - (s0.z - 0.2)) < 1e-9, 'its place on the clock plus its offset');
   const later = egRideAt(spec, pl, 4.1), q2 = egPieceAt(s0, 4.1);
   assert.ok(Math.abs(later[0] - (s0.x + q2.dx + 0.4)) < 1e-9, 'the piece moved, the rider with it');
-  assert.ok(egRideHolds(spec, pl) && !egRideHolds(spec, [0, 4, 0, 0]) && !egRideHolds(spec, [0, 0, 2, 0]), 'an offset off its top is no ride');
+  // PIN MOVED (AUDIT EG V, d: lane4 L4-2 - a ride holds only where the pose's own feet stand on its piece): the feet with it
+  const feet = [s0.x + q.dx + 0.4, s0.y, s0.z + q.dz - 0.2];
+  assert.ok(egRideHolds(spec, pl, ...feet, 3.3) && !egRideHolds(spec, [0, 4, 0, 0], ...feet, 3.3) && !egRideHolds(spec, [0, 0, 2, 0], ...feet, 3.3), 'an offset off its top is no ride');
   const ledge = spec.steps.findIndex((s) => s.kind === 'ledge');
-  assert.equal(egRideHolds(spec, [ledge, 0, 0, 0]), false, 'a still slab rides nothing');
+  assert.equal(egRideHolds(spec, [ledge, 0, 0, 0], spec.steps[ledge].x, spec.steps[ledge].y, spec.steps[ledge].z, 3.3), false, 'a still slab rides nothing');
   assert.equal(egRideOf(spec, s0.x + q.dx + 9, s0.y, s0.z, 3.3), null);
   await withSpire(async ({ eg, beat, rec, socks, now }) => {
     const [mac] = SUBS;
     await eg.pose(socks[mac], poseAt(spec, spec.arrive.x, spec.arrive.z)); await beat(100);
-    // a walk to the first piece, then 3 s aboard - the raw pose 40 m off in the void, its ride saying where it stands
+    // a walk to the first piece, then 3 s aboard - PIN MOVED (AUDIT EG V, d: lane4 L4-2): the raw pose where the screen stood
+    // it, on the piece as it swings (a raw pose 40 m off claimed the ride, and the relay stood it there), its ride saying
+    // where on it
     for (let z = spec.arrive.z + 0.6; z < s0.z - 1.2; z += 0.6) { await eg.pose(socks[mac], poseAt(spec, 0, z)); await beat(100); }
-    for (let k = 0; k < 30; k++) { await eg.pose(socks[mac], poseAt(spec, 40, s0.z, 0, { pl: [0, 0.3, 0, 0] })); await beat(100); }
+    for (let k = 0; k < 30; k++) { const q1 = egPieceAt(s0, now() / 1000); await eg.pose(socks[mac], poseAt(spec, s0.x + q1.dx + 0.3, s0.z + q1.dz, s0.y, { pl: [0, 0.3, 0, 0] })); await beat(100); }
     const tr = eg.room._egTrailsBy.get(mac).tr, e = tr.at(-1), qe = egPieceAt(s0, e[0] / 1000);   // PIN MOVED (AUDIT EG III, lane3 #3): the trail is the account's
     assert.ok(Math.abs(e[1] - (s0.x + qe.dx + 0.3)) < 1e-6 && Math.abs(e[3] - s0.z) < 1e-6, 'its trail stands on the piece at its clock');
     assert.equal(rec().mem[mac].fair.why, '', 'its fair trail held aboard');
     // a ride the piece cannot hold: the raw pose judged - and the void holds nothing
     for (let k = 0; k < 30; k++) { await eg.pose(socks[mac], poseAt(spec, 40, s0.z, 0, { pl: [0, 6, 0, 0] })); await beat(100); }
     assert.ok(rec().mem[mac].fair.brks >= 1, 'a ride off its piece is no ride');
-    void now;
   }, { n: 1 });
 });
 

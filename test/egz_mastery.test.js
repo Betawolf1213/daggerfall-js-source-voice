@@ -383,7 +383,7 @@ test('EG-ZS STONESKIN IN THE CENSUS\'S COUNT (section 15; EG-ZR\'s open issue fo
   assert.ok(near(m.bd.v, 0.01 / 1.25), `at 62.5 of 1250 the toll leaves a hundredth of the plain body (${m.bd.v})`);
   // an ally's heal believed: its points over the reference body, over the whole
   m.bd.v = 0.5; m.lowAt = -Infinity;
-  const got = egHeal(V.B, 'acct-0', [['acct-1', 100]], V.now(), LINE);
+  const got = egHeal(V.B, 'acct-0', [['acct-1', 100]], V.now(), LINE, undefined, () => true);   // PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen
   assert.ok(got > 0 && near(m.bd.v, 0.5 + got / healRef(40) / 1.25, 1e-9), `an ally's ${got} healed of the whole (${m.bd.v})`);
 });
 

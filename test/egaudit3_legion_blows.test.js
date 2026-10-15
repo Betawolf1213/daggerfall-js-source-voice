@@ -297,21 +297,22 @@ test('AUDIT EG III A HEAL WORTH A LIFELINE WINDOW (section 15\'s Lifeline, in th
   B.mem['acct-1'].vs = [[vId('lifeline'), 3]];
   bodyStruck(me, 0.8, S.now(), LINE);
   let now = S.now();
+  const saw = () => true;   // PIN MOVED (AUDIT EG V, d: lane4 L4-7 - Lifeline opens only on a heal a relayed cast backs): the healer's cast seen
   for (let k = 0; k < 6; k++, now += 1000) {
-    assert.equal(egHeal(B, 'acct-0', [['acct-1', 1]], now, LINE), 1, 'believed');
+    assert.equal(egHeal(B, 'acct-0', [['acct-1', 1]], now, LINE, undefined, saw), 1, 'believed');
     assert.equal(egCensusDr(B, null, null, { sub: 'acct-0', at: now + 500 }, []), 0, `t+${k}: a point's heal spares nothing`);
   }
   assert.equal(me.ll, undefined, 'no window');
   const min = egLifelineMin(me.lv);
-  egHeal(B, 'acct-0', [['acct-1', Math.ceil(min) - 1]], now, LINE);
+  egHeal(B, 'acct-0', [['acct-1', Math.ceil(min) - 1]], now, LINE, undefined, saw);
   assert.equal(me.ll, undefined, 'a point short of the minimum: none');
-  egHeal(B, 'acct-0', [['acct-1', Math.ceil(min)]], now + 10, LINE);
+  egHeal(B, 'acct-0', [['acct-1', Math.ceil(min)]], now + 10, LINE, undefined, saw);
   assert.deepEqual(me.ll, [[now + 10 - 1000, now + 10 + 3000, 0.3]], 'the minimum: Lifeline III\'s window');   // PIN MOVED (AUDIT EG III's merge with the count group, lane2 #5): Lifeline III is 30% (20 / 25 / 30)
   // believed through the bucket: a claim past it, believed short of the minimum, opens none
   const T = court(), tm = T.B.mem['acct-0'];
   T.B.mem['acct-1'].vs = [[vId('lifeline'), 1]];
   bodyStruck(tm, 0.8, T.now(), LINE);
   tm.hb = Math.ceil(min) - 1; tm.hbAt = T.now();
-  egHeal(T.B, 'acct-0', [['acct-1', 1000]], T.now(), LINE);
+  egHeal(T.B, 'acct-0', [['acct-1', 1000]], T.now(), LINE, undefined, saw);
   assert.equal(tm.ll, undefined, 'the bucket believed a point short: none');
 });

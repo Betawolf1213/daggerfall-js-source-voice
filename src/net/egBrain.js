@@ -96,7 +96,7 @@ import { SAP_HEAL, SAP_FEEDS_MAX } from './gateBrain.js';   // AUDIT EG IV (lane
 import { EG_LORDS } from './egLaw.js';   // AUDIT EG IV (section 18's strata): a lord's band, for the Twin Court's second
 // EG-H1 (EG8d): WHAT THE RELAY JUDGES - THE FAIR TRAIL and its time law (net/egFair.js), one judge for every shape and the
 // hall's own hazards (net/bossRef.js), and the body counted (net/bossBody.js) - the member's one life
-import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egCrossMinMs, egFallenAt, egTrailAt, egFightFloorAt, EG_POSE_NEAR_MS, EG_SUPPORT_UP_M, EG_SUPPORT_DOWN_M } from './egFair.js';
+import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egCrossMinMs, egFallenAt, egTrailAt, egFightFloorAt, EG_POSE_NEAR_MS, EG_SUPPORT_UP_M, EG_SUPPORT_DOWN_M, EG_TS_LAG_MAX_MS } from './egFair.js';
 import { egCompanyTag, EG_SHARE_WHOLE, EG_MEASURES, EG_MEASURE_MAX } from './egReceipt.js';   // EG-ZA: the company, the share and the measures a receipt carries
 import { judgePlace } from './bossRef.js';
 import { bodyStruck, bodySaid, bodyHealed, bodyLife } from './bossBody.js';
@@ -1860,7 +1860,7 @@ export function egPoseIn(B, sub, p, t) {
   const spec = specOf(B);
   if (!egInHall(spec, p.sx, p.z, 4)) return null;
   let x = egLocalX(spec, p.sx), y = p.y, z = p.z, ride = false;
-  if (Array.isArray(p.pl) && egRideHolds(spec, p.pl)) { const q = egRideAt(spec, p.pl, t / 1000); if (q) { [x, y, z] = q; ride = true; } }
+  if (Array.isArray(p.pl) && egRideHolds(spec, p.pl, x, y, z, t / 1000)) { const q = egRideAt(spec, p.pl, t / 1000); if (q) { [x, y, z] = q; ride = true; } }   // AUDIT EG V (lane4 L4-2): the ride the pose's own feet stand on
   if (!ride && litOn(B.F, spec, x, y, z, t)) ride = true;   // EG-ZC: a branch the Moon-Mirror lit holds its body
   if ((B.sg === 'trial' || B.sg === 'closing') && m.hereH === B.h && m.downH !== B.h) {
     const k = fairKey(B, m);
@@ -2021,7 +2021,9 @@ function censusDrains(F, view, bodies, now) {
   const out = [];
   if (!F) return out;
   const H = (F.drn ??= {});
-  const fresh = (b) => { const e = egTrailAt(b.tr, now); return e && now - e[0] <= EG_POSE_NEAR_MS && e[4] === F.h ? e : null; };
+  // AUDIT EG V (lane4 L4-1): a body the room holds at its newest pose (a stand-in, `e[5]` 1 - a socket silent or gone) is
+  // fresh to the edge the room holds it to, EG_TS_LAG_MAX_MS short of now (server/src/index.js _egTrails)
+  const fresh = (b) => { const e = egTrailAt(b.tr, now); return e && now - e[0] <= EG_POSE_NEAR_MS + (e[5] === 1 ? EG_TS_LAG_MAX_MS : 0) && e[4] === F.h ? e : null; };
   const L = EG_HAZARDS.wisp;
   for (const hz of view?.hazards ?? []) {
     if (hz.kind !== 'wisp') continue;
@@ -2104,8 +2106,10 @@ export function egBodyWord(B, sub, v, now, line, enforce = EG_BODY_ENFORCE) {
  * PART IS CORROBORATED - the receiver's word alone named any entered member its healer, so a modified client made an idle
  * companion an earner with one forged word a hall. A healer's believed heal is its part in the hall (`hh`, egActiveIn) only
  * where `cast(by)` says the room relayed a cast from that healer's own socket to this member within EG_HEAL_CAST_MS (the
- * room's record - server/src/index.js `_egCastSaw`); none given, none is. The recap's healing, the count's mend and Lifeline
- * read the word as before.
+ * room's record - server/src/index.js `_egCastSaw`); none given, none is. AUDIT EG V (lane4 L4-7; section 21, "the relay's
+ * census fells it"): AND SO IS THE MEND - the count is mended, and Lifeline opened, only by the believed heals of healers
+ * `cast(by)` corroborates: a word naming a companion who cast nothing mended a modified client's count a third of a body a
+ * second, and refused damage stood. The recap's healing reads the word as before.
  * @param {any} B @param {string} sub @param {Array<[string, number]>} pairs @param {number} now @param {{depth: number, perS: number}} line @param {boolean} [enforce]
  * @param {(by: string) => boolean} [cast]
  */
@@ -2114,7 +2118,9 @@ export function egHeal(B, sub, pairs, now, line, enforce = EG_BODY_ENFORCE, cast
   const under = !!m && ((m.bd?.v ?? 1) < EG_LIFELINE_UNDER || now - (m.lowAt ?? -Infinity) <= EG_LIFELINE_LOOK_MS);
   const had = list.map(([by]) => B.mem[by]?.ht ?? 0);
   const got = egTallyHeal(B, sub, pairs, now);
-  if (got > 0) bodyHealed(B.mem[sub], got / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs), now, line, { enforce });   // EG-ZS: a share of the whole, Stoneskin's cushion in it
+  // AUDIT EG V (lane4 L4-7): what the count is mended by - each healer's believed heal once, where its cast was relayed
+  const seen = new Set(), backed = list.reduce((a, [by], i) => { const d = (B.mem[by]?.ht ?? 0) - had[i]; if (seen.has(by) || !(d > 0) || !cast(by)) return a; seen.add(by); return a + d; }, 0);
+  if (backed > 0) bodyHealed(B.mem[sub], backed / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs), now, line, { enforce });   // EG-ZS: a share of the whole, Stoneskin's cushion in it
   // AUDIT EG III (lane2 #3): each healer's believed heal in this hall, a share of its receiver's body (section 16.1's part)
   if (got > 0) list.forEach(([by], i) => { const q = B.mem[by], d = (q?.ht ?? 0) - had[i]; if (d > 0 && cast(by)) q.hh = (q.hh ?? 0) + d / healRef(B.mem[sub].lv); });   // AUDIT EG IV (lane3 #3): a healer the room saw cast on this member alone
   if (under && got > 0) {
@@ -2122,7 +2128,7 @@ export function egHeal(B, sub, pairs, now, line, enforce = EG_BODY_ENFORCE, cast
     // window (EG_LIFELINE_MIN of the member's reference body)
     let v = 0;
     const min = egLifelineMin(m.lv);
-    list.forEach(([by], i) => { const q = B.mem[by]; if (q && (q.ht ?? 0) - had[i] >= min) v = Math.max(v, egVOf(q.vs, 'lifeline')); });
+    list.forEach(([by], i) => { const q = B.mem[by]; if (q && (q.ht ?? 0) - had[i] >= min && cast(by)) v = Math.max(v, egVOf(q.vs, 'lifeline')); });   // AUDIT EG V (lane4 L4-7): a heal a cast backs
     if (v > 0) m.ll = [...(m.ll ?? []).filter((w) => w[1] >= now - EG_TRAIL_MS), [now - EG_HEAL_WORD_MS, now + EG_LIFELINE_MS, v]].slice(-4);
   }
   return got;
