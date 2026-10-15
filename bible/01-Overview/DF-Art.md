@@ -16,6 +16,11 @@ Then (DF-ART III, 2026-10-15): *"Wait... you removed the backlit windows from th
 **see-through by day, lit at night**: by day the ships' stern windows are open and you see into the great cabin; when
 the lanterns are lit, the glass is whole again and glows warm, as before. The caravan stays see-through always.
 
+Then (DF-ART IV, 2026-10-15): *"Can we bring back the wheels we had before we replaced them"*. The wagons' wheels are
+their own painted pictures again, texel for texel as WAGONS1 painted them (`src/world/wagonWheelArt.js`): a wheel's face
+(hub, seven spokes, felloes, the tyre's edge) and its tread (the tyre's iron, its rivets, the road's dust), in place of
+Daggerfall's spoked wheel (087_7) and grey iron. Every other surface of the wagons stays Daggerfall's.
+
 ## The law
 
 Each of those models still names its pictures under its own pseudo-archive and records (`src/world/galleonArt.js`
@@ -66,7 +71,7 @@ stern window repaints its twin too (`38131_106`, `_121`; `38141_106`).
 | Model | Archive | What it wears now | Where |
 |---|---|---|---|
 | Galleon, carrack, large boat | 38131, 38141, 38171 | Come Sail Away's records for every part. The galleon's stern gallery and the carrack's transom are Daggerfall's leaded window, seen through by day (`SEE_THROUGH_WINDOW`) and lit at night (their night twins, `LIT_WINDOW`). The throats wear the darkest 067 wood. | `galleonArt.js`, `carrackArt.js`, `largeBoatArt.js` (stand-ins on the texture door, `classicStandIns`) |
-| Wagons and caravan | 38181 | Plank boards (050), its woods, the spoked wheel (087_7), iron, sailcloth for the tilt and leather for the harness. The caravan's walls are a flat swatch with Daggerfall's leaded window laid in, seen through. The rear has its door (074_0), inside and out. A look is a swatch (000/001), a woven fabric (049), a wood, a rug, chequered tiles (152_1), plaster or the night sky (355). | `wagonArt.js` WAGON_SOURCES, LOOK_PICTURES, `caravanWall`; uploaded by `scenes/horseCartPool.js` and `scenes/caravanRoom.js` |
+| Wagons and caravan | 38181 | Plank boards (050), its woods, the wagons' own painted wheels and tyres (DF-ART IV), iron, sailcloth for the tilt and leather for the harness. The caravan's walls are a flat swatch with Daggerfall's leaded window laid in, seen through. The rear has its door (074_0), inside and out. A look is a swatch (000/001), a woven fabric (049), a wood, a rug, chequered tiles (152_1), plaster or the night sky (355). | `wagonArt.js` WAGON_SOURCES, LOOK_PICTURES, `caravanWall`; uploaded by `scenes/horseCartPool.js` and `scenes/caravanRoom.js` |
 | Stable, Wagon Yard, Joinery | 38221 | Weathered wood, a building's planking, wooden shingles, straw, earth, stones, water and iron. Each signboard is Daggerfall's planks (050_6) repeated at their own texel size with the yard's word lettered on in the old sign-painter's capitals: STABLES, WAGONS, JOINERY; the Joinery's carries Daggerfall's own shop sign of an axe and a sword (333_18) at its left. | `merchantYardArt.js` YARD_SOURCES; `scenes/merchantYardsHost.js` |
 | Shipyard, lighthouse | 38231 | The yards' records at the yards' records, plus coursed stone (324), lime (041), slates, a warm pane, the leaded window made whole, the hull, rope, canvas and door from Come Sail Away, cobbles, a parchment notice and gold; its two boards lettered SHIPS and CREW as the yards' are. The beacon's flame is Daggerfall's brazier fire (210_0) cut from over its bowl, and the embers are banked fire (356). | `portArt.js` PORT_SOURCES; `scenes/portHost.js` |
 | LeFay monument | 38211 | Granite and marble (341) and plain gold. The plaque is its own painted bronze as it was (Mac: *"Bring back the old plaque texture"*): its bevelled border and the inscription cut into it - JULIAN LEFAY, 1965 - 2025, FATHER OF THE ELDER SCROLLS - and its edges the plate's own bronze (`lefayPlaqueArt`, `lefayBronzeArt`). | `lefayArt.js` LEFAY_SOURCES, `lefayPictures`; `scenes/lefayMonumentHost.js` |
@@ -90,8 +95,12 @@ as Come Sail Away's own hulls do.
 
 ## What stayed, and why
 
-- **The LeFay plaque** is its own (Mac: *"Bring back the old plaque texture"*) - the one picture of the port's own on
-  these models; its stone is Daggerfall's.
+- **The LeFay plaque** is its own (Mac: *"Bring back the old plaque texture"*); its stone is Daggerfall's.
+- **The wagons' wheels** are their own (Mac: *"Can we bring back the wheels we had before we replaced them"*): a wheel's
+  face and its tread, painted as WAGONS1 painted them, byte for byte (`wagonWheelArt.js`). They ride the same door as
+  every wagon record: `WAGON_SOURCES` names them as painted sources (`{ painted }`), and `classicPicture` answers one
+  with its own picture, reading no data - so the pool, the caravan's icon and every paint take them as before.
+  Daggerfall's `DF.wheel` and `DF.ironGrey` stay in the table, worn by nothing now.
 - **The signs' words** (Mac: *"Bring back the sign text"*) are the old sign-painter's capitals (`SIGN_GLYPHS`, cream with
   its shadow), lettered on Daggerfall's planks.
 - **The port's own windows stay whole.** The shipyard office's, the keeper's cottage's and the lighthouse tower's
@@ -135,12 +144,13 @@ which is how their models' uvs lay them). The ships and the wagons go in color32
   day window is open), `auditgalleon2_prefab` (PF3 the glow cut at the preload, PF5 the twins' glow capped with them,
   TS7 - her windows a hole exactly at their glass, their twins lit exactly there), `auditgalleon_prefab` (R8/R11),
   `auditgalleon_sea` (T4(b) - her windows uploaded cut-outs, their twins whole and glowing, drawn through NIGHT_REMAP
-  while the lanterns are lit and never by day), `ships2_carrack` (her transom's twin), `ships2_largeboat`, `wagons1`, `wagons2`, `wagons3`, `wagonuv1`,
+  while the lanterns are lit and never by day), `ships2_carrack` (her transom's twin), `ships2_largeboat`, `wagons1` (DF-ART IV: the wheels' own pictures, their bytes the old ones'), `wagons2`, `wagons3`, `wagonuv1`,
   `merchantyards1` and `carpyard1` (the words lettered), `beacontower`, `shipyards1_place`, `shipyards1_audit_port`
   (L5-5), `lefay1_monument` (the old plaque's own tests back) and `wd3_standins`; the pipeline door's pins
   (`incident_dungeon_seams`, `texturereplacement`) moved for its `cutout`.
 - **Retired with the painted code they tested:** AUDIT GALLEON R12, whose figures the painted art's comment gave.
-- **Mutants.** `tools/mutants/dfart.json` (26, all dead - DF-ART III's twelve: the night remap dropped, worn by day, the
+- **Mutants.** `tools/mutants/dfart.json` (33, all dead - DF-ART IV's seven: the face or the tread Daggerfall's again,
+  the painted door gone, six spokes, the rivets, the grain, the rust; DF-ART III's twelve: the night remap dropped, worn by day, the
   twin unglowing, uncapped or cut, a host's remap lost, a new remap each night, the leads lit, the glow never kept or on
   every record, the lit window cut, the carrack unlit). In the arcs' own lists, records were re-aimed by content
   onto the new code (all dead) and retired with what they broke: R11's seams, R12's texel, the joinery's saw, GALLEON-2's
