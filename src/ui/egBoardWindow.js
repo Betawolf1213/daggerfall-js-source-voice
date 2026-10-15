@@ -136,7 +136,7 @@ const CSS = `
  * THE ENHANCED SKIN'S PANEL in the page: the title, the five tabs, the tab's lines (egBoardLines - the head's two, the
  * rows, the foot's two), a close. `onTab(tab)` a tab pressed, `onClose()` the close or Escape. `render(board, tab)`
  * repaints; `destroy()` takes it away (once).
- * @param {{ doc?: any, onTab: (tab: string) => void, onClose: () => void }} p
+ * @param {{ doc?: any, onTab: (tab: string) => void, onClose: () => void, runs?: () => any[] }} p
  */
 export function createEgBoardPanel({ doc = document, onTab, onClose, runs = () => [] }) {   // AUDIT EG V (c, L7-19): `runs` this device's last runs
   if (doc?.getElementById && !doc.getElementById(STYLE_ID)) {
@@ -202,7 +202,7 @@ export function createEgBoardPanel({ doc = document, onTab, onClose, runs = () =
  * once, however it closes. Answers `{ close(), tab(), board() }`, or null where nothing could open.
  * @param {{ doc?: any, classic?: boolean, fetchBoard: () => Promise<any>, mountWindow?: (win: any) => boolean,
  *   closeWindow?: (win: any) => void, listPickerReady?: () => boolean, tab?: string, onClosed?: () => void,
- *   ListPicker?: any }} deps
+ *   ListPicker?: any, runs?: () => any[] }} deps
  */
 export function openEgBoard({ doc = globalThis.document, classic = false, fetchBoard, mountWindow, closeWindow, listPickerReady = () => true, tab = EG_BOARD_TABS[0], onClosed, ListPicker = ListPickerWindow, runs = () => [] }) {
   let open = true, board = null, at = EG_BOARD_TABS.includes(tab) ? tab : EG_BOARD_TABS[0], shown = '';

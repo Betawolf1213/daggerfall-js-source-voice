@@ -483,7 +483,7 @@ export const egMenderOf = (E, me, sub) => (sub && sub !== me ? egVOf(egRunOfMemb
  *   hurt: (n: number) => void, store?: any, saved?: () => void, hudHidden?: () => boolean, fight?: (link: any) => any, renderer?: any, audio?: any,
  *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null,
  *   paid?: ((c: any, data: any) => void) | null, win?: any, redoubt?: ((rd: number) => void) | null, board?: (() => any) | null,
- *   keyFacts?: (() => any) | null, startWindow?: ((o: any) => any) | null, party?: () => { sub: string, name: string }[], questDue?: () => boolean,
+ *   keyFacts?: (() => any) | null, startWindow?: ((o: any) => any) | null, party?: () => { sub: string, name: string, h?: number, hm?: number }[], questDue?: () => boolean,
  *   callPortal?: any, arches?: any, prompt?: any, windowUp?: () => boolean, feet?: () => (number[]|null), probes?: () => any, Session?: any,
  *   accountOf?: (peer: string) => (string|null) }} deps
  *   EG-F: `keyFacts` the host's facts for the key's refusals (scenes/egArch.js egKeyRefusal - `site` the arch's site on the
