@@ -1,0 +1,20 @@
+[
+  {
+    "name": "HOST-SPLIT-a-ceiling-under-its-host",
+    "file": "test/hostceiling.test.js",
+    "old": "['src/scenes/world.js', 'bootWorld', 35_501]",
+    "new": "['src/scenes/world.js', 'bootWorld', 35_000]",
+    "tests": [
+      "test/hostceiling.test.js"
+    ]
+  },
+  {
+    "name": "HOST-SPLIT-a-ceiling-left-high",
+    "file": "test/hostceiling.test.js",
+    "old": "['server/src/index.js', '_message', 1_678]",
+    "new": "['server/src/index.js', '_message', 2_500]",
+    "tests": [
+      "test/hostceiling.test.js"
+    ]
+  }
+]

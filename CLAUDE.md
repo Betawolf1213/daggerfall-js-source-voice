@@ -28,3 +28,9 @@ change) and read `bible/01-Overview/Port-Doctrine.md` before touching code.
   release reads them there. Never commit a patch-notes file:
   `test/rel4_release.test.js` fails the suite on one. Editing a merged pull
   request's description rewrites its release's notes (`release-notes.yml`).
+- **The hosts do not grow** (HOST-SPLIT, `bible/01-Overview/Host-Split.md`):
+  new behaviour goes into a module the host wires (`src/scenes/*Host.js` is the
+  shape), never into `bootWorld`, `createWorldModes`, `buildDungeonContext`
+  or `bootExterior` themselves. `test/hostceiling.test.js` fails a host that
+  lengthens past its ceiling; `node tools/hostScope.mjs <host>` maps what a
+  block reads and writes before you move it.

@@ -222,6 +222,15 @@ version (`app-v0.1.<count>`, which the updater compares): the release is
 named `Update <n>` and the game shows it beside the commit
 (`01-Overview/Desktop-App.md` REL8).
 
+THE HOSTS DO NOT GROW (HOST-SPLIT, 2026-10-15). bootWorld, createWorldModes,
+buildDungeonContext and bootExterior each keep their whole state in one
+function's scope, and bootWorld grew from 8,897 lines to 35,251 in a month. New
+behaviour goes into a module the host wires - the `*Host.js` modules are the
+shape - not into the host's own function. `test/hostceiling.test.js` holds each
+host to a ceiling (its length when HOST-SPLIT opened, plus a fix's 250 lines),
+and a slice that moves code out lowers it in the same change. The method and
+the map are `01-Overview/Host-Split.md`.
+
 ## Sections
 
 - `01-Overview/` - vision, port doctrine, phase plan, Port-Ledger (departures/quirks/unported)
