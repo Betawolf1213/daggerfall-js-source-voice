@@ -8,12 +8,16 @@
 // middle of Gothway Garden): outside Privateer's Hold - the Daggerfall region's dungeon every new character climbs out
 // of, its exterior the one 1x1 block CUSTAA30.RMB - in every read of it, Daggerfall's own layout or a pack's. The
 // location's own navgrid says what is open (world/cityNavigation.js: DFU's CityNavigation carve, every automap byte a
-// building, a tree or a lamp has drawn closed, the water closed), and two things the automap does not draw are closed on
-// it first: the ground round the Hold's start marker (world/locationEntrance.js locationStartMarkers - where a
-// traveller arriving at the Hold is stood), and World of Daggerfall's camp round the Hold (world/wodPrivateersHold.js
-// HOLD_MODELS, which the hosts hand in), closed with the camp on or off. The spot is the cell nearest the start marker
-// (the block grid's middle, with none) whose every cell centred within MONUMENT_CLEAR_M of it is open ground, a road
-// counted against it. A function of the layout alone, so every client stands it on one spot. The Hold is no town
+// building, a tree or a lamp has drawn closed, the water closed), and what the automap does not draw is closed on it
+// first: THE WAY OUT OF THE HOLD (AUDIT FIVE-ASKS B1) - the exit landing every player walks out of the dungeon onto
+// (player/enterExit.js dungeonEntranceLanding over the Hold's own dungeon-entrance door, which the hosts measure as they
+// stand its block and hand in as `exit`), its doorway behind it and the walk out ahead of it, MONUMENT_LANDING_M wide -
+// and World of Daggerfall's camp round the Hold (world/wodPrivateersHold.js HOLD_MODELS, which the hosts hand in too),
+// closed with the camp on or off. The spot is the cell nearest that landing whose every cell centred within
+// MONUMENT_CLEAR_M of it is open ground, a road counted against it: beside the walk out, the first thing a character
+// climbing out of the Hold sees. A host with no door measured (a pack's block without it) falls back to the block's
+// start marker (world/locationEntrance.js locationStartMarkers - an editor flat; a dungeon's arrival never stands on it,
+// locationEntrance.js entranceOptionsForLocationType), and with no marker to the block grid's middle. A function of the layout alone, so every client stands it on one spot. The Hold is no town
 // (locationType 4, no wandering people), so there is no people's navgrid to carve; carveLefay stays for one that has.
 //
 // WHAT: three octagonal granite steps, a marble pedestal with a bronze plaque on each face, and a marble obelisk
@@ -83,14 +87,19 @@ export const MONUMENT_ROAD_COST = 0.3;
  *  foot (AUDIT LEFAY1 A4: at 3.2 a walker's centre came within 3.58 m, its sprite over the ground ring's 3.3) - 21
  *  cells, so the nearest a walker's centre comes is 4.5 m; the ring of open cells round them is MONUMENT_CLEAR_M's. */
 export const MONUMENT_CARVE_M = 3.6;
-/** HOLD-MONUMENT: the ground kept clear round the Hold's start marker, metres - where a traveller arriving at the Hold is
- *  stood, so the monument's middle stands at least this and MONUMENT_CLEAR_M from it, never on it. */
+/** HOLD-MONUMENT: the ground kept clear round the way out, metres either side of its line (AUDIT FIVE-ASKS B4: no cell of
+ *  the monument's clear disc is centred this near it - the cells' grain lets its middle stand a little nearer than this
+ *  and MONUMENT_CLEAR_M together). */
 export const MONUMENT_LANDING_M = 3.2;
+/** HOLD-MONUMENT (AUDIT FIVE-ASKS B1): the way out's line - from this far behind the exit landing (the doorway and the
+ *  entrance's own ground) to this far ahead of it along the door's outward normal (the walk out). */
+export const MONUMENT_DOOR_BACK_M = 4;
+export const MONUMENT_WALK_M = 8;
 /** HOLD-MONUMENT: the ground closed round each model of World of Daggerfall's camp (HOLD_MODELS) - none of it is in the
  *  block's automap. Its ruins (the 435xx records) stand wide; the tents, rocks, pillars, boxes, flag and wagon less so. */
 export const MONUMENT_CAMP_KEEP_M = 4;
 export const MONUMENT_RUIN_KEEP_M = 8;
-const isRuinModel = (modelId) => modelId >= 43500 && modelId < 43600;
+export const isRuinModel = (modelId) => modelId >= 43500 && modelId < 43600;
 
 /** The cell offsets within `m` metres of a cell's centre, nearest first. Pure. */
 export function discCells(m) {
@@ -151,11 +160,13 @@ function closeRound(nav, x, z, m) {
  * it the monument could stand in the shallows, and a client on each lane would stand it in a different place.
  * HOLD-MONUMENT: `camp` - World of Daggerfall's camp (`{ block, models }`: wodPrivateersHold.js PRIVATEERS_HOLD_BLOCK
  * and HOLD_MODELS, handed in by the host so this law reads none of the camp's foes) - is closed round each of its models
- * in each block of its name, and the start marker's landing is closed; the search starts at the first start marker. Pure.
+ * in each block of its name. `exit` - the Hold's exit landing and its door's outward normal, the location's frame
+ * (`{ x, z, nx, nz }`, the host's measure of dungeonEntranceLanding) - closes the way out and is where the search starts;
+ * with none, the first start marker's ground is closed and the search starts there. Pure.
  * @param {{width: number, height: number, blocks: any[]}} loc
- * @param {{camp?: {block: string, models: ReadonlyArray<{modelId: number, pos: ArrayLike<number>}>}|null}} [opts]
+ * @param {{camp?: {block: string, models: ReadonlyArray<{modelId: number, pos: ArrayLike<number>}>}|null, exit?: {x: number, z: number, nx: number, nz: number}|null}} [opts]
  */
-export function lefaySpotOf(loc, { camp = null } = {}) {
+export function lefaySpotOf(loc, { camp = null, exit = null } = {}) {
   if (!loc?.blocks?.length || !(loc.width > 0) || !(loc.height > 0)) return null;
   const nav = new CityNavigation(loc.width, loc.height);
   for (const b of loc.blocks) {
@@ -170,6 +181,12 @@ export function lefaySpotOf(loc, { camp = null } = {}) {
       for (const m of camp.models) closeRound(nav, (b.originX ?? 0) + m.pos[0], (b.originZ ?? 0) + m.pos[2], isRuinModel(m.modelId) ? MONUMENT_RUIN_KEEP_M : MONUMENT_CAMP_KEEP_M);
     }
   }
+  if (exit && [exit.x, exit.z, exit.nx, exit.nz].every(Number.isFinite)) {
+    const l = Math.hypot(exit.nx, exit.nz) || 1, nx = exit.nx / l, nz = exit.nz / l;
+    for (let t = -MONUMENT_DOOR_BACK_M; t <= MONUMENT_WALK_M + 1e-9; t += HALF_CELL) closeRound(nav, exit.x + nx * t, exit.z + nz * t, MONUMENT_LANDING_M);
+    const at = nav.worldToNav(exit.x, exit.z);
+    return lefaySpot(nav, { gx: at[0], gy: at[1] });
+  }
   const markers = locationStartMarkers(loc.blocks.map((b) => ({
     originX: b.originX, originZ: b.originZ, flats: b.dfBlock?.rmbBlock?.miscFlatObjectRecords ? collectMiscFlats(b.dfBlock) : [],   // the markers are misc flats (AddExteriorBlockFlats skips 199)
   })));
@@ -177,6 +194,12 @@ export function lefaySpotOf(loc, { camp = null } = {}) {
   const from = markers.length ? nav.worldToNav(markers[0][0], markers[0][2]) : null;
   return lefaySpot(nav, from && { gx: from[0], gy: from[1] });
 }
+
+/** HOLD-MONUMENT (AUDIT FIVE-ASKS B1): the exit landing (player/enterExit.js dungeonEntranceLanding's `{ pos, normal }`,
+ *  in a host's frame) as lefaySpotOf's `exit`, in the location's frame (`origin` the location origin in that frame), or
+ *  null for none. Pure. */
+export const lefayExitOf = (landing, origin = [0, 0, 0]) => (landing?.pos && landing?.normal
+  ? { x: landing.pos[0] - origin[0], z: landing.pos[2] - origin[2], nx: landing.normal[0], nz: landing.normal[2] } : null);
 
 /** Close the monument's ground on a navgrid (the wandering people's): every cell within MONUMENT_CARVE_M of its
  *  middle. Answers how many cells it closed. */

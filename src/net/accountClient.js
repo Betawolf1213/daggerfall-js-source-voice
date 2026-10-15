@@ -1480,7 +1480,11 @@ export function accountSds({ fetch, storage }) {
  *  keeper spoken to, `{ ok, data: { granted, why? } }`; no session is `no-session`, never a throw. */
 export function accountLamp({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   const post = waitedPost({ fetch, storage }, waitMs);
-  return { claim: () => post('/v1/lamp/claim', {}) };
+  return {
+    // AUDIT FIVE-ASKS D3: a secret the service stopped honouring is not a session (forgetSession's law)
+    claim: async () => { const r = await post('/v1/lamp/claim', {}); if (r?.error === 'auth') forgetSession(storage); return r; },
+    account: () => storedSession(storage)?.id ?? null,   // AUDIT FIVE-ASKS D2: whose the lamp's answer is
+  };
 }
 
 /**

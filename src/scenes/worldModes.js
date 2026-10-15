@@ -441,7 +441,7 @@ import { realWindowsMode, createViewOut, viewOutFrame } from '../render/realWind
 import { raiseContainerLootSpawned } from '../systems/containerLoot.js';   // FORAGE3: PlayerActivate.OnLootSpawned, one home - RRI2's shelf subscribers first (bandage stacks, store-quality wear, the alchemist's potions), then Foraging's
 import { bedSleepingOn, rrDouseOnDungeonExit, rrRefinedTrainingOn, rrSetting } from '../systems/rrRealism.js';   // RR1: the bed's activation gate, the douse on leaving a dungeon; RR2: the refined training window's switches
 import { rrVariantPerson } from '../systems/rrVariants.js';   // RR2: the variant keepers and residents
-import { chairSeatOf, CHAIR_KIND, CHAIR_PROBE_FROM } from '../world/chairSeat.js';   // SIT1: where on a chair the sitter's body goes
+import { chairSeatOf, chairProbeOver, CHAIR_KIND, CHAIR_FLOOR_STEP } from '../world/chairSeat.js';   // SIT1: where on a chair the sitter's body goes
 import { isLampKeeper, lampLines, LAMP_TEXT, createLampTitle } from '../systems/lampKeeper.js';   // LAMP-KEEPER II: a shop's keeper standing as the lamp, its words and its title
 import { announceHonour } from '../ui/lootBanner.js';   // LAMP-KEEPER II: I Love Lamp, as a loot banner
 import { setRrHostSeams } from '../systems/rrInstall.js';   // RR1: the host's foe-spawner seam for the underworld guilds' squad
@@ -587,18 +587,12 @@ export function createWorldModes(host) {
   // THE FOUR HOSTS: this host's interiors. world.js and exterior.js stand no room; dungeonContext.js's castles keep their
   // chairs as geometry for now (named in bible/01-Overview/Five-Asks-2026-10-14.md).
   let chairSeat = null;   // { key, feet, yaw, top, eye } while seated
-  /** The room's own probe for a chair: the height of the first surface straight down through (x, z) from over its top. */
-  const chairProbe = (aabb) => (x, z) => {
-    const c = interiorCtx?.collider;
-    const from = aabb.min[1] + CHAIR_PROBE_FROM;
-    const d = c?.raycast?.([x, from, z], [0, -1, 0], CHAIR_PROBE_FROM + 0.05);
-    return Number.isFinite(d) && d <= CHAIR_PROBE_FROM + 0.05 ? from - d : null;
-  };
   function sitOnChair(i) {
     const ch = interiorCtx?.chairs?.[i];
     if (!ch || ch.hidden) return;
-    const aabb = worldAabb(ch.cpu.positions, ch.matrix);
-    const seat = chairSeatOf(aabb, ch.matrix, chairProbe(aabb), player.pos);
+    const aabb = ch.aabb ?? worldAabb(ch.cpu.positions, ch.matrix);
+    if (Math.abs(aabb.min[1] - player.pos[1]) > CHAIR_FLOOR_STEP) { setMidScreenText(tooFarAwayText()); return; }   // AUDIT FIVE-ASKS C6: never a chair on another floor
+    const seat = chairSeatOf(aabb, ch.matrix, chairProbeOver(interiorCtx?.collider, aabb), player.pos);   // the room's own collider
     if (!seat) return;
     if (takenSeats([{ x: seat.feet[0], z: seat.feet[2] }], host.seatedPeers?.() ?? []).length) { say(t('chair.taken', 'Someone is already sitting there.')); return; }
     chairSeat = { key: i, feet: seat.feet, yaw: seat.yaw, top: seat.top, eye: seat.eye };
@@ -3146,6 +3140,7 @@ export function createWorldModes(host) {
    *  move, but the DOORS and the action objects do (AUDIT 63 F37's
    *  live-pose law), so the cache can only be a frame long. */
   function interiorActivationTargets() {
+    if (chairSeat) return [];   // SIT1 (AUDIT FIVE-ASKS C5): seated, every press stands you up - so the plaque names nothing the press would not do
     const _mark = frameMark();
     if (_mark !== null && _intMark === _mark && _intList) return _intList;
     // Exit doors and interior swing doors share the E ray; swing doors
@@ -3169,7 +3164,7 @@ export function createWorldModes(host) {
     });
     if (!cardSeat && !chairSeat) interiorCtx.chairs?.forEach((ch, i) => {   // SIT1: a chair, a bench, a throne - none while seated
       if (ch.hidden) return;   // BASE-HIDE: taken out of the room
-      targets.push({ key: `chair:${i}`, aabb: worldAabb(ch.cpu.positions, ch.matrix), distance: RAY_DISTANCE, reach: DEFAULT_ACTIVATION_DISTANCE, surface: true });   // struck at its seat, as a bed is
+      targets.push({ key: `chair:${i}`, aabb: ch.aabb ?? worldAabb(ch.cpu.positions, ch.matrix), distance: RAY_DISTANCE, reach: DEFAULT_ACTIVATION_DISTANCE, surface: true });   // struck at its seat, as a bed is (AUDIT FIVE-ASKS C7: its box the build's)
     });
     if (!cardSeat && inTavern()) interiorCtx.tables?.forEach((t, i) => {   // CARDS2: a tavern's card table, while it seats two
       if (cardSeatsOf(i).length) targets.push({ key: `cardtable:${i}`, aabb: t.aabb, distance: RAY_DISTANCE, reach: DEFAULT_ACTIVATION_DISTANCE, surface: true });   // struck at its top, as a bed is
@@ -8491,7 +8486,7 @@ export function createWorldModes(host) {
           // LAMP-KEEPER II (systems/lampKeeper.js): a shop's keeper standing as the lamp today - the town, the building, the
           // person and the day, one answer for every client in the room
           lampPerson: (pn) => isLampKeeper(pn, {
-            buildingType: building?.buildingType ?? -1, buildingKey: building?.buildingKey ?? 0,
+            buildingType: building?.buildingType ?? -1, buildingFactionId: building?.factionId ?? 0, buildingKey: building?.buildingKey ?? 0,   // AUDIT FIVE-ASKS D4: the shop's own faction
             mapId: hit.dfLocation?.mapTableData?.mapId ?? 0, day: Math.floor(worldMinutes() / MINUTES_PER_DAY),
           }),
           variantPerson: (pn) => rrVariantPerson(pn, {
@@ -9213,14 +9208,14 @@ export function createWorldModes(host) {
     };
     return _pitStage;
   }
-  /** ARENA-FIX 4: THE PIT MASTER'S CHOICE - spar (a practice bout on the pit's stage, the host's), or leave. */
   // LAMP-KEEPER II (systems/lampKeeper.js; Mac: "Anybody that interacts with the lamp model should earn the 'I Love
   // Lamp' title. Implement exclusive dialogue and ensure there is a loot popup for obtaining the title"): A PRESS ON THE
   // LAMP - its own words for the day, Trade (the keeper's own shop, as the bug's click opened it) or Leave; and the
-  // title asked of the account service at every press until it answers (the host's `lampClaim` - none is no account),
-  // its grant said and raised as a loot banner.
+  // title asked of the account service at every press until it answers (the host's `lampClaim` - none is no account
+  // service here, AUDIT FIVE-ASKS D6), its grant said and raised as a loot banner - the signed-in account's (`lampAccount`).
   const lampTitle = createLampTitle({
-    claim: () => host.lampClaim?.() ?? Promise.resolve({ ok: false, error: 'no-session' }),
+    claim: host.lampClaim ? () => host.lampClaim() : null,
+    account: () => host.lampAccount?.() ?? null,
     say: (l) => say(l),
     announce: (kind, key) => announceHonour(kind, key),
   });
@@ -9234,6 +9229,7 @@ export function createWorldModes(host) {
     townTalk?.showOverlay?.(new ChoiceWindow({ lines, options }));
     void lampTitle.speak();
   }
+  /** ARENA-FIX 4: THE PIT MASTER'S CHOICE - spar (a practice bout on the pit's stage, the host's), or leave. */
   function pitMasterChoice() {
     const U = ARENA_TEXT.undercroft;
     const hurt = (playerEntity.health ?? 0) < 0.5 * Math.max(1, playerEntity.maxHealth ?? 1);
@@ -10582,6 +10578,7 @@ export function createWorldModes(host) {
     // DEATH3: and the enhanced fall's pitch, from whichever slot holds the death
     if (interiorOverlay instanceof DeathScreen) interiorOverlay.tiltView(cam);
     if (mode === 'dungeon') dungeonCtx?.deathTilt?.(cam);
+    if (chairSeat && (decorTool.flying() || decorTool.panelOpen() || interiorCtx?.chairs?.[chairSeat.key]?.hidden)) standFromChair();   // SIT1 (AUDIT FIVE-ASKS C2): the decorator's panel or its free camera, or the chair taken out of the room, stands you up
     if (mode === 'interior') decorTool.cameraOverride(cam);   // DECOR1d: the free camera's eye, while a piece is placed
     if (mode === 'interior' && chairSeat && !(interiorOverlay instanceof DeathScreen)) { cam.pos = chairSeat.eye.slice(); player.drawFeet = chairSeat.feet; player.drawYaw = chairSeat.yaw; }   // SIT1: the seated eye, and the body drawn on the chair
     if (mode === 'interior' && cardSeat && !(interiorOverlay instanceof DeathScreen)) cam.pos = cardSeat.eye.slice();   // CARDS2: the seated eye - never over a death's sink and tilt (AUDIT CARDS B2): the dead fall from the body's own eye
@@ -10630,6 +10627,7 @@ export function createWorldModes(host) {
       hudBlocked: activeMouseOverLargeHUD(),
       paused: overlayHeld,
     });
+    if (_act.cast && chairSeat) standFromChair();   // SIT1 (AUDIT FIVE-ASKS C3): a cast stands you up first - it leaves from the body's own eye
     if (_act.cast) {   // the frame's firePending sends it down the live look
       if (mode === 'dungeon') dungeonCtx?.playerAttackInput?.(0, 0, true);
       else magic?.interceptAttack(true);
@@ -10679,10 +10677,11 @@ export function createWorldModes(host) {
     // MW-D25: the modal hosts ride the same Morrowind camera machine as
     // the walk hosts - one eye law, this context's own collider.
     const mwv = mwViewFrame({
-      fpEye: cam.pos, feet: chairSeat ? chairSeat.feet : player.feetAt(), yaw: cam.yaw, pitch: cam.pitch,   // SIT1: third person looks round the chair
+      fpEye: cam.pos, feet: player.feetAt(), yaw: cam.yaw, pitch: cam.pitch,
       dt, riding: !!player.riding || !!cardSeat,   // AUDIT CARDS-2 L11: a seat holds the head as the saddle does; AUDIT-EOTB F3/F4: the host's own clock, and the one state only it has
       raycast: (o, d, m) => player.collider?.raycast?.(o, d, m) ?? null,
       spherecast: (o, r, d, m) => { const h = player.collider?.sphereCast?.(o, r, d, m)?.dist; return Number.isFinite(h) ? h : null; },   // MAC-A: castSphere's seam beside the ray - the camera's two obstacle guards are sphere casts (camera.cpp:186, :200)
+      ...(chairSeat ? { feet: chairSeat.feet } : {}),   // SIT1 (AUDIT FIVE-ASKS C0): third person looks round the chair the body is drawn on, not the capsule beside it (the bench's way - world.js's `seated` spread)
     });
     if (decorTool.flying()) mwv.eye = cam.pos;   // DECOR1d: the free camera looks from its own eye, never over the body's shoulder
     if (cardSeat) mwv.eye = cam.pos;   // CARDS2: seated, the seat's own view - first person (Tavern-Cards.md section 2)
@@ -14073,5 +14072,9 @@ export function createWorldModes(host) {
   // seat where it has none, so others see this body seated on the chair (world.js reads `modes.seatPose`)
   const cardSeatPose = modesApi.seatPose;
   modesApi.seatPose = () => cardSeatPose() ?? (mode === 'interior' && chairSeat ? { feet: chairSeat.feet, yaw: chairSeat.yaw, st: seatTopByte(chairSeat.top) } : null);
+  // SIT1 (AUDIT FIVE-ASKS C1): a touch swing stands you up off a chair, and swings nothing - beside the decorator's own
+  // sink (DECOR1e's line), which a flight still answers first
+  const touchSwing = modesApi.attackInput;
+  modesApi.attackInput = (dx, dy, held) => { if (held && chairSeat && !decorTool.flying()) { standFromChair(); return; } touchSwing(dx, dy, held); };
   return modesApi;
 }

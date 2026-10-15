@@ -98,8 +98,12 @@ export function createSdClaims({ claim, store = null, nowS = () => Math.floor(Da
           recorded++;
           const n = Number.isSafeInteger(answer.data.broken) ? answer.data.broken : null;
           if (n != null) { onBroken(n); say(SD_CLAIM_TEXT.recorded(n)); }
-          if (answer.data.title === true) { say(SD_CLAIM_TEXT.title); announce('title', SD_HONOUR_KEYS.title); }   // HONOUR-BANNER: and its popup
-          if (answer.data.aura === true) { say(SD_CLAIM_TEXT.aura); announce('aura', SD_HONOUR_KEYS.aura); }
+          if (answer.data.title === true) say(SD_CLAIM_TEXT.title);
+          if (answer.data.aura === true) say(SD_CLAIM_TEXT.aura);
+          // HONOUR-BANNER: its popup - for a grant the account did not hold before (AUDIT FIVE-ASKS E1: a re-roll of a held one is
+          // said, never announced as "New"); a service from before acct133 says neither, and nothing pops
+          if (answer.data.titleNew === true) announce('title', SD_HONOUR_KEYS.title);
+          if (answer.data.auraNew === true) announce('aura', SD_HONOUR_KEYS.aura);
         } else if (answer?.ok && answer.data?.why === 'guest' && !guestSaid.has(r)) {
           guestSaid.add(r);
           say(SD_CLAIM_TEXT.guest);

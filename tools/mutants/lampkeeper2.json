@@ -11,8 +11,8 @@
   {
     "name": "LAMP-KEEPER-II-every-182-person",
     "file": "src/systems/lampKeeper.js",
-    "old": "  && LAMP_KEEPER_RECORDS.includes(pn.textureRecord) && isShop(buildingType);",
-    "new": "  && isShop(buildingType);",
+    "old": "(pn.textureArchive === LAMP_KEEPER_ARCHIVE && LAMP_KEEPER_RECORDS.includes(pn.textureRecord))",
+    "new": "(pn.textureArchive === LAMP_KEEPER_ARCHIVE)",
     "tests": [
       "test/lampkeeper2.test.js"
     ]
@@ -20,8 +20,8 @@
   {
     "name": "LAMP-KEEPER-II-in-any-building",
     "file": "src/systems/lampKeeper.js",
-    "old": "  && LAMP_KEEPER_RECORDS.includes(pn.textureRecord) && isShop(buildingType);",
-    "new": "  && LAMP_KEEPER_RECORDS.includes(pn.textureRecord);",
+    "old": "!!pn && isShop(buildingType)\n",
+    "new": "!!pn\n",
     "tests": [
       "test/lampkeeper2.test.js"
     ]
@@ -119,8 +119,8 @@
   {
     "name": "LAMP-KEEPER-II-a-morrowind-lamp",
     "file": "src/scenes/interiorContext.js",
-    "old": "...(lamp ? { lamp: true, _mwLook: null } : {})",
-    "new": "...(lamp ? { lamp: true } : {})",
+    "old": "Object.assign(pn, { lamp: true, _mwLook: null });",
+    "new": "Object.assign(pn, { lamp: true });",
     "tests": [
       "test/lampkeeper2.test.js"
     ]
@@ -148,6 +148,114 @@
     "file": "src/scenes/worldModes.js",
     "old": " ?? (pn?.lamp ? LAMP_TEXT.name() : null);",
     "new": ";",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-the-route-shut",
+    "file": "server-account/src/service.js",
+    "old": "  '/v1/lamp/claim',   // LAMP-KEEPER II",
+    "new": "  // LAMP-KEEPER II",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-the-merchant-never",
+    "file": "src/systems/lampKeeper.js",
+    "old": "|| (!!buildingFactionId && pn.factionID === buildingFactionId)",
+    "new": "|| false",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-the-page-not-the-account",
+    "file": "src/systems/lampKeeper.js",
+    "old": "if (id !== whose) { whose = id; done = false; told.clear(); }",
+    "new": "",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-a-late-answer-kept",
+    "file": "src/systems/lampKeeper.js",
+    "old": "      if (who() !== id) return 'failed';",
+    "new": "",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-signed-out-told-to-go-online",
+    "file": "src/systems/lampKeeper.js",
+    "old": "tell('signin', LAMP_TEXT.signin()); return 'signin';",
+    "new": "tell('offline', LAMP_TEXT.offline()); return 'offline';",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-a-dead-session-kept",
+    "file": "src/net/accountClient.js",
+    "old": "if (r?.error === 'auth') forgetSession(storage); return r; }",
+    "new": "return r; }",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-never-a-pick-target",
+    "file": "src/scenes/interiorContext.js",
+    "old": "    pn.width = size.w;\n    pn.height = size.h;\n    if (!peopleBuilt || !pn.stood || pn.standBatch) return;\n    renderer.uploadTexture(LAMP_ARCHIVE",
+    "new": "    if (!peopleBuilt || !pn.stood || pn.standBatch) return;\n    renderer.uploadTexture(LAMP_ARCHIVE",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-the-batch-never-listed",
+    "file": "src/scenes/interiorContext.js",
+    "old": "    billboardBatches.push(pn.standBatch);\n  })().catch((e) => console.error('[interior] lamp stand failed:', e));",
+    "new": "  })().catch((e) => console.error('[interior] lamp stand failed:', e));",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-stood-twice",
+    "file": "src/scenes/interiorContext.js",
+    "old": "    if (!peopleBuilt || !pn.stood || pn.standBatch) return;\n    renderer.uploadTexture(LAMP_ARCHIVE",
+    "new": "    renderer.uploadTexture(LAMP_ARCHIVE",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-no-words",
+    "file": "src/scenes/worldModes.js",
+    "old": "const lines = lampLines(Math.floor(worldMinutes() / MINUTES_PER_DAY));",
+    "new": "const lines = [];",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-never-asked-of-the-host",
+    "file": "src/scenes/worldModes.js",
+    "old": "claim: host.lampClaim ? () => host.lampClaim() : null,",
+    "new": "claim: null,",
+    "tests": [
+      "test/lampkeeper2.test.js"
+    ]
+  },
+  {
+    "name": "LAMP-KEEPER-II-whose-unasked",
+    "file": "src/scenes/worldModes.js",
+    "old": "    account: () => host.lampAccount?.() ?? null,",
+    "new": "",
     "tests": [
       "test/lampkeeper2.test.js"
     ]

@@ -445,7 +445,7 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
     // activation, keyed on the model id alone as a bed is (INN-BEDS), a prop or scenery; taken out of a furnished room
     // with its piece (BASE-HIDE - it is the piece's furniture)
     if (isChairModel(classicModelIdOf(p.modelIdNum))) {
-      const chair = { cpu, matrix, modelId: classicModelIdOf(p.modelIdNum) };
+      const chair = { cpu, matrix, modelId: classicModelIdOf(p.modelIdNum), aabb };   // AUDIT FIVE-ASKS C7: its world box, as the build measured it
       chairs.push(chair);
       if (baseKey) base.furnish(baseKey, chair);
     }
@@ -581,11 +581,11 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
     // own two among them. Same door, same born identity.
     const [da, dr] = drawnFlat(v?.textureArchive ?? pn.textureArchive, v?.textureRecord ?? pn.textureRecord);
     const redrawn = v || da !== pn.textureArchive || dr !== pn.textureRecord;
-    // LAMP-KEEPER II (systems/lampKeeper.js): the host's pick - a shop's keeper standing as the lamp today keeps its born
-    // identity (its name, its shop) and stands as the lamp; no Morrowind body is read for it (MWNPC8a's look, null)
-    const lamp = !!opts.lampPerson?.(pn);
-    return { ...pn, x, y, z, active: visible, questBehaviour: null, ...(redrawn ? { drawArchive: da, drawRecord: dr } : {}), ...(lamp ? { lamp: true, _mwLook: null } : {}) };
+    return { ...pn, x, y, z, active: visible, questBehaviour: null, ...(redrawn ? { drawArchive: da, drawRecord: dr } : {}) };
   });
+  // LAMP-KEEPER II (systems/lampKeeper.js): the host's pick - a shop's keeper standing as the lamp today keeps its born identity
+  // (its name, its shop) and stands as the lamp; no Morrowind body is read for it (MWNPC8a's look, null)
+  for (const pn of people) if (opts.lampPerson?.(pn)) Object.assign(pn, { lamp: true, _mwLook: null });
   // AUDIT 24 (wave 20): AddPeople's LAST act on every person it stands
   // is `QuestMachine.Instance.SetupIndividualStaticNPC(go, obj.FactionID)`
   // (DaggerfallInterior.cs:1224) - inline, at the GameObject, BEFORE
@@ -680,8 +680,9 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
   // LAMP-KEEPER II (systems/lampKeeper.js): THE LAMP - the classic TEXTURE.197 record 6 whatever a pack replaces it
   // with (its own pixels, getColor32's, never the replacement's), uploaded under the port's own key so a keeper a mod
   // draws on 197_6 is not touched, at the record's size through the one billboard-size door (with Roleplay & Realism's
-  // XML scale, the bug's own stretch). Uploaded at every stand: a hit answers at once, and a picture the place-LRU let go
-  // is put back.
+  // XML scale, the bug's own stretch). Uploaded at every stand, the same key each time: the session's own one small
+  // picture, never a place's - the place-LRU never holds nor frees it (AUDIT FIVE-ASKS D5: bounded at one, its owner the
+  // page).
   const standLamp = (pn) => (async () => {
     const t = await getTexture(LAMP_CLASSIC.archive);
     if (!t || LAMP_CLASSIC.record >= t.recordCount) return;

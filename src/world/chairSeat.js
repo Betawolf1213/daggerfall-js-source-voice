@@ -11,10 +11,12 @@
 // activation of its own (DFU neither); this is the port's.
 //
 // THE SEAT (`chairSeatOf`): the chair's own box (its model's world box), and the room's probe straight down through it:
-// - its SEAT is the first surface under the box's middle between CHAIR_SEAT_MIN and CHAIR_SEAT_MAX over its floor (the
-//   box's foot), or CHAIR_SEAT_DEFAULT over it where the probe meets nothing there;
-// - its BACK is the side, along the chair's own four axes (its model's matrix), whose probe stands CHAIR_BACK_RISE over
-//   the seat - the sitter faces away from it; a bench, a stool and a throne seen from its side have none, and the sitter
+// - its SEAT is the first surface under the box's middle, probed down from the top of the seat's band (CHAIR_SEAT_MAX
+//   over its floor, the box's foot - so a table's top over it is never taken for it), counted between CHAIR_SEAT_MIN and
+//   CHAIR_SEAT_MAX; CHAIR_SEAT_DEFAULT over the floor where the probe meets nothing there;
+// - its BACK is the side, along the chair's own four axes (its model's matrix), whose probe - down from over the box's
+//   top, at CHAIR_BACK_REACHES of the way to that side, the highest kept (AUDIT FIVE-ASKS C4: a thin back, a tall
+//   throne's) - stands CHAIR_BACK_RISE over the seat - the sitter faces away from it; a bench, a stool and a throne seen from its side have none, and the sitter
 //   faces the axis nearest the way they came from;
 // - the body is the card table's (player/seatPose.js seatRigInput - Morrowind has no sitting animation, so the seat is
 //   posed on the skeleton by the climb rig's solver): its feet at the chair's middle on the floor (lowered to rest the
@@ -40,22 +42,34 @@ export const CHAIR_SEAT_MAX = 0.9;
 export const CHAIR_SEAT_DEFAULT = 0.45;
 /** A side whose probe stands this far over the seat is the chair's back. */
 export const CHAIR_BACK_RISE = 0.25;
-/** How far toward a side the back is probed for, of the box's half-width that way. */
-export const CHAIR_BACK_REACH = 0.75;
+/** How far toward a side the back is probed for, of the box's half-width that way - the highest of the three kept. */
+export const CHAIR_BACK_REACHES = Object.freeze([0.5, 0.75, 0.95]);
 /** The hands' "table" over the feet (seatRigInput's `top`): the lap - the hips stand SEATED_HIP_HEIGHT over the feet, the
  *  hands SEAT_OUT + SEAT_HAND_ON before them, on the knees. */
 export const CHAIR_LAP_TOP = 0.64;
-/** How high over the box's foot the probe starts, metres - over any chair's back. */
-export const CHAIR_PROBE_FROM = 1.8;
+/** How far over the band's top (the seat's probe) and the box's top (the back's) a probe starts, metres. */
+export const CHAIR_PROBE_OVER = 0.05;
+/** SIT1 (AUDIT FIVE-ASKS C6): the most a chair's floor may stand above or below the sitter's feet - a chair on a landing,
+ *  a balcony or the floor below, within the ray's reach, is not sat on from here. */
+export const CHAIR_FLOOR_STEP = 0.6;
+
+/** SIT1 (AUDIT FIVE-ASKS C8): THE ROOM'S PROBE for a chair - over `collider` (player/collider.js: raycast(origin, dir, max)
+ *  answers a distance, Infinity for a miss), the height of the first surface straight down through (x, z) from `fromY`
+ *  to the chair's foot, or null. */
+export const chairProbeOver = (collider, aabb) => (x, z, fromY) => {
+  const len = fromY - aabb.min[1] + CHAIR_PROBE_OVER;
+  const d = collider?.raycast?.([x, fromY, z], [0, -1, 0], len);
+  return Number.isFinite(d) && d <= len ? fromY - d : null;
+};
 
 /**
  * THE SEAT ON A CHAIR: `{ feet, yaw, top, eye, pitch, seatY }`, or null for no box. `aabb` the chair's world box
  * (activate.js worldAabb's `{ min, max }`); `matrix` its model's (a column-major 4x4 - its local x and z columns are its
- * four sides); `probe(x, z)` the height of the first surface straight down through (x, z) from over the chair, or null;
+ * four sides); `probe(x, z, fromY)` the height of the first surface straight down through (x, z) from `fromY`, or null;
  * `from` where the sitter stands. Pure.
  * @param {{ min: number[], max: number[] }} aabb
  * @param {ArrayLike<number>} matrix
- * @param {(x: number, z: number) => (number|null)} probe
+ * @param {(x: number, z: number, fromY: number) => (number|null)} probe
  * @param {ArrayLike<number>} from
  */
 export function chairSeatOf(aabb, matrix, probe, from) {
@@ -63,7 +77,7 @@ export function chairSeatOf(aabb, matrix, probe, from) {
   const floorY = aabb.min[1];
   const cx = (aabb.min[0] + aabb.max[0]) / 2, cz = (aabb.min[2] + aabb.max[2]) / 2;
   const hx = (aabb.max[0] - aabb.min[0]) / 2, hz = (aabb.max[2] - aabb.min[2]) / 2;
-  const h = probe(cx, cz);
+  const h = probe(cx, cz, floorY + CHAIR_SEAT_MAX + CHAIR_PROBE_OVER);
   const rise = Number.isFinite(h) ? /** @type {number} */ (h) - floorY : NaN;
   const seatY = rise >= CHAIR_SEAT_MIN && rise <= CHAIR_SEAT_MAX ? /** @type {number} */ (h) : floorY + CHAIR_SEAT_DEFAULT;
   // the chair's four sides: its model's local x and z, flat and unit
@@ -72,10 +86,13 @@ export function chairSeatOf(aabb, matrix, probe, from) {
   const az = unit(matrix?.[8] ?? 0, matrix?.[10] ?? 1) ?? [0, 1];
   const sides = [ax, [-ax[0], -ax[1]], az, [-az[0], -az[1]]];
   let back = null, backH = seatY + CHAIR_BACK_RISE;
+  const topY = aabb.max[1] + CHAIR_PROBE_OVER;
   for (const s of sides) {
-    const reach = (Math.abs(s[0]) * hx + Math.abs(s[1]) * hz) * CHAIR_BACK_REACH;
-    const y = probe(cx + s[0] * reach, cz + s[1] * reach);
-    if (Number.isFinite(y) && /** @type {number} */ (y) > backH) { backH = /** @type {number} */ (y); back = s; }
+    const half = Math.abs(s[0]) * hx + Math.abs(s[1]) * hz;
+    for (const k of CHAIR_BACK_REACHES) {
+      const y = probe(cx + s[0] * half * k, cz + s[1] * half * k, topY);
+      if (Number.isFinite(y) && /** @type {number} */ (y) > backH) { backH = /** @type {number} */ (y); back = s; }
+    }
   }
   let face;
   if (back) face = [-back[0], -back[1]];

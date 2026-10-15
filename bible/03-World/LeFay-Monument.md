@@ -15,14 +15,18 @@ departure, Ledger A (LEFAY).
 (`world/lefayMonument.js` `isLefayTown`: the region by its name in `REGION_NAMES`, the place by its own - a pack's read
 keeps both; the constant keeps its LEFAY1 name, `LEFAY_TOWN`, so every host and the save read it as they did). Its
 exterior is the one 1x1 block `CUSTAA30.RMB`. Two things the block's automap does not draw are closed before the spot is
-looked for (`lefaySpotOf`'s `camp`): the ground within `MONUMENT_LANDING_M` (3.2 m) of the Hold's start marker - the
-archive-199 record-10 flat a traveller arriving at the Hold is stood at (`world/locationEntrance.js`
-`locationStartMarkers`, over `world/rmbFlats.js` `collectMiscFlats`, collectBlockFlats' first pass as its own export) -
-and World of Daggerfall's camp round the Hold (`world/wodPrivateersHold.js` `HOLD_MODELS`, handed in by both exterior
-hosts; its ruins `MONUMENT_RUIN_KEEP_M`, 8 m, the rest `MONUMENT_CAMP_KEEP_M`, 4 m), closed whether the mod stands the
-camp or not, so a client with it off stands the monument where one with it on does. The search starts at the start
-marker rather than the grid's middle (`lefaySpot`'s `from`), so it stands beside where a traveller arrives and the
-Hold's way out. The Hold is no town (locationType 4, no wandering people): there is no people's navgrid to carve, and
+looked for (`lefaySpotOf`'s `exit` and `camp`): THE WAY OUT OF THE HOLD (AUDIT FIVE-ASKS B1/B2) - the exit landing every
+character climbing out of the dungeon is stood on (`player/enterExit.js` `dungeonEntranceLanding` over the block's own
+dungeon-entrance door, measured by both exterior hosts as they stand it - `lefayExitOf`), closed `MONUMENT_LANDING_M`
+(3.2 m) either side of the line from `MONUMENT_DOOR_BACK_M` (4 m) behind it, the doorway, to `MONUMENT_WALK_M` (8 m)
+ahead of it, the walk out - and World of Daggerfall's camp round the Hold (`world/wodPrivateersHold.js` `HOLD_MODELS`,
+handed in by both exterior hosts; its ruins `MONUMENT_RUIN_KEEP_M`, 8 m, the rest `MONUMENT_CAMP_KEEP_M`, 4 m), closed
+whether the mod stands the camp or not, so a client with it off stands the monument where one with it on does. The
+search starts at the exit landing (`lefaySpot`'s `from`), so it stands beside the walk out - the first thing a new
+character sees. A block with no dungeon door measured falls back to its start marker (the archive-199 record-10 editor
+flat, `world/locationEntrance.js` `locationStartMarkers` over `world/rmbFlats.js` `collectMiscFlats` - a dungeon's
+arrival never stands on it, B1), its landing closed, and with no marker to the grid's middle; a null spot is warned of
+in the console (B8). The Hold is no town (locationType 4, no wandering people): there is no people's navgrid to carve, and
 `carveLefay` stays for one that has. LEFAY1's law, which follows, is otherwise unchanged: the spot is the open ground
 nearest that start, read off the location's own navgrid
 (`world/cityNavigation.js`, DFU's CityNavigation carve: every automap byte a building, a tree or a lamp draws is closed,
@@ -98,8 +102,9 @@ unseen, and the count still counts.
 
 ## Verification
 
-- `test/lefay1_monument.test.js` (20): the place (HOLD-MONUMENT: the Hold, and Gothway Garden no longer); the
-  Hold's spot (beside its start marker and never on its landing, clear of every model of the camp - and handed no camp,
+- `test/lefay1_monument.test.js` (21): the place (HOLD-MONUMENT: the Hold, and Gothway Garden no longer); the
+  Hold's spot (beside the exit landing and never on the way out - AUDIT FIVE-ASKS B1/B2 - or, with no door, beside its
+  start marker and never on its landing, clear of every model of the camp - and handed no camp,
   among them; the camp closed only in a block of its name; no marker, the grid's middle; neither host closes the camp
   only when the mod is on); the spot (the middle, round a building, beside a road, all road, none);
   a laid-out town's spot equal to the people's own navgrid's on the enhanced lane; the carve; the stone's faces by picture and all wound

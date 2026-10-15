@@ -56,8 +56,26 @@
   {
     "name": "HOLD-MONUMENT-world-hands-no-camp",
     "file": "src/scenes/world.js",
-    "old": "lefaySpotOf(loc, { camp: { block: PRIVATEERS_HOLD_BLOCK, models: HOLD_MODELS } });   // HOLD-MONUMENT",
-    "new": "lefaySpotOf(loc);   // HOLD-MONUMENT",
+    "old": "lefaySpotOf(loc, { camp: { block: PRIVATEERS_HOLD_BLOCK, models: HOLD_MODELS }, exit:",
+    "new": "lefaySpotOf(loc, { exit:",
+    "tests": [
+      "test/lefay1_monument.test.js"
+    ]
+  },
+  {
+    "name": "HOLD-MONUMENT-the-way-out-kept-open",
+    "file": "src/world/lefayMonument.js",
+    "old": "closeRound(nav, exit.x + nx * t, exit.z + nz * t, MONUMENT_LANDING_M);",
+    "new": "void t;",
+    "tests": [
+      "test/lefay1_monument.test.js"
+    ]
+  },
+  {
+    "name": "HOLD-MONUMENT-searched-not-from-the-exit",
+    "file": "src/world/lefayMonument.js",
+    "old": "    return lefaySpot(nav, { gx: at[0], gy: at[1] });",
+    "new": "    return lefaySpot(nav, null);",
     "tests": [
       "test/lefay1_monument.test.js"
     ]

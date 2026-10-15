@@ -97,7 +97,8 @@ Items have no unique ids: "the port's items have no UID" (`save.js`), and "the p
 - **Corpse gold.** Unleveled Loot turns it from level-scaled to luck-scaled.
 - **Pile gold.** Unleveled Loot's hook that divides pile gold by level is never called (`unleveledLoot.js`), so pile
   gold grows with level.
-- **Hourly respawn, online only.** Dead layout foes and emptied piles come back after one real hour.
+- **Respawn, online only.** Dead layout foes and emptied piles come back on a real clock: 20 minutes in a normal
+  dungeon, 40 in an elite one, half an hour in the Wrothgarian halls and Abyss Dungeons (RESPAWN-30).
 - **Loot rarity.** Forced on online. Luck adds 2 per mille over 50 to every threshold (`lootRarity.js`).
 - **Quest gold.** At most about 7.5k. A shared quest pays every member their own roll (`questShare.js`).
 - **Gate spoils.** Per account, per gate, and a gate comes every 2 real hours:

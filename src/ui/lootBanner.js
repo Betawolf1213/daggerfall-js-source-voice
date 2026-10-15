@@ -284,6 +284,7 @@ ${rarityVarsCss('.lootbanner-stack ')}
 .lb-kicker::after { content: var(--rar-pips, ''); margin-left: 6px; letter-spacing: 0.05em; color: var(--rar, ${T.brass}); }
 .lb-name { font-size: 16px; line-height: 19px; color: var(--rar, #e9e4d9); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lb-count { margin-left: 6px; font-size: 12px; color: ${T.brassHi}; }
+.lb-word { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
 .lb-count:empty { display: none; }
 .lb-count.bump-a { animation: lb-bump-a 180ms ease-out; }
 .lb-count.bump-b { animation: lb-bump-b 180ms ease-out; }
@@ -388,7 +389,10 @@ function build(d, e) {
   const text = el(d, 'div', 'lb-text');
   text.setAttribute('aria-hidden', 'true');
   const kicker = el(d, 'div', 'lb-kicker', e.kicker);
-  const name = el(d, 'div', 'lb-name', e.name);
+  const name = el(d, 'div', 'lb-name', e.honour ? null : e.name);
+  // HONOUR-BANNER (AUDIT FIVE-ASKS E3): the word in its own inline box, painted as it is worn - a gradient title's run spans
+  // the word, never the banner's width, and the count beside it keeps its own colour
+  if (e.honour) { const word = el(d, 'span', 'lb-word', e.name); const p = titlePaint(e.honour.badge); for (const k of Object.keys(p)) if (p[k]) word.style[k] = p[k]; name.append(word); }
   const num = el(d, 'span', 'lb-count', countText(e.count));
   name.append(num);
   const sub = el(d, 'div', 'lb-sub', e.sub);
@@ -397,7 +401,6 @@ function build(d, e) {
   text.append(kicker, name, sub, codex);
   const sr = el(d, 'span', 'lb-sr', `Acquired: ${e.kicker} ${e.name}${e.count > 1 ? `, ${e.count}` : ''}`);
   node.append(icon, text, sr);
-  if (e.honour) { const p = titlePaint(e.honour.badge); for (const k of Object.keys(p)) if (p[k]) name.style[k] = p[k]; }   // HONOUR-BANNER: the word as it is worn
   setPicture(icon, e);
   return { el: node, num, codex, bumps: 0, count: e.count };
 }
@@ -430,7 +433,7 @@ function setPicture(icon, e) {
 }
 
 /** HONOUR-BANNER: the rarity's custom properties in the title's colour (enhancedPlusStyle.js RARITY_VARS' names) - its
- *  light a quarter brighter, its shade half as bright, a star for its pips. */
+ *  light 45% of the way to white, its shade half as bright, a star for its pips. */
 export function honourVars(rgba) {
   if (!Array.isArray(rgba) || rgba.length < 3) return null;
   const c = (v, k) => Math.max(0, Math.min(255, Math.round(v * 255 * k)));
@@ -443,9 +446,12 @@ function paintHonour(node, honour) {
   if (vars) for (const [k, v] of Object.entries(vars)) node.style.setProperty?.(k, v);
   node.dataset.honour = honour.kind;
 }
-/** HONOUR-BANNER: the well's mark - a title's laurel, an aura's ring of light - drawn in the banner's own colour. */
+/** HONOUR-BANNER: the well's mark - a title's laurel, an aura's ring of light - drawn in the banner's own colour, on a
+ *  16-cell grid at a whole number of pixels a cell (AUDIT FIVE-ASKS E4: 56 px drew uneven 3- and 4-pixel cells). */
+export const HONOUR_MARK_NS = 'http://www.w3.org/2000/svg';
 function honourMark(d, kind, box) {
-  const NS = 'http://www.w3.org/2000/svg';
+  const NS = HONOUR_MARK_NS;
+  box = Math.max(16, Math.floor(box / 16) * 16);
   const svg = d.createElementNS ? d.createElementNS(NS, 'svg') : d.createElement('svg');
   svg.setAttribute('viewBox', '0 0 16 16');
   svg.setAttribute('width', String(box));

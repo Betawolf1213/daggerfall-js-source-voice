@@ -257,7 +257,8 @@ lived with the world - the event clock's movement while you play - and never a r
 
 ### 5.4 Real time
 
-Unchanged: respawns (WORLD8, one real hour), the gate's rise and collapse, the gate boss's own beats, the
+Unchanged: respawns (WORLD8's real clock - half an hour in the Wrothgarian halls and Abyss Dungeons since
+RESPAWN-30, `bible/01-Overview/Five-Asks-2026-10-14.md`; 20 and 40 minutes in a normal and an elite dungeon), the gate's rise and collapse, the gate boss's own beats, the
 Seats' weeks, the Sigil stock's and the Marks' UTC days, the renown cap's real hour, a home's rent, the
 bands' and the sea raiders' lives, a held torch's burn.
 

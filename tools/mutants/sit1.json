@@ -124,5 +124,86 @@
     "tests": [
       "test/sit1_chairs.test.js"
     ]
+  },
+  {
+    "name": "SIT1-seated-the-plaque-names-a-chair",
+    "file": "src/scenes/worldModes.js",
+    "old": "    if (chairSeat) return [];   // SIT1 (AUDIT FIVE-ASKS C5)",
+    "new": "    if (false) return [];   // SIT1 (AUDIT FIVE-ASKS C5)",
+    "tests": [
+      "test/sit1_chairs.test.js"
+    ]
+  },
+  {
+    "name": "SIT1-a-chair-on-another-floor",
+    "file": "src/scenes/worldModes.js",
+    "old": "if (Math.abs(aabb.min[1] - player.pos[1]) > CHAIR_FLOOR_STEP) {",
+    "new": "if (Math.abs(aabb.min[1] - player.pos[1]) > Infinity) {",
+    "tests": [
+      "test/sit1_chairs.test.js"
+    ]
+  },
+  {
+    "name": "SIT1-the-shelf-taken-for-the-seat",
+    "file": "src/world/chairSeat.js",
+    "old": "const h = probe(cx, cz, floorY + CHAIR_SEAT_MAX + CHAIR_PROBE_OVER);",
+    "new": "const h = probe(cx, cz, aabb.max[1] + CHAIR_PROBE_OVER);",
+    "tests": [
+      "test/sit1_chairs.test.js"
+    ]
+  },
+  {
+    "name": "SIT1-a-thin-back-missed",
+    "file": "src/world/chairSeat.js",
+    "old": "export const CHAIR_BACK_REACHES = Object.freeze([0.5, 0.75, 0.95]);",
+    "new": "export const CHAIR_BACK_REACHES = Object.freeze([0.5]);",
+    "tests": [
+      "test/sit1_chairs.test.js"
+    ]
+  },
+  {
+    "name": "SIT1-the-third-person-round-the-capsule",
+    "file": "src/scenes/worldModes.js",
+    "old": "      ...(chairSeat ? { feet: chairSeat.feet } : {}),",
+    "new": "",
+    "tests": [
+      "test/sit1_chairs.test.js"
+    ]
+  },
+  {
+    "name": "SIT1-a-touch-swing-swings",
+    "file": "src/scenes/worldModes.js",
+    "old": "if (held && chairSeat && !decorTool.flying()) { standFromChair(); return; } touchSwing",
+    "new": "touchSwing",
+    "tests": [
+      "test/sit1_chairs.test.js"
+    ]
+  },
+  {
+    "name": "SIT1-cast-from-the-chair",
+    "file": "src/scenes/worldModes.js",
+    "old": "    if (_act.cast && chairSeat) standFromChair();",
+    "new": "",
+    "tests": [
+      "test/sit1_chairs.test.js"
+    ]
+  },
+  {
+    "name": "SIT1-the-decorator-seated",
+    "file": "src/scenes/worldModes.js",
+    "old": "if (chairSeat && (decorTool.flying() || decorTool.panelOpen() || interiorCtx",
+    "new": "if (chairSeat && (interiorCtx",
+    "tests": [
+      "test/sit1_chairs.test.js"
+    ]
+  },
+  {
+    "name": "SIT1-the-probe-measured-upward",
+    "file": "src/world/chairSeat.js",
+    "old": "return Number.isFinite(d) && d <= len ? fromY - d : null;",
+    "new": "return Number.isFinite(d) && d <= len ? fromY + d : null;",
+    "tests": [
+      "test/sit1_chairs.test.js"
+    ]
   }
 ]

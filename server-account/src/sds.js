@@ -57,8 +57,9 @@ export async function sdRecordOf({ db }, playerId) {
 /**
  * THE CLAIM: `receipt` verified with the relay's public half and naming `player` (the session's row, never the body's
  * word), one row a (slot, account), and on that first write the Hour's grants rolled off the claim's own draw (`rand` -
- * AUDIT SD III, R4). Answers `{ recorded: true, slot, title, aura, broken }` (`title`/`aura` what THIS kill granted - an account that held one
- * already holds it still), `{ recorded: false, why: 'claimed', broken }`, `{ recorded: false, why: 'guest', broken }`, or
+ * AUDIT SD III, R4). Answers `{ recorded: true, slot, title, aura, titleNew, auraNew, broken }` (`title`/`aura` what THIS kill granted - an account that held one
+ * already holds it still; HONOUR-BANNER, AUDIT FIVE-ASKS E1: `titleNew`/`auraNew` whether it was not held before - the session's row, read
+ * before the write - so the client's loot banner says "New Title" once, never at every re-roll), `{ recorded: false, why: 'claimed', broken }`, `{ recorded: false, why: 'guest', broken }`, or
  * `{ error }` - `no-gate-key` (this service holds no public half), `receipt` (`why` says which rung), `not-yours`.
  * @param {{ db: any, nowS: number, subtle: SubtleCrypto, rand: (b: Uint8Array) => Uint8Array }} ctx
  * @param {{ id: string, handle?: string|null }} player
@@ -75,6 +76,7 @@ export async function claimSd({ db, nowS, subtle, rand }, player, receipt, publi
   const draw = rand(new Uint8Array(4));   // AUDIT SD III (R4): the claim's own seed - nothing the page can read beforehand
   const { title, aura } = sdHonoursRoll(((draw[0] << 24) | (draw[1] << 16) | (draw[2] << 8) | draw[3]) >>> 0);
   const bits = (title ? SD_HONOUR_TITLE : 0) | (aura ? SD_HONOUR_AURA : 0);
+  const prior = Number(player.sd_honours) || 0;   // HONOUR-BANNER (AUDIT FIVE-ASKS E1): what the account held before this claim, off the session's row
   const nonce = hex(rand(new Uint8Array(8)));
   const [row, , count] = await db.batch([
     // THE ROW, stamped with this claim's nonce
@@ -87,5 +89,5 @@ export async function claimSd({ db, nowS, subtle, rand }, player, receipt, publi
   ]);
   const broken = int(count?.results?.[0]?.n);
   if (!(Number(row?.meta?.changes ?? 0) > 0)) return { recorded: false, why: 'claimed', broken };
-  return { recorded: true, slot: c.d, title, aura, broken };
+  return { recorded: true, slot: c.d, title, aura, titleNew: title && !(prior & SD_HONOUR_TITLE), auraNew: aura && !(prior & SD_HONOUR_AURA), broken };
 }
