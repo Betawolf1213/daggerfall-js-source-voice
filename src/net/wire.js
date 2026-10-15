@@ -5745,16 +5745,17 @@ export function validEgOut(m) {
       if (!st || !co || typeof m.b !== 'string' || !EG_B_RE.test(m.b) || !intIn(m.seed, 0, 0xffffffff) || !intIn(m.egv, 1, 999) || !gateMs(m.op) || !egMs(m.wk)) return null;
       if (!intIn(m.rd, 0, EG_HALL_WIRE_MAX) || !(m.rh === 0 || m.rh === 1) || !intIn(m.dg, 0, 0xffffffff) || (m.end != null && !EG_END_WORDS.includes(m.end))) return null;
       const dc = egDecreesW(m.dc ?? []), ms = egList(m.ms ?? [], egRunW, EG_COMPANY_MAX);
+      const nx = egDecreesW(m.nx ?? []);   // AUDIT EG V (L2-11): the rest's beacon - the next circle's decrees the company chose
       const mm = egList(m.mm ?? [], (q) => (Array.isArray(q) && q.length === 5 && egId(q[0]) && intIn(q[1], 1, EG_HALL_WIRE_MAX) && egXZ(q[2]) && egXZ(q[3]) && (q[4] === '' || egId(q[4])) ? [...q] : null), 8);
       const as = egList(m.as ?? [], (a) => (Array.isArray(a) && a.length === 3 && typeof a[0] === 'string' && /^[a-z:]{1,24}$/.test(a[0]) && Array.isArray(a[1]) && a[1].length <= 4 && a[1].every((x) => intIn(x, 0, 99)) && gateMs(a[2]) ? [a[0], [...a[1]], a[2]] : null), 8);
       const ds = egTalliesW(m.ds ?? []);   // EG-ZF: the recap's numbers
-      if (!dc || !ms || !mm || !as || !ds || !intIn(m.geo ?? 0, 0, 8) || !intIn(m.rp ?? 0, 0, 1e8) || !intIn(m.sp ?? 0, 0, 9)) return null;
+      if (!dc || !nx || !ms || !mm || !as || !ds || !intIn(m.geo ?? 0, 0, 8) || !intIn(m.rp ?? 0, 0, 1e8) || !intIn(m.sp ?? 0, 0, 9)) return null;
       const words = (a) => (Array.isArray(a) && a.length <= 8 && a.every((x) => typeof x === 'string' && /^[a-z]{0,16}$/.test(x)) ? [...a] : null);
       const sr = words(m.sr ?? []);
       if (!sr || (m.pr != null && !/^[a-z]{0,16}$/.test(m.pr)) || (m.td != null && !/^[a-z]{0,16}$/.test(m.td)) || (m.ca2 != null && !/^[a-z]{0,8}$/.test(m.ca2))) return null;
       const wg = Array.isArray(m.wg) && m.wg.length <= 3 && m.wg.every((x) => intIn(x, 0, 31)) ? [...m.wg] : [];
       return { k: 'st', b: m.b, seed: m.seed, egv: m.egv, op: m.op, wk: m.wk, ...st, co, rd: m.rd, rh: m.rh, dg: m.dg, end: m.end ?? null,
-        dc, pr: m.pr ?? '', wg, td: m.td ?? '', sr, geo: m.geo ?? 0, ms, ca2: m.ca2 ?? '', mm, rp: m.rp ?? 0, sp: m.sp ?? 0, as, ds,
+        dc, nx, pr: m.pr ?? '', wg, td: m.td ?? '', sr, geo: m.geo ?? 0, ms, ca2: m.ca2 ?? '', mm, rp: m.rp ?? 0, sp: m.sp ?? 0, as, ds,
         site: egSite(m.site) };   // EG-F (section 6.3): the arch's site, kept by the room - a cast-out member with no landing of its own lands there
     }
     case 'sg': { const st = egStage(m); return st ? { k: 'sg', ...st } : null; }

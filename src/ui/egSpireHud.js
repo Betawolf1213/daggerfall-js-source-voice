@@ -59,6 +59,8 @@ import { EG_BOSS_KEYS, egBossName, egTtkRef } from '../net/egLords.js';
 import { egMarkynazDecree } from '../net/egLords.js';   // EG-ZS (section 8.5): the decree the Markynaz lays, named on his card
 import { EG_CHAMPIONS } from '../net/egLaw.js';   // EG-ZS: the champion's signature's title
 import { egProgressText, EG_MARK_NAMES, EG_POTIONS_PER_HALL } from './egHud.js';
+import { egNextCircleText } from './egHud.js';   // AUDIT EG V (L2-11): a rest's beacon - the next circle's decrees and lord
+import { egTwistShown } from '../net/egRun.js';   // AUDIT EG V (L2-4): no Bargain's line when no family is free
 import { EG_PRES_TEXT, EG_BAND_LINES } from './egBeats.js';
 import { EG_PARTY_CSS } from './egParty.js';
 import { titleCardModel, TITLE_CARD_CSS, TITLE_CARD_STYLE_ID } from './gateTitleCard.js';
@@ -197,7 +199,7 @@ export function egArrivalCard(E, { first = false } = {}) {
     kicker: bandCard || court ? band?.name ?? '' : spec.name,
     main: court ? EG_PRES_TEXT.hallCourt(E.h) : EG_PRES_TEXT.hallBand(E.h, theOf(band?.name)),
     sub: court ? spec.name : egObjectiveOf(spec),
-    twist: spec.twist ? EG_TWIST_LINES[spec.twist] ?? '' : '',
+    twist: egTwistShown(spec, E.dc) ? EG_TWIST_LINES[spec.twist] ?? '' : '',
     dec: dec.length ? dec.join(' - ') : '',
     band: bandCard ? EG_BAND_LINES[spec.band] ?? '' : '',
     lays: egMarkynazLine(E, spec),
@@ -348,7 +350,7 @@ export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, p
     recall: mine && mine.alive && !mine.home && !mine.recall ? EG_PRES_TEXT.recallSpent : '',   // my last life (PARTY8-B's law: a fact when it is actionable)
     dec: L.dec === 'card' ? [] : dec, decFold: L.dec === 'fold' && dec.length > 0 ? EG_PRES_TEXT.decrees(dec.length) : '', foldOpen,
     objective: E.sg === 'trial' && !watching ? egObjectiveOf(spec) : '', progress: E.sg === 'trial' && !watching ? egProgressText(spec, E.fight?.pg) : '',
-    stage: watching ? witLine : [stageLine(E, now), egBridgeLine(E, now, bridge && !watching)].filter(Boolean).join(' '), marks, marksSaid: marks.map((m) => `${EG_MARK_NAMES[m.k] ?? ''} ${m.secs}s`).join(' - '),
+    stage: watching ? witLine : [stageLine(E, now), egNextCircleText(E), egBridgeLine(E, now, bridge && !watching)].filter(Boolean).join(' '), marks, marksSaid: marks.map((m) => `${EG_MARK_NAMES[m.k] ?? ''} ${m.secs}s`).join(' - '),
     eclipse: E.sg === 'trial' || E.sg === 'closing' ? egEclipseChip(egEclipseAt(spec, now / 1000)) : '',   // EG-ZG (section 25.5): *The Eclipse - 5*, while the place's hazards run (the fight's own stages)
     lord: egLordBar(E)?.court ? egLordBar(E) : null, lordH: L.lordH,   // only in a Court (a Proving Walk's champion has none)
     gain, first, door, live, touch: touch ? egTouchButtons({ witness: watching, rest: E.sg === 'rest', bridge: bridge && !watching }) : [],

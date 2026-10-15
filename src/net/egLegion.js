@@ -146,18 +146,24 @@ const far = (x, z, here) => { let best = null, bd = -1; for (const m of here) { 
  * AUDIT EG IV (lane1 #14, lane2 #3, lane10 #12; section 18) - THE MINGLED LEGION (a stratum, `F.mingled`): no wave is one kind
  * and Harriers - each body is drawn on its own among the lead kinds (EG_MINGLED_LEADS: a Diver only under the sky), and a
  * Daedra Lord leads one wave in three (EG_MINGLED_DLORD_EVERY), not six.
- * @param {any} F @param {() => number} rng @param {number} size @param {{ swarm?: number, waveNo?: number, sky?: boolean, room?: number }} o
+ * AUDIT EG V (L2-12; section 14: "every wave carries a Binder"): SWARM-MOTHER is the fight's own decree (`F.D.swarm`), read here
+ * whoever pours the wave - the hall's, a lord's fury's and its Muster-Call's, a champion's escort, Kyn's Vigil's - unless a caller
+ * names its own. (L3-20; section 8.4): `only` - a wave of that one kind (an Athenaeum's Harriers), its Binders beside it.
+ * @param {any} F @param {() => number} rng @param {number} size @param {{ swarm?: number, waveNo?: number, sky?: boolean, room?: number, only?: number|null }} o
  */
-export function egWaveKinds(F, rng, size, { swarm = 0, waveNo = 0, sky = false, room = egLegionRoom(F) } = {}) {
-  const open = EG_BAND_KINDS[F.band] ?? EG_BAND_KINDS[0];
-  const leads = WAVE_LEADS.filter((k) => open.includes(k) && (k !== EG_KIND.diver || sky));
-  const lead = leads[Math.floor(rng() * leads.length)] ?? EG_KIND.harrier;
+export function egWaveKinds(F, rng, size, { swarm = F?.D?.swarm ?? 0, waveNo = 0, sky = false, room = egLegionRoom(F), only = null } = {}) {
   const out = [];
-  const every = F.mingled ? EG_MINGLED_DLORD_EVERY : EG_DLORD_EVERY;
-  if (F.band >= 3 && waveNo % every === every - 1) out.push(EG_KIND.dlord);
-  const half = Math.ceil(size / 2);
-  if (F.mingled) { const mix = EG_MINGLED_LEADS.filter((k) => k !== EG_KIND.diver || sky); while (out.length < size) out.push(mix[Math.floor(rng() * mix.length)] ?? lead); }
-  else for (let i = out.length; i < size; i++) out.push(i < half ? lead : EG_KIND.harrier);
+  if (only != null) for (let i = 0; i < size; i++) out.push(only);
+  else {
+    const open = EG_BAND_KINDS[F.band] ?? EG_BAND_KINDS[0];
+    const leads = WAVE_LEADS.filter((k) => open.includes(k) && (k !== EG_KIND.diver || sky));
+    const lead = leads[Math.floor(rng() * leads.length)] ?? EG_KIND.harrier;
+    const every = F.mingled ? EG_MINGLED_DLORD_EVERY : EG_DLORD_EVERY;
+    if (F.band >= 3 && waveNo % every === every - 1) out.push(EG_KIND.dlord);
+    const half = Math.ceil(size / 2);
+    if (F.mingled) { const mix = EG_MINGLED_LEADS.filter((k) => k !== EG_KIND.diver || sky); while (out.length < size) out.push(mix[Math.floor(rng() * mix.length)] ?? lead); }
+    else for (let i = out.length; i < size; i++) out.push(i < half ? lead : EG_KIND.harrier);
+  }
   for (let s = 0; s < swarm; s++) out.push(EG_KIND.binder);
   return out.slice(0, Math.max(0, room));
 }
@@ -172,11 +178,14 @@ export const egLegionCap = (n, c) => Math.min(14, 2 + Math.ceil(1.5 * n) + Math.
 export const EG_STANDING_MAX = 16;
 /** AUDIT EG III - THE ROOM UNDER THE CAP: how many more of the legion fight `F` may stand now - its cap (halved in a Deepway's
  *  rift chamber, `halfCap`, section 8.8) less its standing foes (a friend is none). Every wave is held to it (egWaveKinds) - the
- *  director's, a lord's fury's and its summons' waves alike - and Hunting Pack's, a Kynval squad, the hunt's pair. */
+ *  director's, a lord's fury's and its summons' waves alike - and Hunting Pack's, a Kynval squad, the hunt's pair.
+ *  AUDIT EG V (L2-3; sections 8.1, 8.8 and 12): A DORMANT LURKER IS NO PART OF IT - a fragment's statue in its wall's shadow
+ *  (net/egBrain.js fragStand) counts from its waking, an ambush springing whatever the room; counted asleep, three statues in a
+ *  lone member's Deepway rift chamber (its cap halved to two) held every wave for good. */
 export function egLegionCapOf(F) { return Math.min(EG_STANDING_MAX, Math.floor(egLegionCap(F.n, F.c) / (F.halfCap ? 2 : 1))); }
 export function egLegionRoom(F) {
   if (!Array.isArray(F?.bodies) || !Number.isFinite(F.n) || !Number.isFinite(F.c)) return Infinity;
-  return Math.max(0, egLegionCapOf(F) - F.bodies.filter((b) => b.role === EG_ROLE.add && b.hp > 0 && !egHas(b, EG_FL.friend)).length);
+  return Math.max(0, egLegionCapOf(F) - F.bodies.filter((b) => b.role === EG_ROLE.add && b.hp > 0 && !egHas(b, EG_FL.friend) && !egHas(b, EG_FL.dormant)).length);
 }
 
 /**
@@ -543,6 +552,21 @@ export function egSquad(F, spots, now, out) {
     if (b && af === 'shielded') b.shield = Math.round(b.max / 4);
     return b;
   }).filter(Boolean);
+}
+/**
+ * AUDIT EG V (L2-7; section 8.7: "a shield of a quarter of its health that only blows from behind break") - A SHIELDED ELITE'S
+ * SHIELD, one law for a member's blow (net/egBrain.js egBlow) and every host hit the room strikes for it (hostStrike: Sweeping
+ * Arc, Bladestorm, Kindled Steel, Deadeye, Spillover): a blow from (px, pz) on add `b` while its shield stands TURNS on its
+ * front - nothing lands (egShieldTurns); one from behind lands and the shield takes it first, what it soaks given back to the
+ * body's health, its mark dropped as it breaks (egShieldSoak, answering the soak).
+ */
+export const egShieldTurns = (b, px, pz) => b?.role === EG_ROLE.add && egHas(b, EG_FL.shielded) && (b.shield ?? 0) > 0 && !egFromBehind(b, px, pz);
+export function egShieldSoak(F, b, got, out) {
+  if (!(got > 0) || b?.role !== EG_ROLE.add || !((b.shield ?? 0) > 0)) return 0;
+  const soak = Math.min(b.shield, got);
+  b.shield -= soak; b.hp += soak;
+  if (b.shield <= 0) egSetFl(F, b, EG_FL.shielded, false, out);
+  return soak;
 }
 /** A body's facing toward the struck pose - a blow from within 60 degrees of behind it (a shield-wall's, a Shielded
  *  elite's law). */
