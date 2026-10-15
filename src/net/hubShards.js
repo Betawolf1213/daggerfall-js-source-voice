@@ -166,11 +166,6 @@ export const foldFind = (s) => String(s ?? '').toLowerCase().replace(/['’\s-]/
 /** The searches the whole hub answers a second, whoever asks - a search walks everyone online (each socket's own
  *  bucket is a search a second besides). A search past it is answered `busy`. */
 export const HUB_FIND_ROOM_HZ_MAX = 10;
-/** CHAT-FIND-HUB: the chat's search box asks the hub no closer together than this - the relay's own bucket for a socket
- *  is a search a second (three banked), and the World and Guild tabs' asks spend it too. */
-export const HUB_FIND_ASK_MS = 1500;
-/** CHAT-FIND-HUB: a query that still stands in the box is asked again once its answer is this old (who is online moves). */
-export const HUB_FIND_FRESH_MS = 15_000;
 /** How often at most a session asks the hub who of its guild is online (the Guild tab's list, every shard's). */
 export const HUB_GUILD_WHO_MS = 30_000;
 /** SCALE5c (Mac's decision 2, the list while the hub is small): how often at most a hub link on a shard asks the bus for

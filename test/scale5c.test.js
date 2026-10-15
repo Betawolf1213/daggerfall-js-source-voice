@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 
 import { fakeRooms } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
-import { OnlineSession } from '../src/net/online.js';
+import { OnlineSession, HUB_FIND_ASK_MS, HUB_FIND_FRESH_MS } from '../src/net/online.js';
 import { SOCIAL_ROOM, CHAT_ROOMS, isSocialRoom, isChatRoom, isRegionRoom, parseClient, RELAY_VERSION, CLOSE_REPLACED } from '../src/net/wire.js';
 import * as H from '../src/net/hubShards.js';
 
@@ -323,7 +323,7 @@ test('CHAT-FIND-HUB the session: the search box asks the hub while this link kno
     assert.deepEqual(finds().at(-1), { t: 'find', q: 'ald' });
     t += 100;
     assert.equal(s.askFind('aldr'), false, 'the floor');
-    t += H.HUB_FIND_ASK_MS;
+    t += HUB_FIND_ASK_MS;
     assert.equal(s.askFind('ald'), false, 'asked, the answer on its way');
     ws.receive({ t: 'found', q: 'ald', l: [{ id: 'peer-0002', name: 'Aldric', sub: 'acct-x' }] });
     assert.equal(lines, 0, 'the box\'s answer is never a line');
@@ -333,10 +333,10 @@ test('CHAT-FIND-HUB the session: the search box asks the hub while this link kno
     assert.equal(s.askFind('aldr'), true, 'a query moved');
     ws.receive({ t: 'found', q: 'aldr', l: [], busy: 1 });
     assert.equal(s.hubFound.q, 'ald', 'a busy hub answered nothing');
-    t += H.HUB_FIND_ASK_MS;
+    t += HUB_FIND_ASK_MS;
     assert.equal(s.askFind('aldr'), true, 'and is asked again');
     ws.receive({ t: 'found', q: 'aldr', l: [{ id: 'peer-0002', name: 'Aldric' }] });
-    t += H.HUB_FIND_FRESH_MS;
+    t += HUB_FIND_FRESH_MS;
     assert.equal(s.askFind('aldr'), true, 'a stale answer is asked again');
     assert.equal(s.sendFind('aldr'), true);
     ws.receive({ t: 'found', q: 'aldr', l: [] });
@@ -345,7 +345,7 @@ test('CHAT-FIND-HUB the session: the search box asks the hub while this link kno
     assert.equal(s.hubFound, null, 'the box cleared lets the answer go');
     const n = finds().length;
     for (let i = 0; i < 50; i++) { t += 16; s.askFind(`q${i}`); }
-    assert.ok(finds().length - n <= Math.ceil((50 * 16) / H.HUB_FIND_ASK_MS) + 1, 'a typist at sixty frames a second stays under the relay\'s bucket');
+    assert.ok(finds().length - n <= Math.ceil((50 * 16) / HUB_FIND_ASK_MS) + 1, 'a typist at sixty frames a second stays under the relay\'s bucket');
   });
 });
 
