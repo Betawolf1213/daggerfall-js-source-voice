@@ -408,9 +408,13 @@ test('POI-4b PLACING AN ENTRY: its parts keep their own turn, size, solidity and
   assert.ok(Math.abs(d.lights[0].t[1] - l.t[1] - 3) < 1e-6 && Math.abs(d.lights[0].t[2] - l.t[2] - 1) < 1e-6, `where it stands from the origin (${d.lights[0].t} against ${l.t})`);
   assert.equal(d.lights[0].flicker, true);
   // one step: undone, the parts and the light go together
+  // PIN MOVED (AUDIT POI E11): placed with no POI held, the new POI and its model are ONE step, as this section says -
+  // this asserted the two the editor made (one undo took the parts and left the POI standing empty, a second took it)
   ed.undo();
-  assert.equal(ed.docOf(id).parts.length, 0);
-  assert.equal(ed.docOf(id).lights.length, 0);
+  assert.equal(ed.has(id), false, 'one undo: the POI and its model gone together');
+  ed.redo();
+  assert.equal(ed.docOf(id).parts.length, 2);
+  assert.equal(ed.docOf(id).lights.length, 1);
 });
 
 test('POI-4b RECORDS: the shelf in the migration and the routes in the service; the import keeps what it places unless told not; the inspectors keep a POI and a part', () => {

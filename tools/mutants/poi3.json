@@ -11,8 +11,8 @@
   {
     "name": "POI3-the-pitch-sign",
     "file": "src/poi/poiEdit.js",
-    "old": "const sx = clamp(2 * (w * x - y * z), -1, 1);",
-    "new": "const sx = clamp(2 * (w * x + y * z), -1, 1);",
+    "old": "const sx = 2 * (w * x - y * z), m02",
+    "new": "const sx = 2 * (w * x + y * z), m02",
     "tests": [
       "test/poi3_edit.test.js"
     ]
@@ -272,7 +272,7 @@
   {
     "name": "POI3-keys-heard-while-flying",
     "file": "src/scenes/poiEditorHost.js",
-    "old": "      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) eye.keys.add(a); return true; }",
+    "old": "      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) { eye.keys.add(a); return true; } return false; }",
     "new": "      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) eye.keys.add(a); }",
     "tests": [
       "test/poi3_edit.test.js"
@@ -299,7 +299,7 @@
   {
     "name": "POI3-flight-by-the-raw-key",
     "file": "src/scenes/poiEditorHost.js",
-    "old": "      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) eye.keys.add(a); return true; }",
+    "old": "      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) { eye.keys.add(a); return true; } return false; }",
     "new": "      if (eye.look) { eye.keys.add(e.code === 'KeyW' ? 'MoveForwards' : e.code); return true; }",
     "tests": [
       "test/poi3_edit.test.js"

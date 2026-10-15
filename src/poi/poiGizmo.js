@@ -11,9 +11,11 @@
 //     An axis drag is read on the plane through the axis that faces the eye best - never a plane seen edge on, so an
 //     arrow pointing at the eye still drags along itself.
 //   - TURN: a ring an axis, and the outer ring the eye's own axis. The angle is the one swept round the centre on the
-//     ring's plane; a ring seen edge on is read on the screen's plane, its sweep taken about the axis.
-//   - SIZE: a box an axis (that side alone), the centre all three. The factor is the grab point's distance from the
-//     centre now over at the grab, along the axis (or across the screen, for all three).
+//     ring's plane; a ring seen edge on (no sweep to read on a line) by the cursor's travel along its near side's
+//     tangent, the arc over the radius (AUDIT POI E5).
+//   - SIZE: a box an axis (that side alone), the centre all three. An axis's factor is the grab point's distance from the
+//     centre now over at the grab, along the axis; all three's the cursor's travel across the screen, right and up
+//     growing it, an arm's length doubling it (AUDIT POI E10 - the centre is grabbed beside the centre).
 //   - SNAP: a move to its step along each handle axis, a turn to its degrees, a size to its step of the factor.
 //   - A HANDLE THAT CANNOT BE DRAGGED IS NOT OFFERED: an arrow or a box pointing at the eye (every plane that holds its
 //     axis holds the ray too - there is nothing to read the drag on) and a square seen edge on are `hidden`, neither
@@ -181,17 +183,36 @@ const snapTo = (v, step) => (step > 0 ? Math.round(v / step) * step : v);
  */
 export function beginGizmoDrag(g, handle, o, d) {
   const c = g.c;
-  let plane, axis = null;
+  let plane, axis = null, along = null;
   if (g.mode === 'turn') {
     axis = handle === 'view' ? norm(mul(g.viewDir, -1)) : g.axes[AX[handle]];
-    plane = Math.abs(dot(axis, g.viewDir)) > 0.08 ? axis : norm(g.viewDir);   // a ring seen edge on: the screen's plane
+    if (Math.abs(dot(axis, g.viewDir)) > EDGE_RING) plane = axis;
+    else {
+      // AUDIT POI E5: A RING SEEN EDGE ON - the screen's plane, where both arms of the old sweep lay on one line (it read 0
+      // or 180 degrees: within ~4.6 degrees of the POI's height the yaw ring was grabbed, turned nothing, and flipped half
+      // round across the centre). Its drag is the cursor's travel along the ring's tangent at its near side, as an angle
+      // (the arc's length over the radius) - the near side moves with the cursor, the way a wheel seen from its rim turns.
+      plane = norm(g.viewDir);
+      along = norm(cross(axis, mul(g.viewDir, -1)));
+    }
   } else if (handle === 'view' || handle === 'all') plane = norm(g.viewDir);
   else if (handle.length === 2) plane = g.axes[PLANE[handle][2]];
   else { axis = g.axes[AX[handle]]; plane = axisPlaneNormal(axis, g.viewDir); }
   const t = rayPlane(o, d, c, plane);
   if (t === null) return null;
   const hit = add(o, mul(d, t));
-  return { mode: g.mode, handle, c, axes: g.axes, plane, axis, hit0: hit, L: g.L };
+  // AUDIT POI E10: the size-all handle reads the cursor's travel across the screen - right and up grow it, left and down
+  // shrink it - so its basis (the screen's right and up on the plane through the centre) is kept from the grab
+  const screen = g.mode === 'size' && handle === 'all' ? screenBasis(g.viewDir) : null;
+  return { mode: g.mode, handle, c, axes: g.axes, plane, axis, along, screen, hit0: hit, L: g.L };
+}
+/** A ring this near edge on (|its axis . the view|) is read by its tangent, not on its own plane (AUDIT POI E5). */
+const EDGE_RING = 0.08;
+/** The screen's right and up at a view direction, in the game's frame (Unity's left-handed: looking +z, +x is right) -
+ *  a view straight up or down takes north as its up. */
+function screenBasis(viewDir) {
+  const right = norm(Math.abs(viewDir[1]) < 0.99 ? cross([0, 1, 0], viewDir) : cross([0, 0, 1], viewDir));
+  return { right, up: norm(cross(viewDir, right)) };
 }
 
 /**
@@ -219,6 +240,12 @@ export function dragResult(s, o, d, snap = null) {
     }
     return { move: delta };
   }
+  if (s.mode === 'turn' && s.along) {
+    // AUDIT POI E5: edge on - the cursor's travel along the near side's tangent, an arc of the ring's radius
+    let deg = (dot(sub(hit, s.hit0), s.along) / Math.max(1e-9, s.L)) * 180 / Math.PI;
+    if (snap?.turn) deg = snapTo(deg, snap.turn);
+    return { turn: { axis: s.axis, deg: deg === 0 ? 0 : deg } };
+  }
   if (s.mode === 'turn') {
     const v0 = sub(s.hit0, s.c), v1 = sub(hit, s.c);
     // swept about the turn's axis: both arms laid on the ring's plane first (the screen's, for a ring seen edge on)
@@ -238,8 +265,11 @@ export function dragResult(s, o, d, snap = null) {
     const i = s.axes.indexOf(s.axis);
     return { size: [0, 1, 2].map((k) => (k === i ? f : 1)) };
   }
-  const r0 = len(sub(s.hit0, s.c)), r1 = len(sub(hit, s.c));
-  let f = r0 > 1e-9 ? r1 / r0 : 1;
+  // AUDIT POI E10: all three by the cursor's travel across the screen, an arm's length of it doubling the size - the
+  // grab's distance now over at the grab (the axes' law) made the centre square, grabbed a few pixels from the centre,
+  // a lever of a few pixels: grabbed 2 px out, 10 px of travel sized it x5.75
+  const travel = sub(hit, s.hit0);
+  let f = 1 + (dot(travel, s.screen.right) + dot(travel, s.screen.up)) / Math.max(1e-9, s.L);
   if (snap?.size) f = 1 + snapTo(f - 1, snap.size);
   f = Math.max(0.01, f);
   return { size: [f, f, f] };
