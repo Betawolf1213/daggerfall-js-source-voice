@@ -112,6 +112,13 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
    (`firmamentPowers.js` capAt - AUDIT UICALM-FIRM1 L1 H1: capped apart they made +21 Strength and +86 Health): an
    attribute +15, a combat skill +15, a spell's damage +30%, its price 25% off at most, casting speed +15%, blows at most 15% lighter, +75 health and
    magicka, a 10% chance to evade a blow ...
+   **An attribute's gain lands on a maxed stat** (FIRM-MAX, 2026-10-15, asked of the port: "normaly nodes like +6% speed
+   and someone has 100speed already should count additionally to 100 speed ... all nodes should also work on maxed out
+   stats"): the gain lifts that attribute's live ceiling by itself (`firmamentPowers.js` firmamentFold writes it on
+   `entityMods.js` statMax, which `statMods.js liveStat` reads into its maxValue as it reads DFU's StatMaxMods), so The
+   Steed's +2 Speed and the Path of the Sign's +6% on a 100 read 108. A Fortify fills the lift and never passes it, and
+   with the sky asleep the ceiling is `MaxStatValue` again. Skills needed nothing: their mods already sat on top of the
+   softcap unclamped. A departure from `DaggerfallStats.GetLiveStatValue`'s ceiling for the sky's own gains alone.
 2. **The blow's channels are capped again as a group** at the moment of the blow (`blowPct`): any weapon, melee, the
    weapon's family and the foe's kind together at most +30%; its conditions (an unaware foe, a wounded wielder) after
    that, and the whole at most +50%. The spell's price likewise (`castCostPct`).
@@ -246,7 +253,7 @@ lends the whole guild) are the next slice (section 10).
 `test/firm1_law.test.js` (16: the build code, the trades take nothing away, the sky's shape and spacing, the keys'
 hash, the law, the purses, the budget whole), `test/firm1_service.test.js` (8: the respec, the switch, the purses, a
 change judged whole, Craft for the life ring alone, a repeat, the refund's silver, the harvest's XP),
-`test/firm1_powers.test.js` (9: raw on the key stars, the Wrothgarian zone, offline, the fold, the duel and the mentor,
+`test/firm1_powers.test.js` (10: raw on the key stars, a maxed stat (FIRM-MAX), the Wrothgarian zone, offline, the fold, the duel and the mentor,
 the blow, the spell, the damage and the layer, the acts), `test/firm1_book.test.js` (4: the respec, the read, a change
 coalesced, a lost answer kept), and the audit's `test/audit_uicalm_firm1.test.js` (`01-Overview/Audit-UICalm-Firm1.md`). The lab: `firmament.html`
 (`?dress=grimoire` for the Grimoire, `?fresh=1`, `?renown=`, `?ranks=`).

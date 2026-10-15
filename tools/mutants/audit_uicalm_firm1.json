@@ -2,8 +2,8 @@
   {
     "name": "AUF-L1H1-attr-apart",
     "file": "src/systems/firmamentPowers.js",
-    "old": "for (const a of ATTRIBUTES) { const v = capAt(a, read(a) + pctOf(entity.stats?.[a], read(`pct.${a}`))); if (v) mods.stats[a] = v; }",
-    "new": "for (const a of ATTRIBUTES) { const v = read(a) + pctOf(entity.stats?.[a], read(`pct.${a}`)); if (v) mods.stats[a] = v; }",
+    "old": "const v = capAt(a, read(a) + pctOf(entity.stats?.[a], read(`pct.${a}`)));",
+    "new": "const v = read(a) + pctOf(entity.stats?.[a], read(`pct.${a}`));",
     "tests": [
       "test/audit_uicalm_firm1.test.js"
     ]

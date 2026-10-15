@@ -184,5 +184,23 @@
     "tests": [
       "test/firm1_law.test.js"
     ]
+  },
+  {
+    "name": "FIRM-MAX-no-lift",
+    "file": "src/systems/firmamentPowers.js",
+    "old": "    if (v > 0) mods.statMax[a] = v;",
+    "new": "",
+    "tests": [
+      "test/firm1_powers.test.js"
+    ]
+  },
+  {
+    "name": "FIRM-MAX-ceiling-unread",
+    "file": "src/systems/statMods.js",
+    "old": "  maxMod += entity._mods?.statMax?.[statName] ?? 0;",
+    "new": "",
+    "tests": [
+      "test/firm1_powers.test.js"
+    ]
   }
 ]

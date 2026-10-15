@@ -96,6 +96,29 @@ test('FIRM1 powers: RAW ON THE KEY STARS, PERCENT ON THE SMALL - a small star\'s
   assert.ok(liveStat(p, 'strength') - before < 40 * c['pct.strength'] / 100 + 1);
 });
 
+test('FIRM-MAX: A STAR LANDS ON A MAXED STAT - its gain lifts the attribute\'s live ceiling by itself, so +6% Speed on a 100 reads past 100; a Fortify still stops at the lifted ceiling, and with the sky off the ceiling is DFU\'s again (mutants: the fold writes no statMax; liveStat leaves it out of the ceiling)', () => {
+  const p = hero();
+  p.stats.speed = 100;
+  setFirmamentOnline(true);
+  const t = walk('st.start', 'st.s1');   // The Steed's +2 Speed, the Path of the Sign's +6%
+  const c = treeStats(t);
+  assert.deepEqual([c.speed, c['pct.speed']], [2, 6]);
+  setFirmamentTree(t);
+  computeEntityMods(p);
+  assert.equal(liveStat(p, 'speed'), 108, '100 + 2 + 6% of 100');
+  p.activeEffects.push({ kind: 'fortifyAttribute', stat: 'speed', magnitude: 20, roundsRemaining: 5 });
+  assert.equal(liveStat(p, 'speed'), 108, 'a Fortify fills the lift, never past it');
+  p.stats.speed = 95;
+  computeEntityMods(p);
+  assert.equal(liveStat(p, 'speed'), 107, 'the ceiling is 100 + the gain, whatever the stat under it (95 x 6% floors to 5: 100 + 2 + 5)');
+  p.activeEffects.length = 0;
+  p.stats.speed = 100;
+  setFirmamentOnline(false);
+  computeEntityMods(p);
+  p.activeEffects.push({ kind: 'fortifyAttribute', stat: 'speed', magnitude: 20, roundsRemaining: 5 });
+  assert.equal(liveStat(p, 'speed'), 100, 'offline: no sky, DFU\'s MaxStatValue');
+});
+
 test('FIRM1 powers: A REFEREED FIGHT AND A MENTOR - the combat channels sleep, the life channels stay', () => {
   const p = hero();
   setFirmamentOnline(true);
