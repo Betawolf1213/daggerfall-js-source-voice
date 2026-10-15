@@ -167,7 +167,7 @@ import { isTouchDevice } from '../ui/touchDevice.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { createEgLookDraw } from './egLookDraw.js';   // EG-G2: the Spire's sky, mist and lines (section 25)
 import { egQuietCompany } from '../world/egLook.js';
-import { egTrailPush, egTrailSegs, EG_TRAIL } from '../world/egLook.js';   // AUDIT EG V (h; section 8.2): THE TRAIL
+import { egRibbonPush, egTrailSegs, EG_TRAIL } from '../world/egLook.js';   // AUDIT EG V (h; section 8.2): THE TRAIL
 import { CONCEAL_MODE } from '../systems/combatVisuals.js';   // AUDIT EG V (h; section 8.2): an ally on traversal ground, ECV1's plain blend
 import { egStairStep, egSpireLights, egDoorCompass, egWitnessTwist, EG_LIGHTS_TEXT } from '../world/egLights.js';   // EG-ZE: the stair, the door and the lights
 import { egReducedMotion } from '../ui/egAccess.js';
@@ -1823,7 +1823,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   function lawForget() { egSpecForget(); lawGot.clear(); lawAsked.clear(); lawBuilt = ''; digestSeen.k = ''; trailForget(); }
 
   // ── AUDIT EG V (h; lane3 L3-10 (b) and (c), section 8.2) - THE TRAIL, AND THE ALLIES ON TRAVERSAL GROUND ─────────────────
-  /** each living member's route through the span or Brink I stand in (`routes`: sub -> its points, world/egLook.js egTrailPush,
+  /** each living member's route through the span or Brink I stand in (`routes`: sub -> its points, world/egLook.js egRibbonPush,
    *  mine among them), the breach and hall they are of, the first across the room named as its door opened (`esay` door's
    *  `s`), and THE TRAIL's segments this frame (one buffer, kept) */
   const trail = { b: '', h: 0, first: '', routes: new Map(), segs: new Float32Array(EG_TRAIL.max * 6), n: 0 };
@@ -1851,7 +1851,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (egSlotAt(sx) !== slot) return;
     let route = trail.routes.get(sub);
     if (!route) trail.routes.set(sub, (route = []));
-    egTrailPush(route, spec, egLocalX(spec, sx), p[1] + R0[1], p[2] + R0[2], tS);
+    egRibbonPush(route, spec, egLocalX(spec, sx), p[1] + R0[1], p[2] + R0[2], tS);
   }
   /** Is `sub` a living, entered member of breach `E` (its company row)? */
   function livingOf(E, sub) { for (const c of E.co ?? []) if (c[0] === sub) return c[3] === 1 && c[5] === 1; return false; }

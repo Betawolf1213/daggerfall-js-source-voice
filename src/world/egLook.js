@@ -166,7 +166,7 @@ export const EG_TRAIL = Object.freeze({ step: 1, max: 240, alpha: 0.4, width: 2,
  * at most, EG_TRAIL.max in all (the first kept). Answers whether it was kept.
  * @param {any[]} route @param {any} spec @param {number} x @param {number} y @param {number} z @param {number} tS
  */
-export function egTrailPush(route, spec, x, y, z, tS) {
+export function egRibbonPush(route, spec, x, y, z, tS) {
   if (route.length >= EG_TRAIL.max) return false;
   const last = route.at(-1);
   if (last && trailAt(spec, last, tS, _trailP) && Math.hypot(x - _trailP[0], y - _trailP[1], z - _trailP[2]) < EG_TRAIL.step) return false;

@@ -4,7 +4,7 @@
 //              out of the breach (the frame's way out, away), with what the screen asked and was given of them, so a way back
 //              asks again;
 //   L3-10 (b)  THE TRAIL - once a span's door opens, the first across's route drawn as a faint gold ribbon for the others: each
-//              screen keeps every member's route (world/egLook.js egTrailPush, a ridden point on its piece), the room names the
+//              screen keeps every member's route (world/egLook.js egRibbonPush, a ridden point on its piece), the room names the
 //              first across, the line pass draws it in its own buffer (render/egLinePass.js);
 //   L3-10 (c)  THE ALLIES ON TRAVERSAL GROUND AT 60% - the host's every-peer veil asks the breach's client (allyVeil), and a veil
 //              that keeps the name draws it (net/remotePlayers.js `named`).
@@ -20,7 +20,7 @@ import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { egPieceAt } from '../src/net/egSpanLaw.js';
 import { egFightFloorAt } from '../src/net/egFair.js';
 import { egToDungeon } from '../src/world/egHall.js';
-import { egTrailPush, egTrailSegs, egEdgeLineColor, EG_TRAIL, EG_LINE_KIND, EG_FOG_FLOOR } from '../src/world/egLook.js';
+import { egRibbonPush, egTrailSegs, egEdgeLineColor, EG_TRAIL, EG_LINE_KIND, EG_FOG_FLOOR } from '../src/world/egLook.js';
 import { EgLinePass, EG_LINE_FS, EG_LINE_VS } from '../src/render/egLinePass.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { CONCEAL_MODE } from '../src/systems/combatVisuals.js';
@@ -123,16 +123,16 @@ test('AUDIT EG V E NEW-1 THE HALLS GIVEN ARE FORGOTTEN ON EVERY WAY OUT (section
 });
 
 // ── L3-10 (b): THE TRAIL ─────────────────────────────────────────────────────────────────────────────────────────────────
-test('AUDIT EG V L3-10 (b) THE TRAIL, ITS LAW (section 8.2): a member\'s route kept a point a metre at most (egTrailPush), at most EG_TRAIL.max; a point on a Drift kept on its piece, so the ribbon rides it; its segments in the dungeon\'s frame, EG_TRAIL.lift over the feet, into the buffer it is given and no further (egTrailSegs) (mutants: no thinning; the cap; a ridden point left where it was; the lift; the buffer overrun)', () => {
+test('AUDIT EG V L3-10 (b) THE TRAIL, ITS LAW (section 8.2): a member\'s route kept a point a metre at most (egRibbonPush), at most EG_TRAIL.max; a point on a Drift kept on its piece, so the ribbon rides it; its segments in the dungeon\'s frame, EG_TRAIL.lift over the feet, into the buffer it is given and no further (egTrailSegs) (mutants: no thinning; the cap; a ridden point left where it was; the lift; the buffer overrun)', () => {
   const spec = egHallOf(77, 2, 0), drift = spec.steps.find((s) => s.kind === 'drift');
   assert.ok(drift && !egFightFloorAt(spec, drift.x, drift.y, drift.z), 'a Drift on traversal ground');
   const route = [];
-  assert.equal(egTrailPush(route, spec, 0, 0, 0, 1), true);
-  assert.equal(egTrailPush(route, spec, 0, 0, 0.6, 1), false, 'under a metre on: not kept');
-  assert.equal(egTrailPush(route, spec, 0, 0, 1.2, 1), true);
+  assert.equal(egRibbonPush(route, spec, 0, 0, 0, 1), true);
+  assert.equal(egRibbonPush(route, spec, 0, 0, 0.6, 1), false, 'under a metre on: not kept');
+  assert.equal(egRibbonPush(route, spec, 0, 0, 1.2, 1), true);
   // onto the Drift at its place at 3 s: kept on it
   const at3 = egPieceAt(drift, 3);
-  assert.equal(egTrailPush(route, spec, drift.x + at3.dx, drift.y, drift.z + at3.dz, 3), true);
+  assert.equal(egRibbonPush(route, spec, drift.x + at3.dx, drift.y, drift.z + at3.dz, 3), true);
   assert.ok(route[2].pl && route[2].pl[0] === drift.i, 'kept on its piece');
   const o = egToDungeon(spec, 0, EG_TRAIL.lift, 0), segs = new Float32Array(EG_TRAIL.max * 6);
   assert.equal(egTrailSegs(route, spec, 3, segs), 2);
@@ -146,7 +146,7 @@ test('AUDIT EG V L3-10 (b) THE TRAIL, ITS LAW (section 8.2): a member\'s route k
   // a buffer of one segment takes one; the cap
   assert.equal(egTrailSegs(route, spec, 6, new Float32Array(6)), 1);
   const long = [];
-  for (let k = 0; k < EG_TRAIL.max + 40; k++) egTrailPush(long, spec, 0, 0, 1.5 * k, 1);
+  for (let k = 0; k < EG_TRAIL.max + 40; k++) egRibbonPush(long, spec, 0, 0, 1.5 * k, 1);
   assert.equal(long.length, EG_TRAIL.max, 'at most EG_TRAIL.max');
 });
 

@@ -650,7 +650,7 @@ group from that tree (e453f8587c) and merged it (96b62ba692).
 | 6 (G NEW-2) | FIXED (words) | `egaudit4_lords_page`'s title no longer says `net/egLord.js` never existed | the test's title |
 | 7 (D NEW-1) | FIXED (words) | EG-E (the rest): `net/egPay.js` is in no relay's graph - the account service and the client import it | section 31 |
 | 8 (L1-13) | RECORDED | the climb on the Colossus's Rails is not built: a ridden piece today is a span's, laid by the hall's law on the fight's clock (`net/egFair.js` egRideAt), and a Rail on a body walking its own route is a new kind of piece the motor, THE FAIR TRAIL and the solver would each have to learn | sections 13.3 and 30 |
-| 9 (L3-10 b, c) | FIXED | THE TRAIL: the door's word names its first across; each screen keeps every living member's route (`world/egLook.js` egTrailPush, a point a metre at most, a point on a moving piece kept on it) and draws the first across's for the others in the closing as THE EDGE LINE's gold at 40% (`render/egLinePass.js`, its own buffer). Allies on traversal ground draw at 60% with their names kept (`scenes/egClient.js` allyVeil through the host's every-peer veil; `net/remotePlayers.js`); their Sigil auras are not drawn there, as a concealed peer's are not | `egaudit5_h`, `egaudit5_h_client`; section 8.2, both lines gone from section 30 |
+| 9 (L3-10 b, c) | FIXED | THE TRAIL: the door's word names its first across; each screen keeps every living member's route (`world/egLook.js` egRibbonPush, a point a metre at most, a point on a moving piece kept on it) and draws the first across's for the others in the closing as THE EDGE LINE's gold at 40% (`render/egLinePass.js`, its own buffer). Allies on traversal ground draw at 60% with their names kept (`scenes/egClient.js` allyVeil through the host's every-peer veil; `net/remotePlayers.js`); their Sigil auras are not drawn there, as a concealed peer's are not | `egaudit5_h`, `egaudit5_h_client`; section 8.2, both lines gone from section 30 |
 | 10 (L1-10's limit) | FIXED | a ground burning as a landing comes is no ground to flee to under THE UNION FLOOR (`net/egFloor.js` egBurnsIn). Lane 1's `p11_sweep`, run again on the merged tree after the second round: 0 violations over every lord, for one and four members | `egaudit5_h`; section 13.2 |
 | 11 (seen while drafting) | FIXED | a Rift-Yard's Kynval Squad holds its first wave Stillness's 10 s past its 30, one law with the Rampart's (`net/egBrain.js` squadTwist) | `egaudit5_h`; section 17.2 |
 
@@ -697,6 +697,13 @@ the coordinator merged it once more:
   `index.js`).
 - **The account's clock.** The stake clock's hourly job stands beside KG6's minute job: nine statements a minute and
   twenty-three an hour on a quiet world (`auditscale` D7).
+- **What the merged suite found**, each fixed:
+  - group H's ribbon push and THE FAIR TRAIL's shared a name, `egTrailPush`, in two modules (`audit24_onehome`): the
+    ribbon's is `egRibbonPush` (`world/egLook.js`);
+  - KG5's string archive `'kings-gambit'` (`render/gambitTableDraw.js`) was in no row of EG-G2's registry: registered;
+  - the lords' pronouns pin read a card's flavor from the catalog, where it no longer stands: it reads `cardFlavor`;
+  - `kg5_relay`'s version pin moved to `world205`; and the card words' rows for the thirteen languages (`kgset_cards`,
+    L10N1b, L10N6b), merged through `tools/l10nInSession.mjs`.
 - **The hosts' ceilings.** HOST-SPLIT's ceilings were measured on main, without the arc's own wiring: +226 code lines
   in `bootWorld` and +191 in `createWorldModes`, written before HOST-SPLIT. With main's growth since (+38 and +153),
   the merged hosts stood 14 and 98 lines over. Host-Split.md names the case - two branches that each fit, landing

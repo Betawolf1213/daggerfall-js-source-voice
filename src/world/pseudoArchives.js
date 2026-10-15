@@ -103,6 +103,7 @@ export const PSEUDO_ARCHIVE_KEYS = Object.freeze([
   K('hcc', 'scenes/horseCartPool.js', 'HORSE_ARCHIVE', "Horses, Carts and Coaches"),
   K('htwaist-lantern', 'player/eotbLantern.js', 'LANTERN_ART_KEY', 'the waist lantern'),
   K('iliac-cards', 'render/iliacTableDraw.js', 'ILIAC_ARCHIVE', "Iliac Hand's cards"),
+  K('kings-gambit', 'render/gambitTableDraw.js', 'GAMBIT_ARCHIVE', "The King's Gambit's board and pieces - render/gambitTableDraw.js (the merge of main)"),
   K('model-icon', 'ui/itemScroller.js', 'MODEL_ICON_ARCHIVE', "a model's icon in the item lists"),
   K('mw-stand', 'scenes/decorRoom.js', 'MW_STAND_ARCHIVE', "a placed Morrowind stand's picture"),
 ]);

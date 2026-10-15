@@ -10,6 +10,7 @@ import { egHallOf } from '../src/net/egLaw.js';
 import { egHavenRouteM } from '../src/net/egLords.js';
 import { egErrandMs } from '../src/net/egShape.js';
 import { ILIAC_CARDS } from '../src/net/iliacCards.js';
+import { cardFlavor } from '../src/systems/iliacCardWords.js';   // PIN MOVED (the merge of main past KG-SET): a card's flavor is the words module's, read through the text core
 
 const page = readFileSync(new URL('../bible/11-Multiplayer/Elite-Gates.md', import.meta.url), 'utf8');
 /** A section of the page, from its heading to the next of its depth or higher. */
@@ -29,7 +30,7 @@ test('AUDIT EG IV lane1 #29 and #28 SECTIONS 12 AND 13.4 NAME WHAT WAS BUILT: th
 });
 
 test('AUDIT EG IV lane9 #18 THE LORDS\' PRONOUNS ARE THE GAME\'S: Ilthys and Seyth "she" on the page as on their cards, Grath "he" as on his card, the Night-Stalker "it" as on its card (mutants: the page\'s "he" for Ilthys or Seyth, "it" for Grath, "he" for the Night-Stalker)', () => {
-  const card = (id) => ILIAC_CARDS.find((c) => c.id === id)?.flavor ?? '';
+  const card = (id) => cardFlavor(ILIAC_CARDS.find((c) => c.id === id));
   assert.match(card('eg-ilthys'), /\bShe\b|\bshe\b/); assert.match(card('eg-seyth'), /\bher\b/); assert.match(card('eg-grath'), /\bhim\b|\bhe\b/); assert.match(card('eg-stalker'), /^It\b/);
   const s134 = section('### 13.4 The Valkynaz'), s133 = section('### 13.3 The roster');
   const ilthys = s134.split('\n').find((l) => l.startsWith('| **Ilthys')), seyth = s134.split('\n').find((l) => l.startsWith('| **Seyth'));

@@ -3394,6 +3394,136 @@
   "tr": "4da24436dbc8",
   "by": "claude-in-session"
  },
+ "cards.iliacSet.egArmsmaster.flavor": {
+  "en": "8ddb1e5c0de0",
+  "tr": "7fe2905095ea",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egArmsmaster.rules": {
+  "en": "05afd0305c83",
+  "tr": "ae89004ac159",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egCairnkeeper.flavor": {
+  "en": "1de97504985e",
+  "tr": "f922aac60466",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egCairnkeeper.rules": {
+  "en": "fb460b7b6e9d",
+  "tr": "a3f19728fe85",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egColossus.flavor": {
+  "en": "fe45cbcb35fa",
+  "tr": "c3e63250d09a",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egColossus.rules": {
+  "en": "83af0fbe0fff",
+  "tr": "77733a2e25fa",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egDusk.flavor": {
+  "en": "1c6d137a6b6c",
+  "tr": "5956a6fcf846",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egDusk.rules": {
+  "en": "cfe240ffcfbe",
+  "tr": "d66fc300fba2",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egGaroth.flavor": {
+  "en": "fb79a57abc6d",
+  "tr": "e76e018fd504",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egGaroth.rules": {
+  "en": "0a27e9b0e057",
+  "tr": "af9e34082dea",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egGrath.flavor": {
+  "en": "49c86f39fabb",
+  "tr": "7cbfaf15dc48",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egGrath.rules": {
+  "en": "f67663ecb75d",
+  "tr": "4fec427b859f",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egIlthys.flavor": {
+  "en": "f07e2e764e17",
+  "tr": "607d81dcf421",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egIlthys.rules": {
+  "en": "eeabb2213abe",
+  "tr": "9b529e9a7518",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egMorvayn.flavor": {
+  "en": "43cfb2841531",
+  "tr": "991027488fed",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egMorvayn.rules": {
+  "en": "f44c383ea63d",
+  "tr": "41895a76ce19",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egSeyth.flavor": {
+  "en": "d98f27130887",
+  "tr": "64a3a25e6c19",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egSeyth.rules": {
+  "en": "8a7c7a91f02b",
+  "tr": "8ce73376de2e",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egSpellmaster.flavor": {
+  "en": "86c4dd4c0d62",
+  "tr": "4f2dae41502b",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egSpellmaster.rules": {
+  "en": "d8d82eba103e",
+  "tr": "ae0310ea1fa7",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egStalker.flavor": {
+  "en": "b88fec9cf82a",
+  "tr": "d5d3404705e5",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egStalker.rules": {
+  "en": "47c6d3178e4f",
+  "tr": "98e3797b65c3",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egTwins.flavor": {
+  "en": "c122371c0754",
+  "tr": "da1f06f737c1",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egTwins.rules": {
+  "en": "0d3ed237da5e",
+  "tr": "360104b00df6",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egWyrm.flavor": {
+  "en": "1df24ca9fc1c",
+  "tr": "635011adbbc7",
+  "by": "claude-in-session"
+ },
+ "cards.iliacSet.egWyrm.rules": {
+  "en": "e32047cfa340",
+  "tr": "83e500e438b0",
+  "by": "claude-in-session"
+ },
  "cards.iliacSet.evermor.flavor": {
   "en": "f51f15a831d3",
   "tr": "506c506fa0c1",

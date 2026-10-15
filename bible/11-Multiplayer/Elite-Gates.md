@@ -792,7 +792,7 @@ law's own count, measured over 150 seeds).
 - **The trail**: once the door opens, the first across's route draws as a faint gold ribbon for the others. The door's
   word names the member whose arrival opened it (`esay` door, its `s`). Each screen keeps every living member's route
   over a span or a Brink, a point a metre at most and `EG_TRAIL.max` (240) points at most, a point on a moving piece kept
-  on that piece (`world/egLook.js` egTrailPush). In the closing it draws the first across's for the others in THE EDGE
+  on that piece (`world/egLook.js` egRibbonPush). In the closing it draws the first across's for the others in THE EDGE
   LINE's gold at 40%, never pulsing (`render/egLinePass.js`, THE TRAIL kind, its own buffer); the first across never
   sees their own (AUDIT EG V, L3-10).
 - **Members never block each other**: peers are not in the collider (`src/net/remotePlayers.js`). Allies draw at 60%
