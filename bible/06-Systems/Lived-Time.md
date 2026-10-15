@@ -208,7 +208,7 @@ clock: stock, prices, respawns, events, the day's shelf.
 What a player can speed by resting is their own waits, each exactly as DFU lets a single player, and
 every cost comes with it:
 
-- **the waits:** an infection's turn, a promotion's 28 days, training's cooldown, a repair, a letter,
+- **the waits:** an infection's turn, a demotion's 28 days (a promotion online waits none - PROMO-NOW), training's cooldown, a repair, a letter,
   the reputation drift, the cure roll;
 - **the costs:** effects run out; hunger, thirst and sleep build; the vampire thirsts; the werewolf's
   urge builds; rooms and loans run.

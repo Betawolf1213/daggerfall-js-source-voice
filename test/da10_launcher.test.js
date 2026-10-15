@@ -197,7 +197,8 @@ test('DA10: the shell - Play is the only way in, the news is the check\'s own re
   assert.match(main, /inGamePicker: cfg\.arena2InGame === true \|\| !!process\.env\.DAGGER_SKIP_ARENA2_PROMPT,/);
   // the version last played, kept at the handover - the next launch's NEW marks
   const hand = main.slice(main.indexOf('function launchGame()'), main.indexOf('/** The launch check, inside DA6'));
-  assert.match(hand, /saveConfig\(\{ \.\.\.loadConfig\(\), lastPlayed: app\.getVersion\(\) \}\);/);
+  // PIN MOVED: DA13 - the GAME's version, which the channel moves past the install's own (gameVersion)
+  assert.match(hand, /saveConfig\(\{ \.\.\.loadConfig\(\), lastPlayed: gameVersion\(\) \}\);/);
   // AUDIT INSTALL R2-A9: returning is a config.json from BEFORE DA10 - not one a first run wrote before its first Play
   assert.match(main, /const returning = !cfg\.lastPlayed && cfg\.launcherSeen !== true && Object\.keys\(cfg\)\.length > 0;\s*if \(cfg\.launcherSeen !== true\) saveConfig\(\{ \.\.\.loadConfig\(\), launcherSeen: true \}\);/);
   assert.match(main, /\n\s*returning,\n/);

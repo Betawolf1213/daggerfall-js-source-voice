@@ -7,6 +7,7 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS / WAGON-TIERS (PIN MOVED): the upkeep is handed each tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import {
   saddleGait, saddleSpeedText, saddleTitle, saddleMeters, saddleButtons, saddleHint, fedText, drawEnhancedSaddle, hideEnhancedSaddle,
@@ -186,7 +187,7 @@ test('STEED-UI the upkeep\'s read: the ridden horse - its breath while ridden (n
   const items = [h, w, oats(2), apple(1), kit(1)];
   const store = [oats(3), kit(2)];
   const sw = { horse: true, wagon: true };
-  const up = createUpkeep({ items: () => items, now: () => t, horseCare: () => sw.horse, wagonUpkeep: () => sw.wagon, stores: () => store });
+  const up = createUpkeep({ items: () => items, now: () => t, horseCare: () => (sw.horse ? HARD : null), wagonUpkeep: () => (sw.wagon ? WHARD : null), stores: () => store });
   const r = up.saddle('Horse');
   assert.equal(r.horse.breath, 1);
   assert.equal(r.horse.winded, false);
@@ -205,7 +206,7 @@ test('STEED-UI the upkeep\'s read: the ridden horse - its breath while ridden (n
   // on a bench, the team's hungriest horse is the one shown hungry and fed - the bond stays the lead's
   const lead = horse(41, { horseFed: T0 + 600, horseBond: 300 }), second = horse(42, { horseFed: T0 - 60 }), spare = horse(43, { horseFed: T0 - 5000 });
   const teamPack = [lead, second, spare, wagon('openWagon')];
-  const tu = createUpkeep({ items: () => teamPack, now: () => T0, horseCare: () => true, wagonUpkeep: () => true });
+  const tu = createUpkeep({ items: () => teamPack, now: () => T0, horseCare: () => HARD, wagonUpkeep: () => WHARD });
   const bench = tu.saddle('Cart').horse;
   assert.deepEqual([bench.hungerKey, bench.feed, bench.team, bench.tier], ['hungry', 1, 2, 'Accepting'], 'the second of the Open Wagon\'s two - the spare is in no harness');
   assert.deepEqual([tu.saddle('Horse').horse.hungerKey, tu.saddle('Horse').horse.feed, tu.saddle('Horse').horse.team], ['fed', 0, 1], 'astride: the one ridden');
@@ -302,7 +303,7 @@ test('STEED-UI the four hosts: world.js and exterior.js build the one glue over 
   const world = rd('src/scenes/world.js'), ext = rd('src/scenes/exterior.js');
   for (const [name, s] of [['world.js', world], ['exterior.js', ext]]) {
     assert.match(s, /const saddleHost = createSaddleHost\(\{\n {4}upkeep, runtime: \(\) => hccRuntimeOn\(\), items: \(\) => playerEntity\.items \?\? \[\],/, `${name}: the glue`);
-    assert.match(s, /saddleHost\.motion\(gamePaused\(\) \? 0 : dt, metres, galloping\);/, `${name}: the motion`);
+    assert.match(s, /saddleHost\.motion\(gamePaused\(\) \? 0 : dt, metres, galloping, player\.rideWalking\);/, `${name}: the motion - HORSE-TIERS (PIN MOVED): and the walk the motor took`);
     assert.match(s, /openStable: \(\) => hudCtx\.togglePause\(\{ at: 'holdings' \}\)/, `${name}: the Stable`);
     assert.match(s, /pass: upkeepPass/, `${name}: the kit's hour`);
     assert.ok(s.includes("isEnhancedPlus() && typeof document !== 'undefined' && walkMode"), `${name}: Enhanced Plus only`);
@@ -335,7 +336,7 @@ test('STEED-UI the Stable page, polished: the bond a bar to the next word with t
   const a = horse(31, { horseFed: T0 + 14 * 60 + 10, horseBond: 450 });
   const w = wagon('caravan', 300);
   const items = [a, w, oats(2)];
-  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => true, wagonUpkeep: () => true });
+  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => HARD, wagonUpkeep: () => WHARD });
   setHoldingsProvider(stableProviderFor({ runtime: null, on: () => false, hasHorse: () => true, hasCart: () => true, wagonKind: () => 'caravan', items: () => items, upkeep: u }));
   resetHoldingsPages();
   try {

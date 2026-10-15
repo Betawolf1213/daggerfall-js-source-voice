@@ -47,6 +47,7 @@
 
 import { SAVE_MAX_BYTES } from './service.js';
 import { GUILD_RANK_MASTER } from '../../src/net/guildLaw.js';   // AUDIT REALM L1-F7: a deleted guildmaster hands the guild over first
+import { homeMoved } from '../../src/net/homeLaw.js';   // QUEST-HOME: the homes a deleted character took with it
 import { liquidWealthOf, customsAllowance, REALM_BIRTH_LEVEL, REALM_BIRTH_WEALTH_MAX } from '../../src/net/realmGoldLaw.js';
 import { cardWorthOf, cardPacksOf, customsCardAllowance, STARTER_DECK_WORTH } from '../../src/net/cardWorthLaw.js';   // CARDS9: the cards' customs - the client's law   // AUDIT REALM2 S1: the first save, measured as customs measures it
 import { ID_RE, armsIssuable } from '../../src/net/identityToken.js';   // CUSTOMS-PASS: an account named by its id; INT7: the arms' claim
@@ -664,7 +665,8 @@ export function realmAtOf(/** @type {any} */ v) {
  * row's `witnessed` takes it in the same step, so the budget never charges a gain the service itself made. INT6: the
  * last checkpoint judged clean is never `prev` to drop.
  * @param {any} ctx @param {string} playerId @param {{ id: string, lease: string, seq: number }} at
- * @param {(save: any) => string | null} change @param {{ outbound?: boolean }} [opts]
+ * @param {(save: any) => string | null} change @param {{ outbound?: boolean, escrow?: boolean | Set<string>, seize?: boolean }} [opts]
+ *   `escrow`: the pieces leaving in the service's hands (ledger.js ledgerMoves - true all, a Set those keys)
  */
 export async function prepareRealmRecord({ db, bucket, rand, nowS }, playerId, at, change, { outbound = false, escrow = false, seize = false } = {}) {
   if (!bucket) return { error: 'no-storage' };
@@ -725,7 +727,7 @@ export async function prepareRealmRecord({ db, bucket, rand, nowS }, playerId, a
  * join reads the new one (the staff rollback's way, review.js). Answers prepareRealmRecord's `{ steps, key, prev, seq }`,
  * guarded on the sequence it read, or `{ error }`.
  * @param {any} ctx @param {string} playerId @param {string} charId
- * @param {(save: any) => string | null} change @param {{ escrow?: boolean }} [opts]
+ * @param {(save: any) => string | null} change @param {{ escrow?: boolean | Set<string> }} [opts]
  */
 export async function seizeRealmRecord(ctx, playerId, charId, change, { escrow = true } = {}) {
   const row = await ctx.db.prepare('SELECT seq, lease FROM realm_characters WHERE id = ? AND player = ? AND dead_at IS NULL').bind(charId, playerId).first();
@@ -856,7 +858,10 @@ export async function deleteRealm({ db, bucket, nowS = Math.floor(Date.now() / 1
   const late = await homeHeld();
   if (late) return late;
   await dropCharacterObjects(bucket, playerId, id, [row.obj, row.prev]);
-  await db.batch([
+  // QUEST-HOME (Mac, 2026-10-15: "Close both"): the homes the delete takes, a house again to every page online - read
+  // with the delete in one batch, so the answer names exactly what went
+  const [gone] = await db.batch([
+    db.prepare('SELECT map_id, building_key FROM homes WHERE player = ? AND char_id = ? ORDER BY map_id, building_key').bind(playerId, id),
     db.prepare('DELETE FROM homes WHERE player = ? AND char_id = ?').bind(playerId, id),
     db.prepare('DELETE FROM guild_members WHERE player = ? AND char_id = ?').bind(playerId, id),
     db.prepare('DELETE FROM renown_tracks WHERE player = ? AND char_id = ?').bind(playerId, id),
@@ -875,7 +880,10 @@ export async function deleteRealm({ db, bucket, nowS = Math.floor(Date.now() / 1
     endUnionsOf(db, id, nowS, 'gone'),   // LEGACY7 part three: a union ends with the character
     db.prepare('DELETE FROM realm_wed_halves WHERE char_id = ?').bind(id),
   ]);
-  return { ok: true };
+  /** @type {Map<number, number[]>} */
+  const towns = new Map();
+  for (const h of gone?.results ?? []) towns.set(h.map_id, [...(towns.get(h.map_id) ?? []), h.building_key]);
+  return { ok: true, ...(towns.size ? { moved: [...towns].flatMap(([mapId, keys]) => homeMoved(mapId, [], keys)) } : {}) };
 }
 
 /** HOME-RENT (2026-09-30): THE TENANCIES STILL RUNNING in a character's homes - a sale (homes.js) or the character's

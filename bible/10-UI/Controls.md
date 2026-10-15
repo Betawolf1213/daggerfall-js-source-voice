@@ -126,7 +126,12 @@ button presses with no key bound. The mouse clicks it while the pointer is free 
 and at the helm a pad's bare d-pad is the helm's (up the sails, held the square sails; down the lanterns, held leave
 the helm; left and right the time scale, held the trim), none of it a binding - so the table below keeps no Pad row
 for the nine, and the prompt bar says what the d-pad does there. Aboard another player's boat (CSA-K) there is no
-key and no button: the helm is its owner's.
+key and no button: the helm is its owner's. It moves (HUD-HELM, 2026-10-15, Mac: "Yes, same branch" - the saddle
+panel's twin, below): the bar is a HUD-MOVE piece, "Helm panel"
+(`hudLayout.js:"{ id: 'helm', sel: '.helmpanel .helmpanel-bar'"`), placed where the player put it the moment it is
+built, with a preview of itself ("At the helm (preview)", `buildHelmPreview`) while the editor is open and nobody is
+at a helm; the sea's target card stands under the bar wherever it is moved (`03-World/Naval-Combat.md`, Where the card
+stands).
 
 HELM-KEYS (2026-09-29, the player: "Arrow keys should not only control your ship, but also setting and raising your
 sails. I also want to find a way to make the ship controls more intuitive instead of a bunch of buttons and key
@@ -195,14 +200,16 @@ Options' bar) hides it. It spends NO key of its own and adds no binding.
 
 - **What it reads** (`systems/upkeepRuntime.js saddle`, never written): its title the rider's - "Riding <name>" or
   "Driving the <wagon>" - with the gait (Standing, Walking, Galloping, Trotting, Rolling - HORSE-WALK, 2026-10-12: a
-  horse under horse care walks, and gallops on the run; Trotting is DFU's one pace, horse care off,
-  `06-Systems/Horse-Care.md` THE WALK) and the pace in km/h, smoothed off
+  horse under horse care walks, and gallops on the run; Trotting is DFU's one pace - horse care Off, and on Boons a
+  gallop asked and refused, HORSE-TIERS - `06-Systems/Horse-Care.md` THE WALK) and the pace in km/h, smoothed off
   the motor's odometer (a placement or a carry never counted); the horse's Breath a bar while ridden (Winded in
-  words); its Hunger a chip with the hours its food has left - on a bench the TEAM's, its hungriest horse's (a
-  Caravan's second horse starving drags the team's Strength as its lead would); its Bond a bar to the next word; the
+  words); its Hunger a chip with the hours its food has left - on a bench the TEAM's, its hungriest horse's (on Hard a
+  Caravan's second horse starving drags the team's Strength as its lead would), amber at most on Boons, where hunger
+  costs nothing (HORSE-TIERS: no red where nothing costs); its Bond a bar to the next word; the
   wagon's state and share of whole, and its load against its limit. The line under the title says what the horse
-  needs first (winded, starving, a wagon failing), else the gallop's key while ridden and, while the look holds the
-  mouse, how to free it (`FreeMouse`, Y).
+  needs first (winded, starving, a wagon failing - on wagon upkeep's Hard, where a failing wagon is slow; on its Boons
+  the wagon's chip stops at amber and the line says nothing of a pace it has, WAGON-TIERS), else the gallop's key while
+  ridden and, while the look holds the mouse, how to free it (`FreeMouse`, Y).
 - **Every button is a door that already stands** (`scenes/saddleHost.js`, one glue for `world.js` and `exterior.js`):
   Feed oats and Apple are the Stable page's acts, to the horse the panel shows hungry; Repair kit is the kit's Use
   (where a kit would mend); Cargo is a press on the wagon (`systems/horseCart.js openWagonCargo` - the load opened
@@ -214,6 +221,13 @@ Options' bar) hides it. It spends NO key of its own and adds no binding.
 - **The mouse** clicks it while the pointer is free; **a finger** taps it (44 px, the helm's own place clear of the
   stick and the corner); **a pad** keeps its d-pad for the quick slots (a rider's potions are on it) and presses the
   panel with its cursor (PADPLUS1). The classic skin keeps the grip bar's breath and the keys.
+- **It moves** (HUD-SADDLE, FIELD BUGS 2026-10-14, Discord: "Riding Window is not able to be edited in the HUD Editor
+  (Alt+U)" - `01-Overview/Field-Bugs-2026-10-14-riding-panel.md`): the bar is a HUD-MOVE piece, "Riding panel"
+  (`hudLayout.js:"{ id: 'saddle', sel: '.saddlepanel .saddlepanel-bar'"`) - Alt+U frames it, a drag moves it, its
+  corner sizes it, its X turns it off in play, and a double-click or Reset puts it back. A panel built at a mount stands
+  where the player put it from its first frame (`ui/hudPlacer.js` placeHudPieces, the notice stack's leaf), and while
+  the editor is open and nobody rides it stands as a preview of itself ("Riding panel (preview)", `buildSaddlePreview`).
+  The helm panel, its twin at the same place, is a piece too (HUD-HELM, above).
 
 ## AUDIT KB1 (2026-09-24, Mac: "Audit this before we merge")
 

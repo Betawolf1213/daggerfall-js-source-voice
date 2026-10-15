@@ -134,7 +134,8 @@ test('LIVING CREW THE GUNS AND THE GRAPPLE: her guns out - no song, the battle\'
   for (const [n, m] of life.members.entries()) if (!m.station) { m.pos = [-1 + (n % 3), 2, 5 + n * 0.2]; m.path = null; m.state = 'idle'; }   // a knot of them amidships
   const shouts = new Set();
   let into = 0;
-  run(life, 25, { muster: -1 }, (l) => { into += 0.05; if (into > CREW_LINE_S) for (const x of l.speech()) shouts.add(x.text); });   // a word already said fades on
+  // PIN MOVED (CREW-MUSTER, FIELD BUGS 2026-10-14): a grapple thrown names her side of it - here she is boarded
+  run(life, 25, { muster: -1, way: 'repel' }, (l) => { into += 0.05; if (into > CREW_LINE_S) for (const x of l.speech()) shouts.add(x.text); });   // a word already said fades on
   const ext = deckExtentZ(deck);
   const walkers = life.members.filter((m) => !m.station);
   for (const m of walkers) {
@@ -145,7 +146,7 @@ test('LIVING CREW THE GUNS AND THE GRAPPLE: her guns out - no song, the battle\'
   const zs = walkers.map((m) => m.pos[2]).sort((a, b) => a - b);
   assert.ok(zs.at(-1) - zs[0] > (ext[1] - ext[0]) * 0.5, 'spread fore and aft');
   for (let i = 1; i < zs.length; i++) assert.ok(zs[i] - zs[i - 1] > (ext[1] - ext[0]) / walkers.length * 0.5, `evenly along her rail: ${zs.map((z) => z.toFixed(1))}`);
-  assert.ok([...shouts].every((w) => CREW_BLURBS.muster.includes(w)), 'the muster\'s words');
+  assert.ok(shouts.size > 0 && [...shouts].every((w) => CREW_BLURBS.repel.includes(w)), `the repel's words: ${[...shouts]}`);
   assert.ok(life.members.find((m) => m.station).pos[0] === 5.5, 'the station at his post');
   run(life, 1, {});
   assert.ok(life.members.every((m) => m.state !== 'ready'), 'the grapple over');

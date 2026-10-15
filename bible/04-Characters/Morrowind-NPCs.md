@@ -1796,10 +1796,12 @@ THE LOOKS (K).
   puppet (`_mwWire = 'kit'`) stands in its sprite until it has them, then
   is the owner's man in the owner's armour and blade. A record still
   building keeps the look the first word carried. THE DUNGEON'S LAW, said:
-  every machine's copy of a dungeon's foe carries its own roll, and that
-  copy is what its player loots - so a dungeon's body wears its own copy's
-  kit; its race, face and death are the room's (the layout point's, or the
-  owner's seed).
+  every machine's copy of a dungeon's foe wears its own copy's kit, and
+  its race, face and death are the room's (the layout point's, or the
+  owner's seed); what its BODY holds is the room's - one base list every
+  copy computes, the takes against it the room's word, and each player's
+  own bonus over it (PARTY-LOOT, 2026-10-14, Mac: "Shared base + personal
+  bonus" - `06-Systems/Online-Arc.md` PARTY-LOOT), whatever the copy wore.
 - K3. A dungeon's puppet - a room's encounter, a member's own foe - was
   stood at its first streamed feet, its `marker`, and seeded off that: its
   owner's spawn spot to the owner, another man to everyone else. The room's
@@ -2558,7 +2560,7 @@ DISC20-C's distance from the entry to its ground call (10200 -> 10400, the
 ## 29. FB1015 - THE BODY UNDER A WINDOW, AND WHERE ITS TEXELS STAND (2026-10-15)
 
 The owner: "When looting dead marrowind enemies, they turn to a sprite. The models also clip through geometry."
-Record of the batch: `01-Overview/Field-Bugs-2026-10-15.md`.
+Record of the batch: `01-Overview/Field-Bugs-2026-10-15b.md`.
 
 - LOOT-BODY. Both dungeon hosts (scenes/worldModes.js's dungeon arm, scenes/dungeon.js) draw the level's flats under a
   window and return before drawFoes - the only place a foe's body was drawn - and AUDIT MW-NPC C6 (section 21) showed

@@ -58,8 +58,8 @@
   {
     "name": "the-row-stops-carrying-its-item",
     "file": "src/systems/worldHover.js",
-    "old": "    rarity: rarityAttr(it),   // LR1: null with the switch off or for Common\n    item: it,",
-    "new": "    rarity: rarityAttr(it),   // LR1: null with the switch off or for Common",
+    "old": "    mine: isPersonalLoot(it),   // PARTY-LOOT: this player's own bonus - every other row is the same for everyone in the room\n    item: it,",
+    "new": "    mine: isPersonalLoot(it),   // PARTY-LOOT: this player's own bonus - every other row is the same for everyone in the room",
     "tests": [
       "test/quicklootstats.test.js"
     ]
