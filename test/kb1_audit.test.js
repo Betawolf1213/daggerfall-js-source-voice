@@ -350,7 +350,9 @@ test('AUDIT KB1 (UI 3 + hosts 4): eventAction reads the event\'s own flags and b
 test('AUDIT KB1 (UI 4): Escape on the Controls pane\'s prompt answers No - the menu\'s back stack asks the pane before it leaves the section (mutant: the arm dropped, so Escape discards every staged bind)', () => {
   const m = rd('src/ui/enhancedMenu.js');
   const arm = m.indexOf(': controlsPromptOpen() ? () => dismissControlsPrompt()');
-  assert.ok(arm > 0 && arm < m.indexOf(": section !== 'home' ? () => go('home')"), 'the prompt is answered before the section is left');
+  // PIN MOVED (AUDIT UICALM-FIRM1 L3 L1): the section's way back now puts the keyboard on its door - the order held
+  const leave = m.indexOf(": section !== 'home' ? () => { const from = section; go('home');");
+  assert.ok(arm > 0 && leave > arm, 'the prompt is answered before the section is left');
 });
 
 test('AUDIT KB1 (UI 6): the pad\'s button closes the classic window it opened - the pause on Menu, the pack on View (mutant: the primary alone read)', () => {

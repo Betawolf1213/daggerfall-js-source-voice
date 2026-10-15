@@ -118,6 +118,7 @@ await page.route('**/arena2/**', async (route) => {
 
 await page.goto(`${BASE}/play/?skin=enhanced`, { waitUntil: 'networkidle' });
 await page.waitForSelector('#enhanced-menu .doorbtn', { timeout: 20000 });
+if (await page.locator('#enhanced-menu .doorbtn.door-offline').count()) await page.locator('#enhanced-menu .doorbtn.door-offline').click();   // UI-CALM: the games stand behind Offline
 await page.locator('#enhanced-menu .doorbtn.door-new').first().click();
 await page.getByRole('button', { name: 'Begin', exact: true }).click();
 await page.waitForSelector('#enhanced-menu', { state: 'detached', timeout: 20000 });
@@ -243,6 +244,7 @@ await ctx.close();
   await p2.route('**/arena2/**', (route) => route.fulfill({ status: 404, body: '' }));
   await p2.goto(`${BASE}/play/?skin=enhanced`, { waitUntil: 'networkidle' });
   await p2.waitForSelector('#enhanced-menu .doorbtn', { timeout: 20000 });
+  if (await p2.locator('#enhanced-menu .doorbtn.door-offline').count()) await p2.locator('#enhanced-menu .doorbtn.door-offline').click();   // UI-CALM: the games stand behind Offline
   await p2.locator('#enhanced-menu .doorbtn.door-new').first().click();
   await p2.getByRole('button', { name: 'Begin', exact: true }).click();
   await p2.waitForSelector('#enhanced-menu', { state: 'detached', timeout: 20000 });

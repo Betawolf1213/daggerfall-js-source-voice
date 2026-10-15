@@ -89,7 +89,9 @@ export const FRAME_ROLES = {
     // game going on under them, as the helm's and the saddle's bars stand over the world
     'body .dfcards', 'body .dfiliac',
     'body .dfgambit',   // KG3: The King's Gambit's panel, the third card table's (Kings-Gambit.md section 14.1)
-    'body .lgs-win'],   // LEGACY3: the Succession - who carries the line on
+    'body .lgs-win',   // LEGACY3: the Succession - who carries the line on
+    // FIRM1: the Firmament's window (ui/firmamentWindow.js) - its bar, its panels, its presses
+    'body .fmt-bar', 'body .fmt-side', 'body .fmt-confirmbox'],
   // the talk panel is a .px-win whose own ground rule outweighs .px-win's
   windowGround: ['.talk-shell .talk-panel'],
   // REVENANT-PAGE / COMPANION-ROSTER: a row is a card, never a press (the 2026-10-02 audit: the tile's hover and its sink);
@@ -129,7 +131,10 @@ export const FRAME_ROLES = {
     // the binder, a row a deck
     'body .dfcards .seat', 'body .dfiliac .hold', '.px-sys .binder-deck',
     'body .dfgambit-sec', 'body .dfgambit-info', 'body .dfgambit-result',   // KG3: a section, the information box, the result
-    '.px-win .card.acctin ul.acctfacts.acctrecord li'],   // PROFILE-MENU: the profile's record, a tile a deed   // ARENA3: the Arena window's cards - a bout, a tier, a banner, a board, a rule   // ARENA2: the versus bar's plate - a stone panel over the sand
+    '.px-win .card.acctin ul.acctfacts.acctrecord li',   // PROFILE-MENU: the profile's record, a tile a deed   // ARENA3: the Arena window's cards - a bout, a tier, a banner, a board, a rule   // ARENA2: the versus bar's plate - a stone panel over the sand
+    // FIRM1: the Firmament's window (ui/firmamentWindow.js) - its card, its word, its hint (under the Grimoire the card
+    // and the word are scrolls of its own)
+    'body .fmt-tip', 'body .fmt-say', 'body .fmt-hint'],
   // panels that carry a brass edge on the left as their own mark
   panelAccent: ['body .rvncard', '.notice', '.inputbox', 'body .dfsocial-toast', 'body .dfdecor-bar'],   // PLUS-DRESS: the two that wore a brass line
   button: ['.port-host .port-btn', '.pack-shell .statflip-btn', '.inv-info .act', '.pbind .act', '.px-sys .act', '.shell .act', '.px-win .card .act', '.pack-shell .act', '.px-setwrap .act',
@@ -180,12 +185,16 @@ export const FRAME_ROLES = {
     // PLUS-MENU (2026-10-07, Mac: "give the main menu the enhanced plus UI treatment"): the front door's doors - stone
     // slabs that go brass under the pointer, as every other Plus press does (AUDIT PLUS-MENU M3: the System tab's list
     // named beside them was `.px-menu.px-compact`, which nothing builds - that list is the rail's rows, the qrow role)
-    '.px-menu .doorbtn'],
+    '.px-menu .doorbtn',
+    // FIRM1: the Firmament's window (ui/firmamentWindow.js) - its bar, its panels, its presses
+    'body .fmt-btn'],
   primary: ['.lv-ok', '.hmroot .act:not(.hmtool)', 'body .dfdecor-place', 'body .bounty-shell .act.primary', 'body .lgs-shell .act.primary', 'body .notice-shell .act.primary',
     'body .aw-shell .act.primary',   // ARENA3: Fight and the wager placed - what the window is for   // BOUNTY1: Take bounty and Take the reward in brass   // PLUS-MAP: the map's tools are plain stone   // PLUS-DRESS: Place is what the decorator is for
     'body .dfnaval-take',   // NAV-F: Take all (and a raid's Sail on) - what the plunder window is for
-    'body .dfcards button[data-kind="primary"]', 'body .dfiliac button[data-kind="primary"]',
-    'body .dfgambit button[data-kind="primary"]'],   // KG3: Build your army, Start the battle, End turn, Play again   // CARDS-PLUS: Deal me in, Check and Call; Deal, Commit and Play again
+    'body .dfcards button[data-kind="primary"]', 'body .dfiliac button[data-kind="primary"]',   // CARDS-PLUS: Deal me in, Check and Call; Deal, Commit and Play again
+    'body .dfgambit button[data-kind="primary"]',   // KG3: Build your army, Start the battle, End turn, Play again
+    // FIRM1: the Firmament's window (ui/firmamentWindow.js) - its bar, its panels, its presses
+    'body .fmt-btn.fmt-go'],
   // PLUS-DRESS: a press that COSTS something - leave or disband a guild, remove a member, challenge a player - the
   // button in blood rather than brass (the low-health frame's red). Each is a button above as well; this is its edge.
   warn: ['body .dfsocial-btn.warn', 'body .dfprofile-duel',
@@ -193,8 +202,10 @@ export const FRAME_ROLES = {
     '.pack-shell .fate-confirm .act.warn', '.px-sys .cmp-acts .act.warn',   // REVENANT-FATE: Execute; COMPANION-ROSTER: Release, confirmed
     'body .dfdecor-btn.warn',   // MENU-ORDER: the decorator's Remove - its piece and half its price go
     '.trade-shell .act.trade-steal',   // MENU-ORDER: the counter's Steal - a crime, if the keeper sees it
-    'body .dfiliac button[data-kind="warn"]',
-    'body .dfgambit button[data-kind="warn"]'],   // KG3: Forfeit, and Stand up mid-game - the stake given up   // CARDS-PLUS: Iliac Hand's Concede and stand - the staked card or the ranked game given up
+    'body .dfiliac button[data-kind="warn"]',   // CARDS-PLUS: Iliac Hand's Concede and stand - the staked card or the ranked game given up
+    'body .dfgambit button[data-kind="warn"]',   // KG3: Forfeit, and Stand up mid-game - the stake given up
+    // FIRM1: the Firmament's window (ui/firmamentWindow.js) - its bar, its panels, its presses
+    'body .fmt-btn.fmt-exit'],
   tile: ['.port-host .port-tile', '.pack-shell .sf-chip', '.port-host .port-iconcell', '.pack-shell .itemrow', '.pack-shell .equipped .wornrow', '.pack-shell .wornsock', '.wizard .racegrid button',
     '.wizard .facegrid button', '.shell .ft-tile', '.shell .ft-seg', '.shell .ft-mchip', '.shell .ft-tile-more',   // FT18: a condensed tile's parts toggle
     '.sb-shell .sb-chip', '.cr-shell .sb-chip', '.piletab',
@@ -217,7 +228,9 @@ export const FRAME_ROLES = {
     'body .dfnaval-chip', 'body .dfnaval-gun',   // NAV-F: the plate's fire/brace chips and the battery rose - readouts, never pressed
     'body .arena-timer', 'body .arena-tag',
     'body .aw-chip',   // ARENA3: the Arena window's titles, banners, laurels, odds and states - readouts   // ARENA2: the bout's clock and the crowd's darling/villain marks - readouts
-    'body .dfcards .pot', 'body .dfiliac .pw'],   // CARDS-PLUS: the pot, and a holding's power each way - readouts
+    'body .dfcards .pot', 'body .dfiliac .pw',   // CARDS-PLUS: the pot, and a holding's power each way - readouts
+    // FIRM1: the Firmament's window (ui/firmamentWindow.js) - its bar, its panels, its presses
+    'body .fmt-purse'],
   // HOLDINGS: a holding's picture, a name's field (`.hld-art`, `.hld-field`)
   well: ['body .rvncard-face', '.px-sys .rvn-face', '.px-sys .hld-art', '.px-sys .hld-field', '.px-sys .fam-view', '.px-sys .fam-card .fam-face', 'body .lgs-face',   // LEGACY3: the tree's ground, the card's portrait
      '.pack-shell .fate-face', '.px-sys .cmp-face', '.px-sys .cmp-slot', '.trade-shell .packcol', '.pack-shell .sf-sec', '.shell .opt-search', '.shell .ft-tile-drawer',   // FT18: the Features search and a tile's opened drawer
@@ -239,7 +252,9 @@ export const FRAME_ROLES = {
   input: ['.shell .opt-search', '.wizard .namebox', '.sb-shell .sb-rename input', '.cr-shell .cr-compose input', '.hmsearch input',
     'body .dfsocial-field', 'body .dfchat-input', 'body .dfdecor-search',
     '.tview-wp-pick', '#wp-menu input.wpm-name',   // WAYPOINTS: the follow dropdown and the menu's name
-    '.px-sys .binder-edit input'],   // COLLECTIONS (CARDS-PLUS): a deck's name
+    '.px-sys .binder-edit input',   // COLLECTIONS (CARDS-PLUS): a deck's name
+    // FIRM1: the Firmament's window (ui/firmamentWindow.js) - its bar, its panels, its presses
+    'body .fmt-find'],
   meterFill: ['.px-fill', 'body .dfgambit-fill'],   // KG3: a piece's health, banded like the vitals
   header: ['.port-host .port-head', '.px-win .px-tabs', '.talk-head', '.sb-shell .sb-top', '.cr-shell .sb-top', '.trade-shell .sb-top',
     'body .broker-head',   // SET7: the Broker's header - who, the purse, the turn of the day
@@ -371,6 +386,13 @@ const BLOOD_HI = '#ff8a76 #7a1d16 #5a130f #e0584a';
 const BLOOD_SUNK = '#3d0d0a #b83a2e #e0584a #5a130f';
 const RING = `0 0 0 1px ${T.outline}`;
 const LIT_BAND = 'linear-gradient(180deg, rgba(255,255,255,0.08) 0 2px, transparent 2px calc(100% - 3px), rgba(0,0,0,0.32) calc(100% - 3px))';
+/** UI-CALM II: a window's carved frame and ground, for a surface that is a window by look but not by role (the
+ *  character walk's list and card - ui/uiCalmStyle.js), so the two never drift apart. */
+export const WINDOW_FRAME = Object.freeze({
+  image: `${FRAME_URL} ${BAND} / ${BAND}px / ${OUTSET}px stretch`,
+  ground: `${GRAIN}, ${T.ground}`,
+  shadow: `4px 4px 0 ${OUTSET}px rgba(0,0,0,0.42)`,
+});
 
 export function frameCss(r = FRAME_ROLES) {
   const pressable = [...r.button, ...r.primary];

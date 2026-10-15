@@ -5200,6 +5200,7 @@ export async function bootExterior(canvas, renderer, params, status) {
         covered: townTalk.hudCovered || (modes?.hudCovered ?? false) || gamePaused() || !hudRenderEnabled(),
         touch: !!touch, mouseFree: show && (cursorActive() || !document.pointerLockElement),
         freeKey: saddleKeyLabel('FreeMouse'), keyOf: saddleKeyLabel,
+        toggle: show && hccActionPressed('SaddlePanel'),   // UI-CALM: the panel's key (F2) - up and away
       });
     }
     arenaFrame(dt);   // ARENA-FIX 12: the bout on the city's floor or the instance's - before the modal return, as the world host's

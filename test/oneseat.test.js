@@ -500,6 +500,7 @@ function seatHost({ publishThrows = false, duelThrows = false, court = null } = 
     travellerBook: { clear: () => log.push('travellers forgotten') }, travellerSent: { last: { px: 1 }, at: 0 },   // AUDIT TV C5
     exteriorFoes: { clearPuppets: () => log.push('puppets gone') }, modes: { clearOwnPuppets: () => log.push('own puppets gone'), gateArenaDay: () => court },
     camps: { sweepOwners: (alive) => log.push(`camps kept for ${alive.size}`) }, hcc: { pruneKept: (list) => log.push(`kept teams for ${list.length} rooms`) },
+    setFirmamentOnline: () => {}, firmBook: null,   // FIRM1: the sky sleeps and wakes with the sigils (systems/firmamentLive.js); no book in this host
     setSigilOnline, setSigilRenown, setRenownLayer: (e, level) => log.push(`renown layer ${level}`), playerEntity: { name: 'Mac' }, renownNow: 12, onlineOn: true,
     computeEntityMods: () => log.push('set tiers folded'),   // SET3 (main's): the sets' stat fold, as a Renown rise runs it
     ejectFromCourt: (t) => log.push(`cast out: ${t}`), COURT_TEXT: { lost: 'the fight is lost' },

@@ -195,7 +195,7 @@ export const unitChips = (/** @type {{level: number, hp: number, atk: number, ra
   t('cards.kingsGambit.chip.cost', '{n} pts', { n: u.cost }),
 ];
 /** The army's two chips. */
-export const pointsLeft = (/** @type {number} */ left) => t('cards.kingsGambit.army.pointsLeft', 'Points left {left} of {budget}', { left, budget: KG_POINT_BUDGET });
+export const armyPointsLeft = (/** @type {number} */ left) => t('cards.kingsGambit.army.pointsLeft', 'Points left {left} of {budget}', { left, budget: KG_POINT_BUDGET });
 export const unitsHeld = (/** @type {number} */ n) => t('cards.kingsGambit.army.units', 'Units {n} of {max}', { n, max: KG_MAX_UNITS });
 /** The king's line under the army. */
 export const armyKingLine = (/** @type {string} */ crown) => t('cards.kingsGambit.army.king', 'Your king: {king} - free. If your king falls, you lose.', { king: kingName(crown) });

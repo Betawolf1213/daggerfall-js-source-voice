@@ -108,6 +108,12 @@
 // kept one an account for a day); the level rides the token when the
 // mint names one:
 //   POST /v1/renown/xp { character, xp, name?, rid?, region? } -> { character, xp, level, credited, rose, order, max?, repeat? }   (SEAT1b: `region` where it was earned)
+// FIRM1, THE FIRMAMENT (firmament.js; the law src/net/firmamentLaw.js): a character's passive tree, its Stars the Renown
+// track's and its Craft points the profession tracks', every change the whole tree judged by the law, a refund's silver
+// burnt in the change's batch. Behind FIRMAMENT_OPEN:
+//   POST /v1/firmament/state { character }            -> { tree, renown, stars, craft, ranks, left, refund }
+//   POST /v1/firmament/set { character, tree, rid }   -> { ...state, silver, balance? } | { repeat, ... }
+//   POST /v1/firmament/respec { character, rid, realm?, region? } -> { ...state, respec, gold, realm? } (the whole sky back for 10,000 gold)
 //   POST /v1/auth/token { character? }    -> { ..., level, xp }   (RENOWN4: xp, the track's total)
 //   (REALM-DOOR: the token says whether that character is one of the account's realm characters, `rc`)
 //   (ARENA4b: and, for a realm character, the level on its tile - its summary's - as `cl`, 1..1000)
@@ -203,6 +209,7 @@ import { BUSY_RETRY_AFTER_S } from '../../src/net/busyLaw.js';   // BUSY-GATE: h
 import { sendLetter, inboxOf, readLetter, deleteLetter } from './letters.js';   // MAIL1: the letters' routes
 import { postBoxOf, readPost, claimPost, deletePost } from './post.js';   // SERVER-POST: the server's post
 import { reportRenownXp, renownTrackOf, renownTracksOf, renownCharacterOk } from './renownTracks.js';   // RENOWN1: Renown's track - RENOWN-CHAR: a character's again
+import { firmamentState, setFirmament, respecFirmament, FIRM_STATUS } from './firmament.js';   // FIRM1: the Firmament - a character's passive tree
 import { chaptersOpenFor, readRoll, claimRoll } from './npcRoll.js';   // CHAP1: the Roll - a realm character's standing with Daggerfall's guilds
 import { witnessHall, listHalls, strikeHall } from './npcHalls.js';
 import { creditReceipt } from './npcReceipts.js';   // CHAP2b: a receipt's standing and the chapter's receipt writ
@@ -1253,6 +1260,19 @@ const service = {
           if (key) order = await mintRenownOrder({ s: who.player.id, lv: r.level }, key, { subtle, nowS });
         }
         return json({ ...r, order }, 200, origin);
+      }
+
+      // ═══ FIRM1: THE FIRMAMENT ═══════════════════════════════════
+      //
+      // A character's passive tree: read with its purses, and changed WHOLE - the law judges the tree asked for against the
+      // purses this service counts, and a refund's silver is burnt in the change's own batch (firmament.js).
+      if (path === '/v1/firmament/state' || path === '/v1/firmament/set' || path === '/v1/firmament/respec') {
+        if (request.method !== 'POST') return no('method', 405, origin);
+        const r = path === '/v1/firmament/state' ? await firmamentState(ctx, who.player, env, body)
+          : path === '/v1/firmament/set' ? await setFirmament(ctx, who.player, env, body)
+            : await respecFirmament({ ...ctx, bucket: env.SAVES }, who.player, env, body);   // a realm character's record is in R2
+        if ('error' in r) return json({ error: r.error, ...(Number.isSafeInteger(r.silver) ? { silver: r.silver } : {}), ...(r.error === 'seq' && Number.isSafeInteger(r.seq) ? { seq: r.seq } : {}) }, /** @type {Record<string, number>} */ (FIRM_STATUS)[r.error] ?? 400, origin);
+        return json(r, 200, origin);
       }
 
       // ═══ CHAP1: THE ROLL ═════════════════════════════════════════

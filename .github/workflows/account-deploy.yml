@@ -78,6 +78,8 @@ on:
       - "src/net/motherlodeLaw.js"
       - "src/net/boardLaw.js"
       - "src/net/professionLaw.js"
+      - "src/net/firmamentLaw.js"
+      - "src/net/firmamentTree.js"
       - "src/net/nodeLaw.js"
       - "src/world/ethericSea.js"
       - "src/net/skyLaw.js"

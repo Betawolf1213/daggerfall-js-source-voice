@@ -12,8 +12,8 @@
  {
   "name": "GATHER-SPEED-ground-track-apart",
   "file": "server-account/src/professions.js",
-  "old": "    readAll(db, [...(key === null ? [] : [factsStatement(db, [key], wkind)]), trackStatement(db, player.id, character, profession)])",
-  "new": "    Promise.all([...(key === null ? [] : [factsStatement(db, [key], wkind)]), trackStatement(db, player.id, character, profession)].map(async (st) => (await st.all()).results ?? []))",
+  "old": "    readAll(db, [...(key === null ? [] : [factsStatement(db, [key], wkind)]), trackStatement(db, player.id, character, profession), firmStatement(db, player.id, character)])",
+  "new": "    Promise.all([...(key === null ? [] : [factsStatement(db, [key], wkind)]), trackStatement(db, player.id, character, profession), firmStatement(db, player.id, character)].map(async (st) => (await st.all()).results ?? []))",
   "tests": [
    "test/gatherspeed.test.js"
   ],

@@ -110,8 +110,8 @@
   {
     "name": "PROFILE-MENU-a-tile-not-a-panel-under-Plus",
     "file": "src/ui/enhancedFrame.js",
-    "old": "    '.px-win .card.acctin ul.acctfacts.acctrecord li'],",
-    "new": "    ],",
+    "old": "    '.px-win .card.acctin ul.acctfacts.acctrecord li',   // PROFILE-MENU",
+    "new": "    // PROFILE-MENU",
     "tests": [
       "test/plus_menu_site.test.js"
     ]
@@ -128,8 +128,8 @@
   {
     "name": "PLUS-MENU-the-doors-out-of-the-role",
     "file": "src/ui/enhancedFrame.js",
-    "old": "    '.px-menu .doorbtn'],",
-    "new": "    ],",
+    "old": "    '.px-menu .doorbtn',\n    // FIRM1",
+    "new": "    // FIRM1",
     "tests": [
       "test/plus_menu_site.test.js"
     ]

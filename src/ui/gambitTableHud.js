@@ -39,7 +39,7 @@ import { noteFirstUse } from '../systems/tutorials.js';
 import { DPAD_CODES } from './plusPad.js';
 import {
   unitName, kingName, pieceName, regularLines, stakeLabel, stakeWhat, stakePurse, stakeNight,
-  kingLine, unitLine, unitCost, unitChips, pointsLeft, unitsHeld, armyKingLine, actionsLeft, refusalWords, cellWords,
+  kingLine, unitLine, unitCost, unitChips, armyPointsLeft, unitsHeld, armyKingLine, actionsLeft, refusalWords, cellWords,
   pieceInfoLines, gambitTitle, GAMBIT_HEADS, GAMBIT_PRESS, pressStart, pressForfeit, pressStandCost, pressDrink, pressStrike,
   potionsChip, fallenChip, healthOf, nextStep, resultHead, kingFalls, resultGold, nightSpent, gambitWhat, gambitGuide,
   gambitWords, layoutName, GAMBIT_ONLINE_PRESS, onlineHead, onlineSeat, clockChip, onlineStep, onlineEnd, watchWin,
@@ -174,7 +174,7 @@ export function gambitHudModel(p) {
     const pressed = p.pressed != null ? rosterUnit(p.pressed) : null;
     out.army = {
       heads: { unit: GAMBIT_HEADS.unit, grid: GAMBIT_HEADS.grid, army: GAMBIT_HEADS.army },
-      chips: [pointsLeft(left), unitsHeld(army.length)],
+      chips: [armyPointsLeft(left), unitsHeld(army.length)],
       unit: pressed ? { id: pressed.id, card: unitCardId(pressed.id), name: unitName(pressed.id), line: unitLine(pressed), cost: unitCost(pressed.cost), said: p.said ?? null } : null,
       grid: gridOrder().map((u) => {
         const ok = canRecruit(army, u.id);

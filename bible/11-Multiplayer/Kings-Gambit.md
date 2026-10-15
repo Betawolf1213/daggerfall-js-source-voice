@@ -1715,7 +1715,7 @@ floor) wears GRANDMASTER - the mod's highest tier's name."
 - THE RECEIPT (`net/gambitReceipt.js`, `g1`): `{j, f, r, h, i, e}` - the game, the two accounts (the host's first), the
   winning seat (no draw: a game nobody won is no receipt), how (`king`, `forfeit`, `idle`, `left`), a week's life; the
   version inside the signed bytes, so an Iliac Hand receipt is never a King's Gambit one, nor the other way.
-- THE SEASON BOARD (`server-account/src/gambit.js`, migration `0114_gambit_ladder`): Iliac Hand's board's twin for a
+- THE SEASON BOARD (`server-account/src/gambit.js`, migration `0115_gambit_ladder`): Iliac Hand's board's twin for a
   game with no deck to vouch for - one row a game whichever seat carries it (`/v1/gambit/claim`), the arena's Elo and
   season, a pair's day and season capped, a rating written only while both ratings stand as read; the board
   (`/v1/gambit/board`) a top ten, the caller pinned, its #1 and what the title needs. GRANDMASTER (`grandmaster` in the

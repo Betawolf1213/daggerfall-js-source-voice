@@ -60,8 +60,10 @@ test('MW-HEADS1: every head and hair re-made from the committed export and its s
   assert.equal(sha(SOURCES.breton), '657dfa95cb607b00f9fb786fad389e0aae7390e8ccf6934ecbc7a47ada009b18', 'daggerwind.fbx as it came');
   assert.deepEqual(meshModelNames(raw(SOURCES.breton)), ['b_n_breton_m_hair_widow', 'b_n_breton_m_head_05.002', 'b_n_breton_m_head_05.003']);
   // each painting as sent, under the part its export names it for (matched by what it is drawn for - Own-Heads.md)
+  // PIN MOVED (MW-HEADS3 - the export's author: "its using the eyepatch on the wrong head"): the eyepatch's painting is
+  // h0411's, the plain brown beard h0423's - the two files' names swapped, their bytes as sent
   assert.deepEqual(Object.fromEntries(Object.entries(PAINTINGS).map(([id, p]) => [id, sha(p).slice(0, 16)])), {
-    breton_m_head_h04: '0dce24bce8854284', breton_m_head_h0411: '2761ddc06d78ec16', breton_m_head_h0423: '942fc18546e33b15',
+    breton_m_head_h04: '0dce24bce8854284', breton_m_head_h0411: '942fc18546e33b15', breton_m_head_h0423: '2761ddc06d78ec16',
     breton_m_hair_widow: 'e81078936d780b3d', breton_m_hair_01: '0bb984ce708a59e4', breton_m_hair_0111: 'feafc235bc1cb8e6',
   });
   assert.deepEqual(['b_n_breton_m_hair_widow', 'b_n_breton_m_head_05.002', 'b_n_breton_m_head_05.003'].map((o) => objectMaterials(tree, o)), [
@@ -151,8 +153,9 @@ test('MW-HEADS1: one eyepatch - the one painting whose eyes differ side to side 
     return [side(1, true), side(-1, false)];
   };
   const band = Object.fromEntries(HEADS.map((id) => [id, eyeBand(id)]));
-  assert.ok(band.breton_m_head_h0423 > 30, `the eyepatch's eyes differ side to side (${band.breton_m_head_h0423.toFixed(1)})`);
-  assert.ok(band.breton_m_head_h04 < 12 && band.breton_m_head_h0411 < 12, `the plain faces' eyes match (${band.breton_m_head_h04.toFixed(1)}, ${band.breton_m_head_h0411.toFixed(1)})`);
+  // PIN MOVED (MW-HEADS3): the eyepatch is h0411's
+  assert.ok(band.breton_m_head_h0411 > 30, `the eyepatch's eyes differ side to side (${band.breton_m_head_h0411.toFixed(1)})`);
+  assert.ok(band.breton_m_head_h04 < 12 && band.breton_m_head_h0423 < 12, `the plain faces' eyes match (${band.breton_m_head_h04.toFixed(1)}, ${band.breton_m_head_h0423.toFixed(1)})`);
   for (const id of ['breton_m_head_h0411', 'breton_m_head_h0423']) {
     const [r, l] = halves(id);
     assert.ok(r > 0.85 && l > 0.95, `${id}: each side of the face reads its own half (${r.toFixed(2)}, ${l.toFixed(2)})`);
@@ -229,7 +232,7 @@ test('MW-HEADS1: the Breton men\'s pools are the port\'s own wherever a PLAYER\'
   assert.deepEqual([counts({ ownHeads: true }), counts({ has: () => false, ownHeads: true }), counts({})], [[3, 3], [4, 4], [4, 4]], 'each row counts the pool it chose among (L2-F7)');
   const [lostHead, lostHair] = ['head', 'hair'].map((sl) => playerBodyRows(data, 'breton', false, { faceIndex: 6, has: () => false, ownHeads: true }).find((r) => r.slot === sl));
   assert.deepEqual([lostHead.record.id, lostHair.record.id], ['b_n_breton_m_head_02', 'b_n_breton_m_hair_02'], 'the curated pair not there: the walk over the data\'s');
-  assert.match(lostHead.verdict, /derived \(curated "breton_m_head_h0423" is not in these archives\)$/);
+  assert.match(lostHead.verdict, /derived \(curated "breton_m_head_h0411" is not in these archives\)$/);
   // the match stands down only where the table answers BOTH halves among the pools (L2-F6): every Breton man's portrait
   // over the port's own; none over the data's; and a table that names one half leaves the other to the match
   assert.deepEqual(Array.from({ length: 10 }, (_, f) => curatedAnswersFace(own, 'Breton', false, f)), Array(10).fill(true));
@@ -240,8 +243,10 @@ test('MW-HEADS1: the Breton men\'s pools are the port\'s own wherever a PLAYER\'
   assert.deepEqual(facePools(data, 'nord', false).hairs.map((r) => r.id), ['b_n_nord_m_hair_00', 'b_n_nord_m_hair_01', 'b_n_nord_m_hair_02', 'b_n_nord_m_hair_03']);
   const face = (opts) => { const rows = playerBodyRows(data, 'breton', false, opts); return ['head', 'hair'].map((s) => rows.find((r) => r.slot === s)); };
   // the player's ten portraits, curated by eye (bible/04-Characters/Own-Heads.md): each its table's pair, portrait 6 the eyepatch
-  const want = { 0: ['h0411', '0111'], 1: ['h0411', 'widow'], 2: ['h04', '01'], 3: ['h04', 'widow'], 4: ['h0411', '0111'],
-    5: ['h04', '0111'], 6: ['h0423', '0111'], 7: ['h0411', '01'], 8: ['h0411', 'widow'], 9: ['h04', 'widow'] };
+  // PIN MOVED (MW-HEADS3): the brown beard's portraits on h0423, which wears it now; portrait 6 the eyepatch on h0411 in
+  // its own object's hair, the 01 - never the headband ("it gave me the rambo hair")
+  const want = { 0: ['h0423', '0111'], 1: ['h0423', 'widow'], 2: ['h04', '01'], 3: ['h04', 'widow'], 4: ['h0423', '0111'],
+    5: ['h04', '0111'], 6: ['h0411', '01'], 7: ['h0423', '01'], 8: ['h0423', 'widow'], 9: ['h04', 'widow'] };
   for (let f = 0; f < 10; f++) {
     const [head, hair] = face({ faceIndex: f, ownHeads: true });
     assert.deepEqual([head.record.id, hair.record.id], [`breton_m_head_${want[f][0]}`, `breton_m_hair_${want[f][1]}`], `portrait ${f}`);
@@ -259,7 +264,7 @@ test('MW-HEADS1: the Breton men\'s pools are the port\'s own wherever a PLAYER\'
   assert.match(npcHead.record.id, /^b_n_breton_m_head_0\d$/);
   // a Breton vampire's head is the race's vampire head, over his own; his hair his own
   const [vHead, vHair] = face({ faceIndex: 6, vampire: true, ownHeads: true });
-  assert.equal(vHead.record.id, 'b_v_breton_m_head_01'); assert.equal(vHair.record.id, 'breton_m_hair_0111');
+  assert.equal(vHead.record.id, 'b_v_breton_m_head_01'); assert.equal(vHair.record.id, 'breton_m_hair_01');
   // a Breton woman: the data's, by her face index (no table for her)
   const her = playerBodyRows(data, 'breton', true, { faceIndex: 5 });
   assert.equal(her.find((r) => r.slot === 'head').record.id, 'b_n_breton_f_head_01');
@@ -304,7 +309,7 @@ test('MW-HEADS1 (AUDIT): a real build - a Breton man wears the port\'s own head 
     return { res, asked: asked.n, ids: [row('head').record?.id, row('hair').record?.id], bound: res.third.arm.pieces.filter((p) => p.bone === 'head').map((p) => p.slot) };
   };
   const ownBuilt = await built(true);
-  assert.deepEqual(ownBuilt.ids, ['breton_m_head_h0423', 'breton_m_hair_0111'], 'portrait 6, curated: the eyepatch');
+  assert.deepEqual(ownBuilt.ids, ['breton_m_head_h0411', 'breton_m_hair_01'], 'portrait 6, curated: the eyepatch (MW-HEADS3)');
   assert.deepEqual(ownBuilt.bound, ['head', 'hair'], 'both bound under the Head node');
   const faceNotes = (b) => b.res.third.notes.filter((n) => /^(head|hair)\b/.test(n));   // (the fixture carries no other skin: its slots' own notes)
   assert.deepEqual(faceNotes(ownBuilt), [], 'no note on the face');

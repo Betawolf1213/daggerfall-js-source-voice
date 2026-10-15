@@ -72,7 +72,7 @@
   {
     "name": "MWHEADS1-the-eyepatch-on-another-portrait",
     "file": "src/formats/mwFaceTable.json",
-    "old": "      \"6\": {\n        \"head\": \"breton_m_head_h0423\",",
+    "old": "      \"6\": {\n        \"head\": \"breton_m_head_h0411\",",
     "new": "      \"6\": {\n        \"head\": \"breton_m_head_h04\",",
     "tests": [
       "test/mwheads1.test.js"
@@ -93,7 +93,7 @@
     "name": "MWHEADS1-two-eyepatches",
     "file": "tools/bakeHeads.mjs",
     "old": "  breton_m_head_h04: 'src/assets/mw/source/Breton_Head_H04.png',",
-    "new": "  breton_m_head_h04: 'src/assets/mw/source/Breton_Head_H0423.png',",
+    "new": "  breton_m_head_h04: 'src/assets/mw/source/Breton_Head_H0411.png',",
     "tests": [
       "test/mwheads1.test.js"
     ],
