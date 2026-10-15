@@ -24,7 +24,7 @@ import * as relay from '../server/src/relay.js';
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
 test('WORLD8: the wire - the hour, and what is due: a stamp an hour or more before now; not a missing stamp, not without a clock, not a stamp ahead, not a minute short; one home at both ends; the memory\'s thirty days stand above it', () => {
-  assert.equal(RESPAWN_MS, 3600 * 1000, 'a real hour');
+  assert.equal(RESPAWN_MS, 30 * 60 * 1000, 'half a real hour');   // PIN MOVED (RESPAWN-30, Mac 2026-10-14: "Reduce dungeon cooldown from 1 hour to 30 minutes" - "I meant the chest and foe respawn"): a real hour
   const t = 1_789_400_000_000;
   assert.equal(respawnDue(t, t + RESPAWN_MS), true); assert.equal(respawnDue(t, t + RESPAWN_MS * 30), true);
   assert.equal(respawnDue(t, t + RESPAWN_MS - 1), false, 'a millisecond short');

@@ -1152,6 +1152,18 @@
    "has": "noteMinutes: () => skyMinutes(),",
    "clock": "sky",
    "why": "L10N5: the minute a notebook header records, as the streaming host's"
+  },
+  {
+   "file": "src/scenes/worldModes.js",
+   "has": "mapId: hit.dfLocation?.mapTableData?.mapId ?? 0, day: Math.floor(worldMinutes() / MINUTES_PER_DAY),",
+   "clock": "event",
+   "why": "the lamp keeper's day - which shop's keeper stands as the lamp (LAMP-KEEPER II)"
+  },
+  {
+   "file": "src/scenes/worldModes.js",
+   "has": "const lines = lampLines(Math.floor(worldMinutes() / MINUTES_PER_DAY));",
+   "clock": "event",
+   "why": "the lamp's words for the day (LAMP-KEEPER II)"
   }
  ]
 }

@@ -146,9 +146,9 @@ test('AUDIT WORLD7/8 B1/B4/C2: the stamp is the RELAY\'s millisecond - under an 
     assert.ok(Math.abs(relay - (Date.now() + off)) < 2000, `the relay's instant (${relay - (Date.now() + off)} ms off)`);
     assert.ok(Math.abs(local - Date.now()) < 2000, 'sharedWallMs is this machine\'s clock');
     assert.ok(relay - local > off - 2000, 'the two differ by the offset - a stamp taken from the wrong one is the offset wrong for every other machine');
-    // a host forty minutes slow: with the relay's stamp the hour is the hour
+    // a host forty minutes slow: with the relay's stamp the respawn's wait is its own
     const stampAtKill = relay; const nowLater = relay + RESPAWN_MS - 60_000;
-    assert.equal(respawnDue(stampAtKill, nowLater), false, 'fifty-nine minutes after the kill: not due, whatever the machines\' own clocks say');
+    assert.equal(respawnDue(stampAtKill, nowLater), false, 'a minute short of RESPAWN_MS after the kill: not due, whatever the machines\' own clocks say');
     assert.equal(respawnDue(stampAtKill, nowLater + 60_000), true);
   } finally { setSharedClock(null); }
   assert.ok(Date.now() - t0 < 5000);
