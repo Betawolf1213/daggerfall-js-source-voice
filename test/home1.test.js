@@ -470,7 +470,8 @@ test('HOME1 the wiring by source: the home answers at the door BEFORE Daggerfall
   assert.match(m, /onlineHomeLines: \(\) => \(host\.onlineHomes \? HOME_BANK_LINES : null\),/);
   const w = src('src/scenes/world.js');
   assert.match(w, /const homesApi = params\.has\('online'\) \? accountHomes\([^\n]*\n\s*const onlineHomes = homesApi \? createOnlineHomes\(/, 'online alone, and built before any quest can ask');   // HOME-RENT: the service's door kept for a home's rooms too
-  assert.ok(w.indexOf('const onlineHomes = ') < w.indexOf('isPlayerHome: (mapId, buildingKey) => !!onlineHomes?.homeAt(mapId, buildingKey),'));
+  // PIN MOVED (FIELD BUGS 2026-10-14 QUEST-HOME, test/fb1014_questhome.test.js): every town's homes, the boot's read beside the towns asked
+  assert.ok(w.indexOf('const onlineHomes = ') < w.indexOf('isPlayerHome: (mapId, buildingKey) => onlineHomes?.homeStands(mapId, buildingKey) ?? false,'));
   assert.match(w, /townMapId: \(dfLoc\.mapTableData\?\.mapId \?\? 0\) >>> 0,/, 'the door\'s own town');
   assert.match(w, /onlineHomes\?\.ensure\(_musicLoc\?\.mapTableData\?\.mapId\);/, 'the town asked on arrival');
   assert.match(w, /partyNames: \(\) => \(social\?\.others\?\.\(\) \?\? \[\]\)\.map\(\(m\) => m\.name\)/);

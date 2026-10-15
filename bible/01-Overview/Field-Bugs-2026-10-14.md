@@ -14,6 +14,7 @@ Discord threads from 2026-10-13 and 2026-10-14, handed over as screenshots, read
 | 7 | "the 'Look Around > With secrets' config is not even showing anything" (Arbeck) | not reproduced: nothing on its path changed since 2026-10-10 and its suite passes; it lights only in a dungeon, on an Info ask (F3 or the wheel's Info), within 8 m and in sight - and a thick secret wall can hide its own glow card | asked of the player |
 | 8 | "Gold appears when I'm trading but not in my inventory" - "After I went to sleep my character lost 5000 of gold" (Soda_do_macaco...) | not reproduced: the trade window's figure, its refusal and its payment read one count (coins and letters of credit); the inventory's footer counts coins alone, and a payment spends letters first, so a 5000 letter spent leaves the coin figure where it was | asked of the player |
 | 9 | "Mountain clipping and invisible" - "Mountain is invisible and you can go through it and get stuck" (BigOOF) | a video, no place named | asked of the player |
+| 10 | "Currently on the final part of the quest to 'Travel to the second town named by the poisonmaker'. However coming to the location it has NPCs, but NO Houses, except for a player house which is marked as the residence I need for the quest, but it's just.. a player house..?" (Buckinghouse Farmstead) | HOME1's "no quest picks a player's home" asked only the towns this page had asked; the Dark Brotherhood's The Acceptance Test picks its second town's residence in a town never walked into, so the farmstead's only house - another player's home - was the quest's | fixed (QUEST-HOME) |
 
 ## STORES-CRASH: the Stores page walks a station's nodes as the browser mints them (1)
 
@@ -143,3 +144,38 @@ on the rest path takes gold but a death (a tenth) or an overdue loan's draw. Ask
 seen on waking, and the Wallet's letters.
 
 THE MOUNTAIN (9). A video, no place named. Asked: the place (the map's name or pixel).
+
+## QUEST-HOME: no quest picks a player's home, in any town (10)
+
+`server-account/src/homes.js` homeLayouts; `src/systems/onlineHomes.js` hearEveryTown, homeStands; `src/scenes/world.js`
+takeHomeLayouts and the quest machine's `isPlayerHome`. Read on main's `7c291d36`.
+
+THE REPORT. The last step of a quest, "Travel to the second town named by the poisonmaker": Buckinghouse Farmstead,
+whose map named one building, "The Mesmerized Residence", the quest's residence - and its door read "To <owner>'s
+home", Vote up, Vote down: another player's online home. The player tried the quest repair, then restarted the quest.
+
+FOUND. The quest is the Dark Brotherhood's The Acceptance Test (`L0A01L00`): its letter sends the player to the
+poisonmaker (`_apothecary_`, a Chemist, at `Place _apo_ remote apothecary`), who sends them to poison `_npc_`'s wine at
+`_mansion_` - `Place _mansion_ remote house1`, "in __mansion_", the second town - and its three people's homes are
+generated residences too (Person.cs AssignHomeTown, `remote house`). Every one is chosen when the quest starts, in a town
+of the region the player has not been to (SelectRemoteTownSite's darts). HOME1 kept a player's online home out of the
+choice - the collector's `isPlayerHome` (`systems/quest/place.js` _collectQuestSitesOfBuildingType; a departure, DFU
+has one player) - but the seam asked `onlineHomes.homeAt`, which knows a town only once this page has asked it, at its
+gate or a door; HOME1's own record carried it as a known limit. So the rule held in the player's own town alone: a
+remote town's houses were all fair game, and a farmstead has one. The door then did what HOME1 built it to do for a
+quest's holder (the quest rung, PlayerActivate.IsActiveQuestBuilding): it let them into a stranger's furnished home,
+which is what the player found.
+
+FIXED. The layouts read every online boot already makes before its first town stands (WD3, `/v1/homes/layouts`) names
+every town's homes by building as well: `homes`, `[mapId, [buildingKey, ...]]` a town, keys ascending - every home, a
+guild's hall and a deed held - read in the same batch as the towns and kept under the same generation (STORM-SHED 2's
+`homes_gen`); a town's homes were any session's to read already (homesInTown). The registry keeps it beside the towns
+it asks (`hearEveryTown`), and the quest machine's `isPlayerHome` asks `homeStands`: a player's home in any town. The
+service is acct133 (no migration); a client on an older service hears no `homes` and keeps what it knew. A quest made
+before the fix keeps its site - restarting it chooses again. HOME1's known limit narrows to what no client can know at
+the moment it chooses: a house bought after this page's boot read in a town it has not asked since, and a quest whose
+residence was chosen before its house was bought; the quest rung lets its player in, as before. Pinned by
+`test/fb1014_questhome.test.js` - the real Worker, the client's own door, the real registry, and the reporter's own quest
+taken by the real machine in a region whose farmstead's only house is a player's home (`tools/mutants/fb1014_questhome.json`,
+6, dead); PIN MOVED in `test/wd3_online.test.js` (the read's `homes`) and `test/home1.test.js` (the seam), and the
+account service's version pins (acct133).

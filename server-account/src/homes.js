@@ -39,6 +39,7 @@ import { prepareRealmRecord, realmActFirst, realmAtOf, recordMovedOf, mustChange
 import { payFromSave, creditSave } from '../../src/net/realmGoldLaw.js';   // REALM P2.2b: the wallet's own order, over the record
 import {
   HOME_CAP, HOME_ENTRY_DEFAULT, HOME_CLAIMS_MAX, HOME_CLAIMS_WINDOW_S, HOME_TOWN_MAX, HOME_LAYOUTS_MAX,
+  HOME_KEYS_MAX,   // FIELD BUGS 2026-10-14 QUEST-HOME: the homes the layouts read names by building
   homeMapIdOk, homeBuildingKeyOk, homeRegionOk, homePriceOk, homeEntryOk, homeSaleRefund, homeLookOf, homeLayoutOk, homeLayoutsMatch,
   homeInArenaCell, RENT_ANCHOR_MOVED,   // ARENA4b: the arena's cell, and a tenancy's point the move carries
   homeDeedOf,   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: the deed a record holds to a building, as the door reads it
@@ -495,13 +496,32 @@ export async function homesOf({ db }, player) {
  * WD3: EVERY TOWN THAT HOLDS A HOME, AND THE LAYOUT IT KEEPS - its oldest home's (null: Daggerfall's own town). Read by
  * every session at its online boot (a guest's too: the towns are everyone's to walk), so each client stands each such
  * town as its homes were bought in it (src/systems/layoutPins.js), one town for the whole room. `[mapId, layout]` rows.
+ *
+ * FIELD BUGS 2026-10-14 QUEST-HOME (Discord: "Travel to the second town named by the poisonmaker ... NO Houses, except
+ * for a player house which is marked as the residence I need for the quest"): AND THE BUILDINGS EACH TOWN'S HOMES ARE,
+ * `homes`: `[mapId, [buildingKey, ...]]` a town, keys ascending - every home, hall and deed held, up to HOME_KEYS_MAX. A
+ * quest picks its residence in a town its player has never walked into (Place.cs's `remote house`), and the client knew
+ * a town's homes only once it had asked that town at its gate or a door - so "no quest picks a player's home" held in
+ * the player's own town alone, and a remote farmstead's only house, a player's home, was the quest's. A town's homes are
+ * any session's to read already (homesInTown); this is the building of each, and nothing else of it. Read in the same
+ * request as the towns (a batch, HOMES-SHED's law) and kept under the same generation (homeLayoutsKept).
  * @param {{db: any}} ctx
  */
 export async function homeLayouts({ db }) {
-  const { results = [] } = await db.prepare(`SELECT h.map_id, h.layout FROM homes h
+  const [{ results = [] }, { results: keyed = [] }] = await db.batch([
+    db.prepare(`SELECT h.map_id, h.layout FROM homes h
     WHERE NOT EXISTS (SELECT 1 FROM homes o WHERE o.map_id = h.map_id AND (o.bought_at < h.bought_at OR (o.bought_at = h.bought_at AND o.building_key < h.building_key)))
-    ORDER BY h.map_id LIMIT ?`).bind(HOME_LAYOUTS_MAX).all();
-  return { towns: results.map((r) => [r.map_id, homeLayoutOk(r.layout) ? r.layout ?? null : null]) };
+    ORDER BY h.map_id LIMIT ?`).bind(HOME_LAYOUTS_MAX),
+    db.prepare('SELECT map_id, building_key FROM homes ORDER BY map_id, building_key LIMIT ?').bind(HOME_KEYS_MAX),
+  ]);
+  /** @type {Array<[number, number[]]>} */
+  const homes = [];
+  for (const r of keyed) {
+    const town = homes[homes.length - 1];
+    if (town?.[0] === r.map_id) town[1].push(r.building_key);
+    else homes.push([r.map_id, [r.building_key]]);
+  }
+  return { towns: results.map((r) => [r.map_id, homeLayoutOk(r.layout) ? r.layout ?? null : null]), homes };
 }
 
 /** STORM-SHED 2 (2026-10-06, the account database's follow-ups): THE TOWNS' LAYOUTS, READ AGAIN ONLY ONCE A TOWN'S HOMES

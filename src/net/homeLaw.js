@@ -153,6 +153,9 @@ export const HOME_LAYOUT_MODS = Object.freeze(['beautiful-villages', 'beautiful-
 export const HOME_LAYOUT_MAX = 96;
 /** The most towns the layouts read answers (a town per home at the very most). */
 export const HOME_LAYOUTS_MAX = 20000;
+/** FIELD BUGS 2026-10-14 QUEST-HOME: the most homes the layouts read names by building (`homes`) - three a town at the
+ *  towns' own bound. A home past it is known where its town is asked, as every home was before. */
+export const HOME_KEYS_MAX = 3 * HOME_LAYOUTS_MAX;
 /** A home's layout stamp: null (Daggerfall's own town) or `vendor@version` of the layout mods, joined by '+', each
  *  named once. */
 export function homeLayoutOk(v) {

@@ -129,7 +129,10 @@ is REFUSED (409 `home-layout`, naming the town's layout; `net/homeLaw.js`
 `homeLayoutsMatch`) - its building key names a building of the town that client
 sees, and storing it under the other layout would hand the buyer a stranger's
 house. The client hears the layouts again and builds the town as the room's. Every client reads
-`/v1/homes/layouts` - each town holding a home and its layout - at its online
+`/v1/homes/layouts` - each town holding a home and its layout (and, FIELD BUGS
+2026-10-14 QUEST-HOME, acct133, each town's homes by building, `homes`: the quest
+machine picks no player's home as a residence in a town never asked -
+`06-Systems/Online-Arc.md` HOME1) - at its online
 boot, before the first town is built, and pins those towns; online, a save's
 own records pin nothing (one player's save would stand one town apart from the
 room's). Until the service has answered AND its pins stand (the packs they let

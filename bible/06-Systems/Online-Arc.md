@@ -9485,11 +9485,18 @@ took: three town homes a character, no upkeep.
   (`world/interiorShared.js`, the bag's `home`): its memory names no cupboard, a peer's word about one never lands
   (a word about `container:3` would have overwritten the owner's chest, and then been published back as the room's),
   and a refused act's records name none.
-- **Quests** (`systems/quest/place.js`, a departure: Daggerfall has one player): no quest picks a known player's home
-  as its residence (the towns this page has heard from).
+- **Quests** (`systems/quest/place.js`, a departure: Daggerfall has one player): no quest picks a player's home as
+  its residence, in any town. FIELD BUGS 2026-10-14 QUEST-HOME (`01-Overview/Field-Bugs-2026-10-14.md`): the rule read
+  the towns this page had asked, one at a time at a gate or a door, and a `remote` residence is picked in a town its
+  player has never walked into - so it held in the player's own town alone, and a farmstead's only house, a player's
+  home, was a quest's. The layouts read every online boot makes (WD3) names every town's homes by building now
+  (`server-account/src/homes.js` homeLayouts' `homes`, acct133), the registry keeps it beside the towns it asks
+  (`systems/onlineHomes.js` hearEveryTown, homeStands), and the quest machine's `isPlayerHome` asks it
+  (`scenes/world.js`).
 
-Offline nothing here exists and every door is Daggerfall's. **Known limits.** A quest set up for a town this page
-has not heard from can still pick a building that is someone's home; the quest rung then lets its player in. The
+Offline nothing here exists and every door is Daggerfall's. **Known limits.** A house bought after this page's boot
+read, in a town it has not asked since, can still be picked - and a quest that chose its residence before the house
+was bought keeps it; the quest rung then lets its player in. The
 gold is the save's, as all of it is. What a home holds lives in its owner's own save, never on the service - the
 next slices' decor (DECOR1) is the first thing kept there. No relay change. Pinned: `test/home1.test.js` (11) - the
 law, the service through the real Worker with every migration applied (one owner, the cap a character's, the repeat,

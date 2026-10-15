@@ -16391,6 +16391,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   function takeHomeLayouts(heard) {
     const towns = heard?.ok ? heard.data?.towns : null;
     if (!Array.isArray(towns)) return null;
+    onlineHomes?.hearEveryTown(heard.data?.homes);   // FIELD BUGS 2026-10-14 QUEST-HOME: and the buildings every town's homes are - a quest's residence is picked in towns never walked into
     _serverLayoutRecords = towns.filter((t) => Array.isArray(t)).map(([mapId, layout]) => ({
       locationKey: _layoutKeyOfMapId.get(Number(mapId) >>> 0) ?? null, stamp: typeof layout === 'string' ? layout : undefined, kind: 'house',
     }));
@@ -20039,8 +20040,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // DaggerfallBankManager.IsHouseOwned reads the CURRENT region's
     // owned-house slot (:140-148) - banking.js's own law, H1's home.
     isHouseOwned: (buildingKey) => isHouseOwned(playerEntity.houses ?? [], _questRegionIndex(), buildingKey),
-    // HOME1: nor a player's online home - a quest must not send its player into a house its owner keeps shut. The towns this page has heard from (systems/onlineHomes.js); one not heard from yet answers no.
-    isPlayerHome: (mapId, buildingKey) => !!onlineHomes?.homeAt(mapId, buildingKey),
+    // HOME1: nor a player's online home - a quest must not send its player into a house its owner keeps shut. FIELD BUGS 2026-10-14 QUEST-HOME: in ANY town - the boot's read of every town's homes beside the towns this page has asked (systems/onlineHomes.js homeStands); the asked towns alone left every remote residence unguarded.
+    isPlayerHome: (mapId, buildingKey) => onlineHomes?.homeStands(mapId, buildingKey) ?? false,
     townLayoutsKnown: () => !homeLayoutsOnline || _homeLayoutsApplied,   // QUESTOR-MOVED: a shared quest is mended on arrival only once the towns' layouts are known (applyLayoutPins' own gate, AUDIT WD3 S5) - AUDIT QA2: and STAND, the pins and their held-back towns set (a share landing while the packs were fetched was chosen again unpinned); the load's own re-seat mends one that landed before
     // Place's _getBuildingName bag - townTalk's ONE name bag, so the
     // quest's generated names and the talk directory's cannot drift.

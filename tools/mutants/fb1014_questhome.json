@@ -1,0 +1,56 @@
+[
+  {
+    "name": "QUEST-HOME-the-read-names-no-homes",
+    "file": "server-account/src/homes.js",
+    "old": "  return { towns: results.map((r) => [r.map_id, homeLayoutOk(r.layout) ? r.layout ?? null : null]), homes };",
+    "new": "  return { towns: results.map((r) => [r.map_id, homeLayoutOk(r.layout) ? r.layout ?? null : null]) };",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-boots-word-not-kept",
+    "file": "src/systems/onlineHomes.js",
+    "old": "    everyTown = next;\n",
+    "new": "",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-homeStands-asks-the-asked-towns-alone",
+    "file": "src/systems/onlineHomes.js",
+    "old": "  const homeStands = (mapId, buildingKey) => !!towns.get(idOf(mapId))?.homes.has(buildingKey) || !!everyTown.get(idOf(mapId))?.has(buildingKey);",
+    "new": "  const homeStands = (mapId, buildingKey) => !!towns.get(idOf(mapId))?.homes.has(buildingKey);",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-towns-asked-unheard",
+    "file": "src/systems/onlineHomes.js",
+    "old": "  const homeStands = (mapId, buildingKey) => !!towns.get(idOf(mapId))?.homes.has(buildingKey) || !!everyTown.get(idOf(mapId))?.has(buildingKey);",
+    "new": "  const homeStands = (mapId, buildingKey) => !!everyTown.get(idOf(mapId))?.has(buildingKey);",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-read-not-handed-on",
+    "file": "src/scenes/world.js",
+    "old": "    onlineHomes?.hearEveryTown(heard.data?.homes);   // FIELD BUGS 2026-10-14 QUEST-HOME",
+    "new": "    void heard;   // FIELD BUGS 2026-10-14 QUEST-HOME",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-isPlayerHome-back-on-homeAt",
+    "file": "src/scenes/world.js",
+    "old": "    isPlayerHome: (mapId, buildingKey) => onlineHomes?.homeStands(mapId, buildingKey) ?? false,",
+    "new": "    isPlayerHome: (mapId, buildingKey) => !!onlineHomes?.homeAt(mapId, buildingKey),",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  }
+]
