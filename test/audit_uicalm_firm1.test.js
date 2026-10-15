@@ -28,6 +28,11 @@ import { setFirmament, respecFirmament, FIRM_OPS_MAX, FIRM_PACKED_MAX } from '..
 import { setSigilDueling, _resetSigilForTests } from '../src/systems/sigil.js';
 import { createHerbAct } from '../src/systems/herbAct.js';
 import { renownMpOf } from '../src/systems/renownLayer.js';
+import { drawEnhancedSaddle, hideEnhancedSaddle, toggleSaddlePanel, saddlePanelOpen, saddleNote, SADDLE_PANEL_PREF, SADDLE_HELLO_MS } from '../src/ui/enhancedSaddle.js';
+import { getPref, setPref, _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
+import { HUD_LOCK_PREF } from '../src/ui/hudLayout.js';
+import { markFoeStruck } from '../src/ui/hudFoeTarget.js';
+import { fakeDoc, one } from './decorFakes.mjs';
 import { createCharacter } from '../src/systems/chargen.js';
 import { buildCustomCareer } from '../src/systems/customClass.js';
 import { SKILLS, skillValue } from '../src/systems/skills.js';
@@ -637,4 +642,115 @@ test('AUDIT UICALM-FIRM1 L5 H5: the herb act\'s Basket glints longer by the stea
   const g = (a) => a.state?.glint ?? a.glint;
   assert.ok(Number.isFinite(g(plain)), 'the act says its glint');
   assert.ok(Math.abs(g(steady) - g(plain) * mult) < 1e-9);
+});
+
+// ─── LANE 4 and LANE 5: the saddle panel, the calm HUD ──────────────
+
+const SADDLE = (o = {}) => ({
+  mode: 'Horse', name: 'Shadow', wagonName: '', speed: 0, galloping: false,
+  horse: { breath: 1, winded: false, hunger: 'Fed', hungerKey: 'fed', fedHours: 14, full: false, tier: 'Familiar', bond: 45, tierAt: 35, next: { name: 'Trusting', at: 55 } },
+  wagon: null, oats: 3, apples: 0, kits: 0, load: null, near: true, wagonNear: true, cargo: null, view: false, hcc: true, ...o,
+});
+
+test('AUDIT UICALM-FIRM1 L5 M5 / L4 M1: the saddle panel When needed, on a page - a need a line, the hello its first seconds, then nothing; its key puts it up, kept WITH the choice it was pressed under', () => {
+  _resetPrefsForTests();
+  const doc = fakeDoc();
+  const keyOf = (a) => (a === 'SaddlePanel' ? 'F2' : '');
+  const show = (state) => drawEnhancedSaddle({ keyOf, ...state }, {}, { doc })?.dataset?.show;
+  try {
+    assert.equal(show({ saddle: SADDLE(), now: 1000 }), 'hello', 'mounted: the hello');
+    assert.match(one(doc.body, 'saddlepanel-hint').textContent, /F2/, 'it names the key');
+    assert.equal(show({ saddle: SADDLE(), now: 1000 + SADDLE_HELLO_MS + 1 }), 'none', 'then nothing');
+    const winded = SADDLE({ horse: { ...SADDLE().horse, winded: true, breath: 0 } });
+    assert.equal(show({ saddle: winded, now: 9000 }), 'note');
+    assert.equal(one(doc.body, 'saddlepanel-hint').textContent, saddleNote(winded));
+    assert.equal(toggleSaddlePanel(), true);
+    assert.equal(show({ saddle: SADDLE(), now: 9500 }), 'full', 'the key: up');
+    assert.deepEqual(getPref('saddlePanelOpen'), { open: true, mode: 'auto' });
+    // the choice moves: the old press is the old choice's
+    setPref(SADDLE_PANEL_PREF, 'off');
+    assert.equal(saddlePanelOpen(), false);
+    assert.equal(show({ saddle: SADDLE(), now: 9600 }), 'none', 'Off after an old F2: nothing');
+    assert.equal(show({ saddle: SADDLE(), now: 9600, touch: true }), 'chip', 'a finger keeps its plate');
+    setPref(SADDLE_PANEL_PREF, 'always');
+    assert.equal(show({ saddle: SADDLE(), now: 9700 }), 'full', 'Always after an old F2 away: up');
+    toggleSaddlePanel();
+    assert.equal(show({ saddle: SADDLE(), now: 9800 }), 'none', 'and its own key puts it away');
+  } finally { hideEnhancedSaddle(); _resetPrefsForTests(); }
+  assert.match(read('src/ui/enhancedSaddle.js'), /if \(last\.place === 0\) \{ if \(state\.touch\) placeTouch\(doc\); else placeBar\(doc\); \}/, 'a finger\'s block placed under the compass');
+});
+
+test('AUDIT UICALM-FIRM1 L5 M7 / L4 M3, N1: the calm HUD - the vitals rest after VITALS_REST_S full, and not a moment before; the player\'s Off, a lost point, a foe in the bar and the HUD arranged keep them up', async () => {
+  _resetPrefsForTests();
+  const mk = (tag = 'div') => ({
+    tag, className: '', textContent: '', src: '', alt: '', children: [], dataset: {}, attrs: {},
+    style: { setProperty(k, v) { this[k] = v; }, removeProperty(k) { delete this[k]; } },
+    classList: { _s: new Set(), add(...c) { c.forEach((x) => this._s.add(x)); }, remove(...c) { c.forEach((x) => this._s.delete(x)); }, toggle(c, on) { if (on ?? !this._s.has(c)) this._s.add(c); else this._s.delete(c); return this._s.has(c); }, contains(c) { return this._s.has(c); } },
+    setAttribute(k, v) { this.attrs[k] = String(v); }, getAttribute(k) { return this.attrs[k]; }, removeAttribute(a) { delete this.attrs[a]; }, remove() {},
+    append(...c) { this.children.push(...c); }, appendChild(c) { this.children.push(c); return c; }, replaceChildren(...c) { this.children = c; }, addEventListener() {},
+  });
+  const find = (node, cls) => {
+    if (String(node.className ?? '').split(/\s+/).includes(cls)) return node;
+    for (const c of node.children ?? []) { const got = find(c, cls); if (got) return got; }
+    return null;
+  };
+  const prev = globalThis.document;
+  globalThis.document = { createElement: (t) => mk(t), createElementNS: () => mk(), getElementById: () => null, head: mk(), body: mk(), querySelector: () => null, querySelectorAll: () => [] };
+  const { drawEnhancedHud, destroyEnhancedHud, HUD_CALM_PREF, VITALS_REST_S } = await import('../src/ui/enhancedHud.js');
+  try {
+    const v = { health: 300, maxHealth: 300, fatigue: 100, maxFatigue: 100, magicka: 50, maxMagicka: 50 };
+    drawEnhancedHud(v, 0, 0, {});
+    const root = globalThis.document.body.children.find((n) => n.className === 'hud');
+    const bars = find(root, 'hud-bars');
+    const rest = () => bars.classList.contains('rest');
+    const run = (s, vit = v) => { for (let t = 0; t < s; t += 0.5) drawEnhancedHud(vit, 0, 0.5, {}); return rest(); };
+    assert.equal(VITALS_REST_S, 4);
+    assert.equal(run(3.5), false, 'not before the seconds');
+    assert.equal(run(1), true, 'then at rest');
+    assert.equal(run(0.5, { ...v, health: 299 }), false, 'one whole point of 300 lost: up at once');
+    assert.equal(run(4.5), true);
+    setPref(HUD_CALM_PREF, false);
+    assert.equal(run(0.5), false, 'the player\'s Off');
+    setPref(HUD_CALM_PREF, true);
+    assert.equal(run(4.5), true);
+    setPref(HUD_LOCK_PREF, false);
+    assert.equal(run(0.5), false, 'the HUD arranged: never at rest');
+    setPref(HUD_LOCK_PREF, true);
+    assert.equal(run(4.5), true);
+    markFoeStruck({ name: 'Rat', entity: { health: 5, maxHealth: 10 } });
+    assert.equal(run(0.5), false, 'a foe in the bar');
+  } finally {
+    destroyEnhancedHud();
+    globalThis.document = prev;
+    _resetPrefsForTests();
+  }
+});
+
+test('AUDIT UICALM-FIRM1 L4 H1, M4, M5, L1-L4 (text pins - the window wants a canvas): the bar inside the gutters, the say box and hint take no taps, a finger reads before it learns, the overlays\' close asks, a sign alone is a change, the keys hold the sky, Enter on a press is its own, every refusal said', () => {
+  const w = read('src/ui/firmamentWindow.js');
+  assert.match(w, /\.fmt-bar \{ position: absolute; left: 16px; right: 16px; margin-inline: auto; width: fit-content;/);
+  assert.doesNotMatch(w, /\.fmt-bar \{[^}]*translateX/);
+  assert.match(w, /\.fmt-hint \{[^}]*pointer-events: none;/);
+  assert.match(w, /\.fmt-say \{[^}]*pointer-events: none;/);
+  assert.match(w, /view\.y = Math\.max\(40, barFoot\(\) \/ 2\);/);
+  assert.match(w, /view\.y = -n\.y \* view\.z \+ barFoot\(\) \/ 2;/);
+  assert.match(w, /if \(e\.pointerType === 'touch' && d\.button !== 2 && hover !== key\) \{ setHover\(key, p\.x, p\.y\); return; \}/);
+  assert.match(w, /canvas\.addEventListener\('pointerleave', \(e\) => \{ if \(!drag && e\.pointerType !== 'touch'\) setHover\(null, 0, 0\); \}\);/);
+  assert.match(w, /const overlayClose = \(\) => \{\n\s+if \(!dead && unaccepted\(\) && !armedClose\) \{[\s\S]{0,200}unregister = registerOverlay\(overlayClose\);\n\s+return;/);
+  assert.match(w, /if \(used && e\.key !== 'Escape'\) armedClose = false;/);
+  assert.match(w, /function unaccepted\(\) \{ const c = changes\(\); return !!\(c\.added \|\| c\.removed \|\| \(c\.startChanged && pending\.start\)\); \}/);
+  assert.match(w, /const n = c\.added \+ c\.removed \+ \(c\.startChanged && pending\.start \? 1 : 0\);/);
+  assert.match(w, /if \(!c\.added && !c\.removed && !\(c\.startChanged && pending\.start\)\) return;/);
+  for (const d of ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']) assert.match(w, new RegExp(`case '${d}': view\\.[xy] [-+]= 60; hold\\(\\); dirty = true; break;`), d);
+  assert.match(w, /case 'Enter': if \(e\.target\?\.tagName === 'BUTTON'\) \{ used = false; break; \}/);
+  assert.match(w, /return \/\*\* @type \{Record<string, string>\} \*\/ \(REFUSALS\)\[error\] \?\? accountRefusalText\(error\);/);
+  assert.match(w, /if \(st\.error === 'firm-closed'\) return t\('firm\.readFail\.closed',/);
+  assert.match(w, /say\(refusalText\(r\?\.error, true\), true\);/);
+  // L4 M6, L5, L6: the pause tabs wrap where a language's six do not fit; a page press's key in page ink; the Stable's
+  // stepper on the card
+  assert.doesNotMatch(read('src/ui/uiCalmStyle.js'), /\.px-tabs \{ flex-wrap: nowrap/);
+  assert.match(read('src/ui/grimoireDress.js'), /\$\{G\} \[data-grim-on="page"\] \[class\$="-key"\] \{ color: \$\{T\.inkSoft\} !important;/);
+  assert.match(read('src/ui/holdingsPages.js'), /\.px-sys \.hld-pick:has\(\.hld-step\) \{ grid-template-columns: auto minmax\(0, 1fr\) auto; \}/);
+  // the type floor: no word of the window under 12px
+  assert.deepEqual([...w.matchAll(/font-size: (\d+)px/g)].map((m) => Number(m[1])).filter((n) => n < 12), []);
 });

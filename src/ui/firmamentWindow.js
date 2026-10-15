@@ -86,7 +86,7 @@ export const FIRM_CSS = `
 .fmt-purse { display: inline-flex; align-items: baseline; gap: 6px; padding: 3px 10px; font-size: 14px; white-space: nowrap; }
 .fmt-purse b { font-size: 18px; font-weight: 600; color: #f3cf86; }
 .fmt-purse.life b { color: #9fe8cc; }
-.fmt-purse .of { color: #9a9486; font-size: 12px; }
+.fmt-purse .of { color: #b9b2a1; font-size: 12px; }
 .fmt-btn { font: inherit; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 12px; cursor: pointer; color: #e9e4d9; }
 .fmt-btn[disabled] { opacity: 0.45; cursor: default; }
 .fmt-find { font: inherit; font-size: 13px; padding: 5px 8px; width: 180px; color: #e9e4d9; background: transparent; }
@@ -99,15 +99,15 @@ export const FIRM_CSS = `
 .fmt-side ul { list-style: none; margin: 0; padding: 0; }
 .fmt-side li { padding: 2px 0; line-height: 1.35; }
 .fmt-side li.capped { color: #f3cf86; }
-.fmt-side li.capped::after { content: ' (at the cap)'; color: #9a9486; font-size: 11px; }
+.fmt-side li.capped::after { content: ' (at the cap)'; color: #b9b2a1; font-size: 12px; }   /* AUDIT UICALM-FIRM1 L5 M8: UI-CALM's type floor and quiet ink */
 .fmt-side li.neg { color: #e08a7a; }
-.fmt-side .none { color: #9a9486; font-style: italic; }
-.fmt-side .fmt-note { color: #9a9486; font-size: 12px; margin: 10px 0 0; line-height: 1.4; }
+.fmt-side .none { color: #b9b2a1; font-style: italic; }
+.fmt-side .fmt-note { color: #b9b2a1; font-size: 12px; margin: 10px 0 0; line-height: 1.4; }
 .fmt-tip { position: absolute; z-index: 2; pointer-events: none; min-width: 200px; max-width: 320px; padding: 10px 12px; font-family: var(--data); color: #e9e4d9; font-size: 13px; display: none; }
 .fmt-tip.on { display: block; }
 .fmt-tip .nm { font-family: var(--display); font-size: 18px; font-weight: 600; color: #f3cf86; line-height: 1.15; }
 .fmt-tip .nm.life { color: #9fe8cc; }
-.fmt-tip .kd { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #9a9486; margin: 2px 0 6px; }
+.fmt-tip .kd { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #b9b2a1; margin: 2px 0 6px; }
 .fmt-tip ul { list-style: none; margin: 0; padding: 0; }
 .fmt-tip li { padding: 1px 0; }
 .fmt-tip li.neg { color: #e08a7a; }

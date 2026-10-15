@@ -610,5 +610,277 @@
     "tests": [
       "test/audit_uicalm_firm1.test.js"
     ]
+  },
+  {
+    "name": "AUF-L5M5-saddle-dom-always",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "  const mode = state.panel ?? saddlePanelMode();",
+    "new": "  const mode = 'always';",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M5-saddle-dom-ignores-show",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "  if (show === 'none') return parts.root;\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ],
+    "equivalent": true,
+    "why": "the early return is work saved while hidden: data-show stays 'none', and the sheet's .saddlepanel[data-show=\"none\"] { display: none } hides whatever is drawn under it"
+  },
+  {
+    "name": "AUF-L5M5-saddle-dataset-full",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "parts.root.dataset.show = show;",
+    "new": "parts.root.dataset.show = 'full';",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M5-toggle-not-kept",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "  setPref(SADDLE_OPEN_PREF, { open: next, mode });\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M5-open-default-up",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "typeof v.open === 'boolean' ? v.open : mode === 'always';",
+    "new": "typeof v.open === 'boolean' ? v.open : true;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M5-off-touch-no-chip",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "  if (mode === 'off') return state.touch ? 'chip' : 'none';",
+    "new": "  if (mode === 'off') return 'none';",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M5-hello-hours",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "export const SADDLE_HELLO_MS = 6000;",
+    "new": "export const SADDLE_HELLO_MS = 600000;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M5-hello-no-key-name",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "saddleHello(s, state.keyOf?.(SADDLE_PANEL_ACTION) ?? '')",
+    "new": "saddleHello(s, '')",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4M1-press-outlives-choice",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "v && typeof v === 'object' && v.mode === mode && typeof v.open === 'boolean'",
+    "new": "v && typeof v === 'object' && typeof v.open === 'boolean'",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4M2-finger-on-the-compass",
+    "file": "src/ui/enhancedSaddle.js",
+    "old": "  if (last.place === 0) { if (state.touch) placeTouch(doc); else placeBar(doc); }",
+    "new": "  if (last.place === 0 && !state.touch) placeBar(doc);",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M7-calm-ignores-pref",
+    "file": "src/ui/enhancedHud.js",
+    "old": "  const calm = getPref(HUD_CALM_PREF) !== false && !hudArranging() && allFull &&",
+    "new": "  const calm = !hudArranging() && allFull &&",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M7-calm-ignores-foe",
+    "file": "src/ui/enhancedHud.js",
+    "old": " && allFull && !parts.foe?.classList?.contains?.('on');",
+    "new": " && allFull;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M7-rest-at-once",
+    "file": "src/ui/enhancedHud.js",
+    "old": "export const VITALS_REST_S = 4;",
+    "new": "export const VITALS_REST_S = 0;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M7-rest-toggle-dropped",
+    "file": "src/ui/enhancedHud.js",
+    "old": "parts.bars?.classList?.toggle?.('rest', rest);",
+    "new": "void rest;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4M3-rest-while-arranged",
+    "file": "src/ui/enhancedHud.js",
+    "old": "  const calm = getPref(HUD_CALM_PREF) !== false && !hudArranging() && allFull &&",
+    "new": "  const calm = getPref(HUD_CALM_PREF) !== false && allFull &&",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4N1-a-share-of-the-maximum",
+    "file": "src/ui/enhancedHud.js",
+    "old": "|| now > max - 1);",
+    "new": "|| now >= max * 0.995);",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4H1-bar-half-the-screen",
+    "file": "src/ui/firmamentWindow.js",
+    "old": ".fmt-bar { position: absolute; left: 16px; right: 16px; margin-inline: auto; width: fit-content; top: 10px;",
+    "new": ".fmt-bar { position: absolute; left: 50%; top: 10px; transform: translateX(-50%);",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4H1-say-takes-taps",
+    "file": "src/ui/firmamentWindow.js",
+    "old": "transform: translateX(-50%); pointer-events: none; padding: 7px 16px;",
+    "new": "transform: translateX(-50%); padding: 7px 16px;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4H1-finger-learns-at-once",
+    "file": "src/ui/firmamentWindow.js",
+    "old": "    if (e.pointerType === 'touch' && d.button !== 2 && hover !== key) { setHover(key, p.x, p.y); return; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4H1-sky-under-the-bar",
+    "file": "src/ui/firmamentWindow.js",
+    "old": "    view.y = Math.max(40, barFoot() / 2);",
+    "new": "    view.y = 40;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4M4-overlay-close-unasked",
+    "file": "src/ui/firmamentWindow.js",
+    "old": "    if (!dead && unaccepted() && !armedClose) {\n      armedClose = true;",
+    "new": "    if (false) {\n      armedClose = true;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4M5-sign-not-a-change",
+    "file": "src/ui/firmamentWindow.js",
+    "old": "  function unaccepted() { const c = changes(); return !!(c.added || c.removed || (c.startChanged && pending.start)); }",
+    "new": "  function unaccepted() { const c = changes(); return !!(c.added || c.removed); }",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4L1-arrow-unheld",
+    "file": "src/ui/firmamentWindow.js",
+    "old": "      case 'ArrowLeft': view.x += 60; hold(); dirty = true; break;",
+    "new": "      case 'ArrowLeft': view.x += 60; dirty = true; break;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4L2-enter-hijacks",
+    "file": "src/ui/firmamentWindow.js",
+    "old": "      case 'Enter': if (e.target?.tagName === 'BUTTON') { used = false; break; } click();",
+    "new": "      case 'Enter': click();",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4L4-refusal-raw",
+    "file": "src/ui/firmamentWindow.js",
+    "old": "    return /** @type {Record<string, string>} */ (REFUSALS)[error] ?? accountRefusalText(error);",
+    "new": "    return /** @type {Record<string, string>} */ (REFUSALS)[error] ?? 'The stars refused.';",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5-readfail-closed-silent",
+    "file": "src/ui/firmamentWindow.js",
+    "old": "    if (st.error === 'firm-closed') return t('firm.readFail.closed',",
+    "new": "    if (st.error === 'firm-closed') return null; void t('firm.readFail.closed',",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L5M8-window-floor",
+    "file": "src/ui/firmamentWindow.js",
+    "old": ".fmt-tip .kd { font-size: 12px;",
+    "new": ".fmt-tip .kd { font-size: 10px;",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4M6-tabs-held-to-one-row",
+    "file": "src/ui/uiCalmStyle.js",
+    "old": "  ${P} .px-win > .px-tabs { gap: 2px; }",
+    "new": "  ${P} .px-win > .px-tabs { flex-wrap: nowrap; gap: 2px; }",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4L5-key-wood-ink",
+    "file": "src/ui/grimoireDress.js",
+    "old": "${G} [data-grim-on=\"page\"] [class$=\"-key\"] { color: ${T.inkSoft} !important; text-shadow: none !important; }\n",
+    "new": "",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
+  },
+  {
+    "name": "AUF-L4L6-stepper-spills",
+    "file": "src/ui/holdingsPages.js",
+    "old": ".px-sys .hld-pick:has(.hld-step) { grid-template-columns: auto minmax(0, 1fr) auto; }",
+    "new": ".px-sys .hld-pick:has(.hld-step) { grid-template-columns: auto auto 1fr auto; }",
+    "tests": [
+      "test/audit_uicalm_firm1.test.js"
+    ]
   }
 ]
