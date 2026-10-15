@@ -18,10 +18,12 @@
 //   the kill, the round            the KILL listener, the MAGIC ROUND (regeneration)
 //   health and magicka             the ONLINE LAYER beside Renown's (renownLayer.js setOnlineLayerExtra), moved each round
 //
-// THE COMBAT CHANNELS SLEEP (`awake`) offline (the tree is not in force), in every refereed fight (sigil.js sigilDueling -
-// the duel, the arena, the siege: the word every loot and set power sleeps on), while mentoring (SOFTCAP2's `_mentor`,
-// as the Arcane paths sleep), and never answer a blow or a spell at a player - so the PvP the port refereed stands
-// exactly where it stood. IN THE WROTHGARIAN ZONE the sky FIGHTS ITS BEASTS (the lead dev, 2026-10-13: "this should help
+// THE COMBAT CHANNELS SLEEP (`awake`) offline (the tree is not in force), in a duel and an arena bout (sigil.js
+// sigilDueling - the word every loot and set power sleeps on), while mentoring (SOFTCAP2's `_mentor`, as the Arcane paths
+// sleep), and never answer a blow or a spell at a player. A SIEGE AND THE ZONE ARE NOT REFEREED BOUTS (AUDIT UICALM-FIRM1
+// L1 M3 - this header had said a siege slept): there, as the loot's and the sets' powers do, the pace, the price and the
+// pool act; what lands on a player is rolled with the sky off (below), and the relay's referee holds its harm and its
+// casts to its own ceilings. IN THE WROTHGARIAN ZONE the sky FIGHTS ITS BEASTS (the lead dev, 2026-10-13: "this should help
 // in the wrotgarian zone against pve"): every channel acts against the zone's foes as anywhere online, and a player
 // there is never struck harder for it - a strike or a spell at a player is rolled on my sheet with the sky taken off it
 // (withoutFirmament, scenes/world.js wildStrikeOut / wildSpellOut), and a player's blow lands on the referee's vitality,
@@ -73,7 +75,9 @@ export function withoutFirmament(entity, fn) {
 let _rand = Math.random;
 /** The fraction a percent of a blow leaves, carried to the next, by weapon (or by my fists). */
 let _carry = new WeakMap();
-let _takenOwed = 0;
+/** AUDIT UICALM-FIRM1 L1 M4: the fraction a damage taken leaves, ONE CARRY A CHANNEL - a blow's and a spell's percents
+ *  may have opposite signs, and one shared carry made a lighter spell land harder */
+let _takenOwed = { blow: 0, spell: 0 };
 
 /** A percent of `damage`, whole, the fraction carried on `key` - the sets' own law (sigilSetPowers.js setBlow). */
 function shareOf(key, damage, pct) {
@@ -85,6 +89,9 @@ function shareOf(key, damage, pct) {
 
 // ── the fold ────────────────────────────────────────────────────────
 
+/** `v` held inside channel `key`'s budget (STAT_DEFS) - a key star's raw points and a small star's share are one channel. */
+const capAt = (key, v) => { const d = statDef(key); return d ? Math.max(d.min, Math.min(d.max, v)) : v; };
+
 /** THE ENTITY FOLD: the attributes, the skills, the saving throws, armour on every part, the carry, standing and the
  *  wardrobe's channels - the combat ones while awake, the life ones while in force. */
 export function firmamentFold(entity) {
@@ -93,11 +100,13 @@ export function firmamentFold(entity) {
   const mods = newMods();
   const read = (key) => (statDef(key)?.kind === 'life' ? l[key] : f[key]) ?? 0;
   // a key star's raw points, and a small star's share of the character's own (its permanent value: Ascend's points in it)
-  for (const a of ATTRIBUTES) { const v = read(a) + pctOf(entity.stats?.[a], read(`pct.${a}`)); if (v) mods.stats[a] = v; }
+  // - AUDIT UICALM-FIRM1 L1 H1: the two TOGETHER held to the channel's budget (an attribute +15, a combat skill +15):
+  // capped apart they made +21 Strength and a mastered Stealth +53
+  for (const a of ATTRIBUTES) { const v = capAt(a, read(a) + pctOf(entity.stats?.[a], read(`pct.${a}`))); if (v) mods.stats[a] = v; }
   for (const n of [...COMBAT_SKILLS, ...LIFE_SKILLS]) {
     const id = SKILLS[n];
     const share = read(`skillPct.${n}`);
-    const v = read(`skill.${n}`) + (share ? pctOf(permanentSkillValue(entity, id), share) : 0);
+    const v = capAt(`skill.${n}`, read(`skill.${n}`) + (share ? pctOf(permanentSkillValue(entity, id), share) : 0));
     if (v) mods.skills[id] = v;
   }
   for (const e of FIRM_ELEMENTS) { const v = read(`resist.${e}`); if (v) mods.resist[e] = v; }
@@ -145,11 +154,12 @@ export function firmamentCastCost(entity, sp, spell = null) {
 export function firmamentDamage(entity, dmg) {
   const c = fight(entity);
   if (c === NONE || !(dmg > 0)) return dmg;
-  const pct = pendingPlayerBlow() ? (c.blowTaken ?? 0) : (c.spellTaken ?? 0);
+  const ch = pendingPlayerBlow() ? 'blow' : 'spell';
+  const pct = ch === 'blow' ? (c.blowTaken ?? 0) : (c.spellTaken ?? 0);
   if (!pct) return dmg;
-  const exact = (dmg * pct) / 100 + _takenOwed;
+  const exact = (dmg * pct) / 100 + _takenOwed[ch];
   const whole = pct >= 0 ? Math.floor(exact + 1e-9) : Math.ceil(exact - 1e-9);
-  _takenOwed = exact - whole;
+  _takenOwed[ch] = exact - whole;
   return Math.max(0, dmg + whole);
 }
 /** A foe's blow, `evade` in a hundred, missing me entirely - asked before any modifier (the door's own order). */
@@ -189,7 +199,8 @@ export function firmamentLayer(entity = me()) {
   if (!entity) return;
   const baseHp = Number.isFinite(entity.rawMaxHealth) ? entity.rawMaxHealth : (entity.maxHealth ?? 0) - renownHpOf(entity);
   const baseMp = (entity.maxMagicka ?? 0) - renownMpOf(entity);
-  setOnlineLayerExtra(entity, { hp: (c.hp ?? 0) + pctOf(baseHp, c.hpPct ?? 0), mp: (c.mp ?? 0) + pctOf(baseMp, c.mpPct ?? 0) });
+  // AUDIT UICALM-FIRM1 L1 H1: the raw points and the share together inside the budget (+75 Health, +75 Spell Points)
+  setOnlineLayerExtra(entity, { hp: capAt('hp', (c.hp ?? 0) + pctOf(baseHp, c.hpPct ?? 0)), mp: capAt('mp', (c.mp ?? 0) + pctOf(baseMp, c.mpPct ?? 0)) });
 }
 
 // ── registered at import ───────────────────────────────────────────
@@ -213,5 +224,5 @@ onFirmamentChange(() => {
 });
 
 /** Tests only: fresh carries, and dice of their own ([0, 1)). */
-export function _resetFirmamentPowersForTests() { _carry = new WeakMap(); _takenOwed = 0; }
+export function _resetFirmamentPowersForTests() { _carry = new WeakMap(); _takenOwed = { blow: 0, spell: 0 }; }
 export function _setFirmamentPowersRandForTests(fn) { _rand = typeof fn === 'function' ? fn : Math.random; }

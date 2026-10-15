@@ -23,9 +23,9 @@
 //   - so no path through the sky, however it is chosen, adds more than the budget to a fight. Keystones count against
 //   the same caps: they trade, they do not stack past them. A LIFE star carries life channels alone (pinned: every life
 //   star's stat is `kind: 'life'`), so the Craft purse can never reach a fight at all. And the powers that read the sky
-//   (systems/firmamentPowers.js) sleep offline (Daggerfall as it was), in every refereed fight (the duel, the arena,
-//   the siege - sigil.js sigilDueling, the word every loot and set power sleeps on), while mentoring,
-//   and never touch a blow or a spell at another player.
+//   (systems/firmamentPowers.js) sleep offline (Daggerfall as it was), in a duel and an arena bout (sigil.js
+//   sigilDueling, the word every loot and set power sleeps on), while mentoring, and never touch a blow or a spell at
+//   another player (a siege and the Wrothgarian zone keep the pace and the price, as the loot and the sets do).
 //
 // Pure, no imports but the tree: the account Worker validates and applies it, the client draws and spends it.
 // ═══════════════════════════════════════════════════════════════════
@@ -206,13 +206,18 @@ const GROUP_KEY = Object.freeze({ undead: 'undeadDmg', daedra: 'daedraDmg', anim
  * @param {{ skill?: string|null, group?: string|null, unaware?: boolean, wounded?: boolean }} blow
  */
 export function blowPct(c, { skill = null, group = null, unaware = false, wounded = false } = {}) {
-  let general = (c.weaponDmg ?? 0);
-  if (skill && skill !== 'Archery') general += (c.meleeDmg ?? 0);
+  const chans = ['weaponDmg'];
+  if (skill && skill !== 'Archery') chans.push('meleeDmg');
   const fam = skill ? /** @type {Record<string, string>} */ (FAMILY_OF_SKILL)[skill] : null;
-  if (fam) general += (c[fam] ?? 0);
+  if (fam) chans.push(fam);
   const g = group ? /** @type {Record<string, string>} */ (GROUP_KEY)[group] : null;
-  if (g) general += (c[g] ?? 0);
-  let pct = Math.max(BLOW_FLOOR, Math.min(BLOW_CAP, general));
+  if (g) chans.push(g);
+  // AUDIT UICALM-FIRM1 L1 M2: the group's gains capped, then its prices paid (Night Mother's Embrace's -5 in an open
+  // fight was swallowed by a melee and a short-blade sum already past the group's 30)
+  const paid = pricesOf(c);
+  let gain = 0, price = 0;
+  for (const k of chans) { gain += (c[k] ?? 0) - (paid[k] ?? 0); price += paid[k] ?? 0; }
+  let pct = Math.max(BLOW_FLOOR, Math.min(BLOW_CAP, gain) + price);
   if (unaware) pct += (c.unawareDmg ?? 0);
   if (wounded) pct += (c.rageDmg ?? 0);
   return Math.min(BLOW_TOTAL_CAP, pct);
@@ -220,10 +225,13 @@ export function blowPct(c, { skill = null, group = null, unaware = false, wounde
 /** THE PERCENT THE SKY TAKES OFF ONE SPELL'S PRICE - every school's own channel counts only where every effect of the
  *  spell is that school's (`schools` the schools its effects are in). Negative is a dearer spell. */
 export function castCostPct(c, schools = []) {
-  let pct = c.castCost ?? 0;
+  const chans = ['castCost'];
   const set = new Set(schools);
-  if (set.size === 1) pct += c[`castCost.${[...set][0]}`] ?? 0;
-  return Math.min(CAST_COST_CAP, pct);
+  if (set.size === 1) chans.push(`castCost.${[...set][0]}`);
+  const paid = pricesOf(c);
+  let gain = 0, price = 0;
+  for (const k of chans) { gain += (c[k] ?? 0) - (paid[k] ?? 0); price += paid[k] ?? 0; }
+  return Math.min(CAST_COST_CAP, gain) + price;   // the gains capped, then the price paid (AUDIT UICALM-FIRM1 L1 M2)
 }
 
 // ─── AN ALLOCATION ──────────────────────────────────────────────────
@@ -369,6 +377,28 @@ export function totals(tree) {
   }
   return out;
 }
+/** Whether a stat's value is a PRICE - against its holder: less of a good thing, or more damage taken (`blowTaken`,
+ *  `spellTaken`). Only a battle keystone carries one (pinned). */
+export const isPrice = (key, v) => (/Taken$/.test(key) ? v > 0 : v < 0);
+/** The sums over the start and the stars allocated, the gains and the prices apart: `{ gains, prices }`. */
+export function treeParts(tree) {
+  /** @type {Record<string, number>} */
+  const gains = {};
+  /** @type {Record<string, number>} */
+  const prices = {};
+  if (!tree?.start) return { gains, prices };
+  for (const k of [tree.start, ...(tree.keys ?? [])]) {
+    const n = firmNode(k);
+    if (!n) continue;
+    for (const [s, v] of Object.entries(n.stats)) { const to = isPrice(s, v) ? prices : gains; to[s] = (to[s] ?? 0) + v; }
+  }
+  return { gains, prices };
+}
+/** Where treeStats keeps each channel's price, for the group readers (blowPct, castCostPct) - off the channels' own
+ *  entries, so a reader walking the stats sees the channels alone. */
+export const PRICES = Symbol('firmament prices');
+/** The prices treeStats paid on `c`, by channel (none on stats it did not make). */
+const pricesOf = (c) => /** @type {Record<string, number>} */ (/** @type {any} */ (c)?.[PRICES] ?? {});
 /** THE BUDGET: every channel held inside its `min`..`max`. A key no channel is drops. */
 export function capped(raw) {
   /** @type {Record<string, number>} */
@@ -380,8 +410,29 @@ export function capped(raw) {
   }
   return Object.freeze(out);
 }
-/** The capped totals of an allocation - what every reader reads. */
-export const treeStats = (tree) => capped(totals(tree));
+/**
+ * The capped totals of an allocation - what every reader reads. AUDIT UICALM-FIRM1 L1 M2: THE GAINS ARE CAPPED, THEN THE
+ * PRICE IS PAID - a keystone's price summed in before the cap was paid by nobody whose gains already stood past it
+ * (Martyr's Vow's -4 spell damage left a capped mage at +30). Each channel's price rides on the stats under PRICES, so
+ * a group read at the blow or the cast pays it after its own cap too.
+ */
+export function treeStats(tree) {
+  const { gains, prices } = treeParts(tree);
+  /** @type {Record<string, number>} */
+  const out = {};
+  /** @type {Record<string, number>} */
+  const paid = {};
+  for (const k of new Set([...Object.keys(gains), ...Object.keys(prices)])) {
+    const d = statDef(k);
+    if (!d) continue;
+    const g = Math.max(d.min, Math.min(d.max, gains[k] ?? 0));
+    const v = Math.max(d.min, Math.min(d.max, g + (prices[k] ?? 0)));
+    if (v !== 0 && Number.isFinite(v)) out[k] = v;
+    if (prices[k] && v - g) paid[k] = v - g;
+  }
+  Object.defineProperty(out, PRICES, { value: Object.freeze(paid) });
+  return Object.freeze(out);
+}
 /** Which channels the budget holds back: `[{ key, raw, held }]` - the sky's sum past a cap, so the window can say so. */
 export function overCap(raw) {
   const out = [];
@@ -419,7 +470,11 @@ export function unpackTree(s) {
   const bar = s.indexOf('|');
   const start = bar < 0 ? s : s.slice(0, bar);
   if (!isStart(start)) return { start: null, keys: [] };
-  return { start, keys: cleanKeys(bar < 0 ? [] : s.slice(bar + 1).split(',')) };
+  // AUDIT UICALM-FIRM1 L1 L4: a star the sky no longer has drops (cleanKeys), and every star that reached the start only
+  // through it drops with it, free - never left paying stats in a row the law would refuse
+  const keys = cleanKeys(bar < 0 ? [] : s.slice(bar + 1).split(','));
+  const reached = reachFrom(start, new Set(keys));
+  return { start, keys: keys.filter((k) => reached.has(k)) };
 }
 // ─── THE BUILD CODE ──────────────────────────────────────────────────
 // A tree as a line a player pastes in Discord and another loads into the window: `FIRM-<sky>-<stars>`. `<stars>` is a

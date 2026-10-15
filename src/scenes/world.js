@@ -752,7 +752,7 @@ import { readAccount, buyInsignia, equipTitle, equipAura, adoptIdentity as adopt
 import { ownAura, ownNameAsAt } from '../systems/ownGlyphs.js';   // WB9g: the aura at my own feet - the service's last word, kept on the stored session; NAME-AS: and when this device last chose the name its player wears
 import { INSIGNIA, insigniaRefusal } from '../net/insignia.js';   // WB9g
 import { createFirmamentBook, setFirmamentBook } from '../net/firmamentBook.js';   // FIRM1: the Firmament - this device's tree and purses
-import { setFirmamentTree, setFirmamentOnline } from '../systems/firmamentLive.js';   // FIRM1: the tree in force, online alone
+import { setFirmamentTree, setFirmamentOnline, setFirmamentMentoring } from '../systems/firmamentLive.js';   // FIRM1: the tree in force, online alone
 import { starsFor } from '../net/firmamentLaw.js';   // FIRM1: the Stars a Renown level brings, said with it
 import { withoutFirmament } from '../systems/firmamentPowers.js';   // FIRM1: a strike or a spell at a player - a duel's, a siege's, the Wrothgarian zone's - is rolled with the sky off
 import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, accountFirmament, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
@@ -28583,6 +28583,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // leaving the group hands my real character back the same frame.
     const mentorLevels = social?.party ? social.others().filter((m) => m.online !== false && Number.isInteger(m.p?.cl)).map((m) => m.p.cl) : [];
     const mentorWord = refreshMentor(playerEntity, mentorLevels);
+    setFirmamentMentoring(!!playerEntity._mentor);   // AUDIT UICALM-FIRM1 L1 L2: the sky sleeps the frame mentoring starts, and wakes the frame it ends
     if (mentorWord) {
       const text = mentorWord === 'on' ? mentorStatusText(playerEntity) : 'Mentoring ended - your real level, skills, attributes and gear are back.';
       try { chatLog.push(chatLog.active, { text, system: true }); } catch { /* no chat yet: the sheet says it too */ }
@@ -29370,6 +29371,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!seatOut()) return;
     _seatOut = false; _seatLeft = false; _seatSaid = false;
     setFirmamentOnline(true);   // FIRM1: and the sky wakes with them
+    firmBook?.read().catch(() => {});   // AUDIT UICALM-FIRM1 L1 L3: as the service holds it now - another tab may have respecced or refunded while this one sat out
     setSigilOnline(true); setSigilRenown(renownNow); setRenownLayer(playerEntity, renownNow); computeEntityMods(playerEntity);   // AUDIT ONESEAT H3: online again (SET3: the sets' tiers with it)
     online?.resume();
     for (const [tabId, link] of chatLinks ?? []) {

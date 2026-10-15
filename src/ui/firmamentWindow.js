@@ -26,7 +26,7 @@
 import { t } from '../systems/textManager.js';   // UI-CALM: the read's failure, said
 import { FIRM_NODES, FIRM_EDGES, SIGNS, SERPENT, FIRM_RADII, signById } from '../net/firmamentTree.js';
 import {
-  pathTo, refundTakes, firmCostOf, fits, pointsLeft, treeDiff, refundSilver, statWords, statDef, totals, capped, overCap, FIRM_RESPEC_GOLD,
+  pathTo, refundTakes, firmCostOf, fits, pointsLeft, treeDiff, refundSilver, statWords, statDef, overCap, treeStats, treeParts, FIRM_RESPEC_GOLD,
   buildCode, treeOfCode, treeFault,
 } from '../net/firmamentLaw.js';
 import { firmamentBook } from '../net/firmamentBook.js';
@@ -196,9 +196,10 @@ export function statLines(stats) {
 }
 /** The sky's sums as the side panel says them: `{ combat: [...], life: [...] }`, each line `{ text, capped, neg }`. */
 export function summaryOf(tree) {
-  const raw = totals(tree);
-  const held = capped(raw);
-  const over = new Set(overCap(raw).map((o) => o.key));
+  // AUDIT UICALM-FIRM1 L1 M2: what the sky does - the gains capped, then the prices paid (treeStats) - and a channel held
+  // back where its gains pass the budget
+  const held = treeStats(tree);
+  const over = new Set(overCap(treeParts(tree).gains).map((o) => o.key));
   const out = { combat: [], life: [] };
   for (const [k, v] of Object.entries(held).sort(([a], [b]) => a.localeCompare(b))) {
     const d = statDef(k);
