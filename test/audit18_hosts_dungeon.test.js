@@ -168,7 +168,11 @@ test('audit18 sweep: all three spawn sites run the one shared equip chain', () =
   const dungeon = hostSrc('dungeonContext.js');
   const guards = hostSrc('cityGuards.js');
   // RF2: the equip chain rides the ONE enemy-loot seam (hostCombat.spawnEnemyLoot) - a host calls that, once per branch
-  assert.equal((dungeon.match(/\bspawnEnemyLoot\(/g) ?? []).length, 3, 'class + monster branch, and a room body\'s base (PIN MOVED, PARTY-LOOT: the same one seam on the room\'s terms)');
+  assert.equal((dungeon.match(/\bspawnEnemyLoot\(/g) ?? []).length, 2, 'class + monster branch');
+  // PIN MOVED (HOST-SPLIT, FIELD BUGS 2026-10-14): a room body's base - PARTY-LOOT's, the same one seam on the room's
+  // terms - left buildDungeonContext with its block for src/scenes/roomLootHost.js, which the dungeon host constructs
+  assert.equal((hostSrc('roomLootHost.js').match(/\bspawnEnemyLoot\(/g) ?? []).length, 1, 'a room body\'s base (PIN MOVED, PARTY-LOOT: the same one seam on the room\'s terms)');
+  assert.match(dungeon, /= createRoomLoot\(\{   \/\/ HOST-SPLIT: src\/scenes\/roomLootHost\.js/, 'and the dungeon host constructs it');
   assert.equal((guards.match(/\bspawnEnemyLoot\(/g) ?? []).length, 1, 'the city watch');
   for (const [name, src] of allHosts()) {
     if (name === 'hostCombat.js') continue;   // the one shared home

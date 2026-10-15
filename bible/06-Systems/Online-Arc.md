@@ -15726,7 +15726,7 @@ them over everyone's list whole: both halves of the report are that one word, fr
 then **"Shared base + personal bonus"**. **And the race** (asked, 2026-10-15, how two players taking the same piece in
 one breath should end - each keeping it, or the room deciding): **"Host arbitrates"**.
 
-### The law (systems/roomLoot.js, scenes/dungeonContext.js)
+### The law (systems/roomLoot.js, scenes/roomLootHost.js - the dungeon host's block, moved out of scenes/dungeonContext.js at the field-bugs merge, `01-Overview/Host-Split.md` - and scenes/dungeonContext.js)
 
 - **THE BASE.** A dungeon room's container - a layout pile (`loot:<i>`), a layout foe's body (`corpse:<i>`), a rest
   encounter's body (`enc:<n>`) - has ONE base list, and every client COMPUTES it: the container's own chain on dice

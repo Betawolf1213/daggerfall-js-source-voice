@@ -51,15 +51,21 @@ setSigilOnline(true);   // an online page: the sigils' and the Renown's door
 
 const SRC = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const AST = acorn.parse(SRC, { ecmaVersion: 'latest', sourceType: 'module' });
-function find(pred) {
+/** HOST-SPLIT (FIELD BUGS 2026-10-14): the PARTY-LOOT block left buildDungeonContext for src/scenes/roomLootHost.js
+ *  (createRoomLoot, moved by tools/hostMove.mjs) - read here as the dungeon host's is. */
+const MOD = readFileSync(new URL('../src/scenes/roomLootHost.js', import.meta.url), 'utf8');
+const MOD_AST = acorn.parse(MOD, { ecmaVersion: 'latest', sourceType: 'module' });
+function find(pred, ast = AST) {
   let hit = null;
   (function walk(n) {
     if (!n || typeof n.type !== 'string' || hit) return;
     if (pred(n)) { hit = n; return; }
     for (const k of Object.keys(n)) { const v = n[k]; if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v.type === 'string') walk(v); }
-  })(AST);
+  })(ast);
   return hit;
 }
+/** A function of the block's, as the module holds it. */
+const modFn = (name) => { const n = find((x) => x.type === 'FunctionDeclaration' && x.id?.name === name, MOD_AST); assert.ok(n, `roomLootHost.js has function ${name}`); return MOD.slice(n.start, n.end); };
 const fnNode = (name) => find((x) => x.type === 'FunctionDeclaration' && x.id?.name === name);
 const fnSrc = (name) => { const n = fnNode(name); assert.ok(n, `src has function ${name}`); return SRC.slice(n.start, n.end); };
 const optFn = (name) => { const n = fnNode(name); return n ? SRC.slice(n.start, n.end) : ''; };
@@ -70,8 +76,26 @@ const memberSrc = (name) => {
   const body = SRC.slice(n.value.start, n.value.end);
   return n.method ? `function ${body}` : body;
 };
-/** The PARTY-LOOT block whole, from its banner to the line after it (absent before PARTY-LOOT). */
-const BLOCK = (() => { const a = SRC.indexOf('  // ── PARTY-LOOT (2026-10-14'), b = SRC.indexOf('  const _retyping = new Set();'); return a >= 0 && b > a ? SRC.slice(a, b) : ''; })();
+/** The PARTY-LOOT block whole, as the dungeon host runs it (absent before PARTY-LOOT). PIN MOVED (HOST-SPLIT): it was the
+ *  host's own lines, from its banner to `const _retyping`; it is now the host's three counters and its construction of
+ *  the module, both sliced from dungeonContext.js, under the module's own `createRoomLoot` sliced from roomLootHost.js -
+ *  the host destructures the returns into the mount's scope, where its doors mounted beside it reach them, and the
+ *  module's imports (the player, the mid-screen line) are this peer's, as the host's were. */
+const PARTS = (() => {
+  const ctor = find((x) => x.type === 'VariableDeclaration' && x.declarations.some((d) => d.init?.type === 'CallExpression' && d.init.callee?.name === 'createRoomLoot'));
+  const fn = find((x) => x.type === 'FunctionDeclaration' && x.id?.name === 'createRoomLoot', MOD_AST);
+  const a = SRC.indexOf('  let _roomMintHold = 0;');
+  if (!ctor || !fn || a < 0 || a > ctor.start) return null;
+  const body = fn.body.body;
+  assert.equal(body[body.length - 1].type, 'ReturnStatement', 'the module ends in its returns');
+  const handles = ctor.declarations[0].init.arguments[0];
+  return { lets: SRC.slice(a, ctor.start), fn: MOD.slice(fn.start, fn.end), ctor: SRC.slice(ctor.start, ctor.end), handles: SRC.slice(handles.start, handles.end), body: MOD.slice(body[0].start, body[body.length - 2].end) };
+})();
+const BLOCK = PARTS ? `${PARTS.lets}${PARTS.fn}\n  ${PARTS.ctor}\n` : '';
+/** The block's own scope alone - the module's body under the host's handles (built outside it, so its by-value names
+ *  are the mount's, never the body's own destructured copies of them), `tail` run in it with the block's internal
+ *  members (rollRoomBase) in reach - for a mount with none of the host's doors beside it. */
+const blockBody = (tail) => (PARTS ? `${PARTS.lets}const host = ${PARTS.handles};\n  {\n  ${PARTS.body}\n  ${tail}\n  }\n` : '');
 /** The build's pile loop, its list and its open zone's ring - the two lines the build mints a pile's list with. */
 const PILE_BUILD = (() => { const m = /\n(\s*const items = [^\n]*rollPileItems\(\);[^\n]*\n\s*if \(_wildDungeon[^\n]*)\n/.exec(SRC); assert.ok(m, 'the build mints a pile\'s list'); return m[1]; })();
 const scoped = (state) => new Proxy(state, {
@@ -536,7 +560,7 @@ test('PARTY-LOOT: THE BASE IS THE ROOM\'S ROLL ALONE - one name and one set of t
       const got = p.as(() => {
         const own = Math.random;
         Math.random = () => { if (rollingAsTheRoom()) throw new Error(`${key}: a base draw reached Math.random`); return own(); };
-        try { return sig(mount(`${BLOCK} return { rollRoomBase };`, { ...p.state, rollPileItems: p.host.rollPileItems }).rollRoomBase(key, terms).items); }
+        try { return sig(mount(blockBody('return { rollRoomBase };'),{ ...p.state, rollPileItems: p.host.rollPileItems }).rollRoomBase(key, terms).items); }
         finally { Math.random = own; }
       });
       if (lists.has(`${key}#${g}`)) assert.equal(got, lists.get(`${key}#${g}`), `${key}#${g}: one list on both machines`);
@@ -549,10 +573,10 @@ test('PARTY-LOOT: THE BASE IS THE ROOM\'S ROLL ALONE - one name and one set of t
 test('PARTY-LOOT by source: no Math.random in the room\'s law (systems/roomLoot.js) nor in the dungeon\'s PARTY-LOOT block; the base rolls inside asTheRoom; the readers turn an unborn container away; the kill, the stream and the memory roll nothing of their own onto a room body', () => {
   const strip = (t) => t.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
   assert.doesNotMatch(strip(readFileSync(new URL('../src/systems/roomLoot.js', import.meta.url), 'utf8')), /Math\.random/, 'the room\'s law draws only on its seeded dice');
-  assert.ok(BLOCK, 'the dungeon carries the PARTY-LOOT block');
+  assert.ok(BLOCK, 'the dungeon carries the PARTY-LOOT block (PIN MOVED, HOST-SPLIT: constructed from src/scenes/roomLootHost.js)');
   assert.doesNotMatch(strip(BLOCK), /Math\.random/, 'and the block takes no draw of its own');
-  assert.match(fnSrc('rollRoomBase'), /asTheRoom\(\(\) => \{\s*if \(h\.pile\) items = roomPileBase\(h, terms, rolls, gender\);\s*else \(\{ items, lootCap \} = roomBodyBase\(h\.foe, terms, rolls, gender, rejects\)\);\s*\}\);/);
-  assert.match(fnSrc('roomBodyBase'), /spawnEnemyLoot\(e, f\.mobileType, ENEMY_BASICS\[f\.mobileType\], roller, \{ \.\.\.eliteLootOpts\(f\.src\), where: 'dungeon', \.\.\.o, rejects \}\);/);
+  assert.match(modFn('rollRoomBase'), /asTheRoom\(\(\) => \{\s*if \(h\.pile\) items = roomPileBase\(h, terms, rolls, gender\);\s*else \(\{ items, lootCap \} = roomBodyBase\(h\.foe, terms, rolls, gender, rejects\)\);\s*\}\);/);
+  assert.match(modFn('roomBodyBase'), /spawnEnemyLoot\(e, f\.mobileType, ENEMY_BASICS\[f\.mobileType\], roller, \{ \.\.\.eliteLootOpts\(f\.src\), where: 'dungeon', \.\.\.o, rejects \}\);/);
   assert.match(memberSrc('lootContents'), /if \(\(kind === 'loot' \|\| kind === 'corpse'\) && roomUnborn\(key\)\) return null;/);
   assert.match(memberSrc('takeLoot'), /if \(\(kind === 'loot' \|\| kind === 'corpse'\) && roomUnborn\(key\)\) return 0;/);
   assert.match(fnSrc('lootTargets'), /if \(!p\.batch \|\| roomUnborn\(`loot:\$\{i\}`\)\) return;/);
