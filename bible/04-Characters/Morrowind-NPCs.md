@@ -290,6 +290,20 @@ view's (AUDIT OW4 J6), the flats' own - stands as handed. Classic
 billboards keep DFU's upright quad: they are flats, not pictures of a 3D
 figure. Pinned: `test/bodylean.test.js`; mutants `tools/mutants/bodylean.json`.
 
+BODY-CARD (2026-10-14, the owner: "Reimplement the billboard morrowind look as a toggle"; asked which look, the upright card BODY-LEAN
+replaced). THE BILLBOARD LOOK, a switch: Features > Combat > With Morrowind
+data, "Billboard Look" (`features.js` mw-billboard-look, pref
+`mwBillboardLook`, off by default, the viewer's own - it never reaches the
+wire). On, drawRigSpriteBox stands the card upright again (world up), as it
+stood before BODY-LEAN - every Morrowind body and 3D horse, the player's,
+a peer's, the people's, by the lone pass and the batch - so a figure draws
+cos(pitch) of its height, the flats' way, shorter as the camera rises over
+it. Off, the card leans and the figure keeps its true height. Read where
+the card is stood (`characterSprite.js:"const qUp = up ??"`), so it takes
+effect at once with no rebuild; a lean the host hands (the travel view's)
+stands as handed either way. Pinned: `test/bodycard.test.js`; mutants
+`tools/mutants/bodycard.json`.
+
 ONE-BAD-BODY (FIELD BUGS 2026-10-13b, `01-Overview/Field-Bugs-2026-10-13b.md`;
 the owner: "people are saying with norrowind models, people are invisable.
 Something in a recent commit borked it", online only). The packer places each tile after the last (`x += it.pw`),
@@ -744,7 +758,11 @@ pool's behavioural proof of the same lines.
   garment dyed off the spawn (`FOLK_DYES`) so a street is not one colour;
   the guard in the watch's whole steel plate. (AMENDED BY MWNPC17, section
   25: the variant is the walker's role and cut - FOLK_DRESS - and the
-  wardrobe dresses the rest off the spawn.) A RE-ROLL IS A NEW PERSON:
+  wardrobe dresses the rest off the spawn.) (AMENDED BY MW-FOLK1, 2026-10-13,
+  and its audit: a walker whose picture has an outfit of the port's own -
+  eleven of the twenty-four - wears that outfit and no wardrobe, so one
+  picture's walkers differ by their faces alone;
+  `04-Characters/Townsfolk-Outfits.md`.) A RE-ROLL IS A NEW PERSON:
   the pool's shells come back as someone else, so another archive, face,
   name or gender is a new id (`<shell>.<spawn>`) and a new look - a body
   built for them, never the last one's re-dressed (PeerBodies holds a
@@ -1656,10 +1674,12 @@ card regulars and every NPC lane) would have dropped it:
   of the mesh's buffer - a bow's few hundred corners while it draws, never
   the body (fpArm.js uploadThirdMesh). Its box moves with it (rule 42).
 - AUDIT MW-CLOAK x MWNPC1: THE SEATED CLOAK AND THE GEAR THAT GOES WITH
-  IT. Seated, main swaps the cloak's batch for one whose thighs weigh less
-  (mwCloakFit.js seatCloak); the stream carries the weights, so a layout
-  is the same body only while each skinned piece skins by the batch it was
-  laid out from (`skinSamePieces`) - a seat lays the body out again, once.
+  IT. Seated, main swapped the cloak's batch for one whose thighs weighed
+  less (mwCloakFit.js seatCloak - gone since MW-CAPE-RIGID, 2026-10-14: the
+  cloak rides the chest alone, `04-Characters/Cloak.md`); the stream
+  carries the weights, so a layout is the same body only while each
+  skinned piece skins by the batch it was laid out from (`skinSamePieces`)
+  - a fit that replaces the cloak's batch lays the body out again, once.
   And main turns the stowed gear with the cloak after every pose (the
   assembly's `afterPose`, applyCloakFollow), reading the CPU-posed cloak
   and re-placing the gear on the CPU: the GPU pose returned before it. Now
@@ -2014,7 +2034,14 @@ ten colours over ten faces.
   outfit their sprite shows (`folkBodies.js` FOLK_DRESS: the commoner, the
   tradesman, the traveller and the robed scholar - and the CUT their picture
   shows, a robe, a skirt or breeches, so the body that replaces a picture at
-  its range wears what the picture wore). A still picture by its kind
+  its range wears what the picture wore). (AMENDED BY MW-FOLK1, 2026-10-13: a
+  walker whose picture has an outfit of the port's own - eleven of the
+  twenty-four - wears that outfit and no garment of the wardrobe's, so a
+  street of one such picture shows as many people as its race has faces -
+  48 on a Nord's 387, 9 on a Breton's 385; "barely any two alike" holds
+  on the thirteen pictures the wardrobe still dresses (MWNPC17e re-read on
+  Nord women's 392, AUDIT MW-FOLK1 L3-F2);
+  `04-Characters/Townsfolk-Outfits.md`.) A still picture by its kind
   (`rosterBodies.js` STILL_WARDROBE - a priest at the door in robes). The
   street's guard keeps the watch's uniform; foes and rosters keep their kit.
 - HOW WELL. A wealth TIER per role, on Morrowind's own clothing ladder - the
@@ -2062,7 +2089,10 @@ and foeBodies as before.
 NOT HERE. A noble's sprite shows one cut and their body may wear another
 where the role has both (a gown and a blouse and skirt): only the walkers'
 and the priests' pictures name their cut. Faces beyond a race's own BODY
-records (Morrowind's NPC heads are what the data carries).
+records (Morrowind's NPC heads are what the data carries) - but the port's
+own (AMENDED BY MW-HEADS1, 2026-10-13: the Breton men's three heads and three
+hairs stand in place of the data's, and the walk reaches their nine pairs;
+`04-Characters/Own-Heads.md`).
 
 PROVEN. `test/mwnpc17_wardrobe.test.js` (5): every role and sex dressed by its
 own table over hundreds of seeds - pure, its garments and dyes, one top or

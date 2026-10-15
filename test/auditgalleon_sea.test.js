@@ -6,7 +6,7 @@
 //   T3    past her range a side reloading bends in to close on a runner by CHASE_MARGIN of her pace (AUDIT NAV2 F21's
 //         bend, whose one kill was the F25 duels' by chance - the five-gun galleon changed them);
 //   T4(b) the pool puts her pictures on the texture door as it loads her (her every face drew nothing without them), and
-//         uploads her stern gallery's glass as its night glow when her meshes are made;
+//         uploads her stern gallery's pictures cut-outs, seen through (DF-ART), when her meshes are made;
 //   T4(c) a boarding's last leg into a sounded berth skips the lookout only when the boat lies still, her way there is
 //         not lost, the berth is open and she is within her lookout's reach of it - each guard on its own.
 import './modsOff.js';
@@ -19,8 +19,9 @@ import { createSeaShip, stepCaptain, windShare, WIND_RATED, CHASE_MARGIN, __boar
 import { HULL, hullBuild, classById } from '../src/systems/naval/navalShips.js';
 import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
 import { Boat } from '../src/systems/comeSailAwayBoat.js';
-import { GALLEON_ARCHIVE, GALLEON_TEX_SIZE, TEX, BANDS, _resetGalleonArt } from '../src/world/galleonArt.js';
-import { isVendorArchive, vendorRecordCount, clearVendorTextures } from '../src/systems/textureReplacement.js';
+import { GALLEON_ARCHIVE, TEX, BANDS, _resetGalleonArt } from '../src/world/galleonArt.js';
+import { isVendorArchive, vendorRecordCount, clearVendorTextures, setTextureDeriveContext } from '../src/systems/textureReplacement.js';
+import { fakeClassicRgba } from './classicArtFake.mjs';
 import { findHarbour, createWaterGrid, stepErrand, STALL_S, DETOUR_M, ARRIVE_EASE_M, ARRIVE_SAILS } from '../src/systems/naval/shipLife.js';
 
 const near = (a, b, eps, what) => assert.ok(Math.abs(a - b) <= eps, `${what}: ${a} vs ${b}`);
@@ -116,7 +117,7 @@ test('AUDIT GALLEON T4(c): a boarding\'s last leg skips the lookout (`berthing`)
   assert.equal(__boardCourse(pirate({ pos: [600, 0, 0] }), boat(), WIND, open).berthing, false, 'beyond her lookout');
 });
 
-test('AUDIT GALLEON T4(b): the pool puts every picture of hers on the texture door as it loads her model - stand-ins of GALLEON_ARCHIVE before any mesh of hers asks (without them TEXTURE.38131 would not load and her every face drew nothing) - and her meshes made, uploads each stern-gallery slice\'s glass as its night glow, a replacement\'s, and nothing else of hers glows', async () => {
+test('AUDIT GALLEON T4(b): the pool puts every picture of hers on the texture door as it loads her model - stand-ins of GALLEON_ARCHIVE before any mesh of hers asks (without them TEXTURE.38131 would not load and her every face drew nothing) - and her meshes made, uploads each stern-gallery slice a cut-out - its glass seen through (DF-ART, Mac: "windows should always be see through") - and nothing else of hers, and nothing of hers glows', async () => {
   const fileFetch = async (url) => {
     const bytes = readFileSync(fileURLToPath(url));
     return { ok: true, json: async () => JSON.parse(bytes.toString('utf8')), arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.length) };
@@ -129,23 +130,24 @@ test('AUDIT GALLEON T4(b): the pool puts every picture of hers on the texture do
     uploadEmissionTexture: (archive, record, color32, opts) => glow.push({ archive, record, w: color32?.width, h: color32?.height, opts }),
   };
   const texture = () => ({ recordCount: 100, getSize: () => ({ width: 40, height: 64 }), getScale: () => ({ width: 0, height: 0 }) });
-  const pipeline = { getTexture: async () => texture(), uploadRecord() {}, getGpuMesh: async (id) => ({ classic: id }) };
+  const uploads = [];
+  const pipeline = { getTexture: async () => texture(), uploadRecord: (archive, record, opts) => uploads.push({ archive, record, opts }), getGpuMesh: async (id) => ({ classic: id }) };
   // AUDIT GN2-TS10: as a process that never loaded her stands - a galleon pool loaded earlier in the process (any pool
   // test before this one) had put her on the door and spent the once of her registration
   clearVendorTextures();
   _resetGalleonArt();
+  setTextureDeriveContext({ classicRgba: fakeClassicRgba() });   // DF-ART: her pictures are read from the player's ARENA2 - the tests' stand-in
   assert.equal(isVendorArchive(GALLEON_ARCHIVE), false, 'not on the door before her model loads');
   const pool = createComeSailAwayPool({ renderer, pipeline, fetchFn: fileFetch, log: { warn() {} } });
   assert.equal(await pool.preload(), true);
   assert.equal(isVendorArchive(GALLEON_ARCHIVE), true, 'her pictures stand in for GALLEON_ARCHIVE');
   assert.equal(vendorRecordCount(GALLEON_ARCHIVE), Object.keys(TEX).length, 'every picture of hers');
   pool.spawnNow(new Boat(HULL.SmallShip, 0), { position: [0, 0, 0], rotation: [0, 0, 0, 1] });
-  for (let i = 0; i < 100 && glow.length < BANDS.sternWindows.recs.length; i++) { pool.draw(); await new Promise((r) => setTimeout(r, 10)); }
+  const hers = () => uploads.filter((u) => u.archive === GALLEON_ARCHIVE);
+  for (let i = 0; i < 100 && !BANDS.sternWindows.recs.every((r) => hers().some((u) => u.record === r)); i++) { pool.draw(); await new Promise((r) => setTimeout(r, 10)); }
   for (let i = 0; i < 5; i++) { pool.draw(); await new Promise((r) => setTimeout(r, 10)); }
-  assert.deepEqual([...new Set(glow.map((g) => g.record))].sort((x, y) => x - y), [...BANDS.sternWindows.recs].sort((x, y) => x - y), 'each slice of her stern windows glows, nothing else of hers');
-  for (const g of glow) {
-    assert.equal(g.archive, GALLEON_ARCHIVE);
-    assert.deepEqual([g.w, g.h], [GALLEON_TEX_SIZE, GALLEON_TEX_SIZE], 'its mask the picture\'s own size');
-    assert.equal(g.opts?.replacement, true, 'a replacement\'s glow (no TEXTURE file is hers)');
-  }
+  const cut = [...new Set(hers().filter((u) => u.opts?.cutout).map((u) => u.record))].sort((x, y) => x - y);
+  assert.deepEqual(cut, [...BANDS.sternWindows.recs].sort((x, y) => x - y), 'each slice of her stern windows a cut-out, nothing else of hers');
+  assert.ok(hers().every((u) => u.opts?.opaque === true), 'every picture of hers a model\'s');
+  assert.deepEqual(glow, [], 'nothing of hers glows');
 });

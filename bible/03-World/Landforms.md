@@ -437,7 +437,7 @@ valley floor a shape overreaches rounds off instead of being cut flat):
 |---|---|---|---|---|
 | woodlands | Woodlands (231) | rolling: LANDFORM5's octaves | 4-48 x 1.6 | 88 m across; p99 5 deg |
 | mountain woods | MountainWoods (230) | foothills: half rolling, half ridgelines | 8-56 x 1.6 | 191 m; p99 16 deg |
-| mountain | Mountain (226) | ridgelines | 16-80 x 1.6 | 260 m; p99 24, at most 37 deg |
+| mountain | Mountain (226) | ridgelines, and sharp peaks (MOUNTAINS-SHARP, below) | 16-112 x 1.6, peaks 320 | 260 m; p99 24, at most 37 deg (LANDFORM6's ridges alone, 16-80) |
 | desert | Desert (224), the Alik'r | dune seas, mesas where the rock field rises past 0.3 | 6-26 x 1.3 | 52 m; p99 23 deg |
 | desert2 | Desert2 (225), Dak'fron | the same, mesas from -0.1: far more rock | 6-30 x 1.3 | 58 m; p99 17 deg |
 | rainforest | Rainforest (227) | karst towers over plains | 8-50 x 1.4 | 86 m; at most 44 deg |
@@ -560,6 +560,61 @@ lens's town figures are the steepest sample over nine pixels. Hills shrunk by
 the land's slope would have taken the detail off the steep ground for a third of
 a point of grades over 45 degrees, and were not made; where the hills did bite
 was the roads.
+
+## MOUNTAINS-SHARP - THE RANGES STAND SHARP AND TALL
+
+(2026-10-14, the owner: "Mountains shape (Dragontail/Wrothgarian). More pointy, less rounded (sharp), more height".) The Dragontail and the
+Wrothgarian Mountains are CLIMATE.PAK's Mountain (226), so the mountain land is
+what they wear (`LANDFORM_DIALS.lands.mountain`); the mountain woods, their
+foothills, keep LANDFORM8's round bells. Three dials moved, one law added:
+
+- **Sharp peaks.** `peaks.sharp`: each peak is `(1 - q)^2` from its summit to
+  its foot (`peakField`'s `sharp`) where LANDFORM8's is a bell,
+  `(1 + cos(pi q)) / 2` - a point on top, flanks that steepen toward it, easing
+  out at the foot - at the same place, girth, height and lean, so a sharp peak
+  stands wherever its bell did, never over it. Centred by its own mean
+  (`PEAK_MEAN_SHARP`: `(1 - q)^2` averages 1/6 over its ellipse, the bell
+  1/2 - 2/pi^2), so the land's mean height, and a town's level on it, stay
+  their own.
+- **Twice as tall.** `peaks.high` 160 -> 320 units: a peak 400 m at the most
+  where it stood 200 (LANDFORM8's "not super huge" - the owner's newer word
+  takes it). Its steepest flank, at the summit of the tallest and narrowest,
+  `2 x high` over a 553 m radius: some 55 degrees, under the motor's 70
+  (`player/motor.js` SLOPE_LIMIT_DEG - past it a walker slides).
+- **Ridges 1.4 times as tall.** `high` 80 -> 112 units.
+
+The tallest hill (`HILLS_TOP`) is now the mountains' 499.2 units (624 m) and
+`LANDFORM_CEILING` 2915.25 (about 3,644 m; THE CEILING above told 2544 and
+3,180 m before LANDFORM8, 2704 and 3,380 m after it).
+
+Measured on all-mountain country (20 km square, a value every 51 m, the land
+1 km and more over the knee): its relief from 419 m across to 670, its tallest
+hill from 265 m over the land to 456, the 99th percentile 51 m grade from 29
+degrees to 39 and the steepest from 49 to 60; its mean unmoved (0.3 m to 0.2).
+The mountain woods' numbers are unchanged to the metre.
+
+**What it costs: the low fringe.** LANDFORM5's ease - a land's hills come in
+over its height above the knee, whole only once it stands `coast` (1.25)
+times its tallest hill, so a hill is never taller than the land under it -
+measures by the land's tallest, now 624 m where it was 360. So the ranges'
+hills ease in over a longer rise: over all-mountain country the new ground
+stands taller from some 500 m over the knee up (563 m: the tallest 329 m
+against 236; 688 m: 419 against 253), and lower than it was under that (313 m:
+118 against 151; 188 m: 44 against 67). The law is every land's and pinned
+(test/landform6.test.js, a hill under 0.91 of its land's height over the
+knee), so it stands; mountain land stands high on the real map, and how much of
+it lies under 500 m was not measured here (no ARENA2 in this container).
+
+Not moved: the far ring and the travel view take no hills (RESIDUES), so a
+taller range there is a wider hand-over, as it was; the overworld map's relief
+is the bytes'. Every client stands the same ground from the same dials - no
+server copy. A tab built before this stands the old ground until it reloads
+(TWO BUILDS IN ONE ROOM, RESIDUES). Saves are in DFU's frame and re-stand.
+Pinned: `test/landform6.test.js` (the dials, the sharp law on a peak's own
+axis, its point, its footprint the bell's, its mean, its steepest flank),
+`test/landform.test.js` (the ceiling), `test/auditlandforms.test.js` (the
+dials written out); mutants `tools/mutants/mountainsharp.json`, and LANDFORM8's
+and LANDFORM6's re-aimed (`wodpeaks.json`, `landform6.json`).
 
 ## LANDFORM7 - A ROAD EASES THE HILLS
 

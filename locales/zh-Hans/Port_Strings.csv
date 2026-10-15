@@ -1,4 +1,6 @@
 Key,Value
+features.mwBillboardLook.note,"使用 Morrowind 身体时，人物和马匹像 经典精灵图一样直立，从上方看会显得更矮。关闭时，它们会朝镜头倾斜，保持真实高度。"
+features.mwBillboardLook.title,"公告板外观"
 lang.offer,"使用简体中文进行游戏？"
 lang.offer.machine,"此翻译为机器翻译，仍在校对中。"
 lang.offer.no,"不，保持英文"
