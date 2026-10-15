@@ -3757,16 +3757,28 @@ export class Renderer {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      const rb = gl.createRenderbuffer();
-      gl.bindRenderbuffer(gl.RENDERBUFFER, rb);
-      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, CHAR_SPRITE_RT_SIZE, CHAR_SPRITE_RT_SIZE);
+      // BODY-DEPTH (2026-10-15, the owner: "The models also clip through geometry"): THE PICTURE'S DEPTH IS A TEXTURE,
+      // not a renderbuffer - the composite quad reads it back (drawCharacterSpriteQuad `depth`), so a body is tested
+      // against the world where each of its texels stands, never as one flat card through its middle
+      const depth = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, depth);
+      this._tex0Bound = null;   // PERF-TEX3: unit 0 again, this path's own
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT16, S, S, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       const fbo = gl.createFramebuffer();
       gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rb);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depth, 0);
       gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameFbo ?? null);   // EL4: minted mid-frame, the frame comes back
-      cs = this._csRT = { fbo, tex, rb };
+      cs = this._csRT = { fbo, tex, depth };
     }
+    // BODY-DEPTH: every caller draws INTO the target next - its depth texture may not stand on unit 1, where the quad
+    // left it, while it is drawn into (a program that samples unit 1 would read a texture its own framebuffer writes - a
+    // feedback loop, and WebGL refuses the draw), so unit 1 is let go and its shadow with it
+    if (this._depthOnUnit1) { this._activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, null); this._activeTexture(gl.TEXTURE0); this._tex1Bound = null; this._depthOnUnit1 = false; }
     return cs;
   }
 
@@ -3975,7 +3987,7 @@ export class Renderer {
         for (let i = at; i < at + n; i++) {
           const it = items[i], q = it.quad;
           this.drawCharacterSpriteQuad(tex, q.at, q.halfW, q.halfH, q.right, it.pw / CHAR_SPRITE_RT_SIZE, it.ph / CHAR_SPRITE_RT_SIZE,
-            q.hitFlash, q.conceal, q.up, [it.tx / CHAR_SPRITE_RT_SIZE, it.ty / CHAR_SPRITE_RT_SIZE], q.fx);   // MWNPC5: and its tells
+            q.hitFlash, q.conceal, q.up, [it.tx / CHAR_SPRITE_RT_SIZE, it.ty / CHAR_SPRITE_RT_SIZE], q.fx, q.depth);   // MWNPC5: and its tells; BODY-DEPTH: and where its texels stand
         }
         at += n;
       }
@@ -4089,7 +4101,11 @@ export class Renderer {
    *  drawRigSpriteBox); none, world up - every vertex exactly where it stood. */
   /** MWNPC5: `fx`, optional - a foe's tells on its body ({ glint: [r, g, b, a] | null, elite: pulse (0 none; negative a
    *  corpse's rim), time: seconds, dissolve: [share, r, g, b] | null }); none, the quad draws as it did. */
-  drawCharacterSpriteQuad(tex, center, halfW, halfH, right, u1 = 1, v1 = 1, hitFlash = 0, conceal = null, up = null, origin = null, fx = null) {
+  /** BODY-DEPTH: `depth`, optional - where the picture's texels stand ({ dir, near, range, base }, characterSprite.js
+   *  pictureDepth): each texel written at its own depth off the sprite target's depth texture, so a body lying on a floor
+   *  or standing at a wall is tested where it is, not as a card through its middle. None (a card of its own vertical - the
+   *  travel view's lean, the Billboard Look), the quad's own depth, as it always was. */
+  drawCharacterSpriteQuad(tex, center, halfW, halfH, right, u1 = 1, v1 = 1, hitFlash = 0, conceal = null, up = null, origin = null, fx = null, depth = null) {
     this._close2D();   // PERF-2D: the baseline back, before anything that needs it
     const gl = this.gl;
     this._ensureCharQuadProgram();
@@ -4116,6 +4132,14 @@ export class Renderer {
     gl.uniform4f(c.glint, g ? g[0] : 0, g ? g[1] : 0, g ? g[2] : 0, g ? g[3] : 0);
     gl.uniform2f(c.elite, fx?.elite || 0, fx?.time || 0);
     gl.uniform4f(c.dissolve, d ? d[0] : 0, d ? d[1] : 0, d ? d[2] : 0, d ? d[3] : 0);
+    // BODY-DEPTH: the target's depth on unit 1 whenever the target stands (unit 1's one door and its shadow - the sampler
+    // never reads a texture the frame is drawing into), read only when this picture says where its texels stand
+    const dtex = this._csRT?.depth ?? null;
+    if (dtex) { this._bindEmission(dtex); this._depthOnUnit1 = true; }   // let go before the target is drawn into (_charSpriteRT)
+    gl.uniform1i(c.depthTex, 1);
+    const dp = dtex && depth ? depth : null;
+    gl.uniform4f(c.depthK, dp ? dp.near : 0, dp ? dp.range : 0, dp ? dp.base : 0, dp ? 1 : 0);
+    gl.uniform3f(c.depthDir, dp ? dp.dir[0] : 0, dp ? dp.dir[1] : 0, dp ? dp.dir[2] : 0);
     this._bindVao(this._charQuadVAO);
     gl.bindBuffer(gl.ARRAY_BUFFER, this._charQuadVBO);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, v);
@@ -4162,6 +4186,12 @@ uniform float uHitFlash;   // HITFLASH1: a Morrowind body struck
 uniform vec4 uGlint;      // TELL2: rgb the blow's colour, a its strength (0 off)
 uniform vec2 uElite;      // ELITE FOES: x the glow's pulse (0 off; negative an elite's corpse - the rim alone), y seconds
 uniform vec4 uDissolve;   // DISSOLVE: x the share gone (0 whole, 1 gone), yzw the edge's colour
+// BODY-DEPTH: the picture's depth (the sprite target's own) and how to read it - x the ortho's near, y its far - near, z
+// the quad's own distance along the picture's ray, w 1 when this picture says where its texels stand (0: the quad's depth)
+uniform sampler2D uDepthTex;
+uniform vec4 uDepthK;
+uniform vec3 uDepthDir;   // the picture's ray, unit
+uniform mat4 uProj, uView;
 out vec4 outColor;
 ${FOG_GLSL}
 ${HIT_FLASH_GLSL}
@@ -4175,15 +4205,26 @@ float tileAlpha(ivec2 p) {
   if (p.x < lo.x || p.y < lo.y || p.x >= hi.x || p.y >= hi.y) return 0.0;
   return texelFetch(uTex, p, 0).a;
 }
-// eliteRim's twin: a texel within 2 of the silhouette (dx*dx + dy*dy <= 4)
+// BODY-DEPTH: the window depth of a texel whose picture depth is d - the quad's point moved along the picture's ray to
+// where the texel stands, as the world's camera sees it; the quad's own where the picture says nothing (or the point is
+// behind the eye)
+float bodyDepth(float d) {
+  if (uDepthK.w < 0.5) return gl_FragCoord.z;
+  vec4 c = uProj * uView * vec4(vWorld + uDepthDir * (uDepthK.x + d * uDepthK.y - uDepthK.z), 1.0);
+  return c.w > 1e-4 ? clamp(c.z / c.w * 0.5 + 0.5, 0.0, 1.0) : gl_FragCoord.z;
+}
+// eliteRim's twin: a texel within 2 of the silhouette (dx*dx + dy*dy <= 4) - BODY-DEPTH: answered as the nearest such
+// silhouette texel's picture depth, so the outline stands where the body does; -1.0 where there is none
 float bodyRim(ivec2 p) {
+  float best = -1.0;
   for (int dy = -2; dy <= 2; dy++) {
     for (int dx = -2; dx <= 2; dx++) {
       if ((dx == 0 && dy == 0) || dx * dx + dy * dy > 4) continue;
-      if (tileAlpha(p + ivec2(dx, dy)) >= 0.5) return 1.0;
+      ivec2 q = p + ivec2(dx, dy);
+      if (tileAlpha(q) >= 0.5) { float d = texelFetch(uDepthTex, q, 0).r; best = best < 0.0 ? d : min(best, d); }
     }
   }
-  return 0.0;
+  return best;
 }
 // eliteEmber's twin: its column the tile's own (a column of the picture, wherever the tile stands this frame)
 float bodyEmber(ivec2 p, float secs) {
@@ -4225,16 +4266,18 @@ void main() {
   if (t.a < (uConceal.x > 0.0 ? 0.1 : 0.5)) {
     // MWNPC5: the outline and the embers stand where the body does not - never on a concealed body nor one burning away
     if (uConceal.x == 0.0 && uDissolve.x <= 0.0) {
-      if (uGlint.a > 0.0 && bodyRim(bodyTexel(uv)) > 0.0) { outColor = bodyFogged(glintRimColor(uGlint)); return; }
+      float rim = uGlint.a > 0.0 || uElite.x != 0.0 ? bodyRim(bodyTexel(uv)) : -1.0;   // BODY-DEPTH: and where it stands
+      if (uGlint.a > 0.0 && rim >= 0.0) { gl_FragDepth = bodyDepth(rim); outColor = bodyFogged(glintRimColor(uGlint)); return; }
       if (uElite.x != 0.0) {
         ivec2 p = bodyTexel(uv);
-        if (bodyRim(p) > 0.0) { outColor = bodyFogged(eliteRimColor(eliteRimK(uElite.x, uElite.y))); return; }
+        if (rim >= 0.0) { gl_FragDepth = bodyDepth(rim); outColor = bodyFogged(eliteRimColor(eliteRimK(uElite.x, uElite.y))); return; }
         float em = uElite.x > 0.0 ? bodyEmber(p, uElite.y) : 0.0;
-        if (em > 0.0) { outColor = bodyFogged(eliteRimColor(uElite.x) * (0.55 + 0.6 * em)); return; }
+        if (em > 0.0) { gl_FragDepth = gl_FragCoord.z; outColor = bodyFogged(eliteRimColor(uElite.x) * (0.55 + 0.6 * em)); return; }
       }
     }
     discard;
   }
+  gl_FragDepth = uDepthK.w > 0.5 ? bodyDepth(texelFetch(uDepthTex, bodyTexel(uv), 0).r) : gl_FragCoord.z;   // BODY-DEPTH: the texel where it stands (no read for a card)
   float edge = 0.0;
   if (uDissolve.x > 0.0) {   // MWNPC5: burnt away, the feet first - and the edge it burns along (dissolveEdge)
     float g = bodyGrain(bodyTexel(uv), uv.y / max(uSpan.y, 1e-6)) - (uDissolve.x * 1.1 - 0.05);   // dissolveCutAt
@@ -4269,6 +4312,9 @@ void main() {
         glint: gl.getUniformLocation(P, 'uGlint'),   // MWNPC5: a foe's tells on its body
         elite: gl.getUniformLocation(P, 'uElite'),
         dissolve: gl.getUniformLocation(P, 'uDissolve'),
+        depthTex: gl.getUniformLocation(P, 'uDepthTex'),   // BODY-DEPTH: where the picture's texels stand
+        depthK: gl.getUniformLocation(P, 'uDepthK'),
+        depthDir: gl.getUniformLocation(P, 'uDepthDir'),
       };
       const vao = gl.createVertexArray();
       this._bindVao(vao);
