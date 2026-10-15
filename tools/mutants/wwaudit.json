@@ -32,8 +32,8 @@
   {
     "name": "WWAUDIT-D6-form-dropped-before-the-first-build",
     "file": "src/combat/fpArm.js",
-    "old": "      if (busy) {\n        if (pendingBuild) pendingBuild",
-    "new": "      if (!lastBuildOpts) return false;\n      if (busy) {\n        if (pendingBuild) pendingBuild",
+    "old": "      if (busy) {\n        if (pendingBuild) pendingBuild = { ...pendingBuild, werewolf: want, skin: wantSkin };",
+    "new": "      if (!lastBuildOpts) return false;\n      if (busy) {\n        if (pendingBuild) pendingBuild = { ...pendingBuild, werewolf: want, skin: wantSkin };",
     "tests": [
       "test/werewolf1.test.js"
     ],

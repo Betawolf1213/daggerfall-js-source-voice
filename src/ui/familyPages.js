@@ -58,7 +58,7 @@ export const TREE_ZOOM_STEP = 1.12;
  * @property {() => any} family   the family played (systems/legacy/family.js), or null
  * @property {() => number} lived   the played member's own minutes lived
  * @property {() => any} [past]   AUDIT LEGACY III A17: the past played back (a dead or retired member's save), or null
- * @property {(pose:any) => Promise<{width:number, height:number, colors:Uint8Array}|null>} [faces]   a portrait
+ * @property {(pose:any) => Promise<{width:number, height:number, colors:Uint8Array, scale?:number}|null>} [faces]   a portrait (PORTRAIT3D: `scale` - a Morrowind head, that many times the record's size)
  * @property {(id:number) => string|null} switchRefusal   why playing `id` is refused, or null
  * @property {() => string|null} [mantleRefusal]   AUDIT LEGACY U4: why the played elder may not pass the mantle now, or null
  * @property {(id:number) => {ok:boolean, why?:string}} switchTo
@@ -277,7 +277,7 @@ function faceBox(el, p, cls = 'fam-face') {
   const faces = _provider?.faces;
   if (faces && p) {
     // AUDIT LEGACY III P17: a townsperson wed in wears their own face (systems/legacy/facePose.js)
-    faces(facePose(p)).then((img) => {
+    faces(facePose(p, { currentId: _provider?.family?.()?.currentId ?? null })).then((img) => {   // MW-HEADS2: and whether they are the one played
       if (!img?.width || img.colors?.byteLength !== img.width * img.height * 4) return;
       const cv = /** @type {HTMLCanvasElement} */ (el('canvas'));
       const ctx = cv.getContext?.('2d');
@@ -286,6 +286,7 @@ function faceBox(el, p, cls = 'fam-face') {
       const d = ctx.createImageData(img.width, img.height);
       d.data.set(new Uint8ClampedArray(img.colors.buffer, img.colors.byteOffset, img.colors.byteLength));
       ctx.putImageData(d, 0, 0);
+      if (img.scale > 0) Object.assign(cv.style, { width: `${img.width / img.scale}px`, height: `${img.height / img.scale}px`, imageRendering: 'auto' });   // PORTRAIT3D: a Morrowind head, at the record's size
       glyph.remove();
       box.append(cv);
     }).catch(() => { /* the glyph stands */ });
