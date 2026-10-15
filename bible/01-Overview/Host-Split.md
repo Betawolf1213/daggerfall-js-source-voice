@@ -310,3 +310,8 @@ the build since. Found:
   below `state`, an early build passed the gate. Every slice turns a hoisted
   function into such a binding, so the walk now indexes every name a
   declaration binds. It finds nothing new on the tree. One mutant, dead.
+- A PIN THAT READ ONE SPELLING. PERF-COL2's census of a pixel's bucket
+  providers (`test/perfcol2.test.js`) was rewritten to the module's spelling,
+  `host.state.pixelTranslation`, alone - so it counted only the build's seven, and
+  a provider the host lays itself, reading `state`, went uncounted, marked or not.
+  It counts both spellings now. One mutant, dead (it lived on the rewritten pin).
