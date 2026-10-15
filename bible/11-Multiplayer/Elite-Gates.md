@@ -3641,15 +3641,26 @@ the arc's equivalents), and its record names the four hosts and the Ledger rows 
 ships its band's art: no slice ships a placeholder. Every band is open (`net/egLaw.js` `EG_OPEN`, the bands' count).
 
 **The table is the plan as written.** The arc shipped in the slices whose records follow - EG-PLAY, EG-FULL's three
-layers, EG-E, EG-F, EG-G, EG-H and the EG-Z wave - each saying which planned pieces it took. Some planned names were
-never built under them: `net/egHost.js` and `net/egLord.js` (the legion is `net/egLegion.js`, the lords
-`net/egLords.js`), `scenes/egHall.js` and `egHallParts` (the circle is built by `world/egHall.js` and its worker,
-section 9). **A record names another record's departure by its number when it closed**: a list renumbered later keeps
-the pointer to the departure as it then stood, so read such a pointer against the record's own date. **Versions** are
+layers, EG-E, EG-F, EG-G, EG-H, the EG-Z wave, the EG-HERO wave and EG-HERO-LAY - each saying which planned pieces it
+took. Some planned names do not stand under them. `net/egHost.js` and `net/egLord.js` were built by EG-PLAY and retired
+by layer one (the legion is `net/egLegion.js`, the lords `net/egLords.js`). `scenes/egHall.js` and `egHallParts` were
+never built (the circle is built by `world/egHall.js` and its worker, section 9). **The arc's audits as built** have
+pages of their own, not records here: AUDIT EG III (`01-Overview/Audit-EG-III.md`) and AUDIT EG IV
+(`01-Overview/Audit-EG-IV.md`, 2026-10-13: the Fallen Stacks laid and the legion, lords and net groups). AUDIT EG V
+wrote EG IV's page on 2026-10-15, because EG IV left no record and its lanes' findings list was never saved. **A record
+names another record's departure by its number when it closed**: a list renumbered later keeps the pointer to the
+departure as it then stood, so read such a pointer against the record's own date. **Versions** are
 named as they stood too: the arc ships under one relay version, one account version and one migration (section 23's
 Versions), so a record's `world195`-`world200`, `acct116`-`acct127` and migrations 0111 and 0112 are `world201`, `acct133` and
 0113 since the merges of main. EG-E1, EG-E2, EG-E3 and EG15's records stand in sections 19 and 20, beside the law they
 built.
+
+**EG-L10N, owed** (recorded by AUDIT EG V; named until then only in a merge's message and in
+`test/l10n4_hardcoded.test.js`'s comment). The arc's own words reach a player in English, whatever language they chose.
+The arc met the localization arc at the merge of main past it (0b9991ffc2, 2026-10-13). There its account refusals went
+through the text core (`account.refusal.*`), and the L10N4 ratchet (`test/l10n4_hardcoded.test.js`) counted every other
+file's prose as it arrived: 848 hard-coded literals across the 33 `eg*` files of `src/` at 9a862e8d. A slice that routes
+them through `t()` lowers those counts; until one does, every other word the breach says is English.
 
 | slice | what | moves |
 |---|---|---|
@@ -4023,6 +4034,16 @@ Closes layer one's first departure for the pieces.
   client), and a member caught is cast to the nearest segment wholly ahead of the edge. A Forge Bridge's walkway carries
   whoever stands on it toward the arrival plate at `EG_BELT_MPS` 1.0 m/s.
 
+**The four hosts** (AUDIT EG V: this record named none; read off its two commits).
+- `src/scenes/world.js` - WIRED: `registerSpireFooting` (Iron Footing against the spans' Gust and Pendulum, from the
+  breach client's `footing`) and `registerSpireWake` (the hall's wake, which a Falling Wall falls from), beside layer
+  one's registrations. Nothing was added to `function frame(now)`.
+- `src/scenes/dungeonContext.js` - FLAGGED, untouched: the moving pieces, the Pendulum, the Gust, the Drop's walls and
+  the Falling Wall's segments ride its existing `egSpan` (`scenes/egSpan.js`), stood and ridden as layer one left it.
+- `src/scenes/worldModes.js` - FLAGGED, untouched: the circle reaches it through its existing build; `world/egHall.js`
+  `egWallBand` leaves the Falling Wall's walkway out of the circle's mesh and collider there.
+- `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
+
 **Pins.** `test/egfull_span.test.js` (6) and `tools/mutants/egspan.json` (19, every one dead). `RELAY_VERSION` stays
 `world196` (renumbered past main's COATS1 `world195` at the merge; `world197` past CHAT-LANG's `world196` at the next, `world198` past BAL8's `world197` at a later one, `world199` past SPAWN-REBIRTH's `world198` at the next, `world200` past AUDIT ETHER-OW's `world199` at a later one, `world201` past PEER-ACTS' `world200` at the next),
 unshipped, rehashed with `net/egSpanLaw.js` in its graph.
@@ -4142,6 +4163,16 @@ EG-G2; the authored hero fragments laid into the halls, EG-HERO-LAY's spec law 7
   spec law 7 lays one since EG-HERO-LAY, its polygon floors and graph in the spec). A passage's mouth and exit are its
   `z0` and `z1`; its floors are rectangles.
 
+**The four hosts** (AUDIT EG V: this record named none; read off its commit).
+- `src/scenes/world.js` - WIRED: `registerSpireObjs` (Grath's islands and the false walls, as the relay's `eob` says) and
+  `registerSpireAct` (an Orrery stone turned, an engine worked), from the breach client's `objs` and `act`. Nothing was
+  added to `function frame(now)`.
+- `src/scenes/worldModes.js` - WIRED: the press ladder's `egstone:` and `egengine:` arm, which hands the press to the
+  context's `egPress`.
+- `src/scenes/dungeonContext.js` - WIRED: `egPress`; the activation ray's targets take `egSpan.targets()` (an Athenaeum's
+  Orrery stones, a chamber's engine) and its namer `egSpan.hoverName`.
+- `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
+
 **Pins.**
 - `test/egfrag_law.test.js` (9), `test/egfrag_relay.test.js` (5), `test/egfrag_client.test.js` (6).
 - `tools/mutants/egfrag.json` (51, every one dead). Re-aimed and judged again: `egfull.json` (31), `egspan.json` (19)
@@ -4169,6 +4200,15 @@ The economy layer's first piece, the one the relay must judge: **FEATS OF THE SP
 - **Departure.** Each signature is a beat the relay already counts, not the page's examples (the Examination with no
   rune missed at *n* = 8). Grath's became the page's own once the relay kept who a place's blow caught (EG-ZB:
   *Unsinged*, `EG_FEAT_BRIDGE`).
+
+**The four hosts** (AUDIT EG V: this record named none; read off its commit, which carried PERF-V8 beside the feats).
+- `src/scenes/world.js` - WIRED for PERF-V8, not for the feats: the host frame's breach lines moved out of
+  `function frame(now)` into two host functions of the same lines, `egCourtFrame` (the breach's fight and tracker put
+  away with no online frame; the court's law in a breach) and `egWitnessEye` (the witness's eye), because the frame stood
+  over three quarters of V8's ceiling.
+- `src/scenes/worldModes.js` and `src/scenes/dungeonContext.js` - FLAGGED, untouched: the feats are the relay's
+  (`net/egFeats.js`) and the receipt's, and no host reads them.
+- `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
 
 **Pins.** `test/egeco_feats.test.js` (2) and `tools/mutants/egeco.json` (6, every one dead). `RELAY_VERSION` `world197`,
 rehashed with `net/egFeats.js` in its graph.
@@ -4583,8 +4623,9 @@ bus, EG-ZD; the High-contrast shapes, EG-G2; the shakes' reduced motion, EG-ZG):
    fight's.
 3. The absent ring reads this screen's silence: no pose of theirs in my room, the same silence the relay counts. The
    wire carries no absence word, and `net/egBrain.js` is unchanged.
-4. `port:allyEffects` (THE QUIET COMPANY) is not built, because the Spire's passes draw no allies' spell effects or hit
-   numbers to quiet.
+4. `port:allyEffects` (THE QUIET COMPANY) is not built: it governs allies' hit numbers alone, and the port draws none
+   (`ui/hitNumbers.js`). The allies' spell effects are quieted in a trial by another seam since EG-ZG (`ui/egAccess.js`
+   `egAllyLook`).
 5. The party rows decorate the party panel's cards, so a company member who has left the party is not on them. My own
    recall shows on my chip.
 6. A Weir Key found rings the Rare chime. The *Weir Key* banner is the loot banner's, and a restacked key does not pass
@@ -4823,9 +4864,9 @@ re-aimed by content, every one dead.
    one). The deploy cannot sign a hub frame, so it waits on `/v1/eg/live` and says the setting in its log. The hub refuses
    the open after the service has staked the key, so each refusal hands the stake back as a void at once.
 4. **Every law's generator is kept.** `net/egLaw.js` `egHallOf(seed, h, geo, law)` builds each law in `EG_LAWS`
-   (`net/egDurable.js`: 4, 5 and 6 - EG-ZC kept law 4's beside law 5, and AUDIT EG III's law 6 joined them), so a breach
-   keeps its own halls through a later spec. A client that does not know its breach's law rebuilds a circle drawn before
-   its given halls came, under the veil. Its next circle draws from them at once. Under another law the client offers
+   (`net/egDurable.js`: law 4 then; EG-ZC kept law 4's beside law 5, AUDIT EG III's law 6 joined them, EG-HERO-LAY's law
+   7 after it, and every law since joins the same way), so a breach keeps its own halls through a later spec. A client
+   that does not know its breach's law rebuilds a circle drawn before its given halls came, under the veil. Its next circle draws from them at once. Under another law the client offers
    no worker's build (AUDIT EG III): the swap's worker (`world/egCircleWorker.js`) never holds the halls given, so every
    circle of such a breach steps the old way, from this thread's halls, and the rebuild is counted done only once its
    step has run.
@@ -5152,7 +5193,8 @@ pillar and the witness's sight.
 
 **Pins.**
 - `test/egz_stair.test.js` (9).
-- `tools/mutants/egz_stair.json` (85, every one dead). Two survived the first run:
+- `tools/mutants/egz_stair.json` (85 at the slice, every one dead; 86 at EG-ZD's merge, with
+  EGZ-the-way-back-under-the-hour, and 84 since EG-ZO took the underside's two). Two survived the first run:
   - a witness's compass during a closing - a pin was added;
   - the client's own guard on the lights outside the halls - redundant with the draw's own and the law's, so it was
     removed.
@@ -5395,7 +5437,8 @@ section 22's tick.
   - `egplay_relay`'s `EG_KINDS` (`void`, `claimed`), and its ended breach's alarm (its tombstone's end, a week on);
   - `egdur_relay`'s drain and cap (the room holds the order's tombstone and no breach);
   - `egeco_herald`'s ended room (its tombstone's alarm);
-  - `auditwbx2`'s sweep cursors (seven, `sweep:egrc`).
+  - `auditwbx2`'s sweep cursors (seven, `sweep:egrc`; eight since AUDIT EG IV's `sweep:egcall`, moved on the merged head
+    by 9a862e8d - the merge note at this section's end).
 - Eleven records of other slices re-aimed by content, every one judged again and dead: `egeco`, `egeco_honours` (two),
   `egeco_relay` (four), `egmade` (three) and `egplay`.
 - `RELAY_VERSION` `world197`, unshipped, rehashed: `net/egBrain.js` imports `net/egReceipt.js`, so the graph's walk
@@ -5581,10 +5624,11 @@ not yet turn it", EG-H1's departures 3, 10 and 11, and EG-E's departure for the 
 
 **Departures, said plainly.**
 
-1. The walk graph is derived from the spec, not carried as the fragment record's `graph` (section 11.5). The spec gains
-   no field, so `EG_SPEC` and `EG_LAWS` stand. EG-ZC's bump for the fragments is its own, and nothing here asks for one.
-   Its nodes are only those the geometry implies. A passage's two floors are two regions; a chamber's ring has no node
-   inside its floor.
+1. A code-built hall's walk graph is derived from the spec, not carried as the fragment record's `graph` (section 11.5).
+   At this slice the spec gained no field, so `EG_SPEC` and `EG_LAWS` stood. EG-ZC's bump for the fragments is its own,
+   and nothing here asked for one. Its nodes are only those the geometry implies. A passage's two floors are two regions;
+   a chamber's ring has no node inside its floor. A hero's own `graph` is carried since EG-HERO-LAY (spec law 7's
+   `heroes`) and joined to the hall's (`net/egWalkGraph.js`).
 2. The Harriers' body-block is a Harrier hovering at its member, not a collider: the motor collides with no add.
 3. The fight ground beyond `spec.fl` is a span's islands and plates and a Rampart's pillars and winch plates. Bridges
    and side spans stay traversal ground. On a span a member is aimed at within 0.5 m of it; elsewhere the fight's old
@@ -5653,7 +5697,10 @@ recap's board line, the first-time lines once an account, and First of the Spire
     any after the end, are not.
   - What was believed also mends the receiver's count, as an ally's mend and never out of its own budget
     (`net/egBrain.js` `egHeal` - `bodyHealed`, the gate's AUDIT INT11 law).
-  - None of it buys anything: no receipt, no share of a Redoubt's earners (the director keeps its own `dc`), no threat.
+  - At this slice none of it bought anything: no receipt, no share of a Redoubt's earners (the director kept its own
+    `dc`), no threat. It buys no threat still. But a believed heal has since become its healer's part in a hall for the
+    earner rule (AUDIT EG III lane2 #3 - `hh`, `net/egBrain.js` `egActiveIn`), and since AUDIT EG IV (lane3 #3) it counts
+    only where the room relayed that healer's cast to its receiver (`EG_HEAL_CAST_MS`). Section 16.1 holds the rule.
 - **On the wire** (`net/wire.js`).
   - The Redoubt carries the chart (`rd`'s `dm`): `[sub, level, dealt, on the lord, blows, heaviest, falls, healed]`,
     at most a company's rows, most dealt first, ties in the company's order. Every member with a part, and every member
@@ -5833,8 +5880,9 @@ arrow. The law is one new module, `world/egTelegraph.js`; the gate's own telegra
 
 **Departures, said plainly.**
 - **Done another way:**
-  - fight floors are discs and lanes in the law (`spec.fl`), not polygons, so a floor is triangulated as the floor test
-    reads it: a disc's 48 sides and a lane's capsule;
+  - a code-built hall's fight floors are discs and lanes in the law (`spec.fl`), not polygons, so such a floor is
+    triangulated as the floor test reads it: a disc's 48 sides and a lane's capsule. A hero's fight floors are polygons
+    (`{ t: 'p' }`) since EG-HERO-LAY, and are cut by ear clipping (`world/egTelegraph.js` `earCut`);
   - a lane floor's circle (the court the pass clips by and the whole floor's line follows) is the one through its ends,
     so on a lane floor the whole floor's line stands only at its two ends;
   - "the screen darkens" is the fight floors darkening, every moon-shaft kept. Walls and sky stay as they are: that is
@@ -5853,8 +5901,14 @@ arrow. The law is one new module, `world/egTelegraph.js`; the gate's own telegra
 
 **Pins.**
 - `test/egz_telegraph.test.js` (13).
-- `tools/mutants/egz_telegraph.json` (74, every one dead). One survived the first run - the sigils hung at a
-  companion's eye rather than over the head - and was killed by pinning their height (EG_SIGIL_UP_M over the eye).
+- `tools/mutants/egz_telegraph.json` (74 at the slice, every one dead; 75 since the merge of main #880-#899 below).
+  One survived the first run - the sigils hung at a companion's eye rather than over the head - and was killed by
+  pinning their height (EG_SIGIL_UP_M over the eye).
+- At the merge of main #880-#899 (a43a033e63, 2026-10-14): main's AOE-PERF lays a path's or a tether's telegraph on a
+  strip of its own (`render/gateTelegraph.js` `telegraphStrip`, the walkways' quad laid along it). `drawFloors` lends the
+  gate's `draw` a fight floor's own triangles, and a strip read as one of them (`uOnFloor`) would lie at the court's
+  origin. So `draw` lays no strip while it holds a floor's triangles, and a path on a fight floor is drawn on that floor.
+  Pinned in `test/egz_telegraph.test.js` (the floors' draws), mutant EGZ-floor-no-strip dead.
 - Judged again over the files this slice touched: every record of `eglook.json` (12), `egpres_hud.json` (34),
   `egfrag.json` (11), `egspan.json` (9), `egint.json` (3), `mwspellfx1.json` (4), `fieldgun20.json` (2) and
   `egplay.json` (1) aimed at the fight, the HUD, the shelf, the span, the Morrowind effects or the flashes (76, every
@@ -6059,9 +6113,10 @@ applies every Vestige section 21 names); both sentences are deleted above.
    asks: a member pulled a step short of the end pays one quarter.
 3. **The toll never takes the last of a member's health**: the screen keeps a point and the census a hundredth, as the
    fray's lash does. The page names no floor, and a toll that killed would be a fall mid-stair, which belongs to no hall.
-4. **"A new island, or a fragment's node"** is new still ground of the support law, first stood on fairly this hall. The
-   fragment record's `graph` is not carried (EG-ZB's departure 1), so a fragment's floors and stairs stand for its
-   nodes.
+4. **"A new island, or a fragment's node"** is new still ground of the support law, first stood on fairly this hall. A
+   code-built fragment carries no record `graph` (EG-ZB's departure 1), so its floors and stairs stand for its nodes. A
+   hero's floors stand for its nodes too since EG-HERO-LAY (`net/egFair.js` `groundAt`'s `h<i>`): the graph its law
+   carries is the legion's, never the toll's.
 5. **The halls tolled** are those whose closing is the span's (`door`'s own group): the Span (section 7), the Deepway
    (section 8.8), a Brink and the Proving Walk, whose roads are crossed in the same 45 s. A fight's and a Court's pull
    costs nothing.
@@ -7321,7 +7376,8 @@ seen in the live game.
 - `test/egz_state.test.js` (7): the feet's law, the director, the lords on the seam (added at the merge), the screen, the
   joiner, a reload in the real Room, the shaft's telegraphs.
 - `tools/mutants/egz_state.json` (96, every one dead; two added at the merge: a lord's straight walk at the hall's 0, and
-  its feet left on the stair at its top). One survived the first run - the pinned Casters raised at a spot's height
+  its feet left on the stair at its top; 97 since AUDIT EG IV's AUDIT-EG-IV-region-hint-pad-short, a walker up a rim
+  stair - `01-Overview/Audit-EG-IV.md`). One survived the first run - the pinned Casters raised at a spot's height
   again - and was killed by finding a Rampart whose pillars given to a company of two share a bastion's plan.
 - Re-aimed by content (mutantdrift): `egz_frag.json`'s EGZ-the-breach-s-law-forgotten (onto `specOf`'s own line) and
   `egz_legion.json`'s EGZ-ground-walkers-straight (onto `walkGraph`'s). Judged again, every record of the lists aimed at
@@ -7594,8 +7650,8 @@ were checked through the wire, the screen's fold and `egLookOf` in node, not see
   - `egz_state.json`: EGZJ-row-height-unrounded, EGZJ-row-walk-end-height-dropped and EGZJ-row-state-unsaid onto the row
     of eighteen; EGZJ-wire-row-of-thirteen onto the validator's eighteen; EGZJ-link-lord-phase-dropped onto the lord's
     branch, which now reads its size; EGZJ-lord-top-reached-feet-left-on-the-stair onto `egWayOn`.
-- Judged again: `eg5.json` (40), `egz_lords.json` (35: 33 dead, its 2 equivalent as recorded), `egz_state.json` (96),
-  `egz_legion.json` (56) and `egz_rules.json` (78) - every one as recorded. And every record of the lists aimed at the fight's
+- Judged again: `eg5.json` (40), `egz_lords.json` (35: 33 dead, its 2 equivalent as recorded), `egz_state.json` (96
+  then), `egz_legion.json` (56) and `egz_rules.json` (78) - every one as recorded. And every record of the lists aimed at the fight's
   modules this slice touched (`net/egBodies.js`, `egLords.js`, `egLegion.js`, `egWalkGraph.js`, `egLink.js`,
   `scenes/egFight.js`) or within ten lines of its changes in `net/egBrain.js`, `net/egLaw.js` and `net/wire.js`:
   `egint.json` (14), `egz_recap.json` (5), `egz_frag.json` (3), `egfull.json` (2), `eg6a.json` (1) and `egplay.json` (1) - 26,
@@ -8114,8 +8170,10 @@ touched. No hall lays a hero fragment until the laying slice does, so no host dr
   step down, a gap stretched, a pier wider than its flight, the foot's tunnel let down. Also the specs' variant and class,
   each registry left without its fragment, the kit's pieces, and the code-built kit's own numbers (`EG_SHAFT_FLIGHT_CM`,
   the Ossuary's height and piece, the mist's line).
-- `RELAY_VERSION` stays the arc's (`world200` since the merge of main past AUDIT ETHER-OW, `world201` past PEER-ACTS): no relay byte moved, because
-  `net/egHeroFrags.js` is in no relay import graph. `ACCOUNT_VERSION` stays the arc's (`acct133`).
+- `RELAY_VERSION` stays the arc's (`world200` since the merge of main past AUDIT ETHER-OW, `world201` past PEER-ACTS). At
+  this slice no relay byte moved, because `net/egHeroFrags.js` was then in no relay import graph. Since EG-HERO-LAY every
+  hero's law JSON is in the relay's graph (that record's "The relay's bytes"). `ACCOUNT_VERSION` stays the arc's
+  (`acct133`).
 - The Port-Ledger's ELITE-GATES row names the new files.
 
 ### EG-HERO (the Shade Perilous) - 2026-10-13 - THE GLOAM THICKET AND THE ECLIPSE VAULT
@@ -8287,9 +8345,10 @@ and that one are merged by the coordinator.
   - the law's ring, a beam's reach and the budget, and the bake's moon clock;
   - the test's own 20 m sweep.
 - PIN MOVED: `test/eg6c_law.test.js` - the registry's keys are the reference's and the two heroes'.
-- `RELAY_VERSION` stays the arc's (`world200` since the merge of main past AUDIT ETHER-OW, `world201` past PEER-ACTS): no file of the relay's bundle
-  moved, and `net/egHeroFrags.js` is in no relay import graph yet. `ACCOUNT_VERSION` stays the arc's (`acct133`), with no
-  migration. `EG_SPEC` and `EG_LAWS` are as they were.
+- `RELAY_VERSION` stays the arc's (`world200` since the merge of main past AUDIT ETHER-OW, `world201` past PEER-ACTS). At
+  this slice no file of the relay's bundle moved, and `net/egHeroFrags.js` was in no relay import graph yet. Since
+  EG-HERO-LAY every hero's law JSON is in the relay's graph (that record's "The relay's bytes"). `ACCOUNT_VERSION` stays
+  the arc's (`acct133`), with no migration. `EG_SPEC` and `EG_LAWS` were as they were.
 - The Port-Ledger's ELITE-GATES row names the four tools and the assets.
 
 ### EG-HERO (the Broken Galleries) - 2026-10-13 - THE OBLIVION CAVERNS, THE FALLEN STACKS, THE BROKEN COLONNADE
@@ -8467,9 +8526,10 @@ EG-HERO-LAY lays it.
   - The one gap that judging found is now held: a first piece too high off the ground, which the solver takes level.
 - PIN MOVED: `test/eg6c_law.test.js` no longer pins the registry to the reference alone. Its first entry is the reference,
   and no kit's layable heroes include it (the reference's "laid by no hall", kept failing).
-- `RELAY_VERSION` stays `world199`: `net/egHeroFrags.js` is not in the relay's bundle, and no file of it moved
-  (`test/relayversion.test.js` stands). `ACCOUNT_VERSION` stays `acct124`; there is no migration. `EG_SPEC` and `EG_LAWS`
-  are as they were.
+- `RELAY_VERSION` stays `world199`. At this slice `net/egHeroFrags.js` was not in the relay's bundle, and no file of it
+  moved (`test/relayversion.test.js` stood). Since EG-HERO-LAY every hero's law JSON is in the relay's graph (that
+  record's "The relay's bytes"). `ACCOUNT_VERSION` stays `acct124`; there is no migration. `EG_SPEC` and `EG_LAWS` were as
+  they were.
 
 ### EG-HERO-LAY - 2026-10-13 - SPEC LAW 7: THE HEROES LAID
 
@@ -8656,7 +8716,9 @@ over that proxy.
 - The 25-seed sweep with the golden seeds, all four bands, under law 7 with the shipped registry (the reference alone, laid
   by none): 95, 111, 108 and 109 courses, every one crossed. Law 7 is law 6 then, and its 800 halls are law 6's but their
   number. With the test registry in band 0, 100 seeds and the golden: 57 hero halls, 351 courses, every one crossed.
-- `ACCOUNT_VERSION` is untouched, with no migration. No new `src/` module (the fixture is the test's), and the
+- `ACCOUNT_VERSION` is untouched, with no migration. The account Worker bundles the hero law all the same, since
+  `net/egLaw.js` imports `net/egHeroFrags.js` and its law tables; its deploy's path filter has listed them since
+  9a862e8d (the merge note at this section's end). No new `src/` module (the fixture is the test's), and the
   Port-Ledger's ELITE-GATES row is unchanged.
 
 **At the merge of the ten heroes (2026-10-13).** The four bands' heroes, merged onto this law, made the registry real: law-7
@@ -8880,7 +8942,9 @@ Every number in the block and in the scenes comes from IEEE arithmetic and `Math
 - `src/scenes/world.js` - untouched.
 - `src/scenes/worldModes.js` - untouched.
 - `src/scenes/dungeonContext.js` - untouched.
-No host draws a hero yet; laying them is spec law 7's work.
+At this slice no host drew a hero. It was merged in the same merge as EG-HERO-LAY, whose spec law 7 lays it: the hero
+rides the circle's one mesh and collider bucket through `scenes/worldModes.js`'s existing path, and the hosts stand as
+that record's four hosts say.
 
 **Pins.**
 - `test/eghero_wellhead.test.js` (10 tests) holds, for each fragment:
@@ -8897,6 +8961,36 @@ No host draws a hero yet; laying them is spec law 7's work.
 - `tools/mutants/eghero_wellhead.json`: 25 mutants, every one dead.
 - PIN MOVED: `test/eg6c_law.test.js`'s registry pin now holds the reference as the first key, not the only one.
 - `test/doctrine.test.js`'s allow-list names the nine new files.
-- `RELAY_VERSION` stays `world199`: no relay import reaches `net/egHeroFrags.js`, so the relay's bytes do not move.
-  `ACCOUNT_VERSION` stays `acct124`. `EG_SPEC` and `EG_LAWS` are unchanged.
+- `RELAY_VERSION` stays `world199`. On its own branch no relay import reached `net/egHeroFrags.js`, so the relay's bytes
+  did not move. Merged onto EG-HERO-LAY, its three law JSONs joined the relay's graph with the other heroes' (that
+  record's "The relay's bytes"). `ACCOUNT_VERSION` stays `acct124`. `EG_SPEC` and `EG_LAWS` were unchanged by this slice.
 - The Port-Ledger's ELITE-GATES row names the new files.
+
+### After AUDIT EG IV - 2026-10-14 - THE MERGE OF MAIN #880-#899, AND WHAT CI'S WHOLE GATE FOUND
+
+Two commits came after AUDIT EG IV (`01-Overview/Audit-EG-IV.md`) and before AUDIT EG V. This note records what each
+one changed in the arc.
+
+- **The merge of main #880 to #899** (a43a033e63):
+  - main's REVIVE took `acct132` and SEAT-FACTS took migration 0112, so the arc ships as `acct133` and
+    `0113_elite_breach.sql`. The relay stays `world201`, because main's is still `world200`. Every version pin, the
+    wrangler.toml line and the mutant records aimed at the version line moved to `acct133`;
+  - SCHOOLS3 and EG15 had both moved the one magicka gift into `systems/playerHeal.js`. Main's `manaMine` is its one home
+    (ONE EXPORT), and the Battlemage's Discipline (`systems/sigilSetPowers.js`) returns its magicka through it.
+    `eg15_panoply`'s pins and its EG15-return-share mutant were re-aimed (`11-Multiplayer/Sigil-Sets.md` EG15);
+  - main's AOE-PERF lays a path's telegraph on a strip of its own. The Spire's per-floor draw keeps a fight floor's own
+    triangles for it, pinned in `egz_telegraph` with EGZ-floor-no-strip (EG-ZG's record);
+  - `egz_telegraph` and `eg15` were run on the merged tree: 166 dead, none survived.
+- **What CI's whole gate found on the merged head** (9a862e8d). CI had not run the whole suite on the arc since AUDIT EG
+  IV and EG-HERO-LAY, because the pushes in between conflicted with their base and ran no workflow. Its first run found
+  three pins those slices had left unmoved:
+  - `.github/workflows/account-deploy.yml` did not list `net/egHeroFrags.js` and its eleven law tables, which EG-HERO-LAY's
+    `net/egLaw.js` brings into the account Worker's bundle. Its path filter now lists them (`test/accountdeploy.test.js`
+    ACC1-CI);
+  - AUDIT EG IV's `none` refusal (*The Spire took no key for that.*, `account.refusal.none`) was missing from the
+    catalogs. It is now in the English catalog (`tools/l10nExtract.mjs`), and drafted in-session for the thirteen whole
+    catalogs (`tools/l10nInSession.mjs`, recorded as the machine's);
+  - `test/auditwbx2.test.js` M9: the hub's one cursor read carries AUDIT EG IV's `sweep:egcall`, an eighth cursor, beside
+    EG-ZA's `sweep:egrc` (PIN MOVED).
+- **The four hosts**: `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js` and `scenes/exterior.js` were
+  not touched for the arc. The merge resolved no conflict in any of them, and 9a862e8d touches no `src/` file.
