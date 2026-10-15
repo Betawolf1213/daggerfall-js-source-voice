@@ -24,5 +24,68 @@
   {"name": "DFART-NIGHT-the-glow-never-kept", "file": "src/world/classicArt.js", "old": "        if (glowRecs.includes(record)) glows.set(record, paneGlow(pic));", "new": "", "tests": ["test/dfart_classicart.test.js", "test/galleon_model.test.js"], "why": "a lit window built with no glow"},
   {"name": "DFART-NIGHT-every-record-glowing", "file": "src/world/classicArt.js", "old": "        if (glowRecs.includes(record)) glows.set", "new": "        if (true) glows.set", "tests": ["test/dfart_classicart.test.js", "test/galleon_model.test.js"], "why": "every picture of hers glowing"},
   {"name": "DFART-NIGHT-the-lit-window-cut", "file": "src/world/classicArt.js", "old": "export const LIT_WINDOW = Object.freeze({ from: DF.window, crop: Object.freeze([0, 0, 37, 57]), mirror: true });", "new": "export const LIT_WINDOW = Object.freeze({ from: DF.window, crop: Object.freeze([0, 0, 37, 57]), mirror: true, glass: true });", "tests": ["test/dfart_classicart.test.js", "test/galleon_model.test.js"], "why": "the lit window's glass a hole: its glow drawn nowhere"},
-  {"name": "DFART-NIGHT-the-carrack-unlit", "file": "src/world/carrackArt.js", "old": "export const CARRACK_NIGHT = Object.freeze({ [TEX.transom0]: TEX.transom0 + NIGHT_RECORD_OFFSET });", "new": "export const CARRACK_NIGHT = Object.freeze({});", "tests": ["test/ships2_carrack.test.js", "test/auditgalleon_sea.test.js"], "why": "the carrack's transom never lit"}
+  {"name": "DFART-NIGHT-the-carrack-unlit", "file": "src/world/carrackArt.js", "old": "export const CARRACK_NIGHT = Object.freeze({ [TEX.transom0]: TEX.transom0 + NIGHT_RECORD_OFFSET });", "new": "export const CARRACK_NIGHT = Object.freeze({});", "tests": ["test/ships2_carrack.test.js", "test/auditgalleon_sea.test.js"], "why": "the carrack's transom never lit"},
+  {
+    "name": "DF-ART-IV-the-wheel-daggerfalls-again",
+    "file": "src/world/wagonArt.js",
+    "old": "[TEX.wheel]: WHEEL_PAINTED.wheel",
+    "new": "[TEX.wheel]: DF.wheel",
+    "tests": [
+      "test/wagons1.test.js"
+    ]
+  },
+  {
+    "name": "DF-ART-IV-the-tread-daggerfalls-again",
+    "file": "src/world/wagonArt.js",
+    "old": "[TEX.tyre]: WHEEL_PAINTED.tyre",
+    "new": "[TEX.tyre]: DF.ironGrey",
+    "tests": [
+      "test/wagons1.test.js"
+    ]
+  },
+  {
+    "name": "DF-ART-IV-the-painted-arm-gone",
+    "file": "src/world/classicArt.js",
+    "old": "  if (typeof from?.painted === 'function') return from.painted();\n",
+    "new": "",
+    "tests": [
+      "test/wagons1.test.js"
+    ]
+  },
+  {
+    "name": "DF-ART-IV-six-spokes",
+    "file": "src/world/wagonWheelArt.js",
+    "old": "const k = (((a + Math.PI) / (2 * Math.PI)) * 7) % 1;",
+    "new": "const k = (((a + Math.PI) / (2 * Math.PI)) * 6) % 1;",
+    "tests": [
+      "test/wagons1.test.js"
+    ]
+  },
+  {
+    "name": "DF-ART-IV-the-rivets-gone",
+    "file": "src/world/wagonWheelArt.js",
+    "old": "for (let x = 4; x < S; x += 16)",
+    "new": "for (let x = 4; x < 0; x += 16)",
+    "tests": [
+      "test/wagons1.test.js"
+    ]
+  },
+  {
+    "name": "DF-ART-IV-another-grain",
+    "file": "src/world/wagonWheelArt.js",
+    "old": "n = noise(0xa61, S, S, 8, 8);",
+    "new": "n = noise(0xa62, S, S, 8, 8);",
+    "tests": [
+      "test/wagons1.test.js"
+    ]
+  },
+  {
+    "name": "DF-ART-IV-no-rust",
+    "file": "src/world/wagonWheelArt.js",
+    "old": "if (r() < 0.04) c = C.rust;",
+    "new": "if (r() < 0) c = C.rust;",
+    "tests": [
+      "test/wagons1.test.js"
+    ]
+  }
 ]
