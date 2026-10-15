@@ -139,7 +139,7 @@
  },
  {
   "name": "ASO-tvbadgeof",
-  "file": "src/scenes/world.js",
+  "file": "src/scenes/travelViewMarks.js",
   "old": "gt: p.gt ?? null, rb: p.rb ?? null });",
   "new": "gt: p.gt ?? null });",
   "tests": [

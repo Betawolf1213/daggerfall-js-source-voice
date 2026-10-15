@@ -772,5 +772,15 @@
       "test/egswap_client.test.js",
       "test/eglook_hosts.test.js"
     ]
+  },
+  {
+    "name": "EGLOOK-lamp-on-the-galleries",
+    "file": "src/systems/lampKeeper.js",
+    "old": "export const LAMP_ARCHIVE = 38232;",
+    "new": "export const LAMP_ARCHIVE = 38241;",
+    "tests": [
+      "test/eglook_registry.test.js"
+    ],
+    "note": "AUDIT EG V, the merge of main: LAMP-KEEPER II's lamp back on the Spire's Broken Galleries (38241) - the registry's sweep and its collision refusal hold it off"
   }
 ]

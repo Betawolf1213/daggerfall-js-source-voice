@@ -89,7 +89,7 @@ over node:sqlite, and the breach client.
 | group | files | findings | commit, merged as | pins (tests) | mutants |
 |---|---|---|---|---|---|
 | legion | net/: `egBrain.js`, `egLegion.js`, `egLords.js`, `egRun.js`, `egVestige.js`; `scenes/egClient.js`, `systems/spireVestiges.js` | lane 1 #6, #12-#14, #16-#18, #22, #25, #27, #30, #31; lane 2 #3; lane 10 #11-#15, #22 | 82ab8c9504, d106f7d5ae | `egaudit4_legion` 9, `egaudit4_legion_run` 11 | 68 |
-| net | server-account/: `eg.js`, `egHonours.js`, `index.js`, `accounts.js`, migration 0112 (0113 since); `server/src/index.js`; net/: `egBrain.js`, `egReceipt.js`, `wire.js`, `online.js`, `accountClient.js`; `scenes/egClient.js` | lane 3 #1-#19; lane 4 #14; lane 9 #24 | 461cef3486 and cc79f7bd1b (the page), 4c5a46ebba | `egaudit4_net_service` 7, `egaudit4_net_relay` 11, `egaudit4_net_client` 4 | 58 |
+| net | server-account/: `eg.js`, `egHonours.js`, `index.js`, `accounts.js`, migration 0112 (0114 since); `server/src/index.js`; net/: `egBrain.js`, `egReceipt.js`, `wire.js`, `online.js`, `accountClient.js`; `scenes/egClient.js` | lane 3 #1-#19; lane 4 #14; lane 9 #24 | 461cef3486 and cc79f7bd1b (the page), 4c5a46ebba | `egaudit4_net_service` 7, `egaudit4_net_relay` 11, `egaudit4_net_client` 4 | 58 |
 | lords | net/: `egLords.js`, `egBrain.js`, `egShape.js`, `egBodies.js`, `wire.js`; `scenes/egFight.js`, `ui/egSpireHud.js` | lane 1 #1-#5, #7-#11, #15, #19-#21, #23, #24, #26, #28, #29, #32; lane 9 #16, #18; lane 10 #1, #17 | 805105b516, 5c674367a9 | `egaudit4_lords` 17, `egaudit4_lords_errands` 5, `egaudit4_lords_page` 3 | 70; 68 after the merge |
 
 Together the groups added 8 test files (67 tests) and 194 mutant records in three lists under tools/mutants/
@@ -99,7 +99,7 @@ all of theirs dead; the lords' commit records no run. AUDIT EG V ran all 194 on 
 
 `RELAY_VERSION` stayed the arc's `world201`, unshipped. Each group re-hashed it in place, and so did the net's and the
 lords' merges (`bbf0ef90...` before the legion, `52e769e7...` after the lords). `ACCOUNT_VERSION` stayed the arc's
-(`acct127` then, `acct133` since). The net group's launch letter went into the arc's own migration (0112 then, 0113
+(`acct127` then, `acct134` since). The net group's launch letter went into the arc's own migration (0112 then, 0114
 since). `EG_SPEC` and `EG_LAWS` did not change, and no group touched the hall law (`net/egLaw.js`). The Stacks' commit
 moved law 7's halls, which had not shipped.
 

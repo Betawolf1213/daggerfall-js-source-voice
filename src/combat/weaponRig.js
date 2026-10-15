@@ -77,6 +77,7 @@ import { rriNativeMaterialValue } from '../systems/rriItems.js';
 import { riddenHorseLook } from '../systems/horseCoats.js';   // COATS1: the sprite body's mount wears the ridden horse's look   // AUDIT 68 S09-v-shield-material-ignored: the port's one NativeMaterialValue
 import { createHandheldTorches, isHeldLight } from '../systems/handheldTorches.js';   // HT1: Handheld Torches' component, one per rig beside the widget; TORCH-VIS: and its own light test
 import { lanternAtWaist } from '../systems/playerTorch.js';   // HT-WAIST: a lantern hung at the waist is in no hand - the ladder, the Morrowind body and the sprite ask the one question
+import { liveVampirism } from '../systems/racialLive.js';   // PORTRAIT3D: a vampire's body wears the race's vampire head
 import { isTransformedLycanthrope, liveLycanthropy } from '../systems/lycanthropy.js';   // WW1: Weapon Widget's FPSWeaponClone, beside the machine; AUDIT-EOTB2: the sprite's form
 import { concealmentFlags } from '../systems/effects.js';   // EOTB-IL: PlayerBillboard.UpdateMaterial reads the player's own IsInvisible / IsAShade / IsBlending
 import { getBool, getInt } from '../systems/settings.js';   // EOTB-IL: PlayerBillboard.LateUpdate reads DaggerfallUnity.Settings.BowDrawback
@@ -123,6 +124,7 @@ export function armBuildOptsOf(entity) {
   return {
     werewolf: isMwWerewolf(entity),   // WEREWOLF1: a save loaded mid-transformation builds the wolf at the door
     skin: isMwWerewolf(entity) ? ownWerewolfSkin() : null,   // SHADOW-FANG: and in its skin
+    vampire: !!liveVampirism(entity),   // PORTRAIT3D (the owner: "Do this"): a vampire wears the race's vampire head (getVampireHead, MWNPC14), the body as its portrait
     race: mwRaceId(entity.race),
     female: entity.gender === 'female',
     faceIndex: entity.faceIndex | 0,
@@ -133,6 +135,7 @@ export function armBuildOptsOf(entity) {
     torch: isLitTorch(entity.lightSource),   // MW-D51: the lit light, in the left hand
     hipLight: lanternAtWaist(entity.lightSource),   // HT-WAIST: the lit lantern, hung at the hip of the third-person body
     sheathing: getPref('mwSheathing'),   // WS1: the holster on the third-person body
+    ownHeads: true,   // MW-HEADS2: the player's body wears the port's own heads (a Breton man's) - an NPC's never does
   };
 }
 
@@ -155,7 +158,7 @@ export function buildArmsFor(entity) {
  *  the other two thirds, and setWorn/setWeapon already follow those
  *  per frame; nothing followed these. */
 export function armIdentityOf(entity) {
-  return { race: mwRaceId(entity?.race), female: entity?.gender === 'female', faceIndex: entity?.faceIndex | 0, werewolf: isMwWerewolf(entity) };   // WEREWOLF1: and the form
+  return { race: mwRaceId(entity?.race), female: entity?.gender === 'female', faceIndex: entity?.faceIndex | 0, werewolf: isMwWerewolf(entity), vampire: !!liveVampirism(entity) };   // WEREWOLF1: and the form; PORTRAIT3D: and the curse's face
 }
 
 /** MWA3 (Mac, 2026-09-16: "my character who is an argonian uses a human
@@ -179,7 +182,7 @@ export function armsReady() { return fpArm.ready(); }
 export function armsStandFor(entity, { ready = () => fpArm.ready(), builtFor = () => fpArm.builtFor(), buildingFor = () => fpArm.buildingFor() } = {}) {
   const want = armIdentityOf(entity);
   const same = (have) => !!have && have.race === want.race && !!have.female === want.female && (have.faceIndex | 0) === want.faceIndex
-    && !!have.werewolf === want.werewolf;   // WEREWOLF1
+    && !!have.werewolf === want.werewolf && !!have.vampire === want.vampire;   // WEREWOLF1; PORTRAIT3D: and the curse's face
   // MW-EARLY: A BUILD UNDER WAY STANDS FOR WHOM IT IS BUILDING. The load
   // door starts the build off the save before the world is read
   // (prebuildArmsForSave), so the restore's own door arrives while it
@@ -1649,6 +1652,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
         const wolf = isMwWerewolf(entity);
         if (wolf !== wolfForm) { wolfForm = wolf; wolfSkin = wolf ? ownWerewolfSkin() : null; }
         fpArm.setWerewolf(wolf, { skin: wolfSkin });
+        fpArm.setVampire?.(!!liveVampirism(entity));   // PORTRAIT3D: and the vampire's head the moment the curse takes, the face at the cure
       }
       // Paralysis freezes the arm as it freezes the swing - a clip that
       // keeps idling while the player cannot move is the animation

@@ -80,10 +80,10 @@ test('SD9b THE CLAIM: an `h1` the relay signed, naming the claiming account, is 
   const { priv, pubKey } = await relayPair();
   const ctx = { db, nowS: T0 + 60, subtle, rand: rolling(seedFor(false, false)) };   // AUDIT SD III (R4, PIN MOVED): the claim's draw rolls none
   const r7 = await hour(A.id, 7, priv);
-  assert.deepEqual(await claimSd(ctx, A, r7, pubKey), { recorded: true, slot: 7, title: false, aura: false, broken: 1 });
+  assert.deepEqual(await claimSd(ctx, A, r7, pubKey), { recorded: true, slot: 7, title: false, aura: false, titleNew: false, auraNew: false, broken: 1 });
   assert.deepEqual(await claimSd(ctx, A, r7, pubKey), { recorded: false, why: 'claimed', broken: 1 }, 'once, whatever happens to it');
   assert.deepEqual(await claimSd(ctx, A, await hour(A.id, 7, priv, { c: 99, nowS: T0 + 5 }), pubKey), { recorded: false, why: 'claimed', broken: 1 }, 'the slot is the key, not the bytes');
-  assert.deepEqual(await claimSd(ctx, A, await hour(A.id, 8, priv, { x: 'stood', l: 41 }), pubKey), { recorded: true, slot: 8, title: false, aura: false, broken: 2 });
+  assert.deepEqual(await claimSd(ctx, A, await hour(A.id, 8, priv, { x: 'stood', l: 41 }), pubKey), { recorded: true, slot: 8, title: false, aura: false, titleNew: false, auraNew: false, broken: 2 });
   assert.deepEqual(db._raw.prepare('SELECT slot, boss, earned, lv FROM sd_kills WHERE account = ? ORDER BY slot').all(A.id).map((r) => ({ ...r })),
     [{ slot: 7, boss: 'remnant', earned: 'dealt', lv: 30 }, { slot: 8, boss: 'remnant', earned: 'stood', lv: 41 }]);
   assert.deepEqual(await claimSd(ctx, B, r7, pubKey), { error: 'not-yours' }, 'nobody claims another\'s');
@@ -115,18 +115,21 @@ test('SD9b THE GRANTS: a kill\'s first write rolls Hourbreaker and The Turning H
   assert.equal(honours(A.id), 0, 'none before');
   assert.ok(!titlesHeld(row(A.id), {}).includes('hourbreaker'));
   assert.equal(equipRefusal('hourbreaker', row(A.id), {}), 'not-held');
-  assert.deepEqual(await claimSd({ ...ctx, rand: rolling(seedFor(true, false)) }, A, await hour(A.id, 7, priv), pubKey), { recorded: true, slot: 7, title: true, aura: false, broken: 1 });
+  assert.deepEqual(await claimSd({ ...ctx, rand: rolling(seedFor(true, false)) }, A, await hour(A.id, 7, priv), pubKey), { recorded: true, slot: 7, title: true, aura: false, titleNew: true, auraNew: false, broken: 1 });
   assert.equal(honours(A.id), SD_HONOUR_TITLE);
   assert.ok(titlesHeld(row(A.id), {}).includes('hourbreaker'), 'held');
   assert.equal(equipRefusal('hourbreaker', row(A.id), {}), null, 'and may be worn');
-  assert.deepEqual(await claimSd({ ...ctx, rand: rolling(seedFor(false, false)) }, A, await hour(A.id, 8, priv), pubKey), { recorded: true, slot: 8, title: false, aura: false, broken: 2 });
+  assert.deepEqual(await claimSd({ ...ctx, rand: rolling(seedFor(false, false)) }, A, await hour(A.id, 8, priv), pubKey), { recorded: true, slot: 8, title: false, aura: false, titleNew: false, auraNew: false, broken: 2 });
   assert.equal(honours(A.id), SD_HONOUR_TITLE, 'held for good');
   assert.deepEqual(await claimSd({ ...ctx, rand: rolling(seedFor(true, true)) }, A, await hour(A.id, 8, priv), pubKey), { recorded: false, why: 'claimed', broken: 2 }, 'a slot counted grants nothing again');
   assert.equal(honours(A.id), SD_HONOUR_TITLE, 'the first write alone');
-  assert.deepEqual(await claimSd({ ...ctx, rand: rolling(seedFor(false, true)) }, A, await hour(A.id, 9, priv), pubKey), { recorded: true, slot: 9, title: false, aura: true, broken: 3 });
+  assert.deepEqual(await claimSd({ ...ctx, rand: rolling(seedFor(false, true)) }, A, await hour(A.id, 9, priv), pubKey), { recorded: true, slot: 9, title: false, aura: true, titleNew: false, auraNew: true, broken: 3 });
   assert.equal(honours(A.id), SD_HONOUR_TITLE | SD_HONOUR_AURA, 'both');
   assert.deepEqual(db._raw.prepare('SELECT slot, title, aura FROM sd_kills WHERE account = ? ORDER BY slot').all(A.id).map((r) => ({ ...r })),
     [{ slot: 7, title: 1, aura: 0 }, { slot: 8, title: 0, aura: 0 }, { slot: 9, title: 0, aura: 1 }], 'each row says what it granted');
+  // HONOUR-BANNER (AUDIT FIVE-ASKS E1): a re-roll of an honour the account holds (its row read before the write) is granted and never new
+  const held = await claimSd({ ...ctx, rand: rolling(seedFor(true, true)) }, { ...A, sd_honours: SD_HONOUR_TITLE | SD_HONOUR_AURA }, await hour(A.id, 10, priv), pubKey);
+  assert.deepEqual([held.title, held.aura, held.titleNew, held.auraNew], [true, true, false, false], 'held: no "New" popup');
   // a guest's grants nothing - and a guest row never holds the title
   const g = (await createGuest({ db, subtle, rand, nowS: T0 }, { deviceLabel: null })).id;
   assert.equal((await claimSd({ ...ctx, rand: rolling(seedFor(true, true)) }, { id: g, handle: null }, await hour(g, 7, priv), pubKey)).why, 'guest');
@@ -171,7 +174,7 @@ test('SD9b THE WORKER: /v1/sd/claim behind a session and never open - the sessio
   assert.equal((await call('POST', '/v1/sd/claim', { receipt: r })).status, 401, 'a stranger claims nothing');
   const real = globalThis.crypto.getRandomValues.bind(globalThis.crypto);
   const draw = t.mock.method(globalThis.crypto, 'getRandomValues', (b) => (b.length === 4 ? rolling(seedFor(true, false))(b) : real(b)));
-  assert.deepEqual((await call('POST', '/v1/sd/claim', { receipt: r, account: them.id }, me.secret)).body, { recorded: true, slot: 7, title: true, aura: false, broken: 1, weir: { found: true, keys: 1 } });   // EG-PLAY: an Hour broken rolls a Weir Key off the same mocked die (server-account/src/eg.js rollWeirKey, one in three)
+  assert.deepEqual((await call('POST', '/v1/sd/claim', { receipt: r, account: them.id }, me.secret)).body, { recorded: true, slot: 7, title: true, aura: false, titleNew: true, auraNew: false, broken: 1, weir: { found: true, keys: 1 } });   // EG-PLAY: an Hour broken rolls a Weir Key off the same mocked die (server-account/src/eg.js rollWeirKey, one in three)
   draw.mock.restore();
   assert.equal((await call('POST', '/v1/sd/claim', { receipt: r }, them.secret)).status, 403, 'another\'s receipt');
   const forged = await call('POST', '/v1/sd/claim', { receipt: await hour(me.id, 8, (await relayPair()).priv) }, me.secret);
@@ -211,13 +214,13 @@ test('SD9b THE DEVICE\'S BOOK: a signed receipt the relay handed is kept (one a 
   const mine = await hour('acct-me-0001', 7, priv);
   const theirs = await hour('acct-them-0002', 7, priv);
   const bare = await hour('acct-me-0001', 8, null);
-  const said = [], asked = [];
-  let answer = { ok: true, data: { recorded: true, slot: 7, title: true, aura: true, broken: 3 } };
+  const said = [], asked = [], popped = [];
+  let answer = { ok: true, data: { recorded: true, slot: 7, title: true, aura: true, titleNew: true, auraNew: true, broken: 3 } };
   let me = 'acct-me-0001', ms = 0;
   const store = new Map();
   const book = createSdClaims({
     claim: async (r) => { asked.push(r); return answer; }, store: { get: (k) => store.get(k), set: (k, v) => store.set(k, v) },
-    nowS: () => T0, nowMs: () => ms, say: (t) => said.push(t), me: () => me,
+    nowS: () => T0, nowMs: () => ms, say: (t) => said.push(t), me: () => me, announce: (kind, key) => popped.push([kind, key]),
   });
   assert.equal(book.add(bare), false, 'unsigned: never kept');
   assert.equal(book.add(theirs), true);
@@ -226,6 +229,16 @@ test('SD9b THE DEVICE\'S BOOK: a signed receipt the relay handed is kept (one a 
   await book.flush();
   assert.deepEqual(asked, [mine]);
   assert.deepEqual(said, [SD_CLAIM_TEXT.recorded(3), SD_CLAIM_TEXT.title, SD_CLAIM_TEXT.aura]);
+  assert.deepEqual(popped, [['title', 'hourbreaker'], ['aura', 'turninghour']], 'HONOUR-BANNER: each grant its loot popup, beside its line');
+  // AUDIT FIVE-ASKS E1: a re-roll of a title already held is said, and never announced as new
+  const rsaid = [], rpopped = [];
+  const book2 = createSdClaims({
+    claim: async () => ({ ok: true, data: { recorded: true, slot: 9, title: true, aura: false, titleNew: false, auraNew: false, broken: 4 } }),
+    nowS: () => T0, nowMs: () => 0, say: (t) => rsaid.push(t), me: () => 'acct-me-0001', announce: (kind, key) => rpopped.push([kind, key]),
+  });
+  assert.equal(book2.add(await hour('acct-me-0001', 9, priv)), true);
+  await book2.flush();
+  assert.deepEqual([rsaid, rpopped], [[SD_CLAIM_TEXT.recorded(4), SD_CLAIM_TEXT.title], []], 'held already: the line, no popup');
   assert.deepEqual(store.get(SD_CLAIMS_KEY), [theirs], 'counted: let go');
   assert.equal(book.add(mine), false, 'settled this session: not again');
   // another account signs in: offered at once
@@ -233,6 +246,7 @@ test('SD9b THE DEVICE\'S BOOK: a signed receipt the relay handed is kept (one a 
   answer = { ok: true, data: { recorded: false, why: 'guest', broken: 0 } };
   assert.equal(book.tick(), true); await settle();
   assert.deepEqual([asked, said], [[theirs], [SD_CLAIM_TEXT.guest]]);
+  assert.equal(popped.length, 2, 'a guest\'s Hour pops nothing');
   assert.deepEqual(store.get(SD_CLAIMS_KEY), [theirs], 'a guest\'s kept');
   ms += 2000; assert.equal(book.tick(), false, 'not before the retry');
   ms += SD_CLAIM_RETRY_MS; asked.length = 0; said.length = 0;

@@ -201,8 +201,8 @@
  {
   "name": "MWNPCMERGE-row-off-settings",
   "file": "src/ui/settingsMap.js",
-  "old": "\"feat:mw-spell-effects\", \"feat:mw-npc-bodies\"]),",
-  "new": "\"feat:mw-spell-effects\"]),",
+  "old": "\"feat:mw-spell-effects\", \"feat:mw-npc-bodies\", \"feat:mw-billboard-look\"]),",
+  "new": "\"feat:mw-spell-effects\", \"feat:mw-billboard-look\"]),",
   "tests": [
    "test/mwnpc_mainmerge.test.js"
   ]

@@ -135,7 +135,9 @@ test('AUDIT-SEATS THE RIBBON ON THE TRAVEL VIEW: a traveller frame keeps the rib
   assert.match(hud, /\$\{b\.gt \?\? ''\}\|\$\{\(Array\.isArray\(b\.rb\) \? b\.rb : \[\]\)\.join\('\/'\)\}/, 'the sprite keyed by it');
   assert.match(hud, /x\.fillStyle = P\.rb\.field; x\.fillRect\(cx, by, rowW, R\.band\);\n\s+x\.fillStyle = P\.rb\.border; x\.fillRect\(cx, by \+ R\.band, rowW, R\.edge\);/);
   const world = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
-  assert.match(world, /const tvBadgeOf = \(p\) => \(\{[^\n]*gt: p\.gt \?\? null, rb: p\.rb \?\? null \}\);/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  const tvm = readFileSync(new URL('../src/scenes/travelViewMarks.js', import.meta.url), 'utf8');
+  assert.match(tvm, /const tvBadgeOf = \(p\) => \(\{[^\n]*gt: p\.gt \?\? null, rb: p\.rb \?\? null \}\);/);
 });
 
 test('AUDIT-SEATS THE HALL OF RECORDS FROM THE BOARD AND IN THE CASTLES: the Seat tab reads the whole Chronicle as the book (said where it cannot); the world opens it in place of the board; a crown\'s castle shelves are its Hall of Records while the seats are open, pressed into the dungeon\'s own window slot (mutants: the button; its refusal; the board\'s door; the castle\'s shelves; the castle\'s gate; its press)', async () => {

@@ -3110,8 +3110,13 @@ function peerSpritesCard() {
   c.append(choiceRow('chatLang', t('menu.chat.lang', 'Language channel'),
     t('menu.chat.langNote', 'A chat tab for players who speak your language, wherever they are. /lang in the chat chooses it too.'),
     [['', t('menu.toggle.off', 'Off')], ...Object.entries(CHAT_LANGS).map(([code, name]) => [code, name])], { home: true }));
+  // CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG"): the two channels a player joins, beside the language's
+  c.append(prefRow('chatTrade', t('menu.chat.trade', 'Trade channel'),
+    t('menu.chat.tradeNote', 'A chat tab for buying, selling and swapping with players anywhere. /join trade in the chat joins it too.'), { home: true }));
+  c.append(prefRow('chatLfg', t('menu.chat.lfg', 'LFG channel'),
+    t('menu.chat.lfgNote', 'A chat tab for finding a group, or one more for yours. /join lfg in the chat joins it too.'), { home: true }));
   c.append(prefRow('chatChannelColours', t('menu.chat.colours', 'Chat colours by channel'),
-    t('menu.chat.coloursNote', 'World white, Region green, Guild purple, Local grey, Party teal, Language rose.'), { home: true }));
+    t('menu.chat.coloursNote', 'World white, Region green, Guild purple, Local grey, Party teal, Language rose, Trade gold, LFG blue.'), { home: true }));
   c.append(prefRow('chatPingSound', t('menu.chat.ping', 'Chime when someone @mentions you'),
     t('menu.chat.pingNote', 'A line with @YourName is always marked in gold; this adds a chime.'), { home: true }));
   return c;

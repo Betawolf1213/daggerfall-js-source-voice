@@ -271,8 +271,10 @@ test('WILD-ALERT host: the Overworld\'s marks - a chase wears the "!", and so do
   const keys = new Function('exteriorFoes', 'foeAlerted', `${cutFn('wildCampKeys')} return wildCampKeys;`)({ foes: pool }, foeAlerted)();
   assert.deepEqual([...keys].sort(), ['me:7', 'p2:3']);
   assert.equal(WILD_MARK, '!');
-  assert.match(W, /label: chasing \? `\$\{WILD_MARK\} \$\{bandLabel\(mk\.name, mk\.mobileTypes\.length\)\}` : bandLabel/);
-  assert.match(W, /label: wildCamps\.has\(c\.key\) \? `\$\{WILD_MARK\} \$\{c\.label\}` : c\.label/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  const tvm = readFileSync(new URL('../src/scenes/travelViewMarks.js', import.meta.url), 'utf8');
+  assert.match(tvm, /label: chasing \? `\$\{WILD_MARK\} \$\{bandLabel\(mk\.name, mk\.mobileTypes\.length\)\}` : bandLabel/);
+  assert.match(tvm, /label: wildCamps\.has\(c\.key\) \? `\$\{WILD_MARK\} \$\{c\.label\}` : c\.label/);
 });
 
 test('WILD-ALERT host: a wilderness band no longer holds the journey for its sight - journeyThreats asks a chase alone (mutant: the wanderers counted again)', () => {

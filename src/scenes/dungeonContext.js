@@ -6163,7 +6163,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (!held) continue;
       const _now = _wallNow();
       _lootUnreadable.delete(canon);   // AUDIT SETS M2: a word it can read again
-      if (respawnDue(rec.t, _now)) continue;   // WORLD8: the room emptied it more than an hour ago - due back; my own roll stands and the record is not the room's word any more
+      if (respawnDue(rec.t, _now)) continue;   // WORLD8: the room emptied it longer ago than this dungeon's respawn - due back; my own roll stands and the record is not the room's word any more
       _lootSeen.add(canon);   // the room HAS opened it, whether or not I may land it right now
       { const _t = Number.isFinite(rec.t) ? (_now == null ? rec.t : Math.min(rec.t, _now)) : _now; if (_t != null) _lootAt.set(canon, _t); }
       if (canon.startsWith('srch:')) searchHeard(Number(canon.slice(5)), _lootAt.get(canon));   // SEARCH1: another's search starts my five hours too   // WORLD8: the room's stamp, or now for a record without one; AUDIT WORLD7/8 C2: never AHEAD of now - a peer's far-future stamp switched the hour off for everyone and rode into the memory for thirty days

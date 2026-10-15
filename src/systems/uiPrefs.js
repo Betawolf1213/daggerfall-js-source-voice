@@ -91,6 +91,9 @@ export const PREF_DEFAULTS = Object.freeze({
   // CHAT-COLOURS: each channel's lines in its own colour (World white, Region green, Guild purple, Local grey ...). PING1:
   // a line naming me with an @ chimes.
   chatLang: '', chatChannelColours: true, chatPingSound: true,
+  // CHAT-TRADE (2026-10-14): the Trade and LFG channels this player joined (/join, /leave) - off until they choose one,
+  // so a player who never does sees no new tab.
+  chatTrade: false, chatLfg: false,
   packPhoneDoll: false,   // PACK-PHONE (FIELD BUGS 2026-09-30): the pack's body on a phone - hidden until the header's Body shows it
   // PADPLUS1: the Plus controller - the crossbar ('auto' while a pad is connected, 'on', 'off'), run as a toggle on
   // the Run button, and the version of the one-time layout move already made (ui/plusPad.js)

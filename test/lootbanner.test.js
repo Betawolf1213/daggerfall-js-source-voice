@@ -345,3 +345,57 @@ test('LOOT-BANNER THE WIRING: drawHud reads the player entity it is handed on ev
   assert.match(read('src/systems/lootCodex.js'), /if \(!quiet && !presentCodexFind\(item, key\.kind\)\) \{/);
   assert.doesNotMatch(read('src/systems/lootCodex.js'), /from '\.\.\/ui\//, 'the codex imports no face');
 });
+
+// ── HONOUR-BANNER (2026-10-14, Mac: "The title/aura in the abyss dungeon should also have a loot popup"; the lamp's "ensure
+// there is a loot popup for obtaining the title") ──
+test('HONOUR-BANNER THE ENTRY: a title or an aura granted is a banner of its own - its word, "New Title"/"New Aura", the top tier\'s place and fanfare, the title\'s own colour; a word nobody names is none', async () => {
+  const PB = await import('../src/ui/playerBadge.js');
+  const t = B.honourEntry({ kind: 'title', key: 'hourbreaker' });
+  assert.deepEqual([t.name, t.kicker, t.sub, t.tier, t.big, t.count, t.item], ['Hourbreaker', 'New Title', 'Wear it from your account card', 'gilded', true, 1, null]);
+  assert.equal(t.key, 'honour\u0002title\u0002hourbreaker');
+  assert.deepEqual(t.honour.rgba, PB.HOUR_GOLD, 'a gradient title\'s middle - the Remnant\'s gold');
+  const a = B.honourEntry({ kind: 'aura', key: 'turninghour' });
+  assert.deepEqual([a.name, a.kicker], ['The Turning Hour', 'New Aura']);
+  assert.equal(a.honour.badge.key, PB.AURA_PAINT.turninghour, 'an aura in the paint of the title it is family to');
+  assert.equal(B.honourEntry({ kind: 'title', key: 'nobody' }), null);
+  assert.equal(B.honourEntry({ kind: 'glyph', key: 'dev' }), null);
+  assert.deepEqual([B.honourKicker('title'), B.honourKicker('aura'), B.honourSub()], ['New Title', 'New Aura', 'Wear it from your account card']);
+  assert.deepEqual(B.honourVars(PB.HOUR_GOLD), { '--rar': '#e8c060', '--rar-hi': '#f2dca8', '--rar-lo': '#746030', '--rar-rgb': '232,192,96', '--rar-pips': "'\\2605'" });
+  assert.equal(B.honourVars(null), null);
+});
+
+test('HONOUR-BANNER THE FACE: announced on Enhanced Plus it stands - held by the account, never dropped as gone from the pack - in the title\'s colour and paint, big, with the fanfare; the mark an SVG in the title\'s colour, a laurel or a ring; the classic skin builds nothing and the door says so; the Hour\'s door wired (the lamp\'s is test/lampkeeper2\'s)', () => withPage((doc, sounds) => {
+  on();
+  doc.createElementNS = (ns, tag) => Object.assign(fakeEl(tag, doc), { namespaceURI: ns });   // AUDIT FIVE-ASKS E4: the browser's door, the mark's real path
+  setPref('soundEnhancements', true);
+  const me = hero();
+  frame(me);
+  assert.equal(B.announceHonour('title', 'hourbreaker'), true);
+  frame(me);
+  const [b] = byClass(doc.body, 'lootbanner');
+  assert.ok(b, 'it stands, though nothing of it is in the pack');
+  assert.deepEqual([b.dataset.rarity, b.dataset.honour], ['gilded', 'title']);
+  assert.ok(b.classList.contains('lb-big'));
+  assert.equal(b.style.getPropertyValue('--rar'), '#e8c060', 'its edge and light the title\'s colour');
+  assert.deepEqual([textIn(b, 'lb-kicker'), textIn(b, 'lb-name'), textIn(b, 'lb-sub')], ['New Title', 'Hourbreaker', B.honourSub()]);
+  const word = byClass(b, 'lb-word')[0];
+  assert.ok(word && word.parent === byClass(b, 'lb-name')[0] && word.textContent === 'Hourbreaker', 'the word in its own box (AUDIT FIVE-ASKS E3)');
+  assert.match(word.style.backgroundImage, /^linear-gradient/, 'the word in the paint it is worn in - over the word, not the row');
+  assert.equal(byClass(b, 'lb-name')[0].style.backgroundImage ?? '', '', 'the row itself unpainted: the count keeps its own colour');
+  const [mark] = byClass(b, 'lb-icon')[0].children;
+  assert.deepEqual([mark.namespaceURI, mark.tag, mark.attrs.fill, mark.attrs.width, mark.attrs.height], [B.HONOUR_MARK_NS, 'svg', 'var(--rar)', '48', '48'], 'an SVG in the banner\'s colour, whole pixels a cell');
+  const titleRects = mark.children.length;
+  assert.deepEqual(sounds, [SOUND.ArenaFanfareLevelUp]);
+  assert.equal(B.announceHonour('aura', 'turninghour'), true);
+  frame(me);
+  const aura = byClass(doc.body, 'lootbanner').find((n) => n.dataset.honour === 'aura');
+  assert.ok(aura && byClass(aura, 'lb-icon')[0].children[0].children.length !== titleRects, 'a ring of light, not the title\'s laurel');
+  assert.equal(B.announceHonour('aura', 'nobody'), false, 'a word nobody names: no banner');
+  withPage((cdoc) => {
+    assert.equal(B.announceHonour('title', 'hourbreaker'), false, 'the classic skin: the line alone');
+    frame(hero());
+    assert.equal(cdoc.getElementById(B.LOOT_BANNER_STACK_ID), null);
+  }, { skin: 'classic' });
+  assert.match(read('src/scenes/world.js'), /announce: \(kind, key\) => announceHonour\(kind, key\),/, 'the Hour\'s door');
+  assert.match(read('src/net/sdClaims.js'), /if \(answer\.data\.titleNew === true\) announce\('title', SD_HONOUR_KEYS\.title\);/, 'announced when the title is newly held (AUDIT FIVE-ASKS E1)');
+}));

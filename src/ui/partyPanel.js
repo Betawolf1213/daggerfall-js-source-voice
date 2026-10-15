@@ -75,6 +75,7 @@ import { PARTY_GREEN_CSS, lastOnlineText } from '../net/social.js';   // one hom
 import { PARTY_MAX } from '../net/wire.js';   // PARTY8: the seat count in the title
 import { PIXELIFY_FIVE_FACE, PIXEL_FONT_CSS, PIXEL_TEXT_SHADOW } from './pixelifyFive.js';   // FONT1: the enhanced skin's own face, unsmoothed, with Silkscreen's five
 import { partyFxKey, partyFxAbbrev, partyHealOf } from '../net/partyBuffs.js';   // PARTY-BUFFS: a member's own effects, and the heal they gained
+import { portraitRenderer } from '../render/portraitRenderer.js';   // PORTRAIT3D: the renderer a Morrowind head is taken with (a leaf)
 import { spellIconUrl } from './enhancedArt.js';   // PARTY-BUFFS: the spell's own icon, cut from ICON00I0 as the enhanced spellbook cuts it
 
 export const PARTY_STYLE_ID = 'dagger-party-style';
@@ -289,7 +290,32 @@ export function vitalsText(v, max) {
  *
  * It is a seam rather than a hard call so the panel can be driven with no WebGL, no data files and no browser: a
  * test injects `faceLoader` and the bitmap-to-ImageData step is the only part left to prove (test/soc4_partyhud).
+ *
+ * PORTRAIT3D: with Morrowind's data attached the face is the Morrowind head first (characters/headPortraits.js
+ * poseHeadImage - a seat's, a member's, a townsperson wed in's), at the record's own shape HEAD_RECORD.scale times over:
+ * `scale` says so, and a well draws it that many times smaller, smooth. The record where none is drawn.
  */
+/** PORTRAIT3D: the data's stamp a seat's face key carries (`|mw<generation>`), so a face drawn before Morrowind's data
+ *  came is drawn again as its head - '' with no renderer, no data, or until the heads' module has loaded (behind a door). */
+let _heads = null, _headsAsked = false;
+export function headSuffix() {
+  if (!portraitRenderer()) return '';
+  if (!_heads) {
+    if (!_headsAsked) { _headsAsked = true; import('../characters/headPortraits.js').then((m) => { _heads = m; }).catch(() => {}); }
+    return '';
+  }
+  const g = _heads.headDataStamp();
+  return g ? `|mw${g}` : '';
+}
+/** PORTRAIT3D: a pose's Morrowind head as the loader answers it - `{ width, height, colors, scale }`, or null. */
+async function morrowindFaceOf(pose) {
+  const { poseHeadImage, HEAD_RECORD } = await import('../characters/headPortraits.js');
+  const img = await poseHeadImage(pose, { px: HEAD_RECORD.w * HEAD_RECORD.scale, ph: HEAD_RECORD.h * HEAD_RECORD.scale });
+  if (!img) return null;
+  const colors = new Uint8ClampedArray(img.width * img.height * 4);
+  colors.set(img.data);
+  return { width: img.width, height: img.height, colors, scale: HEAD_RECORD.scale };
+}
 /** The talk's common faces (DaggerfallTalkWindow's CommonFaces archive). */
 export const COMMON_FACES_FILE = 'TFAC00I0.RCI';
 export function createFaceLoader({ fetchBytes, palette } = {}) {
@@ -303,6 +329,8 @@ export function createFaceLoader({ fetchBytes, palette } = {}) {
     return p;
   };
   return async (pose) => {
+    const head = portraitRenderer() ? await morrowindFaceOf(pose).catch(() => null) : null;
+    if (head) return head;
     if (!fetchBytes || !palette) return null;
     // AUDIT LEGACY III P17: a townsperson's own face - the talk window's CommonFaces record, the one the census gave them
     // for life (COMMON_FACES_FILE: ui/nativeTalk.js PORTRAIT_ARCHIVE.CommonFaces, pinned equal - never imported, so the
@@ -415,9 +443,11 @@ export function createPartyPanel({ social, doc = document, art = null, faceLoade
     card.pix.height = img.height;
     // AN INTEGER SCALE OR NONE. The backing store is the record's own pixels; the CSS size is a whole multiple of
     // it, so the plate shows NEAREST-scaled 1996 art rather than a smeared bilinear one.
-    const s = Math.max(1, Math.min(Math.floor(FACE_BOX_W / img.width), Math.floor(FACE_BOX_H / img.height)));
+    // PORTRAIT3D: a Morrowind head is its picture `scale` times smaller, smooth - the record's own size
+    const s = img.scale > 0 ? 1 / img.scale : Math.max(1, Math.min(Math.floor(FACE_BOX_W / img.width), Math.floor(FACE_BOX_H / img.height)));
     card.pix.style.width = `${img.width * s}px`;
     card.pix.style.height = `${img.height * s}px`;
+    card.pix.style.imageRendering = img.scale > 0 ? 'auto' : '';
     const px = ctx.createImageData(img.width, img.height);
     px.data.set(new Uint8ClampedArray(img.colors.buffer));
     ctx.putImageData(px, 0, 0);
@@ -556,7 +586,7 @@ export function createPartyPanel({ social, doc = document, art = null, faceLoade
     card.hpH = h;
     paintFx(card, m.online ? p?.fx : null);
     card.hpPct = pct;
-    const key = p ? faceKeyOf(p) : null;
+    const key = p ? `${faceKeyOf(p)}${headSuffix()}` : null;   // PORTRAIT3D: and the data's stamp
     if (key !== card.faceKey) {
       card.faceKey = key;
       card.drawn = null;

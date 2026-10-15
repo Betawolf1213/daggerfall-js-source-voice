@@ -77,6 +77,7 @@ export const PSEUDO_ARCHIVES = Object.freeze([
   N(38211, 'world/lefayMonument.js', 'LEFAY_ARCHIVE', 'port', "Lefay's monument"),
   N(38221, 'world/merchantYardArt.js', 'YARD_ARCHIVE', 'port', "the merchant yards"),
   N(38231, 'world/portArt.js', 'PORT_ARCHIVE', 'port', "the harbour - the shipyard and the lighthouse"),
+  N(38232, 'systems/lampKeeper.js', 'LAMP_ARCHIVE', 'port', "Kludge Town's lamp - the classic 197_6 under the port's own key (LAMP-KEEPER II; 38241, the Galleries' - world/egBandArt.js - until the merge of main into the Spire)"),
   N(EG_BAND_ARCHIVES[0], 'world/pseudoArchives.js', 'EG_BAND_ARCHIVES', 'port', "the Spire's Broken Galleries", EG_BAND_ARCHIVES[0] + EG_BAND_BLOCK - 1),
   N(EG_BAND_ARCHIVES[1], 'world/pseudoArchives.js', 'EG_BAND_ARCHIVES', 'port', "the Spire's Soul Cairn", EG_BAND_ARCHIVES[1] + EG_BAND_BLOCK - 1),
   N(EG_BAND_ARCHIVES[2], 'world/pseudoArchives.js', 'EG_BAND_ARCHIVES', 'port', "the Spire's Shade Perilous", EG_BAND_ARCHIVES[2] + EG_BAND_BLOCK - 1),

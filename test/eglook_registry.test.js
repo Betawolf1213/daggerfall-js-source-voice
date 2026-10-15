@@ -55,7 +55,7 @@ test('EG-G2 THE REGISTRY (section 11.6): no two numbered pseudo-archives overlap
   assert.equal(pseudoArchiveOwner(38191), null, 'a free number has no owner');
   assert.equal(pseudoArchiveFree(38150), 38150, 'a free number is its own pick');
   assert.equal(pseudoArchiveFree(38151), 38152, 'past the Hour\'s');
-  assert.equal(pseudoArchiveFree(38231, 9), 38232, 'nine free after the harbour\'s');
+  assert.equal(pseudoArchiveFree(38231, 8), 38233, 'eight free after the harbour\'s and the lamp\'s');   // PIN MOVED (AUDIT EG V, the merge of main): LAMP-KEEPER II's lamp took 38232 - nine were free after the harbour's
   assert.equal(pseudoArchiveFree(38241, 9), 38290, 'past the Spire\'s');
   assert.equal(pseudoArchiveOwner(pseudoArchiveFree(1)), null);
 });

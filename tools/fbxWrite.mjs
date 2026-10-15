@@ -5,7 +5,9 @@
 // them is wrong and the suite says so". EG6c (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 11.6) needs it
 // outside a test: the reference hero fragment (tools/egRefFragScene.mjs) is a scene the port writes itself, committed as
 // an .fbx so tools/fragBake.mjs bakes it exactly as it bakes one of Mac's. ONE EXPORT: the writer moved here whole and the
-// test imports it, so the fixture and the reference are written by one writer.
+// test imports it, so the fixture and the reference are written by one writer. (The MW-FOLK1 audit's pins of
+// tools/fbxStrip.mjs's cut needed it too and moved FIELD-GUN-MW1's copy to test/fixtures/fbxWrite.mjs on main; the merge
+// of main into EG kept this one home and gave it that copy's `blender` footer.)
 //
 // A node is `{ name, props, children }`; a prop is `{ t, v }` in the reader's type codes - S a string (FBX's embedded
 // NULs kept: "Name\0\x01Model"), D a double, I an int32, L an int64, and the arrays d (doubles) and i (int32s), each
@@ -13,6 +15,7 @@
 // The version is 7400 by default: the 32-bit record headers (>=7500 widens them, and nothing written here needs it).
 
 import { FBX_MAGIC } from './fbxRead.mjs';
+import { FOOT_ID, FOOT_MAGIC } from './fbxStrip.mjs';
 
 /** The property constructors, by the reader's type codes. */
 export const S = (v) => ({ t: 'S', v });
@@ -63,8 +66,11 @@ export function encodeNode(node, start) {
   return Buffer.concat([head, propBytes, ...kids, ...(kids.length ? [Buffer.alloc(13)] : [])]);
 }
 
-/** A whole file: the magic, the version, every root node, the closing null record. */
-export function writeFbx(roots, version = 7400) {
+/** A whole file: the magic, the version, every root node, the closing null record. `blender` closes it with the footer
+ *  Blender's encoder writes (encode_bin.py: its id, four zeros, zeros to the next 16 - a whole 16 when already there - the
+ *  version, 120 zeros, the closing magic), the one footer the strip re-pads; without it the file ends at the null record,
+ *  as every file this writer wrote before. */
+export function writeFbx(roots, version = 7400, { blender = false } = {}) {
   const header = Buffer.alloc(27);
   header.write(FBX_MAGIC, 0, 'latin1');
   header.writeUInt8(0x1a, 20); header.writeUInt8(0x00, 21);
@@ -73,5 +79,14 @@ export function writeFbx(roots, version = 7400) {
   let at = header.length;
   for (const r of roots) { const b = encodeNode(r, at); out.push(b); at += b.length; }
   out.push(Buffer.alloc(13));
+  at += 13;
+  if (blender) {
+    out.push(FOOT_ID, Buffer.alloc(4));
+    at += 20;
+    let pad = ((at + 15) & ~15) - at;
+    if (pad === 0) pad = 16;
+    const v = Buffer.alloc(4); v.writeUInt32LE(version, 0);
+    out.push(Buffer.alloc(pad), v, Buffer.alloc(120), FOOT_MAGIC);
+  }
   return Buffer.concat(out);
 }

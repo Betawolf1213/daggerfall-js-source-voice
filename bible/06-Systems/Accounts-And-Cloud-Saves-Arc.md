@@ -4024,12 +4024,12 @@ unique different version of the aura, a title named Hour's First, and each the g
   has 11 mutants, all dead.
 
 
-## EG-PLAY and after — the Elite Breach on the account service (2026-10-11 to 2026-10-13, acct133, migration 0113)
+## EG-PLAY and after — the Elite Breach on the account service (2026-10-11 to 2026-10-13, acct134, migration 0114)
 
 The Elite Breach's account half, each piece recorded in `bible/11-Multiplayer/Elite-Gates.md` section 31 (sections 19
 and 20 for EG-E1 to EG-E3) and listed here so this arc's page names every route it holds. The arc ships under one
-account version, EG-PLAY's: `acct116` to `acct122` on its branch, `acct133` since the merges of main (past BAL9, NAME-AS,
-HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRAFT-PROCS, SCHOOLS5, RECOVERY-SET and REVIVE's `acct132`), and one migration, `0113_elite_breach.sql` (0111 then 0112 on its branch, past NAME-AS's 0111 and SEAT-FACTS' 0112).
+account version, EG-PLAY's: `acct116` to `acct122` on its branch, `acct134` since the merges of main (past BAL9, NAME-AS,
+HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRAFT-PROCS, SCHOOLS5, RECOVERY-SET, REVIVE and LAMP-KEEPER II's `acct133`), and one migration, `0114_elite_breach.sql` (0111, 0112 then 0113 on its branch, past NAME-AS's 0111, SEAT-FACTS' 0112 and LAMP-KEEPER II's 0113).
 
 - **EG-PLAY** (`server-account/src/eg.js`): the Weir Keys (`players.eg_keys`, the rolls at gate and Hour claims, the
   launch gift), `/v1/eg/keys`, `/v1/eg/open` (a stake, idempotent on its request id; one live breach an account; the
@@ -4048,14 +4048,14 @@ HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRA
 - **AUDIT EG IV** (the net group, `01-Overview/Audit-EG-IV.md`):
   - an open whose answer was lost is asked again by its request id (`/v1/eg/open`'s `again`). The service answers with
     the stake it took, for its void, or with `none` (404) where it took none;
-  - the launch gift's letter is sent by migration 0113 beside its key (`EG_LAUNCH_POST`, batch `spire-launch`);
+  - the launch gift's letter is sent by migration 0114 beside its key (`EG_LAUNCH_POST`, batch `spire-launch`);
   - a stake the first breach's mercy held is spent by the clock with its own letter (`EG_STAKE_POST_HELD`);
   - a gate kill's Weir Key is rolled in its claim's own batch (`egGateWeir`);
   - the opener's `'empty'` end clears their `eg_live`;
   - Spire Champion is kept only once a season's late ends are claimed;
   - the routes' comment names what the open reads and what it and the admission refuse.
 
-## EG-E2 — the Spire's titles and auras (2026-10-12, under EG-PLAY's account version: acct121 then, acct133 since the merges; world197 then, world201 since)
+## EG-E2 — the Spire's titles and auras (2026-10-12, under EG-PLAY's account version: acct121 then, acct134 since the merges; world197 then, world203 since)
 
 The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
 of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -

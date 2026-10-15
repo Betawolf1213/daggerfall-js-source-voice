@@ -172,6 +172,7 @@ import { getTextKeyTime, animVelocity } from './mwAnim.js';
 import { mat33Mul } from './mwNifMesh.js';   // AUDIT 68 S11-affine-dup: the one row-major 3x3 product
 import { batchMoves, posePartBatch, nodeAffineAt, nodeClockAt, clockFor } from './mwPartClock.js';   // MW-BOW1: a part's own clock
 import { applyClimbRig } from '../combat/climbRig.js';   // CLIMB6: the climb's pose on the rig's own bones
+import { ownFacePools } from '../characters/ownHeadModels.js';   // MW-HEADS1: the port's own heads and hairs - a race's pools where it has them
 
 /** The four parts allowed to fall back to a third-person mesh when the
  *  first-person record is missing (rule 3 / npcanimation.cpp:1217-1253).
@@ -1654,8 +1655,22 @@ export function armReport(parts, race, female) {
  */
 /** MW-D35: the race-and-sex's head and hair pools, id-sorted - THE
  *  SAME pools playerBodyRows walks, exposed so the matcher measures
- *  exactly the candidates the walk would have chosen among. */
-export function facePools(parts, race, female) {
+ *  exactly the candidates the walk would have chosen among.
+ *  MW-HEADS1: where the port carries its own heads and hairs for the race
+ *  and sex (characters/ownHeadModels.js - the Breton men's), THOSE are the
+ *  pools, in place of the data's: every door that chooses a face - the NPC
+ *  walk, the curated table, the measured match - chooses among them.
+ *  AUDIT MW-HEADS1 (L2-F5): WHERE THE ARCHIVES CARRY THEM. `has` is the
+ *  archives' directory (fpArm.js archiveHas): the own pools stand only
+ *  while every one of their meshes is in it, and the data's otherwise -
+ *  the own archive is a chunk the page imports, and one that did not load
+ *  left every Breton man with no head and no hair, notes and all, where
+ *  the data's would have drawn. All or none: a pool half-present would
+ *  walk a save's face onto another index. No `has` - a caller with no
+ *  archives - reads the own as shipped. */
+export function facePools(parts, race, female, { has = null, own: ownAsked = false } = {}) {
+  const own = ownAsked ? ownFacePools(race, female) : null;   // MW-HEADS2: the port's own heads are a player's alone - asked for
+  if (own && (!has || [...own.heads, ...own.hairs].every((r) => has(`meshes/${r.model}`)))) return { heads: own.heads, hairs: own.hairs };
   const want = String(race || '').toLowerCase();
   const pool = (slot) => {
     const forSlot = (parts ?? []).filter((p) => p.race === want && p.slot === slot
@@ -1685,7 +1700,27 @@ export function werewolfHeadRows(parts) {
   ];
 }
 
-export function playerBodyRows(parts, race, female, { beast = false, faceIndex = 0, faceTable = FACE_TABLE, faceMatch = null, vampire = false, walk = null } = {}) {   // MWNPC14: `vampire` the race's vampire head; MWNPC17: `walk` an NPC's { head, hair }
+/** MW-D33: THE CURATED FACE - mwFaceTable.json's judgement for a race, sex and portrait, `{ head, hair }` record ids,
+ *  or null where the table holds none. AUDIT MW-HEADS1 (L2-F6): one reading, for the rows that wear it and the match
+ *  that stands down when it answers both halves. */
+export const curatedFace = (race, female, faceIndex, faceTable = FACE_TABLE) =>
+  faceTable?.[String(race || '').toLowerCase()]?.[female ? 'female' : 'male']?.[String(faceIndex | 0)] ?? null;
+
+/** AUDIT 68 S11-faceid-case: a BODY id keeps its raw case (the walk's sort order is the save-stable law), so a wanted id
+ *  - the curated table's, or the matcher's raw-case verdict - is compared without it. */
+export const poolRecord = (pool, id) => {
+  const w = String(id || '').toLowerCase();
+  return w ? pool.find((p) => String(p.id).toLowerCase() === w) ?? null : null;
+};
+
+/** AUDIT MW-HEADS1 (L2-F6): does the curated table answer BOTH halves of this face among these pools? Then no measured
+ *  match is ever worn (playerBodyRows: the curated id wins wherever the pool carries it), and none is measured. */
+export function curatedAnswersFace(pools, race, female, faceIndex, faceTable = FACE_TABLE) {
+  const c = curatedFace(race, female, faceIndex, faceTable);
+  return !!c && !!poolRecord(pools.heads, c.head) && !!poolRecord(pools.hairs, c.hair);
+}
+
+export function playerBodyRows(parts, race, female, { beast = false, faceIndex = 0, faceTable = FACE_TABLE, faceMatch = null, vampire = false, walk = null, has = null, ownHeads = false } = {}) {   // MWNPC14: `vampire` the race's vampire head; MWNPC17: `walk` an NPC's { head, hair }; AUDIT MW-HEADS1: `has` the archives' (facePools); MW-HEADS2: `ownHeads` a player's - the port's own heads
   const want = String(race || '').toLowerCase();
   // MW-D32: the sweep slots resolve through getBodyParts-whole
   // (npcanimation.cpp:1167-1297 - LAST proper match wins, male-for-
@@ -1717,7 +1752,7 @@ export function playerBodyRows(parts, race, female, { beast = false, faceIndex =
   // authored by eye. A curated id wins when the pool carries it; an id
   // the archives do not carry falls back to the walk (never traps),
   // and the row's verdict says which happened.
-  const curated = faceTable?.[want]?.[female ? 'female' : 'male']?.[String(faceIndex | 0)] ?? null;
+  const curated = curatedFace(race, female, faceIndex, faceTable);
   // The sex law, list-shaped: the matching sex's pool, else the male
   // pool retail relies on - never a mix, or the index would walk across
   // sexes. AUDIT MW-A F2: the sort and the index are the FACE'S law and
@@ -1725,18 +1760,10 @@ export function playerBodyRows(parts, race, female, { beast = false, faceIndex =
   // any archive arrangement; the sweep slots above ride
   // resolveBodyParts, the reference's own LAST-wins walk, untouched.
   // AUDIT 68 S11-facepools-dup: facePools IS that law - the pools the
-  // matcher measured are the pools walked here, by construction.
-  const pools = facePools(parts, race, female);
-  // AUDIT 68 S11-faceid-case: a BODY id keeps its raw case (the walk's
-  // sort order is the save-stable law), so a wanted id - the curated
-  // table's, or the matcher's raw-case verdict - is compared without it.
-  const byId = (pool, id) => {
-    const w = String(id || '').toLowerCase();
-    return w ? pool.find((p) => String(p.id).toLowerCase() === w) ?? null : null;
-  };
+  // matcher measured are the pools walked here, by construction (the
+  // same `has`: AUDIT MW-HEADS1).
+  const pools = facePools(parts, race, female, { has, own: ownHeads });
   for (const slot of ['head', 'hair']) {
-    const forSlot = parts.filter((p) => p.race === want && p.slot === slot
-      && p.skin && p.playable && !p.firstPerson);
     const sorted = slot === 'head' ? pools.heads : pools.hairs;
     let chosen = null;
     let how = null;
@@ -1749,13 +1776,13 @@ export function playerBodyRows(parts, race, female, { beast = false, faceIndex =
       how = 'walked for an NPC';
     } else if (sorted.length) {
       const wantId = curated ? String(curated[slot] || '').toLowerCase() : '';
-      chosen = byId(sorted, wantId);
+      chosen = poolRecord(sorted, wantId);
       how = chosen ? 'curated' : null;
       // MW-D35 (parallel arc): the MEASURED match sits between the
       // hand-curated table and the walk - a likeness computed from the
       // player's own data, named as such on the row.
       if (!chosen && faceMatch?.[slot]) {
-        chosen = byId(sorted, faceMatch[slot]);
+        chosen = poolRecord(sorted, faceMatch[slot]);
         how = chosen ? 'matched to the portrait' : null;
       }
       if (!chosen) {
@@ -1767,7 +1794,7 @@ export function playerBodyRows(parts, race, female, { beast = false, faceIndex =
       slot,
       record: chosen,
       verdict: chosen ? (how ? `third-person record found, ${how}` : 'third-person record found') : 'NOTHING for this slot',
-      counts: { all: forSlot.length },
+      counts: { all: sorted.length },   // AUDIT MW-HEADS1 (L2-F7): the pool chosen among - the port's own where it stands
     });
   }
   // MWNPC14: A VAMPIRE'S FACE - the race's vampire head over the one walked (npcanimation.cpp updateNpcBase: the head

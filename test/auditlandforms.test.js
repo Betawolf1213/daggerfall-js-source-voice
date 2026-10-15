@@ -532,7 +532,8 @@ test('AUDIT LANDFORMS D8: the law, written out, is the shaper - at every sample 
     hills: { uplandAt: 700, coast: 1.25, region: 2400, warp: 80, warpScale: 520, scales: [300, 125, 50], weights: [1, 0.36, 0.1] },
     lands: {   // LANDFORM6 (test/landform6.test.js pins what each land does)
       woodlands: { low: 4, high: 48, upland: 1.6, shape: 'rolling' }, mountainWoods: { low: 8, high: 56, upland: 1.6, shape: 'foothills', peaks: { cell: 380, fill: 0.34, high: 112 } },   // PIN MOVED (LANDFORM8): the rounded peaks
-      mountain: { low: 16, high: 80, upland: 1.6, shape: 'ridged', peaks: { cell: 360, fill: 0.5, high: 160 } }, desert: { low: 6, high: 26, upland: 1.3, shape: 'desert', rockFrom: 0.3 },
+      // PIN MOVED (MOUNTAINS-SHARP): the mountains' ridges 112 and their peaks 320 and sharp
+      mountain: { low: 16, high: 112, upland: 1.6, shape: 'ridged', peaks: { cell: 360, fill: 0.5, high: 320, sharp: true } }, desert: { low: 6, high: 26, upland: 1.3, shape: 'desert', rockFrom: 0.3 },
       desert2: { low: 6, high: 30, upland: 1.3, shape: 'desert', rockFrom: -0.1 },
       rainforest: { low: 8, high: 50, upland: 1.4, shape: 'knolls', cell: 120, fill: 0.62, edge: 0.88, roll: 0.15 },
       subtropical: { low: 6, high: 44, upland: 1.4, shape: 'knolls', cell: 210, fill: 0.6, edge: 1, roll: 0.7 },

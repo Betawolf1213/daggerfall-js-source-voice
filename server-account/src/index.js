@@ -75,6 +75,7 @@
 //   POST /v1/eg/board    {} -> { ok, season, descent: { alone, few, company }, depths, deepest, proclamation, best }   (EG-E2: the Elite Breach's three boards - egHonours.js)
 //   POST /v1/eg/find     { tier } -> { found, keys, asks }   (EG-E3: a dungeon elite's find - 'super' | 'elite' | 'regular', the service's die, 6 asks a tier a day, 2 keys a week)
 //   POST /v1/eg/starts   { subs } -> { starts: { [sub]: [w, ..., 0] | null }, keys, rehearsal, rk }   (EG-F: the start window's preflight - which starts each member may make)
+//   POST /v1/lamp/claim  {} -> { granted, why? }   (LAMP-KEEPER II: a lamp keeper spoken to - I Love Lamp, laid once on the row; `why` 'held' | 'guest')
 //   POST /v1/gate/claim  { receipt, region?, character? } -> { recorded, stones, closed, seat? }   (WB12d: the row's embers, AUDIT WB12d A4; SEAT1b: `seat` the kill's influence)
 // MARKS1, Marks - an account's alone, behind MARKS_OPEN (marks.js); `rid` the act's own id:
 //   POST /v1/marks/balance {}                               -> { balance, today, bank }
@@ -222,6 +223,7 @@ import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey, findEg, egFirstSay, eg
 import { egBoardOf, withEgHonours } from './egHonours.js';   // EG-E2: the Elite Breach's boards, and Spire Champion on the row
 import { egSink } from './egEconomy.js';   // EG-E1: the Broker's Panoply sink
 import { startsEg } from './egStarts.js';   // EG-F: the start window's preflight
+import { claimLamp } from './lamp.js';   // LAMP-KEEPER II: I Love Lamp, laid on the row
 import { voteHome } from './homeVotes.js';   // HOME-VOTE: a town's word on a player's house
 import { claimHome, releaseHome, setHomeEntry, homesInTown, homesOf, setHomeLook, homeLayoutsKept, arenaMoveHome, arenaMovesOf, arenaMoveSeen, holdDeed, inheritHome } from './homes.js';   // HOME1: the online homes' routes; HOME-LOOK: its outside; WD3: the towns' layouts; ARENA4b: the homes the arena displaced, moved; FIELD BUGS 2026-10-04d KNIGHT-HOUSE: a deed held
 import { roomsOf, offerRoom, withdrawRoom, rentRoom, collectRent } from './rent.js';   // HOME-RENT: a home's rooms, rented
@@ -1203,6 +1205,11 @@ const service = {
           ...(Number.isSafeInteger(r.w) ? { w: r.w } : {}), ...(typeof r.piece === 'string' ? { piece: r.piece } : {}), ...(Number.isSafeInteger(r.purse) ? { purse: r.purse, price: r.price } : {}) }, EG_STATUS[r.error] ?? 400, origin);   // EG-E1: the sink's - which piece, the purse and the price
         if (path === '/v1/eg/claim' && r.recorded === true && r.q === 'w' && r.paid === true) await grantSpoils(ctx.db, who.player.id);   // INT5: a signed win's spoils, the budget's fill (EG-E1: a Redoubt the week pays)
         return json(r, 200, origin);
+      }
+
+      if (path === '/v1/lamp/claim' && request.method === 'POST') {
+        // LAMP-KEEPER II: A LAMP KEEPER SPOKEN TO - the session says who, lamp.js lays I Love Lamp on the row once
+        return json(await claimLamp(ctx, who.player), 200, origin);
       }
 
       if (path === '/v1/arena/claim' && request.method === 'POST') {

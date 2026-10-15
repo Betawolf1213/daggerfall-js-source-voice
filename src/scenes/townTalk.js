@@ -77,6 +77,7 @@ import { liveStat } from '../systems/statMods.js';   // AUDIT 63 F4: TalkManager
 import { ActionTextBox } from '../ui/actionText.js';   // ROAD-D D10: DaggerfallUI.MessageBox, the port's parchment
 import { registerPresenter, messageBox } from '../systems/notify.js';   // ENH-NOTICE3: this slot and this PopupText, offered to the one door every message goes through - and the door itself, for this host's own box seam
 import { preloadTalkArt, setNpcPortrait, clearNpcPortrait } from '../ui/nativeTalk.js';   // U8b   // ROAD-D D10: SetNPCPortrait
+import { npcHeadImage } from '../characters/headPortraits.js';   // PORTRAIT3D: the face as the head the body wears
 import { createTalkWindow, talkDoorReady } from '../ui/talkDoor.js';   // ET1: the ONE door - the classic window or the enhanced panel over it
 import { requestLook } from '../player/pointerLock.js';   // ET1: the panel's Goodbye relocks inside its own gesture (MAC1)
 import { nativeMetrics, pointToNative } from '../ui/nativePanel.js';   // U8b: pointer routing
@@ -833,7 +834,9 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
 
   /** LEGACY-HOME: a mobile's portrait - a resident's own (one of the line: the chargen head they were made with), else
    *  TalkManager.cs:817's: a mobile ALWAYS portraits from TFAC00I0.RCI, at the record SetPerson minted for it. */
-  const portraitOf = (person) => person?.living?.res?.portrait ?? { archive: 'CommonFaces', record: person?.personFaceRecordId ?? 0 };
+  // PORTRAIT3D: and the look the walker's body is built from (folkBodies.js folkLook, rosterBodies.js residentLook, a
+  // kin's own) - its face as that body's head where the people stand in Morrowind bodies
+  const portraitOf = (person) => ({ ...(person?.living?.res?.portrait ?? { archive: 'CommonFaces', record: person?.personFaceRecordId ?? 0 }), head: person?._mwRes?.look ?? person?._mwFolk?.look ?? person?.living?.res?.look ?? null });
 
   /** The conversation itself, once nothing stands before it (the activation's gates above). */
   function converse(target) {
@@ -932,7 +935,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
     // :817 for a mobile, :849 for a static NPC), so it lands here -
     // the port's one window door. A caller with no portrait clears
     // the last one rather than inheriting a stranger's face.
-    if (portrait) setNpcPortrait(portrait.archive, portrait.record);
+    if (portrait) setNpcPortrait(portrait.archive, portrait.record, { picture: portrait.head ? (renderer) => npcHeadImage(portrait.head, { renderer }) : null });   // PORTRAIT3D
     else clearNpcPortrait();
     _talkSeed = npcSeed;   // F043: whoever we are talking to now
     // V4: GetSuppressTalk (LycanthropyEffect.cs:423-437) - every

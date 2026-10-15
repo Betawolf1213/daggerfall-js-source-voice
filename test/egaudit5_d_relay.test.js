@@ -9,7 +9,7 @@
 //          round trip is still never counted; the drains read a held body;
 //   L4-2   A RIDE ONLY WHERE THE POSE STANDS: `pl` naming a piece the pose's own feet are not on is no ride (egRideHolds);
 //   L4-7   THE COUNT MENDED ONLY BY A HEAL A CAST BACKS (egHeal), Lifeline with it;
-//   L4-8   EG_RELAY_MIN the arc's own relay (world201), never a main relay that carries no breach;
+//   L4-8   EG_RELAY_MIN the arc's own relay (world203), never a main relay that carries no breach;
 //   L4-9   THE HOLD'S FINDING KEPT IN THE RECORD: a room woken twice inside its hold gives the gap back to what the hold
 //          found, never to a word its company stamped meanwhile;
 //   L4-10  A ROOM WOKEN MID-TRIAL HOLDS THE BODY of a member whose socket is gone, from the pose its record kept;
@@ -269,10 +269,10 @@ test('AUDIT EG V L4-7 THE COUNT MENDED ONLY BY A HEAL A CAST BACKS (sections 16.
 });
 
 // ── L4-8 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-test('AUDIT EG V L4-8 THE FIRST RELAY THAT OPENS A BREACH IS THE ARC\'S OWN (section 23, "Versions"): EG_RELAY_MIN is RELAY_VERSION\'s number - world201 - so a client meeting main\'s world197 to world200 (no breach in them) never sends one an `eg` (mutant: the branch\'s old 197)', () => {
-  assert.equal(RELAY_VERSION, 'world201', 'the arc ships under world201 (unshipped)');
+test('AUDIT EG V L4-8 THE FIRST RELAY THAT OPENS A BREACH IS THE ARC\'S OWN (section 23, "Versions"): EG_RELAY_MIN is RELAY_VERSION\'s number - world203 - so a client meeting main\'s world197 to world202 (no breach in them) never sends one an `eg` (mutant: the branch\'s old 197)', () => {
+  assert.equal(RELAY_VERSION, 'world203', 'the arc ships under world203 (unshipped; PIN MOVED: world201 until the merge of main past CHAT-TRADE world201 and FIVE-ASKS world202)');
   assert.equal(EG_RELAY_MIN, Number(/^world(\d+)$/.exec(RELAY_VERSION)[1]));
-  for (const v of ['world197', 'world198', 'world199', 'world200']) assert.equal(relaySupportsEg(v), false, `${v} carries no breach`);
+  for (const v of ['world197', 'world198', 'world199', 'world200', 'world201', 'world202']) assert.equal(relaySupportsEg(v), false, `${v} carries no breach`);
   assert.equal(relaySupportsEg(RELAY_VERSION), true);
 });
 

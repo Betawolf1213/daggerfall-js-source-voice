@@ -163,7 +163,7 @@
   },
   {
     "name": "AUDIT-EG-IV-net-launch-letter-to-the-rite",
-    "file": "server-account/migrations/0113_elite_breach.sql",
+    "file": "server-account/migrations/0114_elite_breach.sql",
     "old": "FROM players p WHERE EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = p.id AND g.earned != 'rite');",
     "new": "FROM players p WHERE EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = p.id);",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDIT-EG-IV-net-launch-letter-twice",
-    "file": "server-account/migrations/0113_elite_breach.sql",
+    "file": "server-account/migrations/0114_elite_breach.sql",
     "old": "INSERT OR IGNORE INTO server_post",
     "new": "INSERT INTO server_post",
     "tests": [

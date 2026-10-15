@@ -1494,6 +1494,17 @@ export function accountSds({ fetch, storage }) {
   };
 }
 
+/** LAMP-KEEPER II (2026-10-14): THE LAMP'S TITLE (server-account/src/lamp.js) through the one door - `claim()` a lamp
+ *  keeper spoken to, `{ ok, data: { granted, why? } }`; no session is `no-session`, never a throw. */
+export function accountLamp({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    // AUDIT FIVE-ASKS D3: a secret the service stopped honouring is not a session (forgetSession's law)
+    claim: async () => { const r = await post('/v1/lamp/claim', {}); if (r?.error === 'auth') forgetSession(storage); return r; },
+    account: () => storedSession(storage)?.id ?? null,   // AUDIT FIVE-ASKS D2: whose the lamp's answer is
+  };
+}
+
 /**
  * EG-PLAY: THE ELITE BREACH (server-account/src/eg.js) through the one door - the Weir Keys the account holds and its live
  * breach (`keys`), the open that stakes one (`open` - idempotent on its request id `rq`; `rh` the day's Rehearsal, no
