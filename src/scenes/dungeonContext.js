@@ -293,7 +293,7 @@ import { UnderwaterFog } from '../render/underwaterFog.js';   // ROAD-B (b3): Un
 import { NavClient } from '../ai/navClient.js';   // ENHANCED AI 3b
 import { getPref } from '../systems/uiPrefs.js';
 import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';   // MWNPC5b: the foes in their Morrowind bodies
-import { isBodyFoe, foeActor, foeFx, foeId, foeSeed, applyWireLook } from '../characters/foeBodies.js';
+import { isBodyFoe, foeActor, foeFx, foeId, foeSeed, applyWireLook, drawBodiesUnderWindow } from '../characters/foeBodies.js';
 import { createPopulationLane } from '../characters/npcBodies.js'; import { personActor } from '../characters/peopleBodies.js';   // MWNPC8b: the dungeon's standing people   // ENHANCED AI 3b: the Enhanced tab's switch
 import { raiseEnemyDeath, playRareDrop, pileBody, sayEnemyDied, corpseEntityName } from './corpseMarker.js';   // UL1: OnEnemyDeath; LR3: the drop chime; LOOT-STACK: a body as the loot window's tab; LOOT7-CHECK DUNGEON-DIED: the kill notice; L10N3e: a body's name as shown
 import { rollCorpseKit, capFoeLoot } from '../systems/foeLootCap.js';   // KIT-ROLL: a foe's kit, laddered at its death by every body door; AUDIT 625 L5: a copy's cap
@@ -8799,10 +8799,12 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
      *  townTalk to draw a second time - the popup column stood too.
      *  The branch says it now, in one call that owns both. */
     hideHudText: () => hideHudTextSurfaces(hudText),
-    /** AUDIT MW-NPC C6: a frame that draws the flats but no foe (a window up: the host returns before drawFoes, the
-     *  only place a body is drawn) shows every corpse flat - none left cast-only by the last frame's mark (a dead
-     *  person under an open window was drawn nowhere). drawFoes marks them anew. */
-    showBodyFlats: () => { for (const f of foes) if (f.corpseBatch) f.corpseBatch.castOnly = false; },
+    /** AUDIT MW-NPC C6: a frame that draws the flats but no foe (a window up: the host returns before drawFoes) shows
+     *  every corpse flat - none left cast-only by the last frame's mark (a dead person under an open window was drawn
+     *  nowhere). FB1015 LOOT-BODY: and draws the bodies drawFoes last synced, frozen, each corpse flat cast-only where
+     *  its body stands (characters/foeBodies.js drawBodiesUnderWindow) - the loot window no longer turns the body it was
+     *  opened on into its classic corpse. drawFoes marks them anew. */
+    drawWindowBodies: (canvas, { proj, view, eye }) => drawBodiesUnderWindow(_npcLane, foes, _npcStood, { idOf: foeId, corpseFlat: (f) => f.corpseBatch, renderer, canvas, proj, view, eye }),
     hudSay: (t, delayInSeconds = undefined) => hudText.add(t, delayInSeconds),   // R1: the host's one-line channel (the F1-F4 mode line)   // AT2: AddHUDText's delay arg rides through, as townTalk.say's does - Ambient Text sets it per line (textDisplayTime)
     hudBox: (rows) => pushDungeonWindow(new ActionTextBox(rows)),   // AUDIT 63 F33: DaggerfallUI.MessageBox, for the enemy arm's success boxes
     randomText: (id) => textRsc?.randomTextById(id, Math.random) ?? '',   // AUDIT 63 F33: TextProvider.GetRandomText (:250-269) - the 8999 pool

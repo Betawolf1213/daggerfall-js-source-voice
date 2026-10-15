@@ -642,6 +642,7 @@ import { hullBuild } from '../systems/naval/navalShips.js';   // LIVING CREW: a 
 import { sparedByPlayer, isShipmate } from '../combat/friendlyFire.js';   // SHIPMATES: the player's own crew, spared his blows and wearing their bars
 import { padFamily } from '../ui/padGlyphs.js';   // AUDIT NAV1 (the presentation): the pad in hand's family - the readout names its buttons
 import { hdGlyphName } from '../ui/padGlyphsHD.js';   // NAV-F: the helm's readout; AUDIT NAV1: its Brace under a finger
+import { glassPadWords } from './glassPad.js';   // AUDIT CAPTAIN'S SEA S3's helper, moved out (HOST-SPLIT: AUDIT WORLD-REWARDS's merge of main)
 import { createNavalPlunderOverlay, closeNavalPlunder, createNavalYardOverlay, closeNavalYard, createEtherChartOverlay, closeEtherChart, createShipyardOverlay, closeShipyard } from '../ui/navalPlunderDoor.js';   // NAV-F: a taken ship's window, behind its door; AUDIT NAV1: the shipwright's
 import { installNavalSounds } from '../systems/naval/navalSounds.js';   // NAV-E: the guns' own sounds
 import { navalRecordKey } from '../systems/naval/navalWire.js';   // NAV-G: my sea's word, said when it changed
@@ -989,7 +990,7 @@ import { createStandingHorses, isStandingHorseFlat } from '../world/standingHors
 import { isStandFlat, standFlatId, standFlatRecord } from '../world/standFlats.js';   // STAND-FLAT: a town horse and a person's flat no StaticNPC holds, a batch each
 import { DECOR_DRAW, decorCullVerdict, offerDecorFigures } from './decorRoom.js';   // PERF-YARD: a placed piece's verdict, from the host's view test; MWNPC18: a yard's figures in their bodies
 import { createHomeYards, yardLampRows } from './homeYards.js';   // HOME-YARD: the town's yards, and the owner's decorator outside; YARD-LIGHT: a yard's lamps as the night's scene lights
-import { modelFootRects, footRectsAt } from './homeYards.js';   // FB1009 HOME-FOOT: a building's ground, its models' faces seen from above
+import { modelFootRects, footRectsAt, homeYardWallet } from './homeYards.js';   // INSTANCES' HOST-SPLIT: and the yard's wallet, out of bootWorld   // FB1009 HOME-FOOT: a building's ground, its models' faces seen from above
 import { loadIcon } from '../ui/textureCanvas.js';   // HOME-YARD: the decorator's pictures
 import { decorScanDeps } from '../systems/decorScan.js';   // HOME-YARD: the catalogue's scan (DECOR-DUNGEON: one constructor for both hosts)
 import { DOOR_TYPE } from '../world/meshReader.js';   // ARENA1: the undercroft's stair is a dungeon entrance (DECOR-DUNGEON: GLOBAL_SCALE went with the yards' scan deps, systems/decorScan.js)
@@ -11110,18 +11111,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     drawSpyglass(null);
     spyglassTaps();
   }
-  /** AUDIT CAPTAIN'S SEA S3: the pad's press for the glass, as its foot names it - the button chosen for it, else the
-   *  d-pad's tap or hold the player gave it (Plus's d-pad), else none. */
-  function glassPadWords(padHand) {
-    const code = getBinding(bindings(), 'Spyglass', false);
-    if (code && /^Joystick/.test(code)) return hdGlyphName(padHand, code);
-    if (!isEnhancedPlus()) return null;
-    for (const [dir, m] of Object.entries(plusDpadMap())) {
-      if (m.tap === 'Spyglass') return hdGlyphName(padHand, DPAD_CODES[dir]);
-      if (m.hold === 'Spyglass') return `Hold ${hdGlyphName(padHand, DPAD_CODES[dir])}`;
-    }
-    return null;
-  }
   /** AUDIT CAPTAIN'S SEA S3: the d-pad presses the player gave the glass, for the helm's prompts ([{ dir, kind }]). */
   const glassDpad = () => (isEnhancedPlus() ? Object.entries(plusDpadMap()).flatMap(([dir, m]) => ['tap', 'hold'].filter((k) => m[k] === 'Spyglass').map((kind) => ({ dir, kind }))) : []);
   /** The glass's frame: its press read (the key's edge, the plate's tap, the host's door, a finger's Lower), lowered where
@@ -13635,15 +13624,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // TOWN'S YARDS AND THE OWNER'S DECORATOR OUTSIDE (scenes/homeYards.js) - every online home's pieces outside, stood in
   // its pixel for everyone in the street, and the decorator on the owner's own lot (the lot's edge marked, a piece off
   // it refused). HOME-LOOK rides its panel: "Exterior", the house's outside painted. Online alone.
-  const homeYardWallet = (region) => {
-    playerEntity.bankAccounts ??= createBankAccounts(BANK_REGION_COUNT);
-    const a = playerEntity.bankAccounts[goldRegion(playerEntity.bankAccounts, region)] ?? null;   // EMPIRE-ACCOUNT: the Empire's account
-    return {
-      gold: totalGoldAmount(playerEntity) + (a?.accountGold ?? 0),
-      pay: (n) => payUndoable(playerEntity, n, a),   // MARKET-AUDIT: answering the undo of exactly what it took
-      credit: (n) => { addGold(playerEntity, n); },
-    };
-  };
   // GUILD1d: the halls' banners on the streets built (scenes/hallBanners.js), drawn in the frame after the duel walls
   const hallBanners = onlineHomes && bannerPass ? createHallBanners({
     built: () => built, homes: onlineHomes, translation: (px, py) => state.pixelTranslation(px, py), eye: () => cam.pos,
@@ -13696,7 +13676,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     trees: lowPolyTrees ? { door: lowPolyTrees, sway: (proto, share) => _lptSway.set(proto, Math.max(_lptSway.get(proto) ?? 0, share)), windfall: (proto, share) => _lptWindfall.set(proto, Math.max(_lptWindfall.get(proto) ?? 0, share)) } : null,   // DECOR-LPT: a yard's tree as Low Poly Trees' own - its 3D tree in the near set (lowPolyTreesFrame)
     character: () => characterIdOf(playerEntity),
     realm: () => (realmSession ? (o) => realmGoldAct({ session: realmSession, checkpoint: () => onlineCheckpoint(), ...o }) : null),
-    wallet: (region) => homeYardWallet(region), regionOf: (y) => built.get(`${y.px},${y.py}`)?.homeRegion ?? 0,
+    wallet: (region) => homeYardWallet(playerEntity, region), regionOf: (y) => built.get(`${y.px},${y.py}`)?.homeRegion ?? 0,   // INSTANCES' HOST-SPLIT: the wallet's body in scenes/homeYards.js
     doc: typeof document !== 'undefined' ? document : null, win: typeof window !== 'undefined' ? window : null, canvas, touch: isTouchDevice(),
     actionOf: (e) => actionOf(e, keys), locked: () => typeof document !== 'undefined' && document.pointerLockElement === canvas,
     cursorOff: () => setCursorActive(false), stick: () => touch?.axes() ?? gamepad?.axes() ?? null,
@@ -25143,6 +25123,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     say: (text) => chatNotice(text),
     onSpoils: (entry) => grantSerpentSpoils(entry),
     onMarks: (data) => { showHaul(claimHauls(data, 'serpent')); return marksBook?.claimLines(data, 'serpent') ?? null; },   // SERPENT-SET: the serpent's silver, the raids' own door
+    announce: (kind, key) => announceHonour(kind, key),   // SERPENT5: Coilbreaker's and The Maelstrom's popup, the Hour's own door
     onRecorded: (data) => {
       if (data?.renown?.character !== characterIdOf(playerEntity)) return;   // RENOWN-CHAR: the character that fought the serpent adopts its Renown, no other
       const a = renownAnswer({ ...data.renown, order: data.order ?? null }, data.renown.credited ?? 0, renownSaid);
@@ -30363,12 +30344,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // INSTANCES (bible/11-Multiplayer/Instances.md): THE DOOR - public or an instance, at a dungeon or a building a quest of
   // mine names, at Privateer's Hold, where a partner stands an instance; built once, asked by the modes host's two funnels
   // (scenes/instanceDoor.js). The room's key reads what it was entered as (roomIdentity's `instance`, below)
-  const instanceDoor = createInstanceDoor({
-    online: () => onlineOn, instanceOk: () => !!(online?.instanceOk || chatLinks?.get('world')?.instanceOk),
-    account: () => social?.acct ?? null, character: () => realmSession?.id ?? null, members: () => social?.others() ?? [],
-    pixel: () => playerTravelPixel(), questMachine: () => questBridge?.machine ?? null,
-    showOverlay: (w) => townTalk.showOverlay(w), say: (l) => townTalk.say(l),
-  });
+  const instanceDoor = createInstanceDoor({ online: () => onlineOn, instanceOk: () => !!(online?.instanceOk || chatLinks?.get('world')?.instanceOk), account: () => social?.acct ?? null, character: () => realmSession?.id ?? null,
+    members: () => social?.others() ?? [], pixel: () => playerTravelPixel(), questMachine: () => questBridge?.machine ?? null, showOverlay: (w) => townTalk.showOverlay(w), say: (l) => townTalk.say(l) });
   // VAR, not const: the pointer and wheel listeners far above close over
   // this binding and are live before it is assigned, so it must exist
   // and read undefined rather than throw a TDZ ReferenceError. Every

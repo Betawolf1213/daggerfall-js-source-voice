@@ -329,3 +329,25 @@ export function foeFx(f, batch = f?.batch) {
   fx.glint = glint; fx.elite = elite; fx.time = batch.eliteTime || 0; fx.dissolve = dissolve;
   return fx;
 }
+
+/**
+ * FB1015 LOOT-BODY (2026-10-15, the owner: "When looting dead marrowind enemies, they turn to a sprite"): THE BODIES UNDER
+ * A WINDOW. Both dungeon hosts draw the level's flats under a window and return before drawFoes - the only place a foe's
+ * body was drawn - so AUDIT MW-NPC C6 showed every corpse flat there instead, and the loot window, opened on a body, stood
+ * the classic corpse in its place for as long as it was open. The lane's bodies stand as its last sync left them - no
+ * sync runs under the window, so none lingers, none steps, every skin is kept - so the window's frame draws them, frozen,
+ * as the people's lane is drawn under a window (drawPeople), and marks each corpse flat cast-only where its body stands.
+ * A dead foe with no body standing - past the cut, still building, no lane - keeps its flat: C6's law, which this keeps.
+ * `stood` the foes drawFoes last offered (the lane's last sync), `corpseFlat(f)` a foe's corpse flat (or none). Answers
+ * whether a body pass was drawn.
+ * @param {any} lane @param {any[]} foes @param {any[]} stood
+ * @param {{ idOf: (f: any) => any, corpseFlat: (f: any) => any, renderer: any, canvas: any, proj: any, view: any, eye: number[] }} o
+ */
+export function drawBodiesUnderWindow(lane, foes, stood, { idOf, corpseFlat, renderer, canvas, proj, view, eye }) {
+  for (const f of foes) { const b = corpseFlat(f); if (b) b.castOnly = false; }
+  if (!lane || !(lane.offered > 0)) return false;
+  for (const f of stood) { const b = f.dead ? corpseFlat(f) : null; if (b) b.castOnly = lane.has('foe', idOf(f)); }
+  renderer.beginCharacterSpriteBatch?.();
+  try { lane.draw(canvas, { proj, view, eye }); } finally { renderer.flushCharacterSpriteBatch?.(); }
+  return true;
+}
