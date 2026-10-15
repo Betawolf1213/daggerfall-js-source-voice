@@ -17,6 +17,10 @@
 //   WHO SEES IT: the company from the hub's call (`call`); everyone else on the opener's world cell from the opener's foes
 //     frame (`ea`, `word`) - believed only near the opener's own feet, only when the hub's signature verifies
 //     (net/egCallSig.js verifyEgCall), at most EG_ARCH_PER_CELL strangers' arches at once, and never past its window.
+//     AUDIT EG V (lane4 L4-6): THE SITE IS THE OPENER'S WORD - the hub signs the site the open frame says (its shape alone
+//     checked), and the key's refusals 2-5 and 8 are the opener's own screen's, so a modified client can stand a signed
+//     arch anywhere: a stranger's screen draws it but stands no stone for it (standCollider) - no gate, road or door is
+//     shut by one, and no body is moved out of one. Its own company's screens, which answer its call, stand its stone.
 //   ITS DOOR: the company steps through its open fire (or presses it) - `onStep`, the answer; anyone else is told
 //     "The breach answers only to <opener>'s company." Its plaque names it; a stranger's names the company too.
 //   ITS CLEARING (world/gateClearance.js gateClearSet - `clears`), ITS LANDING (world/gateArena.js gateLandingFor, an arch
@@ -246,11 +250,12 @@ export function createEgArchPool({ renderer = null, collider = () => null, pixel
       mesh = renderer.createMesh(model);
     } catch (e) { console.warn('[eg] the arch would not build', e?.message ?? e); mesh = null; }
   }
-  /** An arch's collider stood while it stands risen on built ground, taken down otherwise. */
+  /** An arch's collider stood while it stands risen on built ground, taken down otherwise - AUDIT EG V (lane4 L4-6): my own
+   *  company's alone (`mine`); a stranger's arch stands where its opener's word put it, and is no stone to me. */
   function standCollider(a) {
     const col = collider();
     if (!col?.addMesh) return;
-    const want = a.place?.risen && !a.place.coarse ? egArchMatrix(a.place) : null;
+    const want = a.mine && a.place?.risen && !a.place.coarse ? egArchMatrix(a.place) : null;
     const key = want ? Array.from(want, (v) => v.toFixed(3)).join(',') : null;
     if (key === a.col) return;
     col.removeBucket?.(egArchBucket(a.b));

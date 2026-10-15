@@ -75,6 +75,7 @@ import { getPref } from '../systems/uiPrefs.js';
 import { betterAmbience } from '../systems/betterAmbience.js';   // EG-ZG: the heavy blows' shakes - the port's one shaker, under the player's own maxShake
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';
 import { stateAnims, FLY_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED, HURT_ANIM_SPEED } from '../characters/mobileUnit.js';
+import { setSpireStruck } from '../systems/sigilSetPowers.js';   // AUDIT EG V (L8-1): a body's blow, marked for the Spire's two hurt saves
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { egHallOf, egCountText, egVentAt, egInVent, EG_LORDS, EG_BANDS, EG_VENT_PCT, EG_VENT_WARN_MS, EG_VENT_FIRE_MS } from '../net/egLaw.js';
 import { egVentState, egInVentDisc, egPendAt, EG_VENT_R, EG_VENT_TELL_S, EG_PEND_REACH, EG_PEND_HALF, EG_PEND_CLEAR_MIN } from '../net/egSpanLaw.js';
@@ -496,11 +497,14 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   }
   /** A blow on me landed - its share of my health and its base, through my saving throw against its element. EG-ZP: less
    *  the share `dr` my company's Vestiges spare a blow (spared). EG-ZR: its share of my body without Stoneskin's points.
-   *  AUDIT EG III: `x` its weight on me - a twin's Touched (egTouchedX), my part of a chained blow (egChainMates). */
-  function landShare(pct, base, el, name, dr = 0, x = 1) {
+   *  AUDIT EG III: `x` its weight on me - a twin's Touched (egTouchedX), my part of a chained blow (egChainMates). AUDIT
+   *  EG V (lane8 L8-1): `foe` - a body's blow (a lord's, the legion's), marked as a foe's as it lands
+   *  (systems/sigilSetPowers.js setSpireStruck), so Shed Skin and the Reprieve answer it; a hazard, a zone or a drain is none. */
+  function landShare(pct, base, el, name, dr = 0, x = 1, foe = false) {
     const e = player();
     if (!e || !(e.health > 0) || !(pct > 0)) return;
     const k = (1 - dr) * x, raw = strikeDamage(pct * k, spireBodyMax(e), base * k), dmg = el ? savedShare(raw, save(e, el)) : raw;
+    if (dmg > 0 && foe) setSpireStruck();
     if (dmg > 0) strike(dmg, { fire: el === 'fire', el, name });
   }
   /** AUDIT EG IV (lane1 #5): a member's feet in the hall's frame where this screen stands them (mine, or a companion's as drawn),
@@ -928,13 +932,13 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (!bl.cut && t < bl.at) _pending.push(bl);   // EG-ZG: the peril arrow's
         if (!judged.has(bl.i) && !bl.cut && standing) {
           const v = egBlowVerdict(bl, f[0], f[1], t, 400, me());   // AUDIT EG IV (lane1 #5): a failure blow that names me lands wherever I stand
-          if (v !== 'wait') { judged.add(bl.i); if (v === 'hit') { landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part * egTouchedX(F, bl, me(), t)); if (bl.pu > 0) { const s = bl.s[0]; const ox = s[0] === 'l' ? s[3] - s[1] : f[0] - s[1], oz = s[0] === 'l' ? s[4] - s[2] : f[1] - s[2], d = Math.hypot(ox, oz) || 1; push(ox / d, oz / d, bl.pu); } } }   // AUDIT EG III (lane1 #4): THE TWINS' TOUCHED, on my own blow
+          if (v !== 'wait') { judged.add(bl.i); if (v === 'hit') { landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part * egTouchedX(F, bl, me(), t), true); if (bl.pu > 0) { const s = bl.s[0]; const ox = s[0] === 'l' ? s[3] - s[1] : f[0] - s[1], oz = s[0] === 'l' ? s[4] - s[2] : f[1] - s[2], d = Math.hypot(ox, oz) || 1; push(ox / d, oz / d, bl.pu); } } }   // AUDIT EG III (lane1 #4): THE TWINS' TOUCHED, on my own blow
         }
         if (mates.length && !bl.cut && standing) for (const sub of mates) {   // AUDIT EG III (lane1 #12): my part of a blow on a chained mate, at their feet where this screen draws them
           const key = `${bl.i}:${sub}`, q = judged.has(key) ? null : peerFeet(sub);
           if (!q) continue;
           const v = egBlowVerdict(bl, q[0], q[2], t, 400, sub);
-          if (v !== 'wait') { judged.add(key); if (v === 'hit') landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part); }
+          if (v !== 'wait') { judged.add(key); if (v === 'hit') landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part, true); }   // AUDIT EG V (L8-1): a body's blow
         }
         if (!landedSet.has(bl.i) && t >= bl.at && t - bl.at < 1500) {
           landedSet.add(bl.i); const s = bl.s[0]; if (s && s.length >= 3) play3(BOSS_CUES.quake, toDungeon(s[1], 1, s[2]));
