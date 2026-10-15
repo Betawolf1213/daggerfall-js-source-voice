@@ -55,6 +55,7 @@
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egHallOf, egCircleOfHall, egSlotOfHall, egCountText, egObjectiveOf, EG_LAST_WORD_MS, EG_COUNT_START_MS, EG_REDOUBT_HOLD_MS, EG_BANDS, EG_DECREES, EG_DECREE_BY_KEY, EG_TWIST_LINES, EG_TEXT } from '../net/egLaw.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
+import { egGatherOf } from '../net/egLink.js';   // AUDIT EG V (c, L3-10): the gather, as the room counts it
 import { EG_ROLE, EG_FL } from '../net/egBodies.js';
 import { EG_BOSS_KEYS, egBossName, egTtkRef } from '../net/egLords.js';
 import { egMarkynazDecree } from '../net/egLords.js';   // EG-ZS (section 8.5): the decree the Markynaz lays, named on his card
@@ -265,10 +266,13 @@ export function egLordBar(E) {
 }
 
 // ── THE STAGE'S LINE ──────────────────────────────────────────────────────────────────────────────────────────
+/** AUDIT EG V (c, L3-10; section 7): the gather's count on the stage's line, as the ring over the plate fills (world/
+ *  egLights.js) - `k` of the `n` the hall waits for said `here`. */
+export const egHereText = (k, n) => t('eg.gather.here', '{k} of {n} here.', { k, n });
 function stageLine(E, now) {
   const left = E.su > 0 ? Math.max(0, E.su - now) : 0;
   switch (E.sg) {
-    case 'arrive': return left > 0 ? `${EG_TEXT.wakes.replace('.', '')} in ${egCountText(left)}.` : 'Gather on the arrival plate.';
+    case 'arrive': { const G = egGatherOf(E), g = G.n > 1 ? ` ${egHereText(G.here, G.n)}` : ''; return left > 0 ? `${EG_TEXT.wakes.replace('.', '')} in ${egCountText(left)}.${g}` : `Gather on the arrival plate.${g}`; }   // AUDIT EG V (c, L3-10): *3 of 6 here*
     case 'closing': return `${EG_TEXT.door} Step through the door.`;
     case 'rest': return left > 0 ? `${EG_TEXT.descend.replace('.', '')} in ${egCountText(left)} - or take the way home.` : EG_TEXT.descend;
     default: return '';

@@ -12,6 +12,8 @@
 //   THE REDOUBT'S LIGHTS (sections 16.2 and 27.5) - the beacon climbing at the court's heart 1.5 s into the Redoubt's
 //     sequence and standing through the rest, flaring as each recall lands; the recall's blue pillar where the called
 //     back rise;
+//   THE GATHER (section 7, AUDIT EG V c L3-10) - a gold ring over the ARRIVAL PLATE's rim while the hall gathers, its arc
+//     the share of the company the hall waits for that has said `here` (the room's own count - net/egLink.js egGatherOf);
 //   THE COMPANY'S WORD (sections 16.4 and 16.5) - the living's and the witnesses' pings: a blue pillar 6 m tall whose
 //     glyph names its kind (here, danger, mine - a witness's cache);
 //   THE WITNESS'S SIGHT (section 16.5) - what the living cannot see: each dormant Lurker's anchor, each alcove (on its
@@ -22,7 +24,7 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egHallOf, egCircleOfHall, egBandOfCircle, EG_DOOR_REACH_M, EG_TWIST_LINES } from '../net/egLaw.js';
-import { egBodyPlace } from '../net/egLink.js';
+import { egBodyPlace, egGatherOf } from '../net/egLink.js';   // AUDIT EG V (c, L3-10): and the gather, as the room counts it
 import { EG_ROLE, EG_FL } from '../net/egBodies.js';
 import { EG_KIND } from '../net/egLegion.js';
 import { egToDungeon } from './egHall.js';
@@ -144,7 +146,7 @@ function pillarWithGlyph(out, p, h, w, c, a, g, size) {
 export function egSpireLights(E, now, { witness = false, still = false, palette = null, ys = null } = {}) {
   if (!E?.b || !(E.h > 0) || E.end) return NO_LIGHTS;
   // a trial with nothing said: nothing stands, and nothing is made for it (asked every frame)
-  if (E.sg !== 'closing' && E.sg !== 'rest' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;
+  if (E.sg !== 'closing' && E.sg !== 'rest' && E.sg !== 'arrive' && !witness && !E.rises?.length && !E.pings?.length) return NO_LIGHTS;   // AUDIT EG V (c, L3-10): and the gather's ring
   const out = [];
   const spec = egHallOf(E.seed, E.h, E.geo ?? 0), gold = palette?.safety ?? EG_DANGER_PALETTES.standard.safety, blue = EG_LIGHT_BLUE;
   // THE DOOR: its beam climbing at the opening, and the closing's ring draining the closing's seconds
@@ -154,6 +156,12 @@ export function egSpireLights(E, now, { witness = false, still = false, palette 
     out.push(light(EG_LIGHT_KIND.beam, p, EG_DOOR_BEAM.h * up, EG_DOOR_BEAM.w, 0, gold, 1, 0));
     const span = (E.su || 0) - (E.sa || 0);
     out.push(light(EG_LIGHT_KIND.ring, [p[0], p[1] + EG_CLOSING_RING.lift, p[2]], 0, EG_CLOSING_RING.w, EG_CLOSING_RING.r, gold, 1, span > 0 ? clamp01((E.su - now) / span) : 0));
+  }
+  // AUDIT EG V (c, L3-10; section 7 - "a ring fills over the plate, *3 of 6 here*"): THE GATHER's ring over the arrival
+  // plate's rim, filling as the company says `here` - a company of one has nothing to gather
+  if (E.sg === 'arrive' && spec.arrive) {
+    const G = egGatherOf(E);
+    if (G.n > 1) { const p = egToDungeon(spec, spec.arrive.x, spec.arrive.y ?? 0, spec.arrive.z); out.push(light(EG_LIGHT_KIND.ring, [p[0], p[1] + EG_CLOSING_RING.lift, p[2]], 0, EG_CLOSING_RING.w, spec.arrive.r, gold, 1, G.here / G.n)); }
   }
   // THE REDOUBT'S BEACON: at the court's heart (scenes/egClient.js beaconAt's own place), through the rest
   const R = E.redoubt;

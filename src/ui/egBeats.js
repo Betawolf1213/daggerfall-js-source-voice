@@ -218,7 +218,7 @@ export const EG_BEATS = Object.freeze({
   // AUDIT EG V (c, L7-16; the PR's "a lord waking" has its sound and its line): a lord's wake - the gate's title card its sight
   // (scenes/egFight.js, `by` 'card': it says the name on the screen already), the score's swell its sound (SPIRWAKE), and
   // its line in the chat, `n` the lord's name
-  wake: Object.freeze({ sight: "the lord's card", sound: 'score', words: (n) => t('eg.beat.wake', '{n} wakes.', { n }), by: 'card', chat: true }),
+  wake: Object.freeze({ sight: 'gateTitleCard', sound: 'score', words: (n) => t('eg.beat.wake', '{n} wakes.', { n }), by: 'card', chat: true }),
 });
 export const EG_BEAT_KEYS = Object.freeze(Object.keys(EG_BEATS));
 /** The room's beat lines (`esay`'s `w`) that are beats of the table. AUDIT EG III: Bladestorm's and Deadeye's are their

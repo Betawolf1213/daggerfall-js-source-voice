@@ -5583,8 +5583,9 @@ function egCompany(co, full) {
   if (!Array.isArray(co) || co.length < 1 || co.length > EG_COMPANY_MAX) return null;
   const out = [];
   for (const t of co) {
-    if (!Array.isArray(t) || t.length !== (full ? 10 : 3) || typeof t[0] !== 'string' || !ID_RE.test(t[0]) || typeof t[1] !== 'string' || !intIn(t[2], 1, EG_COMPANY_MAX)) return null;
-    if (full && !(t.slice(3, 8).every((v) => v === 0 || v === 1) && intIn(t[8], 0, 2) && (t[9] === 0 || t[9] === 1))) return null;
+    // AUDIT EG V (c, L3-10): a full row's eleventh, `here` (0 or 1 - net/egBrain.js egCompanyOf), kept; a row of ten has none
+    if (!Array.isArray(t) || !(full ? t.length === 10 || t.length === 11 : t.length === 3) || typeof t[0] !== 'string' || !ID_RE.test(t[0]) || typeof t[1] !== 'string' || !intIn(t[2], 1, EG_COMPANY_MAX)) return null;
+    if (full && !(t.slice(3, 8).every((v) => v === 0 || v === 1) && intIn(t[8], 0, 2) && (t[9] === 0 || t[9] === 1) && (t.length === 10 || t[10] === 0 || t[10] === 1))) return null;
     out.push(full ? [t[0], sanitizeName(t[1]), ...t.slice(2)] : [t[0], sanitizeName(t[1]), t[2]]);
   }
   return new Set(out.map((t) => t[0])).size === out.length ? out : null;

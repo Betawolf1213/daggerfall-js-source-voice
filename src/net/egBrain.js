@@ -319,8 +319,10 @@ export function egEnter(B, sub, ez, lv, now) {
 const countWord = (B, now) => ({ cl: Math.round(B.cnt.at > 0 ? B.cnt.left : egCountLeft(B.cnt, now)), ca: B.cnt.at });
 /** The stage's word (`sg`). */
 export const egStageWord = (B, now) => ({ k: 'sg', h: B.h, sg: B.sg, sa: B.sa, su: B.su, ...countWord(B, now), hw: B.hw, dn: B.dn });
-/** The company as the room says it: `[sub, name, numeral, alive, home, in, witness, forsaken, falls, recall]`. */
-export const egCompanyOf = (B) => B.co.map((c) => { const m = B.mem[c.sub]; return [c.sub, c.name, c.n, m ? m.alive : 1, m?.home ? 1 : 0, m?.in ? 1 : 0, m?.wit ? 1 : 0, m?.forsaken ? 1 : 0, m?.falls ?? 0, m ? m.recall : 1]; });
+/** The company as the room says it: `[sub, name, numeral, alive, home, in, witness, forsaken, falls, recall, here]`. AUDIT EG V
+ *  (c, L3-10; section 7 - "a ring fills over the plate, *3 of 6 here*"): `here` 1 once the member has said `here` in the hall
+ *  the company stands in (its pose on the arrival plate - `hereH`), so every screen counts the gather the room counts. */
+export const egCompanyOf = (B) => B.co.map((c) => { const m = B.mem[c.sub]; return [c.sub, c.name, c.n, m ? m.alive : 1, m?.home ? 1 : 0, m?.in ? 1 : 0, m?.wit ? 1 : 0, m?.forsaken ? 1 : 0, m?.falls ?? 0, m ? m.recall : 1, m && B.h > 0 && m.hereH === B.h ? 1 : 0]; });
 /** The breach's whole state (`st`): the stage, the company, the decrees in force (and the Proclamation, the Wager, the
  *  tide, the strata), each member's run, the cache's kind, the Mementos lying, the respite and the Surplus. */
 export function egStateOf(B, now) {
@@ -1101,9 +1103,12 @@ export function egStep(B, now, bodies, rng) {
   // EG-ZI (sections 7 and 21): A LATE WAKE'S `here` - a member the hall woke without says it as it reaches the arrival
   // plate, and its trail is judged from there (unheard, its trail never began: nothing it crossed was judged, and the toll
   // had no fair point of it)
-  if (B.sg === 'trial' || B.sg === 'closing') for (const b of inHall) { const m = B.mem[b.sub]; if (m.hereH !== B.h && m.downH !== B.h && egOnArrive(spec, b.x, b.z, 1.5)) m.hereH = B.h; }
+  // AUDIT EG V (c, L3-10): a `here` newly said is told the company (`co` - each screen's gather ring and its count)
+  let heard = false;
+  if (B.sg === 'trial' || B.sg === 'closing') for (const b of inHall) { const m = B.mem[b.sub]; if (m.hereH !== B.h && m.downH !== B.h && egOnArrive(spec, b.x, b.z, 1.5)) { m.hereH = B.h; heard = true; } }
+  if (B.sg === 'arrive') for (const b of inHall) if (B.mem[b.sub].hereH !== B.h && egOnArrive(spec, b.x, b.z, 1.5)) { B.mem[b.sub].hereH = B.h; heard = true; }
+  if (heard) out.push({ k: 'co', co: egCompanyOf(B) });
   if (B.sg === 'arrive') {
-    for (const b of inHall) if (egOnArrive(spec, b.x, b.z, 1.5)) B.mem[b.sub].hereH = B.h;
     const L = living(B);
     const all = B.wk ? L.length > 0 && L.every(([, m]) => m.hereH === B.h) : B.co.every((c) => B.mem[c.sub]?.in && B.mem[c.sub].alive && B.mem[c.sub].hereH === B.h);
     if (all && !B.gatherAt) { B.gatherAt = now; B.su = now + EG_GATHER_MS; out.push(egStageWord(B, now)); }
