@@ -54,6 +54,13 @@
 // blow on the Fire-touched, Isk's on the Frost-touched, +25%) and MORVAYN'S CHAINING (egChainMates - a blow on any of my
 // chain split over it, a mate's judged at their drawn feet); the title card only ever this fight's own, and a leave that
 // holds nothing touches nothing (the Burning Court's card stands).
+// EG-LOOK (2026-10-15, Mac: "Bosses should also be oversized sprites. Not modeled like the abyss dungeon"; bible/11-Multiplayer/
+// Elite-Gates-Look.md section 9): THE LORDS, OVERSIZED - every lord and champion still Daggerfall's own sprite, drawn at its
+// PRESENCE (egPresenceOf - world/egKit.js EG_LORD_PRESENCE: a Court's lord 1.6, a Valkynaz 1.8, a champion 1.4, a twin and a
+// mirror their own lord's) over its body's scale (egLookOf `drawn` beside `scale`, which stays the body's): the billboard grows up
+// from its feet on the body's place (the renderer's quad is base-anchored), a flyer's hover rises with it, the grown sprite casts
+// no shadow (OW-BIG's law), and an errand's numerals stand over the drawn head (egGivenAt). The hit target, every sound, the
+// telegraphs and the wire are the body's as before: the drawn size is this screen's alone.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
@@ -81,6 +88,8 @@ import { setSpireStruck } from '../systems/sigilSetPowers.js';   // AUDIT EG V (
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { egHallOf, egCountText, egVentAt, egInVent, EG_LORDS, EG_BANDS, EG_VENT_PCT, EG_VENT_WARN_MS, EG_VENT_FIRE_MS } from '../net/egLaw.js';
 import { egRimCastsBack } from '../net/egLaw.js';   // AUDIT EG V (lane1 #21): the magma casts back only off every causeway
+import { EG_CHAMPIONS } from '../net/egLaw.js';   // EG-LOOK (section 9): which bosses are champions - drawn at a champion's presence
+import { EG_LORD_PRESENCE } from '../world/egKit.js';   // EG-LOOK (section 9): THE LORDS' PRESENCE
 import { egVentState, egInVentDisc, egPendAt, EG_VENT_R, EG_VENT_TELL_S, EG_PEND_REACH, EG_PEND_HALF, EG_PEND_CLEAR_MIN } from '../net/egSpanLaw.js';
 import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../net/egSpanLaw.js';   // EG-ZC: a slag crust's break told
 import { egBodyPlace, egBodyHeight } from '../net/egLink.js';   // EG-ZJ: a body's feet
@@ -274,15 +283,44 @@ export function egBodyAct(b, now, mobile, blow, hover = 0) {
   const T = tab('idle');
   return { act: 'idle', anims: T, frame: Math.floor((now / 1000) * (hover > 0 ? FLY_ANIM_SPEED : T[0].fps ?? 4)), loop: true, sink: 0 };
 }
+/** EG-LOOK (section 9): the champions' keys (net/egLaw.js EG_CHAMPIONS - the Proving Walks' Kyn ranks, and Clan Feud's beside a
+ *  Court's lord). */
+const CHAMPION_KEYS = /** @type {Set<string>} */ (new Set(EG_CHAMPIONS.map((C) => C.key)));
+/** EG-LOOK (section 9) - A BOSS'S PRESENCE: how many times its body's scale its sprite is drawn (world/egKit.js
+ *  EG_LORD_PRESENCE) - a champion's, a Valkynaz's (net/egLaw.js EG_LORDS `valk`), else a Court lord's; the Twins are a Court's
+ *  lords and a mirror wears its own lord's key, so each takes its lord's. Pure. @param {string} key */
+export function egPresenceOf(key) {
+  if (CHAMPION_KEYS.has(key)) return EG_LORD_PRESENCE.champion;
+  return EG_LORDS[key]?.valk ? EG_LORD_PRESENCE.valkynaz : EG_LORD_PRESENCE.lord;
+}
+/** A flying lord's hover over the ground it keeps at its body's size (m) - drawn at its presence times this, so the grown
+ *  sprite's feet clear the company's heads by as much of its own height as the body's did. */
+export const EG_LORD_HOVER_M = 6;
+/** A flyer's bob about its hover (m, at its body's size - a lord's drawn at its presence times this). */
+const HOVER_BOB_M = 0.15;
+/** EG-LOOK (section 9): how far over a lord's DRAWN head an errand's numerals stand (m) - EG_GIVEN_UP_LORD_M over its feet is
+ *  the law's word while no sprite of it stands on this screen (no ARENA2 picture yet, a vanished lord). */
+export const EG_GIVEN_OVER_HEAD_M = 0.6;
+/** AUDIT EG IV (lane1 #15) and EG-LOOK (section 9): where an errand's numerals stand over body `b` at `t`, the dungeon's frame
+ *  (`centre` the hall's): over its sprite's drawn head (`top`, the world height drawBody last stood it to - a lord grown to its
+ *  presence, a flyer at its hover) when it stands on this screen, else the law's height over its feet (EG_GIVEN_UP_LORD_M a
+ *  lord's, EG_GIVEN_UP_M any other's). Pure. @param {any} b @param {number[]} centre @param {number} t @param {number} [top] */
+export function egGivenAt(b, centre, t, top = NaN) {
+  const [x, z] = egBodyPlace(b, t);
+  const y = Number.isFinite(top) ? top + EG_GIVEN_OVER_HEAD_M : centre[1] + egBodyHeight(b, t) + (b.role === EG_ROLE.lord ? EG_GIVEN_UP_LORD_M : EG_GIVEN_UP_M);
+  return [centre[0] + x, y, centre[2] + z];
+}
 /** A body's look: a lord's its own (scaled, flying high), an add's its kind's by the band, an object's none (drawn
- *  otherwise). */
+ *  otherwise). EG-LOOK (section 9): `scale` is the BODY's - the relay's bodyR and the hit target are read off it - and `drawn`
+ *  the sprite's, its `presence` times it (an add's its own scale); `hover` how high over its feet it is drawn flying. */
 export function egLookOf(b, band) {
   if (b.role === EG_ROLE.lord) {
     const key = EG_BOSS_KEYS[b.k] ?? 'kynreeve', L = egBossLook(key, b.pt), lord = EG_LORDS[key];
     const fly = (b.fl & EG_FL.fly) !== 0 && (b.fl & EG_FL.grounded) === 0;
-    return { mobile: L.mobile, scale: L.scale * (b.sz ?? 1) * ((b.fl & EG_FL.mirror) !== 0 ? 0.95 : 1), hover: fly ? 6 : 0, name: egBossName(key, b.pt), lord: true, epithet: lord?.epithet ?? '' };   // EG-ZQ: `sz` the room's size (net/egLink.js - Colossal's)
+    const scale = L.scale * (b.sz ?? 1) * ((b.fl & EG_FL.mirror) !== 0 ? 0.95 : 1), presence = egPresenceOf(key);   // EG-ZQ: `sz` the room's size (net/egLink.js - Colossal's)
+    return { mobile: L.mobile, scale, presence, drawn: scale * presence, hover: fly ? EG_LORD_HOVER_M * presence : 0, name: egBossName(key, b.pt), lord: true, epithet: lord?.epithet ?? '' };
   }
-  if (b.role === EG_ROLE.add) { const L = egKindLook(b.k, band); return { ...L, hover: (b.fl & EG_FL.fly) !== 0 ? L.hover : Math.min(L.hover, 0.9) }; }
+  if (b.role === EG_ROLE.add) { const L = egKindLook(b.k, band); return { ...L, presence: 1, drawn: L.scale, hover: (b.fl & EG_FL.fly) !== 0 ? L.hover : Math.min(L.hover, 0.9) }; }
   return null;
 }
 
@@ -584,33 +622,40 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** EG-ZP: the share of blow `bl` on me my company's Vestiges spare (egShieldDr - the census's own law) - each companion
    *  where this screen draws them, at their feet (the pose stands at the eye). */
   const spared = (E, F, bl) => egShieldDr(E, F, spec, bl, me(), trail, peerFeet, ll, hymn);
-  /** One body drawn: its look's sprite at its act's frame, at its place. */
+  /** One body drawn: its look's sprite at its act's frame, at its place. EG-LOOK (section 9): at its DRAWN size (a lord's
+   *  presence over its body's scale), its feet on the body's place - the quad stands up from its base - a flyer's hover its
+   *  drawn one; a grown sprite casts no shadow; `top` its drawn head this frame (NaN while it stands nowhere on this screen). */
   function drawBody(b, t, blow) {
     const look = egLookOf(b, band);
     if (!look) return;
-    const d = drawn.get(b.i) ?? { batch: null, look, at: [0, 0, 0] };
+    const d = drawn.get(b.i) ?? { batch: null, look, at: [0, 0, 0], top: NaN };
     drawn.set(b.i, d);
-    d.look = look;
+    d.look = look; d.top = NaN;
     const T = texture(look.mobile);
     if (!T || !renderer?.createBillboardBatch) return;
     const act = egBodyAct(b, t, look.mobile, blow, look.hover);
     if (act.act === 'gone' || ((b.fl & EG_FL.hidden) !== 0 && b.role === EG_ROLE.lord)) return;
     const [x, z] = egBodyPlace(b, t), bodyY = egBodyHeight(b, t);   // EG-ZJ (section 11.7): on its own feet, the room's word - never the hall's height
-    const y = bodyY + (act.sink > 0 ? -act.sink : 0) + (look.hover > 0 ? look.hover + 0.15 * Math.sin(t / 260 + b.i) : 0);
+    const y = bodyY + (act.sink > 0 ? -act.sink : 0) + (look.hover > 0 ? look.hover + HOVER_BOB_M * look.presence * Math.sin(t / 260 + b.i) : 0);   // EG-LOOK: a flyer's hover and bob its drawn ones
     d.at[0] = centre[0] + x; d.at[1] = centre[1] + y; d.at[2] = centre[2] + z;
     const eye = cam() ?? d.at;
     const fr = bossFrame(/** @type {any} */ (act), b.yaw ?? (b.mv ? Math.atan2(b.mv.tx - b.mv.x, b.mv.tz - b.mv.z) : Math.PI), d.at, eye, (rec) => T.tex.getFrameCount?.(rec) ?? 1);
     const rkey = `${fr.record}#${fr.frame}`;
-    if (!renderer.textures?.has?.(`${T.archive}_${rkey}`)) uploadRecordFrame?.(T.archive, fr.record, fr.frame);
-    const sz = mobileBillboardSize(T.tex, fr.record), w = sz.w * look.scale, h = sz.h * look.scale;
-    if (!d.batch) { d.batch = renderer.createBillboardBatch(T.archive, rkey, { w, h }, [[0, 0, 0]]); d.batch.origin = [0, 0, 0]; }
+    if (!renderer.textures?.has?.(`${T.archive}_${rkey}`)) uploadRecordFrame?.(T.archive, fr.record, fr.frame);   // EG-LOOK: one picture a frame at every size - its key and its sampling (NEAREST) never the size's
+    const sz = mobileBillboardSize(T.tex, fr.record), w = sz.w * look.drawn, h = sz.h * look.drawn;   // EG-LOOK (section 9): the sprite at its presence
+    if (!d.batch) {
+      d.batch = renderer.createBillboardBatch(T.archive, rkey, { w, h }, [[0, 0, 0]]); d.batch.origin = [0, 0, 0];
+      if (look.presence > 1) d.batch.noShadow = true;   // EG-LOOK: OW-BIG's law - a grown figure casts no giant's shadow (render/shadowPass.js)
+    }
+    d.top = d.at[1] + h;
     setBatchHitFlash(d.batch, egBodyFlash(b, t));   // EG-ZG (section 25.8): my blows flash it fully, anyone else's at 0.4
     setBatchGlint(d.batch, b.fellAt ? null : egRimOf(darkNow > 0 ? EG_SHADE_BAND : band, b.fl | 0));   // EG-ZG (section 25.6): THE SHADE'S RIM LIGHT - AUDIT EG V (lane1 #13): every foe's in the place's dark
     d.batch.record = rkey; d.batch.size = { w: fr.flip ? -w : w, h };
     if (d.batch.bounds) d.batch.bounds[3] = Math.hypot(w, h) * 0.5;
     d.batch.origin[0] = d.at[0]; d.batch.origin[1] = d.at[1]; d.batch.origin[2] = d.at[2];
     _batches.push(d.batch);
-    // the body my blows meet (never a friend, a ward's, a vanished lord)
+    // the body my blows meet (never a friend, a ward's, a vanished lord). EG-LOOK (section 9): the BODY's - its height and radius
+    // off its body's scale (the relay's bodyR), never its drawn presence; it stands where the sprite's feet are drawn
     if (!b.fellAt && b.hp > 0 && (b.fl & (EG_FL.friend | EG_FL.hidden)) === 0) {
       d.target ??= { i: b.i, feet: [0, 0, 0], height: 2, radius: 0.6, entity: hostStandIn({ mobile: look.mobile, name: look.name }, b.i), mobile: look.mobile, name: look.name, m: b.max };
       d.target.feet[0] = d.at[0]; d.target.feet[1] = centre[1] + y; d.target.feet[2] = d.at[2];
@@ -979,7 +1024,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (!ns.length) continue;
         const b = F.bodies.find((x) => x.i === i);
         if (!b || !(b.hp > 0) || b.goneAt) continue;
-        const [x, z] = egBodyPlace(b, tg), at = egScreenAt(vp, [centre[0] + x, centre[1] + egBodyHeight(b, tg) + (b.role === EG_ROLE.lord ? EG_GIVEN_UP_LORD_M : EG_GIVEN_UP_M), centre[2] + z]);
+        const at = egScreenAt(vp, egGivenAt(b, centre, tg, b.role === EG_ROLE.lord ? drawn.get(i)?.top : NaN));   // EG-LOOK (section 9): over a lord's drawn head
         if (at) _sigils.push({ key: `e${i}`, x: at[0], y: at[1], marks: [{ sigil: 'given', text: egGivenWords(ns, E.co) }] });
       }
       const subs = _subs;
