@@ -67,6 +67,7 @@ import { egRedoubtPay, egReliquariesOf, egSinkOf } from './egEconomy.js';   // E
 import { arenaWeekOf } from '../../src/net/arenaLaw.js';   // EG-E3: the week a find's keys are capped by, the arena's
 import { egMayStart, egWagerOf } from '../../src/net/egStartLaw.js';   // EG-F: the start Redoubt and the Wager, held at the open and every admission
 import { egStartsFor } from './egStarts.js';
+import { egSpoilsSeed } from '../../src/net/egPay.js';   // AUDIT EG V (L8-5): the spoils' seed, the receipt's mixed with the claim's own draw
 
 /** The odds a recorded gate kill rolls a key, a fighter who broke the rite, an Hour; the kills in a row the pity waits. */
 export const EG_KEY_ODDS = 1 / 6;
@@ -229,7 +230,10 @@ export async function openEg({ db, nowS, subtle, rand }, player, body, key) {
   if (had) {
     if (had.state !== 'held' || int(had.until) <= nowS) return { error: 'spent' };
     const row = await playerRow(db, player.id);
-    const order = await mintEgOrder({ o: 'egopen', s: player.id, eb: had.b, ez: had.ez, ew: int(had.ew), rh: int(had.rh) === 1 ? 1 : undefined, ewg: wagerOfRow(had.wg) }, key, { subtle, nowS });
+    // AUDIT EG V (lane4 L4-5; sections 6.1 and 23 - the stake's `until` is set "so no breach outlives it"): THE SAME ORDER
+    // AGAIN, signed as of the stake's own `at` as `again`'s is - re-signed fresh until the stake's `until`, a request id
+    // asked again hours on opened its breach then, past `eg_live`'s end, and the account opened a second beside it
+    const order = await mintEgOrder({ o: 'egopen', s: player.id, eb: had.b, ez: had.ez, ew: int(had.ew), rh: int(had.rh) === 1 ? 1 : undefined, ewg: wagerOfRow(had.wg) }, key, { subtle, nowS: int(had.at) });
     return { order, b: had.b, ez: had.ez, keys: int(row?.eg_keys), until: int(had.until), rh: int(had.rh) };
   }
   if (!rh && !(await proven(db, player.id))) return { error: 'unproven' };
@@ -411,14 +415,15 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
       settle = may && c.nr === 1 ? returnStake(db, c.z, true) : may ? [] : [spendStake(db, c.z)];
     }
     const [row] = await db.batch([
-      db.prepare('INSERT OR IGNORE INTO eg_runs (b, account, h, why, t, at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(c.b, player.id, c.h, c.why, c.t, nowS),
+      // AUDIT EG V (lane8 L8-5): the row's own draw (`nonce`) - the end's Reliquaries roll on the receipt's seed mixed with it
+      db.prepare('INSERT OR IGNORE INTO eg_runs (b, account, h, why, t, at, nonce) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)').bind(c.b, player.id, c.h, c.why, c.t, nowS, hex(rand(new Uint8Array(8)))),
       db.prepare('UPDATE players SET eg_live_b = NULL, eg_live_until = 0 WHERE id = ?1 AND eg_live_b = ?2').bind(player.id, c.b),
       ...settle,
       ...egHonourStatements(db, player, c, nowS),   // EG-E2: the end as the boards rank it, the Annals' pages kept (egHonours.js)
       ...egReceiptRest(db, player, c),   // EG-ZA: the company, as the Descent keeps a company one row
     ]);
     recorded = Number(row?.meta?.changes ?? 0) > 0;
-    said = { ...(await egReliquariesOf({ db, nowS }, player, c)), ...(await egStandingOf(db, player, c)) };   // EG-E1: the Reliquaries it opens, by the week's pay; EG-ZF: the member's standing - the recap's board line
+    said = { ...(await egReliquariesOf({ db, nowS }, player, c)), ...(await egStandingOf(db, player, c)), ...(await egEndSeedOf(db, player, c)) };   // EG-E1: the Reliquaries it opens, by the week's pay; EG-ZF: the member's standing - the recap's board line; AUDIT EG V (L8-5): the seed they roll on
   } else {
     // a void: the stake back (once - the stake's own state guards it; AUDIT EG III: held or spent) and the live breach
     // cleared; answered as recorded however often it is carried
@@ -428,6 +433,13 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
   if (recorded && c.q !== 'v') egBoardsMoved();   // AUDIT EG III (lane3 #18): a Redoubt or an end moved the boards this Worker keeps
   const keys = int((await playerRow(db, player.id))?.eg_keys);
   return recorded ? { recorded: true, q: c.q, b: c.b, ...(c.q === 'w' ? { w: c.w } : {}), keys, ...said, ...honours } : { recorded: false, why: 'claimed', q: c.q, keys, ...said, ...honours };
+}
+
+/** AUDIT EG V (lane8 L8-5; section 16.3): AN END'S SPOILS SEED - its receipt's `c` mixed with the draw its row keeps
+ *  (net/egPay.js egSpoilsSeed), `{ seed }`; `{}` with no row (a guest's end writes none). */
+async function egEndSeedOf(db, player, c) {
+  const r = await db.prepare('SELECT nonce FROM eg_runs WHERE b = ?1 AND account = ?2').bind(c.b, player.id).first();
+  return r ? { seed: egSpoilsSeed(c.c, r.nonce) } : {};
 }
 
 /**

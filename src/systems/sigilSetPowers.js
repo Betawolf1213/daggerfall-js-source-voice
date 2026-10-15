@@ -464,11 +464,22 @@ let _pending = null;
  *  burning brass); nothing else reads it. */
 let _bossBlowAt = -Infinity, _pendingBoss = false;
 export function setBossStruck() { _bossBlowAt = _now(); }
+/** AUDIT EG V (lane8 L8-1; Elite-Gates.md section 15's death saves, Sigil-Sets.md 6e): A SPIRE FOE'S BLOW. The Spire's lords
+ *  and legion strike through the dungeon context's door (scenes/egFight.js landShare -> strikePlayer), never the attack
+ *  formula's struck tail, so their blows carried no foe's mark - and the two hurt-listener saves the Spire holds to its
+ *  next Redoubt, Shed Skin and the Panoply's own Reprieve, never once answered a blow in the Spire, where the Panoply
+ *  drops. The fight's driver marks a body's blow as it lands (never a hazard, a zone or a drain - no foe's blow), taken by
+ *  the damage door as it opens, read by those two alone: no foe of the door's stands behind it, so Spite, Riposte, Blood
+ *  for Blood, the Wrath and the loot's blow listeners hear none (Sigil-Sets.md section 8). */
+let _spireBlowAt = -Infinity, _pendingSpire = false;
+export function setSpireStruck() { _spireBlowAt = _now(); }
 function setDoorOpen(entity) {
   if (!entity?.isPlayer || entity.peer) return;
   _pending = landedBlow();
   _pendingBoss = _now() - _bossBlowAt <= BLOW_WINDOW_S;
   _bossBlowAt = -Infinity;
+  _pendingSpire = _now() - _spireBlowAt <= BLOW_WINDOW_S;
+  _spireBlowAt = -Infinity;
 }
 /** LOOT4 (the Loot arc, bible/06-Systems/Loot-Arc.md section 6): THE BLOW THIS HURT CARRIES - the foe's blow the door
  *  took as it opened (`{ attacker }`), or null: a fall, a poison's round, a spell. Read by a damage modifier asked before
@@ -484,9 +495,10 @@ export function registerPlayerBlowLanded(name, fn) { if (typeof fn === 'function
 // ── Wrath of the Warden: a blow that leaves me under the line ───────
 export function setHurt(entity, { before, after, saved = false }) {
   if (!entity?.isPlayer || entity.peer) return;
-  const blow = _pending;
+  const blow = _pending, spire = _pendingSpire;
   _pending = null;
   _pendingBoss = false;   // AUDIT SD: the boss's mark is this hurt's alone
+  _pendingSpire = false;   // AUDIT EG V (L8-1): and the Spire's
   // SD9d: THE HOUR TURNS - the death it turned back said, and its share of my health returned, as the door left me at 1
   // (whatever dealt it: the save is a death save's, a fall's as a blow's)
   if (saved && _s.hourHeal > 0) {
@@ -496,6 +508,7 @@ export function setHurt(entity, { before, after, saved = false }) {
     const healed = max > 0 ? healMine(entity, (max * share) / 100) : 0;
     say(healed > 0 ? `The Hour Turns! ${healed} health returns.` : 'The Hour Turns!');
   }
+  if (!blow && spire) { shed(entity, before, after, saved); reprieve(entity, before, after, saved); return; }   // AUDIT EG V (L8-1): a Spire foe's blow - its two saves
   if (!blow) return;   // L3: a fall, a poison's tick, a spell's burn - no foe's blow, no Spite and no Wrath
   if (before - after > 0) for (const fn of _landed.values()) { try { fn(entity, blow.attacker, before - after); } catch { /* the loot is not the blow's problem */ } }   // LOOT4
   spite(entity, blow, before - after);
@@ -851,4 +864,4 @@ export function setHudChips(entity, now = _now()) {
 
 /** Tests only: a clock of their own (seconds), and every power fresh. */
 export function _setSetPowersClockForTests(fn) { _now = typeof fn === 'function' ? fn : () => performance.now() / 1000; }
-export function _resetSetPowersForTests() { _s = fresh(); _carry = new WeakMap(); _blow = null; _bossBlowAt = -Infinity; _pendingBoss = false; _holdOwed = 0; _say = (line) => { hudText(line); }; _sound = null; _allies = null; _spireRoom = () => null; }
+export function _resetSetPowersForTests() { _s = fresh(); _carry = new WeakMap(); _blow = null; _bossBlowAt = -Infinity; _pendingBoss = false; _spireBlowAt = -Infinity; _pendingSpire = false; _holdOwed = 0; _say = (line) => { hudText(line); }; _sound = null; _allies = null; _spireRoom = () => null; }

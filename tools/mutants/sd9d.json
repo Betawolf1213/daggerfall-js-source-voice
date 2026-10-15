@@ -328,8 +328,8 @@
   {
     "name": "SD9D-a-blows-alone",
     "file": "src/systems/sigilSetPowers.js",
-    "old": "  if (saved && _s.hourHeal > 0) {\n    const share = _s.hourHeal;\n    _s.hourHeal = 0;\n    const max = entity?.maxHealth;\n    const healed = max > 0 ? healMine(entity, (max * share) / 100) : 0;\n    say(healed > 0 ? `The Hour Turns! ${healed} health returns.` : 'The Hour Turns!');\n  }\n  if (!blow) return;   // L3: a fall, a poison's tick, a spell's burn - no foe's blow, no Spite and no Wrath\n",
-    "new": "  if (!blow) return;   // L3: a fall, a poison's tick, a spell's burn - no foe's blow, no Spite and no Wrath\n  if (saved && _s.hourHeal > 0) {\n    const share = _s.hourHeal;\n    _s.hourHeal = 0;\n    const max = entity?.maxHealth;\n    const healed = max > 0 ? healMine(entity, (max * share) / 100) : 0;\n    say(healed > 0 ? `The Hour Turns! ${healed} health returns.` : 'The Hour Turns!');\n  }\n",
+    "old": "  if (saved && _s.hourHeal > 0) {\n    const share = _s.hourHeal;\n    _s.hourHeal = 0;\n    const max = entity?.maxHealth;\n    const healed = max > 0 ? healMine(entity, (max * share) / 100) : 0;\n    say(healed > 0 ? `The Hour Turns! ${healed} health returns.` : 'The Hour Turns!');\n  }\n  if (!blow && spire) { shed(entity, before, after, saved); reprieve(entity, before, after, saved); return; }   // AUDIT EG V (L8-1): a Spire foe's blow - its two saves\n  if (!blow) return;   // L3: a fall, a poison's tick, a spell's burn - no foe's blow, no Spite and no Wrath\n",
+    "new": "  if (!blow) return;   // L3: a fall, a poison's tick, a spell's burn - no foe's blow, no Spite and no Wrath\n  if (saved && _s.hourHeal > 0) {\n    const share = _s.hourHeal;\n    _s.hourHeal = 0;\n    const max = entity?.maxHealth;\n    const healed = max > 0 ? healMine(entity, (max * share) / 100) : 0;\n    say(healed > 0 ? `The Hour Turns! ${healed} health returns.` : 'The Hour Turns!');\n  }\n  if (!blow && spire) { shed(entity, before, after, saved); reprieve(entity, before, after, saved); return; }   // AUDIT EG V (L8-1): a Spire foe's blow - its two saves\n",
     "tests": [
       "test/sd9d_numidium.test.js"
     ]

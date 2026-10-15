@@ -11,6 +11,7 @@ import { mintEgReceipt, readEgReceipt, verifyEgReceipt, egReceiptValid, EG_RECEI
 import { EG_LIVE_S, EG_LAST_WORD_S, EG_KEY_PITY } from '../server-account/src/eg.js';
 import { EG_LAST_WORD_MS } from '../src/net/egLaw.js';
 import { arenaWeekOf } from '../src/net/arenaLaw.js';   // EG-E1: the week the Panoply sink keeps
+import { egSpoilsSeed } from '../src/net/egPay.js';   // AUDIT EG V: the spoils' seed a claim answers
 
 const { subtle } = globalThis.crypto;
 const RQ = 'rq0123456789abcdef';
@@ -95,7 +96,10 @@ test('EG-PLAY THE CLAIM: a Redoubt\'s `w` is counted once a (breach, account, Re
   const c1 = await S.call('/v1/eg/claim', { receipt: w }, me.secret);
   // PIN MOVED (EG-E1): a Redoubt's answer says what it paid (server-account/src/egEconomy.js egRedoubtPay - the week's first:
   // paid, its first-this-season ember into the purse beside the gate's; Marks shut here) and, asked again, the same pay
-  const pay = { b: open.b, w: 1, paid: true, marks: null, deed: null, embers: 1, purse: 2, weir: null, pity: [] };
+  // PIN MOVED (AUDIT EG V, d: lane8 L8-5): and the seed its spoils roll on - the receipt's mixed with the row's own draw
+  const nonce = S.env.DB._raw.prepare('SELECT nonce FROM eg_redoubts WHERE b = ? AND account = ?').get(open.b, me.id).nonce;
+  const pay = { b: open.b, w: 1, paid: true, marks: null, deed: null, embers: 1, purse: 2, weir: null, pity: [], seed: egSpoilsSeed(77, nonce) };
+  assert.match(nonce, /^[0-9a-f]{16}$/);
   assert.deepEqual(c1.body, { recorded: true, q: 'w', keys: 0, ...pay });
   assert.deepEqual((await S.call('/v1/eg/claim', { receipt: w }, me.secret)).body, { recorded: false, why: 'claimed', q: 'w', keys: 0, ...pay, again: true });
   assert.equal(S.env.DB._raw.prepare('SELECT state FROM eg_stakes WHERE ez = ?').get(open.ez).state, 'spent');

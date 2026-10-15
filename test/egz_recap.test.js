@@ -92,7 +92,7 @@ test('EG-ZF the director: THE DAMAGE CHART AT THE COURT\'S FALL (section 27.6) -
   // a breach begun at Hall 4 - a Rampart, then the Court: the whole breach's damage spans two halls, the chart one
   const R = play({ start: 4, until: (b) => b.sg === 'rest', hook: (B, now, take, rng) => {
     if (B.sg !== 'trial' || !B.F?.tl) return;
-    if (!healed && B.F.bodies.some((b) => b.role === 0 && b.ph)) healed = egHeal(B, 'acct-1', [['acct-0', 50], ['acct-2', 30]], now, LINE);
+    if (!healed && B.F.bodies.some((b) => b.role === 0 && b.ph)) healed = egHeal(B, 'acct-1', [['acct-0', 50], ['acct-2', 30]], now, LINE, undefined, () => true);   // PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen
     // acct-2 falls in the Court once the lord is half down - the chart counts it
     const L = B.F.bodies.find((b) => b.role === 0);
     if (!fell && L && L.hp < L.max / 2) { fell = true; take(egWord(B, 'acct-2', { k: 'fell' }, null, now, rng)); }
@@ -167,7 +167,7 @@ test('EG-ZF the director: A COMPANION\'S HEAL (section 27.6) - credited to the h
   const m1 = B.mem['acct-1'];
   bodyStruck(m1, 0.6, now, LINE);
   const v0 = m1.bd.v;
-  const got = egHeal(B, 'acct-1', [['acct-0', 40]], now, LINE);
+  const got = egHeal(B, 'acct-1', [['acct-0', 40]], now, LINE, undefined, () => true);   // PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen
   assert.equal(got, 40);
   assert.ok(Math.abs(m1.bd.v - (v0 + 40 / ref)) < 1e-9, 'the count mended by the share of the reference health believed');
   assert.equal(B.mem['acct-0'].ht, 40);
@@ -249,6 +249,9 @@ test('EG-ZF relay (real Room): A MEMBER\'S `heal` - each healer the socket in th
       // the heals: Ann's spell healed Mac 60 and Mac's healed Ann 25 - each said by its receiver, the healer by peer id
       bodyStruck(R().mem['acct-mac'], 0.5, clock, eg.room._egLine());
       const v0 = R().mem['acct-mac'].bd.v;
+      // PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen - Ann's spell on Mac, relayed by the room (ALLY-CAST's directed frame)
+      await eg.raw(socks['acct-ann'], JSON.stringify({ t: 'cast', data: { to: 'peer-acct-mac', level: 5, spell: { name: 'Heal', element: 4, rangeType: 1, effects: [{ type: 10, subType: 8, magnitudeBaseLow: 20, magnitudeBaseHigh: 20, magnitudeLevelBase: 0, magnitudeLevelHigh: 0, magnitudePerLevel: 1,
+        durationBase: 0, durationMod: 0, durationPerLevel: 1, chanceBase: 100, chanceMod: 0, chancePerLevel: 1 }] } } }));
       await eg.raw(socks['acct-mac'], JSON.stringify({ t: 'eg', k: 'heal', h: [['peer-acct-ann', 60], ['peer-nobody', 99], ['peer-acct-mac', 99]] }));
       assert.ok(Math.abs(R().mem['acct-mac'].bd.v - (v0 + 60 / healRef(20))) < 1e-9, 'Mac\'s count mended by what was believed');
       await eg.raw(socks['acct-ann'], JSON.stringify({ t: 'eg', k: 'heal', h: [['peer-acct-mac', 25]] }));

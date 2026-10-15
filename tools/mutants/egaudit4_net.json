@@ -11,8 +11,8 @@
   {
     "name": "AUDIT-EG-IV-net-again-order-as-of-now",
     "file": "server-account/src/eg.js",
-    "old": "ewg: wagerOfRow(had.wg) }, key, { subtle, nowS: int(had.at) });",
-    "new": "ewg: wagerOfRow(had.wg) }, key, { subtle, nowS });",
+    "old": "ewg: wagerOfRow(had.wg) }, key, { subtle, nowS: int(had.at) });\n    return { order, b: had.b, ez: had.ez, keys: int(row?.eg_keys), until: int(had.until), rh: int(had.rh), at: int(had.at) };",
+    "new": "ewg: wagerOfRow(had.wg) }, key, { subtle, nowS });\n    return { order, b: had.b, ez: had.ez, keys: int(row?.eg_keys), until: int(had.until), rh: int(had.rh), at: int(had.at) };",
     "tests": [
       "test/egaudit4_net_service.test.js"
     ]

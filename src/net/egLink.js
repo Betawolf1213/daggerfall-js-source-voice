@@ -127,7 +127,11 @@ const FIGHT_WORDS = new Set(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'e
 
 /**
  * One word folded into the breach's state (pure). A word of another breach than the one held is not this one's - a call
- * starts a breach's state over, a room's `st` replaces it.
+ * starts a breach's state over, a room's `st` replaces it. AUDIT EG V (lane4 L4-4; section 6.1, "one breach at a time"):
+ * but never the breach this screen stands in - a call of another breach heard while the room's breach is live (egLiveHeld)
+ * is kept as the call alone, and the breach, its hall and its fight stand: the hub calls the opener's whole frozen company,
+ * and a member still in another breach's trial (its opener's own end come, a second breach opened) had its state wiped -
+ * the screen's frame stood down every frame until its room next said `st`.
  * @param {any} s @param {any} w a validEgOut projection @param {number} now
  */
 export function foldEg(s, w, now) {
@@ -137,7 +141,7 @@ export function foldEg(s, w, now) {
     return { ...s, fight: foldFight(s.fight, w, now), heardAt: now };
   }
   switch (w.k) {
-    case 'call': return s.b === w.b ? { ...s, call: w, heardAt: now } : { ...EG_STATE_EMPTY, call: w, b: w.b, seed: w.seed, op: w.op, rh: w.rh, heardAt: now };
+    case 'call': return s.b === w.b || egLiveHeld(s) ? { ...s, call: w, heardAt: now } : { ...EG_STATE_EMPTY, call: w, b: w.b, seed: w.seed, op: w.op, rh: w.rh, heardAt: now };
     case 'st': {
       const same = s.b === w.b;
       return { ...(same ? s : EG_STATE_EMPTY), call: same ? s.call : null, b: w.b, seed: w.seed, egv: w.egv, op: w.op, wk: w.wk, ...stageOf(w), co: w.co, rd: w.rd, rh: w.rh, dg: w.dg, end: w.end,
@@ -166,6 +170,9 @@ export function foldEg(s, w, now) {
     default: return s;
   }
 }
+/** AUDIT EG V (lane4 L4-4): does state `s` hold a breach its room has spoken of (its company said) that has not ended -
+ *  the breach this screen stands in, which no other breach's call replaces? */
+export const egLiveHeld = (s) => !!s?.b && (s.co?.length ?? 0) > 0 && !s.end;
 /** THE COUNT at `now` (the relay's clock): what was left when it last began to run, less the time since - or, held,
  *  what is left. */
 export const egCountAt = (s, now) => (s.ca > 0 ? Math.max(0, s.cl - Math.max(0, now - s.ca)) : s.cl);

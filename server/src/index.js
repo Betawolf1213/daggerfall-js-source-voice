@@ -336,7 +336,7 @@ import { EG_INTERNAL_HERALD, EG_HERALD_KEY, EG_HERALD_KEEP_MS, EG_HERALD_TELL_MS
 import { egPoseIn, egCount, egCountHeals, egBodyWord, egFairWoke, EG_BODY_ENFORCE } from '../../src/net/egBrain.js';
 import { egHeal } from '../../src/net/egBrain.js';   // EG-ZF (Elite-Gates.md section 27.6): what a companion's spell healed in a member - the recap's healing
 import { EG_HEAL_CAST_MS } from '../../src/net/egBrain.js';   // AUDIT EG IV (lane3 #3): how far back a relayed cast corroborates a heal word's healer
-import { egPoseClock, egPoseShared, egTrailPush, EG_TRAIL_MS } from '../../src/net/egFair.js';
+import { egPoseClock, egPoseShared, egTrailPush, EG_TRAIL_MS, EG_TS_LAG_MAX_MS } from '../../src/net/egFair.js';   // AUDIT EG V (L4-1): the edge no pose can still land before
 import { signEgCall } from '../../src/net/egCallSig.js';   // EG-F: the hub's signature on the call's arch fields
 import { egGate, EG_INTERNAL_OPEN, EG_KEY, egCallKey, validEgOpenTell, EG_BRAIN_MIN } from './relay.js';
 import { egHubGate, EG_HUB_KINDS } from './relay.js';   // AUDIT EG IV (lane3 #5): the hub's own breach words on a bucket of their own
@@ -448,7 +448,9 @@ const EG_CAST_SEEN_MAX = 64;
  * AUDIT EG III (lane3 #3; Elite-Gates.md sections 6.1 and 22): A CLOSED SOCKET'S BODY HELD - an account's trail record (`{ tr,
  * last }`, the room's - `last` its newest real pose) grown to `now` with its last pose, an entry each EG_HELD_STEP_MS
  * (`[t, x, y, z, h, 1]`, from the trail's end, its window's at most), for EG_ABSENT_TRIAL_MS after that pose; past it the
- * trail is left as it is (the absence's fall is the director's). Answers the trail.
+ * trail is left as it is (the absence's fall is the director's). Answers the trail. AUDIT EG V (lane4 L4-1): `now` is
+ * where the hold stops - an OPEN socket's is the room's now less EG_TS_LAG_MAX_MS (_egTrails), the edge before which no
+ * pose of it can still land.
  * @param {{ tr: number[][], last: number[] }} k @param {number} now
  */
 function egTrailHeld(k, now) {
@@ -7403,6 +7405,10 @@ export class Room {
   async _egSave(B, now, force) {
     if (!force && now - (this._egSavedAt ?? 0) < CHECKPOINT_MS) return;
     this._egSavedAt = now;
+    // AUDIT EG V (lane4 L4-10; section 22, "Storage, not memory"): each member's newest pose kept with the record (`lp`,
+    // `[t, x, y, z, h]` - its instant given back with the rest), so a room woken mid-trial still holds the body of a member
+    // whose socket is gone (_egTrails) - the trails themselves are memory alone
+    for (const [sub, k] of this._egTrailsBy ?? []) if (B.mem?.[sub] && Array.isArray(k?.last)) B.mem[sub].lp = k.last.slice(0, 5);
     if (B.end && !B.tomb) { B.tomb = 1; await this._egDoneWrite(B.ez, B.end, null, now); }
     await this.state.storage.put(EG_KEY, B);
   }
@@ -7497,14 +7503,23 @@ export class Room {
    * EG_ABSENT_TRIAL_MS from it - its trail held there, an entry each EG_HELD_STEP_MS to now (`[t, x, y, z, h, 1]`), so the
    * judge's poses either side of a landing find it standing where it was. The census walked the sockets alone, and a closed
    * one dropped its body from every blow. No blow is aimed at it: the director's bodies are the fresh poses (_egBodies).
+   * AUDIT EG V (lane4 L4-1; sections 6.1 and 21): AND A SILENT SOCKET'S - a client says a pose when it moves (and every
+   * HEARTBEAT_MS standing still - net/online.js sendPose), so a member standing still, a backgrounded tab or a client holding
+   * its poses back through a wind-up had no pose within EG_POSE_NEAR_MS of any landing and took nothing. Every living
+   * member's trail is held at its newest pose: a closed socket's to now, an open one's to now less EG_TS_LAG_MAX_MS - a pose
+   * is placed at most that before it arrives (net/egFair.js egPoseShared), so its trail up to there is whole, the stand-ins
+   * never stand over a pose still on its way, and the judge still waits for the pose sent after a landing (a dodge in its
+   * last round trip is no hit). AUDIT EG V (lane4 L4-10; section 22): a room woken mid-trial holds each body at the pose its
+   * record kept (`m.lp`, _egSave), until the member says another.
    */
   _egTrails(B, now = Date.now()) {
     const socks = this._siegeSockets(), out = [];
     for (const [sub, m] of Object.entries(B.mem ?? {})) {
-      const k = this._egTrailsBy?.get(sub);
-      if (socks.has(sub)) { out.push({ sub, tr: k?.tr ?? [] }); continue; }
-      if (!m?.in || !m.alive || m.home || !k?.last) continue;
-      out.push({ sub, tr: egTrailHeld(k, now) });
+      let k = this._egTrailsBy?.get(sub);
+      if (!k && Array.isArray(m?.lp) && m.lp.length === 5) { k = { ws: null, tr: [], last: m.lp }; (this._egTrailsBy ??= new Map()).set(sub, k); }
+      const open = socks.has(sub);
+      if (!m?.in || !m.alive || m.home || !k?.last) { if (open) out.push({ sub, tr: k?.tr ?? [] }); continue; }
+      out.push({ sub, tr: egTrailHeld(k, open ? now - EG_TS_LAG_MAX_MS : now) });
     }
     return out;
   }

@@ -20,6 +20,8 @@ import { EG_TRAIL_MS } from '../src/net/egFair.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { createEgFight, egShieldBreach, egLifelineOpen } from '../src/scenes/egFight.js';
+/** PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen - the room's record of a cast from the healer to the member (server/src/index.js _egCastSaw). */
+const CAST_SEEN = () => true;
 import { createEgClient, egLifelineOf, EG_HEAL_SEND_MS } from '../src/scenes/egClient.js';
 
 const T0 = 1_800_000_000_000;
@@ -66,7 +68,7 @@ function both(C, pts, { o = 0, p = 0.4, b = 0, moved = false, heal = null } = {}
   if (heal) {
     R = at - heal.ms;
     bodyStruck(B.mem[me], 0.8, R - 500, LINE);   // the count under 30% as the word comes
-    assert.ok(egHeal(B, me, [[heal.by, 40]], R, LINE, false) > 0, 'the heal believed');
+    assert.ok(egHeal(B, me, [[heal.by, 40]], R, LINE, false, CAST_SEEN) > 0, 'the heal believed');   // PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen
   }
   // THE CENSUS
   const pose = (i, t) => [t, ...(moved && i === 0 && t === at - 800 ? [mx + 1, 0, mz] : [pts[i][0], 0, pts[i][1]]), B.h];
@@ -187,7 +189,7 @@ test('EG-ZP LIFELINE\'S WINDOW, THE CENSUS\'S OWN (scenes/egFight.js egLifelineO
   const R = C.t + 1000;
   for (const dt of [0, 10, 20, 30, 40, EG_LIFELINE_MS + EG_TRAIL_MS + 100]) {
     egBodyWord(B, me, 100, R + dt, LINE, false);   // PIN MOVED (AUDIT EG III): a heal worth a window lifts the count; its own word keeps it seen low
-    egHeal(B, me, [[by, 30]], R + dt, LINE, false);
+    egHeal(B, me, [[by, 30]], R + dt, LINE, false, CAST_SEEN);   // PIN MOVED (AUDIT EG V, d: lane4 L4-7 - the count is mended, and Lifeline opened, only by a heal a relayed cast backs): the healer's cast seen
     ll = egLifelineOpen(ll, v, R + dt);
     assert.deepEqual(ll, B.mem[me].ll, `the census's windows at +${dt}`);
   }
@@ -257,7 +259,7 @@ test('EG-ZP LIFELINE, THE RECEIVER\'S HALF (scenes/egClient.js lifelineSaid; sec
     const ll = () => S.fight().shield().ll, last = () => ll().at(-1) ?? null;
     /** the window a word said at shared `at` opens: from its arrival (100 ms later) a second back to 3 s on */
     const win = (at, v = 0.25) => [at + 100 - EG_HEAL_WORD_MS, at + 100 + EG_LIFELINE_MS, v];   // PIN MOVED (AUDIT EG III, lane2 #5): Lifeline II's 25%
-    const census = (word, R) => { bodyStruck(B.mem['acct-0'], 0.8, R - 10, LINE); egHeal(B, 'acct-0', word.h.map(([id, n]) => [({ 'peer-ann': 'acct-1', 'peer-bob': 'acct-2', 'peer-me': 'acct-0' })[id] ?? '', n]), R, LINE, false); return B.mem['acct-0'].ll?.at(-1) ?? null; };
+    const census = (word, R) => { bodyStruck(B.mem['acct-0'], 0.8, R - 10, LINE); egHeal(B, 'acct-0', word.h.map(([id, n]) => [({ 'peer-ann': 'acct-1', 'peer-bob': 'acct-2', 'peer-me': 'acct-0' })[id] ?? '', n]), R, LINE, false, CAST_SEEN); return B.mem['acct-0'].ll?.at(-1) ?? null; };
     // under 30% at a frame, Ann heals: the window at the word's arrival - the census's own
     entity.health = 200; S.frame();
     entity.health += 100; assert.equal(client.healedBy('peer-ann', 100), true);
@@ -307,7 +309,7 @@ test('EG-ZP LIFELINE, THE RECEIVER\'S HALF (scenes/egClient.js lifelineSaid; sec
     const q = B.mem['acct-2'], tl = C.t + 900_000;
     q.vs = []; bodyStruck(q, 0.1, tl - 10, LINE);
     egBodyWord(B, 'acct-2', 250, tl, LINE);
-    egHeal(B, 'acct-2', [['acct-1', 30]], tl + EG_LIFELINE_LOOK_MS + 1, LINE, false);
+    egHeal(B, 'acct-2', [['acct-1', 30]], tl + EG_LIFELINE_LOOK_MS + 1, LINE, false, CAST_SEEN);
     assert.equal(q.ll, undefined, 'the census\'s boundary, the same');
   } finally { S.done(); }
 });

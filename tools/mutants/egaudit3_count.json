@@ -673,7 +673,7 @@
   {
     "name": "EGA3-count-grant-seed-unread",
     "file": "src/systems/egSpoils.js",
-    "old": "roll: () => egReliquaryList(c.c, level, rl)",
+    "old": "roll: () => egReliquaryList(seed, level, rl)",
     "new": "roll: () => egReliquaryList(0, level, rl)",
     "tests": [
       "test/egaudit3_count_spoils.test.js"

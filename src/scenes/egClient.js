@@ -129,7 +129,7 @@
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
 import { egKeyRefusal } from './egArch.js';   // EG-F: the key's refusals, in the page's order
 import { egCallPromptModel, soundEgHorn, EG_CALL_KEYS } from './egCall.js';   // EG-F: the call's prompt and horn
-import { importPublicKeyB64 } from '../net/identityToken.js';   // EG-F: the relay's public half, for a stranger's arch
+import { importPublicKeyB64, ORDER_TTL_S } from '../net/identityToken.js';   // EG-F: the relay's public half, for a stranger's arch; AUDIT EG V: an order's life
 import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, egBandOfCircle, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR, EG_BAND_LORDS, EG_VALKYNAZ } from '../net/egLaw.js';
 import { egOnFight, egSpecGive, egSpecDigest, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (section 10.7): the fight floor, and off it the Spire's traversal ground; (section 22) a hall given, the law I draw
 import { EG_TOLL_STEP } from '../net/egLaw.js';   // EG-ZI (section 10.6): the pull's toll, a quarter's share
@@ -239,6 +239,11 @@ export const EG_COUNTED_KEY = 'eg.counted';
 export const EG_COUNTED_MAX = 64;
 /** EG-ZA: a stake handed back (its void claimed) - the words. */
 export const EG_VOID_TEXT = 'The Spire did not open. Your key is returned.';
+/** AUDIT EG V (lane4 L4-3; sections 6.1 and 23): an admit order lives ORDER_TTL_S from its signing, so one kept past this
+ *  long (ms - half its life: the portal's PORTAL_OPEN_MS and a slow step under the veil still to come) is asked of the
+ *  service again before it goes to the room; and the most asks my hall makes for one breach (a refused order, a stale one). */
+export const EG_ADMIT_FRESH_MS = (ORDER_TTL_S / 2) * 1000;
+export const EG_ADMIT_ASKS = 3;
 /** How often a step through the door is said again while I stand in it, how long the end's words stand before the walk
  *  out, how often the balance is asked while online, how often a hub that has not taken an open is asked again. */
 export const EG_DOWN_EVERY_MS = 1000;
@@ -508,8 +513,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   let fight = null;
   /** an open in flight: its request id, the service's order, whether the hub took it */
   let opening = null;
-  /** my admission to the breach I answered: `{ b, z }`; the welcome it went to the room under */
-  let admit = null, inFor = -1;
+  /** my admission to the breach I answered: `{ b, z, at }` (AUDIT EG V: `at` when it came, this device's clock); the welcome
+   *  it went to the room under; AUDIT EG V (lane4 L4-3): the asks my hall made of the service, by breach, and one in flight */
+  let admit = null, inFor = -1, admitAsking = false;
+  const admitAsks = new Map();
+  /** AUDIT EG V (lane4 L4-3): do I hold an admit order for breach `b` young enough to go to its room (EG_ADMIT_FRESH_MS)? */
+  const admitFresh = (b) => admit?.b === b && !!admit.z && Date.now() - admit.at < EG_ADMIT_FRESH_MS;
   let answering = false, swapping = false, leaving = false;
   /** EG-H3 (EG10): when the step into a new circle began waiting on its build still in flight (0: not waiting) */
   let swapWaitAt = 0;
@@ -789,10 +798,10 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (answering || M?.stepping) return false;
     answering = true;
     try {
-      if (admit?.b !== c.b) {
+      if (!admitFresh(c.b)) {   // AUDIT EG V (lane4 L4-3): an order past half its life, or refused, asked again - never reused
         const a = await account.admit(c.b);
         if (!a?.ok) { say(a?.error === 'start' ? EG_TEXT.notStart(c.ew ?? 0) : egRefusalText(a?.error)); return false; }   // EG-F: no carries
-        admit = { b: c.b, z: a.data?.order ?? null };
+        admit = { b: c.b, z: a.data?.order ?? null, at: Date.now() };
         inFor = -1;
         // AUDIT EG IV (lane4 #14; section 29 - "every refusal is checked again when its async answer lands"): a step indoors,
         // the open window's end or the Spire entered while the admission was asked - each said in its own words, never as
@@ -894,8 +903,33 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (w === 'the breach took the key' || w === 'the void is too old') { if (voidFor) stakeDrop((s) => s.z === voidFor); voidFor = ''; return true; }   // EG-ZA: the breach's own receipts settle it, or it is past asking - a background ask, said nothing
     if (opening && !inSpire() && w === 'the breach is closed' && opening.tries < EG_OPEN_TRIES) { opening.sentAt = Date.now() - EG_OPEN_RETRY_MS + 1000; return true; }   // AUDIT EG III (lane4 #8): the open asked again - nothing said while it retries
     if (w === 'the breach is closed' && answeredFor && link.state().call?.b === answeredFor) { say(EG_TEXT.late(link.state().call.o)); answeredFor = ''; callPortal?.clear?.(); return true; }   // EG-F: answered after the first hall woke - the late line, said instead
-    if (w === 'the order is spent' || w === 'the order is not yours') admit = admit ? { ...admit, z: null } : null;
+    if (w === 'the order is spent' || w === 'the order is not yours') {
+      // AUDIT EG V (lane4 L4-3): the order let go whole - the next answer asks the service again (a refused order kept its
+      // breach, and every later answer said a shut Spire); in my hall it is asked again at once, nothing said meanwhile
+      const b = admit?.b ?? link.state().b;
+      admit = null; inFor = -1;
+      return inSpire() && !!b && (admitAsks.get(b) ?? 0) < EG_ADMIT_ASKS;
+    }
     return false;
+  }
+  /**
+   * AUDIT EG V (lane4 L4-3; section 6.1 - "The member's hello to eg:<b> carries the order"): MY ADMISSION SAID TO THE ROOM
+   * I stand in, while it does not count me - the order I hold, once a welcome, while it is young (admitFresh); else asked of
+   * the service again, one ask at a time and EG_ADMIT_ASKS a breach at most (ASYNC NEVER DROPS: the frames meanwhile wait
+   * on that one), and the answer goes on the welcome I stand under. An order lives a minute, and a slow step under the veil
+   * - or a portal stepped into half a minute on - carried a dead one, which the room refused as not mine.
+   */
+  function admitIn(b, o) {
+    if (admitFresh(b)) { if (o?.welcomes !== inFor && o?.sendEg?.('in', { z: admit.z, lv: Math.max(1, entity.level | 0) })) inFor = o.welcomes; return; }
+    if (admitAsking || (admitAsks.get(b) ?? 0) >= EG_ADMIT_ASKS) return;
+    admitAsking = true;
+    admitAsks.set(b, (admitAsks.get(b) ?? 0) + 1);
+    (async () => {
+      let a = null;
+      try { a = await account.admit(b); } catch { a = null; }
+      if (a?.ok && a.data?.order) { admit = { b, z: a.data.order, at: Date.now() }; inFor = -1; }
+      else if (a && !a.ok && (admitAsks.get(b) ?? 0) >= EG_ADMIT_ASKS) say(egRefusalText(a.error));
+    })().finally(() => { admitAsking = false; });
   }
 
   // ── the receipts ──────────────────────────────────────────────────────────────────────────────────────
@@ -1140,7 +1174,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (!E.b || E.b !== M?.egHallBreach?.()) return;
     // my admission, once: a member the room already counts is never asked again
     const mine = egMemberOf(E, me());
-    if (mine && !mine.in && admit?.b === E.b && admit.z && o?.welcomes !== inFor && o?.sendEg?.('in', { z: admit.z, lv: Math.max(1, entity.level | 0) })) inFor = o.welcomes;
+    if (mine && !mine.in) admitIn(E.b, o);   // AUDIT EG V (lane4 L4-3): a young order, or one asked again
     backFrame(E, mine);   // EG-ZD (section 22): THE WAY BACK kept as the room says it
     if (mine?.alive) relHeld = egRunOfMember(E, me()).rel;   // EG-ZD (section 16.5): what a fall would cost
     if (mine && mine.forsaken) { if (!leaving) { witness = null; backDrop(E.b); walkOut(EG_END_TEXT.forsake); } return; }

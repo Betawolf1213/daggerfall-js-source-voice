@@ -643,8 +643,8 @@
   {
     "name": "EGA3L-lifeline-min-unread",
     "file": "src/net/egBrain.js",
-    "old": "(q.ht ?? 0) - had[i] >= min) v =",
-    "new": "(q.ht ?? 0) > had[i]) v =",
+    "old": "(q.ht ?? 0) - had[i] >= min && cast(by)) v =",
+    "new": "(q.ht ?? 0) > had[i] && cast(by)) v =",
     "tests": [
       "test/egaudit3_legion_blows.test.js"
     ],

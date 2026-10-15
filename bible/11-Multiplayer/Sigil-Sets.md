@@ -301,7 +301,7 @@ to whole rounds and given one more, as Eventide's is: three rounds, at least the
 ride the cast frame's byte (255 at most). **The Spire's recovery** (`Elite-Gates.md` section 15): in an Elite Breach the
 Reprieve, Unbroken, The Hour Turns and Shed Skin are no timers - spent there, each is held to the next Redoubt taken, and
 its chip reads *Redoubt*; out of that breach its own timer governs again. The HUD's chip shows the Reprieve's shield (its
-points) while it holds, then its recovery; its sound is a Shield spell's own cast.
+points) while it holds, then its recovery; its sound is a Shield spell's own cast. A Spire lord's blow is a foe's to it (section 8, AUDIT EG V).
 
 ## 7. The Sigil Broker - Sigil Stones buy the day's stock (SET7)
 
@@ -372,6 +372,12 @@ price and their week (`ui/brokerWindow.js`).
   boss's as it lands (`scenes/sdRemnantBlows.js` `bodysBlow` -> `setBossStruck`), taken by the damage door as it
   opens, and read by Gearward alone: Spite, the Wrath, Riposte, Blood for Blood and Shed Skin hear no foe in it, and the
   loot's blow listeners none. The Warden's court marks nothing (its bytes are the gate's).
+- The Spire's lords and its legion (`Elite-Gates.md` section 15) strike through the dungeon context's door too, no struck
+  tail - and the two hurt-listener saves the Spire holds to its next Redoubt answer them (AUDIT EG V: neither had ever
+  triggered there, where the Panoply drops): a body's blow is marked as a Spire foe's as it lands (`scenes/egFight.js`
+  landShare -> `setSpireStruck`; never a hazard's, a zone's or a drain's), taken by the damage door as it opens, and read
+  by Shed Skin and the Reprieve alone. Spite, the Wrath, Riposte, Blood for Blood and the loot's blow listeners hear no foe
+  in it - no foe of the door's stands behind it.
 - AUDIT SETS M2: a client older than RAID4b cannot read a raid set's sigil. A room's container word it cannot read is
   now marked unreadable and never landed, claimed, closed over or opened - from this build on; a tab still running a
   build before it refuses the list and claims the container with its own roll, as it did. The relay's deploy drops

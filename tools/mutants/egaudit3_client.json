@@ -670,8 +670,8 @@
   {
     "name": "EGA3C-touched-not-on-screen",
     "file": "src/scenes/egFight.js",
-    "old": "spared(E, F, bl), part * egTouchedX(F, bl, me(), t));",
-    "new": "spared(E, F, bl), part);",
+    "old": "spared(E, F, bl), part * egTouchedX(F, bl, me(), t), true);",
+    "new": "spared(E, F, bl), part, true);",
     "tests": [
       "test/egaudit3_client_fight.test.js"
     ]

@@ -20,8 +20,8 @@
   {
     "name": "EGZA-rcfold-unbounded",
     "file": "src/net/egDurable.js",
-    "old": "  return [...by.values()].slice(-EG_RC_KEEP);",
-    "new": "  return [...by.values()];",
+    "old": "  const all = [...by.values()], held = all.filter((x) => !x.spent).slice(-EG_RC_KEEP), spent = all.filter((x) => x.spent).slice(-EG_RC_KEEP);",
+    "new": "  const all = [...by.values()], held = all.filter((x) => !x.spent), spent = all.filter((x) => x.spent);",
     "tests": [
       "test/egz_keys.test.js"
     ]

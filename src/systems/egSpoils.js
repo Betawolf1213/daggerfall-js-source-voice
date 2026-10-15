@@ -22,9 +22,15 @@
 // seed off the END receipt's (egReliquarySeed), its Panoply at twice the Redoubt's chance (EG_RELIQUARY_PANOPLY_X, its own
 // stream - no pity: the service never sees a Reliquary's roll), no lord's arm nor card (a Reliquary is no lord's).
 //
+// AUDIT EG V (2026-10-15; sections 16.1, 16.3 and 19): THE SEED IS THE CLAIM'S - a receipt's spoils and an end's Reliquaries
+// roll on the seed the account service answers its claim with (`seed` - net/egPay.js egSpoilsSeed: the receipt's `c` mixed
+// with the service's own draw), never the receipt's own, which the page could read and roll ahead (lane8 L8-5); and A PAID
+// REDOUBT'S DEADLANDS EMBERS are in its spoils - one stack of the gate's currency, as many as the service paid (the claim's
+// `embers`, the row's `stones`), which the Broker's insignia and the Panoply's sink take from the pack (lane8 L8-2).
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { seededRng } from './wind.js';
-import { spoilsBase, magicOrBetter, SPOILS_SOURCE } from './gateSpoils.js';
+import { spoilsBase, magicOrBetter, sigilStone, SPOILS_SOURCE } from './gateSpoils.js';
 import { applyRarity, lastPass, socketPass, weaponSocketPass, techniquePass } from './lootRarity.js';
 import { bossGems } from './gems.js';
 import { bossCardRoll } from './bossCards.js';
@@ -116,13 +122,27 @@ export function rollEgSpoils(seed, level, w, { lord = '', pity = [], goldOnly = 
 }
 
 /** The spoils as the pool throws them (scenes/spoilsPool.js's pieces): each pass's items, its card, its gems, then its
- *  gold - the Hour's order - each dressed in the treasure flat the seed chooses. Pure.
- * @param {number} seed @param {number} level @param {number} w @param {{ lord?: string, pity?: number[], goldOnly?: boolean }} [o] */
+ *  gold - the Hour's order - each dressed in the treasure flat the seed chooses. AUDIT EG V (lane8 L8-2): `o.embers` the
+ *  Deadlands Embers the claim paid, one stack thrown last (egEmberStack), its flat drawn after every other. Pure.
+ * @param {number} seed @param {number} level @param {number} w @param {{ lord?: string, pity?: number[], goldOnly?: boolean, embers?: number }} [o] */
 export function egSpoilsList(seed, level, w, o = {}) {
-  return dressed(seed, rollEgSpoils(seed, level, w, o));
+  return dressed(seed, rollEgSpoils(seed, level, w, o), o.goldOnly ? null : egEmberStack(o.embers));
 }
-/** Passes as the pool throws them, each piece dressed in the treasure flat `seed`'s own stream chooses. Pure. */
-function dressed(seed, passes) {
+/** The most embers one Redoubt pays (net/egPay.js egEmbersOf at its deepest Redoubt, 19,999 - and the wire's bound on a
+ *  claim's answer is the service's own). */
+export const EG_EMBERS_MAX = 2001;
+/** AUDIT EG V (lane8 L8-2; section 19 - "the Spire's embers join EMBERS_EARNED_SQL ... so the insignia and the sink spend
+ *  them"): A PAID REDOUBT'S DEADLANDS EMBERS - one stack of the gate's currency (systems/gateSpoils.js sigilStone, minted as
+ *  the gate's and the serpent's: no roll taken), as many as the claim paid (`embers`, the row's `stones`), or null. The
+ *  service wrote them to the purse and no pack ever held them, so the Broker - who takes them from the pack - could not. */
+export const egEmberStack = (n) => (Number.isSafeInteger(n) && n > 0 ? Object.assign(sigilStone(), { stackCount: Math.min(n, EG_EMBERS_MAX) }) : null);
+/** AUDIT EG V (lane8 L8-5): the seed a claimed receipt's spoils roll on - the account service's answer's (`seed`), its
+ *  receipt's own (`c`) only where the service kept no row (a guest's gold). Pure. */
+export const egSpoilsSeedOf = (c, d) => (Number.isSafeInteger(d?.seed) && d.seed >= 0 ? d.seed >>> 0 : (c?.c ?? 0) >>> 0);
+/** Passes as the pool throws them, each piece dressed in the treasure flat `seed`'s own stream chooses - AUDIT EG V: the
+ *  embers' stack last, its flat drawn after every other (the gate's glow - scenes/spoilsPool.js SIGIL_TIER, 'artifact',
+ *  as systems/serpentSpoils.js says it). Pure. */
+function dressed(seed, passes, embers = null) {
   const look = seededRng(((seed >>> 0) ^ 0x5eed) >>> 0);
   const flat = () => RANDOM_TREASURE_ICONS[Math.floor(look() * RANDOM_TREASURE_ICONS.length)];
   const out = [];
@@ -133,6 +153,7 @@ function dressed(seed, passes) {
     for (const g of s.gems) out.push({ kind: 'item', item: g, tier: 'common', record: flat() });
     out.push(gold);
   }
+  if (embers) out.push({ kind: 'item', item: embers, tier: 'artifact', record: flat() });
   return out;
 }
 
@@ -170,5 +191,6 @@ export function egReliquaryGrant(c, d, level) {
   if (c?.q !== 'x' || !Number.isSafeInteger(c.c) || typeof c.b !== 'string') return null;
   const rl = (Array.isArray(d?.rl) ? d.rl : []).filter((w) => Number.isSafeInteger(w) && w >= 1).slice(0, EG_RELIQUARIES_MAX);
   if (!rl.length) return null;
-  return { day: egReliquaryDay(c.b), roll: () => egReliquaryList(c.c, level, rl), text: EG_SPOILS_TEXT.opened(rl.length), n: rl.length };
+  const seed = egSpoilsSeedOf(c, d);   // AUDIT EG V (lane8 L8-5): the claim's seed, never the receipt's own
+  return { day: egReliquaryDay(c.b), roll: () => egReliquaryList(seed, level, rl), text: EG_SPOILS_TEXT.opened(rl.length), n: rl.length };
 }

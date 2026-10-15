@@ -40,7 +40,7 @@ import { SERPENT_ATTACK_BY_ID, SERPENT_ATTACK_TABLE, GRIP, CRUSH, MAEL_GRIND, MA
 import { shapeMeets, fleetShare } from '../systems/serpentStrike.js';
 import { deepIn, BODY_AFTER_MS } from './bossBody.js';
 import { egInBlow, egInShape, segDist, egPieceIn } from './egShape.js';   // EG-H1: the Spire's FULL shape stamps, one judge for them all
-import { egTrailAt, egTrailAfter, egTrailNear, egTrailReady, egFightFloorAt, EG_POSE_WAIT_MS, EG_POSE_NEAR_MS } from './egFair.js';   // EG-H1: THE TIME LAW's trails
+import { egTrailAt, egTrailAfter, egTrailNear, egTrailReady, egFightFloorAt, EG_POSE_WAIT_MS, EG_POSE_NEAR_MS, EG_TS_LAG_MAX_MS } from './egFair.js';   // EG-H1: THE TIME LAW's trails; AUDIT EG V: the edge a trail is whole to
 import { egVentAt, EG_VENT_PCT } from './egLaw.js';
 import { egHazardParts, EG_HAZARDS } from './egFragLaw.js';
 
@@ -268,8 +268,11 @@ export function judgeShapes(F, bodies, now, spec) {
         // any pose sent inside it while it lasts - the screens' own verdict (net/egShape.js egBlowVerdict's span)
         a.bl ??= {}; a.bt ??= {};
         if (!a.bl[b.sub]) { if (!egTrailReady(b.tr, a.at, now)) continue; a.bl[b.sub] = 1; if (deepShared(test, b.tr, a.at, F.h, spec, ys, free)) { a.bh.push(b.sub); out.push(hit); continue; } }
-        const upto = Math.min(now, a.at + sp);
-        if (caughtWhile(test, b.tr, a.bt[b.sub] ?? a.at, upto, F.h, spec, ys, { free })) { a.bh.push(b.sub); out.push(hit); }
+        // AUDIT EG V (lane4 L4-1; section 21): read to the edge the trail is whole to - a pose is placed up to
+        // EG_TS_LAG_MAX_MS before it arrives, and the room's stand-ins for a silent body stand that far back - so a pose
+        // still on its way when the read went past its instant is never skipped
+        const from = a.bt[b.sub] ?? a.at, upto = Math.max(from, Math.min(now - EG_TS_LAG_MAX_MS, a.at + sp));
+        if (caughtWhile(test, b.tr, from, upto, F.h, spec, ys, { free })) { a.bh.push(b.sub); out.push(hit); }
         a.bt[b.sub] = upto;
         continue;
       }

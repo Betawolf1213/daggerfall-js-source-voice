@@ -121,20 +121,22 @@ function instantsOf(B, now, fn) {
 }
 /**
  * AUDIT EG III (lane3 #8; section 22, THE HOLD - "A member who returns finds the hall where they left it"): WHAT A HOLD
- * FOUND - each held record's instants as its hold began (an object's keys and their values), so its release gives the gap
- * back to those alone. A member's word during the hold (a ping, a pose, a heal, a pick) stamps relay time, and moving it by
- * the whole gap stood it in the future: a pose stamped ten seconds before the release stood a hundred seconds ahead, and
- * its fair trail judged nothing until the clock caught it. An instant rewritten during the hold, or in a piece made during
- * it, is the hold's own and stays; a deadline the hold found (a rest's end, a closing's) still moves, however far into the
- * hold it fell. In memory, keyed by the record: a room woken again inside its hold takes it again from what it read.
- * @type {WeakMap<any, WeakMap<object, Map<string, number>>>}
+ * FOUND - so its release gives the gap back to those instants alone. A member's word during the hold (a ping, a pose, a
+ * heal, a pick) stamps relay time, and moving it by the whole gap stood it in the future: a pose stamped ten seconds before
+ * the release stood a hundred seconds ahead, and its fair trail judged nothing until the clock caught it. An instant
+ * rewritten during the hold, or in a piece made during it, is the hold's own and stays; a deadline the hold found (a rest's
+ * end, a closing's) still moves, however far into the hold it fell. AUDIT EG V (lane4 L4-9): KEPT IN THE RECORD - the
+ * finding lived in memory, and a room woken again inside its hold (a second deploy, an eviction) took it afresh from what it
+ * read, the words its company stamped meanwhile among it, and moved them by the whole gap into the future. Every instant the
+ * room stamped before it slept is at or before its last beat (`B.hold.at`), and moves; past it, the hold keeps the values
+ * it found (`B.hold.f` - its deadlines, and a word heard after the last beat: few), and only those move.
+ * @param {any} B @param {number} at the hold's last beat @param {number} now
+ * @returns {number[]}
  */
-const HOLD_FOUND = new WeakMap();
-/** The hold's finding taken: breach `B`'s instants at `now`. */
-function holdFind(B, now) {
-  const found = new WeakMap();
-  instantsOf(B, now, (o, k, v) => { let m = found.get(o); if (!m) found.set(o, (m = new Map())); m.set(k, v); });
-  HOLD_FOUND.set(B, found);
+function holdFind(B, at, now) {
+  const f = new Set();
+  instantsOf(B, now, (_o, _k, v) => { if (v > at) f.add(v); });
+  return [...f].sort((a, b) => a - b);
 }
 
 /**
@@ -150,7 +152,7 @@ export function egResume(B, now, voidBefore = 0) {
   if (!egLawKnown(B.egv) || egForceVoided(B, voidBefore)) return 'void';   // EG-ZA: and THE FORCE VOID - a breach live at a `force` deploy's stamp
   if (!(B.wk > 0)) { B.tk = now; return null; }
   const last = Number.isFinite(B.tk) && B.tk <= now ? B.tk : now;
-  if (B.hold) { holdFind(B, now); return 'hold'; }   // woken again inside a hold: its release gives the whole gap back (AUDIT EG III: to what it found)
+  if (B.hold) return 'hold';   // woken again inside a hold: its release gives the whole gap back (AUDIT EG III: to what it found - AUDIT EG V: the record's)
   if (egBetween(B)) { egHoldBegin(B, last, now); return 'hold'; }
   B.tk = now;
   return now - last > EG_GAP_MS && egGiveBack(B, now - last, now) > 0 ? 'gave' : null;
@@ -160,9 +162,9 @@ export function egResume(B, now, voidBefore = 0) {
  * @param {any} B @param {number} at @param {number} now
  */
 export function egHoldBegin(B, at, now) {
-  B.hold = { at, until: now + EG_REJOIN_MS, ran: B.cnt?.at > 0 ? 1 : 0 };
+  const ran = B.cnt?.at > 0 ? 1 : 0;
   if (B.cnt) B.cnt = egCountHold(B.cnt, at);
-  holdFind(B, now);   // AUDIT EG III (lane3 #8): what the hold found - its release moves those alone
+  B.hold = { at, until: now + EG_REJOIN_MS, ran, f: holdFind(B, at, now) };   // AUDIT EG III (lane3 #8): what the hold found - its release moves those alone; AUDIT EG V (L4-9): kept in the record
 }
 /**
  * May a held breach go on at `now`: every living member back in the room (`present` - the accounts with a fresh body
@@ -185,9 +187,8 @@ export function egRelease(B, now) {
   const h = B?.hold;
   if (!h) return 0;
   B.hold = null;
-  const found = HOLD_FOUND.get(B);
-  HOLD_FOUND.delete(B);
-  const gap = egGiveBack(B, Math.max(0, now - h.at), now, found ? (o, k, v) => found.get(o)?.get(k) === v : null);
+  const found = Array.isArray(h.f) ? new Set(h.f) : null;
+  const gap = egGiveBack(B, Math.max(0, now - h.at), now, found ? (_o, _k, v) => v <= h.at || found.has(v) : null);
   if (h.ran && B.cnt) B.cnt = egCountRun(B.cnt, now);
   B.tk = now;
   return gap;
@@ -247,7 +248,10 @@ export const egRcId = (/** @type {any} */ c) => `${c.b}:${c.q}:${Number.isSafeIn
 /**
  * THE HUB'S HELD RECEIPTS FOLDED: `kept` (an account's `egrc:` list - `{ id, r, e }`, or `{ id, spent: 1, e }` where its
  * account has said the service counted it) with `add` (`{ id, r, e }` newly told) at `nowS`: one entry an identity, the
- * newer receipt of it kept, never over a spent mark; the expired dropped; the newest EG_RC_KEEP kept. Pure.
+ * newer receipt of it kept, never over a spent mark; the expired dropped; the newest EG_RC_KEEP kept. AUDIT EG V (lane4's
+ * EG_RC_KEEP question; section 23, "the hub is their holder of record"): the newest EG_RC_KEEP of each - unclaimed
+ * receipts and spent marks are bounded apart, so a week of receipts its account claimed (each a mark kept its life) never
+ * pushes out one it has not taken yet. Pure.
  * @param {any} kept @param {Array<{id: string, r: string, e: number, spent?: number}>} add @param {number} nowS
  */
 export function egRcFold(kept, add, nowS) {
@@ -258,7 +262,8 @@ export function egRcFold(kept, add, nowS) {
     by.delete(x.id);
     by.set(x.id, x);
   }
-  return [...by.values()].slice(-EG_RC_KEEP);
+  const all = [...by.values()], held = all.filter((x) => !x.spent).slice(-EG_RC_KEEP), spent = all.filter((x) => x.spent).slice(-EG_RC_KEEP);
+  return all.filter((x) => held.includes(x) || spent.includes(x));
 }
 /** An account's word that the service counted receipt `id`: its held copy forgotten, REMEMBERED AS SPENT until `e` (the
  *  gate's AUDIT WBX2 M3 law - the word may come before the room's own tell, and must stand over it). Pure. */

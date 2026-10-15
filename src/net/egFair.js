@@ -45,8 +45,8 @@
 //   RIDDEN POSES (section 10.8). A pose on a moving piece (a Drift, a Rail, a Drum) carries `pl`: the piece's index and
 //     its offset from that piece's top at the sender's time (egRideOf); a receiver draws it at the piece's place on its
 //     own clock plus the offset, and the relay judges it on the piece's clock position at the pose's shared time
-//     (egRideAt), its offset held to the piece's top (egRideHolds) - a rider never floats beside a swinging platform,
-//     and a pose cannot claim a piece it is not on.
+//     (egRideAt), its offset held to the piece's top and its own feet on the piece (egRideHolds - AUDIT EG V) - a rider
+//     never floats beside a swinging platform, and a pose cannot claim a piece it is not on.
 //
 // Pure: a pose, a spec and a clock in; the accumulator moved in place. In the relay bundle (net/egBrain.js); the client
 // reads the ridden poses' half. Not a DFU member. Ledger A (ELITE-GATES).
@@ -158,10 +158,23 @@ export function egRideOf(spec, x, y, z, tS) {
   }
   return null;
 }
-/** Does a ride's offset lie on its piece's top (the capsule about it)? A pose cannot claim a piece it stands beside. */
-export function egRideHolds(spec, pl) {
+/**
+ * Does a ride hold: its offset on its piece's top (the capsule about it), and - AUDIT EG V (lane4 L4-2; section 10.8, "a
+ * pose cannot claim a piece it is not on") - the pose's own feet at (x, y, z) (the hall's frame) on that piece at shared
+ * second `tS`: within its top's heights, and on its footprint inflated by the capsule as the piece stood within
+ * EG_SUPPORT_LAG_S of `tS` (the support law's reach - egSupportAt). An offset alone placed any pose on any ridden piece in
+ * the hall: a member on a fight floor claiming a far Drift was stood on it for the count, off every floor. Pure.
+ * @param {any} spec @param {any} pl @param {number} x @param {number} y @param {number} z @param {number} tS
+ */
+export function egRideHolds(spec, pl, x, y, z, tS) {
   const s = Array.isArray(pl) ? ridden(spec, pl[0]) : null;
-  return !!s && Math.abs(pl[1]) <= s.w / 2 + EG_BODY_R && Math.abs(pl[3]) <= s.d / 2 + EG_BODY_R && pl[2] >= -EG_RIDE_DOWN_M && pl[2] <= EG_RIDE_UP_M;
+  if (!s || !(Math.abs(pl[1]) <= s.w / 2 + EG_BODY_R && Math.abs(pl[3]) <= s.d / 2 + EG_BODY_R && pl[2] >= -EG_RIDE_DOWN_M && pl[2] <= EG_RIDE_UP_M)) return false;
+  if (!(y - s.y >= -EG_RIDE_DOWN_M && y - s.y <= EG_RIDE_UP_M)) return false;
+  for (const t of [tS - EG_SUPPORT_LAG_S, tS, tS + EG_SUPPORT_LAG_S]) {
+    const q = egPieceAt(s, t);
+    if (Math.abs(x - (s.x + q.dx)) <= s.w / 2 + EG_BODY_R && Math.abs(z - (s.z + q.dz)) <= s.d / 2 + EG_BODY_R) return true;
+  }
+  return false;
 }
 /** Where a ridden pose stands at shared second `tS`: the piece's place on the clock plus the offset `[x, y, z]` (the hall's
  *  frame), or null when the ride is none of this hall's. */

@@ -59,7 +59,7 @@ export const EG_HERALD_KEEP_MS = 3_600_000;
 export const EG_HERALD_TELL_MS = 5000;
 /** The tells the hub remembers folding (a breach's news told again after a lost answer is folded once). */
 export const EG_HERALD_SEEN_MAX = 64;
-/** The Descent's three brackets, by the company's earning entrants (section 20). */
+/** The Descent's three brackets, by the company's entrants - every member its room admitted, earning or not (section 20). */
 export const EG_DESCENT_BRACKETS = Object.freeze(['Alone', 'the Few', 'the Company']);
 /** A company of `n`'s bracket (0 Alone, 1 the Few, 2 the Company), or -1. */
 export const egDescentBracket = (n) => (n === 1 ? 0 : n >= 2 && n <= 4 ? 1 : n >= 5 && n <= EG_PARTY_MAX ? 2 : -1);

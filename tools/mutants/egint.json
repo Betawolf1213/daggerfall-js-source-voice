@@ -110,8 +110,8 @@
   {
     "name": "EGINT-any-offset-rides",
     "file": "src/net/egFair.js",
-    "old": "  return !!s && Math.abs(pl[1]) <= s.w / 2 + EG_BODY_R && Math.abs(pl[3]) <= s.d / 2 + EG_BODY_R && pl[2] >= -EG_RIDE_DOWN_M && pl[2] <= EG_RIDE_UP_M;",
-    "new": "  return !!s;",
+    "old": "  if (!s || !(Math.abs(pl[1]) <= s.w / 2 + EG_BODY_R && Math.abs(pl[3]) <= s.d / 2 + EG_BODY_R && pl[2] >= -EG_RIDE_DOWN_M && pl[2] <= EG_RIDE_UP_M)) return false;",
+    "new": "  if (!s) return false;",
     "tests": [
       "test/egint_relay.test.js"
     ]
@@ -128,7 +128,7 @@
   {
     "name": "EGINT-the-ride-judged-raw",
     "file": "src/net/egBrain.js",
-    "old": "  if (Array.isArray(p.pl) && egRideHolds(spec, p.pl)) { const q = egRideAt(spec, p.pl, t / 1000); if (q) { [x, y, z] = q; ride = true; } }",
+    "old": "  if (Array.isArray(p.pl) && egRideHolds(spec, p.pl, x, y, z, t / 1000)) { const q = egRideAt(spec, p.pl, t / 1000); if (q) { [x, y, z] = q; ride = true; } }",
     "new": "  if (false) { const q = egRideAt(spec, p.pl, t / 1000); if (q) { [x, y, z] = q; ride = true; } }",
     "tests": [
       "test/egint_relay.test.js"

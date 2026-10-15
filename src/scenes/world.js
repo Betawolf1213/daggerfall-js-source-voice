@@ -426,7 +426,7 @@ import { createSerpentClaims } from '../net/serpentClaims.js';   // SERPENT1: it
 import { createSdClaims } from '../net/sdClaims.js';   // SD9b: the Hour's receipts carried to the account service
 import { readSdReceipt } from '../net/sdReceipt.js';   // SD9e: my Hour receipt, read for its spoils
 import { SD_SPOILS_KEYS, SD_SPOILS_RECORDS_MAX, SD_SPOILS_TEXT, sdSpoilsDay, sdSpoilsSlot, sdSpoilsList } from '../systems/sdSpoils.js';   // SD9e: the Brass Remnant's spoils
-import { egSpoilsDay, egSpoilsList, EG_SPOILS_TEXT } from '../systems/egSpoils.js';   // EG-E: a Redoubt's spoils
+import { egSpoilsDay, egSpoilsList, egSpoilsSeedOf, EG_SPOILS_TEXT } from '../systems/egSpoils.js';   // EG-E: a Redoubt's spoils; AUDIT EG V: on the claim's seed
 import { egReliquaryGrant } from '../systems/egSpoils.js';   // AUDIT EG III (Elite-Gates.md section 16.3): an end's Reliquaries opened
 import { createSdSpoils, clearOfPillars } from './sdSpoils.js';   // SD9e: thrown from where it fell; AUDIT SD: the way home clear of the arena's pillars
 import { slainLine, serpentBossOf, serpentBossById, sameSerpentSite, SERPENT_NATIVE_PER_M } from '../net/serpentLaw.js';   // SERPENT1: the hub's word of its kill, in the chat (AUDIT SERPENT S1: my own site's alone)
@@ -25372,12 +25372,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   /** EG-E (Elite-Gates.md section 19): WHAT A REDOUBT PAID - the account service's word on my Redoubt receipt (scenes/
    *  egClient.js `paid`): its Marks and the guild's deed as a haul card; its spoils (systems/egSpoils.js - rolled on the
-   *  receipt's seed at the level the breach admitted, the lord's arm and card by its key, the Panoply's pity as the
-   *  service forced it), thrown from the Court's heart when I stand in that Redoubt, else straight into the pack - in the
+   *  seed the claim answered - AUDIT EG V: the receipt's mixed with the service's own draw - at the level the breach
+   *  admitted, the lord's arm and card by its key, the Panoply's pity as the service forced it, and the Deadlands Embers it
+   *  paid), thrown from the Court's heart when I stand in that Redoubt, else straight into the pack - in the
    *  Hour's pool (the Spire is a dungeon's frame as the Hour is, and the two are never stood in at once), once a receipt
    *  and account. A Redoubt taken again this week pays its gold alone, and a guest's (no name the service records) too.
    *  AUDIT EG III (section 16.3): an END's claim (`q` 'x') opens its Reliquaries - those the service answered (`rl`), each a
-   *  roll at its Redoubt's depth off the end receipt's seed (systems/egSpoils.js egReliquaryGrant), straight into the pack
+   *  roll at its Redoubt's depth off the seed the end's claim answered (systems/egSpoils.js egReliquaryGrant), straight into the pack
    *  through the same pool, once an end and account. */
   function egSpoilsPaid(c, d) {
     if (c?.q === 'x') {
@@ -25389,13 +25390,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (d?.marks || d?.deed) { showHaul(claimHauls(d, 'eg')); for (const line of marksBook?.claimLines(d, 'eg') ?? []) chatNotice(line); }
     const guest = d?.why === 'guest', goldOnly = guest || d?.paid === false;
     const level = spoilsLevel(playerEntity.level ?? 1, c.l);
-    const o = { lord: typeof c.lk === 'string' ? c.lk : '', pity: Array.isArray(d?.pity) ? d.pity.filter((p) => p === 0 || p === 1) : [], goldOnly };
-    const day = egSpoilsDay(c.b, c.w), roll = () => egSpoilsList(c.c, level, c.w, o);
+    // AUDIT EG V (lane8 L8-2, L8-5; section 19): the embers the claim paid in the spoils, and the seed the claim answered
+    const o = { lord: typeof c.lk === 'string' ? c.lk : '', pity: Array.isArray(d?.pity) ? d.pity.filter((p) => p === 0 || p === 1) : [], goldOnly, embers: Number.isSafeInteger(d?.embers) ? d.embers : 0 };
+    const seed = egSpoilsSeedOf(c, d), day = egSpoilsDay(c.b, c.w), roll = () => egSpoilsList(seed, level, c.w, o);
     const text = guest ? EG_SPOILS_TEXT.guest : goldOnly ? EG_SPOILS_TEXT.goldOnly(c.w) : EG_SPOILS_TEXT.granted(c.w);
     const at = egClient?.beaconAt?.(c.h) ?? null;
     if (at) {
       const f = player.feetAt(), bearing = Math.atan2(f[0] - at.at[0], f[2] - at.at[2]);
-      if (sdSpoilsPool.spew({ day, seed: c.c, level, at: at.at, bearing, acct: c.s, keep: at.keep, roll })) chatNotice(goldOnly ? text : EG_SPOILS_TEXT.spilled);
+      if (sdSpoilsPool.spew({ day, seed, level, at: at.at, bearing, acct: c.s, keep: at.keep, roll })) chatNotice(goldOnly ? text : EG_SPOILS_TEXT.spilled);
       return;
     }
     spoilsLock(() => sdSpoilsPool.grant({ day, acct: c.s, roll, text })).catch((e) => console.warn('[eg] spoils', e?.message ?? e));
