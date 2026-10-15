@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-15c CART-AWAY (Mac, 2026-10-15, asked "If parked outside of the pvp zone in the wrothgarian
+// FIELD BUGS 2026-10-15d CART-AWAY (Mac, 2026-10-15, asked "If parked outside of the pvp zone in the wrothgarian
 // mountains, can it be lost?": "Yeah, if its parked outside the zone nothing should be lost"). A death in the open zone
 // dropped every piece in the cart and half its gold wherever the wagon stood (systems/wildDropLaw.js takeWildDeath,
 // taken by the account service off the record - server-account/src/wild.js). Now the cart's share is taken only while the

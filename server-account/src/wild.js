@@ -31,7 +31,7 @@
 // record - never two, never none - and an end asked twice moves nothing twice. A record the judge holds keeps the piece
 // (it can never reach its killer, so it is never lost).
 //
-// CART-AWAY (FIELD BUGS 2026-10-15c; Mac, 2026-10-15: "if its parked outside the zone nothing should be lost"): THE CART
+// CART-AWAY (FIELD BUGS 2026-10-15d; Mac, 2026-10-15: "if its parked outside the zone nothing should be lost"): THE CART
 // DROPS ONLY WHILE THE WAGON IS WITH ITS FALLEN. Whether a parked wagon stands on the zone's ground is the zone's mask,
 // which only a client holds (the map files); so the fallen's own tab says its wagon is away (`cart` 0 -
 // src/systems/wildCart.js wildCartAway), and the word is honoured only where the record this service keeps agrees by its

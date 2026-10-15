@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-15c MEND-TIERS (Unconquerable, "Repair Regression": "worn items should always repair before
+// FIELD BUGS 2026-10-15d MEND-TIERS (Unconquerable, "Repair Regression": "worn items should always repair before
 // backpack items. If you wear a Cast When Held ring or Item Deteriorates armor and pick up 20 damaged axes, bows, and
 // shoes off dungeon mobs to sell in town, the game decides those 20 pieces of vendor trash are more important than the
 // ring on your finger"). MEND-STARVE (2026-10-14) put a worn piece that wears itself on the round the tick mends - Cast

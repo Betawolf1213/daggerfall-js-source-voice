@@ -391,7 +391,7 @@ export function repairsObjectsTarget(items, { allowMagicRepairs = false } = {}) 
     if (templateByIndex(it.templateIndex)?.isNotRepairable) continue;
     if (isEnchantedItem(it) && !allowMagicRepairs) continue;
     if (it.templateIndex === TRANSPORT_SMALL_CART || it.templateIndex === TRANSPORT_HORSE) continue;   // AUDIT WAGONS4: a wagon's condition is its upkeep - a Wagon Yard's or a kit's, never a held enchantment's (DFU's wagon never wore)
-    // FIELD BUGS 2026-10-15c MEND-TIERS (Unconquerable: "worn items should always repair before backpack items"; Mac's
+    // FIELD BUGS 2026-10-15d MEND-TIERS (Unconquerable: "worn items should always repair before backpack items"; Mac's
     // call): a worn piece that wears itself on the round the tick mends (Cast When Held's degrade, Item Deteriorates) is
     // mended after the rest of what is worn - first, it took every tick, +1 and -1 on the same round, and no other worn
     // piece was mended (MEND-STARVE, 2026-10-14) - and ahead of the pack, where MEND-STARVE had put it behind the loot

@@ -156,7 +156,7 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   takes, as it takes the purse's coin - into the same remains at its whole value, unless a quest's or one the trade
   refuses (`wildDropLaw.js:"item.templateIndex === TEMPLATES.Letter_of_credit && !item.questItem"`) - answered ahead
   of the decor's kept-back list, which names the letter too.
-- CART-AWAY (FIELD BUGS 2026-10-15c; MAC'S DECISION, 2026-10-15, asked "If parked outside of the pvp zone in the
+- CART-AWAY (FIELD BUGS 2026-10-15d; MAC'S DECISION, 2026-10-15, asked "If parked outside of the pvp zone in the
   wrothgarian mountains, can it be lost?": "Yeah, if its parked outside the zone nothing should be lost"): THE CART'S
   SHARE ONLY WHEN THE WAGON IS WITH THEM. Where it stands is the Horse Cart and Cargo record's
   (`horseCartLaw.js:"export function newSaveData"`, the save's modData). WITH THEM: driven, beside them on foot (the
@@ -187,10 +187,10 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   socket plays), once, and says the same collect each time it is asked (`wildLaw.js:"export function collectAsk"`). The
   killer's tab carries it to the service as an act on its own record (`/v1/wild/collect`, wildCollect): the piece into
   that record and the escrow ended, one batch guarded to the one row - only then is it the killer's, and it arrives in
-  the service's answer, carried, never in a slot (`world.js:"const wildCollected = (d) =>"`). NOBODY COLLECTING by the
+  the service's answer, carried, never in a slot (`wildEscrowHost.js:"const wildCollected = (d) =>"`). NOBODY COLLECTING by the
   remains' latest end (`until`: the order's minute and `WILD_REMAINS_MS`, WILD_ESCROW_HOLD_S) and a collect signed at
   that moment spent (`WILD_COLLECT_TTL_S`, `escrowBackAt`), the fallen's own tab takes it back into its record
-  (`/v1/wild/reclaim`, wildReclaim) - watched on the zone's frame (`world.js:"const wildEscrowFrame = () =>"`), and a
+  (`/v1/wild/reclaim`, wildReclaim) - watched on the zone's frame (`wildEscrowHost.js:"const wildEscrowFrame = () =>"`), and a
   game closed meanwhile asks the service at its next play (`/v1/wild/escrows`). The piece is in the fallen's record, the
   escrow, or one record - never two, never none; an end asked twice moves nothing twice. What the fallen sees: the
   death screen says the piece is held until the killer collects it and comes back otherwise (`WILD_TEXT.deathHeld`), a

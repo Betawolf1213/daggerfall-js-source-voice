@@ -1,6 +1,6 @@
 // @ts-check
 // ═══════════════════════════════════════════════════════════════════
-// CART-AWAY (FIELD BUGS 2026-10-15c; Mac, 2026-10-15, asked "If parked outside of the pvp zone in the wrothgarian
+// CART-AWAY (FIELD BUGS 2026-10-15d; Mac, 2026-10-15, asked "If parked outside of the pvp zone in the wrothgarian
 // mountains, can it be lost?": "Yeah, if its parked outside the zone nothing should be lost") - THE FALLEN'S WORD THAT
 // ITS WAGON IS AWAY (bible/11-Multiplayer/Wild-Zone.md section 4).
 //

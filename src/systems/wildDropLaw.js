@@ -198,7 +198,7 @@ export function takeWildDeath(entity, w = -1, keep = () => false, wt = null, { c
   return { taken: kept.map(([it]) => it), from: kept.map(([, f]) => f), records, killer: killer && records.length > 0, gold };
 }
 
-/** CART-AWAY (FIELD BUGS 2026-10-15c; Mac, asked "If parked outside of the pvp zone in the wrothgarian mountains, can it
+/** CART-AWAY (FIELD BUGS 2026-10-15d; Mac, asked "If parked outside of the pvp zone in the wrothgarian mountains, can it
  *  be lost?": "Yeah, if its parked outside the zone nothing should be lost"): THE WAGON'S RECORD a save carries - Horse
  *  Cart and Cargo's (horseCartLaw.js newSaveData, in the save's `modData` under HCC_VENDOR) - or null. */
 export const wildCartRecordOf = (/** @type {any} */ save) => { const r = save?.modData?.[HCC_VENDOR]; return r && typeof r === 'object' ? r : null; };

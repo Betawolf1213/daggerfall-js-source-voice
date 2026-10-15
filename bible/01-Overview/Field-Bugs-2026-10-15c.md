@@ -1,135 +1,182 @@
-# FIELD BUGS 2026-10-15c - threads from the bug-reports channel
+# FIELD BUGS 2026-10-15c - eleven threads, one pull request
 
-Five Discord threads from 2026-10-14, handed over as screenshots, read on the code as it stands at main's `bd385fc6`,
-and one question of Mac's own on the way. Each is traced on the real modules first; the fixes are pinned one to a tag,
-and the decisions are Mac's (2026-10-15).
+Eleven Discord threads handed over by Mac on 2026-10-15 with: "Please tackle all bugs in ONE PR". Two of them are one
+bug (the market's bodies). Read on the code as it stands at main's `bd385fc6` (the FIELD BUGS 2026-10-14 roll-up merged).
+Two calls were Mac's, asked: "Store as loose" (LOOT-LOOSE) and "One body per account" (ONE-BODY).
 
 | | Report | What it was | Done |
 |---|---|---|---|
-| 1 | "Wagon appears outside of buildings/dungeons when stabled" - "I keep sending my wagon away, but every time I enter a building or dungeon it appears outside again ... it wasn't happening a few days ago" (Fay) | HOLDINGS' Send away left the pair in the mod's WithPlayer state - the state of a wagon beside a player on foot - and the door parks every such wagon at the entrance (the mod's IL_98f0) | fixed (WAGON-STABLED) |
-| 2 | "Repair Regression" - "worn items should always repair before backpack items. If you wear a Cast When Held ring or Item Deteriorates armor and pick up 20 damaged axes, bows, and shoes off dungeon mobs to sell in town, the game decides those 20 pieces of vendor trash are more important than the ring on your finger" (Unconquerable) | MEND-STARVE (`Field-Bugs-2026-10-14.md`, the day before) put a worn piece that wears itself behind every other damaged piece, the pack's included | changed (MEND-TIERS), Mac's call: worn first, the self-wearing piece next, the pack last |
-| 3 | "Flying kick doesn't work" - "tried doing it mid-air, off ledges, flat ground aiming up aiming down etc nothing works, also when in werewolf form it simply says 'the beast knows no technique'"; the HUD: "You cannot leap from here." (very stinky) | TECH1 as designed: every leap and dash is refused off the ground, and the one line says it for eleven causes; on flat ground the kick launched on the real motor. The werewolf's line is TECH1's own | changed (KICK-AIR), Mac's call: the kick goes from the air |
-| 4 | "Right Arm armor disappearing" - "The armor for my right arm has disappeared between logging in and logging out, but the rest of my gear is saved fine" (Thatweirdphoenix) | not reproduced: slot 13 (RightArm) came back from every save and load tried, offline and online; DFU's own law (every shield covers the left arm, none the right) breaks a shield-bearer's right pauldron first, and a broken piece comes off | asked of the player |
-| 5 | "I think the issue can be tied to the fact I reforged lines and honed them in the mages guild ... I sold one blade, which was unmodded" (Boar; the thread's title not handed over) | not decided: the thread's own complaint is not in the screenshot | asked of the player |
-| 6 | "If parked outside of the pvp zone in the wrothgarian mountains, can it be lost?" (Mac) | the wagon and the horse never: a vehicle is kept. But a death in the zone dropped the cart's cargo and half its gold wherever the wagon stood | changed (CART-AWAY), Mac's call: "if its parked outside the zone nothing should be lost" |
+| 1 | "Random encounter from box - Slaughter fish" | SEARCH1's crate foe drew from the dungeon's layout roster, swimmers and all | SLAUGHTER-BOX |
+| 2 | "Happened after a server restart ... friend who is a duplicate of them" | a cell's room kept two sockets of one account | ONE-BODY (relay world207) |
+| 3 | "the town of penbrugh every animal and food stand item turned into freaks" | a town mod's factioned market flats stood Morrowind bodies | STALL-FLATS |
+| 4 | "The NPC's are clustered into groups and all have their heads down and they just rotate" | the same | STALL-FLATS |
+| 5 | "No boots model on legendary boots" | chain boots have no imperial chain model; the figure stood bare skin | BARE-BOOTS |
+| 6 | "alchemy and some other ingredients when looted from a dungeon are unstorable" | law 3, as written - looted units are never counted | LOOT-LOOSE |
+| 7 | "Quest enemy spawned inside object" | a body inside a pillar to the ceiling read free | QUEST-FOE-WALL |
+| 8 | "Crafting arrows at the workbench is useless" | a mod's Arrow weight made a Twig five arrows, not two | BENCH-ARROWS |
+| 9 | "NONE are the Tambeth Hawkley Residence" | a residence picked in another player's home before QUEST-HOME | QUEST-RESIDENCE |
+| 10 | "Morrowind Axes Registered Wrong Due to Reversed Naming Convention" | DF_TO_MW_WEAPON matched the axes' names, not their hands | MW-AXES |
+| 11 | "Boulder's glint offset is way off" | a boulder's aim point was half its rock's height | BOULDER-GLINT |
 
-## WAGON-STABLED: a pair sent away stays at the stable (1)
+The four hosts (THE FOUR HOSTS RULE): every fix sits in a module the hosts share, save three in-place edits - `world.js`'s
+Stores deposit hands the page's order through (LOOT-LOOSE), `worldModes.js`'s quest stand marks its person
+(STALL-FLATS) and its two home door titles read the quest's name (QUEST-RESIDENCE) - each the same line, none grown.
+`exterior.js` and `dungeonContext.js` take nothing new: the market bodies stand in `world.js` and `exterior.js` through
+the one `personLook`; the crate's foe in `dungeonContext.js` through `pickRosterFoe`; the pillar's free in every host
+through `freeLodgedFeet`. And PVP-ESCROW's handoff leaves `bootWorld` for `scenes/wildEscrowHost.js`, the host back
+under the ceiling it had before FB1015's raise (`01-Overview/Host-Split.md`).
 
-`src/systems/horseCart.js` sendTransportAway, handlePreTransition, leaveStable; `src/systems/horseCartLaw.js`
-newSaveData; `src/ui/holdingsPages.js` stableWords; `src/systems/upkeepRuntime.js` horseWhereOf.
+## SLAUGHTER-BOX: a crate's foe stands on the floor, never a swimmer (1)
 
-THE REPORT. "I keep sending my wagon away, but every time I enter a building or dungeon it appears outside again ... it
-wasn't happening a few days ago."
+`src/systems/searchables.js` pickRosterFoe; `src/characters/dungeonEnemies.js` WATER_SPECIES (exported, the one home);
+`src/systems/wildDungeons.js` (its own `new Set([11, 41, 42])` retired for it).
 
-FOUND. Send away (HOLDINGS, 10155e299a, 2026-10-03) reset the pair to the mod's WithPlayer - the same record as a wagon
-beside a player on foot - and HandlePreTransition [IL_98f0] parks every such wagon at a door and leaves every such
-horse waiting there; mounting the horse laid the stabled wagon behind as well. Reproduced at a building's door and a
-dungeon's. No commit in the reported days moved it: STEED-UI (2026-10-11) put a Stable button on the saddle panel, and
-Send away became an everyday act.
+FOUND. SEARCH1 (our own - DFU has no searchables) wakes two foes a third of the time a chest or a crate is searched, and
+a chest's or a crate's draws from the dungeon's layout roster (`collectDungeonEnemies`). That roster holds RDBLayout's
+Slaughterfish, Dreugh and Lamia for markers under water (RDBLayout.AddEnemy's water veto keeps them there and nowhere
+else), and nothing took them out before the pick: two Slaughterfish on the dry floor by the crates. The rest ambush reads
+ENCOUNTER_TABLES 0-18 (table 19 holds the swimmers) and the outdoor hosts roll nothing while swimming.
 
-FIXED. Two save words of the port's own (`WagonStabled`, `HorseStabled`), set by Send away and let go by a summon, a
-park, a mount, or a record laid afresh. A stabled pair is parked at no door, left behind by no mount and taken on no
-journey; a pair driven or ridden through a door parks the mod's way, and WithPlayer never sent keeps every mod law. An
-old save loads not stabled. The Stable's card says Stabled only for a pair sent away and With you otherwise (the next
-door leaves it outside), and horse care's keep follows the card: a horse never sent is with its owner. THE FOUR HOSTS:
-worldModes.js runs every interior and dungeon entry through handlePreTransition; world.js and exterior.js reach it
-through createWorldModes; dungeonContext.js has no door from outdoors, and its save seams carry the words. Pinned by
-`test/fb1015_wagonstabled.test.js` (`tools/mutants/fb1015_wagonstabled.json`, 27, dead); PINS MOVED: hcc_law (the
-record's field count, 15 to 17), holdings (the Stable's view and words), steed1_horsecare (the keep's view), wagons2
-(the journey's source).
+CHANGED. The pick leaves out WATER_SPECIES; a roster of swimmers alone wakes the grave's undead, as an empty one did.
+Pinned in `test/search1_searchables.test.js` (the Aquatic species of EnemyBasics are the layout's three, one home);
+`tools/mutants/fb1015c_slaughterbox.json` 3, all dead. Online: the search is rolled on the searcher's page and its foes
+are loose stands, so the fix holds for the room; no relay change. `06-Systems/Searchables.md`.
 
-## MEND-TIERS: worn first, the piece that wears itself next, the pack last (2)
+## ONE-BODY: a place stands one body an account (2)
 
-`src/systems/enchantments.js` repairsObjectsTarget, mendTier.
+`server/src/index.js` the hello's one-socket law; `src/net/wire.js` RELAY_VERSION `world207` (`world206` on its branch, renumbered past main's SERPENT5 `world206` at the merge).
 
-THE REPORT. "Repair Regression": a worn Cast When Held ring or Item Deteriorates armour, and twenty damaged axes, bows
-and shoes picked up to sell - the loot was mended and the ring was not.
+FOUND. A relay deploy restarts every room and drops every socket (`relay-deploy.yml`). Peers are kept by peer id, and
+a cell's room (`world:x,y` - the open country and the towns) or a world room (a dungeon, an interior) let one account
+stand under two ids: only a gate's court, a siege's field and a Super dungeon's realm closed an account's older socket
+on a new hello (PVP-REF, SD3), and the hub's one seat (ONESEAT) leaves a hung or half-open socket in its cells. So a tab
+that outlived the restart's gap stood beside the account's new one - frozen, clickable, and seen by the friend's own
+page, whose welcome named it (`rosterFor` carries no account, and since NAME-AS a name is not unique, so no client could
+tell them apart). The client's own staleness (80 s, four heartbeats) hides a silent peer, but a welcome names it again,
+and a socket still heartbeating stands for good. AUDIT ONESEAT R3 had recorded the gap, not fixed it.
 
-FOUND. MEND-STARVE (`Field-Bugs-2026-10-14.md`, 705af64180, the day before) ranked a worn piece that wears itself on the
-tick's own round (Cast When Held, CastWhenHeld.cs:27; Item Deteriorates, ItemDeteriorates.cs:29) after every damaged
-piece, the pack's included. Such a piece wears a point a tick, so the loot took every tick and the ring lost a point a
-tick: a 40% ring beside twenty pieces of loot, 400 rounds through the payloads, lost 100 while the loot mended.
-MEND-STARVE's own fault stands - first in the order, the piece took +1 and -1 forever and no other worn piece was
-mended.
+CHANGED (Mac, asked: "One body per account"). A cell's room and a world room close an account's older socket when it
+says hello again under another id (CLOSE_REPLACED, its leave sent to the room), as the gate's, the siege's and the Super
+dungeon's rooms already did. Two tabs of one account in a place are one player now - the older rule ("two players")
+reversed. Relay `world207`, its law row in `test/relayversion.test.js`; the deploy drops every player once. Pinned in
+`test/fb1015c_onebody.test.js`; five relay pins that modelled two tabs of one account in a place moved (PIN MOVED in
+each); `tools/mutants/fb1015c_onebody.json`.
 
-FIXED. Mac's three tiers (`mendTier`): what is worn, then a worn piece that wears itself, then the pack, with MEND-WORN's
-mendOrder inside each. Arbeck's other worn gear is still mended first. The accepted trade-off: while such a piece is
-below its condition the tick holds it and the pack waits - Cast When Held wears on every tick's round out of rest, so
-while one is worn and damaged nothing carried is mended, and two such pieces share the tick (the more worn is held).
-The repair kit (`smithItems.js` repairKitTargets) was already worn-first and is unchanged. Pinned by
-`test/fb1015_mendtiers.test.js` (`tools/mutants/fb1015_mendtiers.json`, 5: 4 dead, 1 equivalent as recorded); PIN MOVED
-in `test/fb1014_mendstarve.test.js` (the boots wait); re-aimed by content: MEND-STARVE-the-self-wearing-piece-first-again
-and MEND-WORN-pack-order (dead).
+## STALL-FLATS: a body stands only for a person's picture (3, 4)
 
-## KICK-AIR: the Flying Kick goes from the air (3)
+`src/characters/peopleBodies.js` personLook; `src/scenes/worldModes.js` questStandLook (`questPerson`).
 
-`src/combat/techniqueRoster.js` kick (`airborne`); `src/combat/techniques.js` refusal; `src/player/motor.js`
-techniqueLaunch.
+FOUND. Beautiful Villages gives its market blocks' food, goods and animals a faction (TVRNAS02, TEMPASB0, TEMPBSB0,
+RESIAS02: faction 584, flags 6), and RMBLayout makes every factioned flat a StaticNPC - DFU's own rule, kept. MWNPC8b's
+people lane then stood a Morrowind body for each: in TVRNAS02 alone 101 of 112 bodies stood for scenery (TEXTURE.213,
+10021, 205, 204, 211, 214 and the rest), a heap of men at each stall, idle and turning to the eye (`PERSON_TURN_RATE`).
+DFU draws a person only of RDBLayout.NPCFlatArchives (FlatTypes.NPC) and the rest as their billboards; AUDIT WD3 G1 had
+carried that law into the click ray alone. The bowed heads in the second report are likely MW-HEADS1's backwards Breton
+heads (re-baked by MW-HEADS2) - not proven.
 
-THE REPORT. "Flying kick doesn't work": "tried doing it mid-air, off ledges, flat ground aiming up aiming down etc nothing
-works", the HUD saying "You cannot leap from here."; as a werewolf, "the beast knows no technique".
+CHANGED. `personLook` stands no body for a flat outside NPC_FLAT_ARCHIVES (`world/npcFlatArchives.js` isNpcFlat) - the
+editor's 199 with the rest, so MWNPC8b's own marker check folds into it. A quest's person keeps a body whatever FLATS.CFG
+pictures them with (`questPerson`). The StaticNPC list is DFU's still. Pinned in `test/mwnpc8b_streetdungeon.test.js` on
+the vendored pack's TVRNAS02 (113 StaticNPCs, 11 bodies, none for scenery); `fb1015c_stallflats.json` 2, dead;
+`mwnpc8b.json`'s MWNPC8b-marker-bodied re-aimed by content. `04-Characters/Morrowind-NPCs.md` 13b.
 
-FOUND. TECH1's design (`05-Combat/Weapon-Techniques.md`): one gate refused every leap and dash off the ground, on the
-press and again on the release - a jump, a fall, a ledge, or a press let go after takeoff - and the one line said it for
-eleven causes. On flat ground the kick launched on the real motor through the whole press, hold and release. The
-werewolf's line is TECH1's own and stays.
+## BARE-BOOTS: what imperial chain lacks, iron (5)
 
-CHANGED (Mac's call). The roster marks the kick `airborne` and the gate reads the mark; every other leap and dash stays
-grounded, and every other refusal - a climb, a wall, a vault, the water, a levitation, a slow fall, the saddle, a
-knockdown - is the kick's too. From the air it is the same kick, aimed from the airborne feet. A flight launched
-mid-fall keeps that fall's start: the launch had re-anchored it, so a kick near the ground would have cancelled a
-12 m fall's damage. THE FOUR HOSTS: none changed - exterior.js, world.js and worldModes.js each hand the one
-PlayerMotor to the runner, and dungeonContext.js reads worldModes' (or `dungeon.js`'s) through its technique door.
-Pinned by `test/fb1015_kickair.test.js` (`tools/mutants/fb1015_kickair.json`, 9, dead).
+`src/formats/mwItemMap.js` DF_TO_MW_ARMOR_MATERIAL, mwArmorRecords.
 
-## CART-AWAY: a wagon away from a death in the zone keeps its cargo (6)
+FOUND. The Legendary was innocent: "The Wayrest Courier's Treads" is Boots (108) on whatever material the loot made it,
+and DFU's RandomArmorMaterial makes one boot in five Chain. Imperial chain is a cuirass, greaves and coif in Morrowind,
+and the figure's armour (`composeWornArmor`) answered "the classic sprite stands" for the rest - on a figure that has no
+sprite, so the skin stood. Every chain boot, gauntlet and pauldron, Legendary or not. And the material chain was walked
+by material, not by piece: Tribunal attached, Adamantium boots stopped at adamantium (no boots) and never reached ebony.
 
-`src/systems/wildDropLaw.js` takeWildDeath, wildDropCandidates, takeWildGold (`cart`), wildCartMayBeAway;
-`src/systems/wildCart.js`; `server-account/src/wild.js` wildFall; `src/scenes/world.js` wildTakeDrop.
+CHANGED. Chain's second token is iron (the NPCs' wardrobe's own stand-in, `wardrobe.js` CHAIN_PIECES), and the chain
+is walked by piece. A departure from MW-D28's recorded judgement ("instead of a wrong metal standing in"), named in
+`mwItemMap.js` and `04-Characters/Morrowind-NPCs.md`. Pinned in `test/fb1015c_bareboots.test.js` (every armour Legendary
+on every base and material, through `applyRarity` and the equip door); `fb1015c_bareboots.json` 2, dead.
 
-THE ASK. Mac, asked "If parked outside of the pvp zone in the wrothgarian mountains, can it be lost?": "Yeah, if its
-parked outside the zone nothing should be lost."
+## LOOT-LOOSE: a looted material goes into the Stores as loose (6)
 
-FOUND. The wagon and its horse are never lost - a vehicle is on the zone's kept list, and no wagon breaks nor horse dies
-(UPKEEP-ONLINE). But the account service's take (INT9, `/v1/wild/fall`) dropped every cart piece and half its gold
-wherever the wagon stood: it read `wagonItems` and never the Horse Cart and Cargo record beside them.
+`src/ui/profPages.js` the Stores page's Put in and Put everything in; `src/scenes/world.js` the deposit's order.
 
-CHANGED (Mac's call). The cart's share only while the wagon is with the fallen: driven, beside them unstabled,
-following, or parked on a pixel of the zone. Parked anywhere else (the band is not the zone), stabled or none, every
-piece and its gold stay. The fallen's tab says so (`cart` 0, from its wagon record and wildMaskOf); the service, which
-holds no map files, honours it only where the stored record's mode agrees. A seizure honours no word; an old tab says
-none; a repeat ask answers the first take. THE LIMIT: the wagon record is the client's own (Wild-Zone.md section 22).
-THE FOUR HOSTS: world.js WIRED (one existing line); dungeonContext.js and worldModes.js reach it through world.js;
-exterior.js NOT WIRED (online only). No migration; the account service's version moves (acct138). Pinned by
-`test/fb1015_cartaway.test.js` (`tools/mutants/fb1015_cartaway.json`, 20, dead); PINS MOVED: int9_wild_ref,
-fb1014_pvpescrow; re-aimed: INT9-AUDIT-SVC-THE-FITTED-FEW-ASKED, ESCROW-the-escrow-asked-of-any-room.
+FOUND. Law 3 as written (`06-Systems/Materials-Bag.md` 5): the service counts only what it handed out, and a looted
+unit - rolled on the client - is held and never counted, so the page named it "unstorable" and Put in moved nothing.
+The third report of it (FIELD BUGS 2026-10-09c, 2026-10-09f, 2026-10-13e), each leaving the call to Mac.
 
-## The right arm: asked of the player (4)
+CHANGED (Mac, asked: "Store as loose"). Put in and Put everything in take what is held past the count as loose - BAG-
+CRAFT's origin, by its `work` order: the counted first by `all`, then the rest by `work`. Loose units serve every
+crafting station and never a writ, the guild Stores or a Drakes sale, so nothing past the count reaches the economy. The
+card says "N loose". No service change. Pinned in `test/fb1009c_uncounted.test.js` (PIN MOVED: Put in had been shut);
+`fb1009c_uncounted.json` 11, dead. `06-Systems/Materials-Bag.md` 4.
 
-THE REPORT. Twice, the right arm's armour gone between a login and a logout, the rest of the gear kept.
+## QUEST-FOE-WALL: a body inside a pillar to the ceiling is freed (7)
 
-FOUND. Nothing on the save's path drops it. Slot 13 is DFU's RightArm in every table that names it (`paperdoll.js`
-EQUIP_SLOTS, `equipRules.js` SLOT_RULES' 106, Roleplay & Realism Items' 518 and 526), and a save and load through
-`save.js` snapshotPlayer, restorePlayer and `equip.js` fillEquipTable brought it back every time - classic steel and the
-mod's sets, cloaks in the slots either side, offline and as an online page. The realm stores the save as it is sent;
-the judge freezes trade and never edits a save. What does take it off is DFU's own wear: a blow lands on each arm three
-times in twenty (`formulas.js` STRUCK_BODY_PARTS), every shield covers the left arm and none the right
-(`armorMaterials.js`), and a pauldron holds 2,048 points against a cuirass's 4,096 - so for a player with a shield the
-right pauldron is the first piece to break (200 runs of 200 through the real damageEquipment), and a broken piece
-comes off (`equip.js` lowerCondition) and stays in the pack at 0%.
+`src/characters/foeSpacing.js` lodgedIn.
 
-ASKED. Whether the player carries a shield, and whether a broken right pauldron sits in the pack.
+FOUND. B0B70Y16 Dragonslayer places its Dragonling at a random QuestSpawn marker, as DFU's GetSiteMarker does, and the
+port's stand is DFU's (GameObjectHelper.CreateEnemy at the marker; no free-spot search - DFU's controller pushes out
+of an overlap on its first move). CRATE-FREE (FIELD BUGS 2026-10-04d) frees a body stood inside a model, but asked a lid
+within LODGE_REACH over the knee: a pillar running to the ceiling (uncapped, or capped past the reach) holds a body for
+good - the collider's push is facing-blind - and measured, a flyer stood in a 1 m, 6 m pillar was still in it after ten
+seconds of chase. No ARENA2 here: whether the Elyrrya Tradition's marker stands in a pillar is not measured; the other
+reading (Meaner Monsters' 2.5x Dragonling sprite over a 0.35 m capsule, half the billboard behind a wall it stands by)
+is DFU's too and is not changed.
 
-## The reforged blades: asked of the player (5)
+CHANGED. With no lid in reach, a body is lodged when every bearing meets a face's back - inside a column. Pinned in
+`test/fb1004d_cratefree.test.js` (the column, the capped pillar, beside it, a sleeve open at both ends, the free, and a
+tall crate in a corner); `fb1004d_cratefree.json` 24, dead (two re-aimed by content, two new).
 
-THE REPORT. Two posts from Boar's thread, its title not handed over: the three Masterworks reforged and honed at the
-Mages Guild, and one blade, unmodded, sold.
+## BENCH-ARROWS: a Twig fletches two arrows, as written (8)
 
-FOUND. On the market, a Masterwork its maker reforged or honed has no route: the crafted-piece and auction lists keep
-only a piece as its making minted it (`smithItems.js` asMinted), and the pack's route refuses the maker's own piece
-(`server-account/src/market.js` market-piece-route) - so an unmodded blade lists and the modded ones show nowhere. The
-shop's sale, the item law, the loot check and the ids were ruled out: a reforge and a hone change the piece in place,
-and every sale removes the one item handed to it. Whether that dead end is the thread's complaint is not in the
-screenshot.
+`src/systems/fletching.js` fletchYield.
 
-ASKED. What went wrong - the thread's title and what was tried - before anything changes.
+FOUND. FLETCH's law is a piece's weight over the Arrow's 0.25 kg - Twigs two, a Pine Branch four, a Wood Bundle ten,
+"the workbench's twenty stay the better trade" (`05-Combat/Arrow-Supply.md` 3). `templateByIndex` answers a mod's patch
+first, and Roleplay & Realism: Items (on by default, forced online) makes the Arrow 0.1 kg: a Twig was five arrows, four
+the bench's twenty without its plank and its ingot. The suite never registered the mod's patches.
+
+CHANGED. The Arrow's weight is the classic Arrow's (`ITEM_TEMPLATES`). The bench is untouched. Pinned in
+`test/arrowsupply.test.js` with the mod's patches registered; `arrowsupply.json` 52, dead.
+
+## QUEST-RESIDENCE: a home a quest names says the quest's name (9)
+
+`src/systems/onlineHomes.js` homeDoorTitle; `src/scenes/worldModes.js` the door's plaque and the info click.
+
+FOUND. N0B00Y09 "Research Notes" sets its scholar in `Place _scholar_home_ remote house` - a nearby town's house, named
+"The <surname> Residence". Before QUEST-HOME (main, 2026-10-15) `isPlayerHome` asked `homeAt`, which knew no town the
+page had not asked, so the pick could land in another player's online home - whose door says its owner's name over the
+building's. No door in Tambeth said "The Hawkley Residence". QUEST-HOME's re-pick moves such a site on the next online
+boot (the residence takes a new name - the journal says it); it cannot move one in a town with no other house, or one
+the player has stood in. Not reproduced on the reporter's save.
+
+CHANGED. A home a quest still names says the quest's name first: "The Hawkley Residence (Aldric's home)". Pinned in
+`test/fb1015c_questresidence.test.js`; `fb1015c_questresidence.json` 3, dead; `home1.test.js`'s hover pin moved.
+
+## MW-AXES: the Morrowind axes cross Daggerfall's names (10)
+
+`src/formats/mwFirstPerson.js` DF_TO_MW_WEAPON, dfWeaponShape.
+
+FOUND. Daggerfall's Battle Axe is its one-hander and its War Axe its two-hander (DFU's ItemTemplates; WEAPON_HANDS 127
+'Either', 128 'Both') - the reverse of every later game. DF_TO_MW_WEAPON matched the names (War_Axe -> AxeOneHand,
+Battle_Axe -> AxeTwoHand), and the type picks the mesh, the icon, the clips, the grip and the sheath: a War Axe swung
+one-handed beside a torch, a Battle Axe took both hands.
+
+CHANGED. Battle_Axe -> AxeOneHand (Morrowind's war axes), War_Axe -> AxeTwoHand (its battle axes); the shape tie-break
+crosses the two names. Every row now holds the hands its weapon has, the Flail the one declared fudge. A material
+Morrowind has no two-handed axe in falls back to the type's first record (off-metal) - not measured without the
+retail data; the Wood-Axe (128) now swings two-handed on the Morrowind body, as its rule says. Pinned in
+`test/fb1015c_mwaxes.test.js`; `fb1015c_mwaxes.json` 3, dead; `fparm`, `daedric_model_shape` and `mwattackclip` pins
+moved. `Port-Ledger.md` MW-D9's row corrected.
+
+## BOULDER-GLINT: a boulder's glint stands on its stones (11)
+
+`src/scenes/mineHost.js` BOULDER_LIFT.
+
+FOUND. A node's act - its face and its glint (`ui/profReticle.js`) - stands at the node's aim point, its foot plus its
+`lift`. A boulder's lift was half its ROCK's height (to 1.2 m), set over the loose stones the player sees as the boulder:
+the face stood 30 degrees over the stones at a metre and a half, against 8.7 for a vein. Not changed, recorded: a
+boulder's stones stand off the rock's box (`rockFoot`), which for a turned rock can be far from the rock as it shows.
+
+CHANGED. A boulder's lift is BOULDER_LIFT, 0.4 m - the stones' scale against a vein's 0.5 over its ore. The look still
+meets the node up to its glow's top. Pinned in `test/fb1001_mining.test.js` (NODE-AIM's lift pin moved);
+`fb1015c_boulderglint.json` 1, dead.

@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-15c WAGON-STABLED (Fay, 2026-10-14: "Wagon appears outside of buildings/dungeons when stabled - I
+// FIELD BUGS 2026-10-15d WAGON-STABLED (Fay, 2026-10-14: "Wagon appears outside of buildings/dungeons when stabled - I
 // keep sending my wagon away, but every time I enter a building or dungeon it appears outside again"). HOLDINGS' Send
 // away (systems/horseCart.js sendTransportAway, 10155e299a) put the pair in the mod's WithPlayer - the same record as a
 // pair beside a player on foot - and Horse Cart and Cargo's HandlePreTransition [IL_98f0] parks a WithPlayer wagon at

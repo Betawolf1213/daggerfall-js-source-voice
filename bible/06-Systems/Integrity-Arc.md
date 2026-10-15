@@ -400,7 +400,7 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
   takeWildDeath): the killer's worn piece first (`wildPickOf` - the piece the offer showed, else none), then half the
   purse and the cart's coin, then the bag's and the cart's drop BY WORTH (a bag of junk ahead of them kept the gold and
   the valuables), fitted to one remains, every record within `WILD_RECORD_BYTES_MAX`, the rest put back where it came
-  from; the record's lit light follows its piece. CART-AWAY (FIELD BUGS 2026-10-15c; Mac, 2026-10-15: "if its parked
+  from; the record's lit light follows its piece. CART-AWAY (FIELD BUGS 2026-10-15d; Mac, 2026-10-15: "if its parked
   outside the zone nothing should be lost" - `11-Multiplayer/Wild-Zone.md` section 4): the cart's coin and its drop only
   while the wagon is with the fallen. The zone's mask is the client's, so the fallen's own tab says its wagon is away
   (`cart` 0 - `systems/wildCart.js` wildCartAway), and the service takes the word only where the record it keeps says
@@ -454,7 +454,7 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
   goes only to its killer, who can never have it from a held record.
 - **THE FOUR HOSTS.** `scenes/world.js` WIRED (the zone word, the blows, the referee's readout, the fall, the drop, the
   deposit, the seizure, the escrow - the killer's collect carried, the fallen's piece taken back, both on the zone's
-  frame, `world.js:"const wildEscrowFrame = () =>"`); `scenes/dungeonContext.js` (the zone's halls) WIRED through world.js's own `wildStrike` and
+  frame, `wildEscrowHost.js:"const wildEscrowFrame = () =>"`); `scenes/dungeonContext.js` (the zone's halls) WIRED through world.js's own `wildStrike` and
   `wildSpellOut`, refereed alike, its pool holding the remains, its ghost leaving once its deposit has gone; `scenes/
   worldModes.js` (a building) no fight - the zone word is 0 indoors - its pool holding the remains;
   `scenes/exterior.js`, the offline fixed city, NOT WIRED on purpose: the zone is online's alone.

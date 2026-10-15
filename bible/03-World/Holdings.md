@@ -65,7 +65,7 @@ persistence off, the classic transport's **With you**; the wagon's load against 
   out.
 - **RENAME HORSE** in place, by the name prompt's own law (`renameHorse` - `resolveHorseNameInput`).
 
-**WAGON-STABLED** (FIELD BUGS 2026-10-15c, `01-Overview/Field-Bugs-2026-10-15c.md`; Fay, 2026-10-14: "Wagon appears outside of buildings/dungeons when stabled - I
+**WAGON-STABLED** (FIELD BUGS 2026-10-15d, `01-Overview/Field-Bugs-2026-10-15d.md`; Fay, 2026-10-14: "Wagon appears outside of buildings/dungeons when stabled - I
 keep sending my wagon away, but every time I enter a building or dungeon it appears outside again"). Stabled WAS the
 mod's WithPlayer and nothing more - the state of a pair beside a player on foot - and the mod's HandlePreTransition
 [IL_98f0] parks a WithPlayer wagon at every door such a player goes through and stands a WithPlayer horse behind them

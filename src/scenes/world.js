@@ -311,6 +311,7 @@ import { createPortHost, PORT_TEXT, stairRefusal, stairFeetY } from './portHost.
 import { createShipyardHost } from './shipyardHost.js';   // SHIPYARDS: the shipmaster's window's host half
 import { createWardenShows } from './wagonWardenShow.js';   // WARDEN1: the town watch's throw, played
 import { createWagonWarden, wardenTownIn } from './wagonWardenHost.js';   // WARDEN1: the town watch - my wagon's stamp, the cell's words, the offline clock; AUDIT WARDEN1 D3: the town under a point, one pure home
+import { createWildEscrowHost } from './wildEscrowHost.js';   // PVP-ESCROW: the two-phase handoff's two sides, out of bootWorld (HOST-SPLIT)
 import { WARDEN_VENDOR, isWardenTown } from '../systems/wagonWarden.js';   // WARDEN1: the stamp's save slot, and the towns a watch keeps
 import { townGroundOf, yardSitesOn, craftYardSitesOn, carveYards, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
 import { isYardTown, yardKeeper, ALL_YARD_KINDS, YARD_BENCH } from '../systems/merchantYards.js';   // MERCHANT-YARDS: the towns that stand them, who keeps them, the town's people
@@ -896,7 +897,7 @@ import { createPartyTruce } from '../systems/wildZone.js';   // PARTY-TRUCE (FIE
 import { GREATER_GIANT_CALL, GREATER_GIANT_CALL_AT } from '../systems/wildZone.js';   // GREATER-GIANT
 import { wildRing, wildRingAt, wildRingName, wildRingBonus, setWildMask, wildMask, WILD_RINGS, wildJourney, WILD_GIANT, WILD_GIANT_CHANCE, WILD_GIANT_MAX, WILD_STRANGER_M, WILD_STRANGER_SEE_M, WILD_STRANGER_SLOW_M, WILD_STRANGER_RGBA } from '../systems/wildZone.js';   // WILD2: the four rings; WILD3: the journeys
 import { wildTakeTook, wornOffer, wildRecord, wildChunks, wildSpawnSpot } from '../systems/wildDeath.js';
-import { wildCartWord } from '../systems/wildCart.js';   // CART-AWAY (FIELD BUGS 2026-10-15c): my wagon away from my death keeps its cargo
+import { wildCartWord } from '../systems/wildCart.js';   // CART-AWAY (FIELD BUGS 2026-10-15d): my wagon away from my death keeps its cargo
 import { readWildReceipt, WILD_FALL_GRACE_S } from '../net/wildReceipt.js';   // INT9: the relay's fall, carried to the service
 import { WILD_REF, wildKin, sameGuild } from '../net/wildRef.js';   // INT9: the zone referee's numbers (its mend, for the HUD); MAC (2026-10-14): and its kin, one law with the referee's
 import { createWildFight } from '../net/wildFight.js';
@@ -12832,8 +12833,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         settle: () => profBook.settle(profMint, profMintCraft),   // AUDIT 29 C4: a kept withdrawal asked again when the Stores page opens; PROF3: and a kept craft
         // BAG1 (bible/06-Systems/Materials-Bag.md): THE STORES PAGE'S OTHER HALF - what is carried put in (the bag's first,
         // then the pack's), in a town; the bag's load, and the room the bag and the pack have left
-        deposit: async (k, n) => {
-          const r = await profBook.deposit(k, n);
+        deposit: async (k, n, order = 'all') => {   // LOOT-LOOSE: the page's `work` puts a looted unit in as loose
+          const r = await profBook.deposit(k, n, { order });
           if (r?.ok) return { ok: true, text: `${n} ${materialCountLabel(k, n)} put in the Stores.` };
           return { ok: false, kept: r?.kept === true, text: r?.kept ? BAG_DEPOSIT_KEPT_TEXT : accountRefusalText(r?.error) };   // AUDIT BAG1: `kept` - Put everything in stops on it
         },
@@ -24435,81 +24436,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const held = d.wi === 0 && !!d.escrow?.r;
     if (dd) setWildDeath({ killer: dd.killer, dropped: d.order ? n : 0, claimed, held });
     else if (out.length || d.gold?.purse || d.gold?.cart) townTalk.say(WILD_TEXT.dropLate);   // AUDIT INT9: a receipt that found me risen
-    if (held) wildEscrowHeld(d.escrow, { killer: dd?.killer ?? null, name: claimed });
+    if (held) wildEscrow.held(d.escrow, { killer: dd?.killer ?? null, name: claimed });
     if (d.order && n && body) wildDeposit({ r: d.r, items: d.items, o: d.order, p: body.p, room, mine: body });
   };
-  // ── THE TWO-PHASE HANDOFF (MAC'S DECISION, 2026-10-14: "the fallen must lose the worn piece only once the killer actually
-  //    has it") - server-account/src/wild.js holds the killer's piece in ESCROW from the fall ──
-  /** MY PIECES IN ESCROW (the fallen's side): r -> { name, killer, due, tries, busy } - each watched by the zone's frame and
-   *  taken back into my record once my killer can no longer collect it (wildReclaim), or told collected. A game closed
-   *  while one is held asks the service for its own at its next play (`_wildEscrowsAsked`). */
-  const _wildEscrows = new Map();
-  let _wildEscrowsAsked = false;
-  const wildEscrowHeld = (e, { killer = null, name = null, say = true } = {}) => {
-    if (!e?.r || _wildEscrows.has(e.r)) return;
-    const shown = name ?? (e.rec ? itemLongName(validLootList([e.rec])?.[0] ?? e.rec) : null);
-    const dueMs = Number.isFinite(e.back) ? e.back * 1000 : Date.now();   // the service's second; a skewed clock is answered `escrow-wait`
-    _wildEscrows.set(e.r, { name: shown, killer, due: Math.max(Date.now(), dueMs), tries: 0, busy: false });
-    if (say) townTalk.say(WILD_TEXT.heldNote(killer, shown, Math.max(1, Math.ceil((dueMs - Date.now()) / 60_000))));
-  };
-  /** MY KILLER'S COLLECTS (the killer's side): r -> { cr, tries, due, busy } - the room's signed collect of the piece I picked,
-   *  carried to the service as an act on my record (wildCollect); the piece comes in its answer. */
-  const _wildCollects = new Map();
-  const wildCollectHeard = (cr, at) => { if (at?.r && !_wildCollects.has(at.r)) _wildCollects.set(at.r, { cr, tries: 0, due: 0, busy: false }); };
-  const wildCollected = (d) => {
-    if (!d || d.again) return;   // collected already: my record (and the pack it loaded) holds it
-    const item = validLootList([d.item])?.[0] ?? null;
-    if (!item) return;
-    addItem((playerEntity.items ??= []), item);
-    townTalk.say(WILD_TEXT.collected(itemLongName(item)));
-  };
-  const wildEscrowBack = (r, d) => {
-    const e = _wildEscrows.get(r);
-    _wildEscrows.delete(r);
-    if (!d || d.again) return;   // back already: my record (and the pack it loaded) holds it
-    const item = validLootList([d.item])?.[0] ?? null;
-    if (item) addItem((playerEntity.items ??= []), item);
-    townTalk.say(WILD_TEXT.heldBack(item ? itemLongName(item) : e?.name ?? null));
-  };
-  /** The zone's frame: an escrow due is asked back, a collect heard is carried - each an act on my record, alive, one at a
-   *  time each, a word that says nothing asked again on its own clock. */
-  const wildEscrowFrame = () => {
-    if (!realmSession || realmSession.lost) return;
-    if (!_wildEscrowsAsked) {
-      _wildEscrowsAsked = true;
-      wildAccount.escrows({ character: realmSession.id }).then((a) => { for (const e of (a?.ok ? a.data?.escrows : null) ?? []) wildEscrowHeld(e, { say: false }); }).catch(() => { _wildEscrowsAsked = false; });
-    }
-    if (!(playerEntity.health > 0) || modes?.deathUp?.() || townTalk.overlay instanceof DeathScreen) return;   // an act on my record, never on a dead frame
-    const now = Date.now();
-    const again = (/** @type {any} */ res) => !res?.unknown && ['offline', 'server', 'rate', 'no-session'].includes(res?.error);   // an outcome unknown is the session's own to settle (realmSaves.js)
-    for (const [r, e] of _wildEscrows) {
-      if (e.busy || now < e.due) continue;
-      e.busy = true;
-      realmGoldAct({ session: realmSession, checkpoint: () => onlineCheckpoint(), needsAnswer: true, call: (at) => wildAccount.reclaim({ r, realm: at }), apply: (a) => wildEscrowBack(r, a?.data ?? null) })
-        .then((res) => {
-          e.busy = false;
-          if (res?.ok) return;
-          if (res?.error === 'escrow-collected') { _wildEscrows.delete(r); townTalk.say(WILD_TEXT.heldTaken(e.killer, e.name)); return; }
-          if (res?.error === 'escrow-wait') { e.due = Date.now() + Math.max(1, res.wait ?? 30) * 1000 + 1_000; return; }
-          if (again(res) && e.tries < 8) { e.tries++; e.due = Date.now() + 15_000 * e.tries; return; }
-          _wildEscrows.delete(r);   // nothing of mine there (taken back already, another tab's), or the session's own end
-        })
-        .catch(() => { e.busy = false; e.tries++; e.due = Date.now() + 30_000; });
-    }
-    for (const [r, c] of _wildCollects) {
-      if (c.busy || now < c.due) continue;
-      c.busy = true;
-      realmGoldAct({ session: realmSession, checkpoint: () => onlineCheckpoint(), needsAnswer: true, call: (at) => wildAccount.collect({ receipt: c.cr, realm: at }), apply: (a) => wildCollected(a?.data ?? null) })
-        .then((res) => {
-          c.busy = false;
-          if (res?.ok) { _wildCollects.delete(r); return; }
-          if (again(res) && c.tries < 8) { c.tries++; c.due = Date.now() + 5_000 * c.tries; return; }
-          _wildCollects.delete(r);
-          if (['escrow-late', 'escrow-returned', 'escrow-collected'].includes(res?.error)) townTalk.say(WILD_TEXT.collectLate());
-        })
-        .catch(() => { c.busy = false; c.tries++; c.due = Date.now() + 30_000; });
-    }
-  };
+  // PVP-ESCROW's two sides (scenes/wildEscrowHost.js - HOST-SPLIT, FIELD BUGS 2026-10-15c)
+  const wildEscrow = createWildEscrowHost({ townTalk, session: realmSession, modes: () => modes, wildAccount, checkpoint: () => onlineCheckpoint() });
   /** THE DEPOSIT - the service's records to the room, chunk by chunk on the wild frames' own pace, each chunk carrying its
    *  order (the room keeps the remains only when the records digest to it: net/wildLaw.js). An order is good a minute. */
   const _wildDeposits = [];   // { r, chunks, k, o, p, room, mine, at }
@@ -24677,7 +24608,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     for (const peer of [..._wildBodies.keys()]) if (!wildFight.body(peer)) wildBodyGone(peer);
     online?.setWildZone?.(wildCan() ? 1 : 0);   // INT9: my word on the zone, for its referee - standing in it, alive, where it fights
     wildDepositFrame(); wildSeizeFrame(); wildHudFrame();   // INT9: a drop's deposit, a fall to seize, the referee's readout
-    wildEscrowFrame();   // MAC (2026-10-14, the two-phase handoff): my piece in escrow asked back, my collect carried
+    wildEscrow.frame();   // MAC (2026-10-14, the two-phase handoff): my piece in escrow asked back, my collect carried
     wildRemains.setRooms(online?.status === 'open' ? online.heldRooms() : []);   // HALO-REMAINS: my room and the halo's
     wildRemains.setPool(wildOutdoors() ? droppedLoot : (modes?.droppedPool?.() ?? null));
     wildRemains.tick();
@@ -24886,7 +24817,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     now: () => performance.now(),
     nameOf: (item) => itemLongName(item),
     me: () => social?.acct ?? null,   // INT9: the killer's piece, mine alone
-    collect: (cr, at) => wildCollectHeard(cr, at),   // MAC (2026-10-14): the room's collect of my piece in escrow, carried to the service
+    collect: (cr, at) => wildEscrow.collectHeard(cr, at),   // MAC (2026-10-14): the room's collect of my piece in escrow, carried to the service
   });
   setHudZone(() => (wildHere() ? { name: `${WILD_TEXT.chip} - ${wildRingName(wildRing())}, ${wildRingBonus(wildRing())}`, foot: `${wildRing()}/${WILD_RINGS}` } : null));   // WILD1: the HUD's glyph, on the enhanced skin...
   setZoneEntity(playerEntity);   // ...and on the classic row

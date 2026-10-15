@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-15c KICK-AIR (a player, 2026-10-14: "Flying kick doesn't work ... tried doing it mid-air, off ledges,
+// FIELD BUGS 2026-10-15d KICK-AIR (a player, 2026-10-14: "Flying kick doesn't work ... tried doing it mid-air, off ledges,
 // flat ground aiming up aiming down etc nothing works" - the HUD: "You cannot leap from here."). The technique key's one
 // gate refused every leap and dash off the ground (combat/techniques.js refusal), asked on the press and again on the
 // release, so a kick pressed in a jump, in a fall or off a ledge - or pressed on the ground and let go after the takeoff -
