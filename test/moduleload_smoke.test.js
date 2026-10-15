@@ -68,7 +68,7 @@ test('every module under src/ loads - its body RUNS, not just parses', async () 
   assert.deepEqual(unexpectedlyFine, [], `these import fine now - remove them from NOT_IMPORTABLE:\n  ${unexpectedlyFine.join('\n  ')}`);
 });
 
-test('the blind spot is exactly twelve modules, each with a reason', () => {
+test('the blind spot is exactly fourteen modules, each with a reason', () => {
   const files = walk(join(root, 'src')).map((f) => relative(root, f).split('\\').join('/'));
   for (const f of Object.keys(NOT_IMPORTABLE)) {
     assert.ok(files.includes(f), `${f} is on the exclusion list and no longer exists`);

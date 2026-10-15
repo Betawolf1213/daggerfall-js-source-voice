@@ -158,7 +158,7 @@ test('FIRM1 powers: A SPELL - its damage, its pace and its price; a keystone\'s 
   assert.equal(spellPowerMult(p, { ...FOE, isPlayer: true }, { online: false }), 1, 'never at a player');
   const destr = { effects: [{ type: 4, subType: 0 }] };
   assert.equal(firmamentCastCost(p, 100, destr), 100 * (100 - (c.castCost ?? 0)) / 100);
-  setFirmamentTree(walk('rt.start', 'rt.k'));   // Martyr's Vow: spells 8% weaker
+  setFirmamentTree(walk('rt.start', 'rt.k'));   // Martyr's Vow: spells 4% weaker (its price halved)
   assert.ok(spellPowerMult(p, FOE, { online: false }) < before.power);
 });
 

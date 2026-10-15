@@ -19,7 +19,7 @@ import { ACTIONS, PORT_ACTIONS, DEFAULT_BINDINGS } from '../src/systems/inputAct
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
-test('UI-CALM the front door asks which world first: Online and Offline the two doors, Online first; Continue, New Game, Load Game and the Test Room behind Offline, each backing out to it; Settings and Overhauls two small doors under the two; the rail Online first, Offline\'s four under their word (mutants: UICALM-offline-escapes-to-top, UICALM-online-second)', () => {
+test('UI-CALM the front door asks which world first: Online and Offline the two doors, Online first; Continue, New Game, Load Game and the Test Room behind Offline, each backing out to it; Settings and Overhauls plaques in the foot; the rail Online first, Offline\'s four under their word (mutants: UICALM-offline-escapes-to-top, UICALM-online-second)', () => {
   assert.deepEqual([...HOME_OFFLINE], ['Continue', 'New Game', 'Load Game', 'Test Room']);
   assert.deepEqual([...HOME_LINKS], ['Settings', 'Overhauls']);
   assert.deepEqual(['continue', 'new', 'load', 'test', 'online', 'settings', 'about'].map(offlineSection), [true, true, true, true, false, false, false]);
@@ -60,7 +60,7 @@ test('UI-CALM the saddle panel is a block in the bottom-right corner, up and awa
   assert.equal(saddleAlert(S({ horse: null, load: { kg: 801, limit: 800 } })), 'load');
   assert.equal(saddleAlert(S({ horse: null, load: { kg: 800, limit: 800 } })), null, 'at its limit is not past it');
   assert.deepEqual([saddleHello(S(), 'F2'), saddleHello(S(), '')], ['F2: saddle panel', 'Saddle panel: give it a key in Controls']);
-  // the key: a port action on Slash, its press handed to the one glue by both hosts, which puts the panel up or away
+  // the key: a port action on F2, its press handed to the one glue by both hosts, which puts the panel up or away
   assert.equal(ACTIONS.at(-1), 'SaddlePanel');
   assert.ok(PORT_ACTIONS.includes('SaddlePanel') && DEFAULT_BINDINGS.some(([c, a]) => c === 'F2' && a === 'SaddlePanel'));
   assert.match(rd('src/scenes/saddleHost.js'), /if \(s && toggle && !covered\) toggleSaddlePanel\(\);/);

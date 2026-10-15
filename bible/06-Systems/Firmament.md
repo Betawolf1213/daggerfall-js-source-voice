@@ -125,7 +125,7 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
    fights the beasts** (the lead dev, 2026-10-13: "this should help in the wrotgarian zone against pve"): every channel
    acts against the zone's foes, and a player there is never struck harder for it - every strike or spell at a player
    (a duel's, a siege's, the zone's) is rolled on a sheet with the sky taken off (`firmamentPowers.js withoutFirmament`,
-   `scenes/world.js` the six sheets), a player's blow lands on the referee's vitality and never through the sky's damage
+   `scenes/world.js` the seven sheets - four strikes and three spells), a player's blow lands on the referee's vitality and never through the sky's damage
    door, and a player felled feeds no kill star.
 6. **Points are scarce and slow**: the Stars come with Renown, which the service bounds an hour, and Renown 50 is
    hundreds of hours. A Renown 20 character has 38 Stars against 295 combat stars to buy (302 with the seven free starts) - a

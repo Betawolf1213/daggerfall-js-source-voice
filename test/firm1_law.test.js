@@ -185,10 +185,20 @@ test('FIRM1 law: THE BUDGET - the whole sky allocated at once holds every channe
   assert.deepEqual(capped({ strength: 99, hp: -5, nonsense: 3, spellPower: 0 }), { strength: 15, hp: 0 });
 });
 
-test('FIRM1 law: the PvE budget a real build reaches - a full 49 Stars spent on the Warrior\'s fight adds no more than the caps to a blow and never a channel past one', () => {
-  const t = walk('wr.start', 'wr.k', 'wr.c1.3', 'wr.c3.3', 'wr.c5.3', 'wr.c4.4', 'wr.c2.4', 'wr.c6.4', 'wr.c7.2');
+// PIN MOVED (AUDIT UICALM-FIRM1 L5 L3): the build spent 35 of the 98 its title promised, and its trim never ran - it
+// now walks the sky from the Warrior's sign star by star, nearest first (its own 49 first, then on), until the Renown 50
+// purse is spent
+test('FIRM1 law: the PvE budget a real build reaches - a whole Renown 50 purse spent from the Warrior\'s sign adds no more than the caps to a blow and never a channel past one', () => {
+  const t = walk('wr.start', 'wr.k');
   const stars = starsFor(50);
-  while (firmCostOf(t.keys).combat > stars) t.keys.pop();
+  for (;;) {
+    const next = [...FIRM_NODES.values()].filter((n) => n.ring !== 'life' && n.kind !== 'start' && !t.keys.includes(n.key))
+      .map((n) => pathTo(t, n.key)).filter((p) => p.length && treeFault({ start: t.start, keys: [...t.keys, ...p] }, stars, 0) === null).sort((a, b) => a.length - b.length)[0];
+    if (!next) break;
+    t.keys.push(...next);
+  }
+  const spent = firmCostOf(t.keys).combat + firmCostOf(t.keys).life;
+  assert.ok(spent >= stars - 2, `spent ${spent} of ${stars}`);
   assert.equal(treeFault(t, stars, 0), null);
   const c = treeStats(t);
   assert.ok(blowPct(c, { skill: 'Axe', group: 'undead', wounded: true }) <= BLOW_TOTAL_CAP);
