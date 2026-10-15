@@ -1,6 +1,6 @@
 # project-dagger
 
-**DFO Online** - an open-source reimplementation of The Elder Scrolls II: Daggerfall (BR5, 2026-10-11; it was DAGGERFALL ONLINE from BR4, 2026-09-27, DAGGERFALL ENHANCED from BR1, 2026-09-13, and DAGGERFALL JAVASCRIPT from U60 until then - `10-UI/UI-Arc.md` BR5 says where the original game is still named, and why). A 1:1 port, built the way we build: hand-rolled WebGL2, Vite, Node ESM, no framework. Data layer and game logic ported faithfully from Daggerfall Unity's reverse-engineered C#; presentation rebuilt on our stack; characters rebuilt on our voxel system.
+**DFO Online** - an open-source reimplementation of The Elder Scrolls II: Daggerfall (BR5, 2026-10-11; it was DAGGERFALL ONLINE from BR4, 2026-09-27, DAGGERFALL ENHANCED from BR1, 2026-09-13, and DAGGERFALL JAVASCRIPT from U60 until then - `10-UI/UI-Arc.md` BR5 says where the original game is still named, and why). Its own game, built the way we build: hand-rolled WebGL2, Vite, Node ESM, no framework. It began as a 1:1 port - data layer and game logic ported faithfully from Daggerfall Unity's reverse-engineered C#, presentation rebuilt on our stack, characters rebuilt on our voxel system - and since SCOPE1 (Mac, 2026-10-14) parity with DFU is no longer the goal: DFU is the reference we read first, not the target (`01-Overview/Port-Doctrine.md`, Scope).
 
 Read `01-Overview/Port-Doctrine.md` before touching anything.
 
@@ -176,7 +176,9 @@ the DFU value is unknown, the element does not draw until it is
 looked up. And native-window screenshots are eyeballed against the
 CLASSIC layout (the art's own frames are the ruler - an icon
 crossing a baked slot border is a positioning bug even when the
-code "looks right").
+code "looks right"). SCOPE1 (2026-10-14): this binds the windows that
+keep DFU's layout; a window redesigned on purpose cites its own design
+record instead (`01-Overview/Port-Doctrine.md`, Scope).
 
 **THE ONE CONSTRUCTION SEAM** (AUDIT 17i). When two hosts build the
 same object, every dependency it grows must be remembered twice - and
@@ -331,7 +333,7 @@ held by text pins - tdz_selfreference.test.js is the standing guard.
 
 - Desktop-first. A mobile touch layer (`src/ui/touch.js`: virtual stick +
   look/attack drag + button row speaking the desktop input language) ships
-  for on-device testing and is wired into all four hosts - Port-Doctrine.md:19,
+  for on-device testing and is wired into all four hosts - Port-Doctrine.md (Rebuilt on our stack, 3),
   approved by Mac 2026-08-13. (AUDIT 18: this bullet denied the touch
   layer outright for six days after it landed (approved 2026-08-13). The
   open-flags list below is grep-regenerated from `src/`, so it can never catch
