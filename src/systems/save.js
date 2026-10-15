@@ -23,6 +23,7 @@ import { snapshotRegionConditions, restoreRegionConditions } from './regionCondi
 import { arenaLadderSnapshot, arenaLadderRestore } from './arenaLadder.js';
 import { regularsBookRestore } from './cardTableSession.js';   // AUDIT CARDS-2 H2: the tavern regulars' purses, by the day   // ARENA2: the arena's ladder, offline
 import { forfeitsBookRestore } from './iliacTableSession.js';   // CARDS10: the regulars' forfeits
+import { gambitPursesRestore, gambitCrownRestore } from './gambitTableSession.js';   // KG3: The King's Gambit's regulars' nights and the player's crown
 import { arenaLeagueSnapshot, arenaLeagueRestore } from './arenaLeague.js';   // ARENA3: the banners, the season, the Records page, the book
 import { arenaReplaysSnapshot, arenaReplaysRestore } from './arenaReplay.js';   // ARENA5: your ladder replays
 import { snapshotStanding, restoreStanding } from './standing.js';   // REP: the standing book   // S42: the CONDITION half of RegionDataRecord
@@ -462,6 +463,8 @@ export function snapshotPlayer(entity, { position = null, pose = null, classicMi
   // tempers for the game day, so a load puts them back as it puts the purse back; additive (an older save keeps none)
   snap.cardRegulars = regularsBookRestore(entity.cardRegulars);
   snap.iliacForfeits = forfeitsBookRestore(entity.iliacForfeits);   // CARDS10: the regulars who paid a card tonight
+  snap.gambitPurses = gambitPursesRestore(entity.gambitPurses);   // KG3: what The King's Gambit's regulars paid out tonight (Kings-Gambit.md 10.7)
+  snap.gambitCrown = gambitCrownRestore(entity.gambitCrown);   // KG3: the player's crown, kept on the character (10.4)
   // ARENA5: YOUR LADDER REPLAYS (systems/arenaReplay.js) - the last three ladder bouts, each its own versioned record,
   // on the arena record beside the ladder (an older save reads back with none; the ladder's own read ignores the field)
   snap.arena.replays = arenaReplaysSnapshot(entity.arenaReplays ?? []);
@@ -1010,6 +1013,8 @@ export function restorePlayer(entity, snap, spellsByIndex = null) {
   entity.arenaLadder = arenaLadderRestore(snap.arena);   // ARENA2: a save from before the ladder climbs from tier 1
   entity.cardRegulars = regularsBookRestore(snap.cardRegulars);   // AUDIT CARDS-2 H2: a save from before the book seats fresh regulars
   entity.iliacForfeits = forfeitsBookRestore(snap.iliacForfeits);   // CARDS10: a save from before the book owes no regular's card
+  entity.gambitPurses = gambitPursesRestore(snap.gambitPurses);   // KG3: a save from before the book owes no regular's night
+  entity.gambitCrown = gambitCrownRestore(snap.gambitCrown);   // KG3: one of the four crowns, else Daggerfall
   entity.arenaReplays = arenaReplaysRestore(snap.arena?.replays);   // ARENA5: a save from before the replays keeps none
   entity.arenaLeague = arenaLeagueRestore(snap.arenaLeague);   // ARENA3: a save from before the banners wears none
   // AUDIT 23 (C4/guilds-4): DFU clamps every region's LegalRep right

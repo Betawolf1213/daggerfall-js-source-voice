@@ -46,7 +46,7 @@ const open = async () => {
   await page.goto(`${BASE}/play/?nointro&lang=${LANG}`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.px-menu button', { timeout: 20000 });
   if (await page.locator('.px-acctstage').count()) await page.locator('.px-acctstage').click({ position: { x: 2, y: 2 } });
-  await page.locator('.px-menu .door-settings').click();
+  await page.locator(':is(.px-menu, .px-foot) .door-settings').click();
   await page.locator('#enhanced-menu .subbtn').filter({ hasText: /^Interface/ }).first().click();
 };
 const tables = () => page.evaluate(async () => {

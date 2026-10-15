@@ -59,7 +59,8 @@ const FLOOR_SHEETS = ['src/ui/enhancedStyle.js', 'src/ui/enhancedPlusStyle.js', 
   'src/ui/pageWindow.js', 'src/ui/pickupFeed.js', 'src/ui/plusPadBinds.js', 'src/ui/profActStyle.js', 'src/ui/profStationStyle.js',
   'src/ui/profileWindow.js', 'src/ui/travelViewHud.js', 'src/ui/enhancedDeath.js', 'src/ui/enhancedPlayerTrade.js', 'src/ui/plusPad.js',
   'src/ui/enhancedFrame.js', 'src/ui/introScreen.js',   // AUDIT FONT3 C3: the film's words are the pixel face too
-  'src/ui/waypointMenu.js', 'src/ui/travelPaceControls.js'];   // WAYPOINTS and PACE-DIALS (2026-10-06): the right-click menu and the pace box lay sheets of their own
+  'src/ui/waypointMenu.js', 'src/ui/travelPaceControls.js',   // WAYPOINTS and PACE-DIALS (2026-10-06): the right-click menu and the pace box lay sheets of their own
+  'src/ui/cardPanelKit.js', 'src/ui/cardTableHud.js', 'src/ui/iliacTableHud.js', 'src/ui/gambitTableHud.js'];   // KG3: the card tables' panels - the chrome, Hold'em, Iliac Hand and The King's Gambit
 // a ◆, a rarity pip, the emblem's word, an SVG's own units - and (AUDIT FONT3 C3) the effect words and rounds INSIDE a
 // 16px effect icon (the party card's and the crew's), which are the icon's own marks at the icon's own scale
 const GLYPH_ONLY = /::?before|::?after|insignia-word|provlabel|dfparty-fx[wr]|dfnaval-crew-fxe/;

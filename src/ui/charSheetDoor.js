@@ -39,6 +39,7 @@
 import { isEnhanced } from '../systems/uiSkin.js';
 import { PIXEL_FAMILIES } from './pixelifyFive.js';   // FONT3: the wait card names the enhanced face first
 import { eventActions } from './input.js';   // MAC-C: the REGISTRY's answer for the two window keys
+import { firmamentOver } from './firmamentOver.js';   // FIRM1: the Firmament, swapped in over the Stats page
 import { mountEnhancedChunk, paintChunkNotice } from './enhancedChunk.js';   // MENU1: the one lazy-chunk door, and the notice it paints when a chunk is gone
 import { registerOverlay } from './enhancedOverlays.js';   // PX28: Tab puts it away
 import { pauseMenuHooks, pauseMenuAct } from './pauseDoor.js';   // F5-QUESTS: the pause window's own hooks and act - a cycle (pauseDoor imports this door), read only at call time
@@ -228,8 +229,15 @@ function enhancedSheetPageOverlay(hooks, entity = null, pause = null) {
   // z-index 13, the pause door's depth: they are peers, never stacked.
   host.style.cssText = 'position:fixed;inset:0;z-index:13;background:transparent;overflow:hidden';
   document.body.append(host);
+  // FIRM1: the sky over this page, as the Ascension is (ui/firmamentOver.js) - declared before the page's options read it
+  const firm = firmamentOver({
+    alive: () => !fired,
+    below: () => { try { view?.unmount?.(); } catch { /* already gone */ } view = null; },
+    back: () => remountPage(),
+  });
   const close = () => {
     if (fired) return;
+    firm.drop();   // FIRM1: the sheet key closes the Firmament too
     try { ascendView?.destroy?.(); } catch { /* already gone */ }   // ASCEND-ANYTIME: the sheet key closes whatever is on top
     ascendView = null;
     ascendHost?.remove();
@@ -316,6 +324,7 @@ function enhancedSheetPageOverlay(hooks, entity = null, pause = null) {
       // no entity gets no button, the same refusal the three above
       // give for a door they were handed none of.
       openAscend: entity ? openAscend : undefined,
+      openFirmament: firm.hook,   // FIRM1: online alone (firmamentOver.js)
     }, () => seams);
     return {
       mode: 'pause',

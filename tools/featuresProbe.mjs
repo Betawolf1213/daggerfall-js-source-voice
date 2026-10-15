@@ -29,7 +29,7 @@ await page.goto(`${BASE}/play/?nointro`, { waitUntil: 'networkidle' });
 await page.waitForSelector('.px-menu button', { timeout: 15000 });
 if (await page.locator('.px-acctstage').count()) await page.keyboard.press('Escape');
 check('ORG2: no Features door - its rows are Settings\' tabs', (await page.locator('.px-menu .door-features').count()) === 0);
-await page.locator('.px-menu .door-settings').click();
+await page.locator(':is(.px-menu, .px-foot) .door-settings').click();
 await page.waitForSelector('#enhanced-menu .subbtn', { timeout: 10000 });
 
 const tabNames = await page.$$eval('#enhanced-menu .subbtn', (bs) => bs.map((b) => b.firstChild.textContent.trim()));

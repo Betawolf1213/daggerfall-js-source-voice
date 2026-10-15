@@ -3,16 +3,19 @@
 // its emblem against the painter's list (every emblem drawn by some card), the Princes legendary or higher and ruling
 // the whole board, every effect record one the engine reads and every card's text EXACTLY what its records do, the
 // holdings each with a rule, the set's count by kind and tier (so a card added is a card meant), the order of things
-// the game knows (a Lich outranks an Orc), and the starter deck clean.
+// the game knows (a Lich outranks an Orc), and the starter deck clean. KG-SET (2026-10-13): a card's rules and flavor
+// are the display's now (systems/iliacCardWords.js, through the text core) - the catalog holds none, and the rules a
+// player reads are still EXACTLY what the card's records do.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ILIAC_CARDS, ILIAC_LOCATIONS, ILIAC_TIERS, ILIAC_TAGS, CARD_EMBLEMS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
 import { deckValid, fxText, fxRefusal, ILIAC_VERBS, ILIAC_TRIGGERS, ILIAC_TARGETS, ILIAC_PICKS, ILIAC_TURNS } from '../src/net/iliacHand.js';
 import { RARITY_ORDER } from '../src/systems/lootRarity.js';
 import { EMBLEM_KEYS } from '../src/render/iliacCardFaces.js';
+import { cardRules, cardFlavor } from '../src/systems/iliacCardWords.js';
 
 const ALL = [...ILIAC_CARDS, ...ILIAC_LOCATIONS];
-const KEYS = ['id', 'name', 'kind', 'cost', 'power', 'tier', 'tags', 'emblem', 'fx', 'text', 'flavor'].sort();
+const KEYS = ['id', 'name', 'kind', 'cost', 'power', 'tier', 'tags', 'emblem', 'fx'].sort();   // PIN MOVED (KG-SET): no `text`, no `flavor` - the words are the display's
 const rank = (tier) => ILIAC_TIERS.indexOf(tier);
 
 test('CARDS8 the tiers are the loot\'s, and the painter\'s emblems are the list he was given', () => {
@@ -21,7 +24,7 @@ test('CARDS8 the tiers are the loot\'s, and the painter\'s emblems are the list 
     'harpy', 'nymph', 'dreugh', 'daedra', 'atronach', 'dragon', 'knight', 'mage', 'thief', 'assassin', 'priest', 'warrior',
     'noble', 'prince', 'artifact', 'fire', 'frost', 'shock', 'heal', 'shadow', 'city', 'desert', 'fortress', 'dungeon', 'sea',
     'razor', 'staff', 'book', 'claymore', 'rose', 'daedric', 'scorpion', 'bat', 'boar', 'tree', 'gargoyle', 'banish', 'recall', 'sun',
-    'gate', 'serpent', 'gear']);   // PIN MOVED (CARDS9): the bosses' own pictures
+    'gate', 'serpent', 'gear', 'bear', 'cat', 'spider', 'fish', 'mummy', 'bow']);   // PIN MOVED (CARDS9): the bosses' own pictures; (KG-SET): the nine's
   assert.deepEqual([...CARD_EMBLEMS], [...EMBLEM_KEYS], 'AUDIT CARDS-5 B: the catalog\'s list is the painter\'s, no glyph drawn for no card');
   for (const list of [ILIAC_TIERS, ILIAC_TAGS, CARD_EMBLEMS, ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK]) assert.ok(Object.isFrozen(list));
   const used = new Set(ALL.map((c) => c.emblem));
@@ -41,7 +44,7 @@ test('CARDS8 every card\'s shape: its keys, a lowercase-hyphen id unique across 
     assert.ok(CARD_EMBLEMS.includes(c.emblem), `${c.id}: ${c.emblem}`);
     assert.ok(Array.isArray(c.tags) && c.tags.every((t) => ILIAC_TAGS.includes(t)), `${c.id}: ${c.tags}`);
     assert.equal(new Set(c.tags).size, c.tags.length, c.id);
-    assert.ok(typeof c.flavor === 'string' && c.flavor.length > 0 && c.flavor.length <= 80, `${c.id}'s flavour`);
+    assert.ok(cardFlavor(c).length > 0 && cardFlavor(c).length <= 80, `${c.id}'s flavour`);   // KG-SET: read where it is shown
     assert.ok(Object.isFrozen(c) && Object.isFrozen(c.fx) && Object.isFrozen(c.tags) && c.fx.every(Object.isFrozen), `${c.id} frozen`);
     if (c.kind === 'unit' || c.kind === 'prince') assert.ok(Number.isInteger(c.power) && c.power >= 1, `${c.id} stands power`);
     else assert.equal(c.power, 0, `${c.id}: a ${c.kind} has no power`);
@@ -87,9 +90,9 @@ test('CARDS8 every effect record is the engine\'s language, and every card says 
       assert.equal(fxRefusal(f, c.kind), null, `${c.id}: ${JSON.stringify(f)}`);
       assert.ok(ILIAC_VERBS.includes(f.do), `${c.id}: ${f.do}`);
     }
-    assert.equal(c.text, fxText(c.fx, c.kind), c.id);
-    assert.ok(c.text.length > 0 && c.text.length <= 120, `${c.id}'s text is a short line: ${c.text}`);
-    assert.ok(!c.text.includes('?'), `${c.id}'s text names a card the catalog has`);
+    assert.equal(cardRules(c), fxText(c.fx, c.kind), c.id);   // KG-SET: the rules a player reads, in English, are the records' own words
+    assert.ok(cardRules(c).length > 0 && cardRules(c).length <= 120, `${c.id}'s text is a short line: ${cardRules(c)}`);
+    assert.ok(!cardRules(c).includes('?'), `${c.id}'s text names a card the catalog has`);
   }
   // A spell acts when revealed and leaves; a holding's rule is aimed at both its sides.
   for (const c of ILIAC_CARDS.filter((x) => x.kind === 'spell')) assert.ok(c.fx.every((f) => f.on === 'reveal'), c.id);
@@ -102,7 +105,7 @@ test('CARDS8 every effect record is the engine\'s language, and every card says 
 });
 
 test('CARDS8 the holdings: the Iliac Bay\'s places, each with its own rule', () => {
-  assert.deepEqual(ILIAC_LOCATIONS.map((c) => [c.id, c.text]), [
+  assert.deepEqual(ILIAC_LOCATIONS.map((c) => [c.id, cardRules(c)]), [
     ['daggerfall', 'Knight units here have +2 power.'],
     ['sentinel', 'Units here that cost 1 or 2 have +1 power.'],
     ['wayrest', 'Each side holds only 3 cards here.'],
@@ -120,9 +123,9 @@ test('CARDS8 the holdings: the Iliac Bay\'s places, each with its own rule', () 
 
 test('CARDS8 the first set, counted by kind and tier - a card added is a card meant', () => {
   const by = (key) => ILIAC_CARDS.reduce((m, c) => ({ ...m, [c[key]]: (m[c[key]] ?? 0) + 1 }), {});
-  assert.deepEqual(by('kind'), { unit: 73, spell: 14, prince: 11 });   // PIN MOVED (CARDS9): the three bosses' own, units; PIN MOVED (EG-E): the Battlespire's thirteen lords', units
-  assert.deepEqual(by('tier'), { common: 26, magic: 23, rare: 13, legendary: 12, aetheric: 18, artifact: 6 });   // PIN MOVED (EG-E): the lords' thirteen, aetheric
-  assert.equal(ILIAC_CARDS.length, 98);   // PIN MOVED (EG-E): the lords' thirteen
+  assert.deepEqual(by('kind'), { unit: 82, spell: 14, prince: 11 });   // PIN MOVED (CARDS9): the three bosses' own, units; (KG-SET): the nine, units; PIN MOVED (EG-E): the Battlespire's thirteen lords', units
+  assert.deepEqual(by('tier'), { common: 31, magic: 25, rare: 15, legendary: 12, aetheric: 18, artifact: 6 });   // PIN MOVED (KG-SET): five commons, two magics, two rares; PIN MOVED (EG-E): the lords' thirteen, aetheric
+  assert.equal(ILIAC_CARDS.length, 107);   // PIN MOVED (EG-E): the lords' thirteen
 });
 
 test('CARDS8 power and cost follow what the thing is in the game', () => {
@@ -135,7 +138,7 @@ test('CARDS8 power and cost follow what the thing is in the game', () => {
   assert.ok(p('iron-atronach') > p('flesh-atronach'));
   assert.ok(p('giant') === Math.max(...ILIAC_CARDS.map((x) => x.power)), 'nothing stands taller than a giant');
   assert.deepEqual(ILIAC_CARDS.filter((x) => x.cost === 1 && x.kind !== 'spell').map((x) => x.id).sort(),
-    ['giant-bat', 'imp', 'mages-guild-apprentice', 'rat', 'thieves-guild-filcher']);
+    ['giant-bat', 'imp', 'mages-guild-apprentice', 'rat', 'slaughterfish', 'thieves-guild-filcher']);   // PIN MOVED (KG-SET): the Slaughterfish, a 1/3 that tires
   // The legendary-or-higher cards: the Princes, the artifacts, and the Bay's few legends.
   assert.deepEqual(ILIAC_CARDS.filter((x) => rank(x.tier) >= rank('legendary') && x.kind === 'unit').map((x) => x.id), ['ancient-vampire', 'ancient-lich', 'king-gothryd', 'valkynaz-ruhn', 'sethrakul', 'brass-remnant',
     'eg-grath', 'eg-spellmaster', 'eg-armsmaster', 'eg-ilthys', 'eg-cairnkeeper', 'eg-twins', 'eg-morvayn', 'eg-dusk', 'eg-stalker', 'eg-seyth', 'eg-colossus', 'eg-wyrm', 'eg-garoth']);   // PIN MOVED (CARDS9): the bosses' own, aetheric; PIN MOVED (EG-E): the Battlespire's lords', aetheric
@@ -156,6 +159,6 @@ test('AUDIT CARDS-5: the catalog\'s rules are the ones looked at - every card\'s
   const { createHash } = await import('node:crypto');
   const rec = (c) => [c.id, c.name, c.kind, c.cost, c.power, c.tier, c.tags, c.fx];
   const body = JSON.stringify({ cards: ILIAC_CARDS.map(rec), locations: ILIAC_LOCATIONS.map(rec), starter: STARTER_DECK });
-  assert.deepEqual([ILIAC_CARDS.length, ILIAC_LOCATIONS.length, STARTER_DECK.length], [98, 11, 30]);   // PIN MOVED (CARDS9): the bosses' three; PIN MOVED (EG-E): the lords' thirteen
-  assert.equal(createHash('sha256').update(body).digest('hex'), '247741ef0a4917c0539a7a6ddec29ca64763f62af6797ab535c080c7ac1dd8f4');   // PIN MOVED (CARDS9): the bosses' three cards; PIN MOVED (EG-E): the Battlespire's thirteen lords' cards
+  assert.deepEqual([ILIAC_CARDS.length, ILIAC_LOCATIONS.length, STARTER_DECK.length], [107, 11, 30]);   // PIN MOVED (CARDS9): the bosses' three; (KG-SET): the nine; PIN MOVED (EG-E): the lords' thirteen
+  assert.equal(createHash('sha256').update(body).digest('hex'), '894bf5ab19cf0745b72984674c02794286aedb09d33920618a8f5adb41907379');   // PIN MOVED (CARDS9): the bosses' three cards; (KG-SET, 2026-10-13): the nine The King's Gambit brought in (Kings-Gambit.md section 10.3); PIN MOVED (EG-E): the Battlespire's thirteen lords' cards (their words in systems/iliacCardWords.js since the merge of main past KG-SET)
 });

@@ -42,8 +42,8 @@ const METHOD = 'a Room method of its own (the SCALE5 arms\' shape)';
  *  second test makes it). Raise one only with the reason written beside it: the ceiling is the line between wiring a
  *  module in and growing the knot. */
 const CEILINGS = [
-  ['src/scenes/world.js', 'bootWorld', 21_695, MODULE],   // HOST-SPLIT 1: travelViewMarks out (21,589 -> 21,445 code lines)
-  ['src/scenes/worldModes.js', 'createWorldModes', 7_159, MODULE],
+  ['src/scenes/world.js', 'bootWorld', 21_921, MODULE],   // HOST-SPLIT 1: travelViewMarks out (21,589 -> 21,445 code lines); AUDIT EG V (the merge of main into PR #800, 2026-10-15): +226, the Elite Gates arc's own wiring - written before HOST-SPLIT, measured into no ceiling - met main's growth since, two branches that each fit (Host-Split.md, THE CEILING GATES A CHANGE); the arc's lines measured in, its cut owed (Audit-EG-V.md, Still owed)
+  ['src/scenes/worldModes.js', 'createWorldModes', 7_350, MODULE],   // AUDIT EG V (the merge of main into PR #800, 2026-10-15): +191, the Elite Gates arc's circle (standEgHall, its dress, look, gates, swap and occluders) - written before HOST-SPLIT, measured into no ceiling - met main's growth since; the arc's lines measured in, the circle's cut to a module the host wires owed (Audit-EG-V.md, Still owed)
   ['src/scenes/dungeonContext.js', 'buildDungeonContext', 5_446, MODULE],
   ['src/scenes/exterior.js', 'bootExterior', 3_446, MODULE],
   ['server/src/index.js', '_message', 1_093, METHOD],   // the relay's Room is 473 methods already - its knot is the one dispatcher

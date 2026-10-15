@@ -720,6 +720,17 @@ const REFUSAL_WORDS = {
   'piece-legacy': () => t('account.refusal.pieceLegacy', 'That came into the realm from a classic save through customs. It stays yours, and the realm does not trade it.'),
   'service-moved': () => t('account.refusal.serviceMoved', 'The realm moved that character\'s record since its last clean save, so it cannot be rolled back to it.'),   // INT6: staff's
   'no-clean': () => t('account.refusal.noClean', 'That character has no save the realm judged clean to roll back to.'),   // INT6: the review's rollback (tools/realmReview.mjs)
+  // FIRM1 (bible/06-Systems/Firmament.md): the Firmament's own (server-account/src/firmament.js)
+  'firm-closed': () => t('account.refusal.firmClosed', 'The Firmament is closed to you for now.'),
+  'firm-character': () => t('account.refusal.firmCharacter', 'This character could not be named to the Firmament.'),
+  'firm-rid': () => t('account.refusal.firmRid', 'That request could not be read. Try again.'),
+  'firm-key': () => t('account.refusal.firmKey', 'One of those stars is unknown.'),
+  'firm-start': () => t('account.refusal.firmStart', 'Choose a birthsign first.'),
+  'firm-path': () => t('account.refusal.firmPath', 'A star has no path back to your birthsign.'),
+  'firm-points': () => t('account.refusal.firmPoints', 'You lack the points for that.'),
+  'firm-rate': () => t('account.refusal.firmRate', 'Too many changes this hour. Try again later.'),
+  'firm-stale': () => t('account.refusal.firmStale', 'Your stars were changed elsewhere. Look again.'),
+  'firm-respec-empty': () => t('account.refusal.firmRespecEmpty', 'Nothing is learned yet.'),
 };
 export const REFUSALS = /** @type {Readonly<Record<string, string>>} */ (localizedTable(REFUSAL_WORDS));
 
@@ -1853,6 +1864,18 @@ export function accountProf({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   };
 }
 
+/** FIRM1: THE FIRMAMENT'S DOOR (server-account/src/firmament.js) - a character's tree and purses read, and the whole tree
+ *  it wants asked under its own id. Every answer is `call`'s shape; each is waited for ACCOUNT_ACT_WAIT_MS at most. */
+export function accountFirmament({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    account: () => storedSession(storage)?.id ?? null,
+    state: (character) => post('/v1/firmament/state', { character }),
+    set: (character, tree, rid) => post('/v1/firmament/set', { character, tree, rid }),
+    respec: (character, rid, realm = null, region = null) => post('/v1/firmament/respec', { character, rid, ...(realm ? { realm } : {}), ...(Number.isSafeInteger(region) ? { region } : {}) }),   // the whole sky back for gold
+  };
+}
+
 /** PROF5: the market's door (server-account/src/market.js) - the Market tab's views and every act, each with the
  *  board's region and the hubs this client derived (the courier's road, witnessed - PROF0 26). */
 export function accountMarket({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
@@ -1903,6 +1926,17 @@ export function accountIliac({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
     board: () => post('/v1/iliac/board', {}),
     me: () => storedSession(storage)?.id ?? null,
     guest: () => storedSession(storage)?.kind === 'guest',   // AUDIT CARDS-6 E14: a guest's account plays no ranked game (iliac.js deckOrderOf)
+  };
+}
+
+/** KG6 (bible/11-Multiplayer/Kings-Gambit.md section 19): THE KING'S GAMBIT'S SEASON - its rated results carried to the
+ *  service (server-account/src/gambit.js claimGambit) and its board read (gambitBoardOf). */
+export function accountGambit({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    claim: (receipt) => post('/v1/gambit/claim', { receipt }),
+    board: () => post('/v1/gambit/board', {}),
+    me: () => storedSession(storage)?.id ?? null,
   };
 }
 

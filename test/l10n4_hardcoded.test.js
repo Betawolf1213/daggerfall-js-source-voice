@@ -92,6 +92,8 @@ const HARDCODED = {
   'src/net/egRun.js': 18,
   'src/net/egSpanLaw.js': 16,   // PIN MOVED (AUDIT EG V, f: +4, THE TIMED SOLVER's law-8 refusals (egSpanProof's `why` - the set pieces' margin, the Collapsing Tube's, the Forge Line's hammers) - read by a test and the sweep's tool, never said to a player, kept as egLaw.js's hero refusals are)
   'src/net/egVestige.js': 60,
+  'src/net/firmamentLaw.js': 42,
+  'src/net/firmamentTree.js': 113,
   'src/net/fortLaw.js': 21,
   'src/net/gateBrain.js': 9,
   'src/net/gateClaims.js': 5,
@@ -109,7 +111,7 @@ const HARDCODED = {
   'src/net/homeLaw.js': 3,
   'src/net/homeVoteLaw.js': 11,
   'src/net/houseLaw.js': 1,
-  'src/net/iliacCards.js': 272,
+  'src/net/iliacCards.js': 65,   // KG-SET: the set's words moved to systems/iliacCardWords.js; EG-E: the Battlespire's thirteen lords' names (+13), their words there too since the merge of main
   'src/net/iliacHand.js': 13,
   'src/net/journalPage.js': 16,
   'src/net/mail.js': 3,
@@ -296,7 +298,7 @@ const HARDCODED = {
   'src/scenes/travelView.js': 39,
   'src/scenes/treeHost.js': 3,
   'src/scenes/windfallHost.js': 5,
-  'src/scenes/world.js': 354,
+  'src/scenes/world.js': 349,
   'src/scenes/worldModes.js': 84,
   'src/systems/aetheric.js': 115,
   'src/systems/alchemyItems.js': 3,
@@ -379,7 +381,7 @@ const HARDCODED = {
   'src/systems/immersiveFootsteps.js': 10,
   'src/systems/immersiveTravel.js': 13,
   'src/systems/improvedInteriorLighting.js': 1,
-  'src/systems/inputActions.js': 85,
+  'src/systems/inputActions.js': 86,
   'src/systems/inventory.js': 2,
   'src/systems/itemBound.js': 4,
   'src/systems/itemIds.js': 2,
@@ -546,6 +548,7 @@ const HARDCODED = {
   'src/tools/depthCopyCheck.js': 8,
   'src/tools/enhancedUI.js': 24,
   'src/tools/enhancedVisuals.js': 1,
+  'src/tools/firmamentLab.js': 3,
   'src/tools/gunLab.js': 7,
   'src/tools/mwViewer.js': 9,
   'src/tools/paperdollViewer.js': 18,
@@ -583,7 +586,7 @@ const HARDCODED = {
   'src/ui/enhancedAccount.js': 8,
   'src/ui/enhancedBook.js': 1,
   'src/ui/enhancedCharSheet.js': 1,
-  'src/ui/enhancedChargen.js': 106,
+  'src/ui/enhancedChargen.js': 108,
   'src/ui/enhancedChronicle.js': 35,
   'src/ui/enhancedChunk.js': 2,
   'src/ui/enhancedControls.js': 20,
@@ -595,7 +598,7 @@ const HARDCODED = {
   'src/ui/enhancedInventory.js': 84,
   'src/ui/enhancedLevelUp.js': 17,
   'src/ui/enhancedLevelingChoice.js': 6,
-  'src/ui/enhancedMenu.js': 58,   // AUDIT EG V (c, L7-10): the Spire's three accessibility rows routed
+  'src/ui/enhancedMenu.js': 62,   // AUDIT EG V (c, L7-10): the Spire's three accessibility rows routed; UI-CALM's doors at the merge of main
   'src/ui/enhancedMerchantPanel.js': 1,
   'src/ui/enhancedNotice.js': 1,
   'src/ui/enhancedPlayerTrade.js': 14,
@@ -604,7 +607,7 @@ const HARDCODED = {
   'src/ui/enhancedPorts.js': 106,
   'src/ui/enhancedPost.js': 13,
   'src/ui/enhancedRest.js': 10,
-  'src/ui/enhancedSaddle.js': 19,
+  'src/ui/enhancedSaddle.js': 19,   // AUDIT UICALM-FIRM1 L4 M8: the saddle's notes routed (saddle.note.*), back to its count before UI-CALM
   'src/ui/enhancedSpellbook.js': 23,
   'src/ui/enhancedTalk.js': 8,
   'src/ui/enhancedTavern.js': 9,
@@ -614,6 +617,9 @@ const HARDCODED = {
   'src/ui/eventMapMarks.js': 6,
   'src/ui/exteriorAutomapWindow.js': 6,
   'src/ui/familyPages.js': 111,
+  // PIN MOVED (AUDIT UICALM-FIRM1 L4 H1, M4, L3-L4): the window's finger hint, its overlay guard and its respec's lost
+  // answer - the Firmament's words are English OPEN, its translation pass the owner's (Audit-UICalm-Firm1.md L5 M1)
+  'src/ui/firmamentWindow.js': 93,
   'src/ui/fleetPage.js': 30,
   'src/ui/fpsCounter.js': 3,
   'src/ui/gateBossBar.js': 5,
@@ -629,7 +635,7 @@ const HARDCODED = {
   'src/ui/heldMap.js': 42,
   'src/ui/heraldryArt.js': 4,
   'src/ui/hitNumbers.js': 1,
-  'src/ui/holdingsPages.js': 58,
+  'src/ui/holdingsPages.js': 59,
   'src/ui/howManyField.js': 1,
   'src/ui/hudLayout.js': 28,
   'src/ui/hudStatus.js': 1,
@@ -644,7 +650,7 @@ const HARDCODED = {
   'src/ui/joystickControlsWindow.js': 1,
   'src/ui/legacyModelChoice.js': 26,
   'src/ui/legacySuccession.js': 3,
-  'src/ui/levelNotice.js': 6,
+  'src/ui/levelNotice.js': 6,   // AUDIT UICALM-FIRM1 L4 M8: the Renown rise routed (level.renown.*)
   'src/ui/levelUpView.js': 23,
   'src/ui/levelingChoice.js': 16,
   'src/ui/loadingScreen.js': 10,

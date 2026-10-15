@@ -353,11 +353,12 @@
   {
     "name": "EGECO2-champion-off-the-mint",
     "file": "server-account/src/index.js",
-    "old": "      if (ARENA_HONOUR_PATHS.has(path)) who.player = await withEgHonours(honoursCtx, who.player, nowS);",
-    "new": "",
+    "old": "who.player = await withGambitHonours(honoursCtx, await withEgHonours(honoursCtx, who.player, nowS), nowS);",
+    "new": "who.player = await withGambitHonours(honoursCtx, who.player, nowS);",
     "tests": [
       "test/egeco_honours.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (the merge of main): re-aimed by content - one line lays the Spire Champion, then the Grandmaster; the mutant drops the Spire's."
   },
   {
     "name": "EGECO2-spire-titles-a-guests",

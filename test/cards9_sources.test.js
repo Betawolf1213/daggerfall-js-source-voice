@@ -139,7 +139,11 @@ test('CARDS9 the foes: a creature drops its own card - one draw at its card\'s t
     assert.ok(!BOSS_CARD_IDS.includes(id), 'no foe drops a boss\'s own');
     assert.ok(FOE_CARD_PER_MILLE[c.tier] > 0, `${id}: a chance for its tier`);
   }
-  for (const none of ['GrizzlyBear', 'Spider', 'Mummy', 'FrostDaedra', 'FireDaedra', 'Knight_CityWatch', 'Slaughterfish']) assert.equal(FOE_CARDS[MOBILE_TYPES[none]], undefined, `${none}: no card`);
+  // PIN MOVED (KG-SET, 2026-10-13): the seven creatures that dropped no card drop their own, and the Archer and the Ranger
+  // theirs (Kings-Gambit.md section 10.3); the city watch and the three callings with no card of their own drop none
+  for (const [kind, id] of [['GrizzlyBear', 'grizzly-bear'], ['SabertoothTiger', 'sabretooth-tiger'], ['Spider', 'spider'], ['Slaughterfish', 'slaughterfish'],
+    ['Mummy', 'mummy'], ['FrostDaedra', 'frost-daedra'], ['FireDaedra', 'fire-daedra'], ['Archer', 'archer'], ['Ranger', 'ranger']]) assert.equal(FOE_CARDS[MOBILE_TYPES[kind]], id, `${kind}: its own card`);
+  for (const none of ['Knight_CityWatch', 'Bard', 'Acrobat', 'Monk']) assert.equal(FOE_CARDS[MOBILE_TYPES[none]], undefined, `${none}: no card`);
   assert.deepEqual({ ...FOE_CARD_PER_MILLE }, { common: 16, magic: 11, rare: 7, legendary: 3 });
   assert.equal(TITLED_FOE_CARD_MULT, 2);
   const rat = { mobileType: MOBILE_TYPES.Rat, items: [] };
@@ -149,7 +153,7 @@ test('CARDS9 the foes: a creature drops its own card - one draw at its card\'s t
   assert.equal(foeCardRoll({ ...rat, eliteFoe: true }, script([0.032])), null);
   assert.equal(foeCardRoll({ ...rat, revenant: true }, () => 0), null);
   assert.equal(foeCardRoll({ ...rat, worldBoss: true }, () => 0), null);
-  assert.equal(foeCardRoll({ mobileType: MOBILE_TYPES.Spider, items: [] }, () => 0), null);
+  assert.equal(foeCardRoll({ mobileType: MOBILE_TYPES.Bard, items: [] }, () => 0), null);   // PIN MOVED (KG-SET): the Spider drops its own now - a Bard has none
   const lich = { mobileType: MOBILE_TYPES.Lich, items: [] };
   assert.equal(foeCardRoll(lich, script([0.0069])), 'lich');
   assert.equal(foeCardRoll(lich, script([0.0071])), null, 'a rare card, a rare draw');

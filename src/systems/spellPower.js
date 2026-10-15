@@ -65,7 +65,10 @@ export function schoolMult(caster, target, school, { self = false, ...opts } = {
 
 const _power = new Map();
 const _pierce = new Map();
-/** Named modifiers, `fn(caster, target) -> percent` more damage. A non-function removes the name. */
+/** FIRM1: the least a spell's damage is multiplied by, whatever its modifiers' percents add to (only a price - a
+ *  Firmament keystone's - is ever below none). */
+export const SPELL_POWER_FLOOR = 0.5;
+/** Named modifiers, `fn(caster, target) -> percent` more damage (FIRM1: or less, below none). A non-function removes the name. */
 export function registerSpellPowerMod(name, fn) { if (typeof fn === 'function') _power.set(name, fn); else _power.delete(name); }
 /** Named modifiers, `fn(caster, target) -> points` off the target's saving throw. A non-function removes the name. */
 export function registerSpellPierceMod(name, fn) { if (typeof fn === 'function') _pierce.set(name, fn); else _pierce.delete(name); }
@@ -77,9 +80,9 @@ export function spellPowerMult(caster, target, opts = {}) {
   let pct = 0;
   for (const fn of _power.values()) {
     const v = fn(caster, target);
-    if (Number.isFinite(v) && v > 0) pct += v;
+    if (Number.isFinite(v) && v !== 0) pct += v;   // FIRM1: a keystone's price may be a percent LESS (Martyr's Vow)
   }
-  return schoolPotency(caster, opts) * (1 + pct / 100);
+  return schoolPotency(caster, opts) * Math.max(SPELL_POWER_FLOOR, 1 + pct / 100);
 }
 
 /** SCHOOLS3: named listeners told when MY spell LANDED - `fn({ caster, target, foe, spell, r, self, reflected, took,

@@ -291,7 +291,7 @@ list cannot be lost as EG IV's was. Each fix is named in its pin's test title by
 | L9-9 | MED | departures of EG-ZG, EG-ZB and EG-ZI stale since EG-HERO-LAY | FIXED (words) | G: narrowed to code-built halls |
 | L9-10 | LOW | EG-H2's departure 4 names laws 4-6 alone; EG-G1's departure 4 gives a stale reason | FIXED (words) | G |
 | L9-11 | LOW | records' mutant counts disagree with their lists (`egz_state`, `egz_telegraph`, `egz_stair`) | FIXED (words) | G: 97, 75 and 84; AOE-PERF's floor strip recorded in EG-ZG |
-| L9-12 | LOW | Testing.md rows say migration 0111 and `drawAuras` | FIXED (words) | G: 0113 (0114 since), and `auraFrame` |
+| L9-12 | LOW | Testing.md rows say migration 0111 and `drawAuras` | FIXED (words) | G: 0113 (0116 since), and `auraFrame` |
 | L9-13 | LOW | section 31's intro says `net/egHost.js` and `net/egLord.js` were never built | FIXED (words) | G: built by EG-PLAY and retired by layer one |
 | L9-14 | LOW | Active-Arcs has no line for the EG-HERO wave or EG-HERO-LAY, and the Page-Index line lags | FIXED (words) | G |
 | L9-15 | LOW | the Accounts arc misses AUDIT EG IV's account half | FIXED (words) | G: a bullet for it |
@@ -406,7 +406,7 @@ Pages: 6.2, 8.1, 8.4, 8.7, 12, 14, 15, 16.3, 16.4, 17.2 and 23's `st` row. Its N
   until a Valkynaz. Item 3.
 
 **D, the net** (`server/src/index.js`; `server-account/src/eg.js`, `server-account/src/egEconomy.js`, `server-account/src/egHonours.js`, migration
-0113, 0114 since; net/: `bossRef.js`, `egBrain.js`, `egDurable.js`, `egFair.js`, `egHerald.js`, `egLink.js`, `egPay.js`,
+0113, 0116 since; net/: `bossRef.js`, `egBrain.js`, `egDurable.js`, `egFair.js`, `egHerald.js`, `egLink.js`, `egPay.js`,
 `wire.js`; scenes/: `egArch.js`, `egClient.js`, `egFight.js`, `world.js`; systems/: `egSpoils.js`, `sigilSetPowers.js`;
 `ui/egBoardWindow.js`). It took:
 
@@ -614,7 +614,7 @@ The coordinator then merged main: 84 commits, through 366f9d836b (#909), the hos
 ## The second round
 
 Group H branched from the merged head after the merge of main (62eeb8d923). It pins its work in
-`test/egaudit5_h*.test.js`, with mutants in `tools/mutants/egaudit5_h.json`, and re-hashes `world203` in place if the
+`test/egaudit5_h*.test.js`, with mutants in `tools/mutants/egaudit5_h.json`, and re-hashes `world203` (`world205` since the second merge of main) in place if the
 relay's graph moves. Group L was briefed beside it and not run (below).
 
 ### Group H - the followups
@@ -672,6 +672,39 @@ Its partial work was not merged. EG-L10N stays owed as section 31 records it ("#
 words reach every player in English, whatever language they chose, and the L10N4 ratchet holds their counts where the
 arc arrived.
 
+## At the second merge of main
+
+After group H and this page were pushed (b94c6a3dd6), main had moved 59 commits more - UI-CALM, FIRM1 and FIRMAMENT-ON,
+REL-FAST, MW-HEADS3, and The King's Gambit's KG-SET, KG5 and KG6 among them - and the pull request conflicted again, so
+the coordinator merged it once more:
+
+- **Versions**:
+  - `RELAY_VERSION` `world205`, past KG-SET (`world203`) and KG5 (`world204`); `EG_RELAY_MIN` 205;
+  - `ACCOUNT_VERSION` `acct135`, past KG6 (`acct134`);
+  - the migration `0116_elite_breach.sql`, past FIRMAMENT-ON's `0114_firmament.sql` and KG6's `0115_gambit_ladder.sql`.
+
+  The relay's graph pin holds both arcs' files, and every version pin, the wrangler line and the mutant records aimed at
+  the version lines moved again.
+- **Titles.** The Spire's thirteen follow KG6's Grandmaster in `TITLES` (43). `acc3titles`' list, the six title-slice
+  pins and `lampkeeper2`'s I Love Lamp moved with PIN MOVED notes.
+- **The lords' cards.** KG-SET took the Iliac set's words out of the relay's catalog (`net/iliacCards.js`, which the
+  relay carries and which never shows a word) into `systems/iliacCardWords.js`, read through the text core. The thirteen
+  lords' cards lost their `text` and `flavor` there and gained their words in `iliacCardWords.js`
+  (`cards.iliacSet.eg*`), drafted for the thirteen whole languages as KG-SET drafted the set's (recorded as
+  `claude-in-session`). `cards8_catalog`'s counts and its catalog hash moved.
+- **The honours.** A board, a box and an account's row lay the Spire Champion and the Grandmaster both
+  (`withEgHonours`, then `withGambitHonours`, in `server-account/src/board.js`, `boardNames.js`, `letters.js` and
+  `index.js`).
+- **The account's clock.** The stake clock's hourly job stands beside KG6's minute job: nine statements a minute and
+  twenty-three an hour on a quiet world (`auditscale` D7).
+- **The hosts' ceilings.** HOST-SPLIT's ceilings were measured on main, without the arc's own wiring: +226 code lines
+  in `bootWorld` and +191 in `createWorldModes`, written before HOST-SPLIT. With main's growth since (+38 and +153),
+  the merged hosts stood 14 and 98 lines over. Host-Split.md names the case - two branches that each fit, landing
+  together - and its two fixes, a move or a raise with its reason. The coordinator raised each ceiling by the arc's
+  own lines (to 21,921 and 7,350), with the reason beside it in `test/hostceiling.test.js`, and records the move as
+  owed: `tools/hostMove.mjs` refuses the circle's group (its state is `let`s), and the method's last step - Mac plays
+  the slice and runs `npm run perf` - is his.
+
 ## Still owed
 
 - **EG-L10N**: the arc's own words through the text core, skipped at Mac's word (group L, above).
@@ -721,6 +754,9 @@ arc arrived.
     - a second device handed a held Redoubt receipt;
     - *You find a Weir Key* said twice on a re-claim;
   - lane 9: `EG_LONG_STEP_LOOK` (10) against section 17.2's "for one span".
+- **The arc's cut out of the hosts** (HOST-SPLIT): the circle's group in `createWorldModes` (`standEgHall`, the band's
+  dress, the look, the gates, the swap and the occluders - some 210 lines) to a module the host wires, and the arc's
+  wiring in `bootWorld`, each ceiling lowered with it (the second merge of main, above).
 - **A browser with the game's data**: nothing here was seen running. Every fix is tested headless, against the
   director's own frames, the relay's Room, the account Worker and the real player motor.
 - **EG21's tuning in the field**, still the owner's.

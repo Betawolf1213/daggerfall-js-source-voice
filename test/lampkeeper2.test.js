@@ -140,7 +140,7 @@ test('LAMP-KEEPER II THE ACCOUNT SERVICE: the first word lays I Love Lamp on the
   assert.equal(titlesHeld({ handle: 'Mac', lamp_title: 1 }, {}).includes('ilovelamp'), true);
   assert.equal(titlesHeld({ handle: 'Mac', lamp_title: 0 }, {}).includes('ilovelamp'), false);
   assert.equal(titlesHeld({ handle: null, lamp_title: 1 }, {}).includes('ilovelamp'), false, 'a guest row holds none');
-  assert.equal(TITLES.at(-14), 'ilovelamp', 'the vocabulary, last of main\'s');   // PIN MOVED (AUDIT EG V, the merge of main): the Spire's thirteen, unshipped, follow it - a shipped title's index never moves
+  assert.equal(TITLES.at(-15), 'ilovelamp', 'the vocabulary, last of main\'s when it came');   // PIN MOVED (KG6): The King's Gambit's Grandmaster joined after it, last; PIN MOVED (AUDIT EG V, the merges of main): the Spire's thirteen after the Grandmaster
   assert.equal(TITLE_TEXT.ilovelamp, 'I Love Lamp');
   assert.deepEqual([...TITLE_RGBA.ilovelamp], [1, 0.698, 0.376, 1], 'lamplight');
   const e = honourEntry({ kind: 'title', key: 'ilovelamp' });

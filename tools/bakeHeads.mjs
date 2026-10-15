@@ -32,8 +32,11 @@
 //   THE PAINTINGS, BY THE NAMES THE EXPORT GIVES THEM. They came as attachments with no names; the export names each
 //   material's picture (tx_b_n_breton_m_h04.png and so on), so each part is read by its material AND held to that name
 //   (`objectMaterials`), and each painting was matched to its name by what it is drawn for - the red band on the
-//   headband's own island, the eyepatch on the one full-face layout that is not mirrored, the hairline along its hair's
-//   island (bible/04-Characters/Own-Heads.md).
+//   headband's own island, the eyepatch on a full-face layout that is not mirrored, the hairline along its hair's
+//   island (bible/04-Characters/Own-Heads.md). MW-HEADS3 (2026-10-15, the export's author, through the owner: "the
+//   eyepatch head was assigned the wrong hair / it gave me the rambo hair / ... its using the eyepatch on the wrong
+//   head"): the eyepatch is h0411's - object .002's face, its hair the 01 - and the plain brown beard h0423's; the two
+//   share one layout, so the paintings could not tell them apart and the first match guessed the headband's object.
 //
 //   NOTHING OF A SKELETON. A rigid part needs no bind and no weights: each NIF is the part's mesh and its painting, the
 //   shape the Thunderlock's is (tools/nifWrite.mjs meshToNif).

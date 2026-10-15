@@ -2851,7 +2851,7 @@ the pay law `net/egPay.js`, and the Broker sells the Panoply's sink. File by fil
   piece) or `short` 409 (the purse and the price). It is in `ROUTES`, the eg act map, `EG_STATUS` and the route comment.
 - **`server-account/src/index.js`**: the claim takes `{ receipt, character }`. INT5's `grantSpoils` fires only for a
   recorded, paid Redoubt.
-- **Migration 0114** (EG-PLAY's, unshipped; 0111, 0112 then 0113 on its branch, renumbered past NAME-AS's 0111, SEAT-FACTS' 0112 and LAMP-KEEPER II's 0113 at the merges) gains a block of its own:
+- **Migration 0116** (EG-PLAY's, unshipped; 0111, 0112, 0113 then 0114 on its branch, renumbered past NAME-AS's 0111, SEAT-FACTS' 0112, LAMP-KEEPER II's 0113, FIRMAMENT-ON's 0114 and KG6's 0115 at the merges) gains a block of its own:
   - `eg_redoubts`: `wk`, `paid`, `stones`, `nonce`, `forced`, `wkey`;
   - `players`: `eg_pity`, `eg_valk_wk`;
   - the table `eg_sink (account, wk, piece, at)`.
@@ -2873,8 +2873,8 @@ the pay law `net/egPay.js`, and the Broker sells the Panoply's sink. File by fil
   its record in section 31); the other three hosts carry no Broker or claim.
 
 **Pins.** `test/egeco_service.test.js` (12) and `test/egeco_broker.test.js` (3). `tools/mutants/egeco_pay.json`
-(58, every one dead). `ACCOUNT_VERSION` stays EG-PLAY's (`acct121` then, `acct134` since the merges): the migration is
-EG-PLAY's 0114, unshipped.
+(58, every one dead). `ACCOUNT_VERSION` stays EG-PLAY's (`acct121` then, `acct135` since the merges): the migration is
+EG-PLAY's 0116, unshipped.
 
 ## 20. The boards and the herald
 
@@ -2961,8 +2961,8 @@ an arm: its statements appended to the arm's batch, and a `w`'s new honours merg
 - **Departure, said plainly:** a Descent row's Proclamation is its company's first claim's week, not the open's.
 - **Pins.** `test/egeco_honours.test.js` (8) and `test/egeco_board.test.js` (5); `tools/mutants/egeco_honours.json`
   (63, every one dead); every pinned list of the titles and auras moved (PIN MOVED); `RELAY_VERSION` `world197`
-  rehashed (unshipped); `ACCOUNT_VERSION` stays EG-PLAY's (`acct121` then, `acct134` since the merges), its migration
-  extended (0111 then, 0114 since), unshipped.
+  rehashed (unshipped); `ACCOUNT_VERSION` stays EG-PLAY's (`acct121` then, `acct135` since the merges), its migration
+  extended (0111 then, 0116 since), unshipped.
 
 **EG-E3 record (2026-10-12): the herald, the receipts' bound and the dungeon's find.** (Mac: *"I said I want
 everything"*.)
@@ -3023,7 +3023,7 @@ everything"*.)
   - **The caps**: the ask is counted before the die, 6 a tier per account per real UTC day (`EG_FIND_PER_DAY`). Finds
     pay at most 2 keys an arena week (`EG_FIND_KEYS_PER_WEEK`), and the key and the find's mark are written in one
     transaction.
-  - **Storage**: the table `eg_finds`, added to EG-PLAY's migration (0111 then, 0114 since; `ACCOUNT_VERSION` stays
+  - **Storage**: the table `eg_finds`, added to EG-PLAY's migration (0111 then, 0116 since; `ACCOUNT_VERSION` stays
     EG-PLAY's).
   - **The client** door is `accountEg(...).find(tier)`, and the client logic is `systems/egFind.js`:
     - `registerEgFind({ ask, tierNow, selfId, online, say, throwKey })` registers a death handler (`eg-find`) for the
@@ -3393,7 +3393,7 @@ relay receipt is):
 22),
 not the service's.
 
-**Migration 0114** (EG-PLAY's, unshipped; 0111, 0112 then 0113 on its branch, renumbered past NAME-AS's 0111, SEAT-FACTS' 0112 and LAMP-KEEPER II's 0113 at the merges) holds every
+**Migration 0116** (EG-PLAY's, unshipped; 0111, 0112, 0113 then 0114 on its branch, renumbered past NAME-AS's 0111, SEAT-FACTS' 0112, LAMP-KEEPER II's 0113, FIRMAMENT-ON's 0114 and KG6's 0115 at the merges) holds every
 table and column of the arc: the keys (`players.eg_keys`, `eg_key_miss`), `eg_live` (`players.eg_live_b`,
 `eg_live_until`), the Rehearsal's day, the mercy, `eg_stakes`, `eg_redoubts`, `eg_runs`, the feats, the champions, the
 honours, the Annals, the week's pay, the pity, the sink, `eg_finds` and the first-time lines; and (AUDIT EG V) an end's
@@ -3402,11 +3402,11 @@ own draw and its Wager's decrees (`eg_runs.nonce`, `wgs`) and the Reliquaries a 
 **Versions.** Each slice that moves the relay bundle bumps `RELAY_VERSION` (`src/net/wire.js`) with its `LAW` row, and a
 game that does not know it is told to reload. Each that moves the service bumps `ACCOUNT_VERSION`
 (`server-account/src/service.js`). The arc ships under one of each, EG-PLAY's, re-hashed in place by every later slice
-while unshipped: `world203` (`world195` on its branch, renumbered past COATS1, CHAT-LANG, BAL8, SPAWN-REBIRTH, AUDIT
-ETHER-OW, PEER-ACTS, CHAT-TRADE and FIVE-ASKS at the merges) and `acct134` (`acct116` to `acct122` on its branch, `acct124`, `acct126`, `acct127` and `acct133` after earlier
-merges, renumbered past main's slices to LAMP-KEEPER II's `acct133` at the merges). The new titles and auras join `TITLES` and `AURAS` in `src/net/identityToken.js`.
-A client sends an `eg` frame only to a relay at or past the arc's own (`EG_RELAY_MIN` 203, `src/net/wire.js` - AUDIT EG
-V: it read 197, its branch's first, and main's world197 to world202 carry no breach).
+while unshipped: `world205` (`world195` on its branch, renumbered past COATS1, CHAT-LANG, BAL8, SPAWN-REBIRTH, AUDIT
+ETHER-OW, PEER-ACTS, CHAT-TRADE, FIVE-ASKS, KG-SET and KG5 at the merges) and `acct135` (`acct116` to `acct122` on its branch, `acct124`, `acct126`, `acct127`, `acct133` and `acct134` after earlier
+merges, renumbered past main's slices to KG6's `acct134` at the merges). The new titles and auras join `TITLES` and `AURAS` in `src/net/identityToken.js`.
+A client sends an `eg` frame only to a relay at or past the arc's own (`EG_RELAY_MIN` 205, `src/net/wire.js` - AUDIT EG
+V: it read 197, its branch's first, and main's world197 to world204 carry no breach).
 
 ## 24. The made level's rules
 
@@ -3967,8 +3967,8 @@ of main past the host split). **A record
 names another record's departure by its number when it closed**: a list renumbered later keeps the pointer to the
 departure as it then stood, so read such a pointer against the record's own date. **Versions** are
 named as they stood too: the arc ships under one relay version, one account version and one migration (section 23's
-Versions), so a record's `world195`-`world200`, `acct116`-`acct127` and migrations 0111 to 0113 are `world203`, `acct134` and
-0114 since the merges of main. EG-E1, EG-E2, EG-E3 and EG15's records stand in sections 19 and 20, beside the law they
+Versions), so a record's `world195`-`world203`, `acct116`-`acct134` and migrations 0111 to 0114 are `world205`, `acct135` and
+0116 since the merges of main. EG-E1, EG-E2, EG-E3 and EG15's records stand in sections 19 and 20, beside the law they
 built.
 
 **EG-L10N, owed**: the arc's own words reach a player in English, whatever language they chose - its record, below the
@@ -3980,7 +3980,7 @@ slice table's last row, says what is routed and what is owed.
 | **EG0a** | AUDIT EG0 | the bible |
 | **EG0b** | the fragments (sections 11 and 8.8 as first written) | the bible |
 | **EG0c** | AUDIT EG II, the polish pass | the bible |
-| **EG-PLAY** | THE ELITE BREACH, PLAYABLE: the slice the user asked for before the rest - the smallest Elite Breach that plays online end to end, cut through EG2, EG5, EG8, EG9-EG12 and EG14's `w` arm (its record, below, says what each piece took and left) | client, relay (world203), service (acct134) |
+| **EG-PLAY** | THE ELITE BREACH, PLAYABLE: the slice the user asked for before the rest - the smallest Elite Breach that plays online end to end, cut through EG2, EG5, EG8, EG9-EG12 and EG14's `w` arm (its record, below, says what each piece took and left) | client, relay (world205), service (acct135) |
 | **EG1** | THE GATE'S TIERS: `systems/gateTier.js`, `GATE_TIER_TEXT`, the Regular tier's words unchanged; THE REGISTRY: `world/pseudoArchives.js`, every port archive in it, and its collision test | client |
 | **EG2** | THE WEIR KEY: template 575 and its art; the balance (migration); the rolls in `claimGate` (which gains `rand`) and `claimSd`; the pity; `/v1/eg/find`, the killer's ask and the caps; `/v1/eg/keys`; the restack, new; the launch gift (a send migration) | client, service |
 | **EG3** | THE BOSS SEAM: `net/bossSeam.js`; the gate, the Remnant and the serpent re-plugged, frames and pins unchanged; the trails keep y | relay (a version) |
@@ -4155,7 +4155,7 @@ to the next circle.
 **What shipped, by piece.**
 
 - **The key** (EG2's core): template 575 (`systems/weirKey.js`), bound and stacked; its picture DFU's Talisman's
-  (TEXTURE.211 record 50). The count is the account's (`players.eg_keys`, migration 0111 - 0114 since the merges past NAME-AS, SEAT-FACTS and LAMP-KEEPER II) and the pack's stack its face,
+  (TEXTURE.211 record 50). The count is the account's (`players.eg_keys`, migration 0111 - 0116 since the merges past NAME-AS, SEAT-FACTS, LAMP-KEEPER II, FIRMAMENT-ON and KG6) and the pack's stack its face,
   restacked by every answer that carries it. Rolled at a recorded gate claim (the first certain, then one in six, one in
   four with the rite broken, the pity after five misses) and an Hour claim (one in three) - `server-account/src/eg.js`
   `rollWeirKey`, answered as `weir` on both claims. `/v1/eg/keys`. The launch gift: one key to every account with a
@@ -4178,7 +4178,7 @@ to the next circle.
   one life (a death, or three minutes absent in a trial, is a member's fall). The legion (`net/egHost.js` - the gate's
   Harriers and Ward-Bearers about a hall's own spots); the champion's kit (`net/egLord.js` - the Warden's cleave, slam
   and charge) for the Proving Walk's champion, *The Kynreeve*, and the INTERIM Court lord, *The Kynreeve Castellan*.
-  The receipts minted with the relay's key and re-handed at a hello. `RELAY_VERSION` `world195` (`world196` since the merge past COATS1, `world197` since the merge past CHAT-LANG, `world198` since the merge past BAL8, `world199` since the merge past SPAWN-REBIRTH, `world200` since the merge past AUDIT ETHER-OW, `world201` since the merge past PEER-ACTS, `world203` since the merge past CHAT-TRADE and FIVE-ASKS).
+  The receipts minted with the relay's key and re-handed at a hello. `RELAY_VERSION` `world195` (`world196` since the merge past COATS1, `world197` since the merge past CHAT-LANG, `world198` since the merge past BAL8, `world199` since the merge past SPAWN-REBIRTH, `world200` since the merge past AUDIT ETHER-OW, `world201` since the merge past PEER-ACTS, `world203` since the merge past CHAT-TRADE and FIVE-ASKS, `world205` since the merge past KG-SET and KG5).
 - **The call and the step in** (EG9's core): the call said in chat and on the tracker; `/breach` answers it once the
   breach opens (and a Weir Key used while one stands does the same), `/breach rehearse` opens the day's Rehearsal,
   `/breach home` takes a Redoubt's way home.
@@ -4231,8 +4231,8 @@ way home and the next circle). Mutants: `tools/mutants/egplay.json` (20), every 
 quoted lines moved, re-aimed by content: the bound list's (`auditrealm`, `cards8`, `loot9`, `portal1`, `wallet1` - 575
 joins it), the account version's (`br5`, `crafthold`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct116, acct118,
 acct119, acct121 then acct122
-on the branch; acct134 since the merges, past main's slices up to LAMP-KEEPER II's acct133), the order kinds'
-(`guild1c`, `seat2a2`) and the relay version's (`soc1` - world195, then world196 past COATS1, then world197 past CHAT-LANG, then world198 past BAL8, then world199 past SPAWN-REBIRTH, then world200 past AUDIT ETHER-OW, then world201 past PEER-ACTS, then world203 past CHAT-TRADE and FIVE-ASKS). The Ledger: section A's ELITE-GATES row
+on the branch; acct135 since the merges, past main's slices up to KG6's acct134), the order kinds'
+(`guild1c`, `seat2a2`) and the relay version's (`soc1` - world195, then world196 past COATS1, then world197 past CHAT-LANG, then world198 past BAL8, then world199 past SPAWN-REBIRTH, then world200 past AUDIT ETHER-OW, then world201 past PEER-ACTS, then world203 past CHAT-TRADE and FIVE-ASKS, then world205 past KG-SET and KG5). The Ledger: section A's ELITE-GATES row
 (`01-Overview/Port-Ledger.md`), naming every file.
 
 ### EG-FULL, LAYER ONE - 2026-10-11 (Mac: "I said I want everything") - THE SPIRE'S OWN FIGHT, THE RUN, THE WITNESS
@@ -4317,7 +4317,7 @@ fall, the fall and the recall, the Redoubt's choices, forsaking) and `test/egful
 were rewritten to the Spire's own words: `test/egplay_law.test.js`, `test/egplay_relay.test.js` and
 `test/egplay_client.test.js`. Mutants: `tools/mutants/egfull.json` (31). Records whose quoted lines moved were re-aimed
 by content: `egplay`, `sd6a` and `sd18a` (the Orrery widened with defaults equal to the Hour's bytes). `RELAY_VERSION`
-stays `world195` (`world196` since the merge past COATS1, `world197` past CHAT-LANG, `world198` past BAL8, `world199` past SPAWN-REBIRTH, `world200` past AUDIT ETHER-OW, `world201` past PEER-ACTS, `world203` past CHAT-TRADE and FIVE-ASKS), unshipped, with its hash and graph recomputed. The account Worker bundles `net/egShape.js` through the
+stays `world195` (`world196` since the merge past COATS1, `world197` past CHAT-LANG, `world198` past BAL8, `world199` past SPAWN-REBIRTH, `world200` past AUDIT ETHER-OW, `world201` past PEER-ACTS, `world203` past CHAT-TRADE and FIVE-ASKS, `world205` past KG-SET and KG5), unshipped, with its hash and graph recomputed. The account Worker bundles `net/egShape.js` through the
 wire, so `account-deploy.yml` lists it. A real defect was found and fixed on the way: the rest's offers were fanned to the
 whole company, so every screen showed the last member's cards.
 
@@ -4374,7 +4374,7 @@ Closes layer one's first departure for the pieces.
 - `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
 
 **Pins.** `test/egfull_span.test.js` (6) and `tools/mutants/egspan.json` (19, every one dead). `RELAY_VERSION` stays
-`world196` (renumbered past main's COATS1 `world195` at the merge; `world197` past CHAT-LANG's `world196` at the next, `world198` past BAL8's `world197` at a later one, `world199` past SPAWN-REBIRTH's `world198` at the next, `world200` past AUDIT ETHER-OW's `world199` at a later one, `world201` past PEER-ACTS' `world200` at the next, `world203` past CHAT-TRADE's `world201` and FIVE-ASKS' `world202` at the one after),
+`world196` (renumbered past main's COATS1 `world195` at the merge; `world197` past CHAT-LANG's `world196` at the next, `world198` past BAL8's `world197` at a later one, `world199` past SPAWN-REBIRTH's `world198` at the next, `world200` past AUDIT ETHER-OW's `world199` at a later one, `world201` past PEER-ACTS' `world200` at the next, `world203` past CHAT-TRADE's `world201` and FIVE-ASKS' `world202` at the one after, `world205` past KG-SET's `world203` and KG5's `world204` at the next),
 unshipped, rehashed with `net/egSpanLaw.js` in its graph.
 
 ### EG-FULL, LAYER THREE - 2026-10-11 - THE FRAGMENTS, THE FORK, THE SET PIECES
@@ -4556,7 +4556,8 @@ none).
   joins it, and the Proclamation is drawn by the arena week.
 - **THE LORDS' ARMS AND CARDS.** `systems/egLordArms.js` (new) `EG_LORD_ARMS`: each of the thirteen lords' named
   Legendary (The Houndfang to The Clan-Breaker), a fixed base Legendary on the spoils' draws. `net/iliacCards.js` gains
-  thirteen aetheric lord cards, found only in their Redoubt's spoils; `systems/bossCards.js` `BOSS_CARDS` and
+  thirteen aetheric lord cards, found only in their Redoubt's spoils (their rules and flavor read through the text core
+  from `systems/iliacCardWords.js` since the merge of main past KG-SET, as every card's are); `systems/bossCards.js` `BOSS_CARDS` and
   `BOSS_CARD_PER_MILLE` take them by lord at the gate's 200.
 - **A REDOUBT'S SPOILS** (`systems/egSpoils.js` `rollEgSpoils`, `egSpoilsList`). Rolled on the receipt's seed and paid
   by the service's word: gold growing with the Redoubt, one Rare or Legendary piece, one to three of `magicOrBetter`,
@@ -5014,7 +5015,7 @@ the company scattered across the Bay is called by a horn and a prompt and answer
   opener's keys, the day's Rehearsal and the relay's public half (`rk`).
 - **The open carries the choice**: `/v1/eg/open` takes `ew` and `wg`, refuses `start` (a start the opener may not make:
   no carries, its own included) and `wager` (not up to three decrees of three families - `egWagerOf`, its families
-  copied by number and held equal to `EG_DECREES`), and writes both into the stake (migration 0111's EG-F block, 0114
+  copied by number and held equal to `EG_DECREES`), and writes both into the stake (migration 0111's EG-F block, 0116
   since the merges:
   `eg_stakes.ew`, `eg_stakes.wg`) and the order (`ew`, `ewg`). Every admission is held to the breach's start (`start`,
   403), and its order names it; the three new refusal words (`start`, `wager`, `subs`) each have a sentence in
@@ -5102,8 +5103,8 @@ the company scattered across the Bay is called by a horn and a prompt and answer
 and judged again: `gateclear.json` (the sweep's turn), `auditwb_world.json`, `gateseen.json` and `wb2.json` (the gate
 pool's doors). Pins moved, each said so: `test/egplay_service.test.js` (the keys' answer carries `rk`; `EG_ORDER_FIELDS`
 gains `ewg`) and `test/wb2_gate.test.js` (the cap, now 4, met by six gates). `RELAY_VERSION` stays `world197`,
-unshipped, rehashed with `net/egCallSig.js` in its graph. `ACCOUNT_VERSION` stays `acct121` (`acct134` since the
-merges); migration 0111 (0114 since) gains the
+unshipped, rehashed with `net/egCallSig.js` in its graph. `ACCOUNT_VERSION` stays `acct121` (`acct135` since the
+merges); migration 0111 (0116 since) gains the
 EG-F block; `.github/workflows/account-deploy.yml` lists `src/net/egStartLaw.js`, which the account Worker bundles.
 
 ### EG-H2 - 2026-10-12 - THE MADE LEVEL'S RULES AND DURABILITY
@@ -5399,7 +5400,7 @@ the reverb's crossfade and TEXTURE.356, EG-ZH; the arch's skin, EG-F):
   smoothstep in the sky's shader (SD20c's sweep) and a registry line that named the Oblivion Gate (WB12a's guard). One
   failure stands at the base commit, not this slice's: doctrine's Ledger-row check names `src/net/egPay.js` and
   `src/systems/egLordArms.js`, left to the Ledger's owner.
-- `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121` (`acct134`
+- `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121` (`acct135`
   since
   the merges).
 - The Port-Ledger's ELITE-GATES row names this slice's files.
@@ -8502,10 +8503,10 @@ touched. No hall lays a hero fragment until the laying slice does, so no host dr
   step down, a gap stretched, a pier wider than its flight, the foot's tunnel let down. Also the specs' variant and class,
   each registry left without its fragment, the kit's pieces, and the code-built kit's own numbers (`EG_SHAFT_FLIGHT_CM`,
   the Ossuary's height and piece, the mist's line).
-- `RELAY_VERSION` stays the arc's (`world200` since the merge of main past AUDIT ETHER-OW, `world201` past PEER-ACTS, `world203` past CHAT-TRADE and FIVE-ASKS). At
+- `RELAY_VERSION` stays the arc's (`world200` since the merge of main past AUDIT ETHER-OW, `world201` past PEER-ACTS, `world203` past CHAT-TRADE and FIVE-ASKS, `world205` past KG-SET and KG5). At
   this slice no relay byte moved, because `net/egHeroFrags.js` was then in no relay import graph. Since EG-HERO-LAY every
   hero's law JSON is in the relay's graph (that record's "The relay's bytes"). `ACCOUNT_VERSION` stays the arc's
-  (`acct133`; `acct134` since the merge past LAMP-KEEPER II).
+  (`acct133`; `acct134` since the merge past LAMP-KEEPER II, `acct135` since the merge past KG6).
 - The Port-Ledger's ELITE-GATES row names the new files.
 
 ### EG-HERO (the Shade Perilous) - 2026-10-13 - THE GLOAM THICKET AND THE ECLIPSE VAULT
@@ -8677,10 +8678,10 @@ and that one are merged by the coordinator.
   - the law's ring, a beam's reach and the budget, and the bake's moon clock;
   - the test's own 20 m sweep.
 - PIN MOVED: `test/eg6c_law.test.js` - the registry's keys are the reference's and the two heroes'.
-- `RELAY_VERSION` stays the arc's (`world200` since the merge of main past AUDIT ETHER-OW, `world201` past PEER-ACTS, `world203` past CHAT-TRADE and FIVE-ASKS). At
+- `RELAY_VERSION` stays the arc's (`world200` since the merge of main past AUDIT ETHER-OW, `world201` past PEER-ACTS, `world203` past CHAT-TRADE and FIVE-ASKS, `world205` past KG-SET and KG5). At
   this slice no file of the relay's bundle moved, and `net/egHeroFrags.js` was in no relay import graph yet. Since
   EG-HERO-LAY every hero's law JSON is in the relay's graph (that record's "The relay's bytes"). `ACCOUNT_VERSION` stays
-  the arc's (`acct133`; `acct134` since the merge past LAMP-KEEPER II), with no migration. `EG_SPEC` and `EG_LAWS` were as they were.
+  the arc's (`acct133`; `acct134` since the merge past LAMP-KEEPER II, `acct135` since the merge past KG6), with no migration. `EG_SPEC` and `EG_LAWS` were as they were.
 - The Port-Ledger's ELITE-GATES row names the four tools and the assets.
 
 ### EG-HERO (the Broken Galleries) - 2026-10-13 - THE OBLIVION CAVERNS, THE FALLEN STACKS, THE BROKEN COLONNADE
@@ -8999,7 +9000,7 @@ them"), layer three's departure and its still-owed item, EG6c's "laying waits" s
 - As merged with the ten heroes:
   - the graph holds `net/egHeroFrags.js` (4,888 B) and eleven law JSONs (28,826 B: 1,768 B for the Colonnade's up to
     4,206 B for the Stacks'), 100 files;
-  - `RELAY_VERSION` is `world200` (main took `world199`; `world201` since main's PEER-ACTS took `world200`, `world203` since CHAT-TRADE and FIVE-ASKS took `world201` and `world202`), rehashed in place.
+  - `RELAY_VERSION` is `world200` (main took `world199`; `world201` since main's PEER-ACTS took `world200`, `world203` since CHAT-TRADE and FIVE-ASKS took `world201` and `world202`, `world205` since KG-SET and KG5 took `world203` and `world204`), rehashed in place.
 
 **The four hosts.**
 

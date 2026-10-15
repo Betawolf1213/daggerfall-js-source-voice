@@ -301,7 +301,12 @@ test('audit24 wave46: PlayArrowSound is DEAD in DFU and stays unported', () => {
   // never fires, so an enemy arrow in DFU makes the WEAPON hit sound
   // and no arrow sound at all - which is what the port now does.
   const src = rd('src/systems/soundClips.js');
-  assert.doesNotMatch(src, /ArrowHit/, 'the clip is not ported, because nothing would play it');
+  // PIN MOVED (KG4b, 11-Multiplayer/Kings-Gambit.md section 17.4): the clip IS named now - The King's Gambit's archers
+  // play it, as the mod's IL does (world/gambitMotion.js) - and still nothing plays it for an enemy's arrow: the game's
+  // board is the one place in the port that reads SOUND.ArrowHit
+  assert.match(src, /ArrowHit: \d+/, 'named for the one game that plays it');
+  const readers = ['src/scenes/world.js', 'src/scenes/dungeonContext.js', 'src/scenes/exterior.js', 'src/combat/arrowFlight.js', 'src/world/gambitMotion.js'].filter((f) => /SOUND\.ArrowHit\b/.test(rd(f)));
+  assert.deepEqual(readers, ['src/world/gambitMotion.js'], 'never an enemy arrow\'s');
   // hitSoundFor IS the two live ones, and the port uses it for arrows
   assert.match(src, /export function hitSoundFor\(weapon, rolls = Math\.random\)/);
   for (const f of ['src/scenes/world.js', 'src/scenes/dungeonContext.js']) {

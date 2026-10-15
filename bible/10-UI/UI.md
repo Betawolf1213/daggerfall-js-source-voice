@@ -33,7 +33,10 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and TEMP-UI's PACK TEMPERATURE (`temperatureCard.js`: the felt temperature on the enhanced pack's figure, a wearable's card and the Stats side - live, over the minute law's own sum; `06-Systems/Climates-Calories.md` TEMP-UI)
 - and MINE-PERKS' MOTHERLODES ON THE MAPS (`lodeMapMark.js`: a Motherlode Sense's day's Motherlodes, each a circle on its pixel with its ore and, until it rises, its hour, on both maps and the Overworld; `06-Systems/Professions-Arc.md` 43)
 - and CARDS-PLUS's CARD PANEL KIT (`cardPanelKit.js`: the chrome both card tables' panels wear, and the kit cut to them on the classic skin; `11-Multiplayer/Tavern-Cards.md` section 38)
-366 modules
+- and KG3's KING'S GAMBIT PANEL (`gambitTableHud.js`: the third card table's panel - the setup, the army, the turn and the result in the card panels' kit and the house's roles, the phone's sheet and strip; `gambitTableWords.js`: its every word through the text core, each number the law's own; `11-Multiplayer/Kings-Gambit.md` section 16)
+- and FIRM1's FIRMAMENT (`firmamentWindow.js`: the passive tree's sky over the whole screen, in both dresses; `firmamentOver.js`: its door off the Stats page, for either door that draws the page; `06-Systems/Firmament.md`)
+- and UI-CALM's QUIET PASS (`uiCalmStyle.js`: the type, the space and the quiet ink laid after Plus's sheet - the front door's two questions, the corner temperature, the calm vitals, the type floor; `10-UI/UI-Calm.md`)
+371 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

@@ -2,11 +2,12 @@
   {
     "name": "HOST-SPLIT-a-ceiling-under-its-host",
     "file": "test/hostceiling.test.js",
-    "old": "['src/scenes/world.js', 'bootWorld', 21_695, MODULE]",
+    "old": "['src/scenes/world.js', 'bootWorld', 21_921, MODULE]",
     "new": "['src/scenes/world.js', 'bootWorld', 21_400, MODULE]",
     "tests": [
       "test/hostceiling.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (the merge of main into PR #800): re-aimed by content - bootWorld's ceiling raised by the Elite Gates arc's own lines (+226)"
   },
   {
     "name": "HOST-SPLIT-a-ceiling-left-high",

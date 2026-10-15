@@ -641,8 +641,8 @@
   {
     "name": "CSA-E-arm-power-no-wind",
     "file": "src/systems/comeSailAway.js",
-    "old": "    const num17 = f(GetSailPower() * vMagnitude(state.windVectorCurrent));",
-    "new": "    const num17 = f(GetSailPower());",
+    "old": "    const num17 = f(f(GetSailPower() * vMagnitude(state.windVectorCurrent)) * f(firmSail()));",
+    "new": "    const num17 = f(f(GetSailPower()) * f(firmSail()));",
     "tests": [
       "test/csa_wind.test.js"
     ]
