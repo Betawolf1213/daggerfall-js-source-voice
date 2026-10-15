@@ -1,4 +1,14 @@
 {
+ "account.refusal.repairNoFaction": {
+  "en": "40e9bc6ef338",
+  "tr": "9543e972488b",
+  "by": "claude-in-session"
+ },
+ "account.refusal.repairNotSet": {
+  "en": "cc0bc29bd55f",
+  "tr": "d46c3aea9cd3",
+  "by": "claude-in-session"
+ },
  "lang.offer": {
   "en": "4417f5798650",
   "tr": "a63b29efe2c3",

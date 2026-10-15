@@ -1,4 +1,6 @@
 Key,Value
+account.refusal.repairNoFaction,"該角色的記錄中沒有這個派系，因此未作任何修復。"
+account.refusal.repairNotSet,"該角色的這個派系沒有那個標記，因此未作任何修復——是正確的角色嗎？"
 lang.offer,"使用繁體中文進行遊戲？"
 lang.offer.machine,"此翻譯為機器翻譯，仍在校對中。"
 lang.offer.no,"不，保持英文"

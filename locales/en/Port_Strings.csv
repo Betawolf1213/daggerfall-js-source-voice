@@ -518,6 +518,8 @@ account.refusal.rentPrice,"The owner has changed the price of that room. Look ag
 account.refusal.rentRate,"You have changed a great deal about rooms this hour. Try again later."
 account.refusal.rentRooms,"A home can offer at most {max} rooms to rent."
 account.refusal.rentTaken,"Somebody else is renting that room now."
+account.refusal.repairNoFaction,"That character's record holds no such faction, so nothing was repaired."
+account.refusal.repairNotSet,"That faction does not carry that flag on this character, so nothing was repaired - is it the right character?"
 account.refusal.retired,"That is no longer how a duel is recorded - the duel's referee records it."
 account.refusal.rollBusy,"Your standing with the guilds was being written. It will try again."
 account.refusal.rollClaim,"Your standing with the guilds could not be sent. The game may need updating."

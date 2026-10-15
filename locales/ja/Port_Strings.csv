@@ -503,6 +503,8 @@ account.refusal.rentPrice,"所有者がその部屋の価格を変更しまし�
 account.refusal.rentRate,"この1時間で部屋の変更を多く行いすぎました。しばらくしてからもう一度お試しください。"
 account.refusal.rentRooms,"1軒の家が貸し出せる部屋は{max}部屋までです。"
 account.refusal.rentTaken,"その部屋は今、別の人が借りています。"
+account.refusal.repairNoFaction,"そのキャラクターの記録にはその勢力がないため、何も修復されませんでした。"
+account.refusal.repairNotSet,"このキャラクターのその勢力にはそのフラグがないため、何も修復されませんでした - 正しいキャラクターですか?"
 account.refusal.retired,"決闘はもうこの方法では記録されません。決闘の審判が記録します。"
 account.refusal.rollBusy,"ギルドでの立場を書き込み中でした。再試行されます。"
 account.refusal.rollClaim,"ギルドでの立場を送信できませんでした。ゲームの更新が必要かもしれません。"

@@ -2594,6 +2594,16 @@
   "tr": "a2e41b69a7c7",
   "by": "claude-in-session"
  },
+ "account.refusal.repairNoFaction": {
+  "en": "40e9bc6ef338",
+  "tr": "823fbfdec951",
+  "by": "claude-in-session"
+ },
+ "account.refusal.repairNotSet": {
+  "en": "cc0bc29bd55f",
+  "tr": "a50bf707d2d1",
+  "by": "claude-in-session"
+ },
  "account.refusal.retired": {
   "en": "1f21826df490",
   "tr": "1d47bf155ded",

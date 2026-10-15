@@ -518,6 +518,8 @@ account.refusal.rentPrice,"Il proprietario ha cambiato il prezzo di quella stanz
 account.refusal.rentRate,"Hai cambiato moltissimo riguardo alle stanze in quest’ora. Riprova più tardi."
 account.refusal.rentRooms,"Una casa può offrire al massimo {max} stanze in affitto."
 account.refusal.rentTaken,"Ora quella stanza la affitta qualcun altro."
+account.refusal.repairNoFaction,"Il registro di quel personaggio non contiene una fazione simile, quindi non è stato riparato nulla."
+account.refusal.repairNotSet,"Quella fazione non porta quel contrassegno su questo personaggio, quindi non è stato riparato nulla - è il personaggio giusto?"
 account.refusal.retired,"Un duello non si registra più così - lo registra l’arbitro del duello."
 account.refusal.rollBusy,"La tua reputazione con le gilde era in fase di scrittura. Si riproverà."
 account.refusal.rollClaim,"Non è stato possibile inviare la tua reputazione con le gilde. Il gioco potrebbe dover essere aggiornato."

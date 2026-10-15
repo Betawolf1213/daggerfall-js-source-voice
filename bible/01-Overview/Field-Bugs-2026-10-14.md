@@ -14,7 +14,7 @@ Discord threads from 2026-10-13 and 2026-10-14, handed over as screenshots, read
 | 7 | "the 'Look Around > With secrets' config is not even showing anything" (Arbeck) | not reproduced: nothing on its path changed since 2026-10-10 and its suite passes; it lights only in a dungeon, on an Info ask (F3 or the wheel's Info), within 8 m and in sight - and a thick secret wall can hide its own glow card | asked of the player |
 | 8 | "Gold appears when I'm trading but not in my inventory" - "After I went to sleep my character lost 5000 of gold" (Soda_do_macaco...) | not reproduced: the trade window's figure, its refusal and its payment read one count (coins and letters of credit); the inventory's footer counts coins alone, and a payment spends letters first, so a 5000 letter spent leaves the coin figure where it was | asked of the player |
 | 9 | "Mountain clipping and invisible" - "Mountain is invisible and you can go through it and get stuck" (BigOOF) | a video, no place named | asked of the player |
-| 10 | "Daedra Summoning bugged" - "Summoned Hermaeus Mora at the Mages Guild online, paid 100k. No video, no offer, no message. The save now has Hermaeus Mora (faction 8) flags = 65 (Summoned set), and quest W0C00Y00 is not among the active quests"; then "trying to summon Mora in the Dak'Fron region - which does not meet the requirements for the quest" | DFU's own order: the gold spent and the Summoned flag set BEFORE the prince's quest is made, and a quest that cannot be made there (W0C00Y00 wants a palace in the region) offered nothing and said nothing | fixed (SUMMON-OFFER); the stuck save needs Mac's call |
+| 10 | "Daedra Summoning bugged" - "Summoned Hermaeus Mora at the Mages Guild online, paid 100k. No video, no offer, no message. The save now has Hermaeus Mora (faction 8) flags = 65 (Summoned set), and quest W0C00Y00 is not among the active quests"; then "trying to summon Mora in the Dak'Fron region - which does not meet the requirements for the quest" | DFU's own order: the gold spent and the Summoned flag set BEFORE the prince's quest is made, and a quest that cannot be made there (W0C00Y00 wants a palace in the region) offered nothing and said nothing | fixed (SUMMON-OFFER); the stuck save mended by staff (SUMMON-REPAIR) |
 
 ## STORES-CRASH: the Stores page walks a station's nodes as the browser mints them (1)
 
@@ -179,10 +179,21 @@ of a quest arm that had no offer. Pinned by `test/fb1014_summonoffer.test.js`, w
 bridge in one crafted region with a palace and the same region without one; on the old law all four of its tests fail
 (`tools/mutants/fb1014_summonoffer.json`, 7, dead).
 
-NOT DONE - THE PLAYER'S SAVE (Mac's call). The fix stops new cases; it does not mend a save that already holds the flag.
-Nothing in a save tells this flag from a summoning whose offer the player refused - DFU sets it either way and never
-clears it (`factionRep.js` setFlag: OR only), and a refusal leaves no record - so a load-time repair that clears
-Summoned where the prince's quest is not live would hand every player who refused an offer a second one. Undoing it for
-this player is an operator's act on one character - faction 8's 0x40 cleared and the 100,000 gold returned - and no
-operator run does that yet (the realm's runs restore homes, guild places, lines; `tools/realmRestore.mjs`,
-`tools/reviveRealmCharacter.mjs`).
+THE PLAYER'S SAVE - SUMMON-REPAIR (2026-10-15, acct133; Mac, asked: "Operator tool"). The fix stops new cases; it does
+not mend a save that already holds the flag. Nothing in a save tells this flag from a summoning whose offer the player
+refused - DFU sets it either way and never clears it (`factionRep.js` setFlag: OR only), and a refusal leaves no record,
+so a load-time repair that clears Summoned where the prince's quest is not live would hand every player who refused an
+offer a second one. Staff mend the one character instead: the review's `realm-repair` act
+(`server-account/src/review.js`, `src/net/repairLaw.js`; `06-Systems/Integrity-Arc.md` INT6) clears one of FactionFile's
+flag bits on one faction of a realm character's record and gives gold back as a letter of credit, once a ticket, behind
+the developers' list like every review act and written among the character's findings. It refuses a faction the record
+does not hold and a bit that is not set, so a repair aimed at the wrong character mends and gives nothing. The record is
+seized one sequence on, the rollback's way: the tab playing it cannot write over it, and its next join plays the mended
+record. Pinned by `test/fb1014_summonrepair.test.js` (`tools/mutants/fb1014_summonrepair.json`, 16, dead). For the
+reporter, once acct133 is live, signed in as a developer (DAGGER_HANDLE and DAGGER_PASSWORD), the first command naming
+the character's id for the second:
+
+```sh
+node tools/realmReview.mjs characters sucean
+node tools/realmReview.mjs repair <the id it names> fb1014-summon-offer 8 0x40 100000 "SUMMON-OFFER: Hermaeus Mora summoned in Dak'fron, W0C00Y00 could not be made"
+```

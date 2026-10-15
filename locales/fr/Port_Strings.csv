@@ -518,6 +518,8 @@ account.refusal.rentPrice,"Le propriétaire a changé le prix de cette chambre. 
 account.refusal.rentRate,"Vous avez beaucoup modifié de chambres cette heure-ci. Réessayez plus tard."
 account.refusal.rentRooms,"Une demeure peut proposer au plus {max} chambres à louer."
 account.refusal.rentTaken,"Quelqu’un d’autre loue cette chambre maintenant."
+account.refusal.repairNoFaction,"Le registre de ce personnage ne contient aucune faction de ce genre, donc rien n’a été réparé."
+account.refusal.repairNotSet,"Cette faction ne porte pas cette marque pour ce personnage, donc rien n’a été réparé - est-ce le bon personnage ?"
 account.refusal.retired,"Ce n’est plus ainsi qu’un duel est enregistré - l’arbitre du duel l’enregistre."
 account.refusal.rollBusy,"Votre rang auprès des guildes était en cours d’écriture. Nouvel essai à venir."
 account.refusal.rollClaim,"Votre rang auprès des guildes n’a pas pu être envoyé. Le jeu a peut-être besoin d’une mise à jour."
