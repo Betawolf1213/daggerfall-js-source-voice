@@ -168,8 +168,8 @@ which is what the player found.
 
 FIXED. The layouts read every online boot already makes before its first town stands (WD3, `/v1/homes/layouts`) names
 every town's homes by building as well: `homes`, `[mapId, [buildingKey, ...]]` a town, keys ascending - every home, a
-guild's hall and a deed held - read in the same batch as the towns and kept under the same generation (STORM-SHED 2's
-`homes_gen`); a town's homes were any session's to read already (homesInTown). The registry keeps it beside the towns
+guild's hall and a deed held - read beside the towns and kept with them under the generation read before both
+(STORM-SHED 2's `homes_gen`); a town's homes were any session's to read already (homesInTown). The registry keeps it beside the towns
 it asks (`hearEveryTown`), and the quest machine's `isPlayerHome` asks `homeStands`: a player's home in any town. The
 service is acct133 (no migration); a client on an older service hears no `homes` and keeps what it knew. A quest made
 before the fix keeps its site - restarting it chooses again. HOME1's known limit narrows to what no client can know at

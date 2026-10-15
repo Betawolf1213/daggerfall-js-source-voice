@@ -503,16 +503,17 @@ export async function homesOf({ db }, player) {
  * quest picks its residence in a town its player has never walked into (Place.cs's `remote house`), and the client knew
  * a town's homes only once it had asked that town at its gate or a door - so "no quest picks a player's home" held in
  * the player's own town alone, and a remote farmstead's only house, a player's home, was the quest's. A town's homes are
- * any session's to read already (homesInTown); this is the building of each, and nothing else of it. Read in the same
- * request as the towns (a batch, HOMES-SHED's law) and kept under the same generation (homeLayoutsKept).
+ * any session's to read already (homesInTown); this is the building of each, and nothing else of it. Read beside the
+ * towns, and kept with them under the generation read before both (homeLayoutsKept) - a home made between the two
+ * reads moves the generation, so the next ask reads both again.
  * @param {{db: any}} ctx
  */
 export async function homeLayouts({ db }) {
-  const [{ results = [] }, { results: keyed = [] }] = await db.batch([
+  const [{ results = [] }, { results: keyed = [] }] = await Promise.all([
     db.prepare(`SELECT h.map_id, h.layout FROM homes h
     WHERE NOT EXISTS (SELECT 1 FROM homes o WHERE o.map_id = h.map_id AND (o.bought_at < h.bought_at OR (o.bought_at = h.bought_at AND o.building_key < h.building_key)))
-    ORDER BY h.map_id LIMIT ?`).bind(HOME_LAYOUTS_MAX),
-    db.prepare('SELECT map_id, building_key FROM homes ORDER BY map_id, building_key LIMIT ?').bind(HOME_KEYS_MAX),
+    ORDER BY h.map_id LIMIT ?`).bind(HOME_LAYOUTS_MAX).all(),
+    db.prepare('SELECT map_id, building_key FROM homes ORDER BY map_id, building_key LIMIT ?').bind(HOME_KEYS_MAX).all(),
   ]);
   /** @type {Array<[number, number[]]>} */
   const homes = [];
