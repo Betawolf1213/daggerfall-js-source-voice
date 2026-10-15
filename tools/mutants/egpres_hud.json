@@ -155,7 +155,7 @@
   {
     "name": "EGPRES-the-twist-dropped",
     "file": "src/ui/egSpireHud.js",
-    "old": "twist: spec.twist ? EG_TWIST_LINES[spec.twist] ?? '' : '',",
+    "old": "twist: egTwistShown(spec, E.dc) ? EG_TWIST_LINES[spec.twist] ?? '' : '',",
     "new": "twist: '',",
     "tests": [
       "test/egpres_hud.test.js"

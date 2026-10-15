@@ -28,6 +28,7 @@
 import { egHallOf, egCircleOfHall, egSlotOfHall, egPhase, egTimes, egCountText, egObjectiveOf, EG_TEXT, EG_COUNT_START_MS, EG_LAST_WORD_MS, EG_BANDS, EG_DECREES, EG_TWIST_NAMES } from '../net/egLaw.js';
 import { EG_OPEN_ENDS } from '../net/egLaw.js';   // AUDIT EG III (section 16.3): the ends that open the Reliquaries
 import { egBossOf, egLordCard } from '../net/egLaw.js';   // AUDIT EG V (L2-11): the next Court's lord, the law's
+import { egStrataSecond } from '../net/egBrain.js';   // AUDIT EG V (L2-11): and the second lord its strata stand beside it
 import { egPanoplyIn, egValkRedoubt } from '../net/egPay.js';   // AUDIT EG III: the rest's stake line - a Reliquary's Panoply odds
 import { EG_RELIQUARY_PANOPLY_X } from '../systems/egSpoils.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
@@ -140,14 +141,16 @@ export function egStakeText(rw) {
  * AUDIT EG V (L2-11; sections 14 and 16.3: "the next circle's decrees ... and the next lord, both shown on the beacon") - THE
  * BEACON'S WORDS in a rest: *The next circle bears: Gale-Swept, Hunting Pack II.* once the company's word chose them (the
  * state's `nx` - net/egBrain.js egNextOf), and *The next Court: Grath, the Hound.* - the next circle's lord, the law's
- * (net/egLaw.js egBossOf). '' outside a rest. Pure.
+ * (net/egLaw.js egBossOf), with the second lord the strata held stand beside it (the Twin Court's, the Old Masters' -
+ * net/egBrain.js egStrataSecond, the state's `sr`). '' outside a rest. Pure.
  * @param {any} E
  */
 export function egNextCircleText(E) {
   if (!E?.b || E.sg !== 'rest' || !(E.h > 0)) return '';
   const dec = (E.nx ?? []).map(([id, rank]) => `${EG_DECREES[id]?.name ?? ''}${rank >= 2 ? ' II' : ''}`).filter(Boolean);
-  const L = egLordCard(egBossOf(E.seed, egCircleOfHall(E.h) + 1));
-  return [dec.length ? `The next circle bears: ${dec.join(', ')}.` : '', `The next Court: ${L.name}${L.epithet ? `, ${L.epithet}` : ''}.`].filter(Boolean).join(' ');
+  const c = egCircleOfHall(E.h) + 1, key = egBossOf(E.seed, c), two = egStrataSecond(E.sr, key, c);
+  const card = (k) => { const L = egLordCard(k); return `${L.name}${L.epithet ? `, ${L.epithet}` : ''}`; };
+  return [dec.length ? `The next circle bears: ${dec.join(', ')}.` : '', `The next Court: ${card(key)}${two ? ` - and ${card(two)}` : ''}.`].filter(Boolean).join(' ');
 }
 /** The company's rows (section 27.4): each member's numeral and name, a cracked recall, a witness's eye, home, forsaken. */
 export function egCompanyRows(E) {

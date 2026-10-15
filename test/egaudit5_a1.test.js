@@ -14,7 +14,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egHallOf, egCirclePlan, egCircleOfHall, egBossOf, egLordCard, egDecreeCount, EG_DECREES, EG_DECREE_BY_KEY, EG_TWIST_LINES, EG_TWIST_NAMES, EG_SEALED_MS } from '../src/net/egLaw.js';
-import { egBreachNew, egEnter, egStep, egWord, egGeo, egNextOf, EG_RESPITE_BUDGET_MS, EG_RESPITE_STEP_MS, EG_RESPITE_MIN_MS, EG_READY_MS } from '../src/net/egBrain.js';
+import { egBreachNew, egEnter, egStep, egWord, egGeo, egNextOf, egStrataSecond, EG_RESPITE_BUDGET_MS, EG_RESPITE_STEP_MS, EG_RESPITE_MIN_MS, EG_READY_MS } from '../src/net/egBrain.js';
 import { egDecreesAsk, egDecreesChosen, egDecreesInForce, egBargainFams, egBargainOpen, egBargainDecree, egTwistShown, egFrayOf, egFrayingOpen, egLeanOf, EG_FRAYING_FRAY, EG_FRAYING_II_TURNS, EG_ASK_MS } from '../src/net/egRun.js';
 import { EG_VESTIGES, EG_SHARDS_PER } from '../src/net/egVestige.js';
 import { EG_WAGER_FAMILY_OF } from '../src/net/egStartLaw.js';
@@ -117,6 +117,9 @@ test('AUDIT EG V L2-11 THE BEACON NAMES THE NEXT CIRCLE (sections 14 and 16.3: *
   assert.equal(egNextCircleText(E), line);
   assert.equal(egHudModel(E, 'acct-0', P.now(), { inSpire: true }).dec, line, 'the classic HUD\'s rest line');
   assert.ok(egSpireHudModel(E, 'acct-0', P.now()).stage.includes(line), 'the Spire HUD\'s stage line');
+  // under the Twin Court the next Court's second lord beside it (the strata the state says)
+  const two = egLordCard(egStrataSecond(['twincourt'], egBossOf(12345, 2), 2));
+  assert.ok(egNextCircleText({ ...E, sr: ['twincourt'] }).endsWith(`The next Court: ${L2.name}, ${L2.epithet} - and ${two.name}, ${two.epithet}.`), 'the Twin Court\'s second lord named');
   P.voteAll('ready', 1);
   P.stepUntil(() => P.B.sg !== 'rest');
   assert.deepEqual(egNextOf(P.B), [], 'none outside a rest');
@@ -230,7 +233,7 @@ test('AUDIT EG V L2-13 THE LEAN AT THE BREACH\'S FIRST REDOUBT (sections 15 and 
 
 // ── L2-15: THE PICKS CLOSE WITH THE REST ──────────────────────────────────────────────────────────────────────────────────
 test('AUDIT EG V L2-15 EVERY PICK IS THE REST\'S (section 15: "takes one within the rest; unpicked, the first is taken"): a member whose shards buy a second pick and who takes none has both taken at the rest\'s end, its shards spent and its offer closed; a pick and a Surplus are refused outside the rest, even with an offer left in hand (mutants: one pick taken at the close; the offer left open; a pick in a trial; a Surplus in a trial)', () => {
-  const P = court(1, { pre: (B) => { B.mem['acct-0'].shards = EG_SHARDS_PER; } });
+  const P = court(1, { pre: (B) => { B.mem['acct-0'].shards = EG_SHARDS_PER; B.mem['acct-1'].shards = 4 * EG_SHARDS_PER; } });
   P.toWindow();
   const m = P.B.mem['acct-0'], offer = [...m.offer];
   assert.equal(m.picks, 2, 'a second pick');
@@ -239,6 +242,8 @@ test('AUDIT EG V L2-15 EVERY PICK IS THE REST\'S (section 15: "takes one within 
   assert.equal(m.vs.length, 2, 'both picks taken');
   assert.deepEqual(m.vs.map(([id]) => id), [offer[0], offer[1]], 'each the first card left');
   assert.deepEqual([m.offer, m.picks, m.shards], [null, 0, 0], 'the offer closed, the shards spent');
+  const m1 = P.B.mem['acct-1'];
+  assert.deepEqual([m1.offer, m1.picks], [null, 0], 'more picks than cards: the offer closed all the same');
   P.toTrial();
   m.offer = [EG_VESTIGES[5].id]; m.picks = 1; P.B.sur = 1;
   assert.deepEqual(P.word('acct-0', { k: 'pick', v: EG_VESTIGES[5].id }), [], 'no pick in a trial');

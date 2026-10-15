@@ -253,6 +253,8 @@ test('AUDIT EG V L3-20 THE ATHENAEUM\'S PRESSURE IS HARRIERS (section 8.4: "ceil
     for (let k = 0; k < (3 * EG_LOCK_EVERY_MS) / 250; k++) P.step();
     const kinds = risen(P.frames.slice(said0));
     const harriers = kinds.filter((k) => k === EG_KIND.harrier).length, binders = kinds.filter((k) => k === EG_KIND.binder).length;
+    const waves = P.frames.slice(said0).filter((f) => f.k === 'ead');
+    assert.ok(waves.length >= 2 && waves.every((f) => f.a.filter((t) => t[2] === EG_KIND.harrier).length === Math.ceil(5 / 4)), 'ceil(n/4) Harriers a wave');
     assert.ok(harriers >= 4, `Harriers rise: ${kinds}`);
     assert.equal(kinds.length, harriers + binders, `nothing but Harriers (and Binders): ${kinds}`);
     assert.equal(binders > 0, wg.length > 0, 'a Binder under Swarm-Mother');

@@ -1865,7 +1865,8 @@ At each Redoubt the next circle's **decrees** are chosen and shown on the beacon
 Hunting Pack.* With them the beacon names the next lord: *The next Court: Grath, the Hound.* The company knows what is
 coming before it chooses to go on. Each family's ask closes at its 10 s, as every ask of the company's word does
 (section 16.4). Its choice is kept for the next circle (`B.next.dc`, which the rest's end makes the circle's) and said on the
-state as `nx`, and every screen's rest line says both (`ui/egHud.js` `egNextCircleText`, the lord the law's `egBossOf`).
+state as `nx`, and every screen's rest line says both (`ui/egHud.js` `egNextCircleText`, the lord the law's `egBossOf`, with the
+second lord the strata stand beside it - `egStrataSecond`).
 
 - **How many**: circle 1, none. From circle 2, `min(4, 1 + floor((c-2)/2))`.
 - **One per family**: never two from one of the five families, so a company can track every one. Dagon's Bargain
