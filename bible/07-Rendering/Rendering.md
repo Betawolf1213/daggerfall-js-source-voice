@@ -214,7 +214,15 @@ directory by `test/audit18_bible_docs.test.js`:
   PICTURE mode, the Bay deck's Kings) on one atlas; the house's marks laid over
   it - a side by its ring's shape, the chosen brass, reach a wash, range an
   outline, a target the blood ring - each edged in the kit's outline. Made as
-  the battle is drawn, freed with the game; KG4 raises the board.
+  the battle is drawn, freed with the game. KG4 (2026-10-14, section 17) BUILDS
+  it: the mat a slab with its water recessed, the walls stone blocks, the
+  pillars columns, the water's ripples drifting; the cards stand in turned
+  stands, standees with their faces read from either chair, their health a
+  bar turned to the viewer; the hazards' flames, spikes, bubbles and warnings,
+  the numbers in a glyph strip painted in code and the shot's four squares on
+  an effects' atlas (a cutout); a hurt card drawn red and a healed one green
+  through the texture remap onto the atlas's tints. Its poses are
+  `world/gambitMotion.js`'s.
 - `lightClusters.js` - LC1 CLUSTERED LIGHTS (2026-09-23): the frustum cut into
   16 x 9 x 24 cells once a frame on the CPU, each light written into the cells
   its view-space box touches, uploaded as two integer textures (the grid's

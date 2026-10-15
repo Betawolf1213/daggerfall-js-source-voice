@@ -513,13 +513,15 @@ export function targetInRange(board, p, col, row, target) {
 /** FoesInRange: the other side's pieces `p` reaches from where it stands, in the pieces' order. @param {GambitBoard} board @param {GambitPiece} p */
 export const foesInRange = (board, p) => board.pieces.filter((o) => o.side !== p.side && targetInRange(board, p, p.col, p.row, o));
 /**
- * GetReachable: the cells `p` may move to, breadth-first over floor up to KG_MOVE_RANGE steps, through no piece (its own
- * side's included), never its own cell - `[col, row]` in the order the walk meets them.
+ * GetReachable's walk, the law's one: breadth-first from `p`'s cell over floor up to KG_MOVE_RANGE steps, through no piece
+ * (its own side's included) - `{met, from}`: the cells in the order the walk meets them, and each met cell's index to the
+ * index of the cell it was met from (the start's -1).
  * @param {GambitBoard} board @param {GambitPiece} p
  */
-export function reachable(board, p) {
-  /** @type {number[][]} */ const out = [];
-  const steps = new Map([[cellIndex(p.col, p.row), 0]]), queue = [[p.col, p.row]];
+function walkFrom(board, p) {
+  /** @type {number[][]} */ const met = [];
+  const start = cellIndex(p.col, p.row);
+  const steps = new Map([[start, 0]]), from = new Map([[start, -1]]), queue = [[p.col, p.row]];
   for (let q = 0; q < queue.length; q++) {
     const [x, y] = queue[q], d = steps.get(cellIndex(x, y));
     if (d >= KG_MOVE_RANGE) continue;
@@ -527,12 +529,37 @@ export function reachable(board, p) {
       const nx = x + dx, ny = y + dy;
       if (isPassable(board.tiles, nx, ny) && !steps.has(cellIndex(nx, ny)) && !pieceAt(board, nx, ny)) {
         steps.set(cellIndex(nx, ny), d + 1);
+        from.set(cellIndex(nx, ny), cellIndex(x, y));
         queue.push([nx, ny]);
-        out.push([nx, ny]);
+        met.push([nx, ny]);
       }
     }
   }
-  return out;
+  return { met, from };
+}
+
+/**
+ * GetReachable: the cells `p` may move to, breadth-first over floor up to KG_MOVE_RANGE steps, through no piece (its own
+ * side's included), never its own cell - `[col, row]` in the order the walk meets them.
+ * @param {GambitBoard} board @param {GambitPiece} p
+ */
+export const reachable = (board, p) => walkFrom(board, p).met;
+
+/**
+ * KG4 (section 10.1, AUDIT KG C22): THE WAY A MOVE WALKED - GetReachable's own walk from `p`'s cell, kept as the path it
+ * met (col, row) by: `[[col, row], ...]` from `p`'s cell to (col, row), a cell a step, or null where the walk does not
+ * reach it. The mod slides a piece straight at its new cell (MoveTowards), through whatever stands between; the board
+ * walks it this way, so a piece never crosses a wall. Read on the board BEFORE the move (the move event carries only its
+ * two ends).
+ * @param {GambitBoard} board @param {GambitPiece} p @param {number} col @param {number} row
+ */
+export function reachPath(board, p, col, row) {
+  const { from } = walkFrom(board, p);
+  const end = inBounds(col, row) ? cellIndex(col, row) : -1;
+  if (end === cellIndex(p.col, p.row) || !from.has(end)) return null;
+  /** @type {number[][]} */ const path = [];
+  for (let i = end; i !== -1; i = /** @type {number} */ (from.get(i))) path.unshift([i % KG_COLS, Math.floor(i / KG_COLS)]);
+  return path;
 }
 
 /** A blow's damage (Attack): attack x (KG_BLOW_LOW + KG_BLOW_SPREAD x u) at float32, rounded by RoundToInt, at least 1.

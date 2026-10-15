@@ -13,7 +13,8 @@
 //
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import { CARD_TABLE_W, CARD_TABLE_D, CARD_TABLE_RAIL } from './cardTableProp.js';
-import { KG_COLS, KG_ROWS } from '../net/kingsGambit.js';
+import { KG_COLS, KG_ROWS, KG_TILE } from '../net/kingsGambit.js';
+import { CARD_W, CARD_L } from './cardMotion.js';
 
 /** The felt inside the rail: its long and its short side, in metres. */
 export const GAMBIT_FELT_LONG = CARD_TABLE_W - 2 * CARD_TABLE_RAIL;
@@ -57,6 +58,118 @@ export function gambitPlaces(frame, hostFeet) {
   const w = KG_COLS * cell, d = KG_ROWS * cell;
   const corners = [point(-w / 2, d / 2), point(w / 2, d / 2), point(w / 2, -d / 2), point(-w / 2, -d / 2)];
   return { end, cell, top, right, toHost, width: w, depth: d, at, cellAt, corners };
+}
+
+// ── KG4: THE BOARD BUILT, THE CARDS STANDING, THE LEAN ─────────────────────────────────────────────────────────────
+
+/** A piece's card on its cell: this share of the cell wide (10.1's plate, 4.5 cm on a 7.08 cm cell). */
+export const GAMBIT_CARD_SHARE = 0.64;
+/** THE BUILT BOARD (5.3): a wall a stone block a cell square and a few centimetres high, a pillar a column, the water
+ *  recessed under the mat (metres; a pillar's radius a share of the cell). MEASURE (KG4): read in the lab's photographs. */
+export const GAMBIT_WALL_H = 0.024;
+export const GAMBIT_PILLAR_H = 0.042;
+export const GAMBIT_PILLAR_R = 0.34;
+export const GAMBIT_WATER_DROP = 0.0025;
+/** THE STAND (10.1): a turned disc this share of a cell across and this high (m); the card's foot this deep in its slot;
+ *  the chosen piece lifted this much (m). */
+export const GAMBIT_DISC_SHARE = 0.84;
+export const GAMBIT_DISC_H = 0.006;
+export const GAMBIT_SLOT_DEPTH = 0.003;
+export const GAMBIT_SELECT_LIFT = 0.01;
+/** A standing card's height on a board of `cell` (m): the plate's own 63:88 at GAMBIT_CARD_SHARE of the cell. */
+export const gambitCardHeight = (/** @type {number} */ cell) => (GAMBIT_CARD_SHARE * cell * CARD_L) / CARD_W;
+/** The foot of a standing card over the mat (m): on its disc, in its slot. */
+export const GAMBIT_CARD_FOOT = GAMBIT_DISC_H - GAMBIT_SLOT_DEPTH;
+
+/**
+ * THE PRESS ON THE BUILT BOARD (14.3): the cell a ray from `eye` along `dir` presses - the nearest of a standing card (its
+ * face, square to the board's rows, both sides alike), a wall's top, a pillar's top, and the mat itself, or null off the
+ * board. A press on a card's face is its cell, as the press on its cell is; one on a wall's top is the wall's cell (which
+ * presses nothing - the law moves no piece there), never the cell the ray would reach on the mat behind it.
+ * @param {ReturnType<typeof gambitPlaces>} places @param {{tiles: number[], pieces: {col: number, row: number}[]}} board
+ * @param {number[]} eye @param {number[]} dir
+ */
+export function gambitPressCell(places, board, eye, dir) {
+  /** @type {{t: number, cell: number[]}|null} */ let best = null;
+  const take = (/** @type {number} */ t, /** @type {number[]} */ cell) => { if (t > 0 && (!best || t < best.t)) best = { t, cell }; };
+  const planeY = (/** @type {number} */ y) => (Math.abs(dir[1]) > 1e-9 ? (y - eye[1]) / dir[1] : -1);
+  const pointAt = (/** @type {number} */ t) => [eye[0] + dir[0] * t, eye[1] + dir[1] * t, eye[2] + dir[2] * t];
+  const local = (/** @type {number[]} */ p, /** @type {number} */ c, /** @type {number} */ r) => {
+    const o = places.at(c, r), dx = p[0] - o[0], dz = p[2] - o[2];
+    return [(dx * places.right[0] + dz * places.right[1]) / places.cell, (dx * places.toHost[0] + dz * places.toHost[1]) / places.cell];
+  };
+  const H = gambitCardHeight(places.cell), half = GAMBIT_CARD_SHARE / 2;
+  for (const p of board.pieces ?? []) {
+    // the card's face: the plane through its cell's centre along the rows (normal toHost), its width across the cell
+    const o = places.at(p.col, p.row), n = places.toHost;
+    const den = dir[0] * n[0] + dir[2] * n[1];
+    if (Math.abs(den) < 1e-9) continue;
+    const t = ((o[0] - eye[0]) * n[0] + (o[2] - eye[2]) * n[1]) / den;
+    const q = pointAt(t), [u] = local(q, p.col, p.row), y = q[1] - (places.top + GAMBIT_CARD_FOOT);
+    if (Math.abs(u) <= half && y >= 0 && y <= H) take(t, [p.col, p.row]);
+  }
+  for (let r = 0; r < KG_ROWS; r++) for (let c = 0; c < KG_COLS; c++) {
+    const tile = board.tiles?.[r * KG_COLS + c];
+    if (tile !== KG_TILE.wall && tile !== KG_TILE.pillar) continue;
+    const t = planeY(places.top + (tile === KG_TILE.wall ? GAMBIT_WALL_H : GAMBIT_PILLAR_H));
+    if (t <= 0) continue;
+    const [u, v] = local(pointAt(t), c, r);
+    if (tile === KG_TILE.wall ? Math.abs(u) <= 0.5 && Math.abs(v) <= 0.5 : Math.hypot(u, v) <= GAMBIT_PILLAR_R) take(t, [c, r]);
+  }
+  const tm = planeY(places.top);
+  if (tm > 0) { const cell = places.cellAt(pointAt(tm)); if (cell) take(tm, cell); }
+  return best ? /** @type {any} */ (best).cell : null;
+}
+
+/** THE LEAN (10.7): pitched this far down (first guess 55 degrees - any of 48 to 63 keeps the board in view), and the
+ *  board's projected box kept this share of the clear screen at most (a margin round it). */
+export const GAMBIT_LEAN_PITCH = (55 * Math.PI) / 180;
+export const GAMBIT_LEAN_FILL = 0.94;
+
+/**
+ * THE LEAN (10.7, 14.7; MEASURE KG4): the seated eye moved forward over the player's own edge of the board and up, and
+ * pitched down, until the whole board - its corners and its head row's cards standing - lies in the CLEAR part of the
+ * screen (`clear`: `{x0, x1, y0, y1}`, shares of the world's view, y down - the screen past the panel's column, above the
+ * phone's strip, under the touch layer's presses), centred there. Solved, not guessed: the board's projected box is fitted
+ * by moving the eye back along its line of sight and sideways along the board, a few rounds. Answers `{eye, fwd}`.
+ * @param {ReturnType<typeof gambitPlaces>} places
+ * @param {{aspect: number, fovY: number, clear?: {x0: number, x1: number, y0: number, y1: number}, pitch?: number}} view
+ */
+export function gambitLean(places, { aspect, fovY, clear = { x0: 0, x1: 1, y0: 0, y1: 1 }, pitch = GAMBIT_LEAN_PITCH }) {
+  const f = [-places.toHost[0] * Math.cos(pitch), -Math.sin(pitch), -places.toHost[1] * Math.cos(pitch)];   // toward the head, down
+  const rt = [places.right[0], 0, places.right[1]];
+  const up = [f[1] * rt[2] - f[2] * rt[1], f[2] * rt[0] - f[0] * rt[2], f[0] * rt[1] - f[1] * rt[0]];   // forward x right: the screen's up (the world's left hand - Unity's axes)
+  const ty = Math.tan(fovY / 2), tx = ty * aspect;
+  const H = gambitCardHeight(places.cell);
+  const head = [places.corners[2], places.corners[3]];
+  const pts = [...places.corners, ...head.map((p) => [p[0], p[1] + H, p[2]])];
+  const centre = [(places.corners[0][0] + places.corners[2][0]) / 2, places.top, (places.corners[0][2] + places.corners[2][2]) / 2];
+  // the clear screen in the projection's own units (x right, y up)
+  const cx0 = clear.x0 * 2 - 1, cx1 = clear.x1 * 2 - 1, cy0 = 1 - clear.y1 * 2, cy1 = 1 - clear.y0 * 2;
+  let dist = 1, sx = 0, sy = 0;
+  const eyeOf = () => [0, 1, 2].map((i) => centre[i] - f[i] * dist + rt[i] * sx + up[i] * sy);
+  const box = () => {
+    const e = eyeOf();
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (const p of pts) {
+      const d = [p[0] - e[0], p[1] - e[1], p[2] - e[2]];
+      const z = d[0] * f[0] + d[1] * f[1] + d[2] * f[2];
+      const x = (d[0] * rt[0] + d[1] * rt[1] + d[2] * rt[2]) / (Math.max(z, 1e-6) * tx);
+      const y = (d[0] * up[0] + d[1] * up[1] + d[2] * up[2]) / (Math.max(z, 1e-6) * ty);
+      x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+    }
+    return { x0, x1, y0, y1 };
+  };
+  for (let round = 0; round < 24; round++) {
+    const b = box();
+    const k = Math.max((b.x1 - b.x0) / ((cx1 - cx0) * GAMBIT_LEAN_FILL), (b.y1 - b.y0) / ((cy1 - cy0) * GAMBIT_LEAN_FILL));
+    dist *= Math.max(0.5, Math.min(2, k));
+    // centre it: the box's middle moved to the clear screen's, the eye slid square to its line of sight
+    const n = box();
+    const dx = ((cx0 + cx1) - (n.x0 + n.x1)) / 2, dy = ((cy0 + cy1) - (n.y0 + n.y1)) / 2;
+    sx -= dx * dist * tx; sy -= dy * dist * ty;
+  }
+  return { eye: eyeOf(), fwd: f, box: box() };
 }
 
 /** The yaw a side's cards lie at on the mat - each side reads its own the right way up, a card's top (the plate's +Z)

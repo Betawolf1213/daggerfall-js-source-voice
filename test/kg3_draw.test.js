@@ -77,15 +77,25 @@ test('KG3 the atlas: every unit\'s picture, the four Kings, the back - each a ce
 });
 
 test('KG3 the mat\'s quad over the board\'s corners, wound as the renderer winds - cross(b - a, c - a) up - from either side of the table (mutant: a triangle turned)', () => {
+  // PIN MOVED (KG4, Kings-Gambit.md section 17): the mat is a slab now - its top a quad a cell over the board's corners,
+  // every one facing up; its four edges stand down to the felt (test/kg4_board.test.js holds them, and the recess)
   for (const feet of [[2, 0, -3.9], [2, 0, -2.1], [3.4, 0, -3], [0.6, 0, -3]]) {
     const P = gambitPlaces(frame(), feet);
     const m = matModel(P);
     const pos = (i) => [m.positions[i * 3], m.positions[i * 3 + 1], m.positions[i * 3 + 2]];
+    let tops = 0;
+    const xs = [], zs = [];
     for (let t = 0; t < m.indices.length; t += 3) {
+      if (m.normals[m.indices[t] * 3 + 1] < 0.9) continue;   // a slab's edge
       const [a, b, c] = [pos(m.indices[t]), pos(m.indices[t + 1]), pos(m.indices[t + 2])];
       const ux = b[0] - a[0], uz = b[2] - a[2], vx = c[0] - a[0], vz = c[2] - a[2];
       assert.ok(uz * vx - ux * vz > 0, `${feet}: triangle ${t / 3} faces up`);
+      for (const q of [a, b, c]) { xs.push(q[0]); zs.push(q[2]); }
+      tops++;
     }
+    assert.equal(tops, 2 * KG_COLS * KG_ROWS);
+    const cx = P.corners.map((q) => q[0]), cz = P.corners.map((q) => q[2]);
+    assert.ok(near(Math.min(...xs), Math.min(...cx), 1e-6) && near(Math.max(...xs), Math.max(...cx), 1e-6) && near(Math.min(...zs), Math.min(...cz), 1e-6) && near(Math.max(...zs), Math.max(...cz), 1e-6), 'over the board\'s corners');
     assert.equal(m.subMeshes[0].textureArchive, GAMBIT_ARCHIVE);
   }
 });
@@ -115,6 +125,8 @@ test('KG3 the mat painted in the house\'s coat: every cell its layout\'s tone, t
 });
 
 test('KG3 the draw: nothing until a board; the atlas and the mat made once, the plates once a kind, scaled to their cell; the mat painted again only when its look changes - the old picture let go first (the cache keeps a key\'s first); all freed once (mutants: the release; the scale; a plate a draw)', () => {
+  // PIN MOVED (KG4, section 17): the atlas comes with its hurt and healed tints and the effects' atlas beside it, and the
+  // board is built - its stands, its stone and its bars are meshes of their own (test/kg4_board.test.js holds them)
   const made = [], freed = [], released = [], uploads = [], drawn = [];
   const own = { measureText: (t) => ({ width: String(t).length * 5 }), getImageData: (x, y, w, h) => ({ data: new Uint8ClampedArray(w * h * 4) }), createLinearGradient: () => ({ addColorStop() {} }), createRadialGradient: () => ({ addColorStop() {} }) };
   const ctx = new Proxy(own, { get: (o, k) => (k in o ? o[k] : () => {}), set: (o, k, v) => { o[k] = v; return true; } });
@@ -129,23 +141,27 @@ test('KG3 the draw: nothing until a board; the atlas and the mat made once, the 
   const look = { layout: st.layout, tiles: st.tiles, hazards: st.hazards, pieces: st.pieces.map((p) => ({ id: p.id, side: p.side, col: p.col, row: p.row, king: p.king, unit: p.unit })), selected: null, lit: [], range: [], targets: [], cursor: null, staged: null };
   d.draw({ places, look, crowns: [3, 0] });
   const kinds = new Set(look.pieces.map((p) => pieceAtlasKey(p, [3, 0])));
-  assert.equal(d.meshCount(), kinds.size + 1, 'the mat, and a plate a kind');
-  assert.deepEqual(uploads.map((u) => u[1]), ['atlas', 'mat']);
-  assert.equal(drawn.length, look.pieces.length + 1);
-  const plateMat = drawn[1][1];
+  const onAtlas = (m) => m.subMeshes[0].textureRecord === 'atlas';
+  assert.equal(made.filter(onAtlas).length, kinds.size, 'a plate a kind');
+  assert.equal(made.filter((m) => m.subMeshes[0].textureRecord === 'mat').length, 1, 'the mat once');
+  assert.deepEqual(uploads.map((u) => u[1]), ['atlas', 'atlas-hurt', 'atlas-glow', 'fx', 'mat']);
+  const plates = drawn.filter((x) => onAtlas(x[0].m));
+  assert.equal(plates.length, look.pieces.length, 'a card a piece');
+  const plateMat = plates[0][1];
   const s = (GAMBIT_CARD_SHARE * places.cell) / CARD_W;
   assert.ok(near(Math.hypot(plateMat[0], plateMat[1], plateMat[2]), s, 1e-5), 'a plate scaled to its cell');
+  const n = made.length;
   d.draw({ places, look, crowns: [3, 0] });
-  assert.equal(uploads.length, 2, 'the same look: nothing painted again');
+  assert.equal(uploads.length, 5, 'the same look: nothing painted again');
   d.draw({ places, look: { ...look, cursor: [1, 1] }, crowns: [3, 0] });
-  assert.deepEqual(uploads.map((u) => u[1]), ['atlas', 'mat', 'mat'], 'a new look: the mat painted again');
+  assert.deepEqual(uploads.map((u) => u[1]).slice(5), ['mat'], 'a new look: the mat painted again');
   assert.deepEqual(released, [[GAMBIT_ARCHIVE, 'mat']], 'its old picture let go first');
-  assert.equal(made.length, kinds.size + 1, 'no mesh made again');
+  assert.equal(made.length, n, 'no mesh made again');
   d.destroy(); d.destroy();
   assert.equal(freed.length, made.length, 'every mesh, once');
-  assert.deepEqual(released.slice(1).map((x) => x[1]).sort(), ['atlas', 'mat']);
+  assert.deepEqual(released.slice(1).map((x) => x[1]).sort(), ['atlas', 'atlas-glow', 'atlas-hurt', 'fx', 'mat']);
   d.draw({ places, look, crowns: [3, 0] });
-  assert.equal(made.length, kinds.size + 1, 'nothing made after the end');
+  assert.equal(made.length, n, 'nothing made after the end');
   const bare = createGambitTableDraw({}, { doc });
   assert.doesNotThrow(() => bare.draw({ places, look, crowns: [3, 0] }), 'a renderer without the path draws nothing');
 });

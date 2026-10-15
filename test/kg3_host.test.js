@@ -36,6 +36,7 @@ import { CARD_W, CARD_L, chipDiscs } from '../src/world/cardMotion.js';
 import { cardMatrix } from '../src/render/cardTableDraw.js';
 import { holdCursor } from '../src/player/pointerLock.js';
 import { rayDirFromScreen } from '../src/player/tapRay.js';
+import { gambitPressCell, gambitCardHeight, GAMBIT_CARD_FOOT, gambitLean } from '../src/world/gambitCloth.js';   // KG4: the built board's press, the lean
 import { regularsToStand, regularBark, regularLook } from '../src/world/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
 import { cardPackPrice, buyCardPack } from '../src/systems/cardSources.js';
@@ -347,9 +348,12 @@ test('KG3 A PRESS ON THE CLOTH is a cell through the frame\'s own lens - a fine 
   // cell, a few px past GAMBIT_SNAP_PX from the nearest of the player's pieces (the only candidates while none is
   // chosen), presses that cell and takes no piece
   const VW = W / 3, VH = H / 3;
-  const small = (c, row) => { const s = projectToScreen(P.at(c, row), VW, VH, CAM.proj, CAM.view, null); return [s.x, s.y]; };
+  // PIN MOVED (KG4, Kings-Gambit.md section 17): the cards stand - a piece is where the finger sees it, its card's middle,
+  // and the cell under a point is the built board's (a card's face is its cell, never the mat behind it)
+  const mid = GAMBIT_CARD_FOOT + gambitCardHeight(P.cell) / 2;
+  const small = (c, row) => { const o = P.at(c, row), s = projectToScreen([o[0], o[1] + mid, o[2]], VW, VH, CAM.proj, CAM.view, null); return [s.x, s.y]; };
   /** The cell a screen point lies over, read through the lens as the game reads it. */
-  const under = ([x, y]) => { const ray = rayDirFromScreen(x, y, VW, VH, CAM.proj, CAM.view, CAM.eye, null); const p = ray ? hand.tablePoint(CAM.eye, ray, P.top) : null; return p ? P.cellAt(p) : null; };
+  const under = ([x, y]) => { const ray = rayDirFromScreen(x, y, VW, VH, CAM.proj, CAM.view, CAM.eye, null); return ray ? gambitPressCell(P, st(), CAM.eye, ray) : null; };
   const own = st().pieces.filter((p) => p.side === 0).map((p) => small(p.col, p.row));
   let far = null;
   for (const [ox, oy] of own) for (let a = 0; a < 16 && !far; a++) for (const d of [24, 26, 28]) {
@@ -361,8 +365,9 @@ test('KG3 A PRESS ON THE CLOTH is a cell through the frame\'s own lens - a fine 
   assert.ok(far, 'an empty cell beside a piece, past the radius');
   assert.equal(r.g.pointer(far, { w: VW, h: VH }, { touch: true }), true);
   assert.equal(r.g.g.selected, null, 'past the radius: the cell under the finger, no piece taken');
-  // a finger a little off a piece's cell still takes it
-  const [mx, my] = screen(mover.col, mover.row);
+  // a finger a little off a piece's card still takes it
+  const mo = P.at(mover.col, mover.row), ms0 = projectToScreen([mo[0], mo[1] + mid, mo[2]], W, H, CAM.proj, CAM.view, null);
+  const [mx, my] = [ms0.x, ms0.y];
   assert.equal(r.g.pointer([mx + GAMBIT_SNAP_PX - 4, my], { w: W, h: H }, { touch: true }), true);
   assert.equal(r.g.g.selected, mover.id, 'snapped to the player\'s own piece');
   // under a finger a move stages, and Move here commits it
@@ -406,17 +411,19 @@ test('KG3 the board drawn and freed: the mat and the pieces\' plates made as the
   r.g.draw(0, CAM);
   assert.equal(r.made.length, 0, 'no board before a game');
   toBattle(r);
-  r.g.draw(16, CAM);
+  // PIN MOVED (KG4, section 17): the muster throws the cards on a beat apart - every piece drawn once all are thrown;
+  // and the textures are five now (the atlas, its hurt and healed tints, the effects' atlas, the mat)
+  r.g.draw(16000, CAM);
   assert.ok(r.made.length >= 2, 'the mat and the plates');
   assert.ok(r.drawn.length > r.g.g.session.state.pieces.length, 'the mat and every piece drawn');
   const madeAt = r.made.length;
-  r.g.draw(32, CAM);
+  r.g.draw(16032, CAM);
   assert.equal(r.made.length, madeAt, 'made once, drawn every frame');
   r.g.close();
   assert.equal(r.freed.length, r.made.length, 'every mesh freed');
-  assert.deepEqual(r.released.map((x) => x[1]).sort(), ['atlas', 'mat'], 'both textures let go');
+  assert.deepEqual(r.released.map((x) => x[1]).sort(), ['atlas', 'atlas-glow', 'atlas-hurt', 'fx', 'mat'], 'every texture let go');
   const after = r.drawn.length;
-  r.g.draw(48, CAM);
+  r.g.draw(16048, CAM);
   assert.equal(r.drawn.length, after, 'nothing drawn after the close');
   assert.equal(all(r.doc.body, 'dfgambit').length, 1);
   assert.ok(all(r.doc.body, 'dfgambit')[0].removed, 'the panel gone');
@@ -545,4 +552,88 @@ test('KG3 THE HOST\'S WIRING (scenes/worldModes.js\'s card block, run as the six
   assert.equal(f.api.gambitStaked(), false, 'nothing staked');
   assert.equal(door({ gambitStaked: f.api.gambitStaked }, { say: () => {} }, false, stakedSaveRefusal), true, 'the save goes on');
   f.api.standFromCardTable();
+});
+
+test('KG4 THE HOST FEEDS THE MOTION AND LEANS (Kings-Gambit.md 10.1, 10.7, section 17): the deal\'s muster moves, a move walks its piece; the lean is none in the setup, comes in over GAMBIT_LEAN_S once the battle is dealt - fitted eye and look, eased from the seat\'s - and goes with the result; the interior host lays it on the seat\'s eye and look (mutants: the feed; the lean\'s phase; the host\'s eye; the host\'s look)', () => {
+  const r = rig({ gold: 1000 });
+  const view = { w: 1280, h: 800, rect: null, aspect: 1280 / 800, fovY: (65 * Math.PI) / 180 };
+  const seat = { eye: [FEET[0], 1.3, FEET[2]], fwd: [0, -0.2, 0.98] };
+  assert.equal(r.g.lean(0, view, seat), null, 'the setup keeps the seat\'s own view');
+  toBattle(r);
+  assert.ok(r.g.g.motion.moving(r.now + 1), 'the muster throws the cards');
+  // the lean, asked every frame as the host asks it: from the seat's at the deal, the whole lean GAMBIT_LEAN_S on
+  const first = r.g.lean(16, view, seat);
+  assert.ok(first && Math.hypot(first.eye[0] - seat.eye[0], first.eye[1] - seat.eye[1], first.eye[2] - seat.eye[2]) < 0.02, 'it starts at the seat');
+  const half = r.g.lean(316, view, seat);
+  const full = r.g.lean(1016, view, seat);
+  const L = gambitLean(r.g.g.places, { aspect: view.aspect, fovY: view.fovY, clear: { x0: 0, x1: 1, y0: 0, y1: 1 } });
+  assert.ok(half && Math.hypot(half.eye[0] - L.eye[0], half.eye[1] - L.eye[1], half.eye[2] - L.eye[2]) > 0.01, 'half way in');
+  assert.ok(Math.hypot(full.eye[0] - L.eye[0], full.eye[1] - L.eye[1], full.eye[2] - L.eye[2]) < 1e-6 && Math.hypot(full.fwd[0] - L.fwd[0], full.fwd[1] - L.fwd[1], full.fwd[2] - L.fwd[2]) < 1e-6, 'leaning, fitted');
+  r.tick(5000);
+  assert.ok(!r.g.g.motion.moving(r.now), 'the muster done');
+  const st = r.g.g.session.state;
+  const mover = st.pieces.find((p) => p.side === 0 && reachable(st, p).length);
+  const [c, row] = reachable(st, mover)[0];
+  r.g.press('cell', [mover.col, mover.row]);
+  r.g.press('cell', [c, row]);
+  assert.ok(r.g.g.motion.moving(r.now + 1), 'a move walks its piece');
+  r.g.press('forfeit'); r.g.press('forfeit');
+  r.tick(GAMBIT_RESULT_MS + 10);
+  assert.equal(r.g.g.phase, 'over');
+  for (let t = r.now; t < r.now + 1000; t += 50) r.g.lean(t, view, seat);
+  assert.equal(r.g.lean(r.now + 1000, view, seat), null, 'the result keeps the seat\'s own view');
+  // the interior host: the lean on the seat's eye and look, after the seat's own and before the camera machine reads it
+  const WM = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
+  const seatAt = WM.indexOf("    if (mode === 'interior' && cardSeat && !(interiorOverlay instanceof DeathScreen)) cam.pos = cardSeat.eye.slice();");
+  const eyeAt = WM.indexOf('    if (gambitLeanNow) cam.pos = gambitLeanNow.eye;');
+  const machine = WM.indexOf('    const mwv = mwViewFrame({', seatAt);
+  assert.ok(seatAt > 0 && eyeAt > seatAt && eyeAt < machine, 'the lean\'s eye after the seat\'s, before the camera machine');
+  assert.match(WM, /const lookFwd = gambitLeanNow\?\.fwd \?\? fwd;/);
+  assert.match(WM, /const view = betterAmbience\.view\(lookAt\(mwv\.eye, \[mwv\.eye\[0\] \+ lookFwd\[0\], mwv\.eye\[1\] \+ lookFwd\[1\], mwv\.eye\[2\] \+ lookFwd\[2\]\]/, 'and the view looks along the lean');
+});
+
+test('KG4 THE PRESS ON THE BUILT BOARD, AT THE HOST (14.3): a fine pointer on a standing card\'s upper face takes that piece - the mat behind it is another cell; under a finger, a press beside a card, within GAMBIT_SNAP_PX of its middle and past it from its cell\'s centre, snaps to the piece (mutants: the flat press; the snap at the cell\'s centre)', () => {
+  const r = rig({ gold: 1000 });
+  toBattle(r);
+  r.tick(5000);
+  r.g.draw(r.now, CAM);
+  const st = r.g.g.session.state, P = r.g.g.places;
+  const cardH = gambitCardHeight(P.cell), mid = GAMBIT_CARD_FOOT + cardH / 2, H_ = H;
+  const scr = (p) => { const s = projectToScreen(p, W, H_, CAM.proj, CAM.view, null); return [s.x, s.y]; };
+  const matCell = ([x, y]) => { const ray = rayDirFromScreen(x, y, W, H_, CAM.proj, CAM.view, CAM.eye, null); const q = ray ? hand.tablePoint(CAM.eye, ray, P.top) : null; return q ? P.cellAt(q) : null; };
+  const built = ([x, y]) => { const ray = rayDirFromScreen(x, y, W, H_, CAM.proj, CAM.view, CAM.eye, null); return ray ? gambitPressCell(P, st, CAM.eye, ray) : null; };
+  // a host piece whose card's upper face lies over another cell of the mat
+  let pick = null;
+  for (const pc of st.pieces.filter((x) => x.side === 0)) {
+    const o = P.at(pc.col, pc.row), q = scr([o[0], P.top + GAMBIT_CARD_FOOT + cardH * 0.85, o[2]]);
+    const m = matCell(q), b = built(q);
+    if (b && b[0] === pc.col && b[1] === pc.row && !(m && m[0] === pc.col && m[1] === pc.row)) { pick = { pc, q }; break; }
+  }
+  assert.ok(pick, 'a card standing over another cell');
+  r.g.pointer(pick.q, { w: W, h: H_ }, {});
+  assert.equal(r.g.g.selected, pick.pc.id, 'the card\'s face pressed: its piece taken');
+  r.g.press('cancel');
+  assert.equal(r.g.g.selected, null);
+  // under a finger: beside a card (off its face), near its middle, far from its cell's centre - looked for at the screen's
+  // own size and at smaller ones (a phone's cells are small: 14.3)
+  let side = null;
+  for (const k of [1, 0.5, 0.33]) {
+    const VW = W * k, VH = H_ * k;
+    const at = (p) => { const s = projectToScreen(p, VW, VH, CAM.proj, CAM.view, null); return [s.x, s.y]; };
+    const press = ([x, y]) => { const ray = rayDirFromScreen(x, y, VW, VH, CAM.proj, CAM.view, CAM.eye, null); return ray ? gambitPressCell(P, st, CAM.eye, ray) : null; };
+    const mids = st.pieces.filter((x) => x.side === 0).map((x) => { const o = P.at(x.col, x.row); return { pc: x, m: at([o[0], o[1] + mid, o[2]]), c: at(o) }; });
+    for (const { pc, m, c } of mids) {
+      for (let a = 0; a < 48 && !side; a++) for (let d = 8; d <= GAMBIT_SNAP_PX - 1 && !side; d += 1) {
+        const q = [m[0] + d * Math.cos((a * Math.PI) / 24), m[1] + d * Math.sin((a * Math.PI) / 24)];
+        const b = press(q);
+        const others = mids.some((o) => o.pc.id !== pc.id && Math.hypot(o.m[0] - q[0], o.m[1] - q[1]) <= GAMBIT_SNAP_PX + 2);
+        if (Math.hypot(c[0] - q[0], c[1] - q[1]) > GAMBIT_SNAP_PX + 2 && !others && b && !pieceAt(st, b[0], b[1])) side = { pc, q, view: { w: VW, h: VH } };
+      }
+      if (side) break;
+    }
+    if (side) break;
+  }
+  assert.ok(side, 'a point beside a card, near its middle');
+  r.g.pointer(side.q, side.view, { touch: true });
+  assert.equal(r.g.g.selected, side.pc.id, 'snapped to the piece by its card\'s middle');
 });

@@ -27,6 +27,15 @@
 // Escape or the pad's B cancel - and with nothing to cancel ask the Stand up press, which asks twice while a stake is
 // down (a stray Escape forfeited the stake as a step off the seat does).
 //
+// KG4 (2026-10-14, sections 5.3, 10.1, 10.7, 14.3 and 17): THE BOARD RAISED. The session's events drive the pieces' motion
+// (world/gambitMotion.js - the walk, the blow, the fall, the muster) and the draw lays it on the built board; a press
+// reads the built board (world/gambitCloth.js gambitPressCell - a standing card's face is its cell, a wall's top is the
+// wall's, never the cell behind it), and under a finger a piece snaps by its card's middle, where the finger sees it.
+// THE LEAN (10.7): while a battle is on the seat leans over the board - the eye forward and up, pitched down - until the
+// whole board lies in the screen the panel leaves clear (`lean`: world/gambitCloth.js gambitLean, fitted, never guessed),
+// eased in and out over GAMBIT_LEAN_S (at once under reduced motion); the setup, the army and the result keep the seat's
+// own view.
+//
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import { GambitTableSession, gambitNightLeft, gambitPursesAfter, stakeOf, gambitCrownRestore, crownIndex, GAMBIT_CROWNS, GAMBIT_LOG_MAX, GAMBIT_STAKE_MULTS } from '../systems/gambitTableSession.js';
 import { tierFor, GAMBIT_TIERS } from '../systems/gambitPatrons.js';
@@ -36,7 +45,9 @@ import {
   pieceName, unitJoined, unitLeft, unitTooDear, armyFull, refusalWords, logLine, resultGold,
   dealLine, barkInvite, barkEnd,
 } from '../ui/gambitTableWords.js';
-import { gambitPlaces } from '../world/gambitCloth.js';
+import { gambitPlaces, gambitPressCell, gambitLean, gambitCardHeight, GAMBIT_CARD_FOOT } from '../world/gambitCloth.js';
+import { createGambitMotion } from '../world/gambitMotion.js';
+import { prefersReducedMotion } from '../systems/hitFlash.js';
 import { createGambitTableDraw } from '../render/gambitTableDraw.js';
 import { tablePoint } from '../world/cardHand.js';
 import { BARK_MS } from '../world/cardRegulars.js';
@@ -52,6 +63,35 @@ export const GAMBIT_ARM_MS = 4000;
 /** Under a finger a press snaps to the nearest of the player's pieces, the lit cells and the ringed foes within this
  *  many CSS px (14.3 - fifteen columns across a 390 px screen are 26 px a column at best). */
 export const GAMBIT_SNAP_PX = 22;
+/** KG4: the lean comes in, and goes, over this long (s) - at once under reduced motion. */
+export const GAMBIT_LEAN_S = 0.6;
+/** KG4 (14.7): on a touch device the touch layer's presses stand at the screen's top - the lean keeps the board under
+ *  this many CSS px. */
+export const GAMBIT_TOUCH_TOP_PX = 64;
+
+/**
+ * THE CLEAR SCREEN (14.7; MEASURE KG4): the part of the world's view the lean fits the board into - the largest of what
+ * lies left of the panel, right of it and above it (the desktop's column, the phone's strip, the landscape phone's
+ * column), and under the touch layer's presses on a touch device. Shares of the world's view, y down.
+ * @param {{left: number, right: number, top: number, bottom: number, width: number, height: number}|null} box the panel's
+ * @param {{w: number, h: number, rect?: {x: number, y: number, w: number, h: number}|null}} view the canvas (CSS px) and the
+ *   world's strip on it (hudLarge.js worldViewportRect: shares, y from the foot - Unity's)
+ * @param {boolean} [touch]
+ */
+export function gambitClear(box, { w, h, rect = null }, touch = false) {
+  const R = rect ?? { x: 0, y: 0, w: 1, h: 1 };
+  const fx = (/** @type {number} */ px) => Math.max(0, Math.min(1, (px / w - R.x) / R.w));
+  const fy = (/** @type {number} */ py) => Math.max(0, Math.min(1, (py / h - (1 - R.y - R.h)) / R.h));
+  const y0 = touch ? Math.min(0.3, fy(GAMBIT_TOUCH_TOP_PX)) : 0;
+  if (!box || !(box.width > 0) || !(box.height > 0)) return { x0: 0, x1: 1, y0, y1: 1 };
+  const area = (/** @type {any} */ c) => Math.max(0, c.x1 - c.x0) * R.w * w * Math.max(0, c.y1 - c.y0) * R.h * h;
+  const options = [
+    { x0: 0, x1: fx(box.left), y0, y1: 1 },
+    { x0: fx(box.right), x1: 1, y0, y1: 1 },
+    { x0: 0, x1: 1, y0, y1: fy(box.top) },
+  ];
+  return options.reduce((a, b) => (area(b) > area(a) ? b : a));
+}
 
 /** A REGULAR'S CROWN (10.4): the regular's seed's - the four in the deck's suit order, by the seed mod 4 - and the next
  *  round that order when it is the player's. @param {number} seed @param {string} mine the player's crown key */
@@ -85,7 +125,9 @@ export function openGambitTableGame(d) {
     wordsOpen: false, armiesOpen: false, more: false, log: /** @type {string[]} */ ([]),
     barks: new Map(), places: gambitPlaces(d.frame, d.mySeatFeet), look: /** @type {any} */ (null), cam: /** @type {any} */ (null),
     draw: createGambitTableDraw(d.renderer, { doc: d.doc }), hud: /** @type {any} */ (null), release: d.holdCursor(),
+    motion: createGambitMotion(), leanK: 0, leanAt: /** @type {number|null} */ (null),
   };
+  g.motion.lay(g.places.end);
   // HOW IT WORKS stands open until the player - not the character: a preference - has finished one game; their own
   // fold or unfold holds from then on (14.4)
   const guideOpen = () => { const v = getPref('gambitGuideOpen'); return typeof v === 'boolean' ? v : !getPref('gambitPlayed'); };
@@ -171,6 +213,7 @@ export function openGambitTableGame(d) {
     const s = g.session;
     if (!s) return false;
     const events = s.drain();
+    if (events.length) g.motion.feed(events, now, s.state);   // KG4: the pieces' motion, from the law's own words
     for (const e of events) {
       const line = logLine(e, { regular: g.game.name, names: nameOf });
       if (line) g.log.push(line);
@@ -336,21 +379,24 @@ export function openGambitTableGame(d) {
     const { w, h, rect = null } = view, cam = g.cam;
     const ray = rayDirFromScreen(at[0], at[1], w, h, cam.proj, cam.view, cam.eye, rect);
     const p = ray ? tablePoint(cam.eye, ray, g.places.top) : null;
-    if (!p || !onFelt(p)) return false;
+    const built = ray ? gambitPressCell(g.places, g.session.state, cam.eye, ray) : null;   // KG4: the built board - a card's face, a wall's top
+    if (!built && (!p || !onFelt(p))) return false;
     const now = d.now();
     g.armed = null;
     if ((how.button ?? 0) !== 0) { press('cancel'); return true; }   // another button on the table cancels - never the swing
-    let cell = g.places.cellAt(p);
+    let cell = built;
     if (how.touch) {
       // UNDER A FINGER: the nearest of the player's pieces, the lit cells and the ringed foes within GAMBIT_SNAP_PX
       const m = model();
       const st = g.session.state;
-      const candidates = [...st.pieces.filter((x) => x.side === 0).map((x) => [x.col, x.row]), ...(m.battle?.lit ?? []), ...(m.battle?.targets ?? []).map((id) => { const x = pieceById(st, id); return x ? [x.col, x.row] : null; }).filter(Boolean)];
+      const candidates = [...st.pieces.filter((x) => x.side === 0).map((x) => [x.col, x.row, 1]), ...(m.battle?.lit ?? []).map((c) => [c[0], c[1], 0]), ...(m.battle?.targets ?? []).map((id) => { const x = pieceById(st, id); return x ? [x.col, x.row, 1] : null; }).filter(Boolean)];
       let best = null, bestD = GAMBIT_SNAP_PX;
+      const mid = GAMBIT_CARD_FOOT + gambitCardHeight(g.places.cell) / 2;   // KG4: a piece where the finger sees it - its card's middle
       for (const c of candidates) {
-        const s = projectToScreen(g.places.at(c[0], c[1]), w, h, cam.proj, cam.view, rect);
+        const o = g.places.at(c[0], c[1]);
+        const s = projectToScreen(c[2] ? [o[0], o[1] + mid, o[2]] : o, w, h, cam.proj, cam.view, rect);
         const dist = s.front ? Math.hypot(s.x - at[0], s.y - at[1]) : Infinity;
-        if (dist <= bestD) { bestD = dist; best = c; }
+        if (dist <= bestD) { bestD = dist; best = [c[0], c[1]]; }
       }
       cell = best ?? cell;
     }
@@ -415,7 +461,28 @@ export function openGambitTableGame(d) {
       if (g.closed) return;
       if (cam) g.cam = { proj: cam.proj, view: Float32Array.from(cam.view), eye: cam.eye.slice() };
       if (!g.look) return;
-      g.draw.draw({ places: g.places, look: g.look, crowns: g.game ? g.game.crowns.map(crownIndex) : [3, 0] });
+      const now = typeof _now === 'number' ? _now : d.now();
+      const poses = g.session ? g.motion.poses(g.session.state, now, { reduced: prefersReducedMotion() }) : null;
+      g.draw.draw({ places: g.places, look: g.look, crowns: g.game ? g.game.crowns.map(crownIndex) : [3, 0], poses, eye: g.cam?.eye, now });
+    },
+    /**
+     * THE LEAN (10.7): this frame's eye over the board - `{eye, fwd}` eased between the seat's own (`seat`) and the lean,
+     * or null on the seat's own view. `view` the canvas (CSS px), its world strip and the lens (`{w, h, rect, aspect,
+     * fovY}`). @param {number} now @param {any} view @param {{eye: number[], fwd: number[]}} seat
+     */
+    lean(now, view, seat) {
+      if (g.closed) return null;
+      const want = g.phase === 'battle' ? 1 : 0;
+      const dt = g.leanAt === null ? 0 : Math.max(0, (now - g.leanAt) / 1000);
+      g.leanAt = now;
+      g.leanK = prefersReducedMotion() ? want : want > g.leanK ? Math.min(want, g.leanK + dt / GAMBIT_LEAN_S) : Math.max(want, g.leanK - dt / GAMBIT_LEAN_S);
+      if (g.leanK <= 0) return null;
+      const clear = gambitClear(g.hud?.root?.getBoundingClientRect?.() ?? null, view, touch());
+      const L = gambitLean(g.places, { aspect: view.aspect, fovY: view.fovY, clear });
+      const k = g.leanK * g.leanK * (3 - 2 * g.leanK);
+      const eye = [0, 1, 2].map((i) => seat.eye[i] + (L.eye[i] - seat.eye[i]) * k);
+      const f = [0, 1, 2].map((i) => seat.fwd[i] + (L.fwd[i] - seat.fwd[i]) * k), m = Math.hypot(f[0], f[1], f[2]) || 1;
+      return { eye, fwd: [f[0] / m, f[1] / m, f[2] / m] };
     },
     /** The regulars in their chairs this frame - every free chair's, as the setup lists them - each with what they say. */
     regularsNow(/** @type {number} */ now) {

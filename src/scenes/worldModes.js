@@ -10598,6 +10598,13 @@ export function createWorldModes(host) {
     if (mode === 'dungeon') dungeonCtx?.deathTilt?.(cam);
     if (mode === 'interior') decorTool.cameraOverride(cam);   // DECOR1d: the free camera's eye, while a piece is placed
     if (mode === 'interior' && cardSeat && !(interiorOverlay instanceof DeathScreen)) cam.pos = cardSeat.eye.slice();   // CARDS2: the seated eye - never over a death's sink and tilt (AUDIT CARDS B2): the dead fall from the body's own eye
+    // KG4 (Kings-Gambit.md 10.7): THE LEAN - a King's Gambit battle is played from the seat leaning over the board, fitted
+    // to the screen the panel leaves clear; the seat's own eye and look otherwise
+    const gambitLeanNow = mode === 'interior' && cardSeat && gambitGame && !(interiorOverlay instanceof DeathScreen)
+      ? gambitGame.lean(performance.now(), { w: canvas.clientWidth, h: canvas.clientHeight, rect: worldViewportRect(canvas.clientWidth, canvas.clientHeight), aspect: largeHudWorldAspect(canvas.clientWidth, canvas.clientHeight), fovY: fieldOfView() }, { eye: cam.pos, fwd })
+      : null;
+    if (gambitLeanNow) cam.pos = gambitLeanNow.eye;
+    const lookFwd = gambitLeanNow?.fwd ?? fwd;
     host.climbFeel?.frame(dt, overlayHeld);   // CLIMB4: the climb's camera, off this frame's motor (the world host's handle - one body) - AUDIT CLIMB-ARC F2/F4: held while the motor is
     // A8 - POINTER PARITY, THE FLAG AT THIS LINE RETIRED. Mouse0 is
     // DFU's ActivateCenterObject: the readied spell fires on its
@@ -10699,7 +10706,7 @@ export function createWorldModes(host) {
     });
     if (decorTool.flying()) mwv.eye = cam.pos;   // DECOR1d: the free camera looks from its own eye, never over the body's shoulder
     if (cardSeat) mwv.eye = cam.pos;   // CARDS2: seated, the seat's own view - first person (Tavern-Cards.md section 2)
-    const view = betterAmbience.view(lookAt(mwv.eye, [mwv.eye[0] + fwd[0], mwv.eye[1] + fwd[1], mwv.eye[2] + fwd[2]], [0, 1, 0]));   // BA1: the shaker sits between the follower and the camera
+    const view = betterAmbience.view(lookAt(mwv.eye, [mwv.eye[0] + lookFwd[0], mwv.eye[1] + lookFwd[1], mwv.eye[2] + lookFwd[2]], [0, 1, 0]));   // BA1: the shaker sits between the follower and the camera; KG4: the lean's look over the board
     const aimView = view.slice();   // AUDIT CLIMB-ARC F10: the view the player aims with, before the climb's feel
     host.climbFeel?.view(view, !decorTool.flying() && !mwv.thirdPerson);   // CLIMB4: the climb's pitch, roll and eye - first person, never the decorator's free camera
     host.reportFrame?.(proj, view);   // AUDIT 62 F16/F28: TI1's tap ray and lock dot ride the host's last frame, and only its EXTERIOR render wrote one

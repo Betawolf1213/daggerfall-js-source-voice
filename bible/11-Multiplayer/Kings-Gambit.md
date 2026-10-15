@@ -509,7 +509,7 @@ Each ships alone and is verifiable without the next.
 | **KG2** SHIPPED (section 12) | THE INNKEEPER'S PLAY: `systems/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, the tiers over a regular's seed, the regular's army by the law's AutoFill (AUDIT KG C4). MEASURE: each tier against an Auto-filled 300 over seeded games. |
 | **KG-SET** SHIPPED (section 15) | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
 | **KG3** SHIPPED (section 16) | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - in the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS) and the roles, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in the thirteen whole languages (L10N6's rule, the twelve drafting owing them - section 16.5; the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
-| **KG4** | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press on the built board (14.3); the cloth's marks in the house's coat (14.8); the lab (`cards.html` with a King's Gambit table) and its probes - the panel's at a desktop's and a phone's size (`tools/cardPanelsProbe.mjs`, the three panels' one probe - 14.9); the frame cost on the phone probe, as CARDS3c measured it. |
+| **KG4** SHIPPED (section 17) | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press on the built board (14.3); the cloth's marks in the house's coat (14.8); the lab (`cards.html` with a King's Gambit table) and its probes - the panel's at a desktop's and a phone's size (`tools/cardPanelsProbe.mjs`, the three panels' one probe - 14.9); the frame cost on the phone probe, as CARDS3c measured it. |
 | **KG5** | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
 | **KG6** | Gold tables online (the realm's escrow) and a season board with its title (section 10.7). |
 
@@ -1422,7 +1422,120 @@ re-aimed by content (`auditcards5` faces5-F23, `cardsplus` CP-warn-dropped and C
 KGSET-painter-words-english, `navaudit_boarding` NAVB-B14, `auditcards6_e` AC6-E2-panel-box - at `insidePanelBox`, the
 panel's box test's one home now - and `cards3b` C3b-host-bubble).
 
-- **Not yet:** the board raised (KG4: walls, pillars and water built, the pieces stood in their stands and moving, the
-  lean, the hazards' effects, the numbers and the shot, the cards lab's King's Gambit table and the three panels'
-  probe, the frame cost); online (KG5); gold online and the season board (KG6).
+- **Not yet:** the board raised (KG4 - SHIPPED, section 17); online (KG5); gold online and the season board (KG6).
 - **Ledger:** section A row THE KING'S GAMBIT - THE EVENING OFFLINE.
+
+## 17. KG4 (2026-10-14): the board on the cloth
+
+The owner, of the open pull request: "Pick up the PR working on the new minigame", and on the slices left: KG4 in this
+pull request, KG5 and KG6 after it. KG3's board was a flat mat with the pieces lying on it; KG4 BUILDS it and STANDS the
+cards, as sections 5.3, 5.4, 10.1, 10.7, 14.3, 14.7 and 14.8 decided.
+
+- THE BOARD BUILT (5.3; `render/gambitTableDraw.js`): the mat a slab `GAMBIT_MAT_LIFT` proud of the felt, its edges down
+  to it (`matModel`, a quad a cell); every water cell `GAMBIT_WATER_DROP` under the mat with its recess's walls, the
+  mod's two ripples drifting over it; every wall a stone block a cell square and `GAMBIT_WALL_H` high, its courses and its
+  lit top edge painted on it; every pillar a column `GAMBIT_PILLAR_R` of a cell round and `GAMBIT_PILLAR_H` tall
+  (`stoneModel`, one model for a board, made again only for a new board). The mat stays KG3's painting, the marks of 14.8
+  on it.
+- THE CARDS STANDING (10.1): each piece its card upright in its stand - a turned disc (`discModel`) `GAMBIT_DISC_SHARE`
+  of a cell across and `GAMBIT_DISC_H` high, the host's the kit's bone, the guest's its dark stone with its rim notched,
+  a king's brass ringed in its side's tone, every rim edged in the kit's outline and a bone line, the chosen's brass; the
+  card a STANDEE (`gambitPlateModel`): its picture on both faces, the back's u turned so it reads the right way round
+  from behind; its face to its owner (`standingMatrix`: X x Y = Z, a rotation - a mirrored face is a culled one); the
+  chosen card lifted `GAMBIT_SELECT_LIFT`; its health a bar over its top edge turned to the viewer, banded like the
+  vitals, its length the value (14.8).
+- THE MOTION (`world/gambitMotion.js`), every timing the mod's, read off its IL (2.10, `EffectOffset`, the attack's
+  visuals): the walk along the path the move took at 3.5 cells a second - the law's own walk kept as a path
+  (`kingsGambit.js:"export function reachPath(board, p, col, row) {"`, on the board before the move: AUDIT KG C22); a
+  blow's impact AttackTiming's default 0.2 s after the order, its lunge from 0.1 s before it for 0.28 s, 0.15 of a cell
+  for a melee blow and 0.06 for a shot, a shot's bolt 0.3 s; the hit 0.45 s - EffectOffset's knock of 0.22 of a cell
+  along the blow, dying away, and its jitter of 4 px on the mod's cell at a 1080-line screen ((1080 - 190) / 13 px: 0.058
+  of a cell), none under reduced motion (14.8) - and the face red the while (the atlas's hurt tint through the
+  renderer's texture remap); a potion's 0.6 s glow, green; the number rising 0.8 of a cell over 1 s, signed, in a glyph
+  strip painted in code (three by five, the HUD's hard outline all round); the fall 0.27 s after the blow lands, a topple
+  flat away from the attacker (back from its owner, a hazard's victim) and a slide to its owner's FALLEN PILE - together
+  the mod's 0.6 s - where the cards lie fanned along the board's edge and count the losses at a glance (`gambitPile`,
+  `gambitPileStep`: off the board, on the felt, at the owner's right hand by its own edge); THE MUSTER at the deal, each
+  side's king first and then its units in the deployment's order, one each `GAMBIT_MUSTER_BEAT_S`, thrown on Iliac
+  Hand's arc from its owner's edge and stood up as it lands. A piece's motions queue: a second order waits for the first,
+  a blow's foe is struck after its attacker has come.
+- THE HAZARDS (DrawHazard): fire's three flickering flames, spikes' six steel spikes raised, poison's rising bubbles, a
+  warning's pulsing ring and its bobbing "!" - each over KG3's painted mark.
+- THE SHOT (10.7): four bright squares on the line from the shooter to its target over the bolt's 0.3 s, at a card's
+  mid-height.
+- THE PRESS ON THE BUILT BOARD (14.3): `gambitCloth.js:"export function gambitPressCell(places, board, eye, dir) {"` -
+  the nearest of a standing card's face (its cell), a wall's top (the wall's cell, which presses nothing), a pillar's top
+  and the mat; never the cell a ray reaches on the mat behind a card. Under a finger a piece snaps by its card's middle,
+  where the finger sees it.
+- THE LEAN (10.7, 14.7): `gambitCloth.js:"export function gambitLean(places, { aspect, fovY, clear = { x0: 0, x1: 1, y0: 0, y1: 1 }, pitch = GAMBIT_LEAN_PITCH }) {"`
+  - SOLVED, not guessed: pitched `GAMBIT_LEAN_PITCH` (55 degrees) down over the board, the eye moved back along its line
+  of sight and slid square to it until the board's corners and its head row's cards standing fill `GAMBIT_LEAN_FILL` of
+  the CLEAR screen and stand centred in it. The clear screen
+  (`gambitTableGame.js:"export function gambitClear(box, { w, h, rect = null }, touch = false) {"`) is the largest of what
+  lies left of the panel, right of it and above it - the desktop's column, the phone's strip, the landscape phone's
+  column - under the touch layer's presses (`GAMBIT_TOUCH_TOP_PX`) on a touch device, read in the world's strip. The
+  battle leans in over `GAMBIT_LEAN_S` (at once under reduced motion) from the seat's own eye and look and back out with
+  the result; the setup, the army and the result keep the seat's view. The interior host lays it on the seat's eye after
+  the seat's own and before the camera machine reads it (`worldModes.js:"    if (gambitLeanNow) cam.pos = gambitLeanNow.eye;"`),
+  and the view looks along it.
+- THE LAB (`src/tools/cardsLab.js`, `cards.html?game=gambit`): a game against a regular played on the law, its motion
+  fed, drawn at a chosen moment; `cam=lean` the lean fitted to the lab's own panel, `cam=close` a close look at the cards
+  standing, `chair=long` a long side's chair; `__gambitState` the board's corners and a cell's size on the screen.
+  `tools/cardPanelsProbe.mjs` gives the three panels' one probe The King's Gambit's setup, army, battle and result, and
+  `tools/cardsPhoneProbe.mjs` its frame cost.
+
+### 17.1 THE MEASURES
+
+- THE LEAN (10.7, 14.7), by the three panels' probe (`PROBE_ONLY=gambit node tools/cardPanelsProbe.mjs`: the battle over
+  the lab's leaning board, in each look - its four scenes' 742 checks, all held): the board stands clear of the panel - its column, its
+  strip - at every size and in every look, and a cell on the screen is 35.3 px at a 1280x760 desktop (51.1 with the
+  panel folded); 16.7 px in a 1000x560 window under the unfolded panel (15.2 under the Grimoire dress), 36.0 folded;
+  21.7 px on a 390x844 phone; 19.9 on a 360x740; 25.3 on an 844x390 phone under a finger. The snap's 22 px is the 390
+  phone's whole cell (14.3 had measured 26 px a column at best before the lean). At a desktop's whole screen from a long
+  side the solved eye is 0.57 m over the felt and 0.07 m back from the board's near edge - the record's first guess was
+  0.62 and 0.10 - and a phone held upright lifts it to some 1.9 m over the felt, where the board's 1.06 m fits the 33
+  degrees it sees across.
+- THE 1000x560 WINDOW: the panel unfolded leaves the board a band 127 px tall over it; the fold gives it 36 px cells.
+  RECORD OPEN: whether the battle's panel at such a window should take the strip a phone's does (14.7 is the phone's law).
+- THE MUSTER'S BEAT (10.1): kept at the first guess, 0.12 s - a side's thirteen cards are all thrown and standing 1.86 s
+  after the deal (twelve beats and Iliac Hand's 0.42 s throw); a first order waits for its piece's own throw.
+- THE FRAME'S COST (`tools/cardsPhoneProbe.mjs`'s King's Gambit row; ten frames a run, three runs alternated - the
+  probe's own thirty and seven outlast its page's half hour on this container, whose software GL takes 2.1 s for the bare
+  room at a desktop's size): from the lean the board adds 724 ms to a 3.8 s room frame at 1100x640, and 191 ms to a 1.9 s
+  one on a 390x844 phone at a quarter of the CPU (Iliac Hand's cloth: 18 and 7 ms); from far over the table, the board
+  small on the screen, 47 ms. The cost is the board's PIXELS - the lean fills the screen with it by design, and the
+  software GL shades every one on the CPU - not its draws: a ceiling, not a phone's number (CARDS3c's caveat), where a
+  phone's GPU lays one more textured layer over the felt for little.
+
+### 17.2 FOUND AT KG4
+
+- THE BOARD'S KEYS, READ RAW (CI's second shard on KG3's head; section 16.5): the panel's own keys now, `gambitBoardKey`.
+- A BEAR'S CARD IN A CORPSE-FOOD PIN: KG-SET gave the Grizzly Bear its card, and `test/survtiers3.test.js`'s
+  CORPSE-FOOD, mounted held every item on a joiner's copy of a bear's body to raw meat "(a bear has none)" - so the
+  death's card roll (`Math.random`'s) failed CI some runs. The roll is pinned to drop, and the card held to the bear's
+  own, once.
+- THE LEAN'S PROJECTION, PROVED THROUGH THE RENDERER'S OWN LENS: the first solver centred the board on the screen's
+  mirror image (its screen's up the wrong hand) - the lab's phone showed it, and the pin that would have caught it read
+  the solver's own box. The pin reads the frame's matrices now (perspective, mirrorProjectionX, lookAt), and the
+  mutant that turns the up's hand dies on it.
+- THE PRESS AND THE SNAP AT THE HOST: two mutants survived the first run - the flat press, and the snap at the cell's
+  centre - for no host pin told them from the built board's. Each has its own now (a card's upper face over another cell
+  of the mat; a point beside a card, near its middle and past its cell's centre).
+- SOUND (5.6) stays out of KG4: the record names the table's clips and their trap, and none of the slices took them; the
+  clips past `systems/soundClips.js`'s named ones are named from SoundClips.cs by the slice that plays them, and no copy
+  of it is in the tree. RECORD OPEN.
+
+### 17.3 Pins and mutants
+
+`test/kg4_board.test.js` (12): the walk's path against GetReachable's own walk; the motion on the mod's clock (the walk
+round a wall, the lunge, the shot, the hit, reduced motion, the number); the fall, the pile, the potion and the muster;
+the piles on the felt; the press on the built board; the lean in the clear screen and through the renderer's own lens;
+the clear screen; the built board's models; the cards standing; the effects' atlas; the draw's allocations; a whole
+seeded game's motion. `test/kg3_host.test.js` (15): KG4's host pins - the motion fed and the lean phased, eased and laid
+by the interior host; the built press and the card's-middle snap. The moved pins of `kg3_draw` (the slab; the five
+textures) and `kg3_host` (the press's finger by a card's middle; the muster before every piece is drawn). Mutants:
+`tools/mutants/kg4.json`, 35, all dead; `kg3.json`'s KG3-D-triangle and KG3-D-scale re-aimed (the builder's winding, the
+standing card's scale), dead.
+
+- **Not yet:** online (KG5); gold online and the season board (KG6); the table's sounds (5.6, RECORD OPEN).
+- **Ledger:** section A row THE KING'S GAMBIT - THE BOARD ON THE CLOTH.
