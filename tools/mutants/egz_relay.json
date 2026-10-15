@@ -26,7 +26,7 @@
   { "name": "EGZQ-wire-size-nought-refused", "file": "src/net/wire.js", "old": "  if (t[17] !== 0 && !intIn(t[17], EG_SIZE_WIRE_MIN, EG_SIZE_WIRE_MAX)) return null;", "new": "  if (!intIn(t[17], EG_SIZE_WIRE_MIN, EG_SIZE_WIRE_MAX)) return null;", "tests": ["test/egz_relay.test.js"] },
   { "name": "EGZQ-wire-size-under-colossal", "file": "src/net/wire.js", "old": "export const EG_SIZE_WIRE_MAX = 2000;", "new": "export const EG_SIZE_WIRE_MAX = 1300;", "tests": ["test/egz_relay.test.js"] },
   { "name": "EGZQ-link-size-unread", "file": "src/net/egLink.js", "old": "b.sz = t[17] > 0 ? t[17] / 1000 : 1;", "new": "b.sz = 1;", "tests": ["test/egz_relay.test.js"] },
-  { "name": "EGZQ-screen-size-undrawn", "file": "src/scenes/egFight.js", "old": "scale: L.scale * (b.sz ?? 1) * ((b.fl & EG_FL.mirror) !== 0 ? 0.95 : 1)", "new": "scale: L.scale * ((b.fl & EG_FL.mirror) !== 0 ? 0.95 : 1)", "tests": ["test/egz_relay.test.js"] },
+  { "name": "EGZQ-screen-size-undrawn", "file": "src/scenes/egFight.js", "old": "const scale = L.scale * (b.sz ?? 1) * ((b.fl & EG_FL.mirror) !== 0 ? 0.95 : 1)", "new": "const scale = L.scale * ((b.fl & EG_FL.mirror) !== 0 ? 0.95 : 1)", "tests": ["test/egz_relay.test.js"] },
 
   { "name": "EGZQ-shares-per-member-not-reference", "file": "src/net/egLords.js", "old": "L.per = L.max / Math.max(1, F.team);", "new": "L.per = L.max / Math.max(1, F.n);", "tests": ["test/egz_relay.test.js"] },
   { "name": "EGZQ-shares-wake-company-unseeded", "file": "src/net/egLords.js", "old": "(F.subs ?? []).forEach((s, j) => {", "new": "[].forEach((s, j) => {", "tests": ["test/egz_relay.test.js"] },
