@@ -605,7 +605,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     // AUDIT EG V (lane1 #12; section 13.3, "the true one glints with its WIND"): the umbra the room says glints (`st` 1) - lit and
     // pulsing, and the Night-Stalker's WIND heard from it once
     if (key === 'umbra' && b.st === 1) {
-      sh.color = brighter(sh.color); sh.flash = 0.5 + 0.5 * Math.sin(t / 90); sh.alpha = 1;
+      sh.color = brighter(sh.color); sh.flash = 0.65 + 0.35 * Math.sin(t / 90); sh.alpha = 1;
       if (!cued.has(`u${b.i}`)) { cued.add(`u${b.i}`); _barks.push({ kind: STALKER_MOBILE, at: toDungeon(b.x, 1, b.z), cue: hostCue('windup', STALKER_MOBILE), critical: true }); }
     }
     _shapes.push(sh);
