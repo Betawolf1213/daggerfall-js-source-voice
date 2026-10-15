@@ -179,10 +179,14 @@ export default defineConfig({
       // revenantCard.js imports hudLayout.js statically - the dynamic edge
       // keeps the two out of a cycle, it was never meant to split a chunk
       // (hud.js imports revenantCard.js anyway). Only that pair is quiet;
-      // any other ineffective dynamic import still warns. (The paths are the
-      // working directory's: bare from the repo root, prefixed elsewhere.)
+      // any other ineffective dynamic import still warns. The module is the
+      // log's `id` (its absolute path); the importer is read off the message,
+      // whose paths are the working directory's and come after a colour code
+      // (AUDIT BUILD-LEFTOVERS: a filter anchored to the message's start never
+      // matched a real build). Either separator, for a Windows build.
       onLog(level, log, handler) {
-        if (log.code === 'INEFFECTIVE_DYNAMIC_IMPORT' && /(?:^|\/)src\/ui\/revenantCard\.js is dynamically imported by (?:\S*\/)?src\/ui\/hudLayout\.js\b/.test(log.message)) return;
+        if (log.code === 'INEFFECTIVE_DYNAMIC_IMPORT' && /[\\/]src[\\/]ui[\\/]revenantCard\.js$/.test(log.id ?? '')
+          && /\bdynamically imported by (?:\S*[\\/])?src[\\/]ui[\\/]hudLayout\.js but\b/.test(log.message)) return;
         handler(level, log);
       },
       input: {

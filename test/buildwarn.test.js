@@ -16,8 +16,12 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** build.rollupOptions.onLog, as vite.config.js actually spells it - not a copy. */
 function onLog() {
-  const m = /^ {6}onLog\(level, log, handler\) \{\n([\s\S]*?)\n {6}\},$/m.exec(readFileSync(join(root, 'vite.config.js'), 'utf8'));
+  const cfg = readFileSync(join(root, 'vite.config.js'), 'utf8');
+  const m = /^ {6}onLog\(level, log, handler\) \{\n([\s\S]*?)\n {6}\},$/m.exec(cfg);
   assert.ok(m, 'vite.config.js no longer carries build.rollupOptions.onLog');
+  // and it is the BUILD's: inside `build: {`'s `rollupOptions: {`, before its `input: {` (a worker's would read the same)
+  const b = cfg.indexOf('\n  build: {\n'), r = cfg.indexOf('\n    rollupOptions: {\n', b), i = cfg.indexOf('\n      input: {\n', r);
+  assert.ok(b > 0 && r > b && m.index > r && m.index < i, 'the onLog read here is build.rollupOptions.onLog');
   // eslint-disable-next-line no-new-func
   return new Function('level', 'log', 'handler', m[1]);
 }
@@ -42,14 +46,17 @@ test('BUILD-LEFTOVERS THE BUILD\'S WARNINGS STAY WORTH READING: built by Vite th
     files['src/main.js'] += "import { use as third } from './y/notHudLayout.js';\nconsole.log(third());\n";
     for (const [p, text] of Object.entries(files)) { mkdirSync(dirname(join(dir, p)), { recursive: true }); writeFileSync(join(dir, p), text); }
     const warned = [];
+    // AUDIT BUILD-LEFTOVERS: built FROM the tree, as a real build runs from the repo - so the warning names its paths bare,
+    // as the real one does (a tree built from elsewhere names them `../../tmp/...`, and the filter was only ever tried so)
+    const cwd = process.cwd();
+    process.chdir(dir);
     const logger = createLogger('warn', { allowClearScreen: false });
     logger.warn = (msg) => warned.push(msg);
     await build({
       root: dir, configFile: false, logLevel: 'warn', customLogger: logger,
       build: { outDir: join(dir, 'dist'), rollupOptions: { onLog: onLog() } },
-    });
-    // (the paths are relative to the working directory - this tree is elsewhere, so they carry a prefix)
-    const ineffective = [...warned.join('\n').matchAll(/(src\/\w+\/\w+\.js) is dynamically imported by \S*?(src\/\w+\/\w+\.js)/g)].map((m) => `${m[1]} is dynamically imported by ${m[2]}`);
+    }).finally(() => process.chdir(cwd));
+    const ineffective = [...warned.join('\n').matchAll(/(src\/\w+\/\w+\.js) is dynamically imported by (src\/\w+\/\w+\.js)/g)].map((m) => `${m[1]} is dynamically imported by ${m[2]}`);
     assert.deepEqual(ineffective.sort(), [
       'src/x/callee.js is dynamically imported by src/x/caller.js',
       'src/y/revenantCard.js is dynamically imported by src/y/notHudLayout.js',
