@@ -52,6 +52,7 @@ import { foldQuickLoot, quickLootRow, quickLootStats, resetQuickLoot, quickLootO
 import { setClassicLootFrame } from '../systems/classicLootFrame.js';   // DISC22-C: the classic panel's frame, a leaf hud.js can read   // QUICK-LOOT B3: the highlight is the FEATURE's - this draws it and frees it, it does not own it; QUICK-LOOT-STATS: and the lit row's own numbers
 import { bodyStackMark, resetBodyStack } from '../player/lootStack.js';   // LOOT-STACK: the plaque counts the pile the pick noted
 import { armDrawWatchdog, disarmDraw } from './drawWatchdog.js'; import { destroyPickupFeed, clearPickupFeed } from './pickupFeed.js';   // DISC29-D: the watchdog counts frames, not milliseconds; PICKUP-FEED: the take's cards, freed with this teardown
+import { PLAQUE_MINE_TAG } from '../systems/roomLoot.js';   // PARTY-LOOT: a row of this player's own bonus says so
 
 /** The gap in CSS pixels between the cross's lower arm tip and the
  *  plaque's top edge. Large enough that the two never read as one
@@ -300,6 +301,14 @@ function paint(n, f, sel = -1, stats = []) {
       c.className = 'wplaque-count';
       c.textContent = `×${r.stack}`;
       row.append(c);
+    }
+    // PARTY-LOOT: this player's own bonus says so - the rows without the tag are the room's, the same for everyone
+    if (r.mine) {
+      row.classList.add('mine');
+      const m = document.createElement('span');
+      m.className = 'wplaque-mine';
+      m.textContent = PLAQUE_MINE_TAG;
+      row.append(m);
     }
     list.append(row);
   }

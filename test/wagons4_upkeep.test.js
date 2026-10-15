@@ -7,6 +7,7 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS / WAGON-TIERS (PIN MOVED): the upkeep is handed each tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import {
   wagonCondition, wagonConditionMax, wagonSoundness, wagonState, WAGON_STATES, rollWear, journeyWear, wearWagon, WEAR_FLOOR,
@@ -97,7 +98,7 @@ test('WAGONS4 MENDING: the Wagon Yard makes it whole for 12% of its kind\'s valu
 
 test('WAGON-MEND NEVER BROKEN, IT ALWAYS GOES (2026-10-12, the owner: "wagons shouldnt entirely break down to become unusable"): a wagon at its last point - or one a save holds at nought - is driven, its team at the failing pace, every door open; the hosts compose no broken word beside the short team\'s (mutants: WAGON-MEND-a-state-under-failing, WAGON-MEND-worn-to-nought)', () => {
   const items = [{ group: 'Transportation', templateIndex: 94, horseSeed: 5 }, wagon('cart', 0)];
-  const u = createUpkeep({ items: () => items, now: () => 1e6, wagonUpkeep: () => true });
+  const u = createUpkeep({ items: () => items, now: () => 1e6, wagonUpkeep: () => WHARD });
   const { w, rt, step } = makeWorld();
   const host = () => { w.short = wagonTeamShort(items); };   // the hosts' own composition
   host(); step(2);
@@ -121,7 +122,7 @@ test('WAGONS4 THE RUNTIME\'S WEAR: the driven wagon worn by the metres its team 
   const w = wagon('cart');
   const items = [w];
   let on = true;
-  const u = createUpkeep({ items: () => items, now: () => 1e6, wagonUpkeep: () => on, say: (t) => said.push(t) });
+  const u = createUpkeep({ items: () => items, now: () => 1e6, wagonUpkeep: () => (on ? WHARD : null), say: (t) => said.push(t) });
   u.tick(0.016, { mode: 'Foot', metres: 500, wagonGoes: false });
   assert.equal(wagonCondition(w), 1400, 'it stayed: no wear');
   for (let i = 0; i < 100; i++) u.tick(0.016, { mode: 'Cart', metres: 10, road: true, wagonGoes: true });
@@ -154,14 +155,14 @@ test('WAGONS4 THE RUNTIME\'S WEAR: the driven wagon worn by the metres its team 
   on = false;
   w.currentCondition = 1400;
   u.tick(0.016, { mode: 'Cart', metres: 900, wagonGoes: true });
-  assert.deepEqual([wagonCondition(w), u.journey(10), u.thrown(), u.rideScale('Cart')], [1400, null, null, 1], 'the switch off: no wear, the cart its own pace');
+  assert.deepEqual([wagonCondition(w), u.journey(10), u.thrown(), u.rideScale('Cart')], [1400, null, null, 1], 'Off: no wear, the cart its own pace');
 });
 
 test('WAGONS4 THE KIT: a Wagon Repair Kit spent on the wagon where its load is reached - an hour passed, out of the list it was used from; never past 60%; the Stable card\'s button and an inventory\'s Use alike (mutants: the reach unread, the hour, the kit not spent)', () => {
   const w = wagon('openWagon', 0);
   const items = [w, { group: 'UselessItems2', templateIndex: UPKEEP_ITEM.WagonKit, stackCount: 2 }];
   const passed = [];
-  const u = createUpkeep({ items: () => items, now: () => 1e6, wagonUpkeep: () => true });
+  const u = createUpkeep({ items: () => items, now: () => 1e6, wagonUpkeep: () => WHARD });
   assert.equal(u.act('kit', 0, { wagonNear: false }).text, WAGON_UPKEEP_TEXT.kitNotNear('Open Wagon'));
   const r = u.act('kit', 0, { pass: (m) => passed.push(m) });
   assert.deepEqual([r.ok, wagonCondition(w), items[1].stackCount, passed], [true, 350, 1, [60]]);
@@ -169,7 +170,7 @@ test('WAGONS4 THE KIT: a Wagon Repair Kit spent on the wagon where its load is r
   assert.deepEqual([m.wagon.stateKey, m.wagon.kitWorks, m.kits], ['rickety', true, 1]);
   // the Use, out of the wagon's own load
   const load = [{ group: 'UselessItems2', templateIndex: UPKEEP_ITEM.WagonKit }];
-  registerUpkeepUses(u, { reach: () => ({ near: true, stabled: false, wagonNear: true, who: 'Your horse' }), pass: (n) => passed.push(n), horseCare: () => true, wagonUpkeep: () => true });
+  registerUpkeepUses(u, { reach: () => ({ near: true, stabled: false, wagonNear: true, who: 'Your horse' }), pass: (n) => passed.push(n), horseCare: () => HARD, wagonUpkeep: () => WHARD });
   const use = itemUseHandler(UPKEEP_ITEM.WagonKit);
   const r2 = use(load[0], load);
   assert.equal(r2.kind, 'upkeep'); assert.match(r2.text, /It is 50% sound\./);
@@ -201,9 +202,9 @@ test('WAGONS4 A SMITH MENDS NO HORSE AND NO WAGON: a wagon left at a smith\'s co
   assert.match(rd('src/scenes/worldModes.js'), /: refusal === 'transport' \? \[TRANSPORT_CANNOT_BE_REPAIRED_TEXT\]/);
 });
 
-test('WAGONS4 THE SWITCH AND THE HOSTS: a Features row beside horse care, on by default and forced on online; the hosts hand the runtime the wear - the odometer\'s, a journey\'s days, the watch\'s throw (mutants: each door dropped)', () => {
+test('WAGONS4 THE ROW AND THE HOSTS: a Features row beside horse care (its tiers WAGON-TIERS\', test/wagontiers.test.js); the hosts hand the runtime the wear - the odometer\'s, a journey\'s days, the watch\'s throw (mutants: each door dropped)', () => {
   const f = FEATURES.find((x) => x.id === 'wagon-upkeep');
-  assert.deepEqual([f.group, f.kinds, f.control.key, f.control.initial, f.control.online], ['world', ['enhanced'], 'wagonUpkeep', true, true]);
+  assert.deepEqual([f.group, f.kinds, f.control.key], ['world', ['enhanced'], 'wagonUpkeep']);
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = rd(host);
     assert.match(s, /teamShort: \(\) => wagonTeamShort\(playerEntity\.items \?\? \[\]\),/, host);

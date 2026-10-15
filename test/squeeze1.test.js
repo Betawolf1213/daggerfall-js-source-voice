@@ -102,7 +102,7 @@ test('AUDIT pre-merge S2: every FOE keeps its floor by its motor\'s word, whatev
   const m = readFileSync(new URL('../src/characters/enemyMotor.js', import.meta.url), 'utf8');
   const sites = [...m.matchAll(/this\.collider\.move\(this\.feet,[^;]*\);/g)].map((x) => x[0]);
   assert.equal(sites.length, 6);
-  for (const site of sites) assert.match(site, /, this\.height, true, FOE_KEEPS_FLOOR\);$/, site);
+  for (const site of sites) assert.match(site, /, this\.controllerHeight, true, FOE_KEEPS_FLOOR\);$/, site);   // DOOR-JAM (FIELD BUGS 2026-10-14b): the controller's own height, HeightAdjust's crouch
   assert.match(m, /const FOE_KEEPS_FLOOR = true;/);
   const c = readFileSync(new URL('../src/player/collider.js', import.meta.url), 'utf8');
   // (AUDIT CLIMB2 G1 added `noStep` after it - the free climber's, which passes keepFloor false in so many words)

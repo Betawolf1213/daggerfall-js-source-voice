@@ -21,9 +21,10 @@
 // stays whole at every stage: a worn kit rolls the ladder at death (KIT-ROLL), the cap keeps supplies before plain gear
 // (CAP-SUPPLIES), and the rest supplies drop online at all.
 //
-// WHOSE RENOWN: the roller's own - the page that rolls the loot (a dungeon's host for its foes, a street's cell owner
-// for its foes, and for a treasure pile the page that builds the dungeon - each player's own), as a foe's level and a
-// pile's already follow that page's character. Read through SIGIL1's door
+// WHOSE RENOWN: the roller's own - the page that rolls the loot (a street's cell owner for its foes, a building's
+// opener for its containers), as a foe's level and a pile's already follow that page's character. In a dungeon ROOM
+// (PARTY-LOOT, systems/roomLoot.js) a container's shared base rolls at the first stage, nobody's, and each player's own
+// Renown rolls their bonus over it - the base's share and the bonus's together the player's own stage. Read through SIGIL1's door
 // (systems/sigil.js sigilOnline / sigilRenown, set by scenes/world.js as the token's level is adopted), the one every
 // Renown-woken power reads. OFFLINE there is no Renown, and the loot is LOOT-EASE's whole (the "Bright" row) - Renown is
 // online's own progression. ONLINE BEFORE THE PAGE KNOWS ITS RENOWN (the moments before the first token), the first

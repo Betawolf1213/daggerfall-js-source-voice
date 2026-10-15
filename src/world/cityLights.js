@@ -19,6 +19,7 @@
 
 import { RMB_DIMENSION } from '../formats/blocksFile.js';
 import { GLOBAL_SCALE } from './meshReader.js';
+import { lightList, packLight, adoptLight } from '../render/lightId.js';   // LIGHT-ID: a light into the frame's list through the one seam, its identity beside it
 
 export const LIGHTS_ARCHIVE = 210;
 export const CITY_LIGHT_RANGE = 18;
@@ -89,6 +90,7 @@ export function fillLanternPool(pixels, translate, pool, ranges, animRanges, ext
       const l = j < p.lights.length ? p.lights[j] : more[j - p.lights.length];
       const e = pool[n] ?? (pool[n] = { x: 0, y: 0, z: 0 });
       e.x = l[0] + t[0]; e.y = l[1] + t[1]; e.z = l[2] + t[2];
+      adoptLight(e, l);   // LIGHT-ID: the entry is this lantern's this frame - the pool reshuffles when a pixel streams out
       ranges[n] = animRanges[(slot0 + j) % animRanges.length];
       n++;
     }
@@ -214,12 +216,9 @@ export function nearestLights(lights, pos, max = 16, range = CITY_LIGHT_RANGE, c
     while (j > 0 && _selD[j - 1] > d) { _selD[j] = _selD[j - 1]; _selIdx[j] = _selIdx[j - 1]; j--; }
     _selD[j] = d; _selIdx[j] = i;
   }
-  const out = new Float32Array(count * 4);
+  const out = lightList(count);   // LIGHT-ID: each light's identity rides the list
   for (let i = 0; i < count; i++) {
     const l = lights[_selIdx[i]];
-    out[i * 4] = l.x;
-    out[i * 4 + 1] = l.y;
-    out[i * 4 + 2] = l.z;
     // AUDIT PERF-LIGHTS F2 (pre-existing, found by this audit): a
     // per-light range array SHORTER than the light list gives `undefined`
     // here, which lands in a Float32Array as NaN - and a NaN far plane
@@ -230,7 +229,7 @@ export function nearestLights(lights, pos, max = 16, range = CITY_LIGHT_RANGE, c
     // edge marked. The fallback is the module's own default range, which
     // is what an unanimated lantern is anyway.
     const w = perLight ? perLight[_selIdx[i]] : range;
-    out[i * 4 + 3] = Number.isFinite(w) ? w : CITY_LIGHT_RANGE;
+    packLight(out, i, l, Number.isFinite(w) ? w : CITY_LIGHT_RANGE);
   }
   if (!colorOf) return out;
   // The colour arm rides the SAME selection - the one-sort law above

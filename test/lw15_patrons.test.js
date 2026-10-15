@@ -206,7 +206,7 @@ test('LW15 the service: an hour\'s patrons at a public trader - the piece sold o
   assert.equal(held, sold.reduce((x, s) => x + s.gets, 0), 'the seller\'s held gold');
   const fauc = a.raw.prepare("SELECT SUM(gold) AS g, SUM(n) AS n FROM realm_faucets WHERE kind = 'patron'").get();
   assert.deepEqual([fauc.g, fauc.n], [held, sold.length], 'the faucet measured');
-  assert.deepEqual(FAUCET_KINDS, ['patron']);
+  assert.deepEqual(FAUCET_KINDS, ['patron', 'repair']);   // SUMMON-REPAIR: staff's refunds, the second kind
   assert.equal(a.raw.prepare('SELECT COUNT(*) AS n FROM market_deliveries').get().n, 0, 'no delivery: gone from the realm');
   const lastDay = sold.filter((s) => s.hour * 3600 + s.minute * 60 > _now - 86_400);
   assert.ok(Array.isArray(r1.body.patrons) && r1.body.patrons.length === lastDay.length, 'the last day\'s told');

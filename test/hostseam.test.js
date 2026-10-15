@@ -81,7 +81,12 @@ function bindings(file, fnName) {
   const host = findHostFunction(parseModule(readFileSync(join(ROOT, file), 'utf8')), fnName);
   assert.ok(host, `${file} has ${fnName}`);
   const { members, owner } = scopeOf(host);
-  const params = new Set(host.fn.params.filter((p) => p.type === 'Identifier').map((p) => p.name));
+  // every name a parameter binds - `opts = {}` and a destructured one too (AUDIT HOST-SPLIT 2, the second read: a default
+  // read as no binding at all, and failed PARTY-LOOT's module, copied from buildDungeonContext's `opts = {}`)
+  const bound = (p) => (p.type === 'Identifier' ? [p.name] : p.type === 'AssignmentPattern' ? bound(p.left)
+    : p.type === 'RestElement' ? bound(p.argument) : p.type === 'ArrayPattern' ? p.elements.filter(Boolean).flatMap(bound)
+    : p.type === 'ObjectPattern' ? p.properties.flatMap((q) => bound(q.type === 'RestElement' ? q.argument : q.value)) : []);
+  const params = new Set(host.fn.params.flatMap(bound));
   return (n) => {
     const o = owner.get(n);
     const kind = o ? (o.stmt.type === 'VariableDeclaration' ? o.stmt.kind : o.stmt.type) : params.has(n) ? 'param' : null;

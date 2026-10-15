@@ -502,7 +502,10 @@ them, and no captain takes them for a contact.
   lower while the foe's bar is up under the compass and further under its blade. Come Sail Away's HELM PANEL stands
   there too on Enhanced Plus, and its bar is as tall as its buttons wrap, so while it stands the card is placed
   NAVAL_CARD_GAP under its measured foot (`drawNavalHud`'s `under`, `enhancedHelm.js enhancedHelmBar` - the panel is
-  drawn earlier in the frame, and its foot is read only while a card stands or the layout is due). The layer copies
+  drawn earlier in the frame, and its foot is read only while a card stands or the layout is due). The bar is a HUD-MOVE
+  piece (HUD-HELM, 2026-10-15, `10-UI/Controls.md`): moved, the card stands under it - its head the bar's foot, its
+  centre the bar's (`cardCentreUnder`, held so the card stays on the screen) - and with the bar turned off in play (its
+  visibility hidden) the card stands at the compass's foot again, as with no helm. The layer copies
   the HUD scale onto its root, so every part follows the player's HUD scale together - the card at it capped by its
   column's room (The layout, below).
 - **On a finger's screen** (`touch`): no key is named - "Hold and drag to aim", "Lift to fire", "Tap: board her" (the
@@ -1138,11 +1141,20 @@ with crew naturally getting into position and fighting enemies".
   crew the chorus). Her guns out (`battle`: she engages, boards, runs, answers; my boat with the aim laid or a hostile
   near): no song, the battle's words, a run from post to post. A grapple thrown (`muster`): every man to the rail facing
   the other ship, evenly fore and aft (`deck.rail` - the outermost deck cell of the row, never the clamp from far abeam,
-  which lands every man on her widest cell), facing out, shouting. The player on her deck is never walked through (a
+  which lands every man on her widest cell), facing out, shouting their side of it - CREW-MUSTER (FIELD BUGS
+  2026-10-14, "Crew Attacking Me"; Mac's call, 2026-10-14: "Both"): the crew going over the other's rail cries the
+  boarding's words (`CREW_BLURBS.board`), the crew being boarded the repel's (`CREW_BLURBS.repel`) - the host names each
+  crew's side (`way`: navalHost `myCrew` and `crewShips`, the grapple by its kind, `world.js navalCrewFrame`) and a
+  rail order alone has none (the battle's words); THE FOUR HOSTS RULE: `scenes/world.js` alone stands the crews -
+  `exterior.js`, `worldModes.js` and `dungeonContext.js` stand none. The player on her deck is never walked through (a
   walker waits, then goes elsewhere after CREW_BLOCKED_S). AUDIT NAV2: THE MUSTER IS CALLED AT BOARDING RANGE (F40: the
   grapple's 2.2 s alone saw nobody but the stations ready - at a repel's start 0 of 2 of my walkers, at my boarding 1
-  of her 4) - a ship closing to board her, a struck ship in my reach (my helm within BOARD_RANGE past both beams, my
-  feet within FOOT_BOARD_M) or the grapple, within CREW_MUSTER_M of her: her walkers to the rail on the side the other
+  of her 4) - a ship closing to board her, a struck ship a boarding could take NOW (CREW-MUSTER, Mac's call: the
+  boarding's own reach, never a copy of it - at my helm `navalHost.js:"  function boardingGap(boat, e,"`, `boardable`'s:
+  BOARD_RANGE past both beams and my way under BOARD_SPEED; on foot `footReach`, FOOT_BOARD_M of her side, the rail
+  `boardableOnFoot` goes over; a repel thrown back left her struck alongside, and at a helm under way my crew stood at
+  the rail crying "Here they come!" at nobody but the player, from the moment he took the helm to the moment he left
+  it) or the grapple, within CREW_MUSTER_M of her: her walkers to the rail on the side the other
   will lie once alongside, dealt fore to aft by where they stand (by roster index they ran 190.9 m a muster on the
   galley), her stations ready at their posts; along her main deck's rail, never past her centreline (F62, found at the
   merge: F34's raised decks put the Small Ship's foremost man on her forecastle's top row, 0.68 m to port in a

@@ -146,10 +146,13 @@ export class QuestOfferFlow {
     this._guild = null;
     this._guildCtx = { guildGroup: null, buildingFactionId: factionId };
     this.offeredQuest = this.questLists.getQuest(questName, factionId);
-    // GetQuest answers null for a quest the reader has no source for,
-    // and DFU simply does not offer one (:273-279) - the prince has
-    // still been summoned and recorded either way.
-    if (!this.offeredQuest) return { kind: 'close' };
+    // GetQuest answers null for a quest the reader has no source for, or
+    // whose parse threw - a remote Place or Person with no site in the
+    // player's region (ParseQuest swallows it) - and DFU then offers
+    // nothing (:273-279). So does this: NO STEP, not a silent close step
+    // - the summoning reads the null as "no quest here" before it spends
+    // the gold or records the prince (daedraSummoning.js SUMMON-OFFER).
+    if (!this.offeredQuest) return null;
     return this._offerQuest();
   }
 

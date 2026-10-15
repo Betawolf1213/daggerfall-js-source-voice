@@ -24,6 +24,11 @@
 // alone. So it is no pile of anyone else's, and the killer's own game asks for it the moment the room says it: their
 // pick off the body was the choice, and this is the piece arriving.
 //
+// MAC'S DECISION (2026-10-14, "Yes, build it" - the two-phase handoff): where the service holds that piece in ESCROW, the
+// room hands no record for it - it answers the killer's ask with its signed COLLECT (`cr`, net/wildReceipt.js `g1`), and
+// this book hands that to the host (`collect`), whose tab carries it to the service: the piece arrives as the service's
+// answer, committed to the killer's record (server-account/src/wild.js wildCollect), never as the room's copy of it.
+//
 // The host hands in everything this touches (the pool, the frame, the pack, the clock, the socket), so the pins drive
 // it with fakes. The pile's `items` are minted through the item law the host hands in (systems/loot.js validLootList).
 // ═══════════════════════════════════════════════════════════════════
@@ -52,8 +57,10 @@ export const WILD_NO_STORE = Object.freeze({ kg: 0, name: 'These remains' });
  * @param {() => number} [o.now]                            a monotonic clock, ms
  * @param {(item: any) => string} [o.nameOf]
  * @param {() => string|null} [o.me]                       my account, as the relay knows it (INT9: the killer's piece)
+ * @param {(cr: string, at: { r: string, i: number, rec: any }) => void} [o.collect]   MAC (2026-10-14): the room's collect of
+ *   my piece in escrow, for the host to carry to the service (once a remains)
  */
-export function createWildRemains({ send, pool, toScene, mine, pack, mint, addItem, stacksWith, unequip = () => {}, unpurse = () => 0, canTake = () => true, say = () => {}, now = () => Date.now(), nameOf = () => 'it', me = () => null }) {
+export function createWildRemains({ send, pool, toScene, mine, pack, mint, addItem, stacksWith, unequip = () => {}, unpurse = () => 0, canTake = () => true, say = () => {}, now = () => Date.now(), nameOf = () => 'it', me = () => null, collect = () => {} }) {
   /** @type {Map<string, any>} */
   const recs = new Map();     // r -> { r, p, nm, os, oid, until, items[], end, pile, seen: Map<obj, {i, n}>, mine }
   // HALO-REMAINS: the rooms I hold - my own and the halo's (the cells beside mine); each record is its room's
@@ -115,6 +122,8 @@ export function createWildRemains({ send, pool, toScene, mine, pack, mint, addIt
 
   /** INT9 (AUDIT): every remains' id said here this life - a killer's seizure is never asked of one its fallen laid. */
   const saidIds = new Set();
+  /** MAC (2026-10-14): the remains whose collect this book has handed the host - once each, however often the room says it. */
+  const collected = new Set();
   /** INT9: the piece I picked off a fallen's body, asked of the room - the whole of it, once it has left. */
   const askMine = (/** @type {any} */ rec) => {
     const it = rec.wk && rec.wk === me() ? rec.items[rec.wi] : null;
@@ -192,6 +201,18 @@ export function createWildRemains({ send, pool, toScene, mine, pack, mint, addIt
       const key = `${w.r}:${w.i}`;
       const left = (asked.get(key) ?? 1) - 1;
       if (left > 0) asked.set(key, left); else asked.delete(key);
+      if (w.k === 'cr') {
+        // MAC (2026-10-14): MY COLLECT - the piece the service holds in escrow is mine once the service commits it; the
+        // room's record of it is nobody's to add
+        const it = rec && w.i === rec.wi && rec.wk === me() ? rec.items[w.i] : null;
+        if (rec && w.i === rec.wi && rec.wk === me()) rec.items[w.i] = null;   // never asked again
+        if (!collected.has(w.r)) {
+          collected.add(w.r);
+          if (collected.size > 64) collected.delete(collected.values().next().value);
+          try { collect(w.cr, { r: w.r, i: w.i, rec: it }); } catch { /* the host's */ }
+        }
+        return;
+      }
       if (w.k === 'got') {
         if (rec && w.i === rec.wi && rec.wk === me()) rec.items[w.i] = null;   // AUDIT INT9: mine, whole - never asked again before the room's `rm`
         const item = mint([w.it])?.[0] ?? null;

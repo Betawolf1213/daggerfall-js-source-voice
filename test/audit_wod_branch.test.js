@@ -569,7 +569,8 @@ test('WOD6 (audit): a pixel is the arrival\'s until its first frame - a marker m
   try { h.tick(); } finally { Math.random = orig; }
   assert.deepEqual([q.wodSpawners[0].spawner.started, q.wodSpawners[0].spawner.active], [true, false], 'Start from the player, within 300: stood down, never sprung at their feet');
   assert.equal(h.droppedLoot.piles?.length ?? 0, 0);
-  assert.match(WORLD, /destroyPixel\(next\.px, next\.py, \{ collectLoose: false \}\);\n      _wodArrival\.keys\.delete\(`\$\{next\.px\},\$\{next\.py\}`\);\n      state\.release\(next\.px, next\.py\);/, 'a build that failed is torn down with its key, and is no longer the arrival\'s');
+  // PIN MOVED (BUILD-RETRY, test/ow_buildretry.test.js): the key let go through the stream's `fail`, which asks for it again on its own wait
+  assert.match(WORLD, /destroyPixel\(next\.px, next\.py, \{ collectLoose: false \}\);\n      _wodArrival\.keys\.delete\(`\$\{next\.px\},\$\{next\.py\}`\);\n(?:      \/\/[^\n]*\n)*      state\.fail\(next\.px, next\.py, performance\.now\(\)\);/, 'a build that failed is torn down with its key, and is no longer the arrival\'s');
   assert.match(WORLD, /reposition: REPOSITION\.RandomStartMarker \}\);\n[^\n]*\n          \{ const s = walkMode && playerSpawned; const f = s \? player\.pos : cam\.pos; wodOnLoad\(/, 'the online underground wake is a load: OnLoad last');
 });
 

@@ -241,8 +241,14 @@ stood, by the tool:
   the tool. By hand: an anchor in a code comment (`exterior.js`, which the tool
   does not read), a `citedrift` pin on a ledger citation the tool had moved, and
   a TIME1 census row.
-- `bootWorld` 21,445 -> 20,706 code lines (35,114 -> 33,912 raw); its ceiling
-  21,695 -> 20,956.
+- `bootWorld` 21,750 -> 21,011 code lines (35,528 -> 34,326 raw), measured at
+  the merge with main at bd385fc6; its ceiling 21,695 -> 21,261, the new length
+  plus 250 (step 4). Main stood 55 over its own ceiling there - the field-bugs
+  roll-up grew bootWorld 131 lines at its merge - and this slice's move is the
+  next pull request's fix the ceiling's rule asks for. (The slice first wrote
+  21,445 -> 20,706 and a ceiling of 20,956: the pilot's measure less the 739
+  lines, where the base it moved from measured 21,619 - so it left 76 lines of
+  room, not 250. AUDIT HOST-SPLIT 2, the second read, measured again.)
 
 THE PINS READ THE HOST WHOLE. The move broke 143 tests in 130 files - the
 pilot's ratio (9.6 pins a hundred lines against 9.5), at five times the
@@ -351,3 +357,35 @@ the build since. Found:
   The first three proved by a mutant that passed the rewritten pin and failed
   the fixed one (H1's recorded in `hostseam.json`; the other two are moves);
   A10's move is failed by its own no-await check as well.
+
+## PARTY-LOOT's block - roomLootHost (FIELD BUGS 2026-10-14, at the merge)
+
+Not a slice of the order above: a fix that landed past the ceiling. PARTY-LOOT (`06-Systems/Online-Arc.md`) was
+written on main at 7c291d36, before HOST-SPLIT 0, and put its room-loot block - 48 members, the room's base, its word,
+its claims and the host's verdicts - into `buildDungeonContext`, which took the dungeon host 204 code lines over its
+ceiling (5,650 against 5,446) once it met main in the field-bugs pull request. A raise was not taken: the map read the
+block as a clean cut - 0 host `let`s written, 30 names read - so it is a module, not room to grow.
+
+- THE MOVE. The block left for `src/scenes/roomLootHost.js` (`createRoomLoot(host)`) by `tools/hostMove.mjs`: 15 names
+  by value, 18 live (`_authority`, `_foesFrom`, the loot sets, `_wallNow`, `onlineRoom` and the block's three counters,
+  two of them written through setters), 23 returned and destructured where it stands; 16 import lines came along and
+  the host dropped the 40 names it no longer read. 21 mutant records followed the code, by the tool.
+- WHERE IT STANDS. The tool constructs a group where it stood, and this one stood below its first caller: the build's
+  `for (const e of enemies) await buildFoeAt(e)` reads `lootBuiltOf` and `forgetRoomContainer` thousands of lines above
+  the block - hoisted function declarations until now, a destructured `const` in its temporal dead zone after. So the
+  block was first moved verbatim above `buildFoeAt` (its members are function declarations, arrow `const`s and empty
+  `Map`s, none reading the host at construction), and its three `let` counters above it - `_roomMintHold` is written by
+  the host's restore, so it stays the host's and the module reads it live. Then the tool found no member used above it.
+- THE TOOL had a hole the move fell into: a comment ending a code line above a group was read as the group's doc, so
+  that line - a host `let` - went into the module and out of the host, and the host's own write of it would have thrown.
+  `tools/hostMove.mjs` stops at a comment that does not begin its own line; `test/hostmove.test.js` holds the fixture
+  (`trailing-comment-above`, the original and the moved host run alike) and `tools/mutants/hostmove.json` its mutant.
+- THE PINS, by hand: `test/partyloot.test.js` mounted the block's own lines out of the host; it mounts the host's
+  counters and construction (from `dungeonContext.js`) over the module's `createRoomLoot` (from `roomLootHost.js`) now,
+  the module's imports - the player, the mid-screen line - still each peer's own, and reads the base's two pins in the
+  module. `test/audit18_hosts_dungeon.test.js`'s count of the one enemy-loot seam reads two in the host and the room
+  body's one in the module, and that the host constructs it. The harnesses that spread `test/roomLootOff.mjs` into
+  their host mounts were untouched: the host's names are the same names.
+- `buildDungeonContext` 5,650 -> 5,263 code lines; its ceiling stays 5,446 (the block was never in the measure the
+  ceiling was set from). `tools/mutate.mjs` over `partyloot.json`: 30 dead; over `hostmove.json`: 11 dead. As every
+  slice: CI has no ARENA2, so the room's loot is Mac's to play before it merges.

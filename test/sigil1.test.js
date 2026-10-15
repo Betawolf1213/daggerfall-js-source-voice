@@ -347,13 +347,14 @@ test('SIGIL1 the hosts: the session is online from the boot\'s first line and my
   _resetSigilForTests();
   // the dungeon
   const D = strip(read('src/scenes/dungeonContext.js'));
-  assert.match(D, /stampWonWeapons\(foe\.entity\.items, _sharedFoe\(foe\) \? fightN\(foe\) : 1\);\s*raiseEnemyDeath\(foe\.entity,/, 'the host\'s kill, at its fight');
+  assert.match(D, /stampWonWeapons\(foe\.entity\.items, _sharedFoe\(foe\) \? fightN\(foe\) : 1\);\s*(?:if \(!_roomBody\) )?raiseEnemyDeath\(foe\.entity,/, 'the host\'s kill, at its fight');   // PIN MOVED (PARTY-LOOT): a room's body's sigils are its base's (at the fight's count, roomBodyBase)
   // PIN MOVED (AUDIT 625 L5): both copies are capped now, last - after their kit, their food and their sigils, as the
   // host's death caps its own
   // PIN MOVED (AUDIT CARDS-6 A3): and each copy's own card drawn before the cap
-  assert.match(D, /if \(r\.d === 1 && !f\.dead\) \{ rollCorpseKit\(f\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\); addCorpseFood\(f\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\); stampWonWeapons\(f\.entity\.items, f\._fightN \?\? 1\); dropFoeCard\(f\.entity\); capFoeLoot\(f\.entity\); \}/, 'a joiner\'s copy of the body, at the host\'s count');
-  assert.match(D, /if \(wire && sf\.dead && !f\.dead && sf\.items == null\) \{ rollCorpseKit\(f\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\); addCorpseFood\(f\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\); stampWonWeapons\(f\.entity\.items, 1\); dropFoeCard\(f\.entity\); capFoeLoot\(f\.entity\); \}/, 'a body the room\'s memory hands an arrival');
-  assert.match(D, /function rollPileItems\(\) \{[\s\S]{0,600}?rollLootRarity\([^;]*;\s*stampWonWeapons\(items, 1\);\s*return items;/, 'every pile, at the build and the hour\'s respawn');   // MERGE 2: 600 - the pile trio\'s call carries FORAGE3\'s index and luck beside REALM P0.4\'s level
+  // PIN MOVED (PARTY-LOOT): never a room's body - a layout body's and an encounter's sigils are their base's
+  assert.match(D, /if \(r\.d === 1 && !f\.dead && !\(roomLootOn\(\) && roomCanonOfFoe\(f\) != null\)\) \{ rollCorpseKit\(f\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\); addCorpseFood\(f\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\); stampWonWeapons\(f\.entity\.items, f\._fightN \?\? 1\); dropFoeCard\(f\.entity\); capFoeLoot\(f\.entity\); \}/, 'a joiner\'s copy of the body, at the host\'s count');
+  assert.match(D, /if \(wire && sf\.dead && !f\.dead && sf\.items == null && !\(roomLootOn\(\) && roomCanonOfFoe\(f\) != null\)\) \{ rollCorpseKit\(f\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\); addCorpseFood\(f\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\); stampWonWeapons\(f\.entity\.items, 1\); dropFoeCard\(f\.entity\); capFoeLoot\(f\.entity\); \}/, 'a body the room\'s memory hands an arrival');
+  assert.match(D, /function rollPileItems\(\{[^\n]*\) \{[\s\S]{0,700}?rollLootRarity\([^;]*;\s*stampWonWeapons\(items, 1, \{ rolls \}\);[^\n]*\n\s*return items;/, 'every pile, at the build and the hour\'s respawn');   // PIN MOVED (PARTY-LOOT): on the roll's own dice - a room's base its seeded ones   // MERGE 2: 600 - the pile trio\'s call carries FORAGE3\'s index and luck beside REALM P0.4\'s level
   assert.match(D, /if \(r\.d !== 1\) f\._fightN = r\.n \?\? 1;/, 'a joiner reads the count off live records alone');
   assert.match(strip(read('src/scenes/exteriorFoes.js')), /if \(r\.d !== 1\) f\._fightN = r\.n \?\? 1;/, 'and an outdoor reader');
   assert.match(strip(read('src/scenes/cityGuards.js')), /stampWonWeapons\(g\.entity\.items, 1, \{ rolls: rand \}\);\s*raiseEnemyDeath\(g\.entity,/, 'the watch\'s kill');

@@ -192,8 +192,8 @@
   {
     "name": "SD4A-the-piles'-drop-the-Elite's",
     "file": "src/scenes/dungeonContext.js",
-    "old": "undefined, _superTier ? { itemChanceScale: SUPER_LOOT_DROP_MULT } : elite ?",
-    "new": "undefined, elite ?",
+    "old": "rolls, _superTier ? { itemChanceScale: SUPER_LOOT_DROP_MULT } : elite ?",
+    "new": "rolls, elite ?",
     "tests": [
       "test/sd4a_super.test.js"
     ]

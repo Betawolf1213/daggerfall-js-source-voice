@@ -79,6 +79,17 @@ export function host() {
   return g;
 }
 `, ['g'], (h) => h()()],
+  // a comment ending the code line above the group is that line's, not the group's doc (PARTY-LOOT's move took the
+  // host's `let` along with it, and the host's own write of it threw)
+  ['trailing-comment-above', `import { K } from './dep.js';
+export function host() {
+  let count = K;   // a host let whose line ends in a comment
+  // the group's own doc
+  const g = () => ++count;
+  count = 10;
+  return () => [g(), count];
+}
+`, ['g'], (h) => h()()],
   // a host with no import line still takes the constructor's (f8 crashed)
   ['no-imports', `export function host() {
   const x = 1;

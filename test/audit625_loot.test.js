@@ -80,8 +80,9 @@ test('AUDIT 625 L5: a joiner\'s copy of a body and an arrival\'s are capped as t
   const { readFileSync } = await import('node:fs');
   const dc = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
   // PIN MOVED (AUDIT CARDS-6 A3): each copy draws for its own card before its cap, as the host's death does
-  assert.match(dc, /if \(r\.d === 1 && !f\.dead\) \{ rollCorpseKit\(f\.entity, [^;]*\); addCorpseFood\(f\.entity, [^;]*\); stampWonWeapons\(f\.entity\.items, f\._fightN \?\? 1\); dropFoeCard\(f\.entity\); capFoeLoot\(f\.entity\); \}/, 'the stream\'s death of a joiner\'s copy');
-  assert.match(dc, /if \(wire && sf\.dead && !f\.dead && sf\.items == null\) \{ rollCorpseKit\(f\.entity, [^;]*\); addCorpseFood\(f\.entity, [^;]*\); stampWonWeapons\(f\.entity\.items, 1\); dropFoeCard\(f\.entity\); capFoeLoot\(f\.entity\); \}/, 'an arrival\'s copy the room hands without its list');
+  // PIN MOVED (PARTY-LOOT): never a room's body - its kit, food, card, sigils and cap are its base's
+  assert.match(dc, /if \(r\.d === 1 && !f\.dead && !\(roomLootOn\(\) && roomCanonOfFoe\(f\) != null\)\) \{ rollCorpseKit\(f\.entity, [^;]*\); addCorpseFood\(f\.entity, [^;]*\); stampWonWeapons\(f\.entity\.items, f\._fightN \?\? 1\); dropFoeCard\(f\.entity\); capFoeLoot\(f\.entity\); \}/, 'the stream\'s death of a joiner\'s copy');
+  assert.match(dc, /if \(wire && sf\.dead && !f\.dead && sf\.items == null && !\(roomLootOn\(\) && roomCanonOfFoe\(f\) != null\)\) \{ rollCorpseKit\(f\.entity, [^;]*\); addCorpseFood\(f\.entity, [^;]*\); stampWonWeapons\(f\.entity\.items, 1\); dropFoeCard\(f\.entity\); capFoeLoot\(f\.entity\); \}/, 'an arrival\'s copy the room hands without its list');
   // and the cap itself, on a copy the food overfilled: gold kept, the best by tier, then the supplies, then the dearest
   const { capFoeLoot } = await import('../src/systems/foeLootCap.js');
   const e = { lootCap: 3, items: [goldStack(4), { name: 'a', group: 'Weapons', value: 10 }, { name: 'b', group: 'Armor', value: 20 }, { name: 'meat', group: 'UselessItems2', value: 1 }, { name: 'c', group: 'Armor', value: 5 }] };

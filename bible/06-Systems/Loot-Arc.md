@@ -1020,9 +1020,13 @@ stage is above it, and Renown 40 is under the loot before PLAIN-LOOT (section 18
 its death (KIT-ROLL - every foe's since AUDIT 625, section 21), the cap keeps a supply before plain gear
 (CAP-SUPPLIES), the rest supplies drop online at all.
 
-**Whose Renown.** The roller's: the page that rolls the loot - a dungeon's host for its foes, a street cell's owner
-for its foes, and for a treasure pile the page that builds the dungeon (each player's own, `dungeonContext.js`
-`rollPileItems`) - as a foe's level and a pile's already follow that page's character. Read
+**Whose Renown.** The roller's: the page that rolls the loot - a street cell's owner for its foes, a building's opener
+for its containers - as a foe's level and a pile's already follow that page's character. IN A DUNGEON ROOM (PARTY-LOOT,
+2026-10-14, Mac: *"I want a delicate balance... the best of both worlds"*, then **"Shared base + personal bonus"** -
+`06-Systems/Online-Arc.md` PARTY-LOOT) a pile's and a body's shared base rolls at the FIRST stage, nobody's Renown, and
+each player's own Renown rolls their bonus over it: the pieces the base's keep let go that their stage's keep keeps,
+and their stage's share of the supplies above the first's, on their own ladder - so the base's and the bonus's
+together are the player's own stage, and only they see their part. Read
 through SIGIL1's door (`sigil.js` `sigilOnline`, `sigilRenown`), which `scenes/world.js` sets: online from the page's
 own word before any list is minted, its Renown as the token's level is adopted (`renownAdopt`, only ever upward),
 offline again when a tab leaves its seat. Online before the page knows its Renown - the moments before the first token

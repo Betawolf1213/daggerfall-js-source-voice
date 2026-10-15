@@ -833,7 +833,7 @@ export function randomlyAddPotionRecipe(chance, items, rolls = Math.random) {
  *  AFTER the equipment, as DFU does - AssignEnemyStartingEquipment
  *  has already pushed the gear into `items` by :388, so a map lands
  *  after a helmet in the list and not before it. */
-export function addEnemyLootExtras(items, basics, rolls = Math.random) {
+export function addEnemyLootExtras(items, basics, rolls = Math.random, { quarters = undefined } = {}) {   // PARTY-LOOT: `quarters` the roll's RENOWN-LOOT share, handed to the extras (undefined: the roller's own)
   if (!items || !basics) return items;
   randomlyAddMap(basics.mapChance ?? 0, items, rolls);
   // "if (!string.IsNullOrEmpty(mobileEnemy.LootTableKey))" - the port
@@ -844,7 +844,7 @@ export function addEnemyLootExtras(items, basics, rolls = Math.random) {
     randomlyAddPotion(3, items, rolls);
     randomlyAddPotionRecipe(2, items, rolls);
     for (const fn of [..._enemyLootExtras.values()]) {   // REPAIR-EASE: the port's own extras on a looting foe (the field kit)
-      try { fn({ items, basics, rolls }); } catch (e) { console.warn('[enemyLoot] an extra threw', e); }
+      try { fn({ items, basics, rolls, quarters }); } catch (e) { console.warn('[enemyLoot] an extra threw', e); }
     }
   }
   return items;
@@ -871,7 +871,7 @@ export function unlevelPileGold(items, level) {
  *  The potion chance is FOUR here, not three. */
 export const PILE_MAP_CHANCES = Object.freeze([2, 1, 1, 2, 2, 15]);   // J, K, L, M, N, O
 
-export function addPileLootExtras(items, lootTableKey, rolls = Math.random, { locationIndex = null, luck = 50, level = 1, online = isOnlinePage(), where = null } = {}) {
+export function addPileLootExtras(items, lootTableKey, rolls = Math.random, { locationIndex = null, luck = 50, level = 1, online = isOnlinePage(), where = null, quarters = undefined } = {}) {   // PARTY-LOOT: `quarters` the roll's RENOWN-LOOT share for the subscribers (undefined: the roller's own)
   if (!items || !lootTableKey) return items;
   if (online) unlevelPileGold(items, level);   // REALM P0.4: every pile, whatever its key
   // `int alphabetIndex = key - 64` on the FIRST character: 'A' is 1,
@@ -888,7 +888,7 @@ export function addPileLootExtras(items, lootTableKey, rolls = Math.random, { lo
   // a laboratory's or a dragon's den's pile was never worn). RRI2's RandomConditionLootItems is its first subscriber;
   // every other hears it after (Foraging's, There's a Hole in the Bottom of the Ocean's AddBonusMagicLoot and UpgradeLoot).
   // AUDIT OH-F B3: `where` the host that rolled it ('dungeon', or null).
-  if (lootTableKey !== '-') raiseTabledLootSpawned({ locationIndex, key: lootTableKey, items, rolls, luck, where });
+  if (lootTableKey !== '-') raiseTabledLootSpawned({ locationIndex, key: lootTableKey, items, rolls, luck, where, quarters });
   return items;
 }
 
