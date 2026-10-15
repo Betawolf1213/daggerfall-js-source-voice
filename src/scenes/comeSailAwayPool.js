@@ -217,6 +217,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     const nodes = w.nodes, mats = w.mats, wrecs = w.recs;
     let at = 0, moved = false;
     const root = boat.GameObject;
+    const seen = root?.parent === null ? stamp : -1;   // PERF-SAILS4: a root hung under something walks a frame of its own - never read for her nodes' worldMatrix
     if (root?.activeSelf) {
       const rr = recOf(root);
       if (!localSame(rr, root) || rr.pend || rr.pver !== ROOT_MADE) { rr.pend = true; rr.under = null; }
@@ -226,7 +227,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
       while (stack.length) {
         const n = stack.pop(), pr = recs.pop();
         if (nodes[at] !== n) { nodes[at] = n; moved = true; }
-        mats[at] = pr.m; wrecs[at] = pr; at++;
+        mats[at] = pr.m; wrecs[at] = pr; pr.seen = seen; at++;   // PERF-SAILS4: walked by this frame's walk (worldOf)
         for (let i = n.children.length - 1; i >= 0; i--) {
           const c = n.children[i];
           if (!c.activeSelf) continue;
@@ -273,6 +274,14 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     }
     return e.key;
   }
+  /** PERF-SAILS4: a node's matrix in its boat's frame - the one this frame's walk keeps (made as it is read) when the
+   *  walk went through it, else the node's own (PrefabNode.worldMatrix). The two are one product of the same values
+   *  (a boat's root hangs under nothing: the walk's root matrix is her worldMatrix), to the bit; the walk's makes each
+   *  matrix once a frame for every reader and into its own storage, where the node's asks its whole chain each time. */
+  const worldOf = (n) => {
+    const r = n._walkRec;
+    return r !== undefined && walkStamp > 0 && r.seen === walkStamp ? made(r) : n.worldMatrix();
+  };
   /** PERF-SAILS2: a walked node's matrix, made now if it is due - its parent's first. */
   function made(r) {
     if (!r.pend) return r.m;
@@ -553,8 +562,8 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
       k.pose = { position: [0, 0, 0], rotation: [0, 0, 0, 1] };
     }
     const bones = k.bones, boneWorld = k.boneWorld;
-    for (let b = 0; b < bones.length; b++) boneWorld[b] = bones[b] ? bones[b].worldMatrix() : null;
-    const pose = k.pose, sw = skinnedNode.worldMatrix(), sq = skinnedNode._rotationKept();
+    for (let b = 0; b < bones.length; b++) boneWorld[b] = bones[b] ? worldOf(bones[b]) : null;   // PERF-SAILS4: the walk's, where it went
+    const pose = k.pose, sw = worldOf(skinnedNode), sq = skinnedNode._rotationKept();
     pose.position[0] = sw[12]; pose.position[1] = sw[13]; pose.position[2] = sw[14];
     pose.rotation[0] = sq[0]; pose.rotation[1] = sq[1]; pose.rotation[2] = sq[2]; pose.rotation[3] = sq[3];
     if (script.everyFrame && rigStill(k, boneWorld, pose)) return;

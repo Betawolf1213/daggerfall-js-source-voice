@@ -241,6 +241,33 @@ Pins: `test/perfsails3.test.js` (5), `tools/mutants/perfsails3.json` (11, 11 dea
 `A0928-R5-flat-scale-walks-again` (`n.lossyScale` for the walk's matrix) survives on origin/main d8ccf7fd6 as it does
 here - the node's own matrix is kept since AUDIT NAV1 #11, so the walk again makes nothing the pin can count.
 
+## PERF-SAILS4 — a still clip posed once, and a rope's bones read off the frame's walk
+
+*2026-10-14, the same capture after PERF-SAILS3: of the ships' frame what was left was navalHost's poseShip 0.48 ms -
+0.31 of it the ships' animators - and the pool's every-frame rope holders 0.45, 0.24 of that their bones' world
+matrices.*
+
+- THE ANIMATORS (`world/unityAnimator.js` leafPose): every frame asked each curve of each playing clip its property by
+  a string made for it, and posed the clip anew. A port's ships stand: her sails stowed, her doors, hatches and gunports
+  closed, her rudder home - and 129 of the vendored 141 clips hold every component `constant` (the twelve that move are
+  the rowing rudders'), so their pose is the same at any time. A clip's curves are now bound once (its bindings kept in
+  its curves' order, so a later curve on one property is still the one that stands), and a constant clip is posed once,
+  after the props are bound, and handed out as made - its readers (the write, the blend, a transition's snapshot) read
+  it and never write it. `ANIM=1 tools/csaBench.mjs`, twelve ships' 136 animators standing: 0.51-0.53 -> 0.07 ms a frame.
+- THE ROPES (`scenes/comeSailAwayPool.js` worldOf): an every-frame holder asked each bone's PrefabNode.worldMatrix,
+  which asks its whole chain and makes a new matrix wherever the hull rocked - though the frame's walk had just been
+  through every one of those nodes. A bone and the rope's renderer now read the walk's matrix (made as it is read, into
+  its own storage) when this frame's walk went through them - the same product of the same values: a boat's root hangs
+  under nothing, so the walk's root matrix is her worldMatrix (every node of every hull, sea and mine, compared to the
+  bit). A root hung under something marks its walk as no frame's, and its nodes are read by their own worldMatrix.
+  `tools/csaBench.mjs` rocking: 0.71-0.74 (PERF-SAILS3) -> 0.60-0.63 ms.
+
+Same answer: every pose 118 animators of ten ships of every hull and rig write over 900 frames (the controllers' own
+bools and floats turned, crossfades, plays at a time, a frame held, animators off and on, then every rudder rowing a
+second) - one sha256 on origin/main d8ccf7fd6 and here; and PERF-SAILS3's digest of the pool, the ropes' bakes in it,
+unchanged. Pins: `test/perfsails4.test.js` (3; the ropes' bakes against their nodes' own matrices, free and hung under a
+turned node), `tools/mutants/perfsails4.json` (6, 6 dead).
+
 ## PERF-SKY1 — the stars are a night's (the port takes this part alone)
 
 The v5 slice's stars half: the Dynamic Skies dome weighs its stars by `night * horizonValue`, and by day night is 0 -
