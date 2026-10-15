@@ -9,7 +9,7 @@ with no frame at all.
 
 | | Report | What it was | Done |
 |---|---|---|---|
-| 1 | "Riding Window is not able to be edited in the HUD Editor (Alt+U)" | the saddle panel (STEED-UI, 2026-10-11) never joined HUD-MOVE's list of pieces (2026-10-01): the editor frames only what the list names | fixed (HUD-SADDLE) |
+| 1 | "Riding Window is not able to be edited in the HUD Editor (Alt+U)" | the saddle panel (STEED-UI, 2026-10-11) never joined HUD-MOVE's list of pieces (2026-10-01): the editor frames only what the list names - nor did its twin, the helm panel | fixed (HUD-SADDLE; the helm, HUD-HELM, Mac's word) |
 | 2 | "the horse care toggle in the settings menu doesn't seem to work" | not reproduced: off the line the switch takes effect at once at every door it governs; online the row is the room's, forced on and locked - the design | traced and pinned (HORSE-CARE-SWITCH); asked of the player |
 
 ## HUD-SADDLE: the riding panel is a HUD piece (1)
@@ -63,10 +63,21 @@ itself; the sweep that frames it is started by the enhanced HUD every host draws
 puts the rider on foot (`systems/transport.js` dismountOnTransition) - and draw no panel: named, not wired. No host was
 edited.
 
-NOT CHANGED: the helm panel (`ui/enhancedHelm.js`, CSA-L) is the saddle panel's twin - the same whole-screen layer, its
-bar at the same place under the compass - and is not in HUD_PIECES either, so a boat's helm cannot be moved or turned off
-in the editor. Nobody reported it, and the sea's target card stands under its bar's foot (`scenes/world.js`, `under:
-enhancedHelmBar()`), so moving it is its own slice, for Mac's word.
+THE HELM PANEL (HUD-HELM, 2026-10-15, Mac: "Yes, same branch"). The helm panel (`ui/enhancedHelm.js`, CSA-L) is the
+saddle panel's twin - the same whole-screen layer, its bar at the same place under the compass - and stood outside
+HUD_PIECES as the saddle did. Recorded here as not changed, and Mac's word was to change it on this branch. It is the
+saddle's fix to the letter: the piece (`hudLayout.js:"{ id: 'helm', sel: '.helmpanel .helmpanel-bar'"`, "Helm panel"),
+placed on build (`enhancedHelm.js:"placeHudPieces(doc);   // HUD-HELM"`), and a preview while nobody is at a helm
+(`buildHelmPreview`, its own nodes AND its own holds - a trim held on the live panel is the live panel's). Its build and
+its painting split the saddle's way (`build`, `paintHelm`); the live panel's frame is the same frame. THE SEA'S TARGET
+CARD (`ui/navalHud.js`) stands under the bar wherever it is moved: it measured the bar's foot for its head already (NAV-F
+- a moved bar's box carries the move), and now its centre stands on the bar's centre too (`cardCentreUnder`, held so the
+card at its scale stays on the screen) - it had stood at the screen's centre whatever the bar did. A bar turned off in
+play keeps its box with its visibility hidden, so the card asks whether the bar is seen (`standing`) and, where it is
+not, stands at the compass's foot as with no helm. The four hosts: `scenes/world.js`, the only host with a sea, draws
+the helm and the card; `scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` draw neither. No host
+was edited. Pinned by `test/hudhelm.test.js` (4); mutants `tools/mutants/hudhelm.json` (8, all dead). The fake page the
+two suites share is `test/hudPage.mjs` (one home: it was this file's own).
 
 Pinned by `test/fb1014_ridingpanel.test.js` over a page that answers the selectors HUD-MOVE asks, descendants among them,
 with the real sweep, the real panel and the real editor's key and X: a panel built at a mount stands at its saved

@@ -126,7 +126,12 @@ button presses with no key bound. The mouse clicks it while the pointer is free 
 and at the helm a pad's bare d-pad is the helm's (up the sails, held the square sails; down the lanterns, held leave
 the helm; left and right the time scale, held the trim), none of it a binding - so the table below keeps no Pad row
 for the nine, and the prompt bar says what the d-pad does there. Aboard another player's boat (CSA-K) there is no
-key and no button: the helm is its owner's.
+key and no button: the helm is its owner's. It moves (HUD-HELM, 2026-10-15, Mac: "Yes, same branch" - the saddle
+panel's twin, below): the bar is a HUD-MOVE piece, "Helm panel"
+(`hudLayout.js:"{ id: 'helm', sel: '.helmpanel .helmpanel-bar'"`), placed where the player put it the moment it is
+built, with a preview of itself ("At the helm (preview)", `buildHelmPreview`) while the editor is open and nobody is
+at a helm; the sea's target card stands under the bar wherever it is moved (`03-World/Naval-Combat.md`, Where the card
+stands).
 
 HELM-KEYS (2026-09-29, the player: "Arrow keys should not only control your ship, but also setting and raising your
 sails. I also want to find a way to make the ship controls more intuitive instead of a bunch of buttons and key
@@ -220,7 +225,7 @@ Options' bar) hides it. It spends NO key of its own and adds no binding.
   corner sizes it, its X turns it off in play, and a double-click or Reset puts it back. A panel built at a mount stands
   where the player put it from its first frame (`ui/hudPlacer.js` placeHudPieces, the notice stack's leaf), and while
   the editor is open and nobody rides it stands as a preview of itself ("Riding panel (preview)", `buildSaddlePreview`).
-  The helm panel, its twin at the same place, is not a piece yet (the record says why).
+  The helm panel, its twin at the same place, is a piece too (HUD-HELM, above).
 
 ## AUDIT KB1 (2026-09-24, Mac: "Audit this before we merge")
 

@@ -5149,9 +5149,19 @@
   "tr": "c099bb525063",
   "by": "claude-in-session"
  },
+ "menu.hud.piece.helm": {
+  "en": "ac5504b07657",
+  "tr": "156994f9e3f3",
+  "by": "claude-in-session"
+ },
  "menu.hud.piece.saddle": {
   "en": "9695262a7229",
   "tr": "c50fe398ae41",
+  "by": "claude-in-session"
+ },
+ "menu.hud.preview.helm": {
+  "en": "b6de3cda3c14",
+  "tr": "e15d4d893030",
   "by": "claude-in-session"
  },
  "menu.hud.preview.saddle": {

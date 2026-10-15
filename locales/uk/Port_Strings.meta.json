@@ -19,9 +19,19 @@
   "tr": "5cc3159c299f",
   "by": "claude-in-session"
  },
+ "menu.hud.piece.helm": {
+  "en": "ac5504b07657",
+  "tr": "44fc590bf1ff",
+  "by": "claude-in-session"
+ },
  "menu.hud.piece.saddle": {
   "en": "9695262a7229",
   "tr": "d209f1a33190",
+  "by": "claude-in-session"
+ },
+ "menu.hud.preview.helm": {
+  "en": "b6de3cda3c14",
+  "tr": "e4765ea2f91a",
   "by": "claude-in-session"
  },
  "menu.hud.preview.saddle": {

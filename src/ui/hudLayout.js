@@ -67,6 +67,10 @@ export const HUD_PIECES = Object.freeze([
   // preview while nobody rides (its stand-in is that layer, the bar inside it the piece - ghostOf). No `dummy`: the
   // panel is built only when there is a ride to show, and a window over the HUD covers it as it covers the HUD
   { id: 'saddle', sel: '.saddlepanel .saddlepanel-bar', get name() { return t('menu.hud.piece.saddle', 'Riding panel'); }, ghost: 'saddle' },
+  // HUD-HELM (2026-10-15, Mac: "Yes, same branch"): the helm panel's bar (ui/enhancedHelm.js), the saddle's twin - its
+  // layer the whole screen, the piece the bar inside it, a preview while nobody is at a helm; the sea's target card
+  // stands under the bar wherever it is moved (ui/navalHud.js drawNavalHud's `under`)
+  { id: 'helm', sel: '.helmpanel .helmpanel-bar', get name() { return t('menu.hud.piece.helm', 'Helm panel'); }, ghost: 'helm' },
   { id: 'fps', sel: '#fps-counter', name: 'FPS counter' },
   { id: 'midtext', sel: '#enhanced-midtext, .hudmid[data-hm-ghost="midtext"]', name: 'Screen messages', dummy: true, ghost: 'midtext' },
   { id: 'netstatus', sel: '#enhanced-netstatus, .hudstatus[data-hm-ghost="netstatus"]', name: 'Online status', dummy: true, ghost: 'netstatus' },
@@ -281,15 +285,15 @@ let ghostDeps = null, ghostDepsLoading = false;
 function ensureGhostDeps() {
   if (ghostDeps || ghostDepsLoading) return;
   ghostDepsLoading = true;
-  Promise.all([import('./gateBossBar.js'), import('./partyPanel.js'), import('./revenantCard.js'), import('./lootBanner.js'), import('./enhancedSaddle.js')])
-    .then(([boss, party, revenant, loot, saddle]) => { ghostDeps = { BOSS_BAR_CSS: boss.BOSS_BAR_CSS, BOSS_BAR_STYLE_ID: boss.BOSS_BAR_STYLE_ID, injectPartyStyle: party.injectPartyStyle, buildRevenantPreview: revenant.buildRevenantPreview, buildLootBannerPreview: loot.buildLootBannerPreview, buildSaddlePreview: saddle.buildSaddlePreview }; })
+  Promise.all([import('./gateBossBar.js'), import('./partyPanel.js'), import('./revenantCard.js'), import('./lootBanner.js'), import('./enhancedSaddle.js'), import('./enhancedHelm.js')])
+    .then(([boss, party, revenant, loot, saddle, helm]) => { ghostDeps = { BOSS_BAR_CSS: boss.BOSS_BAR_CSS, BOSS_BAR_STYLE_ID: boss.BOSS_BAR_STYLE_ID, injectPartyStyle: party.injectPartyStyle, buildRevenantPreview: revenant.buildRevenantPreview, buildLootBannerPreview: loot.buildLootBannerPreview, buildSaddlePreview: saddle.buildSaddlePreview, buildHelmPreview: helm.buildHelmPreview }; })
     .catch(() => { ghostDeps = {}; });
 }
-/** HUD-SADDLE: the stand-in a node belongs to - the node itself, or the layer it stands in (the saddle panel's bar is
- *  its piece, its whole-screen layer the stand-in); null for a host's real node. */
+/** HUD-SADDLE: the stand-in a node belongs to - the node itself, or the layer it stands in (the saddle panel's bar and
+ *  the helm panel's are their pieces, their whole-screen layers the stand-ins); null for a host's real node. */
 const ghostOf = (n) => (n?.hasAttribute?.('data-hm-ghost') ? n : n?.closest?.('[data-hm-ghost]') ?? null);
 function buildGhost(doc, kind) {
-  if ((kind === 'party' || kind === 'boss' || kind === 'revenant' || kind === 'loot' || kind === 'saddle') && !ghostDeps) { ensureGhostDeps(); return null; }   // next sweep
+  if ((kind === 'party' || kind === 'boss' || kind === 'revenant' || kind === 'loot' || kind === 'saddle' || kind === 'helm') && !ghostDeps) { ensureGhostDeps(); return null; }   // next sweep
   const div = (cls, text) => { const n = doc.createElement('div'); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   let g = null;
   if (kind === 'notices') {
@@ -322,6 +326,8 @@ function buildGhost(doc, kind) {
     try { g = ghostDeps.buildLootBannerPreview?.(doc) ?? null; } catch { g = null; }   // LOOT-BANNER: a banner as one will stand
   } else if (kind === 'saddle') {
     try { g = ghostDeps.buildSaddlePreview?.(doc) ?? null; } catch { g = null; }   // HUD-SADDLE: the panel as it stands astride
+  } else if (kind === 'helm') {
+    try { g = ghostDeps.buildHelmPreview?.(doc) ?? null; } catch { g = null; }   // HUD-HELM: the panel as it stands at a helm
   }
   if (g) { g.setAttribute('data-hm-ghost', kind); doc.body.append(g); }
   return g;
