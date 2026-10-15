@@ -44,6 +44,21 @@ const isFn = (n) => n.type === 'FunctionDeclaration' || n.type === 'FunctionExpr
 /** A node's length in source lines, its first and last counted. */
 export const lines = (n) => n.loc.end.line - n.loc.start.line + 1;
 
+/** A node's length in CODE lines - lines holding anything but whitespace and comments. The ceiling counts these: the
+ *  knot is code, and the bible's comments are no weight to be shed to make room. `comments` is acorn's onComment list. */
+export function codeLines(src, node, comments) {
+  const chars = src.slice(node.start, node.end).split('');
+  for (const c of comments) for (let i = Math.max(c.start, node.start); i < Math.min(c.end, node.end); i++) if (chars[i - node.start] !== '\n') chars[i - node.start] = ' ';
+  return chars.join('').split('\n').filter((l) => l.trim()).length;
+}
+
+/** parseModule, keeping the comments (for codeLines). */
+export const parseModuleWithComments = (src) => {
+  const comments = [];
+  const ast = parse(src, { ecmaVersion: 'latest', sourceType: 'module', locations: true, allowHashBang: true, onComment: comments });
+  return { ast, comments };
+};
+
 /** A module's source parsed as the port parses it - with locations. */
 export const parseModule = (src) => parse(src, { ecmaVersion: 'latest', sourceType: 'module', locations: true, allowHashBang: true });
 
@@ -58,7 +73,7 @@ export function findHostFunction(ast, want) {
     }
     // a function's name, when it has no id, is the binding or key that holds it - `const f = () =>`, `m() {}`, `{ m: () => }`
     const nm = n.type === 'VariableDeclarator' ? n.id?.name
-      : n.type === 'MethodDefinition' || n.type === 'Property' || n.type === 'PropertyDefinition' ? n.key?.name : undefined;
+      : (n.type === 'MethodDefinition' || n.type === 'Property' || n.type === 'PropertyDefinition') && !n.computed ? n.key?.name : undefined;
     for (const c of children(n)) visit(c, nm);
   };
   visit(ast);
@@ -76,11 +91,23 @@ function bound(p, out = []) {
   return out;
 }
 
-/** What one body statement declares, and whether as a `let`. */
+/** The `var`s a statement declares anywhere inside it short of a nested function - they belong to the function. */
+function hoistedVars(stmt, out = []) {
+  const walk = (n) => {
+    if (!n || typeof n.type !== 'string' || isFn(n) || n.type === 'ClassBody') return;
+    if (n.type === 'VariableDeclaration' && n.kind === 'var') for (const d of n.declarations) bound(d.id, out);
+    for (const c of children(n)) walk(c);
+  };
+  walk(stmt);
+  return out;
+}
+
+/** What one body statement declares, and whether as a `let` (a `var` is one: it can be written). */
 function declares(stmt) {
   if (stmt.type === 'VariableDeclaration') return { names: stmt.declarations.flatMap((d) => bound(d.id)), isLet: stmt.kind !== 'const' };
   if ((stmt.type === 'FunctionDeclaration' || stmt.type === 'ClassDeclaration') && stmt.id) return { names: [stmt.id.name], isLet: false };
-  return { names: [], isLet: false };
+  const vars = hoistedVars(stmt);   // `if (x) { var y = 1; }` at the host's top level declares the host's y
+  return { names: vars, isLet: vars.length > 0 };
 }
 
 /** Every identifier a subtree uses, and every one it assigns. */
@@ -89,12 +116,16 @@ function uses(root) {
   const walk = (n, parent, key) => {
     if (n.type === 'Identifier') {
       const propKey = (parent?.type === 'MemberExpression' && key === 'property' && !parent.computed)
-        || ((parent?.type === 'Property' || parent?.type === 'MethodDefinition' || parent?.type === 'PropertyDefinition') && key === 'key' && !parent.computed && !parent.shorthand);
+        || ((parent?.type === 'Property' || parent?.type === 'MethodDefinition' || parent?.type === 'PropertyDefinition') && key === 'key' && !parent.computed && !parent.shorthand)
+        || ((parent?.type === 'LabeledStatement' || parent?.type === 'BreakStatement' || parent?.type === 'ContinueStatement') && key === 'label');
       if (!propKey) read.add(n.name);
       return;
     }
+    if (n.type === 'MetaProperty') return;   // new.target, import.meta - no binding
     if (n.type === 'AssignmentExpression') for (const nm of bound(n.left)) wrote.add(nm);
     if (n.type === 'UpdateExpression' && n.argument.type === 'Identifier') wrote.add(n.argument.name);
+    // `for (x of xs)` / `for ([a] in o)` on a binding that already stands writes it every turn
+    if ((n.type === 'ForOfStatement' || n.type === 'ForInStatement') && n.left.type !== 'VariableDeclaration') for (const nm of bound(n.left)) wrote.add(nm);
     for (const key of Object.keys(n)) {
       if (key === 'loc') continue;
       const v = n[key];
@@ -117,12 +148,13 @@ export function scopeOf(host) {
   for (const m of members) for (const n of m.names) owner.set(n, m);
   const lets = new Set(members.filter((m) => m.isLet).flatMap((m) => m.names));
   const hostNames = new Set([...owner.keys(), ...params]);
+  const writable = new Set([...lets, ...params]);   // what a group's write can change under the host: a let, a var, a parameter
   const cost = (group) => {
     const inGroup = new Set(group.flatMap((m) => m.names));
     const reads = new Set(), writes = new Set(), usedBy = new Set();
     for (const m of group) {
       for (const n of m.read) if (hostNames.has(n) && !inGroup.has(n)) reads.add(n);
-      for (const n of m.wrote) if (lets.has(n) && !inGroup.has(n)) writes.add(n);
+      for (const n of m.wrote) if (writable.has(n) && !inGroup.has(n)) writes.add(n);
     }
     for (const m of members) {
       if (group.includes(m)) continue;
