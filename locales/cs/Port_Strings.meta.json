@@ -7694,6 +7694,36 @@
   "tr": "244b6e525057",
   "by": "claude-in-session"
  },
+ "guild.rankNeeds.high": {
+  "en": "a1baa03c371e",
+  "tr": "d2215872ef31",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.highBest": {
+  "en": "e19b51f3b047",
+  "tr": "8646f9952e9a",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.next": {
+  "en": "0f2038dee524",
+  "tr": "4a468e9036a9",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.reputation": {
+  "en": "1e2c1afb0b95",
+  "tr": "f9c9d185ff1f",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.second": {
+  "en": "128193ee04ec",
+  "tr": "8fa27c357385",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.skills": {
+  "en": "52aa2bb51d9d",
+  "tr": "b921261e2e89",
+  "by": "claude-in-session"
+ },
  "lamp.granted": {
   "en": "801073835a6b",
   "tr": "45f9d58cfe73",
