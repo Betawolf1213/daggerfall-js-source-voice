@@ -20,6 +20,7 @@ import { ITEM_FIELDS, validBinderDeck } from '../src/systems/itemFields.js';
 import { validLootItem } from '../src/systems/loot.js';
 import { pageOf } from '../src/ui/packPages.js';
 import { ILIAC_CARDS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
+import { cardRules } from '../src/systems/iliacCardWords.js';
 import { deckValid } from '../src/net/iliacHand.js';
 import { drawCardsPart, cardsPartShown, resetCardsPart, deckCards, deckRefusal, DECK_REFUSAL_WORDS } from '../src/ui/cardBinderPage.js';
 import { collectionsPageShown, collectionParts } from '../src/ui/collectionsPage.js';
@@ -41,7 +42,7 @@ test('CARDS8 the card: one template named by its card - two of one card stack, t
   assert.equal(pack.length, 2, 'and it stacks back');
   assert.equal(resolveItemName(pack[0]), `Card: ${cardById(A).name}`);
   assert.equal(iliacCardName({ templateIndex: ILIAC_CARD_TEMPLATE, group: 'UselessItems2', card: 'no-such-card' }), 'Card');
-  assert.ok(survivalInfoTokens(pack[0]).some((t) => t.text === cardById(A).text), 'its rules on its card');
+  assert.ok(survivalInfoTokens(pack[0]).some((t) => t.text === cardRules(cardById(A))), 'its rules on its card');   // KG-SET: read where they are shown
   assert.ok(iliacCardLines(pack[0])[0].includes(String(cardById(A).power)));
   assert.equal(mintIliacCard('no-such-card'), null, 'a card the catalog does not know is never minted');
   assert.equal(isBound(pack[0]), false);

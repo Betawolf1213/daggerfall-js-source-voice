@@ -553,6 +553,16 @@ export const CREDITS = Object.freeze({
       vendor: Object.freeze(['sands-of-the-alikr']),
       link: 'https://www.nexusmods.com/daggerfallunity/mods/1390',
     }),
+    // KG3 (bible/11-Multiplayer/Kings-Gambit.md section 10.7): the bundle names no author - the credits' own unnamed form
+    // until the owner names them (CR1 asks every row for an author; AUDIT KG C17)
+    Object.freeze({
+      get title() { return t('credits.kingsGambit.title', 'The King\u2019s Gambit'); },   // the game's name as its table says it (L10N4)
+      version: '1',
+      get author() { return t('credits.author.unnamed', 'Unnamed ({source})', { source: 'thekingsgambit.dfmod' }); },
+      get what() { return t('credits.kingsGambit.what', 'A battle of armies and kings, played at a tavern\u2019s card table against its regulars or online against another player (KG): its rules and the innkeeper\u2019s play ported 1:1 off the compiled script, its units the Iliac Hand cards\u2019 pictures and its kings the Bay deck\u2019s.'); },
+      get terms() { return t('credits.kingsGambit.terms', 'Ported from the shipped bundle, read off its compiled script method by method, with the permission the owner recorded (2026-10-13); the bundle names no author - see vendor/kings-gambit/README.md for the permission record.'); },
+      vendor: Object.freeze(['kings-gambit']),
+    }),
   ]),
 });
 

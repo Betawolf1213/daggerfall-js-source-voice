@@ -815,7 +815,7 @@ ${G} :is([data-grim="ink"], .px-journal) :is(.opt-tools, .poolbar, .reviewhead, 
 /** The windows too small or too thin for the board's frame. */
 export const SMALL_WINDOWS = Object.freeze(['.px-about', '.px-profile', '.px-support', '.travelpanel-bar', '.tview-bar', '.tview-side',
   '.tview-confirm', '#wp-menu', '#travel-pace-box', '.helmpanel-bar', '.saddlepanel-bar', '.hmroot .hmtools', 'body .dfdecor-bar',
-  'body .dfcards', 'body .dfiliac']);   // AUDIT CARDS-PLUS B4: the card tables' panels - the torn page's frame ran off the screen's edges
+  'body .dfcards', 'body .dfiliac', 'body .dfgambit']);   // AUDIT CARDS-PLUS B4: the card tables' panels - the torn page's frame ran off the screen's edges; KG3: the third's
 
 export function kitCss() {
   const fb = FRAME_ART.band;
@@ -959,6 +959,17 @@ ${G} body .dfiliac .ic .p.up { background: #2f7a43 !important; }
 ${G} body .dfiliac .ic .p.down { background: #4a1a12 !important; color: #ffb4a6 !important; }
 ${G} body .dfiliac .slot { background: rgba(43,26,12,0.12) !important; box-shadow: inset 0 0 0 1px rgba(43,26,12,0.5) !important; }
 ${G} body .dfcards [tabindex="0"]:focus-visible, ${G} body .dfiliac [tabindex="0"]:focus-visible { outline: 2px solid ${T.red} !important; outline-offset: 2px; }
+/* KG3: The King's Gambit's marks that are no role's. Its chosen tiles and rows are the kit's (a tile's gold leaf, a list
+   row's wash - NO-BAR); a press armed for its second press in the pack's red; the keyboard's place the red ring, as the
+   other two panels'; a name, a term and the result's head in the ink on the page (a unit's name in its picture's well
+   is on wood, and keeps the wood's words), the result's win the green that is yours and its loss the pack's red; an
+   action left and a tier's step lit in gold leaf on their wooden chip (the painter's own word for lit, dfgambit-lit) */
+${G} body .dfgambit button[data-armed="true"] { outline: 2px solid ${T.red} !important; outline-offset: 1px; }
+${G} body .dfgambit [tabindex="0"]:focus-visible { outline: 2px solid ${T.red} !important; outline-offset: 2px; }
+${G} body .dfgambit :is(.dfgambit-regname, .dfgambit-term, .dfgambit-head)${IN_INK}${NOT_WOOD} { color: ${T.ink} !important; text-shadow: none !important; }
+${G} body .dfgambit .dfgambit-head.dfgambit-won${IN_INK}${NOT_WOOD} { color: #1d5530 !important; }
+${G} body .dfgambit .dfgambit-head.dfgambit-lost${IN_INK}${NOT_WOOD} { color: ${T.red} !important; }
+${G} body .dfgambit .dfgambit-pip.dfgambit-lit, ${G} body .dfgambit .dfgambit-step i.dfgambit-lit { background: ${T.goldLeaf} !important; }
 ${G} .px-sys .binder-chip.short { color: #ff8a6a !important; outline: 2px solid #ff8a6a; outline-offset: -3px; }
 
 /* WELL - sunk into the board: a dark hollow with the light caught on its far lip */
