@@ -66,6 +66,8 @@ import { HOLIDAYS } from './holidays.js';
 import { GUILDS } from './guilds.js';
 import { isBagItem } from '../net/bagLaw.js';   // BAG1: a loaded Materials Bag is never sold (the cart's rule)
 import { activeWagonItem } from './wagonKinds.js';   // WAGONS2 (FINAL AUDIT): the wagon driven, read once for every counter (sellGuardOf)
+import { wagonSoldWhole } from './wagonUpkeep.js';   // WAGON-TIERS: a wagon's wear prices its sale only on Hard
+import { wagonUpkeepRules } from './upkeepSwitch.js';   // WAGON-TIERS: the tier, through wagon upkeep's one accessor
 import { PATRON_COUNTER_MARK } from '../net/patronLaw.js';   // AUDIT LW-II-2 S1: online, a counter's piece is no patron's
 import {
   cureOfferMessageOffset, TRADE_MESSAGE_BASE_ID, NOT_ENOUGH_GOLD_ID,
@@ -238,6 +240,10 @@ export function buyItemPrice(item, { quality = 0, priceAdjustment = 1000, holida
  *  after the find still lowers the sale. A piece with no mark - handed over whole (a craft, a reward, a new shelf's),
  *  or found before this - sells at its own condition, repaired or not. Offline, the mod's prices stand. */
 export function saleConditionPercentage(item, { online = isOnlinePage() } = {}) {
+  // WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers"): a wagon's condition is its wear, and its wear prices it only where
+  // the seller's wagon upkeep tier says so (Hard). On Boons - and Off - a counter buys it as DFU's plain wagon, which
+  // never wore: whole (bible/06-Systems/Wagon-Upkeep.md, The tiers)
+  if (wagonSoldWhole(item, wagonUpkeepRules())) return 100;
   const found = item?.foundCondition;
   if (!online || !Number.isInteger(found) || !(found < (item?.currentCondition ?? 0))) return conditionPercentage(item);
   return conditionPercentage({ currentCondition: found, maxCondition: item.maxCondition });

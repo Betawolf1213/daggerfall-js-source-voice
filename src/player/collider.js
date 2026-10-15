@@ -59,6 +59,10 @@ const SUBSTEP_LEN = CAPSULE_RADIUS * 0.75;
  *  whole motion, however long. */
 export const EXACT_SWEEP_MAX = SUBSTEPS_MAX * SUBSTEP_LEN;
 const GROUND_NY = Math.cos((SLOPE_LIMIT_DEG * Math.PI) / 180);
+/** DOOR-JAM (FIELD BUGS 2026-10-14b): the least push the sideways pass's resolve gives a body for move() to report a
+ *  side contact (`sides`, CharacterController.collisionFlags' CollidedSides), metres - under it the body only rested
+ *  against what it touches. */
+export const SIDE_CONTACT = 1e-4;
 const TAN_SLOPE_LIMIT = Math.tan((SLOPE_LIMIT_DEG * Math.PI) / 180);   // AUDIT LANDFORMS II I3: the terrain floor snap's reach
 const SKIN = 0.02;
 
@@ -1853,7 +1857,8 @@ export class Collider {
    * so no component ever exceeds a fraction of the radius - a sphere
    * displaced past a surface in one step never contacts it (tunneling;
    * surfaced by starved-frame dt spikes in the headless harness).
-   * @returns {{grounded:boolean, hitCeiling:boolean}}
+   * @returns {{grounded:boolean, hitCeiling:boolean, sides?:boolean}} `sides`: the sweep met something on the body's
+   *   sides (CollisionFlags.CollidedSides - DOOR-JAM, _moveStep)
    */
   /** AUDIT (the pre-merge audit, S2): `keepFloor` - a FOE's move (enemyMotor passes it): a body held down by a ceiling
    *  keeps the floor its lower sphere was set on (SQUEEZE1), whatever its height. The player's stances never pass it.
@@ -1877,12 +1882,13 @@ export class Collider {
       // here says no. Past the cap the remainder is taken as a single step, which is what a teleport is: the sweep
       // stops being exact for a motion no frame can produce anyway, and no number can buy an unbounded loop.
       const n = Math.min(SUBSTEPS_MAX, Math.ceil(maxComp / maxStep));
-      const out = { grounded: false, hitCeiling: false, pushedDown: false, groundKey: null };
+      const out = { grounded: false, hitCeiling: false, pushedDown: false, groundKey: null, sides: false };
       for (let i = 0; i < n; i++) {
         const r = this._moveStep(feet, dx / n, dy / n, dz / n, height, snap);
         out.grounded = r.grounded;
         out.groundKey = r.groundKey ?? null;
         out.hitCeiling = out.hitCeiling || r.hitCeiling;
+        out.sides = out.sides || r.sides;   // DOOR-JAM: one Move's CollidedSides is any contact along the whole of it
       }
       return out;
     }
@@ -1933,7 +1939,7 @@ export class Collider {
     //      RISING capsule off its pre-jump horizontal resolve, and
     //      the motor's velY clamp then killed every jump at one frame
     //      (apex 0.069 = one tick of 4.5/60 - the live "can't jump").
-    const out = { grounded: false, hitCeiling: false, pushedDown: false };
+    const out = { grounded: false, hitCeiling: false, pushedDown: false, sides: false };
 
     // Horizontal (phase-local flags; only the block test reads them).
     const beforeX = feet[0];
@@ -1953,6 +1959,14 @@ export class Collider {
     if (hOut.refused) { feet[0] = beforeX; feet[2] = beforeZ; }
     const movedSq = (feet[0] - beforeX) ** 2 + (feet[2] - beforeZ) ** 2;
     const wantedSq = dx * dx + dz * dz;
+    // DOOR-JAM (FIELD BUGS 2026-10-14b): CharacterController.collisionFlags' CollidedSides - the sideways pass met
+    // something on the body's sides: the resolve pushed the pass off where the motion put it by more than SIDE_CONTACT,
+    // along a face steeper than the slope limit (the collider's own wall law, GROUND_NY) - never a floor or a walkable
+    // slope the lower sphere rides. A pass the resolve refused is back where it began, the whole motion off. Read by
+    // EnemyMotor.HeightAdjust (characters/enemyMotor.js _heightAdjust).
+    const sideX = feet[0] - (beforeX + dx), sideY = feet[1] - entryY, sideZ = feet[2] - (beforeZ + dz);
+    const sideSq = sideX * sideX + sideZ * sideZ;
+    let sides = sideSq > SIDE_CONTACT * SIDE_CONTACT && sideY / Math.sqrt(sideSq + sideY * sideY) < GROUND_NY;
 
     // Step-up: only while not rising (Unity steps a grounded/falling
     // controller). The ASCENDING lift ladder takes the SMALLEST clear
@@ -2020,12 +2034,16 @@ export class Collider {
           if (probeY <= entryY) break;
         }
         if (!landed) continue;
+        // DOOR-JAM: a step climbed is the controller's own up-forward-down, no side contact - a rung that carried the
+        // body on along its motion. One the resolve threw back as far (a head under a lintel's edge) is not a step.
+        if ((landed[0] - beforeX) * dx + (landed[2] - beforeZ) * dz >= 0.5 * wantedSq) sides = false;
         feet[0] = landed[0];
         feet[1] = landed[1];
         feet[2] = landed[2];
         break;
       }
     }
+    out.sides = sides;
 
     // Vertical - the frame's TRUTH for grounded/ceiling.
     const vx0 = feet[0], vy0 = feet[1], vz0 = feet[2];

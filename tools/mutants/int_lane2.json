@@ -130,11 +130,12 @@
   {
     "name": "INT9-RC-THE-VERSION-UNREAD",
     "file": "src/net/wildReceipt.js",
-    "old": "  if (v !== WILD_RECEIPT_V) return { ok: false, why: 'version' };\n",
+    "old": "  if (v !== V) return { ok: false, why: 'version' };\n",
     "new": "",
     "tests": [
       "test/int9_wild_ref.test.js"
-    ]
+    ],
+    "note": "MAC (2026-10-14, re-aimed by content): the fall receipt and the collect share one verify, verifyAs"
   },
   {
     "name": "INT9-A-REMAINS-UNVOUCHED-TAKEN",
@@ -148,11 +149,12 @@
   {
     "name": "INT9-THE-KILLERS-PIECE-ANYONES",
     "file": "src/net/wildLaw.js",
-    "old": "  if (i === rec.wi && rec.wk && sub !== rec.wk) return null;",
+    "old": "  if (named && sub !== named) return null;",
     "new": "  if (false) return null;",
     "tests": [
       "test/int9_wild_ref.test.js"
-    ]
+    ],
+    "note": "PVP-LOOT (re-aimed by content, FIELD BUGS 2026-10-14): the killer's piece's gate is remainsNamedFor's - one law, read by takeFrom and by the relay's friend law"
   },
   {
     "name": "INT9-A-REMAINS-UNVOUCHED-SAID",
@@ -600,11 +602,12 @@
   {
     "name": "INT9-AUDIT-SVC-A-FRESH-ORDER-EACH-ASKING",
     "file": "server-account/src/wild.js",
-    "old": "    order = await mintRemainsOrder({ s: fallen, wr: r, wh, wn: records.length, wm, ...(killerFirst && killer ? { wk: killer, wi: 0 } : {}), ...(wg ? { wg } : {}) }, signing, { subtle: ctx.subtle, nowS: oi });",
-    "new": "    order = await mintRemainsOrder({ s: fallen, wr: r, wh, wn: records.length, wm, ...(killerFirst && killer ? { wk: killer, wi: 0 } : {}), ...(wg ? { wg } : {}) }, signing, { subtle: ctx.subtle, nowS: ctx.nowS });",
+    "old": "    order = await mintRemainsOrder({ s: fallen, wr: r, wh, wn: records.length, wm, ...(killerFirst && killer ? { wk: killer, wi: 0, ...(escrow ? { we: 1 } : {}) } : {}), ...(wg ? { wg } : {}) }, signing, { subtle: ctx.subtle, nowS: oi });",
+    "new": "    order = await mintRemainsOrder({ s: fallen, wr: r, wh, wn: records.length, wm, ...(killerFirst && killer ? { wk: killer, wi: 0, ...(escrow ? { we: 1 } : {}) } : {}), ...(wg ? { wg } : {}) }, signing, { subtle: ctx.subtle, nowS: ctx.nowS });",
     "tests": [
       "test/int9_wild_ref.test.js"
-    ]
+    ],
+    "note": "MAC (2026-10-14, re-aimed by content): the order says an escrowed piece, we"
   },
   {
     "name": "INT9-AUDIT-SVC-THE-ORDER-OUTLIVES-ITS-MINUTE",

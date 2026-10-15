@@ -75,8 +75,8 @@
   {
     "name": "LEGACY7H-world-not-told",
     "file": "src/scenes/world.js",
-    "old": ", onWrote: () => legacyOnlineHomesRead() }) : null;",
-    "new": " }) : null;",
+    "old": ", onWrote: () => legacyOnlineHomesRead(), onHomes: () => homesLearned() }) : null;",
+    "new": ", onHomes: () => homesLearned() }) : null;",
     "tests": [
       "test/legacy7_homes.test.js"
     ]

@@ -81,6 +81,15 @@
     ]
   },
   {
+    "name": "HOSTMOVE-a-trailing-comment-taken-for-the-doc",
+    "file": "tools/hostMove.mjs",
+    "old": "    if (src.slice(lineStart(c.start), c.start).trim()) break;\n",
+    "new": "",
+    "tests": [
+      "test/hostmove.test.js"
+    ]
+  },
+  {
     "name": "HOSTMOVE-new-target-read-as-a-name",
     "file": "tools/hostMove.mjs",
     "old": "    if (n.type === 'MetaProperty') return;   // new.target, import.meta - no binding\n    if (n.type === 'Property' && n.shorthand",

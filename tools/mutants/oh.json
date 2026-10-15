@@ -732,8 +732,8 @@
   {
     "name": "OH-E-worn-dropped",
     "file": "src/scenes/hostCombat.js",
-    "old": "items: entity.items, worn: eq?.worn ?? [], where });",
-    "new": "items: entity.items, worn: [], where });",
+    "old": "items: entity.items, worn: eq?.worn ?? [], where, rolls, roller: player });",
+    "new": "items: entity.items, worn: [], where, rolls, roller: player });",
     "tests": [
       "test/oh_abyss.test.js"
     ]
@@ -951,8 +951,8 @@
   {
     "name": "OH-F-B3-pile-untagged",
     "file": "src/systems/loot.js",
-    "old": "raiseTabledLootSpawned({ locationIndex, key: lootTableKey, items, rolls, luck, where });",
-    "new": "raiseTabledLootSpawned({ locationIndex, key: lootTableKey, items, rolls, luck });",
+    "old": "raiseTabledLootSpawned({ locationIndex, key: lootTableKey, items, rolls, luck, where, quarters });",
+    "new": "raiseTabledLootSpawned({ locationIndex, key: lootTableKey, items, rolls, luck, quarters });",
     "tests": [
       "test/oh_abyss.test.js",
       "test/rri2_realism.test.js"

@@ -4,7 +4,10 @@
 // createUpkeep), its doors the host's:
 //
 //   items()      the pack (playerEntity.items)               now()      the character's clock (worldTick.js ownMinutes)
-//   horseCare()  STEED1's switch (Features: Horse care)      wagonUpkeep()  WAGONS4's (Features: Wagon upkeep)
+//   horseCare()  STEED1's tier - its rules (systems/upkeepTiers.js), null for Off: the hosts hand THE ONE ACCESSOR,
+//                systems/upkeepSwitch.js horseCareRules (HORSE-TIERS, Features: Horse care)
+//   wagonUpkeep()  WAGONS4's tier - its rules (systems/upkeepTiers.js), null for Off: the hosts hand ITS ONE ACCESSOR,
+//                systems/upkeepSwitch.js wagonUpkeepRules (WAGON-TIERS, Features: Wagon upkeep)
 //   where()      the horse's keep: 'with' | 'waiting' | 'stabled' (steedCare.js STEED_WHERE - the host reads Horse Cart
 //                and Cargo's view: horseWhereOf)
 //   stores()     the wagon's load where it is with its owner (its storage in reach - upkeepReach's wagonNear), else []:
@@ -45,10 +48,13 @@ export function bondWay(bond) {
 }
 
 /**
- * @param {{ items: () => any[], now: () => number, horseCare?: () => boolean, wagonUpkeep?: () => boolean,
+ * HORSE-TIERS (2026-10-15): `horseCare()` answers the live tier's rules (upkeepTiers.js HORSE_CARE_RULES) or null for
+ * Off - each door below reads it once, at its call, so a turn of the tier takes effect at once. WAGON-TIERS: and
+ * `wagonUpkeep()` wagon upkeep's (WAGON_UPKEEP_RULES), the same way.
+ * @param {{ items: () => any[], now: () => number, horseCare?: () => any, wagonUpkeep?: () => any,
  *   where?: () => string, stores?: () => any[], say?: (text: string) => void }} deps
  */
-export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep = () => false, where = () => 'with', stores = () => [], say = () => {} }) {
+export function createUpkeep({ items, now, horseCare = () => null, wagonUpkeep = () => null, where = () => 'with', stores = () => [], say = () => {} }) {
   /** @type {Map<number, { spent: number, winded: boolean }>} */
   const breaths = new Map();
   let lastNow = /** @type {number|null} */ (null);
@@ -63,11 +69,13 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
   const breathOf = (horse) => { const s = horse?.horseSeed | 0; if (!breaths.has(s)) breaths.set(s, freshBreath()); return /** @type {{ spent: number, winded: boolean }} */ (breaths.get(s)); };
   const ridden = () => activeHorseItem(pack());
 
-  /** A wagon's state moved down a step: said, once - Rickety, Failing. */
-  function sayWorn(item, after) {
+  /** A wagon's state moved down a step: said, once - Rickety, Failing. WAGON-TIERS: in its tier's words - Boons' say
+   *  no slowness it does not have. */
+  function sayWorn(item, after, wcare) {
     if (!after || after.key === 'sound' || after.key === 'worn') return;
-    const name = wagonWord(item);
-    say(after.key === 'failing' ? WAGON_UPKEEP_TEXT.failing(name) : WAGON_UPKEEP_TEXT.rickety(name));
+    const name = wagonWord(item), slows = !!wcare?.wearSlows;
+    if (after.key === 'failing') say(slows ? WAGON_UPKEEP_TEXT.failing(name) : WAGON_UPKEEP_TEXT.failingBoons(name));
+    else say(slows ? WAGON_UPKEEP_TEXT.rickety(name) : WAGON_UPKEEP_TEXT.ricketyBoons(name));
   }
 
   /**
@@ -82,10 +90,11 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
     const its = pack(), t = now();
     if (!Number.isFinite(t)) return;
     const skipped = lastNow != null && t - lastNow >= SKIP_MINUTES;
-    if (horseCare()) {
+    const care = horseCare();
+    if (care) {
       birthHorses(its);
       if (skipped || tendedAt == null || Math.floor(t) !== tendedAt) {   // the keep: the host's `where` read a game minute at most
-        const r = tendHorses(its, t, { since: tendedAt ?? lastNow, where: where(), stores: store() });
+        const r = tendHorses(its, t, { since: tendedAt ?? lastNow, where: where(), stores: store(), rules: care });
         if (r.ate) say(STEED_TEXT.ateOnTheRoad(r.ate));
         tendedAt = Math.floor(t);
       }
@@ -93,9 +102,9 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
       const horse = activeHorseItem(its);
       const riding = mode === 'Horse';
       if (horse) {
-        const st = steedStats(horse, t);
+        const st = steedStats(horse, t, care);
         if (st) {
-          const b = stepBreath(breathOf(horse), { stats: st.stats, hunger: st.hunger, galloping: riding && galloping, ridden: riding && moving, dt });
+          const b = stepBreath(breathOf(horse), { stats: st.stats, hunger: st.hunger, galloping: riding && galloping, ridden: riding && moving, dt, rules: care });
           breaths.set(horse.horseSeed | 0, b);
           if (b.winded && !wasWinded && riding) say(STEED_TEXT.winded);
           else if (!b.winded && wasWinded && riding) say(STEED_TEXT.rested);
@@ -104,13 +113,22 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
         }
       }
       wasRiding = riding;
-    } else { breaths.clear(); wasRiding = false; wasWinded = false; tendedAt = null; }   // AUDIT STEED1: off, no keep ran - none to catch up when it is on again
-    if (wagonUpkeep()) {
+    } else {
+      breaths.clear(); wasRiding = false; wasWinded = false; tendedAt = null;   // AUDIT STEED1: off, no keep ran - none to catch up when it is on again
+      // HORSE-TIERS (Climates & Calories' Off, SURV-TIERS: "its minutes are nobody's needs"): Off a horse is DFU's and
+      // needs nothing, so each horse's food clock is carried with the clock - it stands, on again, where Off found it,
+      // neither starved nor its bond faded by the time it was DFU's
+      if (lastNow != null && t > lastNow) {
+        for (const h of its) if (isHorseItem(h) && Number.isInteger(h.horseFed) && h.horseFed > 0) h.horseFed = Math.round(h.horseFed + (t - lastNow));
+      }
+    }
+    const wcare = wagonUpkeep();   // WAGON-TIERS: Boons and Hard wear it alike (the same world); Off never
+    if (wcare) {
       const w = activeWagonItem(its);
       if (w !== lastWagon) { lastWagon = w; lastState = w ? wagonState(w).key : null; }
       if (w && wagonGoes && metres > 0 && metres < 1000) {
         const r = wear.add(w, rollWear(metres, { kind: wagonKindOf(w), road, load }));
-        if (r && r.after.key !== r.before.key) sayWorn(w, r.after);
+        if (r && r.after.key !== r.before.key) sayWorn(w, r.after, wcare);
       }
       if (w) lastState = wagonState(w).key;
     }
@@ -118,22 +136,25 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
   }
 
   /** The motor's ride pace, its ride base times this: a horse's Speed; a wagon's state and its team's Strength under
-   *  its load. 1 with either switch off. @param {string} mode @param {number} [load] */
+   *  its load. 1 with either tier Off - and a wagon's state only where its tier's wear slows it (WAGON-TIERS: Hard).
+   *  @param {string} mode @param {number} [load] */
   function rideScale(mode, load = 0) {
     const its = pack(), t = now();
+    const care = horseCare();
     if (mode === 'Horse') {
-      if (!horseCare()) return 1;
-      const st = steedStats(activeHorseItem(its), t);
-      return st ? steedSpeedScale(st.stats.speed) : 1;
+      if (!care) return 1;
+      const st = steedStats(activeHorseItem(its), t, care);
+      return st ? steedSpeedScale(st.stats.speed, care) : 1;
     }
     if (mode === 'Cart') {
       let k = 1;
       const w = activeWagonItem(its);
-      if (wagonUpkeep() && w) k *= wagonPace(w);   // WAGON-MEND: a failing wagon's the slowest - and every wagon rolls
-      if (horseCare() && w) {
+      const wcare = wagonUpkeep();
+      if (wcare && w) k *= wagonPace(w, wcare);   // WAGON-MEND: a failing wagon's the slowest - and every wagon rolls; WAGON-TIERS: on Hard
+      if (care && w) {
         const team = horsesIn(its).slice(0, wagonHorsesOf(wagonKindOf(w)));
-        const strengths = team.map((h) => steedStats(h, t)?.stats.strength).filter((v) => Number.isFinite(v));
-        if (strengths.length) k *= teamDraftScale(strengths.reduce((a, b) => a + b, 0) / strengths.length, load);
+        const strengths = team.map((h) => steedStats(h, t, care)?.stats.strength).filter((v) => Number.isFinite(v));
+        if (strengths.length) k *= teamDraftScale(strengths.reduce((a, b) => a + b, 0) / strengths.length, load, care);
       }
       return k;
     }
@@ -144,31 +165,38 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
    *  own word - Roleplay & Realism's no-gallop-in-town - first); with horse care, a run on a horse the mod does not
    *  rule on is a gallop. Null: no word (horse care off, or not a horse). @param {string} mode @param {boolean|null} base */
   function gallopGate(mode, base) {
-    if (!horseCare() || mode !== 'Horse') return null;
+    const care = horseCare();
+    if (!care || mode !== 'Horse') return null;
     if (base === false) return false;
     const horse = ridden();
-    const st = steedStats(horse, now());
+    const st = steedStats(horse, now(), care);
     if (!st) return base;
     return canGallop(breathOf(horse), st.hunger);
   }
 
   /** transport.js's walk (HORSE-WALK): the horse walks unless it gallops wherever horse care rules its gallop - horse
    *  care on, a horse, the one ridden born (its stats; gallopGate defers to the mod without them). Else false: DFU's
-   *  ride base. @param {string} mode */
-  function rideWalks(mode) {
-    if (!horseCare() || mode !== 'Horse') return false;
-    return !!steedStats(ridden(), now());
+   *  ride base. HORSE-TIERS: `runAsked` the rider asks the gallop (Run held, or latched) - a gallop asked and refused
+   *  (winded, starving: gallopGate) walks only in a tier that holds a refused gallop to the walk (`refusedRunWalks` -
+   *  Hard); Boons rides it at DFU's own pace, so Run held is never slower than DFU's horse.
+   *  @param {string} mode @param {boolean} [runAsked] */
+  function rideWalks(mode, runAsked = false) {
+    const care = horseCare();
+    if (!care || mode !== 'Horse') return false;
+    if (runAsked && !care.refusedRunWalks) return false;
+    return !!steedStats(ridden(), now(), care);
   }
 
   /** Whether the rider pays the gallop's fatigue (DFU's running band): not when horse care has the horse pay it in
    *  breath. @param {string} mode */
-  const riderPaysGallop = (mode) => !(horseCare() && mode === 'Horse' && !!ridden());
+  const riderPaysGallop = (mode) => !(!!horseCare() && mode === 'Horse' && !!ridden());
 
   /** The HUD's horse bar while riding: `{ amount, low }` or null. @param {string} mode */
   function bar(mode) {
-    if (!horseCare() || mode !== 'Horse') return null;
+    const care = horseCare();
+    if (!care || mode !== 'Horse') return null;
     const horse = ridden();
-    const st = steedStats(horse, now());
+    const st = steedStats(horse, now(), care);
     if (!st) return null;
     const b = breathOf(horse), amount = breathShare(b, st.stats);
     return { amount, low: b.winded || amount < BREATH_LOW || st.hunger === 'starving' };
@@ -176,18 +204,20 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
 
   /** A journey on the travel map of `days`, the wagon with it: worn by the day. */
   function journey(days) {
-    if (!wagonUpkeep()) return null;
+    const wcare = wagonUpkeep();
+    if (!wcare) return null;
     const w = activeWagonItem(pack());
     const r = w ? wearWagon(w, journeyWear(days)) : null;
-    if (r && r.after.key !== r.before.key) sayWorn(w, r.after);
+    if (r && r.after.key !== r.before.key) sayWorn(w, r.after, wcare);
     return r;
   }
   /** The watch carried the wagon off (scenes/wagonWarden.js): THROWN_WEAR off it. */
   function thrown() {
-    if (!wagonUpkeep()) return null;
+    const wcare = wagonUpkeep();
+    if (!wcare) return null;
     const w = activeWagonItem(pack());
     const r = w ? wearWagon(w, THROWN_WEAR) : null;
-    if (r && r.after.key !== r.before.key) sayWorn(w, r.after);
+    if (r && r.after.key !== r.before.key) sayWorn(w, r.after, wcare);
     return r;
   }
 
@@ -203,11 +233,13 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
     return out;
   }
   /** A wagon's card: its kind's word, its state, its share of whole, whether a kit would mend it, and a Wagon Yard's
-   *  price to make it whole - drawn up at the yard, and with its wright going out to it (`mendAway`). */
-  function wagonCard(w) {
+   *  price to make it whole - drawn up at the yard, and with its wright going out to it (`mendAway`). WAGON-TIERS: its
+   *  tier's id and whether its wear slows it (`wearSlows` - the card's and the panel's words and tones read it). */
+  function wagonCard(w, wcare) {
     const s = wagonState(w), share = wagonSoundness(w);
     return {
       name: wagonWord(w), state: s.name, stateKey: s.key, tone: s.tone, condition: wagonCondition(w), max: wagonConditionMax(w), share,
+      tier: wcare?.id ?? null, wearSlows: !!wcare?.wearSlows,
       kitWorks: share < WAGON_KIT_CEILING, mend: mendPrice(w), mendAway: mendPrice(w, { away: true }),
     };
   }
@@ -216,10 +248,13 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
   /** The card's horses and wagon: each horse's look, stats, bond, hunger and breath; the wagon's soundness. */
   function model({ near = true, name = '' } = {}) {
     const its = pack(), t = now();
-    const out = { horseCare: !!horseCare(), wagonUpkeep: !!wagonUpkeep(), near: !!near, horses: /** @type {any[]} */ ([]), wagon: /** @type {any} */ (null), ...supplies() };
-    if (out.horseCare) {
+    const care = horseCare();
+    // HORSE-TIERS: `tier` the tier's id and `hungerCosts` its word on hunger (the card's words and tones read them)
+    const wcare = wagonUpkeep();
+    const out = { horseCare: !!care, tier: care?.id ?? null, hungerCosts: !!care?.hungerCosts, wagonUpkeep: !!wcare, near: !!near, horses: /** @type {any[]} */ ([]), wagon: /** @type {any} */ (null), ...supplies() };
+    if (care) {
       horsesIn(its).forEach((h, i) => {
-        const st = steedStats(h, t);
+        const st = steedStats(h, t, care);
         if (!st) return;
         const f = fedUntil(h);
         out.horses.push({
@@ -232,7 +267,7 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
       });
     }
     const w = activeWagonItem(its);
-    if (out.wagonUpkeep && w) out.wagon = wagonCard(w);
+    if (wcare && w) out.wagon = wagonCard(w, wcare);
     return out;
   }
 
@@ -250,24 +285,27 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
   function saddle(mode) {
     const its = pack(), t = now();
     const out = { horse: /** @type {any} */ (null), wagon: /** @type {any} */ (null), ...supplies() };
-    if (horseCare()) {
-      const h = ridden(), st = steedStats(h, t);
+    const care = horseCare();
+    if (care) {
+      const h = ridden(), st = steedStats(h, t, care);
       if (st) {
         const riding = mode === 'Horse', b = breathOf(h);
         const horses = horsesIn(its), w = activeWagonItem(its);
         const team = riding || !w ? [h] : horses.slice(0, Math.max(1, wagonHorsesOf(wagonKindOf(w))));
         const needy = team.reduce((a, x) => ((fedUntil(x) ?? Infinity) < (fedUntil(a) ?? Infinity) ? x : a), h);
-        const ns = steedStats(needy, t) ?? st, f = fedUntil(needy);
+        const ns = steedStats(needy, t, care) ?? st, f = fedUntil(needy);
         out.horse = {
           breath: riding ? breathShare(b, st.stats) : null, winded: riding && !!b.winded,
           hunger: HUNGER[ns.hunger].name, hungerKey: ns.hunger, fedHours: f != null && f > t ? (f - t) / 60 : 0,
           full: f != null && f - t >= FULL_AHEAD, feed: Math.max(0, horses.indexOf(needy)), team: team.length,
           tier: st.tier, bond: st.bond, ...bondWay(st.bond),
+          hungerCosts: !!care.hungerCosts,   // HORSE-TIERS: NO RED where hunger costs nothing (ui/enhancedSaddle.js)
         };
       }
     }
-    const w = wagonUpkeep() ? activeWagonItem(its) : null;
-    if (w) out.wagon = wagonCard(w);
+    const wcare = wagonUpkeep();
+    const w = wcare ? activeWagonItem(its) : null;
+    if (w) out.wagon = wagonCard(w, wcare);
     return out;
   }
 
@@ -283,14 +321,15 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
     const its = pack(), t = now();
     if (verb === 'ride') return chooseRiddenHorse(its, Number(arg) | 0);
     if (verb === 'feed' || verb === 'treat') {
-      if (!horseCare()) return { ok: false, text: 'Not here.' };
+      const care = horseCare();
+      if (!care) return { ok: false, text: 'Not here.' };
       const horse = horsesIn(its)[Number(arg) | 0];
       if (!horse) return { ok: false, text: STEED_TEXT.noHorse };
       if (stabled) return { ok: false, text: STEED_TEXT.stabled };
       if (!near) return { ok: false, text: STEED_TEXT.notHere };
       const kind = verb === 'feed' ? 'oats' : 'apple';
       const list = from ?? (steedFoodOf(its.find((x) => steedFoodOf(x)?.key === kind)) ? its : store().some((x) => steedFoodOf(x)?.key === kind) ? store() : its);   // the pack's first, then the wagon's load
-      return feedHorse(its, horse, kind, t, (Number(arg) | 0) === 0 ? who : 'Your horse', { from: list, food: piece });
+      return feedHorse(its, horse, kind, t, (Number(arg) | 0) === 0 ? who : 'Your horse', { from: list, food: piece, rules: care });
     }
     if (verb === 'kit') {
       if (!wagonUpkeep()) return { ok: false, text: 'Not here.' };
@@ -362,19 +401,21 @@ export function upkeepReach(runtime, on) {
  * by the host whose upkeep it is (the registry is one a template - the host standing last answers). A use while the
  * switch is off is no use (`usable`), and the item stays.
  * @param {ReturnType<typeof createUpkeep>} upkeep
- * @param {{ reach: () => any, pass: (minutes: number) => void, horseCare: () => boolean, wagonUpkeep: () => boolean }} o
+ * @param {{ reach: () => any, pass: (minutes: number) => void, horseCare: () => any, wagonUpkeep: () => any }} o
+ * HORSE-TIERS: `horseCare` the one accessor, as the upkeep is handed it - the tier's rules, null for Off. WAGON-TIERS:
+ * `wagonUpkeep` wagon upkeep's, the same way.
  */
 export function registerUpkeepUses(upkeep, { reach, pass, horseCare, wagonUpkeep }) {
   registerItemUseHandler(UPKEEP_ITEM.Oats, Object.assign((item, collection) => {
     if (!horseCare()) return null;
     const r = upkeep.act('feed', 0, { ...reach(), from: collection, piece: item, pass });
     return { kind: 'upkeep', text: r.text };
-  }, { usable: () => horseCare() }));
+  }, { usable: () => !!horseCare() }));
   registerItemUseHandler(UPKEEP_ITEM.WagonKit, Object.assign((item, collection) => {
     if (!wagonUpkeep()) return null;
     const r = upkeep.act('kit', 0, { ...reach(), from: collection, piece: item, pass });
     return { kind: 'upkeep', text: r.text };
-  }, { usable: () => wagonUpkeep() }));
+  }, { usable: () => !!wagonUpkeep() }));
 }
 
 /** Whether a pack's horses are all born and known to the law (a test's and a host's read). */

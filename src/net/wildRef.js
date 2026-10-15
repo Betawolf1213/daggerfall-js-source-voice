@@ -10,9 +10,9 @@
 //   - WHO FIGHTS. The relay cannot see the map (the zone is the POLITIC map's region 16, cut and kept out as
 //     systems/wildZone.js builds it from the files every client holds), so a socket's zone is its own word: each says it
 //     stands in it, and leaves it (`zone`). A blow lands only where BOTH fighters said so - a crafted client can opt out
-//     of the zone's fights, never into another's: an honest player outside the zone is nobody's target. And never on a
-//     party member or one under the party's truce (the hub's word), nor on the fighter's own duel opponent (the duel's
-//     referee holds that one).
+//     of the zone's fights, never into another's: an honest player outside the zone is nobody's target. And never on KIN
+//     (wildKin, below): a party member or one under the party's truce (the hub's word), the fighter's own duel opponent
+//     (the duel's referee holds that one), or - Mac's decision, 2026-10-14: "Guildmates are friends" - one of its guild.
 //   - THE VITALITY is the Royal Tourney's (300 + 2 x the Renown the token signs) - the zone's fights are the referee's
 //     bar, as a siege's and a duel's are; the save's health is the foes' alone. A fighter no player has struck for
 //     WILD_REF.mendMs is whole again.
@@ -37,6 +37,24 @@ import { SIEGE_HIT, newFighter, refereeBlow, refereeCast, refereeStep } from './
  *  respawn or a reconnect left its place stale for good - now it is believed, and the jumper waits); the most fighters
  *  and falls a room keeps. */
 export const WILD_REF = Object.freeze({ mendMs: 30_000, pickMs: 60_000, truceMs: 10 * 60_000, riseMs: 120_000, jumpMs: 2_000, fightersMax: 200, fallsMax: 64 });
+
+/** MAC'S DECISION (2026-10-14, "Guildmates are friends"): ONE GUILD - two guilds' marks, each present and the same. A
+ *  mark is the relay's verified guild id (the token's `gi`) or a client's guild tag (`gt` - a tag is one guild's alone,
+ *  UNIQUE in the service's `guilds`), never one of each. */
+export const sameGuild = (/** @type {unknown} */ a, /** @type {unknown} */ b) => typeof a === 'string' && a.length > 0 && a === b;
+
+/**
+ * MAC'S DECISION (2026-10-14): WHO IS KIN IN THE ZONE - never a fair foe, struck by nobody: one of my party or under its
+ * truce (`party` - the hub's word at the relay, the social picture and the truce book on a client), my own duel's
+ * opponent (`duel` - its blows are the duel's), or one of my guild (`guilds`, the two guilds' marks - sameGuild). ONE LAW,
+ * BOTH ENDS: the referee asks it of every blow and cast (server/src/index.js `_wildBlow`, before wildBlow below), every
+ * client door asks it of its targets (scenes/world.js wildFair), and the remains' friend law reads its guild half
+ * (`_wildWord`, world.js canTake). Answers whether the two are kin.
+ * @param {{ party?: boolean, duel?: boolean, guilds?: unknown[] | null }} o
+ */
+export function wildKin({ party = false, duel = false, guilds = null } = {}) {
+  return !!party || !!duel || (Array.isArray(guilds) && sameGuild(guilds[0], guilds[1]));
+}
 
 /** A room's zone: its fighters by account, its falls waiting on a pick or a signature. */
 export const newWildRef = () => ({ fighters: new Map(), falls: new Map() });
@@ -124,8 +142,8 @@ export function wildPose(st, sub, p, now) {
 const mend = (x, now) => { if (!x.down && now - x.struckAt >= WILD_REF.mendMs && now - x.zoneAt >= WILD_REF.mendMs) x.f.hp = x.f.max; };
 
 /**
- * A BLOW OR A CAST in the zone - `by` and `to` accounts, `kin` the caller's word that the two are of one party or under its
- * truce, or duel each other (the hub's and the duel's - asked by the relay before it): landed only between two fighters
+ * A BLOW OR A CAST in the zone - `by` and `to` accounts, `kin` the caller's wildKin over the two (one party or its truce,
+ * a duel's two, one guild - asked by the relay before it): landed only between two fighters
  * that both stand in the zone, neither down, never kin; judged by the referee (a strike on the weapon `held` its look
  * carries and the arms `wa` its token signs; a cast, `r` SIEGE_HIT.Spell, to its harm's most and rate). A fall makes the
  * fall record (`r` the remains' id the caller minted) - its killer the striker. Answers `{ ok, dealt, fell, fall, why }`.

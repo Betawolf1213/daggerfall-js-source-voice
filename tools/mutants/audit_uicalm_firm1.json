@@ -623,7 +623,7 @@
   {
     "name": "AUF-L5M5-saddle-dom-ignores-show",
     "file": "src/ui/enhancedSaddle.js",
-    "old": "  if (show === 'none') return parts.root;\n",
+    "old": "  if (show === 'none') return;\n",
     "new": "",
     "tests": [
       "test/audit_uicalm_firm1.test.js"
@@ -697,8 +697,8 @@
   {
     "name": "AUF-L4M2-finger-on-the-compass",
     "file": "src/ui/enhancedSaddle.js",
-    "old": "  if (last.place === 0) { if (state.touch) placeTouch(doc); else placeBar(doc); }",
-    "new": "  if (last.place === 0 && !state.touch) placeBar(doc);",
+    "old": "  if (last.place === 0) { if (state.touch) placeTouch(doc, parts, last); else placeBar(doc, parts, last); }",
+    "new": "  if (last.place === 0 && !state.touch) placeBar(doc, parts, last);",
     "tests": [
       "test/audit_uicalm_firm1.test.js"
     ]

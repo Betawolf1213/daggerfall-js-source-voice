@@ -179,23 +179,34 @@ import { effectWords as ew, spellFrame } from '../src/ui/enhancedSpellbook.js';
 import { TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS } from '../src/ui/spellIcons.js';
 
 test('PX23b: an effect carries magnitude, duration and chance - and the first draft read none', () => {
-  // spellEffects hands back the effect RECORDS; systems/effects.js
-  // reads exactly these fields (:446-454) to resolve a live effect.
-  const e = ew({
-    type: 1, subType: 0,
-    magnitudeBaseLow: 8, magnitudeBaseHigh: 20, magnitudeLevelBase: 2,
-    durationBase: 6, durationMod: 1, chanceBase: 0,
-  });
-  assert.deepEqual(e.parts, ['8-20 +2/level', '6 +1/level rounds']);
-  // Each part appears only when the effect HAS it: a spell with no
-  // magnitude should not read "0 to 0".
-  assert.deepEqual(ew({ type: 1, subType: 0 }).parts, []);
-  assert.deepEqual(ew({ type: 1, subType: 0, magnitudeBaseLow: 5, magnitudeBaseHigh: 5 }).parts, ['5']);
-  assert.deepEqual(ew({ type: 1, subType: 0, chanceBase: 40, chanceMod: 2 }).parts, ['40% +2/level']);
+  // spellEffects hands back the effect RECORDS; the cast engine
+  // resolves a live effect from exactly these eleven fields.
+  //
+  // SB-FX: THIS PIN MOVED, DELIBERATELY. It asserted '8-20 +2/level' and
+  // '6 +1/level rounds' for a Continuous Damage Health record and
+  // '40% +2/level' for a chance that effect does not have: it read
+  // magnitudeLevelBase (MagnitudePlusMin) as a per-level step, and its
+  // literals held ZEROS in the fields no producer zeroes, so "a field
+  // that is not 0 is a component" passed here and nowhere in the game
+  // (the SB-FX pins below are built from the producers). The law it was
+  // written for stands: the record's numbers are read - all eleven, as
+  // ClassicEffectRecordToEffectSettings reads them - and a component
+  // appears only when the effect HAS it, by the effect's support flags.
+  const rec = (type, subType) => ({ type, subType,
+    durationBase: 6, durationMod: 1, durationPerLevel: 2, chanceBase: 40, chanceMod: 2, chancePerLevel: 3,
+    magnitudeBaseLow: 8, magnitudeBaseHigh: 20, magnitudeLevelBase: 2, magnitudeLevelHigh: 5, magnitudePerLevel: 4 });
+  const e = ew(rec(1, 0));   // Continuous Damage Health: duration and magnitude, no chance
+  assert.deepEqual(e.parts, ['Duration: 6 + 1 per 2 level(s)', 'Magnitude: 8 - 20 + 2 - 5 per 4 level(s)']);
+  assert.deepEqual(ew(rec(0, -1)).parts, ['Duration: 6 + 1 per 2 level(s)', 'Chance: 40 + 2 per 3 level(s)'],
+    'Paralyze, its subType the signed byte a record reads: duration and chance, no magnitude');
+  assert.deepEqual(ew(rec(26, 255)).parts, ['Duration: 6 + 1 per 2 level(s)'], 'Free Action: duration alone');
+  assert.deepEqual(ew(rec(43, 255)).parts, [], 'Teleport supports none - its name alone, whatever its fields hold');
+  // A per-level divisor the record leaves at 0 reads as DFU floors it, at 1.
+  assert.deepEqual(ew({ ...rec(4, 0), magnitudePerLevel: 0 }).parts, ['Magnitude: 8 - 20 + 2 - 5 per 1 level(s)']);
   // ...and the names still come from the classic's own key lookup.
   assert.ok(e.group.length > 0);
   const src = read('src/ui/enhancedSpellbook.js');
-  assert.match(src, /magnitudeBaseLow|durationBase|chanceBase/, 'the record is read, not just its type');
+  assert.match(src, /const s = classicEffectSettings\(effect\);/, 'the record is read as DFU instantiates it, not just its type');
 });
 
 test('PX23b: the two icons the classic only shows on HOVER are printed as words', () => {
@@ -231,4 +242,101 @@ test('PX23b: RENAME comes back, and the book says when you cannot afford a spell
   assert.match(src, /const short = Number\.isFinite\(magicka\) && sel\.cost > magicka;/);
   assert.match(src, /not enough magicka/);
   assert.match(read('src/ui/enhancedStyle.js'), /\.sb-shell \.sb-rename input \{[\s\S]{0,120}min-height: 44px;/);
+});
+
+// ── SB-FX (2026-10-14, a player on Discord: "The spell details panel in the Spellbook shows placeholder values
+// instead of what the spell actually does") ─────────────────────────────────────────────────────────────────────────
+// Built from the PRODUCER, not a literal: the spell the real SpellMakerWindow inscribes, through its own clicks and
+// its own typed spinner field, then saved and restored the way a player's book is.
+import { SpellMakerWindow, SPELL_MAKER_RECTS, EDITOR_RECTS } from '../src/ui/spellMakerWindow.js';
+import { SPELLBOOK_TEMPLATE_INDEX } from '../src/systems/spellMaker.js';
+import { spellMakerGroups, spellMakerSubgroups, SPELL_MAKER_EFFECTS } from '../src/systems/spellEffects.js';
+import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
+import { readSpellsStd } from '../src/formats/spellsStd.js';
+import { join } from 'node:path';
+
+/** A spell made at the maker, as a player makes one: each effect picked from the two lists, its settings typed into
+ *  the editor's fields (the enhanced port's door - ui/enhancedPorts.js spellEditorView's `set`), the editor shut, a
+ *  target and an element pressed, a name, Buy. Answers the record the book is handed. */
+function madeSpell(effects, { target, element, name }) {
+  const entity = { name: 'S', level: 1, stats: {}, skills: [50], maxMagicka: 40, goldPieces: 100000,
+    items: [{ group: 'MiscItems', templateIndex: SPELLBOOK_TEMPLATE_INDEX }], spells: [] };
+  const w = new SpellMakerWindow({ entity });
+  const press = ([x, y]) => w.click(x + 1, y + 1);
+  for (const [group, subgroup, settings] of effects) {
+    press(SPELL_MAKER_RECTS.addEffect);
+    w.picker.selectedIndex = spellMakerGroups().indexOf(group);
+    w.picker.input('Enter');
+    if (subgroup) {
+      w.picker.selectedIndex = spellMakerSubgroups(group).findIndex((e) => e.subgroup === subgroup);
+      w.picker.input('Enter');
+    }
+    assert.ok(w.editor, `${group} ${subgroup}: the editor opened`);
+    for (const [field, v] of settings) w.editor.setValue(field, v);
+    press(EDITOR_RECTS.exit);
+    assert.equal(w.editor, null, 'and shut');
+  }
+  press(SPELL_MAKER_RECTS[target]);
+  press(SPELL_MAKER_RECTS[element]);
+  w.name = name;
+  press(SPELL_MAKER_RECTS.buySpell);
+  assert.equal(entity.spells.length, 1, 'the spell was inscribed');
+  return { entity, spell: entity.spells[0] };
+}
+
+test('SB-FX: the book reads the spell the SPELL MAKER inscribed - its own settings, and only the parts its effects support', () => {
+  // The player's spell: By Touch, Shock based, Damage Health - and a Paralyze beside it, for the two components
+  // Damage Health does not have. Every value is one the maker's floor of 1 cannot fake.
+  const { entity, spell } = madeSpell([
+    ['Damage', 'Health', [['magnitudeBaseHigh', 12], ['magnitudeBaseLow', 4], ['magnitudeLevelHigh', 6], ['magnitudeLevelBase', 2],
+      ['magnitudePerLevel', 3], ['durationBase', 20], ['chanceBase', 50]]],
+    ['Paralyze', null, [['durationBase', 5], ['durationMod', 2], ['durationPerLevel', 3],
+      ['chanceBase', 30], ['chanceMod', 4], ['chancePerLevel', 2], ['magnitudeBaseHigh', 9]]],
+  ], { target: 'byTouch', element: 'shockBased', name: 'Spark' });
+  // THE PRODUCER'S SHAPE, which is why reading a field's value for "has it" can never work: a greyed-out spinner
+  // takes no value (DaggerfallEffectSettingsEditorWindow.InitControlState) and keeps the maker's floor of 1
+  // (blankEffectSettings - DefaultEffectSettings' "1 + 1 per level"), so Damage Health is inscribed holding a
+  // duration and a chance of 1 + 1 per 1 level, and Paralyze a magnitude of 1 - 1 + 1 - 1.
+  assert.deepEqual([spell.rangeType, spell.element], [1, 3]);
+  const [dmg, para] = spell.effects;
+  assert.deepEqual([dmg.type, dmg.subType, dmg.durationBase, dmg.durationMod, dmg.chanceBase, dmg.chanceMod], [4, 0, 1, 1, 1, 1]);
+  assert.deepEqual([para.type, para.subType, para.magnitudeBaseLow, para.magnitudeBaseHigh, para.magnitudeLevelBase], [0, 255, 1, 1, 1]);
+  // THE BOOK SAYS WHAT THE SPELL DOES. Each part is the component's header row of DFU's own spellbook description
+  // (DaggerfallSpellBookWindow.ShowEffectPopup's SpellBookDescription - TEXT.RSC 1212 for Damage Health,
+  // 1202 for Paralyze), over the settings ClassicEffectRecordToEffectSettings gives the effect - and a component
+  // the effect does not support (SupportDuration / SupportChance / SupportMagnitude) is not printed at all.
+  const want = [
+    ['Magnitude: 4 - 12 + 2 - 6 per 3 level(s)'],
+    ['Duration: 5 + 2 per 3 level(s)', 'Chance: 30 + 4 per 2 level(s)'],
+  ];
+  const [row] = bookModel(entity.spells, () => 0);
+  assert.deepEqual(row.effects.map((e) => [e.group, e.subgroup]), [['Damage', 'Health'], ['Paralyze', '']]);
+  assert.deepEqual(row.effects.map((e) => e.parts), want);
+  // ...and the book a SAVE brings back says the same: a made spell travels whole (systems/save.js snapshotPlayer).
+  const back = { name: 'S' };
+  restorePlayer(back, JSON.parse(JSON.stringify(snapshotPlayer(entity))), new Map());
+  assert.deepEqual(back.spells[0].effects, spell.effects, 'the settings round-trip');
+  assert.deepEqual(bookModel(back.spells, () => 0)[0].effects.map((e) => e.parts), want);
+});
+
+test('SB-FX: on the real SPELLS.STD every stock effect reads its supported components alone, with the record\'s own numbers', (t) => {
+  // The stock records are the book's other producer, and they carry the same 1s: all 99 effect slots in the file
+  // hold 1 + 1 per 1 level in a component their effect does not support.
+  if (!process.env.ARENA2_PATH) return t.skip('ARENA2_PATH not set');
+  const spells = readSpellsStd(new Uint8Array(readFileSync(join(process.env.ARENA2_PATH, 'SPELLS.STD'))));
+  const shock = spells.find((s) => s.index === 8);
+  assert.equal(shock.name, 'Shock');
+  assert.deepEqual(effectWords(shock.effects[0]).parts, ['Magnitude: 1 - 20 + 1 - 4 per 1 level(s)']);
+  let n = 0;
+  for (const sp of spells) {
+    for (const e of sp.effects.filter((x) => x.type >= 0)) {
+      const tpl = SPELL_MAKER_EFFECTS.find((x) => x.key === `${e.type},${e.subType & 0xff}`);
+      if (!tpl) continue;
+      const parts = effectWords(e).parts;
+      const has = ['duration', 'chance', 'magnitude'].filter((c) => tpl[c]);
+      assert.deepEqual(parts.map((p) => p.split(':')[0].toLowerCase()), has, `${sp.name} ${tpl.key}`);
+      n++;
+    }
+  }
+  assert.ok(n > 90, `the whole file was read (${n})`);
 });

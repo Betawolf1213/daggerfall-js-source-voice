@@ -28,6 +28,7 @@ import { freeLodgedFeet } from '../src/characters/foeSpacing.js';   // FIELD BUG
 import { Collider } from '../src/player/collider.js';
 import { effectiveLevel } from '../src/systems/mentorMode.js';   // SOFTCAP2: the mentor's level the spawn sites read (a free name there, the module's own import)
 import { foeSeed, applyWireLook } from '../src/characters/foeBodies.js';   // AUDIT MW-NPC II K3: the dungeon context's look seed, in the mounted scope
+import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 
 const I = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 function box(x0, y0, z0, x1, y1, z1) {
@@ -72,6 +73,7 @@ const mount = (body, state) => new Function('__s', `with (__s) { ${body} }`)(sco
 function context(collider, idleH) {
   const foes = [];
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     foeSeed, applyWireLook,   // AUDIT MW-NPC II K3: the records' look seed (roomRecord, applyFoeRecord, the puppets' stands)
     ENEMY_BASICS, collider, foes, flyerStandFeet, enemyControllerHeight,
     freeLodgedFeet,   // FIELD BUGS 2026-10-04d CRATE-FREE: the build's stand, the real one (no flyer here stands in a model)
