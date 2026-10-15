@@ -1,7 +1,7 @@
 # AUDIT EG IV - the Elite Gates arc through its ten heroes, as built
 
 2026-10-13, of the Elite Gates arc in PR #800 (`11-Multiplayer/Elite-Gates.md`). It came after AUDIT EG III
-(`01-Overview/Audit-EG-III.md`) and after the hero wave merged that morning: the four EG-HERO records (the ten hero
+(`01-Overview/Audit-EG-III.md`) and after the hero wave merged earlier that day: the four EG-HERO records (the ten hero
 fragments authored in code, a band at a time) and EG-HERO-LAY (spec law 7, the heroes laid in the halls). At least ten
 cold lanes read the arc. The Fallen Stacks was laid first, and then three fix groups (the legion, the lords and the net)
 fixed what the lanes had found.
@@ -197,7 +197,8 @@ Each pin moved carries its PIN MOVED note. Each group re-aimed by content the re
 - **The net**: `egaudit3_count`, `egdur_relay`, `egeco_board`, `egeco_honours`, `egeco_receipts`, `egplay_relay`,
   `egz_keys` and `wb5b_gate_claim`. Re-aimed: `audit28` (1), `egaudit3_count` (2), `egplay` (1), `egz_ends` (2),
   `egz_keys` (1), `wb5b` (1).
-- Eight Testing.md rows were added, one for each test file, and the Suite was recounted at each merge.
+- Eight Testing.md rows were added, one for each test file, and the Suite was recounted at the net's and the lords'
+  merges.
 
 ## At the merges
 
@@ -210,8 +211,8 @@ The coordinator merged the legion (d106f7d5ae), then the net (4c5a46ebba), then 
     (`egLordsPairOf`);
   - the Soul Burst keeps the legion's summon under the cap and the lords' named member;
   - two lords mutants were dropped, because the legion's stand replaced their lines (70 to 68):
-    EGA4-lords-twincourt-shrinks-champion (a twin of EGA4L-pair-champion-scaled) and EGA4-lords-oldmasters-unpaired
-    (its case is held by EGA4-lords-oldmasters-word-unread);
+    EGA4-lords-twincourt-shrinks-champion (a twin of the legion's EGA4L-pair-champion-scaled) and
+    EGA4-lords-oldmasters-unpaired (its case is held by EGA4-lords-oldmasters-word-unread);
   - section 12's Ward-Bearer row is the lords' job with the legion's sprites, and section 18's strata are the legion's,
     with the lords' fall law;
   - `world201` was re-hashed again.
