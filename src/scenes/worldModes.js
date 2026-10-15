@@ -9543,6 +9543,7 @@ export function createWorldModes(host) {
           fates: !!host.openRevenantFate, shakeCamera: (k) => host.shakeCamera?.(k),   // REVENANT-FATE: the host opens a beaten revenant's choice; an execution's blow felt
           onLootClaimed: () => host.onLootClaimed?.(),   // AUDIT WORLD4 C2/D5: a claimed container makes the room's memory due this frame
           partyLevels: () => host.partyLevels?.() ?? [],   // PARTY-LOOT: the party's levels, which a room container's base is minted at (the outer host's)
+          roomHost: () => host.roomHost?.() ?? null,   // PARTY-LOOT: the room's seat, whose word grants a take (the outer host's)
           // A10: the Recall prompt (Teleport.cs:81-98). The outer host
           // owns it - the plan's arms are its pixel teleport, its mode
           // teardown and its dungeon mount - so a cast underground in

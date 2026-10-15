@@ -14,5 +14,8 @@ export const ROOM_LOOT_OFF = Object.freeze({
   lootBuiltOf: () => null,
   isRoomWord: () => false,
   composeRoomContainer: () => false,
+  roomTakeSeat: () => {},
+  roomClaimTick: () => {},
+  roomSettle: () => false,
   _roomMintHold: 0,
 });

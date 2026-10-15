@@ -75,7 +75,7 @@ import { runSurvivalMinutes, markOutCold } from '../systems/survival/needs.js'; 
 import { addCorpseFood } from '../systems/survival/loot.js';   // CORPSE-FOOD: a joiner's copy of a body rolls its own food
 import { dateFromClassicMinutes } from '../systems/gameDate.js';   // SURV7: the env's month
 import { playerEntity, surfacePlayer, hurtPlayer as hurtEntity, damageShieldPool, setDeathPresenter, setAvoidDeathHook, staffFly, levitateWarded } from '../characters/playerEntity.js';   // AUDIT 58: DecreaseHealth's shield hook is the BASE class's, so every entity's door owes it
-import { addItem, spendAmmoFor, isEnchanted } from '../systems/inventory.js';
+import { addItem, spendAmmoFor, isEnchanted, stacksWith, isGoldPieces, addGoldPieces } from '../systems/inventory.js';   // PARTY-LOOT: a claim's piece out of the pack and back on its grant
 import { useQuickslot, swapQuickslot, offHandQuickslot, spellQuickslotPress, offHandOffersSwap, tickQuickslotHold } from '../systems/quickslots.js';   // QS2/QS4: the diamond's performers   // QS6: the spell slot, the off hand's swap question, and the hold machine
 import { worldAabb, objectAabb, peacefulFoePass, doorDistanceOf } from '../player/activate.js';   // AUDIT 63 F37/F38: objectAabb is the LIVE box a ray or a collision meets
 import { getInteractionMode, interactionModeAsks } from '../player/interactionMode.js';   // AUDIT TACT C5: a pickpocket's plaque names the mark; SENSE1: the asks for Info, the look round's cue
@@ -141,9 +141,11 @@ import { wildLootAfter } from './hostCombat.js';   // WILD1: the open zone's gol
 import { rollRoomBonus } from './hostCombat.js';   // PARTY-LOOT: a player's own layer over a room's base, the knobs read in their one home
 import {
   seededRolls, roomContainerName, roomBaseLevel, roomBaseGender, roomRoller, isRoomBaseKind, isRoomWord, validRoomWord, sameRoomTerms,
-  roomTermsBeat, baseSignature, mergeRoomWord, composeRoomList, roomTakesOf, roomWord, roomEmptied, roomState, markPersonal,
+  roomTermsBeat, baseSignature, mergeRoomWord, composeRoomView, roomWord, claimWord, recentAnswers, roomEmptied, roomState, markPersonal,
   isPersonalLoot, bonusSpent, settleBonusSpent, ROOM_BASE_LUCK, ROOM_BASE_QUARTERS, ROOM_BASE_FIND, ROOM_BASE_MAX,
-} from '../systems/roomLoot.js';   // PARTY-LOOT: a room's container is one base list for everyone, and a bonus of each player's own
+  judgeRoomClaim, roomClaimId, claimOf, pieceCount, roomClaimOrder, ROOM_TAKEN_TEXT, ROOM_CLAIM_TIMEOUT_MS,
+  ROOM_PUT_RESAY_MS, ROOM_CLAIMS_MAX,
+} from '../systems/roomLoot.js';   // PARTY-LOOT: a room's container is one base list for everyone, and a bonus of each player's own; the host grants a take of it
 import { asTheRoom } from '../systems/onlineLane.js';   // PARTY-LOOT: a base is rolled under the room's rules
 import { isDeepPileKey } from '../systems/restItems.js';   // PARTY-LOOT: a deep pile's supplies, the subscribers' own gate
 import { TELL } from '../ai/tells.js';   // TELL1: the breaking blow's shove
@@ -195,7 +197,7 @@ import { silenceBlocksCast, attemptSoulTrap, peerSoulTrapOf, SOUL_TRAP_TEXT, dis
 import { preloadTradeArt } from '../ui/nativeTrade.js';   // DR1: X7's Identify window - the SPELL's, castable underground
 import { createTradeWindow, tradeDoorReady } from '../ui/tradeDoor.js';   // the enhanced/native fork, same law as ui/inventoryDoor.js
 import { identifySpellPass, identifiedTallyText, notEnoughSpellPointsText } from '../systems/tradeModes.js';   // DR1: DoModeAction's spell arm (:954-995)
-import { isEquipped } from '../systems/equip.js';   // DR1: FilterLocalItems' `!item.IsEquipped` (:693)
+import { isEquipped, unequipItem } from '../systems/equip.js';   // DR1: FilterLocalItems' `!item.IsEquipped` (:693); PARTY-LOOT: a claimed piece taken back off
 import { totalGoldAmount } from '../systems/court.js';   // DR1: the trade screen's gold strip - AUDIT 58: PlayerEntity.GetGoldAmount (:1313-1316), coins PLUS letters
 import { isAzurasStarEquipped, registerFoeDoor } from '../systems/artifactEffects.js';   // V3: the Star's kill capture; AUDIT PSCALE1 DOORS-2: Namira's reflection through this pool's door
 import { applySpell, hasActiveEffect, isEntityWaterWalking, entityIsParalyzed, maxFatigue, applyEnemyMotorEffectFlags, concealmentFlags, concealFlagsOfBits, isSoulTrapEffect, spellSways } from '../systems/effects.js';   // A5: the enemy Levitate arm, the foe-target concealment closure + EntityConcealmentBehaviour's visual
@@ -245,7 +247,7 @@ import {
   RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS,
   RANDOM_TREASURE_MARKER_RECORD, DUNGEON_LOOT_KEYS, shownSpellName,   // L10N3e: a spell's name as shown
 } from '../systems/loot.js';
-import { peerHanded } from '../systems/peerWord.js';   // SS3: a bound piece in the room's containers, or on a body, never lands; HACKED-GOLD: nor a letter of credit (systems/peerWord.js)
+import { peerHanded, neverPeerHanded } from '../systems/peerWord.js';   // SS3: a bound piece in the room's containers, or on a body, never lands; HACKED-GOLD: nor a letter of credit (systems/peerWord.js)
 import { floorLanding, closestDoorTo } from '../player/enterExit.js';   // DE1: TransitionDungeonInterior orients away from the door it came through
 import { trs, multiply, identity, UP_Y } from '../world/mat4.js';
 import { StaticBatchBuilder, keyResolver, SHADOW_CELL_SIZE } from '../render/staticBatch.js';   // PERF5: the level's static models as one mesh; LA-AUDIT A1: with its shadow cells
@@ -5909,6 +5911,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     }
     if (!on) _foesFrom = null;   // AUDIT WORLD2 A1: the next stream, whoever's, starts its count over
     clearSurplus();   // DESYNC-ZERO: the old host's layout foes past mine were its own
+    if (on) roomTakeSeat();   // PARTY-LOOT: the claims the last host left unanswered are this seat's to judge now
   }
 
   // S12: the dungeon world snapshot. Foes persist by SPAWN ORDER
@@ -5973,7 +5976,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // WORLD3 the doors, WORLD4 the loot - one frame, either half or both
     if (Array.isArray(data.c)) camps.applyOwner(id, data.c);   // SURV3: their camps, replacing theirs alone (their word is the whole of theirs)
     const asked = data.rs != null && roomEncounterAsked(id, data.rs);   // REST-SYNC: a joiner's rest asks the host for its encounter
-    const n = (Array.isArray(data.a) ? actions.applyRemote(data.a) : 0) + (Array.isArray(data.l) ? applyLoot(data.l) : 0);
+    const n = (Array.isArray(data.a) ? actions.applyRemote(data.a) : 0) + (Array.isArray(data.l) ? applyLoot(data.l, typeof id === 'string' ? id : null) : 0);   // PARTY-LOOT: who said it - a claim is its claimer's, the room's state its host's
     return n > 0 || asked;
   }
   // WORLD4 (Mac: "Lets start on slice 4"): THE ROOM'S LOOT. A container nobody has opened is each client's OWN roll -
@@ -6132,13 +6135,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (claim || !_roomState.has(canon) || _lootUnreadable.has(canon)) return false;
     const h = roomBaseHolder(canon);
     if (h) settleRoomBonus(canon, holderList(h));
-    const _t = _wallNow(); if (_t != null) _lootAt.set(canon, _t);   // WORLD8: my word, stamped before it is minted (AUDIT WORLD7/8 C1)
-    const rec = roomRecordOf(canon);
-    if (!rec) return false;
-    const first = !_lootSeen.has(canon);
-    _lootSeen.add(canon);
-    if (first) opts.onLootClaimed?.();   // D5: the memory goes out now
-    const sent = !!opts.onActions?.({ k: _locationKey, l: [rec] });
+    roomSettle(canon);   // the takes and the puts since its last compose: judged here (the host's), claimed of the host (anyone else's)
+    const sent = roomSayNow(canon);
     if (canon !== _lootOpenKey) composeRoomContainer(canon);   // the room's takes heard while it stood open land now it is not
     return sent;
   }
@@ -6149,12 +6147,12 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  chest (the transfer's splice is index-guarded), making two of one. A container you have open is yours until
    *  you close it; your own close is then the room's newest word, which is the same last-writer-wins the slice
    *  already runs on. */
-  function applyLoot(list) {
+  function applyLoot(list, from = null) {
     let n = 0;
     for (const rec of Array.isArray(list) ? list : []) {
       const canon = lootKeyOf(rec?.k);
       if (!canon) continue;
-      if (isRoomBaseContainer(canon)) { n += landRoomWord(canon, rec); continue; }   // PARTY-LOOT: a room container's word is takes against its base, merged - never a list landed over it
+      if (isRoomBaseContainer(canon)) { n += landRoomWord(canon, rec, from); continue; }   // PARTY-LOOT: a room container's word is takes against its base, merged - never a list landed over it
       const items = peerHanded(validLootList(rec.r));   // SS3: a container is the room's - a bound piece in one never lands; HACKED-GOLD: nor a letter of credit, a peer's gold
       if (!items) { if (lootHolder(canon) && !respawnDue(rec.t, _wallNow())) { _lootSeen.add(canon); _lootUnreadable.add(canon); } continue; }   // AUDIT SETS M2: the room has spoken, in words this build cannot read (a word due back is the room's no longer - WORLD8)
       const held = lootHolder(canon);
@@ -6194,6 +6192,11 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   const _roomPending = new Map();   // canon -> a word that came before its body fell here
   const _roomNextGen = new Map();   // canon -> the generation a pile's respawn rolls next (the room's emptying stamp)
   let _roomMintHold = 0;            // a restore lands the room's words before anything mints over them
+  const _roomSeen = new Map();      // canon -> { list, at }: the shared pieces its list held at its last compose (a take is read against it)
+  const _roomMine = new Map();      // claim id -> this player's own claim or put the host has not answered (or a claim that timed out, still answered late)
+  const _roomWon = new Set();       // `canon#g|place` this player's claims were granted - a sibling claim's refusal is then no news
+  let _roomClaimN = 0;              // this context's claims, counted (roomClaimId)
+  let _roomNowMs = 0;               // the frame's clock as the claims' tick last read it
   const roomLootOn = () => onlineRoom();
   /** A layout foe's or a rest encounter's body's room key, or null (a quest spawn's, a summon's, a party member's own
    *  foe, a revenant's - RVN8's list holds a player's own pieces, so its body keeps WORLD4's word - and a foe a company
@@ -6347,36 +6350,51 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     settleRoomBonus(canon, list);
     const bonus = roomBonusOf(canon, base);
     const spent = bonusSpent(bonus.key);
-    const out = composeRoomList(base.items, base.full, st, bonus.pieces.filter((_, i) => !spent.has(i)));
+    const { list: out, seen } = composeRoomView(base.items, base.full, st, bonus.pieces.filter((_, i) => !spent.has(i)), roomPendingOf(canon, st));
     list.length = 0;
     list.push(...out);
     bonus.composed = true;
     bonus.list = list;
     _roomComposed.set(canon, { base, list });
+    _roomSeen.set(canon, { list, at: seen });
+    for (const [id, m] of [..._roomMine]) if (m.canon === canon && m.put && m.refused) { _roomMine.delete(id); roomGive(m.item, pieceCount(m.item)); }   // a put the host refused comes back, now nothing stands open on it
     if (h.pile) settleLootFlat(h.i);
     return true;
   }
-  /** The room's word about a room container as this client would say it now, or null (unborn). */
+  /** The room's word about a room container as this client would say it now, or null (unborn): its HOST's - the
+   *  room's state, its stored pieces and its latest verdicts (the memory's too, which the host publishes) - or, while
+   *  another holds the seat, this player's claims and puts in flight (none in flight, nothing to say). */
   function roomRecordOf(canon) {
+    if (!_authority) {
+      const st = _roomState.get(canon), base = st ? rollRoomBase(canon, st.terms) : null;
+      if (!st || !base) return null;
+      const q = [], a = [];
+      for (const m of _roomMine.values()) {
+        if (m.canon !== canon || m.lapsed || m.refused || !sameRoomTerms(m.terms, st.terms)) continue;
+        if (m.claim) q.push(m.claim); else a.push(m.put);
+      }
+      return q.length || a.length ? claimWord(canon, st, base.h, q.slice(-ROOM_CLAIMS_MAX), a.slice(-ROOM_CLAIMS_MAX), _lootAt.get(canon) ?? null) : null;
+    }
+    return roomStateWord(canon, true);
+  }
+  /** The room's STATE about a container, as its host (or its minter, at the birth) says it: the terms and the takes, the
+   *  stored pieces a peer may be handed and their ids, and - `verdicts` - the latest answers. */
+  function roomStateWord(canon, verdicts) {
     const st = _roomState.get(canon), h = roomBaseHolder(canon);
     if (!st || !h) return null;
     const base = rollRoomBase(canon, st.terms);
     if (!base) return null;
-    // the takes off the live list when it was composed from this very base; else the state as the room has said it
-    const cp = _roomComposed.get(canon);
-    const takes = cp?.base === base && cp.list === holderList(h)
-      ? roomTakesOf(st, base.items, base.full, holderList(h), isPersonalLoot)
-      : { x: [...st.taken].sort((a, b) => a - b), c: [...st.counts].filter(([i]) => !st.taken.has(i)).sort((a, b) => a[0] - b[0]), s: st.stored };
-    if (takes.s.length > LOOT_LIST_MAX) {
-      if (!_lootTooBig.has(canon)) { _lootTooBig.add(canon); console.warn(`[loot] ${canon} holds ${takes.s.length} stored items, more than the room can carry (${LOOT_LIST_MAX}); it is not said`); }
+    const kept = st.stored.map((it, i) => [it, st.ids[i]]).filter(([it]) => !neverPeerHanded(it));   // SS3/HACKED-GOLD: peerHanded's own rule, pair by pair
+    if (kept.length > LOOT_LIST_MAX) {
+      if (!_lootTooBig.has(canon)) { _lootTooBig.add(canon); console.warn(`[loot] ${canon} holds ${kept.length} stored items, more than the room can carry (${LOOT_LIST_MAX}); it is not said`); }
       return null;
     }
     _lootTooBig.delete(canon);
-    return roomWord(canon, st, base.h, { ...takes, s: peerHanded(takes.s) ?? [] }, _lootAt.get(canon) ?? null);
+    return roomWord(canon, st, base.h, { s: kept.map((p) => p[0]), si: kept.map((p) => p[1]) }, _lootAt.get(canon) ?? null, verdicts ? recentAnswers(st) : []);
   }
   /** A room word landed: projected, its base checked against this client's own (the signature), merged into the room's
    *  state and the list recomposed. Answers 1 when it was the room's word about a container here, else 0. */
-  function landRoomWord(canon, rec) {
+  function landRoomWord(canon, rec, from = null) {
     const h = roomBaseHolder(canon);
     if (!h) return 0;
     if (!isRoomWord(rec)) return landLegacyList(canon, h, rec);
@@ -6384,19 +6402,31 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     const _now = _wallNow();
     if (!w) { if (roomBorn(h)) { _lootSeen.add(canon); _lootUnreadable.add(canon); } return 0; }   // AUDIT SETS M2: the room's word, in terms this build cannot read
     if (Number.isFinite(rec.t) && respawnDue(rec.t, _now)) { if (h.pile) _roomNextGen.set(canon, Math.max(_roomNextGen.get(canon) ?? 0, Math.trunc(rec.t))); return 0; }   // WORLD8: the room's word is past its hour - the pile's next life is its own
-    if (!roomBorn(h)) { _roomPending.set(canon, rec); return 0; }   // a body that has not fallen here yet: landed when it does
+    if (!roomBorn(h)) { _roomPending.set(canon, { rec, from }); return 0; }   // a body that has not fallen here yet: landed when it does
     const st = _roomState.get(canon);
-    if (st && !sameRoomTerms(w, st.terms) && !roomTermsBeat(w, st.terms)) return 1;   // another mint, which loses to the one here
+    // WHO SAYS WHAT (host arbitrates): the room's state - its takes, its stored pieces, its verdicts - is the HOST's word,
+    // or the memory's (the host publishes it); a birth is anyone's (the mint's own law, roomTermsBeat); a claim and a put
+    // are their claimer's own, in their claimer's name (claimOf) - and the memory's claims are nobody's to judge again
+    const birth = !st || (!sameRoomTerms(w, st.terms) && roomTermsBeat(w, st.terms));
+    if (!roomHostSaid(from)) { w.x = []; w.c = []; w.y = []; if (!birth) { w.s = null; w.si = null; } }
+    w.q = from == null ? [] : w.q.filter((cl) => claimOf(cl.id, from));
+    w.a = from == null ? [] : w.a.filter((p) => claimOf(p.id, from));
+    if (st && !sameRoomTerms(w, st.terms) && !roomTermsBeat(w, st.terms)) {   // another mint, which loses to the one here
+      if (_authority && (w.q.length || w.a.length)) { mergeRoomWord(st, w); roomJudge(canon, st); }   // its claims are on a base that is gone: refused
+      return 1;
+    }
     const base = rollRoomBase(canon, w);
     if (!base) return 0;
     if (w.h && w.h !== base.h) { _lootSeen.add(canon); _lootUnreadable.add(canon); return 0; }   // another build's base: never landed as a list (M2's word)
-    const { state, changed } = mergeRoomWord(st, w);
+    const { state, changed, answered } = mergeRoomWord(st, w);
     _roomState.set(canon, state);
     _lootUnreadable.delete(canon);
     _roomUnbornAt.delete(canon);
     _lootSeen.add(canon);
     { const _t = Number.isFinite(rec.t) ? (_now == null ? rec.t : Math.min(rec.t, _now)) : _now; if (_t != null && (!Number.isFinite(_lootAt.get(canon)) || _t > _lootAt.get(canon))) _lootAt.set(canon, _t); }   // WORLD8's stamp, never ahead of now (AUDIT WORLD7/8 C2)
-    if (changed || _roomComposed.get(canon)?.base !== base || _roomComposed.get(canon)?.list !== holderList(h)) composeRoomContainer(canon);
+    for (const [id, g] of answered) roomResolve(id, g, canon);   // the host's verdicts on this player's own claims
+    if (changed || answered.length || _roomComposed.get(canon)?.base !== base || _roomComposed.get(canon)?.list !== holderList(h)) composeRoomContainer(canon);
+    if (_authority && state.claims.size) roomJudge(canon, state);   // the host grants them, in the order they reached it
     if (h.pile) h.pile.roomWords = (h.pile.roomWords ?? 0) + 1;   // AUDIT LW-II-2 D5: the room's word counted on the pile
     return 1;
   }
@@ -6416,6 +6446,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     const st = roomState(terms);
     base.items.forEach((_, i) => st.taken.add(i));
     st.stored = items;
+    st.ids = items.map((_, i) => `s:${i}`);   // named by place, as a word without ids names them - the same on every client
     const was = _roomState.get(canon);
     if (was && !roomTermsBeat(terms, was.terms) && !sameRoomTerms(terms, was.terms)) return 1;
     _roomState.set(canon, st);
@@ -6424,6 +6455,175 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (Number.isFinite(rec.t)) _lootAt.set(canon, _now == null ? rec.t : Math.min(rec.t, _now));
     composeRoomContainer(canon);
     return 1;
+  }
+  // ── THE CLAIMS (Mac, 2026-10-15: "Host arbitrates") ──
+  // A TAKE OF A SHARED PIECE IS A CLAIM, AND THE ROOM'S HOST GRANTS IT. Two players taking the same piece in the same
+  // breath both kept it while each machine took on its own word. Now the room's host - WORLD2's, the seat that runs its
+  // foes (`_authority`) - is the one that says who has it: a claim reaching it takes what is left of the piece, the first
+  // first, and a later one is told ROOM_TAKEN_TEXT. Whatever door took the piece (the window, the quick door, Physical
+  // Items' one-item door), the take is read the same way - against what the list held at its last compose (`_roomSeen`)
+  // - by roomSettle: the host judges its own at once (no round trip: alone in a room, or offline, nothing waits), and
+  // anyone else takes the piece back out of its pack, claims it, and has it only on the grant - in the meantime it reads
+  // as taken for them alone, and on a refusal or after ROOM_CLAIM_TIMEOUT_MS it comes back. A PUT is the host's to land
+  // as well, so the stored pieces have one writer. The bonus is never a claim's: it is the player's, at once. Every
+  // client keeps the claims it hears until their verdict, so a seat that changes hands judges what the last host left
+  // unanswered (roomTakeSeat), in one order whoever takes it.
+  /** A piece no peer may be handed (a bound piece, a letter of credit - systems/peerWord.js) never lands as a put. */
+  const roomAdmit = (it) => !neverPeerHanded(it);
+  /** Whose word the room's state is: the memory's (no sender - the host publishes it), the HOST's - the relay's seat
+   *  (opts.roomHost) or the stream this client follows (WORLD2's `_foesFrom`, which an ex-host's last words still name) -
+   *  and nobody's else: a peer says claims. With neither known, any word (a room with no seat said yet). */
+  function roomHostSaid(from) {
+    if (from == null || from === _foesFrom) return true;
+    if (_authority) return false;
+    const seat = opts.roomHost?.() ?? null;
+    return seat == null ? _foesFrom == null : from === seat;
+  }
+  /** This player's claims in flight on a container, read as taken in its list until the verdict, and its puts. */
+  function roomPendingOf(canon, st) {
+    const places = new Map(), stored = new Map(), puts = [];
+    for (const m of _roomMine.values()) {
+      if (m.canon !== canon || !sameRoomTerms(m.terms, st.terms)) continue;
+      if (m.claim && !m.lapsed) { const k = m.claim.p ?? m.claim.sp, at = m.claim.p !== undefined ? places : stored; at.set(k, (at.get(k) ?? 0) + m.claim.n); }
+      else if (m.put && !m.refused) puts.push({ it: m.item, id: m.put.id });
+    }
+    return { places, stored, puts };
+  }
+  /** Say a room container's word now, stamped before it is minted (WORLD8; AUDIT WORLD7/8 C1). */
+  function roomSayNow(canon, mint = () => roomRecordOf(canon)) {
+    const _t = _wallNow(); if (_t != null) _lootAt.set(canon, _t);
+    const rec = mint();
+    if (!rec) return false;
+    const first = !_lootSeen.has(canon);
+    _lootSeen.add(canon);
+    if (first) opts.onLootClaimed?.();   // D5: the memory goes out now
+    return !!opts.onActions?.({ k: _locationKey, l: [rec] });
+  }
+  /** `n` of a piece back out of this player's hands - the very record, or the stack it merged into, in the pack or the
+   *  bag; a coin out of the purse. Answers how many it found (a piece used straight off the container is found nowhere). */
+  function roomLift(item, n) {
+    if (isGoldPieces(item)) { const had = playerEntity.goldPieces ?? 0, t = Math.min(had, n); playerEntity.goldPieces = had - t; return t; }
+    let left = n;
+    const off = (list, at) => {
+      const held = list[at], have = pieceCount(held);
+      if (have <= left) { if (isEquipped(held)) unequipItem(playerEntity, held); list.splice(at, 1); left -= have; }
+      else { held.stackCount = have - left; left = 0; }
+    };
+    for (const list of [playerEntity.items, playerEntity.bagItems]) {
+      if (!Array.isArray(list) || left <= 0) continue;
+      const at = list.indexOf(item);
+      if (at >= 0) off(list, at);
+      for (let i = list.length - 1; i >= 0 && left > 0; i--) if (list[i] !== item && stacksWith(list[i], item)) off(list, i);
+    }
+    return n - left;
+  }
+  /** `n` of a piece into this player's hands: coin to the purse, the rest to the pack (it stacks). */
+  function roomGive(item, n) {
+    if (n <= 0) return;
+    if (isGoldPieces(item)) { addGoldPieces(playerEntity, n); return; }
+    addItem((playerEntity.items ??= []), Number.isInteger(item?.stackCount) ? { ...item, stackCount: n } : item);
+  }
+  /** THE TAKES AND THE PUTS a room container's list shows since its last compose, read against what it held then. A
+   *  list some load replaced is no list composed here, and says nothing. Answers whether anything was taken or put. */
+  function roomSettle(canon) {
+    const seen = _roomSeen.get(canon), h = roomBaseHolder(canon), st = _roomState.get(canon), base = _roomComposed.get(canon)?.base;
+    if (!seen || !h || !st || !base || seen.list !== holderList(h)) return false;
+    const here = new Set(seen.list);
+    let moved = false;
+    for (const [obj, info] of [...seen.at]) {
+      const cur = here.has(obj) ? pieceCount(obj) : 0;
+      if (cur === info.n) continue;
+      moved = true;
+      if (cur > info.n) { roomPut(canon, st, base, { ...obj, stackCount: cur - info.n }, null); info.n = cur; continue; }   // laid onto one of the room's stacks
+      const k = info.n - cur;
+      info.n = cur;
+      if (!cur) seen.at.delete(obj);
+      roomTake(canon, st, base, obj, info, k);
+    }
+    for (const obj of seen.list) {
+      if (seen.at.has(obj) || isPersonalLoot(obj)) continue;   // the bonus is the player's own - taken and put back at will
+      moved = true;
+      roomPut(canon, st, base, obj, seen);
+    }
+    return moved;
+  }
+  /** `k` of a shared piece taken: the host's judged where it stands (what another was granted first goes back out of
+   *  its pack), anyone else's taken back out of the pack and claimed of the host. */
+  function roomTake(canon, st, base, obj, info, k) {
+    const mine = info.sp != null ? _roomMine.get(info.sp) : null;
+    if (mine?.put && mine.refused) { _roomMine.delete(info.sp); return; }   // a put the host refused, taken back: it was never the room's
+    const claim = { id: roomClaimId(opts.selfId?.() ?? 'self', _sharedStamp, ++_roomClaimN), ...(info.p !== undefined ? { p: info.p } : { sp: info.sp }), n: k, tm: _wallNow() ?? 0 };
+    if (_authority) {
+      const g = judgeRoomClaim(st, base.items.length, base.full, claim, roomAdmit);
+      if (g < k) { roomLift(obj, k - g); if (!g) setMidScreenText(ROOM_TAKEN_TEXT); }
+      return;
+    }
+    const give = roomLift(obj, k);
+    _roomMine.set(claim.id, { canon, terms: st.terms, claim, item: obj, give, at: _roomNowMs, lapsed: false });
+    st.claims.set(claim.id, claim);   // heard here too: a seat that comes to this client judges it with the rest
+  }
+  /** A piece laid in a room container: the host lands it at once (a refusal comes back once nothing stands open on it);
+   *  anyone else's stands in their list as theirs and is said to the host, again until it is answered. */
+  function roomPut(canon, st, base, obj, seen) {
+    const put = { id: roomClaimId(opts.selfId?.() ?? 'self', _sharedStamp, ++_roomClaimN), it: { ...obj }, tm: _wallNow() ?? 0 };
+    if (_authority) {
+      const g = judgeRoomClaim(st, base.items.length, base.full, { ...put, it: obj }, roomAdmit);
+      if (g) seen?.at.set(obj, { sp: put.id, n: pieceCount(obj) });
+      else { _roomMine.set(put.id, { canon, terms: st.terms, put, item: obj, refused: true }); seen?.at.set(obj, { sp: put.id, n: pieceCount(obj) }); }
+      return;
+    }
+    _roomMine.set(put.id, { canon, terms: st.terms, put, item: obj, saidAt: _roomNowMs, refused: false });
+    st.claims.set(put.id, put);
+    seen?.at.set(obj, { sp: put.id, n: pieceCount(obj) });
+  }
+  /** A verdict on one of this player's own claims or puts: the piece comes to the pack on a grant (no more than came out
+   *  of it), a refusal is said (unless a claim of theirs already holds that piece); a refused put comes back. */
+  function roomResolve(id, g, canon) {
+    const m = _roomMine.get(id);
+    if (!m) return;
+    if (m.put) {
+      if (g) _roomMine.delete(id);
+      else m.refused = true;   // back to the pack at the next compose - never from under an open window (AUDIT WORLD4 C1)
+      return;
+    }
+    _roomMine.delete(id);
+    const key = `${canon}#${m.terms.g}|${m.claim.p ?? m.claim.sp}`;
+    if (g > 0) { roomGive(m.item, Math.min(g, m.give)); _roomWon.add(key); if (_roomWon.size > ROOM_CLAIMS_MAX * 4) _roomWon.delete(_roomWon.values().next().value); }
+    else if (!_roomWon.has(key)) setMidScreenText(ROOM_TAKEN_TEXT);
+  }
+  /** THE HOST GRANTS: every claim and put a container's state holds unanswered, in the order they reached it (or, at a
+   *  seat's change, roomClaimOrder's), judged - this player's own landing as any verdict does - then the list composed
+   *  and the verdicts said. */
+  function roomJudge(canon, st, order = null) {
+    const base = rollRoomBase(canon, st.terms);
+    if (!base || !st.claims.size) return false;
+    const claims = [...st.claims.values()];
+    if (order) claims.sort(order);
+    const verdicts = claims.map((cl) => [cl.id, judgeRoomClaim(st, base.items.length, base.full, cl, roomAdmit)]);
+    for (const [id, g] of verdicts) roomResolve(id, g, canon);
+    composeRoomContainer(canon);
+    return roomSayNow(canon);
+  }
+  /** THE SEAT CHANGES HANDS (setAuthority's handover): what the last host left unanswered is judged here now. */
+  function roomTakeSeat() {
+    if (!roomLootOn()) return;
+    for (const [canon, st] of [..._roomState]) if (st.claims.size) roomJudge(canon, st, roomClaimOrder);
+  }
+  /** THE CLAIMS' FRAME: every room container's takes and puts read (the host's verdicts said, anyone else's claims), a
+   *  claim with no verdict past ROOM_CLAIM_TIMEOUT_MS let go - its piece back in the list, its verdict still landed if it
+   *  comes late - and a put with none said again. */
+  function roomClaimTick(nowMs) {
+    _roomNowMs = nowMs;
+    if (!roomLootOn() || _roomMintHold) return;
+    const due = new Set();
+    for (const canon of [..._roomSeen.keys()]) if (roomSettle(canon)) due.add(canon);
+    for (const m of _roomMine.values()) {
+      if (m.claim && !m.lapsed && nowMs - m.at >= ROOM_CLAIM_TIMEOUT_MS) { m.lapsed = true; composeRoomContainer(m.canon); }
+      else if (m.put && !m.refused && !_authority && nowMs - m.saidAt >= ROOM_PUT_RESAY_MS) { m.saidAt = nowMs; due.add(m.canon); }
+    }
+    for (const canon of due) roomSayNow(canon);
+    const lapsed = [..._roomMine].filter(([, m]) => m.lapsed);
+    for (const [id] of lapsed.slice(0, Math.max(0, lapsed.length - ROOM_CLAIMS_MAX * 2))) _roomMine.delete(id);
   }
   /** THE MINT: a room container's terms, once - its generation, the party's level (roomLoot.js roomBaseLevel off the
    *  outer host's party levels, the poses' `cl`), the fight's count for a body, the relay's clock - landed here and said
@@ -6442,7 +6642,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     _roomUnbornAt.delete(canon);
     _roomNextGen.delete(canon);
     composeRoomContainer(canon);
-    return publishLoot(canon);
+    return roomSayNow(canon, () => roomStateWord(canon, false));   // the BIRTH: its terms and its stored pieces, whoever minted (a claimer says no state but this)
   }
   /** A body has fallen here: the room's word for it lands (one that came first), else the host mints its terms, else it
    *  holds nothing until the room's word comes - none of this copy's own roll is the room's. */
@@ -6451,7 +6651,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     const canon = roomCanonOfFoe(f);
     if (!canon || !isRoomBaseContainer(canon)) return;
     const pend = _roomPending.get(canon);
-    if (pend) { _roomPending.delete(canon); landRoomWord(canon, pend); }
+    if (pend) { _roomPending.delete(canon); landRoomWord(canon, pend.rec, pend.from); }
     if (_roomState.has(canon)) { composeRoomContainer(canon); return; }
     if (_authority && !_roomMintHold) { mintRoomTerms(canon, Number.isFinite(f._diedAt) ? f._diedAt : 0); return; }
     f.entity.items.length = 0;   // UNBORN holds nothing: this copy's own roll is no reader's (LOOT11's light, Hunting's body key, the save); the sweep counts its wait from here (mintUnbornRoom)
@@ -6459,7 +6659,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   /** The room's bookkeeping for a container forgotten (a body stood up again, a pile's life over). */
   function forgetRoomContainer(canon) {
     _roomState.delete(canon); _roomBase.delete(canon); _roomBonus.delete(canon); _roomComposed.delete(canon);
-    _roomUnbornAt.delete(canon); _roomPending.delete(canon);
+    _roomUnbornAt.delete(canon); _roomPending.delete(canon); _roomSeen.delete(canon);
   }
   /** THE SWEEP'S HALF (once a second, beside WORLD8's): every room container standing here with no terms gets them -
    *  the host's at once for a body, after ROOM_TERMS_WAIT_HOST_MS for a pile (the room's memory comes first); another
@@ -7570,6 +7770,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     const aimed = aimView ?? view;
     _ecvT += dt;
     respawnSweep(_ecvT);   // WORLD8: the hour's respawn, once a second
+    roomClaimTick(_ecvT * 1000);   // PARTY-LOOT: the takes this frame - judged by the host, claimed of it by anyone else
     const ecvOn = combatVisualsOn();   // ECV1: once per frame
     _weaponCanvas = canvas;   // C10: the rig's late canvas (gesture dim + the overlay draw)
     // MW-D8: latch the eye and heading THIS frame, before anything draws.
@@ -10021,7 +10222,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // lands its TAKES alone, which only grow (a take this client missed - a walk back in under an older memory - is
       // heard at the host's next publish), never its stored pieces, which a live word may have said since
       if (_sharedApplied) {
-        if (Array.isArray(shared.world.loot)) applyLoot(shared.world.loot.filter((rec) => { const c = lootKeyOf(rec?.k); return c && isRoomBaseContainer(c) && isRoomWord(rec); }).map((rec) => (_roomState.has(lootKeyOf(rec.k)) ? { ...rec, s: undefined } : rec)));
+        if (Array.isArray(shared.world.loot)) applyLoot(shared.world.loot.filter((rec) => { const c = lootKeyOf(rec?.k); return c && isRoomBaseContainer(c) && isRoomWord(rec); }).map((rec) => (_roomState.has(lootKeyOf(rec.k)) ? { ...rec, s: undefined, si: undefined } : rec)));
         return false;
       }
       forgetDelveRun({ way: false });   // AUDIT DELVE B3: the room's walls are not the ones this client heard move (its own walk stands)
@@ -10995,6 +11196,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       for (const p of droppedLoot._piles) { p.dead = true; if (p.batch) renderer.destroyBillboardBatch(p.batch); }
       droppedLoot._piles.length = 0;
       droppedLoot.physical.destroy();   // PI1: and the items standing as themselves - their batches and their pictures
+      for (const m of _roomMine.values()) if (m.claim && !m.lapsed) roomGive(m.item, m.give);   // PARTY-LOOT: a claim still in flight leaves with its claimer - no verdict reaches a dungeon that is gone
+      _roomMine.clear();
       portals.clear();   // COMPANION-PORTAL: the portals standing own a batch each and leave with the dungeon
       sdEnd?.clear();   // SD4b: the Rift and the Return, and the bell
       sdHall?.clear();   // SD6c: the hall's meshes

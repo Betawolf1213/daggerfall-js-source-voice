@@ -16,7 +16,9 @@ import * as acorn from 'acorn';
 import { respawnDue } from '../src/net/wire.js';
 import { generateItems, addPileLootExtras, validLootList, LOOT_LIST_MAX, DUNGEON_LOOT_KEYS, LOOT_NEWER_TEXT } from '../src/systems/loot.js';
 import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons, LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
-import { peerHanded } from '../src/systems/peerWord.js';
+import { peerHanded, neverPeerHanded } from '../src/systems/peerWord.js';
+import { addItem, stacksWith, isGoldPieces, addGoldPieces } from '../src/systems/inventory.js';
+import { isEquipped, unequipItem } from '../src/systems/equip.js';
 import { spawnEnemyLoot, wildLootAfter, rollRoomBonus } from '../src/scenes/hostCombat.js';
 import { raiseEnemyDeath } from '../src/scenes/corpseMarker.js';
 import { rollCorpseKit, capFoeLoot } from '../src/systems/foeLootCap.js';
@@ -91,18 +93,24 @@ const clock = { t: 1_700_000_000_000 };
 function relay() {
   const peers = [];
   const q = [];
+  const gone = new Set();
+  const sent = [];   // every frame said, kept
   return {
     join(p) { peers.push(p); },
-    send(from, data) { q.push({ from, data: JSON.parse(JSON.stringify(data)) }); return true; },
+    send(from, data) { if (gone.has(from)) return false; const f = { from, data: JSON.parse(JSON.stringify(data)) }; q.push(f); sent.push(f); return true; },
+    /** A peer leaves the room: gone from it, and whatever it had not yet said goes with it. */
+    leave(p) { gone.add(p.id); const i = peers.indexOf(p); if (i >= 0) peers.splice(i, 1); for (let k = q.length - 1; k >= 0; k--) if (q[k].from === p.id) q.splice(k, 1); },
     flush() { while (q.length) { const { from, data } = q.shift(); for (const p of peers) if (p.id !== from) p.as(() => p.host.applyActions(from, data)); } },
     frames: q,
+    sent,
   };
 }
 
 /** ONE PEER: a character (its level, Luck, Renown, dice and its own mod switch), and the real dungeon host's loot
  *  doors over one layout pile and one layout foe - built as the build builds them, on this peer's own roll. */
-function peer(net, { id, level, luck, renown, seed, host, foraging, partners, characterId }) {
+function peer(net, { id, level, luck, renown, seed, host, foraging, partners, characterId, seat = { id: host ? id : null } }) {
   const player = { level, gender: 'male', name: id, characterId, stats: { luck, strength: 60 }, activeEffects: [], items: [], goldPieces: 0 };
+  const said = [];   // what the mid-screen line said to this player (the refusal's line)
   const own = lcg(seed);
   const as = (fn) => {
     const realRandom = Math.random;
@@ -117,7 +125,9 @@ function peer(net, { id, level, luck, renown, seed, host, foraging, partners, ch
     _authority: host, playerEntity: player, dfLocation: { mapTableData: { dungeonType: DUNGEON_TYPE } }, lootKey: DUNGEON_LOOT_KEYS[DUNGEON_TYPE],
     _superTier: false, _wildDungeon: false, _wildRing: null, _deepCleared: new Set(), _deepFoeCleared: new Set(),
     SUPER_LOOT_DROP_MULT: 1.5, ELITE_LOOT_DROP_MULT: 1.2, SUPER_LOOT_QUALITY_MULT: 1.5, ELITE_LOOT_QUALITY_MULT: 1.2,
-    opts: { selfId: () => id, onActions: (data) => net.send(id, data), onLootClaimed: () => {}, partyLevels: () => partners },
+    opts: { selfId: () => id, onActions: (data) => net.send(id, data), onLootClaimed: () => {}, partyLevels: () => partners, roomHost: () => seat.id },
+    _foesFrom: host ? null : seat.id, _sharedStamp: `st${seed}`, _foesSeqIn: -1, clearSurplus: () => {},   // WORLD2: the host this client follows, and the seat's handover
+    addItem, stacksWith, isGoldPieces, addGoldPieces, isEquipped, unequipItem, neverPeerHanded,
     onlineRoom: () => true, _wallNow: () => clock.t, respawnDue, validLootList, peerHanded, LOOT_LIST_MAX, LOOT_NEWER_TEXT, ENEMY_BASICS,
     generateLootItems: generateItems, addPileLootExtras, rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons,
     spawnEnemyLoot, wildLootAfter, grantEliteLoot, rollCorpseKit, raiseEnemyDeath, capFoeLoot, rollRoomBonus,
@@ -126,7 +136,7 @@ function peer(net, { id, level, luck, renown, seed, host, foraging, partners, ch
     spawnCorpseNow: async (f) => { f.corpsePos = [...f.ai.feet]; }, renderer: { destroyBillboardBatch: () => {} }, billboardBatches: [], renownFoeRevived: () => {},
     respawnFoe: () => false, camps: { applyOwner: () => {}, activate: () => false }, roomEncounterAsked: () => false, actions: { applyRemote: () => 0 },
     droppedLoot: { physical: { owns: () => false }, pileFor: () => null, lootFinds: () => [] }, lootCrown: (pos) => pos, droppedTorches: { activate: () => false }, plaqueActionFor: () => null,
-    activateSearchable: () => 0, setMidScreenText: () => {}, activeOverlay: null, silverFindKey: () => null, silverFindAt: () => {},
+    activateSearchable: () => 0, setMidScreenText: (t) => said.push(t), activeOverlay: null, silverFindKey: () => null, silverFindAt: () => {},
     quickLootTake, showPickups: null, lootPile: () => null, pileBody: () => null, openInventory: () => null, RANDOM_TREASURE_ARCHIVE: 216,
   };
   const h = mount(`
@@ -148,10 +158,11 @@ function peer(net, { id, level, luck, renown, seed, host, foraging, partners, ch
     const RESPAWN_BURST = 4;
     ${fnSrc('respawnSweep')}
     ${fnSrc('rollPileItems')}
+    ${optFn('setAuthority')}
     const api = { lootContents: ${memberSrc('lootContents')}, takeLoot: ${memberSrc('takeLoot')}, lootFinds: ${memberSrc('lootFinds')}, corpseKeyOf: ${memberSrc('corpseKeyOf')} };
     const buildPile = () => { ${PILE_BUILD}
       return items; };
-    return { api, applyActions, setFoeDead, respawnSweep, rollPileItems, buildPile, publishLoot, lootBuiltOf: typeof lootBuiltOf === 'function' ? lootBuiltOf : null, bases: typeof _roomBase === 'undefined' ? null : _roomBase };
+    return { api, applyActions, setFoeDead, respawnSweep, rollPileItems, buildPile, publishLoot, setAuthority: typeof setAuthority === 'function' ? setAuthority : null, roomClaimTick: typeof roomClaimTick === 'function' ? roomClaimTick : () => {}, lootBuiltOf: typeof lootBuiltOf === 'function' ? lootBuiltOf : null, bases: typeof _roomBase === 'undefined' ? null : _roomBase };
   `, state);
   // THE BUILD, as dungeonContext builds it: the pile loop's own lines and buildFoeAt's chain, each on THIS peer's dice
   as(() => {
@@ -164,7 +175,7 @@ function peer(net, { id, level, luck, renown, seed, host, foraging, partners, ch
       state.foes.push(f);
     }
   });
-  const p = { id, host: h, state, player, as };
+  const p = { id, host: h, state, player, as, said, seat };
   net.join(p);
   return p;
 }
@@ -175,26 +186,48 @@ function room() {
   RL._resetRoomLootForTests();
   resetQuickLoot();
   const net = relay();
-  const A = peer(net, { id: 'aaaa', level: 30, luck: 70, renown: 45, seed: 11, host: true, foraging: true, partners: [3], characterId: 'char-a' });
-  const B = peer(net, { id: 'bbbb', level: 3, luck: 30, renown: 1, seed: 29, host: false, foraging: false, partners: [30], characterId: 'char-b' });
-  return { net, A, B };
+  const seat = { id: 'aaaa' };   // the relay's seat: A's
+  const A = peer(net, { id: 'aaaa', level: 30, luck: 70, renown: 45, seed: 11, host: true, foraging: true, partners: [3], characterId: 'char-a', seat });
+  const B = peer(net, { id: 'bbbb', level: 3, luck: 30, renown: 1, seed: 29, host: false, foraging: false, partners: [30], characterId: 'char-b', seat });
+  return { net, A, B, seat };
 }
-/** The foe falls (the host's death, then the stream's on the joiner) and the room settles: the sweep's minute, the words. */
-function fall({ net, A, B }) {
-  A.as(() => { for (const f of A.state.foes) A.host.setFoeDead(f, true); });
-  B.as(() => { for (const f of B.state.foes) B.host.setFoeDead(f, true); });
+/** A room of three: A hosts, B and C join (C at level 12, Luck 55, Renown 30 - a bonus of its own). */
+function room3() {
+  RL._resetRoomLootForTests();
+  resetQuickLoot();
+  const net = relay();
+  const seat = { id: 'aaaa' };
+  const A = peer(net, { id: 'aaaa', level: 30, luck: 70, renown: 45, seed: 11, host: true, foraging: true, partners: [3, 12], characterId: 'char-a', seat });
+  const B = peer(net, { id: 'bbbb', level: 3, luck: 30, renown: 1, seed: 29, host: false, foraging: false, partners: [30, 12], characterId: 'char-b', seat });
+  const C = peer(net, { id: 'cccc', level: 12, luck: 55, renown: 30, seed: 41, host: false, foraging: true, partners: [30, 3], characterId: 'char-c', seat });
+  return { net, A, B, C, seat };
+}
+/** The foe falls (the host's death, then the stream's on the joiners) and the room settles: the sweep's minute, the words. */
+function fall({ net, A, B, C = null }) {
+  const all = [A, B, C].filter(Boolean);
+  for (const p of all) p.as(() => { for (const f of p.state.foes) p.host.setFoeDead(f, true); });
   net.flush();
   clock.t += 2000;
-  for (const p of [A, B]) p.as(() => { p.host.respawnSweep(clock.t / 1000); });
+  for (const p of all) p.as(() => { p.host.respawnSweep(clock.t / 1000); });
   net.flush();
   clock.t += 7000;
-  for (const p of [A, B]) p.as(() => { p.host.respawnSweep(clock.t / 1000); });
+  for (const p of all) p.as(() => { p.host.respawnSweep(clock.t / 1000); });
   net.flush();
 }
 const shown = (p, key) => p.as(() => p.host.api.lootContents(key)) ?? [];
 const sig = (it) => JSON.stringify(it);
 const baseRows = (list) => list.filter((it) => !RL.isPersonalLoot(it)).map(sig);
 const mineRows = (list) => list.filter((it) => RL.isPersonalLoot(it)).map(sig);
+/** What a piece IS, whatever its count or its holder. */
+const pieceKey = (it) => `${it.group}.${it.templateIndex}.${it.material ?? ''}.${it.name ?? ''}`;
+/** How much of a piece a player holds: its coin in the purse, else its count across the pack. */
+const holding = (p, it) => (isGoldPieces(it) ? (p.player.goldPieces ?? 0) : p.player.items.filter((x) => pieceKey(x) === pieceKey(it)).reduce((n, x) => n + RL.pieceCount(x), 0));
+/** The quick door's press on a PIECE of `key` (by what it is), wherever it stands in this player's list. */
+function quickTakePiece(p, key, piece) {
+  const row = shown(p, key).findIndex((it) => pieceKey(it) === pieceKey(piece));
+  assert.ok(row >= 0, `${p.id} sees ${piece.name} on ${key}`);
+  return quickTake(p, key, row);
+}
 /** The quick door's press on row `row` of `key`, as the plaque lights it. */
 function quickTake(p, key, row) {
   return p.as(() => {
@@ -330,6 +363,167 @@ test('PARTY-LOOT: each player\'s BONUS is their own - rolled at their own Renown
   assert.ok(!mineRows(shown(back, key)).includes(sig(mine)) || mineA.filter((x) => x === sig(mine)).length > 1, 'and not that one');
 });
 
+test('PARTY-LOOT, HOST ARBITRATES (Mac, 2026-10-15: "Host arbitrates"): the SAME piece taken by two players in one breath goes to ONE of them - the host\'s own take against a joiner\'s, two joiners\' against each other - and the loser is told "Someone took that first." and holds none of it (both kept it); the host\'s own take and a player\'s bonus wait on nobody', () => {
+  setPref('quickLoot', true);
+  // the host against a joiner: the host's take is judged where it stands, before the joiner's claim reaches it
+  {
+    const r = room();
+    fall(r);
+    let raced = 0;
+    for (const key of KEYS) {
+      const piece = shown(r.A, key).find((it) => !RL.isPersonalLoot(it));
+      if (!piece) continue;
+      const n = RL.pieceCount(piece), a0 = holding(r.A, piece), b0 = holding(r.B, piece);
+      r.B.said.length = 0;
+      quickTakePiece(r.A, key, piece);
+      assert.equal(holding(r.A, piece) - a0, n, `${key}: the host's own take is in its pack at once - no round trip`);
+      const like = (p) => shown(p, key).filter((it) => !RL.isPersonalLoot(it) && pieceKey(it) === pieceKey(piece)).length;
+      const was = like(r.B);
+      quickTakePiece(r.B, key, piece);   // B's plaque still names it: A's word has not come
+      assert.equal(holding(r.B, piece) - b0, 0, `${key}: a joiner's take waits for the host's grant`);
+      assert.equal(like(r.B), was - 1, `${key}: and reads as taken on B's own plaque meanwhile`);
+      r.net.flush();
+      assert.equal((holding(r.A, piece) - a0) + (holding(r.B, piece) - b0), n, `${key}: ONE copy between them`);
+      assert.equal(holding(r.B, piece) - b0, 0, `${key}: the host had it first`);
+      assert.ok(r.B.said.includes(RL.ROOM_TAKEN_TEXT), `${key}: and B is told so (said: ${JSON.stringify(r.B.said)})`);
+      assert.deepEqual(baseRows(shown(r.B, key)), baseRows(shown(r.A, key)), `${key}: one list on both`);
+      raced++;
+    }
+    assert.ok(raced >= 4, `raced over ${raced} containers`);
+  }
+  // two joiners against each other: the claim that reaches the host first holds the piece
+  {
+    const r = room3();
+    fall(r);
+    let raced = 0;
+    for (const key of KEYS) {
+      const piece = shown(r.B, key).find((it) => !RL.isPersonalLoot(it));
+      if (!piece) continue;
+      const n = RL.pieceCount(piece), b0 = holding(r.B, piece), c0 = holding(r.C, piece);
+      r.B.said.length = 0; r.C.said.length = 0;
+      quickTakePiece(r.B, key, piece);
+      quickTakePiece(r.C, key, piece);
+      r.net.flush();
+      assert.equal(holding(r.B, piece) - b0, n, `${key}: B's claim reached the host first, and B holds the piece`);
+      assert.equal(holding(r.C, piece) - c0, 0, `${key}: C holds none of it`);
+      assert.ok(r.C.said.includes(RL.ROOM_TAKEN_TEXT) && !r.B.said.includes(RL.ROOM_TAKEN_TEXT), `${key}: the loser alone is told`);
+      for (const p of [r.B, r.C]) assert.deepEqual(baseRows(shown(p, key)), baseRows(shown(r.A, key)), `${key}: ${p.id} sees the host's list`);
+      raced++;
+    }
+    assert.ok(raced >= 4, `raced over ${raced} containers`);
+    // a player's own bonus is theirs at once - never a claim, never the host's
+    const key = KEYS.find((k) => shown(r.C, k).some(RL.isPersonalLoot));
+    assert.ok(key, 'C (Renown 30) holds a bonus somewhere in the room');
+    const mine = shown(r.C, key).find(RL.isPersonalLoot);
+    const m0 = holding(r.C, mine), frames = r.net.frames.length;
+    quickTake(r.C, key, shown(r.C, key).indexOf(mine));
+    assert.equal(holding(r.C, mine) - m0, RL.pieceCount(mine), 'C\'s bonus piece is in its pack at once');
+    assert.ok(r.net.frames.slice(frames).every((f) => (f.data.l ?? []).every((w) => !w.q)), 'and C claimed nothing of the host');
+  }
+  // nobody but the host says the room's state, and nobody claims in another's name
+  {
+    const r = room3();
+    fall(r);
+    const key = KEYS.find((k) => baseRows(shown(r.C, k)).length >= 1);
+    const word = r.net.sent.map((f) => (f.from === 'aaaa' ? (f.data.l ?? []).find((w) => w.k === key && Number.isInteger(w.g)) : null)).find(Boolean);
+    assert.ok(word, 'the host said the container');
+    const onC = baseRows(shown(r.C, key)), onA = baseRows(shown(r.A, key));
+    const dagger = { group: 'Weapons', templateIndex: 113, name: 'Dagger', material: 0, value: 10 };
+    r.net.send('bbbb', { k: ROOM, l: [{ ...word, x: Array.from({ length: onC.length + 4 }, (_, i) => i), s: [dagger], si: ['bbbb:forged:1'] }] });
+    r.net.send('bbbb', { k: ROOM, l: [{ k: word.k, g: word.g, lv: word.lv, ...(word.n ? { n: word.n } : {}), tm: word.tm, h: word.h, q: [{ id: 'cccc:forged:2', p: 0, n: 1, tm: 0 }] }] });
+    r.net.flush();
+    assert.deepEqual(baseRows(shown(r.C, key)), onC, 'a joiner\'s word saying takes lands none of them on another joiner');
+    assert.ok(!shown(r.C, key).some((it) => it.name === 'Dagger'), 'nor its stored pieces');
+    assert.deepEqual(baseRows(shown(r.A, key)), onA, 'nor on the host - and a claim in another\'s name is granted to nobody');
+  }
+});
+
+test('PARTY-LOOT, HOST ARBITRATES: a host that LEAVES mid-claim neither dupes nor drops - the claims it left unanswered are judged by the next seat in one order (roomClaimOrder), each piece to one claimer, none twice, none lost; a claim with no verdict comes back to its claimer\'s list after ROOM_CLAIM_TIMEOUT_MS, and a verdict that comes late still lands', () => {
+  setPref('quickLoot', true);
+  const r = room3();
+  fall(r);
+  const key = KEYS.find((k) => baseRows(shown(r.B, k)).length >= 3);
+  assert.ok(key, 'a container with three pieces of the room\'s');
+  const [x, y, z] = shown(r.B, key).filter((it) => !RL.isPersonalLoot(it));
+  const n = (it) => RL.pieceCount(it);
+  const b0 = { x: holding(r.B, x), y: holding(r.B, y), z: holding(r.B, z) }, c0 = { x: holding(r.C, x), y: holding(r.C, y) };
+  // X: B's claim, answered by the host before it goes - granted, and said to everyone
+  quickTakePiece(r.B, key, x);
+  r.net.flush();
+  assert.equal(holding(r.B, x) - b0.x, n(x), 'X is B\'s, granted by A');
+  // Y: B and C claim it in one breath; Z: B alone - and A leaves before either reaches it
+  quickTakePiece(r.B, key, y);
+  quickTakePiece(r.C, key, y);
+  quickTakePiece(r.B, key, z);
+  r.net.leave(r.A);
+  r.net.flush();   // the claims reach B and C, and nobody judges them
+  assert.equal(holding(r.B, y) - b0.y + holding(r.C, y) - c0.y, 0, 'Y in nobody\'s pack while no seat answers');
+  // no verdict in time: B's Z comes back to B's list (and is still B's claim, heard by C)
+  clock.t += 100;
+  r.B.as(() => r.B.host.roomClaimTick(10 * RL.ROOM_CLAIM_TIMEOUT_MS));
+  assert.ok(shown(r.B, key).some((it) => pieceKey(it) === pieceKey(z)), 'Z is back on B\'s list after the timeout');
+  assert.equal(holding(r.B, z) - b0.z, 0, 'and not in B\'s pack');
+  // the seat passes to C (the relay's word, then WORLD2's handover)
+  r.seat.id = 'cccc';
+  r.B.said.length = 0; r.C.said.length = 0;
+  r.C.as(() => r.C.host.setAuthority(true));
+  r.net.flush();
+  assert.equal((holding(r.B, y) - b0.y) + (holding(r.C, y) - c0.y), n(y), 'Y: ONE copy, judged by the new seat');
+  assert.equal(holding(r.B, y) - b0.y, n(y), 'to B, whose claim comes first in the one order (the same clock, the lower id)');
+  assert.ok(r.C.said.includes(RL.ROOM_TAKEN_TEXT), 'and C is told');
+  assert.equal(holding(r.B, z) - b0.z, n(z), 'Z: B\'s claim, unanswered when A left and timed out since, granted late - not lost');
+  assert.equal(holding(r.B, x) - b0.x, n(x), 'X: still B\'s once, never judged again');
+  assert.equal(holding(r.C, x) - c0.x, 0, 'and never C\'s');
+  for (const it of [x, y, z]) assert.ok(![r.B, r.C].some((p) => shown(p, key).some((s) => pieceKey(s) === pieceKey(it) && !RL.isPersonalLoot(s))), `${it.name}: gone from both lists`);
+  assert.deepEqual(baseRows(shown(r.B, key)), baseRows(shown(r.C, key)), 'one list under the new seat');
+});
+
+test('PARTY-LOOT, HOST ARBITRATES: the WINDOW\'s takes are claims too, and so is a piece the host takes under its own open window after the room granted it to another (AUDIT WORLD4 C1 - nothing lands under it, so it still showed); a PUT is the host\'s to land, and a stored piece raced for goes to one', () => {
+  setPref('quickLoot', true);
+  const r = room3();
+  fall(r);
+  const key = KEYS.find((k) => shown(r.B, k).filter((it) => !RL.isPersonalLoot(it) && !isGoldPieces(it)).length >= 1);
+  assert.ok(key, 'a container holding a piece that is not coin');
+  const p = shown(r.B, key).find((it) => !RL.isPersonalLoot(it) && !isGoldPieces(it));
+  const a0 = holding(r.A, p), b0 = holding(r.B, p), c0 = holding(r.C, p);
+  // the host's window stands open on the container; B takes the piece and the host grants it
+  r.A.state._lootOpenKey = key;
+  quickTakePiece(r.B, key, p);
+  r.net.flush();
+  assert.equal(holding(r.B, p) - b0, RL.pieceCount(p), 'B holds it, granted');
+  const aList = shown(r.A, key);
+  const there = aList.find((it) => !RL.isPersonalLoot(it) && pieceKey(it) === pieceKey(p));
+  assert.ok(there, 'and the host\'s open window still shows it (C1)');
+  // the host's window moves it into the host's pack - the take is judged against the room, and refused
+  r.A.said.length = 0;
+  aList.splice(aList.indexOf(there), 1);
+  addItem(r.A.player.items, there);
+  r.A.as(() => r.A.host.roomClaimTick(clock.t));
+  assert.equal(holding(r.A, p) - a0, 0, 'the host holds none of it: the room had granted it to B');
+  assert.ok(r.A.said.includes(RL.ROOM_TAKEN_TEXT), 'and the host is told');
+  r.A.state._lootOpenKey = null;
+  r.A.as(() => r.A.host.publishLoot(key));
+  r.net.flush();
+  // B's window lays the piece back in: a put, landed by the host and seen by everyone as the room's stored piece
+  const bList = shown(r.B, key);
+  const held = r.B.player.items.find((x) => pieceKey(x) === pieceKey(p));
+  r.B.player.items.splice(r.B.player.items.indexOf(held), 1);
+  bList.push(held);
+  r.B.as(() => r.B.host.roomClaimTick(clock.t));
+  r.net.flush();
+  for (const peerOf of [r.A, r.B, r.C]) assert.equal(shown(peerOf, key).filter((it) => !RL.isPersonalLoot(it) && pieceKey(it) === pieceKey(p)).length, 1, `${peerOf.id}: the put stands in the container once`);
+  assert.equal(holding(r.B, p) - b0, 0, 'and B holds it no more');
+  // B and C race for the stored piece: one copy
+  r.B.said.length = 0; r.C.said.length = 0;
+  quickTakePiece(r.C, key, p);
+  quickTakePiece(r.B, key, p);
+  r.net.flush();
+  assert.equal((holding(r.B, p) - b0) + (holding(r.C, p) - c0), RL.pieceCount(p), 'one copy of the stored piece');
+  assert.equal(holding(r.C, p) - c0, RL.pieceCount(p), 'to C, whose claim reached the host first');
+  assert.ok(r.B.said.includes(RL.ROOM_TAKEN_TEXT), 'and B is told');
+  for (const peerOf of [r.A, r.B, r.C]) assert.equal(shown(peerOf, key).filter((it) => !RL.isPersonalLoot(it) && pieceKey(it) === pieceKey(p)).length, 0, `${peerOf.id}: gone from the container`);
+});
+
 test('PARTY-LOOT: THE BASE IS THE ROOM\'S ROLL ALONE - one name and one set of terms give one list under any player\'s level, Luck, Renown, finders, mod switches and dice, and no draw of it reaches Math.random', () => {
   const r = room();
   fall(r);
@@ -367,7 +561,12 @@ test('PARTY-LOOT by source: no Math.random in the room\'s law (systems/roomLoot.
   assert.match(SRC, /if \(wire && sf\.dead && !f\.dead && sf\.items == null && !\(roomLootOn\(\) && roomCanonOfFoe\(f\) != null\)\) \{ rollCorpseKit/);
   assert.match(fnSrc('spawnCorpse'), /f\.corpse = true;\s*roomBodyBorn\(f\);/);
   assert.match(fnSrc('publishLoot'), /if \(isRoomBaseContainer\(canon\)\) return sayRoomWord\(canon, claim\);/);
-  assert.match(fnSrc('applyLoot'), /if \(isRoomBaseContainer\(canon\)\) \{ n \+= landRoomWord\(canon, rec\); continue; \}/);
+  assert.match(fnSrc('applyLoot'), /if \(isRoomBaseContainer\(canon\)\) \{ n \+= landRoomWord\(canon, rec, from\); continue; \}/);
+  // HOST ARBITRATES: the takes read every frame, the seat's handover judging what the last host left, and a claim in
+  // flight leaving with its claimer when the dungeon goes
+  assert.match(SRC, /respawnSweep\(_ecvT\);[^\n]*\n\s*roomClaimTick\(_ecvT \* 1000\);/);
+  assert.match(fnSrc('setAuthority'), /clearSurplus\(\);[^\n]*\n\s*if \(on\) roomTakeSeat\(\);/);
+  assert.match(SRC, /droppedLoot\.physical\.destroy\(\);[^\n]*\n\s*for \(const m of _roomMine\.values\(\)\) if \(m\.claim && !m\.lapsed\) roomGive\(m\.item, m\.give\);/);
 });
 
 test('PARTY-LOOT: the word and its merge - projected and bounded; takes merge the same in either order and never come back; a WORLD4 list (an older build\'s, a memory from before) is migrated on every machine alike, never landed over the base', () => {
@@ -378,7 +577,7 @@ test('PARTY-LOOT: the word and its merge - projected and bounded; takes merge th
   assert.equal(RL.validRoomWord({ g: 0, lv: 3, c: [[0, 0]] }), null, 'a stack drawn to nothing is a place gone, not a count');
   assert.equal(RL.validRoomWord({ g: 0, lv: 3, s: [{ group: 'Weapons' }] }), null, 'a stored piece no template carries');
   const w = RL.validRoomWord({ g: 0, lv: 3, tm: 7, x: [2], c: [[0, 4]], s: [] });
-  assert.deepEqual(w, { g: 0, lv: 3, n: 1, tm: 7, x: [2], c: [[0, 4]], s: [] });
+  assert.deepEqual(w, { g: 0, lv: 3, n: 1, tm: 7, x: [2], c: [[0, 4]], s: [], si: [], q: [], a: [], y: [] });
   const one = RL.mergeRoomWord(RL.mergeRoomWord(null, { ...w, x: [2], c: [] }).state, { ...w, x: [1], c: [[0, 4]] }).state;
   const two = RL.mergeRoomWord(RL.mergeRoomWord(null, { ...w, x: [1], c: [[0, 4]] }).state, { ...w, x: [2], c: [] }).state;
   assert.deepEqual([[...one.taken].sort(), [...one.counts]], [[...two.taken].sort(), [...two.counts]], 'either order, one state');

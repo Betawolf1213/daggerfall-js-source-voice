@@ -130,7 +130,7 @@ test('HACKED-GOLD a building\'s containers: a peer\'s word lands without a lette
 
 test('HACKED-GOLD the dungeon\'s words and a foe\'s heir: every site a peer\'s list lands at, or this client says one from, reads the one law (pinned at its one line each; the building\'s and the body\'s run above) (mutants: each site\'s filter)', () => {
   const dc = read('src/scenes/dungeonContext.js');
-  assert.match(dc, /import \{ peerHanded \} from '\.\.\/systems\/peerWord\.js';/);
+  assert.match(dc, /import \{ peerHanded(?:, neverPeerHanded)? \} from '\.\.\/systems\/peerWord\.js';/);   // PIN MOVED (PARTY-LOOT, host arbitrates): the room's stored pieces said pair by pair, by peerHanded's own rule
   assert.match(dc, /r: peerHanded\(held\)\.map\(\(it\) => \(\{ \.\.\.it \}\)\)/, 'a dungeon\'s record said');
   assert.match(dc, /const items = peerHanded\(validLootList\(rec\.r\)\);/, 'a dungeon\'s record heard');
   assert.match(dc, /const li = peerHanded\(validLootList\(sf\.items\)\);/, 'a body on the wire');

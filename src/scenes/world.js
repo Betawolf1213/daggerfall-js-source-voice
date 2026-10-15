@@ -30115,6 +30115,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // publish clock is reset, not the publish forced: the frame's own worldPublish sends it this same frame.
     onLootClaimed: () => { _worldPublishedAt = -Infinity; },
     partyLevels: () => partyMateLevels(),   // PARTY-LOOT: my party's levels, for the level a room container's base is minted at
+    roomHost: () => online?.host ?? null,   // PARTY-LOOT: the relay's seat - whose word a room container's state is (the host grants the takes)
     peers: peersNear,
     postItem: (text) => postItemInChat(text), canPostItem: () => canPostItemInChat(),   // CHAT-POST: the building's and the dungeon's packs post too
     partyNear: () => partyOnMaps(), professionMarks: (feet) => professionMarks(feet),   // DISC23-A: the party's bodies, for the dungeon's and the building's plans (AUDIT pre-merge I-E: those drawn here); NODE-MARKS: the dungeon's veins (and a body the knife may skin) on its compass, at its own feet

@@ -1548,8 +1548,9 @@ personal bonus"): a dungeon room's container is ONE base list for
 everyone in it - every client computes it, on dice seeded by the
 container's name and on the room's terms (the party's level fixed at
 its birth) - the room's word about it is the TAKES against that list,
-and each player's own Luck and Renown roll a bonus layer over it that
-only they see and take. The rest of this section is WORLD4 as it
+each take a claim the room's host grants, first come first served
+(Mac, 2026-10-15: "Host arbitrates"), and each player's own Luck and
+Renown roll a bonus layer over it that only they see and take. The rest of this section is WORLD4 as it
 shipped; PARTY-LOOT, below, is the law.
 
 - **The wire** (`src/net/wire.js`): nothing new. The loot rides
@@ -1569,15 +1570,19 @@ shipped; PARTY-LOOT, below, is the law.
   same moment DFU's own law frees an emptied container's flat, and the
   moment the taking is finished rather than half done - and a searched
   find and a revenant's body, which keep WORLD4's word, are CLAIMED on
-  the open too; a pile, a layout body and an encounter's body say their
-  takes against the room's base, and an open says nothing (PARTY-LOOT). `applyLoot` lands another's word
+  the open too; a pile, a layout body and an encounter's body are the
+  room's base, each take of it a claim the room's host grants, and an
+  open says nothing (PARTY-LOOT). `applyLoot` lands another's word
   through the projection and IN PLACE (`held.length = 0`, then push),
   ~~so a window already open on that container updates under the
   reader's hands~~ - AUDIT WORLD4 C1: it does not, and could not: the
   pack binds each loot row to the item OBJECT and never repaints, so
   that landing orphaned every row and the next click took the item AND
   left it in the chest. **A container you have open is yours until you
-  close it**, and your close is then the room's newest word.
+  close it**, and your close is then the room's newest word - a searched
+  find's and a revenant's body's; a room container's takes are claimed
+  as they are made, and a piece the host had granted another before it
+  was taken under the open window goes back out of the pack (PARTY-LOOT).
   `settleLootFlat` frees the flat of a pile the ROOM emptied while this
   player stood beside it (and re-mints one the room refilled - AUDIT
   WORLD4 C3/D2 gave the settle its second direction).
@@ -15706,7 +15711,8 @@ no window, so each player read their own roll, and the first take sent the taker
 them over everyone's list whole: both halves of the report are that one word, from whichever peer spoke first.
 
 **Mac's call** (asked, the base shared or each player's own): *"I want a delicate balance... the best of both worlds"*,
-then **"Shared base + personal bonus"**.
+then **"Shared base + personal bonus"**. **And the race** (asked, 2026-10-15, how two players taking the same piece in
+one breath should end - each keeping it, or the room deciding): **"Host arbitrates"**.
 
 ### The law (systems/roomLoot.js, scenes/dungeonContext.js)
 
@@ -15745,16 +15751,37 @@ then **"Shared base + personal bonus"**.
   rolls no pile of its own (the pile loop's `onlineRoom() ? [] :`), and a fallen copy's own list is emptied at its fall
   (`roomBodyBorn`), so a reader no gate stands before - LOOT11's line of light over a find (`lootFinds`), Hunting's body
   key (`corpseKeyOf`), the save - finds none of it either.
-- **THE WORD IS THE TAKES.** The room's word about a room container is no longer its list: `{k, g, lv, n, tm, h, x, c,
-  s, t}` - its terms, its base's signature (`h`), the base places gone (`x`, a set that only grows), a base stack's count
-  where it was drawn down (`c`, a count that only falls), the pieces players have stored in it (`s`, full records through
-  WORLD4's projection, WORLD4's own last writer) and WORLD8's stamp. `mergeRoomWord` lands two words the same in either
-  order, so two players taking different pieces in one breath both see both gone, and no word a peer says overwrites a
-  list: the list is composed (`composeRoomContainer`) from the base, the takes, the stored pieces and the player's own
-  layer, in place. An OPEN says nothing (`sayRoomWord`): the base is every client's already, so WORLD4's claim has
-  nothing to claim. A word whose signature is not this client's own computation (another build's chain) is AUDIT SETS
-  M2's unreadable word, never a list landed. AUDIT WORLD4 C1 stands: a container you have open is yours until you close
-  it, and your close is then the room's newest takes.
+- **THE WORD IS THE TAKES, AND THE HOST'S.** The room's word about a room container is no longer its list: `{k, g, lv,
+  n, tm, h, x, c, s, si, y, t}` - its terms, its base's signature (`h`), the base places gone (`x`, a set that only
+  grows), a base stack's count where it was drawn down (`c`, a count that only falls), the pieces stored in it (`s`,
+  full records through WORLD4's projection, and `si` their ids), the host's latest verdicts (`y`) and WORLD8's stamp.
+  It is the HOST's word - the relay's seat (`opts.roomHost`) or the stream this client follows (WORLD2's `_foesFrom`) -
+  or the memory's, which the host publishes; a birth is anyone's (the mint's own law); any other peer says only its
+  claims and its puts (below), and nothing else it says is landed (`roomHostSaid`). `mergeRoomWord` lands two words the
+  same in either order, and no word overwrites a list: the list is composed (`composeRoomContainer`, `roomLoot.js`
+  `composeRoomView`) from the base, the takes, the stored pieces, this player's claims and puts in flight and their own
+  layer, in place. An OPEN says nothing (`sayRoomWord`): the base is every client's already. A word whose signature is
+  not this client's own computation (another build's chain) is AUDIT SETS M2's unreadable word, never a list landed.
+  AUDIT WORLD4 C1 stands: nothing lands under a window this player has open.
+- **THE CLAIMS** (Mac, 2026-10-15: "Host arbitrates"). A take of a shared piece - a base piece or a stored one, by the
+  window, the quick door or Physical Items' one-item door - is a CLAIM, and the room's host (WORLD2's, the seat that
+  runs its foes) grants it: in the order the claims reach it, the first takes what is left of the piece (`roomLoot.js`
+  `judgeRoomClaim`), and a later one is answered nought and told "Someone took that first." (`ROOM_TAKEN_TEXT`, the
+  remains' own line, `wildZone.js` `WILD_TEXT`). Every take is read the same way, against what the list held at its last
+  compose (`roomSettle` - each frame from `roomClaimTick`, and at every close and quick take). The host judges its own
+  where it stands, with no round trip, so a player alone in a room, or offline, waits on nothing; a piece the room had
+  already granted another, taken under the host's own open window (C1 keeps it showing), goes back out of its pack.
+  Anyone else takes the piece back out of the pack (`roomLift` - the record, the stack it merged into, the bag, the
+  purse), says the claim (`q`, its id its claimer's own - `claimOf` - so nobody claims in another's name) and has it only
+  on the grant (`roomResolve`): until then it reads as taken in their own list alone, and on a refusal, or with no
+  verdict in `ROOM_CLAIM_TIMEOUT_MS`, it comes back - a verdict that comes later still lands. A PUT (`a`) is the host's
+  to land too, so the stored pieces have one writer; a put the host refuses (a piece no peer may be handed, a full
+  container) comes back once nothing stands open on it. The bonus is never a claim's: the player's own, at once.
+- **THE SEAT CHANGES HANDS.** Every client keeps the claims it hears until their verdict (`roomLoot.js`
+  `mergeRoomWord`), so when WORLD2's handover gives this client the seat (`setAuthority`, then `roomTakeSeat`) it judges
+  what the last host left unanswered in `roomClaimOrder` - the claim's relay clock, then its id, the same order whoever
+  takes the seat - and never a claim the last host answered: a verdict is the first heard for its claim. A host that
+  leaves mid-claim neither dupes nor drops.
 - **THE BONUS.** Each player's own Renown and Luck - "the roller's own" - roll a layer over the base on dice seeded by the
   base's name and the CHARACTER (`roomBonusOf`, its roll `hostCombat.js` `rollRoomBonus` - beside `spawnEnemyLoot`, the
   one home of the keep's and the ladders' knobs): the pieces PLAIN-LOOT's keep let go at the base's first stage that the
@@ -15786,8 +15813,10 @@ passes them through to the dungeon and leaves its interiors as WORLD5 built them
 are rolled at the OPEN and never shown before it, so the claim WORLD5 makes is still the first anyone sees; its treasure
 markers' piles and its foes' bodies are each player's own; `scenes/exterior.js` is the offline bench, with no room.
 
-**What it does not do.** Two players who take the SAME piece in the same breath, before either hears the other, both
-keep it (the window is the word's flight); a revenant's body keeps WORLD4's word (RVN8: its list holds a player's own
+**What it does not do.** A piece used straight from a container (a potion drunk off a body) is used at once: its claim
+takes it from the room and brings nothing more. A claim still in flight when its claimer leaves the dungeon is kept by
+the claimer (no verdict reaches a dungeon that is gone). Two hosts at once - WORLD2's stale-stream handover, before the
+old seat is heard to go - can each grant the same piece. A revenant's body keeps WORLD4's word (RVN8: its list holds a player's own
 pieces); a quest spawn's, a summon's and a party member's own foe's body are their player's, as before; the street's
 bodies are their foe's owner's roll taken under the owner's grant (WORLD6b-iii(c)); a foe's worn kit is its copy's own
 (MW-NPC K2), so the kit a foe fought with need not be the one its body holds; the death's subscribers run where a body's
@@ -15795,12 +15824,19 @@ base is composed, so Physical Items throws a body's pieces out on every client, 
 older build in the room reads the new word as M2's newer word ("Reload to open it"), and its own WORLD4 list still
 lands for everyone, migrated. Not seen with two real players from this container.
 
-- **Pinned**: `test/partyloot.test.js` (7) - two peers mounted over the dungeon host's real loot doors and the real
-  producers, at different levels, Luck, Renown, dice and Foraging switches, joined by a queuing relay: one base on every
-  body and pile; a take removing the same piece for everyone; two takes in one breath both landing; each player's bonus
+- **Pinned**: `test/partyloot.test.js` (10) - two and three peers mounted over the dungeon host's real loot doors and
+  the real producers, at different levels, Luck, Renown, dice and Foraging switches, joined by a queuing relay: one base
+  on every body and pile; a take removing the same piece for everyone; two takes in one breath both landing; THE HOST
+  ARBITRATES - the same piece taken in one breath going to one player (the host against a joiner, two joiners), the
+  loser told, the host's own take and a bonus waiting on nobody; a host leaving mid-claim (the next seat judging what it
+  left in one order: one copy, none lost, none judged twice; a claim with no verdict back in its claimer's list, its
+  late verdict landed); the window's take, the host's take under its own open window refused, a put landed by the host
+  and a stored piece raced for; each player's bonus
   their own (marked, unsaid, the same at every compose, spent through the save); the base one list under any player's
   terms with `Math.random` trapped inside the roll; the source's laws; the word's projection, its merge in either order,
   and the WORLD4 migration on both machines; an unborn container's line of light and body key reading nothing. Run
-  against the dungeon host before PARTY-LOOT, 6 of the 7 fail - the four two-peer tests by their assertions (each peer's
-  own roll; A's list replaced by B's leftovers), two because the block is not there. `tools/mutants/partyloot.json`
-  (16, all killed).
+  against the dungeon host before PARTY-LOOT, the four two-peer base tests fail by their assertions (each peer's own
+  roll; A's list replaced by B's leftovers); against the host before it arbitrated, the three arbitration tests fail by
+  theirs (a joiner's take in its pack at once, two copies of one piece between two joiners, a piece kept by the host
+  under its window after the room granted it). `tools/mutants/partyloot.json`
+  (30, all killed).

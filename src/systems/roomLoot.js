@@ -21,10 +21,14 @@
 //   when no host word has come (ROOM_TERMS_WAIT_MS); two mints for one generation agree by roomTermsBeat, the earlier.
 // - THE TAKES. The room's word about a container is no longer its list: it is the takes against the shared one - the
 //   base pieces gone (`x`, a set that only grows), the base stacks drawn down (`c`, a count that only falls), and what
-//   players have stored in it (`s`, full records, WORLD4's own last-writer word). Two words merge the same in any order,
-//   so two players taking different pieces in the same breath both see both gone; nothing a peer says overwrites a list.
-//   A word carries its base's signature (`h`): a client whose own computation differs (another build) reads it as
-//   AUDIT SETS M2's unreadable word, never as a list to land.
+//   players have stored in it (`s`, full records, and their ids `si`). Two words merge the same in any order, so two
+//   players taking different pieces in the same breath both see both gone; nothing a peer says overwrites a list. A word
+//   carries its base's signature (`h`): a client whose own computation differs (another build) reads it as AUDIT SETS
+//   M2's unreadable word, never as a list to land.
+// - THE CLAIMS (Mac, 2026-10-15: "Host arbitrates"). A take of a shared piece is a claim the room's host grants, first
+//   come first served; the loser is told so and the piece reaches the winner's pack alone. The takes, the stored pieces
+//   and the verdicts are the HOST's word; a claimer says only its claims and its puts (below, validRoomWord's `q`, `a`
+//   and `y`).
 // - THE BONUS. Each player's own Renown and Luck - "the roller's own" (RENOWN-LOOT) - roll a layer over the base on dice
 //   seeded by the container's name and the CHARACTER: the pieces PLAIN-LOOT's keep let go that the player's Renown
 //   keeps, and the supplies their Renown's share adds over the first stage's, laddered at their Luck and their finders.
@@ -39,6 +43,7 @@ import { validLootList, LOOT_LIST_MAX, LOOT_STACK_MAX } from './loot.js';
 import { registerModSaveData } from './modSaveData.js';
 import { healingSupplyChances, mintHealingPotion, mintMagickaPotion } from './healingSupply.js';
 import { restLootChances, restItemsAvailable, createRestItem, REST_PILE_CHANCES, REST_FOE_CHANCES } from './restItems.js';
+import { WILD_TEXT } from './wildZone.js';
 
 // ---- the dice -------------------------------------------------------------------------------------------------------
 
@@ -155,11 +160,41 @@ export function baseSignature(/** @type {any[]} */ items) {
 /** Whether a room's loot record is a PARTY-LOOT word (terms and takes) rather than WORLD4's list. */
 export const isRoomWord = (/** @type {any} */ rec) => !!rec && typeof rec === 'object' && Number.isSafeInteger(rec.g) && Number.isInteger(rec.lv);
 
+// THE CLAIMS (Mac, 2026-10-15, asked how two players taking the same piece in one breath should end: "Host arbitrates").
+// A take of a shared piece - a base piece or a stored one - is a CLAIM, and the room's host (WORLD2's, the one that runs
+// its foes) is the one that grants it: in the order the claims reach it, the first takes the piece and every later one
+// is told ROOM_TAKEN_TEXT. A claimer's piece comes into its pack only on the grant; the host's own take is judged where
+// it stands, with no round trip. A PUT (a piece laid in a container) is the host's to land too, so the stored pieces have
+// one writer. Every word carries its claims' ids, and the host's word its verdicts, so a seat that changes hands judges
+// what the last host left unanswered (roomClaimOrder) and never what it answered.
+
+/** What a loser is told - the remains' own line (systems/wildZone.js), one string for one refusal. */
+export const ROOM_TAKEN_TEXT = WILD_TEXT.taken;
+/** How long a claim stands taken in its claimer's view with no verdict before the piece comes back. */
+export const ROOM_CLAIM_TIMEOUT_MS = 4000;
+/** How often a put with no verdict is said again (a put never comes back on its own: the piece is the room's). */
+export const ROOM_PUT_RESAY_MS = 1500;
+/** The most claims (and the most puts) one word carries. */
+export const ROOM_CLAIMS_MAX = 32;
+/** The verdicts a host's word carries (the latest), and four times as many a state remembers. */
+export const ROOM_ANSWERS_KEPT = 32;
+/** A claim's id (and a stored piece's): the claimer's peer id, its context's stamp and a count - unique in a room. */
+const ROOM_ID_RE = /^[A-Za-z0-9_.:-]{3,80}$/;
+export const validRoomId = (/** @type {any} */ id) => typeof id === 'string' && ROOM_ID_RE.test(id);
+export const roomClaimId = (/** @type {string} */ who, /** @type {string} */ stamp, /** @type {number} */ n) => `${who}:${stamp}:${n}`;
+/** Whether peer `from` made claim `id` - an id names its claimer first, so no peer claims or puts in another's name. */
+export const claimOf = (/** @type {any} */ id, /** @type {any} */ from) => typeof id === 'string' && typeof from === 'string' && id.startsWith(`${from}:`);
+/** A piece's count, as a take and a claim count it: its stack, or one. */
+export const pieceCount = (/** @type {any} */ it) => (Number.isInteger(it?.stackCount) && it.stackCount > 0 ? it.stackCount : 1);
+
 /**
  * A word off the wire, projected (AUDIT WORLD3 A2's law, WORLD4's projection for its stored pieces) - or null. The
  * terms; `h` the base's signature; `x` the base places gone (whole numbers under ROOM_BASE_MAX, each once); `c` a base
  * stack's count where it was drawn down (`[place, count]`, a count of at least one); `s` the stored pieces through
- * validLootList, at most LOOT_LIST_MAX with the rest. A word with no `s` says nothing of the stored pieces (a birth).
+ * validLootList, at most LOOT_LIST_MAX, and `si` their ids (one each, in order - a word without them names them by
+ * place, `s:<i>`); `q` the claims (`{ id, p | sp, n, tm }`: a base place or a stored piece's id, a count), `a` the puts
+ * (`{ id, it, tm }` - a piece the item law refuses is a put of nothing, refused), `y` the host's verdicts (`[id, count
+ * granted]`, nought refused). A word with no `s` says nothing of the stored pieces (a claim, a birth with none).
  */
 export function validRoomWord(/** @type {any} */ rec) {
   if (!isRoomWord(rec)) return null;
@@ -183,23 +218,88 @@ export function validRoomWord(/** @type {any} */ rec) {
       c.push([i, n]);
     }
   }
+  /** @type {any[] | null} */
   let s = null;
-  if (rec.s !== undefined) { s = validLootList(rec.s); if (!s) return null; }
-  return { ...terms, ...(rec.h !== undefined ? { h: rec.h } : {}), x, c, s };
+  /** @type {string[] | null} */
+  let si = null;
+  if (rec.s !== undefined) {
+    if (!Array.isArray(rec.s) || rec.s.length > LOOT_LIST_MAX) return null;
+    if (rec.si !== undefined && (!Array.isArray(rec.si) || rec.si.length !== rec.s.length)) return null;
+    s = []; si = [];
+    const ids = new Set();
+    for (let i = 0; i < rec.s.length; i++) {
+      const one = validLootList([rec.s[i]]);
+      const id = rec.si === undefined ? `s:${i}` : rec.si[i];
+      if (!one || !validRoomId(id) || ids.has(id)) return null;
+      ids.add(id);
+      if (one.length) { s.push(one[0]); si.push(id); }   // INT1: a piece the item law refuses goes, never the word
+    }
+  }
+  const q = [];
+  if (rec.q !== undefined) {
+    if (!Array.isArray(rec.q) || rec.q.length > ROOM_CLAIMS_MAX) return null;
+    for (const cl of rec.q) {
+      if (!cl || typeof cl !== 'object' || !validRoomId(cl.id) || !Number.isInteger(cl.n) || cl.n < 1 || cl.n > LOOT_STACK_MAX) return null;
+      if (cl.tm !== undefined && !Number.isFinite(cl.tm)) return null;
+      if ((cl.p === undefined) === (cl.sp === undefined)) return null;
+      if (cl.p !== undefined && (!Number.isInteger(cl.p) || cl.p < 0 || cl.p >= ROOM_BASE_MAX)) return null;
+      if (cl.sp !== undefined && !validRoomId(cl.sp)) return null;
+      q.push({ id: cl.id, ...(cl.p !== undefined ? { p: cl.p } : { sp: cl.sp }), n: cl.n, tm: cl.tm ?? 0 });
+    }
+  }
+  const a = [];
+  if (rec.a !== undefined) {
+    if (!Array.isArray(rec.a) || rec.a.length > ROOM_CLAIMS_MAX) return null;
+    for (const p of rec.a) {
+      if (!p || typeof p !== 'object' || !validRoomId(p.id) || (p.tm !== undefined && !Number.isFinite(p.tm))) return null;
+      const one = validLootList([p.it]);
+      if (!one) return null;
+      a.push({ id: p.id, it: one[0] ?? null, tm: p.tm ?? 0 });
+    }
+  }
+  /** @type {[string, number][]} */
+  const y = [];
+  if (rec.y !== undefined) {
+    if (!Array.isArray(rec.y) || rec.y.length > ROOM_ANSWERS_KEPT) return null;
+    for (const p of rec.y) {
+      if (!Array.isArray(p) || p.length !== 2 || !validRoomId(p[0]) || !Number.isInteger(p[1]) || p[1] < 0 || p[1] > LOOT_STACK_MAX) return null;
+      y.push([p[0], p[1]]);
+    }
+  }
+  return { ...terms, ...(rec.h !== undefined ? { h: rec.h } : {}), x, c, s, si, q, a, y };
 }
 
 // ---- the room's state of one container ------------------------------------------------------------------------------
 
-/** A container's state as this client knows the room's word: its terms, the base places gone, the drawn-down counts
- *  and the stored pieces. */
-export const roomState = (/** @type {any} */ terms) => ({ terms, taken: new Set(), counts: new Map(), stored: /** @type {any[]} */ ([]) });
+/** A container's state as this client knows the room's word: its terms, the base places gone, the drawn-down counts,
+ *  the stored pieces and their ids, the verdicts it has heard (id -> count granted) and the claims and puts it has
+ *  heard that no verdict has answered yet (id -> claim). */
+export const roomState = (/** @type {any} */ terms) => ({
+  terms, taken: new Set(), counts: new Map(), stored: /** @type {any[]} */ ([]), ids: /** @type {string[]} */ ([]),
+  answers: /** @type {Map<string, number>} */ (new Map()), claims: /** @type {Map<string, any>} */ (new Map()),
+});
+
+/** A verdict recorded: the claim answered, the oldest verdicts let go past four times what a word carries. */
+export function answerRoomClaim(/** @type {any} */ state, /** @type {string} */ id, /** @type {number} */ g) {
+  state.answers.set(id, g);
+  state.claims.delete(id);
+  while (state.answers.size > ROOM_ANSWERS_KEPT * 4) state.answers.delete(/** @type {string} */ (state.answers.keys().next().value));
+}
+/** A claim heard (the claimer's own, or another's) and kept for a verdict - bounded, the oldest let go. */
+function hearRoomClaim(/** @type {any} */ state, /** @type {any} */ cl) {
+  if (state.answers.has(cl.id) || state.claims.has(cl.id)) return;
+  state.claims.set(cl.id, cl);
+  while (state.claims.size > ROOM_CLAIMS_MAX * 2) state.claims.delete(state.claims.keys().next().value);
+}
 
 /**
  * THE MERGE: a projected word into a state - or a fresh state, when the word names another base whose terms beat the
- * state's (a newer generation, an earlier mint). Answers `{ state, changed }`; a word for a base that loses is dropped
- * (`changed` false), and a word for the SAME base (its generation, level and count) merges whichever was minted first. The
- * places gone are a union and the counts a minimum, so two words land the same in either order and a take is never
- * undone by an older word; the stored pieces are the word's, when it says them (WORLD4's last writer).
+ * state's (a newer generation, an earlier mint). Answers `{ state, changed, answered }`; a word for a base that loses
+ * is dropped (`changed` false), its claims heard as claims on a base that is gone (`stale`, refused at their verdict),
+ * and a word for the SAME base (its generation, level and count) merges whichever was minted first. The places gone are
+ * a union and the counts a minimum, so two words land the same in either order and a take is never undone by an older
+ * word; the stored pieces are the word's, when it says them (the host's - one writer); a verdict is the first heard for
+ * its claim, and `answered` the verdicts new here.
  */
 export function mergeRoomWord(/** @type {any} */ state, /** @type {any} */ w) {
   let st = state;
@@ -210,65 +310,114 @@ export function mergeRoomWord(/** @type {any} */ state, /** @type {any} */ w) {
   } else if (!st || roomTermsBeat(w, st.terms)) {
     st = roomState({ g: w.g, lv: w.lv, n: w.n ?? 1, tm: w.tm ?? 0 });
     changed = true;
-  } else return { state: st, changed: false };
+  } else {
+    for (const cl of [...(w.q ?? []), ...(w.a ?? [])]) hearRoomClaim(st, { ...cl, stale: true });
+    return { state: st, changed: false, answered: [] };
+  }
   for (const i of w.x ?? []) if (!st.taken.has(i)) { st.taken.add(i); changed = true; }
   for (const [i, n] of w.c ?? []) { const was = st.counts.get(i); if (was === undefined || n < was) { st.counts.set(i, n); changed = true; } }
-  if (Array.isArray(w.s)) { st.stored = w.s; changed = true; }
-  return { state: st, changed };
+  if (Array.isArray(w.s)) { st.stored = w.s; st.ids = Array.isArray(w.si) ? w.si : w.s.map((_, i) => `s:${i}`); changed = true; }
+  /** @type {[string, number][]} */
+  const answered = [];
+  for (const [id, g] of w.y ?? []) if (!st.answers.has(id)) { answerRoomClaim(st, id, g); answered.push([id, g]); changed = true; }
+  for (const cl of [...(w.q ?? []), ...(w.a ?? [])]) hearRoomClaim(st, cl);
+  return { state: st, changed, answered };
+}
+
+/** THE ORDER a seat that changes hands judges the claims the last host left unanswered in - the claim's own clock (the
+ *  relay's), then its id: a total order, so it is the same order whichever client takes the seat. */
+export const roomClaimOrder = (/** @type {any} */ a, /** @type {any} */ b) => ((a.tm ?? 0) - (b.tm ?? 0)) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+
+/**
+ * THE HOST'S VERDICT on one claim or put, against a state and its base (`baseLength` places, `full` their minted
+ * counts): the count granted, nought refused - and the state moved by it. A claim on a base place takes what is left
+ * of it, up to its count, so the first claim to reach the host is the one that holds the piece; a claim on a stored
+ * piece the same, by its id; a put is landed (`admit` its gate - a piece no peer may be handed never lands - and the
+ * cap's), its id the piece's. A claim already answered answers the same again; a claim on a base that is gone (`stale`)
+ * is refused. The stored list is written new, never in place: the host's own open window keeps the pieces it shows.
+ */
+export function judgeRoomClaim(/** @type {any} */ state, /** @type {number} */ baseLength, /** @type {(number|null)[]} */ full, /** @type {any} */ cl, /** @type {(it: any) => boolean} */ admit = () => true) {
+  if (state.answers.has(cl.id)) return /** @type {number} */ (state.answers.get(cl.id));
+  let g = 0;
+  if (cl.stale) g = 0;
+  else if ('it' in cl) {
+    if (cl.it && admit(cl.it) && state.stored.length < LOOT_LIST_MAX && !state.ids.includes(cl.id)) { state.stored = [...state.stored, cl.it]; state.ids = [...state.ids, cl.id]; g = 1; }
+  } else if (cl.p !== undefined) {
+    if (cl.p < baseLength && !state.taken.has(cl.p)) {
+      const have = state.counts.get(cl.p) ?? (Number.isInteger(full[cl.p]) ? /** @type {number} */ (full[cl.p]) : 1);
+      g = Math.min(cl.n, have);
+      if (g >= have) { state.taken.add(cl.p); state.counts.delete(cl.p); } else state.counts.set(cl.p, have - g);
+    }
+  } else {
+    const at = state.ids.indexOf(cl.sp);
+    if (at >= 0) {
+      const it = state.stored[at];
+      const have = pieceCount(it);
+      g = Math.min(cl.n, have);
+      const stored = [...state.stored], ids = [...state.ids];
+      if (g >= have) { stored.splice(at, 1); ids.splice(at, 1); } else stored[at] = { ...it, stackCount: have - g };
+      state.stored = stored; state.ids = ids;
+    }
+  }
+  answerRoomClaim(state, cl.id, g);
+  return g;
 }
 
 /**
- * THE LIST a client holds for a container: the base pieces still in it (in the base's order, a drawn-down stack at its
- * count), then the stored pieces, then this player's own (their bonus, never the room's). `base` the base's pieces
- * (the same objects every compose, so a take holds the piece it took); `full` their counts as minted.
+ * THE LIST a client holds for a container, and what it holds of whose: the base pieces still in it (in the base's
+ * order, a drawn-down stack at its count), then the stored pieces, then this player's puts the host has not landed
+ * yet, then this player's own (their bonus, never the room's). `pending` is this player's claims in flight - a base
+ * place's count (`places`), a stored piece's (`stored`) - read as taken here until the host's verdict, and its puts
+ * (`puts`, `{ it, id }`). `base` the base's pieces (the same objects every compose, so a take holds the piece it took);
+ * `full` their counts as minted. Answers `{ list, seen }`: `seen` each shared piece of the list -> `{ p }` or `{ sp }`
+ * and its count, which is what a take is read against (the bonus is no claim's).
  */
-export function composeRoomList(/** @type {any[]} */ base, /** @type {(number|null)[]} */ full, /** @type {any} */ state, /** @type {any[]} */ personal = []) {
-  const out = [];
+export function composeRoomView(/** @type {any[]} */ base, /** @type {(number|null)[]} */ full, /** @type {any} */ state, /** @type {any[]} */ personal = [], /** @type {any} */ pending = null) {
+  const places = pending?.places ?? new Map(), storedOut = pending?.stored ?? new Map();
+  const list = [];
+  /** @type {Map<any, any>} */
+  const seen = new Map();
   base.forEach((it, i) => {
     if (state.taken.has(i)) return;
-    const n = state.counts.get(i);
-    if (n !== undefined && Number.isInteger(full[i])) it.stackCount = Math.min(n, /** @type {number} */ (full[i]));
-    out.push(it);
+    const counted = Number.isInteger(full[i]);
+    const left = (state.counts.get(i) ?? (counted ? /** @type {number} */ (full[i]) : 1)) - (places.get(i) ?? 0);
+    if (left <= 0) return;
+    if (counted) it.stackCount = Math.min(left, /** @type {number} */ (full[i]));
+    list.push(it);
+    seen.set(it, { p: i, n: pieceCount(it) });
   });
-  out.push(...state.stored, ...personal);
-  return out;
-}
-
-/**
- * WHAT A LIST SAYS against its base: the state brought up to the live list (a base piece no longer in it is gone, a
- * stack fewer is drawn down - the union and the minimum, never back), and the stored pieces as the list holds them
- * (a piece not of the base and not the player's own). Answers the word's takes `{ x, c, s }`.
- */
-export function roomTakesOf(/** @type {any} */ state, /** @type {any[]} */ base, /** @type {(number|null)[]} */ full, /** @type {any[]} */ list, /** @type {(it: any) => boolean} */ isPersonal) {
-  const at = new Map(base.map((it, i) => [it, i]));
-  const present = new Set();
-  const stored = [];
-  for (const it of list ?? []) {
-    const i = at.get(it);
-    if (i !== undefined) {
-      present.add(i);
-      const n = it.stackCount;
-      if (Number.isInteger(full[i]) && Number.isInteger(n) && n < /** @type {number} */ (full[i])) { const was = state.counts.get(i); if (was === undefined || n < was) state.counts.set(i, n); }
-      continue;
-    }
-    if (isPersonal(it)) continue;
-    stored.push(it);
-  }
-  base.forEach((_, i) => { if (!present.has(i)) state.taken.add(i); });
-  state.stored = stored;
-  return {
-    x: [...state.taken].sort((a, b) => a - b),
-    c: [...state.counts].filter(([i]) => !state.taken.has(i)).sort((a, b) => a[0] - b[0]),
-    s: stored,
+  const shown = (/** @type {any} */ it, /** @type {string} */ id) => {
+    const left = pieceCount(it) - (storedOut.get(id) ?? 0);
+    if (left <= 0) return;
+    const piece = left === pieceCount(it) ? it : { ...it, stackCount: left };
+    list.push(piece);
+    seen.set(piece, { sp: id, n: left });
   };
+  state.stored.forEach((/** @type {any} */ it, /** @type {number} */ k) => shown(it, state.ids[k]));
+  for (const p of pending?.puts ?? []) shown(p.it, p.id);
+  list.push(...personal);
+  return { list, seen };
 }
 
-/** The room's word for a container: its terms, its base's signature and its takes (`x`, `c`, `s`). */
-export const roomWord = (/** @type {string} */ k, /** @type {any} */ state, /** @type {string} */ h, /** @type {{x: number[], c: [number, number][], s: any[]}} */ takes, /** @type {number|null} */ t = null) => ({
+/** The room's word for a container as its HOST says it: its terms, its base's signature, its takes (`x`, `c`), its
+ *  stored pieces and their ids, and its latest verdicts. */
+export const roomWord = (/** @type {string} */ k, /** @type {any} */ state, /** @type {string} */ h, /** @type {{ s: any[], si: string[] }} */ stored, /** @type {number|null} */ t = null, /** @type {[string, number][]} */ y = []) => {
+  const x = [...state.taken].sort((a, b) => a - b);
+  const c = [...state.counts].filter(([i]) => !state.taken.has(i)).sort((a, b) => a[0] - b[0]);
+  return {
+    k, g: state.terms.g, lv: state.terms.lv, ...(state.terms.n > 1 ? { n: state.terms.n } : {}), tm: state.terms.tm, h,
+    ...(x.length ? { x } : {}), ...(c.length ? { c } : {}), s: stored.s.map((it) => ({ ...it })), si: [...stored.si],
+    ...(y.length ? { y } : {}), ...(Number.isFinite(t) ? { t } : {}),
+  };
+};
+/** A claimer's word: the container's terms and base, and its claims and puts in flight - never the room's state. */
+export const claimWord = (/** @type {string} */ k, /** @type {any} */ state, /** @type {string} */ h, /** @type {any[]} */ q, /** @type {any[]} */ a, /** @type {number|null} */ t = null) => ({
   k, g: state.terms.g, lv: state.terms.lv, ...(state.terms.n > 1 ? { n: state.terms.n } : {}), tm: state.terms.tm, h,
-  ...(takes.x.length ? { x: takes.x } : {}), ...(takes.c.length ? { c: takes.c } : {}), s: takes.s.map((it) => ({ ...it })),
+  ...(q.length ? { q: q.map((cl) => ({ ...cl })) } : {}), ...(a.length ? { a: a.map((p) => ({ id: p.id, it: { ...p.it }, tm: p.tm })) } : {}),
   ...(Number.isFinite(t) ? { t } : {}),
 });
+/** The latest verdicts a host's word carries. */
+export const recentAnswers = (/** @type {any} */ state) => [...state.answers].slice(-ROOM_ANSWERS_KEPT);
 
 /** Whether a container holds nothing of the room's: every base piece gone and nothing stored (WORLD8's "emptied"). */
 export const roomEmptied = (/** @type {any} */ state, /** @type {number} */ baseLength) => state.stored.length === 0 && state.taken.size >= baseLength;
