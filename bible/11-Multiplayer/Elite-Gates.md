@@ -4571,8 +4571,8 @@ none).
 **Pins.** `test/egeco_pay.test.js` (3), `test/egeco_spoils.test.js` (5), `test/egeco_hosts.test.js` (2);
 `tools/mutants/egeco.json` (25 today, with the feats', every one dead - none of them on the pay law itself: `net/egPay.js`'s
 mutants and `arenaWeekOf`'s are AUDIT EG V's, in `tools/mutants/egaudit5_d.json`). Records of other arcs re-aimed by content:
-`surv2`, `audit625`, `sd9e`, `cards9`. `RELAY_VERSION` `world197` re-hashed (unshipped) with `net/egPay.js` in its
-graph.
+`surv2`, `audit625`, `sd9e`, `cards9`. `RELAY_VERSION` `world197` re-hashed (unshipped). `net/egPay.js` is in no relay's
+graph: the account service (`server-account/src/eg.js`, `egEconomy.js`) and the client import it.
 
 ### EG-H1 - 2026-10-12 - INTEGRITY: WHAT THE RELAY JUDGES
 

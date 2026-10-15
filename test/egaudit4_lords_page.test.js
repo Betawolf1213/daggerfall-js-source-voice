@@ -21,7 +21,7 @@ function section(head) {
   return head + (next >= 0 ? rest.slice(0, next) : rest);
 }
 
-test('AUDIT EG IV lane1 #29 and #28 SECTIONS 12 AND 13.4 NAME WHAT WAS BUILT: the Valkynaz\'s one brain is net/egLords.js (never the egLord.js no tree had); a Ward-Bearer holds a Rampart\'s portcullis (no lord is warded by one), and the Conquest\'s banner is an errand\'s object (mutants: the old names)', () => {
+test('AUDIT EG IV lane1 #29 and #28 SECTIONS 12 AND 13.4 NAME WHAT WAS BUILT: the Valkynaz\'s one brain is net/egLords.js (never net/egLord.js, the brain EG-PLAY built and layer one retired); a Ward-Bearer holds a Rampart\'s portcullis (no lord is warded by one), and the Conquest\'s banner is an errand\'s object (mutants: the old names)', () => {
   const s134 = section('### 13.4 The Valkynaz'), s12 = section('## 12. The legion - relentless adds');
   assert.ok(s134.includes('ONE brain (`net/egLords.js`)') && !s134.includes('net/egLord.js'), '13.4: net/egLords.js');
   assert.ok(!s12.includes('a ward on what it guards (a lord, a portcullis)') && s12.includes('stands and pulses before a Rampart\'s portcullis'), '12: the Ward-Bearer\'s one job');
