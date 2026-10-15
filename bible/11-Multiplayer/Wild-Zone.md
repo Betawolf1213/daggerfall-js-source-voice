@@ -419,7 +419,7 @@ wdun*); the hub reads, calls it and writes.
   refuses while anyone stands in it, `server/src/index.js:"async _wdunResetInternal"`; AUDIT SCALE II R3-9: every layer of it
   at once, SCALE5d - anyone standing in any layer holds the wipe) - and its EPOCH moves on: every
   client keys the hall's chests by it (`searchLocationKey`, `dungeonContext.js:"function searchLocationKey"`), so a
-  reset fills them again for everyone. The halls keep WORLD8's hour for the rest (DUNGEON-RESPAWN, section 21).
+  reset fills them again for everyone. The halls keep WORLD8's respawn for the rest - half an hour since RESPAWN-30 (DUNGEON-RESPAWN, section 21).
 - THE CROWS: a death in a hall (`wdunDie`, `wildLaw.js:"export function wdunDie"`) sets crows over it until the last
   remains in it go (`wdunGone`, `wildLaw.js:"export function wdunGone"`, told by the place room over
   `WDUN_INTERNAL_GONE`), said to everyone online (`cr`). On both maps three small black birds circle each such hall
@@ -617,7 +617,8 @@ each is a line here, findable by its tag.
   someone was in and left) for everything and the same for elite dungeons 40 mins respawn timer for everything"):
   WORLD8's respawn (`06-Systems/Online-Arc.md`: a dead foe and an emptied container each back on their OWN clock from
   when it fell or was emptied) at the dungeon's own pace - a normal dungeon twenty minutes, an elite one forty; the
-  zone's halls and a Super dungeon keep the hour (`dungeonRespawnMs`,
+  zone's halls and a Super dungeon keep WORLD8's `RESPAWN_MS` - half an hour since RESPAWN-30 (2026-10-14, Mac: "Reduce
+  dungeon cooldown from 1 hour to 30 minutes" - "I meant the chest and foe respawn"; it was the hour) (`dungeonRespawnMs`,
   `dungeonRespawn.js:"export const dungeonRespawnMs"`; `dungeonContext.js:"const _respawnMs"`). Online alone, as
   WORLD8 is.
 - HEAL-CURSE (the owner: "Add a button to the temple services under heal disease named heal curse it removes being a

@@ -179,8 +179,8 @@
   {
     "name": "DC-roll-kind-lost",
     "file": "src/net/chat.js",
-    "old": "    const kind = rolled ? 'roll' : sys ? '' : me === true ? 'me' : isOocText(text) ? 'ooc' : '';",
-    "new": "    const kind = sys ? '' : me === true ? 'me' : isOocText(text) ? 'ooc' : '';",
+    "old": "    const kind = rolled ? 'roll' : sys ? '' : me === true ? 'me' : isOocText(text) ? 'ooc' : isRpText(text) ? 'rp' : '';",
+    "new": "    const kind = sys ? '' : me === true ? 'me' : isOocText(text) ? 'ooc' : isRpText(text) ? 'rp' : '';",
     "tests": ["test/dice1.test.js"]
   },
   {
