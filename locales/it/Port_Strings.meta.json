@@ -10319,6 +10319,11 @@
   "tr": "436493ef1a11",
   "by": "claude-in-session"
  },
+ "poi.diff.markerShownBare": {
+  "en": "9af3e4acd7b5",
+  "tr": "3048776d32e9",
+  "by": "claude-in-session"
+ },
  "poi.diff.moved": {
   "en": "d0606418e284",
   "tr": "09eb8b008225",
@@ -10362,6 +10367,11 @@
  "poi.diff.tags": {
   "en": "10e6a34485c5",
   "tr": "6d7d34140508",
+  "by": "claude-in-session"
+ },
+ "poi.diff.tagsNone": {
+  "en": "fb48cbc8e721",
+  "tr": "90e0c751a072",
   "by": "claude-in-session"
  },
  "poi.diff.turned": {
@@ -10579,6 +10589,11 @@
   "tr": "a9234a54908b",
   "by": "claude-in-session"
  },
+ "poi.editor.hereNoGround": {
+  "en": "a79578f12555",
+  "tr": "c86f64016bd6",
+  "by": "claude-in-session"
+ },
  "poi.editor.import": {
   "en": "0021f0825cb2",
   "tr": "73356afce79d",
@@ -10594,19 +10609,29 @@
   "tr": "6c0c2b87772e",
   "by": "claude-in-session"
  },
+ "poi.editor.importLights": {
+  "en": "dc8d0171872a",
+  "tr": "a5627cbc534a",
+  "by": "claude-in-session"
+ },
  "poi.editor.importNoModel": {
   "en": "41e136412d8d",
   "tr": "50c52f0e30d9",
   "by": "claude-in-session"
  },
  "poi.editor.importPart": {
-  "en": "05b00d8cd5a2",
-  "tr": "e773dde6867b",
+  "en": "5a5fd597d831",
+  "tr": "23408d7111fc",
   "by": "claude-in-session"
  },
  "poi.editor.importParts": {
   "en": "e374280917e6",
   "tr": "1911afc1abb1",
+  "by": "claude-in-session"
+ },
+ "poi.editor.importStopped": {
+  "en": "0a27f1af355b",
+  "tr": "1920201eb88d",
   "by": "claude-in-session"
  },
  "poi.editor.importTitle": {
@@ -10880,8 +10905,8 @@
   "by": "claude-in-session"
  },
  "poi.editor.speed": {
-  "en": "283843560a08",
-  "tr": "71c8ad941db1",
+  "en": "b0a9f929849d",
+  "tr": "a827fb26d41a",
   "by": "claude-in-session"
  },
  "poi.editor.speedHint": {
@@ -11014,6 +11039,11 @@
   "tr": "edd7d8b48471",
   "by": "claude-in-session"
  },
+ "poi.editor.stillChecking": {
+  "en": "0b98ff3047fb",
+  "tr": "be3188431240",
+  "by": "claude-in-session"
+ },
  "poi.editor.strength": {
   "en": "24d3e4fdd9a8",
   "tr": "60b223b3d51e",
@@ -11089,6 +11119,11 @@
   "tr": "efd99d00a465",
   "by": "claude-in-session"
  },
+ "poi.editor.uvGone": {
+  "en": "0a6fe61b594e",
+  "tr": "f6ecb26c215b",
+  "by": "claude-in-session"
+ },
  "poi.editor.uvNoMesh": {
   "en": "576011606583",
   "tr": "0c943febfbd1",
@@ -11117,6 +11152,11 @@
  "poi.editor.withdraw": {
   "en": "f6e1fe6cf5a3",
   "tr": "99e551263b36",
+  "by": "claude-in-session"
+ },
+ "poi.editor.withdrawFirst": {
+  "en": "d70af3f8fdbd",
+  "tr": "b090d74a4edb",
   "by": "claude-in-session"
  },
  "poi.editor.withdrawn": {
@@ -11204,14 +11244,24 @@
   "tr": "9dc9ebd8aeb1",
   "by": "claude-in-session"
  },
+ "poi.gltf.malformed": {
+  "en": "3c054ec4bb3f",
+  "tr": "7ac4c1c04fc2",
+  "by": "claude-in-session"
+ },
  "poi.gltf.missing": {
-  "en": "574bf956f142",
-  "tr": "0bed4f40a6f3",
+  "en": "3749b65b8a44",
+  "tr": "774033442ab2",
   "by": "claude-in-session"
  },
  "poi.gltf.nodeCycle": {
   "en": "59e099655572",
   "tr": "d9c189644e70",
+  "by": "claude-in-session"
+ },
+ "poi.gltf.nodeParents": {
+  "en": "57bb7eb6ae33",
+  "tr": "76d8e45c16ad",
   "by": "claude-in-session"
  },
  "poi.gltf.notGltf": {
@@ -11225,8 +11275,18 @@
   "by": "claude-in-session"
  },
  "poi.gltf.pastEnd": {
-  "en": "842fef76491e",
-  "tr": "bf75069d0608",
+  "en": "21d4de074ebf",
+  "tr": "2898e5918d33",
+  "by": "claude-in-session"
+ },
+ "poi.gltf.tooLarge": {
+  "en": "0f97a0e0362b",
+  "tr": "1829e6da762c",
+  "by": "claude-in-session"
+ },
+ "poi.gltf.tooManyParts": {
+  "en": "d6c2532550d7",
+  "tr": "0f0e9a85b4f2",
   "by": "claude-in-session"
  },
  "poi.gltfWarn.animation": {
@@ -11239,14 +11299,29 @@
   "tr": "6b6dbef93e29",
   "by": "claude-in-session"
  },
+ "poi.gltfWarn.emissionTransform": {
+  "en": "2a78373cedcb",
+  "tr": "3ad57ca071a7",
+  "by": "claude-in-session"
+ },
  "poi.gltfWarn.emissionUvSet": {
   "en": "434788ba99c2",
   "tr": "b3c1d7606a51",
   "by": "claude-in-session"
  },
+ "poi.gltfWarn.extensionIgnored": {
+  "en": "c7fb6a0234a4",
+  "tr": "8d4d5350b135",
+  "by": "claude-in-session"
+ },
  "poi.gltfWarn.imageFormat": {
   "en": "0dd68ec32690",
   "tr": "89970bae3c06",
+  "by": "claude-in-session"
+ },
+ "poi.gltfWarn.instancing": {
+  "en": "a7c27ac3e438",
+  "tr": "69e319ee8eae",
   "by": "claude-in-session"
  },
  "poi.gltfWarn.maps": {
@@ -11444,9 +11519,19 @@
   "tr": "d070e96588a3",
   "by": "claude-in-session"
  },
+ "poi.mesh.indexRange": {
+  "en": "cc37413bef6c",
+  "tr": "287bc3fb1e6a",
+  "by": "claude-in-session"
+ },
  "poi.mesh.malformed": {
   "en": "046b7a7e42bb",
   "tr": "7d34991f36a7",
+  "by": "claude-in-session"
+ },
+ "poi.mesh.notFinite": {
+  "en": "4328cd4c3c54",
+  "tr": "cf13d27715da",
   "by": "claude-in-session"
  },
  "poi.mesh.tooLarge": {
@@ -11484,6 +11569,11 @@
   "tr": "b578b076dd34",
   "by": "claude-in-session"
  },
+ "poi.pack.atAsset": {
+  "en": "5c4ae65a8882",
+  "tr": "b96e07411e8f",
+  "by": "claude-in-session"
+ },
  "poi.pack.badEntry": {
   "en": "5cfa9d3617c0",
   "tr": "e3146b8d77ff",
@@ -11497,6 +11587,11 @@
  "poi.pack.entryNamed": {
   "en": "af490cf2402e",
   "tr": "059137d8a7ed",
+  "by": "claude-in-session"
+ },
+ "poi.pack.entryTwice": {
+  "en": "5db133dc5d2e",
+  "tr": "a680e27a76c0",
   "by": "claude-in-session"
  },
  "poi.pack.export": {
@@ -11539,9 +11634,24 @@
   "tr": "8035e7ee5895",
   "by": "claude-in-session"
  },
+ "poi.pack.poiTwice": {
+  "en": "3537140e1f07",
+  "tr": "3b57b1c7ec12",
+  "by": "claude-in-session"
+ },
+ "poi.pack.refusedAt": {
+  "en": "86b4e620a61d",
+  "tr": "86b4e620a61d",
+  "by": "claude-in-session"
+ },
  "poi.pack.saved": {
   "en": "c977b77a6923",
   "tr": "e9ff6fabceff",
+  "by": "claude-in-session"
+ },
+ "poi.pack.stopped": {
+  "en": "bc68f3b67068",
+  "tr": "69b4b00eac75",
   "by": "claude-in-session"
  },
  "poi.pack.title": {
@@ -11655,8 +11765,8 @@
   "by": "claude-in-session"
  },
  "poi.problem.materialCount": {
-  "en": "eaa1332d30cb",
-  "tr": "8b30e4571e94",
+  "en": "7c0dace50c07",
+  "tr": "7d1d446a18b6",
   "by": "claude-in-session"
  },
  "poi.problem.materials": {
@@ -11854,6 +11964,11 @@
   "tr": "527067efe30d",
   "by": "claude-in-session"
  },
+ "poi.review.kindRollback": {
+  "en": "70b1a1386222",
+  "tr": "5581c41c2691",
+  "by": "claude-in-session"
+ },
  "poi.review.law": {
   "en": "410ea1ad42e2",
   "tr": "c810e1068401",
@@ -11872,6 +11987,11 @@
  "poi.review.look": {
   "en": "a538246e5eec",
   "tr": "59b2cc298150",
+  "by": "claude-in-session"
+ },
+ "poi.review.more": {
+  "en": "6d4892b06a0f",
+  "tr": "4b52fedc720e",
   "by": "claude-in-session"
  },
  "poi.review.needWord": {
@@ -11979,6 +12099,11 @@
   "tr": "208882d7adba",
   "by": "claude-in-session"
  },
+ "poi.review.withdrawn": {
+  "en": "9cc30a017036",
+  "tr": "407050e8d00e",
+  "by": "claude-in-session"
+ },
  "poi.review.word": {
   "en": "dab77bd11850",
   "tr": "dab77bd11850",
@@ -12069,6 +12194,11 @@
   "tr": "2888111a8d11",
   "by": "claude-in-session"
  },
+ "poi.uv.packNoRoom": {
+  "en": "e959f7ebefa0",
+  "tr": "9e461c1c88dc",
+  "by": "claude-in-session"
+ },
  "poi.uv.packTurn": {
   "en": "d08561e5189b",
   "tr": "3e9e3259d238",
@@ -12142,6 +12272,11 @@
  "poi.uv.unwrapped": {
   "en": "6b2db98e6f39",
   "tr": "ffe7c8f700bc",
+  "by": "claude-in-session"
+ },
+ "poi.uv.unwrapping": {
+  "en": "ffaeef46e3ed",
+  "tr": "feecdbcc625a",
   "by": "claude-in-session"
  },
  "poi.uv.vertex": {
