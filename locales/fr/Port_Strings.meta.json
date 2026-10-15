@@ -2279,9 +2279,24 @@
   "tr": "8e5d7389c3aa",
   "by": "claude-in-session"
  },
+ "account.refusal.poiChanged": {
+  "en": "f1e725c57b37",
+  "tr": "1c41c031c2be",
+  "by": "claude-in-session"
+ },
  "account.refusal.poiDoc": {
   "en": "857ea7b91059",
   "tr": "ebe502c38ff6",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiDraftsFull": {
+  "en": "c2084494ffe9",
+  "tr": "d613974e2d23",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiGone": {
+  "en": "a7814a8c0afc",
+  "tr": "78093e5d8ff6",
   "by": "claude-in-session"
  },
  "account.refusal.poiKind": {
@@ -2327,6 +2342,16 @@
  "account.refusal.poiShaMismatch": {
   "en": "23a2f96d8088",
   "tr": "13c2f7a53cac",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiShelfFull": {
+  "en": "d6fe360c6497",
+  "tr": "21209e5b8c1e",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiShelfSpent": {
+  "en": "26efa699f672",
+  "tr": "6979f268a12d",
   "by": "claude-in-session"
  },
  "account.refusal.poiState": {
@@ -11164,6 +11189,11 @@
   "tr": "f8b315bfbff9",
   "by": "claude-in-session"
  },
+ "poi.editor.withdrawnBeside": {
+  "en": "45c4ff3f561c",
+  "tr": "5702b99251ee",
+  "by": "claude-in-session"
+ },
  "poi.editor.wrap": {
   "en": "659eba121958",
   "tr": "e2192b531d66",
@@ -11687,6 +11717,31 @@
  "poi.problem.bool": {
   "en": "944acedaab73",
   "tr": "2a6d49f90ec1",
+  "by": "claude-in-session"
+ },
+ "poi.problem.budgetBytes": {
+  "en": "bc62f934a350",
+  "tr": "025606deec82",
+  "by": "claude-in-session"
+ },
+ "poi.problem.budgetPixels": {
+  "en": "ec218d2aa134",
+  "tr": "f3d7665dd00f",
+  "by": "claude-in-session"
+ },
+ "poi.problem.budgetReach": {
+  "en": "0bb966ad854f",
+  "tr": "c2f6ef1fcdde",
+  "by": "claude-in-session"
+ },
+ "poi.problem.budgetTriangles": {
+  "en": "5f2ae9d6f817",
+  "tr": "ffbd71deaf46",
+  "by": "claude-in-session"
+ },
+ "poi.problem.budgetVertices": {
+  "en": "121dde6330d4",
+  "tr": "b905ac35f9d3",
   "by": "claude-in-session"
  },
  "poi.problem.collide": {
