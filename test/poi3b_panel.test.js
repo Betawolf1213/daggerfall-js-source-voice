@@ -271,7 +271,9 @@ test('POI-3b THE EDITOR IN THE WORLD, BY SOURCE: `?editor` alone, refused online
   assert.match(w, /const frameMotor = \(\) => \{[^\n]*\n\s*if \(poiEditor\?\.active\(\)\) poiEditor\.cameraFrame\(dt, cam\);[^\n]*\n\s*else if \(walkMode\) \{/);
   assert.match(w, /if \(poiEditor\?\.active\(\)\) mwv0\.eye = \[cam\.pos\[0\], cam\.pos\[1\], cam\.pos\[2\]\];/);
   assert.match(w, /try \{ poiEditor\?\.frame\(\); poiHost\?\.frame\(\); \}/);
-  const tr = w.indexOf('poiHost?.drawTranslucent(renderer, cam.pos, yardCull);'), lines = w.indexOf('if (poiEditor?.drawLines(proj, view)) renderer.markForeignPass();');
+  // PIN MOVED (AUDIT POI R4, R14): the translucent pass sorts by the view's own eye and stands after the grass and the haze;
+  // the editor's lines moved with it, after it still
+  const tr = w.indexOf('poiHost?.drawTranslucent(renderer, mwv.eye, yardCull);'), lines = w.indexOf('if (poiEditor?.drawLines(proj, view)) renderer.markForeignPass();');
   assert.ok(tr > 0 && lines > tr && lines - tr < 400, 'the lines after the translucent pass, the pass marked');
   assert.match(w, /if \(!poiEditor\?\.active\(\)\) \{ if \(walkMode && playerSpawned && !tvf\) weaponRig\.draw\(\{ paralyzed \}\); \}/);
   assert.match(w, /registerPlayerDamageMod\('poi-editor', \(_e, dmg\) => \(editor\.active\(\) \? 0 : dmg\)\);/);

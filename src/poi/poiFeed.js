@@ -17,6 +17,12 @@
 //     server that hands back anything else hands back nothing). Each asked once at a time.
 //   - THE EDITOR'S DRAFTS (`setOverlay`): the POI editor stands a builder's open drafts over the live set on that
 //     builder's screen alone - an overlay by POI id, never sent anywhere (POI-3).
+//   - ONE SERVICE'S FEED AT A TIME (AUDIT POI R15): the version, the tag and the kept copy are the service's they came
+//     from (`base()`, which a stored override can move) - another service is asked afresh, and a kept copy is read back
+//     under its own service alone.
+//   - NEVER BACKWARDS (S11, the client's half): an answer older than one this game has already taken from the service
+//     is a stale isolate's (server-account/src/poi.js keeps a feed fifteen seconds) and is not taken - it would take a
+//     fresh approval back down. A kept copy sets no such floor: the service's answer beats last session's copy.
 // ═══════════════════════════════════════════════════════════════════
 
 import { poiDocProblems, poiPixelId, POI_SHA_RE } from './poiLaw.js';
@@ -32,6 +38,8 @@ export const poiAssetCacheKey = (/** @type {string} */ sha) => `poi:a:${sha}`;
 export const POI_ASSET_MEMORY_BYTES = 64 * 1024 * 1024;
 
 const hex = (/** @type {ArrayBuffer} */ buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+/** A pixel no POI stands on: one shared answer, never a fresh array a pixel a frame (AUDIT POI R12). */
+const NONE = Object.freeze([]);
 
 /**
  * @param {{
@@ -47,7 +55,11 @@ export function createPoiFeed({ base, fetch = (u, i) => globalThis.fetch(u, i), 
   /** @type {Map<string, any>} */
   let overlay = new Map();
   let version = -1, etag = null;
+  /** AUDIT POI R15: the service the version and tag held are from; S11: the newest version it has answered this game */
+  let heldBase = null, floor = -1;
   let nextAsk = 0, wait = POI_FEED_RETRY_MS, asking = null, gen = 0;
+  /** AUDIT POI R13: a refresh asked while an ask was out - asked again the moment it answers */
+  let again = false;
   /** @type {Map<number, any[]>} */
   let byPixel = new Map();
   const listeners = new Set();
@@ -95,6 +107,11 @@ export function createPoiFeed({ base, fetch = (u, i) => globalThis.fetch(u, i), 
       const bytes = await cache.get(POI_FEED_CACHE_KEY);
       if (!bytes || version >= 0) return false;
       const kept = JSON.parse(new TextDecoder().decode(bytes));
+      // AUDIT POI R15: the copy names the service it was read from - another's (a stored override moved, or a copy kept
+      // before it said) is not this one's set, and its tag must never be sent here
+      const b = base();
+      if (!b || kept.base !== b) return false;
+      heldBase = b;
       return take(kept.body, kept.etag);
     } catch (e) { if (log) console.warn('[poi] the kept feed would not read', e?.message ?? e); return false; }
   }
@@ -103,16 +120,34 @@ export function createPoiFeed({ base, fetch = (u, i) => globalThis.fetch(u, i), 
   async function ask() {
     const b = base();
     if (!b) return false;
+    // AUDIT POI R15: another service than the one the version and tag came from - its own feed asked whole
+    if (b !== heldBase) { heldBase = b; etag = null; version = -1; floor = -1; }
     const res = await fetch(`${b}/v1/poi/live`, { headers: etag ? { 'if-none-match': etag } : {} });
     if (res.status === 304) return false;
     if (!res.ok) throw new Error(`poi feed ${res.status}`);
     const text = await res.text();
     const body = JSON.parse(text);
+    // S11 (AUDIT POI, the client's half): older than an answer already taken - a stale isolate's; what is held stands
+    if (Number.isInteger(body?.v) && body.v < floor) { if (log) console.warn(`[poi] the feed answered v${body.v} under v${floor} - a stale answer, not taken`); return false; }
     const tag = res.headers?.get?.('etag') ?? null;
     const changed = body.v !== version;
     if (!take(body, tag)) throw new Error('poi feed: not a feed');
-    if (cache) cache.put(POI_FEED_CACHE_KEY, new TextEncoder().encode(JSON.stringify({ etag: tag, body }))).catch(() => {});
+    floor = body.v;
+    if (cache) cache.put(POI_FEED_CACHE_KEY, new TextEncoder().encode(JSON.stringify({ base: b, etag: tag, body }))).catch(() => {});
     return changed;
+  }
+
+  /** Once a frame (cheap): asks the service when its time has come, never twice at once; a failure backs off. Answers
+   *  the ask's promise when one was made (a test awaits it), else null. @param {number} [t] */
+  function tick(t = now()) {
+    if (asking || t < nextAsk) return null;
+    again = false;
+    asking = ask().then(() => { wait = POI_FEED_RETRY_MS; nextAsk = again ? 0 : now() + POI_FEED_POLL_MS; }, (e) => {
+      if (log) console.warn('[poi] the feed would not answer', e?.message ?? e);
+      nextAsk = again ? 0 : now() + wait;
+      wait = Math.min(wait * 2, POI_FEED_POLL_MS);
+    }).finally(() => { asking = null; });
+    return asking;
   }
 
   function remember(sha, bytes) {
@@ -129,24 +164,19 @@ export function createPoiFeed({ base, fetch = (u, i) => globalThis.fetch(u, i), 
   return {
     /** Start: the kept feed first (if any), then the service. */
     async start() { await readKept(); nextAsk = 0; },
+    tick,
     /**
-     * Once a frame (cheap): asks the service when its time has come, never twice at once; a failure backs off. Answers
-     * the ask's promise when one was made (a test awaits it), else null.
-     * @param {number} [t]
+     * Ask now, whatever the clock (the editor after a verdict or a put-back). AUDIT POI R13 (CONTRACTS C7): with an ask
+     * already out - which may have left before the approval landed - asked AGAIN the moment it answers, never dropped
+     * (bible/Home.md ASYNC NEVER DROPS: the out ask used to set the next a minute off). Answers the ask that will carry it.
      */
-    tick(t = now()) {
-      if (asking || t < nextAsk) return null;
-      asking = ask().then(() => { wait = POI_FEED_RETRY_MS; nextAsk = now() + POI_FEED_POLL_MS; }, (e) => {
-        if (log) console.warn('[poi] the feed would not answer', e?.message ?? e);
-        nextAsk = now() + wait;
-        wait = Math.min(wait * 2, POI_FEED_POLL_MS);
-      }).finally(() => { asking = null; });
-      return asking;
+    refresh() {
+      if (!asking) { nextAsk = 0; return tick(); }
+      again = true;
+      return asking.then(() => asking ?? tick());
     },
-    /** Ask now, whatever the clock (the editor after an approval). */
-    refresh() { nextAsk = 0; return this.tick(); },
     /** The POIs standing on a map pixel - live, with this screen's drafts over them. */
-    atPixel(/** @type {number} */ px, /** @type {number} */ py) { return byPixel.get(py * 1000 + px) ?? []; },
+    atPixel(/** @type {number} */ px, /** @type {number} */ py) { return byPixel.get(py * 1000 + px) ?? NONE; },
     /** Every standing POI. */
     all() { return [...byPixel.values()].flat(); },
     /** The live set alone, by id. */

@@ -101,8 +101,8 @@
   {
     "name": "POI2-v-unturned",
     "file": "src/poi/poiRuntime.js",
-    "old": "uvs.push(u, 1 - w);",
-    "new": "uvs.push(u, w);",
+    "old": "uvs[at * 2 + 1] = 1 - w;",
+    "new": "uvs[at * 2 + 1] = w;",
     "tests": [
       "test/poi2_runtime.test.js"
     ]
@@ -110,8 +110,8 @@
   {
     "name": "POI2-the-back-faces-unwound",
     "file": "src/poi/poiRuntime.js",
-    "old": "if (back !== mirrored) indices.push",
-    "new": "if (mirrored) indices.push",
+    "old": "if (back !== mirrored) { indices[ni]",
+    "new": "if (mirrored) { indices[ni]",
     "tests": [
       "test/poi2_runtime.test.js"
     ]
@@ -119,8 +119,8 @@
   {
     "name": "POI2-the-mirror-unwound",
     "file": "src/poi/poiRuntime.js",
-    "old": "if (back !== mirrored) indices.push",
-    "new": "if (back) indices.push",
+    "old": "if (back !== mirrored) { indices[ni]",
+    "new": "if (back) { indices[ni]",
     "tests": [
       "test/poi2_runtime.test.js"
     ]
@@ -200,8 +200,8 @@
   {
     "name": "POI2-the-translucent-nearest-first",
     "file": "src/scenes/poiHost.js",
-    "old": "list.sort((a, b) => b.d - a.d);",
-    "new": "list.sort((a, b) => a.d - b.d);",
+    "old": "while (j >= 0 && _far[j].d < e.d)",
+    "new": "while (j >= 0 && _far[j].d > e.d)",
     "tests": [
       "test/poi2_runtime.test.js"
     ]
@@ -218,8 +218,8 @@
   {
     "name": "POI2-the-body-walled-in",
     "file": "src/scenes/poiHost.js",
-    "old": "!p.stood && col?.addMesh && !inside(p.box, f)",
-    "new": "!p.stood && col?.addMesh",
+    "old": "(p.carry || !inside(p.localBox, f, t))",
+    "new": "(true)",
     "tests": [
       "test/poi2_runtime.test.js"
     ]
