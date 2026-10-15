@@ -276,8 +276,9 @@ function fakeShelf(items = new Map(), gone = new Set()) {
   const calls = [];
   return {
     items, calls,
-    shelfEntry: async (id) => { calls.push(['ask', id]); return items.has(id) && !gone.has(id) ? { ok: true, data: { id, item: structuredClone(items.get(id)) } } : { ok: false, error: 'not-found' }; },
-    shelve: async (item) => { calls.push(['put', item.id]); if (gone.has(item.id)) return { ok: false, error: 'not-found' }; items.set(item.id, structuredClone(item)); return { ok: true, data: { id: item.id } }; },
+    // PIN MOVED (AUDIT POI U13, lane A): an entry taken off answers 'poi-gone', as the store now does
+    shelfEntry: async (id) => { calls.push(['ask', id]); return gone.has(id) ? { ok: false, error: 'poi-gone' } : items.has(id) ? { ok: true, data: { id, item: structuredClone(items.get(id)) } } : { ok: false, error: 'not-found' }; },
+    shelve: async (item) => { calls.push(['put', item.id]); if (gone.has(item.id)) return { ok: false, error: 'poi-gone' }; items.set(item.id, structuredClone(item)); return { ok: true, data: { id: item.id } }; },
   };
 }
 const packOf = (shelf = [], pois = []) => ({ pois, shelf, assets: new Map() });
@@ -320,6 +321,13 @@ test('AUDIT POI P4 AN ENTRY INTO THE SHELF, NEVER OVER ANOTHER: its id free, put
   assert.deepEqual(s.calls, [['ask', well.id], ['ask', copy0], ['ask', copy1], ['put', copy1]]);
   // taken off the shelf (kept, read and put over no more): passed by, put under a copy's id
   s = fakeShelf(new Map([[well.id, well]]), new Set([well.id]));
+  r = await importPack(packOf([well]), { putAsset: null, history: noHistory, ...s, rand });
+  assert.deepEqual([r.ok, r.copied], [true, 1]);
+  assert.deepEqual(s.calls, [['ask', well.id], ['ask', copy0], ['put', copy0]], 'its id passed by, never put to');
+  // taken off between the ask (not there) and the put: the next id
+  s = fakeShelf();
+  const put = s.shelve;
+  s.shelve = async (item) => (item.id === well.id ? (s.calls.push(['put', item.id]), { ok: false, error: 'poi-gone' }) : put(item));
   r = await importPack(packOf([well]), { putAsset: null, history: noHistory, ...s, rand });
   assert.deepEqual([r.ok, r.copied], [true, 1]);
   assert.deepEqual(s.calls, [['ask', well.id], ['put', well.id], ['ask', copy0], ['put', copy0]]);

@@ -31,6 +31,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { orderByDissection, cholesky, solveCholesky, upperCsc } from './sparseCholesky.js';
+import { wrapAngle } from '../world/mat4.js';
 
 const EPS_UV = 1e-6;
 
@@ -354,8 +355,8 @@ function anglesRound(ang, rho, onAxis) {
   let sum = 0, off = 0;
   for (let k = 0; k < 3; k++) {
     if (!(rho[k] > onAxis)) continue;
-    while (ang[k] - ang[ref] > Math.PI) ang[k] -= 2 * Math.PI;
-    while (ang[k] - ang[ref] < -Math.PI) ang[k] += 2 * Math.PI;
+    // within a half turn of the first, in one step (ONCRASH1 C2, found by AUDIT POI: the port's one wrap, never a loop)
+    ang[k] = ang[ref] + wrapAngle(ang[k] - ang[ref]);
     sum += ang[k]; off++;
   }
   for (let k = 0; k < 3; k++) if (!(rho[k] > onAxis)) ang[k] = sum / off;

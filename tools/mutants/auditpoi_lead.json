@@ -196,5 +196,195 @@
     "tests": [
       "test/auditpoi_lead.test.js"
     ]
+  },
+  {
+    "name": "AUDITPOI-L9-a-models-facts-its-submeshes-alone",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "{ kind: 'mesh', ...poiMeshFacts(m.mesh), bytes: bytes.byteLength }",
+    "new": "{ kind: 'mesh', submeshes: m.mesh.submeshes.length }",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L9-a-pictures-bytes-unread",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "{ kind: 'texture', w: im.w, h: im.h, bytes: bytes.byteLength }",
+    "new": "{ kind: 'texture', w: im.w, h: im.h }",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L9-a-picture-puts-bytes-untold",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "{ kind: 'texture', ...r.data.meta, bytes: bytes.byteLength }",
+    "new": "{ kind: 'texture', ...r.data.meta }",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L9-a-uv-puts-bytes-untold",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "{ kind: 'mesh', ...r.data.meta, bytes: out.byteLength }",
+    "new": "{ kind: 'mesh', ...r.data.meta }",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L9-a-packs-bytes-untold",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "facts.put(sha, { ...a, bytes: bytes.byteLength });",
+    "new": "facts.put(sha, { ...a, bytes });",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L9-the-imports-model-facts-without-bytes",
+    "file": "src/poi/poiImport.js",
+    "old": "{ kind: 'mesh', ...r.data.meta, bytes: p.bytes.byteLength }",
+    "new": "{ kind: 'mesh', ...r.data.meta }",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L9-the-imports-picture-facts-without-bytes",
+    "file": "src/poi/poiImport.js",
+    "old": "{ kind: 'texture', ...r.data.meta, bytes: im.bytes.byteLength }",
+    "new": "{ kind: 'texture', ...r.data.meta }",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L9-a-packs-model-without-its-facts",
+    "file": "src/poi/poiPack.js",
+    "old": "{ kind: 'mesh', bytes, ...poiMeshFacts(d.mesh) }",
+    "new": "{ kind: 'mesh', bytes, submeshes: d.mesh.submeshes.length }",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L10-read-as-taken-back-to-its-own",
+    "file": "src/ui/poiEditorPanel.js",
+    "old": "    if (r.data?.state === 'withdrawn') {",
+    "new": "    if (r.data?.state === 'never') {",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L10-the-unheld-draft-read-as-held",
+    "file": "src/poi/poiEdit.js",
+    "old": "e.saved = unheld ? null : text(doc ?? e.doc);",
+    "new": "e.saved = text(doc ?? e.doc);",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L11-the-old-control-range-alone",
+    "file": "src/poi/poiEdit.js",
+    "old": "const NAME_UNSAID_G = /[\\p{Cc}\\p{Cs}\\u{2028}\\u{2029}\\u{202a}-\\u{202e}\\u{2066}-\\u{2069}]/gu;",
+    "new": "const NAME_UNSAID_G = /[\\u0000-\\u001f\\u007f]/g;",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L11-the-cut-through-a-pair",
+    "file": "src/poi/poiEdit.js",
+    "old": ".slice(0, max).replace(/[\\uD800-\\uDBFF]$/, '').trim();",
+    "new": ".slice(0, max).trim();",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-U13-a-taken-off-id-asked-to-be-put",
+    "file": "src/poi/poiTransfer.js",
+    "old": "    if (had.error === 'poi-gone') continue;\n",
+    "new": "",
+    "tests": [
+      "test/auditpoi_packs.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-U13-taken-off-since-the-ask-a-refusal",
+    "file": "src/poi/poiTransfer.js",
+    "old": "r.error !== 'poi-not-author' && r.error !== 'poi-gone') return r;",
+    "new": "r.error !== 'poi-not-author') return r;",
+    "tests": [
+      "test/auditpoi_packs.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L12-the-checks-one-step",
+    "file": "src/poi/poiMesh.js",
+    "old": "  const why = yield* poiMeshErrorSteps(mesh);",
+    "new": "  const why = poiMeshError(mesh);",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L12-the-box-one-step",
+    "file": "src/poi/poiMesh.js",
+    "old": "  const [min, max] = yield* meshBoxSteps(positions);",
+    "new": "  const [min, max] = meshBoxOf(positions);",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L12-a-box-step-reading-its-first-number",
+    "file": "src/poi/poiMesh.js",
+    "old": "    const to = Math.min(p.length, from + POI_MESH_STEP);\n    for (let i = from; i < to; i += 3) {",
+    "new": "    const to = Math.min(p.length, from + 3);\n    for (let i = from; i < to; i += 3) {",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L12-a-finite-step-reading-its-first-number",
+    "file": "src/poi/poiMesh.js",
+    "old": "      for (let i = from; i < to; i++) if (!Number.isFinite(arr[i])) return 'not-finite';",
+    "new": "      for (let i = from; i < from + 1; i++) if (!Number.isFinite(arr[i])) return 'not-finite';",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L12-an-extent-step-reading-its-first-number",
+    "file": "src/poi/poiMesh.js",
+    "old": "    for (let i = from; i < to; i++) if (Math.abs(P[i]) > X) return 'too-large';",
+    "new": "    for (let i = from; i < from + 1; i++) if (Math.abs(P[i]) > X) return 'too-large';",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-L12-the-host-reading-it-whole",
+    "file": "src/scenes/poiHost.js",
+    "old": "        const d = yield* decodePoiMeshSteps(yield feed.asset(part.mesh, { auth: auth() }));",
+    "new": "        const d = ((g) => { for (;;) { const r = g.next(); if (r.done) return r.value; } })(decodePoiMeshSteps(yield feed.asset(part.mesh, { auth: auth() })));",
+    "tests": [
+      "test/auditpoi_lead.test.js"
+    ]
+  },
+  {
+    "name": "AUDITPOI-ONCRASH1-the-angles-round-the-axis-unwrapped",
+    "file": "src/poi/uvMesh.js",
+    "old": "    ang[k] = ang[ref] + wrapAngle(ang[k] - ang[ref]);",
+    "new": "    ang[k] = ang[k] + 0 * wrapAngle(ang[k] - ang[ref]);",
+    "tests": [
+      "test/auditpoi_uv.test.js",
+      "test/poi5_uv.test.js"
+    ]
   }
 ]

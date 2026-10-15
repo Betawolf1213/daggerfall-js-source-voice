@@ -23,7 +23,7 @@
 
 import { zipStore } from '../systems/saveTransfer.js';
 import { poiDocProblems, poiShelfProblems, poiAssetsOf, poiAssetProblems, POI_LIMITS } from './poiLaw.js';
-import { decodePoiMesh, POI_MESH_LIMITS } from './poiMesh.js';
+import { decodePoiMesh, poiMeshFacts, POI_MESH_LIMITS } from './poiMesh.js';
 import { poiImageMetaOf, POI_IMAGE_LIMITS } from './poiImage.js';
 import { poiSha256 } from './poiService.js';
 
@@ -182,7 +182,7 @@ export async function readPack(entries, subtle = globalThis.crypto.subtle) {
     if (m[2] === 'mesh') {
       const d = decodePoiMesh(bytes);
       if ('error' in d) return { ok: false, code: 'pack-asset-bad', sha: m[1] };
-      assets.set(m[1], { kind: 'mesh', bytes, submeshes: d.mesh.submeshes.length });
+      assets.set(m[1], { kind: 'mesh', bytes, ...poiMeshFacts(d.mesh) });   // AUDIT POI S6: the facts the budgets read
     } else {
       const im = poiImageMetaOf(bytes);
       if ('error' in im) return { ok: false, code: 'pack-asset-bad', sha: m[1] };

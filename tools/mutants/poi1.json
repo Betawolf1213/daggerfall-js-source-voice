@@ -12,8 +12,8 @@
   {
     "name": "POI1-an-index-past-the-list",
     "file": "src/poi/poiMesh.js",
-    "old": "  for (let i = 0; i < I; i++) if (m.indices[i] >= V) return 'index-range';",
-    "new": "  for (let i = 0; i < I; i++) if (m.indices[i] > V) return 'index-range';",
+    "old": "    for (let i = from; i < to; i++) if (ix[i] >= V) return 'index-range';",
+    "new": "    for (let i = from; i < to; i++) if (ix[i] > V) return 'index-range';",
     "tests": [
       "test/poi1_store.test.js"
     ]

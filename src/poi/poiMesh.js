@@ -46,16 +46,33 @@ export const POI_MESH_LIMITS = Object.freeze({
  *   submeshes: PoiSubmesh[], boundsMin?: number[], boundsMax?: number[] }} PoiMesh
  */
 
+/**
+ * AUDIT POI R8 (the lead's): A MESH IS READ IN STEPS. A model at the law's bounds is 262,144 vertices and 3,145,728
+ * indices - reading it through (every number finite, every index a vertex, its box) is tens of milliseconds, too long
+ * for one task of the game's stand work (scenes/poiHost.js, a time slice a frame). The checks are generators that yield
+ * every POI_MESH_STEP numbers (poi/poiRuntime.js POI_STEP_UNITS' way); `poiMeshError`, `meshBoxOf` and `decodePoiMesh`
+ * drive them whole for every caller that wants the answer now - ONE check, the steps' and the whole's alike.
+ */
+export const POI_MESH_STEP = 1 << 17;
+/** A step generator driven to its answer at once. @template T @param {Generator<void, T>} g @returns {T} */
+function whole(g) { for (;;) { const r = g.next(); if (r.done) return r.value; } }
+
 /** The bounds of a position list - `[min, max]`, each `[x, y, z]`; a list of none answers zeros. @param {Float32Array} p */
-export function meshBoxOf(p) {
+export function meshBoxOf(p) { return whole(meshBoxSteps(p)); }
+/** meshBoxOf's steps. @param {Float32Array} p @returns {Generator<void, number[][]>} */
+function* meshBoxSteps(p) {
   if (!p.length) return [[0, 0, 0], [0, 0, 0]];
   const min = [p[0], p[1], p[2]], max = [p[0], p[1], p[2]];
-  for (let i = 3; i < p.length; i += 3) {
-    for (let k = 0; k < 3; k++) {
-      const v = p[i + k];
-      if (v < min[k]) min[k] = v;
-      if (v > max[k]) max[k] = v;
+  for (let from = 3; from < p.length; from += POI_MESH_STEP) {
+    const to = Math.min(p.length, from + POI_MESH_STEP);
+    for (let i = from; i < to; i += 3) {
+      for (let k = 0; k < 3; k++) {
+        const v = p[i + k];
+        if (v < min[k]) min[k] = v;
+        if (v > max[k]) max[k] = v;
+      }
     }
+    if (to < p.length) yield;
   }
   return [min, max];
 }
@@ -65,7 +82,9 @@ export function meshBoxOf(p) {
  * lengths that agree, finite numbers, every index a vertex, every run whole triangles inside the list and in order, the
  * limits above. @param {PoiMesh} m @returns {string | null}
  */
-export function poiMeshError(m) {
+export function poiMeshError(m) { return whole(poiMeshErrorSteps(m)); }
+/** poiMeshError's steps (AUDIT POI R8). @param {PoiMesh} m @returns {Generator<void, string | null>} */
+export function* poiMeshErrorSteps(m) {
   if (!m || !(m.positions instanceof Float32Array) || !(m.normals instanceof Float32Array) || !(m.uvs instanceof Float32Array)) return 'arrays';
   if (!(m.indices instanceof Uint16Array || m.indices instanceof Uint32Array)) return 'arrays';
   const V = m.positions.length / 3;
@@ -83,11 +102,26 @@ export function poiMeshError(m) {
     at += s.count;
   }
   if (at !== I) return 'submesh-run';
+  // the numbers' checks in this order, each the first reason it meets, a yield between steps
   for (const arr of [m.positions, m.normals, m.uvs]) {
-    for (let i = 0; i < arr.length; i++) if (!Number.isFinite(arr[i])) return 'not-finite';
+    for (let from = 0; from < arr.length; from += POI_MESH_STEP) {
+      const to = Math.min(arr.length, from + POI_MESH_STEP);
+      for (let i = from; i < to; i++) if (!Number.isFinite(arr[i])) return 'not-finite';
+      yield;
+    }
   }
-  for (let i = 0; i < m.positions.length; i++) if (Math.abs(m.positions[i]) > POI_MESH_LIMITS.extent) return 'too-large';
-  for (let i = 0; i < I; i++) if (m.indices[i] >= V) return 'index-range';
+  const P = m.positions, X = POI_MESH_LIMITS.extent;
+  for (let from = 0; from < P.length; from += POI_MESH_STEP) {
+    const to = Math.min(P.length, from + POI_MESH_STEP);
+    for (let i = from; i < to; i++) if (Math.abs(P[i]) > X) return 'too-large';
+    yield;
+  }
+  const ix = m.indices;
+  for (let from = 0; from < I; from += POI_MESH_STEP) {
+    const to = Math.min(I, from + POI_MESH_STEP);
+    for (let i = from; i < to; i++) if (ix[i] >= V) return 'index-range';
+    yield;
+  }
   return null;
 }
 
@@ -128,7 +162,10 @@ export function encodePoiMesh(m) {
  * does not account for, or anything poiMeshError refuses. Never throws.
  * @param {ArrayBuffer | Uint8Array} input @returns {{ mesh: PoiMesh & { boundsMin: number[], boundsMax: number[] } } | { error: string }}
  */
-export function decodePoiMesh(input) {
+export function decodePoiMesh(input) { return whole(decodePoiMeshSteps(input)); }
+/** decodePoiMesh's steps (AUDIT POI R8) - the stand work's (scenes/poiHost.js `yield*`).
+ * @param {ArrayBuffer | Uint8Array} input @returns {Generator<void, { mesh: PoiMesh & { boundsMin: number[], boundsMax: number[] } } | { error: string }>} */
+export function* decodePoiMeshSteps(input) {
   const bytes = input instanceof Uint8Array ? input : new Uint8Array(input);
   if (bytes.byteLength < HEADER_BYTES) return { error: 'short' };
   if (bytes.byteLength > POI_MESH_LIMITS.bytes) return { error: 'too-many-bytes' };
@@ -153,13 +190,16 @@ export function decodePoiMesh(input) {
   // copied out, so the mesh owns aligned arrays whatever the input's offset
   const take = (/** @type {number} */ n) => { const out = bytes.slice(at, at + n); at += n; return out.buffer; };
   const positions = new Float32Array(take(V * 12));
+  yield;
   const normals = new Float32Array(take(V * 12));
   const uvs = new Float32Array(take(V * 8));
+  yield;
   const indices = wide ? new Uint32Array(take(I * 4)) : new Uint16Array(take(I * 2));
   const mesh = { positions, normals, uvs, indices, submeshes, boundsMin, boundsMax };
-  const why = poiMeshError(mesh);
+  yield;
+  const why = yield* poiMeshErrorSteps(mesh);
   if (why) return { error: why };
-  const [min, max] = meshBoxOf(positions);
+  const [min, max] = yield* meshBoxSteps(positions);
   // AUDIT POI S5: written as the bounds AGREE, not as they differ - `|min - NaN| > 1e-3` is false, so a header of NaN
   // bounds passed, and the game's box for the part was NaN (its "feet inside" hold never true, the collider filed on a
   // player standing in it)

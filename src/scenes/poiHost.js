@@ -46,7 +46,7 @@
 // Not a DFU member. Ledger A (POI).
 // ═══════════════════════════════════════════════════════════════════
 
-import { decodePoiMesh } from '../poi/poiMesh.js';
+import { decodePoiMeshSteps } from '../poi/poiMesh.js';
 import {
   POI_TEXTURE_ARCHIVE, materialLook, samplerOf, emits, createTextureBook, bakeAlbedoSteps, bakeEmissionSteps, poiPartModelSteps,
   placeMatrix, partMatrix, boxThrough, lightsOf,
@@ -296,7 +296,8 @@ export function createPoiHost({
     try {
       for (let i = 0; i < s.doc.parts.length; i++) {
         const part = s.doc.parts[i];
-        const d = decodePoiMesh(yield feed.asset(part.mesh, { auth: auth() }));
+        // AUDIT POI R8 (the lead's): read in steps too - a model at the law's bounds was one task of tens of milliseconds
+        const d = yield* decodePoiMeshSteps(yield feed.asset(part.mesh, { auth: auth() }));
         if ('error' in d) throw new Error(`part ${part.key}: ${d.error}`);
         const held = part.materials.map((m) => holdLook(m));
         s.held.push(...held);

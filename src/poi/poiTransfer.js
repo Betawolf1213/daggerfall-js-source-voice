@@ -102,11 +102,13 @@ async function shelveOne(entry, { shelfEntry, shelve, rand }) {
     const id = k < 0 ? entry.id : k < POI_COPY_IDS ? await copyIdOf(entry, k, content) : mintShelfId(rand);
     const had = await shelfEntry(id);
     if (had.ok) { if (contentOf(had.data.item) === content) return { ok: true, id, copied: k >= 0, already: true }; continue; }
+    // taken off the shelf: its id stays its own, never put over (AUDIT POI U13, lane A: the store says 'poi-gone') - the next
+    if (had.error === 'poi-gone') continue;
     if (had.error !== 'not-found') return had;
     const r = await shelve(k < 0 ? entry : { ...entry, id });
     if (r.ok) return { ok: true, id, copied: k >= 0, already: false };
     // taken off the shelf (kept, never put over), or put there since it was asked: the next id
-    if (r.error !== 'not-found' && r.error !== 'poi-not-author') return r;
+    if (r.error !== 'not-found' && r.error !== 'poi-not-author' && r.error !== 'poi-gone') return r;
   }
   return { ok: false, error: 'poi-not-author' };
 }

@@ -624,6 +624,8 @@ test('AUDIT POI U12 P8 C7 THE QUEUE AND THE HISTORY ANSWER WHERE THEY ASKED: a p
   press(ap);
   await until(() => P.refreshed === 2, 'approved, the feed asked again'); await flush();
   assert.equal(P.svc.count('/v1/poi/review'), 1);
+  // C1 (the lead's, at lane A's merge): the approval names the document the approver looked at, to the store
+  assert.equal(P.svc.asks.find((x) => x.path === '/v1/poi/review').body.docSha, 'd'.repeat(64));
   assert.equal(statusOf(P), 'Approved: Hut. It stands in the world.');
 
   // a revision opened while the put-back's history is asked again: nothing opened over the editor

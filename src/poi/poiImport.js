@@ -85,14 +85,14 @@ export async function uploadImport(prep, put, progress = () => {}) {
     const r = await put(im.bytes, 'texture');
     if (!r.ok) return { ok: false, error: r.error, ...(r.why ? { why: r.why } : {}), image: im.name };
     shaOfImage.set(i, r.data.sha);
-    metas.set(r.data.sha, { kind: 'texture', ...r.data.meta });
+    metas.set(r.data.sha, { kind: 'texture', ...r.data.meta, bytes: im.bytes.byteLength });   // AUDIT POI S6: its bytes, for the budget
     progress(++done, total);
   }
   const parts = [];
   for (const p of prep.parts) {
     const r = await put(p.bytes, 'mesh');
     if (!r.ok) return { ok: false, error: r.error, ...(r.why ? { why: r.why } : {}), part: p.name };
-    metas.set(r.data.sha, { kind: 'mesh', ...r.data.meta });
+    metas.set(r.data.sha, { kind: 'mesh', ...r.data.meta, bytes: p.bytes.byteLength });
     parts.push({
       name: p.name, mesh: r.data.sha, submeshes: p.submeshes, t: p.position,
       materials: p.materials.map((m) => ({ ...m, texture: m.texture === null ? null : shaOfImage.get(m.texture), emissive: m.emissive === null ? null : shaOfImage.get(m.emissive) })),

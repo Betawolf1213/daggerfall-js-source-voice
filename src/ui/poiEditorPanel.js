@@ -42,7 +42,7 @@ import { poiDocProblems, poiAssetProblems, POI_LIMITS, POI_ALPHA, POI_WRAP, POI_
 import { eulerOfQuat, quatOfEuler, lawName, newLight } from '../poi/poiEdit.js';
 import { problemText, problemWhere, gltfErrorText, gltfWarningText, meshErrorText, imageErrorText, packErrorText } from '../poi/poiText.js';
 import { poiSaveDraft, poiSubmit, poiWithdraw, poiRetire, poiList, poiHistory, poiPutAsset, poiShelve, poiShelfEntry } from '../poi/poiService.js';
-import { decodePoiMesh, encodePoiMesh } from '../poi/poiMesh.js';
+import { decodePoiMesh, encodePoiMesh, poiMeshFacts } from '../poi/poiMesh.js';
 import { createPoiUvPanel } from './poiUvPanel.js';   // POI-5: the UV editor
 import { createPoiLibrary } from './poiLibraryPanel.js';   // POI-4b: the library's shelf
 import { createPoiReview } from './poiReviewPanel.js';   // POI-6: the approver's queue, a POI's history
@@ -144,9 +144,11 @@ export function createAssetFacts(fetchAsset, onLearned = () => {}) {
       if (facts.has(sha)) return facts.get(sha);
       facts.set(sha, undefined);
       fetchAsset(sha).then((bytes) => {
+        // AUDIT POI (the lead's; lane A's S6): the facts the store's law reads, its budgets' too - a model's counts, box
+        // and bytes, a picture's size and bytes - so the editor says a POI is over a budget before the store refuses it
         const m = decodePoiMesh(bytes);
-        if (!('error' in m)) facts.set(sha, { kind: 'mesh', submeshes: m.mesh.submeshes.length });
-        else { const im = poiImageMetaOf(bytes); facts.set(sha, 'error' in im ? null : { kind: 'texture', w: im.w, h: im.h }); }
+        if (!('error' in m)) facts.set(sha, { kind: 'mesh', ...poiMeshFacts(m.mesh), bytes: bytes.byteLength });
+        else { const im = poiImageMetaOf(bytes); facts.set(sha, 'error' in im ? null : { kind: 'texture', w: im.w, h: im.h, bytes: bytes.byteLength }); }
         onLearned();
       }, (e) => {
         // a 404 is an asset the store does not have; anything else (offline) is not known - asked again next time
@@ -592,6 +594,13 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     const r = await act((i) => poiWithdraw(i, id, rev));
     if (!r) return;
     if (!r.ok) { say(refusal(r), 'bad'); return; }
+    // AUDIT POI (the lead's; lane A's S8): the builder's own draft of it already open beside it (saved from another
+    // window) - the store closed this one 'withdrawn' and keeps that one; a save puts this document there
+    if (r.data?.state === 'withdrawn') {
+      edit.markSaved(id, { rev: null, state: 'draft', unheld: true });
+      say(t('poi.editor.withdrawnBeside', 'Taken back. You had another draft of it saved: save to put this one in its place.'));
+      return;
+    }
     edit.markSaved(id, { rev, state: 'draft', doc: held });
     say(t('poi.editor.withdrawn', 'Taken back: it is a draft again.'));
   });
@@ -642,7 +651,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     const r = await act((i) => poiPutAsset(i, bytes, 'texture'));
     if (!r) return false;
     if (!r.ok) { say(refusal(r), 'bad'); return false; }
-    facts.put(r.data.sha, { kind: 'texture', ...r.data.meta });
+    facts.put(r.data.sha, { kind: 'texture', ...r.data.meta, bytes: bytes.byteLength });
     use(r.data.sha);
     return true;
   }
@@ -686,7 +695,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
         if (dlg.closed()) return false;
         if (!r) return false;
         if (!r.ok) { say(refusal(r), 'bad'); return false; }
-        facts.put(r.data.sha, { kind: 'mesh', ...r.data.meta });
+        facts.put(r.data.sha, { kind: 'mesh', ...r.data.meta, bytes: out.byteLength });
         // AUDIT POI U7: the part gone (taken out, its POI closed) - nothing wears it, and nothing is said applied
         if (!edit.docOf(id)?.parts.some((q) => q.key === key)) { say(t('poi.editor.uvGone', 'The part is gone: the UVs were not applied.'), 'bad'); return true; }
         edit.edit(id, 'uv', (x) => { const p = x.parts.find((q) => q.key === key); if (p) p.mesh = r.data.sha; });
@@ -813,7 +822,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     go.disabled = false;
     if (!r) return false;
     if (!r.ok) { say(refusal(r), 'bad'); said.replaceChildren(...packRefusalRows(pack, r)); return false; }
-    for (const [sha, a] of pack.assets) facts.put(sha, a.kind === 'mesh' ? { kind: 'mesh', submeshes: a.submeshes } : { kind: 'texture', w: a.w, h: a.h });
+    for (const [sha, { bytes, ...a }] of pack.assets) facts.put(sha, { ...a, bytes: bytes.byteLength });
     let opened = 0, kept = 0;
     for (const o of r.open) {
       // changes of the builder's own to that POI are never thrown away for a pack's

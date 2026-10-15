@@ -11,17 +11,24 @@
 //   - L6 a model whose objects outnumber a POI's parts is refused at "A part for each object", in words, the dialog
 //     standing (lane E's note);
 //   - L7 a model's lights listed, placed and kept with it (lane E's G7);
-//   - L8 the mesh refusals a damaged file meets said as what they are.
+//   - L8 the mesh refusals a damaged file meets said as what they are;
+//   - L9 the editor reads an asset's facts as the store's law does - its budgets' counts, box and bytes (lane A's S6);
+//   - L10 a withdrawal the store closed 'withdrawn' (the builder's other draft open beside it, lane A's S8) leaves the
+//     document a change to save over that draft;
+//   - L11 a name tidied of every character the law refuses (lane A's S13), never cut through a pair;
+//   - L12 a model read in steps (lane B's R8, its last whole task): the stand work's decode yields as its bakes do.
 // Over the shared fake document (test/chargenDom.mjs), as test/auditpoi_panels.test.js drives it.
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createPoiEditorPanel, PRESS_HOLD_MS } from '../src/ui/poiEditorPanel.js';
+import { readFileSync } from 'node:fs';
+import { createPoiEditorPanel, createAssetFacts, PRESS_HOLD_MS } from '../src/ui/poiEditorPanel.js';
 import { createPoiUvPanel } from '../src/ui/poiUvPanel.js';
-import { createPoiEdit, newPart, newLight } from '../src/poi/poiEdit.js';
-import { encodePoiMesh, poiMeshError } from '../src/poi/poiMesh.js';
-import { DEFAULT_MATERIAL, POI_LIMITS } from '../src/poi/poiLaw.js';
-import { writePack } from '../src/poi/poiPack.js';
+import { createPoiEdit, newPart, newLight, lawName } from '../src/poi/poiEdit.js';
+import { encodePoiMesh, decodePoiMesh, decodePoiMeshSteps, poiMeshError, poiMeshFacts, meshBoxOf, POI_MESH_STEP } from '../src/poi/poiMesh.js';
+import { DEFAULT_MATERIAL, POI_LIMITS, POI_BUDGET, poiDocProblems } from '../src/poi/poiLaw.js';
+import { writePack, readPackBytes } from '../src/poi/poiPack.js';
+import { prepareImport, uploadImport } from '../src/poi/poiImport.js';
 import { writeGlb } from '../src/poi/gltfExport.js';
 import { readGltf, bakeGltf } from '../src/poi/gltfImport.js';
 import { handleUnwrap } from '../src/poi/uvUnwrapWorker.js';
@@ -63,6 +70,8 @@ function store() {
     if (s.hold.length) await s.hold.shift();
     if (s.answer[`${method} ${path}`]) return s.answer[`${method} ${path}`]();
     if (path === '/v1/poi/draft') return ok({ id: body.doc.id, rev: ++s.draftRev, state: 'draft' });
+    if (path === '/v1/poi/submit') return ok({ id: body.id, rev: body.rev, state: 'submitted' });
+    if (path === '/v1/poi/withdraw') return ok({ id: body.id, rev: body.rev, state: 'draft' });
     if (path === '/v1/poi/list') return ok({ pois: [] });
     if (path === '/v1/poi/shelf' && method === 'GET') return ok({ items: [] });
     if (path === '/v1/poi/shelf') return ok({ id: body.item.id, at: 1 });
@@ -387,4 +396,119 @@ test('AUDIT POI L8 A DAMAGED MODEL SAID AS WHAT IT IS: a number that is no numbe
   assert.equal(poiMeshError(far), 'index-range');
   assert.equal(meshErrorText('not-finite'), 'A part\'s model holds a number that is not a number (NaN or infinite). Export it again.');
   assert.equal(meshErrorText('index-range'), 'A part\'s model names a vertex it does not have. Export it again.');
+});
+
+// ── L9, L10, L11: LANE A'S STORE, JOINED ──────────────────────────────
+
+const PNG = Uint8Array.from(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==', 'base64'));
+
+test('AUDIT POI L9 THE EDITOR READS AN ASSET AS THE STORE\'S LAW DOES: a model\'s counts, box and bytes and a picture\'s size and bytes, learnt from its bytes, from an upload\'s answer and from a pack - so a POI over a budget is said in the inspector before the store refuses it (mutants: a model\'s facts its submeshes alone; a picture\'s bytes unread; the import\'s facts without their bytes; a pack\'s model without its facts)', async () => {
+  const meshBytes = encodePoiMesh(quad());
+  const mesh = decodePoiMesh(meshBytes).mesh;
+  const want = { kind: 'mesh', ...poiMeshFacts(mesh), bytes: meshBytes.byteLength };
+  const learnt = createAssetFacts(async (sha) => (sha === 'm'.repeat(64) ? meshBytes : PNG));
+  learnt.of('m'.repeat(64)); learnt.of('p'.repeat(64)); await flush();
+  assert.deepEqual(learnt.of('m'.repeat(64)), want, 'from its bytes');
+  assert.deepEqual(learnt.of('p'.repeat(64)), { kind: 'texture', w: 1, h: 1, bytes: PNG.byteLength });
+  // an import's answer: the store's meta and the bytes put
+  const model = readGltf(writeGlb({ name: 'Post', parts: [glbPart('post')], lights: [], pictures: new Map() }));
+  const prep = prepareImport(model, bakeGltf(model, { split: 'whole' }));
+  const up = await uploadImport(prep, async (bytes, kind) => ({ ok: true, data: { sha: 'u'.repeat(64), kind, meta: poiMeshFacts(decodePoiMesh(bytes).mesh) } }));
+  assert.equal(up.metas.get('u'.repeat(64)).bytes, prep.parts[0].bytes.byteLength, 'the import\'s facts carry the bytes put');
+  const pictured = { name: 'Sign', lights: [], images: [{ name: 'sign', bytes: PNG }], parts: [{ name: 'sign', bytes: meshBytes, submeshes: 1, position: [0, 0, 0], materials: [{ ...DEFAULT_MATERIAL, texture: 0, emissive: null }] }] };
+  const up2 = await uploadImport(pictured, async (bytes, kind) => ({ ok: true, data: { sha: (kind === 'mesh' ? 'u' : 'v').repeat(64), kind, meta: kind === 'mesh' ? poiMeshFacts(decodePoiMesh(bytes).mesh) : { w: 1, h: 1 } } }));
+  assert.equal(up2.metas.get('v'.repeat(64)).bytes, PNG.byteLength, 'a picture\'s too');
+  // a pack's: as the store's law reads them
+  const sha = await sha256(meshBytes);
+  const pack = await readPackBytes(writePack({ pois: [docOf(sha, 'Tower')], shelf: [], assets: new Map([[sha, meshBytes]]) }).bytes);
+  assert.ok(pack.ok, JSON.stringify(pack));
+  const { bytes: held, ...facts } = pack.assets.get(sha);
+  assert.deepEqual({ ...facts, bytes: held.byteLength }, want);
+  // every fact the panel is told carries the bytes the budget reads: a picture put, a UV edit put, a pack's (its own
+  // bytes beside its facts), an import's (its metas, above) - by source, the bytes being read by the budget alone
+  const panelSrc = readFileSync(new URL('../src/ui/poiEditorPanel.js', import.meta.url), 'utf8');
+  const told = [...panelSrc.matchAll(/facts\.put\(([^\n]*)\);/g)].map((m) => m[1]);
+  assert.deepEqual(told, [
+    "r.data.sha, { kind: 'texture', ...r.data.meta, bytes: bytes.byteLength }",
+    "r.data.sha, { kind: 'mesh', ...r.data.meta, bytes: out.byteLength }",
+    'sha, { ...a, bytes: bytes.byteLength }',
+    'sha, meta',
+  ]);
+  // the inspector: a part stood 3 km out reaches past the budget, said before any save
+  const P = await over();
+  try {
+    const id = P.edit.create({ px: 1, py: 1, x: 5, z: 5, name: 'Far' });
+    P.edit.edit(id, 'add part', (d) => { d.parts.push({ ...newPart(d, { mesh: P.sha, submeshes: 1, name: 'Hut' }), t: [3000, 0, 0] }); });
+    P.edit.select({ id, part: null });
+    await until(() => all(rightOf(P)).some((n) => /reaches too far from its place/.test(n.textContent)), 'the budget said');
+    assert.ok(3000 > POI_BUDGET.reach);
+  } finally { P.panel.destroy(); }
+});
+
+test('AUDIT POI L10 A WITHDRAWAL THE STORE CLOSES \'withdrawn\': the builder\'s other draft of it is open beside it (saved from another window), so the document is a draft whose every change is still to save, its revision the store\'s to say - a save puts it over that draft (mutant: read as taken back to its own revision, nothing to save)', async () => {
+  const P = await over();
+  try {
+    const id = P.edit.create({ px: 1, py: 1, x: 5, z: 5, name: 'Camp' });
+    P.edit.edit(id, 'add part', (d) => { d.parts.push(newPart(d, { mesh: P.sha, submeshes: 1, name: 'Hut' })); });
+    P.edit.select({ id, part: null });
+    await until(() => all(rightOf(P)).some((n) => n.textContent === 'Nothing - it can be saved.'), 'its model known');
+    press(button(rightOf(P), 'Save draft (Ctrl+S)'));
+    await until(() => P.edit.entryOf(id).state === 'draft', 'saved'); await flush();
+    press(button(rightOf(P), 'Send for approval'));
+    await until(() => P.edit.entryOf(id).state === 'submitted', 'sent'); await flush();
+    P.svc.answer['POST /v1/poi/withdraw'] = () => ({ ok: true, status: 200, headers: { get: () => null }, json: async () => ({ id, rev: 3, state: 'withdrawn' }) });
+    press(button(rightOf(P), 'Take back to draft'));
+    await until(() => P.edit.entryOf(id).state === 'draft', 'taken back'); await flush();
+    assert.equal(P.edit.entryOf(id).rev, null, 'its revision the store\'s to say');
+    assert.equal(P.edit.dirty(id), true, 'the document a change to save');
+    assert.equal(statusOf(P), 'Taken back. You had another draft of it saved: save to put this one in its place.');
+    press(button(rightOf(P), 'Save draft (Ctrl+S)'));
+    await until(() => P.edit.entryOf(id).rev === 4, 'saved over the draft');
+    assert.equal(P.edit.dirty(id), false);
+  } finally { P.panel.destroy(); }
+});
+
+test('AUDIT POI L11 A NAME TIDIED AS THE LAW READS IT: the separators, the bidirectional controls and a lone half of a pair made spaces, and the cut to its length never leaving half a pair - each tidied name one the law takes (mutants: the old control range alone; the cut through a pair)', () => {
+  const law = (name) => poiDocProblems({ v: 1, id: 'poi-00000000beef', name, place: { px: 1, py: 1, x: 0, z: 0, y: 0, ground: 'snap', r: [0, 0, 0, 1], s: 1 }, parts: [partOf('a'.repeat(64))], lights: [], marker: { show: false } }).filter((p) => p.path === 'name');
+  for (const raw of ['Tower\u202eof\u2028Lies', 'Tower\u2066of\u2029Lies', 'Tower\ud800of Lies', 'Tower\u0085of Lies']) {
+    assert.equal(lawName(raw), 'Tower of Lies', JSON.stringify(raw));
+    assert.deepEqual(law(lawName(raw)), [], JSON.stringify(raw));
+    assert.notDeepEqual(law(raw), [], `the law refuses ${JSON.stringify(raw)} untidied`);
+  }
+  const long = `${'a'.repeat(POI_LIMITS.name - 1)}\u{1f3f0}`;
+  assert.equal(lawName(long), 'a'.repeat(POI_LIMITS.name - 1), 'the castle left out whole, not halved');
+  assert.deepEqual(law(lawName(long)), []);
+});
+
+// ── L12: A MODEL READ IN STEPS ────────────────────────────────────────
+
+test('AUDIT POI L12 A MODEL IS READ IN STEPS: the stand work\'s decode yields every POI_MESH_STEP numbers - its copies, its checks and its box - and answers what the whole read answers, every refusal too; the box true whatever step its corners fall in; the host reads it so (mutants: the checks one step; the box one step; a step reading only its first number; the host reading it whole)', () => {
+  const n = 256;   // a sheet of 256 x 256 vertices
+  const pos = [], uv = [], idx = [];
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { pos.push(i * 0.1, 0, j * 0.1); uv.push(i / n, j / n); }
+  for (let j = 0; j < n - 1; j++) for (let i = 0; i < n - 1; i++) { const a = j * n + i; idx.push(a, a + n + 1, a + 1, a, a + n, a + n + 1); }
+  const V = pos.length / 3;
+  const big = { positions: Float32Array.from(pos), normals: new Float32Array(V * 3).fill(0).map((_, k) => (k % 3 === 1 ? 1 : 0)), uvs: Float32Array.from(uv), indices: Uint32Array.from(idx), submeshes: [{ start: 0, count: idx.length }] };
+  const bytes = encodePoiMesh(big);
+  const drive = (g) => { let steps = 0; for (;;) { const r = g.next(); if (r.done) return { value: r.value, steps }; steps++; } };
+  const { value, steps } = drive(decodePoiMeshSteps(bytes));
+  assert.deepEqual(value, decodePoiMesh(bytes), 'what the whole read answers');
+  // three between its copies; a step for every POI_MESH_STEP numbers each check reads; a yield between the box's steps
+  const per = (len) => Math.ceil(len / POI_MESH_STEP);
+  assert.ok(per(V * 3) > 1 && per(idx.length) > 1, 'a mesh of many steps');
+  assert.equal(steps, 3 + per(V * 3) * 2 + per(V * 2) + per(V * 3) + per(idx.length) + (per(V * 3 - 3) - 1));
+  // the box: its corners in the last step and the first
+  const p = new Float32Array(3 * (POI_MESH_STEP + 7)).fill(1);
+  p[p.length - 2] = 9; p[1] = -4; p[p.length - 6] = -3;
+  assert.deepEqual(meshBoxOf(p), [[-3, -4, 1], [1, 9, 1]]);
+  // every refusal the whole read's - a number that is no number mid-step, an index past the vertices in the last step
+  const nan = structuredClone(big); nan.normals[POI_MESH_STEP + 5] = NaN;
+  assert.equal(poiMeshError(nan), 'not-finite');
+  const far = structuredClone(big); far.indices[idx.length - 2] = V;
+  assert.equal(poiMeshError(far), 'index-range');
+  const out = structuredClone(big); out.positions[POI_MESH_STEP + 4] = 3000;
+  assert.equal(poiMeshError(out), 'too-large');
+  // the host reads it in steps (scenes/poiHost.js loadSteps)
+  const host = readFileSync(new URL('../src/scenes/poiHost.js', import.meta.url), 'utf8');
+  assert.match(host, /const d = yield\* decodePoiMeshSteps\(yield feed\.asset\(part\.mesh, \{ auth: auth\(\) \}\)\);/);
 });

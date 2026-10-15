@@ -166,7 +166,11 @@ export function uniqueKey(doc, wanted) {
   for (let n = 2; ; n++) { const k = `${base}-${n}`; if (!taken.has(k)) return k; }
 }
 /** A name as the law takes it: printable, trimmed, bounded. */
-export const lawName = (s, max = /** @type {number} */ (POI_LIMITS.name)) => String(s ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max).trim();
+// AUDIT POI (the lead's; lane A's S13): every character the law now refuses in a name (poiLaw.js UNSAID_RE - controls, a
+// lone half of a pair, the line and paragraph separators, the bidirectional controls) made a space - a name pasted with
+// one was tidied here and refused at the save - and the cut to its length never leaves half a pair at its end
+const NAME_UNSAID_G = /[\p{Cc}\p{Cs}\u{2028}\u{2029}\u{202a}-\u{202e}\u{2066}-\u{2069}]/gu;
+export const lawName = (s, max = /** @type {number} */ (POI_LIMITS.name)) => String(s ?? '').replace(NAME_UNSAID_G, ' ').replace(/\s+/g, ' ').trim().slice(0, max).replace(/[\uD800-\uDBFF]$/, '').trim();
 
 /** A material as the document keeps it: the default's every field, `over` laid on it. */
 export const newMaterial = (over = {}) => ({ ...structuredClone(DEFAULT_MATERIAL), ...structuredClone(over) });
@@ -268,10 +272,11 @@ export function createPoiEdit({ rand = (b) => { globalThis.crypto.getRandomValue
     /** Whether a document differs from what was last saved (a new one always does). */
     dirty(/** @type {string} */ id) { const e = docs.get(id); return !!e && text(e.doc) !== e.saved; },
     /** The service took the document: what it now holds is what was saved. */
-    markSaved(/** @type {string} */ id, /** @type {{ rev?: number | null, state?: string, base?: number | null, doc?: any }} */ { rev = null, state = 'draft', base, doc } = {}) {
+    markSaved(/** @type {string} */ id, /** @type {{ rev?: number | null, state?: string, base?: number | null, doc?: any, unheld?: boolean }} */ { rev = null, state = 'draft', base, doc, unheld = false } = {}) {
       const e = docs.get(id);
       if (!e) return;
-      e.saved = text(doc ?? e.doc); e.rev = rev; e.state = state;
+      // `unheld`: the store's draft is a document this editor does not hold - all of this one is a change to save
+      e.saved = unheld ? null : text(doc ?? e.doc); e.rev = rev; e.state = state;
       if (base !== undefined) e.base = base;
       changed();
     },
