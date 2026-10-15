@@ -157,7 +157,7 @@
   },
   {
     "name": "OWS1-view-peer-no-ship",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "${isShipMark(t?.p) ? ' ship' : ''}${t?.p.tv",
     "new": "${t?.p.tv",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "OWS1-view-book-no-ship",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "kind: `${kind}${ship ? ' ship' : ''}${t.p.tv",
     "new": "kind: `${kind}${t.p.tv",
     "tests": [

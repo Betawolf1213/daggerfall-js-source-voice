@@ -506,7 +506,10 @@ every number a whole pair from Faint to Ascendant, the design's own numbers the 
 (slot, account) and, ON THAT FIRST WRITE ONLY, rolls from a seed of its own drawn at the claim (SD20b - the receipt's,
 which the page holds, let a guest read its roll before it registered): the title **Hourbreaker** one time in
 four, the aura **The Turning Hour** - a slow wheel of brass gears and gold light about the wearer - one time in eight.
-Once held, held for good. The profile counts *Hours broken*. (SD9b: the roll is its own stream, salted - never the
+Once held, held for good. The profile counts *Hours broken*. HONOUR-BANNER (2026-10-14, Mac: "The title/aura in the
+abyss dungeon should also have a loot popup"): each grant the service answers stands as a loot banner too
+(`net/sdClaims.js` `SD_HONOUR_KEYS` through `ui/lootBanner.js` announceHonour - `10-UI/Loot-Banner.md` section 3b),
+beside its chat line. (SD9b: the roll is its own stream, salted - never the
 spoils' draws, which are the receipt's seed's alone; the grants are laid on the account's row, `players.sd_honours`, by the kill's
 row alone, and read off it as the Broker's sale is - so every badge the service mints carries them with no other read.)
 

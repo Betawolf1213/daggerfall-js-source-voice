@@ -149,13 +149,15 @@ test('MW-CLOAK2: the fit over the armour eases the cloak round each point that c
   };
   const eased = await slope(CLOAK_EASE_RADIUS);
   assert.equal(CLOAK_EASE_RADIUS, 8);
-  assert.ok(eased.fit.pushed > 500 && eased.fit.most > 3 && eased.fit.most < 4, `${eased.fit.pushed} vertices eased, the furthest ${eased.fit.most.toFixed(2)}`);
+  // PIN MOVED (MW-CAPE-RIGID): on the chest alone the cloak sits at rest where the chest carries it, the ebony
+  // pauldrons 1.3 through it (2.6 hung over the spine and clavicles) - 720 vertices eased, the furthest 2.3 (it was 3.6)
+  assert.ok(eased.fit.pushed > 500 && eased.fit.most > 2.1 && eased.fit.most < 2.5, `${eased.fit.pushed} vertices eased, the furthest ${eased.fit.most.toFixed(2)}`);
   assert.ok(eased.steepest < 0.8, `the push slopes at most ${eased.steepest.toFixed(2)} a unit`);
   assert.ok(eased.side < 1e-3, `pushed straight back - ${eased.side.toFixed(4)} aside`);
-  // the falloff (1 - (d / 8)^2)^2: the mean push over the eased vertices 1.66 (a falloff of (1 - (d / 8)^2) alone, 1.90)
-  assert.ok(eased.mean > 1.55 && eased.mean < 1.78, `the eased vertices' mean push ${eased.mean.toFixed(3)}`);
+  // the falloff (1 - (d / 8)^2)^2: the mean push over the eased vertices 0.74 (a falloff of (1 - (d / 8)^2) alone, 0.96)
+  assert.ok(eased.mean > 0.68 && eased.mean < 0.79, `the eased vertices' mean push ${eased.mean.toFixed(3)}`);   // PIN MOVED (MW-CAPE-RIGID): 1.66, and 1.90 alone, on the old rig
   const stepped = await slope(1e-3);
-  assert.ok(stepped.steepest > 5, `a triangle's corners alone step ${stepped.steepest.toFixed(1)} a unit - the facet over the pauldron`);
+  assert.ok(stepped.steepest > 3.5, `a triangle's corners alone step ${stepped.steepest.toFixed(1)} a unit - the facet over the pauldron`);   // PIN MOVED (MW-CAPE-RIGID): 4.1 (9.6 on the old rig)
   // its normals are its new shape's, facing as before
   const fresh = vertexNormals(eased.batch.positions, eased.batch.indices);
   let agree = 0; let facing = 0;

@@ -1432,7 +1432,9 @@ test('MW-D27: the faceIndex THREAD is unbroken, swept at the source', () => {
     'buildFpArm no longer hands the face to the body build');
   // PIN MOVED (MWNPC14, Morrowind-NPCs.md section 19): the picker takes a vampire's face beside the rest
   // PIN MOVED (MWNPC17, section 25): and an NPC's walked head and hair
-  assert.match(arm, /playerBodyRows\(parts, race, female, \{ beast, faceIndex, faceMatch(, vampire(, walk)?)? \}\)/,
+  // PIN MOVED (AUDIT MW-HEADS1): and the archives' directory, so the port's own heads stand only where their archive is
+  // PIN MOVED (MW-HEADS2): and whether the body is a player's - the port's own heads are a player's alone
+  assert.match(arm, /playerBodyRows\(parts, race, female, \{ beast, faceIndex, faceMatch(, vampire(, walk(, has: exists(, ownHeads)?)?)?)? \}\)/,
     'the body build no longer hands the face to the picker');
   // TR2: the menu's inline opts moved into weaponRig's ONE HOME - the
   // sweep follows the thread there (menu -> buildArmsFor ->
@@ -1732,7 +1734,12 @@ test('MW-D29: the thread is unbroken - the menu reads the equip table, the build
   // MW-D31: ONE composition serves both rigs - buildFpArm composes,
   // the third person receives verdicts, the fp build filters and
   // shadows from the same result.
-  assert.match(arm, /buildTpBody\(\{ race, female, beast, faceIndex, faceMatch, weapon, hasAmmo, worn,/);
+  // PIN MOVED (AUDIT MW-FOLK1 L2-F2): the composition the third person receives is the one buildFpArm composed, built
+  // once - and composed again without an outfit that bound nothing, the body built again from that (the card's verdicts
+  // read the composition the body was built from)
+  assert.match(arm, /const tpBody = \(wornNow\) => buildTpBody\(\{ race, female, beast, faceIndex, faceMatch, weapon, hasAmmo, worn: wornNow,/);
+  assert.match(arm, /let third = arm\.ok \? await tpBody\(worn\) : null;/);
+  assert.match(arm, /const again = await tpBody\(without\);\n\s*if \(again\.ok\) \{ third = again; wornBuilt = without; \}/);
   assert.match(arm, /const fpAdds = werewolf \? firstPersonPartGroup\(robe, parts, female\)\.adds : fpWornAdds\(worn\.adds\);/, 'the fp build does not filter the adds (WEREWOLF1: the wolf\'s robe takes addPartGroup\'s own first-person ladder instead)');
   assert.match(arm, /for \(const add of fpAdds\)/, 'the fp build does not wear the filtered adds');
   assert.match(arm, /shadowSkinRows\(\n      wanted\.filter/, 'the fp skin does not take the shadows');
@@ -1987,7 +1994,9 @@ test('MW-D33: the worn verdicts reach status() - one per piece, dressed or reaso
   // took the per-piece readout off the assets card ("reduce the amount of
   // over explaining text") - it answers a probe's status() read now.
   const arm = readFileSync('src/combat/fpArm.js', 'utf8');
-  assert.match(arm, /worn: wornVerdicts\(armor \?\? \[\], worn\),/);
+  // PIN MOVED (AUDIT MW-FOLK1 L2-F2): the verdicts of the composition the body was built from (an outfit that bound
+  // nothing composed out again, and said so)
+  assert.match(arm, /worn: wornVerdicts\(armor \?\? \[\], wornBuilt\),/);
   assert.match(arm, /worn: built && built\.ok \? built\.worn : null,/);
   const menu = readFileSync('src/ui/enhancedMenu.js', 'utf8');
   assert.doesNotMatch(menu, /armState\.worn/, 'MWA4: the card keeps the failure lines alone');
@@ -2075,7 +2084,11 @@ test('MW-D35: precedence - curated over matched over the walk, and the wiring', 
   // facePools is the same law the walk uses.
   assert.deepEqual(facePools(parts, 'fprace', false).heads.map((p) => p.id), ['b_head_01', 'b_head_02', 'b_head_03']);
   const arm = readFileSync('src/combat/fpArm.js', 'utf8');
-  assert.match(arm, /await matchFaceFor\(\{ race, female, faceIndex, parts, archives, deps: d \}\)/);
+  // PIN MOVED (AUDIT MW-HEADS1): the matcher is handed the build's pools - facePools over the archives' directory, the
+  // ones the rows walk and the verdict's key names - where it read the race's out of `parts` again
+  // PIN MOVED (MW-HEADS2): and the pools a player's body wears - the port's own heads asked for
+  assert.match(arm, /const pools = werewolf \|\| npcFace \? null : facePools\(parts, race, female, \{ has: archiveHas\(archives\), own: ownHeads \}\);/);
+  assert.match(arm, /await matchFaceFor\(\{ race, female, faceIndex, pools, archives, deps: d \}\)/);
   assert.match(arm, /face: faceMatch,/);
   assert.match(readFileSync('src/scenes/dataSource.js', 'utf8'), /export const fetchArena2Bytes/);
 });
@@ -2379,15 +2392,17 @@ test('AUDIT 32 F1: the head is sampled through its own mesh - the texture layout
     const c = skin ? [210, 160, 130] : [30, 20, 15];
     rgba[o] = c[0]; rgba[o + 1] = c[1]; rgba[o + 2] = c[2]; rgba[o + 3] = 255;
   }
-  // A head mesh: front vertices (high y) at cheek height point their UVs
-  // into the skin quarter; back vertices point into the dark region.
+  // A head mesh: front vertices at cheek height point their UVs into the
+  // skin quarter; back vertices point into the dark region. PIN MOVED
+  // (MW-HEADS2): the front is LOW y - in the Head node's frame a head
+  // looks -Y (the port's own, baked +Y, hung backwards in game).
   const pos = []; const uvs = [];
   const put = (x, y, z, u, v) => { pos.push(x, y, z); uvs.push(u, v); };
   for (let i = 0; i < 20; i++) {
-    put(0, 10, 5 + (i % 5), 0.1, 0.1);        // front cheeks -> skin texels
-    put(0, -10, 5 + (i % 5), 0.75, 0.75);     // back of the skull -> dark texels
+    put(0, -10, 5 + (i % 5), 0.1, 0.1);       // front cheeks -> skin texels
+    put(0, 10, 5 + (i % 5), 0.75, 0.75);      // back of the skull -> dark texels
   }
-  put(0, 10, 0, 0.75, 0.75); put(0, 10, 0.5, 0.75, 0.75);   // chin, front, dark -> bearded
+  put(0, -10, 0, 0.75, 0.75); put(0, -10, 0.5, 0.75, 0.75);   // chin, front, dark -> bearded
   const geom = [{ positions: Float32Array.from(pos), uvs: Float32Array.from(uvs) }];
   const f = headFeatures(rgba, w, h, geom);
   assert.equal(f.via, 'mesh');
@@ -2402,7 +2417,8 @@ test('AUDIT 32 F1: the head is sampled through its own mesh - the texture layout
 
 test('AUDIT 32 F2/F3: the match is memoised per identity and generation, and a miss is not', () => {
   const arm = readFileSync('src/combat/fpArm.js', 'utf8');
-  assert.match(arm, /const fkey = `\$\{gen\}:\$\{race\}:\$\{female \? 'f' : 'm'\}:\$\{faceIndex \| 0\}`;/,
+  // PIN MOVED (MW-HEADS2): and the pools measured - a player's (the port's own) and an escort's (the data's) are two
+  assert.match(arm, /const fkey = `\$\{gen\}:\$\{race\}:\$\{female \? 'f' : 'm'\}:\$\{faceIndex \| 0\}:\$\{fnv\(measured\)\}`;/,
     'the face cache key lost the identity or the generation');
   assert.match(arm, /faceMatch = FACE_MATCH_CACHE\.get\(fkey\);/);
   assert.match(arm, /if \(faceMatch\.head \|\| faceMatch\.hair\) FACE_MATCH_CACHE\.set\(fkey, faceMatch\);/,

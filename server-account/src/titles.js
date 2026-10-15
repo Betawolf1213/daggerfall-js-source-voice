@@ -58,6 +58,9 @@
 //             a Brass Remnant's receipt on its kill's first write
 //             (sds.js claimSd) is a fact that happened, laid on the row
 //             (`sd_honours`, 0087) and held for good.
+//   I LOVE LAMP (LAMP-KEEPER II, 2026-10-14) - recorded the same way: the
+//             account's first word with a lamp keeper (lamp.js claimLamp),
+//             laid on the row (`lamp_title`, 0113) and held for good.
 //
 // WHY THAT AND NOT A `grants` TABLE. Mac asked that "all current
 // players should be granted the founder title", and the obvious
@@ -89,6 +92,7 @@ import { TITLES, GLYPHS, AURAS, SEAT_TITLES, CHAPTER_TITLES } from '../../src/ne
 import { insigniaHeld, insigniaKeys } from '../../src/net/insignia.js';   // WB9g: the Broker's insignia - a title and an aura bought
 import { patreonTitlesOf } from './patreon.js';   // PATREON-LINK: a Patreon tier's title, held by the pledge
 import { SD_HONOUR_TITLE, SD_HONOUR_AURA } from './sds.js';   // SD9b: the Hour's grants on the row
+import { LAMP_TITLE } from './lamp.js';   // LAMP-KEEPER II: I Love Lamp on the row
 
 /** THE FOUNDER CUTOFF, and it is a date rather than a count because
  *  "all current players" is a statement about a MOMENT. Everyone who
@@ -327,6 +331,9 @@ export function titlesHeld(player, env) {
   // held for good. A guest's kill is never written, so a guest row holds none
   if (typeof player?.handle === 'string' && player.handle && (Number(player?.sd_honours) & SD_HONOUR_TITLE)) held.push('hourbreaker');
   if (isHoursFirst(player, env)) held.push('hoursfirst');   // HOURS-FIRST: by name
+  // LAMP-KEEPER II: I LOVE LAMP - laid on the row by the account's first word with a lamp keeper (lamp.js claimLamp), held
+  // for good; a guest's word writes nothing, so a guest row holds none
+  if (typeof player?.handle === 'string' && player.handle && Number(player?.lamp_title) === 1) held.push(LAMP_TITLE);
   return held;
 }
 

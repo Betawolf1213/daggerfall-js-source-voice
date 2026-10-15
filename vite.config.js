@@ -83,7 +83,7 @@ function arena2DevServer() {
 // THE DEPLOY'S OWN NAME, stamped where a verifier can read it without
 // parsing minified JavaScript. `scripts/buildTag.mjs` already writes
 // HEAD's sha into src/buildTag.js at prebuild; that constant reaches
-// the browser inside a rollup chunk whose variable name is minified
+// the browser inside a bundled chunk whose variable name is minified
 // away, so the only thing tools/verify-deploy.mjs could compare was
 // the ENTRY CHUNK'S HASH - an exact-match test that fails the moment
 // another session pushes past your build tag, even though the deploy
@@ -116,6 +116,15 @@ export default defineConfig({
   base: './',
   build: {
     target: 'es2022',
+    // AUDIT DEPS1 (the review): Vite 8 minifies CSS with Lightning CSS -
+    // every page's inline <style> too - for `cssTarget`, which defaults to
+    // `target`, and es2022 reads as Safari 16.4. At 16.4 Lightning CSS drops
+    // a prefix that browser no longer needs (`-webkit-appearance` beside
+    // `appearance`), and the game runs below it: WebGL2 is Safari 15's, and
+    // SAFARI1 (test/nolookbehind.test.js) keeps the modules parsing before
+    // 16.4. The floor is named here so a prefix a Safari 15 needs is kept
+    // (test/csstarget.test.js builds a page through it).
+    cssTarget: ['es2022', 'safari15', 'ios15'],
     // EOTB5: EYE OF THE BEHOLDER'S SPRITES ARE FILES, NOT JAVASCRIPT.
     //
     // Vite inlines any asset under `assetsInlineLimit` (4 KB by

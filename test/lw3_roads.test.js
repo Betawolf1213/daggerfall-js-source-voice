@@ -452,7 +452,9 @@ test('LW3 the streaming host: the trips\' world is the game\'s own populated row
   assert.match(w, /const n = nearestPerson\(eye, dir, _talkPersons\(\)\);/);
   assert.match(w, /const _guardPool = \(\) => \(\(modes\?\.mode \?\? 'exterior'\) !== 'exterior' \? \[\] : _livePersons\.map\(/, 'the watch\'s conversion: the town\'s alone');
   assert.match(w, /for \(const l of livingRoads\.speech\(eye\)\) \{/);
-  assert.match(w, /for \(const m of livingRoads\.marks\(\)\) if \(markShown\(\{ kind: m\.kind \}\)\) marks\.push\(/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js - the road's parties read live
+  assert.match(rd('src/scenes/travelViewMarks.js'), /for \(const m of host\.livingRoads\.marks\(\)\) if \(markShown\(\{ kind: m\.kind \}\)\) marks\.push\(/);
+  assert.match(w, /createTravelViewMarks\(\{[^]*?\n\s+get livingRoads\(\) \{ return livingRoads; \},[^]*?\n\s+\}\);/, 'handed over live');
   const tt = rd('src/scenes/townTalk.js');
   assert.match(tt, /if \(!r\.success\) \{ livingTalk\?\.caught\?\.\(target\.person\); if \(!target\.person\?\.living\?\.town\?\.roadside\) onCrime\?\.\(\); else playerEntity\.crimeCommitted = crimeWas; \}/);   // PIN MOVED (AUDIT LW-II-2 C15): on the road the crime flag that stood before the pickpocket is put back (the road's door cleared every crime)
   // PIN MOVED (LW11): the road's caught hand goes through the caravan's door too (its report), the roads' layer first

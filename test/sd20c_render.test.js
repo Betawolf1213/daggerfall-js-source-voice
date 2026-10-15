@@ -11,6 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 import { glslFunctions } from './glsl.mjs';
@@ -467,7 +468,7 @@ test('SD20c A FRAME OF THE FIGHT MAKES NEXT TO NOTHING (V5) - measured in a chil
     out.inArena = bytes(() => { sink[12] = inArena(20 + (tick() - T0) * 1e-3, 3, 1.5); });
     console.log(JSON.stringify(out));
   `;
-  const run = spawnSync(process.execPath, ['--expose-gc', '--min-semi-space-size=64', '--max-semi-space-size=64', '--input-type=module', '-e', script], { encoding: 'utf8' });
+  const run = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', script], { encoding: 'utf8' });
   assert.equal(run.status, 0, run.stderr);
   const m = JSON.parse(run.stdout.trim().split('\n').pop());
   assert.ok(m.control >= 40, `the control made ${m.control.toFixed(2)} bytes a frame - the measure is blind`);

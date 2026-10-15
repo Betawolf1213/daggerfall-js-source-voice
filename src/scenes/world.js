@@ -303,8 +303,8 @@ import { setHoldingsProvider, stableProviderFor } from '../ui/holdingsPages.js';
 import { fleetBook, fleetShip, titleDeed, knowShip, retitle, setShipPort, forgetShip, fleetSaveSlot, FLEET_SAVE_VENDOR } from '../systems/fleet.js';   // HOLDINGS: the Fleet's ledger and its book of titles
 import { createFleetHost } from './fleetHost.js';   // HOLDINGS: the Fleet page's host half
 import { createQuayPool } from './quayPool.js';   // QUAYS: a harbour's quays, stood off its berths, and the gangways
-import { createLefayMonument } from './lefayMonumentHost.js';   // LEFAY1: the monument to Julian LeFay in Gothway Garden, and the flowers laid at it
-import { isLefayTown, lefaySpotOf, carveLefay } from '../world/lefayMonument.js';   // LEFAY1: its town, its spot off the town's navgrid, and the people's navgrid carved round it
+import { createLefayMonument } from './lefayMonumentHost.js';   // LEFAY1: the monument to Julian LeFay outside Privateer's Hold (HOLD-MONUMENT), and the flowers laid at it
+import { isLefayTown, lefaySpotOf, lefayExitOf, carveLefay } from '../world/lefayMonument.js';   // LEFAY1: its town, its spot off the town's navgrid, and the people's navgrid carved round it
 import { createMerchantYards } from './merchantYardsHost.js';   // MERCHANT-YARDS: every city's and town's Stable and Wagon Yard, and their trade
 import { createPortHost, PORT_TEXT, stairRefusal, stairFeetY } from './portHost.js';   // SHIPYARDS: every port town's shipyard and lighthouse, their people, their press and the lamp - and the stair's refusals
 import { createShipyardHost } from './shipyardHost.js';   // SHIPYARDS: the shipmaster's window's host half
@@ -404,6 +404,7 @@ import { playSerpentSound, SERPENT_VOICE_ROWS } from '../systems/serpentSounds.j
 import { serpentSpoilsList, serpentSpoilsDay, SERPENT_SPOILS_KEYS, SERPENT_SPOILS_TEXT, SERPENT_SPOILS_RECORDS_MAX } from '../systems/serpentSpoils.js';   // SERPENT1: the Old Coil's hoard
 import { createSerpentClaims } from '../net/serpentClaims.js';   // SERPENT1: its receipts carried to the account service
 import { createSdClaims } from '../net/sdClaims.js';   // SD9b: the Hour's receipts carried to the account service
+import { announceHonour } from '../ui/lootBanner.js';   // HONOUR-BANNER: a title or an aura granted, as a loot banner
 import { readSdReceipt } from '../net/sdReceipt.js';   // SD9e: my Hour receipt, read for its spoils
 import { SD_SPOILS_KEYS, SD_SPOILS_RECORDS_MAX, SD_SPOILS_TEXT, sdSpoilsDay, sdSpoilsSlot, sdSpoilsList } from '../systems/sdSpoils.js';   // SD9e: the Brass Remnant's spoils
 import { createSdSpoils, clearOfPillars } from './sdSpoils.js';   // SD9e: thrown from where it fell; AUDIT SD: the way home clear of the arena's pillars
@@ -471,23 +472,22 @@ import { groundHit, canvasPoint, classifyPick } from '../player/travelPick.js'; 
 import { planRoute, routeLegs, roadShare, crossesWater, dryLine, SEA_KINDS } from '../systems/travelRoute.js';   // TV2: the way by the roads; OWS2: and over the water
 import { createSeaHelm, seaHelmStep, seaHelmLook, headingOf as seaHeadingOf, squareOnly as seaSquareOnly } from '../systems/seaHelm.js';   // OWS2: the journey's hand on the helm
 import { createLoadGovernor, unbuiltAround } from '../systems/travelGovernor.js';   // TV2: "Cap it to what loads cleanly"
-import { createWildAlert, noticeChance, WILD_MARK, WILD_MARK_S } from '../systems/wildAlert.js';   // WILD-ALERT: the wilderness notices a fast traveller on a stealth check
+import { createWildAlert, noticeChance, WILD_MARK_S } from '../systems/wildAlert.js';   // WILD-ALERT: the wilderness notices a fast traveller on a stealth check
 import { drawWildMarks, WILD_MARK_RANGE } from '../ui/wildMarks.js';   // WILD-ALERT: the "!" over an alerted foe
 import { playerOnPathAt, pathsDataPoint } from '../systems/travelPaths.js';   // RATE-LAW: the traveller on a road's lane or off it
 import { threatCap, foePaced } from '../systems/travelThreat.js';   // OW6: the journey slows as enemies close; ENEMY-PACE's floor, fixed (RATE-LAW)
 import { farPlaces, settlementPixels, farDistanceText, PIXEL_KM, TV_FAR_RANGE } from '../systems/travelFarPlaces.js';   // TV5: the far places, held at the view's edge
-import { TV_DUNGEON_TYPES, dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
+import { dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
 import { routeGround, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE } from '../systems/travelRoute.js';   // OW-MOUNTAINS, OW-ROADSIDE; AUDIT OW3 J4: the drawn route's points; AUDIT OW4 J3: the ground read once
-import { bandsNear, wanderAt, bandSight, bandChaseStep, bandLabel, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
+import { bandsNear, wanderAt, bandSight, bandChaseStep, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
 import { bandWordOf, validBandWord, chaseYields, bandLifeOf, bandNearMe, bandPixelOf, BAND_WORD_MS, BANDS_WIRE_MAX } from '../systems/travelBands.js';   // TV7b: the chase, shared
 import { walkBegin, leaderWalkStep, walkHeard, memberAnswer, memberFollowing, memberStopOf, memberWalkStep, walkAskStands, sameWalkDest, NO_WALK_ANSWER, PARTY_WALK_RADIUS_M } from '../systems/partyWalk.js';   // TV8: group travel, the leader drives (AUDIT OW3: the whole law, pure)
 import { rollGroupComposition, PACK_SPACING, PACK_ALERT_RADIUS } from '../systems/campEncounters.js';   // TV7: a band is a themed group
 import { seededRng } from '../systems/wind.js';   // TV7: a band's make, rolled from its own seed
 import { enemyDisplayName } from '../characters/enemyBasics.js';   // TV7: a band's words
 import { groupCamps } from '../world/campShared.js';   // OW6: the camps on the Overworld
-import { travellerMarkOf, travellerWorldOf, travellerDue, createTravellerBook, isShipMark } from '../systems/travellerMarks.js';   // TV3: the region's travellers; OWS1: at sea, a ship
+import { travellerMarkOf, travellerDue, createTravellerBook, isShipMark } from '../systems/travellerMarks.js';   // TV3: the region's travellers; OWS1: at sea, a ship
 import { RainCurtainsRenderer, curtainsOf, CURTAIN_FOOT_MARGIN_M } from '../render/rainCurtains.js';   // TV4: the weather's curtains, stood in the world for the view
-import { RANGE_PIXELS as TV_BODY_RANGE } from '../net/wire.js';   // TV3: within the pose range a traveller is their body, not a mark
 import { quickLootWheel, quickLootTake, quickLootArm, plaqueActionFor, plaqueActionSelection, plaqueLightFirst, plaqueStep } from '../systems/quickLoot.js'; import { showPickups, showHaul } from '../ui/pickupFeed.js'; import { claimHauls } from '../ui/haulCards.js';   // QUICK-LOOT B4: the wheel, the take, and the two keys that arm what the next activate means; PICKUP-FEED: what a take moved, as cards (the take's `took`)
 import { findHaul } from '../ui/haulCards.js'; import { setSilverFinder, silverFindAt } from '../systems/silverFinds.js';   // SILVER-FINDS: a loot find's card; the finder every host's loot door asks, and a headstone's find
 import { setWalletSilver } from '../systems/walletItem.js';   // WALLET1: the wallet counts the account's silver
@@ -582,7 +582,7 @@ import { facetBand } from '../net/recipeLaw.js';   // PROF10: the facet's attrib
 import { panBand, DISH_LEVEL } from '../net/recipeLaw.js';   // PROF9: the pan's attribute band; a feast's level at the table
 import { COOK_FIRE } from '../net/professionLaw.js';   // PROF9: the fire Cooking is done at - any lit one, no fee
 import { SURVEYOR } from '../net/professionLaw.js';   // MINE-PERKS: Mining 100's Surveyor, whose own word witnesses the ground
-import { lodeMapMarks, lodeLabel, LODE_COMPASS_CSS } from '../ui/lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, on both maps and the Overworld
+import { lodeMapMarks } from '../ui/lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, on both maps and the Overworld
 import { localWhenText } from '../systems/eventTimers.js';   // AUDIT MINE-PERKS: a Motherlode's hour as the timers say a moment - this machine's clock, its weekday where it is not today
 import { setFeastShare, takeFeastGift, shareFeastWith } from '../systems/cookItems.js';   // PROF9: a feast shared with the party at the table
 import { hasSkillet, packSavedFires, CAMP_TEXT } from '../systems/survival/camp.js';   // PROF9: C&C's Skillet widens the pan's window; AUDIT REST II H5: a dungeon save's fires carried out
@@ -653,7 +653,7 @@ import { raycastColliders, rayBoxEntry, colliderPoses, invertAffine, BUILTIN_COL
 import { DECK_STEP, DECK_HEADROOM, intoDeck, outOfDeck, mainLevel } from '../systems/naval/navalDeck.js';   // DECK-WALK: a body off her deck by more than a tread has left it; her deck's frame (AUDIT NAV2 F33: the headroom a deck point's ray starts under)
 import { warmAshesOn, LeaveShip, setWarmAshesHost, onPreFastTravel as warmAshesPreTravel, onPostFastTravel as warmAshesPostTravel, frame as warmAshesFrame, raidAtSea as warmAshesRaidAtSea, raidRefusal as warmAshesRaidRefusal, raidUnderWay as warmAshesRaidUnderWay, WA_RAID_QUESTS, WA_SEA_REGION } from '../systems/warmAshesShips.js';   // WA1: Warm Ashes - Ships, the ambush at sea; OWS3: its raid, seen coming; THE MERGE (NAV-D, OWS3): one raid at a time
 import { laneNetwork, laneWay, packetsAt, packetAt, LANE_PATH_PX, LANE_DWELL_S } from '../systems/naval/seaLanes.js';   // SEA-LANES: the Bay's packets; LW5: where one is, and her dwell
-import { raidersNear, raiderAt, raiderSight, chaseStep as raiderChaseStep, pixelOfNative, NATIVE_PIXEL as RAID_NATIVE_PIXEL, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M, RAIDER_CHASE_MPS, RAIDERS_WIRE_MAX, RAIDER_WORD_MS, raiderWordOf, validRaiderWord, raiderLifeOf, raiderNearMe, RAIDER_LABEL, RAIDER_LIFE_MS } from '../systems/seaRaiders.js';   // OWS3: Warm Ashes' raiders on the Overworld's sea
+import { raidersNear, raiderAt, raiderSight, chaseStep as raiderChaseStep, pixelOfNative, NATIVE_PIXEL as RAID_NATIVE_PIXEL, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M, RAIDER_CHASE_MPS, RAIDERS_WIRE_MAX, RAIDER_WORD_MS, raiderWordOf, validRaiderWord, raiderLifeOf, raiderNearMe, RAIDER_LIFE_MS } from '../systems/seaRaiders.js';   // OWS3: Warm Ashes' raiders on the Overworld's sea
 import { RAIDER_LEAD_S } from '../systems/naval/navalRaiders.js';   // NAV-R: a raider ship steers its seeded course this far on
 import { setRaidingPartiesHost, raidFrame as raidingPartiesFrame, raidState, raidingPartiesOn, raidTypeName as raidKindName, raidDefendingHere, outOfSight as raidOutOfSight, raidWireWord, raidPeerWord, raidRelayWord, raidTownsFor, raidPoolCleared, raidRelayState, RAID_SPAWN_MIN_DISTANCE, RAID_SPAWN_MAX_DISTANCE } from '../systems/raidingParties.js';   // RAID1: World Events - Raiding Parties, the towns' raids
 import { modSaveRecords, restoreModSaveRecords, newGameModSaveRecords, registerModSaveData } from '../systems/modSaveData.js';   // WA1: DFU's per-mod save slot, for the mods after HCC; OH-D: Ocean Holes' OceanHoleSaveData
@@ -755,7 +755,7 @@ import { createFirmamentBook, setFirmamentBook } from '../net/firmamentBook.js';
 import { setFirmamentTree, setFirmamentOnline, setFirmamentMentoring } from '../systems/firmamentLive.js';   // FIRM1: the tree in force, online alone
 import { starsFor } from '../net/firmamentLaw.js';   // FIRM1: the Stars a Renown level brings, said with it
 import { withoutFirmament } from '../systems/firmamentPowers.js';   // FIRM1: a strike or a spell at a player - a duel's, a siege's, the Wrothgarian zone's - is rolled with the sky off
-import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, accountFirmament, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
+import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, accountLamp, accountFirmament, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
 import { parseModCommand, runModCommand, mutedText, mutedNotices } from '../net/moderation.js';   // MOD1: /mute and /unmute, and the line a muted player reads
 import { createHeartbeat, whileLive } from '../net/heartbeat.js';   // SCALE4c: the beat, the letterbox and the town's board in one request
 import { startPlayClock } from '../net/playClock.js';   // ACC4: time played, knocked from here and measured by the account service's clock
@@ -812,15 +812,17 @@ import { POSE_STRIKES, isWorldRoom, isCellRoom, cellHaloFor, actFrameFits, share
 import { WILD_DATA_MAX, WILD_ITEMS_MAX, POSE_RIDE } from '../net/wire.js';   // INT9 (AUDIT): a deposit's chunks, bounded by the wire's frame; COATS3D: POSE_RIDE - a peer on a horse rides the 3D one
 import { hasDaggerfallArrows } from '../combat/fpArm.js';   // MAC7 #2: the arrow bit on the wire - weaponRig's own read
 import { drawText } from '../ui/text.js';   // ONLINE1: the session's status line
-import { RemotePlayers, composeLook, createSightCache, NAME_RANGE } from '../net/remotePlayers.js';   // ONLINE1: the others, drawn; NAME1: and the sight test their names take, cached and hysteresised (AUDIT NAME1 F2/F5)
+import { RemotePlayers, composeLook, createSightCache } from '../net/remotePlayers.js';   // ONLINE1: the others, drawn; NAME1: and the sight test their names take, cached and hysteresised (AUDIT NAME1 F2/F5)
 import { createNameLayer, nameLayerWanted } from '../ui/nameLayer.js';   // NAME1 + BUBBLE1: the names and the chat bubbles, in the enhanced face; AUDIT NAME1 F7: and who gets that face
 import { enhancedHudScale, setHudSetChips, enhancedHudBottom, enhancedHudQuick } from '../ui/enhancedHud.js';   // AUDIT NAME1 F3: the player's own HUD scale, which the names wear like every other enhanced surface; SET5: the set powers' chips
 import { makeHitPend } from '../net/hitPend.js';   // AUDIT FOES FOE2: a blow the wire refused waits and goes
-import { PeerBodies, peerIsWolf, BODY_BUILD_GATE } from '../net/peerBodies.js';   // MWBODY1: the others in the Morrowind body; WEREWOLF1: and in Bloodmoon's wolf
+import { PeerBodies, peerIsWolf, BODY_BUILD_GATE, playerBuildOpts } from '../net/peerBodies.js';   // MWBODY1: the others in the Morrowind body; WEREWOLF1: and in Bloodmoon's wolf; MW-HEADS2: a player's build
 import { ChatLog, CHAT_REJOIN_MS } from '../net/chat.js';   // CHAT1: the tabs and their lines
 import { LANG_OLD_RELAY_TEXT, NO_LANG_TEXT, langJoinedText } from '../net/chat.js';   // CHAT-LANG: the Language tab's words
 import { CHAT_LANGS, chatLangRoom } from '../net/wire.js';   // CHAT-LANG: the language channels
 import { LANG_LINES, unknownLangText } from '../net/chatCommands.js';   // CHAT-LANG: /lang's list and refusal
+import { OPT_CHANNELS, tradeChanOldText, notJoinedText, optJoinedText, optJoinedSayText, optLeftText, optWaitText, alreadyJoinedText } from '../net/chat.js';   // CHAT-TRADE: the Trade and LFG tabs' words
+import { badJoinText } from '../net/chatCommands.js';   // CHAT-TRADE: /join's and /leave's refusal
 import { oocText, localLineHeard, nextRegionRoom, regionJoinedText, CHAN_OLD_RELAY_TEXT, ROLL_OLD_RELAY_TEXT, EMOTE_OLD_RELAY_TEXT, GUILD_OLD_RELAY_TEXT, NO_GUILD_TEXT, partyNoteTab } from '../net/chat.js';   // CHAT-CHAN: the channels' own laws (a second chat import: CHAT1's pin holds the first as it stands)
 import { parseChatLine, HELP_LINES, CHAT_GREETING_TEXT, unknownCommandText, emptyCommandText, hostMisuseText, badRollText, expandShortcodes, EMOTE_LINES, foundText, FIND_OFFLINE_TEXT, FIND_RELAY_TEXT } from '../net/chatCommands.js';   // CHAT-CHAN: what a typed line IS; DICE1: and a roll; EMOTE1: an action, a gesture, a shortcode
 import { partyRosterSource, localRosterSource, guildRosterSource } from '../net/roster.js';   // CHAT-CHAN: the Party and Local tabs' composed lists
@@ -1085,6 +1087,7 @@ import { createSiegeHerald } from '../net/siegeHerald.js';   // AUDIT-SEATS G1: 
 import { siegeBlowKind, siegeCastClamp, siegeSpellNumbers, siegeSpellBarred, SIEGE_SPELL_BARRED_TEXT, SIEGE_DISMOUNT_TEXT } from '../combat/siegeCombat.js';   // AUDIT-SEATS G5: a battle's shafts, spells and saddle
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { startTutorialTour } from '../ui/tutorialPopup.js';   // TUT1: the welcome tour - and the popups' handler, registered by this host (the four hosts' rule)
+import { createTravelViewMarks } from './travelViewMarks.js';   // HOST-SPLIT
 
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
  *  (ThievesGuild.cs:115, DarkBrotherhood.cs:108). %map is the
@@ -5915,7 +5918,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     let arenaOrigin = null;   // ARENA2: the colosseum's block's origin (pixel-local) - the city floor's frame
     let population = null;   // T2 towns: this pixel's wandering pool
     let locOrigin = null;    // the location origin, pixel-local
-    let lefaySpot = null;    // LEFAY1: Gothway Garden's monument - its spot in the location frame (world/lefayMonument.js lefaySpot), null in any other town
+    let lefaySpot = null;    // LEFAY1: the monument - its spot in the location frame (world/lefayMonument.js lefaySpot), null anywhere but outside Privateer's Hold (HOLD-MONUMENT)
     let yardSites = null;    // MERCHANT-YARDS: a city's or a town's Stable and Wagon Yard - their sites in the location frame, null in any other place
     let portSites = null;    // SHIPYARDS: a port town's shipyard and lighthouse - their sites in the location frame, null in any other place
     let personBatches = null;
@@ -5936,7 +5939,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       setLastLocationKeyTo(dfLocation.regionIndex, dfLocation.locationIndex ?? 0);   // AUDIT-RR F32: WorldDataVariants' last key is THIS location's before its blocks are read - DFU reads the DFLocation right before RMBLayout (MapsFile.cs:999 sets it); the boot index here read every location and left the key on the last
       const loc = layoutLocation(dfLocation, maps, blocks, { enhanced: isEnhanced(), windmills: windmillsOn() });   // WM3: the pack's own switch
       locBlocks = loc.blocks;
-      if (isLefayTown(dfLocation)) lefaySpot = lefaySpotOf(loc);   // LEFAY1: the open ground nearest the town's middle, off its own navgrid
+      const lefayExitDoors = [];   // HOLD-MONUMENT (AUDIT FIVE-ASKS B1): the Hold's dungeon-entrance doors as its blocks stand them - its way out
       // MERCHANT-YARDS: the town's open ground, clear of its buildings, roads and lots; SHIPYARDS: and a port town's seaward
       // ground, on what the yards left - one pass (AUDIT SHIPYARDS L3-3: the yards' and the port's each asked it whole)
       const yardTown = isYardTown(dfLocation), portTown = isPortTown(dfLocation, portByData(dfLocation));
@@ -6107,6 +6110,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
             // keys the 31000-overlap repair on EntryDoor.blockIndex, and a
             // hardcoded 0 made it unreachable from this host.
             const staticDoors = getStaticDoors(cpu, b.dfBlock.index, placed.recordIndex, local);
+            if (isLefayTown(dfLocation)) for (const sd of staticDoors) if (sd.doorType === DOOR_TYPE.DUNGEON_ENTRANCE) lefayExitDoors.push(sd);   // HOLD-MONUMENT: the way out of the Hold
             // GUILD1d: the building's first door, measured where it stands - its hall's banners hang beside it
             const hf = homeKey != null ? pixelHomeFrames.get(homeKey) : null;
             if (hf && !hf.door) hf.door = doorCornersOf(cpu.doors[0], local);
@@ -6210,6 +6214,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           if (isHearthFlat(LIGHTS_ARCHIVE, light.record)) pixelHearths.push([lp[0], lp[1], lp[2], locLocal[1] + light.foot, light.w, light.h]);
         }
       }
+      // HOLD-MONUMENT (AUDIT FIVE-ASKS B1): the monument's spot, its blocks stood - beside the Hold's way out (DFU's exit landing over
+      // its dungeon-entrance door, the location frame), clear of World of Daggerfall's camp on or off
+      if (isLefayTown(dfLocation)) lefaySpot = lefaySpotOf(loc, { camp: { block: PRIVATEERS_HOLD_BLOCK, models: HOLD_MODELS }, exit: lefayExitOf(dungeonEntranceLanding(lefayExitDoors), locLocal) });
+      if (isLefayTown(dfLocation) && !lefaySpot) console.warn('[lefay] no open ground for the monument outside Privateer\'s Hold');   // AUDIT FIVE-ASKS B8: never silent
       // GOTHWAY-BOARDS (systems/gothwayBoards.js): Gothway Garden - the first town out of Privateer's Hold - stands two
       // bounty boards at its north entrance, for a new character to find its first work as they walk in. Stood
       // as the blocks stand theirs (the same model, drawn, merged and solid), kept with the town's own boards and counted a
@@ -6783,7 +6791,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       _bed: bed,   // WATER-NEXT 2: the bed, for the cap's re-index (dwWaterSurface) and its re-carve (dwRecarve)
       groundNormals: labGrass && stride === 1 ? normals : null,   // GRASS-LIT2: the near grid's vertex normals - the grass reads its slope off them; AUDIT B1: only where there is grass (200 KB a pixel)
       population, locOrigin, personBatches,   // T2 towns
-      lefay: lefaySpot,   // LEFAY1: the monument's spot, location frame (locOrigin + its x, z) - null off Gothway Garden
+      lefay: lefaySpot,   // LEFAY1: the monument's spot, location frame (locOrigin + its x, z) - null off Privateer's Hold (HOLD-MONUMENT)
       merchantYards: yardSites,   // MERCHANT-YARDS: the Stable's and the Wagon Yard's sites, location frame - null off a city or a town
       portSites,   // SHIPYARDS: the shipyard's and the lighthouse's sites, location frame - null off a port town
       wardenTown: dfLocation && isWardenTown(dfLocation.mapTableData?.locationType) ? (dfLocation.mapTableData?.mapId ?? 0) >>> 0 : null,   // WARDEN1: a city's, a hamlet's or a village's map id - its watch throws a wagon parked too long on its road, or past its fourth
@@ -14879,7 +14887,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     doorGeneration += 1;   // WORLD-HOVER: the origin was re-anchored, so every door's WORLD matrix moved with it
     bountyFarms?.destroyAll();   // BOUNTY-FARM: the frame moves under it - it stands again from the bounty, in the new one
     quays?.destroyAll();   // QUAYS: and the quays - stood again off the harbours found in the new one
-    lefay?.destroyAll();   // LEFAY1: and the monument - stood again the next frame that finds Gothway Garden built
+    lefay?.destroyAll();   // LEFAY1: and the monument - stood again the next frame that finds Privateer's Hold built
     merchantYards?.destroyAll();   // MERCHANT-YARDS: and the yards - stood again the next frame, in the new frame
     portHost?.destroyAll();   // SHIPYARDS: and the shipyards and lighthouses, the same
     wardenShows?.destroyAll();   // WARDEN1: and a throw in flight - its team set down where it landed
@@ -22468,7 +22476,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     remotePlayers = new RemotePlayers({ renderer, deps: { fetchBytes, palette, getTexture, uploadRecordFrame, audio } });   // 2026-09-17: uploadRecordFrame added for the class-enemy billboard path (net/remotePlayers.js _buildMobile/_syncMobilePeer) - the doll path never touches it
     // MWBODY1: the enhanced skin with Morrowind data attached puts every peer in a body of its own; otherwise the doll
     const enhanced = isEnhanced();   // the skin cannot change without a reload (switchSkin), so it is read once, not per frame
-    peerBodies = new PeerBodies({ renderer, enabled: () => enhanced && morrowindDataCount() > 0, generation: morrowindDataGeneration, collider: () => collider, gate: BODY_BUILD_GATE, horses: () => horseRigFor(renderer) });   // MWA4: attached is on   // CLIMB6: the floor under a hanging peer   // COATS3D: and the 3D horse a rider sits
+    peerBodies = new PeerBodies({ renderer, enabled: () => enhanced && morrowindDataCount() > 0, generation: morrowindDataGeneration, collider: () => collider, gate: BODY_BUILD_GATE, horses: () => horseRigFor(renderer), buildOpts: playerBuildOpts });   // MW-HEADS2: a player's head   // MWA4: attached is on   // CLIMB6: the floor under a hanging peer   // COATS3D: and the 3D horse a rider sits
     const eotbArt = createEotbArt({ renderer });   // DISC23-B: one store for the riders' and the walkers' art
     peerRiders = createPeerRiders({ renderer, art: eotbArt });   // RIDE: the others in the saddle
     peerWalkers = createPeerWalkers({ renderer, art: eotbArt, enabled: () => getPref('peerClassSprites') !== false });   // DISC23-B: the others on foot, as the set they chose - the 'Other players' card's sprite side
@@ -22831,6 +22839,22 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           if (!chatLog.tab('lang').room) chatLog.push('lang', { text: langOld() ? LANG_OLD_RELAY_TEXT : langJoinedText(CHAT_LANGS[cmd.code]), system: true });
           return 'read';
         }
+        // CHAT-TRADE: /join trade, /leave lfg - the choice is kept (`chatTrade`, `chatLfg`) and the frame moves the tab; a
+        // tab joined comes to the front with its line, and a tab left goes from the bar with the chat's front tab saying so
+        if (cmd.kind === 'join' || cmd.kind === 'leave') {
+          if (!cmd.chan) { note(badJoinText(cmd.kind)); return false; }
+          const on = cmd.kind === 'join';
+          if (optJoined(cmd.chan) === on) { note(on ? alreadyJoinedText(cmd.chan) : notJoinedText(cmd.chan)); return 'read'; }   // already so: the state, and the way out of it
+          optSet(cmd.chan, on);
+          return 'read';
+        }
+        // CHAT-TRADE: a line said to a channel not joined JOINS it - the tab to the front, the line kept in the field to be
+        // said once the channel opens (B2's false: nothing went)
+        if (cmd.kind === 'channel' && Object.hasOwn(OPT_CHANNELS, cmd.tab) && !optJoined(cmd.tab)) {
+          optSet(cmd.tab, true, { say: true });
+          return false;
+        }
+        if (cmd.kind === 'rp') return chatSend(tabId, cmd.text, tabId);   // CHAT-RP: a line of roleplay, on this tab - its *mark* is the drawing's
         if (cmd.kind === 'find') { findTab = tabId; const hub = chatLinks?.get('world'); if (!hub?.sendFind(cmd.q)) note(hub?.welcomed && !hub.findOk ? FIND_RELAY_TEXT : FIND_OFFLINE_TEXT); return 'read'; }   // SCALE5c: everyone online, by name - the hub's answer comes back to this tab. AUDIT SCALE II C-1: a hub online on a relay before the shards answers no search, and is never asked one (it closes the link on it) - said as that, not as offline
         if (cmd.kind === 'me') return chatSend(tabId, cmd.text, tabId, { me: true });   // EMOTE1: an action, on this tab
         if (cmd.kind === 'emote') return chatSend('local', cmd.text, tabId, { me: true });   // EMOTE1: a gesture - the body's, so those near see it
@@ -22868,7 +22892,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // wears the friend colour, which is the list's own mark carried into the conversation
       nameColor: (id) => social?.cssColorOf(id) ?? null,   // SOC7 integration: the picture answers (net/social.js cssColorOf - party green, friend blue, a stranger none); the host names no colour, which SOC4's pin holds it to
       rowActions: (peerId) => socialRowActions(peerId),
-      badgeOf: (id) => chatSessionOf(chatLog?.active)?.badgeOf?.(id) ?? null,   // CHAT-FIT: a chat line's author wears the badge the roster shows - the same session answers both, or the one name would say two things on one screen
+      badgeOf: (id) => chatSessionOf(chatLog?.active)?.badgeOf?.(id) ?? null,
+      // CHAT-TRADE (Mac: "There must be a better way to handle the new channels instead of a text command"): the + beside
+      // the tabs - the channels joined by choice, each with its mark; a click is optSet, /join's own door
+      channels: { list: () => Object.entries(OPT_CHANNELS).map(([id, c]) => ({ id, name: c.name, hint: chatLog?.tab(id)?.hint ?? '', joined: optJoined(id) })), set: (id, on) => optSet(id, on) },   // CHAT-FIT: a chat line's author wears the badge the roster shows - the same session answers both, or the one name would say two things on one screen
     });
     socialStart();   // SOC2: the picture over the hub's link, once the panel it lands beside exists
   };
@@ -24911,12 +24938,16 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** SD9b: THE HOUR'S RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/sdClaims.js) - each Brass Remnant's fall
    *  the relay signed for me, kept on the device until the service has counted it (the gate's own carrier, its store). */
   const _accountSds = accountSds({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
+  /** LAMP-KEEPER II: I Love Lamp, asked of the account service at a press on a lamp keeper (worldModes.js lampChoice) -
+   *  online alone; offline the host hands none, and the lamp says the title is an account's. */
+  const _accountLamp = params.has('online') ? accountLamp({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }) : null;
   const sdClaims = params.has('online') ? createSdClaims({
     claim: _accountSds.claim,
     me: _accountSds.me,
     nowS: relayNowS,
     store: _spoilsStore,
     say: (text) => chatNotice(text),
+    announce: (kind, key) => announceHonour(kind, key),   // HONOUR-BANNER (2026-10-14): Hourbreaker and The Turning Hour as a loot popup, beside the line
   }) : null;
   // SILVER-FINDS (bible/06-Systems/Professions-Arc.md 10.5): A LOOT FIND - every host's loot door rolls its container once
   // (systems/silverFinds.js: a body, a treasure pile, a search's find) and a find asks the marks book, whose service's
@@ -26252,7 +26283,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     open: openBroker,
     gone: () => closeBrokerDoor(),   // midnight took her from under her open window: it is shut, and she says so
   }) : null;
-  // LEFAY1: THE MONUMENT TO JULIAN LEFAY (scenes/lefayMonumentHost.js) - in the middle of Gothway Garden, where its
+  // LEFAY1: THE MONUMENT TO JULIAN LEFAY (scenes/lefayMonumentHost.js) - outside Privateer's Hold (HOLD-MONUMENT), where its
   // pixel's build found open ground (`p.lefay`, the location frame), carried by the live floating-origin translation;
   // the flowers a press throws there laid in the character's own pile (systems/save.js carries it)
   const _lefayT = [0, 0, 0], _lefaySite = [0, 0, 0];
@@ -28692,6 +28723,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const chatLangCode = () => (chatLangRoom(getPref('chatLang')) ? getPref('chatLang') : null);
   /** CHAT-LANG: the Language tab on a relay from before the language channels - the World link's welcome said so. */
   const langOld = () => { const world = chatLinks?.get('world'); return world?.status === 'open' && !world.langOk; };
+  /** CHAT-TRADE: the Trade and LFG tabs on a relay from before them - the World link's welcome said so. */
+  const tradeChanOld = () => { const world = chatLinks?.get('world'); return world?.status === 'open' && !world.tradeChanOk; };
+  /** CHAT-TRADE: has the player joined this channel (`chatTrade`, `chatLfg`) - false for a tab that is not one. */
+  const optJoined = (tabId) => (Object.hasOwn(OPT_CHANNELS, tabId) ? getPref(OPT_CHANNELS[tabId].pref) === true : false);
+  /** CHAT-TRADE: why a Trade or LFG tab cannot talk yet - not joined, or a relay from before them; null when it can. */
+  const optWhy = (tabId) => (!Object.hasOwn(OPT_CHANNELS, tabId) || chatLog?.tab(tabId)?.room ? null : tradeChanOld() ? tradeChanOldText() : optJoined(tabId) ? null : notJoinedText(tabId));
   /** CHAT-CHAN: the strip under the chat - why the ACTIVE tab cannot talk, when it cannot: the tab's own reason (a relay
    *  from before the channels, no party), else the socket it rides (connecting, reconnecting, refused: the session's
    *  own line, labelled with the tab - AUDIT CHAT B5). The Region tab before its first region reads the World link's,
@@ -28703,6 +28740,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (tabId === 'guild' && guildOld()) return GUILD_OLD_RELAY_TEXT;   // GUILD1c
     if (tabId === 'guild' && !myGuildTag()) return NO_GUILD_TEXT;
     if (tabId === 'lang' && !tab?.room) return langOld() ? LANG_OLD_RELAY_TEXT : chatLangCode() ? null : NO_LANG_TEXT;   // CHAT-LANG: before its channel
+    if ((tabId === 'trade' || tabId === 'lfg') && !tab?.room) return optWhy(tabId);   // CHAT-TRADE: before its channel
     const s = tabId === 'region' && !tab?.room ? chatLinks?.get('world') : chatSessionOf(tabId);
     return s?.statusLine(tab?.label ?? 'chat') ?? null;
   };
@@ -28719,6 +28757,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if ((tabId === 'party' || tabId === 'region') && chanOld()) return why(CHAN_OLD_RELAY_TEXT);
     if (tabId === 'guild' && guildOld()) return why(GUILD_OLD_RELAY_TEXT);   // GUILD1c
     if (tabId === 'lang' && !chatLog.tab('lang')?.room) return why(langOld() ? LANG_OLD_RELAY_TEXT : NO_LANG_TEXT);   // CHAT-LANG: no channel yet
+    if ((tabId === 'trade' || tabId === 'lfg') && !chatLog.tab(tabId)?.room) return why(optWhy(tabId) ?? optWaitText(tabId));   // CHAT-TRADE: not joined, an older relay, or the channel not open yet
     // EMOTE1: an action only down a session whose relay carries one - an older one would say the words bare
     const s = tabId === 'local' ? online : tabId === 'party' || tabId === 'guild' ? socialLink() : chatLinks.get(tabId);
     if (me && s?.status === 'open' && !s.emoteOk) return why(EMOTE_OLD_RELAY_TEXT);
@@ -28742,6 +28781,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if ((tabId === 'party' || tabId === 'region') && chanOld()) return why(CHAN_OLD_RELAY_TEXT);
     if (tabId === 'guild' && guildOld()) return why(GUILD_OLD_RELAY_TEXT);   // GUILD1c
     if (tabId === 'lang' && !chatLog.tab('lang')?.room) return why(langOld() ? LANG_OLD_RELAY_TEXT : NO_LANG_TEXT);   // CHAT-LANG
+    if ((tabId === 'trade' || tabId === 'lfg') && !chatLog.tab(tabId)?.room) return why(optWhy(tabId) ?? optWaitText(tabId));   // CHAT-TRADE
     const s = tabId === 'local' ? online : tabId === 'party' || tabId === 'guild' ? socialLink() : chatLinks.get(tabId);
     if (s?.status === 'open' && !s.rollOk) return why(ROLL_OLD_RELAY_TEXT);
     if (tabId === 'party' && !social?.party) return why(NO_PARTY_TEXT);
@@ -28784,6 +28824,38 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     chatLog.setRoom('lang', room, CHAT_LANGS[code]);
     link.join(room);
     chatLog.push('lang', { text: langJoinedText(CHAT_LANGS[code]), system: true });
+  };
+  /** CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG" - "without introducing clutter"): THE TRADE AND LFG TABS
+   *  FOLLOW THE PLAYER'S CHOICE - the Language tab's law twice over: on the bar while joined (`chatTrade`, `chatLfg`; /join,
+   *  /leave, the Settings' Chat card), each link in its channel once the World link's welcome says the relay opens them
+   *  (an older one refuses the key), out of it when the choice is taken back. A player who never joins holds no socket
+   *  for either and sees no tab. The join's line is the command's (a page load back into a channel says nothing). */
+  const chatOptFrame = () => {
+    if (seatOut()) return;   // ONE-SEAT: a tab out of the seat joins no channel
+    for (const id in OPT_CHANNELS) {   // AUDIT CHAT-TRADE A6: a frame's walk allocates nothing
+      const c = OPT_CHANNELS[id], link = chatLinks?.get(id);
+      if (!link) continue;
+      const joined = optJoined(id);
+      chatLog.setShown(id, joined);
+      const room = joined ? c.room : null;
+      if (room === chatLog.tab(id).room) continue;
+      if (!room) { chatLog.setRoom(id, null, null); link.leave(); continue; }
+      if (!chatLinks.get('world')?.tradeChanOk) continue;
+      chatLog.setRoom(id, room, c.name);
+      link.join(room);
+    }
+  };
+  /** CHAT-TRADE: A CHANNEL JOINED OR LEFT - the one door, for `/join` and `/leave`, a line said to a channel not joined
+   *  (`say`: its line waits in the field) and the chat's channel picker (ui/chatPanel.js `channels`). The choice is kept
+   *  (`chatTrade`, `chatLfg`) and the frame moves the tab at once; a tab joined comes to the front with its line, and a
+   *  tab left goes from the bar with the chat's front tab saying so. */
+  const optSet = (id, on, { say = false } = {}) => {
+    const c = OPT_CHANNELS[id];
+    if (!c || !chatLog) return;
+    setPref(c.pref, !!on);
+    chatOptFrame();
+    if (on) { chatLog.select(id); chatLog.push(id, { text: tradeChanOld() ? tradeChanOldText() : say ? optJoinedSayText(id) : optJoinedText(id), system: true }); }
+    else chatLog.push(chatLog.active, { text: optLeftText(id), system: true });
   };
   /** PING1 (2026-10-11, the players: "A unique color or alert for @name pings"): the log marks a line that names me
    *  (net/chat.js mentions - my name the presence session's); the alert is the enchanter's chime, once for a burst. */
@@ -28828,6 +28900,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     chatRegionFrame(performance.now());   // CHAT-CHAN: before the rejoin - a region crossed moves the link, a rejoin takes it back to where it is
     travellerFrame(performance.now());   // TV3: and my mark in it, when due
     chatLangFrame();   // CHAT-LANG: and the language channel chosen, or left - before the rejoin too
+    chatOptFrame();   // CHAT-TRADE: and the Trade and LFG channels joined, or left - before the rejoin too
     chatPingFrame(performance.now());   // PING1: a line naming me, chimed
     for (const [tabId, link] of chatLinks) {
       const room = chatLog.tab(tabId).room;   // CHAT-CHAN: a tab whose channel is not known yet (the Region tab, before its first region) has nothing to rejoin
@@ -30724,6 +30797,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return out;
     },
     activateGrave: (g, mode) => activateGrave(g, mode),   // SEARCH1
+    lampClaim: _accountLamp ? () => _accountLamp.claim() : undefined,   // LAMP-KEEPER II: a lamp keeper spoken to - I Love Lamp, the account's
+    lampAccount: _accountLamp ? () => _accountLamp.account() : undefined,   // AUDIT FIVE-ASKS D2: whose it is - another sign-in asks afresh
     monumentTargets: () => lefay?.targets() ?? [],   // LEFAY1: the monument to Julian LeFay, in the street's one ray
     activateMonument: (key, mode, verb) => lefay?.activate(key, mode, verb) ?? false,   // LEFAY1: read it, or throw it a flower
     yardTargets: () => merchantYards?.targets() ?? [],   // MERCHANT-YARDS: the yards' keepers, signs, horses and wagons on show, in the street's one ray
@@ -32499,238 +32574,29 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     }
     return holder._tvAt;
   }
-  /** OVERWORLD NAMES: a player's badge as their name wears it in play - the relay's stamps, never a frame's own words. */
-  const tvBadgeOf = (p) => ({ title: p.title ?? null, glyphs: Array.isArray(p.glyphs) ? p.glyphs : [], lv: p.lv ?? null, gt: p.gt ?? null, rb: p.rb ?? null });   // AUDIT-SEATS: and a Season's banner ribbon
-  const TV_PEER_HEAD_M = 1.8;   // m: a peer's head when no body layer knows their height
-  /** The readout's marks: the plates (the journey's own end hides its plate), and the end. World points - the view
-   *  projects them through the frame's matrices. */
-  function travelViewMarks() {
-    const live = tvTripLive();
-    if (!live) { tvTrip.plan = null; tvTrip.natives = []; tvTrip.end = null; tvTrip.line = ''; }
-    const endKey = live && tvTrip.plan.summary ? `place:${tvTrip.plan.summary.mapId}` : null;
-    const marks = [];
-    for (const p of travelViewPlaces()) {
-      if (p.key === endKey) continue;
-      const tier = params.has('online') ? tierPhrase(dungeonTierLabel(p.summary.loc)) : '';   // TIER1: a dungeon's tier and size under its name, online
-      // OW-DUNGEON-DOT (2026-10-13, field: "some dungeons appear on the Overworld map as towns"): a found dungeon within the
-      // grid wears TV2's plate (travelViewDungeons leaves it to this list), and every plate here was kind 'place' - a
-      // town's brass dot, and the Towns switch's count. Its kind says so now: the dungeons' arch, the Dungeons switch.
-      const isDungeon = TV_DUNGEON_TYPES.has(p.summary.loc?.mapTableData?.locationType);
-      marks.push({ key: p.key, at: tvSceneKept(p, p.x, p.z, TV_PLACE_LIFT), label: p.summary.name, ...(tier ? { sub: tier } : {}), kind: isDungeon ? 'place dungeon' : 'place', pick: true, hub: carriageTown(p.summary.mapId), tip: seatTipAt(p.summary.mapId) });   // OW-HUBS: a carriage town's wheel; SEAT-TIP: a seat's card
-    }
-    // TV5: the far places, held at the edge with their distance (the journey's own end is the flag's)
-    const farEnd = endKey ? `far:${tvTrip.plan.summary.mapId}` : null;
-    const here = state.worldCoords(player.pos);
-    for (const f of travelViewFarPlaces()) {
-      if (f.key === farEnd) continue;
-      const km = (Math.hypot(f.x - here.x, f.z - here.z) / 32768) * PIXEL_KM;   // native units a pixel (MapsFile.WorldMapTerrainDim)
-      marks.push({ key: f.key, at: tvSceneKept(f, f.x, f.z, TV_PLACE_LIFT), label: f.summary.name, sub: farDistanceText(km), kind: 'far', pick: true, edge: true, hub: carriageTown(f.summary.mapId), tip: seatTipAt(f.summary.mapId) });   // OW-HUBS; SEAT-TIP
-    }
-    // TV6: THE DUNGEONS - a found one past the grid a far plate (within it TV2's plate stands - AUDIT OW3 D3: the list
-    // leaves those out, so they spend none of its twelve), the rest unnamed lairs. AUDIT OW3 D1: a spawn the player has
-    // been told of the same way - named once filed, its plate a walk to its door (travelViewSpawnWalk)
-    for (const g of travelViewDungeons()) {
-      if (g.found) {
-        if (!g.spawn && `far:${g.row.mapID}` === farEnd) continue;
-        const km = (Math.hypot(g.x - here.x, g.z - here.z) / 32768) * PIXEL_KM;
-        const tier = params.has('online') ? tierPhrase(dungeonTierLabel(g.loc)) : '';   // TIER1: the tier and size before the distance, online
-        marks.push({ key: g.key, at: tvSceneKept(g, g.x, g.z, TV_PLACE_LIFT), label: g.loc.name, sub: tier ? `${tier} - ${farDistanceText(km)}` : farDistanceText(km), kind: 'far dungeon', pick: true, edge: true });   // OW-FILTER: 'dungeon' - the look is the first word's, the filter's group the second's
-      } else marks.push({ key: g.key, at: tvSceneKept(g, g.x, g.z, TV_PLACE_LIFT), label: '?', kind: 'lair' });
-    }
-    // LW3: THE ROAD'S PARTIES - a caravan, pilgrims, a pedlar, each where it is and where it is bound (scenes/livingRoads.js)
-    if (livingRoads && livingWorldOn()) {
-      for (const m of livingRoads.marks()) if (markShown({ kind: m.kind })) marks.push({ key: m.key, at: [m.at[0], m.at[1] + 2, m.at[2]], label: m.label, kind: m.kind });
-      // LW12: the hideouts of bands the character has heard of - rumoured, a ring
-      const hereN = state.worldCoords(cam.pos);
-      for (const m of livingHideoutsHostOf().marks(hereN.x, hereN.z, skyMinutes())) if (markShown({ kind: m.kind })) marks.push({ key: m.key, at: [m.at[0], m.at[1] + 2, m.at[2]], label: m.label, kind: m.kind });
-    }
-    // TV7: THE BANDS - each with its kind and number where it walks; one chasing me held at the edge, pointing
-    const bms = bandNowMs();
-    // AUDIT OW4 B6: none drawn where none can come - the camps' own switch off, or the enemy spawns held
-    const shown = getPref('wildernessCamps') === false || playerEntity.preventEnemySpawns ? [] : [...travelViewBands()];
-    for (const c of _bandChase.values()) if (!shown.some((o) => o.id === c.band.id)) shown.push(c.band);   // AUDIT OW3 T7-2: a chaser out of the list still seen
-    for (const b of shown) {
-      if (_bandSpent.has(b.id)) continue;
-      const mk = bandMake(b);
-      if (!mk) continue;
-      const chasing = _bandChase.has(b.id), p = bandPlace(b, bms);
-      marks.push({ key: `band:${b.id}`, at: tvSceneKept(b, p.x, p.z, 2), label: chasing ? `${WILD_MARK} ${bandLabel(mk.name, mk.mobileTypes.length)}` : bandLabel(mk.name, mk.mobileTypes.length), kind: chasing ? 'band chase' : 'band', edge: chasing, pick: true });   // OW6: the band's OWN number, the same for every player (a party it meets brings more - PSCALE1 - where it stands); WILD-ALERT: a chase is a band that noticed me - its mark
-    }
-    // OW6 (2026-09-29, the player: "If a camp is spawned, it should show in the overworld"): THE CAMPS - every group
-    // standing about, a camp, a pack or a band stood: mine, and each peer's by the tags their frames carry
-    // (world/campShared.js) - one mark where its living members stand, with its kind and its number; gone with its last
-    const wildCamps = wildCampKeys();   // WILD-ALERT: a camp a member of which has noticed me wears the mark
-    for (const c of travelViewCamps()) marks.push({ key: `camp:${c.key}`, at: [c.at[0], c.at[1] + 2, c.at[2]], label: wildCamps.has(c.key) ? `${WILD_MARK} ${c.label}` : c.label, kind: 'camp', pick: true }); for (const g of gatherHost?.overworldGroups(walkMode ? player.pos : cam.pos) ?? []) marks.push(g);   // OW-ATTACK: pressable; GATHER-OW: each profession's group of nodes near me, a glyph (scenes/gatherHost.js overworldGroups)
-    // YARDS-FOUND (from play: "The new stable and transport merchant shops dont show on town maps/overworld"): each town's
-    // Stable and Wagon Yard standing about me, its name over its ground and its signboard's emblem (scenes/merchantYardsHost.js
-    // overworldMarks) - with the towns on the Towns switch
-    for (const m of merchantYards?.overworldMarks() ?? []) marks.push(m);
-    // SHIPYARDS-FOUND (Mac: "Everything should show on the map/overworld"): each port town's shipyard and lighthouse
-    // standing about me (scenes/portHost.js overworldMarks), and its docks over the first quay laid (scenes/quayPool.js)
-    for (const m of portHost?.overworldMarks() ?? []) marks.push(m);
-    for (const m of quays?.overworldMarks() ?? []) marks.push(m);
-    // BOUNTY-OVERWORLD (the player: "can the bounties also be shown on the overworld map"): EVERY BOUNTY I HOLD - its
-    // hunt's pixel (the held map's black circle, scenes/bountyHost.js mapMarks), its foes and its distance, held at the
-    // edge off the picture as the journey's end is, so the way to it is always shown
-    const bountyIds = new Set();
-    for (const b of bountyHost?.mapMarks?.() ?? []) {
-      const px = Math.floor(b.cx), py = Math.floor(b.cy);
-      if (!Number.isInteger(px) || !Number.isInteger(py) || !b.id) continue;
-      bountyIds.add(b.id);
-      const o = mapPixelToWorldCoords(px, py);
-      const x = o.x + 16384, z = o.z + 16384;   // the pixel's middle, native units
-      let h = _tvBountyHold.get(b.id);
-      if (!h) { h = {}; _tvBountyHold.set(b.id, h); }
-      const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-      h.snap = { px, py, x, z, place: !!b.place, farmKey: b.farmKey ?? null };   // BOUNTY-SNAP: where its click walks
-      marks.push({ key: `bounty:${b.id}`, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), label: `Bounty: ${b.label}`, sub: farDistanceText(km), kind: 'bounty', edge: true, pick: true });   // BOUNTY-SNAP: pressable, on its ring alone (ui/travelViewHud.js pickBox)
-    }
-    for (const id of [..._tvBountyHold.keys()]) if (!bountyIds.has(id)) _tvBountyHold.delete(id);   // a bounty over lets its point go
-    // HOME-VENDOR: THE TRADER'S WAYPOINT - its town's pixel, in Travel Options' mark's own yellow (`target`), named for
-    // the house and held at the edge off the picture with its distance, as a bounty is
-    {
-      const wp = vendorWaypoint();
-      const t = wp ? _townOfMapId.get(wp.map) : null;
-      if (t) {
-        const o = mapPixelToWorldCoords(t.px, t.py);
-        const x = o.x + 16384, z = o.z + 16384;
-        const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-        marks.push({ key: `vendor:${wp.map}:${wp.buildingKey}`, at: tvSceneKept(_tvVendorHold, x, z, TV_PLACE_LIFT), label: `Trader: ${wp.owner || 'a'}'s house`, sub: `${t.name} · ${farDistanceText(km)}`, kind: 'target', edge: true });
-      }
-    }
-    // AUDIT MINE-PERKS (the cold pass, A8 - the thread: "mark the motherlode spots with a waypoint on the travel map"): A
-    // MOTHERLODE SENSE'S MOTHERLODES on the Overworld too - each at its pixel's middle, its ore and its hour, held at the
-    // edge off the picture with its distance as a bounty is; Mining's glyph in the compass's aqua, under the Gathering
-    // switch, its distance never the nodes' reach (no `dist`)
-    {
-      const keep = new Set();
-      if (lodeSense()) {
-        const nowS = Math.floor((Date.now() + _sharedOffsetMs) / 1000);
-        for (const l of motherlodeBook.sensedAll(_lodesSensed)) {
-          keep.add(l.key);
-          const o = mapPixelToWorldCoords(l.x, l.y);
-          const x = o.x + 16384, z = o.z + 16384;   // the pixel's middle, native units
-          let h = _tvLodeHold.get(l.key);
-          if (!h) { h = {}; _tvLodeHold.set(l.key, h); }
-          const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-          marks.push({ key: `lode:${l.key}`, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), label: lodeLabel(l, nowS, lodeWords), sub: farDistanceText(km), kind: 'gather mining', color: LODE_COMPASS_CSS, edge: true });
-        }
-      }
-      for (const k of [..._tvLodeHold.keys()]) if (!keep.has(k)) _tvLodeHold.delete(k);   // a Motherlode gone lets its point go
-    }
-    // WAYPOINTS (2026-10-06): THE FLAGS - every waypoint the switches show, a small flag in its colour where it lies; a
-    // FOLLOWED one held at the screen's edge with its distance, as a bounty is (the rest only where they are in view).
-    // A click on one is a walk to it; a right-click its menu (onTravelViewContext)
-    {
-      const keep = new Set();
-      for (const w of shownWaypoints()) {
-        const n = mapPointToNative(w.mx, w.my);
-        let h = _tvWaypointHold.get(w.id);
-        if (!h) { h = {}; _tvWaypointHold.set(w.id, h); }
-        keep.add(w.id);
-        const followed = isWaypointFollowed(w.id);
-        const km = (Math.hypot(n.x - here.x, n.z - here.z) / 32768) * PIXEL_KM;
-        marks.push({ key: `wp:${w.id}`, at: tvSceneKept(h, n.x, n.z, 0), label: w.name, ...(followed ? { sub: farDistanceText(km) } : {}),
-          kind: `waypoint ${w.kind}`, color: w.color, wpKind: w.kind, followed, edge: followed, pick: true });
-      }
-      for (const id of [..._tvWaypointHold.keys()]) if (!keep.has(id)) _tvWaypointHold.delete(id);
-    }
-    // AUDIT DEEP2 B-1: THE JOURNEY'S END IS NEVER OFF THE SCREEN UNSEEN - held at the edge as a far place is (a far town's
-    // plate gave way to a flag drawn above the picture, and the destination was gone for the whole journey), a place's
-    // with its distance, and a click on a place's flag is its journey again (after a stop there is no ground to click)
-    if (live && tvTrip.end) {
-      const e = tvTrip.end, place = e.kind === 'dest';
-      const km = place ? (Math.hypot(e.x - here.x, e.z - here.z) / 32768) * PIXEL_KM : NaN;
-      marks.push({ key: 'dest', at: tvSceneKept(e, e.x, e.z, place ? TV_PLACE_LIFT : 0), label: e.label, kind: e.kind, edge: true, ...(place ? { pick: true, sub: farDistanceText(km) } : {}) });
-    }
-    // OVERWORLD NAMES (2026-09-28, Mac: "Full, like in play"): THE PLAYERS DRAWN HERE - within the pose range, their
-    // bodies standing - marked as the region's travellers are, over their heads, NAMED AS THEY ARE IN PLAY (the title
-    // above, the Renown, the name, the guild's tag, the glyphs; my party's in its green). From the view's eye the names
-    // over their heads were past NAME_RANGE (60 m) - the eye stands 40-780 m back (the height over the tilt's tangent;
-    // about 200 m as it opens) - so the players nearest (a party travelling together) went nameless; those names stand
-    // down under the view (drawPeerNames) and these stand for them
-    const near = new Set();
-    const book = travellerBook.live(Date.now());
-    const sharing = new Map();   // the region's travellers by id: the players who share where they are with it
-    for (const t of book) sharing.set(t.id, t);
-    const myGt = myGuildTag();   // OW-KIN: asked once a frame, not once a player
-    // the room's drawable peers, as this frame's onlineFrame sifted them (it runs before the readout): the concealed
-    // (`_hiddenPeers`) and the veiled (`_veils`) are never marked
-    // PVPGIANT: the zone's roaming giants on the Overworld, as the enemies they are (never more than two stand)
-    for (const gf of exteriorFoes.foes) { if (gf.entity?.wildGiant && !(gf.entity.health <= 0) && gf.ai?.feet) marks.push({ key: `giant:${gf.id ?? gf.entity.name ?? marks.length}`, at: [gf.ai.feet[0], gf.ai.feet[1] + 8, gf.ai.feet[2]], label: 'Giant', kind: 'stranger', edge: true }); }
-    for (const d of online?.drawable?.() ?? []) {
-      if (!d?.shown || _hiddenPeers.has(d.id) || _veils.has(d.id)) continue;
-      const f = onlineToScene(_peerMapPoses.get(d.id) ?? d.shown);
-      // WILD3 (the owner: "when other players are near you they are counted as enemies bright red and its called stranger
-      // when you near them Like 600m away"): in the open zone a stranger within WILD_STRANGER_M stands as an enemy
-      if (_wildStrangerIds.has(d.id)) {
-        near.add(d.id);
-        marks.push({ key: `peer:${d.id}`, at: [f[0], f[1] + TV_PEER_HEAD_M, f[2]], label: WILD_TEXT.stranger, kind: 'stranger', edge: true });
-        continue;
-      }
-      // AUDIT NAMES N2-2: THE SWITCH HOLDS - a player who shares nothing with the region ("Show me to travellers" off)
-      // and is not of my party is named only as close as play names them (NAME_RANGE from where I stand) and never held
-      // at the edge; my party, and a player whose mark the region already has, are named wherever they stand
-      const party = !!social?.isPartyPeer(d.id), t = sharing.get(d.id);
-      if (!party && !t && Math.hypot(f[0] - player.pos[0], f[2] - player.pos[2]) > NAME_RANGE) continue;
-      if (wildHidesPlayer({ kin: travellerKin({ friend: !!social?.isFriendPeer(d.id), gt: d.gt }, myGt), wire: [d.shown.x, 0, d.shown.z], party })) continue;   // WILD1: in or near the open zone, my party and my guild alone
-      const h = peerRiders.heightOf(d.id) || peerBodies.heightOf(d.id) || peerWalkers.heightOf(d.id) || TV_PEER_HEAD_M;
-      near.add(d.id);
-      // AUDIT NAMES: and one on a journey (their region mark's `tv`) keeps the arrow they wore from afar
-      marks.push({ key: `peer:${d.id}`, at: [f[0], f[1] + h, f[2]], label: d.name ?? '', kind: `${party ? 'party' : 'traveller'}${isShipMark(t?.p) ? ' ship' : ''}${t?.p.tv ? ' journey' : ''}`, edge: party || !!t, badge: tvBadgeOf(d),
-        kin: travellerKin({ friend: !!social?.isFriendPeer(d.id), gt: d.gt }, myGt), lv: d.lv ?? null });   // OWS1: at sea (their region mark says so), a ship; OW-KIN / OW-WHO: who they are to me, and their Renown
-    }
-    // TV3: THE REGION'S TRAVELLERS - their marks, beyond the pose range (inside it they are the players above); a party
-    // member's in the party's colour; one outside the picture held at its edge, pointing
-    const me = playerTravelPixel();
-    for (const t of book) {
-      if (near.has(t.id) || Math.max(Math.abs(t.p.px - me.x), Math.abs(t.p.py - me.y)) <= TV_BODY_RANGE) continue;
-      const w = (t._w ??= travellerWorldOf(t.p));   // PERF-TV: a book entry is made new by each mark heard, so it is kept on it
-      // AUDIT TV C3: the peer's id, asked of the party's seats (a token's subject is another id space) - AUDIT NAMES N1-10:
-      // as play's names ask it (colorOf), so my own other tab is never my party's green
-      const kind = social?.isPartyPeer(t.id) ? 'party' : 'traveller';
-      if (wildHidesPlayer({ kin: travellerKin({ friend: !!social?.isFriendPeer(t.id), gt: t.gt }, myGt), wire: [w.x, 0, w.z], party: kind === 'party' })) continue;   // WILD1: in or near the open zone, my party and my guild alone
-      const ship = isShipMark(t.p);   // OWS1: at sea, a ship - riding the sea's top
-      marks.push({ key: `trav:${t.id}`, at: tvSceneKept(t, w.x, w.z, 2, ship), label: t.name, kind: `${kind}${ship ? ' ship' : ''}${t.p.tv ? ' journey' : ''}`, edge: true, badge: tvBadgeOf(t),
-        kin: travellerKin({ friend: !!social?.isFriendPeer(t.id), gt: t.gt }, myGt), lv: t.lv ?? null });   // OW-KIN / OW-WHO
-      near.add(t.id);
-    }
-    // AUDIT OW5 P6: MY PARTY, WHEREVER THEY ARE - the held map draws them from the party's own poses (partyMarkers); here
-    // a member past the pose range with "Show me to travellers" off, or over a region's border, stood on no mark at all,
-    // and the one who fell behind a group journey vanished from the leader's view. Their pose's pixel, in the party's
-    // colour, held at the edge - never twice (one marked above, by a body or the region's mark, stands as that)
-    for (const m of social?.others() ?? []) {
-      if (!Number.isInteger(m.p?.px) || !Number.isInteger(m.p?.py) || (m.peers ?? []).some((id) => near.has(id))) continue;
-      const o = mapPixelToWorldCoords(m.p.px, m.p.py);
-      let h = _tvPartyHold.get(m.acct);
-      if (!h) { h = {}; _tvPartyHold.set(m.acct, h); }
-      marks.push({ key: `pty:${m.acct}`, at: tvSceneKept(h, o.x + 16384, o.z + 16384, 2), label: m.name ?? '', kind: 'party', edge: true });
-    }
-    // OWS3: WARM ASHES' RAIDERS - the sails within the grid's reach where they sail, and one giving chase wherever it is,
-    // held at the edge off the picture, pointing
-    // AUDIT OW5b S8: none drawn where none can come - no Come Sail Away, no boat to be at sea in (the bands' own B6)
-    if (warmAshesOn() && csaOn()) {
-      const grid = Math.max(1, state.terrainDistance ?? 3);
-      const listed = travelViewRaiders();
-      for (const r of listed) {
-        const c = tvRaid.chase.get(r.id);
-        const ship = navalRaidersOn() ? naval.raiderShipOf(r.seed) : null;   // NAV-R: stood as a ship of the sea - drawn where she sails
-        if (tvRaid.spent.has(r.id) && !c && !ship) continue;
-        const at = ship ? state.worldCoords(ship.pos) : c ? c.pos : (seaRaidPeerChase(r.id) ?? r);   // OW6: one a peer's chase holds, where they say it sails
-        const chase = ship ? ship.chase : !!c;
-        const px = pixelOfNative(at.x, at.z);
-        if (!chase && Math.max(Math.abs(px.x - me.x), Math.abs(px.y - me.y)) > grid) continue;
-        marks.push({ key: `raid:${r.id}`, at: tvSceneKept(c ?? r, at.x, at.z, 2, true), label: RAIDER_LABEL, kind: chase ? 'raider ship chase' : 'raider ship', edge: chase });
-      }
-      // AUDIT OW5b S3: A CHASE OUT OF THE LIST STILL SEEN - its raider's life turned over (the list is this life's), and it
-      // came alongside unseen: "one giving chase is marked wherever it is" (the bands' own T7-2)
-      for (const [id, c] of tvRaid.chase) {
-        if (listed.some((r) => r.id === id)) continue;
-        marks.push({ key: `raid:${id}`, at: tvSceneKept(c, c.pos.x, c.pos.z, 2, true), label: RAIDER_LABEL, kind: 'raider ship chase', edge: true });
-      }
-    }
-    return marks;
-  }
+  const { travelViewMarks } = createTravelViewMarks({   // HOST-SPLIT: src/scenes/travelViewMarks.js
+    TV_PLACE_LIFT, _bandChase, _bandSpent, _hiddenPeers, _lodesSensed, _peerMapPoses, _townOfMapId, _tvBountyHold,
+    _tvLodeHold, _tvPartyHold, _tvVendorHold, _tvWaypointHold, _veils, _wildStrangerIds, bandMake, bandNowMs,
+    bandPlace, cam, carriageTown, csaOn, exteriorFoes, livingHideoutsHostOf, lodeSense, lodeWords, motherlodeBook,
+    myGuildTag, params, player, playerTravelPixel, seaRaidPeerChase, seatTipAt, state, travelViewBands,
+    travelViewCamps, travelViewDungeons, travelViewFarPlaces, travelViewPlaces, travelViewRaiders, travellerBook,
+    tvRaid, tvSceneKept, tvTrip, tvTripLive, walkMode, wildCampKeys, wildHidesPlayer,
+    get _sharedOffsetMs() { return _sharedOffsetMs; },
+    get bountyHost() { return bountyHost; },
+    get gatherHost() { return gatherHost; },
+    get livingRoads() { return livingRoads; },
+    get merchantYards() { return merchantYards; },
+    get naval() { return naval; },
+    get navalRaidersOn() { return navalRaidersOn; },
+    get online() { return online; },
+    get onlineToScene() { return onlineToScene; },
+    get peerBodies() { return peerBodies; },
+    get peerRiders() { return peerRiders; },
+    get peerWalkers() { return peerWalkers; },
+    get portHost() { return portHost; },
+    get quays() { return quays; },
+    get social() { return social; },
+  });
   // OWS3 (2026-09-28, the player's ask: "The pirate quest system should work like how we're changing enemies and nearby
   // dungeons. Like mount and blade, being able to see other players sailing in the overworld and other enemy ships"):
   // WARM ASHES' RAIDERS, SEEN COMING (systems/seaRaiders.js). The mod's raid is a roll on a fast travel by sea the
@@ -34915,7 +34781,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     try { if (_mode() === 'exterior' && !_loading) harbourBook.step(now / 1000); } catch (e) { console.warn('[harbours] book', e?.message ?? e); }   // HARBOUR-BOOK: the port near the player sounded, before its quays stand
     if (_mode() === 'exterior') camps.ride(dt);   // DECK-CAMP: the camps on a boat's deck posed off her - after she moved, before the lights (a fire's) and the world pass
     try { quays?.frame(); } catch (e) { console.warn('[quays] pool', e?.message ?? e); }   // QUAYS: the harbours' quays stood or taken down, before the lights (their lanterns) and the world pass
-    try { lefay?.frame(); } catch (e) { console.warn('[lefay] monument', e?.message ?? e); }   // LEFAY1: the monument stood where Gothway Garden is built, its flowers in flight and laid
+    try { lefay?.frame(); } catch (e) { console.warn('[lefay] monument', e?.message ?? e); }   // LEFAY1: the monument stood where Privateer's Hold is built, its flowers in flight and laid
     try { merchantYards?.frame(); } catch (e) { console.warn('[yards] the yards', e?.message ?? e); }   // MERCHANT-YARDS: each town's Stable and Wagon Yard stood where it is built
     portFrame();   // SHIPYARDS: each port town's shipyard and lighthouse stood where it is built, before the lights (its lamp)
     // Lanterns on 17:00-08:00, flickering verbatim; pixel-local lights

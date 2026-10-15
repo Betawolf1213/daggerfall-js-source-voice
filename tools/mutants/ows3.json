@@ -280,7 +280,7 @@
   },
   {
     "name": "OWS3-host-chaser-lost-off-screen",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "kind: chase ? 'raider ship chase' : 'raider ship', edge: chase });",
     "new": "kind: chase ? 'raider ship chase' : 'raider ship', edge: false });",
     "tests": [

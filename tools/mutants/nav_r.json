@@ -172,8 +172,8 @@
   },
   {
     "name": "NAV-R-the-marks-at-the-seeded-place",
-    "file": "src/scenes/world.js",
-    "old": "const ship = navalRaidersOn() ? naval.raiderShipOf(r.seed) : null;   // NAV-R: stood as a ship of the sea - drawn where she sails",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": "const ship = host.navalRaidersOn() ? host.naval.raiderShipOf(r.seed) : null;   // NAV-R: stood as a ship of the sea - drawn where she sails",
     "new": "const ship = null;   // NAV-R: stood as a ship of the sea - drawn where she sails",
     "tests": [
       "test/nav_r_raiders.test.js"

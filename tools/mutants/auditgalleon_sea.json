@@ -45,22 +45,14 @@
     ]
   },
   {
-    "name": "AUDIT-GN-T4b-her-glass-never-glows",
+    "name": "AUDIT-GN-T4b-her-glass-never-cut",
     "file": "src/scenes/comeSailAwayPool.js",
-    "old": "{ const glow = glowOf(sm.textureArchive, sm.textureRecord); if (glow)",
-    "new": "{ const glow = null; if (glow)",
+    "old": "pipeline.uploadRecord(archive, record, { opaque: true, cutout: cutOf(archive, record) });",
+    "new": "pipeline.uploadRecord(archive, record, { opaque: true });",
     "tests": [
       "test/auditgalleon_sea.test.js"
-    ]
-  },
-  {
-    "name": "AUDIT-GN-T4b-her-glow-not-a-replacement",
-    "file": "src/scenes/comeSailAwayPool.js",
-    "old": "toColor32(glow), { replacement: !pipeline.isClassicArt?.(sm.textureArchive) }); }",
-    "new": "toColor32(glow)); }",
-    "tests": [
-      "test/auditgalleon_sea.test.js"
-    ]
+    ],
+    "why": "DF-ART (re-aimed: her windows seen through by day): her stern windows uploaded whole - nothing seen through them"
   },
   {
     "name": "AUDIT-GN-T4c-berthing-to-a-boat-under-way",

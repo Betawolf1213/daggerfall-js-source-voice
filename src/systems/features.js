@@ -1166,6 +1166,22 @@ export const FEATURES = Object.freeze([
     kinds: Object.freeze(['enhanced']),
     control: Object.freeze({ store: 'prefs', key: 'mwNpcBodies', initial: 'near', online: 'player', tiers: Object.freeze([['off', 'Off'], ['near', 'Near'], ['all', 'All']]) }),
   }),
+  // BODY-CARD (2026-10-14, the owner: "Reimplement the billboard morrowind look as a toggle"; asked, the upright card
+  // BODY-LEAN replaced): every Morrowind body and 3D horse - the player's, a peer's, the people's - stands on an UPRIGHT
+  // card, as Daggerfall's flats do, so it draws shorter as the camera looks down on it (cos(pitch) of its height); off,
+  // the card leans by the picture's own up and the body keeps its true size (BODY-LEAN). The VIEWER'S: how this machine
+  // draws a body, never on the wire. Read where the card is stood (render/characterSprite.js drawRigSpriteBox), so it
+  // takes effect at once.
+  Object.freeze({
+    id: 'mw-billboard-look',
+    group: 'world',
+    get title() { return t('features.mwBillboardLook.title', 'Billboard Look'); },
+    get note() { return t('features.mwBillboardLook.note', 'With the Morrowind body, bodies and horses stand upright like the classic sprites and '
+      + 'look shorter from above. Off, they lean to the camera and keep their true height.'); },
+    get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
+    kinds: Object.freeze(['enhanced']),
+    control: Object.freeze({ store: 'prefs', key: 'mwBillboardLook', initial: false, online: 'player' }),
+  }),
   // ORL1 (2026-09-17): OBLIVION-REMASTER-LIKE LEVELING - the first
   // Morrowind mod, and the only row whose effect line has to say NEXT
   // CHARACTER. Every other mod's switch lands on the running game; this

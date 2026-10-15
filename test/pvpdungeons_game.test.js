@@ -200,11 +200,11 @@ test('CROW-NEWS: the crows\' word names whose death set them, bounded - so the f
 });
 
 import { dungeonRespawnMs, dungeonRespawnDue, DUNGEON_RESPAWN_MS, ELITE_DUNGEON_RESPAWN_MS } from '../src/systems/dungeonRespawn.js';
-test('DUNGEON-RESPAWN: a normal dungeon 20 minutes, an elite 40, each on its own clock; the zone\'s halls and a Super dungeon keep the hour', () => {
+test('DUNGEON-RESPAWN: a normal dungeon 20 minutes, an elite 40, each on its own clock; the zone\'s halls and a Super dungeon keep WORLD8\'s - half an hour since RESPAWN-30', () => {
   assert.equal(dungeonRespawnMs({}), 20 * 60_000);
   assert.equal(dungeonRespawnMs({ elite: true }), 40 * 60_000);
-  assert.equal(dungeonRespawnMs({ elite: true, wild: true }), 3600_000, 'the halls as they were');
-  assert.equal(dungeonRespawnMs({ superTier: true }), 3600_000);
+  assert.equal(dungeonRespawnMs({ elite: true, wild: true }), 30 * 60_000, 'the halls as they were');   // PIN MOVED (RESPAWN-30): an hour
+  assert.equal(dungeonRespawnMs({ superTier: true }), 30 * 60_000);   // PIN MOVED (RESPAWN-30): an hour
   const t = 1e12;
   assert.equal(dungeonRespawnDue(t, t + DUNGEON_RESPAWN_MS - 1, DUNGEON_RESPAWN_MS), false);
   assert.equal(dungeonRespawnDue(t, t + DUNGEON_RESPAWN_MS, DUNGEON_RESPAWN_MS), true, 'twenty minutes after it fell, whoever came and went');

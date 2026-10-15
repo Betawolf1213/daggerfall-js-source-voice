@@ -59,19 +59,19 @@ test('MW-EARLY buildingFor: null at rest, the identity of the build in flight, t
   assert.equal(arm.buildingFor(), null, 'no build: nobody');
   const held = heldRig();
   const first = arm.build({ race: 'fprace', faceIndex: 1, deps: held.deps });
-  assert.deepEqual(arm.buildingFor(), { race: 'fprace', female: false, faceIndex: 1, werewolf: false }, 'the build in flight says whom it builds');
+  assert.deepEqual(arm.buildingFor(), { race: 'fprace', female: false, faceIndex: 1, werewolf: false, vampire: false }, 'the build in flight says whom it builds');   // PIN MOVED (PORTRAIT3D): and the curse's face
   const queued = await arm.build({ race: 'fprace', faceIndex: 2, deps: held.deps });
   assert.equal(queued.queued, true);
-  assert.deepEqual(arm.buildingFor(), { race: 'fprace', female: false, faceIndex: 2, werewolf: false }, 'the queued one is who will stand once the queue drains');
+  assert.deepEqual(arm.buildingFor(), { race: 'fprace', female: false, faceIndex: 2, werewolf: false, vampire: false }, 'the queued one is who will stand once the queue drains');
   held.release();
   await first;
   await settle(() => arm.buildingFor() === null);
   assert.equal(arm.buildingFor(), null, 'settled: `built` answers now');
-  assert.deepEqual(arm.builtFor(), { race: 'fprace', female: false, faceIndex: 2, werewolf: false });
+  assert.deepEqual(arm.builtFor(), { race: 'fprace', female: false, faceIndex: 2, werewolf: false, vampire: false });
   // an unload mid-build: the landing build stands for nobody, so a door after it builds again
   const again = heldRig();
   const inFlight = arm.build({ race: 'fprace', faceIndex: 5, werewolf: true, deps: again.deps });
-  assert.deepEqual(arm.buildingFor(), { race: 'fprace', female: false, faceIndex: 5, werewolf: true }, 'a wolf on its way says so');
+  assert.deepEqual(arm.buildingFor(), { race: 'fprace', female: false, faceIndex: 5, werewolf: true, vampire: false }, 'a wolf on its way says so');
   arm.unload();
   assert.equal(arm.buildingFor(), null, 'unloaded: the build in flight lands dead');
   again.release();

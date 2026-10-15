@@ -67,7 +67,8 @@
 import { createFpArm } from '../combat/fpArm.js';
 import { dfWornEquipment } from '../formats/mwItemMap.js';
 import { werewolfSkinOf } from '../characters/werewolfSkin.js';   // SHADOW-FANG: a peer's wolf in the skin their signed glyphs name
-import { npcHintOf, npcKeyOf, withNpcPicks, npcFaceOf, beastWorn } from '../characters/wardrobe.js';   // MWNPC17: an NPC's own garments, head and hair
+import { npcHintOf, npcKeyOf, withNpcPicks, npcFaceOf, beastWorn, WARDROBE_BEAST_RACES } from '../characters/wardrobe.js';   // MWNPC17: an NPC's own garments, head and hair
+import { ownOutfitFor } from '../characters/ownClothingModels.js';   // MW-FOLK1: a townsperson's whole outfit
 import { ARMOR_ENUM } from '../combat/enemyEquipment.js';
 import { EQUIP_SLOTS } from '../systems/equip.js';
 import { mwRaceId } from '../formats/mwNpc.js';
@@ -258,11 +259,18 @@ function bodyLookKey(look) {
   let k = _bodyLookKeys.get(look);
   if (k === undefined) {
     const items = Array.isArray(look.items) ? look.items : [];
-    k = (items.some((it) => it?.group === 'Weapons') ? lookKey({ ...look, items: items.filter((it) => it?.group !== 'Weapons') }) : lookKey(look)) + npcKeyOf(look);
+    k = (items.some((it) => it?.group === 'Weapons') ? lookKey({ ...look, items: items.filter((it) => it?.group !== 'Weapons') }) : lookKey(look)) + npcKeyOf(look) + outfitKeyOf(look);
     _bodyLookKeys.set(look, k);
   }
   return k;
 }
+
+/** MW-FOLK1: the outfit a look wears (characters/ownClothingModels.js TOWNSFOLK_OUTFITS), read as data - an id the table
+ *  does not hold is none, and so is one on a beast (AUDIT MW-FOLK1 L2-F8: the look's producer refused them, but a look
+ *  is data here - its boots on a Khajiit's or an Argonian's digitigrade feet, as Morrowind dresses none, wardrobe.js
+ *  beastWorn) - and the key it adds to a body's: one outfit is one body, another another. */
+const lookOutfit = (look) => (typeof look?.outfit === 'string' && !WARDROBE_BEAST_RACES.includes(look.race) ? ownOutfitFor(look.outfit) : null);
+export const outfitKeyOf = (look) => { const o = lookOutfit(look); return o ? `|outfit:${o.id}` : ''; };
 
 export function peerBuildOpts(look, shown = null, glyphs = null) {
   if (look?.creature) return { creature: look.creature, reachSweep: false, ...(look.flies ? { flies: true } : {}) };   // MWNPC9: its CREA record (fpArm buildCreatureBody) - nothing worn or held; AUDIT MW-NPC II K5: a flyer's must fly
@@ -275,7 +283,7 @@ export function peerBuildOpts(look, shown = null, glyphs = null) {
     race: mwRaceId(stub.race),
     female: stub.gender === 'female',
     faceIndex: stub.faceIndex | 0,
-    armor: npc ? withNpcPicks(beastWorn(worn, stub.race), npc) : worn,   // MWNPC17: each garment its rung and its pick; AUDIT MWNPC16-18: a beast NPC's feet and head bare
+    armor: [...(npc ? withNpcPicks(beastWorn(worn, stub.race), npc) : worn), ...outfitPiece(look, wolf)],   // MWNPC17: each garment its rung and its pick; AUDIT MWNPC16-18: a beast NPC's feet and head bare; MW-FOLK1: and a townsperson's outfit
     // DISC12: the hand in use; WEREWOLF1: a wolf holds nothing (the build refuses the hand anyway)
     weapon: wolf ? null : stub.equip.slots[shown?.lh ? EQUIP_SLOTS.LeftHand : EQUIP_SLOTS.RightHand] ?? null,
     hasAmmo: false,
@@ -284,6 +292,19 @@ export function peerBuildOpts(look, shown = null, glyphs = null) {
     ...(look?.vampire && !wolf ? { vampire: true } : {}),   // MWNPC14: a vampire foe's face (an NPC's look - the wire's never carries it)
     ...(npc ? { npcFace: npcFaceOf(npc) } : {}),   // MWNPC17: its head and hair walked off its seed
   };
+}
+
+/** MW-HEADS2 (the owner: "only the player Britons should recieve the new heads, not npcs"): ANOTHER PLAYER'S BUILD -
+ *  peerBuildOpts, and the port's own heads, as the local player's body wears them (combat/weaponRig.js
+ *  armBuildOptsOf). The peers' PeerBodies takes it (scenes/world.js); the people's lanes take peerBuildOpts, the data's
+ *  heads. */
+export const playerBuildOpts = (look, shown = null, glyphs = null) => ({ ...peerBuildOpts(look, shown, glyphs), ownHeads: true });
+
+/** MW-FOLK1: the worn piece a look's outfit is (mwItemMap.js composeWornArmor's `outfit` kind) - none for a wolf, whose
+ *  body is the robe's, nor for an id the table does not hold. */
+function outfitPiece(look, wolf) {
+  const o = wolf ? null : lookOutfit(look);
+  return o ? [{ kind: 'outfit', id: o.id }] : [];
 }
 
 /**

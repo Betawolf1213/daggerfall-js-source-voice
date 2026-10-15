@@ -11,8 +11,9 @@
 // estimates disagree with the true projection at high pitch.
 import { multiply, ortho, lookAt, perspective, transformPoint, trs } from '../world/mat4.js';
 import { CHAR_PIXEL, CHAR_SPRITE_RT_SIZE } from './renderer.js';
+import { getPref } from '../systems/uiPrefs.js';   // BODY-CARD: the billboard look, read where the card is stood
 
-/** World up - landAnchor's vertical when it is handed none (BODY-LEAN: drawRigSpriteBox always hands its own). */
+/** World up - landAnchor's vertical when it is handed none, and the upright card's (BODY-CARD). */
 const WORLD_UP = Object.freeze([0, 1, 0]);
 
 /**
@@ -108,7 +109,9 @@ export function drawRigSpriteBox(renderer, canvas, mesh, rigMat, { center, halfW
   // a camera 50 degrees above it, 0.34 at 70, so a body grew and shrank as the camera rose and fell or walked up to it.
   // Leaned by lookAt's own y for the ray, the quad stands square to it and the body draws its true size from any eye.
   // The travel view's lean (AUDIT OW4 J6) is the view's own, the flats' with it, and stands where it is handed.
-  const qUp = up ?? pictureUp(camDir);   // AUDIT OW4 J6: the quad's vertical
+  // BODY-CARD (2026-10-14, the owner: "Reimplement the billboard morrowind look as a toggle"): the Billboard Look
+  // (features.js mw-billboard-look, off by default) stands the card upright again, as before BODY-LEAN - the flats' way.
+  const qUp = up ?? (getPref('mwBillboardLook') ? WORLD_UP : pictureUp(camDir));   // AUDIT OW4 J6: the quad's vertical
   const at = aim === center ? center : landAnchor(center, anchor, camDir, right, qUp);   // PR-BOW1: where the quad stands
   const pvS = multiply(proj, view);
   const prjY = (x, y, z) => { const w = pvS[3]*x + pvS[7]*y + pvS[11]*z + pvS[15]; return (pvS[1]*x + pvS[5]*y + pvS[9]*z + pvS[13]) / w; };
