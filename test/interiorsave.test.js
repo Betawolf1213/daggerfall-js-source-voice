@@ -96,7 +96,7 @@ test('IS1: ONE transition core - the click and the restore share TransitionInter
   const src = read('src/scenes/worldModes.js');
   assert.match(src, /return enterInteriorCore\(hit, entries\);\n  \}/,
     'tryEnter ends in the shared core, exactly as PlayerActivate routes through TransitionInterior');
-  assert.match(src, /async function enterInteriorCore\(hit, entries, restore = null\)/);
+  assert.match(src, /async function enterInteriorCore\(hit, entries, restore = null, instanceChoice = null\)/);   // PIN MOVED (INSTANCES): the door's row on its call back - one core still
   // The restore takes the SAVED record whole - identity AND latch
   // (SerializablePlayer.cs:394-400 restores BuildingDiscoveryData +
   // IsPlayerInsideOpenShop rather than recomputing at the load hour).

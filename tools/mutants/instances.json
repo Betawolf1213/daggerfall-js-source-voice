@@ -1,0 +1,246 @@
+[
+  {
+    "name": "INSTANCES-STRANGER-ADMITTED",
+    "file": "src/net/instanceRoom.js",
+    "old": "  return typeof kin === 'function' ? !!(await kin(subject, r.owner)) : false;",
+    "new": "  return true;",
+    "tests": [
+      "test/instances1.test.js",
+      "test/instances2_relay.test.js"
+    ],
+    "why": "the door admits anyone - an instance is a public room under another name"
+  },
+  {
+    "name": "INSTANCES-STAFF-REFUSED",
+    "file": "src/net/instanceRoom.js",
+    "old": "  if (staff) return true;\n",
+    "new": "",
+    "tests": [
+      "test/instances1.test.js"
+    ],
+    "why": "staff cannot reach a player in their instance"
+  },
+  {
+    "name": "INSTANCES-OWNER-KIN-OF-ITSELF",
+    "file": "src/net/instanceRoom.js",
+    "old": "    if (m === subject || !identity(m)) continue;",
+    "new": "    if (!identity(m)) continue;",
+    "tests": [
+      "test/instances1.test.js"
+    ],
+    "why": "the hub counts the asker as the owner's kin - any account names its own digest"
+  },
+  {
+    "name": "INSTANCES-PARTY-NOT-ASKERS",
+    "file": "src/net/instanceRoom.js",
+    "old": "!Array.isArray(members) || !members.includes(subject) ||",
+    "new": "!Array.isArray(members) ||",
+    "tests": [
+      "test/instances1.test.js"
+    ],
+    "why": "a party the asker is not in admits them"
+  },
+  {
+    "name": "INSTANCES-NOT-A-WORLD-ROOM",
+    "file": "src/net/wire.js",
+    "old": "(?:\\\\.[ms]|${INSTANCE_TAG_SOURCE})?|interior",
+    "new": "(?:\\\\.[ms])?|interior",
+    "tests": [
+      "test/instances1.test.js",
+      "test/instances2_relay.test.js"
+    ],
+    "why": "an instance keeps no memory, no host, no acts - two players in one instance step their own foes"
+  },
+  {
+    "name": "INSTANCES-TTL-PUBLIC",
+    "file": "src/net/wire.js",
+    "old": "export const worldTtlMsFor = (key) => (isInstanceRoom(key) ? INSTANCE_TTL_MS : WORLD_TTL_MS);",
+    "new": "export const worldTtlMsFor = (key) => WORLD_TTL_MS;",
+    "tests": [
+      "test/instances1.test.js",
+      "test/instances2_relay.test.js"
+    ],
+    "why": "an instance's memory is kept thirty days - unbounded rooms on a public room's clock"
+  },
+  {
+    "name": "INSTANCES-HELLO-UNGATED",
+    "file": "server/src/index.js",
+    "old": "      if (isInstanceRoom(a.key)) { const no = await this._instanceAdmit(a.key, who, now); if (no) { this._refuse(ws, no, no === 'busy' ? CLOSE_BUSY : undefined); return; } }\n",
+    "new": "",
+    "tests": [
+      "test/instances2_relay.test.js"
+    ],
+    "why": "the relay never asks who comes in"
+  },
+  {
+    "name": "INSTANCES-HUB-SILENCE-REFUSES",
+    "file": "server/src/index.js",
+    "old": "    return silent ? 'busy' : 'private instance';",
+    "new": "    return 'private instance';",
+    "tests": [
+      "test/instances2_relay.test.js"
+    ],
+    "why": "a hub that does not answer turns a party member away for good instead of busy"
+  },
+  {
+    "name": "INSTANCES-HUB-ALWAYS-KIN",
+    "file": "server/src/index.js",
+    "old": "      if (res?.ok) kin = !!(await res.json())?.kin;",
+    "new": "      if (res?.ok) kin = true;",
+    "tests": [
+      "test/instances2_relay.test.js"
+    ],
+    "why": "every account the hub answers for is kin"
+  },
+  {
+    "name": "INSTANCES-INS-OUTSIDE",
+    "file": "src/net/wire.js",
+    "old": "  const ins = out.in ? instanceOfWord(p.ins) : null;",
+    "new": "  const ins = instanceOfWord(p.ins);",
+    "tests": [
+      "test/instances2_relay.test.js"
+    ],
+    "why": "a member outdoors says an instance"
+  },
+  {
+    "name": "INSTANCES-KEY-PUBLIC",
+    "file": "src/net/online.js",
+    "old": "    return base ? instanceRoomOf(base, instance) : null;",
+    "new": "    return base;",
+    "tests": [
+      "test/instances1.test.js"
+    ],
+    "why": "an instance entered keys its public room - the party's private run in the shared dungeon"
+  },
+  {
+    "name": "INSTANCES-MOUNT-ANYWHERE",
+    "file": "src/systems/instancePlaces.js",
+    "old": "export const questMountsHere = ({ online, builtSize }) => !online || builtSize === 'full';",
+    "new": "export const questMountsHere = ({ online, builtSize }) => true;",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "a re-laid public room stands a quest's things at the whole dungeon's coordinates - in rock and void"
+  },
+  {
+    "name": "INSTANCES-HOLD-PUBLIC",
+    "file": "src/systems/instancePlaces.js",
+    "old": "  if (!isHold) rows.push({ kind: 'public' });",
+    "new": "  rows.push({ kind: 'public' });",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "the Hold's door offers its public room HOLD-ONCE refuses"
+  },
+  {
+    "name": "INSTANCES-FALLBACK-ALWAYS",
+    "file": "src/systems/instancePlaces.js",
+    "old": "export const questDungeonWhole = ({ online, instanceOk, questHere }) => !!(online && !instanceOk && questHere);",
+    "new": "export const questDungeonWhole = ({ online, instanceOk, questHere }) => !!(online && questHere);",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "Public at a quest's dungeon builds it whole - a public room in a layout nobody else there builds"
+  },
+  {
+    "name": "INSTANCES-PARTNER-ANY-BUILDING",
+    "file": "src/systems/instancePlaces.js",
+    "old": "    if (place.in === 2 && p.bk !== place.bk) continue;\n",
+    "new": "",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "a partner's instance in another building of the town is offered at this door"
+  },
+  {
+    "name": "INSTANCES-MINE-AS-JOIN",
+    "file": "src/scenes/instanceDoor.js",
+    "old": ".filter((p) => p.owner !== me)",
+    "new": "",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "a member standing in my own instance is offered as theirs"
+  },
+  {
+    "name": "INSTANCES-QUEST-EPOCH-HOLD",
+    "file": "src/scenes/instanceDoor.js",
+    "old": "    const opener = site.isHold ? HOLD_OPENER : questOpener(q?.uid);",
+    "new": "    const opener = HOLD_OPENER;",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "every quest opens one room for good - its memory never goes with the quest"
+  },
+  {
+    "name": "INSTANCES-WHOLE-IGNORED",
+    "file": "src/world/smallerDungeons.js",
+    "old": "  if (online) return whole ? 'full' : onlineDungeonSize(dfLocation);",
+    "new": "  if (online) return onlineDungeonSize(dfLocation);",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "an instance builds the world's size - its quest's markers in blocks it has not"
+  },
+  {
+    "name": "INSTANCES-STAMP-WORLD",
+    "file": "src/world/smallerDungeons.js",
+    "old": "  if (online) return SMALLER_DUNGEONS_STATE.Disabled;",
+    "new": "  if (online) return ONLINE_DUNGEONS_STATE;",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "a quest started online is stamped at the world's sizes its markers were not chosen on"
+  },
+  {
+    "name": "INSTANCES-RELAY-NO-STAMP",
+    "file": "src/systems/quest/questRepair.js",
+    "old": "  if (!unread) quest.smallerDungeonsState = SMALLER_DUNGEONS_STATE.Disabled;",
+    "new": "",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "the load re-lays a quest on the whole dungeon and leaves its old stamp - every load re-lays it again"
+  },
+  {
+    "name": "INSTANCES-HOLD-INSTANCE-REFUSED",
+    "file": "src/scenes/worldModes.js",
+    "old": "    if (!fromLoad && !holdOpen && !door?.instance && host.dungeonOnline?.()",
+    "new": "    if (!fromLoad && !holdOpen && host.dungeonOnline?.()",
+    "tests": [
+      "test/instances3_door.test.js",
+      "test/holdonce.test.js"
+    ],
+    "why": "the Hold's instance is refused as its public room is - nobody can revisit it"
+  },
+  {
+    "name": "INSTANCES-POPUP-BUILDS",
+    "file": "src/scenes/worldModes.js",
+    "old": "    const door = await host.instanceDoor?.askDungeon?.(hit?.dfLocation, { chosen: instanceChoice, skip: fromLoad || holdOpen, enter: (row) => { tryEnterDungeon(hit, entries, { preferEnterMarker, fromLoad, holdOpen, instanceChoice: row }).catch((e) => console.error(e)); } }) ?? null;\n    if (door && !door.go) return false;\n",
+    "new": "    const door = await host.instanceDoor?.askDungeon?.(hit?.dfLocation, { chosen: instanceChoice, skip: fromLoad || holdOpen, enter: (row) => { tryEnterDungeon(hit, entries, { preferEnterMarker, fromLoad, holdOpen, instanceChoice: row }).catch((e) => console.error(e)); } }) ?? null;\n",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "the dungeon builds while its door's popup is still up - and again when it is answered"
+  },
+  {
+    "name": "INSTANCES-MOUNT-UNGATED",
+    "file": "src/scenes/worldModes.js",
+    "old": "      if (!questMountsHere({ online: !!host.dungeonOnline?.(), builtSize: builtDungeonSize(dungeonLoc) })) { host.instanceDoor?.questElsewhere?.(dungeonLoc?.mapTableData?.mapId); return; }\n",
+    "new": "",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "a re-laid public room re-lays a quest's markers into its own blocks (QUEST-VOID) - the sealed cap the audit found"
+  },
+  {
+    "name": "INSTANCES-ROOM-PUBLIC",
+    "file": "src/scenes/world.js",
+    "old": "        instance: ident?.instance ?? null,   // INSTANCES",
+    "new": "        instance: null,   // INSTANCES",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "an instance entered keys no instance - the party's private run in the public room"
+  }
+]

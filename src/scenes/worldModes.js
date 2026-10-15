@@ -171,6 +171,7 @@ import { trackHudPointer } from '../ui/hudActiveSpells.js';   // U46: the spell-
 import { ImgFile } from '../formats/imgFile.js';   // AUDIT 21 hosts F7: loadHud's reader
 // E2: the shop shelf browse/buy layer (node-pure laws in shopStock.js)
 import { ChoiceWindow } from '../ui/talkWindow.js';
+import { questMountsHere } from '../systems/instancePlaces.js';   // INSTANCES: where a quest's things stand online (bible/11-Multiplayer/Instances.md)
 import { YesNoBoxWindow } from '../ui/yesNoBox.js';   // UXB1-M: DFU's YesNo box - the private-property question
 import { FntFile } from '../formats/fntFile.js';
 import { makeFont } from '../ui/text.js';
@@ -3188,6 +3189,10 @@ export function createWorldModes(host) {
     // whichever site the player stands in.
     if (dungeonCtx && mode === 'dungeon') {
       if (relayingBuilt) return;   // QUEST-VOID: the re-lay's own placements ask for this mount - the one below stands them
+      // INSTANCES: a re-laid public room online stands none of a quest's things - its markers are the dungeon whole's
+      // (systems/instancePlaces.js questMountsHere); it says once where they are, and moves nothing (QUEST-VOID's re-lay
+      // would carry them into this room's blocks)
+      if (!questMountsHere({ online: !!host.dungeonOnline?.(), builtSize: builtDungeonSize(dungeonLoc) })) { host.instanceDoor?.questElsewhere?.(dungeonLoc?.mapTableData?.mapId); return; }
       // QUEST-VOID (questRepair.js relayBuiltDungeon): a quest target on a marker this build has not - its foe in the
       // void, its item in rock - is laid again on the dungeon as built before anything stands.
       relayingBuilt = true;
@@ -8502,9 +8507,15 @@ export function createWorldModes(host) {
     destroyPeopleBehaviours(ctx.people);
     ctx.destroy();
   }
-  async function enterInteriorCore(hit, entries, restore = null) {
+  async function enterInteriorCore(hit, entries, restore = null, instanceChoice = null) {   // INSTANCES: `instanceChoice` - the door's popup's row, on its call back
     const link = host.linkedBankCabin?.();
     if (!hit.sailingCabin && !restore && link && SHIP_INTERIOR_MAP_IDS[link.type] === questSceneCtx?.()?.mapId) return host.enterLinkedBankCabin?.() ?? false;
+    // INSTANCES (bible/11-Multiplayer/Instances.md): a building's door asks as a dungeon's does - a building a quest of mine
+    // names, or one a partner stands an instance in (scenes/instanceDoor.js); a restore, a cabin and a home are never asked
+    if (!restore && !hit.sailingCabin) {
+      const door = await host.instanceDoor?.askBuilding?.(questSceneCtx?.()?.mapId ?? 0, buildingDataForDoor?.(hit) ?? null, { chosen: instanceChoice, enter: (row) => { enterInteriorCore(hit, entries, null, row).catch((e) => console.error(e)); } }) ?? null;
+      if (door && !door.go) return false;
+    }
     return gatedTransition((live) => interiorTransition(hit, entries, restore, live));
   }
   async function enterSailingCabin(saved, pos = null, visit = null) {
@@ -9587,26 +9598,32 @@ export function createWorldModes(host) {
     mapTableData: loc.mapTableData && { ...loc.mapTableData },
     dungeon: loc.dungeon && { ...loc.dungeon, blocks: loc.dungeon.blocks?.map((b) => ({ ...b })) },
   });
-  async function tryEnterDungeon(hit, entries, { preferEnterMarker = false, fromLoad = false, holdOpen = false } = {}) {
+  async function tryEnterDungeon(hit, entries, { preferEnterMarker = false, fromLoad = false, holdOpen = false, instanceChoice = null } = {}) {
+    // INSTANCES (2026-10-15, bible/11-Multiplayer/Instances.md): THE DOOR ASKS FIRST - public or an instance, where a quest
+    // of mine names the dungeon, at Privateer's Hold, or where a partner stands an instance (scenes/instanceDoor.js); its
+    // popup calls back here with the row chosen. A load and the ways in marked `holdOpen` are never asked.
+    const door = await host.instanceDoor?.askDungeon?.(hit?.dfLocation, { chosen: instanceChoice, skip: fromLoad || holdOpen, enter: (row) => { tryEnterDungeon(hit, entries, { preferEnterMarker, fromLoad, holdOpen, instanceChoice: row }).catch((e) => console.error(e)); } }) ?? null;
+    if (door && !door.go) return false;
     // HOLD-ONCE (2026-10-12, asked: "Let's make it where players outside of privateers hold cannot re enter"): online,
     // Privateer's Hold is entered once - by the new game's start (or a save made inside it, or staff landing by a player
     // there: `holdOpen`); its door, a Recall to an anchor set inside and a quest's transfer are refused. Offline, DFU's.
-    if (!fromLoad && !holdOpen && host.dungeonOnline?.() && isPrivateersHold(hit?.dfLocation)) { say(HOLD_ONCE_TEXT); return false; }
+    // INSTANCES: its PUBLIC room - an instance of it is entered any time
+    if (!fromLoad && !holdOpen && !door?.instance && host.dungeonOnline?.() && isPrivateersHold(hit?.dfLocation)) { say(HOLD_ONCE_TEXT); return false; }
     return gatedTransition(async (live) => {   // AUDIT 68 X3-transition-build-race
       // PVPDUNGEONS: the zone's tier rules - the hub's word on my lock is awaited INSIDE the gate (AUDIT 68 X3: awaited
       // before it, a teleport, a recall or a load during the hub's four seconds did not stale the door, and the dungeon
       // was built from wherever the world had moved to; a second press now waits its turn instead of racing the first)
       if (host.wildDungeonGate && !(await host.wildDungeonGate(hit, fromLoad))) return false;
       if (!live()) return false;   // the world moved during the hub's word: no build at all
-      return dungeonTransition(hit, entries, preferEnterMarker, live, fromLoad);
+      return dungeonTransition(hit, entries, preferEnterMarker, live, fromLoad, door);
     });
   }
-  async function dungeonTransition(hit, entries, preferEnterMarker, live, fromLoad = false) {
+  async function dungeonTransition(hit, entries, preferEnterMarker, live, fromLoad = false, door = null) {   // INSTANCES: `door` - the door's answer (an instance builds the dungeon whole)
     // AUDIT 28 W4: SMALLER DUNGEONS - the location that gets BUILT is
     // sized by MapsFile's law (setting, main-story gate, and a live
     // quest's frozen state through its SiteLink), on a clone; the
     // cached location the exterior shares is never touched.
-    const sized = dungeonLocationFor(hit.dfLocation, { questMachine: questBridge?.machine, online: host.dungeonOnline?.() ?? false });   // AUDIT WORLD34 B2: online, the room's one layout - SD-ONLINE: the world's size for the dungeon (WB3b: the court's one block passes through whole)
+    const sized = dungeonLocationFor(hit.dfLocation, { questMachine: questBridge?.machine, online: host.dungeonOnline?.() ?? false, whole: !!door?.whole });   // INSTANCES: an instance, or a quest's dungeon where none can be had, is the dungeon whole   // AUDIT WORLD34 B2: online, the room's one layout - SD-ONLINE: the world's size for the dungeon (WB3b: the court's one block passes through whole)
     if (!sized || !sized.hasDungeon) return false;
     // OH-E: MapsFile.GetLocation reads each caller its own DFLocation - a struct, its Dungeon.Blocks array fresh - where
     // the port's is the maps cache's one object. The dungeon's summary is its own here, so a writer on it (There's a
@@ -13164,8 +13181,8 @@ export function createWorldModes(host) {
     // ONLINE1: what the host needs to name the room - the mounted dungeon's
     // location, the interior's building; null in the exterior
     // ARENA4: the floor's instance standing a relay's bout is that bout's room (`arena:b<id>`)
-    roomIdentity: () => (mode === 'dungeon' ? (isGateArena(dungeonLoc) ? { kind: 'gate', day: dungeonLoc.gate } : isSdRealm(dungeonLoc) ? { kind: 'sd', s: dungeonLoc.sdRealm } : isArenaFloor(dungeonLoc) && dungeonLoc.arenaBout ? { kind: 'arena', o: dungeonLoc.arenaBout } : { kind: 'dungeon', mapId: dungeonLoc?.mapTableData?.mapId ?? null, regionIndex: dungeonLoc?.regionIndex ?? -1, name: dungeonLoc?.name ?? '', size: builtDungeonSize(dungeonLoc) })   // WB3b: the court's room is its gate's own; SD-ONLINE: a dungeon's room is its layout's (the size it was BUILT at); HOLD-SHARED (2026-10-12): Privateer's Hold keys its shared room as every dungeon does (HOLD-SOLO's `solo` reverted)
-      : mode === 'interior' ? { kind: 'interior', buildingKey: interiorBuilding?.buildingKey ?? 0, layout: _visitLayout, ...(interiorCabin ? { boatUid: interiorCabin.uid } : {}), ...(_intShared?.owned ? { private: true, privateRoom: privateVisitRoom } : {}) } : null),   // personal interiors share presence in an owner-specific room, never world memory/loot
+    roomIdentity: () => (mode === 'dungeon' ? (isGateArena(dungeonLoc) ? { kind: 'gate', day: dungeonLoc.gate } : isSdRealm(dungeonLoc) ? { kind: 'sd', s: dungeonLoc.sdRealm } : isArenaFloor(dungeonLoc) && dungeonLoc.arenaBout ? { kind: 'arena', o: dungeonLoc.arenaBout } : { kind: 'dungeon', mapId: dungeonLoc?.mapTableData?.mapId ?? null, regionIndex: dungeonLoc?.regionIndex ?? -1, name: dungeonLoc?.name ?? '', size: builtDungeonSize(dungeonLoc), instance: host.instanceDoor?.dungeonInstance?.(dungeonLoc?.mapTableData?.mapId) ?? null })   // WB3b: the court's room is its gate's own; SD-ONLINE: a dungeon's room is its layout's (the size it was BUILT at); HOLD-SHARED (2026-10-12): Privateer's Hold keys its shared room as every dungeon does (HOLD-SOLO's `solo` reverted)
+      : mode === 'interior' ? { kind: 'interior', buildingKey: interiorBuilding?.buildingKey ?? 0, layout: _visitLayout, instance: host.instanceDoor?.buildingInstance?.(questSceneCtx?.()?.mapId ?? 0, interiorBuilding?.buildingKey ?? 0) ?? null, ...(interiorCabin ? { boatUid: interiorCabin.uid } : {}), ...(_intShared?.owned ? { private: true, privateRoom: privateVisitRoom } : {}) } : null),   // personal interiors share presence in an owner-specific room, never world memory/loot
     get dungeonLocation() { return dungeonLoc; },   // B2: playerInside's dungeon arm
     /** X7: the Identify SPELL's window (Identify.cs:71-76 pushes the
      *  trade window itself). The spell can be cast anywhere, but the

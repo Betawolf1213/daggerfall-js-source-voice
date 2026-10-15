@@ -153,7 +153,7 @@ test('DE2: the standalone host is already level by construction', () => {
 test('DE1: each host call site takes the member it actually is', () => {
   const modes = read('src/scenes/worldModes.js');
   // the walk-in default is the transition - the common way in
-  assert.match(modes, /async function tryEnterDungeon\(hit, entries, \{ preferEnterMarker = false, fromLoad = false, holdOpen = false \} = \{\}\)/,   // MAP-KEEP: the load's arm rides the same bag; PIN MOVED (HOLD-ONCE): and the Hold's `holdOpen`
+  assert.match(modes, /async function tryEnterDungeon\(hit, entries, \{ preferEnterMarker = false, fromLoad = false, holdOpen = false, instanceChoice = null \} = \{\}\)/,   // MAP-KEEP: the load's arm rides the same bag; PIN MOVED (HOLD-ONCE): and the Hold's `holdOpen`; PIN MOVED (INSTANCES): and the door's row on its call back
     'the DEFAULT is the door transition, because that is how a player gets in');
   assert.match(modes, /const spawn = ctx\.startSpawn\(\{ preferEnterMarker \}\);/);
   // AUDIT 39 (#29) MOVED THIS PIN. The one-liner it held said the

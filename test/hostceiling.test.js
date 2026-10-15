@@ -42,7 +42,7 @@ const METHOD = 'a Room method of its own (the SCALE5 arms\' shape)';
  *  second test makes it). Raise one only with the reason written beside it: the ceiling is the line between wiring a
  *  module in and growing the knot. */
 const CEILINGS = [
-  ['src/scenes/world.js', 'bootWorld', 21_695, MODULE],   // HOST-SPLIT 1: travelViewMarks out (21,589 -> 21,445 code lines)
+  ['src/scenes/world.js', 'bootWorld', 21_760, MODULE],   // HOST-SPLIT 1: travelViewMarks out (21,589 -> 21,445 code lines). RAISED (INSTANCES, 2026-10-15): main stood at 21,750, 55 over, at e665d02e (the FIELD BUGS 2026-10-14 roll-up's merges) - and INSTANCES wires 10 more: the door constructed once (scenes/instanceDoor.js holds the feature), the room key's `instance`, the party pose's `ins`, the quest world's `whole`. The overflow is the next HOST-SPLIT slice's to move out
   ['src/scenes/worldModes.js', 'createWorldModes', 7_159, MODULE],
   ['src/scenes/dungeonContext.js', 'buildDungeonContext', 5_446, MODULE],
   ['src/scenes/exterior.js', 'bootExterior', 3_446, MODULE],

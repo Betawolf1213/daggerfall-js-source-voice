@@ -1004,6 +1004,8 @@ import { createSunbaby, sunbabyLight, SUNBABY_WEATHER, sunbabyKey, createSunbaby
 import { relayKnowsLiveEvent } from '../net/wire.js';   // SUNBABY1: a word staged only on a relay that knows it
 import { createStaffTeleportClient, validStaffDestination, staffDestinationKey, followStaffPlayer } from '../net/staffTeleport.js';
 import { privateInteriorPrefix, privateInteriorRoom, privateBoatRoom, privateInteriorOf } from '../net/privateInterior.js';
+import { instanceWord } from '../net/instanceRoom.js';   // INSTANCES: the party pose says the instance I stand in
+import { createInstanceDoor } from './instanceDoor.js';   // INSTANCES: public or an instance, at the door (bible/11-Multiplayer/Instances.md)
 // TESTBUILD: every player may use the staff's /god (/godmode), /fly, /heal, /tp - god mode also lifts the zone's travel law and makes map journeys instant
 const TEST_GODMODE = false;
 const isStaffT = (g) => TEST_GODMODE || isStaff(g);
@@ -20141,8 +20143,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     maps: Object.create(maps, {
       // the page flag off `params`, not `onlineOn` - that const is declared far below, and a quest parsed at chargen
       // asks for its dungeon before it is ("Parsing quest FAILED! Cannot access 'onlineOn' before initialization")
-      getLocation: { value: (r, l) => dungeonLocationFor(maps.getLocation(r, l), { questMachine: questBridge?.machine, online: params.has('online') }) },   // AUDIT WORLD34 B2: online, the room's one layout (SD-ONLINE: the world's size for it)
-      getLocationByName: { value: (rn, ln) => dungeonLocationFor(maps.getLocationByName(rn, ln), { questMachine: questBridge?.machine, online: params.has('online') }) },
+      getLocation: { value: (r, l) => dungeonLocationFor(maps.getLocation(r, l), { questMachine: questBridge?.machine, online: params.has('online'), whole: params.has('online') }) },   // INSTANCES: online a quest's markers are chosen on the dungeon whole - its instance's layout (bible/11-Multiplayer/Instances.md)   // AUDIT WORLD34 B2: online, the room's one layout (SD-ONLINE: the world's size for it)
+      getLocationByName: { value: (rn, ln) => dungeonLocationFor(maps.getLocationByName(rn, ln), { questMachine: questBridge?.machine, online: params.has('online'), whole: params.has('online') }) },
     }),
     getBlock: (name) => blocks.getBlockByName(name),
     // NPC1: the =symbol_ macro's flat caption. The quest machine has
@@ -26990,6 +26992,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const mate = party.members.find((m) => m.acct === party.leader && near(m)) ?? party.members.find(near);
     return mate?.p.ly ?? 0;
   };
+  /** INSTANCES: my party pose's `ins` - the instance the room I stand in is (net/instanceRoom.js instanceWord), inside. */
+  const partyInstanceWord = (mode) => { const w = mode === 'exterior' ? null : instanceWord(modes?.roomIdentity?.()?.instance); return w ? { ins: w } : {}; };
   const composePartyPose = () => {
     const mode = modes?.mode ?? 'exterior';
     const px = playerTravelPixel();   // AUDIT SOC B18: read ONCE - this ran twice a second, and it used to read the pixel three times and compose a whole look (every equipped item) for three fields
@@ -27025,6 +27029,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // validPartyPose already zeroes it outside a building, but this
       // host names its OWN law rather than leaning on the wire's).
       bk: mode === 'interior' ? (modes?.interiorBuilding?.buildingKey ?? null) : null,
+      ...partyInstanceWord(mode),   // INSTANCES: the instance I stand in (`ins`), so a partner at its door is offered to join it
       // PARTY-REST4 (2026-09-21, per-request: "15m away from the leader do not change the healrate party
       // member MUST heal their health near the leader" - the bug this closed): a follower's mirror was
       // computing its OWN restKind() - a position check (bed/houseOwned/ship/byFire) asked of THEIR OWN feet,
@@ -29913,6 +29918,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         buildingKey: ident?.buildingKey ?? 0,
         layout: ident?.layout ?? null,   // WD3 (AUDIT WD3 B3): an interior's room is its layout's
         size: ident?.kind === 'dungeon' ? (ident.size ?? null) : null,   // SD-ONLINE: and a dungeon's (`dungeon:m<id>.m` or `.s`, re-laid medium or small)
+        instance: ident?.instance ?? null,   // INSTANCES: the place's instance, entered through its door (scenes/instanceDoor.js) - its own room
       });
     }
     // the pose: MapsFile's frame in the overworld (the floating origin's
@@ -30354,6 +30360,15 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     },
     draw: ({ renderer: r, planes }) => drawOutsideStreet(r, planes),
   });
+  // INSTANCES (bible/11-Multiplayer/Instances.md): THE DOOR - public or an instance, at a dungeon or a building a quest of
+  // mine names, at Privateer's Hold, where a partner stands an instance; built once, asked by the modes host's two funnels
+  // (scenes/instanceDoor.js). The room's key reads what it was entered as (roomIdentity's `instance`, below)
+  const instanceDoor = createInstanceDoor({
+    online: () => onlineOn, instanceOk: () => !!(online?.instanceOk || chatLinks?.get('world')?.instanceOk),
+    account: () => social?.acct ?? null, character: () => realmSession?.id ?? null, members: () => social?.others() ?? [],
+    pixel: () => playerTravelPixel(), questMachine: () => questBridge?.machine ?? null,
+    showOverlay: (w) => townTalk.showOverlay(w), say: (l) => townTalk.say(l),
+  });
   // VAR, not const: the pointer and wheel listeners far above close over
   // this binding and are live before it is assigned, so it must exist
   // and read undefined rather than throw a TDZ ReferenceError. Every
@@ -30362,6 +30377,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   var modes = createWorldModes({
     climbFeel,   // CLIMB4: the one body's climb camera - the modal frames take it after their own motor step
     outsideView,   // RW1: the street through a building's glass (render/realWindows.js)
+    instanceDoor,   // INSTANCES: public or an instance, at the door (scenes/instanceDoor.js)
     seatedPeers: () => seatedPeerFeet(),   // CARDS2b (AUDIT CARDS B3): the others' seated feet, in this room's scene - their seats are taken
     cardOnline: { ok: () => !!online?.holdemOk, send: (w) => !!online?.sendHoldem(w), id: () => online?.id ?? null, welcomes: () => online?.holdemWelcomes ?? 0, room: () => online?.room ?? null },   // CARDS5: the relay that deals - a word to the room's card table, and who I am at it; CARDS6: the room a stake names
     cardStakes,   // CARDS6: a realm character's stakes at a relay's gold table (null off the realm)

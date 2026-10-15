@@ -2,7 +2,7 @@
   {
     "name": "HOLD-ONCE-DOOR-OPEN",
     "file": "src/scenes/worldModes.js",
-    "old": "    if (!fromLoad && !holdOpen && host.dungeonOnline?.() && isPrivateersHold(hit?.dfLocation)) { say(HOLD_ONCE_TEXT); return false; }\n",
+    "old": "    if (!fromLoad && !holdOpen && !door?.instance && host.dungeonOnline?.() && isPrivateersHold(hit?.dfLocation)) { say(HOLD_ONCE_TEXT); return false; }\n",
     "new": "",
     "tests": [
       "test/holdonce.test.js"
@@ -12,8 +12,8 @@
   {
     "name": "HOLD-ONCE-LOAD-REFUSED",
     "file": "src/scenes/worldModes.js",
-    "old": "    if (!fromLoad && !holdOpen && host.dungeonOnline?.()",
-    "new": "    if (!holdOpen && host.dungeonOnline?.()",
+    "old": "    if (!fromLoad && !holdOpen && !door?.instance && host.dungeonOnline?.()",
+    "new": "    if (!holdOpen && !door?.instance && host.dungeonOnline?.()",
     "tests": [
       "test/holdonce.test.js"
     ],
@@ -22,8 +22,8 @@
   {
     "name": "HOLD-ONCE-NEW-GAME-REFUSED",
     "file": "src/scenes/worldModes.js",
-    "old": "    if (!fromLoad && !holdOpen && host.dungeonOnline?.()",
-    "new": "    if (!fromLoad && host.dungeonOnline?.()",
+    "old": "    if (!fromLoad && !holdOpen && !door?.instance && host.dungeonOnline?.()",
+    "new": "    if (!fromLoad && !door?.instance && host.dungeonOnline?.()",
     "tests": [
       "test/holdonce.test.js"
     ],
@@ -32,8 +32,8 @@
   {
     "name": "HOLD-ONCE-OFFLINE-TOO",
     "file": "src/scenes/worldModes.js",
-    "old": "    if (!fromLoad && !holdOpen && host.dungeonOnline?.() && isPrivateersHold(",
-    "new": "    if (!fromLoad && !holdOpen && isPrivateersHold(",
+    "old": "    if (!fromLoad && !holdOpen && !door?.instance && host.dungeonOnline?.() && isPrivateersHold(",
+    "new": "    if (!fromLoad && !holdOpen && !door?.instance && isPrivateersHold(",
     "tests": [
       "test/holdonce.test.js"
     ],
