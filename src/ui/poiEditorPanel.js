@@ -37,6 +37,7 @@
 
 import { t } from '../systems/textManager.js';   // L10N4: the words through the text core
 import { accountRefusalText } from '../net/accountClient.js';
+import { isTextEntryTarget } from './input.js';   // AUDIT POI U1: a dock held while a field in it is typed in, and then alone
 import { poiDocProblems, poiAssetProblems, POI_LIMITS, POI_ALPHA, POI_WRAP, POI_FILTER } from '../poi/poiLaw.js';
 import { eulerOfQuat, quatOfEuler, lawName, newLight } from '../poi/poiEdit.js';
 import { problemText, problemWhere, gltfErrorText, gltfWarningText, meshErrorText, imageErrorText, packErrorText } from '../poi/poiText.js';
@@ -84,7 +85,7 @@ export const POI_PANEL_CSS = `
 .dfpoi-dialog { pointer-events: auto; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(520px, calc(100vw - 16px)); max-height: calc(100vh - 32px); overflow: auto; padding: 10px; background: rgba(14, 16, 19, .97); border: 1px solid #6b5230; border-radius: 6px; }
 .dfpoi-warn { color: #e8cf8a; margin: 2px 0; }
 .dfpoi-review { padding: 6px 4px; border-bottom: 1px solid #3a2f20; }
-.dfpoi[data-on="0"] .dfpoi-dock, .dfpoi[data-on="0"] .dfpoi-dialog { display: none; }
+.dfpoi[data-on="0"] .dfpoi-dock, .dfpoi[data-on="0"] .dfpoi-dialog, .dfpoi[data-on="0"] .dfpoi-uv { display: none; }
 .dfpoi-launch { pointer-events: auto; position: absolute; left: 8px; bottom: 8px; display: none; }
 .dfpoi[data-on="0"] .dfpoi-launch { display: block; }
 `;
@@ -196,8 +197,8 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   const refusal = (r) => (r?.error ? accountRefusalText(r.error) : t('poi.editor.failed', 'That did not go through.'));
   // POI-4b: the library's dialogs, laid in the panel, through its own door to the store
   const library = createPoiLibrary({ doc, host: root, io, feed, me, act: (fn) => act(fn), say, refusal, editor, decodeImage, rand, exportGlb: (model) => exportGlb(model) });
-  // POI-6: the approver's queue and a POI's history, laid in the panel the same way
-  review = createPoiReview({ doc, host: root, me, act: (fn) => act(fn), say, refusal, edit, facts, goTo });
+  // POI-6: the approver's queue and a POI's history, laid in the panel the same way (the feed asked again after a verdict)
+  review = createPoiReview({ doc, host: root, me, act: (fn) => act(fn), say, refusal, edit, facts, goTo, feed });
   const dialogsClosed = () => { closeDialog(); library.close(); review.close(); };
 
   // ── RENDERING ────────────────────────────────────────────────────
@@ -207,12 +208,18 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     queued = true;
     Promise.resolve().then(() => { queued = false; render(); });
   }
-  const focusedIn = (n) => { const a = doc.activeElement; return !!a && a !== doc.body && typeof n.contains === 'function' && n.contains(a); };
+  // AUDIT POI U1: a dock is held while a field in it is being TYPED in (ui/input.js isTextEntryTarget, less the inputs
+  // nothing is typed into) - and for nothing else. A browser leaves the focus on the button, box or list that was
+  // pressed, and a dock held while ANYTHING in it had the focus went on showing itself as it was before the press:
+  // "Close" never asked again (its second press threw the work away), Save stayed pressable through its own save, the
+  // inspector kept a POI's fields with its new light selected.
+  const UNTYPED = new Set(['checkbox', 'radio', 'color', 'file', 'range', 'button', 'submit', 'reset']);
+  const typingIn = (n) => { const a = /** @type {any} */ (doc.activeElement); return isTextEntryTarget(a) && !UNTYPED.has(a.type) && typeof n.contains === 'function' && n.contains(a); };
   function render() {
-    if (!focusedIn(bar)) renderBar();
+    if (!typingIn(bar)) renderBar();
     renderLeft();
     // a field being typed in keeps its text: the inspector is drawn again once it lets go of the keyboard
-    if (!focusedIn(right)) renderRight();
+    if (!typingIn(right)) renderRight();
   }
   for (const d of [bar, left, right]) d.addEventListener('focusout', () => schedule());
 
@@ -230,7 +237,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     snap.title = t('poi.editor.snapHint', 'Snap to the steps. Hold Ctrl to snap for one drag.');
     const steps = editor.snapSteps();
     const stepIn = (k, title) => { const i = numberInput(steps[k], (v) => { if (v > 0) editor.setSnap(editor.snapOn(), { [k]: v }); }, { step: k === 'turn' ? 1 : 0.05, min: 0 }); i.title = title; return i; };
-    const speed = el('span', '', t('poi.editor.speed', 'Eye {speed} m/s', { speed: Math.round(editor.eyeSpeed() * 10) / 10 }));
+    const speed = el('span', '', t('poi.editor.speed', 'Eye {speed, number} m/s', { speed: Math.round(editor.eyeSpeed() * 10) / 10 }));   // AUDIT POI U13: a number in the reader's own digits
     speed.title = t('poi.editor.speedHint', 'Hold the right mouse button to fly: your movement keys, Jump and Crouch up and down, Run faster, the wheel the speed.');
     const exitBack = btn(t('poi.editor.exitBack', 'Exit to where I stood'), () => onExit('back'));
     const exitHere = btn(t('poi.editor.exitHere', 'Exit here'), () => onExit('here'));
@@ -288,7 +295,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     renderList(listBox);
     out.push(listBox);
     // the search being typed in keeps its field: only the list under it is drawn again
-    if (!focusedIn(left)) left.replaceChildren(...out);
+    if (!typingIn(left)) left.replaceChildren(...out);
     else { const old = left.querySelector?.('.dfpoi-listbox'); if (old) renderList(old); }
   }
   function renderList(box) {
@@ -362,7 +369,9 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     out.push(field(t('poi.editor.markShow', 'Show a mark'), check(marker.show, (v) => change('mark', (x) => { x.marker = { ...(x.marker ?? {}), show: v }; }))));
     out.push(field(t('poi.editor.markLabel', 'Label'), text(marker.label ?? '', (v) => change('mark', (x) => { const l = lawName(v, POI_LIMITS.label); x.marker = { ...(x.marker ?? { show: false }) }; if (l) x.marker.label = l; else delete x.marker.label; }), POI_LIMITS.label)));
     out.push(el('div', 'dfpoi-h', t('poi.editor.lights', 'Lights')));
-    out.push(btn(t('poi.editor.addLight', 'Add a light'), () => edit.edit(d.id, 'light', (x) => { x.lights = [...(x.lights ?? []), newLight()]; }, { id: d.id, part: null, light: (d.lights?.length ?? 0) })));
+    // AUDIT POI U1: bound to the lights it was drawn with - pressed again before the inspector is, it adds no second one
+    const lightsDrawn = d.lights?.length ?? 0;
+    out.push(btn(t('poi.editor.addLight', 'Add a light'), () => { if ((edit.docOf(d.id)?.lights?.length ?? 0) === lightsDrawn) edit.edit(d.id, 'light', (x) => { x.lights = [...(x.lights ?? []), newLight()]; }, { id: d.id, part: null, light: lightsDrawn }); }));
     // POI-4b: its parts and lights kept in the library, from the POI's own origin
     if (d.parts.length) out.push(el('div', 'dfpoi-h', t('poi.library.title', 'Library')), btn(t('poi.library.keepPoi', 'Keep it in the library...'), () => { closeDialog(); library.keep({ name: d.name, parts: structuredClone(d.parts), lights: structuredClone(d.lights ?? []) }); }));
     // POI-6: its revisions (once the store has it), and its model out as a .glb
@@ -426,7 +435,9 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     });
     // POI-4b: the part alone kept in the library - its own turn and size, standing at the entry's origin
     out.push(btn(t('poi.library.keepPart', 'Keep this part in the library...'), () => { closeDialog(); library.keep({ name: part.name || part.key, parts: [{ ...structuredClone(part), t: [0, 0, 0] }], lights: [] }); }));
-    out.push(btn(t('poi.editor.removePart', 'Remove this part'), () => removeSelection()));
+    // AUDIT POI U1: the part it was drawn for - it read the selection, and the second press of a double one, the part gone
+    // and its POI selected, took the whole new POI
+    out.push(btn(t('poi.editor.removePart', 'Remove this part'), () => removePart(sel.id, part.key)));
     return out;
   }
 
@@ -444,7 +455,10 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     out.push(field(t('poi.editor.reach', 'Reach (m)'), numberInput(l.radius, (v) => change('light', at((q) => { q.radius = v; })), { step: 0.5, min: 0.5, max: 100 })));
     out.push(field(t('poi.editor.strength', 'Strength'), numberInput(l.intensity, (v) => change('light', at((q) => { q.intensity = v; })), { step: 0.1, min: 0, max: 10 })));
     out.push(field(t('poi.editor.flicker', 'Flickers'), check(l.flicker, (v) => change('light', at((q) => { q.flicker = v; })))));
-    out.push(btn(t('poi.editor.removeLight', 'Remove this light'), () => edit.edit(d.id, 'light', (x) => { x.lights.splice(sel.light, 1); }, { id: d.id, part: null, light: null })));
+    // AUDIT POI U1: the light it was drawn for - by its place in the list, the lights as they were: pressed twice it took
+    // the next light too, by then at that place
+    const drawn = JSON.stringify(d.lights);
+    out.push(btn(t('poi.editor.removeLight', 'Remove this light'), () => { if (JSON.stringify(edit.docOf(d.id)?.lights) === drawn) edit.edit(d.id, 'light', (x) => { x.lights.splice(sel.light, 1); }, { id: d.id, part: null, light: null }); }));
     return out;
   }
 
@@ -477,15 +491,20 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     const { list: ps, checking } = problemsOf(d);
     const save = btn(t('poi.editor.save', 'Save draft (Ctrl+S)'), () => saveDraft(id));
     save.disabled = busy > 0 || !dirty || ps.length > 0 || checking;
+    // AUDIT POI U3: a submission is not saved over - the store would make a draft BESIDE it, the submission left waiting
+    if (entry.state === 'submitted') save.disabled = true;
     const submit = btn(t('poi.editor.submit', 'Send for approval'), () => submitPoi(id));
     submit.disabled = busy > 0 || ps.length > 0 || checking || entry.state === 'submitted' || entry.state === 'live' && !dirty;
     const out = [el('div', 'dfpoi-h', t('poi.editor.acts', 'Draft')), el('div', 'dfpoi-row')];
     out[1].append(save, submit);
+    if (entry.state === 'submitted' && dirty) out.push(el('div', 'dfpoi-warn', withdrawFirstText()));
     const more = el('div', 'dfpoi-row');
     if (entry.state === 'submitted') more.append(btn(t('poi.editor.withdraw', 'Take back to draft'), () => withdrawPoi(id)));
     if (entry.base != null) more.append(btn(t('poi.editor.retire', 'Ask to retire it'), () => retirePoi(id)));
     if (dirty && entry.saved) more.append(btn(t('poi.editor.revert', 'Put back as saved'), () => edit.edit(id, 'revert', (x) => { const s = JSON.parse(entry.saved); for (const k of Object.keys(x)) delete x[k]; Object.assign(x, s); })));
-    more.append(btn(closing === id ? t('poi.editor.closeUnsaved', 'Close without saving?') : t('poi.editor.close', 'Close'), () => closePoi(id)));
+    // AUDIT POI U1: the press means what its button said - "Close" asks again over unsaved work, and only the question closes
+    const asked = closing === id;
+    more.append(btn(asked ? t('poi.editor.closeUnsaved', 'Close without saving?') : t('poi.editor.close', 'Close'), () => closePoi(id, asked)));
     if (entry.state === 'new' && !entry.saved) more.append(btn(t('poi.editor.discard', 'Throw it away'), () => { edit.remove(id); }));
     out.push(more);
     if (!me.builder) out.push(el('div', 'dfpoi-warn', accountRefusalText('poi-not-builder')));
@@ -499,11 +518,33 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     busy++; schedule();
     try { return await fn(i); } finally { busy--; schedule(); }
   }
-  async function saveDraft(id) {
+  // AUDIT POI U5: the POIs a store act is out for - one at a time each, whatever asked for it (a button drawn before the
+  // act went, Ctrl+S held down and repeating): the second is not sent
+  const going = new Set();
+  async function once(id, fn) {
+    if (going.has(id)) return false;
+    going.add(id);
+    try { return await fn(); } finally { going.delete(id); }
+  }
+  const withdrawFirstText = () => t('poi.editor.withdrawFirst', 'It is waiting for approval: take it back to draft to save these changes.');
+  /** AUDIT POI U2: the document the store holds for an entry - what it was last saved as (a send and a take-back move
+   *  its state, never the screen's changes into "saved"). */
+  const heldDoc = (e) => (e?.saved == null ? undefined : JSON.parse(e.saved));
+  /** Ctrl+S and the Save button: held as the button holds itself. */
+  const saveDraft = (id) => once(id, () => saveNow(id));
+  /** `always` saves an unchanged document too (a send of one with no revision of its own). */
+  async function saveNow(id, always = false) {
     const d = edit.docOf(id), e = edit.entryOf(id);
     if (!d) return false;
-    const { list: ps } = problemsOf(d);
+    // AUDIT POI U5: nothing changed is nothing to save
+    if (!always && !edit.dirty(id)) return false;
+    // AUDIT POI U3: the store saves over a DRAFT of the builder's alone - a submission saved over is a second revision
+    // beside it, and the submission left waiting to be approved as it was
+    if (e.state === 'submitted') { say(withdrawFirstText(), 'bad'); return false; }
+    const { list: ps, checking } = problemsOf(d);
     if (ps.length) { say(t('poi.editor.fixFirst', 'Fix what is wrong before saving ({n}).', { n: ps.length }), 'bad'); return false; }
+    // AUDIT POI U5: an asset not yet heard of is not checked - the button waits for it, and so does the key
+    if (checking) { say(t('poi.editor.stillChecking', 'Its models and pictures are still being checked: save it once that is done.'), 'bad'); return false; }
     const sent = structuredClone(d);
     const r = await act((i) => poiSaveDraft(i, sent, e.base));
     if (!r) return false;
@@ -512,30 +553,40 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     say(t('poi.editor.saved', 'Saved: draft {rev}.', { rev: r.data.rev }));
     return true;
   }
-  async function submitPoi(id) {
-    if (edit.dirty(id) && !(await saveDraft(id))) return;
+  const submitPoi = (id) => once(id, async () => {
+    const e0 = edit.entryOf(id);
+    if (!e0) return;
+    // AUDIT POI U4: saved first whenever it has no revision of its own to send - opened from the live one, the history,
+    // another builder's or a pack - not only when it is changed (it was sent as `{ rev: null }`, a refusal)
+    if ((edit.dirty(id) || e0.rev == null) && !(await saveNow(id, true))) return;
     const e = edit.entryOf(id);
-    const r = await act((i) => poiSubmit(i, id, e.rev));
+    // AUDIT POI U2: what the store sends is the draft as saved - changes typed while it goes stay unsaved
+    const rev = e.rev, held = heldDoc(e);
+    const r = await act((i) => poiSubmit(i, id, rev));
     if (!r) return;
     if (!r.ok) { say(refusal(r), 'bad'); return; }
-    edit.markSaved(id, { rev: e.rev, state: 'submitted' });
+    edit.markSaved(id, { rev, state: 'submitted', doc: held });
     say(t('poi.editor.submitted', 'Sent for approval. An approver will look at it.'));
-  }
-  async function withdrawPoi(id) {
+  });
+  const withdrawPoi = (id) => once(id, async () => {
     const e = edit.entryOf(id);
-    const r = await act((i) => poiWithdraw(i, id, e.rev));
+    if (!e) return;
+    // AUDIT POI U2: taken back, the store's draft is the submission - the changes made since stay changes to save
+    const rev = e.rev, held = heldDoc(e);
+    const r = await act((i) => poiWithdraw(i, id, rev));
     if (!r) return;
     if (!r.ok) { say(refusal(r), 'bad'); return; }
-    edit.markSaved(id, { rev: e.rev, state: 'draft' });
+    edit.markSaved(id, { rev, state: 'draft', doc: held });
     say(t('poi.editor.withdrawn', 'Taken back: it is a draft again.'));
-  }
-  async function retirePoi(id) {
+  });
+  const retirePoi = (id) => once(id, async () => {
     const r = await act((i) => poiRetire(i, id));
     if (!r) return;
     say(r.ok ? t('poi.editor.retireAsked', 'Asked: an approver will decide whether it leaves the world.') : refusal(r), r.ok ? 'ok' : 'bad');
-  }
-  function closePoi(id) {
-    if (edit.dirty(id) && closing !== id) { closing = id; schedule(); return; }
+  });
+  /** `sure` the question asked and answered (AUDIT POI U1: by the button that said so, not by what `closing` is now). */
+  function closePoi(id, sure = false) {
+    if (edit.dirty(id) && !sure) { closing = id; schedule(); return; }
     closing = null;
     edit.close(id);
   }
@@ -558,7 +609,13 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     const live = docs.find((x) => x.rev === h.liveRev);
     const pick = mine ?? live ?? docs.at(-1);
     if (!pick) { say(t('poi.editor.nothingToOpen', 'It has no document to open.'), 'bad'); return; }
-    edit.open(id, { doc: pick.doc, base: h.liveRev ?? null, rev: mine ? mine.rev : null, state: mine ? mine.state : live ? 'live' : 'draft' });
+    // AUDIT POI U4: none of mine open and none live - the newest revision: my own sent back (said so, as it was saved), or
+    // another builder's, a change to save as my own draft (it opened as a clean "draft" of mine with nothing to send)
+    const sentBack = !mine && !live && pick.state === 'rejected' && !!me.handle && String(pick.author).toLowerCase() === me.handle.toLowerCase();
+    const others = !mine && !live && !sentBack;
+    // AUDIT POI P6: my own draft with the base it was made from - the live one's hid that another's went live since, and
+    // its save wrote that base over the store's, so the queue showed it made from the live revision, not stale
+    edit.open(id, { doc: pick.doc, ...(others ? { saved: null } : {}), base: mine ? (mine.base ?? null) : sentBack ? (pick.base ?? null) : (h.liveRev ?? null), rev: mine ? mine.rev : null, state: mine ? mine.state : live ? 'live' : sentBack ? 'rejected' : 'draft' });
     edit.select({ id, part: null });
     say(t('poi.editor.opened', 'Opened {name}.', { name: pick.doc.name }));
   }
@@ -581,40 +638,60 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   }
   /** POI-5: the UV editor over a part's material - the part's mesh fetched and read, the material's picture under it;
    *  applied, the mesh made again is uploaded by its name and the part wears it (one step). */
+  /** @type {any} */
   let uvDialog = null;
+  let uvOpening = false;
   async function openUv(id, key, k) {
     const d = edit.docOf(id), part = d?.parts.find((p) => p.key === key);
-    if (!part || uvDialog) return;
+    // AUDIT POI U7: one UV editor at a time - asked for again while the first's model is fetched, still one
+    if (!part || uvDialog || uvOpening) return;
     const auth = io()?.secret ?? null;
-    let bytes;
-    try { bytes = await feed.asset(part.mesh, { auth }); } catch { say(t('poi.editor.uvNoMesh', 'The part\'s model would not load.'), 'bad'); return; }
+    let bytes = null;
+    uvOpening = true;
+    try { bytes = await feed.asset(part.mesh, { auth }); } catch { bytes = null; }
+    uvOpening = false;
+    if (!bytes) { say(t('poi.editor.uvNoMesh', 'The part\'s model would not load.'), 'bad'); return; }
+    // AUDIT POI U7, U8: the editor left, or the part gone or dressed anew, while its model came - nothing opened over it
+    if (root.dataset.on !== '1' || !edit.docOf(id)?.parts.some((p) => p.key === key && p.mesh === part.mesh)) return;
     const dm = decodePoiMesh(bytes);
     if ('error' in dm) { say(meshErrorText(dm.error), 'bad'); return; }
     const tex = part.materials[k]?.texture;
     const picture = tex && decodeImage ? feed.asset(tex, { auth }).then((b) => decodeImage(b)).catch(() => null) : Promise.resolve(null);
-    uvDialog = createPoiUvPanel({
+    /** @type {any} */
+    let dlg = null;
+    dlg = createPoiUvPanel({
       doc, mesh: dm.mesh, sub: k, materials: part.materials.length, picture,
       title: t('poi.editor.uvTitle', 'UVs: {name}', { name: part.name || part.key }),
       onApply: async (mesh) => {
         let out;
         try { out = encodePoiMesh(mesh); } catch (e) { say(meshErrorText(String(e?.message ?? '').replace(/^poi mesh: /, '')), 'bad'); return false; }
         const r = await act((i) => poiPutAsset(i, out, 'mesh'));
+        // AUDIT POI U7: closed while it went up (Cancel, the editor left) - let go, as closing says: the part keeps its model
+        if (dlg.closed()) return false;
         if (!r) return false;
         if (!r.ok) { say(refusal(r), 'bad'); return false; }
         facts.put(r.data.sha, { kind: 'mesh', ...r.data.meta });
+        // AUDIT POI U7: the part gone (taken out, its POI closed) - nothing wears it, and nothing is said applied
+        if (!edit.docOf(id)?.parts.some((q) => q.key === key)) { say(t('poi.editor.uvGone', 'The part is gone: the UVs were not applied.'), 'bad'); return true; }
         edit.edit(id, 'uv', (x) => { const p = x.parts.find((q) => q.key === key); if (p) p.mesh = r.data.sha; });
         say(t('poi.editor.uvApplied', 'The UVs are applied: the part wears its new model.'));
         return true;
       },
-      onClose: () => { uvDialog = null; },
+      onClose: () => { uvDialog = null; },   // once (AUDIT POI U7: poiUvPanel.js closes once)
     });
-    root.append(uvDialog.root);
-    uvDialog.root.focus?.();
+    uvDialog = dlg;
+    root.append(dlg.root);
+    dlg.root.focus?.();
+  }
+  /** AUDIT POI U1: a part taken out by its key - once; gone, the press does nothing. */
+  function removePart(id, key) {
+    if (!edit.docOf(id)?.parts.some((p) => p.key === key)) return false;
+    return edit.edit(id, 'remove part', (x) => { x.parts = x.parts.filter((p) => p.key !== key); }, { id, part: null });
   }
   function removeSelection() {
     const sel = edit.selection();
     if (!sel) return;
-    if (sel.part != null) edit.edit(sel.id, 'remove part', (x) => { x.parts = x.parts.filter((p) => p.key !== sel.part); }, { id: sel.id, part: null });
+    if (sel.part != null) removePart(sel.id, sel.part);
     else if (sel.light != null) edit.edit(sel.id, 'light', (x) => { x.lights.splice(sel.light, 1); }, { id: sel.id, part: null, light: null });
     else if (edit.entryOf(sel.id)?.state === 'new' && !edit.entryOf(sel.id)?.saved) edit.remove(sel.id);
     else say(t('poi.editor.deleteSaved', 'A saved POI is taken out of the world by asking to retire it.'), 'bad');
@@ -650,7 +727,8 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     if (!pois.length) { say(t('poi.pack.nothingOpen', 'Open the POIs to pack first.'), 'bad'); return false; }
     const r = await act(() => exportPack({ pois }, fetchAsset));
     if (!r) return false;
-    if (!r.ok) { say(t('poi.export.failed', 'A model or picture would not load: nothing was saved.'), 'bad'); return false; }
+    // AUDIT POI C4: a pack refused by its own law said in its words (poiText.js packErrorText); a fetch that failed, as one
+    if (!r.ok) { say(r.code && r.code !== 'export-fetch' ? packErrorText(r) : t('poi.export.failed', 'A model or picture would not load: nothing was saved.'), 'bad'); return false; }
     const file = fileNameOf(pois.length === 1 ? pois[0].name : `poi-pack-${pois.length}`, 'zip');
     download(file, r.bytes, 'application/zip');
     say(t('poi.pack.saved', 'Packed {n, plural, one {# POI} other {# POIs}} into {file}.', { n: pois.length, file }));
@@ -676,23 +754,47 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     const list = el('div', 'dfpoi-sub');
     for (const d of pack.pois) list.append(el('div', '', d.name));
     for (const d of pack.shelf) list.append(el('div', '', t('poi.pack.entryNamed', 'Library: {name}', { name: d.name })));
-    const go = btn(t('poi.pack.uploadOpen', 'Upload and open'), () => importOpened(pack));
+    const said = el('div');
+    const go = btn(t('poi.pack.uploadOpen', 'Upload and open'), () => importOpened(pack, box, go, said));
     const acts = el('div', 'dfpoi-row');
     acts.append(go, btn(t('poi.editor.cancel', 'Cancel'), () => closeDialog()));
     box.append(el('div', 'dfpoi-h', t('poi.pack.title', 'Import a pack')),
       el('div', '', t('poi.pack.holds', '{pois, plural, one {# POI} other {# POIs}}, {entries, plural, one {# library entry} other {# library entries}}, {assets, plural, one {# model or picture} other {# models and pictures}}.', { pois: pack.pois.length, entries: pack.shelf.length, assets: pack.assets.size })),
-      list, acts);
+      list, said, acts);
     dialog = box;
     root.append(box);
     return true;
   }
-  async function importOpened(pack) {
+  /** AUDIT POI C5: the store's refusal of an import as the pack dialog says it - its word, where (an asset, an entry or a
+   *  POI by its name), and the law's problems said where they are. */
+  function packRefusalRows(pack, r) {
+    const at = String(r.at ?? '');
+    const named = pack.pois.find((d) => d.name === at) ?? pack.shelf.find((d) => d.name === at) ?? null;
+    const where = /^[0-9a-f]{64}$/.test(at) ? t('poi.pack.atAsset', 'A model or picture ({sha})', { sha: at.slice(0, 10) }) : at;
+    const rows = [el('div', 'dfpoi-problem', where ? t('poi.pack.refusedAt', '{where}: {word}', { where, word: refusal(r) }) : refusal(r))];
+    for (const p of (r.problems ?? []).slice(0, 12)) {
+      const w = problemWhere(p.path, named);
+      rows.push(el('div', 'dfpoi-problem', w ? `${w}: ${problemText(p)}` : problemText(p)));
+    }
+    return rows;
+  }
+  /** AUDIT POI U9: a store ask that goes only while `box` is the dialog open - once it is cancelled (or another dialog
+   *  opened over it) it is answered `cancelled` and nothing more goes. */
+  const whileOpen = (box, fn) => (...args) => (dialog === box ? fn(...args) : Promise.resolve({ ok: false, error: 'cancelled' }));
+  async function importOpened(pack, box, go, said) {
+    // AUDIT POI U9: once at a time, and for its own dialog - Cancel (or another dialog opened over it) stops it: nothing
+    // more is uploaded, nothing is opened, and its answer closes no dialog the builder opened since
+    go.disabled = true;
+    said.replaceChildren();
+    const mine = () => dialog === box;
     const r = await act((i) => importPack(pack, {
-      putAsset: (b, k) => poiPutAsset(i, b, k), history: (id) => poiHistory(i, id), shelve: (item) => poiShelve(i, item), rand,
-      progress: (n, of) => say(t('poi.editor.uploading', 'Uploading {n} of {of}...', { n, of })),
+      putAsset: whileOpen(box, (b, k) => poiPutAsset(i, b, k)), history: whileOpen(box, (id) => poiHistory(i, id)), shelve: whileOpen(box, (item) => poiShelve(i, item)), rand,
+      progress: (n, of) => { if (mine()) say(t('poi.editor.uploading', 'Uploading {n} of {of}...', { n, of })); },
     }));
+    if (!mine()) { if (r) say(t('poi.pack.stopped', 'Stopped: nothing was opened. What went up before the stop stays in the store.')); return false; }
+    go.disabled = false;
     if (!r) return false;
-    if (!r.ok) { say(refusal(r), 'bad'); return false; }
+    if (!r.ok) { say(refusal(r), 'bad'); said.replaceChildren(...packRefusalRows(pack, r)); return false; }
     for (const [sha, a] of pack.assets) facts.put(sha, a.kind === 'mesh' ? { kind: 'mesh', submeshes: a.submeshes } : { kind: 'texture', w: a.w, h: a.h });
     let opened = 0, kept = 0;
     for (const o of r.open) {
@@ -717,6 +819,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     const files = el('input');
     files.type = 'file'; files.multiple = true; files.accept = '.glb,.gltf,.bin,.png,.jpg,.jpeg,.webp';
     let split = 'whole';
+    let uploading = false;
     const splitSel = select(split, [['whole', t('poi.editor.splitWhole', 'One part')], ['nodes', t('poi.editor.splitNodes', 'A part for each object')]], (v) => { split = v; if (lastRead) show(lastRead); });
     const body = el('div');
     let lastRead = null, prep = null;
@@ -744,18 +847,31 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
       }
     });
     function show(model) {
+      // AUDIT POI U10: never while the parts go up - "Make" or the files changed then re-armed the button and replaced the
+      // parts the keeping read after it (a TypeError, nothing kept); both are held until it is done
+      if (uploading) return;
       prep = prepareImport(model, bakeGltf(model, { split: /** @type {'whole' | 'nodes'} */ (split) }));
       const rows = [el('div', 'dfpoi-h', t('poi.editor.importParts', 'Parts'))];
-      for (const p of prep.parts) rows.push(el('div', 'dfpoi-sub', t('poi.editor.importPart', '{name}: {vertices, number} vertices, {triangles, number} triangles, {materials} materials', { name: p.name || '-', vertices: p.vertices, triangles: p.triangles, materials: p.submeshes })));
+      // AUDIT POI U13: each count in its plural ("1 materials" no more)
+      for (const p of prep.parts) rows.push(el('div', 'dfpoi-sub', t('poi.editor.importPart', '{name}: {vertices, plural, one {{vertices, number} vertex} other {{vertices, number} vertices}}, {triangles, plural, one {{triangles, number} triangle} other {{triangles, number} triangles}}, {materials, plural, one {# material} other {# materials}}', { name: p.name || '-', vertices: p.vertices, triangles: p.triangles, materials: p.submeshes })));
       for (const r of prep.refused) rows.push(el('div', 'dfpoi-problem', `${r.name || '-'}: ${meshErrorText(r.code)}`));
       for (const w of prep.warnings) rows.push(el('div', 'dfpoi-warn', gltfWarningText(w.code, w)));
       body.replaceChildren(...rows);
       place.disabled = !prep.parts.length;
     }
     async function upload() {
-      if (!prep?.parts.length) return;
-      place.disabled = true;
-      const r = await act((i) => uploadImport(prep, (bytes, kind) => poiPutAsset(i, bytes, kind), (n, of) => say(t('poi.editor.uploading', 'Uploading {n} of {of}...', { n, of }))));
+      // AUDIT POI U10: the parts as they stood when it was pressed, once
+      const parts = prep;
+      if (!parts?.parts.length) return;
+      uploading = true;
+      place.disabled = true; splitSel.disabled = true; files.disabled = true;
+      // AUDIT POI U9: Cancel (or another dialog opened over it) stops it - nothing more uploaded, nothing placed, and its
+      // answer closes no dialog the builder opened since
+      const mine = () => dialog === box;
+      const r = await act((i) => uploadImport(parts, whileOpen(box, (bytes, kind) => poiPutAsset(i, bytes, kind)), (n, of) => { if (mine()) say(t('poi.editor.uploading', 'Uploading {n} of {of}...', { n, of })); }));
+      uploading = false;
+      splitSel.disabled = false; files.disabled = false;
+      if (!mine()) { if (r) say(t('poi.editor.importStopped', 'Stopped: nothing was placed.')); return; }
       if (!r) { place.disabled = false; return; }
       if (!r.ok) { say(refusal(r), 'bad'); place.disabled = false; return; }
       for (const [sha, meta] of r.metas) facts.put(sha, meta);
@@ -765,7 +881,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
       if (keepToo.checked) {
         // its meshes as the import holds them - the picture is drawn from them, none fetched back
         const meshes = new Map();
-        r.asset.parts.forEach((part, i) => { const d = decodePoiMesh(prep.parts[i].bytes); if (!('error' in d)) meshes.set(part.mesh, d.mesh); });
+        r.asset.parts.forEach((part, i) => { const d = decodePoiMesh(parts.parts[i].bytes); if (!('error' in d)) meshes.set(part.mesh, d.mesh); });
         await library.keepNow({ name: r.asset.name, parts: r.asset.parts, lights: [], meshes });
       }
     }
@@ -779,7 +895,13 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   return {
     root,
     /** Shown open (the editor's docks) or closed (its launcher alone). */
-    setOn(/** @type {boolean} */ on) { root.dataset.on = on ? '1' : '0'; if (on) schedule(); },
+    setOn(/** @type {boolean} */ on) {
+      root.dataset.on = on ? '1' : '0';
+      if (on) { schedule(); return; }
+      // AUDIT POI U8: leaving the editor lets go of what was open over it - the UV editor (it stood on over the game), the
+      // library, the approver's queue and its look (the screen shows the world as it stands again), the panel's own dialog
+      dialogsClosed(); uvDialog?.close(); closing = null;
+    },
     /** The editor's own change (a tool, the hover, the selection made in the world). */
     refresh: () => schedule(),
     say,

@@ -65,8 +65,8 @@
   {
     "name": "POI3B-the-base-lost",
     "file": "src/ui/poiEditorPanel.js",
-    "old": "edit.open(id, { doc: pick.doc, base: h.liveRev ?? null,",
-    "new": "edit.open(id, { doc: pick.doc, base: null,",
+    "old": ": sentBack ? (pick.base ?? null) : (h.liveRev ?? null), rev:",
+    "new": ": sentBack ? (pick.base ?? null) : null, rev:",
     "tests": [
       "test/poi3b_panel.test.js"
     ]

@@ -89,7 +89,7 @@ export function createPoiLibrary({ doc = document, host, io, feed, me, act, say,
   /** @type {any[] | null} */
   let items = null;
   let query = '', mineOnly = false, shown = SHELF_PAGE;
-  let editing = null;        // the entry whose words are being changed: `{ id, item }`
+  let editing = null;        // the entry whose words are being changed: `{ id, item, name, tags, about }` (as typed so far)
   let dropping = null;       // the entry whose taking-off asks again
   /** Each picture's data: URL, asked once (a failure forgotten, so it is asked again next time). @type {Map<string, Promise<string | null>>} */
   const thumbs = new Map();
@@ -167,7 +167,11 @@ export function createPoiLibrary({ doc = document, host, io, feed, me, act, say,
     return r;
   }
   async function place(it) {
+    const at = dialog;
     const r = await act((i) => poiShelfEntry(i, it.id));
+    // AUDIT POI U11: the answer is for the library that asked - the builder gone on (a keep dialog, the library closed),
+    // nothing is placed and no dialog opened since is closed
+    if (dialog !== at) return;
     if (!r) return;
     if (!r.ok) { say(refusal(r), 'bad'); return; }
     const item = r.data.item;
@@ -183,19 +187,27 @@ export function createPoiLibrary({ doc = document, host, io, feed, me, act, say,
     await exportGlb?.({ name: r.data.item.name, parts: r.data.item.parts, lights: r.data.item.lights ?? [] });
   }
   async function beginEdit(it) {
+    const at = dialog;
     const r = await act((i) => poiShelfEntry(i, it.id));
+    if (dialog !== at) return;   // AUDIT POI U11: for the library that asked
     if (!r) return;
     if (!r.ok) { say(refusal(r), 'bad'); return; }
-    editing = { id: it.id, item: r.data.item };
+    const item = r.data.item;
+    editing = { id: it.id, item, name: item.name, tags: (item.tags ?? []).join(', '), about: item.about ?? '' };
     draw();
   }
   function editRow(it) {
-    const item = editing.item;
+    const item = editing.item, typed = editing;
     const r = el('div', 'dfpoi-shelf-row');
     const form = el('div', 'dfpoi-shelf-text');
-    const name = el('input', 'dfpoi-grow'); name.type = 'text'; name.value = item.name; name.maxLength = POI_LIMITS.name;
-    const tags = el('input', 'dfpoi-grow'); tags.type = 'text'; tags.value = (item.tags ?? []).join(', ');
-    const about = el('textarea'); about.value = item.about ?? ''; about.maxLength = POI_LIMITS.about;
+    // AUDIT POI U11: what is typed is kept with the entry being changed - the list drawn again (a search letter, Mine, Show
+    // more, another entry's Take off) drew the row from the entry, and the words typed were gone
+    const name = el('input', 'dfpoi-grow'); name.type = 'text'; name.value = typed.name; name.maxLength = POI_LIMITS.name;
+    const tags = el('input', 'dfpoi-grow'); tags.type = 'text'; tags.value = typed.tags;
+    const about = el('textarea'); about.value = typed.about; about.maxLength = POI_LIMITS.about;
+    name.addEventListener('input', () => { typed.name = name.value; });
+    tags.addEventListener('input', () => { typed.tags = tags.value; });
+    about.addEventListener('input', () => { typed.about = about.value; });
     const save = btn(t('poi.library.save', 'Save'), async () => {
       const next = { ...item, name: lawName(name.value) };
       const tg = tagsOf(tags.value), words = about.value.trim();
@@ -204,7 +216,8 @@ export function createPoiLibrary({ doc = document, host, io, feed, me, act, say,
       const res = await act((i) => poiShelve(i, next));
       if (!res) return;
       if (!res.ok) { say(res.problems?.length ? problemLine(res.problems[0], next) : refusal(res), 'bad'); return; }
-      editing = null;
+      // AUDIT POI U11: this row's change done - another entry's begun meanwhile stays open, its words with it
+      if (editing === typed) editing = null;
       say(t('poi.library.changed', 'Changed: {name}.', { name: next.name }));
       await refresh();
     });
@@ -263,10 +276,13 @@ export function createPoiLibrary({ doc = document, host, io, feed, me, act, say,
     const tags = el('input', 'dfpoi-grow'); tags.type = 'text'; tags.placeholder = t('poi.library.tagsHint', 'ruin, stone, small');
     const about = el('textarea'); about.maxLength = POI_LIMITS.about;
     const said = el('div');
+    const self = dialog;
     const go = btn(t('poi.library.keep', 'Keep it'), async () => {
       go.disabled = true;
       const r = await keepNow(source, { name: name.value, tags: tagsOf(tags.value), about: about.value });
       go.disabled = false;
+      // AUDIT POI U11: the answer closes this dialog - never a keep dialog opened since, and the name typed into it
+      if (dialog !== self) return;
       if (r.ok) { close(); return; }
       said.replaceChildren(...(r.problems ?? []).slice(0, 12).map((p) => el('div', 'dfpoi-problem', problemLine(p, source))));
     });

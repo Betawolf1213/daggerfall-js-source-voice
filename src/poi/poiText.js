@@ -12,7 +12,7 @@
 // Not a DFU member. Ledger A (POI).
 // ═══════════════════════════════════════════════════════════════════
 
-import { t } from '../systems/textManager.js';   // L10N4: the words through the text core
+import { t, intlLocale } from '../systems/textManager.js';   // L10N4: the words through the text core
 import { POI_MESH_LIMITS } from './poiMesh.js';
 import { POI_IMAGE_LIMITS } from './poiImage.js';
 
@@ -63,7 +63,8 @@ const PROBLEM = {
   'not-uploaded': () => t('poi.problem.notUploaded', 'A model or picture it names has not been uploaded.'),
   'not-a-mesh': () => t('poi.problem.notAMesh', 'It names a picture where a model belongs.'),
   'not-a-texture': () => t('poi.problem.notATexture', 'It names a model where a picture belongs.'),
-  'material-count': (a) => t('poi.problem.materialCount', 'Its model has {want} materials; the part has {have}.', a),
+  // AUDIT POI U13: the count in its plural ("Its model has 1 materials" no more)
+  'material-count': (a) => t('poi.problem.materialCount', 'Its model has {want, plural, one {# material} other {# materials}}; the part has {have}.', a),
 };
 
 /** @type {Record<string, (a: any) => string>} */
@@ -77,8 +78,10 @@ const GLTF = {
   compressed: (a) => t('poi.gltf.compressed', 'This model is compressed ({ext}). Export it again with compression off.', a),
   extension: (a) => t('poi.gltf.extension', 'This model needs {ext}, which the editor does not support.', a),
   'file-missing': (a) => t('poi.gltf.fileMissing', 'This model needs the file {uri}. Choose it together with the .gltf.', a),
-  missing: (a) => t('poi.gltf.missing', 'This model refers to a {what} that is not there.', a),
-  'past-end': (a) => t('poi.gltf.pastEnd', 'This model\'s data is cut short: a {what} runs past its end.', a),
+  // AUDIT POI U13: glTF's own object names said as words of each language, never dropped in ("a accessor", in English in
+  // every language)
+  missing: (a) => t('poi.gltf.missing', 'This model refers to {what, select, accessor {an accessor} bufferView {a buffer view} buffer {a buffer} image {an image} texture {a texture} node {a node} other {a piece of itself}} that is not there.', a),
+  'past-end': (a) => t('poi.gltf.pastEnd', 'This model\'s data is cut short: {what, select, accessor {an accessor} bufferView {a buffer view} other {a piece of it}} runs past its end.', a),
   'node-cycle': () => t('poi.gltf.nodeCycle', 'This model\'s node tree loops back on itself.'),
   'accessor-type': () => t('poi.gltf.accessorType', 'This model stores a mesh attribute in a form glTF does not allow.'),
 };
@@ -122,17 +125,30 @@ const DIFF = {
   retire: () => t('poi.diff.retire', 'Takes it out of the world.'),
   name: (a) => t('poi.diff.name', 'Renamed from "{from}" to "{to}".', a),
   about: () => t('poi.diff.about', 'Its description changed.'),
-  tags: (a) => t('poi.diff.tags', 'Its tags are now: {to}.', a),
+  // AUDIT POI U13: none left is said in words of its own ("Its tags are now: ." no more); a list of them as the reader's
+  // language lists (poiDiff's `tags`, when it hands them over; its `to` as written otherwise)
+  tags: (a) => {
+    const to = Array.isArray(a.tags) ? listText(a.tags) : String(a.to ?? '');
+    return to ? t('poi.diff.tags', 'Its tags are now: {to}.', { to }) : t('poi.diff.tagsNone', 'Its tags were all taken off.');
+  },
   moved: (a) => t('poi.diff.moved', 'Moved {m, number} m.', a),
   ground: (a) => (a.to === 'snap' ? t('poi.diff.groundSnap', 'Now stands on the ground.') : t('poi.diff.groundAbsolute', 'Now stands at a fixed height.')),
   turned: (a) => t('poi.diff.turned', 'Turned {deg, number}°.', a),
   sized: (a) => t('poi.diff.sized', 'Resized from {from, number} to {to, number}.', a),
   'part-added': (a) => t('poi.diff.partAdded', 'Part added: {name}.', a),
   'part-removed': (a) => t('poi.diff.partRemoved', 'Part taken away: {name}.', a),
-  'part-changed': (a) => t('poi.diff.partChanged', 'Part {name}: {what}.', { name: a.name, what: a.what.map((w) => PART_WHAT[w]?.() ?? w).join(', ') }),
+  // AUDIT POI U13: what changed listed as the reader's language lists it, not with an English comma
+  'part-changed': (a) => t('poi.diff.partChanged', 'Part {name}: {what}.', { name: a.name, what: listText(a.what.map((w) => PART_WHAT[w]?.() ?? w)) }),
   lights: (a) => t('poi.diff.lights', 'Its lights changed ({from} to {to}).', a),
-  marker: (a) => (a.show ? t('poi.diff.markerShown', 'Its mark on the map: shown, "{label}".', a) : t('poi.diff.markerHidden', 'Its mark on the map: hidden.')),
+  // AUDIT POI U13: a mark with no label said so (it read 'shown, ""')
+  marker: (a) => (!a.show ? t('poi.diff.markerHidden', 'Its mark on the map: hidden.')
+    : a.label ? t('poi.diff.markerShown', 'Its mark on the map: shown, "{label}".', a) : t('poi.diff.markerShownBare', 'Its mark on the map: shown, with no label.')),
 };
+/** Words as one list, the reader's language's way (Intl.ListFormat, its separators - ui/credits.js's way); joined with a
+ *  comma where the runtime has none. @param {string[]} words */
+function listText(words) {
+  try { return new Intl.ListFormat(intlLocale(), { type: 'unit', style: 'short' }).format(words); } catch { return words.join(', '); }
+}
 /** What changed in a part, in a word each. */
 const PART_WHAT = {
   model: () => t('poi.diff.what.model', 'its model'),

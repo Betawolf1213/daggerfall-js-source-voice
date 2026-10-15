@@ -210,7 +210,9 @@ test('POI-3b OPENING FROM THE STORE: the list asked and searched; a POI opened a
   P.store.history = { id: 'poi-00000000000a', liveRev: 2, revs: [
     { rev: 2, kind: 'doc', doc: doc('Tower'), author: 'Ann', state: 'approved' },
     { rev: 3, kind: 'doc', doc: doc('Tower (Ann)'), author: 'Ann', state: 'draft' },
-    { rev: 4, kind: 'doc', doc: doc('Tower (Mac)'), author: 'mac', state: 'draft' },
+    // PIN MOVED (AUDIT POI P6): my own draft opens with the base IT was made from - the store's `base` on each revision
+    // (poi.js history), which this fixture did not carry; the live revision's base hid that another's went live since
+    { rev: 4, kind: 'doc', doc: doc('Tower (Mac)'), author: 'mac', state: 'draft', base: 2 },
   ] };
   find(P.root, 'Tower').find((n) => n.tagName === 'SPAN').parentNode.click();
   await flush();
