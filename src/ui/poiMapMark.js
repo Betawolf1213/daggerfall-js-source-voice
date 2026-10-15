@@ -18,6 +18,9 @@ export const POI_RING_CSS = '#5a2d8c';
 export const POI_FILL_CSS = 'rgba(90, 45, 140, 0.16)';
 /** The classic region page's texel - a bright violet over its land. */
 export const POI_DOT_RGB = Object.freeze([186, 120, 255]);
+/** AUDIT POI R7: the most POI circles a map draws - its own cap, not the bounty's eight (a hunter's four and room for a
+ *  party): a realm's approved POIs are many more, and every one marked must show. */
+export const POI_MARKS_MAX = 256;
 /** The legend's word, and the reader's fallback label. */
 export const poiLegendText = () => t('poi.map.legend', 'Point of interest');
 

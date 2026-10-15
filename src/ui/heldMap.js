@@ -106,7 +106,7 @@ import { readGateMark, gateMarkKey, GATE_RING_CSS, GATE_LEGEND_TEXT } from './ga
 import { SERPENT_RING_MAP_CSS, SERPENT_LEGEND_TEXT } from './serpentMapMark.js';   // SERPENT1: the sea serpent's ring, in the sea's colours
 import { SD_RING_MAP_CSS, SD_LEGEND_TEXT } from './sdMapMark.js';   // SD2c: the Super dungeon's ring once it is found, in its omen's brass
 import { LODE_RING_CSS, LODE_LEGEND_TEXT, lodeLegendText } from './lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, read by the bounty's reader
-import { POI_RING_CSS, poiLegendText } from './poiMapMark.js';   // POI-2: the approved POIs' marks, read by the bounty's reader
+import { POI_RING_CSS, POI_MARKS_MAX, poiLegendText } from './poiMapMark.js';   // POI-2: the approved POIs' marks, read by the bounty's reader
 import { readBountyMarks, bountyMarksKey, BOUNTY_RING_CSS, BOUNTY_LEGEND_TEXT, BOUNTY_LEGEND_RIM_CSS, REVENANT_RING_CSS, REVENANT_LEGEND_TEXT } from './bountyMapMark.js';   // BOUNTY1: held bounties' black circles, read as the gate's ring is
 import { readRaidMarks, raidMarksKey, placeTip, tipKey, readTip, RAID_MARK_CSS, RAID_LEGEND_TEXT, RAID_HIT_PX, SEAT_TIP_TEXT_MAX } from './eventMapMarks.js';   // EVENT-TIP: the raided towns, and the card a world event answers a hover with
 import { readVendorMark, vendorMarkKey, VENDOR_MARK_CSS, VENDOR_RIM_CSS, VENDOR_LEGEND_TEXT } from './vendorMapMark.js';   // HOME-VENDOR: the trader's waypoint
@@ -2019,7 +2019,7 @@ export class HeldMapWindow {
     const mKey = bountyMarksKey(lodes);
     if (mKey !== this._lodesKey) { this._lodesKey = mKey; this._lodes = lodes; gateMoved = true; this._dirty = true; }
     // POI-2: and the approved POIs - one approved, moved or retired with the map open
-    const pois = readBountyMarks(this.deps.pois, this._size, poiLegendText());
+    const pois = readBountyMarks(this.deps.pois, this._size, poiLegendText(), POI_MARKS_MAX);   // AUDIT POI R7: every marked POI, past the bounty's eight
     const pKey = bountyMarksKey(pois);
     if (pKey !== this._poisKey) { this._poisKey = pKey; this._pois = pois; gateMoved = true; this._dirty = true; }
     // EVENT-TIP: the raided towns ride the same poll (a raid begins, withdraws or is cleansed while the map stands

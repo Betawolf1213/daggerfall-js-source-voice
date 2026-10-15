@@ -305,7 +305,9 @@ async function hostOver(entries, { ground = 50, feetAt = null, collideDrafts = u
     groundAt: () => ground, collider: () => collider, riding: (px, py) => `ride:${px},${py}`, feet: () => feet, now: () => t, log: null,
     ...(collideDrafts ? { collideDrafts } : {}),
   });
-  const settle = async () => { host.frame(); for (let i = 0; i < 20; i++) await new Promise((res) => setImmediate(res)); host.frame(); };
+  // PIN MOVED (AUDIT POI R8): the stand work is a time slice a frame and each wait (an asset, a look) ends in a frame of
+  // its own - a POI stands a few frames after it is asked for, not at the next; settle runs frames until it has
+  const settle = async () => { for (let f = 0; f < 12; f++) { host.frame(); for (let i = 0; i < 4; i++) await new Promise((res) => setImmediate(res)); } };
   return { host, renderer, collider, feed, meshSha, assets, settle, setBuilt: (b) => { built = b; }, setFeet: (f) => { feet = f; }, setNow: (v) => { t = v; } };
 }
 
