@@ -29,7 +29,7 @@
 //                      the dark wood as the pack's own gold-on-wood labels do.
 // The pictures are the pack's, cut at run time (ui/grimoireArt.js) - nothing new is committed.
 import { FRAME_ROLES, FRAME_CSS } from './enhancedFrame.js';
-import { CHANNEL_COLOURS, NAME_COLOURS, PING_COLOURS, channelRules, pipRules } from './chatColours.js';   // CHAT-COLOURS, NAME-INK, PING1: the chat's colours on the page
+import { CHANNEL_COLOURS, NAME_COLOURS, PING_COLOURS, RP_COLOURS, channelRules, pipRules } from './chatColours.js';   // CHAT-COLOURS, NAME-INK, PING1: the chat's colours on the page
 import { tierMarkCss } from './lootTierMarks.js';   // LOOT-MARKS: the quick loot's tier gem and wash, on the page
 import { buildGrimoireArt, grimoireFontUrl, grimoireImg, artVar, FRAME_ART, nativeSize, BOOK_SLICE, PLATE_SLICE,
   VIAL_CUT, DIAL_ICONS, dialIconSize, dialArtName, grimoireDeskUrl } from './grimoireArt.js';
@@ -1387,6 +1387,9 @@ ${G} .dfchat-box :is(.dfchat-time, .dfchat-tag) { color: #4f3218 !important; }  
 ${G} .dfchat-peek, ${G} .dfchat-peek * {
   text-shadow: -1px 0 0 #120804, 1px 0 0 #120804, 0 -1px 0 #120804, 0 1px 0 #120804, 1px 2px 0 rgba(0,0,0,0.6) !important; }
 ${G} .dfchat-peek .dfchat-line.system .dfchat-text { color: #9cc8ff !important; }
+/* CHAT-RP: a line of roleplay on the page - the deep green, leaning (ui/chatColours.js RP_COLOURS); over the world the light */
+${G} .dfchat-box .dfchat-line.rp .dfchat-text { color: ${RP_COLOURS.dark} !important; text-shadow: none !important; font-style: italic; }
+${G} .dfchat-peek .dfchat-line.rp .dfchat-text { color: ${RP_COLOURS.light} !important; }
 
 /* THE OVERWORLD'S FILTERS - GRIM4 (Dudey: "the numbers next to the filters are hardly readable"): a count is written in
    ink at the face's own size, as its word is, on the same line; the block is wide enough that no word is cut, and the

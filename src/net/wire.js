@@ -530,10 +530,18 @@ export const CHAT_LANGS = Object.freeze({
 });
 /** The language's channel key, or null for a code the table does not have. */
 export const chatLangRoom = (code) => (typeof code === 'string' && Object.hasOwn(CHAT_LANGS, code) ? `${CHAT_LANG_PREFIX}${code}` : null);
+/** CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG"): THE TRADE AND LFG CHANNELS - the language channel's
+ *  shape, one room each, everyone who JOINED it in it wherever they stand, the World channel's whole machinery (the
+ *  roster, the badges, the mute, the rate, the room's budget) with nothing new in it. A player is in neither until they
+ *  join (`/join trade`, the Settings' Chat card - `chatTrade`, `chatLfg`), so the tab bar holds none of their tabs and no
+ *  socket is held for them until then. Unsharded: a room only those who chose it are in is a region's size. */
+export const CHAT_TRADE_ROOM = 'chat:trade';
+export const CHAT_LFG_ROOM = 'chat:lfg';
 /** Every channel the relay will open (AUDIT CHAT A1: a whitelist - a later tab is a later entry, and nothing else is a
  *  channel). CHAT-CHAN: the world channel and the 62 region channels, enumerated, so the whitelist stays a list.
- *  CHAT-LANG: and the language channels, one per CHAT_LANGS row (unsharded - a language's room is a region's size). */
-export const CHAT_ROOMS = Object.freeze(new Set([CHAT_WORLD_ROOM, ...Array.from({ length: CHAT_REGION_COUNT }, (_, i) => chatRegionRoom(i)), ...HUB_SHARD_ROOMS, ...REGION_SHARD_ROOMS, ...Object.keys(CHAT_LANGS).map(chatLangRoom)]));   // SCALE5c: and the hub's shards (net/hubShards.js); part two: and each region's
+ *  CHAT-LANG: and the language channels, one per CHAT_LANGS row (unsharded - a language's room is a region's size).
+ *  CHAT-TRADE: and the Trade and LFG channels. */
+export const CHAT_ROOMS = Object.freeze(new Set([CHAT_WORLD_ROOM, ...Array.from({ length: CHAT_REGION_COUNT }, (_, i) => chatRegionRoom(i)), ...HUB_SHARD_ROOMS, ...REGION_SHARD_ROOMS, ...Object.keys(CHAT_LANGS).map(chatLangRoom), CHAT_TRADE_ROOM, CHAT_LFG_ROOM]));   // SCALE5c: and the hub's shards (net/hubShards.js); part two: and each region's
 /** CHAT-CHAN: the channels a LINE may name inside a room (`{t:'chat', text, ch}`). A party's line is said on the hub
  *  link and heard by the party's members alone; a line naming anything else is refused whole - it is never allowed to
  *  fall through to the room's own fan, where a party line said to an old or a confused relay would reach everyone. */
@@ -1359,7 +1367,8 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world201';   // KG-SET (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md section 10.3; NOT YET DEPLOYED): THE ILIAC SET'S RULES WITHOUT ITS WORDS, AND NINE CARDS MORE - net/iliacCards.js, the relay's catalog, keeps each card's rules and canonical name and no longer its rules text or flavor (said in the player's language by systems/iliacCardWords.js, which the relay never carries), and holds the nine units The King's Gambit's roster brought into the set (the Grizzly Bear, the Sabretooth Tiger, the Spider, the Slaughterfish, the Mummy, the Frost and the Fire Daedra, the Archer and the Ranger). A deck holding one of the nine is a deck an older relay refuses ('bad deck'), so a new bundle, a new name (SLAM8).
+export const RELAY_VERSION = 'world202';   // KG-SET (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md section 10.3; NOT YET DEPLOYED; world201 on its branch, renumbered past main's CHAT-TRADE world201 at the merge): THE ILIAC SET'S RULES WITHOUT ITS WORDS, AND NINE CARDS MORE - net/iliacCards.js, the relay's catalog, keeps each card's rules and canonical name and no longer its rules text or flavor (said in the player's language by systems/iliacCardWords.js, which the relay never carries), and holds the nine units The King's Gambit's roster brought into the set (the Grizzly Bear, the Sabretooth Tiger, the Spider, the Slaughterfish, the Mummy, the Frost and the Fire Daedra, the Archer and the Ranger). A deck holding one of the nine is a deck an older relay refuses ('bad deck'), so a new bundle, a new name (SLAM8).
+// world201:   CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG"; bible/06-Systems/Community-Arc.md CHAT-TRADE; NOT YET DEPLOYED): the Trade and LFG channels, `chat:trade` and `chat:lfg`, joined CHAT_ROOMS - the relay opens them as it opens a language's; nothing else in the law moved. The client's Trade and LFG tabs wait for this relay (TRADE_CHAN_RELAY_MIN)
 // world200:   PEER-ACTS (2026-10-13, GATHER-FEEL II; Mac: "Do the not done" - bible/06-Systems/Professions-Arc.md 5.1 "Others see it" and section 45; NOT YET DEPLOYED; world199 on its branch, renumbered past main's AUDIT ETHER-OW world199 at the merge): THE POSE CARRIES A GATHERING ACT - `ga` the act (POSE_GATHER_ACTS: the axe at a trunk, the pick at a stone, a kneel by hand, with the sickle, with the Basket, with the knife, the net wound, flying, waiting, tugged, hauled) and `gm` the net's throw in whole metres, absent off an act; `gb` the beats (a count and the last beat's kind), on its own as `hk` is; validPose bounds them (a code past the table no act, a count of none no beat), poseChanged sends them at once. An older relay's validPose drops them: the others see and hear nothing of an act, as before.
 // world199:   AUDIT ETHER-OW C2-1 (2026-10-13, bible/01-Overview/Audit-Ether-OW.md; NOT YET DEPLOYED): THE WATCH'S GROUND, ONE HOME - the relay's mint asks net/watchReceipt.js watchPixelOk (the Bay's map, whole pixels) where it wrote the bounds itself; the account service's receipt check and the Motherlodes' site read the same law, so a Motherlode stands only where a receipt can name its pixel. The relay's answers are as they were: a new bundle, so a new name (SLAM8).
 // world198:   SPAWN-REBIRTH (2026-10-12, bible/01-Overview/Field-Bugs-2026-10-12h.md; NOT YET DEPLOYED): A CELL KEEPS A SPAWNED DUNGEON'S ROW UNTIL IT STANDS AGAIN - net/overworldLaw.js owRowUntil (its death, the earlier of its two clocks, and OW_REBIRTH_MIN, twenty-four real hours), never OW_ROW_KEEP_MIN's sixty real days; the fold lets a life that is over go before it folds, so a later life's first entry is taken whole; the prune and the welcome read the same end.
@@ -3783,6 +3792,10 @@ export const relaySupportsGuild = (v) => { const m = /^world(\d+)$/.exec(typeof 
  *  ('no such room'), so the Language tab joins only once the World link's welcome names this one or later. */
 export const LANG_RELAY_MIN = 196;
 export const relaySupportsLang = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= LANG_RELAY_MIN; };
+/** CHAT-TRADE: the relay that opens the Trade and LFG channels (both in its CHAT_ROOMS) - an older one refuses the key
+ *  ('no such room'), so neither tab joins until the World link's welcome names this one or later. */
+export const TRADE_CHAN_RELAY_MIN = 201;
+export const relaySupportsTradeChan = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= TRADE_CHAN_RELAY_MIN; };
 export const duelGate = (bucket, nowMs) => tokenGate(bucket, nowMs, DUEL_HZ_MAX);
 export const duelInGate = (bucket, nowMs) => tokenGate(bucket, nowMs, DUEL_IN_HZ_MAX);
 const intIn = (v, lo, hi) => Number.isInteger(v) && v >= lo && v <= hi;
