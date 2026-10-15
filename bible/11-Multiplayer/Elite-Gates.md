@@ -522,8 +522,11 @@ turns away toward a Surplus, which THE GOLD RUN banks the same way.
 
 **The respite budget.** Every breach has `EG_RESPITE_BUDGET_MS` (900 s, 15 minutes) of respite, and each Valkynaz
 Redoubt adds `EG_RESPITE_VALK_MS` (600 s). It is spent at any Redoubt's rest by the company's word (section 16.4), asked
-while 30 s or more is left, each yes lengthening the rest by `EG_RESPITE_STEP_MS` (two minutes, or what is left): the
-count holds while it runs, the last word does not. A three-hour run with one life must leave room for ordinary
+while 30 s or more is left (`EG_RESPITE_MIN_MS`), each yes lengthening the rest by `EG_RESPITE_STEP_MS` (two minutes, or
+what is left): the count holds while it runs, the last word does not. Each yes puts the respite again, and the Ready with it
+(AUDIT EG V), so a company may spend the whole budget at one rest and still end a lengthened rest early. A Ready and a
+respite passed in one word take the respite whole, and the rest ends `EG_READY_MS` (3 s) after it (`net/egBrain.js`
+asksStep). A three-hour run with one life must leave room for ordinary
 life; FFXIV's deep dungeons save between sets of floors for the same reason.
 
 **The surplus.** Time the cap turns away is not wasted. Every 5 real minutes the cap refuses becomes a **Surplus** (at
@@ -719,7 +722,7 @@ Wellhead the legions came through, each a standing body.
 | variant | band | what |
 |---|---|---|
 | **the Rift-Yard** | the Galleries | as above |
-| **the Wellspring** | the Galleries | one great rift worth 30 s of the company's reference damage, shielded while any of its three anchors stand (each 4 s); Sappers walk to broken anchors and relight them at a third |
+| **the Wellspring** | the Galleries | one great rift worth 30 s of the company's reference damage, shielded while any of its three anchors stand (each 4 s); Sappers walk to broken anchors and relight them at a third - one rises from the great rift with each of its waves while an anchor lies broken, within the cap |
 | **the Muster** | the Cairn | no rifts: a standard-bearer (a Daedra Seducer bearing the Kyn's standard, section 12) walks between three rally points (3.0 m/s, a new point every 20 s), and every rally point pours waves while the standard stands. It holds 20 s of the company's reference damage, times the depth. Fell it and the waves stop |
 | **the Holdfast** | the Shade | hold a Battlemage relic (a gold disc, r 6) for 75 s against waves from three rifts. Each add that reaches it takes 4 of its 100. A broken relic opens two more rifts and the hold restarts at half; it never fails the hall |
 | **the Wellmouth** | the Wellhead | the rifts wander: each moves between three sockets on the rim every 20 s, at a fixed 2.0 m/s, so the groups that close them must follow |
@@ -793,11 +796,13 @@ The Battlemages' library, its heart an **Orrery** drawn by `orreryOf` (`src/net/
 - **EG4 widens it** to `orreryOf(s, {turnsMin, turnsMax, fray})`. The Hour's call and its golden draw are unchanged;
   the cache is keyed on the seed and the band.
 - **The Spire's knobs**: the turns range starts at 16-28 and rises by 2 every five Redoubts. The fray is the Hour's
-  default unless the circle carries the Hour's decree The Fraying (section 14).
+  default (`SD_FRAY_MAX`, 48) unless the circle carries the Hour's decree The Fraying (section 14). Then it is
+  `egFrayOf` (`net/egRun.js`), which keeps pace with the road: eight turns past its longest at rank I (the omen's 36 over
+  the first circles' 28, two more every five Redoubts) and four at rank II, never past the default.
 - **The judge**: EG4 extracts the pure judge, `orreryJudge`, out of `_sdTurn` in `server/src/index.js` (reach,
   settle, rights, `orreryStep`). The Hour's room and the Spire's both call it.
 - **Pressure**: `ceil(n/4)` Harriers rise every 15 s while the lock stands, so the members off the stones guard the
-  members on them.
+  members on them. The wave is Harriers alone (`egWaveKinds`' `only`), with Swarm-Mother's Binder beside them.
 - **Everyone works**: any member in reach may turn any stone. The rights (`orreryMayTurn`) only hold back a turner who
   keeps lengthening the road while another turns.
 - **The reward**: solving it in no more turns than the band's minimum grants every member one free Vestige rank at the
@@ -848,7 +853,7 @@ From circle 2, about one hall in four (seeded, never the Court, never two runnin
 | twist | what | on |
 |---|---|---|
 | **Reliquary Vault** | a side span to a cache: an extra Reliquary for each member who reaches it with a fair trail, at the count's cost | a Span or a Proving Walk |
-| **Dagon's Bargain** | a shrine on the arrival plate: the company's word (section 16.4) accepts one more decree for the rest of the circle, and each member who voted yes gains one Reliquary if it passes. At most one a circle, and none when no family is free (section 14) | any trial hall |
+| **Dagon's Bargain** | a shrine on the arrival plate: the company's word (section 16.4) accepts one more decree for the rest of the circle, and each member who voted yes gains one Reliquary if it passes. At most one a circle, and none when no family is free (section 14): the director asks only then (`egBargainOpen`), and no screen shows the shrine's line then (`egTwistShown`). It draws what the circle's draw may: never Swarm-Mother before the Cairn, The Fraying only with an Athenaeum still ahead, never Gale-Swept or Crumbling Halls | any trial hall |
 | **Kynval Squad** | four Kynval elites in place of a wave, each with one affix: **Searing** (its strike leaves a pool, r 2.5, for 6 s), **Shielded** (a shield of a quarter of its health that only blows from behind break), **Wrathful** (shares +10%, inside the 1.5 cap), **Unshaken** (immune to push and to Fade) | a Rift-Yard or a Rampart |
 | **The Scriptorium** | a quiet hall: heals 30%, no trial, and the door opens after 30 s (the count runs) | slot 3, in place of its kind |
 | **A Battlemage's Ghost** | a friendly ghost (the relay's host runner, a friendly flag) fights beside the company for the hall | any trial hall |
@@ -1531,7 +1536,10 @@ frame), and resisted by the Iron Footing Vestige. Near an edge it is a cast-back
   Pack's, and a Kynval squad (its first affixes kept). A friend (the Ghost, the Deserter) is no foe under it. AUDIT EG IV
   (lane1 #6): a lord's summons (Moonfall's Divers, the Soul Burst's Wraiths, the Last Rites'), a Binder's raise and the
   Low Road's foes are held to it too (`egLegionSummon`); a summons a mechanic needs - Morvayn's odd member's Wraith, the
-  Night-Stalker's lone member's Blood Thrall - stands whatever the room, and counts against it after.
+  Night-Stalker's lone member's Blood Thrall, the Honour Horn's Kynval (section 11.2) - stands whatever the room, and
+  counts against it after. A dormant Lurker is no part of the legion until it wakes: a fragment's statue in its wall's
+  shadow counts against the cap from its waking, an ambush that springs whatever the room. Counted asleep, three statues
+  in a lone member's Deepway rift chamber (its cap halved to two) held every wave for good (AUDIT EG V).
 - **Fade** (section 15): every kind picks among the members it sees, never one in its Fade, but an Unshaken elite
   (section 8.7). A shape aimed at another still lands on a Faded member, and a dormant Lurker wakes at anyone's
   nearness.
@@ -1855,7 +1863,9 @@ its first true feat in the Spire.
 
 At each Redoubt the next circle's **decrees** are chosen and shown on the beacon: *The next circle bears: Gale-Swept,
 Hunting Pack.* With them the beacon names the next lord: *The next Court: Grath, the Hound.* The company knows what is
-coming before it chooses to go on.
+coming before it chooses to go on. Each family's ask closes at its 10 s, as every ask of the company's word does
+(section 16.4). Its choice is kept for the next circle (`B.next.dc`, which the rest's end makes the circle's) and said on the
+state as `nx`, and every screen's rest line says both (`ui/egHud.js` `egNextCircleText`, the lord the law's `egBossOf`).
 
 - **How many**: circle 1, none. From circle 2, `min(4, 1 + floor((c-2)/2))`.
 - **One per family**: never two from one of the five families, so a company can track every one. Dagon's Bargain
@@ -1863,7 +1873,10 @@ coming before it chooses to go on.
 - **Standing decrees.** The week's Proclamation (section 20) and a Wager's decrees (section 18) stand for the whole
   breach and hold their families: a circle's drawn decrees, and a Bargain's, come only from the families they leave
   free, and a Wager's three come from three different families. So a circle bears at most nine (four drawn, a
-  Bargain's, the Proclamation and three wagered), and the frames carry nine under their own validator.
+  Bargain's, the Proclamation and three wagered), and the frames carry nine under their own validator. The draw's rule
+  binds what Dagon chooses: a circle's draw and a Bargain never bring Swarm-Mother or Gale-Swept before the Cairn. A
+  Wager is the company's own choice and may take any decree from Hall 1, and it bites from there: its Swarm-Mother's
+  Binders and its Gale-Swept's Gusts stand in the Galleries too.
 - **The company chooses.** For each family the circle draws, the beacon offers two of its decrees, and the company's
   word (section 16.4) takes one; a tie takes the first shown. Dagon chooses which families; the company chooses how
   it suffers them.
@@ -1880,7 +1893,7 @@ card.
 | | **Pyre-Bound** | a slain add bursts: a disc of r 2.5, 1.0 s (floor 0.86 s), 10% | a disc of r 3.5, 1.2 s (floor 1.01 s), 15% |
 | | **Vengeful Shades** | a slain add's shade follows its slayer at 3 m/s for 6 s, then bursts: a disc of r 2, 1.0 s (floor 0.79 s), 10% | 15% |
 | **legion** | **Hunting Pack** | Harriers on every hall, a wave every 30 s | a wave every 20 s |
-| | **Swarm-Mother** | every wave carries a Binder (from the Cairn) | two Binders |
+| | **Swarm-Mother** | every wave the legion draws carries a Binder - the hall's, a lord's, an escort's, the Athenaeum's Harriers' (the fight's own decree, `egWaveKinds`); a span's shadows and Hunting Pack's Harriers are their own (from the Cairn) | two Binders |
 | | **Kyn's Vigil** | every hall's trial begins with the band's champion on the arrival plate, with its escort (`1 + ceil(n/3)`, section 8.5); never in a Proving Walk, a Court or a Deepway whose chamber is a champion's (their own stand there), the Scriptorium (no trial), a span or a Brink (a crossing: its plate is the crossing's start, and a champion keeps to the fight ground, so it could follow no one) | with its escort doubled |
 | | **Kyn's Rally** | a slain add gives its wave's living +10% health, up to three stacks, shown as pips over them | +15% a stack |
 | | **Soul-Pools** | a slain add leaves a pool (r 2.5) for 8 s that heals adds 3% a second unless a member stands in it | r 3.5 |
@@ -1888,6 +1901,7 @@ card.
 | | **Gale-Swept** | every span (a Span's, a Proving Walk's) carries a Gust section (from the Cairn) | two Gust sections |
 | | **Crumbling Halls** | every span carries a Crumble section, and has one island fewer | two Crumble sections, two islands fewer |
 | | **Wellhead Sparks** | every 20 s, `ceil(n/2)` sparks rise, each felled by one blow; any left after 8 s bursts (a disc of r 2.5, 1.2 s, 15%) | `n` sparks |
+| | **The Fraying** | the Hour's omen: an Athenaeum's Orrery snaps back at 36 turns in the first circles, eight past its longest road (`egFrayOf`, section 8.4); drawn only for a circle with an Athenaeum | four past its longest road |
 | **the Covenant** | **The Covenant's Press** | the next Redoubt adds 10 minutes, not 15; the count's chip says so (*+10:00 - the Covenant's Press*) | 5 minutes |
 | | **Ashen Vigil** | the next rest heals half; the rest card says so | a quarter |
 | **lord** | **Colossal**, **Unyielding**, **Vengeful**, **Grudge-Bearer** | the gate's boss-general trials, recast as laws (below), on the Court's lord alone | the laws' rank II values (below) |
@@ -1932,8 +1946,10 @@ recasts the four boss-general trials as X-keyed laws:
 
 The gate's trials written against the Warden's own attacks (Scarring, Dagon's Favoured, Echoing, Soul-Hungry) are not
 drawn, nor is the ninth, Legion-Lord: the Spire's legion is its own (section 12). The Hour's decree **The Fraying**
-(`SD_OMENS`, fray 36) is drawn only for a circle with an Athenaeum, through `orreryOf`'s fray parameter. The Spire's
-new decrees (every family but lord) never reuse the name of one of the gate's trials or one of the Hour's omens.
+(`SD_OMENS`, fray 36) is the ground's (AUDIT EG V). It is drawn only for a circle with an Athenaeum (`egFrayingOpen`; a
+Bargain's only with one still ahead of its hall) and only while its fray is short of the Hour's default (to circle 30), and
+it reaches the Orrery through `orreryOf`'s fray parameter (section 8.4). The Spire's new decrees (every family but lord,
+and The Fraying, the Hour's own) never reuse the name of one of the gate's trials or one of the Hour's omens.
 
 **The profile.** `egFightProfile(decrees)` folds them as `sdFightProfile` does. Its cache is keyed by the sorted decree
 string and bounded (LRU 256): the gate's and the Hour's caches assume a bounded set of 185 or 216, and the Spire's is
@@ -1949,11 +1965,14 @@ handicap itself.
 Hall 60 as at Hall 6, and eight members choosing what to become is what makes a company more than eight builds.
 
 - At each Redoubt, every living member is offered **three Vestiges**, drawn by the relay's rng from three different
-  families, and takes **one** within the rest. Unpicked, the first is taken.
+  families, and takes **one** within the rest. Unpicked, the first is taken. Every pick still in hand at the rest's end
+  (a second one - the shards' or the Athenaeum's) is taken the same way, each the first card left, and the offer closes
+  with the rest: a pick and a Surplus are the rest's alone (AUDIT EG V, `net/egRun.js` egPicksClose).
 - Taking one already held ranks it, **I -> II -> III**. An offer never shows one held at III.
-- **The lean**: at the first Redoubt, one of the three is always drawn from the family of the member's most-used blow
-  kind in the circle (the hit's `r`): melee leans to Blade, an arrow to Hunt, a spell to Arcana. It nudges and never
-  decides; the room knows nothing of classes and should not.
+- **The lean**: at the breach's first Redoubt (a deeper start's first too, section 16.6), one of the three is always
+  drawn from the family of the member's most-used blow kind (the hit's `r`, over the breach - `net/egRun.js`
+  egLeanOf): melee leans to Blade, an arrow to Hunt, a spell to Arcana. A member who has landed no blow leans to
+  nothing. It nudges and never decides; the room knows nothing of classes and should not.
 - **More cards**: Surplus (section 6.2) buys a fourth card or a reroll. A **bequest** (section 16.5) adds the fallen's
   card. A Mastery (below) adds one more. They stack: an offer holds at most six cards (`EG_OFFER_MAX`) - a fourth card
   past it is refused and the Surplus kept, and a reroll deals the offer again by its own law (The Hollow Offer's two,
@@ -2045,6 +2064,11 @@ every Valkynaz Redoubt; a member holds one at a time, and taking another replace
 - **The solver never sees it.** Every course is proven without it, and running a plank is no faster than jumping its gap.
   So the crossing's bound (section 10.5) is not solved with it: a bridge saves at most a wait, and the bound is a measure
   that gates nothing.
+
+**Where the company stands.** The relay reads every Vestige that works by a place - an aura, an Accord, Watchfire - on
+the company where it stands (`net/egBrain.js` egPosedHere): each living member by the pose the room holds of it in this
+hall. A member gone home, a witness, or one whose last pose is an earlier hall's lends nothing by its place, and a
+Fallen's Due holder gone home lends no Due (AUDIT EG V).
 
 **Accords.** Two members within 10 m, holding a named pair from two different families, gain an Accord while they
 stand together. The offer card names it and says what it does: *Takes an Accord with Mira's Hunter's Mark. Hammer and
@@ -2168,7 +2192,8 @@ last-word time.
 - health, magicka and fatigue restored (the room's word, each client its own body; half under Ashen Vigil). The
   relay's census is restored with it, outside the mend budget;
 - the Vestige offer (section 15);
-- the next circle's decrees, chosen by the company's word, and the next lord, both shown on the beacon;
+- the next circle's decrees, chosen by the company's word, and the next lord, both shown on the beacon - the rest's
+  line says *The next Court: ...* from the window and *The next circle bears: ...* once the word closes (section 14);
 - **the recall** of the fallen (section 16.5);
 - **the way home**: a gold arch at least 12 m from where the spoils land, pressed, never walked through. This is
   SS3's lesson (`World-Bosses.md`: the gate's way home became a pressed door after a player walking in for loot
@@ -2214,7 +2239,8 @@ a blue pillar 6 m tall whose glyph names the kind, with a chime (blue is the com
 A company choice (the decrees, Dagon's Bargain, a respite, the Ready vote) is a prompt at the beacon or the shrine,
 open for 10 s to every member, the witnesses included. It passes on a majority of those who answer; silence abstains,
 and a tie refuses (for the decrees, a tie takes the first shown). One silent player never blocks the company, and
-nobody decides for eight alone.
+nobody decides for eight alone. A respite that passes is asked again, and the Ready with it; a Ready and a respite in one
+word take the respite whole (section 6.2).
 
 ### 16.5 One life, one recall, the witness
 
@@ -2313,7 +2339,7 @@ where no hall's fight stands, since there is nothing to show:
 | Cantrip | what |
 |---|---|
 | **Sight** | caches, alcoves and Lurkers' anchors are shown to the company for the hall |
-| **Stillness** | the next hall's first wave and rift pour 10 s late |
+| **Stillness** | the next hall's first wave and rift pour 10 s late (`EG_STILL_MS`), whatever sets it - a Rift-Yard's rifts, a span's shadows, a Rampart's march, an Athenaeum's pressure, a Proving Walk's escort, a Court's first escort from its ring's wake. A hall that pours none (the Scriptorium, a Brink, a Gauntlet, a Deepway's champion chamber) leaves it for the next |
 | **Mending** | the company heals 15% |
 | **Severance** | the next lord's Sappers do not rise in its first phase |
 | **Long Step** | your crumbles wait +0.5 s for one span (private, as crumbles are) |
@@ -3072,7 +3098,7 @@ height rides a word the fight already says, so the frames stay as many as they w
 | `{k:'tonic'}` | member -> room | a Spire Tonic drunk (section 17.1): one of the run's spent, and `{k:'eheal', p: 0.25, why: 'tonic'}` to that member alone - its health through the census, its magicka on its screen (AUDIT EG III) |
 | `{k:'mast'}` | member -> room | a Mastery used (Spirebridge, section 15) - no fields: the room reads the asker's own pose |
 | `{k:'wkpaid', w}` | member -> room | the service answered my Redoubt `w`'s receipt paid already this week: that circle's Reliquaries 20 lumen each (section 16.3; AUDIT EG III) |
-| `{k:'st', ...}` | room -> all | the breach: seed, `sd` (the spec's digest), `egv`, hall, kind, variant, slot, twist, stage, the count's end, the respite left, the company (each `m1..`: numeral, alive, witness, home, forsaken, road), each member's Reliquaries (each one's circle with them, AUDIT EG III), Cantrips and lumen, the Mementos lying, the decrees, the Proclamation, the Wager, the arch's site |
+| `{k:'st', ...}` | room -> all | the breach: seed, `sd` (the spec's digest), `egv`, hall, kind, variant, slot, twist, stage, the count's end, the respite left, the company (each `m1..`: numeral, alive, witness, home, forsaken, road), each member's Reliquaries (each one's circle with them, AUDIT EG III), Cantrips and lumen, the Mementos lying, the decrees, the Proclamation, the Wager, the arch's site; in a rest the next circle's decrees as the company chose them (`nx`, AUDIT EG V) |
 | `{k:'sg', ...}` / `{k:'co', co}` | room -> all | the stage word (the hall, its stage from when to when, the count, the hall's wake, the door's instant) / the company |
 | `{k:'fall', s, n, at, fin}` | room -> all | a member fallen (`fin`: final) |
 | `{k:'rd', w, h, at, cl, g, v, cov, dm}` | room -> all | the Redoubt taken: the count after it and its gain, a Valkynaz's, under the Covenant, the Court's chart (EG-ZF) |
