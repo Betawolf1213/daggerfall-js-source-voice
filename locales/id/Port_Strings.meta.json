@@ -7804,6 +7804,16 @@
   "tr": "47a4d87bee3b",
   "by": "claude-in-session"
  },
+ "guild.rankNeeds.seat": {
+  "en": "7b20e3a58757",
+  "tr": "54a287f2dc99",
+  "by": "claude-in-session"
+ },
+ "guild.rankNeeds.seatMerit": {
+  "en": "8235ff83c4c1",
+  "tr": "537c68f439f0",
+  "by": "claude-in-session"
+ },
  "guild.rankNeeds.second": {
   "en": "128193ee04ec",
   "tr": "37329ba2e897",

@@ -42,7 +42,8 @@ CHANGED (Mac, asked of four shapes - no wait, a review anywhere, both, or DFU's 
   (`rankNeedsLines` over `rankNeeds`, which reads the next row exactly as `baseCalculateNewRank` reads it): "Next rank:
   Swordsman", "Reputation 14 of 20", "A guild skill at 31 - your best, Axe, is 25", "A second guild skill at 9", and,
   when a skill is short, the guild's own skills by name. No line when nothing is short, at the highest rank a review
-  gives (DFU's nine, or 7 while the Roll holds), or for a stranger. It stands above the popup's buttons on the enhanced
+  gives (DFU's nine, or 7 while the Roll holds), or for a stranger (SEAT-LINE, `Field-Bugs-2026-10-15c.md`: at the
+  Roll's 7 the line says the next rank is a seat, and what a seat asks). It stands above the popup's buttons on the enhanced
   skin, the default; the classic window is DFU's own and draws nothing new (THE NATIVE-WINDOW RULE). Its words are the
   port's own strings (`guild.rankNeeds.*`, six keys), drafted in-session in the thirteen whole languages.
 

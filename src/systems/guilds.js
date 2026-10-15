@@ -347,15 +347,22 @@ export function updateRank(memberships, guild, entity, store, now, ctx = null) {
 }
 
 /** PROMO-NOW: what the next rank asks, read exactly as baseCalculateNewRank reads its row - the reputation, and how
- *  many guild skills clear the row's high and low bars. Null for a stranger, without a faction store, or at the
- *  highest rank a review gives (DFU's nine, or the host's `ctx.rankCeiling`). The rows only rise, so the next row
- *  met is every row below it met. */
+ *  many guild skills clear the row's high and low bars. Null for a stranger, without a faction store, or at DFU's
+ *  nine. The rows only rise, so the next row met is every row below it met.
+ *  SEAT-LINE (FIELD BUGS 2026-10-15c): a member AT the host's `ctx.rankCeiling` (online, 7 while the Roll holds) is
+ *  answered `{ rank, seat: true, reputation, reputationNeed }` - the next rank is a chapter's seat, not a review's,
+ *  and the seat's Eligible asks rank 8's reputation (Chapters-Arc 3.5). A book read seated, past the ceiling, is null. */
 export function rankNeeds(memberships, guild, entity, store, ctx = null) {
   const m = membershipOf(memberships, guild);
   if (!isMember(m) || !store) return null;
   const top = Number.isInteger(ctx?.rankCeiling) ? ctx.rankCeiling : RANK_REQ_REPUTATION.length - 1;
   const rank = m.rank + 1;
-  if (rank > top || rank >= RANK_REQ_REPUTATION.length) return null;
+  if (rank >= RANK_REQ_REPUTATION.length) return null;
+  if (rank > top) {
+    return m.rank === top
+      ? { rank, seat: true, reputation: getReputation(store, guild.factionId), reputationNeed: RANK_REQ_REPUTATION[rank] }
+      : null;
+  }
   let best = null;
   for (const skill of guild?.skills ?? []) {
     const value = permanentSkillValue(entity, skill);

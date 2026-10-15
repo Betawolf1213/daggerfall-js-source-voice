@@ -275,6 +275,10 @@ chapters' seats, won by Merit - your rank there is 7." - GUILD3a: "...for its ch
 unmoved and unannounced, and the review never demotes for it - so DFU's demotion record is never shown for a seat's rule.
 Offline the ceiling is none and every review is DFU's whole. AUDIT CHAP4 C3: the ceiling holds from the page's first
 frame - before the Roll's first word DFU's review promoted to 8 and 9, then the word took them back.
+SEAT-LINE (2026-10-15, `01-Overview/Field-Bugs-2026-10-15c.md`; Mac: "Explain the seat"): the hall's line (PROMO-NOW)
+said nothing at 7, so a capped Archmage was told nothing at all; at the ceiling it now says the next rank is a seat and
+what a seat asks - the seat's line in reputation, the Turning's Merit, the tenure and the account's age - read off the
+book seated, so a seat's holder at its own halls is told nothing more.
 
 AUDIT CHAP4 (D2, E2), RECORDED: what DFU GIVES ONCE at rank 8 or 9 and the character keeps is not given online - a seat
 is held, not a rank earned for good. A knightly order's rank-8 and rank-9 armour and its rank-9 house read the BOOK's

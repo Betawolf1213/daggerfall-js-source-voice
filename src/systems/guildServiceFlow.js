@@ -27,6 +27,7 @@ import { isMember, joinedGuildOfGroup, updateRank, rankNeeds, getTitle } from '.
 import { SKILL_NAMES } from './skills.js';   // PROMO-NOW: the hall's line names the guild's skills
 import { isDivine } from './guildVariants.js';
 import { localizedText, localizedTable, t } from './textManager.js';   // L10N3d: the labels and the refusal; PROMO-NOW: the hall's line
+import { SEAT_RANK, SEAT_MERIT_WEEKS, SEAT_TENURE_S, SEAT_ACCOUNT_AGE_S } from '../net/npcChapterLaw.js';   // SEAT-LINE: what a seat asks, the law's own numbers
 
 /** The four ids the window quotes by name (:29-32), plus the two
  *  OnPush records and the spymaster greeting (:455). */
@@ -254,6 +255,23 @@ export function onPushEffects(entity, guild, memberships, store, now, {
 export function rankNeedsLines(entity, guild, memberships, store, ctx = null) {
   const n = rankNeeds(memberships, guild, entity, store, ctx);
   if (!n) return null;
+  const next = t('guild.rankNeeds.next', 'Next rank: {title}', { title: getTitle({ rank: n.rank }, entity, guild) });
+  // SEAT-LINE (FIELD BUGS 2026-10-15c: "I was Archmage and now I cant seem to ever get back past the Wizard rank... All
+  // the other guilds tell me what the next rank is and what I need but the Mages Guild does not"; Mac: "Explain the
+  // seat"): at the Roll's 7 the hall says that 8 and 9 are its chapters' seats and what a seat asks - the reputation
+  // (the Roll's seat line), then the Turning's Merit, the tenure and the account's age (npcChapterLaw.js
+  // seatEligibleAt). A seat's own hall reads the book seated, and says nothing.
+  if (n.seat) {
+    return [
+      next,
+      t('guild.rankNeeds.seat', "Ranks {officer} and {master} are each chapter's council and Master, won by Merit - no review gives them",
+        { officer: SEAT_RANK.officer, master: SEAT_RANK.master }),
+      ...(n.reputation < n.reputationNeed
+        ? [t('guild.rankNeeds.reputation', 'Reputation {have} of {need}', { have: n.reputation, need: n.reputationNeed })] : []),
+      t('guild.rankNeeds.seatMerit', 'Each Turning seats the most Merit over {weeks} weeks, among members {days} days in the guild on accounts {age} days old',
+        { weeks: SEAT_MERIT_WEEKS, days: SEAT_TENURE_S / 86_400, age: SEAT_ACCOUNT_AGE_S / 86_400 }),
+    ];
+  }
   const lines = [];
   if (n.reputation < n.reputationNeed) lines.push(t('guild.rankNeeds.reputation', 'Reputation {have} of {need}', { have: n.reputation, need: n.reputationNeed }));
   if (n.high < 1) {
@@ -264,7 +282,7 @@ export function rankNeedsLines(entity, guild, memberships, store, ctx = null) {
   if (n.high + n.low < 2) lines.push(t('guild.rankNeeds.second', 'A second guild skill at {bar}', { bar: n.skillLow }));
   if (!lines.length) return null;
   if (n.high < 1 || n.high + n.low < 2) lines.push(t('guild.rankNeeds.skills', 'Guild skills: {skills}', { skills: guild.skills.map((s) => SKILL_NAMES[s]).join(', ') }));
-  return [t('guild.rankNeeds.next', 'Next rank: {title}', { title: getTitle({ rank: n.rank }, entity, guild) }), ...lines];
+  return [next, ...lines];
 }
 
 /** The service the popup's middle button runs. DoGuildService's switch

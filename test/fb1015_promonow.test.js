@@ -88,12 +88,13 @@ test('PROMO-NOW: the hall\'s line names what the next rank asks - the reputation
   assert.equal(rankNeedsLines(withSkills(g, 40), g, memberships, storeWith(g, 20)), null, 'nothing short: no line');
 });
 
-test('PROMO-NOW: no line past the highest rank a review gives, nor for a stranger (mutant: the ceiling ignored)', () => {
+test('PROMO-NOW: no review\'s line past the highest rank a review gives, nor for a stranger (mutant: the ceiling ignored)', () => {
   const g = GUILDS.MagesGuild;
   const memberships = {};
   const m = joinGuild(memberships, g, day(1));
   m.rank = 7;
-  assert.equal(rankNeeds(memberships, g, withSkills(g, 10), storeWith(g, 0), { rankCeiling: 7 }), null, 'ranks 8 and 9 are seats online');
+  // PIN MOVED (SEAT-LINE, Field-Bugs-2026-10-15c.md): at the ceiling the next rank is a seat, and the line says so
+  assert.equal(rankNeeds(memberships, g, withSkills(g, 10), storeWith(g, 0), { rankCeiling: 7 }).seat, true, 'ranks 8 and 9 are seats online');
   assert.equal(rankNeeds(memberships, g, withSkills(g, 10), storeWith(g, 0)).rank, 8, 'offline the review gives 8');
   m.rank = 9;
   assert.equal(rankNeeds(memberships, g, withSkills(g, 10), storeWith(g, 0)), null);
@@ -111,6 +112,6 @@ test('PROMO-NOW: the enhanced popup shows a member the line above its buttons; a
 test('PROMO-NOW: the interior host hands the online flag to the review and the line to the popup - both on the shared clock (mutant: the host offline)', () => {
   const wm = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
   assert.ok(/steps: \(\) => onPushEffects\([\s\S]{0,700}?\n\s+promoteWhenEarned: sharedClockOn\(\),/.test(wm), 'the review: online, no wait');
-  assert.ok(wm.includes('rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, memberships, store, { rankCeiling: host.rollRankCeiling?.() ?? null }) : null),'),
+  assert.ok(wm.includes('rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: host.rollRankCeiling?.() ?? null }) : null),'),   // PIN MOVED (SEAT-LINE): read seated
     'the line: online, under the Roll\'s ceiling');
 });
