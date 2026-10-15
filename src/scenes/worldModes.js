@@ -306,7 +306,7 @@ import { goldAmount, totalGoldAmount, deductGold, addGold, payUndoable, setCrime
 import { getReputation, getFlag, setFlag, FACTION_FLAGS } from '../systems/factionRep.js';
 // G7: the last unbuilt guild service - the summoning calendar, the
 // cost, Sheogorath's hijack and the roll.
-import { daedraForSummoner, attemptSummoning, SUMMON_TEXT, DAEDRIC_FOES, summonMacroValues, summonsByName, summonByNameBoxes, summonQuestionRows } from '../systems/daedraSummoning.js';   // IF: the punishment table; DAEDRA1: %dae's one source
+import { daedraForSummoner, attemptSummoning, SUMMON_TEXT, DAEDRIC_FOES, summonMacroValues, summonsByName, summonByNameBoxes, summonQuestionRows, noQuestText } from '../systems/daedraSummoning.js';   // IF: the punishment table; DAEDRA1: %dae's one source; SUMMON-OFFER: the word when no quest can be made
 import { expandRowValues } from '../systems/quest/questMacros.js';   // DAEDRA1: MH1's one walk, with the shared context riding it
 import { currentWeather } from '../systems/weatherSim.js';   // AUDIT AT F3: the WORD; its flags come from weather.js's one derivation
 import { weatherFlags } from '../world/weather.js';   // AUDIT AT F3: WeatherManager's four public flags, derived once from SetWeather's switch
@@ -6221,8 +6221,9 @@ export function createWorldModes(host) {
     if (destination === 'guildServiceDaedraSummoning') {
       // G7 - the last of the twenty destinations. Two boxes: "is it a
       // summoning day" and, if it is, "are you REALLY sure" - and the
-      // answer to the second spends two hundred thousand gold before
-      // anything is rolled.
+      // answer to the second spends two hundred thousand gold whatever
+      // the roll, unless the prince who answers has no quest that can
+      // be made here (SUMMON-OFFER).
       const dict = townTalk?.factionDict ?? null;
       const summonerId = summonerFactionId ?? b?.factionId ?? 0;
       const summoner = dict?.get(summonerId) ?? null;
@@ -6288,13 +6289,20 @@ export function createWorldModes(host) {
           gold: totalGoldAmount(playerEntity),
           daedraRep: (fid) => getReputation(store, fid),
           hasSummoned: (fid) => getFlag(store, fid, FACTION_FLAGS.Summoned),
+          // SUMMON-OFFER (bible/01-Overview/Field-Bugs-2026-10-14.md): the prince's quest, asked for where DFU asks
+          // (GetQuest, after the roll) and BEFORE the gold is spent or the prince recorded - null where it cannot
+          // be made (a remote site the region does not have: W0C00Y00's palace)
+          offerQuest: (questName) => questBridge?.offerDaedricQuest?.(questName, summonerId) ?? null,
           ...weather,
         });
         if (r.kind === 'poor') {
           return { rows: [{ text: `The summoning would cost ${r.cost} gold.`, center: true }] };
         }
-        // The gold goes BEFORE the roll and is not refunded: you paid
-        // for the summoning, not for the prince turning up.
+        // SUMMON-OFFER: he answered and has no quest that can be made here - nothing spent, nothing recorded, and
+        // said (DFU took the gold, set the flag and showed nothing)
+        if (r.kind === 'noQuest') return { rows: [{ text: noQuestText(r.daedra), center: true }] };
+        // The gold is not refunded on a failure: you paid for the
+        // summoning, not for the prince turning up.
         deductGold(playerEntity, r.cost);
         surfacePlayer();
         if (r.kind === 'failed') {
@@ -6317,7 +6325,7 @@ export function createWorldModes(host) {
           return { rows: box(r.textId, r.daedra, `${getLocalizedFactionName(r.daedra.factionId, r.daedra.name)} has met you before.`) };   // L10N3e: the prince as %dae shows him (PersistentFactionData.cs:176)
         }
         setFlag(store, r.daedra.factionId, r.flag);
-        const offered = questBridge?.offerDaedricQuest?.(r.quest, summonerId) ?? null;
+        const offered = r.offered;   // SUMMON-OFFER: made before the gold went
         // G7b: the prince's own .FLC window carries the OFFER step -
         // DaggerfallDaedraSummonedWindow, the film with the offer
         // read over it in four-line chunks. The step has ONE
@@ -6329,7 +6337,7 @@ export function createWorldModes(host) {
         const mountBoxes = () => {
           // DAEDRA1: the prince's own offer is a TEXT.RSC record like
           // any other and was handed over raw here too
-          const boxes = offered ? questBridge.offerBoxes(offered, (id) => say(id, r.daedra)) : [];
+          const boxes = questBridge.offerBoxes(offered, (id) => say(id, r.daedra));
           if (!boxes.length || !guildServiceArtLoaded() || !_shopFont) return;
           let offerWin = null;
           offerWin = new ServiceFlowWindow(boxes, {
@@ -6337,7 +6345,7 @@ export function createWorldModes(host) {
           });
           mountServiceWindow(offerWin);
         };
-        if (offered?.kind === 'offer' && r.daedra.video) {
+        if (r.daedra.video) {
           fetchBytes(r.daedra.video).then((bytes) => {
             let sw = null;
             sw = new DaedraSummonedWindow({
@@ -6355,8 +6363,8 @@ export function createWorldModes(host) {
           }).catch(() => mountBoxes());
           return null;
         }
-        if (offered) { mountBoxes(); return null; }
-        return { rows: [{ text: `${getLocalizedFactionName(r.daedra.factionId, r.daedra.name)} answers your summons.`, center: true }] };   // L10N3e: the prince as %dae shows him (PersistentFactionData.cs:176)
+        mountBoxes();
+        return null;
       };
       if (byName) {
         // SUMMON-NAME: the sixteen by name, then DFU's question about the one named - a flow, whose boxes take a list.

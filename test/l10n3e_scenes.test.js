@@ -607,7 +607,10 @@ test('L10N3e scenes: a guild hall and a temple are named off GetFactionData (For
 test('L10N3e scenes: the summoning\'s own lines name the prince as %dae does (PersistentFactionData.cs:176) - by source, since they sit inside the summoning flow\'s answer, which needs the whole host', () => {
   const wm = host('worldModes.js').text;
   assert.match(wm, /box\(r\.textId, r\.daedra, `\$\{getLocalizedFactionName\(r\.daedra\.factionId, r\.daedra\.name\)\} has met you before\.`\)/);
-  assert.match(wm, /text: `\$\{getLocalizedFactionName\(r\.daedra\.factionId, r\.daedra\.name\)\} answers your summons\.`/);
+  // SUMMON-OFFER: "answers your summons" went with the arm that answered with no quest; the line said when no quest
+  // can be made is the law module's, and names him the same way
+  assert.match(wm, /if \(r\.kind === 'noQuest'\) return \{ rows: \[\{ text: noQuestText\(r\.daedra\), center: true \}\] \};/);
+  assert.match(host('../systems/daedraSummoning.js').text, /\{ prince: getLocalizedFactionName\(daedra\.factionId, daedra\.name\) \}/);
   assert.doesNotMatch(wm, /\$\{r\.daedra\.name\}/, 'no line shows the table\'s canonical name');
 });
 

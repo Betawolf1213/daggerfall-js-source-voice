@@ -275,7 +275,7 @@ const HARDCODED = {
   'src/scenes/treeHost.js': 3,
   'src/scenes/windfallHost.js': 5,
   'src/scenes/world.js': 350,
-  'src/scenes/worldModes.js': 84,
+  'src/scenes/worldModes.js': 83,
   'src/systems/aetheric.js': 97,
   'src/systems/alchemyItems.js': 3,
   'src/systems/allyCast.js': 5,
