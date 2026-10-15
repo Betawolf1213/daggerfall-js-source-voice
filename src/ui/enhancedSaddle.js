@@ -26,8 +26,15 @@
 //
 // Enhanced Plus only: the classic skin keeps the grip bar's meter (ui/hud.js drawGripBar) and the keys.
 // UPDATED, NOT REBUILT (the HUD's third law): the buttons and the meters are made again only when their set changes.
+// MOVABLE (HUD-SADDLE, FIELD BUGS 2026-10-14, Discord: "Riding Window is not able to be edited in the HUD Editor
+// (Alt+U)"): the bar is a HUD-MOVE piece (ui/hudLayout.js HUD_PIECES 'saddle') - moved, sized and turned off as every
+// other piece is, placed where the player put it the moment it is built (the leaf, ui/hudPlacer.js), and stood as a
+// preview while the HUD is unlocked and nobody rides (buildSaddlePreview).
 import { PIXEL_STACK } from './pixelifyFive.js';
 import { injectEnhancedStyle } from './enhancedStyle.js';
+import { placeHudPieces } from './hudPlacer.js';   // HUD-SADDLE: a new panel stands where HUD-MOVE put it from its first frame
+import { isTouchDevice } from './touchDevice.js';   // HUD-SADDLE: the preview stands at a finger's place where the hosts' touch layer does (ui/touch.js attachTouch)
+import { t } from '../systems/textManager.js';   // L10N4: the preview's name in the player's language
 
 export const ENHANCED_SADDLE_ID = 'enhanced-saddle';
 const SADDLE_STYLE_ID = 'enhanced-saddle-style';
@@ -44,6 +51,13 @@ export const SADDLE_BREATH_LOW = 0.25;
  *  short. */
 const WAGON_TONE = Object.freeze({ sound: 'ok', worn: 'ok', rickety: 'warn', failing: 'low' });
 const HUNGER_TONE = Object.freeze({ fed: 'ok', hungry: 'warn', starving: 'low' });
+/** HORSE-TIERS: NO RED where hunger costs nothing (Boons - Climates & Calories' RED MEANS IT COSTS): its chip stops at
+ *  amber. A read that does not say (`hungerCosts` absent) is the system as it stood, which costs. */
+const hungerTone = (h) => { const tone = HUNGER_TONE[h.hungerKey] ?? 'ok'; return h.hungerCosts === false && tone === 'low' ? 'warn' : tone; };
+/** WAGON-TIERS: the same for the wagon - where its wear slows nothing (Boons) a failing wagon's chip stops at amber. */
+const wagonTone = (w) => { const tone = WAGON_TONE[w.stateKey] ?? 'ok'; return w.wearSlows === false && tone === 'low' ? 'warn' : tone; };
+/** WAGON-TIERS: a failing wagon slows its team only where its wear slows it (Hard; a read that does not say is Hard). */
+const failingSlows = (w) => w?.stateKey === 'failing' && w.wearSlows !== false;
 
 /**
  * The gait's word: standing, galloping, else the ride's own pace - a horse horse care walks walks (HORSE-WALK), DFU's
@@ -85,14 +99,14 @@ export function saddleMeters(s) {
       const low = h.winded || h.breath < SADDLE_BREATH_LOW || h.hungerKey === 'starving';
       out.push({ key: 'breath', label: 'Breath', share: h.breath, text: h.winded ? 'Winded' : pct(h.breath), tone: low ? 'low' : 'ok' });
     }
-    out.push({ key: 'hunger', label: h.team > 1 ? 'Team' : 'Hunger', text: h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed ${fedText(h.fedHours)}` : h.hunger, tone: HUNGER_TONE[h.hungerKey] ?? 'ok' });
+    out.push({ key: 'hunger', label: h.team > 1 ? 'Team' : 'Hunger', text: h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed ${fedText(h.fedHours)}` : h.hunger, tone: hungerTone(h) });
     // the bond: its word, and the way to the next (whole at Kindred)
     const span = h.next ? h.next.at - (h.tierAt ?? 0) : 0;
     const share = h.next ? (span > 0 ? (h.bond - (h.tierAt ?? 0)) / span : 0) : 1;
     out.push({ key: 'bond', label: 'Bond', share: Math.max(0, Math.min(1, share)), text: h.tier, tone: 'bond', title: h.next ? `${Math.floor(h.bond)} of ${h.next.at} to ${h.next.name}` : `${h.tier} - the bond is whole` });
   }
   const w = s.wagon;
-  if (w) out.push({ key: 'wagon', label: w.name, share: w.share, text: `${w.state} ${pct(w.share)}`, tone: WAGON_TONE[w.stateKey] ?? 'ok' });
+  if (w) out.push({ key: 'wagon', label: w.name, share: w.share, text: `${w.state} ${pct(w.share)}`, tone: wagonTone(w) });
   const ld = s.load;
   if (ld && ld.limit > 0) {
     const share = ld.kg / ld.limit;
@@ -138,7 +152,7 @@ export function saddleHint(s, state = {}) {
   const h = s.horse, w = s.wagon;
   if (h?.winded) return 'Winded - ease off and let it breathe';
   if (h?.hungerKey === 'starving') return s.mode === 'Horse' ? 'Starving - it will not gallop until it eats' : 'Starving - feed your horse';
-  if (w?.stateKey === 'failing') return `The ${w.name.toLowerCase()} is failing - mend it to get its pace back`;
+  if (failingSlows(w)) return `The ${w.name.toLowerCase()} is failing - mend it to get its pace back`;   // WAGON-TIERS: on Boons it has its pace
   if (state.touch) return '';
   const parts = [];
   const run = state.keyOf?.(SADDLE_ACTIONS.run) ?? '';
@@ -213,11 +227,11 @@ const swallowPresses = (node) => {
 const span = (doc, cls) => { const n = doc.createElement('span'); n.className = cls; return n; };
 const clear = (node) => { if (typeof node.replaceChildren === 'function') node.replaceChildren(); else node.textContent = ''; };
 
+/** The panel's nodes, not yet on the page - the one shape the live panel and HUD-MOVE's preview are both made in. */
 function build(doc) {
   try { injectEnhancedStyle(doc); } catch { /* the kit's sheet is the HUD's; a document without it still takes the panel */ }
   injectSaddleStyle(doc);
   const root = doc.createElement('div');
-  root.id = ENHANCED_SADDLE_ID;
   root.className = 'saddlepanel';
   const bar = doc.createElement('div');
   bar.className = 'saddlepanel-bar';
@@ -232,11 +246,11 @@ function build(doc) {
   bar.append(title, meters, btns);
   root.append(bar);
   swallowPresses(root);
-  doc.body.append(root);
   return { root, bar, name, gait, hint, meters, btns, buttons: new Map(), meterParts: new Map() };
 }
 
-function makeMeters(doc, list) {
+/** `parts` the nodes build() made - the live panel's or a preview's own, never both. */
+function makeMeters(doc, parts, list) {
   clear(parts.meters);
   parts.meterParts.clear();
   for (const m of list) {
@@ -259,7 +273,7 @@ function makeMeters(doc, list) {
   }
 }
 
-function makeButtons(doc, list, hooks) {
+function makeButtons(doc, parts, list, hooks) {
   clear(parts.btns);
   parts.buttons.clear();
   for (const b of list) {
@@ -295,12 +309,25 @@ export function drawEnhancedSaddle(state = {}, hooks = {}, { doc = globalThis.do
   if (!doc?.body) return null;
   const s = state.saddle ?? null;
   if (!s) { hideEnhancedSaddle(); return null; }
-  if (!host) { last = {}; parts = build(doc); host = parts.root; }
+  if (!host) {
+    last = {}; parts = build(doc); host = parts.root;
+    host.id = ENHANCED_SADDLE_ID;
+    doc.body.append(host);
+    placeHudPieces(doc);   // HUD-SADDLE: where the player moved it (or turned it off) from its first frame - not at the next sweep
+  }
   if (state.covered) {
     if (last.covered !== true) { last.covered = true; parts.root.style.display = 'none'; }
     return parts.root;
   }
   if (last.covered === true) { last.covered = false; parts.root.style.display = ''; }
+  paintSaddle(doc, parts, last, state, hooks);
+  return parts.root;
+}
+
+/** The panel's face for a read: `parts` its nodes, `last` what they show now (each piece written only when it moves). The
+ *  live panel's frame and the preview's one painting. */
+function paintSaddle(doc, parts, last, state, hooks) {
+  const s = state.saddle;
   const hud = /** @type {any} */ (doc.querySelector?.('.hud'));
   const scale = hud?.style?.getPropertyValue?.('--hud-scale') || '1';   // the HUD's scale, read off the HUD (the helm's own read)
   if (last.scale !== scale) { last.scale = scale; parts.root.style.setProperty?.('--hud-scale', scale); }
@@ -311,12 +338,12 @@ export function drawEnhancedSaddle(state = {}, hooks = {}, { doc = globalThis.do
   const gait = [saddleGait(s.mode, s.speed, s.galloping, s.walks), saddleSpeedText(s.speed)].filter(Boolean).join(' · ');
   if (last.gait !== gait) { last.gait = gait; parts.gait.textContent = gait; }
   const hint = saddleHint(s, state);
-  const hintWarn = !!(s.horse?.winded || s.horse?.hungerKey === 'starving' || s.wagon?.stateKey === 'failing');
+  const hintWarn = !!(s.horse?.winded || s.horse?.hungerKey === 'starving' || failingSlows(s.wagon));
   if (last.hint !== hint || last.hintWarn !== hintWarn) { last.hint = hint; last.hintWarn = hintWarn; parts.hint.textContent = hint; parts.hint.className = `saddlepanel-hint${hintWarn ? ' warn' : ''}`; }
   // the meters: made again only when their set changes (a bar becoming a chip is a new set)
   const meters = saddleMeters(s);
   const msig = meters.map((m) => `${m.key}${m.share != null ? '#' : ''}`).join(',');
-  if (last.msig !== msig) { last.msig = msig; last.meters = {}; makeMeters(doc, meters); }
+  if (last.msig !== msig) { last.msig = msig; last.meters = {}; makeMeters(doc, parts, meters); }
   for (const m of meters) {
     const p = parts.meterParts.get(m.key);
     if (!p) continue;
@@ -333,7 +360,7 @@ export function drawEnhancedSaddle(state = {}, hooks = {}, { doc = globalThis.do
   }
   const list = saddleButtons(s);
   const sig = list.map((b) => b.act).join(',');
-  if (last.sig !== sig) { last.sig = sig; last.labels = {}; makeButtons(doc, list, hooks); }
+  if (last.sig !== sig) { last.sig = sig; last.labels = {}; makeButtons(doc, parts, list, hooks); }
   for (const b of list) {
     const p = parts.buttons.get(b.act);
     if (!p) continue;
@@ -349,7 +376,24 @@ export function drawEnhancedSaddle(state = {}, hooks = {}, { doc = globalThis.do
       if (why) p.node.setAttribute?.('title', why); else p.node.removeAttribute?.('title');
     }
   }
-  return parts.root;
+}
+
+/** HUD-SADDLE: the read HUD-MOVE's preview stands on - a horse ridden at a stand, fed, half way to its next bond word,
+ *  with oats to hand. Named a preview on its title (buildSaddlePreview), as every stand-in is. */
+const SADDLE_PREVIEW = Object.freeze({
+  mode: 'Horse', name: '', wagonName: '', speed: 0, galloping: false, walks: false,
+  horse: Object.freeze({ breath: 1, winded: false, hunger: 'Fed', hungerKey: 'fed', fedHours: 8, full: false, feed: 0, team: 1, tier: 'Familiar', bond: 45, tierAt: 35, next: Object.freeze({ name: 'Trusting', at: 55 }) }),
+  wagon: null, oats: 1, apples: 0, kits: 0, load: null, near: true, wagonNear: true, cargo: null, view: false, hcc: false,
+});
+
+/** HUD-MOVE's preview (ui/hudLayout.js): the panel as it stands astride, for the unlocked HUD while nobody rides - its
+ *  own nodes, built and painted as the live panel's are, never mounted (the live panel's slot stays empty), at a finger's
+ *  place on a touch device as the hosts' own panel is. Its buttons answer nothing. */
+export function buildSaddlePreview(doc) {
+  const p = build(doc);
+  paintSaddle(doc, p, {}, { saddle: SADDLE_PREVIEW, touch: isTouchDevice(doc.defaultView ?? globalThis.window), mouseFree: true }, {});
+  p.name.textContent = t('menu.hud.preview.saddle', 'Riding panel (preview)');
+  return p.root;
 }
 
 /** Taken down: out of the saddle, the skin or the switch off, a door. */

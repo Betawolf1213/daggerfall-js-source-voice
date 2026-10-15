@@ -3829,6 +3829,31 @@
   "tr": "b852e49a15fe",
   "by": "claude-in-session"
  },
+ "features.horseCare.boons": {
+  "en": "b0e0ff22a34e",
+  "tr": "fab55ce9fe72",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.effect": {
+  "en": "70f7bfca0841",
+  "tr": "e74fd7c01f51",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.hard": {
+  "en": "20a89915f18c",
+  "tr": "e89afcdb9001",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.note": {
+  "en": "71b67dc31094",
+  "tr": "84b2a82f4ae6",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.title": {
+  "en": "f30196f9a875",
+  "tr": "693f51bbd789",
+  "by": "claude-in-session"
+ },
  "features.kind.classic": {
   "en": "706514b2ff2d",
   "tr": "47a2b9603581",
@@ -4214,6 +4239,31 @@
   "tr": "c7d9fdc0ec65",
   "by": "claude-in-session"
  },
+ "features.wagonUpkeep.boons": {
+  "en": "b0e0ff22a34e",
+  "tr": "fab55ce9fe72",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.effect": {
+  "en": "70f7bfca0841",
+  "tr": "e74fd7c01f51",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.hard": {
+  "en": "20a89915f18c",
+  "tr": "e89afcdb9001",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.note": {
+  "en": "9458d5e9bb8b",
+  "tr": "149f9f9c4963",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.title": {
+  "en": "a9e06dd27985",
+  "tr": "4aed5cabef11",
+  "by": "claude-in-session"
+ },
  "features.waterQuality.full": {
   "en": "10b28a8c1e44",
   "tr": "1837d13d112a",
@@ -4272,6 +4322,31 @@
  "features.wind.wisps": {
   "en": "e14414c1ce9d",
   "tr": "3c9174277052",
+  "by": "claude-in-session"
+ },
+ "holdings.horse.boons.hungry": {
+  "en": "7456bcdd5990",
+  "tr": "e2cfa67fc974",
+  "by": "claude-in-session"
+ },
+ "holdings.horse.boons.starving": {
+  "en": "77a85e079362",
+  "tr": "9829b59effcf",
+  "by": "claude-in-session"
+ },
+ "holdings.wagon.boons.failing": {
+  "en": "06e939886c0d",
+  "tr": "9fc583625fd5",
+  "by": "claude-in-session"
+ },
+ "holdings.wagon.boons.rickety": {
+  "en": "bae94e2a5f4e",
+  "tr": "58dcd37e8e3c",
+  "by": "claude-in-session"
+ },
+ "holdings.wagon.boons.sound": {
+  "en": "25b3b3fa348b",
+  "tr": "efb8f35aa77d",
   "by": "claude-in-session"
  },
  "lamp.granted": {
@@ -4927,6 +5002,26 @@
  "menu.hud.lockOn": {
   "en": "2156ced4d521",
   "tr": "142fa5e54490",
+  "by": "claude-in-session"
+ },
+ "menu.hud.piece.helm": {
+  "en": "ac5504b07657",
+  "tr": "7103be1b3f05",
+  "by": "claude-in-session"
+ },
+ "menu.hud.piece.saddle": {
+  "en": "9695262a7229",
+  "tr": "4ce44f456b8f",
+  "by": "claude-in-session"
+ },
+ "menu.hud.preview.helm": {
+  "en": "b6de3cda3c14",
+  "tr": "f34a55fd1c82",
+  "by": "claude-in-session"
+ },
+ "menu.hud.preview.saddle": {
+  "en": "cc8aa54bce2c",
+  "tr": "4df6da22ec68",
   "by": "claude-in-session"
  },
  "menu.hud.reset": {
@@ -7812,6 +7907,16 @@
  "summon.noQuest": {
   "en": "056fe9b45bd2",
   "tr": "592904b2e422",
+  "by": "claude-in-session"
+ },
+ "wagon.upkeep.boons.failing": {
+  "en": "5e6a68b53a69",
+  "tr": "74e168f0fef5",
+  "by": "claude-in-session"
+ },
+ "wagon.upkeep.boons.rickety": {
+  "en": "8dcc1fe1e4b7",
+  "tr": "6d6f9c61ad5a",
   "by": "claude-in-session"
  },
  "wild.escrow.collectLate": {

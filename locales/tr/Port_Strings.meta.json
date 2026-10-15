@@ -554,6 +554,31 @@
   "tr": "bc5988e35f21",
   "by": "claude-in-session"
  },
+ "features.horseCare.boons": {
+  "en": "b0e0ff22a34e",
+  "tr": "973ba1ac9ffb",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.effect": {
+  "en": "70f7bfca0841",
+  "tr": "cfc90459bb84",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.hard": {
+  "en": "20a89915f18c",
+  "tr": "921d49c8c897",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.note": {
+  "en": "71b67dc31094",
+  "tr": "c6f14b5bd9cd",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.title": {
+  "en": "f30196f9a875",
+  "tr": "fc7ef2319f6d",
+  "by": "claude-in-session"
+ },
  "features.mwBillboardLook.note": {
   "en": "b637d8bc86a9",
   "tr": "8b2724d1ceed",
@@ -562,6 +587,56 @@
  "features.mwBillboardLook.title": {
   "en": "1ba578fcc93d",
   "tr": "5fc96b00f276",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.boons": {
+  "en": "b0e0ff22a34e",
+  "tr": "973ba1ac9ffb",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.effect": {
+  "en": "70f7bfca0841",
+  "tr": "cfc90459bb84",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.hard": {
+  "en": "20a89915f18c",
+  "tr": "921d49c8c897",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.note": {
+  "en": "9458d5e9bb8b",
+  "tr": "50d6b8057da9",
+  "by": "claude-in-session"
+ },
+ "features.wagonUpkeep.title": {
+  "en": "a9e06dd27985",
+  "tr": "45223a5e2531",
+  "by": "claude-in-session"
+ },
+ "holdings.horse.boons.hungry": {
+  "en": "7456bcdd5990",
+  "tr": "69da925d3c17",
+  "by": "claude-in-session"
+ },
+ "holdings.horse.boons.starving": {
+  "en": "77a85e079362",
+  "tr": "d5d775b5bd8f",
+  "by": "claude-in-session"
+ },
+ "holdings.wagon.boons.failing": {
+  "en": "06e939886c0d",
+  "tr": "b3f2f6dbe212",
+  "by": "claude-in-session"
+ },
+ "holdings.wagon.boons.rickety": {
+  "en": "bae94e2a5f4e",
+  "tr": "ecc1efb36ca6",
+  "by": "claude-in-session"
+ },
+ "holdings.wagon.boons.sound": {
+  "en": "25b3b3fa348b",
+  "tr": "beafd04bf655",
   "by": "claude-in-session"
  },
  "lamp.granted": {
@@ -672,6 +747,26 @@
  "lootBanner.honour.wear": {
   "en": "3b735704a781",
   "tr": "b6e49b3eeaed",
+  "by": "claude-in-session"
+ },
+ "menu.hud.piece.helm": {
+  "en": "ac5504b07657",
+  "tr": "b27b5dd7d282",
+  "by": "claude-in-session"
+ },
+ "menu.hud.piece.saddle": {
+  "en": "9695262a7229",
+  "tr": "bc181ebfb5c0",
+  "by": "claude-in-session"
+ },
+ "menu.hud.preview.helm": {
+  "en": "b6de3cda3c14",
+  "tr": "e5d9aff758c0",
+  "by": "claude-in-session"
+ },
+ "menu.hud.preview.saddle": {
+  "en": "cc8aa54bce2c",
+  "tr": "097532a5f018",
   "by": "claude-in-session"
  },
  "menu.rail.about": {
@@ -1162,6 +1257,16 @@
  "summon.noQuest": {
   "en": "056fe9b45bd2",
   "tr": "4e0904fc5d91",
+  "by": "claude-in-session"
+ },
+ "wagon.upkeep.boons.failing": {
+  "en": "5e6a68b53a69",
+  "tr": "d169dc87e5ec",
+  "by": "claude-in-session"
+ },
+ "wagon.upkeep.boons.rickety": {
+  "en": "8dcc1fe1e4b7",
+  "tr": "5017eb92f070",
   "by": "claude-in-session"
  },
  "wild.escrow.collectLate": {

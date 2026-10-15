@@ -21,17 +21,25 @@
 //
 // Enhanced Plus only: the classic skin keeps the mod's keys as the mod drew them (no panel of its own).
 // UPDATED, NOT REBUILT (the HUD's third law): the buttons are made again only when the set of them changes.
+// MOVABLE (HUD-HELM, 2026-10-15, Mac: "Yes, same branch" - the saddle panel's twin, HUD-SADDLE): the bar is a HUD-MOVE
+// piece (ui/hudLayout.js HUD_PIECES 'helm') - moved, sized and turned off as every other piece is, placed where the
+// player put it the moment it is built (the leaf, ui/hudPlacer.js), and stood as a preview while the HUD is unlocked and
+// nobody is at a helm (buildHelmPreview). The sea's target card stands under the bar wherever it is moved
+// (ui/navalHud.js drawNavalHud's `under`).
 import { PIXEL_STACK } from './pixelifyFive.js';
 import { injectEnhancedStyle } from './enhancedStyle.js';
+import { placeHudPieces } from './hudPlacer.js';   // HUD-HELM: a new panel stands where HUD-MOVE put it from its first frame
+import { isTouchDevice } from './touchDevice.js';   // HUD-HELM: the preview stands at a finger's place where the hosts' touch layer does (ui/touch.js attachTouch)
+import { t } from '../systems/textManager.js';   // L10N4: the preview's name in the player's language
 import { HELM_DPAD } from './plusPad.js';
-import { HULL_NAMES } from '../systems/comeSailAwayBoat.js';
-import { BOAT_ACTIONS } from '../systems/comeSailAway.js';
+import { HULL_NAMES } from '../systems/comeSailAwayHulls.js';   // HUD-HELM: the leaves, not the boat and the sea - the HUD's preview reaches
+import { BOAT_ACTIONS } from '../systems/comeSailAwayActions.js';   // this module, and AUDIT GUIDE O6 keeps the quest machine off the HUD
 
 export const ENHANCED_HELM_ID = 'enhanced-helm';
 const HELM_STYLE_ID = 'enhanced-helm-style';
 
 /** The registry actions the panel presses - the mod's own nine and HELM-KEYS' more and less sail, by the panel's names
- *  for them (one home for the names: systems/comeSailAway.js BOAT_ACTIONS). */
+ *  for them (one home for the names: systems/comeSailAwayActions.js BOAT_ACTIONS). */
 export const HELM_ACTIONS = Object.freeze({
   sail: BOAT_ACTIONS.toggleSail, light: BOAT_ACTIONS.toggleLight, disembark: BOAT_ACTIONS.disembark,
   trimLeft: BOAT_ACTIONS.trimLeft, trimRight: BOAT_ACTIONS.trimRight, trimModifier: BOAT_ACTIONS.trimModifier,
@@ -196,11 +204,11 @@ const swallowPresses = (node) => {
   for (const t of ['pointerdown', 'mousedown', 'mouseup', 'click', 'touchstart', 'wheel', 'contextmenu']) node.addEventListener(t, swallow);
 };
 
+/** The panel's nodes, not yet on the page - the one shape the live panel and HUD-MOVE's preview are both made in. */
 function build(doc) {
   try { injectEnhancedStyle(doc); } catch { /* the kit's sheet is the HUD's; a document without it still takes the panel */ }
   injectHelmStyle(doc);
   const root = doc.createElement('div');
-  root.id = ENHANCED_HELM_ID;
   root.className = 'helmpanel';
   const bar = doc.createElement('div');
   bar.className = 'helmpanel-bar';
@@ -218,18 +226,19 @@ function build(doc) {
   bar.append(title, btns);
   root.append(bar);
   swallowPresses(root);
-  doc.body.append(root);
   return { root, bar, name, speed, hint, btns, buttons: new Map() };
 }
 
-/** Every hold let go - the panel hidden, rebuilt or gone never leaves a trim held. */
-function releaseAll() {
-  for (const release of [...holding.values()]) release();
-  holding.clear();
+/** Every hold let go - the panel hidden, rebuilt or gone never leaves a trim held. `holds` the live panel's, or a
+ *  preview's own. */
+function releaseAll(holds = holding) {
+  for (const release of [...holds.values()]) release();
+  holds.clear();
 }
 
-function makeButtons(doc, list, hooks) {
-  releaseAll();
+/** `parts` the nodes build() made and `holds` their holds - the live panel's or a preview's own, never both. */
+function makeButtons(doc, parts, list, hooks, holds) {
+  releaseAll(holds);
   if (typeof parts.btns.replaceChildren === 'function') parts.btns.replaceChildren(); else parts.btns.textContent = '';
   parts.buttons.clear();
   for (const b of list) {
@@ -244,19 +253,19 @@ function makeButtons(doc, list, hooks) {
     n.append(label, key);
     if (b.kind === 'hold') {
       const up = () => {
-        if (!holding.has(b.act)) return;
-        holding.delete(b.act);
+        if (!holds.has(b.act)) return;
+        holds.delete(b.act);
         n.classList?.remove?.('held');
         hooks.hold?.(b.action, false);
         if (b.withHeld) hooks.hold?.(b.withHeld, false);
       };
       n.addEventListener('pointerdown', (e) => {
         e.preventDefault?.();
-        if (n.disabled || holding.has(b.act)) return;
+        if (n.disabled || holds.has(b.act)) return;
         try { n.setPointerCapture?.(e.pointerId); } catch { /* a pointer gone already */ }
         if (b.withHeld) hooks.hold?.(b.withHeld, true);
         hooks.hold?.(b.action, true);
-        holding.set(b.act, up);
+        holds.set(b.act, up);
         n.classList?.add?.('held');
       });
       for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) n.addEventListener(t, up);
@@ -286,12 +295,25 @@ export function drawEnhancedHelm(state = {}, hooks = {}, { doc = globalThis.docu
   if (!doc?.body) return null;
   const h = state.helm ?? null, aboard = h ? null : (state.aboard ?? null);
   if (!h && !aboard) { hideEnhancedHelm(); return null; }
-  if (!host) { last = {}; parts = build(doc); host = parts.root; }
+  if (!host) {
+    last = {}; parts = build(doc); host = parts.root;
+    host.id = ENHANCED_HELM_ID;
+    doc.body.append(host);
+    placeHudPieces(doc);   // HUD-HELM: where the player moved it (or turned it off) from its first frame - not at the next sweep
+  }
   if (state.covered) {
     if (last.covered !== true) { last.covered = true; parts.root.style.display = 'none'; releaseAll(); }
     return parts.root;
   }
   if (last.covered === true) { last.covered = false; parts.root.style.display = ''; }
+  paintHelm(doc, parts, last, state, hooks, holding);
+  return parts.root;
+}
+
+/** The panel's face for a state: `parts` its nodes, `last` what they show now (each piece written only when it moves),
+ *  `holds` its holds. The live panel's frame and the preview's one painting. */
+function paintHelm(doc, parts, last, state, hooks, holds) {
+  const h = state.helm ?? null, aboard = h ? null : (state.aboard ?? null);
   const hud = /** @type {any} */ (doc.querySelector?.('.hud'));
   const scale = hud?.style?.getPropertyValue?.('--hud-scale') || '1';   // the HUD's scale, read off the HUD (the journey bar's PLUS8)
   if (last.scale !== scale) { last.scale = scale; parts.root.style.setProperty?.('--hud-scale', scale); }
@@ -305,7 +327,7 @@ export function drawEnhancedHelm(state = {}, hooks = {}, { doc = globalThis.docu
   if (last.hint !== hint) { last.hint = hint; parts.hint.textContent = hint; }
   const list = helmButtons(h);
   const sig = list.map((b) => b.act).join(',');
-  if (last.sig !== sig) { last.sig = sig; last.labels = {}; makeButtons(doc, list, hooks); }
+  if (last.sig !== sig) { last.sig = sig; last.labels = {}; makeButtons(doc, parts, list, hooks, holds); }
   for (const b of list) {
     const p = parts.buttons.get(b.act);
     if (!p) continue;
@@ -319,7 +341,24 @@ export function drawEnhancedHelm(state = {}, hooks = {}, { doc = globalThis.docu
       p.node.setAttribute?.('aria-label', b.label);
     }
   }
-  return parts.root;
+}
+
+/** HUD-HELM: the state HUD-MOVE's preview stands on - a Come Sail Away boat at the wheel with her sails stowed and her
+ *  lanterns dark, the time dial at one. Named a preview on its title (buildHelmPreview), as every stand-in is. */
+const HELM_PREVIEW = Object.freeze({
+  hull: null, hasSails: true, sailsUp: false, squareToggle: false, squareUp: false, hasSquare: false, squareOnly: false,
+  manualTrim: false, light: false, timeDial: true, timeScale: 1, timeScaleIndex: 0, timeScaleMax: 3, orders: false,
+  inIrons: false, way: 0,
+});
+
+/** HUD-MOVE's preview (ui/hudLayout.js): the panel as it stands at a helm, for the unlocked HUD while nobody is at one -
+ *  its own nodes and holds, built and painted as the live panel's are, never mounted (the live panel's slot stays
+ *  empty), at a finger's place on a touch device as the hosts' own panel is. Its buttons answer nothing. */
+export function buildHelmPreview(doc) {
+  const p = build(doc);
+  paintHelm(doc, p, {}, { helm: HELM_PREVIEW, touch: isTouchDevice(doc.defaultView ?? globalThis.window), mouseFree: true }, {}, new Map());
+  p.name.textContent = t('menu.hud.preview.helm', 'At the helm (preview)');
+  return p.root;
 }
 
 /**

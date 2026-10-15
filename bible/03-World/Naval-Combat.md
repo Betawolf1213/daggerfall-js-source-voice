@@ -502,7 +502,10 @@ them, and no captain takes them for a contact.
   lower while the foe's bar is up under the compass and further under its blade. Come Sail Away's HELM PANEL stands
   there too on Enhanced Plus, and its bar is as tall as its buttons wrap, so while it stands the card is placed
   NAVAL_CARD_GAP under its measured foot (`drawNavalHud`'s `under`, `enhancedHelm.js enhancedHelmBar` - the panel is
-  drawn earlier in the frame, and its foot is read only while a card stands or the layout is due). The layer copies
+  drawn earlier in the frame, and its foot is read only while a card stands or the layout is due). The bar is a HUD-MOVE
+  piece (HUD-HELM, 2026-10-15, `10-UI/Controls.md`): moved, the card stands under it - its head the bar's foot, its
+  centre the bar's (`cardCentreUnder`, held so the card stays on the screen) - and with the bar turned off in play (its
+  visibility hidden) the card stands at the compass's foot again, as with no helm. The layer copies
   the HUD scale onto its root, so every part follows the player's HUD scale together - the card at it capped by its
   column's room (The layout, below).
 - **On a finger's screen** (`touch`): no key is named - "Hold and drag to aim", "Lift to fire", "Tap: board her" (the

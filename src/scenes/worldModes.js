@@ -31,7 +31,7 @@ import { resurrectionSpell } from '../systems/resurrect.js';   // RESURRECT1
 import { sharedCartographySpell } from '../systems/partyMap.js';   // PARTY-MAP
 import { signatureOffers } from '../systems/signatureSpells.js';   // SCHOOLS3: a path's signature spell on the Buy Spells shelf
 import { isOnlinePage } from '../systems/onlineLane.js';   // RESURRECT1: the shelf's online arm
-import { horseCareOn } from '../systems/upkeepSwitch.js';   // STEED1: a Stable prices its horses by what they are while horses are cared for
+import { horseCareRules } from '../systems/upkeepSwitch.js';   // STEED1: a Stable prices its horses by what they are while horses are cared for (HORSE-TIERS: any tier but Off, through the one accessor)
 import { bloodDecalDeps } from '../combat/bloodSwitch.js';   // BLOOD1a
 import { createBloodMarks } from '../combat/bloodMarks.js';   // BLOOD1a
 import { doorWorldAabb, doorWorldPosition, doorWorldNormal, interiorLanding, exteriorLanding, dungeonEntranceLanding, climbLadder, floorLanding, repositionFeetY, standsOnFloor, interiorVoidRescue, standFromVoid, NOTHING_OF_VALUE_TEXT, INTERIOR_VOID_TEXT } from '../player/enterExit.js';   // FIELD BUGS 2026-10-04d VOID-ENTRY: the floor a landing stands on, the failsafe, and their two lines
@@ -3548,7 +3548,7 @@ export function createWorldModes(host) {
   function openYardCounter(kind, regionIndex, tradeMode, name, mapId = 0) {
     const b = yardCounter(kind, regionIndex, name);
     const stock = () => yardStock(kind, {
-      mapId, day: Math.floor(worldMinutes() / 1440), online: isOnlinePage(), priced: horseCareOn(),
+      mapId, day: Math.floor(worldMinutes() / 1440), online: isOnlinePage(), priced: !!horseCareRules(),
       owned: (playerEntity.items ?? []).map((it) => it?.horseSeed).filter(Number.isInteger),
     });
     const win = openTradeWindow({ items: tradeMode === 'Sell' ? [] : stock() }, b, tradeMode === 'Sell' ? 'Sell' : 'Buy');

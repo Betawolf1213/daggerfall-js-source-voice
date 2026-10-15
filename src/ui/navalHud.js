@@ -58,6 +58,17 @@ export const NAVAL_CARD_TOP_BLADE = `calc(18px + 28px * var(--hud-scale, 1) + 12
  *  it (`foe` the foe bar's step, 0 without one). */
 export const cardTopPx = (scale, foe = 0) => 18 + 28 * scale + 12 + foe * scale;
 export const NAVAL_CARD_GAP = 8;
+/** The card's width at scale 1 (the sheet's .dfnaval-card `width`), and its most: 86% of the screen. */
+export const NAVAL_CARD_W = 400;
+/** HUD-HELM (2026-10-15, Mac: the sea's target card "anchored to its bar so it moves with it"): where the card's centre
+ *  stands under the helm panel's bar (`helm` its rect) - the bar's own centre, wherever HUD-MOVE put it, held so the card
+ *  at its scale (`kc`) stays on a screen `W` wide. Pure. */
+export function cardCentreUnder(helm, W, kc) {
+  const c = helm.left + helm.width / 2;
+  if (!(W > 0)) return c;
+  const half = Math.min(NAVAL_CARD_W * kc, 0.86 * W) / 2;
+  return Math.max(half, Math.min(W - half, c));
+}
 export const NAVAL_PLATE_W = 272;
 /** On a finger's screen the plate stands over the touch corner's presses - 16px up and 48px tall (ui/touch.js
  *  layoutCorner) - and a gap, never on them. */
@@ -776,6 +787,8 @@ const width = (key, node, v) => { if (shown[key] !== v) { shown[key] = v; node.s
 
 /** A node's box - null for none, or one not standing. */
 const rectOf = (n) => { const r = n?.getBoundingClientRect?.(); return r && (r.width || r.height) ? r : null; };
+/** HUD-HELM: whether a node is seen - HUD-MOVE's X turns a piece off by its visibility, and its box stays where it was. */
+const standing = (n) => { try { return (n.ownerDocument?.defaultView ?? globalThis).getComputedStyle?.(n)?.visibility !== 'hidden'; } catch { return true; } };
 /** The foe bar's step under the compass - the sheet's `:has()` law above, read for the card's column. */
 const foeStep = (doc) => (doc.querySelector?.('.hud-foe.on.blade') ? NAVAL_BLADE_STEP : doc.querySelector?.('.hud-foe.on') ? NAVAL_FOE_STEP : 0);
 const setVar = (name, v) => { if (shown[name] !== v) { shown[name] = v; root.style.setProperty?.(name, v); } };
@@ -791,7 +804,7 @@ const setVar = (name, v) => { if (shown[name] !== v) { shown[name] = v; root.sty
 function placeParts({ key, W, H, scale, short, touch, bottom, vitals, quick, helm, p, braceOn, kc, colTop }) {
   shown.layoutKey = key; shown.layoutAt = hudClock;
   const plateW = parts.plate.offsetWidth || NAVAL_PLATE_W, plateH = parts.plate.offsetHeight || 0;
-  const cw = kc != null ? Math.min(400 * kc, 0.86 * W) : 0;
+  const cw = kc != null ? Math.min(NAVAL_CARD_W * kc, 0.86 * W) : 0;
   const band = cw > 0 ? { left: (W - cw) / 2, right: (W + cw) / 2, bottom: colTop + NAVAL_CARD_H * kc } : null;
   const head = H / 2 + (short ? NAVAL_AIM_DOWN_SHORT : NAVAL_AIM_DOWN) * scale, sf = head + NAVAL_STACK_H * scale;   // the stack's rows
   const warn = { bottom: H / 2 - ((short ? NAVAL_WARN_UP_SHORT : NAVAL_WARN_UP) - NAVAL_WARN_H) * scale, half: (touch ? NAVAL_WARN_HALF_TOUCH : NAVAL_WARN_HALF) * scale + PLATE_GAP };
@@ -851,16 +864,17 @@ export function drawNavalHud(model, { covered = false, doc = globalThis.document
   // the helm panel's bar - its foot the card's head, and over her columns the plate's ceiling - read before this frame's
   // writes here, and only while a card stands or the layout is due
   const read = !under || !!c || due;
-  const helm = under && read ? rectOf(under) : null;
+  const helm = under && read && standing(under) ? rectOf(under) : null;   // HUD-HELM: a bar turned off in play stands nowhere
   const foot = helm?.bottom ?? 0;
   // the card's column: its head (under the helm panel, else the sheet's law) and its scale there - or aside; kept from
   // the last read while the panel goes unmeasured
   if (due) shown.foe = foot > 0 ? 0 : foeStep(doc);
   if (read) {
     const colTop = foot > 0 ? Math.ceil(foot) + NAVAL_CARD_GAP : cardTopPx(scale, shown.foe ?? 0);
-    shown.col = { colTop, kc: !(H > 0) ? scale : short ? null : cardScale({ scale, H, top: colTop, warn: !!p }) };
+    const k = !(H > 0) ? scale : short ? null : cardScale({ scale, H, top: colTop, warn: !!p });
+    shown.col = { colTop, kc: k, cx: foot > 0 && k != null ? cardCentreUnder(helm, W, k) : null };   // HUD-HELM: under the bar, wherever it stands
   }
-  const { colTop, kc } = shown.col;
+  const { colTop, kc, cx } = shown.col;
   const aside = kc == null;
   if (shown.scale !== scale) { shown.scale = scale; root.style.setProperty?.('--hud-scale', String(scale)); }
   cls('rootc', root, `dfnaval-hud${touch ? ' touch' : ''}${compass ? ' classic' : ''}${short ? ' short' : ''}${aside ? ' aside' : ''}`);
@@ -923,6 +937,8 @@ export function drawNavalHud(model, { covered = false, doc = globalThis.document
   if (c) {
     const top = !aside && foot > 0 ? `${colTop}px` : '';
     if (shown.cardTop !== top) { shown.cardTop = top; parts.card.style.top = top; }
+    const left = top && cx != null ? `${Math.round(cx)}px` : '';   // HUD-HELM: centred on the helm panel's bar, not the screen
+    if (shown.cardLeft !== left) { shown.cardLeft = left; parts.card.style.left = left; }
     setVar('--nc-card-scale', aside ? '' : String(Math.round(kc * 1000) / 1000));
     const bars = t.card?.hull != null;   // AUDIT CAPTAIN'S SEA S24: an unknown hull's card has no bars
     const hit = bars ? cardLoss(t.card, dt) : '';

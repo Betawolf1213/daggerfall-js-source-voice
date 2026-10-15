@@ -109,7 +109,7 @@ import { createUpkeep, horseWhereOf, upkeepReach, registerUpkeepUses } from '../
 import { createSaddleHost } from './saddleHost.js';   // STEED-UI: world.js's twin - the saddle panel
 import { getBinding } from '../systems/inputActions.js';   // STEED-UI: the saddle panel's keys, named as the helm names them
 import { buttonText } from '../systems/controlsConfig.js';
-import { horseCareOn, wagonUpkeepOn } from '../systems/upkeepSwitch.js';
+import { horseCareRules, wagonUpkeepRules } from '../systems/upkeepSwitch.js';   // HORSE-TIERS / WAGON-TIERS: each upkeep's tier through its one accessor
 import { setGallopGate, setRideWalk } from '../systems/transport.js';   // HORSE-WALK: horse care's walk beside its gallop
 import { wagonKgFor, activeWagonKind, horseCountOf, wagonTeamShort } from '../systems/wagonKinds.js';   // HCC: ItemHelper.WagonKgLimit - WAGONS1: the driven wagon's
 import { SEATED_EYE_HEIGHT } from '../player/seatPose.js';   // WAGONS3: the driver's seated eye
@@ -1793,17 +1793,17 @@ export async function bootExterior(canvas, renderer, params, status) {
   // STEED1 / WAGONS4: world.js's twin - horse care and wagon upkeep over this host's pack and the character's clock
   const upkeep = createUpkeep({
     items: () => playerEntity.items ?? [], now: () => ownMinutes(),
-    horseCare: horseCareOn, wagonUpkeep: wagonUpkeepOn,
+    horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,
     where: () => horseWhereOf(hccRuntimeOn()?.stableView() ?? null),
     stores: () => (upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()).wagonNear ? playerEntity.wagonItems ?? [] : []),   // the wagon's load, where it is in reach
     say: (l) => townTalk.say(l),
   });
   /** The clock passed by an act of upkeep (a kit's hour), as a camp meal's: the ticker, then the encounters it owes. */
   const upkeepPass = (n) => { playerTicker.advance(n); runEncounterTick(walkMode ? player.pos : cam.pos, true); };
-  setRideWalk((mode) => upkeep.rideWalks(mode));   // HORSE-WALK: horse care's horse walks unless it gallops (bible/06-Systems/Horse-Care.md) - the fixed city stands no Overworld and runs no journey, so no road keeps the ride's pace here (world.js rideOnTheRoad)
+  setRideWalk((mode, runAsked) => upkeep.rideWalks(mode, runAsked));   // HORSE-WALK: horse care's horse walks unless it gallops (bible/06-Systems/Horse-Care.md) - the fixed city stands no Overworld and runs no journey, so no road keeps the ride's pace here (world.js rideOnTheRoad)
   setGallopGate((mode, mods) => upkeep.gallopGate(mode, mods));
   registerUpkeepUses(upkeep, {
-    reach: () => upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()), horseCare: horseCareOn, wagonUpkeep: wagonUpkeepOn,
+    reach: () => upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()), horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,
     pass: upkeepPass,
   });
   const wagonLoadShare = () => { const lim = wagonKgFor(playerEntity); return lim > 0 ? totalWeight(playerEntity.wagonItems ?? []) / lim : 0; };
@@ -5412,7 +5412,7 @@ export async function bootExterior(canvas, renderer, params, status) {
           metres, road: _surfPath, load: wagonLoadShare(),
           wagonGoes: mode === TRANSPORT_MODES.Cart || !!hccRuntimeOn()?.view?.()?.teamFollowing,
         });
-        saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping);   // STEED-UI: the saddle panel's pace and gait
+        saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping, player.rideWalking);   // STEED-UI: the saddle panel's pace and gait; HORSE-TIERS: the walk the motor took
       }
       // PlayerHeightChanger's sink reads `OnExteriorWater == Swimming`
       // alone (:127, :294, :326, :550) - WaterWalking splashes but

@@ -4,9 +4,77 @@ The owner: "On top of this system, I want to build the new horse and wagon maint
 stamina, feeding them grows your bond and improves their stats. Every horse should have different stats." Wagons are
 `06-Systems/Wagon-Upkeep.md` (WAGONS4); this page is the horse.
 
-A departure of the port's own, the enhanced lane's alone: Features, World tab, Travel - **Horse care**
-(`systems/upkeepSwitch.js` horseCareOn, the `horseCare` pref), on by default and forced on online (every horse in a
-room under the one law). Off, a horse is DFU's: no stats, no walk or gallop of its own, nothing to feed.
+A departure of the port's own, the enhanced lane's alone: Features, World tab, Travel - **Horse care**, the
+`horseCare` pref - three tiers since HORSE-TIERS (below): Off, Boons (the default) and Hard, each player's own online.
+Off, a horse is DFU's: no stats, no walk or gallop of its own, nothing to feed - at once, at every door the tier
+governs (a player's "the horse care toggle in the settings menu doesn't seem to work" was traced so,
+`01-Overview/Field-Bugs-2026-10-14-riding-panel.md`, and Mac's word on it made the tiers). The saddle panel stands in
+every tier: it is the ride's, and Off it shows the gait and its doors alone.
+
+## The tiers (HORSE-TIERS, 2026-10-15)
+
+> Mac: *"Allow turn off. Rework this system to be more in line with how we handle climates and calories boons."*
+
+Climates & Calories' model (`06-Systems/Climates-Calories.md` - SURV-TIERS, SURV-BOONS, BOONS-DEFAULT, AUDIT C&C) laid
+over the horse: **one key, three answers**, the tiers written out as data in `systems/upkeepTiers.js` (an
+import-free leaf, as `survival/difficulty.js` is - wagon upkeep's tiers stand beside them since WAGON-TIERS,
+`06-Systems/Wagon-Upkeep.md`).
+
+| Tier | Stored (the `horseCare` pref) | What the horse pays |
+|---|---|---|
+| Off | `false` - the old switch's own | nothing: it is DFU's horse - no stats, one pace, no gallop of its own, nothing to feed |
+| Boons - the default | nothing (PREF1: a default is never stored) | nothing below DFU's horse - its care earns, its neglect costs nothing |
+| Hard | `'hard'` | the system as STEED1 and HORSE-WALK built it - everything below this section, as it stood |
+
+**Boons is not Hard with the numbers turned down.** Its rules, each a field of `HORSE_CARE_RULES` because the tiers
+differ on it:
+
+1. **Same world.** The stats, the bond, the food clock, the breath and every word are the world's in both tiers - a
+   Boons rider's horse is Hungry and Starving as a Hard one's is, and a Stable's three are the same three.
+2. **Nothing is ever taken.** Hunger takes no stat and slows no breath (`hungerCosts`); starving fades no bond
+   (`bondFades` - the keep holds a starving horse's food clock at the starving line, so a turn to Hard owes no fade for
+   the Boons days, and a Boons meal never takes one); the ride's pace is never under DFU's (`paceFloor`: Speed's scale
+   never under 1, so a born-slow horse rides at DFU's pace); a team never drags a loaded wagon (`draftDrags`).
+3. **A horse kept earns.** The bond every meal grows raises every stat - a fast horse's pace, a longer gallop, a quicker
+   breath; a horse fed and with its breath gallops on Run. Starving or winded the gallop is not earned, and a gallop
+   asked and refused rides DFU's own pace, never the walk (`refusedRunWalks`; the motor tells the walk whether Run is
+   asked - `systems/transport.js` rideWalks' `runAsked`): with Run held a Boons horse is never slower than DFU's. With Run
+   let go it walks - HORSE-WALK's way to ride, the owner's, every caring tier's, and no price of neglect (a tended horse
+   walks too). Mac, 2026-10-15: *"Keep the walk"* - DECIDED: Boons' "never below DFU's horse" is the pace with Run held;
+   the walk with Run let go stands on every caring tier.
+4. **No red** (Climates & Calories' rule 4, RED MEANS IT COSTS). Where hunger costs nothing its chip stops at amber - the
+   saddle panel's (`ui/enhancedSaddle.js`) and the Stable card's (`ui/holdingsPages.js` hungerTone) - and the Stable
+   page says only what Boons charges: "Hungry - it costs nothing yet.", "Starving - no gallop until it eats. Feed it."
+
+**Off's minutes are nobody's needs** (Climates & Calories' Off, SURV-TIERS). Off, a horse is DFU's and needs nothing, so
+the keep carries every horse's food clock with the clock (`systems/upkeepRuntime.js` tick): on again it stands where
+Off found it, neither starved nor faded. AUDIT STEED1's reset of the keep's own span at the switch's Off stands beside
+it and now decides nothing - recorded so (`tools/mutants/steed1.json`, its equivalent record).
+
+**One accessor.** Every reader asks the tier through `systems/upkeepSwitch.js` horseCareRules - the live tier's rules,
+null for Off and on any skin but the enhanced one: the upkeep's keep and breath, the gallop gate, the walk, the ride's
+pace, the HUD's breath bar, the Stable page, the saddle panel and the oats' Use (`systems/upkeepRuntime.js`'s doors and
+registerUpkeepUses, each handed the accessor by the two hosts that ride), and a Stable's prices (`scenes/worldModes.js`,
+a horse priced by what it is in any tier but Off). The laws take the rules as an argument (`systems/steedCare.js`
+steedStats, stepBreath, steedSpeedScale, teamDraftScale, feedHorse, tendHorses), and a law handed none runs Hard, so
+every pin written before the tiers still pins it. The boolean switch is gone; the shelf's key has one reader.
+
+**Online.** Every tier, Off included, is the player's (`online: 'player'`) - Climates & Calories' reading (MODS-ONLINE-3):
+a tier decides only what THIS player's horse pays. The horse's fields ride the wire as they always did, a Stable's
+three horses are the town's in every tier, and only their price is the buyer's tier's.
+
+**Moving the players already on it** (`systems/uiPrefs.js` loadPrefs, SURV-TIERS' way). The key is unchanged, and so is
+Off's stored value: a player who turned horse care off stored `false` and is on Off with nothing converted - and a build
+from before the tiers reading the same shelf still reads it as off. The old default, On, was never stored (PREF1), so a
+player who never touched the switch stored nothing and plays the new default, Boons - BOONS-DEFAULT's reading. An On
+written to the shelf all the same chose the system as it stood, and lands on Hard (written so at the next save). Any
+other value names no tier and is dropped at the load. No save holds the switch: a horse's own fields (`horseBond`,
+`horseFed`) are its world, and no tier rewrites them but by its law. The shelf is in the account Worker's bundle, so the
+tiers' leaf is too, and the account deploy's path filter names it (`.github/workflows/account-deploy.yml`, ACC4's walk).
+
+Pinned: `test/horsetiers.test.js` (7 - the one key, the switch online, Boons never below DFU's horse, the shelf, Off's
+minutes, no red, the one accessor); mutants `tools/mutants/horsetiers.json` (20, all dead). The pins written before
+the tiers pin Hard, PIN MOVED where their vocabulary did: the upkeep is handed Hard's rules where it was handed `true`.
 
 ## The law (`systems/steedCare.js`)
 
@@ -18,13 +86,13 @@ so every horse born before STEED1 has had its stats all along, and every client 
 
 | Stat | What it does |
 |---|---|
-| Speed | the ride's pace - its walk and its gallop (THE WALK) times 0.85 + 0.003 a point: 1 at 50, held to [0.85, 1.15] (`steedSpeedScale`) |
+| Speed | the ride's pace - its walk and its gallop (THE WALK) times 0.85 + 0.003 a point: 1 at 50, held to [0.85, 1.15] (`steedSpeedScale`) - on Boons never under 1 |
 | Stamina | its breath: STAMINA_BASE 40 + 1.2 a point (`breathMax` - 100 at 50) |
 | Endurance | how slowly a gallop spends the breath (x 1.25 - Endurance / 200) and how fast it comes back (x 0.75 + Endurance / 200) |
-| Strength | a wagon's pace under its load: 1 - load x (0.3 - 0.002 x Strength), never under 0.75 - the team's mean (`teamDraftScale`) |
+| Strength | a wagon's pace under its load: 1 - load x (0.3 - 0.002 x Strength), never under 0.75 - the team's mean (`teamDraftScale`) - on Hard; on Boons no team drags |
 
-A stat as it stands is its born value, plus a point for every five of its bond (BOND_STEP), less its hunger's penalty,
-held to [1, 100] (`steedStats`).
+A stat as it stands is its born value, plus a point for every five of its bond (BOND_STEP), less its hunger's penalty
+on Hard, held to [1, 100] (`steedStats`).
 
 ### The bond (`horseBond`, in tenths)
 
@@ -36,6 +104,8 @@ character's clock, AUDIT STEED1 - a buyer a year behind would have had it fed a 
 first seen, and a minute's grazing never makes an offered horse's record mismatch its checkpoint.
 
 ### Hunger (`horseFed`, the minute of the character's clock its food runs out)
+
+Hard's (Boons charges none of it - no stat, no breath, no fade - and a starving horse there only does not gallop):
 
 | | From | Stats | Breath back |
 |---|---|---|---|
@@ -75,7 +145,8 @@ Where a horse is decides who feeds it (`systems/upkeepRuntime.js` horseWhereOf, 
 Grazing or stabled, a span the keep did not run across (an inn's rest, a dungeon: no frame ticks indoors) costs it no
 bond - only a fade owed before the span is taken (AUDIT STEED1). The keep's clock is the character's: a load and a new
 character start it afresh (`upkeepRuntime.js` reset, at every door the world host loads through), and so does the
-switch turned off - a horse is never fed back a span from a minute another character or session last kept it.
+tier turned Off - a horse is never fed back a span from a minute another character or session last kept it - and Off
+carries every horse's food clock with the clock (THE TIERS: Off's minutes are nobody's needs).
 
 ### Breath (`stepBreath`, kept in memory by the horse's seed - a gallop's breath is not a thing to save)
 
@@ -112,18 +183,20 @@ gate, the clop's - is false at a walk and true at a sneak (the walk halved, less
 walking rider is no stealthier than a walking traveller.
 
 `systems/transport.js` setRideWalk / rideWalks is horse care's word, the gallop gate's twin; `systems/upkeepRuntime.js`
-rideWalks gives it wherever horse care rules the gallop - horse care on, a horse, the one ridden born (without its stats
+rideWalks gives it wherever horse care rules the gallop - a tier but Off, a horse, the one ridden born (without its stats
 the gate defers to the mod, and the walk to DFU); `player/motor.js` takes it (`_rideBaseNow` - the walk's base, in the
 speed's riding arm and the half-speed base; `rideWalking` - the step's gait; `slowRide` - walked, or under half its
 base). Off horse care a horse is DFU's - one pace, no run in the saddle, the mod's gallop where it rules: a walk with no
-gallop to shift into would hold its rider to it. A cart rolls on its own base. A winded or starving horse walks with Run
-held, as does one in a town wherever Roleplay & Realism's Galloping In Towns is off (the mod's own default - the port
-ships it on, below); autorun's latched run gallops whenever the breath allows.
+gallop to shift into would hold its rider to it. A cart rolls on its own base. On Hard a winded or starving horse walks
+with Run held, as does one in a town wherever Roleplay & Realism's Galloping In Towns is off (the mod's own default - the
+port ships it on, below); on Boons a gallop asked and refused rides DFU's own pace (THE TIERS, rule 3) - the walk is
+told whether Run is asked (rideWalks' `runAsked`, the motor's `_runMode`); autorun's latched run gallops whenever the
+breath allows.
 
 **IN A TOWN IT GALLOPS TOO** (TOWN-GALLOP, 2026-10-13, Mac: "Remove forced horse walking in towns"). Roleplay &
 Realism ships Galloping In Towns off, and AUDIT HORSE-WALK kept the owner's walk under the mod's town: there the mod's
 CanRun said no, so the horse walked with Run held - 5.1 m/s at Speed 50, where its rider runs 8.1 on foot - and online,
-where horse care is forced on, every rider walked every town. The port ships the switch ON (`systems/modSettings.js`,
+where horse care was forced on then, every rider walked every town. The port ships the switch ON (`systems/modSettings.js`,
 the mod's third recorded departure - `06-Systems/Roleplay-Realism.md`), so a town is ridden as the road is: the walk
 unless Run gallops it, on its breath. The room reads it on too (Roleplay & Realism is the room's whole -
 `systems/onlineLane.js` ONLINE_WHOLE_MODS reads the port's default). No tile ever reached the switch (FT14 took the Mods
@@ -166,8 +239,9 @@ What reads the gait:
   was its history's: a trot from a stand, a slow-motion gallop after a gallop. Held under, it trots - the Courser's
   stride that carries 5 m/s (its walk covers 0.67).
 - **Eye Of The Beholder's rider** draws MoveHorse at the walk and GallopHorse at the gallop, by its own speed law.
-- **The saddle panel** says Walking (`ui/enhancedSaddle.js` saddleGait - the very word the motor reads, `transport.js`
-  rideWalks, through `scenes/saddleHost.js`), Galloping on the run, Trotting at DFU's ride (horse care off).
+- **The saddle panel** says Walking (`ui/enhancedSaddle.js` saddleGait - the very walk the motor took, its
+  `rideWalking`, handed by the host's frame through `scenes/saddleHost.js` motion: HORSE-TIERS, since only the motor knows
+  a gallop asked and refused), Galloping on the run, Trotting at DFU's ride (Off, and on Boons a gallop refused).
 - **The head's bob** is DFU's Horse style at the walk, by its velocity; the gallop's is Running's (HeadBobber's order).
 - **The words**: the Features row, and the Horses tutorial ("Your horse walks; hold {Run} to gallop. Don't gallop into
   people in town: trampling them is a crime." - IN A TOWN IT GALLOPS TOO, above).
@@ -202,7 +276,8 @@ quarter, or starving.
 On Enhanced Plus, astride or on a wagon's bench, the horse is on screen under the compass (`ui/enhancedSaddle.js`, off
 `upkeepRuntime.js` saddle): its breath, its hunger with its food's hours, its bond to the next word, the gait and the
 pace; and its doors - Feed oats, an Apple, the Stable page, Dismount. On a bench the hunger is the TEAM's (the
-hungriest horse in harness, `saddle`'s `feed` - the one its Feed goes to) and the bond the lead's.
+hungriest horse in harness, `saddle`'s `feed` - the one its Feed goes to) and the bond the lead's. It is a HUD-MOVE
+piece (HUD-SADDLE, 2026-10-14): Alt+U moves it, sizes it and turns it off (`10-UI/Controls.md`, THE SADDLE PANEL).
 
 The item: a horse's card says its four born stats and its bond (`systems/itemInfo.js` itemStatRows), so a Stable's
 horses say theirs before they are bought.
@@ -225,15 +300,19 @@ templates - so online a Stable sells oats as it did offline from the first (`sys
 
 ## The four hosts
 
-`scenes/world.js` and `scenes/exterior.js` build the upkeep (`createUpkeep`) before Horse Cart and Cargo's runtime, set
+`scenes/world.js` and `scenes/exterior.js` build the upkeep (`createUpkeep`, handed the one accessor `horseCareRules` -
+HORSE-TIERS) before Horse Cart and Cargo's runtime, set
 the walk (`setRideWalk`, HORSE-WALK - world.js's never on the road, the Overworld's and the journeys' host) and the
 gallop gate, hand the 3D horse the motor's slow ride, register the oats' Use, hand the motor its pace and the frame's
 upkeep its odometer's metres, the HUD its bar and the Stable page its acts. `scenes/worldModes.js` (interiors) and
 `scenes/dungeonContext.js` (dungeons) stand no transport - a building or a dungeon puts the rider on foot
-(`transport.js` dismountOnTransition) - and are named, not wired.
+(`transport.js` dismountOnTransition) - and are named, not wired; worldModes.js reads the accessor for one thing, a
+Stable's prices (its counter stands indoors).
 
 Pinned: `test/steed1_horsecare.test.js`; mutants `tools/mutants/steed1.json`, and HORSE-LIVES's and UPKEEP-ONLINE's
 `tools/mutants/wagonmend.json`. THE WALK: `test/horsewalk.test.js`; mutants `tools/mutants/horsewalk.json` (40, all
 dead - TOWN-GALLOP retired the town walk's two with their law) and TOWN-GALLOP's `tools/mutants/towngallop.json` (7,
 all dead). The saddle panel and the page's polish:
-`test/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`.
+`test/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`. The panel as a HUD piece:
+`test/fb1014_ridingpanel.test.js`; mutants `tools/mutants/fb1014_ridingpanel.json`. THE TIERS: `test/horsetiers.test.js`;
+mutants `tools/mutants/horsetiers.json`.
