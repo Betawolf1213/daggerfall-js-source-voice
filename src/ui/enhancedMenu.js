@@ -257,7 +257,7 @@ import { maxRoundsRemaining } from './hudActiveSpells.js';   // BUFF-END: a bund
 // by it. Empty at FT0; the Enhanced category of Settings and the Mods
 // section keep their rows until each one's slice moves it here
 // (bible/10-UI/Features-Arc.md).
-const SECTIONS_BOOT = ['Continue', 'New Game', 'Load Game', 'Online', 'Test Room', 'Settings', 'Overhauls', 'Tutorials', 'Screenshots', 'About'];   // TUT1: the tutorials, to read before the game (ui/tutorialsPane.js)   // ORG2: Features is Settings' tabs now   // LOAD1: the gallery (ui/shotsPane.js)   // OVH1: the three looks   // FT16: Controls is a Settings CATEGORY, not a rail door   // FT14: Mods is gone - every mod is a tile on Features, and what the pane carried besides stands under them   // ONLINE1: the shared world's door
+const SECTIONS_BOOT = ['Online', 'Continue', 'New Game', 'Load Game', 'Test Room', 'Settings', 'Overhauls', 'Tutorials', 'Screenshots', 'About'];   // UI-CALM: Online first, Offline's four under it (drawDoors, the rail's own word)   // TUT1: the tutorials, to read before the game (ui/tutorialsPane.js)   // ORG2: Features is Settings' tabs now   // LOAD1: the gallery (ui/shotsPane.js)   // OVH1: the three looks   // FT16: Controls is a Settings CATEGORY, not a rail door   // FT14: Mods is gone - every mod is a tile on Features, and what the pane carried besides stands under them   // ONLINE1: the shared world's door
 // FD1 (Mac, 2026-09-11): the CLASSIC skin opens on this same door. Its
 // three game doors collapse into BEGIN, which leads into the classic
 // start sequence - the title, the film, Daggerfall's own start window -
@@ -282,6 +282,13 @@ const SECTIONS_CLASSIC = ['Begin', 'Online', 'Settings', 'Overhauls', 'Tutorials
 const SECTIONS_PAUSE = ['Resume', 'Save Game', 'Load Game', 'Settings', 'Overhauls', 'Tutorials', 'Screenshots', 'About', 'Exit'];   // TUT1: a landing's shell (the window's own door is its Tutorials tab)   // ORG2   // LOAD1   // OVH1   // FT14; FT16: Controls is a Settings category
 
 const idOf = (label) => label.toLowerCase().split(' ')[0];
+
+/** UI-CALM: the doors behind Offline on the enhanced front door, in order - the games this device keeps. */
+export const HOME_OFFLINE = Object.freeze(['Continue', 'New Game', 'Load Game', 'Test Room']);
+/** UI-CALM: the two small doors under the two questions - the settings a player may want before either. */
+export const HOME_LINKS = Object.freeze(['Settings', 'Overhauls']);
+/** UI-CALM: whether a section is one of Offline's (its Escape lands back on the offline doors). */
+export const offlineSection = (id) => HOME_OFFLINE.some((l) => idOf(l) === id);
 
 /** L10N1b: the rail's words in the player's language. The ids stay the English labels' (idOf), every English label
  *  reads back as itself, and each is one literal call so tools/l10nExtract.mjs reads the catalog off the source. */
@@ -324,6 +331,16 @@ let onAction = () => {};
 let mode = 'boot';
 let sections = SECTIONS_BOOT;
 let hooks = {};
+// UI-CALM (2026-10-14, a player: "The first screen should just have ONLINE and OFFLINE, with Online first. Continue, New
+// Game and Load Game belong under Offline. I've seen people create characters thinking they're playing online, only to
+// discover later that they're offline."): THE ENHANCED DOOR ASKS ONE QUESTION FIRST - which world - and only then which
+// game. 'top' is the two doors (Online, Offline); 'offline' the offline doors (HOME_OFFLINE) and the way back. Every
+// visit opens on 'top'; a section an offline door opened backs out to 'offline', where its press was made.
+let homeLevel = 'top';
+/** AUDIT UICALM-FIRM1 L3 L1: the keyboard's place after a level changes - the door named, else the level's first. */
+function focusDoor(id) {
+  globalThis.requestAnimationFrame?.(() => (app?.querySelector?.(`.px-menu .door-${id}`) ?? app?.querySelector?.('.px-menu .doorbtn'))?.focus?.());
+}
 let keyHandler = null;
 // ACC1f (Mac: "The online details itself will live as a popup on main
 // menu startup and a new profile icon"): whether the account window is
@@ -4192,6 +4209,12 @@ function go(id) {
   // fires only where it means to: the section actually changing.
   if (id === 'features') id = 'settings';   // ORG2: the Features home is Settings' tabs - an old door's name still lands
   if (id !== section) discardControlsStaging();
+  // UI-CALM: back home from one of Offline's games is back on the offline doors; from Online, Settings or Overhauls the
+  // two questions; from a page both levels show (Tutorials, Screenshots, About) the level it was opened from
+  if (id === 'home' && mode === 'boot') {
+    if (offlineSection(section)) homeLevel = 'offline';
+    else if (section === 'online') homeLevel = 'top';   // AUDIT UICALM-FIRM1 L3 N1: Settings and Overhauls stand in the foot of both levels, so they keep the level they were opened from, as Tutorials does
+  }
   pickedFeature = null;   // ORG2: a walk away drops the picked Features row, as it drops pickedKey
   section = id; pickedKey = null; sheetOpen = false; confirming = null; cloudArm = null; render();   // 0927b B5: an armed press never outlives its pane
 }
@@ -4316,29 +4339,19 @@ function renderHome() {
 
   const menu = el('nav', 'px-menu');
   menu.setAttribute('aria-label', t('menu.home.aria', 'Main menu'));
+  // UI-CALM: the enhanced door asks which world first (drawDoors); the classic skin's door keeps its one list
+  if (twoQuestionDoor()) drawDoors(menu);
   // PX1b: About leaves the center list for the corner box below - the
   // list is what a player DOES, the box is who made it. The SECTION
   // still exists on the shell rail untouched, so the rail-hole pin and
   // the shared-sections law hold.
-  for (const label of sections) {
-    if (label === 'About' || label === 'Screenshots') continue;   // LOAD1: Screenshots stands in the foot, beside About
-    if (label === 'Tutorials') continue;   // TUT1: the foot's left plaque (an eighth door ran the list past a 720-pixel screen)
-    const id = idOf(label);
-    // PX31: THE DOOR'S BUTTONS CARRY THEIR OWN NAME. Until now they
-    // were classless, and nine probes still reached for `.railbtn` -
-    // the SHELL rail's class, which this door has never had since PX1
-    // replaced it. Every one of them timed out at its front door and
-    // no gate noticed, because a probe is not a gate (AUDIT 17f F4).
-    // Selecting on PROSE would be the same bug waiting on a relabel,
-    // so the hook is structural: doorbtn plus the section id, which
-    // is what a probe actually means when it says New Game.
-    const b = el('button', `doorbtn door-${id}`);
-    // AUDIT PLUS-MENU M2: the diamonds stand at rest under Plus (MENU_CSS), so they are drawing, not words - hidden from
-    // a reader, or every door was named "◆ Continue ◆"
-    const dia = () => { const d = el('span', 'px-c', '\u25c6'); d.setAttribute('aria-hidden', 'true'); return d; };
-    b.append(dia(), document.createTextNode(railLabel(label)), dia());   // L10N1b
-    b.onclick = RAIL_ACTS[id] ? () => onAction(RAIL_ACTS[id]) : () => go(id);
-    menu.append(b);
+  else {
+    for (const label of sections) {
+      if (label === 'About' || label === 'Screenshots') continue;   // LOAD1: Screenshots stands in the foot, beside About
+      if (label === 'Tutorials') continue;   // TUT1: the foot's left plaque (an eighth door ran the list past a 720-pixel screen)
+      const id = idOf(label);
+      menu.append(doorBtn(id, railLabel(label), '', RAIL_ACTS[id] ? () => onAction(RAIL_ACTS[id]) : () => go(id)));   // L10N1b
+    }
   }
   stage.append(menu);
   home.append(stage);
@@ -4373,6 +4386,72 @@ function renderHome() {
   app.append(home);
 }
 
+/** UI-CALM: the two-question door stands on the enhanced front door alone (the classic skin's door keeps its list). */
+const twoQuestionDoor = () => mode === 'boot' && sections === SECTIONS_BOOT;
+
+/**
+ * One door of the front door: its name, and (UI-CALM) under it in a smaller hand what lies behind it.
+ *
+ * PX31: THE DOOR'S BUTTONS CARRY THEIR OWN NAME. Until now they were classless, and nine probes still reached for
+ * `.railbtn` - the SHELL rail's class, which this door has never had since PX1 replaced it. Every one of them timed out
+ * at its front door and no gate noticed, because a probe is not a gate (AUDIT 17f F4). Selecting on PROSE would be the
+ * same bug waiting on a relabel, so the hook is structural: doorbtn plus the section id, which is what a probe actually
+ * means when it says New Game.
+ */
+function doorBtn(id, label, sub, onClick) {
+  const b = el('button', `doorbtn door-${id}`);
+  // AUDIT PLUS-MENU M2: the diamonds stand at rest under Plus (MENU_CSS), so they are drawing, not words - hidden from
+  // a reader, or every door was named "◆ Continue ◆"
+  const dia = () => { const d = el('span', 'px-c', '\u25c6'); d.setAttribute('aria-hidden', 'true'); return d; };
+  const word = el('span', 'door-word');
+  word.append(el('span', 'door-name', label));
+  if (sub) word.append(el('span', 'door-sub', sub));
+  b.append(dia(), word, dia());
+  // AUDIT UICALM-FIRM1 L3 M2: a double click's second click is no door's - a door drawn under the pointer by the first
+  // (Offline's level: Load Game stood where Offline was) took it
+  b.onclick = (e) => { if (e?.detail > 1) return; onClick(e); };
+  return b;
+}
+
+/**
+ * UI-CALM: THE TWO QUESTIONS, then the games. The top level is two doors - ONLINE first, then OFFLINE - each saying in a
+ * line what lies behind it, and Settings and Overhauls as two small doors under them (a player may want either before
+ * choosing). OFFLINE opens the offline doors (HOME_OFFLINE) where Continue, New Game and Load Game always stood, and a
+ * way back. Each level is two PAGES - DFO Grimoire writes them on the open book's two leaves under their own heads; Plus
+ * stands them in one column, the offline doors under the word Offline.
+ */
+function drawDoors(menu) {
+  menu.dataset.level = homeLevel;
+  const page = (cls, head) => {
+    const p = el('section', `px-page ${cls}`);
+    if (head) p.append(el('h2', 'px-pagehead', head));
+    menu.append(p);
+    return p;
+  };
+  const level = (to) => () => {
+    const focused = menu.contains?.(document.activeElement);
+    homeLevel = to;
+    render();
+    // a keyboard or a pad that pressed it keeps its place: the first door of the level it opened
+    if (focused) globalThis.requestAnimationFrame?.(() => app?.querySelector?.('.px-menu .doorbtn')?.focus?.());
+  };
+  if (homeLevel === 'offline') {
+    const games = page('px-page-games', t('menu.home.offline', 'Offline'));
+    games.append(el('p', 'px-pagenote', t('menu.home.offlineSub', 'Your own game, kept on this device')));
+    for (const label of HOME_OFFLINE.slice(0, 3)) games.append(doorBtn(idOf(label), railLabel(label), '', () => go(idOf(label))));
+    const more = page('px-page-more', t('menu.home.elsewhere', 'Elsewhere'));
+    for (const label of HOME_OFFLINE.slice(3)) more.append(doorBtn(idOf(label), railLabel(label), '', () => go(idOf(label))));
+    more.append(doorBtn('back', t('menu.home.back', 'Back'), '', level('top')));
+    return;
+  }
+  page('px-page-online', t('menu.home.realmHead', 'The Realm'))
+    .append(doorBtn('online', railLabel('Online'), t('menu.home.onlineSub', 'Play with others in the shared world'), () => go('online')));
+  page('px-page-offline', t('menu.home.ownHead', 'Thine Own Tale'))
+    .append(doorBtn('offline', t('menu.home.offline', 'Offline'), t('menu.home.offlineSub', 'Your own game, kept on this device'), level('offline')));
+  // Settings and Overhauls stand in the foot's box beside Screenshots and About (appendPxFoot) - UI-CALM, a player:
+  // "settings and overhaul can be put in the ... bottom" - so the book's leaves hold the two questions and nothing else
+}
+
 /** PX1b: three-zone foot - build left and About as the bottom-right
  *  box, the centre left open (MENU-TOGGLE retired the skin toggle that
  *  stood there). One builder for both faces (PX3 gave pause its own
@@ -4387,7 +4466,7 @@ function appendPxFoot(home) {
   // TUT1: the tutorials' plaque stands over the build line, at the LEFT - the book a new player reads before the game. A
   // third plaque in About's box ran into the menu's column on a 1280x720 screen, and three stacked overran a phone's foot.
   if (mode !== 'pause' && sections.includes('Tutorials')) {
-    const tuts = el('button', 'px-about px-tuts door-tutorials', 'Tutorials');
+    const tuts = el('button', 'px-about px-tuts door-tutorials', RAIL_TEXT.tutorials());   // AUDIT UICALM-FIRM1 L3 N3: the player's language, as About beside it
     tuts.onclick = () => go('tutorials');
     const left = el('div', 'px-footleft');
     build.remove();
@@ -4398,15 +4477,32 @@ function appendPxFoot(home) {
   // runs under the menu's last rows on a 720-pixel screen. The door's face only: the pause window's System rail carries
   // it as a row (SYSTEM_PANES).
   if (mode !== 'pause' && sections.includes('Screenshots')) {
-    const shots = el('button', 'px-about px-shots', 'Screenshots');
+    const shots = el('button', 'px-about px-shots', RAIL_TEXT.screenshots());
     shots.onclick = () => go('screenshots');
     const right = el('div', 'px-footright');
     about.remove();
+    // UI-CALM: the two-question door's Settings and Overhauls, first in the box (HOME_LINKS)
+    if (twoQuestionDoor()) {
+      for (const label of HOME_LINKS) {
+        const b = el('button', `px-about px-homelink door-${idOf(label)}`, railLabel(label));
+        b.onclick = () => go(idOf(label));
+        right.append(b);
+      }
+    }
     right.append(shots, about);
     foot.append(right);
   }
   home.append(foot);
+  // AUDIT UICALM-FIRM1 L3 H1: THE STAGE RESERVES THE FOOT IT HAS (PX8's law, measured): UI-CALM's two plaques wrap the
+  // foot to a second row the stage's fixed reserve did not hold, and Settings stood over Offline, Load and Back - a tap
+  // on a door opened Settings. The foot says its height (--px-foot-h) and the sheet keeps the stage's foot clear of it.
+  footObs?.disconnect?.();
+  const reserve = () => { const h = Math.ceil(foot.getBoundingClientRect?.().height ?? 0); if (h > 0) home.style?.setProperty?.('--px-foot-h', `${h}px`); };
+  reserve();
+  try { footObs = new globalThis.ResizeObserver(reserve); footObs.observe(foot); } catch { footObs = null; }   // no observer: the sheet's own reserve stands
 }
+/** The foot's watch (appendPxFoot) - one at a time, the last door's. */
+let footObs = /** @type {ResizeObserver|null} */ (null);
 
 // ── PX3: THE PAUSE WINDOW ────────────────────────────────────────
 // HOLDINGS (2026-10-03, Mac: "Lets add a new tab to the pause menu as the stat page is starting to get bloated"): what the
@@ -4737,11 +4833,19 @@ function pauseStats(body) {
     b.onclick = () => { statsSec = 'master'; _masterNote = null; render(); };
     return b;
   })() : null;
-  if (statsSec !== 'master' && (typeof hooks.openAscend === 'function' || masterDoor)) {
+  // FIRM1 (bible/06-Systems/Firmament.md): THE FIRMAMENT'S DOOR beside Ascend - the passive tree swapped in over this
+  // window as the Ascension is (ui/firmamentOver.js), online alone (the door hands no hook offline, so no button is drawn)
+  const firmDoor = typeof hooks.openFirmament === 'function' ? hooks.openFirmament : null;
+  if (statsSec !== 'master' && (typeof hooks.openAscend === 'function' || masterDoor || firmDoor)) {
     const row = el('div', 'px-sheetdoors');
     if (typeof hooks.openAscend === 'function') {
       const b = el('button', 'act', t('pause.door.ascend', 'Ascend'));
       b.onclick = () => hooks.openAscend();
+      row.append(b);
+    }
+    if (firmDoor) {
+      const b = el('button', 'act', t('pause.door.firmament', 'Firmament'));
+      b.onclick = () => firmDoor();
       row.append(b);
     }
     if (masterDoor) row.append(masterDoor);
@@ -5609,8 +5713,17 @@ function renderInto() {
   side.append(brand);
 
   const rail = el('nav', 'rail');
+  // UI-CALM (2026-10-14, a player on DFO Grimoire's rail: "here back to main menu is missing"): THE WAY HOME, SAID. The
+  // wordmark above has always been it (PX1/PX2), and Escape - but a wordmark is not a door a player reads as one; the
+  // rail's first row is, at the door the Main menu and over a game the window it came from
+  const homeRow = el('button', 'railbtn railhome');
+  homeRow.append(el('span', 'rk', mode === 'pause' ? t('menu.home.back', 'Back') : t('menu.home.aria', 'Main menu')));
+  homeRow.onclick = () => go('home');
+  rail.append(homeRow);
   for (const label of sections) {
     const id = idOf(label);
+    // UI-CALM: on the enhanced front door's rail Offline's doors stand under their word, as they do on the door
+    if (sections === SECTIONS_BOOT && label === HOME_OFFLINE[0]) rail.append(el('span', 'railgroup', t('menu.home.offline', 'Offline')));
     const b = el('button', `railbtn${id === section ? ' on' : ''}`);
     b.append(el('span', 'rk', railLabel(label)));   // L10N1b
     // RAIL_ACTS: Resume resolves on the rail rather than opening a
@@ -5762,9 +5875,10 @@ function onKey(e) {
     : confirming ? () => { confirming = null; render(); }
     : sheetOpen ? () => { sheetOpen = false; render(); }
       : controlsPromptOpen() ? () => dismissControlsPrompt()   // AUDIT KB1: the Controls pane's own prompt answers No first - it never leaves the section with the staged binds
-      : section !== 'home' ? () => go('home')   // PX1/PX2: a section backs out to the face
+      : section !== 'home' ? () => { const from = section; go('home'); if (mode !== 'pause') focusDoor(from); }   // PX1/PX2: a section backs out to the face (AUDIT L3 L1: the keyboard on its door)
         : mode === 'pause' ? () => onAction('resume')   // Escape on the pause face resumes
-          : null;
+          : homeLevel !== 'top' && twoQuestionDoor() ? () => { const from = homeLevel; homeLevel = 'top'; render(); focusDoor(from); }   // UI-CALM: the offline doors back out to the two questions (AUDIT L3 L1: the keyboard back on Offline)
+            : null;
   if (!back) return;
   e.preventDefault();
   // A MODAL OVERLAY OWNS ITS INPUT (the wizard's own law, U50). On
@@ -5875,6 +5989,7 @@ export function mountEnhancedMenu(host, {
   // PX2 trades one press of depth for the face Mac adopted, with Save
   // Game the second row a thumb meets and Resume the first.
   section = 'home';
+  homeLevel = 'top';   // UI-CALM: every visit asks which world first
   pauseTab = 'system';
   // ...and THEN the caller's landing, if it named one. After the reset,
   // which is what keeps the reset the default rather than a thing this

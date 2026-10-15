@@ -74,6 +74,11 @@ test('FLOW1 the workflows: verify.yml is the one check - lint and the types, eve
   assert.match(d, /\n {2}deploy:\n {4}needs: \[verify, site\]\n[\s\S]*?uses: actions\/deploy-pages@v4/);
   assert.equal((d.match(/ref: main/g) ?? []).length, 1, 'only the pin reads main - every other job the commit it pinned');
   assert.equal((d.match(/actions\/deploy-pages/g) ?? []).length, 1);
+  // REL-FAST (2026-10-15, Mac: "Yes, thats insanely slow" - a release spent 27.4 of its 33 minutes on `npm run check` in
+  // series): the desktop release's gate is the same check, in parallel, on the commit its legs build
+  const r = read('.github/workflows/release-desktop.yml');
+  assert.match(r, /\n {2}gate:\n {4}uses: \.\/\.github\/workflows\/verify\.yml\n {4}with:\n {6}ref: \$\{\{ github\.sha \}\}\n/);
+  assert.doesNotMatch(r, /run: npm run check/, 'never the serial check again');
   assert.ok(d.indexOf('actions/deploy-pages') > d.indexOf('\n  deploy:\n'), 'the deploy step lives in the job that waits for the verification');
   // the local check is the whole check still, and the loop's scripts are there
   const pkg = JSON.parse(read('package.json'));

@@ -304,9 +304,13 @@ collided with electron-builder's `app/release` OUTPUT directory on
 case-insensitive filesystems - the windows and macos legs of the
 first release died on mkdir EEXIST while ubuntu sailed; the same
 finding class Audit DA recorded for pref keys, biting the infra.
-Whichever door, a `gate` job runs the whole `npm run check` and
-every OS leg `needs` it (AUDIT 68: it had been a step in the ubuntu
-leg alone, which the other two never waited for), all three OS
+Whichever door, a `gate` job runs the whole check and every OS leg
+`needs` it (AUDIT 68: it had been a step in the ubuntu leg alone,
+which the other two never waited for) - since REL-FAST (2026-10-15,
+Mac: "Yes, thats insanely slow") as `verify.yml`, the PR's and the
+deploy's check: lint and the types, four balanced test shards and the
+build at once, on the release's commit, where `npm run check` in
+series had taken 27.4 of a release's 33 minutes - all three OS
 runners package installers (AppImage, NSIS +
 portable exe, dmg - unsigned; macOS players right-click-Open the
 first time), and the artifacts attach to a GitHub Release at that

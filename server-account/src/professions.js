@@ -82,6 +82,8 @@ import { levyAt } from './seatHolding.js';
 import { levyOf, seatWeekOf, seasonZeroOf } from '../../src/net/townSeatLaw.js';
 import { tideNow } from './tides.js';   // SEASON1 part two: the land's Tide (9.3)
 import { tideYield } from '../../src/net/tideLaw.js';
+import { firmStatement, firmStatsFrom, firmStatsOf } from './firmament.js';   // FIRM1: the Firmament's hand on a harvest and a craft
+import { yieldPct, xpPct, scaleQty, scaleXp } from '../../src/net/firmamentLaw.js';
 import { stationSteps } from '../../src/net/fortLaw.js';   // SEAT2b part two (7.5): a seat's crafting halls
 import { fortTiersOf } from './seatForts.js';   // SEAT2b part two: the halls standing at the seat
 import { RAM_KIT } from '../../src/net/professionLaw.js';   // SEAT2b part two: a siege work's place in the Stores
@@ -521,10 +523,11 @@ export async function harvestNode(ctx, player, env, body = {}) {
   // GATHER-SPEED: the hour's acts counted, the ground and the track read, and (SEAT1d) the Levy's seat asked - AT ONCE,
   // three asks in flight together where they were four trips in a row. None reads what another writes; the hour's
   // refusal still comes first, and a refused harvest's reads are only read
-  const [over, [factRows, trackRows], levyKey] = await Promise.all([
+  // FIRM1: and the character's Firmament beside its track (firmament.js firmStatement) - its yield and XP the service's
+  const [over, [factRows, trackRows, firmRows], levyKey] = await Promise.all([
     overRate(ctx, `prof:${player.id}`, PROF_OPS_MAX, PROF_OPS_WINDOW_S),
-    readAll(db, [...(key === null ? [] : [factsStatement(db, [key], wkind)]), trackStatement(db, player.id, character, profession)])
-      .then((rows) => (key === null ? [[], rows[0]] : rows)),
+    readAll(db, [...(key === null ? [] : [factsStatement(db, [key], wkind)]), trackStatement(db, player.id, character, profession), firmStatement(db, player.id, character)])
+      .then((rows) => (key === null ? [[], ...rows] : rows)),
     // A dungeon's vein and a body name no ground of a town
     !deep && !isBody && seatsOpenFor(player, env) ? levyAt(db, nowS, region, [n.x, n.y]) : null,
   ]);
@@ -649,7 +652,13 @@ export async function harvestNode(ctx, player, env, body = {}) {
     }
   }
   if (!key2) return { error: 'bad-node' };
-  const xp = harvestXp(xpTier ?? tier, rank, clean);
+  // FIRM1 (bible/06-Systems/Firmament.md): THE FIRMAMENT'S HAND - the character's tree, as this service keeps it, on the
+  // yield (the service's own die for the fraction) and the XP of the profession worked; after every draw above, so each
+  // of them is what it was
+  const firm = firmStatsFrom(firmRows?.[0], player, env);
+  const firmYield = yieldPct(firm, profession);
+  if (firmYield) qty = scaleQty(qty, firmYield, dice(rand));   // a die drawn only for a tree that moves the yield
+  const xp = scaleXp(harvestXp(xpTier ?? tier, rank, clean), xpPct(firm, profession));
   const nonce = mintId(rand);
   // SEAT1d (SEAT0 7.6): THE LEVY - a tenth of a harvest on ground in the bailiwick of a seat whose Levy rules this week
   // goes to the seat's stockpile; the gatherer keeps at least one (its seat asked above, beside the ground).
@@ -1118,7 +1127,8 @@ export async function smeltAtForge(ctx, player, env, { character, recipe: id, co
   // its first time's 500 (?11, where firstCraftPays) laid on in the decision; every other work's the smelt's
   const act = r.act ? clean === true : false;
   const cap = r.xp ? craftXpCap(r.xp, ranks) : 0;
-  const xp = r.act ? masonXp(count, rank, { clean: act }) : r.xp ? smeltXp(out.tier, count, rank) : 0;   // AUDIT 29 A7: the record's quarter, at the smith's rank
+  const xp = scaleXp(r.act ? masonXp(count, rank, { clean: act }) : r.xp ? smeltXp(out.tier, count, rank) : 0,   // AUDIT 29 A7: the record's quarter, at the smith's rank
+    r.xp ? xpPct(await firmStatsOf(db, player, env, character), trackOf(r.xp)) : 0);   // FIRM1: the Firmament's hand on the craft's XP
   const nonce = mintId(rand);
   // ?1 player ?2 character ?3 rid ?4 recipe ?5 count ?6 out ?7 STORES_MAX ?8 xp ?9 now ?10 nonce ?11 the first time's XP
   // (PROF11: a mason's work's; 0 for every other) ?12 the chisel clean; the inputs ?13 on, two a one
@@ -1295,7 +1305,8 @@ export async function craftAtAnvil(ctx, player, env, { character, recipe: id, cl
   // first craft's ?13 (AUDIT 32 S1: none for a recipe wholly of goods only a counter sells) ?11 now ?12 nonce ?14 the
   // profession ?15 heartwood ?16 the dye; the inputs ?17 on, two a one
   // PROF9: a dish's XP follows the rank, a clean pan's half again (cookXp); every other craft's its tier's (craftXp)
-  const xp = r.kind === 'dish' ? cookXp(rank, { clean: clean === true, steps: halls }) : craftXp(r.tier, rank, false);   // PROF12: the Apothecary's steps
+  const xp = scaleXp(r.kind === 'dish' ? cookXp(rank, { clean: clean === true, steps: halls }) : craftXp(r.tier, rank, false),   // PROF12: the Apothecary's steps
+    xpPct(await firmStatsOf(db, player, env, character), craft));   // FIRM1: the Firmament's hand on the craft's XP
   const binds = [player.id, character, rid, r.id, quality, count, provs[0], provs[1] ?? null, seed, xp, nowS, nonce, firstCraftPays(r) ? FIRST_CRAFT_XP : 0, craft, wood ? 1 : 0, u];
   const held = [];
   inputs.forEach((inp, i) => {
@@ -1419,6 +1430,7 @@ export async function temperPiece(ctx, player, env, { character, recipe: id, qua
   }
   const cost = temperCost(r);
   const cap = craftXpCap(craft, ranks);
+  const xp = scaleXp(temperXp(r, rank), xpPct(await firmStatsOf(db, player, env, character), craft));   // AUDIT UICALM-FIRM1 L2 L3: the Firmament's hand on a temper's XP, as on the anvil's
   const nonce = mintId(rand);
   const decided = 'EXISTS (SELECT 1 FROM prof_tempers WHERE player = ?1 AND rid = ?2 AND n = ?3)';
   // ?1 player ?2 character ?3 rid ?4 recipe ?5 provenance ?6 the quality made ?7 the input ?8 its units ?9 the XP ?10 now
@@ -1432,7 +1444,7 @@ export async function temperPiece(ctx, player, env, { character, recipe: id, qua
       SELECT ?1, ?3, ?2, ?4, ?5, ?6, ?7, ?8,
         MAX(0, MIN(?9, ${Number(cap)} - COALESCE((SELECT xp FROM prof_tracks WHERE player = ?1 AND char_id = ?2 AND profession = ?12), 0))), ?10, ?11
       WHERE ${workableSql('?1', '?2', '?7')} >= ?8 AND ${piece}`)   // AUDIT BAG-CRAFT A1: a station's loose units too
-      .bind(player.id, character, rid, r.id, provenance, quality + 1, cost.key, cost.n, temperXp(r, rank), nowS, nonce, craft),
+      .bind(player.id, character, rid, r.id, provenance, quality + 1, cost.key, cost.n, xp, nowS, nonce, craft),
     // a made piece's row at its new quality, its record re-signed - AUDIT BAG-CRAFT A1: walled to gold where the input held a
     // loose unit (spent first), read before the spend - a piece raised with goods the service never handed out lists as a
     // pack's piece does (for gold alone)
