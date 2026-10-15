@@ -15554,6 +15554,21 @@
   "tr": "93e2454957d7",
   "by": "claude-in-session"
  },
+ "prof.craft.xp": {
+  "en": "c015e35af020",
+  "tr": "177a4fddeab1",
+  "by": "claude-in-session"
+ },
+ "prof.craft.xpFirst": {
+  "en": "73aa29440adb",
+  "tr": "ea9c7f6c50d3",
+  "by": "claude-in-session"
+ },
+ "prof.craft.xpFirstShop": {
+  "en": "187a5f43f66e",
+  "tr": "b46ecf3cfe82",
+  "by": "claude-in-session"
+ },
  "prof.lode.legend": {
   "en": "80b1736b1dfb",
   "tr": "4a640707ab47",
@@ -15674,14 +15689,14 @@
   "tr": "ed0e260bee57",
   "by": "claude-in-session"
  },
- "prof.page.alchemy.xp": {
-  "en": "544b14e3df71",
-  "tr": "3acefb70a1db",
-  "by": "claude-in-session"
- },
  "prof.page.alchemy.xpFirst": {
   "en": "67f6f98ebe2d",
   "tr": "7a2ca0b1bc9f",
+  "by": "claude-in-session"
+ },
+ "prof.page.alchemy.xpShop": {
+  "en": "dc5a1073fa36",
+  "tr": "cf2b936c0e62",
   "by": "claude-in-session"
  },
  "prof.page.anvil": {
@@ -15889,6 +15904,16 @@
   "tr": "e68e1bd7bf53",
   "by": "claude-in-session"
  },
+ "prof.page.craft.xpFirst": {
+  "en": "aacbb5e07ddf",
+  "tr": "704b1848864c",
+  "by": "claude-in-session"
+ },
+ "prof.page.craft.xpShop": {
+  "en": "78aff271f890",
+  "tr": "bc95d2efee7c",
+  "by": "claude-in-session"
+ },
  "prof.page.crafting": {
   "en": "ea78b34da11f",
   "tr": "c13d3dd2fa08",
@@ -16094,6 +16119,11 @@
   "tr": "563df8c85806",
   "by": "claude-in-session"
  },
+ "prof.page.fire.first": {
+  "en": "8241a50507a9",
+  "tr": "ee0d96dd70c5",
+  "by": "claude-in-session"
+ },
  "prof.page.fire.here": {
   "en": "ec69fe6d08c3",
   "tr": "1de9acd814c8",
@@ -16290,8 +16320,8 @@
   "by": "claude-in-session"
  },
  "prof.page.jewel.odds": {
-  "en": "367f776e5547",
-  "tr": "bf8df6c7d4b4",
+  "en": "4519e6329a41",
+  "tr": "3cba3e21ca2b",
   "by": "claude-in-session"
  },
  "prof.page.jewel.points": {
@@ -16557,6 +16587,11 @@
  "prof.page.mason.works": {
   "en": "fbc94329c08e",
   "tr": "255a5deafe65",
+  "by": "claude-in-session"
+ },
+ "prof.page.mason.worksFirst": {
+  "en": "18bc43f00779",
+  "tr": "3a59bde4e3ff",
   "by": "claude-in-session"
  },
  "prof.page.master": {
