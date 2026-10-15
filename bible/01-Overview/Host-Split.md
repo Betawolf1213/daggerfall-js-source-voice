@@ -223,9 +223,13 @@ stood, by the tool:
   came along in 86 lines; the host dropped the 107 it no longer reads.
 - `buildPixel` above the group calls it, so the tool flagged it: a function
   declaration was hoisted, and a destructured `const` is not. Read: nothing
-  calls a build before the construction runs - the boot's first build is 505
-  lines below it, and `bootWorld` awaits nothing between line 1,324 and the
-  construction, so no callback reaches a build early either.
+  calls a build before the construction runs - the boot's first build
+  (`world.js:"const playerPixel = await awaitedBuild(first.px, first.py);"`)
+  stands below it, and `bootWorld`'s last await above the construction is
+  `loadModWorldData` (`world.js:"await loadModWorldData();"`): from there
+  the boot runs to the construction without yielding, so no callback reaches a
+  build early either. (A build before it would have died before the move too, on
+  the breather's dead zone.)
 - 136 mutant records over their lists and 4 doc anchors followed the code, by
   the tool. By hand: an anchor in a code comment (`exterior.js`, which the tool
   does not read), a `citedrift` pin on a ledger citation the tool had moved, and
@@ -266,3 +270,27 @@ own law:
 Proved, not supposed: `tools/mutate.mjs` over the 136 moved records and the
 523 world.js records whose tests changed - 659 dead, 0 survived. A rewritten
 pin that had gone blind would have let one live.
+
+AUDIT HOST-SPLIT 2 (2026-10-15) read the move by an independent scope analysis -
+every one of the moved code's 2,812 references resolving to the same binding of
+the same kind before and after, the 84 copies each a binding `bootWorld` never
+writes and made before the construction, the 22 live names each a getter with
+a setter exactly where the module writes - and found the move sound, and the
+seam's pin short of its own law:
+
+- A COPY THE HOST LATER WRITES WENT UNSEEN. `test/hostseam.test.js` checked that
+  each name the module copies at construction is handed over, never that the
+  host's binding is one that cannot change: a `const` turned `let` and
+  reassigned after the construction leaves the module reading the value it
+  copied, and passed everything. It holds each copy to a binding the host never
+  writes now, refuses a copy handed over as a getter (the module destructures it
+  once all the same), and counts a write through a destructuring target or a
+  for-of head as a write (it read as a read - a missing setter would have thrown
+  only when the line ran). Three mutants.
+- The cost of a live name: a handle with accessors is a dictionary object to V8,
+  about 18 ns a read against 1. The reads that run outside a build are the
+  collider's bucket translations, `host.state.pixelTranslation` - about 5 us a
+  full sweep over 300 buckets; inside a build, a few thousand a pixel, under
+  0.1 ms against a 6 ms slice. Recorded, not fixed: the next slice that moves a
+  per-frame reader should copy the handle's live names into locals per call, or
+  hand over a plain object whose fields the host updates.

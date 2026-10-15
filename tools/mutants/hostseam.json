@@ -16,5 +16,32 @@
     "tests": [
       "test/hostseam.test.js"
     ]
+  },
+  {
+    "name": "HOSTSEAM-a-settled-binding-written-by-the-host",
+    "file": "src/scenes/world.js",
+    "old": "  const wodOpened = wod\n",
+    "new": "  let wodOpened; wodOpened = wod\n",
+    "tests": [
+      "test/hostseam.test.js"
+    ]
+  },
+  {
+    "name": "HOSTSEAM-a-settled-name-handed-over-as-a-getter",
+    "file": "src/scenes/world.js",
+    "old": "wodForgetPeerSites, wodOpened,",
+    "new": "wodForgetPeerSites, get wodOpened() { return wodOpened; },",
+    "tests": [
+      "test/hostseam.test.js"
+    ]
+  },
+  {
+    "name": "HOSTSEAM-a-destructuring-write-read-as-a-read",
+    "file": "test/hostseam.test.js",
+    "old": "\n      || (patternOf.has(parent) && !(parent.type === 'AssignmentPattern' && key === 'right') && !(parent.type === 'Property' && key === 'key'))",
+    "new": "",
+    "tests": [
+      "test/hostseam.test.js"
+    ]
   }
 ]
