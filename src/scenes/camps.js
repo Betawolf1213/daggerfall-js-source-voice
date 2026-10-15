@@ -47,6 +47,7 @@ import { isCampfireKit, CAMPFIRE_USES } from '../systems/survival/items.js';   /
 import { isBedroll, isEmberJar, isFirewood, spendCharge, REST_ITEM_TEXT, FIREWOOD_NIGHTS, BEDROLL_CHANNEL_SECONDS } from '../systems/restItems.js';   // REST6: the Bedroll, the Ember Jar, Firewood
 import { REST_KIND } from '../systems/survival/rest.js';   // AUDIT SURV-TIERS (the third pass): a camp's rest tends its tent's fire
 import { hearthNear, hearthAabb } from '../systems/survival/hearth.js';   // HEARTH1: the world's own fires answer the same question this pool does
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a camp's fire named by its camp
 
 /** The light hangs this far over the flame's base. */
 export const FIRE_LIGHT_UP = 0.6;
@@ -416,7 +417,7 @@ export function createCamps({
     const near = feet
       ? lit.map((c) => [c, Math.hypot(c.rec.pos[0] - feet[0], c.rec.pos[1] - feet[1], c.rec.pos[2] - feet[2])]).filter(([, d]) => d <= CAMP_LIGHT_REACH).sort((a, b) => a[1] - b[1]).map(([c]) => c)
       : lit;
-    return near.slice(0, CAMP_LIGHTS_MAX).map((c) => ({ x: c.rec.pos[0], y: c.rec.pos[1] + FIRE_LIGHT_UP, z: c.rec.pos[2], range: FIRE_LIGHT_RANGE }));
+    return near.slice(0, CAMP_LIGHTS_MAX).map((c) => adoptLight({ x: c.rec.pos[0], y: c.rec.pos[1] + FIRE_LIGHT_UP, z: c.rec.pos[2], range: FIRE_LIGHT_RANGE }, c.rec));   // LIGHT-ID: the camp's fire, frame to frame
   }
   /** A tent's matrix. DECK-CAMP: on a deck, laid in her frame - she rolls and pitches it with her. */
   const tentMatrix = (c) => {

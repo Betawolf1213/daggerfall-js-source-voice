@@ -35,6 +35,7 @@ import { marksCardModel } from '../ui/gateMarksView.js';   // WB9a: tonight's ma
 import { trs } from '../world/mat4.js';
 import { RAY_DISTANCE } from '../player/activate.js';
 import { CAPSULE_RADIUS } from '../player/motor.js';
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: the gate's fire named by its gate
 
 /** The collider's bucket for the gate's stone. */
 export const GATE_BUCKET = 'wb:gate';
@@ -279,7 +280,7 @@ export function createGatePool({
     /** The fire's light over the threshold, for the host's list. */
     lights() {
       if (!place || place.coarse || place.fade <= 0) return NO_GATE;
-      return [{ x: place.origin[0], y: place.origin[1] + GATE_LIGHT_UP, z: place.origin[2], range: GATE_LIGHT_RANGE * place.fade * (0.5 + 0.5 * open) }];
+      return [adoptLight({ x: place.origin[0], y: place.origin[1] + GATE_LIGHT_UP, z: place.origin[2], range: GATE_LIGHT_RANGE * place.fade * (0.5 + 0.5 * open) }, place)];   // LIGHT-ID: the gate's fire, frame to frame
     },
     /** The eye's box: the FIRE, not the stone - a player standing in the threshold is inside the gate's own bounds, and a
      *  box they stand in would win every press they made there. The opening's slab, turned with the gate. */

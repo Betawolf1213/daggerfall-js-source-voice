@@ -79,6 +79,7 @@ import { waterCorners, WATER_DRAW_MASK_TABLE } from '../world/waterCorners.js'; 
 import { windowEmissionRGB } from '../render/windowEmission.js';
 import { realWindowsMode, VIEW_RINGS, clockFogColor } from '../render/realWindows.js';   // RW1: the rooms behind the glass, and the street a building's glass looks out on
 import { CITY_LIGHT_COLOR, CITY_LIGHT_RANGE, LIGHTS_ARCHIVE, collectCityLights, nearestLights, capFadeColors, capFadePairs, fillLanternPool, rangesFor } from '../world/cityLights.js';
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a pooled light named by the light it stands for
 import { isHearthFlat, HEARTH_NEAR } from '../systems/survival/hearth.js';   // HEARTH1: which of those lanterns is a fire you could cook on, and how far one can matter
 import { withPlayerLights } from './magicCandle.js';   // X11/T1: the lights the PLAYER carries
 import { playerTorchLight, waistLanternPoseBit, torchPoseByte, peerTorchLight } from '../systems/playerTorch.js';   // T1; HT-WAIST-NET: the pose's lantern at the waist
@@ -31147,6 +31148,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       for (const l of p.wodLights) {
         const e = _sceneLights[n] ?? (_sceneLights[n] = { x: 0, y: 0, z: 0 });
         e.x = l.x + t[0]; e.y = l.y + t[1]; e.z = l.z + t[2]; e.wodRange = l.range; e.wodColor = l.color;
+        adoptLight(e, l);   // LIGHT-ID: the pool's entry is this light's this frame (the pool refills in `built`'s order)
         n++;
       }
     }
@@ -31159,6 +31161,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     for (const l of lights) {
       const e = _sceneLights[n] ?? (_sceneLights[n] = { x: 0, y: 0, z: 0 });
       e.x = l.x; e.y = l.y; e.z = l.z; e.wodRange = l.range; e.wodColor = l.color;
+      adoptLight(e, l);   // LIGHT-ID: and a boat's lantern its own, as she sails
       n++;
     }
     return n;
@@ -34785,7 +34788,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     const csaLit = csaOn() ? csa.lights(cam.pos) : [];   // AUDIT PRE-MERGE 0928 R2: the boats' lit lanterns are scene lights - in the selection below with the street's, never the player's extras
     // QUAYS: the quays' lanterns, in the lanterns' hours, scene lights beside the boats' in the town lanterns' colour -
     // AUDIT HOLDINGS Q3: never the player's extras, which are never cut and pushed the street's nearest out of the cap
-    if (lightsOnAt(minute)) for (const l of quays?.lights() ?? []) csaLit.push({ x: l.x, y: l.y, z: l.z, range: l.range, color: CITY_LIGHT_COLOR_F32 });
+    if (lightsOnAt(minute)) for (const l of quays?.lights() ?? []) csaLit.push(adoptLight({ x: l.x, y: l.y, z: l.z, range: l.range, color: CITY_LIGHT_COLOR_F32 }, l));   // LIGHT-ID: the quay's lantern's own
     // SHIPYARDS: the lighthouses' lamps and the shipyards' office lanterns, in the lanterns' hours (the pool's own `lit`) -
     // scene lights beside the quays', in the town lanterns' colour
     if (portHost && lightsOnAt(minute)) portLightsInto(csaLit);

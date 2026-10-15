@@ -501,7 +501,8 @@ test('SERAPH-WINGS AUDIT 3, the net: a crouched or mounted wearer without bones 
   auraWingLights([{ at: [0, 0, 0], aura: 'seraphwings', yaw: 0, cape: { ...cape, sunk: true } }], [0, 1.6, -5], lit);
   assert.equal(lit.length, 0, 'closed: unlit');
   const wm = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
-  assert.match(wm, /const _dgTint = \(l\) => \(l && !l\.aura \? \{ \.\.\.l, color: _iilOn \? iilTorch\(l\)\.color : _dgColor \} : l\);/, 'the dungeon\'s flame tint passes an aura\'s light by');
+  // PIN MOVED (LIGHT-ID): the tint's copy is its light's (render/lightId.js adoptLight)
+  assert.match(wm, /const _dgTint = \(l\) => \(l && !l\.aura \? adoptLight\(\{ \.\.\.l, color: _iilOn \? iilTorch\(l\)\.color : _dgColor \}, l\) : l\);/, 'the dungeon\'s flame tint passes an aura\'s light by');
 });
 
 test('SERAPH-WINGS AUDIT 4: a pose reused after a swim is not left sunk - a swim and then a ride or a crouch opens the wings again and lights them; the last segment of every strand lies flat, its across the same way as the one before it (it was taken backward at the tip, and the segment twisted into a bowtie) (mutants: the stale sunk, the tip\'s tangent)', () => {

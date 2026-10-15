@@ -31,6 +31,7 @@ import { freeLodgedFeet } from '../src/characters/foeSpacing.js';   // FIELD BUG
 import { auraWingLights } from '../src/render/auraRing.js';   // SERAPH-WINGS: peerTorchLights' tail
 import { foeSeed, applyWireLook } from '../src/characters/foeBodies.js';   // AUDIT MW-NPC II K3: the dungeon context's look seed, in the mounted scope
 import { partyOnlyQuestShare } from '../src/scenes/questFoeHost.js';   // QUEST-OWNER: the dungeon's quest seam, narrowed to the party (ownShare)
+import { adoptLight } from '../src/render/lightId.js';   // LIGHT-ID: the dungeon's light copies adopt their lights
 
 function sliced(path) {
   const S = readFileSync(new URL(path, import.meta.url), 'utf8');
@@ -360,6 +361,7 @@ function dungeonLights(abyss) {
     return _dgLit;
   `, {
     withPlayerLights, _dgNear: { data: new Float32Array(0), colors: new Float32Array(0) }, _dgColor: dgColor, _abyss: abyss,
+    adoptLight,   // PIN MOVED (LIGHT-ID): the tint's and the candle's copies are their lights' (render/lightId.js)
     dungeonCtx: { candleLight: () => null, campLights: () => [], torchLights: () => [] },
     playerTorchLight: () => null, thunderlockMuzzleLight: () => null, playerEntity: {}, player: { feetAt: () => [8, 0, 4] }, cam: { pos: [8, 1.7, 4], yaw: 0 },
     host: { peerLights: world.peerLights, modeLights: () => [] },
