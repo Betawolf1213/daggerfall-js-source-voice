@@ -159,6 +159,10 @@ let _tolls = new WeakMap();              // GILDED1: a tolling weapon -> its lan
 let _lastToll = null;                    // GILDED1: the last foe a tolling weapon's shot landed on, and when
 /** @type {WeakSet<object>} */
 let _struck = new WeakSet();             // the foes my blows have landed on (First Blood)
+/** @type {WeakMap<object, number>} */
+let _undertow = new WeakMap();           // GILDED2: a foe -> the Undertow's landed blows on it (its stacks, at most the power's max)
+/** @type {{ foe: object, at: number } | null} */
+let _lastUndertow = null;                // GILDED2: the last foe an Undertow blow landed on, and when (its kill heals - TOLL_REFUND_S's bound)
 /** GILDED1: THE HOUR TOLLS - is this weapon's next landed shot its toll? Its landed shots are counted on the strike
  *  (lootStrike, after the blow), so the blow asks before the count moves: shots one and two ring nothing, the third tolls. */
 const tollDue = (weapon, p) => !!weapon && (_tolls.get(weapon) ?? 0) === p.every - 1;
@@ -233,6 +237,7 @@ export function lootBlow(weapon, damage, attacker, target, info) {
       case 'execute': if (share(target) < p.below / 100) pct += p.pct; break;
       case 'firstblood': if (!_struck.has(target)) pct += p.pct; break;
       case 'toll': if (tollDue(weapon, p)) pct += p.pct; break;   // GILDED1: the third that lands
+      case 'undertow': pct += p.pct * (_undertow.get(target) ?? 0); break;   // GILDED2: the blows landed on this foe before (counted to its max at the strike)
       default: break;
     }
   }
@@ -259,6 +264,8 @@ export function lootStrike(attacker, target, damage, weapon) {
       case 'conduit': gainMana(attacker, p.mana); break;
       case 'flow': _s.flow = Math.min(p.max, flowStacks(now) + 1); _s.flowUntil = now + p.seconds; break;
       case 'toll': if (weapon) { _tolls.set(weapon, ((_tolls.get(weapon) ?? 0) + 1) % p.every); _lastToll = { foe: target, at: now }; } break;   // GILDED1
+      case 'dragonfire': if (weapon && foeGroup(target) === p.group) dragonfire(target, (damage * p.share) / 100, p.metres, p.group); break;   // GILDED2
+      case 'undertow': if (weapon) { _undertow.set(target, Math.min(p.max, (_undertow.get(target) ?? 0) + 1)); _lastUndertow = { foe: target, at: now }; } break;   // GILDED2
       default: break;
     }
   }
@@ -294,6 +301,14 @@ function arc(target, amount, metres) {
   for (const f of near(door, struck.ai.feet, metres, target)) { const d = flat2(f.ai.feet, struck.ai.feet); if (d <= bestD) { best = f; bestD = d; } }
   const n = best ? Math.floor(amount * elementShare(best.entity, 'shock')) : 0;
   if (best && n > 0) door.hurtFoe(best, n);
+}
+/** GILDED2: Dragonfire - every other foe of `group` within `metres` of the struck one takes `amount`, and no element's share
+ *  of it: Akatosh's fire, which no Daedra resists. Earthshaker's reach (near), one kind of foe. */
+function dragonfire(target, amount, metres, group) {
+  const door = playerDoor();
+  const struck = recordOf(door, target);
+  if (!struck?.ai?.feet || !(amount > 0)) return;
+  for (const f of near(door, struck.ai.feet, metres, target)) if (foeGroup(f.entity) === group) door.hurtFoe(f, Math.max(1, Math.round(amount)));
 }
 /** Earthshaker: every other foe within `metres` of the struck one takes `amount`. */
 function quake(target, amount, metres) {
@@ -402,7 +417,7 @@ export const hasteBundle = (p) => ({
     magnitudeBaseLow: p.speed, magnitudeBaseHigh: p.speed, magnitudeLevelBase: 0, magnitudeLevelHigh: 0, magnitudePerLevel: 1,
   }],
 });
-/** MY KILL (playerKills.js - every pool's word that my own blow killed a foe): Sanctified's and Orc Rage's heal, Soul
+/** MY KILL (playerKills.js - every pool's word that my own blow killed a foe): Sanctified's, Orc Rage's and (GILDED2) the Undertow's heal, Soul
  *  Siphon's magicka, Tribute's gold, Courier's Haste. */
 export function lootKill(foe) {
   if (!foe || neverCounts(foe)) return;
@@ -421,6 +436,7 @@ export function lootKill(foe) {
       case 'siphon': gainMana(me, (me.maxMagicka * p.pct) / 100); break;
       case 'tribute': { const g = p.gold * Math.max(1, foe.level | 0); addGoldPieces(me, g); say(`Tribute: ${g} gold.`); break; }
       case 'toll': if (p.refund && _lastToll?.foe === foe && now - _lastToll.at <= TOLL_REFUND_S && Array.isArray(me?.items)) { addItem(me.items, createPellets(1)); _lastToll = null; } break;   // GILDED1: the felling shot's pellet, back
+      case 'undertow': if (_lastUndertow?.foe === foe && now - _lastUndertow.at <= TOLL_REFUND_S) { healMine(me, (me.maxHealth * p.heal) / 100); _lastUndertow = null; } break;   // GILDED2: a foe it fells, the tide's heal
       case 'haste':
         if (now >= _s.hasteReady && door?.castOnPlayer) { _s.hasteReady = now + p.recover; _s.recovering.add('haste'); door.castOnPlayer(hasteBundle(p)); }
         break;
@@ -571,6 +587,7 @@ export function lootHudChips(entity, now = _now()) {
 /** Tests only: every carry and power fresh, a clock and a chance of their own (seconds, [0, 1)). */
 export function _resetLootPowersForTests() {
   _carry = new WeakMap(); _resetPlayerHealForTests(); _s = freshState(); _hexed = new WeakMap(); _struck = new WeakSet(); _tolls = new WeakMap(); _lastToll = null;
+  _undertow = new WeakMap(); _lastUndertow = null;   // GILDED2
   _say = (line) => { hudText(line); };
 }
 export function _setLootPowersClockForTests(fn) { _now = typeof fn === 'function' ? fn : () => performance.now() / 1000; }

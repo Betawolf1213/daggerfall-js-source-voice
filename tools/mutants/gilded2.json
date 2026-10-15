@@ -1,0 +1,155 @@
+[
+  {
+    "name": "GILDED2-a-line-over-the-band",
+    "file": "src/systems/gilded.js",
+    "old": "    line('slayer', 30, 'daedra'),",
+    "new": "    line('slayer', 31, 'daedra'),",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-oaths-make",
+    "file": "src/systems/gilded.js",
+    "old": "  templateIndex: WEAPONS.Dai_Katana,\n  material: WEAPON_MATERIALS.Daedric,",
+    "new": "  templateIndex: WEAPONS.Dai_Katana,\n  material: WEAPON_MATERIALS.Ebony,",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-sovereigns-slayer",
+    "file": "src/systems/gilded.js",
+    "old": "    line('leech', 10),",
+    "new": "    line('slayer', 30, 'daedra'),",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-thunderlock-for-every-record",
+    "file": "src/systems/gilded.js",
+    "old": "r.templateIndex === THUNDERLOCK_TEMPLATE ? createThunderlock({ material: r.material }) : createWeapon(r.templateIndex, r.material);",
+    "new": "createThunderlock({ material: r.material });",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-gates-chance",
+    "file": "src/systems/gilded.js",
+    "old": "export const GATE_GILDED_CHANCE = 1 / 100;",
+    "new": "export const GATE_GILDED_CHANCE = 1 / 50;",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-serpents-chance",
+    "file": "src/systems/gilded.js",
+    "old": "export const SERPENT_GILDED_CHANCE = 1 / 100;",
+    "new": "export const SERPENT_GILDED_CHANCE = 1 / 20;",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-oath-before-the-passes",
+    "file": "src/systems/gateSpoils.js",
+    "old": "  techniquePass(pieces.map((p) => p.item), rolls);\n  // GILDED2",
+    "new": "  rollDragonfireOath(rolls);\n  techniquePass(pieces.map((p) => p.item), rolls);\n  // GILDED2",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-sovereign-to-a-ship-that-stood",
+    "file": "src/systems/serpentSpoils.js",
+    "old": "const sovereign = dealt ? rollSunkenSovereign(rolls) : null;",
+    "new": "const sovereign = rollSunkenSovereign(rolls);",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-every-foe-burns",
+    "file": "src/systems/lootPowers.js",
+    "old": "for (const f of near(door, struck.ai.feet, metres, target)) if (foeGroup(f.entity) === group) door.hurtFoe",
+    "new": "for (const f of near(door, struck.ai.feet, metres, target)) door.hurtFoe",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-struck-one-burns-too",
+    "file": "src/systems/lootPowers.js",
+    "old": "for (const f of near(door, struck.ai.feet, metres, target)) if (foeGroup(f.entity) === group)",
+    "new": "for (const f of near(door, struck.ai.feet, metres, null)) if (foeGroup(f.entity) === group)",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-elements-share-taken",
+    "file": "src/systems/lootPowers.js",
+    "old": "door.hurtFoe(f, Math.max(1, Math.round(amount)));\n}\n/** Earthshaker",
+    "new": "door.hurtFoe(f, Math.max(1, Math.round(amount * elementShare(f.entity, 'fire'))));\n}\n/** Earthshaker",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-a-blow-on-any-foe-bursts",
+    "file": "src/systems/lootPowers.js",
+    "old": "case 'dragonfire': if (weapon && foeGroup(target) === p.group)",
+    "new": "case 'dragonfire': if (weapon)",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-undertow-uncapped",
+    "file": "src/systems/lootPowers.js",
+    "old": "case 'undertow': if (weapon) { _undertow.set(target, Math.min(p.max, (_undertow.get(target) ?? 0) + 1));",
+    "new": "case 'undertow': if (weapon) { _undertow.set(target, (_undertow.get(target) ?? 0) + 1);",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-one-count-for-every-foe",
+    "file": "src/systems/lootPowers.js",
+    "old": "case 'undertow': pct += p.pct * (_undertow.get(target) ?? 0); break;",
+    "new": "case 'undertow': pct += p.pct * (_undertow.get(_lastUndertow?.foe ?? target) ?? 0); break;",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-no-tide-heal",
+    "file": "src/systems/lootPowers.js",
+    "old": "{ healMine(me, (me.maxHealth * p.heal) / 100); _lastUndertow = null; }",
+    "new": "{ _lastUndertow = null; }",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-any-kill-heals",
+    "file": "src/systems/lootPowers.js",
+    "old": "case 'undertow': if (_lastUndertow?.foe === foe && now - _lastUndertow.at <= TOLL_REFUND_S)",
+    "new": "case 'undertow': if (_lastUndertow)",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-one-hint-for-all",
+    "file": "src/systems/lootCodex.js",
+    "old": "hint: r.hint ?? GILDED_HINT,",
+    "new": "hint: GILDED_HINT,",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  }
+]

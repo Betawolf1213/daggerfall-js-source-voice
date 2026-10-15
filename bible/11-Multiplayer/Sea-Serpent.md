@@ -431,6 +431,8 @@ route `/v1/serpent/claim`):
   brings *On the Burning Doors* as a breach's does; and a ship that dealt finds a piece of **Sethrakul's Coilscale** -
   the serpent's own Aetheric set (`Sigil-Sets.md` section 6c) - a quarter of the time, rolled after everything above so
   every earlier hoard is what it was for its seed.
+- SERPENT5 (section 17): a ship that dealt finds **the Sunken Sovereign**, a Gilded saber, one hoard in a hundred - the
+  hoard's very last draw - and its first write may grant the title Coilbreaker and the aura The Maelstrom.
 
 Every piece is known, and the ladder's last pass is applied (LOOT2). It is rolled at the level the fight admitted (the
 receipt's `l`), never past the standing character's own (D2). It is given when the service says this claim's device
@@ -840,6 +842,70 @@ missiles ask seams they are not handed, and answer as before.
 
 **The relay:** `world193` (section 11). **Pins:** `test/serpent4.test.js` (9) and the SERPENT1, AUDIT SERPENT, SERPENT2,
 SERPENT3 and AUDIT SHIPS pins its laws moved; `tools/mutants/serpent4.json` (36, all dead).
+
+## 17. The Old Coil's rewards - the Sunken Sovereign, Coilbreaker and The Maelstrom (SERPENT5, 2026-10-15)
+
+Mac: *"With the introduction of elite dungeons soon. I want to enhance the rewards for each world activety ... A gilded
+weapon to the serpent + a rare chance of a title/aura drop."* Three rewards, each a ship that DEALT's alone - a ship that
+stood is paid its hoard and its Renown as before, and nothing here.
+
+**The Sunken Sovereign** (GILDED2, `06-Systems/Gilded.md` section 7): a Gilded Ebony Saber, its power Undertow - the
+hoard's very last draw, one dealing ship's hoard in a hundred (`systems/serpentSpoils.js`, after the technique pass), so
+every hoard rolled before it is what it was for its seed.
+
+**Coilbreaker and The Maelstrom** - the Hour's grants' law (`11-Multiplayer/Super-Dungeons.md` section 11, sds.js) rung
+for rung, in `server-account/src/serpents.js`:
+
+- **Rolled by the service, on the kill's first write.** `claimSerpent` draws four bytes of its own (`rand` - never the
+  receipt's seed, which the page holds: AUDIT SD III R4's lesson) for a REGISTERED account whose receipt says `dealt`,
+  and `serpentHonoursRoll` reads them on a stream of its own (`SERPENT_HONOURS_SALT`, 'COIL' - never the Hour's 'HOUR'):
+  the title **Coilbreaker** one kill in twenty (`SERPENT_TITLE_CHANCE`), the aura **The Maelstrom** one in fifty
+  (`SERPENT_AURA_CHANCE`), the title's draw first. A serpent rises every four hours and an account is counted one a
+  serpent day, where the Hour's one in four and one in eight come a few times a week: rare, and every evening's serpent a
+  chance at them.
+- **Laid by THIS claim's row alone.** The grants ride the claim's own batch: the kill's row says what it granted
+  (`serpent_kills.title`, `.aura`), and the renown statement that runs by the row's nonce ORs them onto the account's
+  `players.serpent_honours` (1 the title, 2 the aura) - migration `0116_serpent_honours.sql` - so a receipt claimed twice
+  at once rolls once, and a claim that wrote no row lays nothing whatever its draw. A guest is never counted, so never
+  granted.
+- **Held for good, read off the row** (`server-account/src/titles.js`): `titlesHeld` gives Coilbreaker off the first bit,
+  `aurasHeld` The Maelstrom off the second, a registered account's alone - worn through the title's and the aura's own
+  doors and signed into the token (`t`, `au`) as every one is.
+- **Answered** (`ACCOUNT_VERSION` acct135): a counted claim's answer carries `title`, `aura` (what THIS kill granted)
+  and `titleNew`, `auraNew` (whether the account did not hold it before - the session's row, read before the write).
+
+**Said and popped** (`net/serpentClaims.js`): a counted kill that granted one says "The Bay names you Coilbreaker." /
+"The Maelstrom turns about you." in the chat, and - when it is new - hands the loot banner's honour door
+(`ui/lootBanner.js` `announceHonour`, HONOUR-BANNER) `SERPENT_HONOUR_KEYS`, wired by the world host beside the Hour's.
+A re-roll of a held one is said, never popped as "New"; a service from before acct135 says neither.
+
+**The words and the colours** (`ui/playerBadge.js`): *Coilbreaker* drawn the open sea into the tide into the foam
+(`COIL_SEA` #2a8fa6, `COIL_TIDE` #1fae8c, `COIL_FOAM` #d8f9ef), edged in black for its near-white end, its one colour the
+tide's - greener and deeper than the Disciple's teal; *The Maelstrom*'s button in the Coilbreaker's paint.
+
+**The Maelstrom, drawn** (`render/auraRing.js`, the aura pass's ninth look, kind 8, added whole - no shade, no mesh, no
+symbols): the whirlpool Sethrakul raises about a ship, at the wearer's feet.
+
+- THE GROUND: a pool of the sea's light, dark in its eye (`MAELSTROM_EYE_R`); `MAELSTROM_ARMS` (3) arms of foam wound in
+  to the eye as a log spiral (`MAELSTROM_TWIST`), turning with the pool - clockwise as the eye sees the ground
+  (`maelstromSpin`'s angle falls, the one mirror's law), so a point of an arm falls INWARD and the arms draw in
+  (`maelstromArmAngle`); a lip of foam breaking round it at `MAELSTROM_R`, the surf running round the lip.
+- THE WALL (the strip at the lip, `MAELSTROM_H` high): the curl of water, its crest of foam riding the arms round
+  (higher under an arm); spray thrown up off the crest, `MAELSTROM_DROPS` drops each on its own arc and back down,
+  carried round with the pool. It kindles UP, the spray rising from the feet.
+- Every rate whole over the aura clock (`maelstromRatesWhole`), so the pool never jumps where the clock wraps; its colours
+  the title's own (`MAELSTROM_RGB` reads `COIL_*`).
+
+**Versions and deploy order.** The two words join the token's closed lists last (`net/identityToken.js` `TITLES`,
+`AURAS`), and the relay reads them off every hello's token - so the RELAY deploys first (`world205`; its bundle's files
+unchanged, only identityToken.js's bytes), then the account service (acct135, with migration 0116). An account service
+ahead of its relay would sign a word the relay refuses, and the token would be refused whole.
+
+**The pins.** `test/serpent5_honours.test.js` - the roll, the claim (through the real migrations, node:sqlite), held,
+the vocabulary and the badge, the carrier, the look's law and the shader RUN (`test/glsl.mjs`: the arms at the clock's
+own turn, the eye, the lip, the curl and the spray). `tools/mutants/serpent5.json`: 21, all dead. The vocabulary's
+enumerations moved with it, each saying so (ACC3, AEGIS, PRIMARCH, CRYSTAL-FIST, SERAPH-WINGS, SHADOW-CLOAK, SD9c,
+HOURS-FIRST, CHAP4c, CHAP6e, LAMP-KEEPER II), and every record that named the lists' old tails was re-aimed by content.
 
 See also: `World-Bosses.md` (the gate, whose law this follows at sea), `03-World/Naval-Combat.md` (the guns, the
 hull and the seams it reaches).

@@ -208,7 +208,10 @@ test('TECH1 THE DOOR: one roll a piece at its tier\'s chance, the door\'s LAST d
       const p = door();
       LR._setTechniqueForTests(null);
       assert.equal(s.gold, p.gold);
-      assert.deepEqual(s.pieces.map((x) => noTech(x.item)), p.pieces.map((x) => x.item), `seed ${seed}: the spoils before it are their seed's`);
+      // PIN MOVED (GILDED2, bible/06-Systems/Gilded.md section 7): the gate's Oath and the serpent's Sovereign are the doors'
+      // very last draw, AFTER the technique's - set aside on both sides
+      const unGilded = (list) => list.filter((x) => x.tier !== 'gilded' || x.item.gilded === 'the-hourlock');
+      assert.deepEqual(unGilded(s.pieces).map((x) => noTech(x.item)), unGilded(p.pieces).map((x) => x.item), `seed ${seed}: the spoils before it are their seed's`);
       assert.deepEqual(s.card ?? null, p.card ?? null, 'the card before it');
     }
   }
