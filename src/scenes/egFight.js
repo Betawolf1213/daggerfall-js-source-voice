@@ -59,8 +59,9 @@
 // PRESENCE (egPresenceOf - world/egKit.js EG_LORD_PRESENCE: a Court's lord 1.6, a Valkynaz 1.8, a champion 1.4, a twin and a
 // mirror their own lord's) over its body's scale (egLookOf `drawn` beside `scale`, which stays the body's): the billboard grows up
 // from its feet on the body's place (the renderer's quad is base-anchored), a flyer's hover rises with it, the grown sprite casts
-// no shadow (OW-BIG's law), and an errand's numerals stand over the drawn head (egGivenAt). The hit target, every sound, the
-// telegraphs and the wire are the body's as before: the drawn size is this screen's alone.
+// no shadow (OW-BIG's law), and an errand's numerals stand over the drawn head (egGivenAt). The hit target's reach (its
+// radius - the relay's bodyR), every sound, the telegraphs and the wire are the body's as before; the target's HEIGHT is the
+// drawn sprite's (the relay judges no height - a shot at the head you see meets him): the drawn size is this screen's alone.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
@@ -311,7 +312,7 @@ export function egGivenAt(b, centre, t, top = NaN) {
   return [centre[0] + x, y, centre[2] + z];
 }
 /** A body's look: a lord's its own (scaled, flying high), an add's its kind's by the band, an object's none (drawn
- *  otherwise). EG-LOOK (section 9): `scale` is the BODY's - the relay's bodyR and the hit target are read off it - and `drawn`
+ *  otherwise). EG-LOOK (section 9): `scale` is the BODY's - the relay's bodyR and the hit target's reach are read off it - and `drawn`
  *  the sprite's, its `presence` times it (an add's its own scale); `hover` how high over its feet it is drawn flying. */
 export function egLookOf(b, band) {
   if (b.role === EG_ROLE.lord) {
@@ -654,12 +655,13 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     if (d.batch.bounds) d.batch.bounds[3] = Math.hypot(w, h) * 0.5;
     d.batch.origin[0] = d.at[0]; d.batch.origin[1] = d.at[1]; d.batch.origin[2] = d.at[2];
     _batches.push(d.batch);
-    // the body my blows meet (never a friend, a ward's, a vanished lord). EG-LOOK (section 9): the BODY's - its height and radius
-    // off its body's scale (the relay's bodyR), never its drawn presence; it stands where the sprite's feet are drawn
+    // the body my blows meet (never a friend, a ward's, a vanished lord). EG-LOOK (section 9): its RADIUS the body's (the relay's
+    // bodyR - the reach the law judges), its HEIGHT the drawn sprite's (the relay judges no height: a blow or a bolt at the head
+    // you see meets him, never passes through it); it stands where the sprite's feet are drawn
     if (!b.fellAt && b.hp > 0 && (b.fl & (EG_FL.friend | EG_FL.hidden)) === 0) {
       d.target ??= { i: b.i, feet: [0, 0, 0], height: 2, radius: 0.6, entity: hostStandIn({ mobile: look.mobile, name: look.name }, b.i), mobile: look.mobile, name: look.name, m: b.max };
       d.target.feet[0] = d.at[0]; d.target.feet[1] = centre[1] + y; d.target.feet[2] = d.at[2];
-      d.target.height = (look.lord ? 2.2 : EG_LEGION_KINDS[b.k]?.h ?? 2) * (look.lord ? look.scale / 1.2 : 1); d.target.radius = look.lord ? Math.max(0.8, (1.8 * look.scale) / 3) : EG_LEGION_KINDS[b.k]?.r ?? 0.6; d.target.m = b.max;
+      d.target.height = (look.lord ? 2.2 : EG_LEGION_KINDS[b.k]?.h ?? 2) * (look.lord ? look.drawn / 1.2 : 1); d.target.radius = look.lord ? Math.max(0.8, (1.8 * look.scale) / 3) : EG_LEGION_KINDS[b.k]?.r ?? 0.6; d.target.m = b.max;
       _targets.push(d.target);
     }
     // EG-H1: the WIND once the wind-up is past FEINT_AT and the blow still stands - a feint's cut comes first, so it never glints

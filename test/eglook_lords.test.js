@@ -92,7 +92,7 @@ test('EG-LOOK THE LORDS\' PRESENCE (Elite-Gates-Look.md section 9; world/egKit.j
   }
 });
 
-test('EG-LOOK THE LORDS, DRAWN (section 9; scenes/egFight.js drawBody over a recording renderer): every boss\'s sprite at its presence - its quad w and h the record\'s times its body\'s scale times its presence, its sphere reaching the drawn quad - its FEET on its body\'s place (the base the renderer stands the quad up from), a mirror\'s 0.95 of its lord\'s, a champion\'s and a Valkynaz\'s their own; a grown sprite casts no shadow (OW-BIG\'s law) and the legion\'s still do; the hit target the BODY\'s - its height and radius off its body\'s scale, never the drawn one - standing at the drawn feet; a flyer\'s feet risen with its presence (its hover and its bob), clear over the company\'s heads, and its target with it; dragged down, on its feet (mutants: the sprite at the body\'s scale; the feet centred; the shadow kept; the sphere at the body\'s size; the target grown; the hover or its bob at the body\'s; the target left on the ground under a flyer)', async () => {
+test('EG-LOOK THE LORDS, DRAWN (section 9; scenes/egFight.js drawBody over a recording renderer): every boss\'s sprite at its presence - its quad w and h the record\'s times its body\'s scale times its presence, its sphere reaching the drawn quad - its FEET on its body\'s place (the base the renderer stands the quad up from), a mirror\'s 0.95 of its lord\'s, a champion\'s and a Valkynaz\'s their own; a grown sprite casts no shadow (OW-BIG\'s law) and the legion\'s still do; the hit target\'s reach the BODY\'s - its radius off its body\'s scale (the relay\'s bodyR), never the drawn one - and its height the drawn sprite\'s (the relay judges no height: a shot at the head you see meets him), standing at the drawn feet; a flyer\'s feet risen with its presence (its hover and its bob), clear over the company\'s heads, and its target with it; dragged down, on its feet (mutants: the sprite at the body\'s scale; the feet centred; the shadow kept; the sphere at the body\'s size; the target short of the drawn head; the hover or its bob at the body\'s; the target left on the ground under a flyer)', async () => {
   const at = (x) => ({ x, z: 30 });
   const bodies = [
     lordRow(1, 'hound', at(-12)), lordRow(2, 'garoth', at(-6)), lordRow(3, 'garoth', { ...at(0), fl: EG_FL.mirror }), lordRow(4, 'kynreeve', at(6)),
@@ -118,7 +118,7 @@ test('EG-LOOK THE LORDS, DRAWN (section 9; scenes/egFight.js drawBody over a rec
     const feet = centre[1] + egBodyHeight(b, clock.t), lift = q.origin[1] - feet;
     if (b.role === EG_ROLE.lord) {
       assert.equal(q.noShadow, true, `${key}: a grown sprite casts no shadow`);
-      assert.ok(near(tg.height, (2.2 * look.scale) / 1.2, 1e-9) && near(tg.radius, Math.max(0.8, (1.8 * look.scale) / 3), 1e-9), `${key}: its target the body's (${tg.height}, ${tg.radius})`);
+      assert.ok(near(tg.height, (2.2 * look.drawn) / 1.2, 1e-9) && near(tg.radius, Math.max(0.8, (1.8 * look.scale) / 3), 1e-9), `${key}: its target's reach the body's, its height the drawn sprite's (${tg.height}, ${tg.radius})`);
     } else {
       assert.equal(q.noShadow, undefined, 'the legion casts as it did');
       assert.deepEqual([tg.height, tg.radius], [EG_LEGION_KINDS[b.k].h, EG_LEGION_KINDS[b.k].r]);
@@ -158,7 +158,7 @@ function wokenAt(h, dc = []) {
   return { B, E, spec, now };
 }
 
-test('EG-LOOK THE BODY STANDS THE RELAY\'S (section 9, "the relay\'s bodyR and the client\'s hit target, both unchanged"; the shape the director mints): seed 12345\'s first Court\'s Grath stood by the director - at his look\'s own size and under Colossal II (1400) - folded through the wire onto a screen that draws him at his presence over his body: the reach to him exactly the radius the relay judges by, his target\'s height his body\'s, his quad his body times 1.6, his size on the wire still his body\'s; nothing of the relay reads a presence (mutants: the target\'s radius off the drawn size; Colossal\'s size unread on the screen)', async () => {
+test('EG-LOOK THE BODY STANDS THE RELAY\'S (section 9, "the relay\'s bodyR and the client\'s hit target, both unchanged"; the shape the director mints): seed 12345\'s first Court\'s Grath stood by the director - at his look\'s own size and under Colossal II (1400) - folded through the wire onto a screen that draws him at his presence over his body: the reach to him exactly the radius the relay judges by, his target\'s height his drawn sprite\'s, his quad his body times 1.6, his size on the wire still his body\'s; nothing of the relay reads a presence (mutants: the target\'s radius off the drawn size; Colossal\'s size unread on the screen)', async () => {
   for (const [dc, sz] of [[[], 0], [[[EG_DECREE_BY_KEY.colossal.id, 2]], 1400]]) {
     const W = wokenAt(5, dc), L = egLordsOf(W.B.F)[0], clock = { t: W.now };
     assert.equal(L.key, 'hound');
@@ -170,9 +170,9 @@ test('EG-LOOK THE BODY STANDS THE RELAY\'S (section 9, "the relay\'s bodyR and t
     const scale = egBossLook('hound').scale * (sz ? sz / EG_LAW_UNIT : 1);
     assert.ok(tg && q, 'drawn and met');
     assert.ok(near(tg.radius, L.r, 1e-9), `the reach to him the relay's own radius (${tg.radius} for ${L.r})`);
-    assert.ok(near(tg.height, (2.2 * scale) / 1.2, 1e-9), 'his target his body\'s height');
+    assert.ok(near(tg.height, (2.2 * scale * EG_LORD_PRESENCE.lord) / 1.2, 1e-9), 'his target as tall as his drawn sprite - the relay judges no height');
     assert.ok(near(q.size.h, SPRITE.h * scale * EG_LORD_PRESENCE.lord, 1e-9), `drawn at his presence (${q.size.h} m)`);
-    assert.ok(q.size.h > (tg.height * EG_LORD_PRESENCE.lord) / 1.2 - 1e-9, 'his sprite stands over his body');
+    assert.ok(q.size.h >= tg.height - 1e-9, 'his capsule inside his sprite');
   }
   // the presence is this screen's alone: nothing under src/net/ names it (the relay's bundle - test/relayversion.test.js - unmoved)
   const net = new URL('../src/net/', import.meta.url).pathname, files = [];
