@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { pathToFileURL } from 'node:url';
 import { createSdEnd } from '../src/scenes/sdEnd.js';
 import { RIFT_BELL_RECORDS } from '../src/systems/sdRiftSound.js';
@@ -157,7 +158,7 @@ test('AUDIT SD V (P1-P4, P6): THE HOLLOW\'S AND THE HOUR\'S FRAMES MAKE NOTHING 
     out.air = bytes(() => air.frame(secs[s++], ear));
     console.log(JSON.stringify(out));
   `;
-  const run = spawnSync(process.execPath, ['--expose-gc', '--min-semi-space-size=64', '--max-semi-space-size=64', '--input-type=module', '-e', script], { encoding: 'utf8' });
+  const run = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', script], { encoding: 'utf8' });
   assert.equal(run.status, 0, run.stderr);
   const m = JSON.parse(run.stdout.trim().split('\n').pop());
   t.diagnostic(Object.entries(m).map(([k, b]) => `${k} ${b.toFixed(2)}`).join(', '));
