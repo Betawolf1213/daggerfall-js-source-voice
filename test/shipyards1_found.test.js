@@ -220,8 +220,12 @@ test('SHIPYARDS THE HOSTS: world.js places the port\'s places in each port town\
   assert.match(w, /function docksWaitOf\(dfLocation, px, py\) \{\n\s*if \(!dfLocation \|\| docksBerthOf\(dfLocation\)\) return null;\n\s*try \{ return csaIsPortTown\(px, py\) \? dfLocation : null; \} catch \{ return null; \}/, 'the book\'s own test');
   assert.match(w, /_portDocksWait = docksWaitOf\(dfLocation, cur\?\.px, cur\?\.py\);/);
   assert.match(w, /const docks = berth \? sceneToLocationXZ\(berth, state\.pixelTranslation\(p\.px, p\.py\), p\.locOrigin\) : null;\n\s*return portPlaceRows\(p\?\.portSites, SHIPYARD_LAYOUT\.points\.crewmaster, docks, dfLocation\?\.name\);/, 'the rows (executed: test/shipyards1_audit_port.test.js)');
-  assert.match(w, /for \(const m of portHost\?\.overworldMarks\(\) \?\? \[\]\) marks\.push\(m\);\n\s*for \(const m of quays\?\.overworldMarks\(\) \?\? \[\]\) marks\.push\(m\);/, 'the Overworld');
-  assert.ok(w.indexOf('portHost?.overworldMarks()') > w.indexOf('function travelViewMarks()'));
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js, the port and
+  // the quays read live off the host that hands them over
+  const tvm = read('src/scenes/travelViewMarks.js');
+  assert.match(tvm, /for \(const m of host\.portHost\?\.overworldMarks\(\) \?\? \[\]\) marks\.push\(m\);\n\s*for \(const m of host\.quays\?\.overworldMarks\(\) \?\? \[\]\) marks\.push\(m\);/, 'the Overworld');
+  assert.ok(tvm.indexOf('portHost?.overworldMarks()') > tvm.indexOf('function travelViewMarks()'));
+  assert.match(w, /createTravelViewMarks\(\{[^]*?\n\s+get portHost\(\) \{ return portHost; \},[^]*?\n\s+get quays\(\) \{ return quays; \},[^]*?\n\s+\}\);/, 'handed over live');
   const door = read('src/ui/townMapDoor.js');
   assert.match(door, /if \(deps\.ports\?\.length\) deps = \{ \.\.\.deps, blocks: yardTownBlocks\(deps\.blocks \?\? \[\], deps\.ports\) \};/, 'laid at the door both maps share');
   const tt = read('src/scenes/townTalk.js');

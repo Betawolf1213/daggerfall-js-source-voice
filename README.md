@@ -44,6 +44,8 @@ or normal releases behind a paywall.
 
 ## Scripts
 
+Node 20.19+ or 22.12+ (Vite 8's floor; CI runs 22).
+
 - `npm run dev` - Vite dev server
 - `npm test` - Node test runner
 - `npm run build` - production build

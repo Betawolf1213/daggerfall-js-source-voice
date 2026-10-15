@@ -71,7 +71,7 @@
   },
   {
     "name": "OW4-B6-drawn-when-off",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "    const shown = getPref('wildernessCamps') === false || playerEntity.preventEnemySpawns ? [] : [...travelViewBands()];",
     "new": "    const shown = [...travelViewBands()];",
     "tests": [

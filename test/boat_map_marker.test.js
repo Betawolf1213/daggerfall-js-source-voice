@@ -6,11 +6,14 @@ const world = readFileSync(new URL('../src/scenes/world.js', import.meta.url), '
 // Execute the host's actual near-player marker loop with its view dependencies.
 // PIN MOVED (THE WROTHGARIAN ZONE): the zone's own loops over the drawable peers stand above this one now, so the
 // loop is found by the block it heads - the last such loop above the region's travellers (TV3)
-const end = world.indexOf('    // TV3: THE REGION');
-const begin = world.lastIndexOf('    for (const d of online?.drawable?.() ?? []) {', end);
+// PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js - the loop is
+// cut from there, and the six names it reads live off the host come in through `host`, as the module reads them
+const tvm = readFileSync(new URL('../src/scenes/travelViewMarks.js', import.meta.url), 'utf8');
+const end = tvm.indexOf('    // TV3: THE REGION');
+const begin = tvm.lastIndexOf('    for (const d of host.online?.drawable?.() ?? []) {', end);
 assert.ok(begin > 0 && end > begin);
-assert.ok(world.slice(begin, end).includes('marks.push({ key: `peer:${d.id}`'), 'the slice is the near-player marker loop');
-const loop = world.slice(begin, end);
+assert.ok(tvm.slice(begin, end).includes('marks.push({ key: `peer:${d.id}`'), 'the slice is the near-player marker loop');
+const loop = tvm.slice(begin, end);
 function markers(raw, drawn, hidden = new Set()) {
   const _peerMapPoses = new Map();
   const drawable = drawn;
@@ -28,6 +31,7 @@ function markers(raw, drawn, hidden = new Set()) {
     const peerRiders = { heightOf: () => 0 }, peerBodies = peerRiders, peerWalkers = peerRiders;
     const isShipMark = () => true, tvBadgeOf = () => null;
     const _wildStrangerIds = new Set(), WILD_TEXT = { stranger: 'Stranger' }, wildHidesPlayer = () => false;   // WILD1/WILD3: out of the zone - no stranger, no one hidden
+    const host = { online, onlineToScene, social, peerRiders, peerBodies, peerWalkers };
     ${loop}
     return marks;
   `)({ drawable: () => raw }, _peerMapPoses, hidden);

@@ -5,6 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { buildShipyardModel, SHIPYARD, HULL_STATIONS } from '../src/world/shipyardModel.js';
@@ -382,7 +383,7 @@ test('AUDIT SHIPYARDS A NIGHT FRAME ALLOCATES NOTHING HERE (L4-2, PERF-LIGHTS\' 
     out.glowCount = host.glows(eye, 0).length;
     console.log(JSON.stringify(out));
   `;
-  const run = spawnSync(process.execPath, ['--expose-gc', '--min-semi-space-size=64', '--max-semi-space-size=64', '--input-type=module', '-e', script], { encoding: 'utf8' });
+  const run = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', script], { encoding: 'utf8' });
   assert.equal(run.status, 0, run.stderr);
   const m = JSON.parse(run.stdout.trim().split('\n').pop());
   assert.equal(m.glowCount, 1 + 2 * BEAM_PUFFS);
