@@ -620,15 +620,21 @@ test('UXB1-B: the commit button says Confirm, head and foot, and the page says t
   });
 });
 
-test('UXB1-D: a replace prompt stands in the HEAD over the list it leaves in place, marks the rows it is about, and the list is inert under it', () => {
+test('UXB1-D: a replace prompt is a tooltip on the changed binding, marks both rows, and leaves the list inert', () => {
   withPane(({ doc, view, store }) => {
     const rowOf = (action) => find(view.body, 'ctl-row').find((r) => one(r, 'ctl-key').dataset.action === action);
     const classes = (n) => n.className.split(/\s+/);
     keyBtn(view, 'MoveForwards').onclick();
     doc.listeners[0].fn(keyEvent('KeyS'));   // MoveBackwards' default
     const head = one(view.body, 'ctl-head');
-    assert.ok(one(head, 'ctl-prompt'), 'the question is inside the sticky head');
-    assert.ok(classes(head).includes('ctl-asking'));
+    const wanted = rowOf('MoveForwards');
+    const tip = one(wanted, 'ctl-tooltip');
+    assert.ok(tip, 'the question is beside the binding being changed');
+    assert.ok(classes(tip).includes('ctl-prompt'), 'the tooltip keeps the prompt card and its answers');
+    assert.equal(one(head, 'ctl-prompt'), undefined, 'the sticky head no longer owns key conflicts');
+    assert.ok(!classes(head).includes('ctl-asking'));
+    assert.equal(keyBtn(view, 'MoveForwards').attrs['aria-expanded'], 'true');
+    assert.equal(tip.attrs.role, 'dialog');
     assert.ok(keyBtn(view, 'MoveForwards'), 'and the list is still drawn under it, so the scroll has somewhere to stay');
     assert.ok(classes(rowOf('MoveForwards')).includes('ctl-want'), 'the row the key would go to is marked');
     assert.ok(classes(rowOf('MoveBackwards')).includes('ctl-holder'), 'the row that holds it now is marked');

@@ -42,8 +42,8 @@
 //  - DEFAULTS confirms, then STAGES the registry's reset (KB1); Confirm
 //    commits it.
 //  - A KEY ANOTHER ACTION HOLDS asks before it moves (KB1, law 4) - in
-//    the sticky head, over the list it leaves standing, with the rows
-//    that clash marked (UXB1-D) - and offers a third answer, USE FOR
+//    a tooltip beside the binding being changed, with the rows that
+//    clash marked (UXB1-D) - and offers a third answer, USE FOR
 //    BOTH (UXB1-S): the key stays and lands here too, and a press does
 //    every action on it.
 //  - A SHARED KEY is green, and each of its rows names what else it
@@ -168,7 +168,7 @@ export const controlsDuplicates = () => dupes;
 export const captureArmed = () => armed;
 
 /** AUDIT KB1 (the UI lens' fourth finding): A PROMPT STANDING IS THE PANE'S, and Escape answers it No. The prompt
- *  card reads as a dialog (UXB1-D: in the sticky head, the list inert under it) - but with no capture armed, Escape
+ *  card reads as a dialog (UXB1-D: beside its binding, the list inert under it) - but with no capture armed, Escape
  *  fell through to the menu's back stack, which left the section and DISCARDED every staged bind
  *  (discardControlsStaging) or, on the pause face, resumed. Since KB1 nearly every bind raises the replace prompt, so
  *  a reflexive Escape there was the common way to lose a whole session of edits. ui/enhancedMenu.js's back stack
@@ -418,13 +418,32 @@ function keyRow(action, label) {
   clear.onclick = act(() => clearBinding(action));
   ctl.append(clear);
 
+  // The conflict belongs to the binding the player just touched. Keep the
+  // complete question and all three answers beside that button instead of
+  // moving the player's attention to the controls card at the top.
+  if (prompt?.kind === 'replace' && prompt.action === action) {
+    const tip = promptCard(true);
+    key.className += ' ctl-tip-anchor';
+    key.setAttribute('aria-expanded', 'true');
+    key.setAttribute('aria-controls', 'ctl-key-in-use');
+    ctl.append(tip);
+  }
+
   row.append(ctl);
   return row;
 }
 
-function promptCard() {
-  const c = el('div', 'ctl-prompt');
-  c.append(el('h3', null, prompt.kind === 'defaults' ? 'Default controls' : 'Key in use'));
+function promptCard(asTooltip = false) {
+  const c = el('div', `ctl-prompt${asTooltip ? ' ctl-tooltip' : ''}`);
+  if (asTooltip) {
+    c.id = 'ctl-key-in-use';
+    c.setAttribute('role', 'dialog');
+    c.setAttribute('aria-modal', 'true');
+    c.setAttribute('aria-labelledby', 'ctl-key-in-use-title');
+  }
+  const title = el('h3', null, prompt.kind === 'defaults' ? 'Default controls' : 'Key in use');
+  if (asTooltip) title.id = 'ctl-key-in-use-title';
+  c.append(title);
   const rows = prompt.kind === 'defaults' ? [localizedText('confirmDefaultControls', DEFAULTS_PROMPT)]   // L10N3d (DaggerfallControlsWindow.cs:302)
     : replaceKeybindPromptRows(prompt.action, prompt.code, prompt.holders, prompt.usingPrimary);
   // UXB1-D: the one pair where the answer is "you need neither" - see sharedFloatNote.
@@ -506,12 +525,11 @@ export function paneControls(body, { render = () => {} } = {}) {
   intro.append(el('p', 'meta ctl-intro-law', `Nothing is saved until you press ${CONFIRM_LABEL}. A key not saved yet is marked on its row.`));
   body.append(intro);
 
-  // UXB1-D: A PROMPT STANDS IN THE HEAD, NOT IN PLACE OF THE LIST. The head is sticky (TORCH-BIND), so the question
-  // is on screen wherever the player had scrolled to; the list stays under it (inert - `act`), so answering it
-  // leaves them on the row they were binding rather than at the top of the page, and the rows it is about are marked
-  // (promptMarks).
-  const head = el('div', `card ctl-head${prompt ? ' ctl-asking' : ''}${owed.length ? ' ctl-owed' : ''}`);
-  if (prompt) head.append(promptCard());
+  // Defaults remains a page-level question in the sticky head. A key conflict
+  // is painted by keyRow as a tooltip on the binding being changed.
+  const defaultsPrompt = prompt?.kind === 'defaults';
+  const head = el('div', `card ctl-head${defaultsPrompt ? ' ctl-asking' : ''}${owed.length ? ' ctl-owed' : ''}`);
+  if (defaultsPrompt) head.append(promptCard());
   else {
     head.append(el('p', 'meta',
       `Nothing is saved until you press ${CONFIRM_LABEL}, Defaults included. Leave this page and your changes are dropped.`));

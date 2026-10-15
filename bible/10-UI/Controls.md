@@ -450,9 +450,10 @@ buttons on its fixed art, Slide's among them, unbound.
 
 - Every group above, a vendored mod's only while the mod is on.
 - A row's button arms a capture; the next key or mouse button binds (Ctrl, Shift or Alt held binds the combo).
-- A held key asks (law 4). The question stands in the page's sticky head, over the list it leaves in place: the row
+- A held key asks (law 4). The question stands in a viewport-fitted tooltip beside the binding being changed: the row
   the key would go to is edged in brass, the row that holds it in red, and the list is inert until it is answered
-  (UXB1-D, 2026-09-25 - it used to replace the list, and a player lost their place in 60 rows).
+  (UXB1-D, 2026-09-25; KEY-IN-USE-TIP, 2026-10-15 - it first replaced the list, then stood in its sticky head; both
+  made a player leave the row to answer a question about it).
 - Right-click or the row's ✕ CLEARS a binding at once - no question, staged like every other edit, so leaving the
   page still drops it (UXB1-C, 2026-09-25, the UX backlog: "Having to scroll back to your key is bad"). The classic
   grid keeps DFU's own remove prompt.
