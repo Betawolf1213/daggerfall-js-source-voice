@@ -26,6 +26,9 @@ import { sdRng } from './sdBrain.js';
 import { arenaSeasonOf } from './arenaLaw.js';
 import { EG_OFFER_MAX, EG_SPOT_X } from './egVestige.js';   // AUDIT EG IV: an offer's six; Spotter's share over a Hunter's Mark
 import { EG_RUN_REL_MAX } from './wire.js';   // AUDIT EG III (lane2 #1): the Reliquaries' circles a run's row carries
+import { egCirclePlan, egCircleOfHall, egSlotOfHall } from './egLaw.js';   // AUDIT EG V (L2-10): THE FRAYING drawn only for a circle with an Athenaeum
+import { SD_OMENS } from './sdMarks.js';   // AUDIT EG V (L2-10): the Hour's omen The Fraying, its fray read
+import { SD_FRAY_MAX } from './sdBrain.js';   // AUDIT EG V (L2-10): the Orrery's own fray, the Hour's default
 
 /** The company's word stays open this long (ms). */
 export const EG_ASK_MS = 10_000;
@@ -92,22 +95,39 @@ export function egAsksDue(B, now, all = false) {
 // ── the decrees ─────────────────────────────────────────────────────────────────────────────────────────────
 /** The families the standing decrees hold (the Proclamation's, the Wager's). */
 export const egStandingFams = (B) => [...(B.pr ? [EG_DECREE_BY_KEY[B.pr]?.fam] : []), ...(B.wg ?? []).map((id) => EG_DECREES[id]?.fam)].filter(Boolean);
+/**
+ * AUDIT EG V (L2-10; sections 8.4 and 14) - THE FRAYING, the Hour's omen (net/sdMarks.js SD_OMENS' `fraying`: the Orrery snaps
+ * back at thirty-six turns) as a decree of the ground: an Athenaeum's Orrery snaps back at egFrayOf(c, rank) turns, not the
+ * Hour's default SD_FRAY_MAX. The Spire's Orrery's road grows two turns every five Redoubts (net/egBrain.js standFight), so its
+ * fray grows with it - eight turns past the longest road at rank I, as the omen's 36 stands over the first circles' 28; four at
+ * rank II (EG_FRAYING_II_TURNS fewer) - and never past the default. Drawn only where it bites (egFrayingOpen).
+ */
+export const EG_FRAYING_FRAY = SD_OMENS.find((o) => o.id === 'fraying')?.law.fray ?? 36;
+export const EG_FRAYING_II_TURNS = 4;
+/** The Fraying's fray at circle c, by its rank. Pure. */
+export const egFrayOf = (c, rank = 1) => Math.min(SD_FRAY_MAX, EG_FRAYING_FRAY + 2 * Math.floor((Math.max(1, c) - 1) / 5) - (rank >= 2 ? EG_FRAYING_II_TURNS : 0));
+/** May The Fraying be drawn for circle c of breach seed `seed`: an Athenaeum stands in its plan at slot `from` or after (a
+ *  Bargain's: one still ahead of its hall), and its fray is short of the Hour's default (to circle 30)? Pure. */
+export const egFrayingOpen = (seed, c, from = 1) => egFrayOf(c) < SD_FRAY_MAX && egCirclePlan(seed, c).some((p, i) => p.kind === 'athenaeum' && i + 1 >= from);
 /** May a decree be drawn at circle c (it never draws a kind or a piece its band lacks: Swarm-Mother's Binders and
- *  Gale-Swept's Gust from the Cairn)? */
-const decreeOpen = (D, c) => !((D.key === 'swarm' || D.key === 'gale') && egBandOfCircle(c) < 1);
+ *  Gale-Swept's Gust from the Cairn)? AUDIT EG V (L2-10): and The Fraying only for a circle with an Athenaeum (egFrayingOpen,
+ *  breach seed `seed`, its slot `from` on). */
+const decreeOpen = (D, c, seed = 0, from = 1) => !((D.key === 'swarm' || D.key === 'gale') && egBandOfCircle(c) < 1) && (D.key !== 'fraying' || egFrayingOpen(seed, c, from));
 /**
  * THE NEXT CIRCLE'S DECREES PUT TO THE COMPANY (section 14): egDecreeCount(c) families from the free ones, each with two
  * decrees offered - one ask a family (`dec:<family>`); from circle 10 one of them ranks up to II. Answers the asks.
+ * AUDIT EG V (L2-1): each ask closes at its EG_ASK_MS as every ask does (section 16.4), its choice kept for the next circle
+ * (`B.next.dc` - net/egBrain.js asksStep) and said on the beacon (the state's `nx`).
  */
 export function egDecreesAsk(B, c, rng, now, out) {
   const k = egDecreeCount(c);
-  if (k <= 0) { B.next = { c, fams: [], up: null }; return []; }
+  if (k <= 0) { B.next = { c, fams: [], up: null, dc: [] }; return []; }
   const held = new Set(egStandingFams(B));
   const free = EG_DECREE_FAMILIES.filter((f) => !held.has(f)).sort(() => rng() - 0.5).slice(0, k);
   const up = egDecreeRanksUp(c) && free.length ? free[Math.floor(rng() * free.length)] : null;
-  B.next = { c, fams: free, up };
+  B.next = { c, fams: free, up, dc: [] };
   return free.map((f) => {
-    const pool = EG_DECREES.filter((D) => D.fam === f && decreeOpen(D, c)).sort(() => rng() - 0.5).slice(0, 2);
+    const pool = EG_DECREES.filter((D) => D.fam === f && decreeOpen(D, c, B.seed)).sort(() => rng() - 0.5).slice(0, 2);
     return egAsk(B, `dec:${f}`, pool.map((D) => D.id), now, out);
   });
 }
@@ -136,13 +156,30 @@ export function egDecreeRanks(B) {
 }
 /** All decrees in force as `[[id, rank], ...]` (the state's word). */
 export const egDecreesInForce = (B) => Object.entries(egDecreeRanks(B)).filter(([k]) => EG_DECREE_BY_KEY[k]).map(([k, rank]) => [EG_DECREE_BY_KEY[k].id, rank]);
-/** A Dagon's Bargain passed: one more decree for the rest of the circle, from a free family. */
-export function egBargainDecree(B, rng) {
+/** AUDIT EG V (L2-5): the decrees of family `f` a Bargain in breach `B`'s hall may draw - those the circle's draw may
+ *  (decreeOpen: never Swarm-Mother before the Cairn; The Fraying only with an Athenaeum still ahead in the circle), never
+ *  Gale-Swept or Crumbling Halls (the circle's level is laid already: a Bargain never redraws its spans). */
+const bargainPool = (B, f) => {
+  const c = egCircleOfHall(B.h), from = egSlotOfHall(B.h) + 1;
+  return EG_DECREES.filter((D) => D.fam === f && D.key !== 'gale' && D.key !== 'crumbling' && decreeOpen(D, c, B.seed, from));
+};
+/** AUDIT EG V (L2-4, L3-5; sections 8.7 and 14: "none when no family is free") - THE FAMILIES FREE FOR A BARGAIN: those neither
+ *  the standing decrees (the Proclamation, the Wager) nor the circle's drawn ones hold, each with a decree it may draw. Pure. */
+export function egBargainFams(B) {
   const used = new Set([...egStandingFams(B), ...(B.dc ?? []).map(([id]) => EG_DECREES[id]?.fam)]);
-  const free = EG_DECREE_FAMILIES.filter((f) => !used.has(f));
+  return EG_DECREE_FAMILIES.filter((f) => !used.has(f) && bargainPool(B, f).length > 0);
+}
+/** Is a Bargain open (once a circle, and only with a family free - egBargainFams)? The director asks the company only then. */
+export const egBargainOpen = (B) => !(B.bargainDc ?? []).length && egBargainFams(B).length > 0;
+/** AUDIT EG V (L2-4, L3-5; section 8.7) - THE TWIST A SCREEN SHOWS for hall `spec` under the decrees in force `dc` (the state's
+ *  `[[id, rank], ...]`): the law's, but no Dagon's Bargain once every family is held (the room asks none then - egBargainOpen),
+ *  so no card offers a shrine that never asks. Pure. */
+export const egTwistShown = (spec, dc) => (spec?.twist === 'bargain' && EG_DECREE_FAMILIES.every((f) => (dc ?? []).some(([id]) => EG_DECREES[id]?.fam === f)) ? null : spec?.twist ?? null);
+/** A Dagon's Bargain passed: one more decree for the rest of the circle, from a free family - null when none is free. */
+export function egBargainDecree(B, rng) {
+  const free = egBargainFams(B);
   if (!free.length) return null;
-  const f = free[Math.floor(rng() * free.length)];
-  const pool = EG_DECREES.filter((D) => D.fam === f && D.key !== 'gale' && D.key !== 'crumbling');   // the circle's level is laid already: a Bargain never redraws its spans
+  const pool = bargainPool(B, free[Math.floor(rng() * free.length)]);
   const D = pool[Math.floor(rng() * pool.length)];
   B.bargainDc = [[D.id, 1]];
   return D;
@@ -175,6 +212,14 @@ export function egStrataTo(B, w) {
 }
 
 // ── the Vestiges' offers ────────────────────────────────────────────────────────────────────────────────────
+/** AUDIT EG V (L2-13; section 15's Lean) - THE BLOW KIND A MEMBER LEANS TO: its most-used landed blow kind over the breach
+ *  (`kinds` `[melee, arrows, spells]` - the first of a tie), or null when it has landed none (no lean, never Blade by
+ *  default). Pure. */
+export function egLeanOf(kinds) {
+  if (!Array.isArray(kinds)) return null;
+  const k = [0, 1, 2].reduce((best, j) => ((kinds[j] ?? 0) > (kinds[best] ?? 0) ? j : best), 0);
+  return (kinds[k] ?? 0) > 0 ? k : null;
+}
 /** THE OFFERS at a Redoubt's rest: one to every living member (net/egVestige.js egOfferOf) - the Lean at the first, a
  *  Mastery at Redoubt 3 and every Valkynaz, a fallen's bequest, shards' extra card. Answers the frames (each `s` its
  *  member's alone). AUDIT EG IV (lane10 #15): no card that cannot act for its member - the living company's size and the
@@ -184,9 +229,10 @@ export function egOffers(B, w, valk, rng, now) {
   const out = [];
   const bequests = Object.values(B.mem).filter((m) => m.bequest != null).map((m) => m.bequest);
   const n = Object.values(B.mem).filter((m) => m.in && m.alive && !m.home && !m.forsaken).length;
+  const first = w === (B.ew ?? 0) + 1;   // AUDIT EG V (L2-13): THE LEAN at the breach's first Redoubt - a deeper start's too (section 16.6)
   for (const [sub, m] of Object.entries(B.mem)) {
     if (!m.in || !m.alive || m.home || m.forsaken) continue;
-    const lean = m.kinds ? [0, 1, 2].reduce((best, k) => ((m.kinds[k] ?? 0) > (m.kinds[best] ?? 0) ? k : best), 0) : null;
+    const lean = first ? egLeanOf(m.kinds) : null;
     const shardPicks = Math.floor((m.shards ?? 0) / EG_SHARDS_PER);
     m.offerO = { lean, w, valk, bequest: bequests.find((b) => b != null && !(m.vs ?? []).some((p) => p[0] === b)) ?? null, rank: shardPicks > 0 ? 1 : 0, hollow: (B.strata ?? []).includes('hollow'), n };
     const cards = egOfferOf(rng, { ...m.offerO, vs: m.vs, mast: m.mast, kinds: m.kinds });
@@ -209,8 +255,15 @@ export function egPick(B, sub, card) {
   if (!m.picks) m.offer = null;
   return true;
 }
-/** The rest's end: every offer still open takes its first card. */
-export function egPicksClose(B) { for (const [sub, m] of Object.entries(B.mem)) if (m.offer?.length && m.picks > 0) egPick(B, sub, m.offer[0]); }
+/** The rest's end: every offer still open takes its first card - AUDIT EG V (L2-15; section 15: "takes one within the rest;
+ *  unpicked, the first is taken"): for every pick still in hand (a second, the shards' or the Athenaeum's, too), each the
+ *  first card left - and the offer closes with the rest, so no pick outlives it. */
+export function egPicksClose(B) {
+  for (const [sub, m] of Object.entries(B.mem)) {
+    while (m.offer?.length && m.picks > 0) if (!egPick(B, sub, m.offer[0])) break;
+    m.offer = null; m.picks = 0;
+  }
+}
 /** A Surplus spent: a fourth card, or the three rerolled. AUDIT EG IV (lane1 #13; section 15: "an offer holds at most six
  *  cards"): a card past EG_OFFER_MAX (or none to find) is refused and the Surplus kept; a reroll deals the offer by its own law
  *  (`m.offerO` - The Hollow Offer's two, the bequest, the shards' card, the Lean), and both deal only cards that act for it. */
@@ -278,7 +331,7 @@ export function egVestigeX(B, sub, pose, body, r, now, here) {
   const d = body && pose ? Math.hypot(pose.x - body.x, pose.z - body.z) : 0;
   if (r !== HIT_KINDS.Melee && d > EG_FAR_M) x *= 1 + egVOf(vs, 'longsight');
   const isAdd = body?.role === 1;
-  const fallenDue = Math.max(0, ...Object.values(B.mem).filter((o) => o.alive && o.in).map((o) => egVOf(o.vs, 'fallensdue')));
+  const fallenDue = Math.max(0, ...Object.values(B.mem).filter((o) => o.alive && o.in && !o.home).map((o) => egVOf(o.vs, 'fallensdue')));   // AUDIT EG V (L2-2): a holder gone home lends none
   const dueOn = (B.F?.fellThisHall ?? 0) > 0;
   const ms = egCompanyAt(B, sub, pose, here);
   // AUDIT EG III - NO QUARTER is an Accord (THE PAIR LAW): while Fallen's Due burns, a Culling Edge holder standing within
@@ -303,7 +356,9 @@ export function egVestigeX(B, sub, pose, body, r, now, here) {
   return { x: egCapX(x, bx), bx };
 }
 /** EG-ZS: the company as the pair law reads it (net/egVestige.js egAccordMates) at a member's blow - each living member in the
- *  breach where the room last holds it (`here`), the striker where its blow stands (`pose`), each with its Vestiges. */
+ *  breach where the room last holds it (`here`), the striker where its blow stands (`pose`), each with its Vestiges. AUDIT EG V
+ *  (L2-2): `here` holds the living alone, each by a pose of this hall (net/egBrain.js egPosedHere) - a member gone home, or
+ *  whose last pose is an earlier hall's, stands with nobody. */
 export function egCompanyAt(B, sub, pose, here) {
   const ms = here.filter((o) => o.sub !== sub).map((o) => ({ sub: o.sub, vs: B.mem[o.sub]?.vs ?? [], x: o.x, z: o.z }));
   return pose ? [{ sub, vs: B.mem[sub]?.vs ?? [], x: pose.x, z: pose.z }, ...ms] : ms;

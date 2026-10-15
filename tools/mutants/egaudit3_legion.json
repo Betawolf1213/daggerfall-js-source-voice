@@ -172,8 +172,8 @@
   {
     "name": "EGA3L-wave-room-default",
     "file": "src/net/egLegion.js",
-    "old": "room = egLegionRoom(F) } = {}) {",
-    "new": "room = Infinity } = {}) {",
+    "old": "room = egLegionRoom(F), only = null } = {}) {",
+    "new": "room = Infinity, only = null } = {}) {",
     "tests": [
       "test/egaudit3_legion.test.js"
     ],
@@ -182,8 +182,8 @@
   {
     "name": "EGA3L-room-friend",
     "file": "src/net/egLegion.js",
-    "old": "b.hp > 0 && !egHas(b, EG_FL.friend)).length);",
-    "new": "b.hp > 0).length);",
+    "old": "b.hp > 0 && !egHas(b, EG_FL.friend) && !egHas(b, EG_FL.dormant)).length);",
+    "new": "b.hp > 0 && !egHas(b, EG_FL.dormant)).length);",
     "tests": [
       "test/egaudit3_legion.test.js"
     ],
@@ -322,8 +322,8 @@
   {
     "name": "EGA3L-wave-partial-unheld",
     "file": "src/net/egBrain.js",
-    "old": "sky: !spec.chamber, room });",
-    "new": "sky: !spec.chamber, room: Infinity });",
+    "old": "sky: !spec.chamber, room, only });",
+    "new": "sky: !spec.chamber, room: Infinity, only });",
     "tests": [
       "test/egaudit3_legion.test.js"
     ],

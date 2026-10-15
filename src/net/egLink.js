@@ -35,7 +35,7 @@ export const EG_FIGHT_EMPTY = Object.freeze({ h: 0, wk: 0, bodies: Object.freeze
 export const EG_STATE_EMPTY = Object.freeze({
   call: null, b: null, seed: 0, egv: 0, op: 0, wk: 0, h: 0, sg: 'wait', sa: 0, su: 0, cl: 0, ca: 0, hw: 0, dn: 0,
   co: Object.freeze([]), rd: 0, rh: 0, dg: 0, end: null,
-  dc: Object.freeze([]), pr: '', wg: Object.freeze([]), td: '', sr: Object.freeze([]), geo: 0, ms: Object.freeze([]), ca2: '', mm: Object.freeze([]), rp: 0, sp: 0, as: Object.freeze([]),
+  dc: Object.freeze([]), nx: Object.freeze([]), pr: '', wg: Object.freeze([]), td: '', sr: Object.freeze([]), geo: 0, ms: Object.freeze([]), ca2: '', mm: Object.freeze([]), rp: 0, sp: 0, as: Object.freeze([]),
   fight: EG_FIGHT_EMPTY, offer: null, tally: Object.freeze({}), asked: Object.freeze({}), got: Object.freeze([]), rises: Object.freeze([]), pings: Object.freeze([]), heals: Object.freeze([]), pz: null,
   falls: Object.freeze([]), redoubt: null, no: null, heardAt: 0,
   site: null,   // EG-F: the arch's site as the room keeps it (the cast-out's landing with the arch gone)
@@ -141,7 +141,7 @@ export function foldEg(s, w, now) {
     case 'st': {
       const same = s.b === w.b;
       return { ...(same ? s : EG_STATE_EMPTY), call: same ? s.call : null, b: w.b, seed: w.seed, egv: w.egv, op: w.op, wk: w.wk, ...stageOf(w), co: w.co, rd: w.rd, rh: w.rh, dg: w.dg, end: w.end,
-        dc: w.dc, pr: w.pr, wg: w.wg, td: w.td, sr: w.sr, geo: w.geo, ms: w.ms, ca2: w.ca2, mm: w.mm, rp: w.rp, sp: w.sp, as: w.as,
+        dc: w.dc, nx: w.nx ?? [], pr: w.pr, wg: w.wg, td: w.td, sr: w.sr, geo: w.geo, ms: w.ms, ca2: w.ca2, mm: w.mm, rp: w.rp, sp: w.sp, as: w.as,   // AUDIT EG V (L2-11): `nx` the rest's beacon
         site: w.site ?? (same ? s.site : null),   // EG-F
         ds: w.ds ?? [],   // EG-ZF
         fight: same && s.fight.h === w.h ? s.fight : EG_FIGHT_EMPTY, heardAt: now };

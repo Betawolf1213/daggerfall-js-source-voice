@@ -86,7 +86,7 @@ const HARDCODED = {
   'src/net/egFeats.js': 19,
   'src/net/egFragLaw.js': 85,
   'src/net/egHerald.js': 14,   // AUDIT EG V (a2, L8-7): +1, a deeper breach's start on the herald's Redoubt posts (', from Redoubt N') - the Discord channel's English, as every herald post is
-  'src/net/egLaw.js': 189,   // EG-HERO-LAY: +16, the hero fit's refusals (net/egLaw.js egHeroTrials' `why`) - the relay's law read by a test and a hero's author, never said to a player, kept as egFragLaw.js's record faults are
+  'src/net/egLaw.js': 191,   // EG-HERO-LAY: +16, the hero fit's refusals (net/egLaw.js egHeroTrials' `why`) - the relay's law read by a test and a hero's author, never said to a player, kept as egFragLaw.js's record faults are; AUDIT EG V (a1): +2, The Fraying's name and line (the decrees' table, the arc's English, owed its localization wave with the rest)
   'src/net/egLegion.js': 10,
   'src/net/egLords.js': 55,   // AUDIT EG IV (the lords' group): +2, Garoth's third-phase card names the older signature he borrows (EG_GAROTH_SIG_CARDS - three names for the one 'The older signature.') - the arc's English, owed its localization wave with the rest
   'src/net/egRun.js': 18,
@@ -577,7 +577,7 @@ const HARDCODED = {
   'src/ui/egArchMapMark.js': 1,
   'src/ui/egBeats.js': 85,
   'src/ui/egBoardWindow.js': 15,
-  'src/ui/egHud.js': 37,
+  'src/ui/egHud.js': 39,   // AUDIT EG V (a1): +2, the rest's beacon - *The next circle bears: ...* and *The next Court: ...* (egNextCircleText) - the arc's English, owed its localization wave with the rest
   'src/ui/egSpireHud.js': 15,   // AUDIT EG IV (the lords' group): +1, an errand's numerals' markup (egSigilHtml's `given` - a template the scan counts; its words are the company's numerals and names)
   'src/ui/egStartWindow.js': 5,
   'src/ui/enhancedAccount.js': 8,

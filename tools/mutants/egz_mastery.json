@@ -409,8 +409,8 @@
   {
     "name": "EGZS-strike-add-half",
     "file": "src/net/egBrain.js",
-    "old": "if (a.role === EG_ROLE.add) { got = Math.min(n, a.hp); a.hp -= n; }",
-    "new": "if (a.role === EG_ROLE.add) { got = Math.min(n, a.hp); a.hp -= n / 2; }",
+    "old": "if (a.role === EG_ROLE.add) { got = Math.min(n, a.hp); a.hp -= n; egShieldSoak(F, a, got, out); }",
+    "new": "if (a.role === EG_ROLE.add) { got = Math.min(n, a.hp); a.hp -= n / 2; egShieldSoak(F, a, got, out); }",
     "tests": [
       "test/egz_mastery.test.js"
     ],

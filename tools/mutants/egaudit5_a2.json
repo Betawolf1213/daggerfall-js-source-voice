@@ -32,8 +32,8 @@
   {
     "name": "EGA5A2-orrery-wake-range",
     "file": "src/net/egBrain.js",
-    "old": "F.orrery = orreryOf(s, egOrreryTurns(spec.c));",
-    "new": "F.orrery = orreryOf(s, egOrreryTurns(1));",
+    "old": "F.orrery = orreryOf(s, { ...egOrreryTurns(spec.c),",
+    "new": "F.orrery = orreryOf(s, { ...egOrreryTurns(1),",
     "tests": [
       "test/egaudit5_a2.test.js"
     ],

@@ -87,7 +87,10 @@ test('EG5 THE MERGE (section 14): the lord family\'s four are the gate\'s boss-g
   assert.deepEqual(lord.map((D) => D.name), ['colossal', 'unyielding', 'vengeful', 'grudge'].map((k) => T(k).name));
   for (const k of ['scarring', 'favoured', 'echoing', 'soulhungry', 'legion']) assert.ok(!EG_DECREES.some((D) => D.name === T(k).name), `${T(k).name} is not drawn`);
   const taken = new Set([...GATE_TRIALS.map((t) => t.name), ...SD_OMENS.map((o) => o.name)]);
-  for (const D of EG_DECREES) if (D.fam !== 'lord') assert.ok(!taken.has(D.name), `${D.name} is the Spire's own`);
+  // PIN MOVED (AUDIT EG V, a1: L2-10 built THE FRAYING - section 14's "the Hour's decree The Fraying", the Hour's own omen carried
+  // whole, its name the omen's; every other decree but the lord family's is still the Spire's own)
+  for (const D of EG_DECREES) if (D.fam !== 'lord' && D.key !== 'fraying') assert.ok(!taken.has(D.name), `${D.name} is the Spire's own`);
+  assert.equal(EG_DECREE_BY_KEY.fraying.name, SD_OMENS.find((o) => o.id === 'fraying').name, 'The Fraying is the Hour\'s');
 });
 
 test('EG5 THE FOLD (section 14, "The merge"): net/sdMarks.js sdMarksLaw\'s rule over the laws in thousandths - a key ending in X multiplies (rounded to the thousandth), any other is the last that names it; the profile folds the decrees in their numbers\' order (mutants: an X key overridden; the thousandth floored; the first naming kept; the fold out of order)', () => {
@@ -119,7 +122,8 @@ test('EG5 THE PROFILE\'S VALIDATOR AND ITS CACHE (section 14, "The profile"): a 
   assert.equal(EG_DECREES_MAX, 9);
   const nine = Array.from({ length: 9 }, (_, i) => [i, 1]);
   assert.deepEqual(validEgDecrees(nine), nine);
-  for (const bad of [null, 'x', {}, [...nine, [9, 1]], [[19, 1]], [[-1, 1]], [[1.5, 1]], [[3, 0]], [[3, 3]], [[3, 1], [3, 2]], [[3]], [[3, 1, 0]], ['3:1'], [['1', 1]]]) assert.equal(validEgDecrees(bad), null, JSON.stringify(bad));
+  // PIN MOVED (AUDIT EG V, a1: L2-10's The Fraying is decree 19 - the unknown decree is the one past the table)
+  for (const bad of [null, 'x', {}, [...nine, [9, 1]], [[EG_DECREES.length, 1]], [[-1, 1]], [[1.5, 1]], [[3, 0]], [[3, 3]], [[3, 1], [3, 2]], [[3]], [[3, 1, 0]], ['3:1'], [['1', 1]]]) assert.equal(validEgDecrees(bad), null, JSON.stringify(bad));
   // the cache: by the sorted string, order-free; an invalid list is the fight with none
   const a = egFightProfile([[17, 1], [15, 2]]);
   assert.equal(egFightProfile([[15, 2], [17, 1]]), a, 'the same profile, whatever the order');

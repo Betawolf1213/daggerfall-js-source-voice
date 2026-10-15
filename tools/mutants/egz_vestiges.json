@@ -155,8 +155,8 @@
   {
     "name": "EGZR-hymn-other-hall",
     "file": "src/net/egBrain.js",
-    "old": "living(B).filter(([, m]) => m.pose?.h === B.h)",
-    "new": "living(B).filter(([, m]) => m.pose)",
+    "old": "egHymnOf(living(B).filter(([, m]) => m.pose?.h === B.h)",
+    "new": "egHymnOf(living(B).filter(([, m]) => m.pose)",
     "tests": [
       "test/egz_vestiges_hymn.test.js"
     ],

@@ -67,9 +67,10 @@ import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT
 import { EG_LATE_HALLS, EG_LATE_ARRIVE_MS, EG_TOLL_STEP, EG_TOLL_QUARTERS, EG_TOLL_WAIVE_MS, EG_TOLL_KINDS } from './egLaw.js';   // EG-ZI: the late wake and the pull's toll (sections 7 and 10.6)
 import { egCountRedoubt, egRedoubtHold, egCountOver, EG_OPEN_ENDS } from './egLaw.js';   // AUDIT EG III (lane2 #1, #2): the count's one law, the good ends
 import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightBind, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck, egMark, egUnmark, egMarkOf, egBodyAt } from './egBodies.js';
-import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egAirY, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
+import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egAirY, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad } from './egLegion.js';
 import { egLegionRoom, egLegionCapOf, egEscortOf, egLurkerWake } from './egLegion.js';   // AUDIT EG III: the room under the legion's cap, a champion's escort, a struck Lurker's wake
 import { egLegionSummon, egBinderBroken, egSpotted } from './egLegion.js';   // AUDIT EG IV: a summons held to the room, a Binder's raise broken, a Spotter's arrow
+import { egShieldTurns, egShieldSoak } from './egLegion.js';   // AUDIT EG V (L2-7): a Shielded elite's shield, one law for every blow
 import { EG_OBJ, egLordsWake, egLordsAwake, egLordsFell, egLordsOf, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
 import { EG_SEAM, egLordsFight } from './egLords.js';   // EG-ZK (section 13.1): every lord through THE BOSS SEAM, called inside the one beat
 import { egPieceIn, egPolyEdgeDist } from './egShape.js';   // AUDIT EG IV (lane1 #11): a champion's wake ring off its floor
@@ -81,6 +82,7 @@ import { egResonance, egAccordMates, EG_STORM_N, EG_STORM_M, EG_FAR_M, EG_KINDLE
 import { EG_M_ID, EG_SWEEP_M, EG_SPILL_M, EG_COUNTER_M } from './egVestige.js';   // AUDIT EG III: Sweeping Arc's, Spillover's and Counterstroke's numbers
 import { egSpirebridge } from './egVestige.js';   // AUDIT EG III: Spirebridge, the room's rule
 import { egEchoShare, egCompanyAt } from './egRun.js';   // EG-ZS: an Echo's share; the company the pair law reads at a blow
+import { egBargainOpen, egFrayOf } from './egRun.js';   // AUDIT EG V: a Bargain only with a family free (L2-4); The Fraying's fray (L2-10)
 import { shDisc, shLane, egInShape } from './egShape.js';
 import { egBlowNear } from './egFloor.js';   // AUDIT EG III: Counterstroke's reach from a lord's blow
 import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL, EG_MIRROR_REACH_M, EG_MIRROR_LIT_R, EG_HAZARDS, egWispAt } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half (EG-ZC: the Moon-Mirror's branch; EG-ZB: the census's drains)
@@ -161,6 +163,13 @@ export function egOrreryTurns(c) {
   const k = Math.max(0, Math.min(Math.floor((c - 1) / 5), (EG_ORRERY_REACH - 28) / 2));
   return { turnsMin: 16 + 2 * k, turnsMax: 28 + 2 * k };
 }
+/** AUDIT EG V (L2-6; section 17.2) - STILLNESS: the next hall that pours a wave of its own holds its first this much longer
+ *  (ms) - a Rift-Yard's rifts, a Rampart's march, an Athenaeum's pressure, a Proving Walk's escort, a Court's first escort, a
+ *  Deepway chamber's rifts or engine waves, a span's shadows; a hall that pours none (egStillHolds) leaves it for the next. */
+export const EG_STILL_MS = 10_000;
+/** AUDIT EG V (L2-6): does hall `spec` pour a wave of its own for Stillness to hold - not the Scriptorium (no trial), a Brink
+ *  (no legion), a Gauntlet (its Casters stand on their pillars from the wake) or a Deepway whose chamber is a champion's? Pure. */
+export const egStillHolds = (spec) => !(spec.kind === 'scriptorium' || spec.kind === 'brink' || (spec.kind === 'rampart' && spec.variant === 'gauntlet') || (spec.kind === 'deepway' && (spec.spots?.chamber?.[0]?.obj ?? 0) === 1));
 /** The rifts a company of n living members faces (section 8.1); the legion's cap is net/egLegion.js's (egLegionCap). */
 export const egRiftsFor = (n) => Math.max(3, Math.min(5, 2 + Math.ceil(n / 3)));
 export { egLegionCap, EG_STANDING_MAX } from './egLegion.js';
@@ -168,6 +177,10 @@ export { egLegionCap, EG_STANDING_MAX } from './egLegion.js';
 export const EG_RESPITE_BUDGET_MS = 900_000;
 export const EG_RESPITE_VALK_MS = 600_000;
 export const EG_RESPITE_STEP_MS = 120_000;
+/** The respite is asked while this much of its budget is left (ms - section 6.2: "asked while 30 s or more is left"). */
+export const EG_RESPITE_MIN_MS = 30_000;
+/** A Ready that passes ends the rest this long after its word (ms). */
+export const EG_READY_MS = 3000;
 /** THE SURPLUS (section 6.2): five minutes the count's cap turns away, three at most. */
 export const EG_SURPLUS_MS = 300_000;
 export const EG_SURPLUS_MAX = 3;
@@ -270,6 +283,10 @@ export function egBreachNew(t) {
 const clockRec = (B) => ({ openedAt: B.op, wokeAt: B.wk, endAt: B.endAt, why: B.end });
 /** The living, entered company (`[sub, m]`). */
 const living = (B) => Object.entries(B.mem).filter(([, m]) => m.in && m.alive && !m.home);
+/** AUDIT EG V (L2-2; section 15: an aura and an Accord are "while they stand together") - THE COMPANY WHERE IT STANDS: each living
+ *  member by the pose the room last holds of it in THIS hall (`{sub, x, z}`) - a member gone home, a witness, or one whose last
+ *  pose is an earlier hall's stands nowhere, and lends no Vestige by its place (a blow's Standard and Accords, Watchfire's). */
+export const egPosedHere = (B) => living(B).filter(([, m]) => m.pose?.h === B.h).map(([sub, m]) => ({ sub, x: m.pose.x, z: m.pose.z }));
 const memberName = (B, sub) => B.mem[sub]?.name ?? B.co.find((c) => c.sub === sub)?.name ?? '';
 /** The circle's span decrees, folded into the specs (net/egLaw.js egGeoOf). */
 export const egGeo = (B) => egGeoOf(egDecreesInForce(B));
@@ -343,6 +360,11 @@ export const egStageWord = (B, now) => ({ k: 'sg', h: B.h, sg: B.sg, sa: B.sa, s
  *  (c, L3-10; section 7 - "a ring fills over the plate, *3 of 6 here*"): `here` 1 once the member has said `here` in the hall
  *  the company stands in (its pose on the arrival plate - `hereH`), so every screen counts the gather the room counts. */
 export const egCompanyOf = (B) => B.co.map((c) => { const m = B.mem[c.sub]; return [c.sub, c.name, c.n, m ? m.alive : 1, m?.home ? 1 : 0, m?.in ? 1 : 0, m?.wit ? 1 : 0, m?.forsaken ? 1 : 0, m?.falls ?? 0, m ? m.recall : B.rh ? 0 : 1, m && B.h > 0 && m.hereH === B.h ? 1 : 0]; });
+/** AUDIT EG V (L2-11; section 14: "At each Redoubt the next circle's decrees are chosen and shown on the beacon") - THE NEXT
+ *  CIRCLE'S DECREES as the rest's beacon names them (`[[id, rank], ...]`): those the company's word chose for it (asksStep), in a
+ *  rest whose next circle they are; none before the word closes, and none outside a rest. Every screen words them with the
+ *  next Court's lord, the law's (ui/egHud.js egNextCircleText). */
+export const egNextOf = (B) => (B.sg === 'rest' && B.next?.c === egCircleOfHall(B.h) + 1 ? (B.next.dc ?? []).map((p) => [...p]) : []);
 /** The breach's whole state (`st`): the stage, the company, the decrees in force (and the Proclamation, the Wager, the
  *  tide, the strata), each member's run, the cache's kind, the Mementos lying, the respite and the Surplus. */
 export function egStateOf(B, now) {
@@ -353,6 +375,7 @@ export function egStateOf(B, now) {
     ms: Object.entries(B.mem).filter(([, m]) => m.in).map(([sub, m]) => egRunOf(sub, m)),
     ca2: B.cache ? B.cache.k : '', mm: B.mementos.map((q) => [q.s, q.h, Math.round(q.x * 100) / 100, Math.round(q.z * 100) / 100, q.by ?? '']),
     rp: Math.round(B.resp), sp: B.sur, as: (B.asks ?? []).map((a) => [a.q, [...a.o], a.until]),
+    nx: egNextOf(B),   // AUDIT EG V (L2-11; sections 14 and 16.3): the beacon's word - the next circle's decrees, as the company chose them
     ds: egTalliesOf(B),   // EG-ZF (section 27.6): each member's damage and healing over the breach - the recap's share and healing
     ...(B.site ? { site: B.site } : {}) };   // EG-F (section 6.3): the arch's site, the room's to keep - the cast-out's landing with the arch gone
 }
@@ -547,6 +570,12 @@ export function egStrataSecond(strata, key, c) {
   const band = EG_LORDS[key]?.band ?? -1, open = EG_TWIN_COURT_LORDS.filter((k) => k !== key && EG_LORDS[k]?.band !== band);
   return open[((c % open.length) + open.length) % open.length] ?? null;
 }
+/** A Proving Walk's champion's escort (section 8.5: `1 + ceil(n/3)` adds of its band, egEscortOf) about its spot - at the wake,
+ *  or AUDIT EG V (L2-6) EG_STILL_MS later under Stillness. */
+function provingEscort(F, spec, rng, now, out) {
+  const k = egEscortOf(F.n);
+  egLegionRaise(F, egWaveKinds(F, rng, k), ringSpots(spec, spec.foe.x, spec.foe.z, 5, k, rng), now, out, { wave: 1 });
+}
 /** A wave's spots about (x, z), `r` out, kept to the fight floor. */
 function ringSpots(spec, x, z, r, k, rng) {
   const out = [];
@@ -561,12 +590,16 @@ function ringSpots(spec, x, z, r, k, rng) {
  */
 function standFight(B, spec, now, rng, out) {
   const L = living(B), lvs = L.map(([, m]) => m.lv), subs = L.map(([sub]) => sub);   // EG-ZQ: the company by account, each lord's fighters
+  // AUDIT EG V (L2-6; section 17.2): STILLNESS spent by the first hall that pours a wave of its own (egStillHolds), its first
+  // wave EG_STILL_MS late whatever sets it - the kind's own first below, a Court's at its ring's wake (trial)
+  const still = B.still && egStillHolds(spec) ? EG_STILL_MS : 0;
+  if (still) B.still = 0;
   if (spec.kind === 'span' || spec.kind === 'brink') {
     const F = egFightNew(spec, now, lvs, subs);
     F.D = egDecreeRanks(B);
     if ((B.strata ?? []).includes('mingled')) F.mingled = 1;   // AUDIT EG IV (section 18): THE MINGLED LEGION's waves (net/egLegion.js egWaveKinds)
     // EG-ZB (section 8.2): a span's legion - its first shadows 4 s after the wake (Stillness: 14 s), Hunting Pack's on its own clock
-    if (spec.kind === 'span') { F.waveAt = now + (B.still ? 14_000 : 4000); F.packAt = now + 30_000; B.still = 0; }
+    if (spec.kind === 'span') { F.waveAt = now + 4000 + still; F.packAt = now + 30_000; }
     spanTwist(B, F, spec, now, out); fragStand(B, F, spec, now, out);
     return F;
   }
@@ -574,8 +607,8 @@ function standFight(B, spec, now, rng, out) {
   F.D = egDecreeRanks(B);
   if ((B.strata ?? []).includes('mingled')) F.mingled = 1;   // AUDIT EG IV (section 18): THE MINGLED LEGION's waves (net/egLegion.js egWaveKinds)
   const n = F.n, P = F.pg;
-  F.waveAt = now + (B.still ? 14_000 : 4000);
-  B.still = 0;
+  F.waveAt = now + 4000 + still;
+  F.still = still;
   const v = spec.variant;
   if (spec.kind === 'yard') {
     if (v === 'wellspring') {
@@ -619,22 +652,23 @@ function standFight(B, spec, now, rng, out) {
       if (v !== 'winch') egLegionRaise(F, [EG_KIND.bearer, EG_KIND.bearer], spec.gate.bearers.map((q) => [q.x, q.z]), now, out);
       const k = Math.min(pillars.length, 1 + Math.ceil(n / 3));
       for (const p of pillars.slice(0, k)) { const [c] = egLegionRaise(F, [EG_KIND.caster], [onPillar(p)], now, out); if (c) c.pinned = 1; }
-      F.waveAt = now + 6000;
+      F.waveAt = now + 6000 + still;
       if (v === 'winch') { F.winch = 0; P.obj = 'winch'; P.winch = 0; } else P.obj = 'wards';
     }
-    if (spec.twist === 'squad') { egSquad(F, [[spec.walk.x, spec.walk.z0 + 30], [spec.walk.x + 1.5, spec.walk.z0 + 32], [spec.walk.x - 1.5, spec.walk.z0 + 34], [spec.walk.x, spec.walk.z0 + 36]], now, out); F.waveAt = now + EG_SQUAD_HOLD_MS; }
+    if (spec.twist === 'squad') { egSquad(F, [[spec.walk.x, spec.walk.z0 + 30], [spec.walk.x + 1.5, spec.walk.z0 + 32], [spec.walk.x - 1.5, spec.walk.z0 + 34], [spec.walk.x, spec.walk.z0 + 36]], now, out); F.waveAt = now + EG_SQUAD_HOLD_MS + still; }
   } else if (spec.kind === 'athenaeum') {
     const s = (egSeed(B.seed, 0x0a7e + spec.h) % 2147483646) + 1;
-    F.orrery = orreryOf(s, egOrreryTurns(spec.c));   // AUDIT EG V (L3-1): the range held to what six stones can need
+    // AUDIT EG V (L3-1): the range held to what six stones can need; (L2-10; sections 8.4 and 14): THE FRAYING in force sets
+    // the Orrery's fray (net/egRun.js egFrayOf), the Hour's otherwise
+    F.orrery = orreryOf(s, { ...egOrreryTurns(spec.c), ...(F.D.fraying ? { fray: egFrayOf(spec.c, F.D.fraying) } : {}) });
     F.lock = orreryFresh(F.orrery); F.lockLast = [0, 0, 0, 0, 0, 0]; F.turns = 0; F.best = orreryShortest(F.orrery, F.lock.st);
     for (const [j, st] of (spec.spots.stone ?? []).entries()) egRaiseObj(F, 'stone', st.x, st.z, 0, now, out, { r: 1, pt: j });
-    F.waveAt = now + EG_LOCK_EVERY_MS;
+    F.waveAt = now + EG_LOCK_EVERY_MS + still;
     P.obj = 'orrery'; P.st = [...F.lock.st]; P.lit = 0; P.f = 0;
   } else if (spec.kind === 'proving') {
     const key = spec.champ ?? 'kynreeve';
     EG_SEAM.new({ F, spec, key, now, out, decrees: F.D, n });   // AUDIT EG IV (lane1 #11; section 8.5): asleep - it wakes at its court's ring (trial, champRing)
-    const k = egEscortOf(n);
-    egLegionRaise(F, egWaveKinds(F, rng, k), ringSpots(spec, spec.foe.x, spec.foe.z, 5, k, rng), now, out, { wave: 1 });
+    if (still) F.escortAt = now + still; else provingEscort(F, spec, rng, now, out);   // AUDIT EG V (L2-6): under Stillness its escort rises late (trial)
     P.obj = 'champion';
   } else if (spec.kind === 'deepway') {
     const ch = spec.spots.chamber?.[0];
@@ -705,7 +739,7 @@ function fragStand(B, F, spec, now, out) {
     if (!f) continue;
     if (low || (!firstOf.has(q.f) && ((f.cls === 'passage' && spec.c >= 3) || (f.cls === 'chamber' && spec.c >= 4)))) { lurks.push([q.x, q.z]); firstOf.add(q.f); }
   }
-  if (lurks.length) egLegionRaise(F, lurks.map(() => EG_KIND.lurker), lurks, now, out, { wave: 0 });
+  if (lurks.length) egLegionRaise(F, lurks.map(() => EG_KIND.lurker), lurks, now, out, { wave: 0 });   // AUDIT EG V (L2-3): statues - the cap counts each from its waking (net/egLegion.js egLegionRoom)
 }
 /** The Low Road's member (section 11.4): past the fork, on its side of the hall. */
 const onLowRoad = (spec, b) => !!spec.fork && b.z >= spec.fork.z && b.x >= (spec.fork.lowX + spec.fork.x) / 2;
@@ -816,7 +850,7 @@ function hornStep(B, F, spec, now, inHall, rng, out) {
   if (!H.kv) {
     if (now < H.at || !inHall.length) return;
     const callee = inHall[Math.floor(rng() * inHall.length)];
-    const [k] = egLegionRaise(F, [EG_KIND.kynval], [[at.x, at.z]], now, out, { wave: 0 });
+    const [k] = egLegionSummon(F, [EG_KIND.kynval], [[at.x, at.z]], now, out, { need: 1, wave: 0 });   // AUDIT EG V (L2-16; section 12): the challenge's own body - it stands whatever the room, and counts against it after
     if (!k) { H.at = now + EG_HORN_AGAIN_MS; return; }
     H.kv = k.i; H.sub = callee.sub; H.foul = inHall.length <= 1 ? 0 : H.foul;
     out.push({ k: 'esay', w: 'horn', n: memberName(B, callee.sub) });
@@ -884,8 +918,6 @@ function captiveStep(B, F, rng, out) {
   for (const [sub, m] of living(B)) { egGive(m, 'cant', 1, rng); out.push({ k: 'egot', to: sub, w: 'cant' }); }
   out.push({ k: 'esay', w: 'freed' });
 }
-/** Is a Bargain open this circle (once a circle, and only with a family free)? */
-const egBargainOpen = (B) => !(B.bargainDc ?? []).length;
 /** An errand's object stood (net/egLords.js's law for its types). */
 function egRaiseObj(F, t, x, z, hp, now, out, o = {}) {
   const b = egRaise(F, EG_ROLE.obj, EG_OBJ[t] ?? 0, [[x, z, o.y]], hp > 0 ? hp : 1, now, out, { r: o.r ?? 1.2, pt: o.pt ?? 0 })[0];
@@ -1103,7 +1135,7 @@ function restStep(B, now, rng, out) {
     else {
       egDecreesAsk(B, egCircleOfHall(B.h) + 1, rng, now, out);
       egAsk(B, 'ready', [1], now, out);
-      if (B.resp >= 30_000) egAsk(B, 'respite', [1], now, out);
+      if (B.resp >= EG_RESPITE_MIN_MS) egAsk(B, 'respite', [1], now, out);
     }
     out.push(egStateOf(B, now));
   }
@@ -1116,7 +1148,8 @@ function nextCircle(B, now, rng, out) {
   if (B.covenant) { egEnd(B, 'home', now, out); return; }
   if (!living(B).length) { egEnd(B, 'gone', now, out); return; }
   const c = egCircleOfHall(B.h) + 1;
-  B.dc = egDecreesChosen(B, due);
+  // AUDIT EG V (L2-1; section 14): the decrees the company chose (their asks closed in the rest - asksStep), and any still open
+  B.dc = [...(B.next?.c === c ? B.next.dc ?? [] : []), ...egDecreesChosen(B, due)];
   B.bargainDc = [];
   B.tide = egTideOf(c, rng);
   B.h = egFirstHallOf(c);
@@ -1125,10 +1158,22 @@ function nextCircle(B, now, rng, out) {
   B.su = now + arriveWait(B);   // EG-ZI: the late wake's wait
   out.push(egStageWord(B, now), egStateOf(B, now));
 }
-/** The company's word answered: the asks whose window closed, each acted on (a Bargain, a respite, the Ready). */
+/**
+ * The company's word answered: the asks whose window closed, each acted on (a Bargain, a respite, the Ready). AUDIT EG V:
+ *   - (L2-1; sections 14 and 16.4) THE NEXT CIRCLE'S DECREES - each family's ask closes at its EG_ASK_MS as every ask does
+ *     (they once stayed in the record past it and were dropped unread, so no circle bore a decree the company chose): its
+ *     choice kept for the next circle (`B.next.dc` - nextCircle) and said on the beacon (the state's `nx`);
+ *   - (L3-17; section 6.2: "each yes lengthening the rest") a respite that passes puts the respite again while
+ *     EG_RESPITE_MIN_MS of the budget is left, and the Ready with it, so a lengthened rest can still be ended early;
+ *   - a Ready and a respite passed in one word: the respite is taken whole, and the rest ends EG_READY_MS after it (the Ready
+ *     acted on first, the respite lengthening what it left).
+ */
 function asksStep(B, now, rng, out) {
   if (!(B.asks ?? []).length) return;
-  const due = egAsksDue(B, now).filter((a) => !a.q.startsWith('dec:'));
+  const due = egAsksDue(B, now).sort((a, b) => (a.q === 'respite' ? 1 : 0) - (b.q === 'respite' ? 1 : 0));
+  const dec = due.filter((a) => a.q.startsWith('dec:'));
+  if (dec.length && B.next) B.next.dc = [...(B.next.dc ?? []), ...egDecreesChosen(B, dec)];
+  let again = false;
   for (const a of due) {
     const yes = egAskResult(a) === 1;
     if (a.q === 'bargain' && yes) {
@@ -1136,15 +1181,16 @@ function asksStep(B, now, rng, out) {
       if (D) { for (const [sub, y] of Object.entries(a.v)) if (y === 1 && B.mem[sub]?.alive) egGive(B.mem[sub], 'rel', egCircleOfHall(B.h)); out.push({ k: 'esay', w: 'bargain', t: D.name }, egStateOf(B, now)); }
     } else if (a.q === 'respite' && yes && B.sg === 'rest') {
       const add = Math.min(EG_RESPITE_STEP_MS, B.resp);
-      B.resp -= add; B.su += add;
+      B.resp -= add; B.su += add; again = true;
       out.push(egStageWord(B, now), { k: 'esay', w: 'respite', t: String(Math.round(add / 1000)) });
     } else if (a.q === 'ready' && yes && B.sg === 'rest') {
-      B.su = Math.min(B.su, now + 3000);
+      B.su = Math.min(B.su, now + EG_READY_MS);
       out.push(egStageWord(B, now), { k: 'esay', w: 'ready' });
     }
     out.push({ k: 'asked', q: a.q, r: egAskResult(a, a.q.startsWith('dec:')) });
   }
-  // the decrees' asks stay open to the rest's end - kept, their tallies said as they move
+  if (again) { egAsk(B, 'ready', [1], now, out); if (B.resp >= EG_RESPITE_MIN_MS) egAsk(B, 'respite', [1], now, out); }
+  if (dec.length) out.push(egStateOf(B, now));   // the beacon's word: the next circle's decrees chosen
 }
 
 /**
@@ -1288,7 +1334,7 @@ function trial(B, spec, now, inHall, rng, out) {
   // beat's every wave takes its room from what is left, never the whole): a rift's (`src`, its key) whose wave would pass the
   // cap HOLDS IT, and its next wave is one body larger (once, however long it held - `F.mem.grow`); any other wave pours what
   // the room holds of it
-  const wave = (spots, k = egWaveSize(F.n), src = null) => {
+  const wave = (spots, k = egWaveSize(F.n), src = null, only = null) => {
     if (!spots.length) return [];
     const grow = (F.mem.grow ??= {}), size = k + (src != null && grow[src] ? 1 : 0), room = egLegionRoom(F);
     if (src != null) {
@@ -1297,7 +1343,7 @@ function trial(B, spec, now, inHall, rng, out) {
     }
     if (Math.min(size, room) <= 0) return [];
     F.waveNo = (F.waveNo ?? 0) + 1;
-    const kinds = egWaveKinds(F, rng, size, { swarm: D.swarm ?? 0, waveNo: F.waveNo, sky: !spec.chamber, room });
+    const kinds = egWaveKinds(F, rng, size, { swarm: D.swarm ?? 0, waveNo: F.waveNo, sky: !spec.chamber, room, only });   // AUDIT EG V (L3-20): `only` one kind's wave
     return egLegionRaise(F, kinds, spots, now, out, { wave: F.waveNo });
   };
   fragStep(B, F, spec, now, inHall, here, rng, out);
@@ -1345,7 +1391,12 @@ function trial(B, spec, now, inHall, rng, out) {
       if (spring) egSetFl(F, spring, EG_FL.ward, anchors.length > 0, out);
       F.pg.anchors = anchors.length;
       if (!spring) { door(B, spec, now, out); return; }
-      if (now >= F.waveAt) { F.waveAt = now + egWaveEveryMs(F.c); wave(ringSpots(spec, spring.x, spring.z, 3, egWaveSize(F.n), rng), egWaveSize(F.n), spring.i); }
+      if (now >= F.waveAt) {
+        F.waveAt = now + egWaveEveryMs(F.c); wave(ringSpots(spec, spring.x, spring.z, 3, egWaveSize(F.n), rng), egWaveSize(F.n), spring.i);
+        // AUDIT EG V (L2-8; sections 8.1 and 12): a Sapper walks from the great rift to a broken anchor to relight it at a third
+        // (sapperGoal, sapperReach), within the cap - as a Yard's walks to its closed rift
+        if (F.brokenAnchors?.length && egLegionRoom(F) > 0) egLegionRaise(F, [EG_KIND.sapper], [[spring.x, spring.z]], now, out, { wave: F.waveNo });
+      }
     } else if (v === 'muster') {
       const std = egBodiesOf(F, EG_ROLE.add, EG_KIND.standard)[0];
       if (!std) { door(B, spec, now, out); return; }
@@ -1421,8 +1472,10 @@ function trial(B, spec, now, inHall, rng, out) {
       if (F.turns <= F.best) { for (const [, m] of living(B)) m.athFree = 1; out.push({ k: 'esay', w: 'orrerytrue' }); }
       door(B, spec, now, out); return;
     }
-    if (now >= F.waveAt) { F.waveAt = now + EG_LOCK_EVERY_MS; const k = Math.ceil(F.n / 4); wave(ringSpots(spec, spec.fight.x, spec.fight.z, spec.fight.r - 3, k, rng), k); }
+    // AUDIT EG V (L3-20; section 8.4): the lock's pressure is `ceil(n/4)` HARRIERS (Swarm-Mother's Binder beside them)
+    if (now >= F.waveAt) { F.waveAt = now + EG_LOCK_EVERY_MS; const k = Math.ceil(F.n / 4); wave(ringSpots(spec, spec.fight.x, spec.fight.z, spec.fight.r - 3, k, rng), k, null, EG_KIND.harrier); }
   } else if (kind === 'proving' || (kind === 'deepway' && F.chamber === 1)) {
+    if (F.escortAt > 0 && now >= F.escortAt) { F.escortAt = 0; provingEscort(F, spec, rng, now, out); }   // AUDIT EG V (L2-6): the escort Stillness held
     if (egLordsFell(F)) { if (kind === 'deepway') F.chamberDone = 1; else { door(B, spec, now, out); return; } }
     else if (!egLordsAwake(F)) ringWake(F, spec, champRing(spec), inHall, now, out, lordCtx);   // AUDIT EG IV (lane1 #11; section 8.5): it wakes at its court's ring
   } else if (kind === 'deepway' && F.chamber === 2) {
@@ -1438,7 +1491,7 @@ function trial(B, spec, now, inHall, rng, out) {
     const lords = egLordsOf(F);
     if (egLordsFell(F)) { redoubt(B, now, rng, out); return; }
     if (!egLordsAwake(F)) {
-      if (ringWake(F, spec, spec.ring, inHall, now, out, lordCtx)) { F.waveAt = now + EG_ESCORT_EVERY_MS; F.lordAt = now; }
+      if (ringWake(F, spec, spec.ring, inHall, now, out, lordCtx)) { F.waveAt = now + EG_ESCORT_EVERY_MS + (F.still ?? 0); F.lordAt = now; }   // AUDIT EG V (L2-6): Stillness holds the first escort
     } else {
       if (now >= F.waveAt) {
         F.waveAt = now + EG_ESCORT_EVERY_MS;
@@ -1657,8 +1710,8 @@ export function egBlow(B, sub, m, pose, now) {
   // standing off it (a false wall in its alcove) is struck from beside it, as before (net/egBodies.js egHitBody)
   const view = egFightView(spec);
   if (!egGroundAt(view, p.x, p.y, p.z, EG_STRIKE_PAD_M) && !(body.role === EG_ROLE.obj && !egGroundAt(view, body.x, NaN, body.z, body.r ?? 1))) return out;
-  const here = Object.entries(B.mem).filter(([, x]) => x.alive && x.in && x.pose).map(([s, x]) => ({ sub: s, x: x.pose.x, z: x.pose.z }));
-  mm.pose = { x: p.x, z: p.z, h: B.h };   // AUDIT EG V (L3-22): the hall it stood in, as the beat keeps it (a fall's Memento reads it)
+  const here = egPosedHere(B);   // AUDIT EG V (L2-2): the living company by its poses of this hall
+  mm.pose = { x: p.x, z: p.z, h: B.h };   // AUDIT EG V (L3-22, L2-2): the hall it struck in, as egStep keeps a pose (a fall's Memento and egPosedHere read it)
   // AUDIT EG IV (lane1 #19): COUNTERSTROKE ARMED AT THE BLOW - a lord's blow landed within EG_COUNTER_M of this member since the
   // beat's census last looked (which arms it for the rest - trial) arms it now, so its 0.6 s are whole from the landing
   for (const bl of F.blows) if (!bl.counted && bl.at <= now && bl.o && egLordsOf(F).some((L) => L.i === bl.o) && egBlowNear(bl, p.x, p.z) <= EG_COUNTER_M) mm.lordLandedAt = Math.max(mm.lordLandedAt ?? -Infinity, bl.at);
@@ -1669,7 +1722,7 @@ export function egBlow(B, sub, m, pose, now) {
   // scenes/egFight.js: from EG_ECHO_Q to twice it, as the wire's `q` holds); the room takes its share - half, or the whole in
   // War-Chorus (net/egRun.js egEchoShare)
   const dm = m.q >= EG_ECHO_Q && m.q < 2 * EG_ECHO_Q ? m.d * egEchoShare(B, sub, p, here) : m.d;
-  if (body.role === EG_ROLE.add && egHas(body, EG_FL.shielded) && (body.shield ?? 0) > 0 && !egFromBehind(body, p.x, p.z)) mult = 0;
+  if (egShieldTurns(body, p.x, p.z)) mult = 0;   // a Shielded elite's front (net/egLegion.js - AUDIT EG V L2-7: the host hits' law too)
   if (body.role === EG_ROLE.obj && body.t === 'heart' && egHas(body, EG_FL.ward)) mult = 0;
   // EG-ZK (section 13.1): A BLOW ON A LORD THROUGH THE SEAM - joined (the director's admission, a lord standing), then the
   // gate's hand and purse times the lord's own weight, and what lands told the lord (its words in `out`)
@@ -1678,7 +1731,7 @@ export function egBlow(B, sub, m, pose, now) {
   const r = lf ? EG_SEAM.hit(lf, sub, dm, m.r, p, now, m.q, { i: m.i, p: mm, x: mult, bx: vx.bx, name: mm.name, here, out, threatX: egThreatX(mm) }) : egHitBody(F, spec, mm, m.i, dm, m.r, p, now, m.q, mult, vx.bx);
   const got = r.got;
   // a Shielded elite (section 8.7): its shield - a quarter of its health - takes the blows from behind first
-  if (got && body.role === EG_ROLE.add && (body.shield ?? 0) > 0) { const soak = Math.min(body.shield, got); body.shield -= soak; body.hp += soak; if (body.shield <= 0) egSetFl(F, body, EG_FL.shielded, false, out); }
+  if (got) egShieldSoak(F, body, got, out);
   if (!got || !r.b) return out;
   if (r.b.role === EG_ROLE.add) egLurkerWake(F, r.b, now, out);   // AUDIT EG III: a blow landing on a dormant Lurker wakes it (Spotter's arrows at any range so - section 15)
   mm.dh += got; mm.dc += got;
@@ -1765,8 +1818,11 @@ function hostHits(B, F, spec, sub, mm, w, b, got, p, now, here, out) {
  */
 function hostStrike(B, F, spec, a, n, w, sub, mm, p, now, here, out) {
   if (!(n > 0) || !(a.hp > 0) || egHas(a, EG_FL.friend) || egHas(a, EG_FL.ward) || egHas(a, EG_FL.hidden)) return 0;
+  // AUDIT EG V (L2-7; section 8.7): a Shielded elite's shield turns a host hit on its front and soaks one from behind, as it
+  // does a member's blow (net/egLegion.js) - struck from where the member stands
+  if (egShieldTurns(a, p.x, p.z)) return 0;
   let got = 0;
-  if (a.role === EG_ROLE.add) { got = Math.min(n, a.hp); a.hp -= n; }
+  if (a.role === EG_ROLE.add) { got = Math.min(n, a.hp); a.hp -= n; egShieldSoak(F, a, got, out); }
   else got = EG_SEAM.hit(egLordsFight(F, spec, {}, now), sub, n, w.r, p, now, w.q, { i: a.i, p: mm, x: 1, bx: w.bx, name: mm.name, here, out, threatX: egThreatX(mm) }).got;
   // AUDIT EG IV (lane1 #25): what a host hit landed is its member's as a blow's is - the hall's and the circle's damage (section
   // 16.1's part, the receipt's share) and the recap's and a Court's chart (net/egTally.js)
@@ -1848,8 +1904,9 @@ export function egWord(B, sub, m, pose, now, rng) {
   const spec = B.h > 0 ? specOf(B) : null;
   const p = spec && pose ? local(spec, { sub, sx: pose.sx, z: pose.z, dead: false }) : null;
   switch (m.k) {
-    case 'pick': if (mm.alive && egPick(B, sub, m.v)) out.push({ k: 'run', r: egRunOf(sub, mm) }, { k: 'offer', to: sub, v: mm.offer ?? [], n: mm.picks ?? 0 }); break;
-    case 'surplus': { const o = egSurplus(B, sub, m.use === 1 ? 'reroll' : 'card', rng, B.rd, B.rd % 5 === 0); if (o) out.push(o, egStateOf(B, now)); break; }
+    // AUDIT EG V (L2-15; section 15: "takes one within the rest"): a pick and a Surplus are the rest's alone
+    case 'pick': if (mm.alive && B.sg === 'rest' && egPick(B, sub, m.v)) out.push({ k: 'run', r: egRunOf(sub, mm) }, { k: 'offer', to: sub, v: mm.offer ?? [], n: mm.picks ?? 0 }); break;
+    case 'surplus': { const o = B.sg === 'rest' ? egSurplus(B, sub, m.use === 1 ? 'reroll' : 'card', rng, B.rd, B.rd % 5 === 0) : null; if (o) out.push(o, egStateOf(B, now)); break; }
     case 'vote': if (egVote(B, sub, m.q, m.y)) { const a = B.asks.find((x) => x.q === m.q); out.push({ k: 'tally', q: m.q, v: Object.values(a.v) }); } break;
     case 'cant': {
       const i = m.i, id = mm.cant?.[i];
@@ -1923,7 +1980,7 @@ export function egWord(B, sub, m, pose, now, rng) {
  *  keeps Far Watch with (net/egBodies.js egTellTo). AUDIT EG III: FAR WATCH by THE PAIR LAW (net/egVestige.js egAccordMates) -
  *  another member holding Long Sight within EG_ACCORD_M of the holder, never the holder itself. */
 export function egWatchOf(B) {
-  const L = living(B).filter(([, m]) => m.pose), out = [];
+  const L = living(B).filter(([, m]) => m.pose?.h === B.h), out = [];   // AUDIT EG V (L2-2): by a pose of this hall
   const ms = L.map(([sub, m]) => ({ sub, vs: m.vs ?? [], x: m.pose.x, z: m.pose.z }));
   for (const [sub, m] of L) {
     const v = egVOf(m.vs, 'watchfire');

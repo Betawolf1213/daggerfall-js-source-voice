@@ -27,6 +27,7 @@ import { egHallOf, egCircleOfHall, egBandOfCircle, EG_DOOR_REACH_M, EG_TWIST_LIN
 import { egBodyPlace, egGatherOf } from '../net/egLink.js';   // AUDIT EG V (c, L3-10): and the gather, as the room counts it
 import { EG_ROLE, EG_FL } from '../net/egBodies.js';
 import { EG_KIND } from '../net/egLegion.js';
+import { egTwistShown } from '../net/egRun.js';   // AUDIT EG V (L2-4): no Bargain's line when no family is free
 import { egToDungeon } from './egHall.js';
 import { EG_STAIR, egStairOf } from './egLook.js';
 import { EG_DANGER_PALETTES } from '../ui/egAccess.js';
@@ -217,5 +218,5 @@ export function egDoorCompass(E, witness = false) {
 export function egWitnessTwist(E) {
   if (!E?.b || !(E.h > 0) || E.end || egCircleOfHall(E.h + 1) !== egCircleOfHall(E.h)) return '';
   const next = egHallOf(E.seed, E.h + 1, E.geo ?? 0);
-  return next.twist ? EG_TWIST_LINES[next.twist] ?? '' : '';
+  return egTwistShown(next, E.dc) ? EG_TWIST_LINES[next.twist] ?? '' : '';   // AUDIT EG V (L2-4): no Bargain's line when no family is free
 }

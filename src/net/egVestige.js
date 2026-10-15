@@ -265,8 +265,8 @@ export function egCardActs(key, n = 0, kinds = null) {
 }
 /**
  * THE OFFER at a Redoubt for one member: three Vestiges from three different families (one held at III never shown),
- * at the first Redoubt one of them from the family of their most-used blow kind (THE LEAN: melee Blade, an arrow Hunt, a
- * spell Arcana); a Mastery as a fourth card at Redoubt 3 and every Valkynaz Redoubt; a bequest's card; at most
+ * at the breach's first Redoubt one of them from the family of their most-used blow kind (THE LEAN, `lean`: melee Blade, an
+ * arrow Hunt, a spell Arcana); a Mastery as a fourth card at Redoubt 3 and every Valkynaz Redoubt; a bequest's card; at most
  * EG_OFFER_MAX. `extra` cards from a Surplus or shards. Under The Hollow Offer, two cards, one a Mastery.
  * AUDIT EG IV: (lane10 #15) every card one that acts for its member (egCardActs - `n` the living company, `kinds` its landed
  * blow kinds), the bequest's aside (the fallen's own); (lane10 #22) `rank` - THE SHARDS' CARD: one of the member's own Vestiges
@@ -278,7 +278,7 @@ export function egOfferOf(rng, { vs = [], mast = -1, lean = null, w = 1, valk = 
   const maxed = new Set((vs ?? []).filter((p) => p[1] >= 3).map((p) => p[0]));
   const own = rank > 0 ? (vs ?? []).filter((p) => p[1] < 3 && EG_VESTIGES[p[0]]).map((p) => p[0]) : [], mine = own.length ? own[Math.floor(rng() * own.length)] : -1;
   const fams = [...EG_V_FAMILIES].sort(() => rng() - 0.5);
-  const leanFam = w === 1 && lean != null ? (lean === 0 ? 'blade' : lean === 1 ? 'hunt' : 'arcana') : null;
+  const leanFam = lean != null ? (lean === 0 ? 'blade' : lean === 1 ? 'hunt' : 'arcana') : null;   // AUDIT EG V (L2-13): `lean` given at the breach's first Redoubt alone (net/egRun.js egOffers), a deeper start's too
   if (leanFam) { fams.splice(fams.indexOf(leanFam), 1); fams.unshift(leanFam); }
   const cards = [];
   const k = (hollow ? 1 : 3) + Math.max(0, extra) + (rank > 0 && mine < 0 ? 1 : 0);

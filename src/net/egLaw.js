@@ -361,6 +361,9 @@ export const EG_DECREES = Object.freeze([
   Object.freeze({ id: 16, key: 'unyielding', fam: 'lord', name: 'Unyielding', line: 'The lord\'s ward holds longer.', law: lawRanks({ shieldX: 2000, hitX: milli(trial('unyielding').hit) }, { shieldX: 3000, hitX: 750 }) }),
   Object.freeze({ id: 17, key: 'vengeful', fam: 'lord', name: 'Vengeful', line: 'The lord strikes harder.', law: lawRanks({ dmgX: milli(trial('vengeful').dmg) }, { dmgX: 1400 }) }),
   Object.freeze({ id: 18, key: 'grudge', fam: 'lord', name: 'Grudge-Bearer', line: 'The lord never forgets.', law: lawRanks({ threatPick: milli(trial('grudge').threatPick), threatDecay: milli(trial('grudge').threatDecay) }, { threatPick: 950, threatDecay: 0 }) }),
+  // AUDIT EG V (L2-10; sections 8.4 and 14): THE FRAYING - the Hour's omen (net/sdMarks.js SD_OMENS) as a decree of the ground,
+  // drawn only for a circle with an Athenaeum; its fray is net/egRun.js egFrayOf's, fed to the Orrery's draw (net/egBrain.js)
+  Object.freeze({ id: 19, key: 'fraying', fam: 'ground', name: 'The Fraying', line: 'The Orrery snaps back sooner.' }),
 ]);
 export const EG_DECREE_BY_KEY = Object.freeze(Object.fromEntries(EG_DECREES.map((d) => [d.key, d])));
 /** How many families a circle draws (section 14): none in the first, then one more every second circle, four at most. */

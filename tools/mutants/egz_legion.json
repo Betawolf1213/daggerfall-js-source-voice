@@ -191,8 +191,8 @@
   {
     "name": "EGZ-the-first-wave-at-the-wake",
     "file": "src/net/egBrain.js",
-    "old": "F.waveAt = now + (B.still ? 14_000 : 4000); F.packAt = now + 30_000; B.still = 0; }",
-    "new": "F.waveAt = now; F.packAt = now + 30_000; B.still = 0; }",
+    "old": "F.waveAt = now + 4000 + still; F.packAt = now + 30_000; }",
+    "new": "F.waveAt = now; F.packAt = now + 30_000; }",
     "tests": [
       "test/egz_legion.test.js"
     ]

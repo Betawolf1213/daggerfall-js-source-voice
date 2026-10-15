@@ -21,7 +21,7 @@ export const EG_START_DEEPEST = 999;
 /** Each decree's family by its number - net/egLaw.js EG_DECREES' `fam`, copied and held equal by a test. */
 export const EG_WAGER_FAMILY_OF = Object.freeze([
   'blows', 'blows', 'blows', 'blows', 'legion', 'legion', 'legion', 'legion', 'legion', 'ground', 'ground', 'ground', 'ground',
-  'covenant', 'covenant', 'lord', 'lord', 'lord', 'lord',
+  'covenant', 'covenant', 'lord', 'lord', 'lord', 'lord', 'ground',   // AUDIT EG V (L2-10): 19 The Fraying, the ground's
 ]);
 
 /**

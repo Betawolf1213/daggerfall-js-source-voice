@@ -27,6 +27,8 @@
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egHallOf, egCircleOfHall, egSlotOfHall, egPhase, egTimes, egCountText, egObjectiveOf, EG_TEXT, EG_COUNT_START_MS, EG_LAST_WORD_MS, EG_BANDS, EG_DECREES, EG_TWIST_NAMES } from '../net/egLaw.js';
 import { EG_OPEN_ENDS } from '../net/egLaw.js';   // AUDIT EG III (section 16.3): the ends that open the Reliquaries
+import { egBossOf, egLordCard } from '../net/egLaw.js';   // AUDIT EG V (L2-11): the next Court's lord, the law's
+import { egStrataSecond } from '../net/egBrain.js';   // AUDIT EG V (L2-11): and the second lord its strata stand beside it
 import { egPanoplyIn, egValkRedoubt } from '../net/egPay.js';   // AUDIT EG III: the rest's stake line - a Reliquary's Panoply odds
 import { EG_RELIQUARY_PANOPLY_X } from '../systems/egSpoils.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
@@ -34,6 +36,7 @@ import { egCardText, egAccordsOf, EG_VESTIGES, EG_M_BY_ID } from '../net/egVesti
 import { egCardAccords } from '../net/egVestige.js';   // EG-ZS (section 15): the Accord an offer's card would take
 import { egResonance, egRankOf, EG_ACCORDS, EG_CAPSTONES, EG_V_FAMILY_NAMES } from '../net/egVestige.js';   // AUDIT EG III: the capstone a card completes, what an Accord does
 import { EG_CANTRIPS } from '../net/egRun.js';
+import { egTwistShown } from '../net/egRun.js';   // AUDIT EG V (L2-4): no Bargain's name when no family is free
 import { injectEnhancedFonts } from './enhancedStyle.js';
 import { chartShare, chartNumber } from './gateDamageChart.js';   // EG-ZF: the share and the numbers as the gate's chart says them
 import { EG_PRES_TEXT } from './egBeats.js';   // EG-ZF: the board's line and the chart's words
@@ -111,7 +114,7 @@ function stageLines(E, spec, now) {
     case 'trial': {
       const obj = egObjectiveOf(spec), prog = egProgressText(spec, E.fight?.pg);
       const lordAsleep = spec?.kind === 'court' && !(E.fight?.bodies ?? []).some((b) => b.role === 0 && b.ph);
-      return { line: obj, sub: prog || (spec?.kind === 'court' && lordAsleep && !(E.fight?.says ?? []).some((s) => s.w === 'wake') ? 'Step into the ring to wake its lord.' : spec?.twist ? EG_TWIST_NAMES[spec.twist] : '') };
+      return { line: obj, sub: prog || (spec?.kind === 'court' && lordAsleep && !(E.fight?.says ?? []).some((s) => s.w === 'wake') ? 'Step into the ring to wake its lord.' : egTwistShown(spec, E.dc) ? EG_TWIST_NAMES[spec.twist] : '') };
     }
     case 'closing': return { line: `${EG_TEXT.door} Step through the door.`, sub: left > 0 ? `${EG_TEXT.pulled.replace('.', '')} in ${ms(left)}.` : '' };
     case 'rest': return { line: `${EG_TEXT.redoubt(E.rd)} - ${EG_TEXT.rest}`, sub: left > 0 ? `${EG_TEXT.descend.replace('.', '')} in ${ms(left)} - or take the way home.` : '' };
@@ -134,6 +137,21 @@ export function egStakeText(rw) {
   const none = ws.reduce((p, w) => p * Math.max(0, 1 - EG_RELIQUARY_PANOPLY_X / egPanoplyIn(w)), 1);
   const k = Math.round(1 / Math.max(1e-9, 1 - none));
   return [`${ws.length} ${ws.length === 1 ? 'Reliquary' : 'Reliquaries'}`, valk ? `${valk} Valkynaz` : '', k >= 2 ? `a Panoply piece about 1 in ${k}` : 'a Panoply piece likely'].filter(Boolean).join(' - ');
+}
+/**
+ * AUDIT EG V (L2-11; sections 14 and 16.3: "the next circle's decrees ... and the next lord, both shown on the beacon") - THE
+ * BEACON'S WORDS in a rest: *The next circle bears: Gale-Swept, Hunting Pack II.* once the company's word chose them (the
+ * state's `nx` - net/egBrain.js egNextOf), and *The next Court: Grath, the Hound.* - the next circle's lord, the law's
+ * (net/egLaw.js egBossOf), with the second lord the strata held stand beside it (the Twin Court's, the Old Masters' -
+ * net/egBrain.js egStrataSecond, the state's `sr`). '' outside a rest. Pure.
+ * @param {any} E
+ */
+export function egNextCircleText(E) {
+  if (!E?.b || E.sg !== 'rest' || !(E.h > 0)) return '';
+  const dec = (E.nx ?? []).map(([id, rank]) => `${EG_DECREES[id]?.name ?? ''}${rank >= 2 ? ' II' : ''}`).filter(Boolean);
+  const c = egCircleOfHall(E.h) + 1, key = egBossOf(E.seed, c), two = egStrataSecond(E.sr, key, c);
+  const card = (k) => { const L = egLordCard(k); return `${L.name}${L.epithet ? `, ${L.epithet}` : ''}`; };
+  return [dec.length ? `The next circle bears: ${dec.join(', ')}.` : '', `The next Court: ${card(key)}${two ? ` - and ${card(two)}` : ''}.`].filter(Boolean).join(' ');
 }
 /** The company's rows (section 27.4): each member's numeral and name, a cracked recall, a witness's eye, home, forsaken. */
 export function egCompanyRows(E) {
@@ -175,7 +193,7 @@ export function egHudModel(E, me, now, { inSpire = false, witness = false, potio
       title: spec ? `Circle ${egCircleOfHall(E.h)} - Hall ${egSlotOfHall(E.h)}: ${spec.name}` : 'The Battlespire',
       count: E.sg === 'end' ? '' : `${held ? 'Held ' : ''}${seal ? 'Last word ' : ''}${ms(shown)}`, countCls,
       line: witLine || line, sub: witLine ? '' : E.sg === 'rest' && run?.rw?.length ? `${egStakeText(run.rw)}. ${sub}` : sub, company: n > 1 ? `${standing} of ${n} standing\n${egCompanyRows(E)}` : '',
-      run: runLine, dec: dec.length ? `Decrees: ${dec.join(', ')}` : '', mark: marks.join(' - '),
+      run: runLine, dec: E.sg === 'rest' ? egNextCircleText(E) : dec.length ? `Decrees: ${dec.join(', ')}` : '', mark: marks.join(' - '),   // AUDIT EG V (L2-11): a rest's beacon
     };
   }
   const c = E.call;

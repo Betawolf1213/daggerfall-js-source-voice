@@ -209,8 +209,8 @@
   {
     "name": "EGA3-count-respite-floor",
     "file": "src/net/egBrain.js",
-    "old": "if (B.resp >= 30_000) egAsk(B, 'respite', [1], now, out);",
-    "new": "if (B.resp >= 0) egAsk(B, 'respite', [1], now, out);",
+    "old": "egAsk(B, 'ready', [1], now, out);\n      if (B.resp >= EG_RESPITE_MIN_MS) egAsk(B, 'respite', [1], now, out);",
+    "new": "egAsk(B, 'ready', [1], now, out);\n      if (B.resp >= 0) egAsk(B, 'respite', [1], now, out);",
     "tests": [
       "test/egaudit3_count.test.js"
     ]

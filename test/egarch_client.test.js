@@ -61,7 +61,7 @@ test('EG-F THE START WINDOW: the stake, the warning, Hall 1 and every Redoubt th
   assert.deepEqual(egStartRows({ keys: 0, me: ME, members: [members[0]], starts, rehearsal: true }).map((r) => r.label), [EG_TEXT.noKeys, EG_TEXT.rehearsal], 'no key: the Rehearsal alone');
   assert.deepEqual(egStartRows({ keys: 1, me: ME, members: [members[0]], starts: { [ME]: [3, 0] } }).map((r) => r.label).slice(1, 3), ['Redoubt 3 - the Broken Galleries', 'Hall 1'], 'alone: no marks');
   // the Wager's own list and toggle
-  assert.equal(egWagerRows([0]).length, 20);
+  assert.equal(egWagerRows([0]).length, 21);   // PIN MOVED (AUDIT EG V, a1: L2-10's The Fraying the twentieth decree - twenty and Done)
   assert.equal(egWagerRows([0])[0].label, '* Chained Blows - the blows');
   assert.equal(egWagerRows([0]).at(-1).label, 'Done');
   assert.deepEqual(egWagerToggle([0], 1), { wager: [0], why: EG_TEXT.wagerFamily });
