@@ -2952,8 +2952,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const personArchives = [...new Set(Object.values(PERSON_TEXTURES).flatMap((r) => [...r.male, ...r.female]).concat(GUARD_TEXTURE))];
   const personTex = new Map();
   let _personTexLoad = null;
+  // BUILD-RETRY (bible/06-Systems/Travel-View.md LOAD-OWED): a load that failed is no answer - kept, one failed read of
+  // one person archive failed every populated pixel's build for the rest of the session; the next town asks again
   const ensurePersonTex = () =>
-    (_personTexLoad ??= Promise.all(personArchives.map(async (a) => personTex.set(a, await getTexture(a)))));
+    (_personTexLoad ??= Promise.all(personArchives.map(async (a) => personTex.set(a, await getTexture(a))))
+      .catch((e) => { _personTexLoad = null; throw e; }));
 
   // LW3 (bible/06-Systems/Living-World.md): THE LIVING WORLD'S ROADS. The trips are pure (systems/livingWorld/trips.js);
   // their world is this host's: the towns - the game's OWN rows (a mod's addition stands on one client and not another),
@@ -18280,6 +18283,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // unload left to come for them. Walking back rebuilds the key
       // and OVERWRITES the orphan, leaking every one of them.
       if (!state.loaded.has(`${next.px},${next.py}`)) destroyPixel(next.px, next.py);
+      else state.stood(next.px, next.py);   // BUILD-RETRY: a pixel that stands has no failures to answer for
     } catch (e) {
       console.error(`pixel ${next.px},${next.py} failed:`, e);
       // AUDIT (49faf853) B1: a build that threw AFTER it published left its entry in `built` while the key left
@@ -18287,7 +18291,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // One that threw before is BUILD-FAIL1's (destroyPixel finds nothing). Nor is it the arrival's any more.
       destroyPixel(next.px, next.py, { collectLoose: false });
       _wodArrival.keys.delete(`${next.px},${next.py}`);
-      state.release(next.px, next.py);
+      // BUILD-RETRY (bible/06-Systems/Travel-View.md LOAD-OWED): let go, and asked for again by the stream on its own
+      // bounded wait (streamingWorld.js BUILD_RETRY_MS - the frame's retryDue, beside this pump), not only by the next
+      // crossing: a read that failed once is read again, and the hole it left is built while the traveller is near it
+      state.fail(next.px, next.py, performance.now());
     }
     building = false;
     if (!queue.length) _streamSince = null;   // PERF-EXT24: and ends with the queue
@@ -19331,6 +19338,44 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     window.__look = (yaw, pitch) => { cam.yaw = yaw; cam.pitch = pitch; lookFilter.settle(); };   // CSA-F probe: the view turned in place (the helm pins the body, not the look)
     window.__streamIdle = () => queue.length === 0 && !building && inFlight.size === 0;   // AUDIT EV: teleport builds count too - the probe told the truth only for pump's
     window.__builtCount = () => built.size;
+    // LOAD-OWED probe surface (tools/pixelBuildSweep.mjs - the frame held by the probe, so nothing else runs): THE PUMP'S
+    // OWN BUILD driven over the map, one pixel at a time - the stream re-centred on it as a teleport re-centres it (every
+    // pixel down, the grid inited there), then `buildPixel`, a throw answered as the pump's catch answers it (torn down,
+    // let go) and handed back with its stack. `again`: built, torn down and built once more, as a re-skin or a return
+    // rebuilds a pixel after its release; `swap`: that rebuild under the other season (tickSeason's flip, both seasons'
+    // sets in the session's caches), the season put back after.
+    window.__pixelBuild = async (px, py, { again = false, swap = false } = {}) => {
+      await Promise.allSettled([...inFlight.values()]);   // a build the stream had under way finishes first
+      for (const k of [...built.keys()]) { const [bx, by] = k.split(',').map(Number); destroyPixel(bx, by, { collectLoose: false }); state.release(bx, by); }
+      queue.length = 0;
+      state.init(px, py);
+      queue.length = 0;
+      const t0 = performance.now();
+      const one = async () => {
+        try { await buildPixel(px, py); return null; } catch (e) {
+          destroyPixel(px, py, { collectLoose: false }); state.release(px, py);
+          return { message: String(e?.message ?? e), stack: String(e?.stack ?? '') };
+        }
+      };
+      let error = await one();
+      if (!error && (again || swap)) {
+        destroyPixel(px, py, { collectLoose: false });
+        const was = season;
+        if (swap) season = season === SEASON.Winter ? SEASON.Summer : SEASON.Winter;
+        try { error = await one(); } finally { season = was; }
+      }
+      const p = built.get(`${px},${py}`);
+      return { error, ms: Math.round(performance.now() - t0), built: !!p, location: p?.location ?? null };
+    };
+    window.__locationPixels = () => [...locationIndex.keys()];   // the sweep's places: every location the index stands, mods' rows with the map's
+    // the sweep's journey (tools/pixelBuildSweep.mjs --journey): the Overworld raised, and the clock, its hold and the stream read
+    window.__overworld = () => ({ entered: travelView?.enter() ?? false, allowed: travelViewAllowed(), danger: !!(duelEnemyNear() || areEnemiesNearby(wildSeen(exteriorFoePool()))), paused: gamePaused(), modal: modes?.modalWindowUp?.() ?? false });
+    window.__journeyState = () => {
+      let owed = 0;
+      for (const k of state.loaded.keys()) if (!built.has(k)) owed++;
+      return { scale: worldTimeScale(), held: tvHeld, why: tvHeldWhy, walking: tvWalking, view: travelView?.state ?? null, pixel: playerTravelPixel(), built: built.size, owed, failed: state.failed.size, queue: queue.length };
+    };
+
     // OH-B probe surface: every streamed pixel's OceanPitTileState diagnostic past the hash's own "not selected", and its pit
     window.__ohStat = () => (oceanHoles ? [...built.values()].map((e) => ({ px: e.px, py: e.py, d: oceanHoles.stateOf(e)?.diagnostic ?? null, pit: e._ohPit ? oceanHoles.entranceOf(e) : null,
       sea: state.pixelTranslation(e.px, e.py, [0, 0, 0])[1] + deepWaters.oceanLocalY }))
@@ -33103,10 +33148,16 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // PERF-TV: counted again only when the ground, the pixel or the reach moved - not every frame
     const px = playerTravelPixel(), gen = tvGroundGenNow(), uc = _tvUnbuilt;
     if (uc.gen !== gen || uc.x !== px.x || uc.y !== px.y || uc.r !== radius) {
-      // ETHER-OW: nothing to build where the world streams nothing - the stream's own law (StreamingWorldState.streams: the
-      // map, the continent's frame, the Eltheric Ocean's box). "Off the map" was that law before the world streamed past
-      // it, and past the Veil (and on the land past the Bay) every pixel read built: the clock was never held for the load
-      uc.n = unbuiltAround(px, radius, (x, y) => !StreamingWorldState.streams(x, y) || built.has(`${x},${y}`));
+      // LOAD-OWED (the bug-reports channel, 2026-10-14: "the speed randomly drops and gets locked at 1x after traveling for
+      // a while ... no enemies or threats nearby"): THE LAND LOADING IS WHAT THE STREAM OWES - a pixel of its grid it is
+      // still building, queued or in flight (`state.loaded` is built or building; less `built`). The stream's books hold
+      // ETHER-OW's law too: it loads nothing where the world streams nothing (StreamingWorldState.streams - the map, the
+      // continent's frame, the Eltheric Ocean's box), so off the map past the Veil the land is owed as the Bay's is. The
+      // count asked that law alone, and a pixel whose build THREW is let go by the stream (pump's catch: state.release) and
+      // asked for again only at the next map pixel crossed - so it read unbuilt to the end: the hold halved the clock to x1
+      // and kept it there, at a walking pace that took minutes to reach that crossing, and a build that failed again held
+      // it again. A hold for the load now ends when its build does, whichever way it ends
+      uc.n = unbuiltAround(px, radius, (x, y) => built.has(`${x},${y}`) || !state.loaded.has(`${x},${y}`));
       uc.gen = gen; uc.x = px.x; uc.y = px.y; uc.r = radius;
     }
     const unbuilt = uc.n;
@@ -34559,6 +34610,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (noticeBook && (!_noticeTown || stampAt - _noticeTown.at >= 1000)) { const town = noticeTownHere(); _noticeTown = { mapId: town ? town.mapId : null, at: stampAt }; }   // SCALE4c: the heartbeat's board part reads it (above)
     _farmSyncT -= dt;
     if (_farmSyncT <= 0) { _farmSyncT = 0.5; try { bountyFarms?.sync(bountyHost?.farmsWanted() ?? []); } catch (e) { console.warn('[bounty] farms', e); } }   // BOUNTY-FARM: the farms brought in line with the bounties held
+    if (state.failed.size) queue.push(...state.retryDue(performance.now()));   // BUILD-RETRY: a failed pixel's wait over, the stream asks for it again
     pump();
 
     meterFor(renderer.gl)?.markCpu('view');   // PERF-SIM1: the projection, the cameras (the Morrowind camera machine, the travel view, the helm)
