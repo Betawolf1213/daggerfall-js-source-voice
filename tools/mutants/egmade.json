@@ -260,7 +260,7 @@
   {
     "name": "EGMADE-the-spec-never-asked",
     "file": "src/scenes/egClient.js",
-    "old": "    if (!E.b || !lawForeign(E) || !(E.h > 0) || E.end) return;",
+    "old": "    if (!E.b || !(E.h > 0) || E.end) return;\n    if (!lawForeign(E) && digestOff(E)) lawOff.add(E.b);",
     "new": "    return;",
     "tests": [
       "test/egmade_law.test.js"

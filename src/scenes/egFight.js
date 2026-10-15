@@ -488,11 +488,18 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear(); ventJudged.clear(); hazHit.clear(); wispHold.clear(); stung.clear();
     toldHeard.clear(); dropFire();   // EG-ZH
     mom = { i: -1, n: 0, q: -1 }; echo = { q: -1, on: false };   // EG-ZR: a new hall's bodies build no stacks of the last's
-    hall = E.h; spec = egHallOf(E.seed, E.h, E.geo ?? 0); centre = egHallCentre(spec); band = spec.band ?? 0;
-    floor = spec.fight ? { r: spec.fight.r + 6, courts: [[spec.fight.x, spec.fight.z]] } : { r: 40, courts: [[0, spec.len / 2]] };
-    floors = egFightFloors(spec);   // EG-ZG (section 11.7): each fight floor triangulated once
+    hall = E.h; respec(E);
     eclipseHeard.clear(); dusts.length = 0; dropFrom = null; dropOn = null; pullsWas = new Map();
     beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
+  }
+  /** The hall's spec and what is made of it: its frame, its band, its floor and fight floors. AUDIT EG V (L3-7; section 22, THE
+   *  LAW PIN): read again in the hall when the room gives it in the breach's own law after my own law drew it (egHallOf answers
+   *  the given hall from then - frame): the bodies and the blows judged kept, the fire falls' flames made again at its frame. */
+  function respec(E) {
+    dropFire();
+    spec = egHallOf(E.seed, E.h, E.geo ?? 0); centre = egHallCentre(spec); band = spec.band ?? 0;
+    floor = spec.fight ? { r: spec.fight.r + 6, courts: [[spec.fight.x, spec.fight.z]] } : { r: 40, courts: [[0, spec.len / 2]] };
+    floors = egFightFloors(spec);   // EG-ZG (section 11.7): each fight floor triangulated once
   }
   /** A blow on me landed - its share of my health and its base, through my saving throw against its element. EG-ZP: less
    *  the share `dr` my company's Vestiges spare a blow (spared). EG-ZR: its share of my body without Stoneskin's points.
@@ -883,6 +890,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const E = link.state(), t = now();
       if (!E.b || !(E.h > 0) || E.end) { if (hall) this.leave(); return; }
       if (E.h !== hall) reset(E);
+      else if (egHallOf(E.seed, E.h, E.geo ?? 0) !== spec) respec(E);   // AUDIT EG V (L3-7): the breach's own hall, given
       mix.peers(true);   // EG-ZH (section 26): every peer's sound 4 dB down while a hall's fight runs
       const F = E.fight.h === E.h ? E.fight : null;
       _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0; _barks.length = 0; _pending.length = 0;

@@ -131,7 +131,7 @@ import { egKeyRefusal } from './egArch.js';   // EG-F: the key's refusals, in th
 import { egCallPromptModel, soundEgHorn, EG_CALL_KEYS } from './egCall.js';   // EG-F: the call's prompt and horn
 import { importPublicKeyB64 } from '../net/identityToken.js';   // EG-F: the relay's public half, for a stranger's arch
 import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, egBandOfCircle, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR, EG_BAND_LORDS, EG_VALKYNAZ } from '../net/egLaw.js';
-import { egOnFight, egSpecGive, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (section 10.7): the fight floor, and off it the Spire's traversal ground; (section 22) a hall given, the law I draw
+import { egOnFight, egSpecGive, egSpecDigest, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (section 10.7): the fight floor, and off it the Spire's traversal ground; (section 22) a hall given, the law I draw
 import { EG_TOLL_STEP } from '../net/egLaw.js';   // EG-ZI (section 10.6): the pull's toll, a quarter's share
 import { readEgReceipt } from '../net/egReceipt.js';
 import { EG_VOID_MAX_S } from '../net/egDurable.js';   // EG-ZA: how long a stake's void may be asked
@@ -1604,13 +1604,32 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** the halls asked (`b:h` -> when), the halls given, the breach told, the circle built again from its given halls */
   const lawAsked = new Map(), lawGot = new Set();
   let lawSaid = '', lawBuilt = '';
-  /** Whether breach `E` keeps another law than mine (`st`'s `egv`). */
-  function lawForeign(E) { return E.egv > 0 && E.egv !== EG_SPEC; }
+  /** AUDIT EG V (L3-12; section 9's safety net): the breaches a hall of which my own law drew otherwise than the room's
+   *  digest says (`st`'s `dg`) - asked and built from the room's bytes for the rest of the breach, as another law's are */
+  const lawOff = new Set();
+  const digestSeen = { k: '', off: false };
+  /** Whether breach `E` keeps another law than mine (`st`'s `egv`) - or one of its halls came out otherwise under mine. */
+  function lawForeign(E) { return (E.egv > 0 && E.egv !== EG_SPEC) || lawOff.has(E.b); }
+  /** AUDIT EG V (L3-12): does the hall I stand in, drawn by my own law, disagree with the room's digest of it (`dg`, the digest
+   *  of the hall `h` the link holds - a new hall's stage lets the last one's go)? Asked once a hall and digest. */
+  function digestOff(E) {
+    if (!(E.dg > 0)) return false;
+    const k = `${E.b}:${E.h}:${E.geo ?? 0}:${E.dg}`;
+    if (digestSeen.k !== k) {
+      digestSeen.k = k;
+      const mine = egSpecDigest(egHallOf(E.seed, E.h, E.geo ?? 0));
+      digestSeen.off = mine !== E.dg;
+      if (digestSeen.off) console.warn(`[eg] hall ${E.h} drawn otherwise than the room's (${mine} against ${E.dg}) - its halls asked of the room`);
+    }
+    return digestSeen.off;
+  }
   /** Each hall of my circle the room has not given me asked (`{k:'spec'}`), EG_SPEC_ASK_MS apart - once my law is not the
-   *  breach's (`st`'s `egv`). Said once a breach. */
+   *  breach's (`st`'s `egv`), or a hall of it came out otherwise under mine (digestOff). Said once a breach of another law. */
   function lawFrame(E) {
-    if (!E.b || !lawForeign(E) || !(E.h > 0) || E.end) return;
-    if (lawSaid !== E.b) { lawSaid = E.b; say(EG_LAW_TEXT); }
+    if (!E.b || !(E.h > 0) || E.end) return;
+    if (!lawForeign(E) && digestOff(E)) lawOff.add(E.b);
+    if (!lawForeign(E)) return;
+    if (lawSaid !== E.b) { lawSaid = E.b; if (!lawOff.has(E.b)) say(EG_LAW_TEXT); }
     const c = egCircleOfHall(E.h), o = online();
     for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) {
       const k = `${E.b}:${h}`;

@@ -182,8 +182,8 @@
   {
     "name": "EGA3C-law-foreign-own-law",
     "file": "src/scenes/egClient.js",
-    "old": "  function lawForeign(E) { return E.egv > 0 && E.egv !== EG_SPEC; }",
-    "new": "  function lawForeign(E) { return E.egv > 0; }",
+    "old": "  function lawForeign(E) { return (E.egv > 0 && E.egv !== EG_SPEC) || lawOff.has(E.b); }",
+    "new": "  function lawForeign(E) { return E.egv > 0 || lawOff.has(E.b); }",
     "tests": [
       "test/egaudit3_client.test.js"
     ]

@@ -146,7 +146,7 @@ export function foldEg(s, w, now) {
         ds: w.ds ?? [],   // EG-ZF
         fight: same && s.fight.h === w.h ? s.fight : EG_FIGHT_EMPTY, heardAt: now };
     }
-    case 'sg': return { ...s, ...stageOf(w), fight: w.h === s.fight.h ? s.fight : EG_FIGHT_EMPTY, offer: w.sg === 'rest' ? s.offer : null, heardAt: now };
+    case 'sg': return { ...s, ...stageOf(w), ...(w.h !== s.h ? { dg: 0 } : {}), fight: w.h === s.fight.h ? s.fight : EG_FIGHT_EMPTY, offer: w.sg === 'rest' ? s.offer : null, heardAt: now };   // AUDIT EG V (L3-12): a new hall's stage lets the last hall's digest go - `dg` is only ever its own hall's (`st` brings the next)
     case 'co': return { ...s, co: w.co, heardAt: now };
     case 'fall': return { ...s, falls: keepLast(s.falls, { s: w.s, n: w.n, at: w.at, fin: w.fin }, EG_FALLS_KEPT), heardAt: now };
     case 'rd': return { ...s, rd: w.w, redoubt: { w: w.w, h: w.h, at: w.at, cl: w.cl, g: w.g, v: w.v, cov: w.cov }, chart: w.dm ? { at: w.at, h: w.h, dm: w.dm } : s.chart, heardAt: now };   // EG-ZF: the lord's fall's chart
