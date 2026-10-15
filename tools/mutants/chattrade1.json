@@ -7,7 +7,6 @@
   {"name": "CT-join-takes-any-name", "file": "src/net/chatCommands.js", "old": "chan: JOIN_CHANNELS.includes(chan) ? chan : ''", "new": "chan", "tests": ["test/chattrade1.test.js"]},
   {"name": "CT-autojoin-says-it", "file": "src/scenes/world.js", "old": "          optSet(cmd.tab, true, { say: true });\n          return false;", "new": "          optSet(cmd.tab, true, { say: true });\n          return true;", "tests": ["test/chattrade1.test.js"]},
   {"name": "CT-trade-on-by-default", "file": "src/systems/uiPrefs.js", "old": "  chatTrade: false, chatLfg: false,", "new": "  chatTrade: true, chatLfg: false,", "tests": ["test/chattrade1.test.js"]},
-  {"name": "CT-rp-marks-doubled", "file": "src/net/chat.js", "old": ".replace(/^\\*+|\\*+$/g, '')", "new": "", "tests": ["test/chattrade1.test.js"]},
   {"name": "CT-rp-kind-lost", "file": "src/net/chat.js", "old": "isOocText(text) ? 'ooc' : isRpText(text) ? 'rp' : ''", "new": "isOocText(text) ? 'ooc' : ''", "tests": ["test/chattrade1.test.js"]},
   {"name": "CT-rp-takes-the-channel-colour", "file": "src/ui/chatColours.js", "old": ":not(.roll):not(.rp)';", "new": ":not(.roll)';", "tests": ["test/chattrade1.test.js"]},
   {"name": "CT-rp-not-italic-on-the-page", "file": "src/ui/grimoireDress.js", "old": "text-shadow: none !important; font-style: italic; }", "new": "text-shadow: none !important; }", "tests": ["test/chattrade1.test.js"]},
@@ -15,5 +14,8 @@
   {"name": "CT-picker-escape-closes-the-chat", "file": "src/ui/chatPanel.js", "old": " if (chanOpen) { setChanOpen(false); return; }", "new": "", "tests": ["test/chattrade1.test.js"]},
   {"name": "CT-picker-left-open-on-close", "file": "src/ui/chatPanel.js", "old": "    setChanOpen(false);   // CHAT-TRADE: and the channel list\n", "new": "", "tests": ["test/chattrade1.test.js"]},
   {"name": "CT-picker-not-wired", "file": "src/scenes/world.js", "old": ", set: (id, on) => optSet(id, on) },", "new": ", set: () => {} },", "tests": ["test/chattrade1.test.js"]},
-  {"name": "CT-picker-mark-wrong", "file": "src/ui/chatPanel.js", "old": "c.joined ? '\\u2713' : ''", "new": "c.joined ? '' : '\\u2713'", "tests": ["test/chattrade1.test.js"]}
+  {"name": "CT-picker-mark-wrong", "file": "src/ui/chatPanel.js", "old": "c.joined ? '\\u2713' : ''", "new": "c.joined ? '' : '\\u2713'", "tests": ["test/chattrade1.test.js"]},
+  {"name": "CT-A2-picker-claims-a-menu", "file": "src/ui/chatPanel.js", "old": "chanMenu.setAttribute('role', 'group');", "new": "chanMenu.setAttribute('role', 'menu');", "tests": ["test/chattrade1.test.js"]},
+  {"name": "CT-A3-inner-marks-kept", "file": "src/net/chat.js", "old": ".replace(/\\*/g, '').replace(/\\s+/g, ' ').trim()}*`;", "new": ".replace(/\\s+/g, ' ').trim()}*`;", "tests": ["test/chattrade1.test.js"]},
+  {"name": "CT-A5-already-reads-as-joined", "file": "src/scenes/world.js", "old": "note(on ? alreadyJoinedText(cmd.chan) : notJoinedText(cmd.chan));", "new": "note(on ? optJoinedText(cmd.chan) : notJoinedText(cmd.chan));", "tests": ["test/chattrade1.test.js"]}
 ]

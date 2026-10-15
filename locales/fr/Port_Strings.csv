@@ -1866,6 +1866,8 @@ mods.worldOfDaggerfall.Enabled.description,"Davantage à découvrir en pleine na
 mods.worldTooltips.Enabled.description,"Un nom sous le réticule pour ce que vous regardez : une personne, une boutique et ses horaires, une porte et sa serrure, la destination d’une sortie, un levier, une roue, une échelle, une bibliothèque, un Daedra prêt à être invoqué. Désactivé, vous voyez toujours ce que contient un coffre ou un corps."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Activer pour ne pas donner d’indication par défaut sur les objets interactifs censés rester secrets, notamment les énigmes de la quête principale."
 naval.yard.grogDrunk,"Le moral de son équipage est {spirits, select, roaring {exubérant} high {haut} steady {stable} low {bas} other {sombre}} - ils ont déjà eu la tournée du jour"
+net.chat.already,"Vous êtes déjà dans le canal {name} - /leave {id} le quitte."
+net.chat.badJoin,"/{cmd} prend trade ou lfg : /{cmd} trade."
 net.chat.channels,"Canaux"
 net.chat.channelsTitle,"Rejoindre ou quitter un canal de discussion"
 net.chat.joinHelp,"/join trade, /join lfg - ajoute un canal à vos onglets ; /leave trade, /leave lfg le retire"

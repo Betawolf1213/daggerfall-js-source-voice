@@ -817,7 +817,7 @@ import { ChatLog, CHAT_REJOIN_MS } from '../net/chat.js';   // CHAT1: the tabs a
 import { LANG_OLD_RELAY_TEXT, NO_LANG_TEXT, langJoinedText } from '../net/chat.js';   // CHAT-LANG: the Language tab's words
 import { CHAT_LANGS, chatLangRoom } from '../net/wire.js';   // CHAT-LANG: the language channels
 import { LANG_LINES, unknownLangText } from '../net/chatCommands.js';   // CHAT-LANG: /lang's list and refusal
-import { OPT_CHANNELS, tradeChanOldText, notJoinedText, optJoinedText, optJoinedSayText, optLeftText, optWaitText } from '../net/chat.js';   // CHAT-TRADE: the Trade and LFG tabs' words
+import { OPT_CHANNELS, tradeChanOldText, notJoinedText, optJoinedText, optJoinedSayText, optLeftText, optWaitText, alreadyJoinedText } from '../net/chat.js';   // CHAT-TRADE: the Trade and LFG tabs' words
 import { badJoinText } from '../net/chatCommands.js';   // CHAT-TRADE: /join's and /leave's refusal
 import { oocText, localLineHeard, nextRegionRoom, regionJoinedText, CHAN_OLD_RELAY_TEXT, ROLL_OLD_RELAY_TEXT, EMOTE_OLD_RELAY_TEXT, GUILD_OLD_RELAY_TEXT, NO_GUILD_TEXT, partyNoteTab } from '../net/chat.js';   // CHAT-CHAN: the channels' own laws (a second chat import: CHAT1's pin holds the first as it stands)
 import { parseChatLine, HELP_LINES, CHAT_GREETING_TEXT, unknownCommandText, emptyCommandText, hostMisuseText, badRollText, expandShortcodes, EMOTE_LINES, foundText, FIND_OFFLINE_TEXT, FIND_RELAY_TEXT } from '../net/chatCommands.js';   // CHAT-CHAN: what a typed line IS; DICE1: and a roll; EMOTE1: an action, a gesture, a shortcode
@@ -22804,7 +22804,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         if (cmd.kind === 'join' || cmd.kind === 'leave') {
           if (!cmd.chan) { note(badJoinText(cmd.kind)); return false; }
           const on = cmd.kind === 'join';
-          if (optJoined(cmd.chan) === on) { note(on ? optJoinedText(cmd.chan) : notJoinedText(cmd.chan)); return 'read'; }   // already so: the state, and the way out of it
+          if (optJoined(cmd.chan) === on) { note(on ? alreadyJoinedText(cmd.chan) : notJoinedText(cmd.chan)); return 'read'; }   // already so: the state, and the way out of it
           optSet(cmd.chan, on);
           return 'read';
         }
@@ -28788,8 +28788,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  for either and sees no tab. The join's line is the command's (a page load back into a channel says nothing). */
   const chatOptFrame = () => {
     if (seatOut()) return;   // ONE-SEAT: a tab out of the seat joins no channel
-    for (const [id, c] of Object.entries(OPT_CHANNELS)) {
-      const link = chatLinks?.get(id);
+    for (const id in OPT_CHANNELS) {   // AUDIT CHAT-TRADE A6: a frame's walk allocates nothing
+      const c = OPT_CHANNELS[id], link = chatLinks?.get(id);
       if (!link) continue;
       const joined = optJoined(id);
       chatLog.setShown(id, joined);

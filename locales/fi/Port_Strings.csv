@@ -1530,6 +1530,8 @@ mods.iliacPuddleNoMore.General.SpawnUnderwaterEnemies.description,"Luo vedenalai
 mods.iliacPuddleNoMore.General.SpawnWaterSurfaces.description,"Piirrä näkyvät vedenpinnat"
 mods.iliacPuddleNoMore.General.SwimSpeedMultiplier.description,"Kerroin ulkona uimisen liikenopeudelle"
 naval.yard.grogDrunk,"Hänen miehistönsä mieliala on {spirits, select, roaring {riehakas} high {korkea} steady {tasainen} low {matala} other {synkkä}} - he ovat jo saaneet tämän päivän kierroksen"
+net.chat.already,"Olet jo kanavalla {name} - /leave {id} poistuu siltä."
+net.chat.badJoin,"/{cmd} ottaa trade tai lfg: /{cmd} trade."
 net.chat.channels,"Kanavat"
 net.chat.channelsTitle,"Liity chat-kanavalle tai poistu siltä"
 net.chat.joinHelp,"/join trade, /join lfg - lisää kanavan välilehtiisi; /leave trade, /leave lfg poistaa sen"

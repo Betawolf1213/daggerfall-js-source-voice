@@ -1483,6 +1483,8 @@ mods.handheldTorches.Throwing.Chance.description,"% chans att elden tar sig på 
 mods.handheldTorches.Throwing.Combustion.description,"En kastad fackla som träffar en fiende kan sätta eld på den."
 mods.handheldTorches.Throwing.Duration.description,"Antal rundor elden brinner på en träffad fiende."
 naval.yard.grogDrunk,"Hennes besättnings humör är {spirits, select, roaring {sprudlande} high {högt} steady {stadigt} low {lågt} other {dystert}} - de har redan fått dagens omgång"
+net.chat.already,"Du är redan med i kanalen {name} - /leave {id} lämnar den."
+net.chat.badJoin,"/{cmd} tar trade eller lfg: /{cmd} trade."
 net.chat.channels,"Kanaler"
 net.chat.channelsTitle,"Gå med i eller lämna en chattkanal"
 net.chat.joinHelp,"/join trade, /join lfg - lägg till en kanal bland dina flikar; /leave trade, /leave lfg tar bort den"

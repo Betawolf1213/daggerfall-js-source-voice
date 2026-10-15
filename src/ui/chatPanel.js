@@ -672,8 +672,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     chanMenu.replaceChildren(...(channels.list?.() ?? []).map((c) => {
       const row = el('button', 'dfchat-chan-row');
       row.type = 'button'; row.dataset.chan = c.id;
-      row.setAttribute('role', 'menuitemcheckbox');
-      row.setAttribute('aria-checked', c.joined ? 'true' : 'false');
+      row.setAttribute('aria-pressed', c.joined ? 'true' : 'false');   // AUDIT CHAT-TRADE A2: a toggle button - the list claims no menu's keys it does not have
       const text = el('span', 'dfchat-chan-text');
       text.append(el('span', 'dfchat-chan-name', c.name), el('span', 'dfchat-chan-hint', c.hint ?? ''));
       row.append(el('span', 'dfchat-chan-mark', c.joined ? '\u2713' : ''), text);
@@ -692,10 +691,9 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
   if (chanBtn) {
     chanBtn.type = 'button';
     chanBtn.setAttribute('aria-label', t('net.chat.channels', 'Channels'));
-    chanBtn.setAttribute('aria-haspopup', 'menu');
     chanBtn.setAttribute('aria-expanded', 'false');
     chanBtn.title = t('net.chat.channelsTitle', 'Join or leave a chat channel');
-    chanMenu.setAttribute('role', 'menu');
+    chanMenu.setAttribute('role', 'group');   // the emoji grid's role: a set of buttons
     chanMenu.setAttribute('aria-label', t('net.chat.channels', 'Channels'));
     chanBtn.addEventListener('click', () => { setChanOpen(!chanOpen); input.focus?.(); });
     tabs.append(chanBtn, chanMenu);

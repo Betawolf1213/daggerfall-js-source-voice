@@ -1866,6 +1866,8 @@ mods.worldOfDaggerfall.Enabled.description,"야생에서 찾을 것이 더 많�
 mods.worldTooltips.Enabled.description,"바라보는 대상의 이름을 조준점 아래에 띄웁니다. 사람, 상점과 영업시간, 문과 자물쇠, 출구가 이어지는 곳, 레버, 바퀴, 사다리, 책장, 소환을 기다리는 데이드라까지 표시합니다. 꺼도 상자나 시체에 든 것은 여전히 보입니다."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"켜면 비밀로 의도되었을 수 있는 상호작용 오브젝트(특히 메인 퀘스트의 퍼즐)에 기본 표시를 하지 않습니다."
 naval.yard.grogDrunk,"선원들의 사기는 {spirits, select, roaring {하늘을 찌릅니다} high {높습니다} steady {안정적입니다} low {낮습니다} other {바닥입니다}} - 오늘 몫의 술은 이미 마셨습니다"
+net.chat.already,"이미 {name} 채널에 있습니다. /leave {id}로 나갑니다."
+net.chat.badJoin,"/{cmd} 뒤에는 trade 또는 lfg를 씁니다: /{cmd} trade"
 net.chat.channels,"채널"
 net.chat.channelsTitle,"채팅 채널에 참여하거나 나가기"
 net.chat.joinHelp,"/join trade, /join lfg - 채널을 탭에 추가합니다. /leave trade, /leave lfg로 뺍니다"

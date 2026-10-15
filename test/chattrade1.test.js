@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { CHAT_TABS, ChatLog, OPT_CHANNELS, isRpText, rpText, notJoinedText, optJoinedText, optJoinedSayText, optLeftText, optWaitText, tradeChanOldText } from '../src/net/chat.js';
+import { CHAT_TABS, ChatLog, OPT_CHANNELS, isRpText, rpText, notJoinedText, optJoinedText, optJoinedSayText, optLeftText, optWaitText, tradeChanOldText, alreadyJoinedText } from '../src/net/chat.js';
 import { CHAT_TRADE_ROOM, CHAT_LFG_ROOM, CHAT_ROOMS, isChatRoom, isRegionRoom, TRADE_CHAN_RELAY_MIN, relaySupportsTradeChan, RELAY_VERSION } from '../src/net/wire.js';
 import { parseChatLine, CHANNEL_COMMANDS, HELP_LINES, JOIN_CHANNELS, badJoinText } from '../src/net/chatCommands.js';
 import { RP_COLOURS, CHANNEL_COLOURS, CHAT_GROUNDS, PING_GROUNDS, COLOURED_LINE, contrast } from '../src/ui/chatColours.js';
@@ -73,6 +73,8 @@ test('CHAT-TRADE commands: /trade, /tr and /lfg say a line on their channel; /jo
   assert.equal(notJoinedText('trade'), 'You are not in the Trade channel - /join trade joins it.');
   assert.equal(optJoinedText('lfg'), 'LFG channel joined. /leave lfg leaves it.');
   assert.equal(optLeftText('trade'), 'Trade channel left.');
+  assert.equal(alreadyJoinedText('lfg'), 'You are already in the LFG channel - /leave lfg leaves it.', 'AUDIT CHAT-TRADE A5');
+  assert.match(rd('src/scenes/world.js'), /note\(on \? alreadyJoinedText\(cmd\.chan\) : notJoinedText\(cmd\.chan\)\)/);
   assert.ok(optWaitText('lfg').startsWith('The LFG channel is still opening'));
   assert.ok(tradeChanOldText().includes('update'));
   assert.equal(optJoinedSayText('trade'), 'Trade channel joined - press Enter to say your line. /leave trade leaves it.');
@@ -112,6 +114,8 @@ test('CHAT-RP mark: /rp wraps the words in single asterisks, and a whole line so
   assert.deepEqual(parseChatLine('/rp'), { kind: 'empty', name: 'rp' });
   assert.deepEqual(parseChatLine('/rp ***'), { kind: 'empty', name: 'rp' }, 'nothing but marks is nothing to say');
   assert.equal(rpText('  hums a tune  '), '*hums a tune*');
+  assert.equal(rpText('*bows* deeply'), '*bows deeply*', 'AUDIT CHAT-TRADE A3: a mark inside the line goes - the whole line is the roleplay');
+  assert.equal(parseChatLine('/rp *bows*   low').text, '*bows low*');
   for (const t of ['*draws her blade*', '*a*', ' *waves* ', '*x * y*']) assert.equal(isRpText(t), true, t);
   for (const t of ['**bold**', '* *', '*', '*sighs', 'hi *x*', '*x *', '((ooc))', '']) assert.equal(isRpText(t), false, t);
   assert.ok(HELP_LINES.includes('/rp <text> - a line of roleplay on this tab, drawn green and leaning: /rp draws her blade'));
@@ -189,13 +193,13 @@ test('CHAT-TRADE picker (Mac: "There must be a better way to handle the new chan
   const add = one(bar, 'dfchat-chan-add'), menu = one(bar, 'dfchat-chans');
   assert.deepEqual(bar.children.map((c) => c.className.split(' ')[0]), ['dfchat-tablist', 'dfchat-chan-add', 'dfchat-chans', 'dfchat-social'], 'beside the tabs, before Social - one glyph, no tab');
   assert.equal(add.textContent, '+');
-  assert.deepEqual([add.attrs['aria-label'], add.attrs['aria-haspopup'], add.attrs['aria-expanded'], menu.attrs.role], ['Channels', 'menu', 'false', 'menu']);
+  assert.deepEqual([add.attrs['aria-label'], add.attrs['aria-haspopup'], add.attrs['aria-expanded'], menu.attrs.role], ['Channels', undefined, 'false', 'group'], 'AUDIT CHAT-TRADE A2: a group of toggle buttons, as the emoji grid - no menu claimed whose keys it lacks');
   assert.equal(menu.className, 'dfchat-chans', 'shut');
   panel.open();
   add.fire('click');
   assert.equal(menu.className, 'dfchat-chans on');
   assert.equal(add.attrs['aria-expanded'], 'true');
-  const rows = () => find(menu, 'dfchat-chan-row').map((r) => [r.dataset.chan, r.attrs['aria-checked'], one(r, 'dfchat-chan-mark').textContent, one(r, 'dfchat-chan-name').textContent, one(r, 'dfchat-chan-hint').textContent]);
+  const rows = () => find(menu, 'dfchat-chan-row').map((r) => [r.dataset.chan, r.attrs['aria-pressed'], one(r, 'dfchat-chan-mark').textContent, one(r, 'dfchat-chan-name').textContent, one(r, 'dfchat-chan-hint').textContent]);
   assert.deepEqual(rows(), [['trade', 'false', '', 'Trade', 'buy, sell'], ['lfg', 'true', '\u2713', 'LFG', 'groups']]);
   find(menu, 'dfchat-chan-row')[0].fire('click');
   assert.deepEqual(sets, [['trade', true]], 'joined through the host');

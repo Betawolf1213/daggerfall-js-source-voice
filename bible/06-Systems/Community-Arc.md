@@ -1036,3 +1036,31 @@ THE FOUR HOSTS: the chat is `scenes/world.js`'s alone (the log, the panel and th
 nothing to wire.
 
 Not a DFU member: Daggerfall Unity has no chat. Ledger A row (ONLINE). Pinned by `test/chattrade1.test.js`.
+
+## AUDIT CHAT-TRADE - the Trade and LFG channels, the picker and /rp, read again (2026-10-15, Mac: "Audit this")
+
+The slice's diff read whole - the wire, the log, the commands, the host's doors, the panel, the colours and the
+sheets - against the relay it reaches. Six findings; five fixed and pinned, one flagged.
+
+- **A1 (flagged - a relay change, Mac's call).** A chat room holds at most CHAT_SOCKETS_MAX sockets (2048,
+  `server/src/index.js` `const cap = isChatRoom(key) ? CHAT_SOCKETS_MAX : SOCKETS_MAX;`), and the Trade and LFG rooms
+  are one room each, unsharded - so past 2048 players in either, the next is refused. The World channel shards sixteen
+  ways (SCALE5c) and each region four (part two) for this reason; the language channels share the limit today. The
+  choice keeps both rooms smaller than the World's, which is why they ship unsharded; sharding them is the region
+  rooms' machinery (`net/hubShards.js`) given two more buses, and a relay deploy.
+- **A2 (fixed).** The picker said `role="menu"` and its rows `menuitemcheckbox` - roles that promise a menu's arrow keys
+  and focus, which it never had. A group of toggle buttons now (`aria-pressed`), the emoji grid's own role.
+- **A3 (fixed).** `/rp *bows* deeply` read `*bows* deeply*`: the line's two ends were stripped of marks one at a time.
+  The whole line is the roleplay, so a mark inside it is taken out (`net/chat.js` rpText).
+- **A4 (fixed).** `/join`'s refusal was English in every language - the L10N4 ratchet's heuristic missed a template
+  without two plain words; it goes through the text core (`net.chat.badJoin`).
+- **A5 (fixed).** `/join trade` while in the Trade channel answered "Trade channel joined." - a join that did not
+  happen; it says the player is already in it, and how to leave (`net.chat.already`).
+- **A6 (fixed).** The Trade and LFG frame walked `Object.entries` - two arrays every frame, for two rows; it walks the
+  table's keys.
+
+Read and found sound: the relay gate on both ends (the World link's welcome, an older relay saying so and joining
+nothing); the room joined only while chosen and left when not; a bare `/leave` still the battle's; the roleplay mark
+never on a game line and behind an action's and an aside's; the colours at 4.5:1 on every ground; the picker's Escape
+and close. Known and kept as the emoji grid's: the picker is reached by the pointer and the touch, the field holding
+the keyboard's Tab (CHAT C7). Pinned in `test/chattrade1.test.js`; `tools/mutants/chattrade1.json` gains A2, A3, A5.

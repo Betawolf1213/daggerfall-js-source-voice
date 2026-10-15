@@ -1866,6 +1866,8 @@ mods.worldOfDaggerfall.Enabled.description,"Mere at finde i vildmarken: banditle
 mods.worldTooltips.Enabled.description,"Et navn under sigtekornet for det, du ser på: en person, en butik og dens åbningstider, en dør og dens lås, hvor en udgang fører hen, et håndtag, et hjul, en stige, en bogreol, en Daedra, der venter på at blive påkaldt. Med den slået fra ser du stadig, hvad en kiste eller et lig rummer."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Slå til for ikke at give en standardmarkering på genstande, man kan bruge, som måske var tænkt som hemmelige, især i forbindelse med gåder i hovedhistorien."
 naval.yard.grogDrunk,"Hendes besætnings humør er {spirits, select, roaring {brusende} high {højt} steady {stabilt} low {lavt} other {dystert}} - de har fået dagens omgang"
+net.chat.already,"Du er allerede med i kanalen {name} - /leave {id} forlader den."
+net.chat.badJoin,"/{cmd} tager trade eller lfg: /{cmd} trade."
 net.chat.channels,"Kanaler"
 net.chat.channelsTitle,"Tilslut eller forlad en chatkanal"
 net.chat.joinHelp,"/join trade, /join lfg - sæt en kanal på dine faner; /leave trade, /leave lfg tager den af"

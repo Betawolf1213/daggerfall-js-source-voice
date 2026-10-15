@@ -1866,6 +1866,8 @@ mods.worldOfDaggerfall.Enabled.description,"Mehr zu entdecken in der Wildnis: Ba
 mods.worldTooltips.Enabled.description,"Ein Name unter dem Fadenkreuz für das, was du ansiehst: eine Person, ein Laden und seine Öffnungszeiten, eine Tür und ihr Schloss, wohin ein Ausgang führt, ein Hebel, ein Rad, eine Leiter, ein Bücherregal, ein Daedra, der auf seine Beschwörung wartet. Ist es aus, siehst du trotzdem, was eine Truhe oder Leiche enthält."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Aktivieren, um bei interaktiven Objekten, die vielleicht geheim bleiben sollten, keinen Standardhinweis zu geben, besonders bei Rätseln der Hauptquest."
 naval.yard.grogDrunk,"Die Stimmung ihrer Mannschaft ist {spirits, select, roaring {ausgelassen} high {hoch} steady {stabil} low {gedrückt} other {finster}} - sie hat die heutige Runde schon bekommen"
+net.chat.already,"Du bist schon im Kanal {name} – /leave {id} verlässt ihn."
+net.chat.badJoin,"/{cmd} nimmt trade oder lfg: /{cmd} trade."
 net.chat.channels,"Kanäle"
 net.chat.channelsTitle,"Einem Chatkanal beitreten oder ihn verlassen"
 net.chat.joinHelp,"/join trade, /join lfg - einen Kanal zu deinen Tabs hinzufügen; /leave trade, /leave lfg entfernt ihn"

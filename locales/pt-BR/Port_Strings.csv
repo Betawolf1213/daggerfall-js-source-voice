@@ -1866,6 +1866,8 @@ mods.worldOfDaggerfall.Enabled.description,"Mais para encontrar nos ermos: acamp
 mods.worldTooltips.Enabled.description,"Um nome sob a mira para o que você estiver olhando: uma pessoa, uma loja e o horário dela, uma porta e a fechadura, aonde uma saída leva, uma alavanca, uma roda, uma escada, uma estante, um Daedra esperando para ser invocado. Com isto desligado, você ainda vê o que um baú ou corpo guarda."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Ative para não dar a indicação padrão em objetos interativos que talvez devessem ser secretos, especialmente nos enigmas da missão principal."
 naval.yard.grogDrunk,"O ânimo da tripulação dela está {spirits, select, roaring {exultante} high {alto} steady {firme} low {baixo} other {sombrio}} - eles já tomaram a rodada de hoje"
+net.chat.already,"Você já está no canal {name} - /leave {id} sai dele."
+net.chat.badJoin,"/{cmd} aceita trade ou lfg: /{cmd} trade."
 net.chat.channels,"Canais"
 net.chat.channelsTitle,"Entrar em um canal de chat ou sair dele"
 net.chat.joinHelp,"/join trade, /join lfg - coloca um canal nas suas abas; /leave trade, /leave lfg o tira"

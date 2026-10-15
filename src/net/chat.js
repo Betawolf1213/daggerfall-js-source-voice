@@ -115,6 +115,8 @@ export const notJoinedText = (id) => t('net.chat.notJoined', 'You are not in the
 export const optJoinedText = (id) => t('net.chat.joined', '{name} channel joined. /leave {id} leaves it.', optArgs(id));
 export const optJoinedSayText = (id) => t('net.chat.joinedSay', '{name} channel joined - press Enter to say your line. /leave {id} leaves it.', optArgs(id));
 export const optLeftText = (id) => t('net.chat.left', '{name} channel left.', optArgs(id));
+/** CHAT-TRADE: `/join` of a channel already joined (AUDIT CHAT-TRADE A5: the join's own line read as a join just made). */
+export const alreadyJoinedText = (id) => t('net.chat.already', 'You are already in the {name} channel - /leave {id} leaves it.', optArgs(id));
 /** CHAT-TRADE: a line said to a channel joined but not open yet (the World link's welcome not heard, the socket opening). */
 export const optWaitText = (id) => t('net.chat.wait', 'The {name} channel is still opening - say it again in a moment.', optArgs(id));
 /** PING1 (2026-10-11, the players: "A unique color or alert for @name pings"): does `text` name `name` with an @ - the
@@ -143,8 +145,9 @@ export const oocText = (text) => `((${String(text ?? '').trim()}))`;
  *  The whole line: an asterisk at each end, and just inside the last something that is neither one nor a space
  *  (`**bold**` and `* *` are not roleplay). */
 export const isRpText = (text) => /^\*[\s\S]*[^*\s]\*$/.test(String(text ?? '').trim());
-/** CHAT-RP: `/rp text`'s line - the text in the mark, any asterisks it was already wrapped in taken off first. */
-export const rpText = (text) => `*${String(text ?? '').trim().replace(/^\*+|\*+$/g, '').trim()}*`;
+/** CHAT-RP: `/rp text`'s line - the text in the mark. The whole line is the roleplay, so a mark typed inside it is
+ *  taken out first (AUDIT CHAT-TRADE A3: stripping the ends alone made `/rp *bows* deeply` read `*bows* deeply*`). */
+export const rpText = (text) => `*${String(text ?? '').replace(/\*/g, '').replace(/\s+/g, ' ').trim()}*`;
 /** CHAT-CHAN: is `speaker` within earshot of `listener` - two feet in the scene's frame, measured in the ground's
  *  plane as the name's range is (net/remotePlayers.js namePoints), between the two BODIES: the listener's is the
  *  port's one "where am I" (player.feetAt()), never the camera, which a third-person view stands behind the body. */

@@ -49,8 +49,8 @@ export const CHANNEL_COMMANDS = Object.freeze([
 ]);
 /** CHAT-TRADE: the channels `/join` and `/leave` name (net/chat.js OPT_CHANNELS' ids). */
 export const JOIN_CHANNELS = Object.freeze(['trade', 'lfg']);
-/** CHAT-TRADE: a /join or /leave that names none of them. */
-export const badJoinText = (name) => `/${name} takes ${JOIN_CHANNELS.join(' or ')}: /${name} ${JOIN_CHANNELS[0]}.`;
+/** CHAT-TRADE: a /join or /leave that names none of them - through the text core (AUDIT CHAT-TRADE A4). */
+export const badJoinText = (name) => t('net.chat.badJoin', '/{cmd} takes trade or lfg: /{cmd} trade.', { cmd: name });
 /**
  * EMOTE1 (2026-09-23, Addison Knox: "Emotes, be it emojis or additional animations"): THE GESTURES. Each is an ACTION
  * line said on the Local tab - a gesture is the body's, and the bodies near enough to see it are the ones Local

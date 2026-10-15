@@ -1866,6 +1866,8 @@ mods.worldOfDaggerfall.Enabled.description,"Víc k nalezení v divočině: tábo
 mods.worldTooltips.Enabled.description,"Jméno pod zaměřovačem pro to, na co se díváš: osoba, obchod a jeho otevírací doba, dveře a jejich zámek, kam vede východ, páka, kolo, žebřík, knihovna, Daedra čekající na vyvolání. I když je vypnuto, stále vidíš, co obsahuje truhla nebo tělo."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Zapni, aby se u interaktivních objektů, které možná měly být tajné, nezobrazovala výchozí nápověda, zvláště u hádanek v hlavním úkolu."
 naval.yard.grogDrunk,"Nálada její posádky je {spirits, select, roaring {bujará} high {vysoká} steady {vyrovnaná} low {nízká} other {zachmuřená}} - dnešní příděl grogu už dostali"
+net.chat.already,"Už jsi v kanálu {name} - /leave {id} ho opustí."
+net.chat.badJoin,"/{cmd} bere trade nebo lfg: /{cmd} trade."
 net.chat.channels,"Kanály"
 net.chat.channelsTitle,"Připojit se ke kanálu chatu, nebo ho opustit"
 net.chat.joinHelp,"/join trade, /join lfg - přidá kanál mezi tvé záložky; /leave trade, /leave lfg ho odebere"

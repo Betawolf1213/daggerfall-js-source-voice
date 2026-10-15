@@ -1866,6 +1866,8 @@ mods.worldOfDaggerfall.Enabled.description,"Больше находок в гл�
 mods.worldTooltips.Enabled.description,"Название под прицелом для того, на что вы смотрите: человек, лавка и часы её работы, дверь и её замок, куда ведёт выход, рычаг, колесо, лестница, книжная полка, даэдра, ожидающий призыва. Если выключено, вы всё равно видите, что лежит в сундуке или на теле."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Включите, чтобы не показывать стандартную подсказку у интерактивных объектов, которые, возможно, задуманы скрытыми, особенно в головоломках основного сюжета."
 naval.yard.grogDrunk,"Боевой дух её команды {spirits, select, roaring {на высоте} high {высокий} steady {ровный} low {низкий} other {мрачный}} - сегодняшнюю чарку они уже получили"
+net.chat.already,"Вы уже в канале {name} — /leave {id} — выйти из него."
+net.chat.badJoin,"/{cmd} принимает trade или lfg: /{cmd} trade."
 net.chat.channels,"Каналы"
 net.chat.channelsTitle,"Войти в канал чата или выйти из него"
 net.chat.joinHelp,"/join trade, /join lfg — добавить канал к вкладкам; /leave trade, /leave lfg — убрать его"
