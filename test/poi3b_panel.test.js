@@ -210,6 +210,8 @@ test('POI-3b OPENING FROM THE STORE: the list asked and searched; a POI opened a
   // AUDIT POI T7: each revision carries the base it was made from, and mine was made from revision 1 - with no base the
   // fixture's "the base it was made from" and "the live revision" were one number, and either passed
   P.store.history = { id: 'poi-00000000000a', liveRev: 2, revs: [
+    // PIN MOVED (AUDIT POI P6, T7): every revision carries the store's `base` (poi.js history); my own draft was made
+    // from revision 1 while revision 2 went live since - it opens with ITS base, never the live one's
     { rev: 2, kind: 'doc', doc: doc('Tower'), base: 1, author: 'Ann', state: 'approved' },
     { rev: 3, kind: 'doc', doc: doc('Tower (Ann)'), base: 2, author: 'Ann', state: 'draft' },
     { rev: 4, kind: 'doc', doc: doc('Tower (Mac)'), base: 1, author: 'mac', state: 'draft' },

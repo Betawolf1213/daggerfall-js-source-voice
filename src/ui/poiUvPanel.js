@@ -22,6 +22,7 @@
 
 import { t } from '../systems/textManager.js';   // L10N4: the words through the text core
 import { createUvEdit } from '../poi/uvEdit.js';
+import { isTextEntryTarget } from './input.js';   // AUDIT POI U6: a key typed into the dialog's own fields is the field's
 
 export const POI_UV_STYLE_ID = 'dfpoi-uv-style';
 export const POI_UV_CSS = `
@@ -250,6 +251,9 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
     return ed.selectedCorners().some((c) => Math.hypot(ed.session.cornerUv[c * 2] - u, ed.session.cornerUv[c * 2 + 1] - v) <= r * 2);
   }
   root.addEventListener('keydown', (e) => {
+    // AUDIT POI U6: the margin's and the density's fields keep what is typed into them - "256" was "56" (the 2 the edge
+    // mode), Ctrl+A every UV and not the field's text, Ctrl+Z the UVs' undo
+    if (isTextEntryTarget(e.target)) return;
     const mod = e.ctrlKey || e.metaKey;
     if (mod && e.code === 'KeyZ') { if (e.shiftKey) ed.redo(); else ed.undo(); }
     else if (mod && e.code === 'KeyY') ed.redo();
@@ -267,9 +271,12 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
     draw();
   });
 
-  function close() { root.remove?.(); onClose(); }
+  // AUDIT POI U7: closed once - Cancel, then the Apply that answers after it, close one dialog and tell the editor once (a
+  // second word let go of its handle to a UV editor opened since, and dialogs stacked); `closed` says so to the Apply out
+  let closed = false;
+  function close() { if (closed) return; closed = true; root.remove?.(); onClose(); }
   draw();
-  return { root, edit: ed, view, draw, close, setTool: (m) => { tool = m; draw(); } };
+  return { root, edit: ed, view, draw, close, closed: () => closed, setTool: (m) => { tool = m; draw(); } };
 }
 
 function inTriangle(p, a, b, c) {
