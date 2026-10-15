@@ -50,7 +50,7 @@
   {
     "name": "GATEKEYS-the-empty-var-back",
     "file": "server-account/wrangler.toml",
-    "old": "ACCOUNT_VERSION = \"acct134\"\n",
+    "old": "ACCOUNT_VERSION = \"acct135\"\n",
     "new": "ACCOUNT_VERSION = \"acct134\"\nGATE_PUBLIC_KEY = \"\"\n",
     "tests": [
       "test/accountdeploy.test.js",

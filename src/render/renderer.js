@@ -19,6 +19,7 @@ import { COLUMN_GLSL } from './columnGlsl.js';   // DW-F: the water column's sha
 // this is already guaranteed - the lines stand where they read as the rule.
 import { buildProgram } from './glProgram.js';   // AUDIT 68 S17-gl-program-dup: the one compile and link
 import { realWindowsGlsl, RW_MAIN_DERIVS, RW_MAIN_CUTOUT, RW_MAIN_GLASS, RW_MAIN_ROOM, GLASS_NONE, GLASS_EXTERIOR, GLASS_INTERIOR, winModeFor, roomLightFor, sphereNdcRect, cropProjection, viewTargetSize, viewSkyFrom, viewRays, VIEW_BG_VS, VIEW_BG_FS, VIEW_PANES_MAX, VIEW_PANE_UNIT, VIEW_PANE_VS, VIEW_PANE_FS } from './realWindows.js';   // RW1: the real windows - the rooms, the glass, the view out
+import { MESH_ALPHA_GLSL, samplerParams, samplerKey } from './meshAlpha.js';   // POI-2: a translucent mesh draw, and a texture's own wrap and filter
 import { frameTarget, setFrameTarget } from './renderTarget.js';   // RW1: the view out's pass hands the frame target back as it found it (EL4's restore)
 import { CLIP_SENTINEL } from '../world/terrainSurface.js';   // FAR-CLIP1: the byte the terrain's clip variant discards - the TileMap format's module, already in this file's closure (waterCorners.js)
 /** AUDIT TECH-FX: the screen offset before any is set - one, frozen (Renderer `screenOffset`). */
@@ -103,6 +104,7 @@ ${CLOUD_SHADOW_GLSL}
 ${BAYER_GLSL}
 ${DISSOLVE_GLSL}
 ${realWindowsGlsl('c')}
+${MESH_ALPHA_GLSL}
 out vec4 outColor;
 ${FOG_GLSL}
 void main() {
@@ -162,7 +164,7 @@ ${RW_MAIN_ROOM}
   // The emission (window style from getWindowColors32, or an auto-emissive
   // record's own albedo at Color.white) goes back on top of the lighting
   // its subtraction above paid for - o.Emission = emission.
-  outColor = vec4(dwWaterFog(mix(uFogColor, lit + emission, fogFactorAt(vWorldPos)), vWorldPos), 1.0);   // DW-C: the sea's distance fog over the finished colour
+  outColor = vec4(dwWaterFog(mix(uFogColor, lit + emission, fogFactorAt(vWorldPos)), vWorldPos), meshAlphaOf(tex.a));   // DW-C: the sea's distance fog over the finished colour; POI-2: alpha 1 but in a translucent draw
   // A2: the Daggerfall/Automap shader's presentation, verbatim
   // (DaggerfallAutomap.shader:102-110): brightness falls with vertical
   // distance from the slice plane (floored at 40%), then the
@@ -2351,6 +2353,7 @@ export class Renderer {
     this.uIndirectColor = gl.getUniformLocation(this.program, 'uIndirectColor');
     this._solidFog = this._fogLocs(this.program);
     this.uDissolveCut = gl.getUniformLocation(this.program, 'uDissolveCut');   // SHIP-FADE: the installed mesh program's dissolve
+    this.uMeshAlpha = gl.getUniformLocation(this.program, 'uMeshAlpha');   // POI-2: the installed mesh program's translucency (render/meshAlpha.js)
     this.rwLocs = {   // RW1: the real windows' uniforms on the installed mesh program - and what this program holds of them is not known yet
       mode: gl.getUniformLocation(this.program, 'uWinMode'), cut: gl.getUniformLocation(this.program, 'uCutout'),
       rect: gl.getUniformLocation(this.program, 'uGlassRect'), lamp: gl.getUniformLocation(this.program, 'uRoomLamp'),
@@ -4908,7 +4911,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     // hand back the wrong sampling silently. Only the logo asks for smooth
     // today and its key is unique, so nothing was broken - but a cache
     // that quietly ignores an argument is a trap, not a cache.
-    const key = `${archive}_${record}${opts.smooth ? '#smooth' : ''}${opts.opaque ? '#opaque' : ''}${opts.mips === false ? (opts.variant ?? '#ui') : ''}${opts.alpha ? '#alpha' : ''}${opts.clamp && !opts.smooth ? '#clamp' : ''}`;   // INCIDENT 2026-09-04: DFU caches materials per alphaIndex; REVIEW 2026-09-05: the un-mipped UI variant of a world archive (item icons) keys apart too; AUDIT 61: `variant: ''` keeps the plain batch key for world art uploaded without a chain (a mod atlas built mipChain:false - SIB1)
+    const key = `${archive}_${record}${opts.smooth ? '#smooth' : ''}${opts.opaque ? '#opaque' : ''}${opts.mips === false ? (opts.variant ?? '#ui') : ''}${opts.alpha ? '#alpha' : ''}${opts.clamp && !opts.smooth ? '#clamp' : ''}${opts.sampler && !opts.smooth ? samplerKey(opts.sampler) : ''}`;   // POI-2: a sampler asked for keys apart too (render/meshAlpha.js samplerKey)   // INCIDENT 2026-09-04: DFU caches materials per alphaIndex; REVIEW 2026-09-05: the un-mipped UI variant of a world archive (item icons) keys apart too; AUDIT 61: `variant: ''` keeps the plain batch key for world art uploaded without a chain (a mod atlas built mipChain:false - SIB1)
     this._uploadSink?.(false, key);   // FIELD BUGS 2026-10-04d PLACE-LRU: a hit is asked for too - the place asking holds it
     if (opts.cutout) this._markCutout(this.textures.get(key));   // RW1: a cutout ask cuts the picture the key already holds, too
     if (this.textures.has(key)) {
@@ -4937,8 +4940,10 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       gl.RGBA, gl.UNSIGNED_BYTE, color32Bytes(color32, `uploadTexture(${archive}, ${record})`)   // WW3: the shape's own error, not a TypeError three frames down
     );
     const { wrap, filter } = textureParams(gl, opts);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
+    // POI-2: a texture's own sampler (render/meshAlpha.js) - a wrap per axis and its filter, its mips world art's as ever
+    const own = opts.sampler && !opts.smooth ? samplerParams(gl, opts.sampler, !opts.smooth && (opts.mips ?? (typeof archive === 'number'))) : null;
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, own ? own.wrapS : wrap);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, own ? own.wrapT : wrap);
     // INCIDENT 2026-09-04: every classic texture DFU builds carries a mip
     // chain (TextureReader.cs:31 `mipMaps = true`, :264 Apply(true)) and
     // samples it POINT (MaterialReader.cs:104/:437, FilterMode.Point =
@@ -4952,8 +4957,8 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     // likewise; those string-keyed uploads keep a single NEAREST level.
     const mips = !opts.smooth && (opts.mips ?? (typeof archive === 'number'));
     if (mips) gl.generateMipmap?.(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mips ? (gl.NEAREST_MIPMAP_NEAREST ?? filter) : filter);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, own ? own.min : mips ? (gl.NEAREST_MIPMAP_NEAREST ?? filter) : filter);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, own ? own.mag : filter);
     if (opts.replacement) { if (tex) this._replacements.add(tex); }   // AUDIT RETRO1 A4: TryImportTexture's - DFU's retro arm never reaches it (J7: a lost context's null is no key)
     else if (mips && !this._retroMips) gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL, 0);   // RETRO1: loaded under retro mode without mip maps (_applyRetroMips)
     this.textures.set(key, tex);
@@ -6328,7 +6333,9 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
    *  ALBEDO of an auto-emissive record, which wears no window tint
    *  (MaterialReader.cs:448-453, EmissionColor = Color.white). */
   uploadEmissionTexture(archive, record, color32, opts = {}) {
-    const key = `${archive}_${record}`;
+    // POI-2: an emission map keys with its albedo's sampler (render/meshAlpha.js samplerKey) - the sub-mesh finds both
+    // under the one resolved key, and both are sampled alike (the shader subtracts one from the other)
+    const key = `${archive}_${record}${opts.sampler ? samplerKey(opts.sampler) : ''}`;
     this._uploadSink?.(true, key);   // FIELD BUGS 2026-10-04d PLACE-LRU: hit or miss, as uploadTexture's
     if (opts.white) this.emissionWhite.add(key);
     if (opts.window) (this.windowMasks ??= new Set()).add(key);   // RW1: DFU's window mask - the rooms' glass outdoors, the street's indoors
@@ -6343,16 +6350,17 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       gl.TEXTURE_2D, 0, gl.RGBA, color32.width, color32.height, 0,
       gl.RGBA, gl.UNSIGNED_BYTE, color32Bytes(color32, `uploadEmissionTexture(${archive}, ${record})`)   // AUDIT 19 F7: the view, not its buffer; WW3: named when the shape is wrong
     );
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    const own = opts.sampler ? samplerParams(gl, opts.sampler, true) : null;   // POI-2: its albedo's own sampling
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, own ? own.wrapS : gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, own ? own.wrapT : gl.REPEAT);
     // REVIEW 2026-09-05: the emission map carries the same chain as the
     // albedo (TextureReader.cs:316/:328/:340 new Texture2D(..., MipMaps),
     // :306 reuses the mipped albedo) and is point-sampled over it
     // (MaterialReader.cs:448/:104). The shader subtracts one from the
     // other (:108-109): both samples must come from the same mip level.
     gl.generateMipmap?.(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST ?? gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, own ? own.min : (gl.NEAREST_MIPMAP_NEAREST ?? gl.NEAREST));
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, own ? own.mag : gl.NEAREST);
     if (opts.replacement) { if (tex) this._replacements.add(tex); }   // AUDIT RETRO1 A4: a replacement albedo's map - neither is capped (J7: a lost context's null is no key)
     else if (!this._retroMips) gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL, 0);   // RETRO1: the albedo's cap, so both samples still come from one level
     this._activeTexture(gl.TEXTURE0);
@@ -8065,10 +8073,33 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
   /** `noShadow` (AUDIT WAGON-HITCH B2): the draw casts nothing into the sun's cascades - a mesh drawn GROWN under the
    *  travel view (OW-BIG's law: a grown figure casts no giant's shadow, as the sprite's selfCard and peerRiders'
    *  noShadow are off). */
-  drawMesh(mesh, modelMatrix, texRemap = null, { noShadow = false } = {}) {
+  drawMesh(mesh, modelMatrix, texRemap = null, { noShadow = false, translucent = 0 } = {}) {
     this._close2D();   // PERF-2D: the baseline back, before anything that needs it
     if (this._rwOutside && this._rwSkips(mesh)) return;   // RW1: the view out leaves out what a context asked it to (outsideViewSkip)
+    // POI-2 (render/meshAlpha.js): A TRANSLUCENT DRAW - its texels' alpha times `translucent` over what is drawn, depth
+    // tested and never written, no shadow cast; the caller draws it after the opaque world, back to front
+    if (translucent > 0) { this._drawTranslucent(mesh, modelMatrix, texRemap, Math.min(translucent, 1)); return; }
     this._drawMeshBundle(mesh, modelMatrix, texRemap, false, noShadow);
+  }
+
+  /** POI-2: the translucent draw's state, set and put back around the one bundle - blending straight alpha over (the
+   *  destination's alpha kept at one: `ONE, ONE_MINUS_SRC_ALPHA` on alpha), the depth mask off, `uMeshAlpha` the share -
+   *  so no draw after it inherits any of it. */
+  _drawTranslucent(mesh, modelMatrix, texRemap, alpha) {
+    const gl = this.gl;
+    this._use(this.program);
+    gl.enable(gl.BLEND);
+    gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.depthMask(false);
+    gl.uniform1f(this.uMeshAlpha, alpha);
+    try {
+      this._drawMeshBundle(mesh, modelMatrix, texRemap, false, true);
+    } finally {
+      this._use(this.program);
+      gl.uniform1f(this.uMeshAlpha, 0);
+      gl.depthMask(true);
+      gl.disable(gl.BLEND);
+    }
   }
 
   _drawMeshBundle(mesh, modelMatrix, texRemap, wire, noShadow = false) {
