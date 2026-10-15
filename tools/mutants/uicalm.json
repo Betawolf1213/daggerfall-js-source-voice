@@ -21,7 +21,7 @@
     "old": "  const rest = calm && last.calmFor >= VITALS_REST_S;", "new": "  const rest = false;",
     "tests": ["test/uicalm.test.js"] },
   { "name": "UICALM-vitals-rest-hurt", "file": "src/ui/enhancedHud.js",
-    "old": "|| now >= max * 0.995);", "new": "|| now >= 0);",
+    "old": "|| now > max - 1);", "new": "|| now >= 0);",
     "tests": ["test/uicalm.test.js"] },
   { "name": "UICALM-sheet-not-laid", "file": "src/ui/enhancedStyle.js",
     "old": "    injectUiCalmStyle(doc);   // UI-CALM", "new": "    // UI-CALM",
