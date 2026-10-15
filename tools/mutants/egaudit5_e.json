@@ -297,5 +297,59 @@
     "tests": [
       "test/egaudit5_e_look.test.js"
     ]
+  },
+  {
+    "name": "EGA5E-lamps-no-budget",
+    "file": "src/world/egHall.js",
+    "old": "  return out.filter((_, i) => near.has(i));",
+    "new": "  return out;",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-lamps-budget-about-new-alone",
+    "file": "src/world/egHall.js",
+    "old": "if (by.length + 1 > N || by.some((j) => near.get(j) + 1 > N)) continue;",
+    "new": "if (by.length + 1 > N) continue;",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-lamps-meaningful-last",
+    "file": "src/world/egHall.js",
+    "old": "const lamp = (p, color = EG_LAMP.color, range = Number(EG_LAMP.range), pr = 0) =>",
+    "new": "const lamp = (p, color = EG_LAMP.color, range = Number(EG_LAMP.range), pr = 9) =>",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-lamps-ring-one-side",
+    "file": "src/world/egHall.js",
+    "old": "EG_LAMP.color, Number(EG_LAMP.range), 1 + spreadRank(k, n)); }",
+    "new": "EG_LAMP.color, Number(EG_LAMP.range), 1 + k); }",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-lamps-budget-13",
+    "file": "src/world/egHall.js",
+    "old": "export const EG_LAMP_BUDGET = Object.freeze({ n: 12, r: 40 });",
+    "new": "export const EG_LAMP_BUDGET = Object.freeze({ n: 13, r: 40 });",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-lamps-radius-30",
+    "file": "src/world/egHall.js",
+    "old": "const { n: N, r: R } = EG_LAMP_BUDGET,",
+    "new": "const { n: N } = EG_LAMP_BUDGET, R = 30,",
+    "tests": [
+      "test/egaudit5_e_look.test.js"
+    ]
   }
 ]

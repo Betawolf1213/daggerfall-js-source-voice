@@ -16,7 +16,7 @@ import { readEgReceipt } from '../src/net/egReceipt.js';
 import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { createEgSwap, EG_SWAP_WAIT_MS } from '../src/scenes/egSwap.js';
-import { createEgSpan } from '../src/scenes/egSpan.js';
+import { createEgSpan, egSpanCollider } from '../src/scenes/egSpan.js';   // AUDIT EG V (L6-10): the collider the host hands the spans
 import { egCircleParts, egCircleKey, egCircleGates, egCirclePartsTransfers } from '../src/world/egCircleParts.js';
 import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts, isEgHall } from '../src/world/egHall.js';
 import { realmArt } from '../src/world/sdRealmArt.js';
@@ -155,8 +155,8 @@ function swapRig({ workerFactory = () => syncWorker() } = {}) {
   const loc = { egBreach: B, egSeed: SEED >>> 0, egCircle: 1, egGeo: 0 };
   const collider = new Collider(() => -Infinity);
   const dynamicDraws = [];
-  const dc = new Function('createEgSpan', 'renderer', 'audio', 'dfLocation', 'dynamicDraws', 'collider', 'opts', '_egHall',
-    `${dcSrc}\nreturn { egSpanRide, egRecircle, get egSpan() { return egSpan; } };`)(createEgSpan, renderer, null, loc, dynamicDraws, collider, { sdClock: () => 10 }, true);
+  const dc = new Function('createEgSpan', 'egSpanCollider', 'renderer', 'audio', 'dfLocation', 'dynamicDraws', 'collider', 'opts', '_egHall',
+    `${dcSrc}\nreturn { egSpanRide, egRecircle, get egSpan() { return egSpan; } };`)(createEgSpan, egSpanCollider, renderer, null, loc, dynamicDraws, collider, { sdClock: () => 10 }, true);
   const ctx = { dynamicDraws, collider, addActivationNamer() {}, egRecircle: (r) => dc.egRecircle(r) };
   const host = { egGateOpen: () => false };
   // PIN MOVED (EG-ZN): the circle's occluders' dither pass stands in the same source (scenes/egOcclude.js), and the band

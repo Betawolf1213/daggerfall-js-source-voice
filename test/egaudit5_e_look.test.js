@@ -6,6 +6,8 @@
 //          ring its own small square (TELEGRAPH_RING_REACH) - each holding every fragment its pool writes.
 //   L5-3   the place's timed hazards - a Rampart's and a span's vents, every fragment hazard - told and landing in the
 //          place's white, so the danger palettes recolour every one (scenes/egFight.js PEND_COLOR, egLookShapes).
+//   L5-16  THE LAMPS' BUDGET - at most 12 lamps within 40 m of any lamp of a circle (world/egHall.js egCircleLights,
+//          EG_LAMP_BUDGET), the meaningful kept, each ring thinned spread.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
@@ -19,7 +21,7 @@ import { EG_ACCESS_PREFS, egPaletteOf } from '../src/ui/egAccess.js';
 import { getPref, setPref } from '../src/systems/uiPrefs.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { createEgFight } from '../src/scenes/egFight.js';
-import { egHallCentre } from '../src/world/egHall.js';
+import { egHallCentre, egCircleLights, egToDungeon, EG_LAMP, EG_DROP_LAMP, EG_LAMP_BUDGET } from '../src/world/egHall.js';
 import { egFightFloors, egFloorPlan, EG_AURA_RING } from '../src/world/egTelegraph.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
@@ -215,4 +217,34 @@ test('AUDIT EG V L5-3 THE PLACE\'S HAZARDS ARE TOLD IN THE PLACE\'S WHITE (secti
     }
   } finally { setPref(EG_ACCESS_PREFS.palette, was); }
   for (const what of ['a Rampart\'s vent', 'a span Vent', 'surge', 'fall', 'basalt', 'cascade', 'hammerline', 'hammer', 'slag', 'tide']) assert.ok(seen.get(what) > 0, `${what} drawn (${JSON.stringify([...seen])})`);
+});
+
+// ── L5-16 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+test('AUDIT EG V L5-16 THE LAMPS\' BUDGET (section 11.9: "At most 12 lights stand within 40 m of any point"): every circle of seeds 1 and 2 (seven of them stood 13 to 18, Grath\'s islands and their court the most) stands at most EG_LAMP_BUDGET\'s 12 lamps within 40 m of any of its lamps, the budget met where it was passed; the meaningful kept - every fragment\'s own light and every Drop\'s wall lamp - and each court\'s and island\'s ring thinned spread, never emptied (mutants: no budget; the budget counted about the new lamp alone; the meaningful let go first; a ring thinned from one side)', () => {
+  assert.deepEqual(EG_LAMP_BUDGET, { n: 12, r: 40 });
+  const near = (a, b) => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z) <= EG_LAMP_BUDGET.r;
+  const at = (L, p) => L.find((q) => Math.hypot(q.x - p[0], q.y - p[1], q.z - p[2]) < 1e-6);
+  let full = 0;
+  const thinned = [];
+  for (const seed of [1, 2]) for (let c = 1; c <= 20; c++) {
+    const geo = c <= 1 ? 0 : seed % 9, L = egCircleLights(seed, c, geo), specs = egCircleSpecs(seed, c, geo);
+    let worst = 0;
+    for (const p of L) worst = Math.max(worst, L.filter((q) => near(p, q)).length);
+    assert.ok(worst <= EG_LAMP_BUDGET.n, `seed ${seed} circle ${c}: ${worst} lamps within 40 m of one`);
+    if (worst === EG_LAMP_BUDGET.n) full++;
+    for (const s of specs) {
+      for (const [x, y, z] of s.lights ?? []) assert.ok(at(L, egToDungeon(s, x, y, z)), `seed ${seed} hall ${s.h}: its fragment's light stands`);
+      for (const q of s.steps) if (q.kind === 'drop') assert.ok(at(L, egToDungeon(s, q.x, q.y + EG_DROP_LAMP.h, q.z + q.d / 2 - EG_DROP_LAMP.off)), `seed ${seed} hall ${s.h}: its Drop's wall lit`);
+      for (const d of s.discs) {
+        if (d.role !== 'court' && d.role !== 'isle') continue;
+        const ring = [0, 1, 2, 3, 4, 5].map((k) => { const a = (k / 6) * Math.PI * 2 + Math.PI / 4; return !!at(L, egToDungeon(s, d.x + Math.cos(a) * (d.r - 1), d.y + EG_LAMP.h, d.z + Math.sin(a) * (d.r - 1))); });
+        const n = ring.filter(Boolean).length;
+        assert.ok(n >= 2, `seed ${seed} hall ${s.h}: a ${d.role}'s ring keeps ${n} of 6`);
+        assert.deepEqual(ring, [0, 1, 2, 3, 4, 5].map((k) => [0, 3, 2, 4, 1, 5].indexOf(k) < n), `seed ${seed} hall ${s.h}: a ring thinned spread - two facing lamps, then those between (${ring.map(Number).join('')})`);
+        if (n < 6) thinned.push(n);
+      }
+    }
+  }
+  assert.ok(full >= 7, `the budget met where it was passed (${full} circles at 12)`);
+  assert.ok(thinned.some((n) => n <= 4), `rings thinned (${thinned.join(',')})`);
 });
