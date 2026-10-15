@@ -115,7 +115,7 @@ high-bit range to punctuation, so every umlaut renders as `#` or `}`
 ("St#rke", "W}ste"). Neither can be caught by any pin the suite has,
 because the suite has never had non-English data.
 
-### ALLOC1 - A MEASURE THAT RACED THE COMPILER (2026-10-14)
+### ALLOC-RACE - A MEASURE THAT RACED THE COMPILER (2026-10-14)
 
 AUDIT DEPS1's full run failed one pin that passed alone: sd25_arena S7, THE
 ARENA'S WATCH MAKES NOTHING - "marks: 17.32 bytes a frame", one boxed number.
@@ -125,21 +125,34 @@ measure is only true of OPTIMISED code - V8 optimises on a background thread,
 and four shards on four cores, each spawning children, can starve that thread
 past the whole warm-up. The windows then count the lower tier's boxing. Proved,
 not supposed: `--concurrent-recompilation-delay=5000` (V8's own switch for a
-late compiler) turns S7 red at 2452 bytes a frame, and with
-`--no-concurrent-recompilation` - the compile on the main thread, at the moment
-the function turns hot - green at any delay. The flags now live in ONE place,
-`test/allocChild.mjs` (`ALLOC_CHILD_ARGS`); `test/allocchild.test.js` holds them
-to their purpose (a frame that makes nothing measures under 2 bytes through
-them with the compiler starved five seconds, against a control that must show
-the boxing) and the suites to them (none spells its own). All ten suites, 120
-tests, pass with the compiler starved.
+late compiler) turns S7 red at 2452 bytes a frame.
 
-The measure now reads the top tier only, and one mutant had been dying by the
-lower tier's luck: SD11A-L2F9-a-still-body-posed-again (a still body's matrix
-made again every frame) makes no byte once optimised - it wastes work, it does
-not make garbage. A work law is pinned by the work: sd11a_scenes's L2 F10/F11
-test now stamps the still body's matrix and holds the stamp through a frame.
-The 33 allocation mutants over the ten suites: 33 dead.
+The child now WAITS for the compiler instead of racing it. `test/allocSettle.mjs`,
+preloaded into every measuring child, makes the `gc()` that opens each window
+first finish the optimising queue (`%FinalizeOptimization`, under
+`--allow-natives-syntax`): the code is compiled the browser's own way -
+concurrently - and read only once it is in. The flags live in ONE place,
+`test/allocChild.mjs` (`ALLOC_CHILD_ARGS`); `test/allocchild.test.js` holds
+them to their purpose (with the compiler held back three seconds, a frame that
+makes nothing measures under 2 bytes through them, against a control - the
+measure without the settle - that must show the boxing) and the suites to them
+(each imports the list and takes it whole). All ten suites, 120 tests, pass as
+they run and with the compiler held back five seconds.
+
+AUDIT ALLOC-RACE (2026-10-15) found the first fix wrong.
+`--no-concurrent-recompilation` compiled each function on the main thread the
+moment it turned hot - a caller before its callees, a different shape of
+optimised code from the one the browser runs. SD11A-L2F9-a-still-body-posed-again
+(a still body's matrix made again every frame) measured 1 byte a frame that way
+and 48 concurrently (its call's boxed numbers): the flag had read the mutant as
+garbage-free, and ALLOC1 gave it a work pin on that reading. Under
+the settle it measures 48 bytes, three runs of three, and L2 F9's measure kills
+it again; sd11a_scenes's L2 F10/F11 test keeps the work pin as well (the still
+body's matrix stamped and held through a frame), because the pose's bytes are
+the call's and an engine that inlines it boxes nothing - the work is the law.
+The 35 allocation mutants over the ten suites and ALLOC-RACE's own three
+(`tools/mutants/allocrace.json`: the settle dropped from the list, the settle
+that waits for nothing, a suite's own list again): 38 dead.
 
 
 | File | Tests | Covers |
@@ -3495,4 +3508,4 @@ print a skip. Campaign: 5 mutants, 5 killed.
 | fb1014_grogword.test.js | 1 | GROG-WORD (`01-Overview/Field-Bugs-2026-10-14.md`, Cruor: "Crew morale LIES sometimes between fleet window/shipwright and the helm!"). Through the yard's own provisionOffer and the window's own yardText: a crew at 40 that has had the day's round reads "Her crew's spirits are low - they have had today's round" (the helm's own word, spiritsOf; routed through t() as `naval.yard.grogDrunk`, drafted in the 25 languages) and its press Tomorrow, still one round a port day; "as high as they go" and No need are the top's alone, drunk or not; a crew at 40 without its round is offered one. 2 mutants, both dead (`tools/mutants/fb1014_grogword.json`: the drunk row read as the top; the word dropped). |
 | fb1014_mendstarve.test.js | 2 | MEND-STARVE (`01-Overview/Field-Bugs-2026-10-14.md`, Arbeck: "my 'Repair items' enchantment is not repairing anything"). Through the round's own payloads (enchantmentMagicRound, AllowMagicRepairs on as online forces it): a worn helm of Item Deteriorates at 20% is passed for a worn cuirass at 99% - the cuirass mends whole a point a tick, then the pack's boots, while the helm wears its point a tick; once nothing else wants the tick it holds the helm. A worn Cast When Held piece is passed for a worn piece less worn and taken when it is the only one; carried, it wears nothing and keeps its place. 3 mutants, all dead (`tools/mutants/fb1014_mendstarve.json`: the self-wearing piece first again; Cast When Held left out; a carried piece counted). |
 | fb1014_finemends.test.js | 2 | FINE-MENDS (`01-Overview/Field-Bugs-2026-10-14.md`, a player fined 560 three times with no new crime; Mac: "Fine raises standing"). Through the real watch (REP1's rig) and the real legal notices: the reporter's 560 at -15 paid mends the name five to the -10 line, the HUD says it rose (+5), and the grace run out the watch stops them no more; -40 mends to -35 and is stopped again for 640 (680 the first); -12 mends two; at the line or above nothing moves; a banished face mends its number and is still known. 2 mutants, both dead (`tools/mutants/fb1014_finemends.json`: the fine mends nothing; past the line). |
-| allocchild.test.js | 2 | ALLOC1 (2026-10-14, AUDIT DEPS1's full run) - THE ALLOCATION MEASURE CANNOT RACE THE COMPILER: through `test/allocChild.mjs`'s ALLOC_CHILD_ARGS a frame that makes nothing measures under 2 bytes with V8's optimising thread held back five seconds, against a control (the same flags without --no-concurrent-recompilation) that must show the boxing; and every suite that spawns an --expose-gc child imports ALLOC_CHILD_ARGS and spells none of its flags (mutants: the flag dropped from the list; a suite's own list again). |
+| allocchild.test.js | 2 | ALLOC-RACE (2026-10-14, AUDIT DEPS1's full run; AUDIT ALLOC-RACE 2026-10-15) - THE ALLOCATION MEASURE CANNOT RACE THE COMPILER: with V8's optimising thread held back three seconds, a frame that makes nothing measures under 2 bytes through `test/allocChild.mjs`'s ALLOC_CHILD_ARGS (its `test/allocSettle.mjs` preload makes each window's gc() finish the optimising queue first), against a control (the measure's flags without the settle) that must show the boxing; and every suite that spawns an allocation-measuring child imports ALLOC_CHILD_ARGS, spells none of its flags and takes the list whole (mutants: the settle dropped from the list; the settle that waits for nothing; a suite's own list again). |

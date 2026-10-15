@@ -515,7 +515,7 @@ test('AUDIT SD II L2 F9: THE SAME LIGHTS AND THE SAME SKY, made in place - realm
 
 // ── L2 F10, F11: posed before the world pass; a hidden draw no draw ─────
 
-test('AUDIT SD II L2 F10, F11: THE HOUR POSED BEFORE THE WORLD PASS, AND A HIDDEN DRAW NO DRAW - the mode machine\'s dungeon arm poses the hall and the arena (the dungeon host\'s sdPose) before the frame begins and before its draws, with no window up, as the Steps are ridden before the motor (in drawFoes, after the world pass, they were drawn a frame late); its draw loop skips a draw that says it is hidden, and so its shadow\'s record (drawMesh makes it); and the sets say so - a gone step, a body not shown, an Echo out of the Break, the hall\'s bridge before the Concord, the breath between gusts (mutants: posed after the draws; a hidden step drawn)', () => {
+test('AUDIT SD II L2 F10, F11: THE HOUR POSED BEFORE THE WORLD PASS, AND A HIDDEN DRAW NO DRAW - the mode machine\'s dungeon arm poses the hall and the arena (the dungeon host\'s sdPose) before the frame begins and before its draws, with no window up, as the Steps are ridden before the motor (in drawFoes, after the world pass, they were drawn a frame late); its draw loop skips a draw that says it is hidden, and so its shadow\'s record (drawMesh makes it); and the sets say so - a gone step, a body not shown, an Echo out of the Break, the hall\'s bridge before the Concord, the breath between gusts (mutants: posed after the draws; a hidden step drawn) (ALLOC-RACE - mutant: a still body posed again)', () => {
   const W = read('src/scenes/worldModes.js');
   const arm = W.slice(W.indexOf("if (mode === 'dungeon') {"), W.indexOf('// Whole-pipeline swap: interior draws'));
   const pose = arm.indexOf('if (isSdRealm(dungeonLoc) && !dungeonCtx.uiOverlayActive) dungeonCtx.sdPose?.(dt, player.pos);');
@@ -563,9 +563,10 @@ test('AUDIT SD II L2 F10, F11: THE HOUR POSED BEFORE THE WORLD PASS, AND A HIDDE
   S = { ...S, ph: 1 };
   fought.frame(1 / 60, null);
   assert.deepEqual([fl[0].hidden, [...fl[0].object.matrix]], [false, [...standing]], 'back where it stood: drawn again');
-  // ALLOC1: and a body standing as it stood is not posed again - its matrix stays as the last pose wrote it. Held by
-  // what the frame does, not by its bytes: optimised code makes the matrix again without a byte, so the measure above
-  // only ever caught this while the compiler was late
+  // ALLOC-RACE: and a body standing as it stood is not posed again - its matrix stays as the last pose wrote it. Held
+  // by what the frame does as well as by its bytes: L2 F9's measure sees the pose made again (48 bytes a frame, its
+  // call's boxed numbers) only as long as the call stays a call - a compiler that inlines it boxes nothing - and the
+  // work is the law here, whatever its bytes
   fl[0].object.matrix[15] = 7;
   fought.frame(1 / 60, null);
   assert.equal(fl[0].object.matrix[15], 7, 'a still body posed again: its matrix made every frame');
