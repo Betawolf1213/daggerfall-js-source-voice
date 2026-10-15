@@ -20,6 +20,7 @@ import { quickslotKey } from '../src/systems/quickslots.js';
 import { shopBuysItem } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
+import { cardRules, cardFlavor } from '../src/systems/iliacCardWords.js';
 import { packModel, mountEnhancedInventory, useResultAction } from '../src/ui/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';
 
@@ -78,8 +79,8 @@ test('AUDIT CARDS-5 C lane\'s survivors: a card is a card only with its card; it
   assert.equal(templateByIndex(ILIAC_CARD_TEMPLATE).basePrice, 1);
   assert.equal(templateByIndex(CARD_BINDER_TEMPLATE).basePrice, 1);
   // the lines, by kind
-  const unit = units.find((c) => c.flavor), spell = ILIAC_CARDS.find((c) => c.kind === 'spell'), prince = ILIAC_CARDS.find((c) => c.kind === 'prince');
-  assert.deepEqual(iliacCardLines(mintIliacCard(unit.id)), [`${unit.tier[0].toUpperCase()}${unit.tier.slice(1)} Unit - costs ${unit.cost}, power ${unit.power}`, unit.text, unit.flavor]);
+  const unit = units.find((c) => cardFlavor(c)), spell = ILIAC_CARDS.find((c) => c.kind === 'spell'), prince = ILIAC_CARDS.find((c) => c.kind === 'prince');
+  assert.deepEqual(iliacCardLines(mintIliacCard(unit.id)), [`${unit.tier[0].toUpperCase()}${unit.tier.slice(1)} Unit - costs ${unit.cost}, power ${unit.power}`, cardRules(unit), cardFlavor(unit)]);   // KG-SET: the card's words, read where they are shown
   assert.equal(iliacCardLines(mintIliacCard(spell.id))[0], `${spell.tier[0].toUpperCase()}${spell.tier.slice(1)} Spell - costs ${spell.cost}`);
   assert.match(iliacCardLines(mintIliacCard(prince.id))[0], new RegExp(`Prince - costs ${prince.cost}, power ${prince.power}$`));
   assert.deepEqual(iliacCardLines({ templateIndex: ILIAC_CARD_TEMPLATE, group: 'UselessItems2', card: 'nothing' }), ['A card this build does not know.']);

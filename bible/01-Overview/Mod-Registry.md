@@ -4,9 +4,12 @@
 > left as it wrote them.** They were true of the fifteen rows that
 > existed on 2026-09-15 and they are the record of what putting those
 > rows side by side found. The live numbers are derived, not written:
-> `vendor/` holds 56 directories and 34 of their READMEs still carry an
+> `vendor/` holds 57 directories and 35 of their READMEs still carry an
 > unfilled permission line, each shown as `RECORD OPEN` in the table
-> (THE ENVIRONMENT MODS, 2026-10-08: demifiend000's `heat-haze`, `windfall` and `snowfall` and the
+> (KG3, 2026-10-13: the unnamed author's `kings-gambit`, the fifty-seventh - the owner's word of permission
+> recorded ("We also have permission"), the author's own words not yet - the bundle names no author - so the open
+> count rises by one;
+> THE ENVIRONMENT MODS, 2026-10-08: demifiend000's `heat-haze`, `windfall` and `snowfall` and the
 > unnamed author's `sands-of-the-alikr`, the fifty-second to the fifty-fifth - Mac's word of permission recorded
 > ("We have permission to use and implement everything into the codebase"), the authors' own words not yet, so the
 > open count rises by four;
@@ -169,6 +172,7 @@ not the date the slice shipped, where those differ.
 | `sands-of-the-alikr` | the pack's 47 pictures of TEXTURE.002, byte for byte (`public/art/sands-of-the-alikr/`, under Port-Doctrine's second exception), a listing of every file's sha256 and the texture door's index; not its fifteen screenshots | unknown (Nexus 1390; the archive names no author) | 2 | shipped `.7z` `Sands_Of_The_AlikR_1390_2_2026-09-14T18-24Z_bWMMNpOWt` (a loose `Textures/` folder, no manifest or readme), handed over by Mac 2026-10-08; `tools/environmentModsExtract.mjs` checks every picture | granted (Mac handed the four archives over 2026-10-08: "We have permission to use and implement everything into the codebase") - **RECORD OPEN** | ALIKR1 | 2026-10-08 | `07-Rendering/Sands-Of-The-Alikr.md` |
 | `snowfall` | manifest and settings verbatim, the compiled script byte for byte and its IL dump (`il/`), its shader read back from DXBC as GLSL (`shaders/`), its notice for Basic Roads verbatim; its 168 winter ground textures (TEXTURE.103, .303, .403), snow albedo and three surface masks (`public/art/snowfall/`, mip 0 losslessly, under Port-Doctrine's second exception) and the texture door's index | demifiend000 | 1.0.5 | shipped `.zip` `Snowfall_1401_1.0_2026-09-26T01-46Z_Z0nnzkJTn` (one `.dfmod`), handed over by Mac 2026-10-08; `tools/environmentModsExtract.mjs` and `tools/dxbcGlsl.py` rebuild every vendored file but the README | granted (Mac handed the four archives over 2026-10-08: "We have permission to use and implement everything into the codebase") - **RECORD OPEN** | SNOWFALL1 | 2026-10-08 | `03-World/Snowfall.md` |
 | `windfall` | manifest and settings verbatim, its console README verbatim, the compiled script byte for byte and its IL dump (`il/`, the port's law), its two shaders read back from DXBC as GLSL (`shaders/`), its three pictures byte for byte (`Textures/`, the author's own leaves and flake) and its 27 AudioClips remuxed losslessly from FSB5 Vorbis to Ogg (`Sound/`, with their lengths) | demifiend000 | 1.0.0 | shipped `.zip` `Windfall_1396_1.0.1_2026-09-14T23-37Z_gMVVlF1MJ` (one `.dfmod` and the console README), handed over by Mac 2026-10-08; `tools/environmentModsExtract.mjs` and `tools/dxbcGlsl.py` rebuild every vendored file but the README | granted (Mac handed the four archives over 2026-10-08: "We have permission to use and implement everything into the codebase") - **RECORD OPEN** | WINDFALL1 | 2026-10-08 | `07-Rendering/Windfall.md` |
+| `kings-gambit` | the bundle's manifest verbatim (its CRLF line ends kept), the compiled script byte for byte and its IL dump (`il/`, the port's law - the bundle carries no C# source); not the bundle itself, nor the C# a decompiler reads off the assembly | unknown (the bundle names no author) | 1 | the shipped `thekingsgambit.dfmod` (UnityFS 7, one LZ4HC block: the manifest and `TheKingsGambit.dll`), handed over by the owner 2026-10-13; `tools/ilDump.py` rebuilds the IL dump | granted (the owner, 2026-10-13: "We also have permission") - **RECORD OPEN** | KG1-KG3 | 2026-10-13 | `11-Multiplayer/Kings-Gambit.md` |
 
 ## Known deviations, per row
 

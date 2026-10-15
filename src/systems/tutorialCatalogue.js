@@ -16,6 +16,8 @@
 // - Every claim was checked against the system's own bible page and code when the page was written (TUT1). A slice
 //   that changes how a system plays changes its page.
 
+import { t } from './textManager.js';   // KG3: a page's words read through the text core when shown
+
 /** @typedef {{ id: string, group: string, title: string, trigger: string, body: ReadonlyArray<string>, points?: ReadonlyArray<string> }} Tutorial */
 
 /** The menu's sections, in order. */
@@ -39,8 +41,16 @@ export const TUTORIAL_GROUPS = Object.freeze([
 export const MENU_ONLY = 'Menu only.';
 const TOUR = 'Part of the welcome tour.';
 
-/** @param {Tutorial} t */
-const page = (t) => Object.freeze({ ...t, body: Object.freeze([...t.body]), points: Object.freeze([...(t.points ?? [])]) });
+/** A page, frozen. KG3 (AUDIT KG D21): a page's words may be getters, read through the text core when the page is shown
+ *  (`t`, never at this module's load) - so a word stays a getter here, where a spread would read it now, in English;
+ *  its body and points are frozen lists either way. @param {Tutorial} p */
+const page = (p) => {
+  /** @type {any} */ const d = Object.getOwnPropertyDescriptors(p);
+  const list = (/** @type {'body'|'points'} */ k) => (d[k]?.get
+    ? { get: () => Object.freeze([...(d[k].get.call(p) ?? [])]), enumerable: true }
+    : { value: Object.freeze([...(p[k] ?? [])]), enumerable: true });
+  return /** @type {Readonly<Tutorial>} */ (Object.freeze(Object.defineProperties({}, { ...d, body: list('body'), points: list('points') })));
+};
 
 /** @type {ReadonlyArray<Readonly<Tutorial>>} */
 export const TUTORIALS = Object.freeze([
@@ -310,9 +320,23 @@ export const TUTORIALS = Object.freeze([
   page({
     id: 'tavern-cards', group: 'towns', title: 'Card Games', trigger: 'When you first sit at a card table.',
     body: [
-      'Play Texas Hold\'em or Iliac Hand against the locals or other players. Online, one table plays for real gold.',
+      'Play Texas Hold\'em, Iliac Hand or The King\'s Gambit against the locals - the first two against other players too. Online, one table plays for real gold.',
       'Cards you collect go in your Card Binder. See them under Menu > Holdings > Collections.',
     ],
+  }),
+  // KG3 (bible/11-Multiplayer/Kings-Gambit.md section 14.5): the third game at the card table - its words through the
+  // text core, read when the page is shown; no number (the panel's guide carries them) and no crown (a page names no
+  // old game, and the game's own crown is its capital's)
+  page({
+    id: 'kings-gambit', group: 'towns',
+    get title() { return t('tutorials.kingsGambit.title', 'The King\'s Gambit'); },
+    get trigger() { return t('tutorials.kingsGambit.trigger', 'When you first sit down to The King\'s Gambit.'); },
+    get body() {
+      return [
+        t('tutorials.kingsGambit.body1', 'A battle of armies and kings on a board laid across a tavern card table. Choose a regular to play against, put down your stake and build your army.'),
+        t('tutorials.kingsGambit.body2', 'Each turn, move your pieces, strike and drink potions. Fell the other king to win - and guard your own.'),
+      ];
+    },
   }),
   page({
     id: 'holdings', group: 'towns', title: 'Houses', trigger: 'When you first look at buying or renting a house.',
