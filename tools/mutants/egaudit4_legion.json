@@ -642,12 +642,13 @@
   {
     "name": "EGA4L-lesson-to-twelve",
     "file": "src/net/egLords.js",
-    "old": "F.mem.lessonR > (F.mem.lessonMin ?? 12)",
-    "new": "F.mem.lessonR > 12",
+    "old": "const last = F.mem.lessonMin ?? EG_LESSON_LAST_R;",
+    "new": "const last = EG_LESSON_LAST_R;",
     "tests": [
       "test/egaudit4_legion_run.test.js"
     ],
-    "why": "the masters' Last Lesson to r 12"
+    "why": "the masters' Last Lesson to r 12",
+    "note": "AUDIT EG V (h): re-aimed by content - the Lesson's last ring named EG_LESSON_LAST_R"
   },
   {
     "name": "EGA4L-runes-ground-spots",

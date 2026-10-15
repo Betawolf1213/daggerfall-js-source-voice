@@ -474,7 +474,7 @@ export function egRuneRouteM(spec, runes, n) {
 }
 /** The fight floor's main disc (its first) - or one about the lord where a lord fights on another's ground (a Twin Court's
  *  second, an Old Master, a Kyn champion beside a Court's lord): AUDIT EG V (h; B NEW-3, section 18) the disc it stands on (the
- *  widest that holds it, else the nearest by its edge), so its errands (the Examination's runes, the Last Lesson's ring, the
+ *  nearest by its edge - the deepest inside, where two hold it), so its errands (the Examination's runes, the Last Lesson's ring, the
  *  Cairn-Keeper's gems, the Mother of Dusk's anchors) and its court's blows (the Lattice, the Blink, the havens' first) stand
  *  about its own floor - never about the ground's first island or court, where it may not be; a ground of no disc, one about
  *  the lord. A Court's own lord, a ground of one disc and every hall but a Court keep the first. */
@@ -483,7 +483,7 @@ function mainDisc(spec, L) {
   if (!discs.length) return { x: L.x, z: L.z, r: 18 };
   if (discs.length === 1 || spec.kind !== 'court' || L.key === spec.lord) return discs[0];
   let best = discs[0], bd = Infinity;
-  for (const f of discs) { const d = dist(L.x, L.z, f.x, f.z) <= f.r ? -f.r : dist(L.x, L.z, f.x, f.z) - f.r; if (d < bd) { bd = d; best = f; } }
+  for (const f of discs) { const d = dist(L.x, L.z, f.x, f.z) - f.r; if (d < bd) { bd = d; best = f; } }
   return best;
 }
 /** A ground's spots of a role, or `k` laid on a ring `rr` out from the main disc's heart (a lord on another's ground). */

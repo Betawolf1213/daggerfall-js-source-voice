@@ -191,11 +191,12 @@
   {
     "name": "EGA4-lords-last-ring-6s",
     "file": "src/net/egLords.js",
-    "old": "F.mem.lessonR > 12 ? now + 6000 : now + EG_ZONE_FIGHT_MS",
-    "new": "now + 6000",
+    "old": "end ? now + EG_ZONE_FIGHT_MS : now + 6000, out",
+    "new": "now + 6000, out",
     "tests": [
       "test/egaudit4_lords.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (h): re-aimed by content - the last ring's end named `end`"
   },
   {
     "name": "EGA4-lords-gore-off-island",

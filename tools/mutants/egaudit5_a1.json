@@ -359,12 +359,13 @@
   {
     "name": "EGA5A1-lean-first-only",
     "file": "src/net/egRun.js",
-    "old": "  const first = w === (B.ew ?? 0) + 1;",
-    "new": "  const first = w === 1;",
+    "old": "const first = nth === 1;",
+    "new": "const first = w === 1;",
     "tests": [
       "test/egaudit5_a1.test.js"
     ],
-    "why": "L2-13: the Lean at Redoubt 1 alone"
+    "why": "L2-13: the Lean at Redoubt 1 alone",
+    "note": "AUDIT EG V (h): re-aimed by content - the Redoubt's place in this breach named `nth`"
   },
   {
     "name": "EGA5A1-lean-blade",
@@ -569,12 +570,13 @@
   {
     "name": "EGA5A1-still-squad",
     "file": "src/net/egBrain.js",
-    "old": "F.waveAt = now + EG_SQUAD_HOLD_MS + still; }",
-    "new": "F.waveAt = now + EG_SQUAD_HOLD_MS; }",
+    "old": "F.waveAt = now + EG_SQUAD_HOLD_MS + still;",
+    "new": "F.waveAt = now + EG_SQUAD_HOLD_MS;",
     "tests": [
       "test/egaudit5_a1_legion.test.js"
     ],
-    "why": "L2-6: the march behind a squad unheld"
+    "why": "L2-6: the march behind a squad unheld",
+    "note": "AUDIT EG V (h): re-aimed by content - one squad law for the Rift-Yard and the Rampart (squadTwist)"
   },
   {
     "name": "EGA5A1-still-ath",
