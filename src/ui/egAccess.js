@@ -12,8 +12,10 @@
 //   `port:telegraphFill` - a danger fill's light, 50-100%: the stage's `uFillK`, the line left whole;
 //   (`port:allyEffects` - Full or Quiet, THE QUIET COMPANY's allies' hit numbers - is not on the shelf: the port draws
 //     only the player's own numbers (ui/hitNumbers.js), so the row would govern nothing);
-//   `port:reducedMotion` - the system's `prefers-reduced-motion` or this row: the count chip's pulse, the gains' flight,
-//     the arrival card's rise and the absent's draining ring stand still (ui/egSpireHud.js), and the stair is a plain cut.
+//   `port:reducedMotion` - the system's `prefers-reduced-motion` or this row: the count chip's pulse, the gains' flight
+//     and the arrival card's rise stand still (ui/egSpireHud.js), the gate's title cards with them - a lord's wake, its
+//     FELLED, THE FALL's card, their rule's sweep (ui/gateTitleCard.js, AUDIT EG V c L7-17) - and the stair is a plain
+//     cut. The absent's ring still drains: it is a count, not a motion.
 // The larger HUD is the port's own `--hud-scale` (port:hudScale), which every part of the Spire's HUD reads; the beats'
 // words go to a polite live region for a screen reader.
 //

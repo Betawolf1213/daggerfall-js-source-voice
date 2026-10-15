@@ -380,6 +380,9 @@ export function createPartyPanel({ social, doc = document, art = null, faceLoade
   // ring, the place line), painted over the card only where it moved; null outside a breach.
   let spire = null;
   let spireWas = null;
+  /** AUDIT EG V (c, L7-7; Elite-Gates.md section 16.5 - "a tap on a party row"): the host's word on a row tapped in a breach
+   *  (a witness watching that member) - the one press the quiet panel takes, on a row the Spire's deco marks `eg-tap`. */
+  let spireTap = null;
 
   const applyVisible = () => {
     const want = (!covered && showing) ? '' : 'none';
@@ -610,6 +613,7 @@ export function createPartyPanel({ social, doc = document, art = null, faceLoade
         card.egMark.setAttribute('aria-hidden', 'true');
         head?.insertBefore?.(card.egNum, card.name); head?.insertBefore?.(card.egMark, card.lead);
         card.facebox.append(card.egRing);
+        card.node.addEventListener?.('click', () => { if (String(card.node.className).split(/\s+/).includes('eg-tap')) spireTap?.(acct); });   // AUDIT EG V (c, L7-7)
       }
       if (!card.egNum) continue;
       setText(card.egNum, d ? d.num : '');
@@ -719,7 +723,7 @@ export function createPartyPanel({ social, doc = document, art = null, faceLoade
     /** COMPANION-KIT: the host's companions seam, handed in after the build (the party's panel is made over `social`). */
     setCompanions(fn) { companions = typeof fn === 'function' ? fn : null; compPainted = null; },
     /** EG-G1: the host's Spire rows seam (ui/egParty.js egPartyDeco by account, or null outside a breach). */
-    setSpire(fn) { spire = typeof fn === 'function' ? fn : null; spireWas = null; },
+    setSpire(fn, onTap = null) { spire = typeof fn === 'function' ? fn : null; spireTap = typeof onTap === 'function' ? onTap : null; spireWas = null; },   // AUDIT EG V (c, L7-7): and a row's tap
     /** What the panel currently draws, for a host or a pin that wants it without walking the DOM. */
     cardCount: () => cards.size,
     cardFor: (acct) => cards.get(acct) ?? null,

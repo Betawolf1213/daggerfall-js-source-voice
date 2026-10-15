@@ -24,7 +24,7 @@
 //   SPIRVALK  a Valkynaz, all phases, rising - 148 BPM, 48 bars, its own motif
 //   SPIRREDT  a Redoubt taken, and its rest: the Battlemages' hymn - 72 BPM, 16 bars, in E MAJOR (the fanfare mended)
 //   SPIRECNT  the count's last two minutes - 160 BPM, 16 bars
-//   SPIREEND  the tear, the end - 70 BPM, 12 bars, decaying in its time; then the band's ambience alone
+//   SPIREEND  the tear, a fall (my own - AUDIT EG V), the end - 70 BPM, 12 bars, decaying in its time; then the band's ambience alone
 // The songs a context names (the band's yard and set-piece cues, a lord's three, a Valkynaz's) are made for that context
 // (`spireScoreSongs(ctx)`, memoized) and registered under the same names when it changes (createSpireScoreHost): the name
 // is the song's place in the law, the notes are the band's and the lord's.
@@ -367,13 +367,15 @@ export function spireScoreSongs({ band = 0, motif = 0, valk = 3, seed = 0 } = {}
  * THE LAW (section 26): what the Spire plays at a place - a SPIRE_SONGS name, SPIRE_SCORE_SILENCE (the band's ambience
  * alone), or null (not in the Spire: the host's music director stands). `place`:
  *   { band, sg (the hall's stage - net/egLink.js), kind (the hall's), lord, valk, phase (1-3), countLeft (ms, while it runs),
- *     set (a set piece stands in this hall), sinceWake (ms since the hall woke), end (the breach is over), sinceEnd (ms) }
+ *     set (a set piece stands in this hall), sinceWake (ms since the hall woke - a Court's, since its LORD woke), asleep (a
+ *     Court whose lord has not woken - the band's ambience), end (the breach is over), sinceEnd (ms), sinceFall (ms since my
+ *     own fall - SPIREEND, as the end) } (AUDIT EG V, c: L7-12 and L7-13)
  */
 export function spireScoreFor(place) {
   if (!place) return null;
   const key = spireScoreKey(place);
   if (key === 'ambience') return SPIRE_SCORE_SILENCE;
-  if (key === 'end') return (place.sinceEnd ?? 0) < SPIRE_END_MS ? SPIRE_SONGS.end : SPIRE_SCORE_SILENCE;
+  if (key === 'end') return !place.end || (place.sinceEnd ?? 0) < SPIRE_END_MS ? SPIRE_SONGS.end : SPIRE_SCORE_SILENCE;   // AUDIT EG V (c, L7-13): a fall's end is its own SPIRE_END_MS (spireScoreKey)
   if (key === 'hall') return SPIRE_BAND_SONGS[Math.max(0, Math.min(3, place.band | 0))];
   if (key === 'lord') return SPIRE_SONGS[`lord${Math.max(1, Math.min(3, place.phase | 0 || 1))}`];
   return SPIRE_SONGS[key];
@@ -381,16 +383,19 @@ export function spireScoreFor(place) {
 /** Which row of THE PRIORITY TABLE a place takes (EG_SCORE_PRIORITY). Pure. */
 export function spireScoreKey(p) {
   const fight = p.sg === 'trial';
+  // AUDIT EG V (c, L7-12): a Court whose lord still sleeps (`asleep` - the hall woke, the lord has not) plays the band's
+  // ambience; its wake's swell is timed from the lord's own wake (`sinceWake`, scenes/egClient.js scoreView)
+  const sleeping = fight && p.kind === 'court' && !!p.asleep;
   const rows = {
-    end: !!p.end,
+    end: !!p.end || (Number.isFinite(p.sinceFall) && p.sinceFall >= 0 && p.sinceFall < SPIRE_END_MS),   // AUDIT EG V (c, L7-13): "the tear, a fall, the end" - my own fall's
     valk: fight && p.kind === 'court' && !!p.valk,
     redoubt: p.sg === 'rest',
     count: Number.isFinite(p.countLeft) && p.countLeft > 0 && p.countLeft <= SPIRE_COUNT_WARN_MS && (fight || p.sg === 'closing'),
-    wake: fight && p.kind === 'court' && (p.sinceWake ?? Infinity) < SPIRE_WAKE_MS,
-    lord: fight && p.kind === 'court',
+    wake: fight && p.kind === 'court' && !sleeping && (p.sinceWake ?? Infinity) < SPIRE_WAKE_MS,
+    lord: fight && p.kind === 'court' && !sleeping,
     set: fight && !!p.set,
     yard: fight && (p.kind === 'yard' || p.kind === 'rampart'),
-    hall: fight,
+    hall: fight && !sleeping,
     ambience: true,
   };
   return EG_SCORE_PRIORITY.find((k) => rows[k]) ?? 'ambience';

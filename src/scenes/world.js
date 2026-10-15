@@ -384,6 +384,7 @@ import { panoplyRows, PANOPLY_NAMES } from '../ui/brokerWindow.js';   // EG-E1: 
 import { panoplyPieceById } from '../systems/aetheric.js';   // EG15: a Panoply piece minted by its id - the sink's
 import { EG_SINK_EMBERS } from '../net/egPay.js';   // EG-E1: the sink's price
 import { openEgBoard, createEgBoardDoor } from '../ui/egBoardWindow.js';   // EG-E2: the Elite Breach's three boards; EG-ZM: their one door
+import { egRecapsKept } from '../ui/egHud.js';   // AUDIT EG V (c, L7-19): the last runs this device kept, on the boards' own tab
 import { registerEgFind, egFindThrow } from '../systems/egFind.js';   // EG-E3: the dungeon's find
 import { setSetPowersAllies, setSpireRecovery, spireRedoubtTaken } from '../systems/sigilSetPowers.js';   // EG15: the Reprieve's allies, the death saves held to a Redoubt in a breach
 import { brokerStock, brokerDay, brokerBought, makeBrokerSale, spendableStonesIn, lockedStonesIn, stoneCount, insigniaSale, stonesText, panoplySale } from '../systems/sigilBroker.js';   // SET7: the day's stock, the record, the sale   // SS1: the stones counted over their stacks
@@ -841,7 +842,8 @@ import { LANG_OLD_RELAY_TEXT, NO_LANG_TEXT, langJoinedText } from '../net/chat.j
 import { CHAT_LANGS, chatLangRoom } from '../net/wire.js';   // CHAT-LANG: the language channels
 import { LANG_LINES, unknownLangText } from '../net/chatCommands.js';   // CHAT-LANG: /lang's list and refusal
 import { oocText, localLineHeard, nextRegionRoom, regionJoinedText, CHAN_OLD_RELAY_TEXT, ROLL_OLD_RELAY_TEXT, EMOTE_OLD_RELAY_TEXT, GUILD_OLD_RELAY_TEXT, NO_GUILD_TEXT, partyNoteTab } from '../net/chat.js';   // CHAT-CHAN: the channels' own laws (a second chat import: CHAT1's pin holds the first as it stands)
-import { parseChatLine, HELP_LINES, CHAT_GREETING_TEXT, unknownCommandText, emptyCommandText, hostMisuseText, badRollText, expandShortcodes, EMOTE_LINES, foundText, FIND_OFFLINE_TEXT, FIND_RELAY_TEXT } from '../net/chatCommands.js';   // CHAT-CHAN: what a typed line IS; DICE1: and a roll; EMOTE1: an action, a gesture, a shortcode
+import { breachCommandOf, helpLines } from '../net/chatCommands.js';   // AUDIT EG V (c, L7-1, L7-21): the Elite Breach's door, its words whole; /help's lines with its own
+import { parseChatLine, CHAT_GREETING_TEXT, unknownCommandText, emptyCommandText, hostMisuseText, badRollText, expandShortcodes, EMOTE_LINES, foundText, FIND_OFFLINE_TEXT, FIND_RELAY_TEXT } from '../net/chatCommands.js';   // CHAT-CHAN: what a typed line IS; DICE1: and a roll; EMOTE1: an action, a gesture, a shortcode
 import { partyRosterSource, localRosterSource, guildRosterSource } from '../net/roster.js';   // CHAT-CHAN: the Party and Local tabs' composed lists
 import { partyCompassPoints } from '../ui/partyMapMarks.js';   // COMPASS-PARTY: the party's points on the compass
 import { SocialState, accountId, accountSecret } from '../net/social.js';   // SOC2: the friends and the party, as the hub says them; the account the hub's hello carries; SOC3: and the two colours a name wears in the DOM - my party's green, a friend's blue
@@ -11630,7 +11632,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   function makePartyPanel(social) {
     partyPanel = createPartyPanel({ social, art: { fetchBytes, palette }, here: () => _partyPose });
     partyPanel.setCompanions(partyCompanions);   // COMPANION-KIT
-    partyPanel.setSpire(() => egClient?.partyRows() ?? null);   // EG-G1 (Elite-Gates.md section 27.4): the company's state on the party rows in a breach
+    partyPanel.setSpire(() => egClient?.partyRows() ?? null, (acct) => egClient?.watchMember(acct));   // AUDIT EG V (c, L7-7): a witness's tap on a row watches that member   // EG-G1 (Elite-Gates.md section 27.4): the company's state on the party rows in a breach
     return partyPanel;
   }
   function companionPanelFrame() {
@@ -22637,8 +22639,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           return true;
         }
         // EG-PLAY: `/breach` - answer an Elite Breach's call; `/breach rehearse` - the day's Rehearsal; `/breach home` - a
-        // Redoubt's way home. Local, never sent as chat.
-        { const m = /^\/breach(?:\s+(\w+))?$/i.exec(text.trim()); if (m) { if (!egClient) chatLog.push(tabId, { text: 'Elite Breaches are online - connect and sign in first.', system: true }); else egClient.command(m[1] ?? ''); return true; } }
+        // Redoubt's way home. Local, never sent as chat. AUDIT EG V (c, L7-1): its words WHOLE (net/chatCommands.js
+        // breachCommandOf) - `/breach pick 2`, `vote yes`, `buy tonic` - where a one-word door read each as no command
+        { const arg = breachCommandOf(text); if (arg != null) { if (!egClient) chatLog.push(tabId, { text: 'Elite Breaches are online - connect and sign in first.', system: true }); else egClient.command(arg); return true; } }
         if (/^\/unstuck(\s+cancel)?$/i.test(text.trim())) {
           // PVPUNSTUCK: outside the zone at once (30 min cooldown); in the zone after a five-minute wait with a bar that can
           // be cancelled (a second /unstuck or "/unstuck cancel" cancels too), and a 60 minute cooldown - overworld and dungeons
@@ -22831,7 +22834,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         // wear them too
         const cmd = parseChatLine(expandShortcodes(text));
         const note = (line) => chatLog.push(tabId, { text: line, system: true });
-        if (cmd.kind === 'help') { for (const line of HELP_LINES) note(line); return 'read'; }
+        if (cmd.kind === 'help') { for (const line of helpLines()) note(line); return 'read'; }   // AUDIT EG V (c, L7-21): /breach among them
         if (cmd.kind === 'emotes') { for (const line of EMOTE_LINES) note(line); return 'read'; }
         // CHAT-LANG: /lang alone lists the channels, /lang off leaves the one held, /lang <code> joins one - the choice is
         // kept (`chatLang`) and the frame moves the tab; the Language tab comes to the front with it
@@ -25277,7 +25280,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  `/breach board`, the Timers row's Elite entries and the start window all open the boards here, in the skin worn (the
    *  enhanced panel, or the classic skin's DFU pickers on the mode's window slot), one at a time. */
   const egBoardDoor = createEgBoardDoor({
-    open: (o) => openEgBoard({ doc: document, classic: !isEnhancedPlus(), fetchBoard: () => _accountEg.board(), listPickerReady: listPickerArtLoaded, ...o }),
+    open: (o) => openEgBoard({ doc: document, classic: !isEnhancedPlus(), fetchBoard: () => _accountEg.board(), listPickerReady: listPickerArtLoaded, runs: () => egRecapsKept(appStorage()), ...o }),   // AUDIT EG V (c, L7-19): and the last runs
     slot: { top: () => modes?.topWindow?.() ?? null, mount: (w) => modes?.mountWindow?.(w), close: (w) => modes?.closeWindow?.(w) },
   });
   /** THE START WINDOW's three doors: DFU's list picker on the mode machine's window slot (the boat's variant picker's own
@@ -25298,7 +25301,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const egClient = params.has('online') ? createEgClient({
     modes: () => modes, online: () => online, hub: () => socialLink(), account: { ..._accountEg, claim: (r) => _accountEg.claim(r, characterIdOf(playerEntity)).then(weirHeard) }, now: egNow, entity: playerEntity, player, cam,   // EG-E1: a claim carries the claiming character (its guild's deed) and its Weir Key restacks
     keyFacts: egKeyFacts, startWindow: egStartWindow, arches: egArchPool, callPortal: _egCallPortal, prompt: egCallPrompt, feet: egFeet, probes: egProbes,   // EG-F
-    party: () => (social?.party?.members ?? []).map((m) => ({ sub: m.acct, name: m.name })), windowUp: () => gamePaused(),   // EG-F: the start window's ticks; the prompt under a window
+    party: () => (social?.party?.members ?? []).map((m) => ({ sub: m.acct, name: m.name, h: m.p?.h, hm: m.p?.hm })), windowUp: () => gamePaused(),   // EG-F: the start window's ticks; the prompt under a window; AUDIT EG V (c, L7-7): a witness's watched member's health, the party's pose
     questDue: () => questTracker.views.some((v) => Number.isFinite(v.clockSeconds) && v.clockSeconds < EG_LAST_WORD_MIN * 60),   // EG-F: a quest falls due inside the last word
     say: (text) => chatNotice(text), mid: (text) => egMid(text), veil: () => gateVeil,
     site: egSiteNow, wire: egWireNow, landAt: egLandAt,

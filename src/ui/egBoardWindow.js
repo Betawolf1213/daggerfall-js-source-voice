@@ -20,14 +20,17 @@ import { egBandOfHall, EG_BAND_NAMES } from '../net/egLaw.js';
 import { ListPickerWindow } from './listPicker.js';
 import { registerOverlay } from './enhancedOverlays.js';   // AUDIT EG III: on the enhanced doors' stack
 import { overlayAction } from './input.js';   // AUDIT EG III: the doors' own Back
+import { t } from '../systems/textManager.js';   // AUDIT EG V (c, L7-19): the last runs' words, in the player's language
 
 /** The tabs, in their order: the Descent's three brackets (server-account/src/egHonours.js EG_BRACKETS), the Depths and
  *  the Deepest Redoubts. */
-export const EG_BOARD_TABS = Object.freeze(['alone', 'few', 'company', 'depths', 'deepest']);
-/** A tab's name. */
+export const EG_BOARD_TABS = Object.freeze(['alone', 'few', 'company', 'depths', 'deepest', 'runs']);
+/** A tab's name. AUDIT EG V (c, L7-19; section 27.6 - "the last five runs are kept"): the sixth, this device's own last runs
+ *  (ui/egHud.js egRecapsKept - the recaps it kept, read here and nowhere else before). */
 export const EG_BOARD_TAB_TEXT = Object.freeze({
   alone: 'The Descent - Alone', few: 'The Descent - The Few', company: 'The Descent - The Company',
   depths: 'The Depths', deepest: 'The Deepest Redoubts',
+  get runs() { return t('eg.board.runs', 'Your last runs'); },
 });
 /** AUDIT EG III: the panel's id on the page - an enhanced door's, so the pad's window test finds it. */
 export const EG_BOARD_PANEL_ID = 'enhanced-egboard';
@@ -58,18 +61,31 @@ export function egBoardClock(secs) {
 }
 /** A Redoubt's day, as the Deepest says when it was taken (UTC, the board's own clock). Pure. */
 const dayOf = (at) => (Number.isFinite(at) && at > 0 ? new Date(at * 1000).toISOString().slice(0, 10) : '?');
+/**
+ * AUDIT EG V (c, L7-19; section 27.6 - "The last five runs are kept"): THE LAST RUNS' LINES - the tab's name, then each recap
+ * this device kept (ui/egHud.js egRecapKeep - `{ title, time, whyText, why, board, at }`), newest first: its day, its depth,
+ * its time from the first wake, why it ended and its board's line; or that none is kept. Pure.
+ * @param {any[]} runs
+ */
+export function egRunsLines(runs) {
+  const list = (Array.isArray(runs) ? runs : []).filter((r) => r && typeof r === 'object' && typeof r.title === 'string').slice().reverse();
+  if (!list.length) return [EG_BOARD_TAB_TEXT.runs, t('eg.board.noRuns', 'No run is kept on this device yet.')];
+  return [EG_BOARD_TAB_TEXT.runs, ...list.map((r) => [dayOf(Number(r.at) / 1000), r.title, r.time, r.whyText || r.why || '', r.board || ''].filter(Boolean).join(' - '))];
+}
 
 /**
  * THE LINES OF A TAB (`tab` one of EG_BOARD_TABS - the first for any other): its name and the season; its ranked rows,
  * then `...` and the member's own row where it is pinned under them; this week's Proclamation and the member's best on
  * the Descent. A Descent row says its company's names, the hall and its band, the time, the Unfallen's flame and its
  * breach's Proclamation (`short`: the first name and how many more, no band and no Proclamation - the classic picker's
- * narrow list). Null, a refusal or a board: never a throw. Pure.
+ * narrow list). Null, a refusal or a board: never a throw. Pure. AUDIT EG V (c, L7-19): the `runs` tab is this device's own
+ * last runs (`runs` - ui/egHud.js egRecapsKept's recaps, newest first here), the service's board aside.
  * @param {any} board the service's answer (or `{ error }`, or null while it is read)
  * @param {string} tab
- * @param {{ short?: boolean }} [o]
+ * @param {{ short?: boolean, runs?: any[] }} [o]
  */
-export function egBoardLines(board, tab, { short = false } = {}) {
+export function egBoardLines(board, tab, { short = false, runs = [] } = {}) {
+  if (tab === 'runs') return egRunsLines(runs);
   if (!board) return [EG_BOARD_TEXT.reading];
   if (board.error) return [EG_BOARD_TEXT.failed(board.error)];
   const t = EG_BOARD_TABS.includes(tab) ? tab : EG_BOARD_TABS[0];
@@ -122,7 +138,7 @@ const CSS = `
  * repaints; `destroy()` takes it away (once).
  * @param {{ doc?: any, onTab: (tab: string) => void, onClose: () => void }} p
  */
-export function createEgBoardPanel({ doc = document, onTab, onClose }) {
+export function createEgBoardPanel({ doc = document, onTab, onClose, runs = () => [] }) {   // AUDIT EG V (c, L7-19): `runs` this device's last runs
   if (doc?.getElementById && !doc.getElementById(STYLE_ID)) {
     const s = doc.createElement('style');
     s.id = STYLE_ID; s.textContent = CSS;
@@ -159,11 +175,12 @@ export function createEgBoardPanel({ doc = document, onTab, onClose }) {
         tabs.append(b);
       }
       root.append(tabs);
-      const lines = egBoardLines(board, t);
-      const rows = board && !board.error ? lines.length - 2 : lines.length;   // the foot's two (the Proclamation, the best) apart
+      const lines = egBoardLines(board, t, { runs: t === 'runs' ? runs() : [] });
+      const foot = t !== 'runs' && board && !board.error;   // AUDIT EG V (c, L7-19): the last runs have no foot and no head of the season
+      const rows = foot ? lines.length - 2 : lines.length;   // the foot's two (the Proclamation, the best) apart
       lines.forEach((line, i) => {
-        if (i >= rows && board && !board.error) { root.append(el('div', 'foot', line)); return; }
-        root.append(el('div', `line${i < 2 && board && !board.error ? ' head' : ''}${/ - you$/.test(line) ? ' you' : ''}`, line));
+        if (i >= rows && foot) { root.append(el('div', 'foot', line)); return; }
+        root.append(el('div', `line${(foot && i < 2) || (t === 'runs' && i === 0) ? ' head' : ''}${/ - you$/.test(line) ? ' you' : ''}`, line));
       });
       const acts = el('div', 'acts');
       const close = el('button', '', EG_BOARD_TEXT.close);
@@ -187,7 +204,7 @@ export function createEgBoardPanel({ doc = document, onTab, onClose }) {
  *   closeWindow?: (win: any) => void, listPickerReady?: () => boolean, tab?: string, onClosed?: () => void,
  *   ListPicker?: any }} deps
  */
-export function openEgBoard({ doc = globalThis.document, classic = false, fetchBoard, mountWindow, closeWindow, listPickerReady = () => true, tab = EG_BOARD_TABS[0], onClosed, ListPicker = ListPickerWindow }) {
+export function openEgBoard({ doc = globalThis.document, classic = false, fetchBoard, mountWindow, closeWindow, listPickerReady = () => true, tab = EG_BOARD_TABS[0], onClosed, ListPicker = ListPickerWindow, runs = () => [] }) {
   let open = true, board = null, at = EG_BOARD_TABS.includes(tab) ? tab : EG_BOARD_TABS[0], shown = '';
   /** @type {any} */ let panel = null;
   /** @type {any} */ let win = null;
@@ -214,14 +231,14 @@ export function openEgBoard({ doc = globalThis.document, classic = false, fetchB
     items: EG_BOARD_TABS.map((k) => EG_BOARD_TAB_TEXT[k]), backdrop: 'none', selectedIndex: EG_BOARD_TABS.indexOf(at),
     onPick: (i) => { at = EG_BOARD_TABS[i] ?? at; showLines(); }, onCancel: close,
   })); };
-  const showLines = () => { shown = 'lines'; put(new ListPicker({ items: egBoardLines(board, at, { short: true }), backdrop: 'none', onPick: () => showTabs(), onCancel: () => showTabs() })); };
+  const showLines = () => { shown = 'lines'; put(new ListPicker({ items: egBoardLines(board, at, { short: true, runs: at === 'runs' ? runs() : [] }), backdrop: 'none', onPick: () => showTabs(), onCancel: () => showTabs() })); };
   if (classic) {
     if (!listPickerReady() || typeof mountWindow !== 'function') return null;
     showTabs();
     if (!open) return null;
   } else {
     if (!doc?.createElement) return null;
-    panel = createEgBoardPanel({ doc, onTab: (k) => { at = k; panel?.render(board, at); }, onClose: close });
+    panel = createEgBoardPanel({ doc, onTab: (k) => { at = k; panel?.render(board, at); }, onClose: close, runs });
     panel.render(null, at);
   }
   Promise.resolve().then(() => fetchBoard()).then((r) => (r?.ok === false ? { error: r.error ?? 'offline' } : r?.ok === true ? r.data : r), () => ({ error: 'offline' })).then((b) => {

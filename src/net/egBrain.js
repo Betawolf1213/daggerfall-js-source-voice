@@ -123,6 +123,8 @@ export const EG_REL_LUMEN = 20;
 export const EG_WINCH_MS = 60_000;
 export const EG_SILENCE_MS = 3000;
 export const EG_ENGINE_HOLD_MS = 45_000;
+/** AUDIT EG V (c, L7-7; sections 16.4 and 16.5 - "every 3 s"): a ping's cooldown, living or witness (ms) - the screen shows it. */
+export const EG_PING_MS = 3000;
 /** EG-FULL LAYER THREE - THE CLAN PIT's Honour Horn (section 11.2): first blown this long after the wake, then once the
  *  last call ends and this long more; the Kynval's ring (m); Ashfall's pulse (ms) and its pools. */
 export const EG_HORN_FIRST_MS = 20_000;
@@ -1789,8 +1791,8 @@ export function egWord(B, sub, m, pose, now, rng) {
       break;
     }
     case 'mast': { const w = egSpirebridge(B, sub, spec, p, now); if (w) out.push(w); break; }   // AUDIT EG III: Spirebridge asked (net/egVestige.js - the room's rule)
-    case 'lping': if (mm.alive && now - (mm.pingAt ?? 0) >= 3000) { mm.pingAt = now; out.push({ k: 'eping', s: sub, x: m.x, z: m.z, w: m.w, wit: 0 }); } break;
-    case 'ping': if (!mm.alive && now - (mm.pingAt ?? 0) >= 3000) { mm.pingAt = now; out.push({ k: 'eping', s: sub, x: m.x, z: m.z, w: m.w, wit: 1 }); } break;
+    case 'lping': if (mm.alive && now - (mm.pingAt ?? 0) >= EG_PING_MS) { mm.pingAt = now; out.push({ k: 'eping', s: sub, x: m.x, z: m.z, w: m.w, wit: 0 }); } break;
+    case 'ping': if (!mm.alive && now - (mm.pingAt ?? 0) >= EG_PING_MS) { mm.pingAt = now; out.push({ k: 'eping', s: sub, x: m.x, z: m.z, w: m.w, wit: 1 }); } break;
     case 'bequest': if (!mm.alive && (mm.vs ?? []).some((q) => q[0] === m.v)) mm.bequest = m.v; break;
     case 'forsake': egForsake(B, sub, now, out); break;
     case 'wkpaid': {
