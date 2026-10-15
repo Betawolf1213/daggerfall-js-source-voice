@@ -36,7 +36,8 @@ change) and read `bible/01-Overview/Port-Doctrine.md` before touching code.
 - **The hosts do not grow** (HOST-SPLIT, `bible/01-Overview/Host-Split.md`):
   new behaviour goes into a module the host wires (`src/scenes/fishHost.js` is
   the shape), never into `bootWorld`, `createWorldModes`, `buildDungeonContext`,
-  `bootExterior` or `navalHost`'s `createNavalHost` themselves - and on the relay into a Room method of its own,
+  `bootExterior`, `navalHost`'s `createNavalHost` or `comeSailAway`'s
+  `createComeSailAwayRuntime` themselves - and on the relay into a Room method of its own,
   never into `_message`. `test/hostceiling.test.js` fails a host that lengthens
   past its ceiling in code lines; `node tools/hostScope.mjs <host>` maps what a
   block reads and writes before you move it.

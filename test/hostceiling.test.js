@@ -47,6 +47,7 @@ const CEILINGS = [
   ['src/scenes/dungeonContext.js', 'buildDungeonContext', 5_446, MODULE],
   ['src/scenes/exterior.js', 'bootExterior', 3_446, MODULE],
   ['src/scenes/navalHost.js', 'createNavalHost', 3_942, MODULE],   // HOST-SPLIT NAVAL: a *Host.js grown into a knot of its own (3,692 code lines)
+  ['src/systems/comeSailAway.js', 'createComeSailAwayRuntime', 2_315, MODULE],   // AUDIT HOST-SPLIT NAVAL: the Come Sail Away runtime, one scope of 2,065 code lines
   ['server/src/index.js', '_message', 1_093, METHOD],   // the relay's Room is 473 methods already - its knot is the one dispatcher
 ];
 
@@ -64,7 +65,7 @@ const measure = (file, fn) => {
   return sizes.get(key);
 };
 
-test('HOST-SPLIT THE HOSTS DO NOT GROW: bootWorld, createWorldModes, buildDungeonContext, bootExterior, navalHost\'s createNavalHost and the relay\'s _message each stay under their ceiling in code lines - new behaviour goes into a module the host wires (a Room method, on the relay), not into the host\'s own scope; on a pull request and on a contributor\'s machine, never on a deploy (mutants: a ceiling under its host; comments counted)', { skip: SKIP }, () => {
+test('HOST-SPLIT THE HOSTS DO NOT GROW: bootWorld, createWorldModes, buildDungeonContext, bootExterior, navalHost\'s createNavalHost, Come Sail Away\'s createComeSailAwayRuntime and the relay\'s _message each stay under their ceiling in code lines - new behaviour goes into a module the host wires (a Room method, on the relay), not into the host\'s own scope; on a pull request and on a contributor\'s machine, never on a deploy (mutants: a ceiling under its host; comments counted)', { skip: SKIP }, () => {
   const over = [];
   for (const [file, fn, ceiling, instead] of CEILINGS) {
     const n = measure(file, fn);
@@ -82,24 +83,54 @@ test('HOST-SPLIT A CEILING COMES DOWN WITH ITS HOST: no ceiling stands more than
   assert.deepEqual(slack, []);
 });
 
-/** A *Host.js module's constructor this long is a knot of its own, not a module the host wires (HOST-SPLIT NAVAL). */
+/** A function this long is a knot of its own, whatever wires it (HOST-SPLIT NAVAL). */
 const KNOT = 2_000;
 
-test('HOST-SPLIT NAVAL A MODULE THAT BECOMES A HOST GETS A CEILING: every src/scenes/*Host.js constructor past KNOT code lines - a module the host wires that grew into one scope of its own, as navalHost\'s createNavalHost did unnoticed to 4,865 lines - stands in CEILINGS, found by walking the folder, not by a list (mutants: the naval ceiling dropped; the knot never reached)', { skip: SKIP }, () => {
-  const dir = join(ROOT, 'src/scenes');
+/** Every source file under a folder. */
+const sources = (dir) => readdirSync(join(ROOT, dir), { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? sources(`${dir}/${e.name}`) : /\.m?js$/.test(e.name) ? [`${dir}/${e.name}`] : [])).sort();
+
+/** A module's OUTERMOST functions past `raw` lines, in any shape - a declaration, an arrow, a method, async or not -
+ *  named as tools/hostScope.mjs names them. (A function inside another is the outer one's: its host's ceiling holds it.) */
+const outermost = (ast, raw) => {
+  const out = [];
+  const isFn = (n) => /^(FunctionDeclaration|FunctionExpression|ArrowFunctionExpression)$/.test(n.type) && n.body?.type === 'BlockStatement';
+  const visit = (n, name) => {
+    if (!n || typeof n.type !== 'string') return;
+    if (isFn(n)) { if (n.loc.end.line - n.loc.start.line + 1 > raw) out.push({ fn: n, name: n.id?.name ?? name }); return; }
+    const nm = n.type === 'VariableDeclarator' ? n.id?.name
+      : (n.type === 'MethodDefinition' || n.type === 'Property' || n.type === 'PropertyDefinition') && !n.computed ? n.key?.name : undefined;
+    for (const k of Object.keys(n)) {
+      if (k === 'loc') continue;
+      const v = n[k];
+      if (Array.isArray(v)) v.forEach((c) => visit(c, nm)); else if (v && typeof v.type === 'string') visit(v, nm);
+    }
+  };
+  visit(ast);
+  return out;
+};
+
+test('HOST-SPLIT NAVAL A MODULE THAT BECOMES A HOST GETS A CEILING: every function in src/ past KNOT code lines - a module the host wires that grew into one scope of its own, as navalHost\'s createNavalHost did unnoticed to 4,865 lines and Come Sail Away\'s runtime to 2,065 code lines - stands in CEILINGS; found by walking src/ and reading every outermost function, whatever its name or shape, not by a list (mutants: the naval ceiling dropped; the knot never reached; the walk by the first create* export alone)', { skip: SKIP }, () => {
   const held = new Set(CEILINGS.map(([file, fn]) => `${file}#${fn}`));
   const loose = [], knots = [];
-  let walked = 0;
-  for (const f of readdirSync(dir).filter((n) => /Host\.js$/.test(n)).sort()) {
-    const fn = /^export function (create\w+)\(/m.exec(readFileSync(join(dir, f), 'utf8'))?.[1];
-    if (!fn) continue;
-    walked++;
-    const file = `src/scenes/${f}`, n = measure(file, fn);
-    if (n > KNOT) knots.push(fn);
-    if (n > KNOT && !held.has(`${file}#${fn}`)) loose.push(`${file} ${fn}: ${n} code lines and no ceiling - add ['${file}', '${fn}', ${n + ROOM}, MODULE] to CEILINGS in test/hostceiling.test.js`);
+  const files = sources('src');
+  for (const file of files) {
+    const src = readFileSync(join(ROOT, file), 'utf8');
+    if (src.split('\n').length <= KNOT) continue;   // shorter than the line: no function in it can reach it
+    const { ast, comments } = parseModuleWithComments(src);
+    for (const { fn, name } of outermost(ast, KNOT)) {
+      const n = codeLines(src, fn, comments);
+      if (n <= KNOT) continue;
+      knots.push(`${file}#${name}`);
+      if (!held.has(`${file}#${name}`)) loose.push(`${file} ${name}: ${n} code lines and no ceiling - add ['${file}', '${name}', ${n + ROOM}, MODULE] to CEILINGS in test/hostceiling.test.js`);
+    }
   }
-  assert.ok(walked >= 20, `only ${walked} *Host.js constructors found - the walk is reading the wrong folder`);
-  // and the line reaches the knot it was drawn for - when the last one is taken apart, this assertion goes with it
-  assert.ok(knots.includes('createNavalHost'), `KNOT (${KNOT}) reaches no module the walk measured: ${JSON.stringify(knots)}`);
+  assert.ok(files.length >= 1000, `only ${files.length} source files under src/ - the walk is reading the wrong tree`);
+  // and the line reaches a function in the tree: a KNOT so high it reached none would hold nothing (when the last knot
+  // is taken apart, this is the assertion to drop - say so in the change that does it)
+  assert.ok(knots.length > 0, `KNOT (${KNOT}) reaches no function in src/ - drop this assertion if the last knot was taken apart`);
+  // and the walk sees every knot the ceilings already hold, whatever its shape (an async declaration, a const arrow) -
+  // a walk that read only one shape would pass on the knots it never met
+  const unseen = CEILINGS.filter(([file, fn]) => file.startsWith('src/') && measure(file, fn) > KNOT && !knots.includes(`${file}#${fn}`)).map(([file, fn]) => `${file}#${fn}`);
+  assert.deepEqual(unseen, [], 'a held knot the walk did not reach');
   assert.deepEqual(loose, []);
 });
