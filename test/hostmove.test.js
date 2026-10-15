@@ -159,7 +159,8 @@ test('HOST-SPLIT 1 (AUDIT) THE TOOL TOUCHES ONLY WHAT MOVED: an import dropped f
     const moved = '{"file": "src/world.js", "old": "if (on) { const moved = live + 1;", "new": "if (on) { const moved = live;", "tests": [], "name": "name-last"}';
     const other = '{"name": "brace-quoted", "file": "src/other.js", "old": "x } y", "new": "y", "tests": []}';
     writeFileSync(join(root, 'tools/mutants/m.json'), `[\n  ${moved},\n  ${other}\n]\n`);
-    const doc = 'An anchor into overworld.js:"if (on) { const moved = live + 1;" names another file.\n';
+    // (spelled in two pieces, so the line is not itself an anchor into overworld.js to the docs' own checks)
+    const doc = `An anchor into ${'overworld.js'}:"if (on) { const moved = live + 1;" names another file.\n`;
     writeFileSync(join(root, 'bible/page.md'), doc);
     const r = retargetRecords({ hostFile: 'src/world.js', toFile: 'src/marks.js', write: true, root });
     assert.deepEqual([r.records, r.unplaced], [1, []]);

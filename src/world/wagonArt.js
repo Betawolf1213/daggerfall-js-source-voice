@@ -14,8 +14,13 @@
 // livery (its oxblood skirt and gilt lines, its shutters, curtains and sunburst). A LOOK (WAGONS2, systems/wagonLooks.js)
 // is a Daggerfall picture too: a paint one of its flat colour swatches (TEXTURE.000/.001), a dyed tilt one of its woven
 // fabrics (TEXTURE.049), a floor its woods, rugs or chequered tiles, a ceiling its boards, plaster or night.
+//
+// DF-ART IV (2026-10-15, Mac: "Can we bring back the wheels we had before we replaced them"): the wheels are the
+// wagons' own again - a wheel's face and its tyre's tread painted as WAGONS1 painted them (world/wagonWheelArt.js),
+// in place of Daggerfall's spoked wheel (087_7) and grey iron. Everything else stays Daggerfall's.
 // Not a DFU member. Ledger A (WAGONS1).
 import { DF, SEE_THROUGH_WINDOW } from './classicArt.js';
+import { wagonWheelArt, wagonTyreArt } from './wagonWheelArt.js';
 
 /** The wagons' pseudo-archive: past the large boat's 38171 (38151 collided once - largeBoatArt.js). */
 export const WAGON_ARCHIVE = 38181;
@@ -93,10 +98,14 @@ export const LOOK_RECORDS = Object.freeze({
 export const lookRecord = (rec, i) => rec + LOOK_RECORD_STRIDE * (Number.isInteger(i) && i > 0 ? i : 0);
 
 /** DF-ART: the Daggerfall record each built record wears (world/classicArt.js DF) - or, a caravan wall, its composed
- *  picture (`caravanWall`). */
+ *  picture (`caravanWall`); DF-ART IV: a wheel's face and its tread the wagons' own painted pictures (`WHEEL_PAINTED`). */
+export const WHEEL_PAINTED = Object.freeze({
+  tyre: Object.freeze({ painted: wagonTyreArt }),
+  wheel: Object.freeze({ painted: wagonWheelArt }),
+});
 export const WAGON_SOURCES = Object.freeze({
   [TEX.floor]: DF.deck, [TEX.side]: DF.hullPlanks, [TEX.inner]: DF.oakPale, [TEX.beam]: DF.oakDark, [TEX.bench]: DF.board,
-  [TEX.tyre]: DF.ironGrey, [TEX.wheel]: DF.wheel, [TEX.iron]: DF.iron, [TEX.openSide]: DF.sailcloth, [TEX.tilt]: DF.sailcloth,
+  [TEX.tyre]: WHEEL_PAINTED.tyre, [TEX.wheel]: WHEEL_PAINTED.wheel, [TEX.iron]: DF.iron, [TEX.openSide]: DF.sailcloth, [TEX.tilt]: DF.sailcloth,
   [TEX.tiltInner]: DF.sailcloth, [TEX.caravanSide]: caravanWall(TEX.caravanSide, DF.paintGreen),
   [TEX.caravanFront]: caravanWall(TEX.caravanFront, DF.paintGreen), [TEX.caravanRear]: caravanWall(TEX.caravanRear, DF.paintGreen),
   [TEX.caravanRoof]: DF.paintGreen, [TEX.roomSide]: caravanWall(TEX.roomSide, DF.paintGreen),
