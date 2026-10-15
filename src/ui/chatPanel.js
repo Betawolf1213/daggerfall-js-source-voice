@@ -1116,7 +1116,12 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
    */
   const paintWho = () => {
     if (!roster) { who.style.display = 'none'; return; }
-    const { rows: all, all: everyone = all, total, shown, label } = rosterRows(roster());   // CHAT-FIND-ALL: `everyone` uncut, for the search
+    const src = roster();
+    // CHAT-FIND-HUB: past what this client knows (a shard's link, past CHAT_ROSTER_MAX online) the World tab's link asks
+    // the hub's own search while the box holds a query (net/online.js askFind - its own clock bounds it; '' lets the
+    // answer go), and the players it found ride in `everyone` (net/roster.js)
+    src?.askFind?.(query);
+    const { rows: all, all: everyone = all, total, shown, label } = rosterRows(src);   // CHAT-FIND-ALL: `everyone` uncut, for the search
     // PERF-ON3: THE SAME LIST IS NO NEWS. net/roster.js answers the very (frozen) array it answered last frame while
     // nothing it is made of moved, so with the heading's word, the count and the open menu also as they were, the key
     // below could only come out as it did - and building it was a string over every row, every frame the chat is open.
