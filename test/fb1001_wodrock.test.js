@@ -171,7 +171,7 @@ test('FB1001-WODROCK: a mirrored piece (a negative scale) keeps the density too'
 
 test('FB1001-WODROCK: the streaming host re-maps each WoD piece as it reads its model - one call, the mod\'s loop alone', () => {
   const w = hostText('src/scenes/world.js');
-  assert.match(w, /^import [^\n]*; import \{ wodRockUvs \} from '\.\.\/world\/wodRockUv\.js';/m);
+  assert.match(w, /^import \{ wodRockUvs \} from '\.\.\/world\/wodRockUv\.js';/m);   // HOST-SPLIT 2: the pixel build's own import line now
   // the piece's model is read through it, before its box, its batch and its collider: the batch draws the new UVs,
   // and the box and the collider read the same positions and indices (a dfMeshToModel pebble's own arrays - below)
   assert.match(w, /for \(const m of place\.models\) \{\n\s*const gpu = await getGpuMesh\(m\.modelId\);\n[^\n]*\n\s*const cpu = wodRockUvs\(cpuModels\.get\(m\.modelId\), m\.matrix, m\.modelId\);/);

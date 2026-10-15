@@ -186,7 +186,7 @@ test('the reach gate is a SECOND test after the pick, and it refuses', () => {
 
 test('world.js collects the boards a pixel stands and hands them over shifted', () => {
   const w = hostText('src/scenes/world.js');
-  assert.ok(w.includes("import { isBulletinBoard, isCityGate,") && w.includes("} from '../world/rmbLayout.js';"),
+  assert.match(w, /import \{[^}]*\bisBulletinBoard, isCityGate\b[^}]*\} from '\.\.\/world\/rmbLayout\.js';/,   // HOST-SPLIT 2: the pixel build's import, its names sorted
     'the model test comes from RMBLayout\'s home, not a second 41739 (AUDIT 64 F14 added isCityGate to the same import - RMBLayout.cs declares both)');
   assert.ok(w.includes('if (isBulletinBoard(placed.modelIdNum)) pixelBoards.push({ box, local });'),   // SEAT1a: and its matrix, a seat's pennant's face
     'the board is caught where the placement is stood, with the box already in the pixel frame');

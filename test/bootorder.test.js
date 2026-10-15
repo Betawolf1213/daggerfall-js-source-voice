@@ -32,10 +32,20 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parse } from 'acorn';
-import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
+import { hostText, movedOutOf } from './hostText.mjs';   // HOST-SPLIT 2: the modules moved out of the host
 
-const src = hostText('src/scenes/world.js');
+const src = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const ast = parse(src, { ecmaVersion: 'latest', sourceType: 'module' });
+// HOST-SPLIT 2: a module moved out of bootWorld (tools/hostMove.mjs) runs where its code stood, and reads the host's
+// live names at their use as `host.<name>` - the same reads, at the same moment. So the walk follows a call into a
+// moved module's functions as into the host's own, and reads `host.<name>` there as `<name>`: the gate sees the build
+// whole, wherever its code now lives.
+const MOVED = movedOutOf('src/scenes/world.js').map((p) => {
+  const text = hostText(p);
+  const tree = parse(text, { ecmaVersion: 'latest', sourceType: 'module' });
+  const ctor = tree.body.find((n) => n.type === 'ExportNamedDeclaration' && n.declaration?.type === 'FunctionDeclaration')?.declaration;
+  return { file: p, ctor, handle: ctor?.params[0]?.name };
+});
 const lineOf = (p) => src.slice(0, p).split('\n').length;
 const kids = (n) => {
   const out = [];
@@ -55,12 +65,15 @@ const findFn = (n, name) => {
 };
 /** the identifiers a node names, and the functions it calls, OUTSIDE any
  *  nested function body - what running that node touches right now */
-function surface(node) {
+function surface(node, handle = null) {
   const ids = new Set(), calls = new Set();
+  const live = (x) => (handle && x.type === 'MemberExpression' && !x.computed && x.object.type === 'Identifier' && x.object.name === handle ? x.property.name : null);
   (function walk(x, depth) {
     if (isFn(x)) depth += 1;
+    if (live(x)) { if (depth === 0) ids.add(live(x)); return; }   // a moved module's `host.<name>`: the host's <name>, read here
     if (x.type === 'Identifier' && depth === 0) ids.add(x.name);
     if (x.type === 'CallExpression' && x.callee.type === 'Identifier' && depth === 0) calls.add(x.callee.name);
+    if (x.type === 'CallExpression' && live(x.callee) && depth === 0) calls.add(live(x.callee));
     for (const [k, c] of kids(x)) {
       if (x.type === 'MemberExpression' && k === 'property' && !x.computed) continue;
       if ((x.type === 'Property' || x.type === 'MethodDefinition' || x.type === 'PropertyDefinition') && k === 'key' && !x.computed) continue;
@@ -123,6 +136,16 @@ test('BOOT-TDZ2: nothing the boot walk runs reads a binding the boot walk has no
       }
     } else if (n.type === 'FunctionDeclaration' && n.id) fns.set(n.id.name, n);
   });
+  // the moved modules' own functions, walked as the host's (HOST-SPLIT 2) - each read through its handle
+  const handleOf = new Map();
+  for (const m of MOVED) {
+    assert.ok(m.ctor && m.handle, `${m.file}: its constructor and its handle`);
+    for (const n of m.ctor.body.body) {
+      if (n.type === 'FunctionDeclaration' && n.id && !fns.has(n.id.name)) { fns.set(n.id.name, n); handleOf.set(n, m.handle); }
+      if (n.type === 'VariableDeclaration') for (const d of n.declarations) if (d.id.type === 'Identifier' && d.init && isFn(d.init) && !arrows.has(d.id.name)) { arrows.set(d.id.name, d.init); handleOf.set(d.init, m.handle); }
+    }
+  }
+  assert.ok(fns.has('buildPixelNow'), 'the walk reaches the pixel build, wherever it stands');
 
   const buildAt = body.findIndex((n) => /const playerPixel = await awaitedBuild\(first\.px, first\.py\);/.test(src.slice(n.start, n.end)));
   assert.notEqual(buildAt, -1, 'the boot no longer awaits its own first pixel build by that name');
@@ -135,7 +158,7 @@ test('BOOT-TDZ2: nothing the boot walk runs reads a binding the boot walk has no
     if (memo.has(name)) return memo.get(name);
     const f = fns.get(name) ?? arrows.get(name);
     if (!f) return new Set();
-    const { ids, calls } = surface(f.body);
+    const { ids, calls } = surface(f.body, handleOf.get(f));
     const out = new Set(ids);
     for (const c of calls) for (const x of reach(c, seen)) out.add(x);
     memo.set(name, out);
@@ -171,7 +194,7 @@ test('BOOT-TDZ2: nothing the boot walk runs reads a binding the boot walk has no
   // on the exact line that produced the second crash. Each entry names
   // the source the excuse rests on; delete the guard and the excuse goes
   // with it, whatever the walker still thinks it can reach.
-  const builder = src.slice(src.indexOf('async function buildPixelNow'), src.indexOf('async function standPixelNpcs'));
+  const builder = hostText('src/scenes/pixelBuild.js');   // HOST-SPLIT 2: the pixel builder, moved whole into its module
   for (const [nm, [why, guard]] of Object.entries(ALLOWED)) {
     assert.ok(builder.includes(guard),
       `${nm} is excused as "${why}", and the guard that excuse rests on (${guard}) is no longer in the pixel builder`);
@@ -188,7 +211,7 @@ test('BOOT-TDZ2: nothing the boot walk runs reads a binding the boot walk has no
     visited.add(name);
     const f = fns.get(name) ?? arrows.get(name);
     if (!f) return;
-    const { ids, calls } = surface(f.body);
+    const { ids, calls } = surface(f.body, handleOf.get(f));
     for (const nm of ids) note(nm, name);
     for (const c of calls) visit(c);
   };

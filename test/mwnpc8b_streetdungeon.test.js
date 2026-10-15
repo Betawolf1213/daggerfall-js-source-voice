@@ -59,7 +59,7 @@ test('MWNPC8b-b the street: one batch a person in standPixelNpcs (the away arm a
 
 test('MWNPC8b-c THE STANDING-PEOPLE HOSTS, enumerated: every scene that stands StaticNPC billboards is named - wired, or flagged with the slice that wires it', () => {
   const HOSTS = {
-    'src/scenes/world.js': 'wired',            // the street's people (8b)
+    'src/scenes/pixelBuild.js': 'wired',       // the street's people (8b) - stood by the world's pixel build (HOST-SPLIT 2), offered by world.js
     'src/scenes/interiorContext.js': 'wired',  // the buildings' (8a), through worldModes.js
     'src/scenes/dungeonContext.js': 'wired',   // the dungeons' (8b), through worldModes.js
     // PIN MOVED (MWNPC8c, section 13c): the standalone location's people stand alone and in their bodies now
@@ -69,7 +69,7 @@ test('MWNPC8b-c THE STANDING-PEOPLE HOSTS, enumerated: every scene that stands S
     .map((f) => `src/scenes/${f}`).filter((p) => /collectExteriorNpcs\(|collectInteriorPeople\(|context: NPC_CONTEXT\.Dungeon/.test(rd(p)));
   assert.deepEqual(found.sort(), Object.keys(HOSTS).sort(), 'a new standing-people host is named here');
   const wiredBy = {
-    'src/scenes/world.js': () => hostText('src/scenes/world.js').includes('streetPeople.offer(personActor('),
+    'src/scenes/pixelBuild.js': () => hostText('src/scenes/world.js').includes('streetPeople.offer(personActor('),
     'src/scenes/interiorContext.js': () => rd('src/scenes/worldModes.js').includes('peopleBodies.offer(personActor('),
     'src/scenes/dungeonContext.js': () => rd('src/scenes/dungeonContext.js').includes('_peopleLane.offer(personActor('),
     'src/scenes/exterior.js': () => /\.offer\(personActor\(/.test(rd('src/scenes/exterior.js')),

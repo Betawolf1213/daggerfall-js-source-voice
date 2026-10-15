@@ -13,10 +13,10 @@ import { figureLook, figureRole, DAEDRA_PRINCES_ARCHIVE, FIGURE_ROLE_WORDS } fro
 import { offerDecorFigures } from '../src/scenes/decorRoom.js';
 import { wornByRole, WARDROBE_ROLES } from '../src/characters/wardrobe.js';
 import { decorIsFigure } from '../src/net/decorLaw.js';
-import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
+import { hostText, hostOf } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
 const ROOT = new URL('../', import.meta.url).pathname;
-const rd = (p) => hostText(p);
+const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
 const walk = (dir) => readdirSync(join(ROOT, dir)).flatMap((n) => {
   const p = `${dir}/${n}`;
   return statSync(join(ROOT, p)).isDirectory() ? walk(p) : p.endsWith('.js') ? [p] : [];
@@ -157,7 +157,7 @@ test('MWNPC18e EVERY HOST THAT DRAWS DAGGERFALL\'S PEOPLE stands them in bodies 
     'src/scenes/decorRoom.js': 'offerDecorFigures(',   // the placed figures, for its hosts (section 26)
     'src/scenes/dungeonContext.js': '_peopleLane.offer(personActor(',
     'src/scenes/exterior.js': 'standPeople.offer(personActor(',
-    'src/scenes/world.js': 'streetPeople.offer(personActor(',
+    'src/scenes/pixelBuild.js': 'streetPeople.offer(personActor(',   // HOST-SPLIT 2: the world's pixel build draws the street's people; its host (world.js) offers them
     'src/scenes/worldModes.js': 'peopleBodies.offer(personActor(',
   };
   const PICTURES = {
@@ -167,7 +167,7 @@ test('MWNPC18e EVERY HOST THAT DRAWS DAGGERFALL\'S PEOPLE stands them in bodies 
     'src/scenes/comeSailAwayPool.js': 'a ship\'s crew (the prefabs\' BillboardHelper people) - NOT HERE, section 27',
   };
   assert.deepEqual(hosts, [...Object.keys(BODIES), ...Object.keys(PICTURES)].sort(), 'every host that draws a person, named once');
-  for (const [f, call] of Object.entries(BODIES)) assert.ok(rd(f).includes(call), `${f} offers its people`);
+  for (const [f, call] of Object.entries(BODIES)) assert.ok((hostOf(f) ? hostText(hostOf(f)) : rd(f)).includes(call), `${f} offers its people`);
   assert.match(rd('bible/04-Characters/Morrowind-NPCs.md'), /Come Sail Away's crews/, 'the crews\' pictures declared');
 });
 
