@@ -47,8 +47,8 @@
  {
   "name": "MWNPC5-flush-drops-fx",
   "file": "src/render/renderer.js",
-  "old": "[it.tx / CHAR_SPRITE_RT_SIZE, it.ty / CHAR_SPRITE_RT_SIZE], q.fx);",
-  "new": "[it.tx / CHAR_SPRITE_RT_SIZE, it.ty / CHAR_SPRITE_RT_SIZE]);",
+  "old": "[it.tx / CHAR_SPRITE_RT_SIZE, it.ty / CHAR_SPRITE_RT_SIZE], q.fx, q.depth);",
+  "new": "[it.tx / CHAR_SPRITE_RT_SIZE, it.ty / CHAR_SPRITE_RT_SIZE], null, q.depth);",
   "tests": [
    "test/mwnpc5_bodyfx.test.js"
   ]
@@ -119,8 +119,8 @@
  {
   "name": "MWNPC5-queue-drops-fx",
   "file": "src/render/characterSprite.js",
-  "old": "quad: { at, halfW, halfH, right, hitFlash, conceal, up: qUp, fx } });",
-  "new": "quad: { at, halfW, halfH, right, hitFlash, conceal, up: qUp } });",
+  "old": "quad: { at, halfW, halfH, right, hitFlash, conceal, up: qUp, fx, depth } });",
+  "new": "quad: { at, halfW, halfH, right, hitFlash, conceal, up: qUp, depth } });",
   "tests": [
    "test/mwnpc5_bodyfx.test.js"
   ]
@@ -128,8 +128,8 @@
  {
   "name": "MWNPC5-lone-drops-fx",
   "file": "src/render/characterSprite.js",
-  "old": "hitFlash, conceal, qUp, null, fx);   // MWNPC5",
-  "new": "hitFlash, conceal, qUp, null, null);   // MWNPC5",
+  "old": "hitFlash, conceal, qUp, null, fx, depth);   // MWNPC5",
+  "new": "hitFlash, conceal, qUp, null, null, depth);   // MWNPC5",
   "tests": [
    "test/mwnpc5_bodyfx.test.js"
   ]

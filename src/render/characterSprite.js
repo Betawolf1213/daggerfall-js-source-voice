@@ -15,6 +15,8 @@ import { getPref } from '../systems/uiPrefs.js';   // BODY-CARD: the billboard l
 
 /** World up - landAnchor's vertical when it is handed none, and the upright card's (BODY-CARD). */
 const WORLD_UP = Object.freeze([0, 1, 0]);
+/** BODY-DEPTH: the picture's near plane (its far is twice its reach - drawRigSpriteBox). */
+export const PICTURE_NEAR = 0.1;
 
 /**
  * @returns diagnostics {center, halfW, halfH, pw, ph} for probes
@@ -137,16 +139,40 @@ export function drawRigSpriteBox(renderer, canvas, mesh, rigMat, { center, halfW
   // two - the 4 m that always stood; a body the travel view grows (OW-BIG, up to x12) was sliced by the fixed planes
   const reach = Math.max(4, halfW + boxH + 1);
   const miniEye = [center[0] - camDir[0] * reach, center[1] - camDir[1] * reach, center[2] - camDir[2] * reach];
-  const sProj = ortho(halfW, halfH, 0.1, 2 * reach), sView = lookAt(miniEye, center, [0, 1, 0]);
+  const sProj = ortho(halfW, halfH, PICTURE_NEAR, 2 * reach), sView = lookAt(miniEye, center, [0, 1, 0]);
+  // BODY-DEPTH: where its texels stand - only for a quad square to the ray (BODY-LEAN's); a card of its own vertical keeps
+  // its own depth
+  const depth = up == null && qUp !== WORLD_UP ? pictureDepth(camDir, center, at, reach) : null;
   // MWNPC2: an open batch (renderer.js beginCharacterSpriteBatch) takes the picture as measured, and the flush draws it
   // in its own tile of the one bind; a lone call takes its own pass, as every call did
   if (renderer.characterSpriteBatchOpen) {
-    renderer.queueCharacterSprite({ mesh, model: rigMat, also, proj: sProj, view: sView, pw, ph, tx: 0, ty: 0, quad: { at, halfW, halfH, right, hitFlash, conceal, up: qUp, fx } });
+    renderer.queueCharacterSprite({ mesh, model: rigMat, also, proj: sProj, view: sView, pw, ph, tx: 0, ty: 0, quad: { at, halfW, halfH, right, hitFlash, conceal, up: qUp, fx, depth } });
     return { center: at, halfW, halfH, pw, ph };
   }
   const sTex = also ? renderer.renderCharacterSprite(mesh, rigMat, sProj, sView, pw, ph, { also }) : renderer.renderCharacterSprite(mesh, rigMat, sProj, sView, pw, ph);
-  renderer.drawCharacterSpriteQuad(sTex, at, halfW, halfH, right, pw / CHAR_SPRITE_RT_SIZE, ph / CHAR_SPRITE_RT_SIZE, hitFlash, conceal, qUp, null, fx);   // MWNPC5: and a foe's tells   // HITFLASH1: a struck body's red; INVIS-LOOK: a concealed peer's body blends; AUDIT OW4 J6: leaned by `up`   // sample the sub-rect (fixed RT, audit fix)
+  renderer.drawCharacterSpriteQuad(sTex, at, halfW, halfH, right, pw / CHAR_SPRITE_RT_SIZE, ph / CHAR_SPRITE_RT_SIZE, hitFlash, conceal, qUp, null, fx, depth);   // MWNPC5: and a foe's tells   // HITFLASH1: a struck body's red; INVIS-LOOK: a concealed peer's body blends; AUDIT OW4 J6: leaned by `up`; BODY-DEPTH: where its texels stand   // sample the sub-rect (fixed RT, audit fix)
   return { center: at, halfW, halfH, pw, ph };
+}
+
+/**
+ * BODY-DEPTH (2026-10-15, the owner: "The models also clip through geometry"): WHERE A PICTURE'S TEXELS STAND. Every
+ * body is a picture composited as one quad, and the quad was depth-tested as itself - a flat card through the body's
+ * middle: a corpse lying toward the eye had its near half under the floor's depth and was cut off by it, and a body at a
+ * wall was cut where the card crossed the wall, whatever the body itself was doing. The picture is an ortho down `dir`
+ * from `reach` behind `center` (lookAt from `center - dir * reach`), so a texel of depth d stands `near + d (far - near)`
+ * along the ray from that eye; a quad square to the ray (BODY-LEAN's) through `at` stands `base` along it, so the texel's
+ * point is the quad's own moved `near + d (far - near) - base` along the ray - and the quad writes that point's depth
+ * (renderer.js drawCharacterSpriteQuad `depth`). `dir` is short of unit for an eye inside half a metre of the aim
+ * (drawRigSpriteBox floors the distance), so the eye stands |dir| x reach back. Null for a ray of no length.
+ * @param {number[]} dir @param {number[]} center @param {number[]} at @param {number} reach
+ * @returns {{ dir: number[], near: number, range: number, base: number } | null}
+ */
+export function pictureDepth(dir, center, at, reach, near = PICTURE_NEAR, far = 2 * reach) {
+  const l = Math.hypot(dir[0], dir[1], dir[2]);
+  if (!(l > 0) || !(reach > 0)) return null;
+  const u = [dir[0] / l, dir[1] / l, dir[2] / l];
+  const base = l * reach + u[0] * (at[0] - center[0]) + u[1] * (at[1] - center[1]) + u[2] * (at[2] - center[2]);
+  return { dir: u, near, range: far - near, base };
 }
 
 /** BODY-LEAN: the picture's own up - (-dir) x right, lookAt's y for a camera looking along `dir` (any length). Level, it
