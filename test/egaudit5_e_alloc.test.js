@@ -22,7 +22,8 @@ import { egHallCentre } from '../src/world/egHall.js';
 import { egFightFloors, egFloorPlan, egFloorPlanKeep } from '../src/world/egTelegraph.js';
 import { egMistSheets, egMistSheetsAt } from '../src/world/egLook.js';
 import { egMistAt } from '../src/net/egFragLaw.js';
-import { drawEgPanel, destroyEgHud, egRecapModel } from '../src/ui/egHud.js';
+import { EgMistPass, EG_MIST_MAX } from '../src/render/egMistPass.js';
+import { drawEgPanel, destroyEgHud, egRecapModel, egPanelModel } from '../src/ui/egHud.js';
 import { EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { EG_PRES_TEXT } from '../src/ui/egBeats.js';
 import { EG_OCCLUDE_CHEST_M } from '../src/scenes/egOcclude.js';
@@ -153,7 +154,7 @@ test('AUDIT EG V L6-4 THE FIGHT\'S FRAME KEEPS ITS LISTS (section 11.9; scenes/e
   assert.ok(bytes < 11 * 1024, `the fight's frame allocates ${Math.round(bytes)} bytes a frame`);
 });
 
-test('AUDIT EG V L6-4 THE MIST, THE ARCHES, THE OCCLUDERS AND THE PANEL KEEP THEIRS (section 11.9): the mist\'s sheets are written into the look\'s kept list - the same list and slots each frame, the law\'s own line (world/egLook.js egMistSheetsAt; scenes/egLookDraw.js); with no arch standing the arch pool answers its one empty list for the draws, the lights, the targets and the clearings, every frame (scenes/egArch.js); the dungeon arm hands the occluders one kept ray - the eye, the focal and my chest - and the witness eye one kept cast (scenes/worldModes.js); the panel stands, never serialised, while what its nodes say stands, and is drawn anew when a card\'s words, the focus or the recap change (ui/egHud.js) (mutants: a new sheet list a frame; the arches\' empty lists made anew; the ray made a frame; the panel rebuilt every frame; the panel kept past a new card; the recap redrawn at each new object)', () => {
+test('AUDIT EG V L6-4 THE MIST, THE ARCHES, THE OCCLUDERS AND THE PANEL KEEP THEIRS (section 11.9): the mist\'s sheets are written into the look\'s kept list - the same list and slots each frame, the law\'s own line (world/egLook.js egMistSheetsAt; scenes/egLookDraw.js); with no arch standing the arch pool answers its one empty list for the draws, the lights, the targets and the clearings, every frame (scenes/egArch.js); the dungeon arm hands the occluders one kept ray - the eye, the focal and my chest - and the witness eye one kept cast (scenes/worldModes.js); the panel stands, never serialised, while what its nodes say stands, and is drawn anew when a card\'s words, the focus or the recap change (ui/egHud.js) (mutants: a new sheet list a frame; the mist pass slicing its list; its cap lost; the arches\' empty lists made anew; the ray made a frame; the panel rebuilt every frame; the panel kept past a new card; the recap redrawn at each new object; a quiet frame\'s panel model worked out)', async () => {
   // the mist
   let sheets = [];
   for (const seed of [1, 2, 3, 4, 5, 7]) for (let c = 6; c <= 10 && !sheets.length; c++) sheets = egMistSheets(egCircleSpecs(seed, c, 0));
@@ -173,6 +174,17 @@ test('AUDIT EG V L6-4 THE MIST, THE ARCHES, THE OCCLUDERS AND THE PANEL KEEP THE
   }
   assert.ok(risen > 4);
   assert.match(rd('src/scenes/egLookDraw.js'), /egMistSheetsAt\(sheets, ts, sheetsAt\)/, 'the look hands its kept list');
+  // the mist pass reads the list in place, at most EG_MIST_MAX a frame - never sliced
+  const gl = new Proxy({}, { get: (o, k) => (k in o ? o[k] : typeof k === 'string' && /^[A-Z_]+$/.test(k) ? 0 : () => ({})) });
+  const mist = new EgMistPass(/** @type {any} */ (gl));
+  const lit = egMistSheetsAt(sheets, 12).filter((q) => q.alpha > 0);
+  assert.ok(lit.length, 'a sheet risen');
+  const many = Array.from({ length: EG_MIST_MAX + 3 }, (_, i) => lit[i % lit.length]);
+  const slice = Array.prototype.slice;
+  let sliced = 0;
+  Array.prototype.slice = function (...a) { sliced++; return slice.apply(this, a); };
+  try { mist.draw(new Float32Array(16), new Float32Array(16), [0, 0, 0], many, [1, 1, 1], 1); } finally { Array.prototype.slice = slice; }
+  assert.deepEqual([mist.drawn, sliced], [EG_MIST_MAX, 0], 'the cap drawn, nothing sliced');
   // the arches, none standing
   const pool = createEgArchPool({ renderer: null, pixelTranslation: () => [0, 0], heightAt: () => 0, now: () => 1000 });
   pool.frame(0.016);
@@ -230,4 +242,10 @@ test('AUDIT EG V L6-4 THE MIST, THE ARCHES, THE OCCLUDERS AND THE PANEL KEEP THE
     assert.notEqual(doc.body.children.at(-1), p3, 'the board\'s line arrived: drawn anew');
     assert.equal(serialised, 0, 'never serialised');
   } finally { JSON.stringify = stringify; destroyEgHud(); }
+  // the panel's model, a frame of a breach with no offer and no vote (the common frame): null, nothing worked out
+  const quietE = { ...EG_STATE_EMPTY, b: '0123456789abcdef', seed: 77, op: 1, wk: 2, h: 3, co: [['acct-0', 'Mac', 1, 1, 1, 1, 0, 0, 0, 1], ['acct-1', 'Ann', 2, 1, 0, 1, 0, 0, 1, 0]], as: [['rest', 2, 5]] };
+  const voted = {};   // the client's own (scenes/egClient.js - egPanelModel(link.state(), me(), t, voted))
+  assert.equal(egPanelModel(quietE, 'acct-0', 10, voted), null);
+  const panelBytes = await sampledBytes(() => egPanelModel(quietE, 'acct-0', 10, voted), 3000, ['ui/egHud.js']);
+  assert.ok(panelBytes < 16, `the panel's model of a quiet frame makes nothing (${panelBytes.toFixed(1)} B a call)`);
 });

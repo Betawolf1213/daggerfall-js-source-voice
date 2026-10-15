@@ -223,10 +223,19 @@ export const egAccordDoes = (key) => { const A = EG_ACCORDS.find((x) => x.key ==
  */
 export function egPanelModel(E, me, now, voted = {}) {
   if (!E?.b || E.end) return null;
-  // AUDIT EG V (L6-4): nothing to offer or ask (the common frame) - nothing worked out, nothing made
-  let asking = false;
-  for (const a of E.as ?? []) if (a[2] > now) { asking = true; break; }
-  if (!E.offer?.v?.length && !asking) return null;
+  // AUDIT EG V (L6-4): nothing to offer or ask (the common frame) - nothing worked out and nothing made, not even the
+  // closures' context the model's own work holds (panelModelOf)
+  if (!E.offer?.v?.length && !askingAt(E, now)) return null;
+  return panelModelOf(E, me, now, voted);
+}
+/** AUDIT EG V (L6-4): is any of the company's words open at `now`? Read in place. */
+function askingAt(E, now) {
+  const as = E.as;
+  if (as) for (let k = 0; k < as.length; k++) if (as[k][2] > now) return true;
+  return false;
+}
+/** egPanelModel's work, for a breach with an offer or a word open. */
+function panelModelOf(E, me, now, voted) {
   const run = me ? egRunOfMember(E, me) : null;
   // EG-ZS (section 15: "The offer card names it: *Takes an Accord with Mira's Hunter's Mark.*"): each living companion's
   // Vestiges, by name, for the Accord a card would take with them (net/egVestige.js egCardAccords)

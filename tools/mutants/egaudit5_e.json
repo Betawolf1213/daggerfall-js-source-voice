@@ -748,5 +748,43 @@
     "tests": [
       "test/egz_camera_host.test.js"
     ]
+  },
+  {
+    "name": "EGA5E-mist-pass-sliced",
+    "file": "src/render/egMistPass.js",
+    "old": "      const s = sheets[k];\n",
+    "new": "      const s = sheets.slice(0, EG_MIST_MAX)[k];\n",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-mist-pass-cap-lost",
+    "file": "src/render/egMistPass.js",
+    "old": "n = Math.min(sheets.length, EG_MIST_MAX); k < n;",
+    "new": "n = sheets.length; k < n;",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-panel-quiet-worked-out",
+    "file": "src/ui/egHud.js",
+    "old": "  if (!E.offer?.v?.length && !askingAt(E, now)) return null;\n  return panelModelOf(E, me, now, voted);",
+    "new": "  return panelModelOf(E, me, now, voted);",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-panel-word-open-unseen",
+    "file": "src/ui/egHud.js",
+    "old": "if (as[k][2] > now) return true;",
+    "new": "if (as[k][2] > now) return false;",
+    "tests": [
+      "test/egpres_hud.test.js",
+      "test/egaudit3_pres.test.js",
+      "test/egfull_client.test.js"
+    ]
   }
 ]
