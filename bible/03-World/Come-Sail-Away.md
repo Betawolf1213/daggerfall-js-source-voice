@@ -2194,7 +2194,15 @@ Plus only; the classic skin keeps the mod's keys as the mod drew them.
   of its tap - the square sails' End with the trim modifier); the mod's step
   spends the frame's taps after its LateUpdate. So the mod's own code runs
   as it runs for the key, and the keys still work (KB1: bindable; a press
-  with no key bound still presses). What the panel shows it reads
+  with no key bound still presses). The actions' names are one table,
+  `systems/comeSailAwayActions.js` BOAT_ACTIONS - a leaf since HUD-HELM
+  (2026-10-15), which the sea's module re-exports: HUD-MOVE's editor
+  previews the panel while nobody is at a helm, so the HUD reaches this
+  module, and the names read from `systems/comeSailAway.js` carried the sea's
+  whole law onto the HUD's graph, as far as the quest machine AUDIT GUIDE O6
+  keeps off it (`01-Overview/Field-Bugs-2026-10-14-riding-panel.md`, THE HELM
+  PANEL). The hull names come from INT1's leaf, `systems/comeSailAwayHulls.js`,
+  for the same reason. What the panel shows it reads
   (`helmPanelState`) and never writes: the sails and whether they stand; the
   square sails' own toggle where the key's chord would raise them alone
   (raised sails, square and fore-and-aft kinds, the assist off); the trim

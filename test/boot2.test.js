@@ -87,6 +87,10 @@ test('BOOT2: the entry\'s static reach touches neither hub and stays under the c
   // GATHER-FEEL II (2026-10-13, VEIN-CRACKS): 77 - a worked vein's crack (systems/veinCrack.js: the GLSL both billboard
   // programs are built from as the renderer loads, beside the batch field the gathering host writes - DISSOLVE's shape).
   // A leaf that imports nothing, so it can bring no hub, and the assertion below keeps it so. The ceiling moves to 77.
+  // HORSE-TIERS (2026-10-15, PIN MOVED): 78 - horse care's tiers (systems/horseCareTiers.js: what the `horseCare` key may
+  // hold, which the prefs shelf's load reads to move an old switch's value to its tier and drop one that names none -
+  // SURV-TIERS' way, whose survival/difficulty.js the load reads beside it). A leaf that imports nothing, so it can bring
+  // no hub, and the assertion below keeps it so. The ceiling moves to 78.
   const importsOf = (p) => [...rd(p).matchAll(STATIC)].map((m) => m[1]);
   assert.deepEqual([importsOf('src/render/ecotoneGlsl.js'), importsOf('src/world/ecotone.js'), importsOf('src/render/windfallSway.js')], [['../world/ecotone.js'], [], []],
     'the border chunk and its law, and the wind law, stay leaves on the boot path');
@@ -95,5 +99,6 @@ test('BOOT2: the entry\'s static reach touches neither hub and stays under the c
   assert.deepEqual(importsOf('src/render/skinPalette.js'), [], 'MWNPC1: the palette\'s shape a leaf');
   assert.deepEqual(importsOf('src/render/horizonHaze.js'), [], 'FAR-SEA1: the horizon\'s haze a leaf');
   assert.deepEqual(importsOf('src/systems/veinCrack.js'), [], 'GATHER-FEEL II: the vein\'s crack a leaf');
-  assert.ok(reach.size <= 77, `the entry statically reaches ${reach.size} files - BOOT2 measured 43, PERF-URL 61, ECOTONE1 66, WINDFALL1 69, RW1 73, MWNPC1 74, FAR-SEA1 75, LOOT-MARKS 76 (ui/lootTierMarks.js, a leaf of no imports: the enhanced sheet's quick-loot tier marks), GATHER-FEEL II 77 (systems/veinCrack.js, a leaf of no imports: a worked vein's crack), and holds the ceiling at 77`);   // PIN MOVED (GATHER-FEEL II): 76 -> 77
+  assert.deepEqual(importsOf('src/systems/horseCareTiers.js'), [], 'HORSE-TIERS: horse care\'s tiers a leaf');
+  assert.ok(reach.size <= 78, `the entry statically reaches ${reach.size} files - BOOT2 measured 43, PERF-URL 61, ECOTONE1 66, WINDFALL1 69, RW1 73, MWNPC1 74, FAR-SEA1 75, LOOT-MARKS 76 (ui/lootTierMarks.js, a leaf of no imports: the enhanced sheet's quick-loot tier marks), GATHER-FEEL II 77 (systems/veinCrack.js, a leaf of no imports: a worked vein's crack), HORSE-TIERS 78 (systems/horseCareTiers.js, a leaf of no imports: what the horse care key may hold), and holds the ceiling at 78`);   // PIN MOVED (GATHER-FEEL II): 76 -> 77
 });

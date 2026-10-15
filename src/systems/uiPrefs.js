@@ -25,6 +25,7 @@ import { appStorage } from './appStorage.js';   // DA1: the storage seam
 import { onlineForcedPref } from './onlineLane.js';   // OL1: the online lane's forcing, read before the shelf
 import { FEATURE_PREF_DEFAULTS } from './features.js';   // RF4: the port's own switches, declared once on their rows
 import { isStoredTier } from './survival/difficulty.js';   // SURV-TIERS: what the survival key may hold (an import-free leaf)
+import { isStoredHorseCare, HORSE_CARE_OLD_ON, HORSE_CARE_OLD_ON_TIER } from './horseCareTiers.js';   // HORSE-TIERS: what the horse care key may hold (a leaf too)
 
 export const PREF_DEFAULTS = Object.freeze({
   // PX30c: the enhanced HUD's scale. It lives HERE and not in DFU's
@@ -300,6 +301,14 @@ export function loadPrefs() {
         // SURV-BOONS (2026-10-12): a fourth tier, Boons, stored by name -
         // isStoredTier reads the table, so it is kept like the others.
         if (p.survival !== undefined && !isStoredTier(p.survival)) _prefs.survival = PREF_DEFAULTS.survival;
+        // HORSE-TIERS (2026-10-15, Mac: "Allow turn off. Rework this system to be more in line with how we handle
+        // climates and calories boons."): HORSE CARE BECAME THREE TIERS ON THE SAME KEY (horseCareTiers.js
+        // HORSE_CARE_STORED), SURV-TIERS' way. Off is stored as the old switch's own `false`, so a player who turned
+        // horse care off is on Off with nothing converted. The old default, On, was never stored (PREF1), so a player
+        // who never touched the switch stored nothing and plays the new default - Boons, BOONS-DEFAULT's reading. An On
+        // written to the shelf all the same chose the system as it stood, and lands on Hard (HORSE_CARE_OLD_ON); any
+        // other value names no tier and is dropped here, as the survival key's is, so the bar and the laws agree.
+        if (p.horseCare !== undefined && !isStoredHorseCare(p.horseCare)) _prefs.horseCare = p.horseCare === HORSE_CARE_OLD_ON ? HORSE_CARE_OLD_ON_TIER : PREF_DEFAULTS.horseCare;
       }
     }
   } catch (e) {

@@ -122,3 +122,12 @@ test('HUD-HELM THE FOUR HOSTS: the panel has one builder, and it places itself -
   assert.match(rd('src/scenes/world.js'), /import \{ drawEnhancedHelm, hideEnhancedHelm, enhancedHelmMounted, enhancedHelmBar,/);
   for (const host of ['exterior.js', 'worldModes.js', 'dungeonContext.js']) assert.ok(!rd(`src/scenes/${host}`).includes('drawEnhancedHelm('), `${host}: draws no helm`);
 });
+
+test('HUD-HELM THE HUD STAYS LIGHT: the editor\'s preview reaches the panel\'s module, so the panel reads the helm keys and the hull names from their leaves (systems/comeSailAwayActions.js, comeSailAwayHulls.js) - never from the sea\'s law or the boat, which would carry the quest machine onto the HUD (AUDIT GUIDE O6) - and the sea reads the one table back (mutants: the keys or the names read from the sea\'s module or the boat)', async () => {
+  const from = [...rd('src/ui/enhancedHelm.js').matchAll(/^import [^;]*? from '([^']+)';/gm)].map((m) => m[1]);
+  assert.ok(from.includes('../systems/comeSailAwayActions.js') && from.includes('../systems/comeSailAwayHulls.js'), 'the two leaves');
+  for (const heavy of ['../systems/comeSailAway.js', '../systems/comeSailAwayBoat.js']) assert.ok(!from.includes(heavy), `the panel reads nothing from ${heavy}`);
+  assert.equal(/^import /m.test(rd('src/systems/comeSailAwayActions.js')), false, 'the keys\' table a leaf');
+  const [leaf, sea] = await Promise.all([import('../src/systems/comeSailAwayActions.js'), import('../src/systems/comeSailAway.js')]);
+  assert.equal(sea.BOAT_ACTIONS, leaf.BOAT_ACTIONS, 'one table: the sea re-exports the leaf\'s');
+});

@@ -368,18 +368,27 @@ export const FEATURES = Object.freeze([
     control: Object.freeze({ store: 'prefs', key: 'worldDungeonSizes', initial: false, online: true }),   // world/smallerDungeons.js WORLD_DUNGEON_SIZES_PREF; forced on online, the room's sizes
   }),
   // STEED1 (2026-10-11, the owner: "Horse should have stamina, feeding them grows your bond and improves their stats.
-  // Every horse should have different stats"): HORSE CARE (bible/06-Systems/Horse-Care.md, systems/steedCare.js). On by
-  // default; online every horse is under it, so the lane forces it on there. HORSE-WALK (2026-10-12): its horse walks
-  // unless the run gallops it.
+  // Every horse should have different stats"): HORSE CARE (bible/06-Systems/Horse-Care.md, systems/steedCare.js).
+  // HORSE-WALK (2026-10-12): its horse walks unless the run gallops it.
+  // HORSE-TIERS (2026-10-15, Mac: "Allow turn off. Rework this system to be more in line with how we handle climates and
+  // calories boons."): TIERS ON THE ONE KEY, as Climates & Calories' row has them - Off (DFU's horse, stored as the old
+  // switch's own `false`), Boons (the default, never stored - BOONS-DEFAULT's way) and Hard (the system as it stood, by
+  // name); systems/horseCareTiers.js HORSE_CARE_STORED and HORSE_CARE_DEFAULT, which test/horsetiers.test.js holds the
+  // row to. The player's online, every tier, as every Climates & Calories tier is (MODS-ONLINE-3's reading: a tier
+  // decides only what THIS player's horse pays) - the lane forced it on there until Mac's word.
   Object.freeze({
     id: 'horse-care',
     group: 'world',
-    title: 'Horse care',
-    note: 'Every horse has its own Speed, Stamina, Endurance and Strength, and walks unless you hold Run to gallop on its '
-      + 'breath. Feeding it grows your bond and every stat with it, and a hungry horse is weaker; online it is always on.',
-    effect: 'Takes effect at once.',
+    get title() { return t('features.horseCare.title', 'Horse care'); },   // HORSE-TIERS: the row's words in the player's language (L10N4's ratchet)
+    get note() { return t('features.horseCare.note', 'Every horse has its own Speed, Stamina, Endurance and Strength, walks unless you hold Run to gallop on its '
+      + 'breath, and grows with the bond feeding it builds. On Boons neglect costs nothing and it is never slower than the '
+      + 'classic horse; on Hard a hungry horse is weaker; Off is the classic horse.'); },
+    get effect() { return t('features.horseCare.effect', 'Takes effect at once. Online, each player picks their own.'); },
     kinds: Object.freeze(['enhanced']),
-    control: Object.freeze({ store: 'prefs', key: 'horseCare', initial: true, online: true }),   // systems/upkeepSwitch.js HORSE_CARE_PREF
+    control: Object.freeze({
+      store: 'prefs', key: 'horseCare', initial: 'boons', online: 'player',   // systems/upkeepSwitch.js HORSE_CARE_PREF; HORSE-TIERS: horseCareTiers.js HORSE_CARE_DEFAULT
+      tiers: Object.freeze([tier(false, OFF), tier('boons', () => t('features.horseCare.boons', 'Boons')), tier('hard', () => t('features.horseCare.hard', 'Hard'))]),
+    }),
   }),
   // WAGONS4 (2026-10-11, the owner: "Wagons have durability and require upkeep to keep from breaking down and becoming
   // unusable"): WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md, systems/wagonUpkeep.js). On by default; forced on online.

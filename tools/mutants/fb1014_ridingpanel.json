@@ -61,32 +61,5 @@
     "tests": [
       "test/fb1014_ridingpanel.test.js"
     ]
-  },
-  {
-    "name": "HUD-SADDLE-SWITCH-the-rows-key",
-    "file": "src/systems/features.js",
-    "old": "control: Object.freeze({ store: 'prefs', key: 'horseCare', initial: true, online: true }),",
-    "new": "control: Object.freeze({ store: 'prefs', key: 'horseCared', initial: true, online: true }),",
-    "tests": [
-      "test/fb1014_ridingpanel.test.js"
-    ]
-  },
-  {
-    "name": "HUD-SADDLE-SWITCH-read-once",
-    "file": "src/systems/upkeepSwitch.js",
-    "old": "export const horseCareOn = () => isEnhanced() && getPref(HORSE_CARE_PREF) === true;",
-    "new": "const HORSE_CARE_AT_LOAD = getPref(HORSE_CARE_PREF) === true;\nexport const horseCareOn = () => isEnhanced() && HORSE_CARE_AT_LOAD;",
-    "tests": [
-      "test/fb1014_ridingpanel.test.js"
-    ]
-  },
-  {
-    "name": "HUD-SADDLE-SWITCH-not-forced-online",
-    "file": "src/systems/features.js",
-    "old": "control: Object.freeze({ store: 'prefs', key: 'horseCare', initial: true, online: true }),",
-    "new": "control: Object.freeze({ store: 'prefs', key: 'horseCare', initial: true, online: 'player' }),",
-    "tests": [
-      "test/fb1014_ridingpanel.test.js"
-    ]
   }
 ]

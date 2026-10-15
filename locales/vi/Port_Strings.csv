@@ -1,4 +1,11 @@
 Key,Value
+features.horseCare.boons,"Phần thưởng"
+features.horseCare.effect,"Có hiệu lực ngay. Khi trực tuyến, mỗi người chơi tự chọn."
+features.horseCare.hard,"Khó"
+features.horseCare.note,"Mỗi con ngựa có Tốc độ, Thể lực, Sức bền và Sức mạnh riêng, đi bước trừ khi bạn giữ Chạy để phi nước đại bằng hơi thở của nó, và lớn lên cùng sự gắn bó mà việc cho ăn vun đắp. Ở Phần thưởng, bỏ bê không mất gì và nó không bao giờ chậm hơn ngựa cổ điển; ở Khó, ngựa đói sẽ yếu hơn; Tắt là ngựa cổ điển."
+features.horseCare.title,"Chăm sóc ngựa"
+holdings.horse.boons.hungry,"Đói - chưa mất gì cả."
+holdings.horse.boons.starving,"Đói lả - không phi nước đại cho đến khi được ăn. Hãy cho nó ăn."
 lang.offer,"Chơi bằng tiếng Việt?"
 lang.offer.machine,"Bản dịch này là bản dịch máy và vẫn đang được kiểm tra."
 lang.offer.no,"Không, giữ tiếng Anh"

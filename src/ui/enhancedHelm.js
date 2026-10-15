@@ -32,14 +32,14 @@ import { placeHudPieces } from './hudPlacer.js';   // HUD-HELM: a new panel stan
 import { isTouchDevice } from './touchDevice.js';   // HUD-HELM: the preview stands at a finger's place where the hosts' touch layer does (ui/touch.js attachTouch)
 import { t } from '../systems/textManager.js';   // L10N4: the preview's name in the player's language
 import { HELM_DPAD } from './plusPad.js';
-import { HULL_NAMES } from '../systems/comeSailAwayBoat.js';
-import { BOAT_ACTIONS } from '../systems/comeSailAway.js';
+import { HULL_NAMES } from '../systems/comeSailAwayHulls.js';   // HUD-HELM: the leaves, not the boat and the sea - the HUD's preview reaches
+import { BOAT_ACTIONS } from '../systems/comeSailAwayActions.js';   // this module, and AUDIT GUIDE O6 keeps the quest machine off the HUD
 
 export const ENHANCED_HELM_ID = 'enhanced-helm';
 const HELM_STYLE_ID = 'enhanced-helm-style';
 
 /** The registry actions the panel presses - the mod's own nine and HELM-KEYS' more and less sail, by the panel's names
- *  for them (one home for the names: systems/comeSailAway.js BOAT_ACTIONS). */
+ *  for them (one home for the names: systems/comeSailAwayActions.js BOAT_ACTIONS). */
 export const HELM_ACTIONS = Object.freeze({
   sail: BOAT_ACTIONS.toggleSail, light: BOAT_ACTIONS.toggleLight, disembark: BOAT_ACTIONS.disembark,
   trimLeft: BOAT_ACTIONS.trimLeft, trimRight: BOAT_ACTIONS.trimRight, trimModifier: BOAT_ACTIONS.trimModifier,

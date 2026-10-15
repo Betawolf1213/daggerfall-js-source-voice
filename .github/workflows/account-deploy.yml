@@ -220,6 +220,7 @@ on:
       - "src/systems/gateSpoils.js"
       - "src/systems/gilded.js"
       - "src/systems/harmMark.js"
+      - "src/systems/horseCareTiers.js"
       - "src/systems/horseCartLaw.js"
       - "src/systems/iliacItems.js"
       - "src/systems/inventory.js"

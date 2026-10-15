@@ -24,6 +24,7 @@ import { requestFittedIcon, fittedImg } from './textureCanvas.js';
 import { WAGON_MODE, HORSE_MODE, TRANSPORT, HORSE_NAME_MAX } from '../systems/horseCartLaw.js';
 import { optionPath } from './settingsMap.js';   // ORG2: a switch named in a window says where it lives
 import { upkeepReach } from '../systems/upkeepRuntime.js';   // STEED1/WAGONS4: a horse fed by hand only beside it, a kit spent only at the wagon
+import { t } from '../systems/textManager.js';   // HORSE-TIERS: Boons' two hunger lines in the player's language
 
 export const STABLE_PAGE_SECTIONS = Object.freeze([Object.freeze(['stable', 'Stable'])]);
 export const HOLDINGS_STYLE_ID = 'holdings-pages-css';
@@ -164,13 +165,20 @@ function statMeter(el, meter, label, now, plus, tone, why = '') {
 }
 /** STEED-UI: a stat's making in words - born, the bond's points, hunger's. */
 export const statWhy = (st, bonus, penalty, hunger) => [`Born ${st.born}`, bonus ? `+${bonus} from your bond` : '', penalty ? `−${penalty} ${String(hunger).toLowerCase()}` : ''].filter(Boolean).join(', ');
-/** STEED1: a hunger's chip tone. */
+/** STEED1: a hunger's chip tone. HORSE-TIERS: NO RED where hunger costs nothing (Boons) - amber at most. */
 const HUNGER_TONE = Object.freeze({ fed: '', hungry: 'is-hurt', starving: 'is-lost' });
-/** STEED1: what a hunger costs, in the card's words. STEED-UI: a fed horse says how long its food lasts. */
+export const hungerTone = (h, care) => (care?.hungerCosts === false && h.hungerKey === 'starving' ? HUNGER_TONE.hungry : HUNGER_TONE[h.hungerKey] ?? '');
+/** STEED1: what a hunger costs, in the card's words. STEED-UI: a fed horse says how long its food lasts. HORSE-TIERS:
+ *  each tier's own words - Hard's what hunger takes, Boons' only the gallop a starving horse has not earned. */
 const HUNGER_LINE = Object.freeze({
   fed: 'Fed.',
   hungry: 'Hungry - every stat ten lower, and its breath slower back.',
   starving: 'Starving - every stat twenty-five lower, no gallop, and your bond fading. Feed it.',
+});
+const HUNGER_LINE_BOONS = Object.freeze({   // HORSE-TIERS: in the player's language (L10N4's ratchet), read as it is shown
+  fed: 'Fed.',
+  get hungry() { return t('holdings.horse.boons.hungry', 'Hungry - it costs nothing yet.'); },
+  get starving() { return t('holdings.horse.boons.starving', 'Starving - no gallop until it eats. Feed it.'); },
 });
 /** STEED-UI: the bond's row - the kit's bar of the way from its word to the next, and the points still to go (whole at
  *  Kindred). */
@@ -185,7 +193,7 @@ function bondMeter(el, meter, h) {
 }
 /** STEED-UI: hours of food as a card says them. */
 const foodHours = (hours) => (hours >= 2 ? `${Math.floor(hours)} hours` : hours * 60 >= 2 ? `${Math.round(hours * 60)} minutes` : 'a minute');
-export const hungerLine = (h) => (h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed - food in it for ${foodHours(h.fedHours)}.` : HUNGER_LINE[h.hungerKey] ?? '');
+export const hungerLine = (h, care = null) => (h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed - food in it for ${foodHours(h.fedHours)}.` : (care?.hungerCosts === false ? HUNGER_LINE_BOONS : HUNGER_LINE)[h.hungerKey] ?? '');
 /**
  * STEED1: a horse's care on its card - its bond and hunger in words, its breath (the one ridden), its four stats, and
  * the acts: oats and an apple from the pack, and the one ridden chosen. `h` a horse of the upkeep's model.
@@ -193,7 +201,7 @@ export const hungerLine = (h) => (h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed
  */
 function steedLines(el, meter, h, care, act) {
   const out = [];
-  out.push(el('span', 'hld-sub', `${h.tier} - bond ${Math.floor(h.bond)} of 100${h.bonus ? `, +${h.bonus} to every stat` : ''}. ${hungerLine(h)}`));
+  out.push(el('span', 'hld-sub', `${h.tier} - bond ${Math.floor(h.bond)} of 100${h.bonus ? `, +${h.bonus} to every stat` : ''}. ${hungerLine(h, care)}`));
   out.push(bondMeter(el, meter, h));
   if (h.ridden) {
     out.push(holdingMeter(el, meter, 'Breath', h.breath * 100, 100, h.breath < 0.25 || h.winded ? 'blood' : 'verdigris'));
@@ -361,7 +369,7 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
     list.append(card(el, { art: HORSE_ART, glyph: '♞', name, words: words.horse, sub: v?.horseName ? 'Your horse' : null, extra, rerender }).item);
     // STEED1: every other horse owned - its look, its care, and the choice to ride it
     for (const h of care?.horseCare ? care.horses.filter((x) => !x.ridden) : []) {
-      list.append(card(el, { art: HORSE_ART, glyph: '♞', name: `${h.look[0].toUpperCase()}${h.look.slice(1)}`, words: { state: h.hunger, tone: HUNGER_TONE[h.hungerKey] ?? '', line: null }, sub: 'Another horse of yours', extra: steedLines(el, meter, h, care, act), rerender }).item);
+      list.append(card(el, { art: HORSE_ART, glyph: '♞', name: `${h.look[0].toUpperCase()}${h.look.slice(1)}`, words: { state: h.hunger, tone: hungerTone(h, care), line: null }, sub: 'Another horse of yours', extra: steedLines(el, meter, h, care, act), rerender }).item);
     }
   }
   if (words.wagon) {

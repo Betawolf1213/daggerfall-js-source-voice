@@ -7,6 +7,7 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { HORSE_CARE_HARD as HARD } from '../src/systems/horseCareTiers.js';   // HORSE-TIERS (PIN MOVED): the upkeep is handed a tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import {
   wagonCondition, wagonConditionMax, wagonSoundness, wagonState, WAGON_STATES, rollWear, journeyWear, wearWagon, WEAR_FLOOR,
@@ -169,7 +170,7 @@ test('WAGONS4 THE KIT: a Wagon Repair Kit spent on the wagon where its load is r
   assert.deepEqual([m.wagon.stateKey, m.wagon.kitWorks, m.kits], ['rickety', true, 1]);
   // the Use, out of the wagon's own load
   const load = [{ group: 'UselessItems2', templateIndex: UPKEEP_ITEM.WagonKit }];
-  registerUpkeepUses(u, { reach: () => ({ near: true, stabled: false, wagonNear: true, who: 'Your horse' }), pass: (n) => passed.push(n), horseCare: () => true, wagonUpkeep: () => true });
+  registerUpkeepUses(u, { reach: () => ({ near: true, stabled: false, wagonNear: true, who: 'Your horse' }), pass: (n) => passed.push(n), horseCare: () => HARD, wagonUpkeep: () => true });
   const use = itemUseHandler(UPKEEP_ITEM.WagonKit);
   const r2 = use(load[0], load);
   assert.equal(r2.kind, 'upkeep'); assert.match(r2.text, /It is 50% sound\./);

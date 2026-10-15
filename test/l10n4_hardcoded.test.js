@@ -330,7 +330,7 @@ const HARDCODED = {
   'src/systems/equip.js': 3,
   'src/systems/eventTimers.js': 44,
   'src/systems/factionStanding.js': 3,
-  'src/systems/features.js': 135,
+  'src/systems/features.js': 131,
   'src/systems/fleet.js': 10,
   'src/systems/fletching.js': 1,
   'src/systems/foeTitle.js': 1,

@@ -7,10 +7,8 @@
 // over a page that answers the selectors HUD-MOVE asks (descendants among them - the panel's bar stands inside its
 // whole-screen layer) with the real sweep, the real panel and the real editor's key and handles.
 //
-// THE SWITCH, END TO END. Horse care's tile was traced to every reader and found sound: the key it writes is the key the
-// switch reads, read live, and every door of the law and the panel asks it. Off the line it does what its words say at
-// once; online it is the room's (forced on, the tile locked and saying so) - the design, recorded on the row and in
-// 06-Systems/Horse-Care.md. Pinned here so the trace is the suite's claim and not the record's.
+// THE SWITCH. Horse care's tile was traced to every reader and found sound; Mac's word on it (2026-10-15) made it tiers
+// on the one key, each player's own online - HORSE-TIERS, pinned end to end by test/horsetiers.test.js.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -145,47 +143,4 @@ test('HUD-SADDLE THE FOUR HOSTS: the panel has one builder, and it places itself
   assert.ok(!saddle.includes("from './hudLayout.js'"), 'through the leaf, not the editor and its previews\' hosts');
   assert.match(saddle, /doc\.body\.append\(host\);\n {4}placeHudPieces\(doc\);/, 'placed the moment it is put on the page');
   assert.match(rd('src/ui/enhancedHud.js'), /import \{ tickHudLayout \} from '\.\/hudLayout\.js';/, 'the HUD every host draws seats the sweep');
-});
-
-test('HUD-SADDLE THE SWITCH, END TO END: Horse care\'s tile writes the key the switch reads, and every reader asks it live - off the line its Off takes the walk, the gallop, the HUD\'s breath, the panel\'s meters and Feed and the oats\' feeding away at once, and its On gives them back; online the room\'s, the tile locked on and saying so (mutants: the row\'s key; the switch read once; the switch left to the player online)', async () => {
-  const { FEATURES } = await import('../src/systems/features.js');
-  const { tileStates } = await import('../src/ui/enhancedMenu.js');
-  const { horseCareOn, HORSE_CARE_PREF } = await import('../src/systems/upkeepSwitch.js');
-  const { createUpkeep } = await import('../src/systems/upkeepRuntime.js');
-  const { createSaddleHost } = await import('../src/scenes/saddleHost.js');
-  const { canRunUnlessRiding, rideWalks, setGallopGate, setRideWalk } = await import('../src/systems/transport.js');
-  const { OATS_TEMPLATE } = await import('../src/systems/steedCare.js');
-  const { saddleMeters, saddleButtons } = await import('../src/ui/enhancedSaddle.js');
-  const row = FEATURES.find((f) => f.id === 'horse-care');
-  assert.equal(row.control.key, HORSE_CARE_PREF, 'the tile\'s key is the switch\'s');
-  const T0 = 2_000_000;
-  const law = (online) => withPage(null, async () => {
-    if (online) globalThis.location = { search: '?skin=enhanced&online' };
-    const items = [{ group: 'Transportation', templateIndex: 94, horseSeed: 77, horseFed: T0 + 8 * 60 }, { group: 'UselessItems2', templateIndex: OATS_TEMPLATE, stackCount: 16 }];
-    const up = createUpkeep({ items: () => items, now: () => T0, horseCare: horseCareOn, wagonUpkeep: () => false });   // as world.js and exterior.js build it
-    setRideWalk((m) => up.rideWalks(m)); setGallopGate((m, mods) => up.gallopGate(m, mods));
-    const host = createSaddleHost({ upkeep: up, runtime: () => null, items: () => items, wagonKg: () => 0, wagonLimit: () => 0, say() {}, pass() {}, openStable() {}, canView: () => false, toggleView() {}, foot() {} });
-    const reads = () => { const s = host.read('Horse'); return { walks: rideWalks('Horse'), gallops: canRunUnlessRiding('Horse'), bar: !!up.bar('Horse'), meters: saddleMeters(s).map((m) => m.key), buttons: saddleButtons(s).map((b) => b.act), gait: s.walks }; };
-    const out = [];
-    try {
-      const st = tileStates(row);
-      out.push({ at: st.labels[st.at], locked: !!st.locked, ...reads() });
-      if (!st.locked) {
-        st.set(st.labels.indexOf('Off'));
-        out.push({ at: 'Off', ...reads(), fed: up.act('feed', 0).ok });
-        tileStates(row).set(tileStates(row).labels.indexOf('On'));
-        out.push({ at: 'On', ...reads() });
-      }
-    } finally { setRideWalk(null); setGallopGate(null); }
-    return out;
-  });
-  const cared = { walks: true, gallops: true, bar: true, meters: ['breath', 'hunger', 'bond'], buttons: ['feed', 'stable', 'dismount'], gait: true };
-  const dfu = { walks: false, gallops: false, bar: false, meters: [], buttons: ['stable', 'dismount'], gait: false };
-  assert.deepEqual(await law(false), [
-    { at: 'On', locked: false, ...cared },
-    { at: 'Off', ...dfu, fed: false },
-    { at: 'On', ...cared },
-  ], 'off the line: DFU\'s horse the moment it is pressed Off - one pace, no gallop in the saddle, nothing to read or feed - and the cared horse again on On');
-  assert.deepEqual(await law(true), [{ at: 'On', locked: true, ...cared }], 'online: the room\'s horse care, the tile locked on (its note: "online it is always on")');
-  assert.match(row.note, /online it is always on\.$/);
 });

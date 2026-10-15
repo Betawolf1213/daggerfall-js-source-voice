@@ -10,7 +10,7 @@ with no frame at all.
 | | Report | What it was | Done |
 |---|---|---|---|
 | 1 | "Riding Window is not able to be edited in the HUD Editor (Alt+U)" | the saddle panel (STEED-UI, 2026-10-11) never joined HUD-MOVE's list of pieces (2026-10-01): the editor frames only what the list names - nor did its twin, the helm panel | fixed (HUD-SADDLE; the helm, HUD-HELM, Mac's word) |
-| 2 | "the horse care toggle in the settings menu doesn't seem to work" | not reproduced: off the line the switch takes effect at once at every door it governs; online the row is the room's, forced on and locked - the design | traced and pinned (HORSE-CARE-SWITCH); asked of the player |
+| 2 | "the horse care toggle in the settings menu doesn't seem to work" | off the line the switch worked at every door it governed; online the row was forced on and locked - the design as it stood | Mac's word: three tiers on the one key, each the player's own online (HORSE-CARE-SWITCH, HORSE-TIERS) |
 
 ## HUD-SADDLE: the riding panel is a HUD piece (1)
 
@@ -76,7 +76,11 @@ card at its scale stays on the screen) - it had stood at the screen's centre wha
 play keeps its box with its visibility hidden, so the card asks whether the bar is seen (`standing`) and, where it is
 not, stands at the compass's foot as with no helm. The four hosts: `scenes/world.js`, the only host with a sea, draws
 the helm and the card; `scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` draw neither. No host
-was edited. Pinned by `test/hudhelm.test.js` (4); mutants `tools/mutants/hudhelm.json` (8, all dead). The fake page the
+was edited. The panel reads its keys' names from a leaf, `systems/comeSailAwayActions.js` (the sea's module re-exports
+it), and its hulls' from INT1's, `systems/comeSailAwayHulls.js`: the editor's preview reaches the panel's module, and
+the names read from `systems/comeSailAway.js` carried the sea's whole law onto the HUD's graph, as far as the quest
+machine's `place.js` that AUDIT GUIDE O6 keeps off it. Pinned by `test/hudhelm.test.js` (5); mutants
+`tools/mutants/hudhelm.json` (10, all dead). The fake page the
 two suites share is `test/hudPage.mjs` (one home: it was this file's own).
 
 Pinned by `test/fb1014_ridingpanel.test.js` over a page that answers the selectors HUD-MOVE asks, descendants among them,
@@ -84,42 +88,28 @@ with the real sweep, the real panel and the real editor's key and X: a panel bui
 place and size, or off, with no sweep between; Alt+U frames it with its name and its X saves it off and on; the preview
 stands while nobody rides, leaves whole for the real one and at the lock, and stands at a finger's place on a phone;
 one builder, the two riding hosts through the one glue, the other two drawing none. Mutants
-`tools/mutants/fb1014_ridingpanel.json` (7 of its 10: no piece, the build's placing dropped, no preview, the stand-in
-read as a real panel, the preview mounted as the live one, the preview never a finger's, the X saving nothing - all dead).
+`tools/mutants/fb1014_ridingpanel.json` (7: no piece, the build's placing dropped, no preview, the stand-in read as a
+real panel, the preview mounted as the live one, the preview never a finger's, the X saving nothing - all dead).
 
-## HORSE-CARE-SWITCH: the toggle traced, and found sound (2)
+## HORSE-CARE-SWITCH: the toggle traced, and Mac's word on it (2)
 
-`src/systems/features.js` 'horse-care'; `src/systems/upkeepSwitch.js` horseCareOn; `src/systems/upkeepRuntime.js`
-createUpkeep.
+`src/systems/features.js` 'horse-care'; `src/systems/upkeepSwitch.js` horseCareRules; `src/systems/horseCareTiers.js`.
 
 THE REPORT. "(also the horse care toggle in the settings menu doesn't seem to work)" - no more is said, and the
 screenshot shows horse care on (Breath, Hunger, Bond and Feed oats are its).
 
-TRACED, on every arm the toggle could fail on:
+TRACED, on every arm the toggle could fail on. Off the line the switch took effect at once at every door it governed:
+the key the tile wrote was the key the switch read, read live on every call, and every door asked it - the upkeep's
+keep and breath, the gallop's gate, the walk, the ride's pace, the HUD's breath bar, the Stable card, the saddle
+panel's read, and Feed and the oats' Use. Online the lane forced the row on and the tile was locked, so a player online
+who pressed it saw nothing change. That was the design as it stood, not a fault with a root to fix, and turning it
+into a player's choice online was Mac's call. The panel itself is the ride's (its title, gait and pace, Stable, View,
+Dismount), not horse care's (`10-UI/Controls.md`, THE SADDLE PANEL), and its X now turns it off (HUD-SADDLE).
 
-- **The key written is the key read.** The row's control
-  (`features.js:"control: Object.freeze({ store: 'prefs', key: 'horseCare', initial: true, online: true }),"`) is the
-  switch's own (`upkeepSwitch.js:"export const HORSE_CARE_PREF = 'horseCare';"`); the tile's press writes it
-  (`ui/enhancedMenu.js` tileStates, `setPref(c.key, i === 1)`).
-- **Read live, never once.** `upkeepSwitch.js:"export const horseCareOn = () =>"` reads the shelf on every call, and both
-  riding hosts hand the upkeep that function itself (`world.js:"const upkeep = createUpkeep({"` and exterior.js's twin:
-  `horseCare: horseCareOn`).
-- **Every door asks it.** The upkeep's keep and breath (`tick`), the gallop's gate, the walk, the ride's pace, the HUD's
-  breath bar, the Stable card, the saddle panel's read, and Feed and the oats' Use (`registerUpkeepUses`, `usable`).
-
-So off the line its Off makes the horse DFU's at once, as the row's words say - one pace (the panel says Trotting), no
-gallop in the saddle, no breath on the HUD, no Breath, Hunger, Bond or Feed on the panel, oats that feed nothing - and
-its On gives every one of them back. The panel itself stays: it is the ride's (its title, gait and pace, Stable, View,
-Dismount), not horse care's (`10-UI/Controls.md`, THE SADDLE PANEL; `06-Systems/Horse-Care.md`).
-
-Online the row is the room's: forced on (`online: true` - every horse in a room under the one law), and the tile says
-so - locked, wearing "online", its press refused, its tooltip "Always on online", its note ending "online it is always
-on". A player online who presses it sees nothing change. That is the design (`06-Systems/Horse-Care.md`), not a fault
-with a root to fix, and turning it into a player's choice online is Mac's call: a horse's Speed sets its pace against
-every other rider's.
-
-Two readings stand, then: the report came from online (the design), or the panel itself was what the player wanted
-gone - which its X now does (HUD-SADDLE). Asked of the player. The trace is pinned by execution, so it is the suite's
-claim and not this page's: the same file's fifth test drives the real tile, the real switch and the upkeep and glue as
-the hosts build them, off the line (On, Off, On) and online (locked on). Mutants: the row's key, the switch read once,
-the switch left to the player online (3 of the file's 10, dead).
+MAC'S WORD (HORSE-TIERS, 2026-10-15): "Allow turn off. Rework this system to be more in line with how we handle
+climates and calories boons." So the switch is three tiers on its one key, as Climates & Calories' is: Off (DFU's
+horse), Boons - the default - (care earns, neglect costs nothing, never below DFU's horse) and Hard (the system as it
+stood), each player's own online as every Climates & Calories tier is. A stored Off stays Off, a stored On lands on
+Hard, and a player who never touched it plays Boons. Every door asks the tier through one accessor
+(`upkeepSwitch.js:"export const horseCareRules = () =>"`). `06-Systems/Horse-Care.md`, The tiers; pinned by
+`test/horsetiers.test.js` (7) and `tools/mutants/horsetiers.json` (20, all dead).

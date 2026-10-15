@@ -1,4 +1,11 @@
 Key,Value
+features.horseCare.boons,"增益"
+features.horseCare.effect,"立即生效。連線時由每位玩家自行選擇。"
+features.horseCare.hard,"困難"
+features.horseCare.note,"每匹馬都有自己的速度、耐力、持久和力量；除非按住奔跑讓牠憑氣息疾馳，否則牠會慢步行走，並隨著餵養建立的羈絆而成長。在增益下，疏於照料不會有任何代價，牠也絕不會比經典的馬更慢；在困難下，飢餓的馬會更弱；關閉則是經典的馬。"
+features.horseCare.title,"馬匹照料"
+holdings.horse.boons.hungry,"飢餓 - 目前還沒有代價。"
+holdings.horse.boons.starving,"飢腸轆轆 - 進食前無法疾馳。餵餵牠吧。"
 lang.offer,"使用繁體中文進行遊戲？"
 lang.offer.machine,"此翻譯為機器翻譯，仍在校對中。"
 lang.offer.no,"不，保持英文"

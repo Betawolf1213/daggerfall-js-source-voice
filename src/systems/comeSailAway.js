@@ -160,6 +160,7 @@ import { monthNames } from './gameDate.js';   // CSA-I: WorldTime.Now.MonthName,
 import { HELM_WAY, CARGO_HOLD_MISSING, steerage, isResponsive, pointOfSail, seaWind, SAIL_FREE, sailFreeGain, WIND_RATED } from './helmWay.js';   // HELM-WAY: the responsive helm; SAIL-FREE: her way under sail
 import { MAP_MARKER_MODE_COLORS, mapRect, guiMouse, mapPixelUnder, guiRectContains, vector2IntDistance, markerLabel, dayOfMonthWithSuffix, mapOverlayDraws, csFloatString, COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_BLACK, DAGGERFALL_DEFAULT_SHADOW_POS } from './comeSailAwayMap.js';   // CSA-I: the position reading
 import { noteFirstUse } from './tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
+import { BOAT_ACTIONS } from './comeSailAwayActions.js';   // HUD-HELM: the helm keys' table, a leaf the HUD's helm panel reads
 
 export const COME_SAIL_AWAY_VENDOR = 'come-sail-away';
 /**
@@ -289,16 +290,9 @@ export const DEED_NOT_HELD_TEXT = 'Her deed must be in your pack to pick her up.
 /** HOLD-WEIGHT (FIELD BUGS 2026-10-05c, the port's own): the pick-up's refusal of a boat whose parts, her hold's weight on
  *  them, would weigh more than the bearer can carry at all - parts no take could ever lift out of a chest again. */
 export const HOLD_TOO_HEAVY_TEXT = 'Her hold is too heavy to carry her packed. Lighten it first.';
-/** The mod's two helm keys this slice reads, as the port's registry actions (KB1: one key, one action). */
-export const BOAT_ACTIONS = Object.freeze({
-  disembark: 'BoatDisembark', toggleLight: 'BoatToggleLight',
-  // CSA-E: the sails' and the trim's (Controls.ToggleSail, TrimRight, TrimLeft, TrimModifier)
-  toggleSail: 'BoatToggleSail', trimRight: 'BoatTrimRight', trimLeft: 'BoatTrimLeft', trimModifier: 'BoatTrimModifier',
-  // CSA-G: the time scale's three (Controls.IncreaseTimeScale, DecreaseTimeScale, ResetTimeScale)
-  timeScaleUp: 'BoatTimeScaleUp', timeScaleDown: 'BoatTimeScaleDown', timeScaleReset: 'BoatTimeScaleReset',
-  // HELM-KEYS (the port's, DECLARED): the arrows' more and less sail (MoreSail, LessSail)
-  sailUp: 'BoatSailUp', sailDown: 'BoatSailDown',
-});
+/** The mod's two helm keys this slice reads, as the port's registry actions (KB1: one key, one action) - their table a
+ *  leaf since HUD-HELM (comeSailAwayActions.js), re-exported here so every reader keeps its import. */
+export { BOAT_ACTIONS };
 /** HELM-TIME-ONLINE: the three time keys - the helm's time dial, retired online. */
 export const BOAT_TIME_ACTIONS = Object.freeze([BOAT_ACTIONS.timeScaleUp, BOAT_ACTIONS.timeScaleDown, BOAT_ACTIONS.timeScaleReset]);
 /** FIELD BUGS 2026-10-02b PLACE-AFLOAT: the placing's word for a water tile that stands over the sea's line. */

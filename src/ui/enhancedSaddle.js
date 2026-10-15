@@ -51,6 +51,9 @@ export const SADDLE_BREATH_LOW = 0.25;
  *  short. */
 const WAGON_TONE = Object.freeze({ sound: 'ok', worn: 'ok', rickety: 'warn', failing: 'low' });
 const HUNGER_TONE = Object.freeze({ fed: 'ok', hungry: 'warn', starving: 'low' });
+/** HORSE-TIERS: NO RED where hunger costs nothing (Boons - Climates & Calories' RED MEANS IT COSTS): its chip stops at
+ *  amber. A read that does not say (`hungerCosts` absent) is the system as it stood, which costs. */
+const hungerTone = (h) => { const tone = HUNGER_TONE[h.hungerKey] ?? 'ok'; return h.hungerCosts === false && tone === 'low' ? 'warn' : tone; };
 
 /**
  * The gait's word: standing, galloping, else the ride's own pace - a horse horse care walks walks (HORSE-WALK), DFU's
@@ -92,7 +95,7 @@ export function saddleMeters(s) {
       const low = h.winded || h.breath < SADDLE_BREATH_LOW || h.hungerKey === 'starving';
       out.push({ key: 'breath', label: 'Breath', share: h.breath, text: h.winded ? 'Winded' : pct(h.breath), tone: low ? 'low' : 'ok' });
     }
-    out.push({ key: 'hunger', label: h.team > 1 ? 'Team' : 'Hunger', text: h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed ${fedText(h.fedHours)}` : h.hunger, tone: HUNGER_TONE[h.hungerKey] ?? 'ok' });
+    out.push({ key: 'hunger', label: h.team > 1 ? 'Team' : 'Hunger', text: h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed ${fedText(h.fedHours)}` : h.hunger, tone: hungerTone(h) });
     // the bond: its word, and the way to the next (whole at Kindred)
     const span = h.next ? h.next.at - (h.tierAt ?? 0) : 0;
     const share = h.next ? (span > 0 ? (h.bond - (h.tierAt ?? 0)) / span : 0) : 1;
