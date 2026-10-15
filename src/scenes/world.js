@@ -642,6 +642,7 @@ import { hullBuild } from '../systems/naval/navalShips.js';   // LIVING CREW: a 
 import { sparedByPlayer, isShipmate } from '../combat/friendlyFire.js';   // SHIPMATES: the player's own crew, spared his blows and wearing their bars
 import { padFamily } from '../ui/padGlyphs.js';   // AUDIT NAV1 (the presentation): the pad in hand's family - the readout names its buttons
 import { hdGlyphName } from '../ui/padGlyphsHD.js';   // NAV-F: the helm's readout; AUDIT NAV1: its Brace under a finger
+import { glassPadWords } from './glassPad.js';   // AUDIT CAPTAIN'S SEA S3's helper, moved out (HOST-SPLIT: AUDIT WORLD-REWARDS's merge of main)
 import { createNavalPlunderOverlay, closeNavalPlunder, createNavalYardOverlay, closeNavalYard, createEtherChartOverlay, closeEtherChart, createShipyardOverlay, closeShipyard } from '../ui/navalPlunderDoor.js';   // NAV-F: a taken ship's window, behind its door; AUDIT NAV1: the shipwright's
 import { installNavalSounds } from '../systems/naval/navalSounds.js';   // NAV-E: the guns' own sounds
 import { navalRecordKey } from '../systems/naval/navalWire.js';   // NAV-G: my sea's word, said when it changed
@@ -11107,18 +11108,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     naval?.glass?.(0, { up: false, zoom: spyglass.zoom });
     drawSpyglass(null);
     spyglassTaps();
-  }
-  /** AUDIT CAPTAIN'S SEA S3: the pad's press for the glass, as its foot names it - the button chosen for it, else the
-   *  d-pad's tap or hold the player gave it (Plus's d-pad), else none. */
-  function glassPadWords(padHand) {
-    const code = getBinding(bindings(), 'Spyglass', false);
-    if (code && /^Joystick/.test(code)) return hdGlyphName(padHand, code);
-    if (!isEnhancedPlus()) return null;
-    for (const [dir, m] of Object.entries(plusDpadMap())) {
-      if (m.tap === 'Spyglass') return hdGlyphName(padHand, DPAD_CODES[dir]);
-      if (m.hold === 'Spyglass') return `Hold ${hdGlyphName(padHand, DPAD_CODES[dir])}`;
-    }
-    return null;
   }
   /** AUDIT CAPTAIN'S SEA S3: the d-pad presses the player gave the glass, for the helm's prompts ([{ dir, kind }]). */
   const glassDpad = () => (isEnhancedPlus() ? Object.entries(plusDpadMap()).flatMap(([dir, m]) => ['tap', 'hold'].filter((k) => m[k] === 'Spyglass').map((kind) => ({ dir, kind }))) : []);
@@ -25141,6 +25130,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     say: (text) => chatNotice(text),
     onSpoils: (entry) => grantSerpentSpoils(entry),
     onMarks: (data) => { showHaul(claimHauls(data, 'serpent')); return marksBook?.claimLines(data, 'serpent') ?? null; },   // SERPENT-SET: the serpent's silver, the raids' own door
+    announce: (kind, key) => announceHonour(kind, key),   // SERPENT5: Coilbreaker's and The Maelstrom's popup, the Hour's own door
     onRecorded: (data) => {
       if (data?.renown?.character !== characterIdOf(playerEntity)) return;   // RENOWN-CHAR: the character that fought the serpent adopts its Renown, no other
       const a = renownAnswer({ ...data.renown, order: data.order ?? null }, data.renown.credited ?? 0, renownSaid);
