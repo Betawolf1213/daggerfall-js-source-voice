@@ -446,10 +446,10 @@
     ]
   },
   {
-    "name": "EGLOOK-sky-no-underside",
-    "file": "src/render/egSkyPass.js",
-    "old": "if (ang < ragged) {",
-    "new": "if (ang < 0.0) {",
+    "name": "EGLOOK-sky-deep-unlit",
+    "file": "src/render/egSkyMap.js",
+    "old": "col = mix(DEEP * (0.45 + 0.4 * dnoise(q * 2.5)), GLOW, heat);",
+    "new": "col = DEEP * 0.1;",
     "tests": [
       "test/eglook_lines.test.js"
     ]

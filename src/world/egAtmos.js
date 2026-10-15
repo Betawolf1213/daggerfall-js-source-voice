@@ -9,8 +9,13 @@
 //   key     the moonlight slot's key (direction toward the light, colour, scale): the Spire's lost sky, the moon's bearing
 //   grade   the lane's grade (render/renderer.js setSceneGrade - world/sdLook.js SD_HOUR_GRADE's shape)
 //   lamp    a lamp's tint (the band's fixtures' flame - the ruin's one emissive)
-//   motes   THE AIR's colours (render/egMotes.js): `lo` the cool end, `hi` the hot end, `rise` up or down (+1 rises)
-//   sky     the band's sky painter's own colours (render/egSkyMap.js): its zenith, horizon, deep and glow
+//   motes   THE AIR (render/egMotes.js): the band's kinds of mote (render/egMotes.js EG_MOTE_KINDS - how each moves), how
+//           many of each, and each one's colour cool (`lo`) and hot (`hi`) - under L2 (display luminance 0.45) but for the
+//           embers' and the sparks' hottest (L3, small - SD-LOOK's value ladder)
+//   sky     the band's sky painter's own colours (render/egSkyMap.js): `zenith` the void overhead (L0), `horizon` the air
+//           just over the line (the haze band - the line itself is the fog's), `deep` the realm below, `glow` its light,
+//           and the realm's own (the ash lid and its lit belly, the spires' rock, the stars, the aurora, the moon); `up` the
+//           light the realm below sends up (the stair's fall lights the Spire's underside by it - render/egStairPass.js)
 // Telegraphs, edge lines and white hazards keep their fog floor under every band's fog (Elite-Gates.md section 25.6) -
 // nothing here touches them.
 //
@@ -27,8 +32,12 @@ export const EG_ATMOS = Object.freeze([
     key: Object.freeze({ scale: 0.75, dir: unit(0.2, 0.75, 0.6), color: f3(0.9, 0.9, 0.95) }),
     grade: Object.freeze({ adaptKey: 0.12, adaptMax: 1.15, bloom: 0.8, vignette: 0.34, contrast: 1.08 }),
     lamp: f3(1.0, 0.76, 0.4),
-    motes: Object.freeze({ lo: f3(0.5, 0.42, 0.4), hi: f3(1.0, 0.5, 0.16), rise: 1 }),
-    sky: Object.freeze({ zenith: f3(0.07, 0.015, 0.01), horizon: f3(0.32, 0.07, 0.03), deep: f3(0.55, 0.14, 0.03), glow: f3(1.0, 0.42, 0.1) }),
+    motes: Object.freeze([   // embers off the fire-sea rising, ash drifting down
+      Object.freeze({ kind: 'ember', n: 600, lo: f3(0.42, 0.08, 0.03), hi: f3(1.0, 0.66, 0.26) }),
+      Object.freeze({ kind: 'ash', n: 360, lo: f3(0.12, 0.1, 0.09), hi: f3(0.3, 0.24, 0.21) }),
+    ]),
+    sky: Object.freeze({ zenith: f3(0.1, 0.014, 0.011), horizon: f3(0.34, 0.05, 0.03), deep: f3(0.2, 0.045, 0.02), glow: f3(0.9, 0.38, 0.07),
+      lid: f3(0.07, 0.02, 0.016), lit: f3(0.6, 0.19, 0.06), rock: f3(0.012, 0.004, 0.004), up: f3(0.85, 0.28, 0.05) }),
   }),
   Object.freeze({   // the Soul Cairn - the Ideal Masters' realm of the dead, a sea of mist
     fog: Object.freeze({ mode: 'exp', density: 0.0075, color: f3(0.1, 0.09, 0.14) }),
@@ -36,8 +45,11 @@ export const EG_ATMOS = Object.freeze([
     key: Object.freeze({ scale: 0.5, dir: unit(-0.3, 0.8, 0.4), color: f3(0.72, 0.8, 0.95) }),
     grade: Object.freeze({ adaptKey: 0.12, adaptMax: 1.15, bloom: 0.85, vignette: 0.38, contrast: 1.06 }),
     lamp: f3(0.55, 0.85, 1.0),
-    motes: Object.freeze({ lo: f3(0.4, 0.55, 0.7), hi: f3(0.7, 0.95, 1.0), rise: 1 }),
-    sky: Object.freeze({ zenith: f3(0.03, 0.02, 0.06), horizon: f3(0.15, 0.13, 0.22), deep: f3(0.32, 0.3, 0.42), glow: f3(0.6, 0.9, 1.0) }),
+    motes: Object.freeze([   // soul-motes drifting slowly up, breathing
+      Object.freeze({ kind: 'soul', n: 800, lo: f3(0.2, 0.26, 0.4), hi: f3(0.32, 0.47, 0.54) }),
+    ]),
+    sky: Object.freeze({ zenith: f3(0.024, 0.014, 0.05), horizon: f3(0.14, 0.1, 0.22), deep: f3(0.08, 0.07, 0.13), glow: f3(0.3, 0.28, 0.42),
+      star: f3(0.78, 0.84, 1.0), soul: f3(0.42, 0.9, 1.0), aurora: f3(0.5, 0.46, 0.72), hem: f3(0.5, 0.88, 0.92), rock: f3(0.02, 0.016, 0.03), up: f3(0.42, 0.44, 0.5) }),
   }),
   Object.freeze({   // the Shade Perilous - Nocturnal's dusk under a great moon
     fog: Object.freeze({ mode: 'exp', density: 0.006, color: f3(0.015, 0.018, 0.03) }),
@@ -45,8 +57,11 @@ export const EG_ATMOS = Object.freeze([
     key: Object.freeze({ scale: 0.95, dir: unit(-0.55, 0.45, 0.7), color: f3(0.72, 0.78, 0.95) }),
     grade: Object.freeze({ adaptKey: 0.11, adaptMax: 1.25, bloom: 0.75, vignette: 0.42, contrast: 1.12 }),
     lamp: f3(0.78, 0.84, 1.0),
-    motes: Object.freeze({ lo: f3(0.45, 0.5, 0.6), hi: f3(0.85, 0.9, 1.0), rise: -1 }),
-    sky: Object.freeze({ zenith: f3(0.005, 0.006, 0.014), horizon: f3(0.03, 0.035, 0.06), deep: f3(0.01, 0.012, 0.02), glow: f3(0.85, 0.9, 1.0) }),
+    motes: Object.freeze([   // moon-dust falling, silver, glinting
+      Object.freeze({ kind: 'dust', n: 800, lo: f3(0.2, 0.22, 0.28), hi: f3(0.4, 0.43, 0.5) }),
+    ]),
+    sky: Object.freeze({ zenith: f3(0.003, 0.0035, 0.008), horizon: f3(0.022, 0.026, 0.046), deep: f3(0.004, 0.005, 0.009), glow: f3(0.5, 0.55, 0.66),
+      moon: f3(0.42, 0.45, 0.52), mare: f3(0.22, 0.24, 0.29), high: f3(0.56, 0.6, 0.68), halo: f3(0.09, 0.11, 0.17), star: f3(0.62, 0.66, 0.76), aurora: f3(0.5, 0.55, 0.62), rock: f3(0.004, 0.004, 0.007), up: f3(0.01, 0.01, 0.015) }),
   }),
   Object.freeze({   // the Havoc Wellhead - the muster-ground over the magma
     fog: Object.freeze({ mode: 'exp', density: 0.009, color: f3(0.14, 0.05, 0.02) }),
@@ -54,8 +69,12 @@ export const EG_ATMOS = Object.freeze([
     key: Object.freeze({ scale: 0.45, dir: unit(0.4, 0.7, -0.5), color: f3(0.95, 0.72, 0.55) }),
     grade: Object.freeze({ adaptKey: 0.12, adaptMax: 1.1, bloom: 0.9, vignette: 0.4, contrast: 1.1 }),
     lamp: f3(1.0, 0.52, 0.18),
-    motes: Object.freeze({ lo: f3(0.35, 0.3, 0.28), hi: f3(1.0, 0.55, 0.15), rise: 1 }),
-    sky: Object.freeze({ zenith: f3(0.06, 0.02, 0.012), horizon: f3(0.35, 0.1, 0.03), deep: f3(0.65, 0.18, 0.03), glow: f3(1.0, 0.5, 0.12) }),
+    motes: Object.freeze([   // sparks rising thick, heavy ash falling
+      Object.freeze({ kind: 'spark', n: 600, lo: f3(0.5, 0.12, 0.03), hi: f3(1.0, 0.72, 0.3) }),
+      Object.freeze({ kind: 'cinder', n: 400, lo: f3(0.1, 0.08, 0.07), hi: f3(0.24, 0.19, 0.16) }),
+    ]),
+    sky: Object.freeze({ zenith: f3(0.1, 0.022, 0.011), horizon: f3(0.42, 0.12, 0.03), deep: f3(0.06, 0.022, 0.015), glow: f3(0.92, 0.38, 0.07),
+      lid: f3(0.085, 0.032, 0.02), lit: f3(0.68, 0.26, 0.06), rock: f3(0.032, 0.024, 0.022), fire: f3(1.0, 0.62, 0.22), up: f3(1.0, 0.36, 0.06) }),
   }),
 ]);
 

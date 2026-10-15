@@ -16,6 +16,8 @@
 //   ?palette=standard|contrast|deutan|tritan  ?fill=50-100   a danger disc on the court in that look (?shape=off: none)
 //   ?mist            a circle with a Mist Stair or the Sinking Stair, the camera over its sheet, the clock at its surge
 //   ?grey            the frame in grey (the lab check's)  ?nopanel the panel hidden (probes)
+//   ?reduced         reduced motion (EG-LOOK: the air held still - scenes/egLookDraw.js drawAir)
+//   ?door            the door open at the hall's end plate: its gold beam (render/egLightPass.js) and its foot's halo
 //   ?frames=<n>      draw n frames and rest (a probe reads the last - tools/spireLabProbe.mjs)
 //   ?view=swatch (or ?swatch)   EG-LOOK: THE BAND'S PICTURES on a wall in the void beside the arrival plate - every record
 //                    the band paints on a quad at its intended texels a metre, the right way up (world/egBandArt.js
@@ -41,6 +43,7 @@ import { createEgLookDraw } from '../scenes/egLookDraw.js';
 import { egLookShapes } from '../scenes/egFight.js';
 import { egCircleSpecs, egFirstHallOf, egBandOfCircle } from '../net/egLaw.js';
 import { egMistAt } from '../net/egFragLaw.js';
+import { EG_LIGHT_KIND, EG_DOOR_BEAM } from '../world/egLights.js';   // EG-LOOK: ?door - the beam and its foot's halo
 import { INTERIOR_LIGHT_DIR } from '../world/interiorLights.js';
 import { perspective, lookAt, identity, mirrorProjectionX } from '../world/mat4.js';
 
@@ -75,7 +78,7 @@ const span = createEgSpan({ renderer, seed: SEED, c: C, geo: 0 });
 span.stand({ dynamicDraws, collider: null });
 const ground = createEgGroundLook({ renderer, lite: params.has('lite') });   // EG-LOOK (?lite: the phones' tier)
 for (const d of ground.stand(SEED, C, 0)) dynamicDraws.push(d);
-const look = createEgLookDraw({ gl });
+const look = createEgLookDraw({ gl, lite: params.has('lite') });
 look.setCircle(SEED, C, 0);
 const telegraph = new GateTelegraphRenderer(gl, { spire: true });
 
@@ -174,7 +177,13 @@ canvas.addEventListener('pointermove', (e) => { if (!drag) return; cam.yaw -= (e
 canvas.addEventListener('pointerup', () => { drag = null; });
 let last = performance.now();
 window.__frame = 0;
-window.__lab = { circle: C, band: BAND, hall: egFirstHallOf(C) + SLOT, batch: () => span.batchStats(), look: () => look.state(), stats: () => ({ ground: ground.stats(), draws: dynamicDraws.filter((d) => !d.hidden && !d.culled).length }), eye: (x, y, z, yawDeg, pitchDeg) => { cam.pos = [x, y, z]; cam.yaw = (yawDeg * Math.PI) / 180; cam.pitch = (pitchDeg * Math.PI) / 180; }, view: (n) => { viewSel.value = n; setView(n); } };
+window.__lab = { circle: C, band: BAND, hall: egFirstHallOf(C) + SLOT, batch: () => span.batchStats(), look: () => look.state(), air: () => look.airState(), stats: () => ({ ground: ground.stats(), air: look.airState(), draws: dynamicDraws.filter((d) => !d.hidden && !d.culled).length }), eye: (x, y, z, yawDeg, pitchDeg) => { cam.pos = [x, y, z]; cam.yaw = (yawDeg * Math.PI) / 180; cam.pitch = (pitchDeg * Math.PI) / 180; }, view: (n) => { viewSel.value = n; setView(n); } };
+
+/** EG-LOOK: ?door - the door's beam over the hall's end plate, as world/egLights.js egSpireLights stands it through the
+ *  closing (the way's gold), for its own pass and its foot's halo. */
+const DOOR_AT = SPEC.end ? egToDungeon(SPEC, SPEC.end.x, SPEC.end.y ?? 0, SPEC.end.z) : null;
+const LIGHTS = params.has('door') && DOOR_AT ? [{ k: EG_LIGHT_KIND.beam, x: DOOR_AT[0], y: DOOR_AT[1], z: DOOR_AT[2], h: EG_DOOR_BEAM.h, w: EG_DOOR_BEAM.w, r: 0, c: LOOK.palette.safety, a: 1, f: 0 }] : [];
+const REDUCED = params.has('reduced');
 
 function frame(now) {
   const dt = Math.min(0.1, (now - last) / 1000); last = now;
@@ -212,10 +221,13 @@ function frame(now) {
   if (swatchMesh) renderer.drawMesh(swatchMesh, identity(), null, NO_SHADOW);   // EG-LOOK: the band's pictures
   for (const d of dynamicDraws) if (!d.hidden && !d.culled) renderer.drawMesh(d.gpu, d.object.matrix, d.texRemap ?? null, d.noShadow ? NO_SHADOW : WITH_SHADOW);
   if (look.drawSky(proj, view, clock, courtFogNow(), skyGain(renderer._fogColor, egHallFog(C).color))) renderer.markForeignPass();
-  // the fight's pass: the mist, the telegraphs, the lines last (scenes/egClient.js drawPass)
+  // the fight's pass: the sky's next quadrant, the mist, THE AIR, the telegraphs, the lines last (scenes/egClient.js drawPass)
+  if (look.paintSky(renderer._worldViewportPx ?? null, lane, clock)) renderer.markForeignPass();   // EG-LOOK: painted for the next frame's fetch
   if (look.drawUnder(proj, view, cam.pos, clock, courtFogNow())) renderer.markForeignPass();
+  if (look.drawAir(proj, view, cam.pos, clock, courtFogNow(), lane, REDUCED, LIGHTS, renderer._worldViewportPx?.[3] ?? 0)) renderer.markForeignPass();   // EG-LOOK: the motes and the halos
   for (const sh of shapesNow(clock)) { telegraph.draw(sh, proj, view, cam.pos, clock, courtFogNow(), centre, null, floor); if (telegraph.drawn > 0) renderer.markForeignPass(); }
   if (params.get('lines') !== 'off' && look.drawOver(proj, view, cam.pos, clock, courtFogNow())) renderer.markForeignPass();   // ?lines=off: the probe's frame without them, to tell the line pass's own pixels
+  if (look.drawLights(proj, view, cam.pos, clock, courtFogNow(), LIGHTS, REDUCED)) renderer.markForeignPass();   // EG-LOOK: ?door's beam, over the lines
   renderer.resolveFrame();
   window.__frame++;
   if (params.has('frames') && window.__frame >= Number(params.get('frames'))) return;   // a probe's still: the frames it reads, then the page rests (SwiftShader draws a circle in seconds)

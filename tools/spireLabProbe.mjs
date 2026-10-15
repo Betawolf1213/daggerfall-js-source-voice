@@ -5,7 +5,9 @@
 //   every view: lit (the halls stand), no GL error;
 //   THE EDGE LINE: from over the circle, its gold where the frame without the line pass (?lines=off) has none - the pass's
 //     own pixels (from above, every rim a ring against the void; at the rim's own edge the line lies gold on the gilt);
-//   the sky view: the Spire's underside - a dark mass overhead - and the band's void around it;
+//   the sky view (EG-LOOK, Elite-Gates-Look.md section 6 - the painted underside gone, the wreck's model the one): the
+//     zenith the band's void (L0 - most of it dark, its mean low), and the sky drawn - the realm's light, its stars, the
+//     moon or the aurora lit somewhere in the frame (a sky never painted leaves the level's clear);
 //   the mist view (?mist): the sheet's pale grey covering the shaft below;
 //   the court view in each palette: the danger disc's edge in the palette's own hue, where the frame with no shapes has none;
 //   the batch: a handful of draws for every piece of the circle, the other halls culled from the plate.
@@ -66,8 +68,9 @@ async function shot(name, query, probe = null) {
   delete r.px;
   return { ...r, rgba, file, errors: [...errors] };
 }
-/** The top third (readPixels' last rows): the share of near-black - the underside - and the mean. */
-const SKY_SRC = `let dark = 0, n = 0, sum = 0; for (let y = Math.floor(h * 0.75); y < h; y++) for (let x = Math.floor(w * 0.3); x < Math.floor(w * 0.7); x++) { const i = (y * w + x) * 4, l = (px[i] + px[i + 1] + px[i + 2]) / 3; n++; sum += l; if (l < 8) dark++; } let lo = 0, m = 0; for (let y = Math.floor(h * 0.5); y < Math.floor(h * 0.62); y++) for (let x = 0; x < w; x++) { const i = (y * w + x) * 4; m++; lo += (px[i] + px[i + 1] + px[i + 2]) / 3; } return { dark: dark / n, top: sum / n, mid: lo / m };`;
+/** The top quarter (readPixels' last rows) - the zenith: the share of near-black and the mean; the middle band's mean; and
+ *  the share of the whole frame lit past 12 (the sky drawn). */
+const SKY_SRC = `let dark = 0, n = 0, sum = 0; for (let y = Math.floor(h * 0.75); y < h; y++) for (let x = Math.floor(w * 0.3); x < Math.floor(w * 0.7); x++) { const i = (y * w + x) * 4, l = (px[i] + px[i + 1] + px[i + 2]) / 3; n++; sum += l; if (l < 8) dark++; } let lo = 0, m = 0; for (let y = Math.floor(h * 0.5); y < Math.floor(h * 0.62); y++) for (let x = 0; x < w; x++) { const i = (y * w + x) * 4; m++; lo += (px[i] + px[i + 1] + px[i + 2]) / 3; } let lit = 0; for (let i = 0; i < px.length; i += 4) if (Math.max(px[i], px[i + 1], px[i + 2]) > 12) lit++; return { dark: dark / n, top: sum / n, mid: lo / m, lit: lit / (w * h) };`;
 /** The middle of the frame: pale grey (the mist's) against the dark shaft. */
 const MIST_SRC = `let pale = 0, n = 0; for (let y = Math.floor(h * 0.2); y < Math.floor(h * 0.6); y++) for (let x = Math.floor(w * 0.3); x < Math.floor(w * 0.7); x++) { const i = (y * w + x) * 4, r = px[i], g = px[i + 1], b = px[i + 2]; n++; if (r > 40 && Math.abs(r - g) < 22 && b >= r - 6) pale++; } return pale / n;`;
 /** A pixel's hue in degrees and its saturation (HSV). */
@@ -97,8 +100,10 @@ try {
       check(`band ${band}: THE EDGE LINE's gold round the circle's rims`, e.glError === 0 && gold > 40 && e.look.edges > 0, `${e.file} ${gold} gold pixels the line pass drew, ${e.look.edges} segments`);
     }
     if (part('sky')) {
+      // EG-LOOK (section 6): the zenith the band's void - most of it dark (the wreck's underside model darker still where it
+      // hangs), its mean at L0 - and the sky drawn, its realm's light, its stars or its moon lit somewhere in the frame
       const k = await shot(`b${band}-sky`, `band=${band}&view=sky&t=40&shape=off`, SKY_SRC);
-      check(`band ${band}: the Spire's underside overhead in the band's void`, k.glError === 0 && k.extra.dark > 0.05, `${k.file} underside ${(k.extra.dark * 100).toFixed(1)}% of the zenith, top mean ${k.extra.top.toFixed(1)}, horizon mean ${k.extra.mid.toFixed(1)}`);
+      check(`band ${band}: the band's void overhead, its realm drawn`, k.glError === 0 && k.extra.dark > 0.5 && k.extra.top <= 12 && k.extra.lit > 0.005, `${k.file} the zenith ${(k.extra.dark * 100).toFixed(1)}% dark, its mean ${k.extra.top.toFixed(1)}, the middle's ${k.extra.mid.toFixed(1)}, ${(k.extra.lit * 100).toFixed(1)}% of the frame lit`);
     }
   }
   if (part('mist')) {

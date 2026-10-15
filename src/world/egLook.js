@@ -31,6 +31,7 @@ import { EG_DRESS, egBandArchive } from './egBandArt.js';
 import { EG_CVD } from '../ui/egAccess.js';
 import { egRideOf } from '../net/egFair.js';   // AUDIT EG V (h): THE TRAIL's points on a ridden piece kept on it
 import { egPieceAt } from '../net/egSpanLaw.js';   // the colour-vision matrices' one home (the shelf's pins and the lab check read the same)
+import { egAtmosOf } from './egAtmos.js';   // EG-LOOK: the skies' colours, the band's air's (one home)
 
 // ── THE EDGE LINE ──────────────────────────────────────────────────────────────────────────────────────────────
 /** THE EDGE LINE (section 25.3): 2 px on a desktop, 3 on a phone (a screen this short or less); its gold's display
@@ -272,14 +273,17 @@ export const egStairOf = (h, reduced = false) => (reduced ? 'cut' : EG_STAIR.ban
  * THE SKIES (EG16): each band's sky in linear rgb - its zenith, its horizon, the deep below (the Galleries' fire-sea, the
  * Cairn's sea of mist, the Shade's dark, the Wellhead's molten glow), its moon, its embers' rate - and THE SPIRE'S
  * UNDERSIDE overhead in every one, smaller each band as the halls fall further down the legions' road: its angular radius
- * (radians) and how far it leans from the zenith toward the course (+z).
+ * (radians) and how far it leans from the zenith toward the course (+z). EG-LOOK (Elite-Gates-Look.md section 6): the sky
+ * itself is painted (render/egSkyMap.js) and its colours are the band's air's (world/egAtmos.js `sky` - one home): the
+ * zenith and the horizon are the painter's, the deep the light the realm sends up (`up` - the stair's underside lit by it,
+ * render/egStairPass.js); the underside is the wreck's model at this angular size (world/egVista.js), never painted.
  */
 export const EG_SKIES = Object.freeze([
-  Object.freeze({ zenith: Object.freeze([0.05, 0.012, 0.01]), horizon: Object.freeze([0.42, 0.12, 0.04]), deep: Object.freeze([0.85, 0.28, 0.05]), moon: 0, embers: 1.0, underside: 0.34, lean: 0.18 }),
-  Object.freeze({ zenith: Object.freeze([0.02, 0.018, 0.035]), horizon: Object.freeze([0.16, 0.15, 0.22]), deep: Object.freeze([0.42, 0.44, 0.5]), moon: 0, embers: 0.15, underside: 0.22, lean: 0.24 }),
-  Object.freeze({ zenith: Object.freeze([0.004, 0.004, 0.008]), horizon: Object.freeze([0.03, 0.032, 0.05]), deep: Object.freeze([0.01, 0.01, 0.015]), moon: 1, embers: 0, underside: 0.13, lean: 0.3 }),
-  Object.freeze({ zenith: Object.freeze([0.03, 0.01, 0.006]), horizon: Object.freeze([0.3, 0.07, 0.02]), deep: Object.freeze([1.0, 0.36, 0.06]), moon: 0, embers: 1.6, underside: 0.07, lean: 0.36 }),
-]);
+  { moon: 0, embers: 1.0, underside: 0.34, lean: 0.18 },
+  { moon: 0, embers: 0.15, underside: 0.22, lean: 0.24 },
+  { moon: 1, embers: 0, underside: 0.13, lean: 0.3 },
+  { moon: 0, embers: 1.6, underside: 0.07, lean: 0.36 },
+].map((s, b) => { const k = egAtmosOf(b).sky; return Object.freeze({ zenith: k.zenith, horizon: k.horizon, deep: k.up, ...s }); }));
 /** A circle's sky. */
 export const egSkyOf = (c) => EG_SKIES[egBandOfCircle(c)];
 
