@@ -33,8 +33,8 @@
   {
     "name": "DA10-5-an-update-found-after-play-hijacks-the-handover",
     "file": "app/lib/launcherState.cjs",
-    "old": "      if (s.launch || !MAY_FIND.has(u.status)) break;\n",
-    "new": "      if (!MAY_FIND.has(u.status)) break;\n",
+    "old": "      if (s.launch || !MAY_FIND.has(u.status)) break;\n      u.version = ev.version ?? null;\n      if (s.transport",
+    "new": "      if (!MAY_FIND.has(u.status)) break;\n      u.version = ev.version ?? null;\n      if (s.transport",
     "tests": ["test/da10_launcher.test.js"]
   },
   {
@@ -75,8 +75,8 @@
   {
     "name": "DA10-11-the-version-last-played-is-never-kept",
     "file": "app/main.cjs",
-    "old": "  launcherDispatch({ type: 'launching' });\n  saveConfig({ ...loadConfig(), lastPlayed: app.getVersion() });\n",
-    "new": "  launcherDispatch({ type: 'launching' });\n",
+    "old": "  launcherDispatch({ type: 'launching' });\n  saveConfig({ ...loadConfig(), lastPlayed: gameVersion() });",
+    "new": "  launcherDispatch({ type: 'launching' });\n ",
     "tests": ["test/da10_launcher.test.js"],
     "note": "Every version is NEW for ever, or none is - the marks say nothing."
   },

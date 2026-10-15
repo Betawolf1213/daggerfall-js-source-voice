@@ -10,8 +10,8 @@
   {
     "name": "REL4-2-publish-runs-when-a-leg-failed",
     "file": ".github/workflows/release-desktop.yml",
-    "old": "    if: needs.version.outputs.tag != ''\n",
-    "new": "    if: always() && needs.version.outputs.tag != ''\n",
+    "old": "    needs: [version, build]\n    if: needs.version.outputs.tag != ''\n",
+    "new": "    needs: [version, build]\n    if: always() && needs.version.outputs.tag != ''\n",
     "tests": ["test/rel4_release.test.js"],
     "note": "always() drops the implicit success(): a dead Windows leg would publish a release with no Windows installer."
   },
