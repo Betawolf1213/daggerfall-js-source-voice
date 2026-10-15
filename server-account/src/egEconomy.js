@@ -32,7 +32,10 @@
 //
 // A Reliquary is one more spoils roll (the client's, off the end receipt's seed), sealed only in a circle whose Redoubt
 // pays this week (section 16.3) - and only the service knows which do. The member's end (`x`) names the circles whose
-// Reliquaries it opens (`rl`, the relay's, one entry a Reliquary); the claim answers those of them that open.
+// Reliquaries it opens (`rl`, the relay's, one entry a Reliquary); the claim answers those of them that open. AUDIT EG V
+// (lane8 L8-4): A CIRCLE'S RELIQUARIES OPEN ONCE AN ACCOUNT AN ARENA WEEK (`eg_reliqs`) - a circle whose Redoubt the
+// breach never recorded opened while no row of it stood paid, so a member who held their Redoubt receipts back opened
+// every circle's Reliquaries at every breach's end that week.
 //
 // ═══ THE SINK ══════════════════════════════════════════════════════
 //
@@ -45,7 +48,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { arenaWeekOf, arenaSeasonOf, arenaSeasonEndsS, ARENA_SEASON_S } from '../../src/net/arenaLaw.js';
-import { egValkRedoubt, egSpoilsPasses, egPanoplyHit, egEmbersOf, EG_PANOPLY_PITY, EG_VALK_KEY_ODDS, EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../../src/net/egPay.js';
+import { egValkRedoubt, egSpoilsPasses, egPanoplyHit, egEmbersOf, egSpoilsSeed, EG_PANOPLY_PITY, EG_VALK_KEY_ODDS, EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../../src/net/egPay.js';
 import { egStrikeStatement, egStrikeAnswer, deedStatements, deedEvent, deedAnswer } from './marks.js';
 import { EMBERS_EARNED_SQL } from './accounts.js';
 
@@ -94,7 +97,9 @@ export async function egRedoubtPay({ db, nowS, rand }, player, c, { env = null, 
   const ctx = { db, nowS };
   const b = c.b, w = c.w, week = arenaWeekOf(nowS), payable = c.rh === 1 ? 0 : 1;
   const nonce = hex(rand(new Uint8Array(8)));
-  const hits = Array.from({ length: egSpoilsPasses(w) }, (_, p) => egPanoplyHit(c.c, w, p));
+  // AUDIT EG V (lane8 L8-5): the spoils roll on the receipt's seed mixed with this claim's own draw (net/egPay.js
+  // egSpoilsSeed) - the pity reads the passes the client will roll on it
+  const hits = Array.from({ length: egSpoilsPasses(w) }, (_, p) => egPanoplyHit(egSpoilsSeed(c.c, nonce), w, p));
   // THE ROW: paid where the account has no paid row of this Redoubt this week (never a Rehearsal's); its embers a first
   // this season's where no row of it was paid since the season's first week; its forced passes off the pity as it stands
   const row = db.prepare(`INSERT OR IGNORE INTO eg_redoubts (b, account, w, h, t, at, wk, paid, stones, nonce, forced)
@@ -129,7 +134,7 @@ export async function egRedoubtPay({ db, nowS, rand }, player, c, { env = null, 
   }
   /** @param {boolean} recorded @param {any[]} results */
   const answer = async (recorded, results) => {
-    const r = await db.prepare('SELECT wk, paid, stones, forced, wkey FROM eg_redoubts WHERE b = ?1 AND account = ?2 AND w = ?3').bind(b, player.id, w).first();
+    const r = await db.prepare('SELECT wk, paid, stones, forced, wkey, nonce FROM eg_redoubts WHERE b = ?1 AND account = ?2 AND w = ?3').bind(b, player.id, w).first();
     const me = await db.prepare(`SELECT eg_keys, MAX(0, ${EMBERS_EARNED_SQL} - insignia_spent) AS purse FROM players WHERE id = ?1`).bind(player.id).first();
     const paid = int(r?.paid) === 1;
     const wrote = (k) => at[k] !== undefined && Number(results?.[at[k]]?.meta?.changes ?? 0) > 0;
@@ -139,6 +144,7 @@ export async function egRedoubtPay({ db, nowS, rand }, player, c, { env = null, 
       marks: paid ? await egStrikeAnswer(ctx, player, env, recorded ? wrote('marks') : true, int(r?.wk), w) : null,
       deed: recorded && at.deed !== undefined ? await deedAnswer(db, player, event, wrote('deed')) : null,
       embers: int(r?.stones), purse: int(me?.purse),
+      seed: egSpoilsSeed(c.c, r?.nonce),   // AUDIT EG V (lane8 L8-5): what the spoils roll on - the row's own claim's draw
       weir: paid && egValkRedoubt(w) ? { found: int(r?.wkey) === 1, keys: int(me?.eg_keys) } : null,
       pity: hits.map((_, p) => p).filter((p) => (int(r?.forced) & (1 << p)) !== 0),
     };
@@ -149,8 +155,11 @@ export async function egRedoubtPay({ db, nowS, rand }, player, c, { env = null, 
 /**
  * THE RELIQUARIES AN END OPENS (section 16.3) - of those the member's end names (`rl`: a circle's number a Reliquary,
  * the relay's), the ones whose circle pays this week for this account: its Redoubt's row in this breach paid, or - a
- * circle whose Redoubt this breach never recorded - none of it paid this arena week. `{ rl }`, or `{}` for an end that
- * names none.
+ * circle whose Redoubt this breach never recorded - none of it paid this arena week. AUDIT EG V (lane8 L8-4): and no other
+ * end of the account's opened that circle's this week - the first end's claim that opens a circle writes it (`eg_reliqs`,
+ * one row an account, week and circle, INSERT OR IGNORE: two claims at once open it once), and an end answers the circles
+ * written in its own name; an end claimed again answers the circles it opened. `{ rl }`, or `{}` for an end that names
+ * none.
  * @param {{ db: any, nowS: number }} ctx @param {{ id: string }} player @param {any} c
  */
 export async function egReliquariesOf({ db, nowS }, player, c) {
@@ -158,11 +167,19 @@ export async function egReliquariesOf({ db, nowS }, player, c) {
   if (c.rh === 1) return { rl: [] };
   const named = c.rl.slice(0, RL_MAX).filter((w) => Number.isSafeInteger(w) && w >= 1 && w <= 19_999);
   if (!named.length) return { rl: [] };
-  const here = await db.prepare('SELECT w, paid FROM eg_redoubts WHERE b = ?1 AND account = ?2').bind(c.b, player.id).all();
-  const week = await db.prepare('SELECT DISTINCT w FROM eg_redoubts WHERE account = ?1 AND wk = ?2 AND paid = 1').bind(player.id, arenaWeekOf(nowS)).all();
-  const mine = new Map((here?.results ?? []).map((r) => [int(r.w), int(r.paid) === 1]));
-  const paidWeek = new Set((week?.results ?? []).map((r) => int(r.w)));
-  return { rl: named.filter((w) => (mine.has(w) ? mine.get(w) : !paidWeek.has(w))) };
+  const opened = async () => new Set(((await db.prepare('SELECT w FROM eg_reliqs WHERE account = ?1 AND b = ?2').bind(player.id, c.b).all())?.results ?? []).map((r) => int(r.w)));
+  let mineOpen = await opened();
+  if (!mineOpen.size) {
+    const here = await db.prepare('SELECT w, paid FROM eg_redoubts WHERE b = ?1 AND account = ?2').bind(c.b, player.id).all();
+    const wk = arenaWeekOf(nowS);
+    const week = await db.prepare('SELECT DISTINCT w FROM eg_redoubts WHERE account = ?1 AND wk = ?2 AND paid = 1').bind(player.id, wk).all();
+    const mine = new Map((here?.results ?? []).map((r) => [int(r.w), int(r.paid) === 1]));
+    const paidWeek = new Set((week?.results ?? []).map((r) => int(r.w)));
+    const pays = [...new Set(named.filter((w) => (mine.has(w) ? mine.get(w) : !paidWeek.has(w))))];
+    if (pays.length) await db.batch(pays.map((w) => db.prepare('INSERT OR IGNORE INTO eg_reliqs (account, wk, w, b) VALUES (?1, ?2, ?3, ?4)').bind(player.id, wk, w, c.b)));
+    mineOpen = await opened();
+  }
+  return { rl: named.filter((w) => mineOpen.has(w)) };
 }
 
 /**

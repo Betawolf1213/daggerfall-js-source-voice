@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { standService, sessionStorageOf } from './accountDb.mjs';
 import { mintEgReceipt } from '../src/net/egReceipt.js';
 import { ARENA_SEASON_EPOCH_S, ARENA_WEEK_S, arenaWeekOf } from '../src/net/arenaLaw.js';
-import { egPanoplyHit, egEmbersOf, EG_PANOPLY_PITY, EG_SINK_EMBERS, EG_PANOPLY_IDS, EG_PAY_MARKS } from '../src/net/egPay.js';
+import { egPanoplyHit, egSpoilsSeed, egEmbersOf, EG_PANOPLY_PITY, EG_SINK_EMBERS, EG_PANOPLY_IDS, EG_PAY_MARKS } from '../src/net/egPay.js';
 import { MARKS_FAUCETS, MARKS_COMBAT, MARKS_KINDS } from '../src/net/marksLaw.js';
 import { INSIGNIA } from '../src/net/insignia.js';
 import { accountEg, SESSION_KEY, accountRefusalText } from '../src/net/accountClient.js';
@@ -203,21 +203,28 @@ test('EG-E1 THE PANOPLY\'S PITY: ten passes in a row with no piece, and the elev
   const me = await S.registered('Pitied');
   const b = breach();
   const ws = [1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13];
-  for (const w of ws) assert.equal(egPanoplyHit(1, w, 0), false, `seed 1 misses at Redoubt ${w}`);
+  // PIN MOVED (AUDIT EG V, d: lane8 L8-5 - the spoils roll on the receipt's seed mixed with the claim's own draw): the
+  // service's 8-byte draws fixed, so the misses are read on the seed the claims answer (net/egPay.js egSpoilsSeed)
+  const real = globalThis.crypto.getRandomValues.bind(globalThis.crypto);
+  t.mock.method(globalThis.crypto, 'getRandomValues', (u) => (u.length === 8 ? u.fill(0) : real(u)));
+  const on = (c) => egSpoilsSeed(c, '0'.repeat(16));
+  const c1 = [...Array(4096).keys()].find((c) => ws.every((w) => !egPanoplyHit(on(c), w, 0)) && !egPanoplyHit(on(c), 15, 0) && !egPanoplyHit(on(c), 15, 1) && !egPanoplyHit(on(c), 14, 0));
+  assert.ok(c1 != null);
+  for (const w of ws) assert.equal(egPanoplyHit(on(c1), w, 0), false, `the claim's seed misses at Redoubt ${w}`);
   const forced = [];
-  for (const w of ws) forced.push((await claim(me, { b, w })).body.pity);
+  for (const w of ws) { const a = (await claim(me, { b, w, c: c1 })).body; assert.equal(a.seed, on(c1), 'the seed answered'); forced.push(a.pity); }
   assert.deepEqual(forced, [[], [], [], [], [], [], [], [], [], [], [0]], 'the eleventh pass forced');
   assert.equal(player(me).eg_pity, 0, 'and the count starts again');
-  assert.equal((await claim(me, { b, w: 14 })).body.pity.length, 0);
+  assert.equal((await claim(me, { b, w: 14, c: c1 })).body.pity.length, 0);
   assert.equal(player(me).eg_pity, 1);
   // a hit resets it
-  const hit = [...Array(64).keys()].find((c) => egPanoplyHit(c, 16, 0));
+  const hit = [...Array(64).keys()].find((c) => egPanoplyHit(on(c), 16, 0));
   assert.equal((await claim(me, { b, w: 16, c: hit })).body.pity.length, 0);
   assert.equal(player(me).eg_pity, 0, 'a piece by its own draw: the count to nothing');
   // a Valkynaz's two passes, in order
   raw.prepare('UPDATE players SET eg_pity = ? WHERE id = ?').run(EG_PANOPLY_PITY - 1, me.id);
-  assert.deepEqual([egPanoplyHit(1, 15, 0), egPanoplyHit(1, 15, 1)], [false, false]);
-  assert.deepEqual((await claim(me, { b, w: 15 })).body.pity, [1]);
+  assert.deepEqual([egPanoplyHit(on(c1), 15, 0), egPanoplyHit(on(c1), 15, 1)], [false, false]);
+  assert.deepEqual((await claim(me, { b, w: 15, c: c1 })).body.pity, [1]);
   assert.equal(player(me).eg_pity, 0);
 });
 

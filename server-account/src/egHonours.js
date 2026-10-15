@@ -61,6 +61,7 @@ import { topWithMe, ARENA_BOARD_TOP } from './arena.js';
 import { boardNamesOf } from './boardNames.js';
 import { isSpireFirst } from './titles.js';   // EG-ZF: First of the Spire's list - its letter's addressees
 import { POST_SENDER } from '../../src/net/postLaw.js';   // EG-ZF: the post's sender, as the box shows it
+import { egWagerOf } from '../../src/net/egStartLaw.js';   // AUDIT EG V (L8-9): the Wager's decrees, read
 import { EG_RECEIPT_TTL_S } from '../../src/net/egReceipt.js';   // AUDIT EG IV (lane3 #13): a season's champions kept once its late ends are claimed
 
 /** THE SPIRE'S HONOURS on the row (`players.eg_honours`), a bit each, in section 19's table's order - each a title of
@@ -99,6 +100,10 @@ export const EG_CHAMPION_CACHE_S = 600;
 const int = (v) => (Number.isSafeInteger(Number(v)) ? Number(v) : 0);
 /** Was the breach wagered - the receipt's `wg`, the Wager's decrees (or a flag)? */
 const wagered = (c) => (Array.isArray(c?.wg) ? c.wg.length > 0 : !!c?.wg);
+/** AUDIT EG V (lane8 L8-9; sections 18 and 20 - "the Wager shown on the row"): the receipt's Wager as its end's row keeps it,
+ *  its decrees' numbers joined by commas ('' none - eg_stakes.wg's form), and read back. */
+const wagerText = (c) => (Array.isArray(c?.wg) ? (egWagerOf(c.wg) ?? []).join(',') : '');
+const wagerOfText = (s) => egWagerOf(String(s ?? '').split(',').filter(Boolean).map(Number)) ?? [];
 
 /** THE HONOURS A `w` RECEIPT GRANTS, as bits (EG_HONOUR) - none from a Rehearsal or any other kind. Pure.
  *  @param {any} c the receipt's claims */
@@ -135,8 +140,8 @@ export function egHonourStatements(db, player, c, _nowS) {
   if (c.q !== 'x') return [];
   const td = Number.isSafeInteger(c.td) && c.td >= 0 ? c.td : null;
   return [
-    db.prepare('UPDATE eg_runs SET n = ?3, ew = ?4, wg = ?5, fl = ?6, td = ?7, rh = ?8, season = ?9 WHERE b = ?1 AND account = ?2')
-      .bind(c.b, player.id, int(c.n), int(c.ew), wagered(c) ? 1 : 0, int(c.fl), td, c.rh === 1 ? 1 : 0, arenaSeasonOf(c.i)),
+    db.prepare('UPDATE eg_runs SET n = ?3, ew = ?4, wg = ?5, fl = ?6, td = ?7, rh = ?8, season = ?9, wgs = ?10 WHERE b = ?1 AND account = ?2')
+      .bind(c.b, player.id, int(c.n), int(c.ew), wagered(c) ? 1 : 0, int(c.fl), td, c.rh === 1 ? 1 : 0, arenaSeasonOf(c.i), wagerText(c)),   // AUDIT EG V (lane8 L8-9): and the Wager's decrees
     ...(int(c.an) > 0 ? [db.prepare('UPDATE players SET eg_annals = eg_annals | ?2 WHERE id = ?1 AND EXISTS (SELECT 1 FROM eg_runs WHERE b = ?3 AND account = ?1)').bind(player.id, int(c.an), c.b)] : []),
   ];
 }
@@ -174,8 +179,8 @@ export async function egRecordOf(db, id) {
 /** The season's ends the Descent may rank: unwagered, begun at Hall 1, no Rehearsal, a hall cleared. */
 const DESCENT_SQL = 'SELECT b, account, h, COALESCE(td, t) AS secs, n, fl, at, co_n, co_h FROM eg_runs WHERE season = ?1 AND rh = 0 AND ew = 0 AND wg = 0 AND h >= 1 ORDER BY at ASC, account ASC';   // EG-ZA: and the receipt's company
 /** Each account's deepest hall this season, from any start - its start Redoubt and its Wager with it. */
-const DEPTHS_SQL = `SELECT account, h, ew, wg, at FROM (
-    SELECT account, h, ew, wg, at, ROW_NUMBER() OVER (PARTITION BY account ORDER BY h DESC, at ASC, b ASC) AS rn
+const DEPTHS_SQL = `SELECT account, h, ew, wg, wgs, at FROM (
+    SELECT account, h, ew, wg, wgs, at, ROW_NUMBER() OVER (PARTITION BY account ORDER BY h DESC, at ASC, b ASC) AS rn
       FROM eg_runs WHERE season = ?1 AND rh = 0 AND h >= 1)
   WHERE rn = 1 ORDER BY h DESC, at ASC, account ASC`;
 /** Each account's deepest Redoubt, all time, and when it first took it. */
@@ -371,7 +376,7 @@ async function ranksOf(db, season, nowS) {
   const gen = _ranksGen;
   const p = (async () => {
     const { companies, brackets } = await descentOf(db, season);
-    const depths = ((await db.prepare(DEPTHS_SQL).bind(season).all()).results ?? []).map((r) => ({ player: r.account, h: int(r.h), ew: int(r.ew), wagered: int(r.wg) === 1 }));
+    const depths = ((await db.prepare(DEPTHS_SQL).bind(season).all()).results ?? []).map((r) => ({ player: r.account, h: int(r.h), ew: int(r.ew), wagered: int(r.wg) === 1, wg: wagerOfText(r.wgs) }));   // AUDIT EG V (L8-9): the Wager's decrees
     const deepest = ((await db.prepare(DEEPEST_SQL).all()).results ?? []).map((r) => ({ player: r.account, w: int(r.w), at: int(r.at) }));
     const v = { companies, brackets, depths, deepest };
     if (gen === _ranksGen) _ranks = { season, at: nowS, v };
@@ -392,7 +397,7 @@ export function egProclamationNow(nowS) {
  * Deepest Redoubts, each `{ rows, pinned, total }` (topWithMe: a top ten, the caller's own pinned under it, each row its
  * `rank` and `you`); the week's Proclamation; the caller's best this season on the Descent (`{ h, t }`, or null).
  * A Descent row: `{ players, names, h, t, n, flame, pr }` (`pr` the Proclamation of its breach's week); a Depths row:
- * `{ player, name, title, glyphs, h, ew, wagered }`;
+ * `{ player, name, title, glyphs, h, ew, wagered, wg }` (AUDIT EG V: `wg` the Wager's decrees' numbers);
  * a Deepest row: `{ player, name, title, glyphs, w, at }`.
  * @param {{ db: any, nowS: number }} ctx @param {any} player @param {any} env
  */

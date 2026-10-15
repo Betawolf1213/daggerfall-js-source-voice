@@ -124,7 +124,9 @@ CREATE INDEX IF NOT EXISTS idx_eg_champions_account ON eg_champions (account);
 --   stones  the Deadlands Embers it paid (src/net/egPay.js egEmbersOf - a Valkynaz's, and a first this season); the
 --           insignia's and the sink's purse (accounts.js EMBERS_EARNED_SQL) counts them
 --   nonce   the claim that wrote it (the service's own draw - a refused re-claim of the same receipt carries none): the
---           Marks, the guild's deed, the pity and the key are written only while the row this claim wrote stands
+--           Marks, the guild's deed, the pity and the key are written only while the row this claim wrote stands; AUDIT
+--           EG V: and the spoils roll on the receipt's seed mixed with it (src/net/egPay.js egSpoilsSeed), answered with
+--           the claim, so no page reads a receipt's spoils before the service has said which receipt the week pays
 --   forced  the Panoply passes the pity forced, a bit a pass
 --   wkey    1 when a Valkynaz's Redoubt found its Weir Key
 ALTER TABLE eg_redoubts ADD COLUMN wk INTEGER NOT NULL DEFAULT -1;
@@ -195,3 +197,23 @@ ALTER TABLE players ADD COLUMN eg_first INTEGER NOT NULL DEFAULT 0;
 -- spendLapsedStakes, EG_STAKE_CLOCK_S past its `until`), its opener's letter written with it; the clock asks the held
 -- stakes by their end, oldest first, by this index - never a walk of every stake ever staked.
 CREATE INDEX IF NOT EXISTS idx_eg_stakes_held ON eg_stakes (state, until);
+
+-- AUDIT EG V (2026-10-15; bible/11-Multiplayer/Elite-Gates.md sections 16.3, 19 and 20) - WHAT AN END'S CLAIM KEEPS.
+--   eg_runs.nonce  the claim that wrote the end's row (the service's own draw): its Reliquaries roll on the receipt's seed
+--                  mixed with it (src/net/egPay.js egSpoilsSeed), answered with the claim - no page reads them before
+--   eg_runs.wgs    the Wager's decrees (their numbers joined by commas, '' none - eg_stakes.wg's form): the Depths' row
+--                  names them (server-account/src/egHonours.js egBoardOf)
+-- THE RELIQUARIES OPENED: one row an (account, arena week, circle) - the end whose claim first opened that circle's
+-- Reliquaries that week (`b`); no other end of the account's opens them that week (server-account/src/egEconomy.js
+-- egReliquariesOf).
+ALTER TABLE eg_runs ADD COLUMN nonce TEXT;
+ALTER TABLE eg_runs ADD COLUMN wgs TEXT NOT NULL DEFAULT '';
+CREATE TABLE IF NOT EXISTS eg_reliqs (
+  account TEXT NOT NULL,
+  wk      INTEGER NOT NULL,
+  w       INTEGER NOT NULL,
+  b       TEXT NOT NULL,
+  PRIMARY KEY (account, wk, w),
+  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_eg_reliqs_b ON eg_reliqs (account, b);

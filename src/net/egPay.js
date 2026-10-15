@@ -10,6 +10,10 @@
 //   THE PANOPLY'S DRAW - its own stream off each pass's seed (never the spoils' own, whose order SET6's law keeps), so the
 //     service reads a miss for the pity without the loot ladder: 1 in max(4, 12 - floor(R/2)), 1 in 3 at a Valkynaz's.
 //   THE EMBERS - 1 + floor(R/10) at a Valkynaz's Redoubt, and 1 for a Redoubt first taken this season.
+//   AUDIT EG V (lane8 L8-5; sections 16.1 and 19): THE SPOILS' SEED - a receipt's `c` mixed with the account service's own
+//     draw at its claim (egSpoilsSeed), answered with the claim: the receipt's seed is the page's to read, so a member
+//     holding several receipts of one Redoubt rolled each one's spoils ahead and claimed the best first, the one the week
+//     pays. Nothing is rolled before the service has said which receipt pays.
 //
 // Pure. Not a DFU member. Ledger A (ELITE-GATES).
 
@@ -45,6 +49,13 @@ function mix(x) {
 export const egPassSeed = (seed, pass) => (pass ? mix(((seed >>> 0) ^ Math.imul(pass, 0x9e3779b9)) >>> 0) : seed >>> 0);
 /** The Panoply's draw for a pass, in [0, 1): its own stream off the pass's seed. Pure. */
 export const egPanoplyDraw = (seed, pass) => mix((egPassSeed(seed, pass) ^ 0x7a40b1e5) >>> 0) / 4294967296;
+/** AUDIT EG V (lane8 L8-5): the seed a receipt's spoils roll on (a Redoubt's passes and Panoply draws, an end's
+ *  Reliquaries) - its own `c` mixed with `nonce`, the account service's own draw at the claim that recorded it (16 hex,
+ *  kept on the row - eg_redoubts.nonce, eg_runs.nonce - so a claim asked again answers the same seed). Pure. */
+export function egSpoilsSeed(c, nonce) {
+  const n = typeof nonce === 'string' && /^[0-9a-f]{16}$/.test(nonce) ? nonce : '0'.repeat(16);
+  return mix((mix(((c >>> 0) ^ parseInt(n.slice(0, 8), 16)) >>> 0) ^ parseInt(n.slice(8), 16)) >>> 0);
+}
 /** Whether pass `pass` of Redoubt `w`'s spoils draws a Panoply piece by its own odds (the pity aside). Pure. */
 export const egPanoplyHit = (seed, w, pass) => egPanoplyDraw(seed, pass) * egPanoplyIn(w) < 1;
 
