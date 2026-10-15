@@ -15,7 +15,7 @@ import { EG_MASTERIES, EG_SPIREBRIDGE_ID, egOfferOf } from '../src/net/egVestige
 import { egBreachNew, egEnter, egStep, egWord, egPoseIn, egStateOf } from '../src/net/egBrain.js';
 import { validEgIn, validEgOut, EG_KINDS, EG_FIGHT_KINDS, EG_SB_WIRE_MS } from '../src/net/wire.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
-import { createEgSpan, egBridgeModel, egBridgeTris, egBridgeLook, EG_STEP_GONE_Y, EG_SB_GROW_S, EG_SB_LAST_S, EG_SB_FALTER_HZ } from '../src/scenes/egSpan.js';
+import { createEgSpan, egSpanCollider, egBridgeModel, egBridgeTris, egBridgeLook, EG_STEP_GONE_Y, EG_SB_GROW_S, EG_SB_LAST_S, EG_SB_FALTER_HZ } from '../src/scenes/egSpan.js';
 import { createEgClient } from '../src/scenes/egClient.js';
 import { egSpireHudModel, egTouchButtons, egPadUp, egPadAct, egPadPrompts, egBridgeLine } from '../src/ui/egSpireHud.js';
 import { EG_PRES_TEXT } from '../src/ui/egBeats.js';
@@ -228,7 +228,9 @@ test('AUDIT EG III SPIREBRIDGE - THE PLANK ON THIS SCREEN (sections 15, 25.2, 25
   const span = createEgSpan({ renderer: R, seed: SEED, c: spec.c }), draws = [], col = new Collider();
   const removeBucket = col.removeBucket.bind(col);
   col.removeBucket = (k) => { removed.push(k); removeBucket(k); };
-  span.stand({ dynamicDraws: draws, collider: col });
+  // PIN MOVED (AUDIT EG V, e: L6-10 - the plank stood over a bare Collider passed while the dungeon host's own wrapper, which
+  // had addMesh alone, kept its bucket for the rest of the circle; it stands through the wrapper the host hands the spans)
+  span.stand({ dynamicDraws: draws, collider: egSpanCollider(col, []) });
   const objs = { h: HALL, objs: [], br: [{ g: 0, from: 10_000, until: 16_000 }] };
   registerSpireObjs(() => objs);
   try {

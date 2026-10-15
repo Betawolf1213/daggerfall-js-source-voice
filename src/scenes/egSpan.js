@@ -437,6 +437,21 @@ function yawAbout(out, yw, x, y, z) {
   return out;
 }
 const _vane = new Float64Array(2);
+/**
+ * AUDIT EG V (L6-10): THE COLLIDER A HOST HANDS THE SPANS - the two doors the spans use of `collider` (a step's, a lane's or a
+ * plank's bucket in; a Spirebridge's plank out at its end), each key the spans stood kept in `keys`, so the host takes them
+ * out again at THE SWAP (scenes/dungeonContext.js egRecircle) - a key taken out at a plank's end leaves the list with it.
+ * The dungeon host's own wrapper had `addMesh` alone: a plank's draw and mesh went at its end and its bucket stood at its
+ * last pose for the rest of the circle - an unseen bridge over the gap on every screen, while the relay's fair trail
+ * (net/egFair.js egSupportAt, the plank's `until`) held a body on it as in the air.
+ * @param {{ addMesh: Function, removeBucket: Function }} collider @param {string[]} keys
+ */
+export function egSpanCollider(collider, keys) {
+  return {
+    addMesh: (...a) => { keys.push(a[0]); return collider.addMesh(...a); },
+    removeBucket: (k) => { const i = keys.indexOf(k); if (i >= 0) keys.splice(i, 1); return collider.removeBucket(k); },
+  };
+}
 
 /**
  * A circle's spans.
@@ -1074,7 +1089,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       meshes.clear();
       batch?.clear(); batch = null;   // EG-G2: the batched kinds' meshes
       models.clear();
-      // EG-ZL: the ghosts' pass and every tell's slot (the Beat's pictures are the session's - egBeatTellUp)
+      // EG-ZL: the ghosts' pass and every tell's slot (the Beat's pictures are the breach's, freed at its end - egBeatTellDown)
       try { pass?.destroy(); } catch { /* gone */ }
       pass = null; passTried = false;
       plainOf.clear(); beatKinds.clear();
