@@ -108,6 +108,12 @@
 // kept one an account for a day); the level rides the token when the
 // mint names one:
 //   POST /v1/renown/xp { character, xp, name?, rid?, region? } -> { character, xp, level, credited, rose, order, max?, repeat? }   (SEAT1b: `region` where it was earned)
+// FIRM1, THE FIRMAMENT (firmament.js; the law src/net/firmamentLaw.js): a character's passive tree, its Stars the Renown
+// track's and its Craft points the profession tracks', every change the whole tree judged by the law, a refund's silver
+// burnt in the change's batch. Behind FIRMAMENT_OPEN:
+//   POST /v1/firmament/state { character }            -> { tree, renown, stars, craft, ranks, left, refund }
+//   POST /v1/firmament/set { character, tree, rid }   -> { ...state, silver, balance? } | { repeat, ... }
+//   POST /v1/firmament/respec { character, rid, realm?, region? } -> { ...state, respec, gold, realm? } (the whole sky back for 10,000 gold)
 //   POST /v1/auth/token { character? }    -> { ..., level, xp }   (RENOWN4: xp, the track's total)
 //   (REALM-DOOR: the token says whether that character is one of the account's realm characters, `rc`)
 //   (ARENA4b: and, for a realm character, the level on its tile - its summary's - as `cl`, 1..1000)
@@ -194,7 +200,8 @@ import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUT
 import { listSaves, putCard, putBlob, getBlob, deleteSave, saveCardOf } from './saves.js';
 import { signingKey, gatePublicKey } from './signing.js';
 import { stakeCards, cashoutCards } from './cards.js';   // CARDS6: a card table's stakes, escrowed
-import { deckOrderOf, claimIliac, iliacBoardOf, withIliacHonours } from './iliac.js';   // CARDS10: a ranked seat's deck vouched for, Iliac Hand's season board and its title
+import { deckOrderOf, claimIliac, iliacBoardOf, withIliacHonours } from './iliac.js';
+import { claimGambit, gambitBoardOf, withGambitHonours } from './gambit.js';   // KG6: The King's Gambit's season board and its GRANDMASTER   // CARDS10: a ranked seat's deck vouched for, Iliac Hand's season board and its title
 import { titleWorn, glyphsOf, glyphsHidden, auraWorn } from './titles.js';
 import { claimArena, arenaAttempt, arenaBoardOf, arenaTeam, withArenaHonours, arenaRatingOf, ARENA_HONOUR_PATHS, ARENA_RENOWN_REGION } from './arena.js';   // ARENA4: the arena's records, its board, its banners, and the honours the mint reads
 import { arenaSeasonOf } from '../../src/net/arenaLaw.js';
@@ -202,6 +209,7 @@ import { BUSY_RETRY_AFTER_S } from '../../src/net/busyLaw.js';   // BUSY-GATE: h
 import { sendLetter, inboxOf, readLetter, deleteLetter } from './letters.js';   // MAIL1: the letters' routes
 import { postBoxOf, readPost, claimPost, deletePost } from './post.js';   // SERVER-POST: the server's post
 import { reportRenownXp, renownTrackOf, renownTracksOf, renownCharacterOk } from './renownTracks.js';   // RENOWN1: Renown's track - RENOWN-CHAR: a character's again
+import { firmamentState, setFirmament, respecFirmament, FIRM_STATUS } from './firmament.js';   // FIRM1: the Firmament - a character's passive tree
 import { chaptersOpenFor, readRoll, claimRoll } from './npcRoll.js';   // CHAP1: the Roll - a realm character's standing with Daggerfall's guilds
 import { witnessHall, listHalls, strikeHall } from './npcHalls.js';
 import { creditReceipt } from './npcReceipts.js';   // CHAP2b: a receipt's standing and the chapter's receipt writ
@@ -843,6 +851,7 @@ const service = {
       const honoursCtx = { ...ctx, db: env.DB };
       if (ARENA_HONOUR_PATHS.has(path)) who.player = await withArenaHonours(honoursCtx, who.player, nowS);
       if (ARENA_HONOUR_PATHS.has(path)) who.player = await withIliacHonours(honoursCtx, who.player, nowS);   // CARDS10: and Iliac Hand's season #1 (iliac.js), on the same doors
+      if (ARENA_HONOUR_PATHS.has(path)) who.player = await withGambitHonours(honoursCtx, who.player, nowS);   // KG6: and The King's Gambit's (gambit.js)
 
       if (path === '/v1/auth/token' && request.method === 'POST') {
         const key = await signingKey(env, subtle);
@@ -1206,6 +1215,20 @@ const service = {
         return json(await iliacBoardOf(ctx, who.player, env), 200, origin);
       }
 
+      if (path === '/v1/gambit/claim' && request.method === 'POST') {
+        // KG6: A RATED KING'S GAMBIT'S RECEIPT, CARRIED HERE BY AN ACCOUNT IT NAMES - Iliac Hand's law (gambit.js
+        // claimGambit): the signature, the account, one row a game, both ratings. A refusal says its rung.
+        const r = await claimGambit(ctx, who.player, body.receipt, await gatePublicKey(env, subtle));
+        if (r.error) return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, r.error === 'no-gate-key' || r.error === 'busy' ? 503 : r.error === 'not-yours' ? 403 : 400, origin);
+        return json(r, 200, origin);
+      }
+
+      if (path === '/v1/gambit/board' && request.method === 'POST') {
+        // KG6: THE KING'S GAMBIT'S SEASON BOARD (Kings-Gambit.md 10.7: "a season board the Arena's way ... whose #1 over 10
+        // games against 5 foes wears GRANDMASTER"), counted from the rows, and the caller's own.
+        return json(await gambitBoardOf(ctx, who.player, env), 200, origin);
+      }
+
       if (path === '/v1/arena/team' && request.method === 'POST') {
         // ARENA4: A BANNER JOINED OR QUIT (`banner` 'red' | 'blue' | null). 403 for a guest; 409 for a banner the season
         // refuses (`season`) or one while another is worn (`joined`).
@@ -1237,6 +1260,19 @@ const service = {
           if (key) order = await mintRenownOrder({ s: who.player.id, lv: r.level }, key, { subtle, nowS });
         }
         return json({ ...r, order }, 200, origin);
+      }
+
+      // ═══ FIRM1: THE FIRMAMENT ═══════════════════════════════════
+      //
+      // A character's passive tree: read with its purses, and changed WHOLE - the law judges the tree asked for against the
+      // purses this service counts, and a refund's silver is burnt in the change's own batch (firmament.js).
+      if (path === '/v1/firmament/state' || path === '/v1/firmament/set' || path === '/v1/firmament/respec') {
+        if (request.method !== 'POST') return no('method', 405, origin);
+        const r = path === '/v1/firmament/state' ? await firmamentState(ctx, who.player, env, body)
+          : path === '/v1/firmament/set' ? await setFirmament(ctx, who.player, env, body)
+            : await respecFirmament({ ...ctx, bucket: env.SAVES }, who.player, env, body);   // a realm character's record is in R2
+        if ('error' in r) return json({ error: r.error, ...(Number.isSafeInteger(r.silver) ? { silver: r.silver } : {}), ...(r.error === 'seq' && Number.isSafeInteger(r.seq) ? { seq: r.seq } : {}) }, /** @type {Record<string, number>} */ (FIRM_STATUS)[r.error] ?? 400, origin);
+        return json(r, 200, origin);
       }
 
       // ═══ CHAP1: THE ROLL ═════════════════════════════════════════

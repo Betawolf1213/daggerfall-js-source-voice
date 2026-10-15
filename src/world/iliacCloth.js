@@ -3,7 +3,8 @@
 // Hold'em scene's way (world/cardScene.js): what the game's state says is where a card is, and this says how it lies and
 // how it got there. Section 3, DECIDED: "the physics is the picture, never the rules".
 //
-// THE LAY. The three holdings lie in a row across the table's middle, square to the line between the two players; each
+// THE LAY. The three holdings lie in a row across the table's middle, square to the line from there to seat 0's chair
+// (until AUDIT KG C1 these words said "the line between the two players", and a record was built on them); each
 // player's cards at a holding stand in a column from it toward his own side of the row (AUDIT CARDS-6 B3: seat 0's line,
 // for seat 1 turned round - a chair at an angle laid its column over the next holding), a little apart and each a little
 // higher than the one before (no two plates on one plane). Every card is turned to be read from the chair whose eyes look

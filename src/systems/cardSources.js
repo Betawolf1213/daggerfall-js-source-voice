@@ -44,9 +44,9 @@ import { BOSS_CARD_IDS } from './bossCards.js';
 
 const M = MOBILE_TYPES;
 /** Each foe's own card, by its mobile type: a creature its own, a calling the guild card it wears. A foe the first set
- *  has no card for drops none: the Grizzly Bear, the Sabertooth Tiger, the Spider, the Slaughterfish, the Mummy, the
- *  Frost and Fire Daedra, and the Bard, the Acrobat, the Monk, the Archer, the Ranger and the watch (AUDIT CARDS-6 A12:
- *  this list named six of the thirteen). */
+ *  has no card for drops none: the Bard, the Acrobat, the Monk and the watch (AUDIT CARDS-6 A12: this list named six of
+ *  the thirteen; KG-SET gave the Grizzly Bear, the Sabertooth Tiger, the Spider, the Slaughterfish, the Mummy, the Frost
+ *  and Fire Daedra, the Archer and the Ranger their own - AUDIT KG II E19: the list still named them). */
 export const FOE_CARDS = Object.freeze({
   [M.Rat]: 'rat', [M.Imp]: 'imp', [M.Spriggan]: 'spriggan', [M.GiantBat]: 'giant-bat', [M.Orc]: 'orc', [M.Centaur]: 'centaur',
   [M.Werewolf]: 'werewolf', [M.Nymph]: 'nymph', [M.OrcSergeant]: 'orc-sergeant', [M.Harpy]: 'harpy', [M.Wereboar]: 'wereboar',
@@ -57,11 +57,15 @@ export const FOE_CARDS = Object.freeze({
   [M.Dragonling]: 'dragonling', [M.Dragonling_Alternate]: 'dragonling', [M.FireAtronach]: 'fire-atronach',
   [M.IronAtronach]: 'iron-atronach', [M.FleshAtronach]: 'flesh-atronach', [M.IceAtronach]: 'ice-atronach',
   [M.Dreugh]: 'dreugh', [M.Lamia]: 'lamia',
+  // KG-SET (2026-10-13, Kings-Gambit.md section 10.3): seven foes that dropped no card drop their own now
+  [M.GrizzlyBear]: 'grizzly-bear', [M.SabertoothTiger]: 'sabretooth-tiger', [M.Spider]: 'spider', [M.Slaughterfish]: 'slaughterfish',
+  [M.Mummy]: 'mummy', [M.FrostDaedra]: 'frost-daedra', [M.FireDaedra]: 'fire-daedra',
   // the callings - the guild card each one's work is
   [M.Mage]: 'mages-guild-apprentice', [M.Battlemage]: 'mages-guild-battlemage', [M.Sorcerer]: 'mages-guild-battlemage',
   [M.Healer]: 'priest-of-arkay', [M.Nightblade]: 'nightblade', [M.Burglar]: 'thieves-guild-filcher', [M.Thief]: 'thieves-guild-filcher',
   [M.Rogue]: 'thieves-guild-crook', [M.Assassin]: 'dark-brotherhood-assassin', [M.Warrior]: 'fighters-guild-swordsman',
   [M.Barbarian]: 'fighters-guild-swordsman', [M.Knight]: 'knight-of-the-wheel', [M.Spellsword]: 'knight-of-the-dragon',
+  [M.Archer]: 'archer', [M.Ranger]: 'ranger',   // KG-SET: their own cards
 });
 /** MEASURE (CARDS9): a foe's card, per mille of its deaths, by its card's tier - about one rat in sixty, one Ancient
  *  Lich in three hundred. */

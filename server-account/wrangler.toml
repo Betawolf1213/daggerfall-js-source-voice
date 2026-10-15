@@ -108,7 +108,7 @@ crons = ["* * * * *", "41 * * * *"]
 [vars]
 # Answered by /health so a deploy that did not happen cannot look like
 # one that did. Kept in step with ACCOUNT_VERSION in src/service.js.
-ACCOUNT_VERSION = "acct133"
+ACCOUNT_VERSION = "acct134"
 # WB5b: THE RELAY'S PUBLIC HALF, GATE_PUBLIC_KEY - the key an Oblivion
 # Gate's kill receipts verify with (src/net/gateReceipt.js) - is NOT a
 # var here. GATE-KEYS (2026-09-26): the account deploy mints the pair
@@ -236,6 +236,11 @@ SEATS_OPEN = "on"
 # patch notes had told everyone; Field-Bugs-2026-10-12.md): "on" - the Chapters are everyone's. CHAPTER_TITLES below is
 # its own switch and stays off.
 CHAPTERS_OPEN = "on"
+# FIRM1 (bible/06-Systems/Firmament.md): THE FIRMAMENT by this switch - "off", "dev" (the DEVELOPER_HANDLES alone) or
+# "on". Shipped at "dev": the developers plan their trees, pay their refunds and gather under them first; opened to
+# everyone by this one line. FIRMAMENT-ON (2026-10-15, the owner, at the audit's merge: "switch it on for players"):
+# "on" - the Firmament is everyone's.
+FIRMAMENT_OPEN = "on"
 # CHAP4c (Chapters-Arc 6): THE CHAPTERS' TITLES - a seat's Master, officer and Former Master signed on the token - by
 # this switch, "on" or anything else for off. Shipped OFF: the relay must carry the five ids first (RELAY_VERSION
 # world183, which relay-deploy.yml deploys on the merge to main - AUDIT CHAP4 R2; CHAP6e's High Master and Season

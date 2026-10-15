@@ -341,7 +341,7 @@
   {
     "name": "CRAFT4-svc-no-xp",
     "file": "server-account/src/professions.js",
-    "old": ".bind(player.id, character, rid, r.id, provenance, quality + 1, cost.key, cost.n, temperXp(r, rank), nowS, nonce, craft),",
+    "old": ".bind(player.id, character, rid, r.id, provenance, quality + 1, cost.key, cost.n, xp, nowS, nonce, craft),",
     "new": ".bind(player.id, character, rid, r.id, provenance, quality + 1, cost.key, cost.n, 0, nowS, nonce, craft),",
     "tests": [
       "test/craft4_temper.test.js"
@@ -350,8 +350,8 @@
   {
     "name": "CRAFT4-svc-made-quality",
     "file": "server-account/src/professions.js",
-    "old": ".bind(player.id, character, rid, r.id, provenance, quality + 1, cost.key, cost.n, temperXp(r, rank), nowS, nonce, craft),",
-    "new": ".bind(player.id, character, rid, r.id, provenance, quality, cost.key, cost.n, temperXp(r, rank), nowS, nonce, craft),",
+    "old": ".bind(player.id, character, rid, r.id, provenance, quality + 1, cost.key, cost.n, xp, nowS, nonce, craft),",
+    "new": ".bind(player.id, character, rid, r.id, provenance, quality, cost.key, cost.n, xp, nowS, nonce, craft),",
     "tests": [
       "test/craft4_temper.test.js"
     ]

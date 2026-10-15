@@ -210,8 +210,9 @@ test('PLUS-MENU: the doors are the kit\'s buttons, given the edge the role paint
   assert.match(MENU_CSS, /\.px-home \.px-rule::before \{ background: linear-gradient\(90deg, transparent, #7a5424 45%, #f3cf86\); \}/, 'the rule under the wordmark gilt');
   // AUDIT M2: standing at rest, the diamonds would be every door's name - "◆ Continue ◆" - so each is hidden from a reader
   const menu = src('src/ui/enhancedMenu.js');
-  const doorLoop = menu.slice(menu.indexOf("const b = el('button', `doorbtn door-${id}`);"), menu.indexOf('menu.append(b);', menu.indexOf("const b = el('button', `doorbtn door-${id}`);")));
-  assert.match(doorLoop, /const dia = \(\) => \{ const d = el\('span', 'px-c', '\\u25c6'\); d\.setAttribute\('aria-hidden', 'true'\); return d; \};\n\s+b\.append\(dia\(\), document\.createTextNode\(railLabel\(label\)\), dia\(\)\);/);
+  // UI-CALM: every door is built by the one maker (doorBtn) - the drawn diamonds either side of its words
+  const doorMaker = menu.slice(menu.indexOf('function doorBtn('), menu.indexOf('return b;', menu.indexOf('function doorBtn(')));
+  assert.match(doorMaker, /const dia = \(\) => \{ const d = el\('span', 'px-c', '\\u25c6'\); d\.setAttribute\('aria-hidden', 'true'\); return d; \};\n[^]*b\.append\(dia\(\), word, dia\(\)\);/);
   // every Plus colour dresses them: the theme rules are walked out of the same role list
   assert.match(PLUS_CSS, /:root\[data-plus-theme="stone"\] \.px-menu \.doorbtn/);
 });

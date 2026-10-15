@@ -51,7 +51,7 @@ import { arenaReplaysRestore } from '../systems/arenaReplay.js';   // ARENA5: yo
 import { createArenaGate, nearArenaGate } from './arenaGate.js';   // ARENA3; ARENA4b: the Herald's choice and the pause door's banner too
 import { createArenaOnline } from './arenaOnline.js';   // ARENA4: the arena online - the hall, a relay's bout, the boards and the receipts
 import { arenaFloorRoomOf } from '../net/arenaLaw.js';   // ARENA4: a bout's room (ARENA4b: or the hour's exhibition's)
-import { accountArena, accountIliac, iliacRefusalText } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
+import { accountArena, accountIliac, iliacRefusalText, accountGambit } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
 import { fighterIdentity } from '../systems/arenaFighters.js';   // ARENA4: the relay's fighters billed by the bout's seed
 import { bossStandIn } from '../world/gateBoss.js';   // ARENA4: my opponent's stand-in for the formulas
 import { closeArenaDoor, arenaDoorOpen } from '../ui/arenaDoor.js'; import { createArenaSessionButton } from '../ui/arenaSessionButton.js';   // HOTFIX 1003f: the session's button on the screen   // ARENA4: the window goes when a bout calls
@@ -313,6 +313,8 @@ import { refinedText, chainStopText } from '../net/chainLaw.js';   // CRAFT1: wh
 import { createMarketBook } from '../net/marketBook.js';   // PROF5: the market's book
 import { createCardStakes } from '../net/cardStakes.js';   // CARDS6: a realm character's card stakes
 import { createIliacClaims } from '../net/iliacClaims.js';   // CARDS10: the ranked games' results carried to the service
+import { createGambitClaims } from '../net/gambitClaims.js';   // KG6: and The King's Gambit's rated games'
+import { seasonCounted, seasonKept, seasonGuest, seasonFoeGuest } from '../ui/gambitTableWords.js';   // KG6: what the season's claims say
 import { createWritBook } from '../net/writBook.js';   // PROF6: guild writs, commissions, the guild Stores
 import { wearCondition, wearOf, WEAR_WHOLE } from '../net/marketLaw.js';   // PROF5: a bought piece's wear; PROF6: a commission's piece unworn
 import { commissionFilledBy } from '../net/writLaw.js';   // AUDIT 31 L8: a piece that answers a commission, the law's own test
@@ -495,7 +497,7 @@ import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk.js';   // GetRan
 import { spellRecordOfIndex, DUNGEON_LOOT_KEYS, generateItems as generateLootItems, addPileLootExtras, shownSpellName } from '../systems/loot.js';   // QG1: CastSpellDo's classic-record read (the G4 registry); WOD3: LootTables.GenerateLoot for the camps' piles; L10N3e: a spell's name as shown
 import { preloadCharSheetArt } from '../ui/charsheet.js';   // U8a. AUDIT 44 (a11): no LevelUpScreen here - a level-up opens the SHEET, and the skin fork behind charSheetDoor decides which face it wears.
 import { createCharSheetWindow, charSheetDoorReady, warmLevelUpWindow } from '../ui/charSheetDoor.js';
-import { announceLevelUp, levelOwed, announceQuestFoeSlain, questFoeName } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
+import { announceLevelUp, levelOwed, announceRenownRise, announceQuestFoeSlain, questFoeName } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
 import { preloadQuestJournalArt } from '../ui/questJournal.js';   // U43: the LogBook and NoteBook doors
 import { createChronicleWindow } from '../ui/chronicleDoor.js';   // PX24d: the chronicle's one door
 import { openPixelDial, setDialOpenHook } from '../ui/pixelDial.js';   // PX15: the Tab compass rose
@@ -735,7 +737,11 @@ import { createSeatLock, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../
 import { readAccount, buyInsignia, equipTitle, equipAura, adoptIdentity as adoptSessionIdentity } from '../net/accountClient.js';   // WB9g: the Broker's insignia - the account's wardrobe, its sale and its wearing, and my own screen's word of it
 import { ownAura, ownNameAsAt } from '../systems/ownGlyphs.js';   // WB9g: the aura at my own feet - the service's last word, kept on the stored session; NAME-AS: and when this device last chose the name its player wears
 import { INSIGNIA, insigniaRefusal } from '../net/insignia.js';   // WB9g
-import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, accountLamp, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
+import { createFirmamentBook, setFirmamentBook } from '../net/firmamentBook.js';   // FIRM1: the Firmament - this device's tree and purses
+import { setFirmamentTree, setFirmamentOnline, setFirmamentMentoring } from '../systems/firmamentLive.js';   // FIRM1: the tree in force, online alone
+import { starsFor } from '../net/firmamentLaw.js';   // FIRM1: the Stars a Renown level brings, said with it
+import { withoutFirmament } from '../systems/firmamentPowers.js';   // FIRM1: a strike or a spell at a player - a duel's, a siege's, the Wrothgarian zone's - is rolled with the sky off
+import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, accountLamp, accountFirmament, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
 import { parseModCommand, runModCommand, mutedText, mutedNotices } from '../net/moderation.js';   // MOD1: /mute and /unmute, and the line a muted player reads
 import { createHeartbeat, whileLive } from '../net/heartbeat.js';   // SCALE4c: the beat, the letterbox and the town's board in one request
 import { startPlayClock } from '../net/playClock.js';   // ACC4: time played, knocked from here and measured by the account service's clock
@@ -1052,7 +1058,8 @@ import { etherPlaceRects } from '../world/etherWatersBake.js';   // ETHER-DEEP: 
 import { breathStep, setWaterBreathingRule } from '../systems/breath.js';   // DW-D: the dungeon's breath law, on the open sea; ApplyArgonianInfiniteBreath
 import { CLASSIC_UPDATE_INTERVAL } from '../characters/weaponStates.js';   // DW-D: PlayerEntity's classic cadence, the dungeon's import
 import { RACES } from '../systems/races.js';   // DW-D: ArgonianInfiniteBreath
-import { localizedStrings, localizedText, getLocalizedLocationName, getLocalizedRegionName, getLocalizedFactionName } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the names shown
+import { localizedStrings, localizedText, getLocalizedLocationName, getLocalizedRegionName, getLocalizedFactionName } from '../systems/textManager.js';
+import { stakedSaveRefusal } from '../ui/gambitTableWords.js';   // KG3: the save's refusal while gold is staked on The King's Gambit   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the names shown
 import { hallStepsFor, harbourPortFor, coastalAt } from '../net/fortLaw.js';   // SEAT2b part two: a seat's crafting halls, its members' Harbour, a coast
 import { isWaterPixel } from '../ui/overworldModel.js';   // SEAT2b part two: a coast is the sea beside the town (the port's one water law)
 import { createSiegeNpcs } from './siegeNpcs.js';   // SEAT2b part two (c): the Barracks' guards and a revolt's rising, drawn
@@ -1200,6 +1207,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   if (params.has('online')) { setSharedClock(() => sharedClassicMinutes(Date.now() + _sharedOffsetMs), (m) => wallMsForClassicMinutes(m) - _sharedOffsetMs, { sky: () => skyClassicMinutes(Date.now() + _sharedOffsetMs), skyWall: (m) => wallMsForSkyMinutes(m) - _sharedOffsetMs }); setSharedWeather(true); }   // and the day picks the sky from here on (weatherSim); OL3: the inverse beside it, for the prices said in real time
   let _sharedClockHeard = false;   // AUDIT ONLINE2 F2: whether it has been - a receipt's life is the relay's, never this device's
   setSigilOnline(params.has('online'));   // SIGIL1: this session plays online - before any list is minted (a pile rolls at a dungeon's build)
+  setFirmamentOnline(params.has('online'));   // FIRM1: and the Firmament is in force online alone
   // SET3: THE SETS' VOICE - a power's line on the HUD (the default), and its sound: Unbroken's the parry's ring, the
   // Wrath's a fire cast (element 0), Eventide's a magic cast (element 4 - Chameleon's own, as its bundle carries)
   setSetsWearer(() => playerEntity);   // SET5: the classic tooltip's and a plaque's set lines read my worn sets
@@ -1905,6 +1913,25 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     ? createProfBook({ door: accountProf({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }), storage: appStorage(),
       character: () => characterIdOf(playerEntity), now: () => Date.now() + _sharedOffsetMs, carry: carryHands })
     : null;
+  // FIRM1 (bible/06-Systems/Firmament.md): THE FIRMAMENT'S BOOK - the character's passive tree and its purses as the account
+  // service keeps them (net/firmamentBook.js); what it hears is the tree in force (systems/firmamentLive.js), and the window
+  // (ui/firmamentWindow.js) reads the page's book where any door opens it. Online only: offline there is no sky.
+  const firmBook = params.has('online')
+    ? createFirmamentBook({ door: accountFirmament({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }), storage: appStorage(),
+      character: () => characterIdOf(playerEntity),
+      // THE RESPEC's gold (FIRM_RESPEC_GOLD): a realm character's record pays it on the service in the respec's own batch,
+      // the purse checkpointed first (realmSaves.js realmGoldAct); the wallet is the purse, its letters, then the Empire's
+      // account (realmGoldLaw payFromSave; court.js payUndoable), as a guild's founding pays
+      realm: realmSession ? { act: (o) => realmGoldAct({ ...o, session: realmSession, checkpoint: () => onlineCheckpoint() }) } : null,
+      wallet: () => {
+        playerEntity.bankAccounts ??= createBankAccounts(BANK_REGION_COUNT);
+        const region = _questRegionIndex() ?? 0;
+        const bank = playerEntity.bankAccounts[goldRegion(playerEntity.bankAccounts, region)] ?? null;   // EMPIRE-ACCOUNT
+        return { gold: () => totalGoldAmount(playerEntity) + Math.max(0, bank?.accountGold ?? 0), pay: (n) => payUndoable(playerEntity, n, bank), credit: (n) => addGold(playerEntity, n), region: () => region };
+      } })
+    : null;
+  setFirmamentBook(firmBook);
+  firmBook?.onChange((st) => setFirmamentTree(st.tree));
   // PROF5 (bible/06-Systems/Professions-Arc.md 26): the market's book - the Market tab's reads through a minute's cache,
   // a piece listed, bought, cancelled back or collected KEPT before it is asked (net/marketBook.js). Its answers tell the
   // Marks book the balance. Online only.
@@ -1955,6 +1982,15 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       nowS: () => (_sharedClockHeard ? Math.floor((Date.now() + _sharedOffsetMs) / 1000) : null), nowMs: () => Date.now() + _sharedOffsetMs,
       onCounted: (a) => townTalk?.say?.(a.rated ? `Iliac Hand: the game is on the season's board - your rating ${a.rating} (${a.delta >= 0 ? '+' : ''}${a.delta}).` : 'Iliac Hand: the game is kept, but not counted - you have played that opponent often enough today.'),
       onGuest: () => townTalk?.say?.('Iliac Hand: register your account to keep your ranked games on the board.') })
+    : null;
+  // KG6 (bible/11-Multiplayer/Kings-Gambit.md section 19): THE KING'S GAMBIT'S SEASON BOARD - the service's door, and the
+  // rated games' signed results this device carries to it (net/gambitClaims.js), Iliac Hand's carrier on its own store
+  const gambitDoor = accountGambit({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
+  const gambitClaims = params.has('online')
+    ? createGambitClaims({ claim: (r) => gambitDoor.claim(r), store: { get: (k) => _spoilsStore.get(k), set: (k, v) => _spoilsStore.set(k, v) }, me: () => gambitDoor.me(),
+      nowMs: () => Date.now() + _sharedOffsetMs, nowS: () => (_sharedClockHeard ? Math.floor((Date.now() + _sharedOffsetMs) / 1000) : null),   // the relay's clock, as Iliac Hand's carrier reads it (AUDIT CARDS-6 D9)
+      onCounted: (a) => townTalk?.say?.(a.rated ? seasonCounted(a.rating, a.delta) : seasonKept(a.cap)),   // AUDIT KG II D11: which cap
+      onGuest: () => townTalk?.say?.(seasonGuest()), onFoeGuest: () => townTalk?.say?.(seasonFoeGuest()) })   // AUDIT KG II D10
     : null;
   // PROF6 (bible/06-Systems/Professions-Arc.md 28): the writs' book - a guild writ posted, supplied, withdrawn; a
   // commission posted, filled (the piece KEPT before it is asked), cancelled, declined; the guild Stores (net/writBook.js).
@@ -10203,6 +10239,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       covered: townTalk.hudCovered || (modes?.hudCovered ?? false) || gamePaused() || !hudRenderEnabled() || !!travelView?.active || !!_travelUIHolder.ui?.isShowing,
       touch: !!touch, mouseFree: show && (cursorActive() || pointerSurfaces.size > 0 || !document.pointerLockElement),
       freeKey: csaKeyLabel('FreeMouse'), keyOf: csaKeyLabel,
+      toggle: show && hccActionPressed('SaddlePanel'),   // UI-CALM: the panel's key (F2) - up and away
     });
   }
   /** CSA-L: THE HELM PANEL (ui/enhancedHelm.js) - Enhanced Plus, at the helm, or aboard another's boat (whose). Once a
@@ -15061,6 +15098,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (modes?.cardTableLive?.()) { if (!quiet) townTalk.say('You cannot save with chips on the table.'); return false; }
     // CARDS10: nor with a card staked on a game of Iliac Hand - the card it may cost is in no save
     if (modes?.iliacStaked?.()) { if (!quiet) townTalk.say('You cannot save with a card staked on the table.'); return false; }
+    if (modes?.gambitStaked?.()) { if (!quiet) townTalk.say(stakedSaveRefusal()); return false; }   // KG3: gold staked on The King's Gambit (Kings-Gambit.md 5.7)
     const pf = walkMode && playerSpawned ? player.pos : cam.pos;
     const wc = state.worldCoords(pf);
     // IS1 (AUDIT 26 F221): the inside-building half (SerializablePlayer
@@ -17076,7 +17114,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     quickSave: worldQuickSave,
     quickLoad: worldQuickLoad,
     relock: () => requestLook(canvas),   // MAC1: the pointer comes back with the resume gesture (ui/pauseDoor.js)
-    savingPrevented: () => !!naval?.saveRefused?.() || !!modes?.cardTableLive?.() || !!modes?.iliacStaked?.(),   // AUDIT NAV1 (B14): the pause's Save says why, as worldQuickSave refuses it; AUDIT CARDS-2 H1: and chips on a card table
+    savingPrevented: () => !!naval?.saveRefused?.() || !!modes?.cardTableLive?.() || !!modes?.gambitStaked?.() || !!modes?.iliacStaked?.(),   // AUDIT NAV1 (B14): the pause's Save says why, as worldQuickSave refuses it; AUDIT CARDS-2 H1: and chips on a card table
     // ONLINE-LOAD1: this host's own live-session flag (`online`,
     // not `onlineOn` - see worldQuickLoad's own header for why),
     // for the enhanced Load pane (enhancedMenu.js paneLoad) to
@@ -18041,6 +18079,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     paused: () => gamePaused(),
     cardTable: () => !!modes?.cardSeated?.(),   // CARDS-TOUCH: seated at a card table, the finger is the table's (ui/touch.js)
     cardHeld: () => !!modes?.cardPressHeld?.(),   // AUDIT CARDS-6 E1: a finger the cards took is never the stick (ui/touch.js)
+    board: { up: () => !!modes?.gambitBoardUp?.() },   // AUDIT KG II C4: at a King's Gambit battle the pad's d-pad is the board's cursor (ui/gamepadInput.js)
   };
   const touch = attachTouch(canvas, inputHooks);
   const gamepad = attachGamepad(canvas, inputHooks);   // GP1: null without the Gamepad API
@@ -20468,6 +20507,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!onlineOn || !Number.isSafeInteger(level) || level < 1) return renownNow;
     if (renownNow !== null && level <= renownNow) return renownNow;
     renownNow = level;
+    firmBook?.read().catch(() => {});   // FIRM1: a Renown level is a Star - the purses read again (and the tree, the first time)
     if (!seatOut()) setRenownLayer(playerEntity, level);   // AUDIT ONESEAT H3: a tab out of the seat is offline - its layer waits for Play online here
     setSigilRenown(level);   // SIGIL1: my Renown wakes the sigils - offline, and online until it is known, they sleep
     computeEntityMods(playerEntity);   // SET3: a set's stat tier wakes, or rises a stage, with my Renown - now, not at the next round
@@ -20780,6 +20820,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // speaks of that hour, whenever it arrives
   let _renownSentHour = null;
   let renownSaid = null;   // AUDIT RENOWN1 UI-5: the highest level the page has announced - a rise is said against this, never against renownNow
+  /** FIRM1: A RENOWN LEVEL, SAID AS AN ASCEND IS (the lead dev: "when leveling up a renown give the player the same
+   *  message as he would ascend") - the level's fanfare and the strip's gold row (ui/levelNotice.js announceRenownRise),
+   *  with the Stars it brought for the Firmament. */
+  const renownRose = (level) => {
+    const was = renownSaid ?? level - 1;
+    renownSaid = level;
+    announceRenownRise(level, { stars: starsFor(level) - starsFor(was), say: (t) => townTalk.say(t) });
+  };
   // SCALE4h: what the hour's bound still takes, as the last report's answer said it - with the hour and the total it was
   // said at, so another hour, or a total another door moved (a raid's, a serpent's, a writ's, a siege's), is a room not
   // known, and the next report goes at the minute's pace to learn it (net/renownTracker.js renownReportSoon)
@@ -20797,7 +20845,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.room !== null) _renownRoom = { room: a.room, hour: renownHour(), xp: renownXp };   // SCALE4h
       renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);   // the rooms I am in hear it now - and again until each answers
-      if (a.announce !== null) { renownSaid = a.announce; townTalk.say(`Your Renown is now ${a.announce}.`); }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
       // AUDIT SCALE II C-3: THE CAP IS THE SENT HOUR'S. A report sent at 10:59:59.7 and answered capped at 11:00:00.3 spoke
       // of hour 10 - stamped with the hour it ARRIVED in, it marked hour 11 spent, and `earning` then kept nothing for the
       // whole of hour 11. A cap is kept only while the hour it was sent in is still the page's
@@ -21296,6 +21344,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     online.onChat = (line) => { if (localLineHeard(line, peersNear(), player.feetAt())) chatLog.push('local', line); };
     online.onRoll = (line) => { if (localLineHeard(line, peersNear(), player.feetAt())) chatLog.push('local', line); };   // DICE1: a roll at the table is heard as a line is
     online.onIliac = (f) => modes?.iliacOnlineFrame?.(f);   // CARDS10: the relay's Iliac table, to the room's host
+    online.onGambit = (f) => modes?.gambitOnlineFrame?.(f);   // KG5: the relay's King's Gambit table, to the room's host
     online.onHoldem = (f) => modes?.cardOnlineFrame?.({ ...f, at: performance.now() });   // CARDS5: the relay's card table, to the room's host - AUDIT CARDS-3 D1: on the cloth's clock (the session's own `now` is the epoch's)
     for (const tab of chatLog.tabs) {
       if (!tab.link) continue;   // CHAT-CHAN: the Party and Local tabs ride the hub's link and the presence session's room
@@ -22143,7 +22192,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  back as `duelHpIn`. */
   const duelStrikeOut = (by, weapon, swing, drawMs = 0, to = null) => {
     if (!duelMgr.fighting) return siegeStrikeOut(to, by, weapon, swing, drawMs);   // AUDIT-SEATS G5: outside a duel, my shaft on a battle's foe (`to`)
-    const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
+    const a = withoutFirmament(playerEntity, () => duelAttackerOf(playerEntity, weapon)), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
     const at = drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {};
     const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStandIn());
     if (!(r.dmg > 0)) { reportPlayerAttack({ hit: false, damage: 0, critical: false, backstab: false, ineffective: false }); return true; }
@@ -22156,7 +22205,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const duelSpellOut = (peerId, sp) => {
     if (!duelMgr.fighting) return siegeSpellOut(peerId, sp);   // AUDIT-SEATS G5: outside a duel, my spell on a siege's foe
     if (peerId !== duelMgr.opponent) return false;
-    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity);
+    const { harm } = withoutFirmament(playerEntity, () => siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity));
     if (!(harm > 0)) return false;
     const n = duelMgr.blow('spell', { p: campToWire(player.feetAt()), d: siegeCastClamp(harm, false) });
     if (n) { _duelSent.set(n, { kind: 'spell', weapon: null }); if (_duelSent.size > 64) _duelSent.delete(_duelSent.keys().next().value); }
@@ -22211,7 +22260,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const size = to === SIEGE_WORK_IDS.gate ? SIEGE_GATEHOUSE.sizeM : SIEGE_RAM.sizeM;
     if (Math.hypot(me[0] - at[0], me[2] - at[1]) / SIEGE_UNITS_PER_M > SIEGE_REACH.melee + size) return false;
     const weapon = weaponRig.playerWeapon.strikingWeapon;
-    const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(weaponRig.playerWeapon.machine?.state);
+    const a = withoutFirmament(playerEntity, () => duelAttackerOf(playerEntity, weapon)), w = duelWeaponOf(weapon), sw = duelSwingOf(weaponRig.playerWeapon.machine?.state);
     const r = resolveDuelStrike({ by: 'melee', a, ...(w ? { w } : {}), ...(sw ? { sw } : {}) }, duelStandIn());
     if (r.dmg > 0) {
       const held = weapon ? (composeLook(playerEntity)?.items ?? []).find((i) => i?.group === 'Weapons' && i.templateIndex === weapon.templateIndex) ?? null : null;
@@ -22226,7 +22275,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const siegeStrikeOut = (to, by, weapon, swing, drawMs = 0) => {
     const battle = royalSession?.active() ? royalSession : siegeSession;
     if (!to || !battle?.active() || !battle.foes().includes(to)) return wildStrikeOut(to, by, weapon, swing, drawMs);   // WILD1: not the battle's - perhaps a fair player of the open zone's
-    const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
+    const a = withoutFirmament(playerEntity, () => duelAttackerOf(playerEntity, weapon)), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
     const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...(drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {}) }, duelStandIn());
     if (r.dmg > 0) {
       const held = weapon ? (composeLook(playerEntity)?.items ?? []).find((i) => i?.group === 'Weapons' && i.templateIndex === weapon.templateIndex) ?? null : null;
@@ -22264,7 +22313,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  (combat/siegeCombat.js siegeSpellNumbers), to the referee as a cast (it clips, and bounds the rate). */
   const siegeSpellOut = (peerId, sp) => {
     if (!siegeSession?.isFoe(peerId)) return wildSpellOut(peerId, sp);   // WILD1: not the siege's - perhaps a fair player of the open zone's
-    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity);
+    const { harm } = withoutFirmament(playerEntity, () => siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity));
     return harm > 0 && siegeSession.cast(peerId, siegeCastClamp(harm, false));
   };
   /** AUDIT-SEATS G5: A GIFT OF MINE ON A SIEGE'S SIDE-MATE - its Heal Health, counted as the mate's own client would land
@@ -22825,7 +22874,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  zone's. */
   const wildStrikeOut = (to, by, weapon, swing, drawMs = 0) => {
     if (!wildFair(to)) return false;
-    const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
+    const a = withoutFirmament(playerEntity, () => duelAttackerOf(playerEntity, weapon)), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
     const at = drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {};
     const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStandIn());
     if (!(r.dmg > 0)) { reportPlayerAttack({ hit: false, damage: 0, critical: false, backstab: false, ineffective: false }); zoneWatchCall(); return true; }
@@ -22837,7 +22886,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  (combat/siegeCombat.js siegeSpellNumbers, a siege's way), to the referee as a cast (it clips, and bounds the rate). */
   const wildSpellOut = (peerId, sp) => {
     if (!wildFair(peerId)) return false;
-    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity);
+    const { harm } = withoutFirmament(playerEntity, () => siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity));
     if (!(harm > 0)) return false;
     const n = wildFight.blow(peerId, 'spell', { p: campToWire(player.feetAt()), d: siegeCastClamp(harm, false) });
     if (n) zoneWatchCall();
@@ -23616,7 +23665,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.xp !== null) renownXpAdopt(a.xp);
       if (a.level !== null) renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);
-      if (a.announce !== null) { renownSaid = a.announce; townTalk.say(`Your Renown is now ${a.announce}.`); }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
     },
     verdictHeard: () => arenaGate.settle(),   // ARENA4b: an exhibition's verdict asked of its room settles the book as it comes
   });
@@ -23660,7 +23709,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.xp !== null) renownXpAdopt(a.xp);
       if (a.level !== null) renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);
-      if (a.announce !== null) { renownSaid = a.announce; townTalk.say(`Your Renown is now ${a.announce}.`); }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
     },
   }) : null;
   /** SERPENT1: THE SERPENT RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/serpentClaims.js) - each kill the
@@ -23681,7 +23730,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.xp !== null) renownXpAdopt(a.xp);
       if (a.level !== null) renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);
-      if (a.announce !== null) { renownSaid = a.announce; townTalk.say(`Your Renown is now ${a.announce}.`); }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
     },
   }) : null;
   /** SD9b: THE HOUR'S RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/sdClaims.js) - each Brass Remnant's fall
@@ -24162,6 +24211,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     serpentClaims?.tick();
     sdClaims?.tick();   // SD9b: what the account service has not counted yet, offered again on its own clock
     iliacClaims?.tick();   // CARDS10: and the ranked Iliac games', on theirs
+    gambitClaims?.tick();   // KG6: and The King's Gambit's rated games', on theirs
     _serpentFight = false;
     if (!serpentHost) return;
     const street = (modes?.mode ?? 'exterior') === 'exterior' && playerSpawned && playerEntity.health > 0 && !modes?.deathUp?.();
@@ -27115,13 +27165,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const profWritTaken = (r) => {
     const d = r?.data ?? {};
     if (Number.isSafeInteger(d.balance)) marksBook?.set(d.balance);
-    let rose = '';
     if (d.renown) {
       const a = renownAnswer({ ...d.renown, order: d.order ?? null }, d.renown.credited ?? 0, renownSaid);
       if (a.xp !== null) renownXpAdopt(a.xp);
       if (a.level !== null) renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);
-      if (a.announce !== null) { renownSaid = a.announce; rose = ` Your Renown is now ${a.announce}.`; }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is (the fanfare and the strip's row), not tacked onto the writ's line
     }
     // PROF6 (FOUND): the XP is the writ's material's profession's - a metal writ's Mining, a wood writ's Logging - never
     // always Herbalism's, as this line said since PROF2 (the answer's track names it)
@@ -27134,7 +27183,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (isChapterWrit(d.writ?.kind)) rollTracker?.refresh();
     const hall = isChapterWrit(d.writ?.kind) && !d.repeat && rollTracker?.held ? hallPosterName(d.writ.faction) : null;
     const merit = hall && Number(d.merit) > 0 ? `, ${Number(d.merit).toLocaleString('en-US')} Merit to its chapter here` : '';
-    return `Writ filled: ${Number(d.pay ?? 0).toLocaleString('en-US')} silver struck to your account, ${Number(d.renown?.credited ?? 0).toLocaleString('en-US')} Renown and ${Number(d.pay ?? 0) * 2} ${prof} XP.${hall ? ` The ${hall} will remember it${merit}.` : ''}${rose}`;
+    return `Writ filled: ${Number(d.pay ?? 0).toLocaleString('en-US')} silver struck to your account, ${Number(d.renown?.credited ?? 0).toLocaleString('en-US')} Renown and ${Number(d.pay ?? 0) * 2} ${prof} XP.${hall ? ` The ${hall} will remember it${merit}.` : ''}`;
   };
   /** SD2c: the server's word on a found Super dungeon while it stands - the map's own mark, under the red seal. */
   const noticeSdCard = () => sdNoticeCard(sdHost?.mapMark() ?? null, sdHost?.hollow()?.site?.cityName ?? '');
@@ -27364,6 +27413,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // leaving the group hands my real character back the same frame.
     const mentorLevels = social?.party ? social.others().filter((m) => m.online !== false && Number.isInteger(m.p?.cl)).map((m) => m.p.cl) : [];
     const mentorWord = refreshMentor(playerEntity, mentorLevels);
+    setFirmamentMentoring(!!playerEntity._mentor);   // AUDIT UICALM-FIRM1 L1 L2: the sky sleeps the frame mentoring starts, and wakes the frame it ends
     if (mentorWord) {
       const text = mentorWord === 'on' ? mentorStatusText(playerEntity) : 'Mentoring ended - your real level, skills, attributes and gear are back.';
       try { chatLog.push(chatLog.active, { text, system: true }); } catch { /* no chat yet: the sheet says it too */ }
@@ -28174,6 +28224,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     camps.sweepOwners(new Set(), now); hcc.pruneKept([], now);
     // AUDIT ONESEAT H3: offline now - the sigil in hand drinks nothing and a weapon won here is won offline (SIGIL1), and
     // the Renown layer is off, as it is for every offline character (RENOWN1); Play online here puts both back
+    setFirmamentOnline(false);   // FIRM1: the sky sleeps offline, as the sigils do
     setSigilOnline(false); setRenownLayer(playerEntity, null); computeEntityMods(playerEntity);   // SET3 (main's, at the merge): the sets sleep with the sigils - their stat tiers folded out now, as a Renown rise folds them in
     wagonRiders?.clear();   // WAGONS2 (FINAL AUDIT): offline, nobody rides with me nor I with anyone - my riders' seats were kept for the gone, my companions walking at heel and every journey waiting GO_LEAD_MS on them
     caravanVisitLink.close();   // WAGONS2-VISIT: and the visited caravan's listener goes with the seat
@@ -28191,6 +28242,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const takeSeat = () => {
     if (!seatOut()) return;
     _seatOut = false; _seatLeft = false; _seatSaid = false;
+    setFirmamentOnline(true);   // FIRM1: and the sky wakes with them
+    firmBook?.read().catch(() => {});   // AUDIT UICALM-FIRM1 L1 L3: as the service holds it now - another tab may have respecced or refunded while this one sat out
     setSigilOnline(true); setSigilRenown(renownNow); setRenownLayer(playerEntity, renownNow); computeEntityMods(playerEntity);   // AUDIT ONESEAT H3: online again (SET3: the sets' tiers with it)
     online?.resume();
     for (const [tabId, link] of chatLinks ?? []) {
@@ -28743,6 +28796,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     cardStakes,   // CARDS6: a realm character's stakes at a relay's gold table (null off the realm)
     // CARDS10: the relay that deals Iliac Hand - a word to the room's Iliac table, who I am at it; a ranked seat's deck
     // vouched for by the service (a realm character's own cards, the record checkpointed first); the results carried
+    gambitOnline: { ok: () => !!online?.gambitOk, send: (w) => !!online?.sendGambit(w), id: () => online?.id ?? null, now: () => Date.now() + _sharedOffsetMs, welcomes: () => online?.holdemWelcomes ?? 0 },   // KG5: the relay's King's Gambit table - Iliac Hand's hooks, its own send
     iliacOnline: { ok: () => !!online?.iliacOk, send: (w) => !!online?.sendIliac(w), id: () => online?.id ?? null, now: () => Date.now() + _sharedOffsetMs, welcomes: () => online?.holdemWelcomes ?? 0 },   // AUDIT CARDS-6 E5: my socket's welcomes (the card tables' one count)
     iliacRanked: {
       // AUDIT CARDS-6 E14: a guest's account is offered no ranked seat - it was, and every vouch it asked failed
@@ -28759,6 +28813,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       board: () => iliacDoor.board(),   // the season's board (iliac.js iliacBoardOf)
     },
     iliacClaims,
+    gambitSeason: { board: () => gambitDoor.board() },   // KG6: The King's Gambit's season board (gambit.js gambitBoardOf)
+    gambitClaims,   // KG6: its rated results carried to the service
     sailingCabin: sailingCabins,
     caravanRoom: caravanRooms,   // WAGONS1
     linkedBankCabin: () => readBankCabinLink(playerEntity.boatCabinLink),

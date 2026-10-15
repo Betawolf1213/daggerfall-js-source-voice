@@ -75,8 +75,12 @@ skeleton, in its skin, wearing nothing (WEREWOLF1). The wereboar keeps Daggerfal
 `headBounds` frames the head's pieces - the head, the hair, a helm's - and of a part that hides the head and hangs from
 more than it (a townsperson's hooded outfit) only what lies within three quarters of the head's diagonal. `headFrame`
 stands the eye before the face (+Z, where the body at rest faces as the inventory's figure sees it), the orthographic
-window the projected box with 8% air and as wide as the picture asked; the model is `figure()`'s own, x negated, in
-metres. It is lit as the inventory's figure is (`renderCharacterSpriteImage`, the studio light), on a transparent
+window the projected box with 8% air and as wide as the picture asked; the model is `figure()`'s own at yaw 0, x
+negated, in metres - **its +180 and all**, which turns the body's front (Morrowind's +Y) to the eye on +Z.
+PORTRAIT3D-FACE (2026-10-15, a player's screenshot via the owner: a Nord's card on the online characters page, all hair
+- "Why is his portrait showing the back of the head"): the first cut copied the transform and left the turn, and its
+pin compared against the same mistake, so every portrait was of the back of a head; the probe's closed steel helm
+showed its mail aventail, now its visor. It is lit as the inventory's figure is (`renderCharacterSpriteImage`, the studio light), on a transparent
 ground, and read back once: one picture per skeleton, skin rows, worn parts, form, skin and size, the data generation
 first (NPCs who wear one head share one picture, and the talk window one texture). A miss is not kept (AUDIT 32 F3's
 law).
@@ -141,4 +145,4 @@ landing on no one; the head key (the data, the helm, the visor); the party's pla
 smooth and a record at whole pixels, the stamp on its key, a townsperson wed in walked as their street body; the
 escorts' key (their own race, no child, no painted face, no data); the dial's trim, its scale and its smooth root; and
 the doors by source; the rig following the curse (setVampire once a change, waiting out a build, the standing arm the
-entity's only with its curse, the frame asking). `tools/mutants/portrait3d.json` (35, all dead).
+entity's only with its curse, the frame asking). `tools/mutants/portrait3d.json` (36, all dead).

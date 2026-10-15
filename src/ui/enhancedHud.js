@@ -111,7 +111,7 @@ import { foeTarget, foeTargetRef, tickFoeTarget } from './hudFoeTarget.js';
 // styles show a corner word - imported rather than restated.
 import { crosshairEnabled, interactionIconStyle, iconReplacesCrosshair, modeIconEnabled, MODE_LABEL } from './hudCrosshair.js';
 import { getInteractionMode } from '../player/interactionMode.js';
-import { tickHudLayout } from './hudLayout.js';   // HUD-MOVE: the movable pieces, the lock and the reset
+import { tickHudLayout, hudArranging } from './hudLayout.js';   // HUD-MOVE: the movable pieces, the lock and the reset
 import { mountHotbarDock, drawEnhancedHotbar, detachHotbarDock, hotbarMode } from './enhancedHotbar.js';   // HB1: the hotbar, the diamond's alternative (one or the other)
 import { setEnhancedMidTextScale } from './enhancedHudText.js';   // AUDIT FONT F2: the mid-screen label is a layer beside this one, not inside it (the popup column it once scaled too is a toast in the notice stack since ENH-NOTICE3)
 import { QUEST_MARK_CSS } from './questMarks.js'; import { nodeMarkCss } from './nodeMarks.js';   // GUIDE5: the tracker's quest on the compass, in the marks' one gold; NODE-MARKS: a profession's nodes in its own colour
@@ -597,7 +597,7 @@ function build(doc) {
   // its title and marked where it costs (AUDIT C&C S14). Only while Climates & Calories is on and its part
   // (`survivalTempHud`, the row's drawer) is. AUDIT C&C S3: a HUD piece of its own inside the compass (ui/hudLayout.js
   // HUD_PIECES 'temp'), with its own X - the compass switched off leaves it standing; a phone keeps the glyph and the
-  // number, and so does a screen where the whole plate would run off its right edge or under the FPS read-out (fitTemp).
+  // number.
   const temp = el('div', 'hud-temp');
   const tempGlyph = el('img', 'hud-tempglyph');
   tempGlyph.alt = '';
@@ -609,7 +609,11 @@ function build(doc) {
   tempScale.append(tempMark);
   temp.append(tempGlyph, tempNum, tempWord, tempScale);
   temp.style.display = 'none';
-  compass.append(temp);
+  // UI-CALM (2026-10-14, a player: "I like the temperature indicator, but it would fit better in the bottom-left
+  // corner"): the plate stands in the CORNER now - the caption's first word, beside the mode's (below: `cap`), where the
+  // status widget's needs already stand - no longer off the compass's end across the sky. Its own piece still
+  // (ui/hudLayout.js HUD_PIECES 'temp', inside the quick block), and it says no more than it must: comfortable, the glyph
+  // and the number; felt or costing, its word and its scale too.
   top.append(compass);
 
   const foe = el('div', 'hud-foe');
@@ -781,7 +785,7 @@ function build(doc) {
   spellIcon.draggable = false;
   spellIcon.style.display = 'none';
   spellChip.append(spellTag, spellIcon, spellName);
-  cap.append(cornerWord, spellChip, readied);
+  cap.append(temp, cornerWord, spellChip, readied);   // UI-CALM: the temperature plate first, in the corner
   const diamond = el('div', 'hud-qdiamond');
   // A cell is FOUR elements, and the reason is the pixel language: a
   // rotated square would blur every sprite in it, so the diamond is a
@@ -908,7 +912,7 @@ function build(doc) {
   cells.main.cell.addEventListener('pointerdown', tap(() => { liveOpts.quickSwitchHand?.(); }));
 
   doc.body.append(root);
-  return { root, bottom, compass, marks, detectMarks: [], partyMarks: [], shipMarks: [], nodeMarks: [], boatMarks: [], gateMark: null, serpentMark: null, sdMark: null, questMark: null, wayOutMark: null, foe, foeName, foeFill, foeGhost, foeChunks, foeBladeFull, foePoise, foePoiseFill, foePoiseWord, magicka, health, fatigue,
+  return { root, bottom, bars, compass, marks, detectMarks: [], partyMarks: [], shipMarks: [], nodeMarks: [], boatMarks: [], gateMark: null, serpentMark: null, sdMark: null, questMark: null, wayOutMark: null, foe, foeName, foeFill, foeGhost, foeChunks, foeBladeFull, foePoise, foePoiseFill, foePoiseWord, magicka, health, fatigue,
     temp: { el: temp, glyph: tempGlyph, num: tempNum, word: tempWord, mark: tempMark },   // TEMP-UI: the temperature plate
     stat, quickCap: cap, quickDiamond: diamond, top,   // UI3: the status widget, the caption it stands on, the diamond it may stand beside and the top block over it (its band is measured from them)
     renown, renownBox, renownFill, renownGhost, renownNum,
@@ -1152,6 +1156,19 @@ export function drawEnhancedHud(vitals, heading01, dt = 0, opts = {}) {
     if (last[`${key}Low`] !== low) { last[`${key}Low`] = low; part.wrap.classList.toggle('low', low); }
   }
 
+  // UI-CALM (2026-10-14, a player: "Not everything needs to be visible constantly. Show information when it's
+  // relevant."): THE VITALS REST WHEN THEY HAVE NOTHING TO SAY - all three full (a magicka of none counts full), no foe
+  // in the target bar, for VITALS_REST_S seconds: the bars fade away, and the first point lost, spent or still to
+  // regain brings them back at once. Skyrim's own law, and Daggerfall's world kept clear of a readout it does not need.
+  // The player's choice (`hudCalm`, the Calm HUD row); never while the HUD is being arranged (its editor shows it).
+  // AUDIT UICALM-FIRM1 L4 N1: full is short of no whole point (a share of the maximum let 300 Health lose one unseen);
+  // L4 M3: and never at rest while the HUD is arranged - split, each bar is the editor's and their box was left at rest
+  const allFull = rows.every(([key, , now, max]) => (key === 'magicka' && !(Number(vitals.maxMagicka) > 0)) || now > max - 1);
+  const calm = getPref(HUD_CALM_PREF) !== false && !hudArranging() && allFull && !parts.foe?.classList?.contains?.('on');
+  last.calmFor = calm ? (last.calmFor ?? 0) + (dt > 0 ? dt : 0) : 0;
+  const rest = calm && last.calmFor >= VITALS_REST_S;
+  if (last.vitalsRest !== rest) { last.vitalsRest = rest; parts.bars?.classList?.toggle?.('rest', rest); }
+
   // PARTY-BUFFS: a heal I took - mine, a potion's, a friend's - rises as "+N" off the reticle (hitNumbers.js); one
   // taken under a window is not measured (AUDIT B10: the hidden frame forgets - a rest's restoring is no heal)
   const hpNow = Number(vitals.health ?? 0);
@@ -1264,6 +1281,10 @@ export function drawEnhancedHud(vitals, heading01, dt = 0, opts = {}) {
   drawTemp(vitals, live);   // TEMP-UI: the temperature plate
 }
 
+/** UI-CALM: the Calm HUD row's switch (systems/features.js) - the vitals rest when full, on unless switched off. */
+export const HUD_CALM_PREF = 'hudCalm';
+/** UI-CALM: how long the vitals stand full and untouched before they rest (s). */
+export const VITALS_REST_S = 4;
 /** TEMP-UI: the temperature plate's part on the Climates & Calories row (systems/features.js) - shown unless switched off. */
 export const TEMP_HUD_PREF = 'survivalTempHud';
 /** TEMP-UI: the glyph for the way a reading runs (ui/hudStatus.js STATUS_GLYPHS). */
@@ -1289,69 +1310,11 @@ function drawTemp(vitals, live = null) {
     const said = `Felt temperature ${r.text}: ${levelSaid(r.label, r.level)}`;
     t.el.title = said;
     t.el.setAttribute('aria-label', said);
-    last.tempFit = -1;   // a new word is a new width: measured again
   }
-  if (r) fitTemp(t);
 }
-/**
- * TEMP-UI: WHERE THE PLATE STANDS, measured now and then - and at once on a new screen size, HUD scale or word, and as a
- * foe's bar comes or goes. AUDIT C&C S3, S10, S12: measured from the WHOLE plate every time - it stayed compact after a
- * HUD scale of 2 went back to 1, judged by its width at 2 - and stepped down only as far as it must, each place taken
- * only where it meets nothing it keeps clear of (TEMP_CLEAR_OF - the FPS read-out stood on it at 1440, 1280 and 1024):
- * the whole plate right of the compass, its air short of the screen's edge; the glyph and the number there (`compact`),
- * on the screen with its costing mark (TEMP_MARK); the compact plate HUNG under the compass's right end (`temp-hung`) -
- * where a phone at a HUD scale of 1.25 to 2 had lost half of it or all of it past the edge - kept on the screen
- * (`--hud-temp-in`), and below what stands there (`--hud-temp-drop`: the FPS read-out's foot, a foe's bar); and where
- * even that meets something, it steps aside (`temp-aside`) until there is room, as the status widget does - the strip's
- * tile still says the reading. Never while the player drags it (the HUD editor - it is a piece of its own).
- */
-function fitTemp(t) {
-  const vp = `${globalThis.innerWidth}x${globalThis.innerHeight}x${last.scale ?? 1}x${parts.foe?.classList?.contains('on') ? 1 : 0}`;
-  if (last.tempVp !== vp) { last.tempVp = vp; last.tempFit = -1; }
-  last.tempFit = ((last.tempFit ?? -1) + 1) % STAT_MEASURE_EVERY;
-  if (last.tempFit !== 0 || typeof t.el.getBoundingClientRect !== 'function' || t.el.hasAttribute?.('data-hm-drag')) return;
-  const vw = globalThis.innerWidth ?? Infinity;
-  const shown = (n) => {
-    const b = n?.getBoundingClientRect?.();
-    if (!b || !(b.width > 0) || !(b.height > 0)) return null;   // display:none - no box
-    try { if (globalThis.getComputedStyle?.(n)?.visibility === 'hidden') return null; } catch { /* a stub's node: shown */ }
-    return b;
-  };
-  const others = [...(document.querySelectorAll?.(TEMP_CLEAR_OF) ?? [])].map(shown).filter(Boolean);
-  const meets = (r, o) => r.left < o.right + TEMP_EDGE && o.left - TEMP_EDGE < r.right && r.top < o.bottom + TEMP_EDGE && o.top - TEMP_EDGE < r.bottom;
-  const clear = (r, edge) => r.right <= edge && !others.some((o) => meets(r, o));
-  const s = t.el.style;
-  s.removeProperty?.('--hud-temp-in');
-  s.removeProperty?.('--hud-temp-drop');
-  t.el.classList.remove('compact', 'temp-hung', 'temp-aside');
-  if (clear(t.el.getBoundingClientRect(), vw - TEMP_EDGE)) return;
-  t.el.classList.add('compact');
-  if (clear(t.el.getBoundingClientRect(), vw - TEMP_MARK)) return;
-  t.el.classList.add('temp-hung');
-  const r = t.el.getBoundingClientRect();
-  const k = r.height > 0 && t.el.offsetHeight > 0 ? r.height / t.el.offsetHeight : 1;   // screen pixels to the plate's own
-  const dx = Math.max(0, r.right - (vw - TEMP_EDGE));
-  if (dx > 0) s.setProperty?.('--hud-temp-in', `${Math.ceil(dx / k)}px`);
-  let h = { left: r.left - dx, right: r.right - dx, top: r.top, bottom: r.bottom };
-  const under = others.filter((o) => meets(h, o));
-  if (!under.length) return;
-  const dy = Math.max(...under.map((o) => o.bottom)) + TEMP_EDGE - h.top;
-  s.setProperty?.('--hud-temp-drop', `${Math.ceil(dy / k)}px`);
-  h = { ...h, top: h.top + dy, bottom: h.bottom + dy };
-  if (!clear(h, vw)) t.el.classList.add('temp-aside');
-}
-/** TEMP-UI: the air the plate keeps from the screen's right edge - and (AUDIT C&C S3, S12) from what it keeps clear of. */
-const TEMP_EDGE = 8;
-/** AUDIT C&C S3, S14: how far a costing plate's mark stands past its box (ui/enhancedStyle.js: 7px past its padding,
- *  inside a 2px frame) - the compact plate beside the compass keeps it on the screen at every level, so the mark moves
- *  nothing (a 360 phone had the plate a pixel from the edge, and the mark past it). */
-const TEMP_MARK = 5;
-/** AUDIT C&C S3, S12: what the plate keeps clear of, where it would stand: the FPS read-out (ui/fpsCounter.js, over every
- *  host at the top right), a foe's bar under the compass, and down the right edge the quest card and the party list -
- *  and (lens S) the two pieces fixed 64 px down and 12 in from the top right: an arena session's button
- *  (ui/arenaSessionButton.js) and a journey's pace box (ui/travelPaceControls.js PACE_BOX_ID), which a compact plate
- *  beside the compass met on a narrow screen at a large HUD scale. */
-const TEMP_CLEAR_OF = '#fps-counter, .hud-foe.on, .qtrack, .dfparty, .arena-session-btn, #travel-pace-box';
+/* TEMP-UI's fitTemp (the plate's places off the compass's right end - beside it, compact, hung under it, aside - kept
+   clear of the FPS read-out, a foe's bar, the quest card and the party list) is retired with the place it measured:
+   UI-CALM stands the plate in the corner's caption, which no screen edge and nothing at the top right can meet. */
 
 /** UI3: frames between two measures of the widget's band - a layout read is not free, and a band moves only when the
  *  chat, the escorts or the quickslot block do. */

@@ -1756,7 +1756,7 @@ export class ChargenFlow {
         // (CreateCharClassSelect.cs:87-88), so no default button and
         // Return is inert; Y and N carry the keyboard
         // (DaggerfallMessageBox.cs:377).
-        if (hotkeyHit('Yes', action, e)) { audio.playOneShot(SOUND.ButtonClick, 1); this.classConfirm = null; this._acceptStandardClass(); }
+        if (hotkeyHit('Yes', action, e)) { audio.playOneShot(SOUND.ButtonClick, 1); if (this.classCalm) audio.playOneShot(SOUND.SelectClassDrums, 1); this.classConfirm = null; this._acceptStandardClass(); }   // UI-CALM: the drums for the choice
         else if (hotkeyHit('No', action, e)) { audio.playOneShot(SOUND.ButtonClick, 1); this.classConfirm = null; }
         else if (action === 'back') { audio.playOneShot(SOUND.ButtonClick, 1); this.classConfirm = null; }
         return;
@@ -2021,9 +2021,14 @@ export class ChargenFlow {
    *  not land on the same row, because MouseClick has already moved
    *  the selection to it by the time MouseDoubleClick reads it. */
   clickClassRow(idx, now) {
-    const wasDouble = this._lastClassClick != null && (now - this._lastClassClick) < DOUBLE_CLICK_DELAY_MS;
+    // UI-CALM (2026-10-14, a player: "when i randomly click around in the class selection i hear drums all the time"):
+    // under the enhanced wizard (`classCalm`) a double click is two on the SAME row - a quick click on one class and
+    // then another is browsing, not a pick (DFU's time-alone test stands for the classic screen)
+    const wasDouble = this._lastClassClick != null && (now - this._lastClassClick) < DOUBLE_CLICK_DELAY_MS
+      && (!this.classCalm || idx === this._lastClassRow);
     this._selectClassRow(idx);   // MouseClick moves the LIST's selection
     this._lastClassClick = now;
+    this._lastClassRow = idx;
     if (wasDouble) { this._lastClassClick = null; this.useClass(); }
     return true;
   }
@@ -2061,7 +2066,9 @@ export class ChargenFlow {
       this._enterCustomClass();
       return;
     }
-    audio.playOneShot(SOUND.SelectClassDrums, 1);   // CreateCharClassSelect (:93-94) - the pick opens the confirm under drums
+    // CreateCharClassSelect (:93-94) - the pick opens the confirm under drums. UI-CALM: under the enhanced wizard
+    // (`classCalm`) reading a class is quiet, and the drums sound for the choice itself (confirmClass, below)
+    if (!this.classCalm) audio.playOneShot(SOUND.SelectClassDrums, 1);
     this.classConfirm = this.describeClass?.(this.classListIndex) ?? null;
     if (!this.classConfirm) this._acceptStandardClass();   // no description available: the pick stands
   }
@@ -2121,7 +2128,7 @@ export class ChargenFlow {
     if (hit.setStatCursor != null) { this._setStatCursor(hit.setStatCursor); return true; }
     if (hit.setSkillCursor != null) { this.skillCursor = hit.setSkillCursor; this._syncSkillSel(); return true; }
     if (hit.setClass != null) { this._selectClassRow(hit.setClass); return true; }   // DISC24-A: the one door
-    if (hit.confirmClass) { this.classConfirm = null; this._acceptStandardClass(); return true; }
+    if (hit.confirmClass) { if (this.classCalm) audio.playOneShot(SOUND.SelectClassDrums, 1); this.classConfirm = null; this._acceptStandardClass(); return true; }   // UI-CALM: the drums for the choice
     if (hit.cancelClass) { this.classConfirm = null; return true; }
     // U18: the method screen's two buttons - the click sets AND closes,
     // as both DFU handlers end in CloseWindow (:63-72).
