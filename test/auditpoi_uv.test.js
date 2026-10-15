@@ -20,8 +20,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import v8 from 'node:v8';
-import vm from 'node:vm';
+import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import './chargenDom.mjs';
 import * as UV from '../src/poi/uvMesh.js';
 import * as ED from '../src/poi/uvEdit.js';
@@ -200,11 +200,31 @@ test('AUDIT POI M5: a selection\'s corners are read from the UV vertices\' table
   assert.equal(ed2.selectedCorners().length, 6);
 });
 
-v8.setFlagsFromString('--expose_gc');
-const gc = vm.runInNewContext('gc');
-/** The buffers the heap still holds once the collector has had its way - the backing stores of dead buffers are freed by
- *  a sweeper of their own, behind a gc() on a loaded machine, so it is asked a few times with the loop turned between. */
+/** The bytes a hundred one-face steps of a 20,000-triangle sheet hold, read in a child of its own (ALLOC-RACE: the
+ *  measure's flags have one home, test/allocChild.mjs) - the buffers the heap still holds once the collector has had its
+ *  way, asked a few times with the loop turned between (a dead buffer's backing store is freed by a sweeper of its own). */
+const UNDO_CHILD = `
+import { createUvEdit } from ${JSON.stringify(new URL('../src/poi/uvEdit.js', import.meta.url).href)};
+const n = 100, pos = [], idx = [], uv = [];
+for (let j = 0; j <= n; j++) for (let i = 0; i <= n; i++) { pos.push(i, 0, j); uv.push(i / n, j / n); }
+const at = (i, j) => j * (n + 1) + i;
+for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) idx.push(at(i, j), at(i + 1, j + 1), at(i + 1, j), at(i, j), at(i, j + 1), at(i + 1, j + 1));
+const V = pos.length / 3;
+const ed = createUvEdit({ positions: Float32Array.from(pos), normals: new Float32Array(V * 3), uvs: Float32Array.from(uv), indices: Uint32Array.from(idx), submeshes: [{ start: 0, count: idx.length }] });
 const settled = async () => { for (let i = 0; i < 6; i++) { gc(); await new Promise((r) => setTimeout(r, 15)); } return process.memoryUsage().arrayBuffers; };
+ed.setMode('face');
+ed.pick(0.004, 0.002, 0.001);
+ed.transform({ move: [1e-6, 0] });
+const a0 = await settled();
+for (let k = 0; k < 99; k++) { ed.pick(0.004 + k * 0.01, 0.002, 0.001); ed.transform({ move: [1e-6, 0] }); }
+const grew = (await settled()) - a0;
+console.log(JSON.stringify({ grew, held: ed.undoBytes() }));
+`;
+function undoGrowth() {
+  const run = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', UNDO_CHILD], { encoding: 'utf8' });
+  assert.equal(run.status, 0, run.stderr);
+  return JSON.parse(run.stdout.trim().split('\n').pop());
+}
 
 test('AUDIT POI M6: a step of the UV undo holds what it changed - a hundred one-face nudges of a 20,000-triangle sheet keep kilobytes, not a whole copy of every corner each (96 MB) - undone and redone exactly, its seams too, the oldest let go past the undo\'s bytes and the latest always kept (mutants: a whole copy a step; the budget unread; a step\'s seams unrestored)', async () => {
   const g = gridMesh(100, (i, j) => [i, 0, j], (i, j) => [i / 100, j / 100]);
@@ -213,10 +233,11 @@ test('AUDIT POI M6: a step of the UV undo holds what it changed - a hundred one-
   ed.setMode('face');
   ed.pick(0.004, 0.002, 0.001);
   ed.transform({ move: [1e-6, 0] });   // the first read of the UV vertices' table
-  const a0 = await settled();
   for (let k = 0; k < 99; k++) { ed.pick(0.004 + k * 0.01, 0.002, 0.001); ed.transform({ move: [1e-6, 0] }); }
-  const grew = (await settled()) - a0;
+  // the heap's own word, in the measure's child: what the hundred steps hold, not only what the undo counts
+  const { grew, held } = undoGrowth();
   assert.ok(grew < 24e6, `a hundred one-face steps held ${(grew / 1e6).toFixed(1)} MB more (a whole copy a step: 96 MB)`);
+  assert.equal(held, ed.undoBytes(), 'the child\'s steps the same as these');
   assert.ok(ed.undoBytes() < 64 * 1024, `the undo holds ${ed.undoBytes()} bytes for a hundred steps of a few corners each`);
   assert.ok(ED.UV_UNDO_BYTES >= 64 * 1024 * 1024);
   const after = Float64Array.from(ed.session.cornerUv);
