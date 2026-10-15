@@ -188,7 +188,9 @@ test('EG-FULL THE REDOUBT\'S CHOICES (section 16.2): the Court fallen, the recal
   assert.ok(decs.length >= 1, 'the next circle\'s decrees asked');
   assert.ok(frames.some((f) => f.k === 'esay' && f.w === 'ready'), 'the Ready said');
   assert.equal(egCircleOfHall(B.h), 2, 'into the second circle');
-  assert.ok(Array.isArray(B.dc));
+  // PIN MOVED (AUDIT EG V, a1: L2-1 - `Array.isArray(B.dc)` held while every circle bore no decree the company chose; the
+  // company voted each family's first, and the second circle bears exactly those)
+  assert.deepEqual(B.dc, decs.map((f) => [f.o[0], 1]), 'the next circle carries the decrees the company chose');
   void EG_RD_RECALL_MS; void EG_RD_WINDOW_MS;
 });
 

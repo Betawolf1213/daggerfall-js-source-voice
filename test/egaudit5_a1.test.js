@@ -13,7 +13,7 @@
 // through the wire (validEgOut) and the link (foldEg), the lines from the HUD's own models.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egCirclePlan, egCircleOfHall, egBossOf, egLordCard, egDecreeCount, EG_DECREES, EG_DECREE_BY_KEY, EG_TWIST_LINES, EG_SEALED_MS } from '../src/net/egLaw.js';
+import { egHallOf, egCirclePlan, egCircleOfHall, egBossOf, egLordCard, egDecreeCount, EG_DECREES, EG_DECREE_BY_KEY, EG_TWIST_LINES, EG_TWIST_NAMES, EG_SEALED_MS } from '../src/net/egLaw.js';
 import { egBreachNew, egEnter, egStep, egWord, egGeo, egNextOf, EG_RESPITE_BUDGET_MS, EG_RESPITE_STEP_MS, EG_RESPITE_MIN_MS, EG_READY_MS } from '../src/net/egBrain.js';
 import { egDecreesAsk, egDecreesChosen, egDecreesInForce, egBargainFams, egBargainOpen, egBargainDecree, egTwistShown, egFrayOf, egFrayingOpen, egLeanOf, EG_FRAYING_FRAY, EG_FRAYING_II_TURNS, EG_ASK_MS } from '../src/net/egRun.js';
 import { EG_VESTIGES, EG_SHARDS_PER } from '../src/net/egVestige.js';
@@ -24,6 +24,7 @@ import { validEgOut } from '../src/net/wire.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { egHudModel, egNextCircleText } from '../src/ui/egHud.js';
 import { egSpireHudModel, egArrivalCard } from '../src/ui/egSpireHud.js';
+import { egWitnessTwist } from '../src/world/egLights.js';
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -125,7 +126,7 @@ test('AUDIT EG V L2-11 THE BEACON NAMES THE NEXT CIRCLE (sections 14 and 16.3: *
 
 // ── L2-4, L3-5: A BARGAIN ONLY WITH A FAMILY FREE ─────────────────────────────────────────────────────────────────────────
 test('AUDIT EG V L2-4 L3-5 DAGON\'S BARGAIN ONLY WITH A FAMILY FREE (section 8.7: "none when no family is free"): a Bargain hall of circle 8 or deeper whose drawn decrees and the Proclamation hold all five families asks nothing, and no screen shows its shrine\'s line; with one family free it asks, passes on the company\'s yes, draws from that family, and seals a Reliquary for each yes (mutants: the free family unasked; the twist line shown with none free; a Bargain\'s draw from a held family)', () => {
-  const at = planHall((p, c) => p.twist === 'bargain' && c >= 8 && (p.kind === 'yard' || p.kind === 'rampart' || p.kind === 'proving'), { c0: 8, c1: 12 });
+  const at = planHall((p, c, slot) => p.twist === 'bargain' && c >= 8 && slot > 1 && (p.kind === 'yard' || p.kind === 'rampart' || p.kind === 'proving'), { c0: 8, c1: 12 });
   const drawn = (B) => { const asks = egDecreesAsk(B, at.c, seeded(3), 0, []); return egDecreesChosen(B, asks); };
   const full = breach({ seed: at.seed, h: at.h, pre: (B) => { B.dc = drawn(B); B.asks = []; } });
   assert.deepEqual(new Set(full.B.dc.map(([id]) => EG_DECREES[id].fam)), new Set(['legion', 'ground', 'covenant', 'lord']), 'four drawn beside the Proclamation\'s blows');
@@ -136,13 +137,19 @@ test('AUDIT EG V L2-4 L3-5 DAGON\'S BARGAIN ONLY WITH A FAMILY FREE (section 8.7
   const spec = egHallOf(at.seed, at.h, egGeo(full.B));
   assert.equal(spec.twist, 'bargain', 'the law lays the shrine');
   assert.equal(egTwistShown(spec, egDecreesInForce(full.B)), null, 'no screen shows it');
-  assert.equal(egArrivalCard(full.E()).twist, '', 'the arrival card says no shrine');
+  const E0 = full.E(), quiet = { ...E0, fight: { ...E0.fight, pg: {} } };
+  assert.equal(egArrivalCard(E0).twist, '', 'the arrival card says no shrine');
+  assert.equal(egHudModel(quiet, 'acct-0', full.now(), { inSpire: true }).sub, '', 'nor the classic HUD');
+  assert.equal(egWitnessTwist({ ...E0, h: at.h - 1 }), '', 'nor a witness\'s sight of it');
   // one family free (the lord's): asked, passed, drawn from it, a Reliquary for each yes
   const one = breach({ seed: at.seed, h: at.h, pre: (B) => { B.dc = drawn(B).filter(([id]) => EG_DECREES[id].fam !== 'lord'); B.asks = []; } });
   one.toTrial();
   assert.deepEqual(egBargainFams(one.B), ['lord']);
   assert.ok(one.frames.some((f) => f.k === 'ask' && f.q === 'bargain'), 'the Bargain asked');
-  assert.equal(egArrivalCard(one.E()).twist, EG_TWIST_LINES.bargain, 'its shrine on the card');
+  const E1 = one.E();
+  assert.equal(egArrivalCard(E1).twist, EG_TWIST_LINES.bargain, 'its shrine on the card');
+  assert.equal(egHudModel({ ...E1, fight: { ...E1.fight, pg: {} } }, 'acct-0', one.now(), { inSpire: true }).sub, EG_TWIST_NAMES.bargain, 'on the classic HUD');
+  assert.equal(egWitnessTwist({ ...E1, h: at.h - 1 }), EG_TWIST_LINES.bargain, 'to a witness');
   const rel0 = one.co.map(([sub]) => one.B.mem[sub].rel.length);
   one.word('acct-0', { k: 'vote', q: 'bargain', y: 1 }); one.word('acct-1', { k: 'vote', q: 'bargain', y: 1 }); one.word('acct-2', { k: 'vote', q: 'bargain', y: 0 });
   one.stepUntil(() => !one.B.asks.some((a) => a.q === 'bargain'));

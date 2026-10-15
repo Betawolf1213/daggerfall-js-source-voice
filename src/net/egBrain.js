@@ -71,7 +71,6 @@ import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egAirY, egLegio
 import { egLegionRoom, egLegionCapOf, egEscortOf, egLurkerWake } from './egLegion.js';   // AUDIT EG III: the room under the legion's cap, a champion's escort, a struck Lurker's wake
 import { egLegionSummon, egBinderBroken, egSpotted } from './egLegion.js';   // AUDIT EG IV: a summons held to the room, a Binder's raise broken, a Spotter's arrow
 import { egShieldTurns, egShieldSoak } from './egLegion.js';   // AUDIT EG V (L2-7): a Shielded elite's shield, one law for every blow
-import { egBargainOpen, egFrayOf } from './egRun.js';   // AUDIT EG V: a Bargain only with a family free (L2-4); The Fraying's fray (L2-10)
 import { EG_OBJ, egLordsWake, egLordsAwake, egLordsFell, egLordsOf, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
 import { EG_SEAM, egLordsFight } from './egLords.js';   // EG-ZK (section 13.1): every lord through THE BOSS SEAM, called inside the one beat
 import { egPieceIn, egPolyEdgeDist } from './egShape.js';   // AUDIT EG IV (lane1 #11): a champion's wake ring off its floor
@@ -83,6 +82,7 @@ import { egResonance, egAccordMates, EG_STORM_N, EG_STORM_M, EG_FAR_M, EG_KINDLE
 import { EG_M_ID, EG_SWEEP_M, EG_SPILL_M, EG_COUNTER_M } from './egVestige.js';   // AUDIT EG III: Sweeping Arc's, Spillover's and Counterstroke's numbers
 import { egSpirebridge } from './egVestige.js';   // AUDIT EG III: Spirebridge, the room's rule
 import { egEchoShare, egCompanyAt } from './egRun.js';   // EG-ZS: an Echo's share; the company the pair law reads at a blow
+import { egBargainOpen, egFrayOf } from './egRun.js';   // AUDIT EG V: a Bargain only with a family free (L2-4); The Fraying's fray (L2-10)
 import { shDisc, shLane, egInShape } from './egShape.js';
 import { egBlowNear } from './egFloor.js';   // AUDIT EG III: Counterstroke's reach from a lord's blow
 import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL, EG_MIRROR_REACH_M, EG_MIRROR_LIT_R, EG_HAZARDS, egWispAt } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half (EG-ZC: the Moon-Mirror's branch; EG-ZB: the census's drains)

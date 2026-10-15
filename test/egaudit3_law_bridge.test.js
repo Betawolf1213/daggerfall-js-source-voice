@@ -13,6 +13,7 @@ import { egSpanPairs, egBridgeOf, egBridgeAhead, egBridgeY, egOnBridge, egSpanPr
 import { egSupportAt, egFairNew, egFairPose, EG_HOLD, EG_SUPPORT_UP_M, EG_SUPPORT_DOWN_M } from '../src/net/egFair.js';
 import { EG_MASTERIES, EG_SPIREBRIDGE_ID, egOfferOf } from '../src/net/egVestige.js';
 import { egBreachNew, egEnter, egStep, egWord, egPoseIn, egStateOf } from '../src/net/egBrain.js';
+import { egPick } from '../src/net/egRun.js';   // PIN MOVED (AUDIT EG V, a1: L2-15 - a pick word is the rest's alone; the fixture takes the card by its producer)
 import { validEgIn, validEgOut, EG_KINDS, EG_FIGHT_KINDS, EG_SB_WIRE_MS } from '../src/net/wire.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { createEgSpan, egBridgeModel, egBridgeTris, egBridgeLook, EG_STEP_GONE_Y, EG_SB_GROW_S, EG_SB_LAST_S, EG_SB_FALTER_HZ } from '../src/scenes/egSpan.js';
@@ -46,7 +47,7 @@ function at(seed = SEED, h = HALL, n = 2) {
   for (let k = 0; k < 60 && B.sg !== 'trial'; k++) step();
   assert.equal(B.sg, 'trial', 'the hall woke');
   B.mem['acct-0'].offer = [EG_SPIREBRIDGE_ID]; B.mem['acct-0'].picks = 1;
-  say('acct-0', { k: 'pick', v: EG_SPIREBRIDGE_ID });
+  egPick(B, 'acct-0', EG_SPIREBRIDGE_ID);
   assert.equal(B.mem['acct-0'].mast, EG_SPIREBRIDGE_ID, 'Spirebridge taken by the pick');
   return { B, spec, clock, pos, step, say, put, rng };
 }
@@ -120,7 +121,7 @@ test('AUDIT EG III SPIREBRIDGE - THE ROOM\'S RULE (section 15: "once a span, a g
   // a second holder with no gap ahead (on the end plate): refused, nothing spent
   const m1 = w.B.mem['acct-1'];
   m1.offer = [EG_SPIREBRIDGE_ID]; m1.picks = 1;
-  w.say('acct-1', { k: 'pick', v: EG_SPIREBRIDGE_ID });
+  egPick(w.B, 'acct-1', EG_SPIREBRIDGE_ID);
   w.put('acct-1', w.spec.end.x, w.spec.end.z);
   assert.deepEqual(w.say('acct-1', { k: 'mast' }), [], 'no gap ahead');
   assert.equal(m1.sbH, undefined, 'nothing spent');

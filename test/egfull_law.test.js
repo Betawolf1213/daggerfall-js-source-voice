@@ -103,9 +103,11 @@ test('EG-FULL THE LORDS (section 13.3): the first circle\'s Grath; every fifth C
   for (const L of Object.keys(EG_LORDS)) assert.ok(met.has(L), `${L} met`);
 });
 
-test('EG-FULL THE DECREES (section 12): nineteen, numbered 0-18 once each, five families; the span decrees fold into the ground as one number (Gale-Swept\'s rank and three times Crumbling\'s) (mutants: a decree numbered twice; the fold swapped)', () => {
-  assert.equal(EG_DECREES.length, 19);
-  assert.deepEqual(EG_DECREES.map((d) => d.id), Array.from({ length: 19 }, (_, i) => i));
+test('EG-FULL THE DECREES (section 12): twenty, numbered 0-19 once each, five families; the span decrees fold into the ground as one number (Gale-Swept\'s rank and three times Crumbling\'s) (mutants: a decree numbered twice; the fold swapped)', () => {
+  // PIN MOVED (AUDIT EG V, a1: L2-10 built THE FRAYING, the twentieth - the ground's, numbered 19)
+  assert.equal(EG_DECREES.length, 20);
+  assert.deepEqual(EG_DECREES.map((d) => d.id), Array.from({ length: 20 }, (_, i) => i));
+  assert.deepEqual([EG_DECREES[19].key, EG_DECREES[19].fam], ['fraying', 'ground']);
   assert.equal(EG_DECREE_FAMILIES.length, 5);
   for (const d of EG_DECREES) { assert.ok(EG_DECREE_FAMILIES.includes(d.fam), d.key); assert.equal(EG_DECREE_BY_KEY[d.key], d); }
   const g = EG_DECREE_BY_KEY.gale.id, cr = EG_DECREE_BY_KEY.crumbling.id;
