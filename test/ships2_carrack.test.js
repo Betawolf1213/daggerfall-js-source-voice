@@ -15,7 +15,10 @@ import {
   CARRACK_BATTERIES, ANCHOR, sideAt, lidFitOf, ropeLadderGeometry,
 } from '../src/world/carrackModel.js';
 import { SAILS, CARRACK_RIG } from '../src/world/carrackRig.js';
-import { carrackArt, carrackGlow, registerCarrackArt, _resetCarrackArt, CARRACK_ARCHIVE, TEX, BANDS } from '../src/world/carrackArt.js';
+import { carrackCut, registerCarrackArt, _resetCarrackArt, CARRACK_ARCHIVE, TEX, BANDS, CARRACK_SOURCES } from '../src/world/carrackArt.js';
+import { GALLEON_SOURCES, TEX as GALLEON_TEX } from '../src/world/galleonArt.js';
+import { DF } from '../src/world/classicArt.js';
+import { fakeClassicRgba, texelOf, texel } from './classicArtFake.mjs';
 import { RUDDER_DEG } from '../src/world/galleonModel.js';
 import { createGalleonGunDeck } from '../src/systems/naval/galleonGunDeck.js';
 import { DECK_STEP } from '../src/systems/naval/navalDeck.js';
@@ -306,20 +309,16 @@ test('SHIPS-2 CARRACK HULL_BUILDS\' CARRACK IS HERS: her box her MeshCollider\'s
 
 // ── her pictures ───────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('SHIPS-2 CARRACK HER PICTURES: painted at load from numbers alone - the same bytes every time - a picture a TEX record under CARRACK_ARCHIVE, each 64 x 64; registered with the vendor textures once; her stern windows\' slices alone glowing by night; every face of hers drawn on a picture of hers (mutants: a picture seeded off the clock, registered twice, the glow everywhere, a face on no picture)', async () => {
-  const hash = (art) => createHash('sha256').update(JSON.stringify(art.map(([r, p]) => [r, p.width, p.height, Buffer.from(p.data).toString('base64')]))).digest('hex');
-  const a = carrackArt(), b = carrackArt();
-  assert.equal(hash(a), hash(b), 'the same bytes');
-  assert.deepEqual([...new Set(a.map(([r]) => r))].sort((x, y) => x - y), [...new Set(Object.values(TEX))].sort((x, y) => x - y), 'a picture a record');
-  for (const [r, p] of a) assert.deepEqual([p.width, p.height, p.data.length], [64, 64, 64 * 64 * 4], `record ${r}`);
-  const lit = (r) => !!carrackGlow(r)?.data.some((v, i) => i % 4 === 0 && v > 0);
-  assert.ok(BANDS.transom.recs.some(lit), 'her stern windows glow');
-  for (const r of new Set(Object.values(TEX))) if (!BANDS.transom.recs.includes(r)) assert.equal(carrackGlow(r), null, `nothing else (record ${r})`);
-  const records = new Set(a.map(([r]) => r));
+test('SHIPS-2 CARRACK HER PICTURES (DF-ART, Mac: "use daggerfall textures instead of AI generated"): a Daggerfall record a TEX record under CARRACK_ARCHIVE - the galleon\'s for the records she shares with her, Come Sail Away\'s planking for her sides - read from the player\'s own ARENA2 as a stand-in, opaque; registered with the vendor textures once; her transom\'s window alone seen through (Mac: "windows should always be see through"); every face of hers drawn on a picture of hers (mutants: registered twice, every picture of hers a cut-out, a face on no picture)', async () => {
+  const records = new Set(Object.keys(CARRACK_SOURCES).map(Number));
+  assert.deepEqual([...records].sort((x, y) => x - y), [...new Set(Object.values(TEX))].sort((x, y) => x - y), 'a Daggerfall record a record');
+  const shared = ['hullBottom', 'hullInner', 'deck', 'trim', 'spar', 'iron', 'canvas', 'rope', 'gilt', 'grate', 'lid', 'door', 'beams', 'dark', 'underDeck'].filter((n) => n in TEX);
+  for (const name of shared) assert.deepEqual(CARRACK_SOURCES[TEX[name]], GALLEON_SOURCES[GALLEON_TEX[name]], `${name}: the galleon's`);
+  assert.deepEqual(CARRACK_SOURCES[TEX.hullSide0], DF.hullPlanks, 'her side Come Sail Away\'s planking');
   for (const [key, g] of Object.entries(built.meshes)) for (const s of g.slots ?? []) {
     if (s.record == null) continue;
     assert.equal(s.archive, CARRACK_ARCHIVE, `${key}: her archive`);
-    assert.ok(records.has(s.record), `${key}: record ${s.record} painted`);
+    assert.ok(records.has(s.record), `${key}: record ${s.record} hers`);
   }
   _resetCarrackArt();
   const added = [];
@@ -327,6 +326,12 @@ test('SHIPS-2 CARRACK HER PICTURES: painted at load from numbers alone - the sam
   assert.equal(registerCarrackArt(add), Object.keys(TEX).length);
   assert.equal(registerCarrackArt(add), 0, 'once');
   assert.ok(added.every((e) => e.archive === CARRACK_ARCHIVE && e.standIn === true && typeof e.build === 'function'));
+  const ctx = { classicRgba: fakeClassicRgba() };
+  for (const e of added) {
+    const pic = await e.build(ctx), from = CARRACK_SOURCES[e.record];
+    if (Array.isArray(from)) assert.deepEqual(texel(pic, 3, 3), [...texelOf(from[0], from[1]), 255], `record ${e.record}: read from ${from.join('_')}, opaque`);
+  }
+  for (const r of new Set(Object.values(TEX))) assert.equal(carrackCut(r), r === TEX.transom0, `record ${r}: ${r === TEX.transom0 ? 'her transom\'s window seen through' : 'whole'}`);
   _resetCarrackArt();
 });
 

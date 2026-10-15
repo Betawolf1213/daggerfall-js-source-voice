@@ -1,11 +1,11 @@
 // AUDIT GALLEON-2 (2026-10-03): HER PREFAB, HER PICTURES, HER MESHES AND HER LOADER, read a second time (the first:
 // test/auditgalleon_prefab.test.js). Each pin failed on the code as it stood (57baee705) or, where the law was right and
 // unpinned, on its mutant (tools/mutants/auditgalleon2_prefab.json); each fix carries an `AUDIT GN2-<id>` comment.
-//   PF3  her pictures painted and her glass's glow cut at the preload, never at her first draw
+//   PF3  her pictures built at the preload, never at her first draw (DF-ART: read from the player's ARENA2)
 //   PF4  her model fetched beside the mod's five files; her prefab built once a process, and never written by a boat
-//   PF5  her pictures and her glow classic art to Retro Mode's no-mip cap, as every other hull's are
+//   PF5  her pictures classic art to Retro Mode's no-mip cap, as every other hull's are; her windows cut-outs
 //   PF7  her helm taken from any side of her wheel       PF8  her doors hinged at their leaf's face, the castle's on her deck
-//   TS7  her glow her glass, pixel for pixel              TS8  a built prism's ends face out
+//   TS7  her windows seen through, pixel for pixel        TS8  a built prism's ends face out
 //   TS12 a flipped smooth triangle's corner normals ride their corners; her port side's livery reads unmirrored
 import './modsOff.js';
 import { test } from 'node:test';
@@ -30,9 +30,10 @@ import { colliderPoses, boxColliderTriangles, raycastColliders, invertAffine } f
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from '../src/player/motor.js';
 import { multiply } from '../src/world/mat4.js';
 import { MODELS, scene } from './csaScene.mjs';
+import { fakeClassicRgba, PANE } from './classicArtFake.mjs';
 
 const { MEASURED: M, HELM } = GM;
-const { galleonArt, galleonGlow, _resetGalleonArt, GALLEON_ARCHIVE, TEX, BANDS } = GA;
+const { galleonCut, _resetGalleonArt, registerGalleonArt, GALLEON_ARCHIVE, TEX, BANDS } = GA;
 const DIR = new URL('../vendor/come-sail-away/Models/', import.meta.url);
 const BAKE_TEXT = readFileSync(new URL('../src/assets/galleon/galleon.json', import.meta.url), 'utf8');
 const BAKE = JSON.parse(BAKE_TEXT);
@@ -69,19 +70,20 @@ function vendorPipeline(asked = []) {
     uploadRecord() {}, getGpuMesh: async (id) => ({ classic: id }),
   };
 }
-/** Her pictures off the door and her glow uncut, as a process that never loaded her stands. */
-const freshArt = () => { clearVendorTextures(); _resetGalleonArt(); setTextureDeriveContext({ classicRgba: async () => null }); };
+/** Her pictures off the door, as a process that never loaded her stands - the player's ARENA2 the
+ *  tests' stand-in (DF-ART: her pictures are read from it). */
+const freshArt = () => { clearVendorTextures(); _resetGalleonArt(); setTextureDeriveContext({ classicRgba: fakeClassicRgba() }); };
 
 // ── PF3 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('AUDIT GALLEON-2 PF3: her pictures are painted and her glass\'s glow cut AT THE PRELOAD - her archive asked and every one of her twenty-three records built on the vendor door, her stern windows\' glow made - never at her first draw (her first mesh\'s ask, or a sail bake\'s: a 50-120 ms stall the first time a hull 2 came into view)', async () => {
+test('AUDIT GALLEON-2 PF3: her pictures are built (DF-ART: read from the player\'s ARENA2) AT THE PRELOAD - her archive asked and every one of her twenty-three records built on the vendor door, her stern windows\' glass cut - never at her first draw (her first mesh\'s ask, or a sail bake\'s: a 50-120 ms stall the first time a hull 2 came into view)', async () => {
   freshArt();
   const pipeline = vendorPipeline();
   const pool = createComeSailAwayPool({ renderer: quietRenderer(), pipeline, fetchFn: fileFetch, log: { warn() {} } });
   assert.equal(await pool.preload(), true);
   assert.ok(pipeline.asked.includes(GALLEON_ARCHIVE), `TEXTURE.${GALLEON_ARCHIVE} asked during the preload`);
-  for (const r of Object.values(TEX)) assert.ok(decodedTexture(GALLEON_ARCHIVE, r), `record ${r} painted at the preload`);
-  assert.equal(GA._galleonGlowMade?.(), true, 'her glow cut at the preload');
+  for (const r of Object.values(TEX)) assert.ok(decodedTexture(GALLEON_ARCHIVE, r), `record ${r} built at the preload`);
+  for (const r of BANDS.sternWindows.recs) assert.ok(decodedTexture(GALLEON_ARCHIVE, r).colors.some((v, i) => i % 4 === 3 && v === 0), `record ${r}: her window's glass cut at the preload`);
   freshArt();
 });
 
@@ -172,7 +174,7 @@ test('AUDIT GALLEON-2 PF4: the cached prefab is NEVER WRITTEN - boats built on i
 
 // ── PF5 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('AUDIT GALLEON-2 PF5: her pictures and her glass\'s glow are her CLASSIC ART to Retro Mode - through the real pipeline into the real renderer\'s uploads, Retro Mode without mip maps caps every one of hers to its first level as it caps a classic hull\'s texture (she was the only hull drawn mip-mapped: her stand-ins uploaded as replacements, TryImportTexture\'s, which DFU\'s retro arm never reaches)', async () => {
+test('AUDIT GALLEON-2 PF5: her pictures are her CLASSIC ART to Retro Mode (DF-ART: her stern windows uploaded cut-outs, nothing of hers glowing) - through the real pipeline into the real renderer\'s uploads, Retro Mode without mip maps caps every one of hers to its first level as it caps a classic hull\'s texture (she was the only hull drawn mip-mapped: her stand-ins uploaded as replacements, TryImportTexture\'s, which DFU\'s retro arm never reaches)', async () => {
   freshArt();
   let nextId = 1, bound = null;
   const maxLevel = new Map();
@@ -191,16 +193,21 @@ test('AUDIT GALLEON-2 PF5: her pictures and her glass\'s glow are her CLASSIC AR
   console.warn = () => {};   // no ARENA2 here: the flats' config and the classic archives say so
   try {
     const pipeline = createDataPipeline({ renderer, arch: null, palette: null, fetch: async () => { throw new Error('no ARENA2 here'); } });
+    setTextureDeriveContext({ classicRgba: fakeClassicRgba() });   // DF-ART: her pictures read from the tests' stand-in ARENA2
     const pool = createComeSailAwayPool({ renderer, pipeline, fetchFn: fileFetch, log: { warn() {} } });
     assert.equal(await pool.preload(), true);
     pool.spawnNow(new Boat(HULL.SmallShip, 0), { position: [0, 0, 0], rotation: [0, 0, 0, 1] });
     const hers = (map) => [...map.keys()].filter((k) => k.startsWith(`${GALLEON_ARCHIVE}_`));
-    for (let i = 0; i < 100 && hers(renderer.emissionTextures).length < BANDS.sternWindows.recs.length; i++) { pool.draw(); await new Promise((r) => setTimeout(r, 5)); }
+    for (let i = 0; i < 100 && hers(renderer.textures).length < 20; i++) { pool.draw(); await new Promise((r) => setTimeout(r, 5)); }
+    for (let i = 0; i < 5; i++) { pool.draw(); await new Promise((r) => setTimeout(r, 5)); }
     assert.ok(hers(renderer.textures).length >= 20, `her pictures uploaded (${hers(renderer.textures).length})`);
-    assert.equal(hers(renderer.emissionTextures).length, BANDS.sternWindows.recs.length, 'her glow uploaded');
+    assert.equal(hers(renderer.emissionTextures).length, 0, 'nothing of hers glows: her windows\' glass is open');
+    for (const k of hers(renderer.textures)) {
+      const rec = Number(k.split('_')[1].split('#')[0]);
+      assert.equal(!!renderer._cutoutArt?.has(renderer.textures.get(k)), BANDS.sternWindows.recs.includes(rec), `${k}: ${BANDS.sternWindows.recs.includes(rec) ? 'a cut-out, seen through' : 'whole'}`);
+    }
     renderer._applyRetroMips(false);   // Retro Mode on, UseMipMapsInRetroMode off
     for (const k of hers(renderer.textures)) assert.equal(maxLevel.get(renderer.textures.get(k).id), 0, `${k}: capped to its first level under Retro Mode`);
-    for (const k of hers(renderer.emissionTextures)) assert.equal(maxLevel.get(renderer.emissionTextures.get(k).id), 0, `${k}'s glow: capped with its picture`);
     // a mod's own stand-in stays TryImportTexture's: uploaded through the same door, never capped
     assert.equal(pipeline.isClassicArt(GALLEON_ARCHIVE), true);
     assert.equal(pipeline.isClassicArt(112395), false, 'Come Sail Away\'s own pictures are a mod\'s');
@@ -303,24 +310,23 @@ test('AUDIT GALLEON-2 PF8: HER DOORS SWING ON THEIR LEAF\'S FACE - shut or open,
 
 // ── TS7 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('AUDIT GALLEON-2 TS7: HER GLOW IS HER GLASS, PIXEL FOR PIXEL - each stern slice\'s mask lit exactly where its picture is her glass or its glint (galleonArt.js\'s two glass colours), the warm lamp colour there and black everywhere else; both slices carry glass (the check was some pixel over nothing: every pixel glowing passed it)', () => {
-  const GLASS = [[34, 48, 58], [92, 124, 136]];   // C.glass, C.glassLit
-  const art = new Map(galleonArt());
-  let panes = 0;
+test('AUDIT GALLEON-2 TS7: HER WINDOWS ARE SEEN THROUGH, PIXEL FOR PIXEL (DF-ART, Mac: "windows should always be see through") - each stern slice\'s picture a hole exactly where its window is glass (Daggerfall\'s leaded window\'s panes) and whole everywhere else, its leads and its frame; both slices carry glass and timber; the pool uploads them cut-outs and nothing else of hers', async () => {
+  _resetGalleonArt();
+  const entries = [];
+  registerGalleonArt((e) => { entries.push(...e); return e.length; });
+  const ctx = { classicRgba: fakeClassicRgba() };
   for (const rec of BANDS.sternWindows.recs) {
-    const pic = art.get(rec), glow = galleonGlow(rec);
-    assert.deepEqual([glow.width, glow.height], [pic.width, pic.height]);
-    let lit = 0;
+    const pic = await entries.find((e) => e.record === rec).build(ctx);
+    let holes = 0, whole = 0;
     for (let i = 0; i < pic.data.length; i += 4) {
-      const glass = GLASS.some((c) => c[0] === pic.data[i] && c[1] === pic.data[i + 1] && c[2] === pic.data[i + 2]);
-      const at = `record ${rec} pixel ${(i / 4) % pic.width},${Math.floor(i / 4 / pic.width)}`;
-      assert.deepEqual([...glow.data.subarray(i, i + 4)], glass ? [255, 186, 96, 255] : [0, 0, 0, 255], `${at}: ${glass ? 'glass glows' : 'no glass, no glow'}`);
-      if (glass) lit++;
+      const glass = PANE.every((c, k) => c === pic.data[i + k]);   // the window's panes, as the stand-in has them
+      assert.equal(pic.data[i + 3], glass ? 0 : 255, `record ${rec} pixel ${(i / 4) % pic.width},${Math.floor(i / 4 / pic.width)}: ${glass ? 'glass, a hole' : 'lead or timber, whole'}`);
+      if (glass) holes++; else whole++;
     }
-    panes += lit;
-    assert.ok(lit > 0, `record ${rec} carries glass`);
+    assert.ok(holes > 0 && whole > 0, `record ${rec} carries glass (${holes}) and timber (${whole})`);
   }
-  assert.ok(panes < 64 * 64 * 2 * 0.2, `her glass a fifth of her stern at most (${panes} pixels)`);
+  for (const r of Object.values(TEX)) assert.equal(galleonCut(r), BANDS.sternWindows.recs.includes(r));
+  _resetGalleonArt();
 });
 
 // ── TS8 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
