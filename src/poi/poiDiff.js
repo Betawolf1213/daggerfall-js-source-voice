@@ -12,15 +12,24 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { POI_PIXEL_M } from './poiLaw.js';
+import { quatMultiply } from '../world/quat.js';
 
 /** A spot's distance under which it has not moved, in metres; a turn's, in degrees; a size's ratio. */
 const MOVE_EPS = 0.005, TURN_EPS = 0.05, SIZE_EPS = 1e-4;
 
 const same = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
-/** The angle between two unit quaternions, in degrees. */
+/**
+ * The angle between two turns, in degrees: the turn that takes one to the other (a * b⁻¹), its half-angle read as
+ * atan2(|its axis part|, |its w|).
+ * AUDIT POI P1: the cosine of the dot product read every quaternion as a UNIT one, and none is quite - the editor tidies
+ * each to a millionth (poiEdit.js tidyQuat) and the law takes a length within a thousandth (poiLaw.js unitQuat) - so a
+ * turn read against ITSELF came out as 0.1 to 0.2 degrees (729 of 1,716 the editor writes; 5.1 at a length of 0.9995)
+ * and an untouched POI said "Turned 0.2°". The product's two parts are scaled alike by both lengths, so their ratio is
+ * the turn alone; its w's sign is the quaternion's other sign (the same turn), read as none.
+ */
 export function quatAngleDeg(a, b) {
-  const d = Math.min(1, Math.abs(a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3]));
-  return (2 * Math.acos(d) * 180) / Math.PI;
+  const [x, y, z, w] = quatMultiply(a, [-b[0], -b[1], -b[2], b[3]]);
+  return (2 * Math.atan2(Math.hypot(x, y, z), Math.abs(w)) * 180) / Math.PI;
 }
 const dist3 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 /** A place's spot in map metres (x east, z north from the map's south-west), its height beside. */
@@ -53,7 +62,9 @@ export function poiDiff(before, after) {
     if (!old) { out.push({ code: 'part-added', name }); continue; }
     const what = [];
     if (old.mesh !== q.mesh) what.push('model');
-    if (dist3(old.t, q.t) > MOVE_EPS) what.push('moved');
+    // AUDIT POI P12: a part's offset is in its POI's frame, under the POI's size - measured in the world, where the
+    // approver sees it (at size 100 a 0.4 m move is an offset of 4 mm, under the bound read in metres of the frame)
+    if (dist3(old.t, q.t) * p1.s > MOVE_EPS) what.push('moved');
     if (quatAngleDeg(old.r, q.r) > TURN_EPS) what.push('turned');
     if (old.s.some((c, i) => Math.abs(q.s[i] / c - 1) > SIZE_EPS)) what.push('sized');
     if (!same(old.materials, q.materials)) what.push('materials');

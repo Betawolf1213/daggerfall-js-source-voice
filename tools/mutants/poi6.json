@@ -11,8 +11,8 @@
   {
     "name": "POI6-the-sign-read-as-a-turn",
     "file": "src/poi/poiDiff.js",
-    "old": "  const d = Math.min(1, Math.abs(a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3]));",
-    "new": "  const d = Math.min(1, (a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3]));",
+    "old": "  return (2 * Math.atan2(Math.hypot(x, y, z), Math.abs(w)) * 180) / Math.PI;",
+    "new": "  return (2 * Math.atan2(Math.hypot(x, y, z), w) * 180) / Math.PI;",
     "tests": [
       "test/poi6_review.test.js"
     ]
@@ -83,7 +83,7 @@
   {
     "name": "POI6-the-law-unasked",
     "file": "src/poi/poiPack.js",
-    "old": "  for (const [i, d] of pois.entries()) { const ps = poiDocProblems(d); if (ps.length) return { ok: false, code: 'pack-bad-poi', index: i, name: String(d?.name ?? ''), problem: ps[0] }; }\n",
+    "old": "  for (const [i, d] of pois.entries()) { const ps = poiDocProblems(d); if (ps.length) return { code: 'pack-bad-poi', index: i, name: String(d?.name ?? ''), problem: ps[0], problems: ps }; }\n",
     "new": "\n",
     "tests": [
       "test/poi6_review.test.js"
@@ -92,8 +92,8 @@
   {
     "name": "POI6-an-entry-not-reminted",
     "file": "src/poi/poiTransfer.js",
-    "old": "    if (!r.ok && (r.error === 'poi-not-author' || r.error === 'not-found')) r = await shelve({ ...entry, id: mintShelfId(rand) });\n",
-    "new": "\n",
+    "old": "    const r = await shelve(k < 0 ? entry : { ...entry, id });",
+    "new": "    const r = await shelve(entry);",
     "tests": [
       "test/poi6_review.test.js"
     ]

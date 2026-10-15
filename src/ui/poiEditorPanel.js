@@ -40,7 +40,7 @@ import { accountRefusalText } from '../net/accountClient.js';
 import { poiDocProblems, poiAssetProblems, POI_LIMITS, POI_ALPHA, POI_WRAP, POI_FILTER } from '../poi/poiLaw.js';
 import { eulerOfQuat, quatOfEuler, lawName, newLight } from '../poi/poiEdit.js';
 import { problemText, problemWhere, gltfErrorText, gltfWarningText, meshErrorText, imageErrorText, packErrorText } from '../poi/poiText.js';
-import { poiSaveDraft, poiSubmit, poiWithdraw, poiRetire, poiList, poiHistory, poiPutAsset, poiShelve } from '../poi/poiService.js';
+import { poiSaveDraft, poiSubmit, poiWithdraw, poiRetire, poiList, poiHistory, poiPutAsset, poiShelve, poiShelfEntry } from '../poi/poiService.js';
 import { decodePoiMesh, encodePoiMesh } from '../poi/poiMesh.js';
 import { createPoiUvPanel } from './poiUvPanel.js';   // POI-5: the UV editor
 import { createPoiLibrary } from './poiLibraryPanel.js';   // POI-4b: the library's shelf
@@ -689,6 +689,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   async function importOpened(pack) {
     const r = await act((i) => importPack(pack, {
       putAsset: (b, k) => poiPutAsset(i, b, k), history: (id) => poiHistory(i, id), shelve: (item) => poiShelve(i, item), rand,
+      shelfEntry: (id) => poiShelfEntry(i, id),   // AUDIT POI P4: the shelf asked before an entry is put (poiTransfer.js)
       progress: (n, of) => say(t('poi.editor.uploading', 'Uploading {n} of {of}...', { n, of })),
     }));
     if (!r) return false;

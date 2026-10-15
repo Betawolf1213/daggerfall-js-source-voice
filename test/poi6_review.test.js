@@ -15,8 +15,8 @@ import { poiDiff, quatAngleDeg } from '../src/poi/poiDiff.js';
 import { diffText, packErrorText } from '../src/poi/poiText.js';
 import { writeGlb, mirrorQuatX } from '../src/poi/gltfExport.js';
 import { readGltf, bakeGltf } from '../src/poi/gltfImport.js';
-import { writePack, readPack, packAssetName } from '../src/poi/poiPack.js';
-import { exportModel, exportPack, importPack, fileNameOf } from '../src/poi/poiTransfer.js';
+import { writePack, readPack, readPackBytes, packAssetName } from '../src/poi/poiPack.js';
+import { exportModel, exportPack, importPack, fileNameOf, copyIdOf } from '../src/poi/poiTransfer.js';
 import { readZipEntries } from '../src/scenes/dataSource.js';
 import { zipStore } from '../src/systems/saveTransfer.js';
 import { encodePoiMesh } from '../src/poi/poiMesh.js';
@@ -174,12 +174,15 @@ test('POI-6 A PACK: written with every asset it names, read back whole through t
   const lying = rest.map((e) => (e.name.endsWith('.png') ? { name: e.name, data: Uint8Array.from([...PNG.slice(0, -1), 0]) } : e));
   assert.equal((await readPack([entries.find((e) => e.name === 'pack.json'), ...lying])).code, 'pack-asset-hash');
   const junk = new TextEncoder().encode('not a mesh at all, but long enough to be read as one header..');
-  assert.equal((await readPack([head({ v: 1, kind: 'poi-pack', pois: [], shelf: [] }), { name: `assets/${await sha256(junk)}.mesh`, data: junk }])).code, 'pack-asset-bad');
+  // PIN MOVED (AUDIT POI P11): a file no document names is no longer read at all, so the damaged mesh is one a POI wears
+  assert.equal((await readPack([head({ v: 1, kind: 'poi-pack', pois: [docOf('poi-00000000beef', { parts: [part('tower', await sha256(junk))] })], shelf: [] }), { name: `assets/${await sha256(junk)}.mesh`, data: junk }])).code, 'pack-asset-bad');
   const short = await readPack([entries.find((e) => e.name === 'pack.json'), ...rest.filter((e) => !e.name.endsWith('.png'))]);
   assert.deepEqual([short.code, short.sha], ['pack-missing-asset', picSha]);
   assert.deepEqual(writePack({ pois: [doc], assets: new Map([[meshSha, meshBytes]]) }), { ok: false, code: 'pack-missing-asset', sha: picSha });
-  // a zip the reader cannot read is no pack (the panel says so)
-  assert.ok(zipStore([]).length > 0);
+  // a zip the reader cannot read is no pack, nor is a zip with nothing in it (the panel says so) - AUDIT POI T4: this
+  // asked that an empty zip has bytes, which no reader could fail
+  assert.deepEqual(await readPackBytes(new TextEncoder().encode('not a zip')), { ok: false, code: 'pack-not-a-pack' });
+  assert.deepEqual(await readPackBytes(zipStore([])), { ok: false, code: 'pack-not-a-pack' });
 });
 
 test('POI-6 INTO THE STORE: a pack\'s assets uploaded by name (those the store has counted apart), its library entries put - under a new id where the store keeps another builder\'s - and its POIs handed back to open: as a change to the live one where the store knows it, else as new; an export that cannot fetch an asset says which (mutants: an entry not re-minted; a known POI opened as new)', async () => {
@@ -190,14 +193,18 @@ test('POI-6 INTO THE STORE: a pack\'s assets uploaded by name (those the store h
   const io = {
     putAsset: async (bytes, kind) => { calls.push(['put', kind]); return { ok: true, data: { sha: 'x', existed: kind === 'texture' } }; },
     history: async (id) => (id === doc.id ? { ok: true, data: { id, liveRev: 3, revs: [{ rev: 3, doc: live }, { rev: 4, doc }] } } : { ok: false, error: 'not-found' }),
-    shelve: async (item) => { calls.push(['shelve', item.id]); return item.id === 'lib-00000000cafe' ? { ok: false, error: 'poi-not-author' } : { ok: true, data: { id: item.id } }; },
+    // PIN MOVED (AUDIT POI P4): the shelf is asked before an entry is put - the store keeps another entry under its id,
+    // so the pack's is put under a copy's id of its own, never over it (it was put over first, and minted afresh only
+    // where the store refused that)
+    shelfEntry: async (id) => (id === 'lib-00000000cafe' ? { ok: true, data: { id, item: { ...entry, name: 'Tower (theirs)' } } } : { ok: false, error: 'not-found' }),
+    shelve: async (item) => { calls.push(['shelve', item.id]); return { ok: true, data: { id: item.id } }; },
     rand: counting(),
   };
   const pack = { pois: [doc, fresh], shelf: [entry], assets: new Map([['m', { kind: 'mesh', bytes: new Uint8Array(1) }], ['p', { kind: 'texture', bytes: new Uint8Array(1) }]]) };
   const r = await importPack(pack, io);
   assert.equal(r.ok, true);
   assert.deepEqual([r.uploaded, r.existed, r.shelved], [1, 1, 1]);
-  assert.deepEqual(calls, [['put', 'mesh'], ['put', 'texture'], ['shelve', 'lib-00000000cafe'], ['shelve', 'lib-000102030405']], 'another builder\'s entry: put under a new id');
+  assert.deepEqual(calls, [['put', 'mesh'], ['put', 'texture'], ['shelve', await copyIdOf(entry, 0)]], 'another entry under its id: put under one of its own');
   assert.deepEqual(r.open.map((o) => [o.id, o.state, o.base, o.saved?.name ?? null]), [[doc.id, 'live', 3, 'Old tower (live)'], [fresh.id, 'new', null, null]]);
   const stop = await importPack(pack, { ...io, putAsset: async () => ({ ok: false, error: 'poi-quota' }) });
   assert.deepEqual([stop.ok, stop.error], [false, 'poi-quota']);
@@ -322,17 +329,25 @@ test('POI-6 A POI\'S HISTORY: every revision newest first with its state, author
   putBack().click();
   await flush();
   assert.equal(P.svc.asks.filter((a) => a.path === '/v1/poi/rollback').length, 0, 'asked first');
+  // AUDIT POI T5: the history drawn again from the store's answer after the put-back - revision 1 the live one now. The
+  // wait for an 'Open this one' was met at once by the dialog drawn before it, so no redraw was ever asked.
+  P.svc.history.set(id, { ...P.svc.history.get(id), liveRev: 1 });
+  const liveRow = () => all(P.panel.review.dialog() ?? { querySelectorAll: () => [] }).filter((n) => n.className === 'dfpoi-review')
+    .find((row) => all(row).some((n) => n.textContent === 'In the world now.'));
+  assert.ok(all(liveRow()).some((n) => n.textContent === 'Revision 2: Second'), 'revision 2 live before the put-back');
   button(P.panel.review.dialog(), 'Put it back in the world?').click();
   await until(() => P.svc.asks.some((a) => a.path === '/v1/poi/rollback'), 'put back');
   assert.deepEqual(P.svc.asks.find((a) => a.path === '/v1/poi/rollback').body, { id, rev: 1 });
-  // the older one opened: a change to the live one, to save
-  await until(() => !!button(P.panel.review.dialog() ?? { querySelectorAll: () => [] }, 'Open this one'), 'drawn again');
+  await until(() => /stands in the world again/.test(all(P.root).find((n) => n.className.includes('dfpoi-status')).textContent), 'said');
+  await flush();
+  assert.ok(all(liveRow()).some((n) => n.textContent === 'Revision 1: First'), 'drawn again: revision 1 in the world now');
+  // the newer one opened: a change to the live one, to save
   const opens = all(P.panel.review.dialog()).filter((n) => n.tagName === 'BUTTON' && n.textContent === 'Open this one');
-  opens[1].click();
-  assert.equal(P.edit.docOf(id).name, 'First');
+  opens[0].click();
+  assert.equal(P.edit.docOf(id).name, 'Second');
   assert.equal(P.edit.dirty(id), true, 'a change to save, against the live one');
-  assert.equal(P.edit.entryOf(id).base, 2);
-  assert.deepEqual(P.went.at(-1), r1.place);
+  assert.equal(P.edit.entryOf(id).base, 1);
+  assert.deepEqual(P.went.at(-1), r2.place);
   P.panel.destroy();
 });
 
@@ -362,14 +377,28 @@ test('POI-6 OUT AND BACK IN FROM THE PANEL: a POI\'s model saved as a .glb the i
   assert.ok(Q.svc.asks.some((a) => /^\/v1\/poi\/asset\/[0-9a-f]{64}\?kind=mesh$/.test(a.path) && a.method === 'PUT'));
   assert.equal(Q.edit.entryOf(id).state, 'new', 'the store does not know it: new');
   assert.equal(Q.edit.docOf(id).name, 'Shrine');
+  // AUDIT POI T6: a POI opened new is unsaved whatever is done to it, so the pin below held for any POI open; and its
+  // wait for the words was all that failed a pack that overwrote it (ten seconds on). Now: SAVED, the pack's is taken;
+  // then CHANGED, the builder's is kept - each asked the moment the dialog closes.
+  const imported = async () => {
+    assert.equal(await Q.panel.openPack(P.files[1].bytes), true);
+    button(Q.root, 'Upload and open').click();
+    await until(() => !button(Q.root, 'Upload and open'), 'the pack imported');
+  };
+  const status = () => all(Q.root).find((n) => n.className.includes('dfpoi-status')).textContent;
+  Q.edit.edit(id, 'rename', (d) => { d.name = 'Shrine, saved'; });
+  Q.edit.markSaved(id, { rev: 1, state: 'draft' });
+  await imported();
+  assert.equal(Q.edit.docOf(id).name, 'Shrine', 'nothing unsaved: the pack\'s');
+  assert.doesNotMatch(status(), /left as you had them/);
   // the builder's own unsaved changes are never thrown away for a pack's
+  Q.edit.markSaved(id, { rev: 1, state: 'draft' });
   Q.edit.edit(id, 'rename', (d) => { d.name = 'Shrine, mine'; });
-  assert.equal(await Q.panel.openPack(P.files[1].bytes), true);
   const asked = Q.svc.asks.length;
-  button(Q.root, 'Upload and open').click();
-  await until(() => /left as you had them/.test(all(Q.root).find((n) => n.className.includes('dfpoi-status')).textContent), 'said');
+  await imported();
   assert.ok(Q.svc.asks.length > asked);
   assert.equal(Q.edit.docOf(id).name, 'Shrine, mine');
+  assert.match(status(), /left as you had them/);
   P.panel.destroy(); Q.panel.destroy();
 });
 
