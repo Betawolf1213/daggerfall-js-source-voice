@@ -702,6 +702,17 @@ const REFUSAL_WORDS = {
   'piece-legacy': () => t('account.refusal.pieceLegacy', 'That came into the realm from a classic save through customs. It stays yours, and the realm does not trade it.'),
   'service-moved': () => t('account.refusal.serviceMoved', 'The realm moved that character\'s record since its last clean save, so it cannot be rolled back to it.'),   // INT6: staff's
   'no-clean': () => t('account.refusal.noClean', 'That character has no save the realm judged clean to roll back to.'),   // INT6: the review's rollback (tools/realmReview.mjs)
+  // FIRM1 (bible/06-Systems/Firmament.md): the Firmament's own (server-account/src/firmament.js)
+  'firm-closed': () => t('account.refusal.firmClosed', 'The Firmament is closed to you for now.'),
+  'firm-character': () => t('account.refusal.firmCharacter', 'This character could not be named to the Firmament.'),
+  'firm-rid': () => t('account.refusal.firmRid', 'That request could not be read. Try again.'),
+  'firm-key': () => t('account.refusal.firmKey', 'One of those stars is unknown.'),
+  'firm-start': () => t('account.refusal.firmStart', 'Choose a birthsign first.'),
+  'firm-path': () => t('account.refusal.firmPath', 'A star has no path back to your birthsign.'),
+  'firm-points': () => t('account.refusal.firmPoints', 'You lack the points for that.'),
+  'firm-rate': () => t('account.refusal.firmRate', 'Too many changes this hour. Try again later.'),
+  'firm-stale': () => t('account.refusal.firmStale', 'Your stars were changed elsewhere. Look again.'),
+  'firm-respec-empty': () => t('account.refusal.firmRespecEmpty', 'Nothing is learned yet.'),
 };
 export const REFUSALS = /** @type {Readonly<Record<string, string>>} */ (localizedTable(REFUSAL_WORDS));
 
@@ -1802,6 +1813,18 @@ export function accountProf({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
     writs: (character, region) => post('/v1/writs/list', { character, region }),
     deliver: (character, id, rid) => post('/v1/writs/deliver', { character, id, rid }),
     motherlodes: (character) => post('/v1/prof/motherlodes', { character }),   // PROF2b: today's three (a strike rides `harvest`)
+  };
+}
+
+/** FIRM1: THE FIRMAMENT'S DOOR (server-account/src/firmament.js) - a character's tree and purses read, and the whole tree
+ *  it wants asked under its own id. Every answer is `call`'s shape; each is waited for ACCOUNT_ACT_WAIT_MS at most. */
+export function accountFirmament({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    account: () => storedSession(storage)?.id ?? null,
+    state: (character) => post('/v1/firmament/state', { character }),
+    set: (character, tree, rid) => post('/v1/firmament/set', { character, tree, rid }),
+    respec: (character, rid, realm = null, region = null) => post('/v1/firmament/respec', { character, rid, ...(realm ? { realm } : {}), ...(Number.isSafeInteger(region) ? { region } : {}) }),   // the whole sky back for gold
   };
 }
 

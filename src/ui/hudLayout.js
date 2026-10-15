@@ -35,10 +35,10 @@ export const HUD_PIECES = Object.freeze([
   // (its own press, beside the X); a dress that draws a compass with a top and a bottom (DFO Grimoire's, hung from the
   // screen's top) stands it up again when it is turned. The flag rides the piece's layout and Reset clears it
   { id: 'compass', sel: '.hud .hud-compass', name: 'Compass', len: true, turn: true },
-  // AUDIT C&C S3: the temperature plate stands INSIDE the compass in the page (ui/enhancedHud.js, off its right end) but
-  // is its own piece, as the status widget is the quick block's - the compass's move and size undone on it, its own X:
-  // the compass's X hid the plate with it while the plate's own part stood on
-  { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'compass' },
+  // AUDIT C&C S3: the temperature plate stands INSIDE another piece in the page but is its own piece, as the status
+  // widget is the quick block's - the outer piece's move and size undone on it, its own X. UI-CALM (2026-10-14): it stands
+  // in the bottom-left corner now, the quick block's caption (ui/enhancedHud.js), so the quick block is its outer piece
+  { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'quick' },
   // `dummy`: hidden until there is something to show (no foe targeted) - while unlocked it stands as a preview to move
   { id: 'foe', sel: '.hud .hud-foe', name: 'Target bar', dummy: true, len: true },
   { id: 'hotbar', sel: '.hud .hb', name: 'Hotbar' },
@@ -85,6 +85,8 @@ export const hudLocked = () => getPref(HUD_LOCK_PREF) !== false;
  *  exactly as their sheets have them. The layout is kept for when Enhanced Plus is chosen again. */
 const customisable = () => { try { return isEnhanced(); } catch { return false; } };
 const locked = () => !customisable() || hudLocked();
+/** Whether the HUD is being arranged now (its editor up: unlocked where it can be). */
+export const hudArranging = () => !locked();
 export const hudBarsSplit = () => getPref(HUD_BARS_SPLIT_PREF) === true;
 export const hudSnap = () => getPref(HUD_SNAP_PREF) !== false;
 const editable = (p) => !p.edit || (p.edit === 'split') === hudBarsSplit();
@@ -129,7 +131,7 @@ ${MOVED} { translate: var(--hmx, 0px) var(--hmy, 0px); scale: var(--hms, 1); }
 /* the quick block turned off leaves the buffs (their own piece) standing, unless they are off too */
 .hud-quick[data-hm-off]:not([data-hm-edit]) .hud-stat[data-hm]:not([data-hm-off]) { visibility: visible !important; }
 /* AUDIT C&C S3: ...and the compass turned off leaves the temperature plate (its own piece) standing, unless it is off too */
-.hud-compass[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }
+.hud-quick[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }   /* UI-CALM: the plate's outer piece is the quick block */
 /* LENGTH (only once a piece's length is changed - the sheet's own widths, small-screen ones too, stand until then) */
 .hud .hud-bars[data-hm-len] .hud-vital .hud-track, .hud .hud-bars .hud-vital[data-hm-len] .hud-track {
   width: calc(min(190px, 23vw) * var(--hml-g, 1) * var(--hml-b, 1)) !important; }

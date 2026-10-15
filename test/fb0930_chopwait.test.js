@@ -62,7 +62,7 @@ function host(entity) {
   const mountWindow = (win) => { shown.push(win.boxes[0].rows[1]); s.show(win); };
   // eslint-disable-next-line no-new-func
   const make = new Function('foragingWait', 'ServiceFlowWindow', 'mountWindow', 'modes', 'townTalk', 'giveReward',
-    `let _questBoxWin = null;\nlet _onQuestBoxClosed = null;\n${KEPT}\n${SHOW}\n${LIVE}\nreturn { showQuestBox, revive: ${REVIVE} };`);
+    `let _questBoxWin = null;\nlet _onQuestBoxClosed = null;\nconst QUEST_BOX_GRACE_MS = 600;   // QUEST-NOTE: the box's grace, world.js's own\n${KEPT}\n${SHOW}\n${LIVE}\nreturn { showQuestBox, revive: ${REVIVE} };`);
   Object.assign(h, make(foragingWait, ServiceFlowWindow, mountWindow, null, { get overlay() { return s.win; } }, () => {}));
   /** The slot's box read and closed, and the next frame. */
   const read = () => { s.win?.close?.(); s.drain(); wait.tick(); };

@@ -3519,6 +3519,16 @@
   "tr": "22e328e3e21e",
   "by": "claude-in-session"
  },
+ "features.calmHud.note": {
+  "en": "aa9c398cb552",
+  "tr": "fc50a00b856b",
+  "by": "claude-in-session"
+ },
+ "features.calmHud.title": {
+  "en": "92e0fdd4cd76",
+  "tr": "b6cff7afc076",
+  "by": "claude-in-session"
+ },
  "features.chooseGuildJobs.effect": {
   "en": "ec60510998ff",
   "tr": "a7587c1aada2",
@@ -3817,6 +3827,21 @@
  "features.group.world": {
   "en": "4afc02730050",
   "tr": "4ecce9840e5f",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.saddleAlways": {
+  "en": "a91bcce893b5",
+  "tr": "c710f2d914e8",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.saddleAuto": {
+  "en": "044789ea3109",
+  "tr": "ec3c82a06c8b",
+  "by": "claude-in-session"
+ },
+ "features.horseCare.saddlePanel": {
+  "en": "40607b38296e",
+  "tr": "02509d585446",
   "by": "claude-in-session"
  },
  "features.kind.classic": {
@@ -4262,6 +4287,31 @@
  "features.wind.wisps": {
   "en": "e14414c1ce9d",
   "tr": "58f5c46e477a",
+  "by": "claude-in-session"
+ },
+ "firm.readFail.closed": {
+  "en": "de16f9841240",
+  "tr": "7e9c45c90062",
+  "by": "claude-in-session"
+ },
+ "firm.readFail.missing": {
+  "en": "e922156003a2",
+  "tr": "8fde43091126",
+  "by": "claude-in-session"
+ },
+ "firm.readFail.offline": {
+  "en": "b9fe9c4963f9",
+  "tr": "d6e619eb859c",
+  "by": "claude-in-session"
+ },
+ "firm.readFail.other": {
+  "en": "8cd2f55c90e4",
+  "tr": "8d68e7f64b9b",
+  "by": "claude-in-session"
+ },
+ "firm.readFail.session": {
+  "en": "e36c0e7d74ac",
+  "tr": "de755a063e62",
   "by": "claude-in-session"
  },
  "lamp.granted": {
@@ -4864,9 +4914,44 @@
   "tr": "6f1eebac6609",
   "by": "claude-in-session"
  },
+ "menu.home.back": {
+  "en": "b52b36b7269f",
+  "tr": "b00933d2069b",
+  "by": "claude-in-session"
+ },
+ "menu.home.elsewhere": {
+  "en": "ebac8c4d9a49",
+  "tr": "3c4dc330097d",
+  "by": "claude-in-session"
+ },
  "menu.home.homeAria": {
   "en": "c920f897c537",
   "tr": "0c7c783f0651",
+  "by": "claude-in-session"
+ },
+ "menu.home.offline": {
+  "en": "e01fa717bacc",
+  "tr": "bff4c52478cb",
+  "by": "claude-in-session"
+ },
+ "menu.home.offlineSub": {
+  "en": "6dbe0124792e",
+  "tr": "127a584539e3",
+  "by": "claude-in-session"
+ },
+ "menu.home.onlineSub": {
+  "en": "69aa7d1c1d2d",
+  "tr": "1d32c7ec5ce7",
+  "by": "claude-in-session"
+ },
+ "menu.home.ownHead": {
+  "en": "240d54d2f1c5",
+  "tr": "a1e025868c71",
+  "by": "claude-in-session"
+ },
+ "menu.home.realmHead": {
+  "en": "25de5315bb88",
+  "tr": "788d299b26af",
   "by": "claude-in-session"
  },
  "menu.hud.foeBar": {
@@ -7589,6 +7674,11 @@
   "tr": "d703779e4c75",
   "by": "claude-in-session"
  },
+ "pause.door.firmament": {
+  "en": "18076f0aaea8",
+  "tr": "6704e61b1608",
+  "by": "claude-in-session"
+ },
  "pause.door.masterCount": {
   "en": "21da1435a986",
   "tr": "572263b35b01",
@@ -8012,6 +8102,16 @@
  "rest.exhausted.fighting": {
   "en": "37f9250e69af",
   "tr": "39015e5eea9f",
+  "by": "claude-in-session"
+ },
+ "saddle.hello.key": {
+  "en": "030a9c848901",
+  "tr": "6a279603cee2",
+  "by": "claude-in-session"
+ },
+ "saddle.hello.none": {
+  "en": "c4f18acb1d78",
+  "tr": "8db500dd918c",
   "by": "claude-in-session"
  },
  "settings.language.machine": {

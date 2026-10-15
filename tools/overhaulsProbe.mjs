@@ -27,7 +27,7 @@ const open = async (page) => {
   await page.goto(`${BASE}/play/?nointro`, { waitUntil: 'networkidle' });
   await page.waitForSelector('.px-menu button', { timeout: 20000 });
   await closeAccount(page);
-  await page.locator('.px-menu .door-overhauls').click();
+  await page.locator(':is(.px-menu, .px-foot) .door-overhauls').click();
   await page.waitForSelector('#enhanced-menu .look-panel', { timeout: 10000 });
 };
 /** The first-run account prompt stands over the doors on a fresh profile - put it away. */
