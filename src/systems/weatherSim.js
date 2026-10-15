@@ -406,7 +406,7 @@ export const heardWeather = () => (_heard != null && _heardAtJump === _jumps ? _
  *  front's intensity on the enhanced lane (a light shower is 0.15), 1 on the classic one. Every rain the player hears
  *  indoors is scaled from THIS, so no indoor rain can outplay the street's. After a jump the classic level stands. */
 export const heardRainGain = () => (_heard != null && _heardAtJump === _jumps ? _heardGain : 1);
-/** WET-FALL (FIELD BUGS 2026-10-15d, "Player is getting wet despite it not raining"): WHAT FALLS ON THE PLAYER - the
+/** WET-FALL (FIELD BUGS 2026-10-15e, "Player is getting wet despite it not raining"): WHAT FALLS ON THE PLAYER - the
  *  street's word and level as the outdoor frame last wrote them, the one truth the skin reads beside the ear. RAIN-HEART
  *  made most rain a sprinkle the eye barely sees, and the soak read the sim's word at the downpour's rate - and soaked
  *  before the front's first drop. `shown` is the host's own word for its sky (world.js's: the Sun Baby's clear day,

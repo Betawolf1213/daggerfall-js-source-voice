@@ -131,7 +131,7 @@ law, HILL-SHAPES' bar for the origin taken to the whole footprint); the four pad
 NOT SEEN, with no GPU here: whether a bank buries a quest marker; how the seam between bank and hill looks, at distance
 and under the climates' textures and the shadows; walking the bank; a real pixel's build cost (15-40 ms a block here, on
 a loaded machine). The real meshes, the gated sweep and what a bank buries were measured with ARENA2 by FIELD BUGS
-2026-10-15d TEMPLE-STEPS: the banks buried no door, but they buried Merdale's temple flight (by up to 1.25 m) and
+2026-10-15e TEMPLE-STEPS: the banks buried no door, but they buried Merdale's temple flight (by up to 1.25 m) and
 TEMPASF1's and TEMPASH4's stairs - a pad buries nothing the author left in the open now.
 
 `test/fb1013e_hillseat.test.js` (8, one on ARENA2_PATH); `tools/mutants/fb1013e_hillseat.json` (18, all dead). No pin

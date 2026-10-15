@@ -333,7 +333,7 @@ function wrap(points) {
   return out;
 }
 
-// FIELD BUGS 2026-10-15d TEMPLE-STEPS: THE SHAPE THE PRODUCER MINTS. This sweep fed blockHillPatch Daggerfall's own models
+// FIELD BUGS 2026-10-15e TEMPLE-STEPS: THE SHAPE THE PRODUCER MINTS. This sweep fed blockHillPatch Daggerfall's own models
 // alone, where the hosts feed it every mesh they draw (the stand-ins too - scenes/world.js cpuModels), and held a model
 // to the hills and the pads alone, where the author stood temples on his foundations and a stair on the landing or the
 // stair under it. So each block is the pack's own as the door serves it (tools/townSolidsSweep.mjs eachPackBlock), its

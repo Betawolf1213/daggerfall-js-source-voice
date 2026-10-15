@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// FIELD BUGS 2026-10-15d TEMPLE-STEPS: THE SOLIDS THE PORT STANDS IN A TOWN'S BLOCK, SWEPT - against the author's own
+// FIELD BUGS 2026-10-15e TEMPLE-STEPS: THE SOLIDS THE PORT STANDS IN A TOWN'S BLOCK, SWEPT - against the author's own
 // models and against every exterior door's approach. The law test/wd3_standins.test.js holds on the player's data.
 //
 //   ARENA2_PATH=<the player's arena2> node tools/townSolidsSweep.mjs          print every finding over both packs' blocks

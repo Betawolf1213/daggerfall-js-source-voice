@@ -1,4 +1,4 @@
-// CRAFT-FIRST-SHOWN (FIELD BUGS 2026-10-15d; the Discord, 2026-10-13: "The first time craft bonus is not applying to
+// CRAFT-FIRST-SHOWN (FIELD BUGS 2026-10-15e; the Discord, 2026-10-13: "The first time craft bonus is not applying to
 // the outfitting. I got somehow it once from...Fishing net? Then never after"): WHAT A CRAFT PAYS, SAID WHERE IT IS
 // EARNED. AUDIT 32 S1 (net/recipeLaw.js firstCraftPays) withholds the first-make 500 (FIRST_CRAFT_XP) from a pattern
 // made wholly of goods only a counter sells - the Weavers' Linen and Wool: 152 of the loom's patterns, the Fishing-Net

@@ -38,7 +38,7 @@ CHANGED (Mac, asked of four shapes - no wait, a review anywhere, both, or DFU's 
   read. The Roll's ceiling holds inside the wait: a member at 7 is not announced 8 or 9 (CHAP4b). Offline every review
   is DFU's whole. DFU's gate is kept as DFU tests it - `!(today < lastRankChange + 28)` - so a stamp that does not read
   as a number opens it as before (`guilds.test.js`'s AUDIT 21 F1 hands the review a bare number).
-  ROLL-PACE (`01-Overview/Field-Bugs-2026-10-15d.md`, the same day) found the premise short: the Roll paces the
+  ROLL-PACE (`01-Overview/Field-Bugs-2026-10-15e.md`, the same day) found the premise short: the Roll paces the
   REPUTATION, and a stranger's quests bank it before the membership begins, so the first review turned a week's
   standing into seven ranks. Online a review now promotes no further than the Roll's pace since the membership began,
   and the no-wait stands only while the Roll paces it.

@@ -1902,7 +1902,7 @@ re-aimed by content and dead, OW6-S-spent-band-slows retired with the wandering 
 INVIS-SWING (2026-10-15): the notice is EnemySenses' stealth roll, which DFU makes behind BlockedByIllusionEffect - an
 Invisibility blinds every enemy but the thirteen seers. The gate rolled the stealth formula alone; `wildAlert.js`
 noticeRoll now passes the illusion gate first, and both of world.js's checks hand it the traveller's concealment and the
-enemy's sight through it. `01-Overview/Field-Bugs-2026-10-15d.md`.
+enemy's sight through it. `01-Overview/Field-Bugs-2026-10-15e.md`.
 
 ## WILD-ALERT-FIX - the deep audit's five (2026-10-05)
 

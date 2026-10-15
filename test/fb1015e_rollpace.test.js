@@ -1,9 +1,9 @@
-// ROLL-PACE (FIELD BUGS 2026-10-15d, a Discord report: "exploit where you do easy quests for a guild and then ask to join
+// ROLL-PACE (FIELD BUGS 2026-10-15e, a Discord report: "exploit where you do easy quests for a guild and then ask to join
 // it to farm 100 rep in 1 minute"; Mac, asked of four shapes: "Pace ranks from joining"). PROMO-NOW took the 28 days off
 // an online promotion because the Roll paces reputation - but a stranger's quests bank reputation with the guild before
 // the membership begins, and the first review turned it into seven ranks at once. Online a review now promotes no
 // further than the Roll's pace could have paid since it saw the membership begin; the stranger's standing still counts,
-// at that pace, and no rank already held is taken. bible/01-Overview/Field-Bugs-2026-10-15d.md.
+// at that pace, and no rank already held is taken. bible/01-Overview/Field-Bugs-2026-10-15e.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

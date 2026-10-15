@@ -781,7 +781,7 @@ export const ROLL_BOOK_RANK_MAX = 7;
 /** The rank the Roll records for a member: the book's, bounded by its own reputation (3.2), and never a seat's. */
 export const rollBookRankOf = (/** @type {unknown} */ reported, /** @type {unknown} */ rep) => Math.max(0, Math.min(whole(reported), rollRankCapOf(rep), ROLL_BOOK_RANK_MAX));
 
-// ROLL-PACE (FIELD BUGS 2026-10-15d, a Discord report: "exploit where you do easy quests for a guild and then ask to join
+// ROLL-PACE (FIELD BUGS 2026-10-15e, a Discord report: "exploit where you do easy quests for a guild and then ask to join
 // it to farm 100 rep in 1 minute"; Mac, asked of four shapes: "Pace ranks from joining"). PROMO-NOW took DFU's 28 days
 // off an online promotion on the word that the Roll's paced reputation paces the ranks - it paces the REPUTATION, and a
 // stranger's quests (DFU's +5 to the guild's faction, a member or not: Quest.cs EndQuest, GuildManager.GetGuildFactionId)

@@ -33,7 +33,7 @@ import { TOWN_PICTURE_ARCHIVE, PICTURE } from './townPictures.js';
 import { registerFlatField } from './flatFields.js';
 import { RMBRP_HILL_SHAPES, SHAPE_BEARINGS, SHAPE_RINGS } from './rmbrpHillShapes.js';   // FIELD BUGS 2026-10-05 HILL-SHAPES: the pack's hills, measured
 import { wrapAngle } from './mat4.js';   // FIELD BUGS 2026-10-13e HILL-SEAT: a pad corner's turn, in one step
-import { DOOR_APPROACH_M } from './curatedPlacements.js';   // FIELD BUGS 2026-10-15d TEMPLE-STEPS: a door's approach, HILL-HOUSE's rule
+import { DOOR_APPROACH_M } from './curatedPlacements.js';   // FIELD BUGS 2026-10-15e TEMPLE-STEPS: a door's approach, HILL-HOUSE's rule
 import { shareDetailedShipsArt } from '../systems/detailedShips.js';   // Cliffworms' Items (archive 1210): his pictures, the towns' too
 
 const U = 0.025;   // MeshReader.GlobalScale: one classic unit in metres
@@ -189,7 +189,7 @@ export const TOWN_CROP_FIELDS = Object.freeze({
 /** The rocks Beautiful Villages and Beautiful Cities scatter round their buildings: each mesh's box as Unity imports it
  *  (x mirrored), in metres at the mesh's own centimetres - [x0, x1, depth below the origin, height above it, z0, z1] -
  *  stood at RMBRP_ROCK_SCALE, below. Each stands in as a boulder of the climate's rock (302_3, swapped by climate) over
- *  that box. FIELD BUGS 2026-10-15d TEMPLE-STEPS: the table was [width, height, depth, length] round the origin, but a
+ *  that box. FIELD BUGS 2026-10-15e TEMPLE-STEPS: the table was [width, height, depth, length] round the origin, but a
  *  mesh's box sits off its origin, by up to a fifth of its width (53086), which the prefab's scale makes a metre. */
 export const RMBRP_ROCKS = Object.freeze({
   53006: [-0.273, 0.263, 0.123, 0.327, -0.308, 0.286], 53012: [-0.431, 0.416, 0.13, 0.278, -0.282, 0.26], 53014: [-0.475, 0.636, 0.001, 0.349, -0.421, 0.561],
@@ -201,7 +201,7 @@ export const RMBRP_ROCKS = Object.freeze({
   53054: [-0.387, 0.505, 0, 0.133, -0.316, 0.252], 53064: [-0.397, 0.396, 0, 0.367, -0.45, 0.401], 53083: [-0.387, 0.387, 0, 0.133, -0.252, 0.252],
   53085: [-0.255, 0.403, 0, 0.136, -0.405, 0.236], 53086: [-1.305, 0.891, 0, 0.56, -0.611, 0.65],
 });
-/** FIELD BUGS 2026-10-15d TEMPLE-STEPS: the scale each rock's prefab stands its mesh at - the m_LocalScale it sets on the
+/** FIELD BUGS 2026-10-15e TEMPLE-STEPS: the scale each rock's prefab stands its mesh at - the m_LocalScale it sets on the
  *  model's root, which MeshReplacement.ImportCustomGameobject keeps and multiplies the placement's into. The stand-ins
  *  had been the mesh alone: at it, 143 of the 245 rocks the packs lay stood wholly under the ground they were laid on. */
 export const RMBRP_ROCK_SCALE = Object.freeze({
@@ -391,7 +391,7 @@ export function seatNatureFlat(seat, x, z, groundY) {
 // hill the model stands on, with that hill's own texture coordinates (hillPlanUv in the hill's frame), so where the bank
 // meets the hill the grass runs on. The model is not moved, and nothing is raised over its base.
 //
-// FIELD BUGS 2026-10-15d TEMPLE-STEPS (Discord: "The Akatosh Chantry in Merdale also has some small issues"): A PAD BURIES
+// FIELD BUGS 2026-10-15e TEMPLE-STEPS (Discord: "The Akatosh Chantry in Merdale also has some small issues"): A PAD BURIES
 // NOTHING THE AUTHOR LEFT IN THE OPEN. A pad is the port's, not the author's - DFU with the pack lays none - and it was
 // laid against the hills and the plane alone, blind to the block's other models. Merdale's TEMPASD1 stands its temple's
 // four-piece flight (21728) over hill 52458: the pad under a post beside it (43733, 0.25 m square) banked down over the
@@ -510,7 +510,7 @@ function segmentDistance(x, z, a, b) {
   return Math.hypot(x - a[0] - ex * t, z - a[1] - ez * t);
 }
 
-/** FIELD BUGS 2026-10-15d TEMPLE-STEPS: a door's approach in the block's frame - the middle of its foot (`foot`), the way
+/** FIELD BUGS 2026-10-15e TEMPLE-STEPS: a door's approach in the block's frame - the middle of its foot (`foot`), the way
  *  out of it, level (`out`, the door record's own normal: the way DFU's exit lands a player), and half its width along
  *  the wall (`half`). `door` a door record of the mesh (meshReader's vert0-2 and normal, the model's own space), `m` the
  *  placement's matrix. */
@@ -718,7 +718,7 @@ export const RMBRP_STALLS = Object.freeze({
   53100: [49, 5], 53101: [449, 1], 53102: [449, 2], 53103: [449, 3], 53104: [49, 0], 53106: [49, 2], 53107: [49, 3], 53108: [49, 4],
   53109: [49, 5], 53113: [49, 5], 53115: [449, 2], 53117: [49, 0], 53118: [49, 1], 53121: [49, 4], 53122: [49, 5], 53123: [49, 6], 53124: [49, 8],
 });
-/** FIELD BUGS 2026-10-15d TEMPLE-STEPS: the scale every stall's prefab stands its mesh at (the model root's m_LocalScale,
+/** FIELD BUGS 2026-10-15e TEMPLE-STEPS: the scale every stall's prefab stands its mesh at (the model root's m_LocalScale,
  *  kept by ImportCustomGameobject). The stand-in had been the mesh at 1, and off its origin by the mesh's width: built
  *  from -0.4 to 2.75 m, where the mesh as Unity imports it (x mirrored, as the docks') runs from -2.76 to 0.43 - its high
  *  back on -x, its counter at the origin. */
@@ -735,7 +735,7 @@ function stall(cloth) {
   for (let i = 0; i < built.positions.length; i++) built.positions[i] *= RMBRP_STALL_SCALE;   // a uniform scale: the normals and the winding hold
   return built;
 }
-/** FIELD BUGS 2026-10-15d TEMPLE-STEPS: the pack's two stone blocks - the temple's platform (53160, Platform-Temple.fbx)
+/** FIELD BUGS 2026-10-15e TEMPLE-STEPS: the pack's two stone blocks - the temple's platform (53160, Platform-Temple.fbx)
  *  and the foundation (53170, Foundation 1.fbx) - are one mesh, a box of +-160 x +-80 x +-160 centimetres centred on
  *  its origin, as Unity imports it: each prefab's MeshFilter names the mesh itself, so the FBX node it was exported on,
  *  and that node's Lcl Scaling (125 on the platform's, 250 on the foundation's), is never instanced - only the prefab's

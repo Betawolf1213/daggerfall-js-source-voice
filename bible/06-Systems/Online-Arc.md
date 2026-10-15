@@ -14828,7 +14828,7 @@ honest crafter's first crafts. The fifteen left - Cured Leather's armour and boo
 counter also sells at twice its worth (7,500 XP, Outfitting 27, 132 Marks) - keep 3.2's 500, as the planks do: a hunter's own leather and a logger's own
 planks earn what 3.2 promised them, and the counter's price is a gatherer's ceiling, not an endless faucet. Silk's
 garments keep theirs (Spider Silk is hunted); the first is still recorded (`first`), the XP answered as credited. CRAFT-FIRST-SHOWN
-(2026-10-15, FIELD BUGS 2026-10-15d - the Discord: "The first time craft bonus is not applying to the outfitting"): the
+(2026-10-15, FIELD BUGS 2026-10-15e - the Discord: "The first time craft bonus is not applying to the outfitting"): the
 rule kept and said - every station's box says its pattern's XP and the 500 its first lays on, or that the Weavers' cloth
 earns none, and the craft's word reads `first` (`06-Systems/Professions-Arc.md` 41.9).
 `acct35`; pinned in `test/audit32_law.test.js` and `test/audit32_service.test.js` (S1, each run red on the code before

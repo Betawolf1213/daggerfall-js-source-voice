@@ -1238,5 +1238,5 @@ Pinned by `test/rainhours.test.js` (4); `tools/mutants/rainhours.json`, 9, all d
 WET-FALL (2026-10-15, a Discord report: "Player is getting wet despite it not raining. Possibly an oversight in reducing
 the rain?"): RAIN-HEART's level reached the drops, the look and the ear, and not the skin - the survival soak read the
 sim's word at the downpour's rate. It reads what falls now (`weatherSim.js` fallingWeather, the street's word and level
-as the ear's), `01-Overview/Field-Bugs-2026-10-15d.md`; `06-Systems/Climates-Calories.md` WET-FALL.
+as the ear's), `01-Overview/Field-Bugs-2026-10-15e.md`; `06-Systems/Climates-Calories.md` WET-FALL.
 
