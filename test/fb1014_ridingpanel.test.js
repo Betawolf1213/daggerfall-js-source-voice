@@ -142,5 +142,5 @@ test('HUD-SADDLE THE FOUR HOSTS: the panel has one builder, and it places itself
   assert.match(saddle, /import \{ placeHudPieces \} from '\.\/hudPlacer\.js';/);
   assert.ok(!saddle.includes("from './hudLayout.js'"), 'through the leaf, not the editor and its previews\' hosts');
   assert.match(saddle, /doc\.body\.append\(host\);\n {4}placeHudPieces\(doc\);/, 'placed the moment it is put on the page');
-  assert.match(rd('src/ui/enhancedHud.js'), /import \{ tickHudLayout \} from '\.\/hudLayout\.js';/, 'the HUD every host draws seats the sweep');
+  assert.match(rd('src/ui/enhancedHud.js'), /import \{ tickHudLayout, hudArranging \} from '\.\/hudLayout\.js';/, 'the HUD every host draws seats the sweep');   // PIN MOVED (THE MERGE of main: AUDIT UICALM-FIRM1 imports hudArranging beside the sweep)
 });
