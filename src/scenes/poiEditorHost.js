@@ -85,11 +85,14 @@ export function boxLines(b, color) {
  *   groundHit: (o: number[], d: number[]) => ({ point: number[] | null, dist: number }),
  *   surfaceAt: (x: number, z: number) => number,
  *   onChange?: () => void, pass?: any, actionOf?: (e: any) => (string | null),
+ *   viewport?: () => (ArrayLike<number> | null), gone?: () => boolean, onGone?: () => void,
  * }} deps `view` the frame the world last drew (its matrices, eye and canvas); `groundHit` the ground (and the world's
  *   meshes) under a ray; `sceneToPixel` a scene point as a map pixel and the spot in its frame; `pass` the lines' pass
- *   (render/poiGizmoPass.js) the frame's `drawLines` draws through
+ *   (render/poiGizmoPass.js) the frame's `drawLines` draws through; `viewport` the pixel rect the world pass draws into
+ *   (`[x, y, w, h]`, null the whole drawing buffer); `gone` whether the world went from under the open editor (a mode
+ *   changed, a game loaded) and `onGone` its leaving then
  */
-export function createPoiEditorHost({ edit, feed, host, view, translation, sceneToPixel, groundHit, surfaceAt, onChange = () => {}, pass = null, actionOf = () => null }) {
+export function createPoiEditorHost({ edit, feed, host, view, translation, sceneToPixel, groundHit, surfaceAt, onChange = () => {}, pass = null, actionOf = () => null, viewport = () => null, gone = () => false, onGone = () => {} }) {
   let on = false;
   /** @type {'select' | 'move' | 'turn' | 'size'} */
   let mode = 'move';
@@ -101,7 +104,7 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
   let ctrlHeld = false;
   /** @type {string | null} */
   let hover = null;
-  /** @type {null | { handle: string, state: any, id: string, part: string | null, light: number | null, start: any }} */
+  /** @type {null | { handle: string, state: any, id: string, part: string | null, light: number | null, start: any, px: number, py: number, frame: number[], now: number[] }} */
   let drag = null;
   /** @type {null | { x: number, y: number, moved: boolean, button: number }} */
   let press = null;
@@ -121,12 +124,9 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
     return d ? { o: [...v.eye], d } : null;
   }
 
-  /** The selected thing's pivot and axes in the scene frame - `{ c, axes, q, doc }` - or null. */
-  function target() {
-    const sel = edit.selection();
-    if (!sel) return null;
-    const doc = edit.docOf(sel.id);
-    if (!doc) return null;
+  /** A POI's own origin in the scene frame - its pixel's translation, its spot, its height over the drawn ground - or
+   *  null while that ground is not built. */
+  function originOfDoc(doc) {
     const t = translation(doc.place.px, doc.place.py, [0, 0, 0]);
     let ground = 0;
     if (doc.place.ground === 'snap') {
@@ -134,7 +134,17 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       if (!Number.isFinite(g)) return null;   // its ground not built yet: nothing to hold
       ground = g - t[1];
     }
-    const origin = [t[0] + doc.place.x, t[1] + ground + doc.place.y, t[2] + doc.place.z];
+    return [t[0] + doc.place.x, t[1] + ground + doc.place.y, t[2] + doc.place.z];
+  }
+
+  /** The selected thing's pivot and axes in the scene frame - `{ c, axes, q, doc }` - or null. */
+  function target() {
+    const sel = edit.selection();
+    if (!sel) return null;
+    const doc = edit.docOf(sel.id);
+    if (!doc) return null;
+    const origin = originOfDoc(doc);
+    if (!origin) return null;
     if (sel.light != null) {
       // a light: where it shines from, moved alone (it has no turn and no size of its own)
       const l = doc.lights?.[sel.light];
@@ -159,6 +169,7 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
     const tg = target();
     const v = view();
     if (!tg || !v || (tg.light && mode !== 'move')) return null;
+    if (edit.shownAs?.(tg.sel.id) !== undefined) return null;   // AUDIT POI E17: another stands in its place on this screen (the approver's "Show the live one") - nothing of what is seen to hold
     const vd = sub(tg.c, v.eye);
     const l = Math.hypot(vd[0], vd[1], vd[2]) || 1;
     const viewDir = mul(vd, 1 / l);
@@ -185,8 +196,9 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
     if (!ray) return;
     const hit = host.pick(ray.o, ray.d, POI_PICK_REACH);
     if (!hit) { if (!additive) edit.select(null); told(); return; }
-    // only a POI being edited can be selected: a live one is opened for editing by the outliner's word (the UI asks)
+    // only a POI being edited can be selected: a live one is opened for editing by the UI's word (`wantsOpen`)
     if (!edit.has(hit.id)) { told(); api.wantsOpen?.(hit.id); return; }
+    if (edit.shownAs?.(hit.id) !== undefined) { told(); return; }   // AUDIT POI E17: what was clicked is the document shown in its place, not the one being edited
     // the first click on a POI takes the POI; once it is held, a click takes the part under the cursor
     const sel = edit.selection();
     edit.select(sel?.id === hit.id ? { id: hit.id, part: hit.key } : { id: hit.id, part: null });
@@ -211,17 +223,19 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       edit.create({ px: px.px, py: px.py, x: px.x, z: px.z, y: lift, name: placing.name });
     } else {
       const asset = placing.asset;
-      // no POI held: a new one stands round the model, named for it (or as the UI names a new one)
-      if (!edit.selection()) edit.create({ px: px.px, py: px.py, x: px.x, z: px.z, y: lift, name: asset.name || placing.fallbackName || '' });
-      const tg = target();
-      if (!tg) return;
-      const local = worldToPlace(tg.doc.place, sub(at, tg.sel.part == null ? tg.c : originOf(tg)));
+      const sel = edit.selection();
+      if (sel ? !originOfDoc(edit.docOf(sel.id)) : !Number.isFinite(ground)) return;   // its ground not built yet: nothing to stand it from
       // every part of the model at once - one step - each where it stands from the model's origin, in the POI's own frame
       // (the model turns and sizes with its POI, as one thing); a library entry's parts keep their own turn, size,
       // solidity and shadow, and its lights come with it (POI-4b)
       const pieces = asset.parts ?? [asset];
       let key = null;
-      edit.edit(tg.sel.id, pieces.length > 1 ? 'add parts' : 'add part', (doc) => {
+      const fill = (doc) => {
+        const o = originOfDoc(doc);
+        if (!o) return;
+        // AUDIT POI E6: measured from the POI's own origin whatever of it is held - with a LIGHT held the pivot was the
+        // light's spot, and every part landed offset by the light's offset ([2, 0, 1] stood at [-3, -3, -1])
+        const local = worldToPlace(doc.place, sub(at, o));
         for (const piece of pieces) {
           const off = piece.t ?? [0, 0, 0];
           const part = newPart(doc, {
@@ -236,16 +250,15 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
         if (asset.lights?.length) doc.lights ??= [];
         // tidied as a new light's spot is (newLight), as a new part's is
         for (const l of asset.lights ?? []) doc.lights.push({ ...structuredClone(l), t: newLight([local[0] + l.t[0], local[1] + l.t[1], local[2] + l.t[2]]).t });
-      });
-      if (key) edit.select({ id: tg.sel.id, part: pieces.length > 1 ? null : key });
+      };
+      const held = (id) => ({ id, part: pieces.length > 1 ? null : key });
+      // no POI held: a new one stands round the model, named for it (or as the UI names a new one) - AUDIT POI E11: the
+      // POI and its model ONE step, as POI-4b says (it was two: the create, then the parts)
+      if (!sel) edit.create({ px: px.px, py: px.py, x: px.x, z: px.z, y: lift, name: asset.name || placing.fallbackName || '' }, fill, held);
+      else if (edit.edit(sel.id, pieces.length > 1 ? 'add parts' : 'add part', fill) && key) edit.select(held(sel.id));
     }
     placing = null; placeAt = null;
     told();
-  }
-  /** The POI's own origin for a target that holds a part. */
-  function originOf(tg) {
-    if (!tg) return [0, 0, 0];
-    return sub(tg.c, mul(quatRotate(tg.doc.place.r, tg.part.t), tg.doc.place.s));
   }
 
   const api = {
@@ -256,8 +269,30 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
     exit() {
       if (drag) { edit.cancel(); drag = null; }
       placing = null; placeAt = null; press = null; hover = null;
-      eye.look = eye.pan = eye.orbit = false; eye.keys.clear();
+      eye.look = eye.pan = eye.orbit = false; eye.keys.clear(); ctrlHeld = false;
       on = false; told();
+    },
+    /**
+     * AUDIT POI E14: EVERYTHING HELD, LET GO - the release this host never heard: a button let go over a window (the world
+     * hands the editor nothing then), the pointer's capture lost, the page's focus gone (another window took it, and its
+     * keyups with it). A drag is kept where it stands (one step, as its button's release keeps it); the look, the pan and
+     * the orbit end; the flight's keys and Ctrl are up; a press is no click. A drag or a look carried on after any of
+     * them - the eye flew on with no key held, the POI followed a cursor whose button was up. Answers whether anything
+     * was held.
+     */
+    letGo() {
+      const held = !!drag || eye.look || eye.pan || eye.orbit || eye.keys.size > 0 || !!press || ctrlHeld;
+      if (drag) { edit.commit(); drag = null; }
+      eye.look = eye.pan = eye.orbit = false; eye.keys.clear(); press = null; ctrlHeld = false;
+      if (held) told();
+      return held;
+    },
+    /** AUDIT POI E14: whether the world went from under the open editor (`gone`: its mode changed, a game was loaded) -
+     *  and if it did, the editor is left (`onGone`), so its listener eats no key in a building and holds no loaded body. */
+    worldGone() {
+      if (!on || !gone()) return false;
+      onGone();
+      return true;
     },
     /** @type {((id: string) => void) | null} the UI's word when a live POI is clicked (open it for editing?) */
     wantsOpen: null,
@@ -360,10 +395,13 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       if (g && hover) {
         const ray = rayAt(e.clientX, e.clientY);
         const state = ray ? beginGizmoDrag(g, hover, ray.o, ray.d) : null;
-        if (state) {
-          const sel = edit.selection();
-          edit.begin(sel.id, mode === 'move' ? 'move' : mode === 'turn' ? 'turn' : 'size');
-          drag = { handle: hover, state, id: sel.id, part: sel.part ?? null, light: sel.light ?? null, start: null };
+        const sel = edit.selection();
+        if (state && edit.begin(sel.id, mode === 'move' ? 'move' : mode === 'turn' ? 'turn' : 'size')) {
+          // AUDIT POI E7: the scene frame the drag is measured in, by its POI's pixel's translation - a floating-origin
+          // recentre mid-drag (the wheel's dolly across a pixel's edge, 500 m of height) moves the eye and every pixel by
+          // its offset, and the next ray, read in the new frame against the grab in the old, carried the POI ~819 m off
+          const { px, py } = g.tg.doc.place;
+          drag = { handle: hover, state, id: sel.id, part: sel.part ?? null, light: sel.light ?? null, start: null, px, py, frame: translation(px, py, [0, 0, 0]), now: [0, 0, 0] };
           told();
           return true;
         }
@@ -380,6 +418,7 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       if (eye.look || eye.pan || eye.orbit) { api.lookBy(dx, dy, cam); return true; }
       if (drag) {
         const ray = rayAt(e.clientX, e.clientY);
+        if (ray) { translation(drag.px, drag.py, drag.now); for (let a = 0; a < 3; a++) ray.o[a] -= drag.now[a] - drag.frame[a]; }   // AUDIT POI E7: the ray read in the frame the drag began in
         const r = ray ? dragResult(drag.state, ray.o, ray.d, snapNow()) : null;
         if (r) { const sel = { id: drag.id, part: drag.part, light: drag.light }; edit.preview((doc) => apply(doc, r, sel)); }
         return true;
@@ -412,8 +451,12 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       return true;
     },
     /**
-     * A key pressed. Answers whether the editor took it (the world then lets nothing else hear it).
-     * @param {{ code: string, key?: string, ctrlKey?: boolean, metaKey?: boolean, shiftKey?: boolean, repeat?: boolean }} e
+     * A key pressed. Answers whether the editor ACTED on it - the host then keeps it from the browser too. Whatever it
+     * answers, the world hears no key while the editor is open (the host stops every one); AUDIT POI E16: a key the
+     * editor does nothing with is the browser's (find, reload, the address bar, zoom, Tab, back) - every chord and every
+     * key the editor had no use for was answered "taken" and its default prevented, beyond the bible's "the browser
+     * keeps its own (F5, F12)".
+     * @param {{ code: string, key?: string, ctrlKey?: boolean, metaKey?: boolean, altKey?: boolean, shiftKey?: boolean, repeat?: boolean }} e
      * @param {any} cam
      * @param {{ save?: () => void, del?: () => void, duplicate?: () => void }} [acts] the UI's own acts
      */
@@ -421,12 +464,15 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       if (!on) return false;
       const mod = e.ctrlKey || e.metaKey;
       if (e.code === 'ControlLeft' || e.code === 'ControlRight') ctrlHeld = true;
-      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) eye.keys.add(a); return true; }   // flying: the builder's own bindings
+      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) { eye.keys.add(a); return true; } return false; }   // flying: the builder's own bindings, and no tool
+      // AUDIT POI E9: Ctrl+Z or Ctrl+Y mid-drag lets the drag go and nothing more (it let go AND undid the step before
+      // it, and this host's own drag stood on, previewing into a document no longer dragged)
+      if (mod && (e.code === 'KeyZ' || e.code === 'KeyY') && drag) { edit.cancel(); drag = null; told(); return true; }
       if (mod && e.code === 'KeyZ') { if (e.shiftKey) edit.redo(); else edit.undo(); told(); return true; }
       if (mod && e.code === 'KeyY') { edit.redo(); told(); return true; }
       if (mod && e.code === 'KeyS') { acts.save?.(); return true; }
       if (mod && e.code === 'KeyD') { acts.duplicate?.(); return true; }
-      if (mod) return true;
+      if (mod || e.altKey) return false;   // AUDIT POI E16: every other chord the browser's
       switch (e.code) {
         case 'KeyQ': api.setMode('select'); return true;
         case 'KeyW': api.setMode('move'); return true;
@@ -441,19 +487,20 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
           else edit.select(null);
           told();
           return true;
-        default: return true;   // nothing the editor is open over hears a key
+        default: return false;   // AUDIT POI E16: not the editor's - the world still hears none of it (the host stops it), the browser keeps it
       }
     },
+    /** A key let go. Answers whether the editor acted on it (a flight key up); the world hears none, as with keyDown. */
     keyUp(/** @type {{ code: string }} */ e) {
       if (!on) return false;
       if (e.code === 'ControlLeft' || e.code === 'ControlRight') ctrlHeld = false;
       const a = actionOf(e);
-      if (a) eye.keys.delete(a);
-      return true;
+      return !!a && eye.keys.delete(a);
     },
 
     /** Once a frame: the working set laid over the live POIs when it moved. */
     frame() {
+      if (api.worldGone()) return;   // AUDIT POI E14: a load under the editor (the street's frame runs on) - the editor left first
       const g = edit.generation();
       if (g !== overlayGen) { overlayGen = g; feed.setOverlay(edit.overlay()); }
     },
@@ -509,11 +556,67 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
     drawLines(proj, viewM) {
       if (!on || !pass) return false;
       const { inWorld, onTop } = api.lineSets();
-      const a = pass.draw(proj, viewM, inWorld, { onTop: false }), b = pass.draw(proj, viewM, onTop, { onTop: true });
+      // AUDIT POI E18: the lines' widths are pixels of the rect the world pass draws into - the strip above the docked
+      // large HUD, a retro or scaled image - never the whole drawing buffer's (they drew thinner, and unequal across)
+      const vp = viewport(), vw = vp ? vp[2] : 0, vh = vp ? vp[3] : 0;
+      const a = pass.draw(proj, viewM, inWorld, { onTop: false, vw, vh }), b = pass.draw(proj, viewM, onTop, { onTop: true, vw, vh });
       return a || b;
     },
     /** The selection's pivot (the gizmo's centre) - the UI's readout and a test's. */
     pivot: () => target()?.c ?? null,
   };
   return api;
+}
+
+/** The window's events the world hands the open editor, in their capture phase (scenes/world.js mountPoiEditor): the
+ *  pointer and the keys, and the two a release can be lost to - the pointer's capture lost, the page's focus gone. */
+export const POI_EDITOR_EVENTS = Object.freeze(['pointerdown', 'pointermove', 'pointerup', 'wheel', 'contextmenu', 'keydown', 'keyup', 'lostpointercapture', 'blur']);
+
+/**
+ * THE EDITOR'S INPUT, ROUTED - what the world's window listener hands the open editor (`onEvent`, on the window's
+ * capture phase) and what a key at the panel's own controls does (`onPanelKey`, on the panel's root, in the bubble
+ * phase: after the control under the key, and after anything in the panel that owns its keys and stops them there, as
+ * the UV dialog does). DOM-free, as the host is: the world binds the two (scenes/world.js mountPoiEditor).
+ *   - THE WORLD HEARS NO KEY while the editor is open (bible POI-3b) - every key is stopped, a field's too.
+ *   - AUDIT POI E16: the BROWSER loses only what the editor acted on (`keyDown`'s answer): find, reload, the address
+ *     bar, zoom, Tab and back stay its own.
+ *   - AUDIT POI E2: A KEY AT THE PANEL is the editor's when its target is a control (a button the builder clicked, a
+ *     select) - it went down to the world's and the mode machine's ladders: "New POI" then Escape opened the pause with
+ *     the placing still armed, a tool clicked then R rested the body, E interacted, Q recast. A key in a typed field is
+ *     the field's, and the world below hears none of it either.
+ *   - AUDIT POI E14: A RELEASE IS NEVER GATED - a button let go over a window or the panel, the pointer's capture lost,
+ *     the window's own blur: the editor lets go of everything it holds (`letGo`). And the world gone from under it (a
+ *     mode changed, a game loaded - `worldGone`) leaves the editor at the next event, that event the world's.
+ * @param {{ editor: any, canvas: any, cam: any, acts: () => any, owns: (t: any) => boolean, overlayUp: () => boolean,
+ *   textEntry: (t: any) => boolean, win?: any }} deps `owns` whether a target is the panel's; `overlayUp` a window over
+ *   the world (its keys and presses are its own); `textEntry` a typed field (ui/input.js isTextEntryTarget); `win` the
+ *   window whose blur is the page's focus gone
+ */
+export function createPoiEditorRouter({ editor, canvas, cam, acts, owns, overlayUp, textEntry, win = globalThis }) {
+  function onEvent(e) {
+    if (!editor.active() || editor.worldGone()) return;
+    if (e.type === 'lostpointercapture' || e.type === 'blur') { if (e.type === 'lostpointercapture' || e.target === win) editor.letGo(); return; }
+    if (overlayUp() || owns(e.target)) { if (e.type === 'pointerup') editor.letGo(); return; }
+    let took = false;
+    switch (e.type) {
+      case 'pointerdown': if (e.target !== canvas) return; took = editor.pointerDown(e); if (took) canvas.setPointerCapture?.(e.pointerId); break;
+      case 'pointermove': took = editor.pointerMove(e, cam); break;
+      case 'pointerup': took = editor.pointerUp(e); break;
+      case 'wheel': if (e.target !== canvas) return; took = editor.wheel(e, cam); break;
+      case 'contextmenu': if (e.target === canvas) { e.preventDefault?.(); took = true; } break;
+      case 'keydown': if (textEntry(e.target)) return; took = editor.keyDown(e, cam, acts()); break;
+      case 'keyup': if (textEntry(e.target)) return; took = editor.keyUp(e); break;
+      default: break;
+    }
+    if (!took && e.type !== 'keydown' && e.type !== 'keyup') return;
+    e.stopImmediatePropagation?.();   // the world hears no key while the editor is open, nor a press the editor took
+    if (took && e.type !== 'pointermove') e.preventDefault?.();   // AUDIT POI E16: the browser loses what the editor acted on, and only that
+  }
+  function onPanelKey(e) {
+    if (!editor.active() || overlayUp()) return;   // a window over the world (the map the bar opened) has its keys
+    e.stopPropagation?.();   // AUDIT POI E2: nothing below the panel - the world, the mode machine - hears a key typed at it
+    if (textEntry(e.target)) return;   // a typed field keeps its key
+    if (e.type === 'keydown' ? editor.keyDown(e, cam, acts()) : editor.keyUp(e)) e.preventDefault?.();
+  }
+  return { onEvent, onPanelKey };
 }

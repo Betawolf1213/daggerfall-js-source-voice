@@ -45,6 +45,11 @@ export function tidyQuat(q) {
 }
 const conj = (q) => [-q[0], -q[1], -q[2], q[3]];
 const DEG = 180 / Math.PI;
+/** AUDIT POI E4: the pitch's cosine (the rotation's own, off its matrix) under which it looks straight up or down - a
+ *  pitch within ~0.0006 degrees of 90. A turn made exactly there (typed, snapped, or a gizmo's 90 about an axis) reads
+ *  as the pole through a tidied quaternion's noise (a millionth a number), and a turn read either side of it comes back
+ *  to within 0.0003 degrees whichever of its three numbers is typed over next. */
+const POLE_COS = 1e-5;
 
 /**
  * Unity's Transform.eulerAngles of a rotation: `[x, y, z]` in degrees, the turn made as Z, then X, then Y
@@ -53,17 +58,25 @@ const DEG = 180 / Math.PI;
  */
 export function eulerOfQuat(q) {
   const [x, y, z, w] = q;
-  const sx = clamp(2 * (w * x - y * z), -1, 1);
+  // AUDIT POI E4: the rotation's matrix, every term over the quaternion's own square length (homogeneous), so a quaternion
+  // tidied to a millionth - its length a millionth off one - is read as the turn it is. The pole was asked of
+  // |2(wx - yz)| > 0.999999, which the tidy's own rounding missed by up to four millionths: a pitch of 90 fell into the
+  // general arm, whose yaw and roll were then atan2 of rounding noise - yaw 45 at a pitch of 90 read [89.9071, 0, 0], and
+  // a roll typed over those numbers committed a turn 45 degrees off what was meant.
+  const n = x * x + y * y + z * z + w * w || 1;
+  const sx = 2 * (w * x - y * z), m02 = 2 * (x * z + w * y), m22 = w * w - x * x - y * y + z * z, cx = Math.hypot(m02, m22);
   let ex, ey, ez;
-  if (Math.abs(sx) > 0.999999) {
-    // looking straight up or down: the yaw and the roll are one turn - all of it given to the yaw, the roll nought
-    ex = Math.sign(sx) * 90;
-    ey = 2 * Math.atan2(y, w) * DEG;
+  if (cx / n < POLE_COS) {
+    // looking straight up or down: the yaw and the roll are one turn - all of it given to the yaw, read off the
+    // matrix's top row as the engine reads it (Unity's MatrixToEuler), the roll nought
+    const s = Math.sign(sx) || 1;
+    ex = s * 90;
+    ey = Math.atan2(s * 2 * (x * y - w * z), w * w + x * x - y * y - z * z) * DEG;
     ez = 0;
   } else {
-    ex = Math.asin(sx) * DEG;
-    ey = Math.atan2(2 * (w * y + x * z), 1 - 2 * (x * x + y * y)) * DEG;
-    ez = Math.atan2(2 * (w * z + x * y), 1 - 2 * (x * x + z * z)) * DEG;
+    ex = Math.atan2(sx, cx) * DEG;
+    ey = Math.atan2(m02, m22) * DEG;
+    ez = Math.atan2(2 * (w * z + x * y), w * w - x * x + y * y - z * z) * DEG;
   }
   const wrap = (a) => { const r = ((a % 360) + 360) % 360; const t = Math.round(r * 1e4) / 1e4; return t >= 360 ? 0 : t; };
   return [wrap(ex), wrap(ey), wrap(ez)];
@@ -216,6 +229,8 @@ export function createPoiEdit({ rand = (b) => { globalThis.crypto.getRandomValue
     if (e) e.doc = JSON.parse(json);
     else docs.set(id, { doc: JSON.parse(json), saved: null, base: null, rev: null, state: 'new', ...(entry ?? {}) });
   };
+  /** An entry's own fields - what a step that takes it out of the set keeps, to put it back as it was. */
+  const entryFields = (id) => { const e = docs.get(id); return e ? { saved: e.saved, base: e.base, rev: e.rev, state: e.state } : undefined; };
   const push = (step) => {
     undo.push(step);
     if (undo.length > depth) undo.splice(0, undo.length - depth);
@@ -267,14 +282,18 @@ export function createPoiEdit({ rand = (b) => { globalThis.crypto.getRandomValue
     selection: () => sel,
     select(/** @type {PoiSelection} */ s) { const v = validSel(s); if (!sameSel(v, sel)) { sel = v; changed(); } },
 
-    /** A new POI at a spot, selected - one step (undone, it is gone). Answers its id. */
-    create(/** @type {{ px: number, py: number, x: number, z: number, y?: number, name: string }} */ at) {
+    /** A new POI at a spot, selected - one step (undone, it is gone). `fill` lays what it stands up with into the new
+     *  document - AUDIT POI E11: a model placed with no POI held stands in a new one as ONE step, the POI and the model
+     *  together, as POI-4b says (it was the create and then an edit: two undos for one click). `select` the selection it
+     *  leaves (else the POI). Answers its id. */
+    create(/** @type {{ px: number, py: number, x: number, z: number, y?: number, name: string }} */ at, /** @type {((doc: any) => void) | null} */ fill = null, /** @type {PoiSelection | ((id: string) => PoiSelection) | undefined} */ select = undefined) {
       if (drag) api.commit();
       const id = mintPoiId(rand);
       const doc = newPoiDoc({ id, ...at });
+      fill?.(doc);
       const selBefore = sel;
       setDoc(id, text(doc));
-      sel = { id, part: null, light: null };
+      sel = validSel((typeof select === 'function' ? select(id) : select) ?? { id, part: null, light: null });
       push({ id, label: 'create', before: null, after: text(doc), selBefore, selAfter: sel, entryAfter: { saved: null, base: null, rev: null, state: 'new' } });
       changed();
       return id;
@@ -302,7 +321,7 @@ export function createPoiEdit({ rand = (b) => { globalThis.crypto.getRandomValue
     edit(id, label, fn, select = undefined) {
       if (drag) api.commit();
       const e = docs.get(id);
-      if (!e) return false;
+      if (!e || shown.has(id)) return false;   // AUDIT POI E17: shown as another (showAs), its working copy is not what is seen - not changed unseen
       const before = text(e.doc);
       const doc = JSON.parse(before);
       fn(doc);
@@ -320,7 +339,7 @@ export function createPoiEdit({ rand = (b) => { globalThis.crypto.getRandomValue
     begin(/** @type {string} */ id, /** @type {string} */ label) {
       if (drag) api.commit();
       const e = docs.get(id);
-      if (!e) return false;
+      if (!e || shown.has(id)) return false;   // AUDIT POI E17: nor dragged while another stands in its place
       drag = { id, label, start: text(e.doc), selBefore: sel };
       return true;
     },
@@ -361,22 +380,28 @@ export function createPoiEdit({ rand = (b) => { globalThis.crypto.getRandomValue
     canRedo: () => redo.length > 0 && !drag,
     undoLabel: () => undo.at(-1)?.label ?? null,
     redoLabel: () => redo.at(-1)?.label ?? null,
-    /** One step back: its document as it was, and the selection it found. Answers its label, or null. */
+    /** One step back: its document as it was, and the selection it found. Answers its label, or null. A drag under way
+     *  is the step taken back (AUDIT POI E9: it was let go AND the step before it undone - one press, two steps). */
     undo() {
-      if (drag) api.cancel();
+      if (drag) { const label = drag.label; api.cancel(); return label; }
       const s = undo.pop();
       if (!s) return null;
+      // AUDIT POI E8: a create undone takes the POI out of the set - what it is now (saved, its revision, its state) goes
+      // with the step, as a remove's does, so its redo brings back a POI that knows it was saved (it came back 'new' and
+      // never saved: thrown away, the store's draft was left behind)
+      if (s.before === null) s.entryAfter = entryFields(s.id);
       setDoc(s.id, s.before, s.entryBefore);
       sel = validSel(s.selBefore);
       redo.push(s);
       changed();
       return s.label;
     },
-    /** One step forward again. */
+    /** One step forward again (a drag under way is let go, and nothing more - as undo). */
     redo() {
-      if (drag) api.cancel();
+      if (drag) { api.cancel(); return null; }
       const s = redo.pop();
       if (!s) return null;
+      if (s.after === null) s.entryBefore = entryFields(s.id);   // AUDIT POI E8: a remove redone - what it is now, for its undo
       setDoc(s.id, s.after, s.entryAfter);
       sel = validSel(s.selAfter);
       undo.push(s);
