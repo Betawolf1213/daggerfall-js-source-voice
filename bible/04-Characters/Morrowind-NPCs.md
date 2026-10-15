@@ -2092,7 +2092,9 @@ and the priests' pictures name their cut. Faces beyond a race's own BODY
 records (Morrowind's NPC heads are what the data carries) - but the port's
 own (AMENDED BY MW-HEADS1, 2026-10-13: the Breton men's three heads and three
 hairs stand in place of the data's, and the walk reaches their nine pairs;
-`04-Characters/Own-Heads.md`).
+AMENDED AGAIN BY MW-HEADS2, 2026-10-15 - the owner: "only the player Britons
+should recieve the new heads, not npcs": an NPC's walk is the data's again, the
+port's own a player's alone; `04-Characters/Own-Heads.md`).
 
 PROVEN. `test/mwnpc17_wardrobe.test.js` (5): every role and sex dressed by its
 own table over hundreds of seeds - pure, its garments and dyes, one top or

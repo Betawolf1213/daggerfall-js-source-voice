@@ -17,13 +17,15 @@
 //   EACH PART IN THE HEAD'S OWN FRAME. A retail head or hair is a RIGID part hung under the skeleton's "Head" node
 //   (02-Formats/Morrowind-Rules.md rules 5, 12 and 13), its geometry in that node's frame. The three faces carry one
 //   such frame between them, not a recentring of each: every one has the same crown (z 7.66), the same sides
-//   (x +-4.78) and the same back (y -6.95), though one is a different mesh with a sculpted beard - so the frame is the
-//   source head's (`b_n_breton_m_head_05`, the names say), and each part is baked in it: the object's scene placement
-//   taken back off (`partFrame` - a translation, the scene turning nothing), never re-centred, never scaled. In it each
-//   face stands upright and looks +Y: its crown on top on the middle line, its nose ahead under it, its chin ahead of
-//   the crown (test/mwheads1.test.js). How the game's Head node turns that frame is the one link the tree cannot read -
-//   no retail skeleton's part nodes are vendored - so a retail head's frame is taken to be its source's, to be seen in
-//   game. Where the owner's scene stood them - z 125 over its floor - is where MW-STEEL5 measured the game drawing a
+//   (x +-4.78) and the same back, though one is a different mesh with a sculpted beard - so the frame is the source
+//   head's (`b_n_breton_m_head_05`, the names say), and each part is baked in it: the object's scene placement taken
+//   back off (`partFrame` - a translation, the scene turning nothing), never re-centred, never scaled.
+//   MW-HEADS2 (2026-10-15, the owner: "some of the ingame heads are backwards on the body"): AND TURNED ROUND. How the
+//   game's Head node turns that frame is the one link the tree cannot read - no retail skeleton's part nodes are
+//   vendored - and the first bake took the scene's +Y for the face's, as the scene's body faced: seen in game, the face
+//   hung backwards on the body. So the head's frame faces -Y - the scene turned half round about its crown
+//   (HEAD_FORWARD: the scene's -Y is the frame's +Y, the brigandine's turn), a rotation and no mirror, the back now at
+//   y +6.95 and the face ahead of the crown on -Y (test/mwheads1.test.js). Where the owner's scene stood them - z 125 over its floor - is where MW-STEEL5 measured the game drawing a
 //   retail head over the T-posed scene's own (3.2 to 4.3 higher than its 113.15 to 129.2, and 125 puts these 3.46
 //   higher): the same height, read two ways.
 //
@@ -38,7 +40,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { readFbx } from './fbxRead.mjs';
-import { bakeMesh, objectMaterials } from './fbxMesh.mjs';
+import { bakeMesh, objectMaterials, basisMap } from './fbxMesh.mjs';
 import { mipChain, writeDds } from './meshTexture.mjs';
 import { meshToNif } from './nifWrite.mjs';
 import { readPng } from './pngIO.mjs';
@@ -66,6 +68,11 @@ export const textureName = (id) => `${id}.dds`;
 export const meshFile = (id) => `src/assets/mw/meshes/${id}.nif`;
 export const textureFile = (id) => `src/assets/mw/textures/${id}.dds`;
 
+/** MW-HEADS2: the scene's axis that becomes the head frame's +Y - its -Y, the scene turned half round about its crown:
+ *  a retail head's frame looks -Y (seen in game - the first bake's +Y hung every face backwards on the body). */
+export const HEAD_FORWARD = '-y';
+export const HEAD_UP = '+z';
+
 const part = (id, batch, slot, object, material, texture, box) => Object.freeze({ id, batch, slot, object, material, texture, box: Object.freeze(box) });
 
 /**
@@ -74,18 +81,19 @@ const part = (id, batch, slot, object, material, texture, box) => Object.freeze(
  * placement the bake keeps.
  */
 export const HEAD_PARTS = Object.freeze([
-  part('breton_m_head_h04', 'breton', 'head', 'b_n_breton_m_hair_widow', 1, 'tx_b_n_breton_m_h04.png', [[-4.78, -6.95, -8.89], [4.78, 8.28, 7.66]]),
-  part('breton_m_hair_widow', 'breton', 'hair', 'b_n_breton_m_hair_widow', 0, 'tx_b_n_breton_m_hair_widow.png', [[-7.18, -10.83, -8.71], [7.18, 5.92, 9.27]]),
-  part('breton_m_head_h0411', 'breton', 'head', 'b_n_breton_m_head_05.002', 0, 'tx_b_n_breton_m_h0411.png', [[-4.78, -6.95, -8.4], [4.78, 8.38, 7.66]]),
-  part('breton_m_hair_01', 'breton', 'hair', 'b_n_breton_m_head_05.002', 1, 'tx_b_n_breton_m_hair01.png', [[-6.05, -8.56, -6.94], [6.05, 6.9, 9.16]]),
-  part('breton_m_head_h0423', 'breton', 'head', 'b_n_breton_m_head_05.003', 0, 'tx_b_n_breton_m_h0423.png', [[-4.78, -6.95, -9.84], [4.78, 7.92, 7.66]]),
-  part('breton_m_hair_0111', 'breton', 'hair', 'b_n_breton_m_head_05.003', 1, 'tx_b_n_breton_m_hair0111.png', [[-6.96, -8.56, -6.94], [6.96, 7.31, 8.82]]),
+  part('breton_m_head_h04', 'breton', 'head', 'b_n_breton_m_hair_widow', 1, 'tx_b_n_breton_m_h04.png', [[-4.78, -8.28, -8.89], [4.78, 6.95, 7.66]]),
+  part('breton_m_hair_widow', 'breton', 'hair', 'b_n_breton_m_hair_widow', 0, 'tx_b_n_breton_m_hair_widow.png', [[-7.18, -5.92, -8.71], [7.18, 10.83, 9.27]]),
+  part('breton_m_head_h0411', 'breton', 'head', 'b_n_breton_m_head_05.002', 0, 'tx_b_n_breton_m_h0411.png', [[-4.78, -8.38, -8.4], [4.78, 6.95, 7.66]]),
+  part('breton_m_hair_01', 'breton', 'hair', 'b_n_breton_m_head_05.002', 1, 'tx_b_n_breton_m_hair01.png', [[-6.05, -6.9, -6.94], [6.05, 8.56, 9.16]]),
+  part('breton_m_head_h0423', 'breton', 'head', 'b_n_breton_m_head_05.003', 0, 'tx_b_n_breton_m_h0423.png', [[-4.78, -7.92, -9.84], [4.78, 6.95, 7.66]]),
+  part('breton_m_hair_0111', 'breton', 'hair', 'b_n_breton_m_head_05.003', 1, 'tx_b_n_breton_m_hair0111.png', [[-6.96, -7.31, -6.94], [6.96, 8.56, 8.82]]),
 ]);
 
 /** A scene-placed mesh in its OBJECT'S own frame: the scene translation the bake kept, taken back off - to the bake's
- *  six places. Nothing else moves: no re-centring, no scale. */
-export function partFrame(mesh) {
-  const t = mesh.bake.sceneTranslation;
+ *  six places. Nothing else moves: no re-centring, no scale. `toBasis` the bake's axes (the translation is the scene's,
+ *  so it is turned as the vertices were - MW-HEADS2's half turn). */
+export function partFrame(mesh, toBasis = basisMap(HEAD_FORWARD, HEAD_UP)) {
+  const t = toBasis(mesh.bake.sceneTranslation);
   const off = (v, k) => +(v - t[k]).toFixed(6);
   return {
     ...mesh,
@@ -101,7 +109,7 @@ export function partMesh(tree, p) {
   if (names[p.material] !== p.texture) {
     throw new Error(`"${p.object}" wears ${JSON.stringify(names[p.material] ?? null)} in material ${p.material}, not ${p.texture} - re-read the export before baking it`);
   }
-  const mesh = partFrame(bakeMesh(objectTree(tree, p.object), { name: p.id, placement: 'scene', forward: '+y', up: '+z', material: p.material }));
+  const mesh = partFrame(bakeMesh(objectTree(tree, p.object), { name: p.id, placement: 'scene', forward: HEAD_FORWARD, up: HEAD_UP, material: p.material }));
   const off = [0, 1, 2].flatMap((k) => [Math.abs(mesh.bounds.min[k] - p.box[0][k]), Math.abs(mesh.bounds.max[k] - p.box[1][k])]);
   if (Math.max(...off) > BOX_SLACK) {
     throw new Error(`"${p.id}" stands at ${JSON.stringify(mesh.bounds)}, not where it was read (${JSON.stringify(p.box)}) - re-read the export before baking it`);

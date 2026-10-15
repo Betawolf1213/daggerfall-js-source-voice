@@ -949,7 +949,7 @@
   {
     "name": "AUDIT-LEGACY-III-P17-the-tree-asks-head-nought",
     "file": "src/ui/familyPages.js",
-    "old": "    faces(facePose(p)).then((img) => {",
+    "old": "    faces(facePose(p, { currentId: _provider?.family?.()?.currentId ?? null })).then((img) => {",
     "new": "    faces({ race: p.race, gender: p.gender, face: p.face }).then((img) => {",
     "tests": [
       "test/auditlegacy3.test.js"
