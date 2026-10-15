@@ -11157,7 +11157,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   /** AUDIT CC-A5: my boats always say who is away - an empty set brings the last of the party home onto her deck. */
   const NO_HANDS_AWAY = new Set();
-  const _crewCtx = { battle: false, struck: false, muster: 0, avoid: null, order: null, sings: true, line: null, asleep: false, work: 0, call: null, roles: null, lookout: -1 }, _crewMe = [0, 0, 0], _crewThem = [0, 0, 0];
+  const _crewCtx = { battle: false, struck: false, muster: 0, way: null, avoid: null, order: null, sings: true, line: null, asleep: false, work: 0, call: null, roles: null, lookout: -1 }, _crewMe = [0, 0, 0], _crewThem = [0, 0, 0];
   const _crewSeed = (s) => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 0x01000193); return h >>> 0; };
   /** AUDIT NAV2 F9: my boat's crew seeded as a room seeds her (comeSailAwayPeers peerKey, `${whose}:${which}` - which,
    *  her place among my word's boats: csaWord's order, the active ones) so her owner and every reader stand one crew;
@@ -11183,7 +11183,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // AUDIT NAV2 F43: a Warm Ashes raid on her deck is fought by its own `_ally_`, her crew (AUDIT NAV1 B2) - her living
       // crew held off her deck till it ends, never walking and singing among the raiders
       const raid = !!b?.quest && b.boat === boat;
-      list.push({ key: boat, boat, deck: csa.deckOf(boat.hull, boat.variant ?? 0), count: crewCount({ hull: boat.hull, crew }), rosterOf: () => navalMyRoster(boat, seed, crew), seed, faction: null, battle: !!mine?.battle, toward: mine?.toward ?? null, hold: raid, mine, away: naval?.awayOf?.(boat) ?? NO_HANDS_AWAY });   // SHIP-CREW: `mine` her order, spirits and lines - CREW-COMPANIONS: `away` her hands ashore, off her deck
+      list.push({ key: boat, boat, deck: csa.deckOf(boat.hull, boat.variant ?? 0), count: crewCount({ hull: boat.hull, crew }), rosterOf: () => navalMyRoster(boat, seed, crew), seed, faction: null, battle: !!mine?.battle, way: mine?.way ?? null, toward: mine?.toward ?? null, hold: raid, mine, away: naval?.awayOf?.(boat) ?? NO_HANDS_AWAY });   // SHIP-CREW: `mine` her order, spirits and lines - CREW-COMPANIONS: `away` her hands ashore, off her deck
     }
     for (const boat of csa.peerBoats) {
       if (!boat?.crewed || !boat.GameObject?.activeSelf || !near(boat, boat.GameObject.position)) continue;
@@ -11195,14 +11195,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     }
     for (const s of naval?.crewShips?.() ?? []) {
       if (!near(s.key, s.pos)) continue;
-      list.push({ key: s.key, boat: s.boat, deck: csa.deckOf(s.boat.hull, s.boat.variant ?? 0), count: crewCount({ hull: s.boat.hull, shipClass: s.shipClass, crewShare: s.crewShare }), rosterOf: () => crewRoster({ hull: s.boat.hull, seed: s.seed, shipClass: s.shipClass, crewShare: s.crewShare }), seed: s.seed, faction: s.faction, battle: s.battle, struck: s.struck, toward: s.toward, hold: s.hold, work: s.work ?? 0 });   // SHIP-WATCH: her hurts, mended
+      list.push({ key: s.key, boat: s.boat, deck: csa.deckOf(s.boat.hull, s.boat.variant ?? 0), count: crewCount({ hull: s.boat.hull, shipClass: s.shipClass, crewShare: s.crewShare }), rosterOf: () => crewRoster({ hull: s.boat.hull, seed: s.seed, shipClass: s.shipClass, crewShare: s.crewShare }), seed: s.seed, faction: s.faction, battle: s.battle, struck: s.struck, way: s.way ?? null, toward: s.toward, hold: s.hold, work: s.work ?? 0 });   // SHIP-WATCH: her hurts, mended
     }
     navalCrew.sync(list);
     const grapple = b?.phase === 'grapple' ? b : null;
     const asleep = asleepHour(hourOf(minuteNow()));   // SHIP-WATCH: every crew's night, but its watch
     navalCrew.frame(dt, eye, (key, ship) => {
       const m = ship.boat.MeshObject.worldMatrix();
-      _crewCtx.battle = ship.battle; _crewCtx.struck = ship.struck; _crewCtx.muster = 0; _crewCtx.avoid = null;
+      _crewCtx.battle = ship.battle; _crewCtx.struck = ship.struck; _crewCtx.muster = 0; _crewCtx.way = null; _crewCtx.avoid = null;
       _crewCtx.order = ship.mine?.order ?? null; _crewCtx.sings = ship.mine?.sings ?? true; _crewCtx.line = ship.mine?.line ?? null;   // SHIP-CREW
       // SHIP-WATCH: the night, her work (mine's off her hurts and her order, the sea's off hers) and my lookout's cry -
       // said once (the host hands it over once)
@@ -11219,6 +11219,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // AUDIT NAV2 F40: or a boarding at hand (navalHost crewShips/myCrew `toward`) - the rail on the side it lies on
       const toward = other?.GameObject ? other.GameObject.position : ship.toward;
       if (toward) { intoDeck(m, toward, _crewThem); _crewCtx.muster = _crewThem[0] >= 0 ? 1 : -1; }
+      // CREW-MUSTER (FIELD BUGS 2026-10-14): and her side of it - the grapple's kind from her deck (the boarded ship's crew
+      // repels), else the host's word with her `toward` (navalHost crewShips/myCrew `way`)
+      if (toward) _crewCtx.way = other ? (key === grapple.shipId ? (grapple.kind === 'board' ? 'repel' : 'board') : grapple.kind) : ship.way ?? null;
       return _crewCtx;
     });
   }
