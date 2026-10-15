@@ -4676,22 +4676,22 @@
  },
  "firm.readFail.missing": {
   "en": "e922156003a2",
-  "tr": "b9afbfb927c3",
+  "tr": "4d7f40d6973f",
   "by": "claude-in-session"
  },
  "firm.readFail.offline": {
   "en": "b9fe9c4963f9",
-  "tr": "7fc6ac3660a8",
+  "tr": "ed445427b6f2",
   "by": "claude-in-session"
  },
  "firm.readFail.other": {
   "en": "8cd2f55c90e4",
-  "tr": "ecf18fba46a9",
+  "tr": "d84e8045b23c",
   "by": "claude-in-session"
  },
  "firm.readFail.session": {
   "en": "e36c0e7d74ac",
-  "tr": "dce34ab09faa",
+  "tr": "c6cf9d3978fd",
   "by": "claude-in-session"
  },
  "lang.offer": {
@@ -4712,6 +4712,26 @@
  "lang.offer.yes": {
   "en": "5397e0583f14",
   "tr": "8d2fab2d123f",
+  "by": "claude-in-session"
+ },
+ "level.renown.risen": {
+  "en": "4d843172a323",
+  "tr": "f9b8af0caf70",
+  "by": "claude-in-session"
+ },
+ "level.renown.risenStars": {
+  "en": "585eaa57b0ca",
+  "tr": "a60f9f28d1e2",
+  "by": "claude-in-session"
+ },
+ "level.renown.sub": {
+  "en": "b99bb1f470f1",
+  "tr": "892334c07ab4",
+  "by": "claude-in-session"
+ },
+ "level.renown.subStars": {
+  "en": "3327f2336c2c",
+  "tr": "1f69ca839d32",
   "by": "claude-in-session"
  },
  "menu.about.build": {
@@ -12457,6 +12477,46 @@
  "saddle.hello.none": {
   "en": "c4f18acb1d78",
   "tr": "aff9fe6de659",
+  "by": "claude-in-session"
+ },
+ "saddle.note.breath": {
+  "en": "33e9e8f97661",
+  "tr": "e61db447aacb",
+  "by": "claude-in-session"
+ },
+ "saddle.note.failing": {
+  "en": "2cb283e1fb4c",
+  "tr": "7308eb9106f0",
+  "by": "claude-in-session"
+ },
+ "saddle.note.hungry": {
+  "en": "0f2c28b6aace",
+  "tr": "43ed22afcd81",
+  "by": "claude-in-session"
+ },
+ "saddle.note.load": {
+  "en": "5bbeca91f711",
+  "tr": "16f02d81de6f",
+  "by": "claude-in-session"
+ },
+ "saddle.note.rickety": {
+  "en": "e03ab1e76ab1",
+  "tr": "8361abe2be43",
+  "by": "claude-in-session"
+ },
+ "saddle.note.starving": {
+  "en": "c4d2d8dcc726",
+  "tr": "e6dea6601482",
+  "by": "claude-in-session"
+ },
+ "saddle.note.starvingGallop": {
+  "en": "fdeaa1efc90e",
+  "tr": "7ee8f3326437",
+  "by": "claude-in-session"
+ },
+ "saddle.note.winded": {
+  "en": "93ab86d5255e",
+  "tr": "90b63ac75ebc",
   "by": "claude-in-session"
  },
  "schools.about.title": {

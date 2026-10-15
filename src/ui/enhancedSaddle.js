@@ -29,9 +29,9 @@
 //
 // UI-CALM (2026-10-14, a player: "Why is there a huge, unmovable panel showing horse/cart info at the top of my screen?
 // It's intrusive and ruins immersion. Put that info in a separate menu ... Show information when it's relevant."):
-// THE PANEL STANDS WHEN IT IS WANTED, AND LOW (saddleShown). Its presses take a click only with the mouse free, so the
-// whole panel - the meters, the presses - stands while the mouse is free (the free-mouse key), and never over the ride
-// while the look holds it. Then only what needs the rider stands, as ONE LINE (`note`: winded, short of breath, hungry,
+// THE PANEL STANDS WHEN IT IS WANTED, AND LOW (saddleShown). The whole panel - the meters, the presses - stands when its
+// key puts it up (F2, SADDLE_PANEL_ACTION) or the choice is Always; its presses take a click only with the mouse free
+// (the hint says how). Away, only what needs the rider stands, as ONE LINE (`note`: winded, short of breath, hungry,
 // a wagon rickety or failing, a load past its limit - and its own meter beside it), and for a few seconds after mounting
 // a line that says the horse's name and how to call the panel (`hello`). A finger has no free mouse: it reads a small
 // plate with the name, and a tap on it opens the panel and closes it again. The Stable page (Holdings) is the separate
@@ -182,15 +182,20 @@ export function saddleAlert(s) {
   if (s?.load && s.load.limit > 0 && s.load.kg > s.load.limit) return 'load';
   return null;
 }
-/** UI-CALM: the one line a `note` says - what needs the rider, and what to do (the plate's title names whose). Pure.
+/** UI-CALM: the one line a `note` says - what needs the rider, and what to do (the plate's title names whose), in the
+ *  player's language as the hello beside it is (AUDIT UICALM-FIRM1 L4 M8: the plate had read half translated). Pure.
  *  @param {any} s */
 export function saddleNote(s) {
   const h = s?.horse, w = s?.wagon;
   switch (saddleAlert(s)) {
-    case 'breath': return h.winded ? 'Winded - ease off and let it breathe' : 'Short of breath - ease off';
-    case 'hunger': return h.hungerKey === 'starving' ? (s.mode === 'Horse' ? 'Starving - it will not gallop until it eats' : 'Starving - feed your horse') : 'Hungry - feed it oats';
-    case 'wagon': return w.stateKey === 'failing' ? `The ${w.name.toLowerCase()} is failing - mend it to get its pace back` : `The ${w.name.toLowerCase()} is rickety - a kit or a Wagon Yard mends it`;
-    case 'load': return 'Overloaded - your team pulls it slower';
+    case 'breath': return h.winded ? t('saddle.note.winded', 'Winded - ease off and let it breathe') : t('saddle.note.breath', 'Short of breath - ease off');
+    case 'hunger': return h.hungerKey === 'starving'
+      ? (s.mode === 'Horse' ? t('saddle.note.starvingGallop', 'Starving - it will not gallop until it eats') : t('saddle.note.starving', 'Starving - feed your horse'))
+      : t('saddle.note.hungry', 'Hungry - feed it oats');
+    case 'wagon': return w.stateKey === 'failing'
+      ? t('saddle.note.failing', 'The {wagon} is failing - mend it to get its pace back', { wagon: w.name.toLowerCase() })
+      : t('saddle.note.rickety', 'The {wagon} is rickety - a kit or a Wagon Yard mends it', { wagon: w.name.toLowerCase() });
+    case 'load': return t('saddle.note.load', 'Overloaded - your team pulls it slower');
     default: return '';
   }
 }
@@ -199,15 +204,17 @@ export function saddleNote(s) {
 export const SADDLE_OPEN_PREF = 'saddlePanelOpen';
 /** UI-CALM: the registry's action that puts the panel up and away (systems/inputActions.js, default F2). */
 export const SADDLE_PANEL_ACTION = 'SaddlePanel';
-/** UI-CALM: whether the panel is up now - the player's last press, else the choice's own (Always: up). */
+/** UI-CALM: whether the panel is up now - the player's last press under this choice, else the choice's own (Always:
+ *  up). AUDIT UICALM-FIRM1 L4 M1: a press is kept WITH the choice it was made under (`{ open, mode }`) - a press kept
+ *  alone outlived the choice (Off showed the whole panel after an old F2, Always nothing), and Restore defaults left it. */
 export function saddlePanelOpen(mode = saddlePanelMode()) {
   const v = getPref(SADDLE_OPEN_PREF);
-  return typeof v === 'boolean' ? v : mode === 'always';
+  return v && typeof v === 'object' && v.mode === mode && typeof v.open === 'boolean' ? v.open : mode === 'always';
 }
 /** UI-CALM: the key's press (or a finger's tap on the plate) - the panel up if it was away, away if it was up. */
 export function toggleSaddlePanel(mode = saddlePanelMode()) {
   const next = !saddlePanelOpen(mode);
-  setPref(SADDLE_OPEN_PREF, next);
+  setPref(SADDLE_OPEN_PREF, { open: next, mode });
   return next;
 }
 /**
@@ -287,9 +294,11 @@ export const SADDLE_CSS = `
 .saddlepanel.touch .saddlepanel-title { pointer-events: auto; cursor: pointer; min-height: 32px; align-items: center; }
 /* the helm's finger place (ui/enhancedHelm.js AUDIT NAV1): centred in the room right of the corner's two presses - the
    bottom is the sticks' */
-/* a finger: the block at the top right, clear of the sticks at the bottom and the corner's two presses at the top left */
-.saddlepanel.touch .saddlepanel-bar { bottom: auto; top: calc(8px + env(safe-area-inset-top, 0px)); right: calc(8px + env(safe-area-inset-right, 0px));
-  max-width: calc(100vw - 144px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); }
+/* a finger: the block at the right, clear of the sticks at the bottom and the corner's two presses at the top left - and
+   UNDER THE COMPASS's band (--sp-top, measured: placeTouch), never across it, held above the hotbar and the vitals
+   (--sp-maxh) and scrolled inside where a short screen leaves less (AUDIT UICALM-FIRM1 L4 M2) */
+.saddlepanel.touch .saddlepanel-bar { bottom: auto; top: var(--sp-top, calc(8px + env(safe-area-inset-top, 0px))); right: calc(8px + env(safe-area-inset-right, 0px));
+  max-width: calc(100vw - 144px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); max-height: var(--sp-maxh, none); overflow-y: auto; }
 .saddlepanel.touch .saddlepanel-btn { min-height: 44px; min-width: 44px; }
 .saddlepanel.touch .saddlepanel-key { display: none; }
 @media (max-width: 560px) { .saddlepanel-btn { padding: 4px 6px; font-size: 13px; } .saddlepanel-bar { width: 260px; } }
@@ -425,7 +434,7 @@ export function drawEnhancedSaddle(state = {}, hooks = {}, { doc = globalThis.do
   if (last.show !== show) { last.show = show; parts.root.dataset.show = show; last.place = -1; }
   if (show === 'none') return parts.root;
   last.place = ((last.place ?? -1) + 1) % SADDLE_PLACE_EVERY;
-  if (last.place === 0 && !state.touch) placeBar(doc);
+  if (last.place === 0) { if (state.touch) placeTouch(doc); else placeBar(doc); }
   const title = saddleTitle(s);
   if (last.title !== title) { last.title = title; parts.name.textContent = title; }
   const gait = [saddleGait(s.mode, s.speed, s.galloping, s.walks), saddleSpeedText(s.speed)].filter(Boolean).join(' · ');
@@ -490,6 +499,23 @@ function placeBar(doc) {
   if (last.bottom === v) return;
   last.bottom = v;
   if (v) parts.root.style.setProperty?.('--sp-bottom', v); else parts.root.style.removeProperty?.('--sp-bottom');
+}
+
+/** AUDIT UICALM-FIRM1 L4 M2: A FINGER'S BLOCK STANDS UNDER THE COMPASS - its top at the HUD top band's foot, its height
+ *  held above whichever of the hotbar and the vitals is highest, both read off the page (the plate and the block had
+ *  covered the compass at every phone size, and the hotbar and the vitals in landscape). */
+function placeTouch(doc) {
+  const band = /** @type {any} */ (doc.querySelector?.('.hud .hud-top'))?.getBoundingClientRect?.();
+  const top = band && band.height > 0 ? Math.round(band.bottom + 6) : null;
+  let floor = Infinity;
+  for (const sel of ['.hud .hb', '.hud .hud-bottom']) {
+    const r = /** @type {any} */ (doc.querySelector?.(sel))?.getBoundingClientRect?.();
+    if (r && r.width > 0 && r.height > 0) floor = Math.min(floor, r.top);
+  }
+  const v = top != null ? `${top}px` : '';
+  const mh = top != null && Number.isFinite(floor) && floor > top ? `${Math.max(48, Math.round(floor - top - 8))}px` : '';
+  if (last.top !== v) { last.top = v; if (v) parts.root.style.setProperty?.('--sp-top', v); else parts.root.style.removeProperty?.('--sp-top'); }
+  if (last.maxh !== mh) { last.maxh = mh; if (mh) parts.root.style.setProperty?.('--sp-maxh', mh); else parts.root.style.removeProperty?.('--sp-maxh'); }
 }
 
 /** Taken down: out of the saddle, the skin or the switch off, a door. */

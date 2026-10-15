@@ -65,13 +65,15 @@ panels full of text constantly pull me out of that world."
 
 ### 5. The gameplay HUD
 
-- **The saddle panel stands when it is wanted, and low** (`ui/enhancedSaddle.js` saddleShown). The whole panel only while
-  the mouse is free - its presses take a click only then - and nothing while the look holds the mouse, but one line
+- **The saddle panel stands when it is wanted, and low** (`ui/enhancedSaddle.js` saddleShown). The whole panel when its
+  key puts it up (F2, see 7 - the second pass's law, which replaced the first pass's "while the mouse is free": the
+  code reads the key and the choice, never the mouse - AUDIT UICALM-FIRM1 L4 M7) or the choice is Always; away, one line
   when something needs the rider (`saddleAlert`/`saddleNote`: winded, short of breath, hungry, a wagon rickety or failing,
   a load past its limit, with its own meter), and the horse's name with how to call the panel for the first six seconds
   in the saddle (`SADDLE_HELLO_MS`). A finger has no free mouse: a small plate with the name, a tap from the panel. It
   is a block in the bottom-right corner, lifted over the vitals and the hotbar only where it would cover them
-  (`placeBar`), never across the compass and the sky; F2 puts it up and away (see 7). The
+  (`placeBar`; a finger's under the compass's band, `placeTouch` - AUDIT UICALM-FIRM1 L4 M2), never across the compass
+  and the sky; F2 puts it up and away (see 7), its press kept with the choice it was made under (L4 M1). The
   Stable page is its separate menu, every word of it there. The player's choice is the Horse care row's part
   **Saddle panel**: When needed (default), Always (STEED-UI's), Off.
 - **The temperature stands in the bottom-left corner** - the quick block's caption, its first word beside the mode's

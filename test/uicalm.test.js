@@ -82,7 +82,9 @@ test('UI-CALM the corner and the quiet HUD: the temperature plate the bottom-lef
   assert.doesNotMatch(hud, /compass\.append\(temp\)/);
   assert.match(rd('src/ui/hudLayout.js'), /\{ id: 'temp', sel: '\.hud \.hud-temp', name: 'Temperature', inside: 'quick' \}/);
   assert.match(UI_CALM_CSS, /\.hud \.hud-temp\[data-level="ok"\] \.hud-tempword, \.hud \.hud-temp\[data-level="ok"\] \.hud-tempscale \{ display: none; \}/);
-  assert.match(hud, /const allFull = rows\.every\(\(\[key, , now, max\]\) => \(key === 'magicka' && !\(Number\(vitals\.maxMagicka\) > 0\)\) \|\| now >= max \* 0\.995\);/);
+  // PIN MOVED (AUDIT UICALM-FIRM1 L4 N1, M3): full short of no whole point; never at rest while the HUD is arranged
+  assert.match(hud, /const allFull = rows\.every\(\(\[key, , now, max\]\) => \(key === 'magicka' && !\(Number\(vitals\.maxMagicka\) > 0\)\) \|\| now > max - 1\);/);
+  assert.match(hud, /const calm = getPref\(HUD_CALM_PREF\) !== false && !hudArranging\(\) && allFull && !parts\.foe\?\.classList\?\.contains\?\.\('on'\);/);
   assert.match(hud, /const rest = calm && last\.calmFor >= VITALS_REST_S;/);
   assert.match(UI_CALM_CSS, /\.hud \.hud-bars\.rest:not\(\[data-hm-edit\]\) \{ opacity: 0;/);
   const row = FEATURES.find((f) => f.id === 'calm-hud');

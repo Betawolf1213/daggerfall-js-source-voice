@@ -484,6 +484,7 @@ test('TEMP-UI: the HUD plate reads LIVE where the needs have run (AUDIT TEMP-UI 
     destroyEnhancedHud();
     globalThis.document = prev; globalThis.innerWidth = prevW;
   }
-  assert.match(read('src/ui/enhancedStyle.js'), /\.hud-temp\.compact \.hud-tempword, \.hud-temp\.compact \.hud-tempscale \{ display: none; \}/);
+  // PIN MOVED (AUDIT UICALM-FIRM1 L5 M10): the compass's plate, its compact and hung kinds, are gone from every sheet
+  for (const f of ['src/ui/enhancedStyle.js', 'src/ui/grimoireDress.js', 'src/ui/uiCalmStyle.js']) assert.doesNotMatch(read(f), /hud-temp\.compact|temp-hung|temp-aside|\.hud-temp \{[^}]*calc\(100% \+/, f);
 });
 

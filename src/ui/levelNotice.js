@@ -158,7 +158,9 @@ export class LevelNotices {
 
   /** FIRM1: a Renown level was reached - the level's own title, its new Stars beneath. */
   announceRenown(level, stars, now) {
-    return this._push(NOTICE_RENOWN, NOTICE_RENOWN, RISEN_TITLE, `Renown ${level}${stars > 0 ? ` · ${stars} new Stars` : ''}`, now);
+    const sub = stars > 0 ? t('level.renown.subStars', 'Renown {level} · {stars, plural, one {# new Star} other {# new Stars}}', { level, stars })
+      : t('level.renown.sub', 'Renown {level}', { level });   // AUDIT UICALM-FIRM1 L4 M8: in the player's language
+    return this._push(NOTICE_RENOWN, NOTICE_RENOWN, RISEN_TITLE, sub, now);
   }
 
   /** QUEST-NOTE: a quest's word - a title and a line under it, keyed by `key` so a second word of one quest updates it. */
@@ -309,7 +311,8 @@ export function announceLevelUp(entity, { say = null, open = null, now = nowMs()
 export function announceRenownRise(level, { stars = 0, say = null, now = nowMs(), doc = DOC } = {}) {
   audio.playOneShot(SOUND.LevelUp, 1);
   if (!isEnhanced() || !doc) {
-    say?.(`You have risen to Renown ${level}!${stars > 0 ? ` ${stars} new Stars shine in your Firmament.` : ''}`);
+    say?.(stars > 0 ? t('level.renown.risenStars', 'You have risen to Renown {level}! {stars, plural, one {# new Star shines} other {# new Stars shine}} in your Firmament.', { level, stars })
+      : t('level.renown.risen', 'You have risen to Renown {level}!', { level }));
     return false;
   }
   levelNotices.announceRenown(level, stars, now);

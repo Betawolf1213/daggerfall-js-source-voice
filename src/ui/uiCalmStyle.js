@@ -82,7 +82,6 @@ const HUD_CSS = `
    beside the mode's word, in the flow (TEMP-UI hung it off the compass's right end). Comfortable it says the glyph and the
    number and no more, a little quieter; felt or costing, its word and its scale stand too. */
 .hud .hud-qcap .hud-temp { position: relative; left: auto; top: auto; right: auto; transform: none; flex: 0 0 auto; }
-.hud .hud-qcap .hud-temp.compact .hud-tempword, .hud .hud-qcap .hud-temp.compact .hud-tempscale { display: revert; }
 .hud .hud-temp[data-level="ok"] .hud-tempword, .hud .hud-temp[data-level="ok"] .hud-tempscale { display: none; }
 ${P} .hud .hud-temp[data-level="ok"] { opacity: 0.85; }
 /* UI-CALM: THE VITALS AT REST (ui/enhancedHud.js VITALS_REST_S) fade in six steps; back at once on the first change - and
@@ -96,9 +95,11 @@ const WINDOWS_CSS = `
 /* UI-CALM: THE QUIET INK one step lighter - every dim word the windows say (--dim, ENHANCED_TOKENS) stood at #9a9486 on the
    slate; Pixelify at 11 and 12 greys out besides (FONT3), so the two together read as fog. */
 ${P} { --dim: #b9b2a1; }
-/* the pause window's six tabs on one row where the window is wide - they wrapped System onto a row of its own */
+/* the pause window's six tabs on one row where the window is wide - they wrapped System onto a row of its own; tighter,
+   so English's six fit, and a language whose six do not WRAPS (AUDIT UICALM-FIRM1 L4 M6: held to one row, Spanish,
+   Russian and five more ran past the window's edges) */
 @media (min-width: 901px) {
-  ${P} .px-win > .px-tabs { flex-wrap: nowrap; gap: 2px; }
+  ${P} .px-win > .px-tabs { gap: 2px; }
   ${P} .px-win > .px-tabs button { font-size: 17px; letter-spacing: 0.08em; text-indent: 0.08em; padding: 6px 12px; gap: 6px; }
 }
 /* THE TYPE FLOOR: no word a player must read under 12px - the settings screen's chips, segments, counts and tags, the

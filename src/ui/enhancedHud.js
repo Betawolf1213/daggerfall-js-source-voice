@@ -111,7 +111,7 @@ import { foeTarget, foeTargetRef, tickFoeTarget } from './hudFoeTarget.js';
 // styles show a corner word - imported rather than restated.
 import { crosshairEnabled, interactionIconStyle, iconReplacesCrosshair, modeIconEnabled, MODE_LABEL } from './hudCrosshair.js';
 import { getInteractionMode } from '../player/interactionMode.js';
-import { tickHudLayout } from './hudLayout.js';   // HUD-MOVE: the movable pieces, the lock and the reset
+import { tickHudLayout, hudArranging } from './hudLayout.js';   // HUD-MOVE: the movable pieces, the lock and the reset
 import { mountHotbarDock, drawEnhancedHotbar, detachHotbarDock, hotbarMode } from './enhancedHotbar.js';   // HB1: the hotbar, the diamond's alternative (one or the other)
 import { setEnhancedMidTextScale } from './enhancedHudText.js';   // AUDIT FONT F2: the mid-screen label is a layer beside this one, not inside it (the popup column it once scaled too is a toast in the notice stack since ENH-NOTICE3)
 import { QUEST_MARK_CSS } from './questMarks.js'; import { nodeMarkCss } from './nodeMarks.js';   // GUIDE5: the tracker's quest on the compass, in the marks' one gold; NODE-MARKS: a profession's nodes in its own colour
@@ -1161,8 +1161,10 @@ export function drawEnhancedHud(vitals, heading01, dt = 0, opts = {}) {
   // in the target bar, for VITALS_REST_S seconds: the bars fade away, and the first point lost, spent or still to
   // regain brings them back at once. Skyrim's own law, and Daggerfall's world kept clear of a readout it does not need.
   // The player's choice (`hudCalm`, the Calm HUD row); never while the HUD is being arranged (its editor shows it).
-  const allFull = rows.every(([key, , now, max]) => (key === 'magicka' && !(Number(vitals.maxMagicka) > 0)) || now >= max * 0.995);
-  const calm = getPref(HUD_CALM_PREF) !== false && allFull && !parts.foe?.classList?.contains?.('on');
+  // AUDIT UICALM-FIRM1 L4 N1: full is short of no whole point (a share of the maximum let 300 Health lose one unseen);
+  // L4 M3: and never at rest while the HUD is arranged - split, each bar is the editor's and their box was left at rest
+  const allFull = rows.every(([key, , now, max]) => (key === 'magicka' && !(Number(vitals.maxMagicka) > 0)) || now > max - 1);
+  const calm = getPref(HUD_CALM_PREF) !== false && !hudArranging() && allFull && !parts.foe?.classList?.contains?.('on');
   last.calmFor = calm ? (last.calmFor ?? 0) + (dt > 0 ? dt : 0) : 0;
   const rest = calm && last.calmFor >= VITALS_REST_S;
   if (last.vitalsRest !== rest) { last.vitalsRest = rest; parts.bars?.classList?.toggle?.('rest', rest); }

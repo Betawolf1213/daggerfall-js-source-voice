@@ -892,6 +892,9 @@ ${G} [data-grim-on="page"]:is(:disabled, [disabled]) { opacity: 1 !important; co
 /* ...and the reason itself (a press's \`*-why\`, written inside it): the press is a wooden surface to the ink, so its
    reason was re-said for the wood - cream on the scroll. On a page it is the soft ink, as its word is. */
 ${G} [data-grim-on="page"] [class$="-why"] { color: ${T.inkSoft} !important; text-shadow: none !important; }
+/* ...and its key (a press's \`*-key\`, the saddle's and the helm's): re-said for the wood it was cream on the parchment, at
+   1.1:1 (AUDIT UICALM-FIRM1 L4 L5) */
+${G} [data-grim-on="page"] [class$="-key"] { color: ${T.inkSoft} !important; text-shadow: none !important; }
 /* EXIT - the way out of a window (its Close) and the one press a screen is for, in the pack's own red Exit frame: cut
    from its inventory's Exit press (ui/grimoireArt.js), the pack's yellow lettering set in it */
 ${G} [data-grim-exit], ${at([...R.primary, '.px-winclose', '.lv-ok'])} {
@@ -1191,7 +1194,6 @@ ${G} .hud-needle { display: none; }
 ${G} .hud-compass { --gcm-mark: calc(3 * var(--gcm) + 7px); width: calc(69 * var(--gcm) - 2 * var(--gcm-mark)); margin-left: var(--gcm-mark); margin-right: var(--gcm-mark); }
 ${G} .hud-compass::after { left: calc(-1 * var(--gcm-mark)); right: calc(-1 * var(--gcm-mark)); }
 ${G} .hud-compass .hud-strip { left: calc(2 * var(--gcm) - var(--gcm-mark)); right: calc(2 * var(--gcm) - var(--gcm-mark)); }
-${G} .hud-compass > .hud-temp:not(.temp-hung) { margin-left: var(--gcm-mark); }
 ${G} .hud-compass .hud-detect, ${G} .hud-compass .hud-party, ${G} .hud-compass .hud-node { top: calc(2 * var(--gcm)) !important; bottom: auto !important; z-index: 4; }
 ${G} .hud-compass .hud-ship { top: calc(2 * var(--gcm) + 6px) !important; z-index: 4; }
 ${G} .hud-compass .hud-boat, ${G} .hud-compass .hud-gate, ${G} .hud-compass .hud-serpent, ${G} .hud-compass .hud-sd, ${G} .hud-compass .hud-quest { z-index: 4; }

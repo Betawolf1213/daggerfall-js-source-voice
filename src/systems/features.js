@@ -382,7 +382,7 @@ export const FEATURES = Object.freeze([
     control: Object.freeze({
       store: 'prefs', key: 'horseCare', initial: true, online: true,   // systems/upkeepSwitch.js HORSE_CARE_PREF
       // UI-CALM (2026-10-14): when the saddle panel stands (ui/enhancedSaddle.js saddleShown) - the player's own, offline
-      // and online: When needed (the mouse freed, a need, the first seconds in the saddle), Always (STEED-UI's), Off
+      // and online: When needed (its key, F2; a need; the first seconds in the saddle), Always (STEED-UI's), Off
       also: Object.freeze([Object.freeze({ store: 'prefs', key: 'saddlePanel', initial: 'auto', online: 'player' })]),
       parts: Object.freeze([Object.freeze({
         key: 'saddlePanel', get label() { return t('features.horseCare.saddlePanel', 'Saddle panel'); },

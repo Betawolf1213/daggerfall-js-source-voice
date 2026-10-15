@@ -30,6 +30,7 @@ import {
   buildCode, treeOfCode, treeFault,
 } from '../net/firmamentLaw.js';
 import { firmamentBook } from '../net/firmamentBook.js';
+import { accountRefusalText } from '../net/accountClient.js';   // AUDIT UICALM-FIRM1 L4 L4: a refusal the window has no words for, in the account's
 import { FRAME_TONES } from './enhancedFrame.js';
 import { GRIM_TONES, GRIMOIRE_STACK, px } from './grimoireDress.js';
 import { artVar } from './grimoireArt.js';
@@ -79,7 +80,7 @@ export const FIRM_CSS = `
 .fmt-root canvas.fmt-sky { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
 .fmt-root canvas.fmt-sky.drag { cursor: grabbing; }
 .fmt-root canvas.fmt-sky.over { cursor: pointer; }
-.fmt-bar { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+.fmt-bar { position: absolute; left: 16px; right: 16px; margin-inline: auto; width: fit-content; top: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   justify-content: center; padding: 8px 14px; max-width: calc(100vw - 32px); box-sizing: border-box; font-family: var(--data); color: #e9e4d9; }
 .fmt-bar h2 { margin: 0 6px 0 0; font-family: var(--brand); font-weight: 400; font-size: 26px; letter-spacing: 0.02em; color: #f3cf86; line-height: 1; }
 .fmt-purse { display: inline-flex; align-items: baseline; gap: 6px; padding: 3px 10px; font-size: 14px; white-space: nowrap; }
@@ -113,9 +114,9 @@ export const FIRM_CSS = `
 .fmt-tip .tx { margin: 6px 0 0; font-style: italic; color: #c2b79a; line-height: 1.35; }
 .fmt-tip .ft { margin: 8px 0 0; font-size: 12px; color: #c2b79a; }
 .fmt-tip .ft.no { color: #e08a7a; }
-.fmt-hint { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); padding: 6px 14px; font-family: var(--data); font-size: 12px; color: #c2b79a;
+.fmt-hint { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); pointer-events: none; padding: 6px 14px; font-family: var(--data); font-size: 12px; color: #c2b79a;
   white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis; box-sizing: border-box; }
-.fmt-say { position: absolute; left: 50%; top: 74px; transform: translateX(-50%); padding: 7px 16px; font-family: var(--display); font-size: 16px; color: #e9e4d9; display: none; max-width: calc(100vw - 32px); box-sizing: border-box; text-align: center; }
+.fmt-say { position: absolute; left: 50%; top: 74px; transform: translateX(-50%); pointer-events: none; padding: 7px 16px; font-family: var(--display); font-size: 16px; color: #e9e4d9; display: none; max-width: calc(100vw - 32px); box-sizing: border-box; text-align: center; }
 .fmt-say.on { display: block; }
 .fmt-say.no { color: #ffb4a6; }
 .fmt-confirmbox { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 16px 20px; min-width: 300px; max-width: calc(100vw - 32px); box-sizing: border-box;
@@ -298,7 +299,9 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
   if ((globalThis.innerWidth ?? 1280) < 760) side.classList.add('shut');
   const tip = el('div', 'fmt-tip');
   tip.setAttribute('data-grim', 'ink');
-  const hint = el('div', 'fmt-hint', 'Click a star to learn the path to it · Right-click a learned star to unlearn it · Drag to look about · Wheel to zoom · F: your birthsign');
+  const coarse = !!globalThis.matchMedia?.('(pointer: coarse)')?.matches;   // AUDIT UICALM-FIRM1 L4 H1: a finger's words
+  const hint = el('div', 'fmt-hint', coarse ? 'Tap a star to read it, tap it again to learn the path · Hold a learned star to unlearn it · Drag to look about · Pinch to zoom'
+    : 'Click a star to learn the path to it · Right-click a learned star to unlearn it · Drag to look about · Wheel to zoom · F: your birthsign');
   hint.setAttribute('data-grim', 'ink');
   const sayBox = el('div', 'fmt-say');
   sayBox.setAttribute('data-grim', 'ink');
@@ -329,10 +332,13 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     view.x = Math.max(-reach, Math.min(reach, view.x));
     view.y = Math.max(-reach, Math.min(reach, view.y));
   };
+  /** AUDIT UICALM-FIRM1 L4 H1: where the bar's foot stands - the sky is centred in the room under it (the bar had stood
+   *  over the middle of a phone's sky, the signs under it) */
+  const barFoot = () => { try { const r = bar.getBoundingClientRect(), o = root.getBoundingClientRect(); return Math.max(0, r.bottom - o.top); } catch { return 0; } };
   const fit = () => {
     view.z = zFloor();
     view.x = (room() - vw()) / 2;
-    view.y = 40;
+    view.y = Math.max(40, barFoot() / 2);
   };
   fit();
   /** Screen pixels (CSS) to the sky's units, and back. */
@@ -368,6 +374,8 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     if (!stay) sayTimer = /** @type {any} */ (setTimeout(() => sayBox.classList.remove('on'), refused ? 3200 : 2200));
   }
 
+  /** Whether anything the player chose is not accepted yet - a star, a refund, a birthsign. */
+  function unaccepted() { const c = changes(); return !!(c.added || c.removed || (c.startChanged && pending.start)); }
   function changes() {
     const d = treeDiff(committed, pending);
     const removedCommitted = committed.start ? d.removed.length : 0;
@@ -385,7 +393,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     starsChip.title = `Stars: two for each Renown level after the first (you are Renown ${p.renown}). They may be spent anywhere.`;
     craftChip.title = 'Craft points: one for every 8 ranks in your professions. They may be spent only on the crafts of the outer ring.';
     const c = changes();
-    const n = c.added + c.removed;
+    const n = c.added + c.removed + (c.startChanged && pending.start ? 1 : 0);   // AUDIT UICALM-FIRM1 L4 M5: a birthsign alone is a change
     goBtn.textContent = n ? `Accept (${n})` : 'Accept';
     goBtn.disabled = !n || !online || respecking;   // AUDIT UICALM-FIRM1 L2 M1: no change while the sky is being taken back
     undoBtn.disabled = !n;
@@ -594,13 +602,13 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
       committed = preview ? { start: null, keys: [] } : cloneTree(book?.current?.() ?? { start: null, keys: [] });
       pending = cloneTree(committed);
       say('Every star is unlearned. Choose a birthsign.', false, true);
-    } else say(/** @type {Record<string, string>} */ (REFUSALS)[r?.error] ?? 'The stars refused.', true);
+    } else say(refusalText(r?.error, true), true);
     refresh();
   }
   function openConfirm() {
     confirming = 'accept';
     const c = changes();
-    if (!c.added && !c.removed) return;
+    if (!c.added && !c.removed && !(c.startChanged && pending.start)) return;
     const lines = [el('h3', null, 'Accept these stars?')];
     if (c.startChanged && pending.start) lines.push(el('p', null, `Birthsign: ${FIRM_NODES.get(pending.start)?.name}.`));
     if (c.added) lines.push(el('p', null, `${c.added} star${c.added === 1 ? '' : 's'} learned.`));
@@ -623,6 +631,14 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     'firm-gold': `You need ${GOLD_WORD} gold to respec.`, 'realm-gold': `You need ${GOLD_WORD} gold to respec.`,
     'firm-respec-empty': 'Nothing is learned yet.', 'firm-busy': 'A change is still on its way. Try again in a moment.',
   });
+  /** AUDIT UICALM-FIRM1 L4 L3-L4, L2 L5: EVERY REFUSAL SAYS WHY - the window's own words where it has them, else the
+   *  account's (accountClient.js REFUSALS, in the player's language); a change the book keeps (no word on it - the net,
+   *  the server, the Worker's rate and maintenance) says so; a respec is never kept, so its lost answer says to look. */
+  function refusalText(error, respec) {
+    const KEPT = ['offline', 'server', 'rate', 'maintenance'];
+    if (KEPT.includes(error)) return respec ? 'No word from the server about the respec. Open the Firmament again in a moment to see whether it was made.' : REFUSALS.offline;
+    return /** @type {Record<string, string>} */ (REFUSALS)[error] ?? accountRefusalText(error);
+  }
   /** UI-CALM (2026-10-14, a player: "why dont i get any stars ... with renown lvl 5"): a read the service refused was
    *  silent - the purses stood at their empty defaults ("0 of 0", Renown 1) as if that were the answer. Now it says so. */
   function readFailText(st) {
@@ -648,7 +664,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
       for (const k of added) burst(k);
       say(added.length ? 'The stars are set.' : 'Your stars are changed.');
     } else {
-      say(/** @type {Record<string, string>} */ (REFUSALS)[r?.error] ?? 'The stars refused.', true);
+      say(refusalText(r?.error, false), true);
       if (!preview && book) { committed = cloneTree(book.current()); }
     }
     refresh();
@@ -660,7 +676,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     if (!n) { fit(); dirty = true; return; }
     view.z = Math.max(view.z, 0.75);
     view.x = -n.x * view.z - (side.classList.contains('shut') ? 0 : 160);
-    view.y = -n.y * view.z;
+    view.y = -n.y * view.z + barFoot() / 2;
     hold();
     dirty = true;
   }
@@ -754,6 +770,8 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     if (!d || d.moved) return;
     const key = pick(p.x, p.y);
     if (!key) return;
+    // AUDIT UICALM-FIRM1 L4 H1: a finger's first tap on a star reads it (its card); the second learns it
+    if (e.pointerType === 'touch' && d.button !== 2 && hover !== key) { setHover(key, p.x, p.y); return; }
     click();
     if (d.button === 2) refund(key); else allocate(key);
     hover = null;
@@ -761,7 +779,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
   };
   canvas.addEventListener('pointerup', up);
   canvas.addEventListener('pointercancel', (e) => { pointers.delete(e.pointerId); drag = null; pinch = null; clearTimeout(longPress); canvas.classList.remove('drag'); });
-  canvas.addEventListener('pointerleave', () => { if (!drag) setHover(null, 0, 0); });
+  canvas.addEventListener('pointerleave', (e) => { if (!drag && e.pointerType !== 'touch') setHover(null, 0, 0); });   // a finger lifted is no pointer gone: its card stays
   canvas.addEventListener('contextmenu', (e) => e.preventDefault());
   function zoomAt(sx, sy, factor) {
     const before = toSky(sx, sy);
@@ -783,25 +801,36 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     switch (e.key) {
       case 'Escape':
         if (confirmBox.classList.contains('on')) { confirmBox.classList.remove('on'); break; }
-        { const c = changes(); if ((c.added || c.removed) && !armedClose) { armedClose = true; say('Your changes are not accepted yet. Press Escape again to discard them.', true); break; } }
+        if (unaccepted() && !armedClose) { armedClose = true; say('Your changes are not accepted yet. Press Escape again to discard them.', true); break; }
         close();
         break;
-      case 'Enter': click(); if (confirmBox.classList.contains('on')) { if (confirming === 'respec') respec(); else if (confirming === 'accept') commit(); } else openConfirm(); break;
+      case 'Enter': if (e.target?.tagName === 'BUTTON') { used = false; break; } click(); if (confirmBox.classList.contains('on')) { if (confirming === 'respec') respec(); else if (confirming === 'accept') commit(); } else openConfirm(); break;
       case 'f': case 'F': click(); focusSign(); break;
       case '+': case '=': zoomAt(vw() / 2, vh() / 2, 1.25); break;
       case '-': case '_': zoomAt(vw() / 2, vh() / 2, 0.8); break;
-      case 'ArrowLeft': view.x += 60; dirty = true; break;
-      case 'ArrowRight': view.x -= 60; dirty = true; break;
-      case 'ArrowUp': view.y += 60; dirty = true; break;
-      case 'ArrowDown': view.y -= 60; dirty = true; break;
+      case 'ArrowLeft': view.x += 60; hold(); dirty = true; break;
+      case 'ArrowRight': view.x -= 60; hold(); dirty = true; break;
+      case 'ArrowUp': view.y += 60; hold(); dirty = true; break;
+      case 'ArrowDown': view.y -= 60; hold(); dirty = true; break;
       case 'Tab': used = false; break;
       default: used = false;
     }
-    if (e.key !== 'Escape') armedClose = false;
+    if (used && e.key !== 'Escape') armedClose = false;
     if (used) { e.preventDefault(); e.stopPropagation(); }
   }
   globalThis.addEventListener?.('keydown', onKey, true);
-  const unregister = registerOverlay(() => close());
+  /** AUDIT UICALM-FIRM1 L4 M4: the overlays' close (the QuickDial's key, Tab by default) asks first, as Escape does - it
+   *  had closed the window and thrown away unaccepted stars. Asked, the window stays up and on the overlays' stack. */
+  const overlayClose = () => {
+    if (!dead && unaccepted() && !armedClose) {
+      armedClose = true;
+      say('Your changes are not accepted yet. Close again to discard them.', true);
+      unregister = registerOverlay(overlayClose);
+      return;
+    }
+    close();
+  };
+  let unregister = registerOverlay(overlayClose);
 
   // ── the drawing ──
   const ctx = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
@@ -1077,7 +1106,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
   if (!preview && book) book.read?.().catch?.(() => {});
 
   refresh();
-  if (pending.start) focusSign();
+  if (pending.start) focusSign(); else { fit(); hold(); dirty = true; }   // mounted: the bar's foot is known now
   if (!online) say('The Firmament opens only online. Your Renown pays for its stars.', true, true);
   else if (!pending.start) say('Choose your birthsign from the seven great stars.', false, true);
   goBtn.focus?.({ preventScroll: true });

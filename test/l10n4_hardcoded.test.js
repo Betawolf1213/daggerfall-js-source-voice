@@ -573,7 +573,7 @@ const HARDCODED = {
   'src/ui/enhancedPorts.js': 106,
   'src/ui/enhancedPost.js': 13,
   'src/ui/enhancedRest.js': 10,
-  'src/ui/enhancedSaddle.js': 27,
+  'src/ui/enhancedSaddle.js': 19,   // AUDIT UICALM-FIRM1 L4 M8: the saddle's notes routed (saddle.note.*), back to its count before UI-CALM
   'src/ui/enhancedSpellbook.js': 23,
   'src/ui/enhancedTalk.js': 8,
   'src/ui/enhancedTavern.js': 9,
@@ -583,7 +583,9 @@ const HARDCODED = {
   'src/ui/eventMapMarks.js': 6,
   'src/ui/exteriorAutomapWindow.js': 6,
   'src/ui/familyPages.js': 111,
-  'src/ui/firmamentWindow.js': 92,
+  // PIN MOVED (AUDIT UICALM-FIRM1 L4 H1, M4, L3-L4): the window's finger hint, its overlay guard and its respec's lost
+  // answer - the Firmament's words are English OPEN, its translation pass the owner's (Audit-UICalm-Firm1.md L5 M1)
+  'src/ui/firmamentWindow.js': 93,
   'src/ui/fleetPage.js': 30,
   'src/ui/fpsCounter.js': 3,
   'src/ui/gateBossBar.js': 5,
@@ -614,7 +616,7 @@ const HARDCODED = {
   'src/ui/joystickControlsWindow.js': 1,
   'src/ui/legacyModelChoice.js': 26,
   'src/ui/legacySuccession.js': 3,
-  'src/ui/levelNotice.js': 9,
+  'src/ui/levelNotice.js': 6,   // AUDIT UICALM-FIRM1 L4 M8: the Renown rise routed (level.renown.*)
   'src/ui/levelUpView.js': 23,
   'src/ui/levelingChoice.js': 16,
   'src/ui/loadingScreen.js': 10,

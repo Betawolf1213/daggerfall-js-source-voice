@@ -143,7 +143,7 @@ export const HOLDINGS_CSS = `
 .px-sys .hld-log { display: grid; grid-template-columns: minmax(120px, 38%) 1fr; align-items: baseline; gap: 8px; }
 @media (max-width: 480px) { .px-sys .hld-field { font-size: 16px; } }
 :root[data-plus-theme="stone"] .px-sys .hld-sub, :root[data-plus-theme="stone"] .px-sys .hld-foot { color: #e2d9c4; }
-@media (max-width: 480px) { .px-sys .hld-pick { grid-template-columns: 1fr; gap: 4px; } .px-sys .hld-pick:has(.hld-step) { grid-template-columns: auto auto 1fr auto; } .px-sys .hld-pick:has(.hld-step) .hld-picklabel { grid-column: 1 / -1; } }
+@media (max-width: 480px) { .px-sys .hld-pick { grid-template-columns: 1fr; gap: 4px; } .px-sys .hld-pick:has(.hld-step) { grid-template-columns: auto minmax(0, 1fr) auto; } .px-sys .hld-pick:has(.hld-step) .hld-picklabel { grid-column: 1 / -1; } .px-sys .hld-stepname { min-width: 0; overflow-wrap: anywhere; } }   /* AUDIT UICALM-FIRM1 L4 L6: the name gives way, the › stays on the card */
 `;
 export function ensureHoldingsStyle(doc = typeof document === 'undefined' ? null : document) {
   if (!doc?.getElementById || doc.getElementById(HOLDINGS_STYLE_ID)) return;

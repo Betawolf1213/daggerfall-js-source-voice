@@ -4714,6 +4714,26 @@
   "tr": "8d2fab2d123f",
   "by": "claude-in-session"
  },
+ "level.renown.risen": {
+  "en": "4d843172a323",
+  "tr": "4d36c135fd4b",
+  "by": "claude-in-session"
+ },
+ "level.renown.risenStars": {
+  "en": "585eaa57b0ca",
+  "tr": "86a82ee9f5af",
+  "by": "claude-in-session"
+ },
+ "level.renown.sub": {
+  "en": "b99bb1f470f1",
+  "tr": "9fd40784b97c",
+  "by": "claude-in-session"
+ },
+ "level.renown.subStars": {
+  "en": "3327f2336c2c",
+  "tr": "97203d2bb753",
+  "by": "claude-in-session"
+ },
  "menu.about.build": {
   "en": "bbd80cf7e2de",
   "tr": "930d472538c7",
@@ -12457,6 +12477,46 @@
  "saddle.hello.none": {
   "en": "c4f18acb1d78",
   "tr": "cc0dcc4c43bc",
+  "by": "claude-in-session"
+ },
+ "saddle.note.breath": {
+  "en": "33e9e8f97661",
+  "tr": "7ed80886b961",
+  "by": "claude-in-session"
+ },
+ "saddle.note.failing": {
+  "en": "2cb283e1fb4c",
+  "tr": "4f68ecefa376",
+  "by": "claude-in-session"
+ },
+ "saddle.note.hungry": {
+  "en": "0f2c28b6aace",
+  "tr": "ecaad795b676",
+  "by": "claude-in-session"
+ },
+ "saddle.note.load": {
+  "en": "5bbeca91f711",
+  "tr": "8e8b0e484d99",
+  "by": "claude-in-session"
+ },
+ "saddle.note.rickety": {
+  "en": "e03ab1e76ab1",
+  "tr": "d95a13422f24",
+  "by": "claude-in-session"
+ },
+ "saddle.note.starving": {
+  "en": "c4d2d8dcc726",
+  "tr": "8e6393b3e5a6",
+  "by": "claude-in-session"
+ },
+ "saddle.note.starvingGallop": {
+  "en": "fdeaa1efc90e",
+  "tr": "0aa4f8db0176",
+  "by": "claude-in-session"
+ },
+ "saddle.note.winded": {
+  "en": "93ab86d5255e",
+  "tr": "07ec0bc8c785",
   "by": "claude-in-session"
  },
  "schools.about.title": {

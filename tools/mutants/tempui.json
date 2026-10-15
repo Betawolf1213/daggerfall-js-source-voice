@@ -322,26 +322,6 @@
     ]
   },
   {
-    "name": "TEMPUI-the-plate-in-the-compass",
-    "file": "src/ui/enhancedStyle.js",
-    "old": ".hud-temp { position: absolute; left: calc(100% + 10px); top: 50%;",
-    "new": ".hud-temp { position: absolute; left: 0; top: 50%;",
-    "why": "the plate over the compass strip",
-    "tests": [
-      "test/tempui.test.js"
-    ]
-  },
-  {
-    "name": "TEMPUI-compact-says-everything",
-    "file": "src/ui/enhancedStyle.js",
-    "old": ".hud-temp.compact .hud-tempword, .hud-temp.compact .hud-tempscale { display: none; }",
-    "new": ".hud-temp.compact .hud-tempword { display: none; }",
-    "why": "the compact plate keeps its scale",
-    "tests": [
-      "test/tempui.test.js"
-    ]
-  },
-  {
     "name": "TEMPUI-no-part",
     "file": "src/systems/features.js",
     "old": "      parts: Object.freeze([Object.freeze({ key: 'survivalTempHud', get label() { return t('features.mod.climatesCalories.tempHud', 'Temperature on the HUD'); } })]),\n",

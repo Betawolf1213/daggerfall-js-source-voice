@@ -85,6 +85,8 @@ export const hudLocked = () => getPref(HUD_LOCK_PREF) !== false;
  *  exactly as their sheets have them. The layout is kept for when Enhanced Plus is chosen again. */
 const customisable = () => { try { return isEnhanced(); } catch { return false; } };
 const locked = () => !customisable() || hudLocked();
+/** Whether the HUD is being arranged now (its editor up: unlocked where it can be). */
+export const hudArranging = () => !locked();
 export const hudBarsSplit = () => getPref(HUD_BARS_SPLIT_PREF) === true;
 export const hudSnap = () => getPref(HUD_SNAP_PREF) !== false;
 const editable = (p) => !p.edit || (p.edit === 'split') === hudBarsSplit();
