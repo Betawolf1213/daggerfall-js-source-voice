@@ -587,7 +587,8 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     if (L.tg !== target.sub) { L.tg = target.sub; L.tgAt = now; }
     if (now < L.nextAt) { if (!egHas(L, EG_FL.fly) && L.key !== 'colossus' && dist(L.x, L.z, target.x, target.z) > L.r + 4) lordWalk(F, spec, L, target.x, target.z, L.r + 1, L.speed ?? 3.4, now, target.y); continue; }
     const kit = KITS[L.key];
-    const blows = (kit?.blows ?? []).filter((b) => (b.ph ?? 1) <= L.ph && (!b.when || b.when(F, L, target, here, ctx)) && now >= (L.cds[b.nm] ?? 0) && dist(L.x, L.z, target.x, target.z) - L.r <= (b.range ?? 40) && Math.max(0, dist(L.x, L.z, target.x, target.z) - L.r) >= (b.minGap ?? 0)   // AUDIT EG V (NEW-1): a member inside its body is at no gap, never past every blow's reach
+    // AUDIT EG V (NEW-1): a member inside the lord's body stands at no gap - never a negative one that every blow's `minGap` refuses (the lord frozen)
+    const blows = (kit?.blows ?? []).filter((b) => (b.ph ?? 1) <= L.ph && (!b.when || b.when(F, L, target, here, ctx)) && now >= (L.cds[b.nm] ?? 0) && dist(L.x, L.z, target.x, target.z) - L.r <= (b.range ?? 40) && Math.max(0, dist(L.x, L.z, target.x, target.z) - L.r) >= (b.minGap ?? 0)
       && (!b.run || oneLevel(view, L, target)));   // EG-ZK: a run reaches no member on another floor's height - the lord walks the graph to them
     const fresh = blows.filter((b) => b.nm !== L.lastBlow || L.run < 2);
     const can = fresh.length ? fresh : blows;

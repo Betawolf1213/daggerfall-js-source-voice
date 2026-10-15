@@ -1823,9 +1823,9 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
      grammar).
      *n* = 1: it binds a Blood Thrall 4 m away; kill it or put 14 m between.
    - Bat swarms: Harriers as Giant Bats.
-   - Phase 2, **Three Shadows**: three umbral discs; the true one glints with its WIND, 2 s before he rises on it
-     (`EG_UMBRA_GLINT_MS`). Nothing on the wire tells it before: every disc is said alike, and his row stays where he
-     vanished until he rises.
+   - Phase 2, **Three Shadows**: three umbral discs; the true one glints with its WIND, 2 s before it rises on it
+     (`EG_UMBRA_GLINT_MS`). Nothing on the wire tells it before: every disc is said alike, and its row stays where it
+     vanished until it rises.
    - Phase 3, **Blood Moon**: tethers on three members, broken at 16 m.
    - *A fight about distance.*
 10. **Valkynaz Seyth of the Shade**: Redoubt 15.

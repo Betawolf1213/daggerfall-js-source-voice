@@ -289,12 +289,12 @@ test('EG-ZJ EVERY BODY ON ITS FEET, BY THE DIRECTOR (section 23; EG-ZB\'s depart
   const RA = breachAt(rs2, ram.h), casters = rowsOf(RA.frames).filter((t) => t[1] === EG_ROLE.add && t[2] === EG_KIND.caster);   // its wake's: the pinned ones
   const pillarY = (t) => ram.discs.find((d) => d.role === 'pillar' && Math.hypot(d.x - t[4], d.z - t[5]) <= d.r)?.y;
   assert.ok(casters.length > 0 && casters.every((t) => t[13] === pillarY(t) && t[13] > 1), `each Caster on its pillar's top (${casters.map((t) => `${t[13]}/${pillarY(t)}`)})`);
-  // the wire: a row of eighteen and a walk of nine, their heights in the hall's bounds, a state in its own
+  // the wire: a row of nineteen and a walk of ten, their heights in the hall's bounds, a state in its own
   const row0 = rowsOf(C.frames)[0], efs0 = { k: 'efs', h: court.h, wk: T0, b: [row0], bl: [], tx: [], mk: [], pg: {} };
   assert.ok(validEgOut(efs0));
-  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 13), 401, row0[14], row0[15], row0[16], row0[17]]] }), null, 'feet past the hall\'s bound');   // PIN MOVED (EG-ZQ): each a row of eighteen
-  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 14), -401, row0[15], row0[16], row0[17]]] }), null, 'a walk\'s end past it');
-  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 15), 100, row0[16], row0[17]]] }), null, 'a state past its bound');
+  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 13), 401, ...row0.slice(14)]] }), null, 'feet past the hall\'s bound');   // PIN MOVED (EG-ZQ): each a row of eighteen; PIN MOVED (AUDIT EG V, b: a row of nineteen - its facing kept, so only the bound refuses it)
+  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 14), -401, ...row0.slice(15)]] }), null, 'a walk\'s end past it');
+  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 15), 100, ...row0.slice(16)]] }), null, 'a state past its bound');
   assert.equal(validEgOut({ ...efs0, zs: [{ i: 1, kind: 'lava', s: ['d', 0, 0, 3], from: T0, until: T0 + 1, p: 0, b: 0, el: null }] }), null, 'a zone the wire does not know');
   const mv0 = walks[0];
   assert.ok(validEgOut({ k: 'emv', m: [mv0] }));
