@@ -154,6 +154,9 @@ const PACK = {
   'pack-asset-hash': () => t('poi.pack.assetHash', 'A model or picture in the pack is not what its name says.'),
   'pack-asset-bad': () => t('poi.pack.assetBad', 'A model or picture in the pack is damaged.'),
   'pack-missing-asset': () => t('poi.pack.missingAsset', 'The pack names a model or picture it does not carry.'),
+  // AUDIT POI P7: an id once in a pack
+  'pack-poi-twice': (a) => t('poi.pack.poiTwice', 'The pack holds two POIs under one id ({name}).', a),
+  'pack-entry-twice': (a) => t('poi.pack.entryTwice', 'The pack holds two library entries under one id ({name}).', a),
 };
 
 const said = (table, fallback) => (code, args = {}) => {

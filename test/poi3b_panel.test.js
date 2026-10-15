@@ -207,16 +207,18 @@ test('POI-3b OPENING FROM THE STORE: the list asked and searched; a POI opened a
   button(P.root, 'Refresh the list').click();
   await flush();
   assert.ok(find(P.root, 'Tower').length === 1 && find(P.root, 'Bridge').length === 1);
+  // AUDIT POI T7: each revision carries the base it was made from, and mine was made from revision 1 - with no base the
+  // fixture's "the base it was made from" and "the live revision" were one number, and either passed
   P.store.history = { id: 'poi-00000000000a', liveRev: 2, revs: [
-    { rev: 2, kind: 'doc', doc: doc('Tower'), author: 'Ann', state: 'approved' },
-    { rev: 3, kind: 'doc', doc: doc('Tower (Ann)'), author: 'Ann', state: 'draft' },
-    { rev: 4, kind: 'doc', doc: doc('Tower (Mac)'), author: 'mac', state: 'draft' },
+    { rev: 2, kind: 'doc', doc: doc('Tower'), base: 1, author: 'Ann', state: 'approved' },
+    { rev: 3, kind: 'doc', doc: doc('Tower (Ann)'), base: 2, author: 'Ann', state: 'draft' },
+    { rev: 4, kind: 'doc', doc: doc('Tower (Mac)'), base: 1, author: 'mac', state: 'draft' },
   ] };
   find(P.root, 'Tower').find((n) => n.tagName === 'SPAN').parentNode.click();
   await flush();
   const e = P.edit.entryOf('poi-00000000000a');
   assert.equal(P.edit.docOf('poi-00000000000a').name, 'Tower (Mac)', 'my own draft, whatever the case of my name');
-  assert.deepEqual([e.rev, e.state, e.base], [4, 'draft', 2]);
+  assert.deepEqual([e.rev, e.state, e.base], [4, 'draft', 1], 'my draft with the base it was made from, not the live one');
   P.edit.close('poi-00000000000a');
   P.store.history.revs = P.store.history.revs.slice(0, 2);
   await P.panel.open('poi-00000000000a');
