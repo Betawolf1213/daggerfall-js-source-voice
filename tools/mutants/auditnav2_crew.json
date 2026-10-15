@@ -65,8 +65,8 @@
   {
     "name": "AUDIT-NAV2-F40-boarder-calls-no-muster",
     "file": "src/scenes/navalHost.js",
-    "old": "if (pos) toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos;",
-    "new": "if (pos) toward = null;",
+    "old": "if (pos) { toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos; way = 'board'; }",
+    "new": "if (pos) { toward = null; way = 'board'; }",
     "tests": [
       "test/auditnav2_crew.test.js"
     ]
@@ -74,8 +74,8 @@
   {
     "name": "AUDIT-NAV2-F40-boarder-musters-toward-her-mark-as-it-lies",
     "file": "src/scenes/navalHost.js",
-    "old": "if (pos) toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos;",
-    "new": "if (pos) toward = pos;",
+    "old": "if (pos) { toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos; way = 'board'; }",
+    "new": "if (pos) { toward = pos; way = 'board'; }",
     "tests": [
       "test/auditnav2_crew.test.js"
     ]
@@ -101,8 +101,8 @@
   {
     "name": "AUDIT-NAV2-F40-struck-ship-deaf-to-my-reach",
     "file": "src/scenes/navalHost.js",
-    "old": "if (gap <= (helm ? BOARD_RANGE : FOOT_BOARD_M)) toward = helm ? abeam(e, from, yawOfRot(helm.GameObject.rotation)) : from;",
-    "new": "if (false) toward = from;",
+    "old": "if (helm ? boardingGap(helm, e) != null : footReach(e, from)) { toward = helm ? abeam(e, from, yawOfRot(helm.GameObject.rotation)) : from; way = 'repel'; }",
+    "new": "if (false) { toward = from; way = 'repel'; }",
     "tests": [
       "test/auditnav2_crew.test.js"
     ]
@@ -110,8 +110,8 @@
   {
     "name": "AUDIT-NAV2-F40-my-crew-deaf-to-my-reach",
     "file": "src/scenes/navalHost.js",
-    "old": "&& dist2d(e.ship.pos, boat.GameObject.position) - hullBuild(e.ship.hull).beam - hullBuild(boat.hull).beam <= BOARD_RANGE) toward = e.ship.pos;",
-    "new": "&& false) toward = e.ship.pos;",
+    "old": "const e = boardable(boat); if (e) { toward = e.ship.pos; way = 'board'; } }",
+    "new": "const e = null; if (e) { toward = e.ship.pos; way = 'board'; } }",
     "tests": [
       "test/auditnav2_crew.test.js"
     ]

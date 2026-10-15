@@ -119,8 +119,8 @@
   {
     "name": "PERFVOL-shipped-off",
     "file": "src/render/shadowPass.js",
-    "old": "facePrepass: true, sunPrepass: true, volumeMemo: true };",
-    "new": "facePrepass: true, sunPrepass: true, volumeMemo: false };",
+    "old": "facePrepass: true, sunPrepass: true, volumeMemo: true, moverDirect: true, loUnread: true };",
+    "new": "facePrepass: true, sunPrepass: true, volumeMemo: false, moverDirect: true, loUnread: true };",
     "tests": [
       "test/perfvol.test.js"
     ]

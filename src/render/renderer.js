@@ -1544,6 +1544,7 @@ import { WATER_BED_GLSL, waterBedMix } from './waterBedGlsl.js';   // WATER-NEXT
 import { packWaterMask, WATER_DRAW_MASK_TABLE } from '../world/waterCorners.js';   // MAC2: the corner table's one home; WATER-DRAW1: the PASS takes the draw's table, not the feet's
 import { pageParam } from '../systems/pageQuery.js';   // PERF-URL: the page's query, parsed once a search
 import { SKIN_PAL_ROW, SKIN_PALETTE_UNIT } from './skinPalette.js';   // MWNPC1: the GPU skin's palette shape
+import { lightIdsOf, lightList, packLight } from './lightId.js';   // LIGHT-ID: each light's identity, lifted off its list for the shadow pass (and the flash packed through the seam)
 import { ecotoneGlsl, ECO_UNITS } from './ecotoneGlsl.js';   // ECOTONE1: the ground's share of its neighbours - the chunk, and the units their tile sets bind on
 import { SNOW_VS, snowTerrainFs, SNOW_UNITS, SNOW_LAYER, snowSurfaceRise } from './snowfallGlsl.js';   // SNOWFALL1: the mod's snow surface, lit as the ground is
 const SNOW_UNIT_LIST = Object.entries(SNOW_UNITS);   // AUDIT ENVIRONS P1: the five pictures' units, listed once
@@ -1807,10 +1808,11 @@ export class Renderer {
     this._windowEmission = new Float32Array([0, 0, 0]);
     this._pointLights = new Float32Array(0); // vec4 per light [x,y,z,range]
     this._flashLight = null;   // DS1: the storm's flash, composed in by setFlashLight
-    this._flashLightScratch = new Float32Array(CLASSIC_MAX_LIGHTS * 4);
+    this._flashLightScratch = lightList(CLASSIC_MAX_LIGHTS);   // LIGHT-ID: a light list - the flash enters through the one seam, the identities beside it
     this._flashColorScratch = new Float32Array(CLASSIC_MAX_LIGHTS * 3);
     this._flashCarriedScratch = new Uint8Array(CLASSIC_MAX_LIGHTS);   // MAC-T1: the carried mask under the flash
     this._pointCarried = null;   // MAC-T1: per-light, 1 for the light in the player's hand (withPlayerLights' mask), else null
+    this._pointIds = null;   // LIGHT-ID: per-light, its producer's identity (render/lightId.js - the list's `ids`), else null (an anonymous list)
     this._everyLightNow = false;    // DISC15: this frame's host asked for the lo tier (everyLightCasts)
     this._everyLightPrev = false;   // DISC15: ...and the frame whose records the passes replay had asked too
     this._pointColor = new Float32Array([1, 1, 1]);
@@ -2536,7 +2538,7 @@ export class Renderer {
     this.maxPointLights = lane ? lane.maxLights : CLASSIC_MAX_LIGHTS;
     const n = this.maxPointLights;
     if (this._flashLightScratch.length < n * 4) {
-      this._flashLightScratch = new Float32Array(n * 4);
+      this._flashLightScratch = lightList(n);   // LIGHT-ID
       this._flashColorScratch = new Float32Array(n * 3);
       this._flashCarriedScratch = new Uint8Array(n);
       this._pointColorScratch = new Float32Array(n * 3);
@@ -3024,6 +3026,7 @@ export class Renderer {
     if (this._everyLightNow !== this._everyLightPrev) { this._air?.invalidatePrev(); } this._everyLightPrev = this._everyLightNow; this._everyLightNow = false;   // LA-POST6: a door crossed either way is a cut - the air's contact march has no previous frame of this room (its prepare is below)
     sp.render({
       eye: this._shadowEye(), lightDir, sunScale: this._sunScale, pointLights: this._pointLights, carried: this._pointCarried,   // MAC-T1; TV1: the cascades about the focus
+      ids: this._pointIds,   // LIGHT-ID: each light's identity - the pass knows a light that moved by it
       cascadeScale: this._focus[3] > 0.5 && this._focusWide ? SHADOW_VIEW_SCALE : 1,   // AUDIT DEEP R-3: and grown to the travel view's picture - AUDIT DEEP2 D7: once it is half risen (at the head the near cascade went from 1.2 cm texels to 4.7 in one frame, and back at the fall's end)
       textures: this.textures, isSpectral: isSpectralArchive, bindVao, everyLight, cut,
       holdSkin: this._holdSkinFn,   // MWNPC16: a body's palette for its replay (the unit's word kept - releaseCharacterSkin puts the identity back over one let go)
@@ -5365,6 +5368,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       windowEmission: this._windowEmission,
       pointLights: this._pointLights,
       pointCarried: this._pointCarried,   // AUDIT LIGHT-NEAR1: the hand's mask rides with the lights (a subarray has no `.carried`)
+      pointIds: this._pointIds,   // LIGHT-ID: and their identities, for the same reason
       pointColor: this._pointColor,
       pointColors: this._pointColors,
       indirect: [this._indirect[0], this._indirect[1], this._indirect[2], this._indirect[3]],
@@ -5453,6 +5457,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     this.setWindowEmission(s.windowEmission);
     this.setPointLights(s.pointLights, s.pointColor, s.pointColors);
     this._pointCarried = s.pointCarried ?? null;   // AUDIT LIGHT-NEAR1: setPointLights read the mask off the array, and a snapshot's has none
+    this._pointIds = s.pointIds ?? null;   // LIGHT-ID: nor its identities
     this.setIndirectLight([s.indirect[0], s.indirect[1], s.indirect[2]], s.indirect[3], s.indirectColor);
     this._proj = s.proj; this._view = s.view; this._lightDir = s.lightDir;
     this._frameStamp++;   // PERF3: a restored state is a new frame to the terrain block
@@ -5730,6 +5735,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       this.setWindowEmission(was.windowEmission);
       this.setPointLights(was.pointLights, was.pointColor, was.pointColors);
       this._pointCarried = was.pointCarried ?? null;
+      this._pointIds = was.pointIds ?? null;   // LIGHT-ID
       this.setIndirectLight([was.indirect[0], was.indirect[1], was.indirect[2]], was.indirect[3], was.indirectColor);
       this.setClearColor(was.clearColor);
       this._proj = was.proj; this._view = was.view; this._lightDir = was.lightDir;
@@ -6162,6 +6168,10 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     const n = this.maxPointLights;   // EL1: the installed set's cap
     // MAC-T1: the carried mask is a property of the composed array, and `subarray` returns a fresh view without it -
     // so it is lifted FIRST, and cut to the same cap
+    // LIGHT-ID: and the identities its composer packed beside each light (render/lightId.js), for the shadow pass - lifted
+    // and cut as the mask is; an anonymous list (none) names its lights by their places, as the pass always had
+    const ids = lightIdsOf(data);
+    this._pointIds = ids ? ids.subarray(0, n) : null;
     const carried = data.carried ?? null;
     this._pointCarried = carried ? carried.subarray(0, n) : null;
     this._pointLights = data.subarray ? data.subarray(0, n * 4) : data;
@@ -6187,7 +6197,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     const data = this._pointLights, colors = this._pointColors, f = light;
     const keep = Math.min(this.maxPointLights - 1, Math.floor(data.length / 4));   // EL1: one slot under the installed cap
     const out = this._flashLightScratch;
-    out[0] = f.x; out[1] = f.y; out[2] = f.z; out[3] = f.range;
+    packLight(out, 0, f);   // LIGHT-ID: the flash into the list through the one seam (its range is past every caster's)
     out.set(data.subarray ? data.subarray(0, keep * 4) : data.slice(0, keep * 4), 4);
     this._pointLights = out.subarray(0, (keep + 1) * 4);
     // MAC-T1: the mask shifts with the arrays - the flash takes slot 0 unmarked, the hand's light keeps its bit
@@ -6195,6 +6205,12 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       const m = this._flashCarriedScratch;
       m[0] = 0; m.set(this._pointCarried.subarray(0, keep), 1);
       this._pointCarried = m.subarray(0, keep + 1);
+    }
+    // LIGHT-ID: the identities shift with them, the flash's own in slot 0 - an anonymous list's stay none
+    if (this._pointIds) {
+      const m = out.ids;
+      m.set(this._pointIds.subarray(0, keep), 1);
+      this._pointIds = m.subarray(0, keep + 1);
     }
     const c = this._flashColorScratch;
     c[0] = f.color[0]; c[1] = f.color[1]; c[2] = f.color[2];

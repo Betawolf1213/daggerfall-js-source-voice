@@ -81,8 +81,10 @@ test('REL5: a download link names the file under releases/latest/download, which
   assert.equal(manualDownloadFile({ platform: 'freebsd', portable: false, packaged: true }), null);
 });
 
-test('REL4: a release is the four downloads, the three manifests and two blockmaps - one short publishes nothing', () => {
+test('REL4: a release is the four downloads, the three manifests and two blockmaps (DA13: and the game\'s manifest and pack) - one short publishes nothing', () => {
   assert.deepEqual([...EXPECTED_RELEASE_FILES].sort(), [
+    // PIN MOVED: DA13 - the game a file at a time: the manifest every copy reads first, and the pack it takes ranges of
+    'DFO-Online-game.json.gz', 'DFO-Online-game.pack',
     'DFO-Online-linux-x86_64.AppImage',
     'DFO-Online-mac-arm64.dmg', 'DFO-Online-mac-arm64.dmg.blockmap',
     'DFO-Online-win-x64-portable.exe',

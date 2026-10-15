@@ -4,9 +4,9 @@
 // want to make it AAA grade").
 //
 // THE LAUNCHER IS THE SHELL'S FIRST WINDOW, not a second program: a
-// Windows update between two releases is ~4.5 MB (the blockmap delta), so
-// a separate launcher would make nothing smaller - it would only add a
-// thing to install, sign and update. The window checks for an update and
+// separate launcher would make no update smaller - it would only add a
+// thing to install, sign and update (what an update costs is DA13's: the
+// game's own channel, the files that changed). The window checks for an update and
 // installs it BEFORE play where this copy can (a client a protocol behind
 // the relay is what install-on-quit left a player with, several times a
 // day), finds the player's Daggerfall files (DA9), shows what changed, and
@@ -256,7 +256,8 @@ test('DA8: the shell - a sandboxed window on its own origin, two words of bridge
 
 test('DA8: in the game - the update is a HUD line saying what the player can do; a browser tab hears nothing', () => {
   assert.equal(updateReadyText({ version: '0.1.4684', manual: false }),
-    'DFO Online 0.1.4684 is ready. It installs when you quit, or now from File > Restart to Update - save first.');
+    // PIN MOVED: DA13 - the next start is when both kinds play: the installer's (run at quit) and the game channel's
+    'DFO Online 0.1.4684 is ready. It plays the next time you start, or now from File > Restart to Update - save first.');
   assert.equal(updateReadyText({ version: '0.1.4684', manual: true }),
     'DFO Online 0.1.4684 is out. Download it from the File menu when you are ready - your saves stay where they are.');
   assert.match(updateReadyText({ version: '<img src=x>' }), /^A new version of DFO Online is ready\./, 'only a version\'s own shape is spoken');

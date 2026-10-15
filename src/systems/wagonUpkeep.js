@@ -18,9 +18,14 @@
 //  - MENDING: a Wagon Yard mends it whole for MEND_SHARE of its kind's value at most, by what it lacks - MEND_FETCH more
 //    to send a wright to where it stands; a Wagon Repair Kit (systems/upkeepItemRows.js) mends KIT_MEND of it in the
 //    field over KIT_MINUTES, to WAGON_KIT_CEILING at most.
+//  - WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers"): WHAT WEAR COSTS is its tier's (systems/upkeepTiers.js - Boons,
+//    the default: nothing, never worse than DFU's plain wagon; Hard: the system as it stood). The laws below that charge
+//    take the tier's rules as an argument, and one handed none runs Hard.
 
 import { isWagonItem, wagonKindOf, WAGON_KINDS } from './wagonKinds.js';
 import { templateByIndex, mintCondition, TRANSPORT_SMALL_CART } from './itemTemplates.js';
+import { WAGON_UPKEEP_HARD } from './upkeepTiers.js';   // WAGON-TIERS: what a law handed no rules runs
+import { t } from './textManager.js';   // WAGON-TIERS: Boons' two words in the player's language
 
 /** A wagon's condition at most - its template's (93's 1400), or the item's own where it carries one. */
 export const wagonConditionMax = (item) => (Number.isInteger(item?.maxCondition) && item.maxCondition > 0 ? item.maxCondition : (templateByIndex(TRANSPORT_SMALL_CART)?.hitPoints ?? 1400));
@@ -138,6 +143,9 @@ export const WAGON_UPKEEP_TEXT = Object.freeze({
   kitNotNear: (name) => `Your ${name} is not here to mend.`,
   kitDone: (name, pct) => `You spend an hour mending your ${name}. It is ${pct}% sound.`,
   smith: 'A smith does not mend wagons. A town’s Wagon Yard does.',
+  // WAGON-TIERS: Boons' words for a step down - the same news, and no slowness it does not have
+  failingBoons: (name) => t('wagon.upkeep.boons.failing', 'Your {name} is falling apart. A Wagon Yard or a Wagon Repair Kit will mend it.', { name }),
+  ricketyBoons: (name) => t('wagon.upkeep.boons.rickety', 'Your {name} is rickety. A Wagon Yard can mend it.', { name }),
 });
 /** A wagon's name in a sentence ("Small Cart", "Caravan"). */
 export const wagonWord = (item) => WAGON_KINDS[wagonKindOf(item)]?.name ?? 'wagon';
@@ -161,5 +169,17 @@ export function kitMendWagon(item) {
   return { ok: true, text: WAGON_UPKEEP_TEXT.kitDone(wagonWord(item), Math.round(wagonSoundness(item) * 100)) };
 }
 
-/** The pace a wagon's state lets its team pull it at (1 for none). */
-export const wagonPace = (item) => (isWagonItem(item) ? wagonState(item).pace : 1);
+/** The pace a wagon's state lets its team pull it at (1 for none) - WAGON-TIERS: its state's slowness only where its
+ *  tier's wear slows it (Hard; on Boons every state rolls at DFU's pace), and a Sound wagon's earned pace where its tier
+ *  pays one (Boons: upkeepTiers.js WAGON_SOUND_BOON - Mac, "Sound wagon rolls faster"). The team's own Strength under
+ *  its load is horse care's, multiplied on after (upkeepRuntime.js rideScale), as every ride pace is. */
+export function wagonPace(item, rules = WAGON_UPKEEP_HARD) {
+  if (!isWagonItem(item)) return 1;
+  const s = wagonState(item);
+  return (rules.wearSlows ? s.pace : 1) * (s.key === 'sound' ? rules.soundPace : 1);
+}
+/** WAGON-TIERS: whether a counter buys `item` as a whole wagon - a wagon on a tier whose wear does not price it (Boons;
+ *  and Off, `rules` null - DFU's plain wagon, which never wore). Hard prices it by its condition (systems/tradeModes.js
+ *  saleConditionPercentage, Roleplay & Realism: Items' conditionCostBase). `rules` the live tier's (null for Off); a
+ *  call handed none runs Hard. */
+export const wagonSoldWhole = (item, rules = WAGON_UPKEEP_HARD) => isWagonItem(item) && !rules?.wearPrices;

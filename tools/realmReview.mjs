@@ -15,6 +15,13 @@
 //                                                            not (while the budget only measures, `holds` lists none of them)
 //   node tools/realmReview.mjs trades <id>                   HACKED-GOLD: one character's realm trades - whom it traded with,
 //                                                            and the gold, letters and pieces each side gave
+//   node tools/realmReview.mjs characters <handle>           SUMMON-REPAIR: an account's realm characters, each its id
+//   node tools/realmReview.mjs repair <id> <ticket> <faction> <flag> <gold> [note]
+//                                                            SUMMON-REPAIR: one of FactionFile's flag bits (0x40, 64 or
+//                                                            Summoned) cleared on the faction of that character's record and
+//                                                            the gold given back as a letter of credit - once a ticket, so the
+//                                                            same command run again moves nothing; its tab loses the seat and
+//                                                            its next join plays the mended record (net/repairLaw.js)
 //
 // THE MEASURE FIRST (Mac, 2026-10-09: "Measure 7 days, then enforce"): read `budget 7` after a week, set each band's
 // `rate` past its 0.999 quantile with room, and `budget-set` with `enforce: true`.
@@ -26,6 +33,8 @@
 // in for this one call and sign out after it; DAGGER_SECRET, a session secret you already hold, is used as it is and left
 // signed in. DAGGER_ACCOUNT_SERVICE points at another service (a local one); the live one by default.
 import { DEFAULT_ACCOUNT_SERVICE, accountRefusalText } from '../src/net/accountClient.js';
+import { repairOf, repairFlagOf } from '../src/net/repairLaw.js';   // SUMMON-REPAIR: the service's own law, asked first here
+import { isHandleShaped } from '../src/net/handleShape.js';
 import { isMain } from './lib/isMain.mjs';
 
 export const USAGE = [
@@ -36,6 +45,8 @@ export const USAGE = [
   '       node tools/realmReview.mjs bodies [days]',
   '       node tools/realmReview.mjs gains [days]',
   '       node tools/realmReview.mjs trades <realm character id>',
+  '       node tools/realmReview.mjs characters <handle>',
+  '       node tools/realmReview.mjs repair <realm character id> <ticket> <faction id> <flag: 0x40 | 64 | Summoned> <gold> [note]',
   '  Sign in with DAGGER_HANDLE and DAGGER_PASSWORD (or DAGGER_SECRET); DAGGER_ACCOUNT_SERVICE for another service.',
 ].join('\n');
 
@@ -58,6 +69,14 @@ const BY_ID = Object.freeze(['findings', 'clear', 'hold', 'rollback', 'trades'])
 export function reviewRequest(argv) {
   const [act, ...rest] = argv;
   if (act === 'holds' && rest.length === 0) return { path: '/v1/mod/realm-holds', body: {} };
+  if (act === 'characters' && rest.length === 1 && isHandleShaped(rest[0])) return { path: '/v1/mod/realm-characters', body: { name: rest[0] } };
+  if (act === 'repair' && rest.length >= 5 && /^r[0-9a-f]{20}$/.test(rest[0])) {
+    // SUMMON-REPAIR: checked by the law the service checks it by, so a typo is refused here and never half-sent
+    const [id, ticket, faction, flag, gold] = rest;
+    const repair = repairOf({ ticket, faction: /^[0-9]+$/.test(faction) ? Number(faction) : NaN, flag: repairFlagOf(flag), gold: /^[0-9]+$/.test(gold) ? Number(gold) : NaN });
+    const note = rest.slice(5).join(' ');
+    return repair ? { path: '/v1/mod/realm-repair', body: { id, ...repair, ...(note ? { note } : {}) } } : { usage: USAGE };
+  }
   if (BY_ID.includes(act) && rest.length >= 1 && /^r[0-9a-f]{20}$/.test(rest[0])) {
     const note = rest.slice(1).join(' ');
     return { path: `/v1/mod/realm-${act}`, body: { id: rest[0], ...(note ? { note } : {}) } };

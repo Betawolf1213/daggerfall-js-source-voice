@@ -80,7 +80,7 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
       return textureFiles.get(archive);
     }
     if (!texturePromises.has(archive)) {
-      texturePromises.set(archive, (async () => {
+      const asked = (async () => {
         // SURV2: an archive that exists only as the port's vendored art
         // (a mod's item icons, 532-539) has no TEXTURE file to fetch -
         // decode the PNGs and stand a sized shell in for the file, and
@@ -125,7 +125,14 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
         preloadedAt.set(archive, epoch);
         textureFiles.set(archive, t);
         return t;
-      })());
+      })();
+      texturePromises.set(archive, asked);
+      // BUILD-RETRY (bible/06-Systems/Travel-View.md LOAD-OWED): A READ THAT FAILED IS NO ANSWER. The rejection stood
+      // here as the archive's answer for the page, so one failed read - a dropped fetch, an IndexedDB read that failed
+      // and fell through to a server without the file - failed every later ask for the archive without reading again:
+      // every pixel of that climate, every town wearing that picture, threw for the rest of the session. A failed ask
+      // is forgotten and the next one reads (AUDIT VE R12's law for a tile set; getGpuMesh's in-flight map's)
+      asked.catch(() => { if (texturePromises.get(archive) === asked) texturePromises.delete(archive); });
     }
     return texturePromises.get(archive);
   }

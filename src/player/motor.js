@@ -776,7 +776,7 @@ export class PlayerMotor {
   /** HORSE-WALK: the classic base GetBaseSpeed's riding arm adds - DFU's own walk base where horse care walks the horse
    *  (transport.js rideWalks), so the walk is its base as a walk is on foot and a pace under half of it is a sneak's;
    *  else the mode's ride base (rideBaseFor). GetRunSpeed's riding arm never reads it: the gallop is the ride base's. */
-  _rideBaseNow() { return rideWalks(this.transportMode) ? DF_WALK_BASE : rideBaseFor(this.transportMode); }
+  _rideBaseNow() { return rideWalks(this.transportMode, this._runMode) ? DF_WALK_BASE : rideBaseFor(this.transportMode); }   // HORSE-TIERS: the run asked rides with the question
   /** STEED1/WAGONS4: the ride's pace scale, a finite positive number (1 for anything else). */
   _rideScale() { const k = this.rideSpeedScale; return Number.isFinite(k) && k > 0 ? k : 1; }
   /** GetSwimSpeed(GetBaseSpeed()) - LevitateMotor's swim: GetBaseSpeed skips the crouch arm while it swims. */
@@ -3160,7 +3160,7 @@ export class PlayerMotor {
     // HORSE-WALK: horse care's horse WALKS unless it gallops - GetBaseSpeed's riding arm on the walk's base
     // (_rideBaseNow), the run on the ride base as ever (GetRunSpeed's riding arm). DFU's ride, which every picture
     // already drew as a gallop (eotbBillboard.js GALLOP_SPEED, horseModel.js HORSE_GAIT_FROM), is the gallop's base now.
-    this.rideWalking = rideBase != null && !this.isRunning && rideWalks(this.transportMode);
+    this.rideWalking = rideBase != null && !this.isRunning && rideWalks(this.transportMode, this._runMode);   // HORSE-TIERS: a gallop asked and refused - Boons' DFU pace, Hard's walk
     if (this.isRunning) {
       speed = runSpeed(this.stats.speed, this.stats.running, this.crouching, rideBase);
       if (rideBase != null) speed *= this._rideScale();   // STEED1: a gallop at the horse's own pace

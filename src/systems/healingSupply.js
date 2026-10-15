@@ -88,9 +88,10 @@ export function maybeAddMagickaPotion(items, pct, rolls = Math.random) {
 /** Every host's install (scenes/shared.js, after the smithing install, so a field kit's roll still comes first): the
  *  potions into a J-O pile and onto a looting foe - the healing potion's draw, then the magicka potion's. */
 export function installHealingSupply() {
-  registerTabledLootHandler('healing-potion', ({ key, items, rolls }) => {
+  // PARTY-LOOT: at the roll's own RENOWN-LOOT share when the raiser names one (a room's base), else the roller's
+  registerTabledLootHandler('healing-potion', ({ key, items, rolls, quarters }) => {
     const i = typeof key === 'string' ? key.charCodeAt(0) - 64 : 0;
-    if (i >= 10 && i <= 15) { const { pile } = healingSupplyChances(); maybeAddHealingPotion(items, pile.healing, rolls); maybeAddMagickaPotion(items, pile.magicka, rolls); }
+    if (i >= 10 && i <= 15) { const { pile } = healingSupplyChances(quarters); maybeAddHealingPotion(items, pile.healing, rolls); maybeAddMagickaPotion(items, pile.magicka, rolls); }
   });
-  registerEnemyLootExtra('healing-potion', ({ items, rolls }) => { const { enemy } = healingSupplyChances(); maybeAddHealingPotion(items, enemy.healing, rolls); maybeAddMagickaPotion(items, enemy.magicka, rolls); });
+  registerEnemyLootExtra('healing-potion', ({ items, rolls, quarters }) => { const { enemy } = healingSupplyChances(quarters); maybeAddHealingPotion(items, enemy.healing, rolls); maybeAddMagickaPotion(items, enemy.magicka, rolls); });
 }

@@ -74,6 +74,7 @@ import { isNatureArchive, BLOCK_FLATS_OFFSET_Y } from '../world/rmbFlats.js';   
 import { LIGHTS_ARCHIVE, CITY_LIGHT_RANGE, CITY_LIGHT_INTENSITY, CITY_LIGHT_COLOR } from '../world/cityLights.js';   // YARD-LIGHT: the town's lantern
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { transformedAabb } from '../render/frustum.js';   // FB1009 HOME-FOOT: a model's ground where its placement stands it
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a row named by its lamp
 
 /** YARD-LIGHT: the light a yard's lamp gives - the town's lantern's (DaggerfallLight [City]: range 18, intensity 1,
  *  white). The world host lights it as it lights theirs: the town lanterns' colour (CITY_LIGHT_COLOR_F32) and their
@@ -122,6 +123,7 @@ export function yardLampRows(lamps, rows, animRanges, color, out) {
     const l = lamps[i];
     const e = rows[i] ?? (rows[i] = { x: 0, y: 0, z: 0, range: 0, color: null });
     e.x = l.x; e.y = l.y; e.z = l.z;
+    adoptLight(e, l);   // LIGHT-ID: the row is this lamp's this frame - the rows refill in the yards' order
     e.range = animRanges[l.slot % animRanges.length] * (l.range / CITY_LIGHT_RANGE);
     e.color = color;
     out.push(e);

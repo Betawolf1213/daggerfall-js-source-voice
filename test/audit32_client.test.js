@@ -302,7 +302,7 @@ test('AUDIT 32 wiring: a flyer\'s body where its corpse lies (H3); no click thro
   const d = src('src/scenes/dungeonContext.js');
   assert.match(d, /const p = floorLanding\(collider, \[f\.ai\.feet\[0\], f\.ai\.feet\[1\] \+ 0\.1, f\.ai\.feet\[2\]\]\);\n\s*f\.corpsePos = p;/, 'H3: the landing kept');
   assert.match(d, /function corpseAt\(f\) \{ return f\?\.corpsePos \?\? f\?\.ai\?\.feet \?\? null; \}/);
-  assert.match(d, /if \(!lootableBody\(f\) \|\| !f\.entity\?\.items\?\.length\) return;[^\n]*\n\s*const p = corpseAt\(f\);/, 'H3: the loot\'s box where the body lies');
+  assert.match(d, /if \(!lootableBody\(f\) \|\| !f\.entity\?\.items\?\.length \|\| roomUnborn\(`corpse:\$\{i\}`\)\) return;[^\n]*\n\s*const p = corpseAt\(f\);/, 'H3: the loot\'s box where the body lies');   // PIN MOVED (PARTY-LOOT): and no box for a room body with no terms yet
   assert.match(d, /f\.corpse = false;[^\n]*\n\s*f\.corpsePos = null;/, 'a freed corpse forgets its place');
   assert.match(d, /corpseKeyOf: \(f\) => \{ const i = foes\.indexOf\(f\); return i >= 0 && lootableBody\(f\) && f\.entity\?\.items\?\.length \? `corpse:\$\{i\}` : null; \},/, 'H8');
   const w = src('src/scenes/world.js');

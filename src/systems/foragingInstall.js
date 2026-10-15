@@ -264,10 +264,10 @@ export function foragingToolsCommand() {
 
 /** One hook's loop: `count` items, each its table's id then the roll, `AddItem(item, AddPosition.Back)` into `items`.
  *  Answers how many it added. */
-function addLootItems(items, { table, count }, luck, quality) {
+function addLootItems(items, { table, count }, luck, quality, rolls = _random) {   // PARTY-LOOT: the draw's own dice
   let added = 0;
   for (let i = 0; i < count; i++) {
-    const t = foragingLootItem(table, luck, quality, _random);
+    const t = foragingLootItem(table, luck, quality, rolls);
     if (!t) continue;
     const item = createForagingItem(t);
     if (item) { addItem(items, item, 'back'); added++; }
@@ -282,12 +282,12 @@ export function onForagingContainerLoot(args) {
 /** ForagingLoot_OnDungeonLootSpawned (IL_084c): LootTables' event over a pile, by the index it was generated at. */
 export function onForagingPileLoot(args) {
   if (!foragingOn() || !Array.isArray(args?.items)) return 0;
-  return addLootItems(args.items, dungeonLootDraw(args.locationIndex, _random), args.luck ?? 50, -1);
+  return addLootItems(args.items, dungeonLootDraw(args.locationIndex, args.rolls ?? _random), args.luck ?? 50, -1, args.rolls ?? _random);   // PARTY-LOOT: the raiser's dice when it hands them (a room's base draws on the room's)
 }
 /** ForagingLoot_OnEnemyDeath (IL_0a08): into the corpse, which is the entity's items (UL1). */
 export function onForagingEnemyDeath(entity, opts = {}) {
   if (!foragingOn() || !entity || entity.isPlayer || !Array.isArray(entity.items)) return 0;   // `as EnemyEntity`
-  return addLootItems(entity.items, corpseLootDraw(entity, _random), opts.luck ?? 50, -1);
+  return addLootItems(entity.items, corpseLootDraw(entity, opts.rolls ?? _random), opts.luck ?? 50, -1, opts.rolls ?? _random);   // PARTY-LOOT: the raiser's dice when it hands them
 }
 
 // ---- the install -------------------------------------------------------

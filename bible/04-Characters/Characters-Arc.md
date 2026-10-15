@@ -2855,6 +2855,18 @@ ARENA2 in the container: the bats' height, the halved capsule's feel
 at doors, and flyers and swimmers in every host want Mac's eyes on the
 live site.
 
+DOOR-JAM (FIELD BUGS 2026-10-14b, `01-Overview/Field-Bugs-2026-10-14b.md`):
+the sized capsule met the doors. A Mage's, a Healer's, a Spellsword's, a
+Lich's and a Daedra Lord's stand taller than nine in ten of the dungeons'
+doorways, and DFU's counterpart to SetupDemoEnemy's height - EnemyMotor
+.HeightAdjust, the 1.65 duck for half a second after a bump on the sides
+- was not ported, so every one walked into the lintel for good. It is
+now (`enemyMotor.js:"this._heightAdjust(FIXED_DT);"`): `height` is DFU's
+originalHeight, which the probes read; `controllerHeight` the one every
+Move sweeps, and nothing else reads it (Mac, 2026-10-15: "Keep full
+height" - missiles, touches, sight, the crosshair, the lock-on and the
+bars keep the whole body; Port-Ledger A).
+
 ### REVIEW 2026-09-05 - the adversarial round over PR #55
 
 Six finder lenses over the merged diff, two refuters per finding; 23

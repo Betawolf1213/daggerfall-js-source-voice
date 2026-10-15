@@ -106,7 +106,8 @@ export function createNavalCrew({ renderer, getTexture, uploadRecordFrame, rand 
    * (`rosterOf()`, asked then and when she grows) in her flats' places; one standing is kept to `count` (the guns took
    * the rest, a mending brings them back); a `hold` crew is off her deck (her men the fight's, a prize's) - her flats stay
    * down and nobody stands, and she stands again whole when the hold ends; `struck` her colours down; `toward` a
-   * boarding at hand, the point her crew musters toward - stood to within CREW_MUSTER_M of her.
+   * boarding at hand, the point her crew musters toward - stood to within CREW_MUSTER_M of her - and `way` her side of
+   * it (CREW-MUSTER: 'board' her men go over, 'repel' the other's come over hers - crewLife.js step's `ctx.way`).
    * @param {any[]} list
    */
   function sync(list) {
@@ -142,6 +143,7 @@ export function createNavalCrew({ renderer, getTexture, uploadRecordFrame, rand 
       // toward it within CREW_MUSTER_M of her - the grapple's 2.2 s alone saw nobody reach it
       const at = w.boat.GameObject?.position;
       ship.toward = w.toward && at && Math.hypot(w.toward[0] - at[0], w.toward[2] - at[2]) <= CREW_MUSTER_M ? w.toward : null;
+      ship.way = ship.toward ? w.way ?? null : null;   // CREW-MUSTER: her side of that boarding ('board' | 'repel') - the muster's words
       // CREW-COMPANIONS: her hands ashore with the player (`away`, roster places) stand off her deck, and her count is
       // the rest's - the guns' trim and the mending's restore never touch a man ashore
       const off = w.away ? ship.life.away(w.away) : 0;
