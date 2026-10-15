@@ -818,8 +818,10 @@ band's **champion** stands: a Kynreeve in the Galleries, a Kynmarcher in the Cai
 - It brings an escort of `1 + ceil(n/3)` adds from its band (2 to 4).
 - Each rank has a signature:
   - **the Kynreeve, Shield-Wall**: blows on his front 120° deal 75% less, blows from behind 30% more (the relay knows
-    both poses), and he turns to the top of threat, so one member holds him while the others flank;
-  - **the Kynmarcher, the Citadel**: he plants three standards, each 4 s of the company's reference damage; each
+    both poses), and he turns to the top of threat, so one member holds him while the others flank - his facing rides
+    his row and every walk (`yw`, section 23), so each screen draws him facing the way his Shield-Wall is judged;
+  - **the Kynmarcher, the Citadel**: as he wakes he plants three standards (asleep, nothing of his errand stands to be
+    broken), each 4 s of the company's reference damage; each
     standing standard takes 20% off every blow on him;
   - **the Markynaz, the Grand Duke's Decree**: he lays one lord-family decree (section 14) on his own fight, named on
     his card. It folds with the circle's lord decrees through the fight's profile (section 14), never in their place: the
@@ -1598,7 +1600,11 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
   holds until the errand is called, and blows past the next threshold are refused until it resolves, so a strong
   company cannot burn past what makes a lord itself. The Examination and Garoth's Clan Muster hold it: the lord keeps
   the least health strictly above the line (`egHoldHp` - a lord held there never reads as past it), and the Clan
-  Muster's third duel holds his fall. A mirror (Seyth's, an image) turns no phase and runs no signature.
+  Muster's duel at his third phase's turn holds his fall. A duel is its lord's own (`net/egLords.js` challengeTick): each
+  lord keeps its own clock, one ring stands at a time, its tally counts only blows on its own lord, and only its own lord's
+  kit ends it - a duel that falls due while another lord's ring stands is called as that one falls (Garoth's under his
+  ward: the errand is not yet called), and a lord's fall ends its own ring. A mirror (Seyth's, an image) turns no phase
+  and runs no signature.
 - **Targeting**: the gate's. 60% to the top of threat (`THREAT_PICK`) and 40% to a random living member, threat
   forgetting `THREAT_DECAY` a second. An absent body is never chosen.
 - **FURY**, the endless lord's answer to a slow company. At `EG_FURY_RATIO` (1.5) x `ttkRef(c)` seconds into the
@@ -1635,7 +1641,12 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
     and open edges bound it. A new blow is held only if it would empty the set.
   - A held blow waits a tick (250 ms), at most four ticks, then is dropped. A blow held after its `tell` went out sends
     `{k:'untell', i}`, so no ghost outline stays on the floor.
-  - Pendulums, vents and the place's hazards are tested in the same set.
+  - Pendulums, vents and the place's hazards are tested in the same set - the lords' own place with them: Grath's
+    burning bridge and the Last Charge's falling third are landings like any blow (no CHECK: each has an edge to run
+    to); a burning or fallen ground told and not yet down (the Conquest's thirds, Both Courts Burn, a Last Lesson's ring)
+    lands at its onset; and a floor gone (a fallen island, a fallen third, the Molten Rim) is no ground to flee to while
+    it stands (`net/egFloor.js` egZoneLandings, egFloorLess). A new blow is held only if it is what empties the set: a set
+    its landings empty without it (a court burning whole) holds nothing more.
   - The search lives in `net/egFloor.js` (section 9), the client's arrow beside it, both over the fight floor's polygon.
   - Pinned: the Arcane Lattice and Chained Blows are passable at *n* = 1.
 - **THE WIDTH RULE** (section 11.7): every aimed blow is at least 4 m across at its narrowest, or the relay's census
@@ -1646,7 +1657,9 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
   - it carries its own feasibility pin for *n* = 1 to 8 (THE ERRAND FLOOR, below), which a haven's route obeys too;
   - the gate exempts its own the same way (`isDagons`, `windupOf`);
   - an errand's failure blow names its members (`on` - the Chain Snaps' pair, a Soul Burst's member, the Cage's bound)
-    and lands on them wherever they stand, never on another: its marks ride them, and no run leaves them.
+    and lands on them wherever they stand, never on another: its marks ride them, and no run leaves them. The census
+    counts it the same way (`net/bossRef.js` judgeShapes): on exactly the members it names, wherever their trails stand at
+    its landing, never on one standing in its marks.
 - **THE ERRAND FLOOR** (pinned beside the wind-up floor):
   - an errand that needs *k* bodies needs `min(k, n)`;
   - its window is at least a lone runner's route at the escape build plus 1.5 s;
@@ -1668,8 +1681,10 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
   (`eb`) carries no feint flag: the relay sends `ecut` at `FEINT_AT`, so a modified client cannot read the feint
   early. No tell depends on a shadow, which a billboard and a phone cannot promise.
 - **The beats.** Every lord wakes with its card (its name and epithet), turns each phase with the gate's phase card
-  (the numeral, the phase's name, one order: *The bridges burn.*), and falls with the gate's fall beats (WB13e), then
-  the damage chart (section 27.6).
+  (the numeral, the phase's name, one order: *II - The Bridges Burn - Off a bridge before it burns.*), and falls with the
+  gate's fall beats (WB13e), then the damage chart (section 27.6). Every lord's two turns are named and ordered
+  (`net/egLords.js` EG_LORD_PHASES - Garoth's third the signature he borrows), the name said at the turn (`esay` 'phase'),
+  the card drawn on every screen at its `eph`, once a fight for a lord and a phase (the Twins turn each their own).
 - **Marks on members.** A lord's mark on a member (the Scent, a soul-mark, Fire-touched, a chain, the cage) shows as a
   chip with a radial timer beside their vitals and a sigil over their head that the company sees, always in Dagon's
   red with its own shape (section 25.5). The marked member hears the personal sting and reads one order: *Hunted -
@@ -1715,7 +1730,11 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
      haven plus 1.5 s. The havens are the first two, three or four of the court's four spots (two neighbours at two),
      and the route is measured over the whole court - its heart, its rim and a 0.5 m grid, plus the grid's half
      diagonal, so never under the truth (`egHavenRouteM`): 5.23 s for two havens (25.7 m), 4.31 s for three (19.2 m)
-     and 2.99 s for four (10.0 m, from the court's heart).
+     and 2.99 s for four (10.0 m, from the court's heart). Beside another lord on a ground of many pieces (THE OLD
+     MASTERS on Grath's islands, the Twins' courts, the Colossus's forge, the Wyrm's cavern) the havens and the route are
+     the whole floor's (`egHavenFloor`): from the havens a court would lay, one more stands at the floor's farthest point
+     (kept 3 m on it) until the route is no longer than those havens' on one court, at most eight; the route is WALKED
+     over the floor's pieces on the same grid (a diagonal step its own length), never across the magma.
    - **Arcane Lattice**: parallel lanes 4 m wide, swept across the court in sequence (the LANES shape; 1.4 s each,
      floor 0.79 s).
    - **Mirror Images**: three images whose blows are feints under Feud's grammar. A blow shatters an image.
@@ -1739,11 +1758,14 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
      - The challenged must last 15 s or deal a tenth of his health inside it.
      - Outside, the company breaks the ring's `clamp(n - challenged, 1, 3)` braziers (each 4 s of the company's
        reference damage) to open it early, while the legion presses.
-     - *n* = 1: no ring; he duels in the open with his whole kit.
+     - *n* = 1: no ring and no braziers: the Challenge is that duel in the open, with his whole kit - the member marked,
+       met by a tenth of his health dealt within its 15 s, so his signature is a company of one's too.
    - **Riposte**: a cone (5 m, 90°) that answers a blow landed in the 0.6 s after his guard rises, 0.9 s (floor
      0.80 s). The tell: his blade raised, glinting.
    - **Lunge**: a lane 4 m wide and 10 m long, 1.0 s (floor 0.79 s). **Whirl**: a disc of r 4, 1.3 s (floor 1.08 s).
-   - Phase 2, *the second challenge*: two Challenges at once (when *n* ≥ 4).
+   - Phase 2, *the second challenge*: two members challenged at once into the one ring (when *n* ≥ 4) - it rises about
+     him and the first, the second is drawn into it, either one's blows count toward the tenth, and its braziers are
+     `clamp(n - 2, 1, 3)`.
    - Phase 3, **the Last Lesson**: the court's edge closes 1 m every 6 s, to r 12, and burns there to the fight's end.
    - *A fight about the duel.*
 4. **Valkynaz Ilthys of the Galleries**: Redoubt 5 (section 13.4).
@@ -1790,7 +1812,8 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
      damage. With all three broken she is dragged down and grounded for 30 s, x1.3; they rise again 20 s after she takes
      the air, and only anchors broken drag her down.
    - **Gutterdark**: the braziers gutter in turn. The floor goes dark; telegraphs keep their light (section 25.6), and
-     every foe keeps a rim light.
+     every foe keeps a rim light - every 30 s for 10 s (`edark`), the Eclipse's dark pool over every fight floor on every
+     screen, every foe the Shade's rim.
    - Phase 2, **Wingbeat**: a glade-wide gust every 8 s, told 1 s, 3 m/s for 1 s (the Steps' gust).
    - Phase 3, **Moonfall**: the anchors rise again 40 s after a grounding ends, two Divers with each.
    - *A fight about the air.*
@@ -1798,9 +1821,11 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
    - It vanishes. Where it stands is drawn as an umbral disc on the floor, the telegraph pass's mark kind.
    - **Blood Tether** on two members, broken by standing 14 m apart for 2 s; it heals the Night-Stalker (the pull-apart
      grammar).
-     *n* = 1: it binds a Blood Thrall (a Harrier body) 4 m away; kill it or put 14 m between.
+     *n* = 1: it binds a Blood Thrall 4 m away; kill it or put 14 m between.
    - Bat swarms: Harriers as Giant Bats.
-   - Phase 2, **Three Shadows**: three umbral discs; the true one glints with its WIND.
+   - Phase 2, **Three Shadows**: three umbral discs; the true one glints with its WIND, 2 s before he rises on it
+     (`EG_UMBRA_GLINT_MS`). Nothing on the wire tells it before: every disc is said alike, and his row stays where he
+     vanished until he rises.
    - Phase 3, **Blood Moon**: tethers on three members, broken at 16 m.
    - *A fight about distance.*
 10. **Valkynaz Seyth of the Shade**: Redoubt 15.
@@ -1811,8 +1836,9 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
     - It walks a fixed route down the Forge Gut's long forge chamber (55 m), stamping lanes 4 m wide and 12 m long ahead
       of it (1.4 s; floor 0.79 s).
     - Its vent-hearts, `4 + 2·floor(n/3)` (4 to 8, always even), are on its back, in pairs within 6 m of each other.
-      **Rails rise along its flank every 15 s** (`carryBy`) and carry members up to them: the Spire's own platforming,
-      inside the fight.
+      **Rails rise along its flank every 15 s** for 8 s, drawn gold along its flanks on every screen; while they stand
+      its hearts are open to blows. The climb they would carry members up is not built: the hearts are struck from the
+      floor beside it while the Rails stand.
     - Break every heart before its Overload (every 75 s; 70% to all, a CHECK) and it is stunned 8 s, x1.5.
     - Chain lightning: a disc of r 2.5 on a member (1.2 s; floor 0.86 s) that leaps to the nearest member within 6 m.
       Spread.
@@ -1845,8 +1871,8 @@ fight of the game again.
 |---|---|---|---|---|---|---|
 | **Ilthys of the Galleries** | 5 | Burning | **the Council Rotunda**: a floor of r 24 and three balconies 4 m up, two stairs each | **Spear of the Conquest** (a lane 4 m x 22 m, 1.3 s); **the Muster-Call** (a wave from the balconies) | **the Conquest**: she plants a banner (an errand's object, struck) on each balcony that claims a third of the floor. Claimed ground burns (a pool, told 3.5 s: the longest way off a third of the floor is 20.8 m) until its banner is broken, and while two banners stand they hold her ward (25 s at most) | **the Last Charge**: a third of the floor falls every 20 s, told 5 s ahead, and rises again when the next falls |
 | **Morvayn of the Cairn** | 10 | Venom-Blooded | **the Soul-Bridge**: two Ossuary crypts (r 14) joined by a rib bridge 30 m long | **Venom Lash** (a cone 8 m, 90°, 1.3 s); **Soul Rend** (a disc of r 4 on a chained pair's midpoint, 1.5 s) | **the Chaining**: pairs of members are bound by soul-chains for 20 s (the stay-close grammar). A pair stretched past 8 m both take 30% (a CHECK), and a blow on one is shared with the other: divided between the chain, a pair's halves (a three's thirds). An odd member, or a member alone, is chained to a Wraith; kill it to break the chain | **the Last Rites**: Wraiths rise at both crypts every 20 s, and chains bind threes |
-| **Seyth of the Shade** | 15 | Rime-Wrought | **the Eclipse Vault** (section 11.2), the Eclipse running | **Frost Lance** (a lane 4 m x 18 m, 1.2 s); **Moonshatter** (three discs of r 2.5 at members' feet, 1.4 s) | **the Mirrorcourt**: two mirror lords fight beside her and throw real blows at half share. Only the true lord casts her ground mark and her bar's pip; the mirrors shimmer (a 2 Hz dither line) and crack audibly when struck. A mirror shatters after 8 s of the company's reference damage and returns 20 s later | **the Long Night**: Gutterdark over the whole vault, while the moon-shafts walk at a fixed 1.5 m/s |
-| **Garoth of the Wellhead** | 20, 25, 30... | each of the four in turn, in `GATE_ASPECTS`' order: Burning at Redoubt 20, Rime-Wrought at 25, Storm-Crowned at 30, Venom-Blooded at 35 | **the Clan Pit** (section 11.2) | **Wellfire** (two lanes 4 m wide crossing at his feet, 1.4 s); **the Kyn's Due** (a disc of r 5 on the top of threat, 1.6 s) | **the Clan Muster**: each phase turn calls an honour duel (one member, the Armsmaster's ring law, r 6, 15 s; none at *n* = 1), at the turn, inside its ward, holding the next threshold until it ends - at the third turn, his fall | one of the three older signatures, by turns from one Garoth Redoubt to the next, under the next aspect, with every decree the circle bears - his own, its card naming it (*The Conquest.*, *The Chaining.*, *The Mirrorcourt.*): the Mirrorcourt's mirrors in his likeness, the Chaining in pairs (chains of three are Morvayn's Last Rites), and never the Eclipse, the Vault's |
+| **Seyth of the Shade** | 15 | Rime-Wrought | **the Eclipse Vault** (section 11.2), the Eclipse running | **Frost Lance** (a lane 4 m x 18 m, 1.2 s); **Moonshatter** (three discs of r 2.5 at members' feet, 1.4 s) | **the Mirrorcourt**: two mirror lords fight beside her and throw real blows at half share. Only the true lord casts her ground mark and her bar's pip; the mirrors shimmer (a 2 Hz dither line) and crack audibly when struck. A mirror shatters after 8 s of the company's reference damage and returns 20 s later | **the Long Night**: Gutterdark over the whole vault, to the fight's end (`EG_ZONE_FIGHT_MS`), while the moon-shafts walk at a fixed 1.5 m/s, kept lit in it |
+| **Garoth of the Wellhead** | 20, 25, 30... | each of the four in turn, in `GATE_ASPECTS`' order: Burning at Redoubt 20, Rime-Wrought at 25, Storm-Crowned at 30, Venom-Blooded at 35 | **the Clan Pit** (section 11.2) | **Wellfire** (two lanes 4 m wide crossing at his feet, 1.4 s); **the Kyn's Due** (a disc of r 5 on the top of threat, 1.6 s) | **the Clan Muster**: each phase turn calls an honour duel (one member, the Armsmaster's ring law, r 6, 15 s; none at *n* = 1), at the turn, inside its ward, holding the next threshold until it ends - at the third turn, his fall; his own duel, which no other lord's kit ends (another's ring standing at his turn, his waits for it under his ward) | one of the three older signatures, by turns from one Garoth Redoubt to the next, under the next aspect, with every decree the circle bears - his own, its card naming it (*The Conquest.*, *The Chaining.*, *The Mirrorcourt.*): the Mirrorcourt's mirrors in his likeness, the Chaining in pairs (chains of three are Morvayn's Last Rites), and never the Eclipse, the Vault's |
 
 A Valkynaz's Redoubt rolls its spoils twice and may give a key (sections 5, 19). The first Valkynaz a company fells is
 its first true feat in the Spire.
@@ -2358,7 +2384,9 @@ It is a departure from DFU, in the Ledger A row.
    starts deeper (section 16.6) begins with every stratum of the Redoubts it starts past (`egStrataTo`, `net/egRun.js`):
    - **The Twin Court**: a second lord beside the Court's own, of another band than its own (`net/egBrain.js` egStrataSecond, one of
      the Hound, the Cairn-Keeper, the Mother of Dusk and the Colossus, turning with the circle), each lord at 0.6 health
-     (`EG_PAIR_HP`; a Kyn champion beside them whole), the union floor over both, won when both have fallen;
+     (`EG_PAIR_HP`; a Kyn champion beside them whole), the union floor over both, won when both have fallen; each lord
+     its own aspect (the second re-aspected to the Wellhead, the Court's own lord keeping its own, the Twin Lords their
+     clans' fire and frost), and a Markynaz's decree folded into the fight's one law whatever lord is stood after him;
    - **The Mingled Legion**: no wave is one kind and Harriers. Every body of a wave is drawn on its own among the lead
      kinds (Harriers, Breakers, Casters, Wraiths, and Divers under the sky - `EG_MINGLED_LEADS`), and a Daedra Lord
      leads one wave in three, not six (`net/egLegion.js` egWaveKinds);
@@ -2368,7 +2396,8 @@ It is a departure from DFU, in the Ledger A row.
      of each other, or the survivor raises the other). Where both masters stand (THE MASTERS' GROUND), the Last Lesson stops at r 17
      (`EG_MASTERS_LESSON_R`), the havens keep their r 13 ring, and the Examination's runes stand on a ring of r 16
      (`EG_MASTERS_RUNE_R`) whatever the ground lays, so neither master's errand stands in the other's burning ground.
-     Holding the Twin Court as well, the master is the second;
+     Each lord counts and tops up its own mirrors and images (Garoth's borrowed Mirrorcourt beside the Spellmaster's
+     Mirror Images), and each its own duel (section 13.2). Holding the Twin Court as well, the master is the second;
    - **The Molten Rim**: the outer 3 m of every disc of a Court is magma (a fight hall's way in and out keeps its
      edge);
    - **Kyn Champions**: Clan Feud at every Court;
@@ -2539,7 +2568,9 @@ one, and the Spire's top drop is the Panoply.
 **Feats of the Spire.** Each lord has three feats, each an honours bit, written with its slice: a thing to master, not
 only survive. Examples: Grath felled with no member caught by a burning bridge; the Examination passed with no rune
 missed at *n* = 8; the Twin Lords falling within 3 s of each other. A band's feats, all held, grant *Master of the
-Galleries*, *of the Cairn*, *of the Shade*, *of the Wellhead*.
+Galleries*, *of the Cairn*, *of the Shade*, *of the Wellhead*. A signature reads its own lord, whatever lord stands beside
+it (`net/egFeats.js`): the Colossus's Breakdown on its own body, Ilthys's banners by kind, the Twin Lords' falls on their
+own bodies; and every one is a company of one's to earn - the Last Armsmaster's Challenge is met in the open at *n* = 1.
 
 **The honours** (service-recorded: `players.eg_honours` bits, beside the deepest Redoubts). They are added as
 `server-account/src/titles.js` adds every honour:
@@ -3042,9 +3073,12 @@ admission never depends on seeing it.
 **Poses.** A pose on a moving piece carries `pl` and its offset (RIDDEN POSES, section 10.8); the field joins
 `validPose`, a relay version (EG8).
 
-**The fight's bodies.** A body's row is `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz]`: its feet and
+**The fight's bodies.** A body's row is `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz, yw]`: its feet and
 its walk's end's height in whole centimetres (the law's, section 9), and its state as the room last said it with since when.
-A walk (`emv`) is `[i, x, z, tx, tz, v, at, y, ty]`. The whole fight (`efs`) carries the zones still to burn (`zs`). Every
+A walk (`emv`) is `[i, x, z, tx, tz, v, at, y, ty, yw]`. Its facing (`yw`, radians in hundredths, within 7 either way) rides
+both, and a turn is said as a walk of its own (`net/egBodies.js` egFace): the relay judges the Kynreeve's Shield-Wall and a
+Shielded elite's back by it, and every screen draws it (AUDIT EG V). A blow may carry its dim outline's lead (`ol`, ms, at most
+30 s): a chained shape's outline stands from the first shape's word, its fill from the first's landing (AUDIT EG V). The whole fight (`efs`) carries the zones still to burn (`zs`). Every
 height rides a word the fight already says, so the frames stay as many as they were. EG-ZJ. A lord's size rides its row too
 (`sz`, thousandths of its look's: Colossal's 1250, at rank II 1400; 0 its look's own; bounded 500-2000 on the wire). EG-ZQ.
 
