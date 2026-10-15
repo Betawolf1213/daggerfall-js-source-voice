@@ -13,6 +13,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { folkLook, folkActor, folkVariant, FOLK_DRESS } from '../src/characters/folkBodies.js';
 import { wornByRole } from '../src/characters/wardrobe.js';   // PIN MOVED (MWNPC17, section 25): a walker is their variant's role and cut, dressed off their spawn
 import { createPopulationLane } from '../src/characters/npcBodies.js';
+import { townsfolkOutfitOf } from '../src/characters/ownClothingModels.js';   // PIN MOVED (MW-FOLK1, Townsfolk-Outfits.md): a sprite with its own outfit wears it
 import { PERSON_TEXTURES, GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
@@ -22,6 +23,7 @@ const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const walker = (archive, gender, extra = {}) => ({ archive, gender, guard: archive === GUARD_TEXTURE, personFaceRecordId: 3, nameNPC: 'Aldo Hent', state: 'move', dir: 2, get facingYaw() { return [0, Math.PI, Math.PI / 2, -Math.PI / 2][this.dir]; }, ...extra });
 
 test('MWNPC7a a walker\'s look is their roll - the race and gender, the outfit their sprite is, dyed off their spawn, a face; the street\'s guard in the watch\'s steel', () => {
+  let own = 0, dressed = 0;
   for (const race of ['Breton', 'Redguard', 'Nord']) {
     for (const [g, gender] of [[GENDERS.Male, 'male'], [GENDERS.Female, 'female']]) {
       PERSON_TEXTURES[race][gender].forEach((archive, v) => {
@@ -30,6 +32,17 @@ test('MWNPC7a a walker\'s look is their roll - the race and gender, the outfit t
         assert.equal(l.race, race);
         assert.equal(l.gender, gender);
         assert.ok(l.faceIndex >= 0 && l.faceIndex <= 9);
+        // PIN MOVED (MW-FOLK1, bible/04-Characters/Townsfolk-Outfits.md): a sprite the port has made its outfit for
+        // wears that outfit - the clothes its picture draws, in its colours - and no garment of the wardrobe's
+        if (townsfolkOutfitOf(archive)) {
+          own++;
+          assert.equal(l.outfit, `townsfolk_${archive}`, `${race} ${gender} variant ${v}: their sprite's own outfit`);
+          assert.deepEqual(l.items, [], 'nothing of the wardrobe with it');
+          assert.ok(l.npc && Number.isInteger(l.npc.seed), 'and their own picks, head and hair');
+          return;
+        }
+        dressed++;
+        assert.equal(l.outfit, undefined, 'a sprite with no outfit of its own: the wardrobe dresses them');
         const { role, cut } = FOLK_DRESS[gender][v];
         assert.ok(wornByRole(l, role), `${race} ${gender} variant ${v}: its role's garments in its dyes (${role})`);
         assert.ok(l.items.every((it) => it.group === (gender === 'female' ? 'WomensClothing' : 'MensClothing')), 'their own sex\'s garments');
@@ -40,9 +53,12 @@ test('MWNPC7a a walker\'s look is their roll - the race and gender, the outfit t
       });
     }
   }
+  assert.deepEqual([own, dressed], [11, 13], 'the eleven sprites with an outfit of their own (MW-FOLK1), the wardrobe the other thirteen');
+  // PIN MOVED (MW-FOLK1): a street's variety is the wardrobe's, on a sprite with no outfit of its own - Breton 391, the
+  // traveller (385, this pin's sprite, wears its picture's)
   const dyes = new Set();
   const outfits = new Set();
-  for (let i = 0; i < 40; i++) { const l = folkLook(walker(PERSON_TEXTURES.Breton.male[0], GENDERS.Male, { nameNPC: `n${i}` }), 'Breton'); dyes.add(l.items[0].dye); outfits.add(l.items.map((it) => `${it.templateIndex}.${it.dye}`).join()); }
+  for (let i = 0; i < 40; i++) { const l = folkLook(walker(PERSON_TEXTURES.Breton.male[2], GENDERS.Male, { nameNPC: `n${i}` }), 'Breton'); dyes.add(l.items[0].dye); outfits.add(l.items.map((it) => `${it.templateIndex}.${it.dye}`).join()); }
   assert.ok(outfits.size >= 36, `one sprite's walkers, hardly two dressed alike (${outfits.size} of 40)`);
   assert.ok(dyes.size >= 5, `a street is not one colour (${[...dyes]})`);
   const guard = folkLook(walker(GUARD_TEXTURE, GENDERS.Male), 'Breton');
