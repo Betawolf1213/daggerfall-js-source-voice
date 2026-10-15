@@ -20,7 +20,7 @@
 // THE CLOCK (10.7). GAMBIT_TURN_MS a turn - the mod has none (its peer timeout is 40 s); an expired turn ends as End turn
 // does, and a seat whose turn the clock has ended GAMBIT_IDLE_TURNS times running is stood up, its game forfeited
 // (Iliac Hand's idle law). A turn ends GAMBIT_TURN_END_MS after its last action (the mod's beat). A stand, or a socket
-// gone, forfeits the game under way (the mod's FORFEIT). Friendly: no gold (KG6 brings it).
+// gone, forfeits the game under way (the mod's FORFEIT). KG6: at the gold table every Ready a stake, the pot the winner's.
 //
 // A STORED TABLE IS CHECKED when the room loads it (AUDIT KG A4): the law's steps trust the state they are handed and
 // throw on a malformed one, so a table whose game the law did not mint is dropped (gambitTableValid).
@@ -44,6 +44,7 @@ import { HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from './cardLaw.js';
 import { HOLDEM_TABLES_MAX, HOLDEM_NAME_MAX, HOLDEM_STAKE_MAX } from './holdemTable.js';
 import { gambitStakeOk } from './gambitStakes.js';
 import { GAMBIT_GAME_ID_RE, GAMBIT_RECEIPT_MAX } from './gambitReceipt.js';
+import { STAKE_ID_RE, ID_RE } from './identityToken.js';   // AUDIT KG II A8: a queued cash-out's and result's ids, the shapes a receipt carries
 
 /** MEASURE (KG5, 10.7): a turn's clock - first guess 60 s (Iliac Hand's is 45). */
 export const GAMBIT_TURN_MS = 60000;
@@ -61,8 +62,12 @@ export const GAMBIT_CROWN_COUNT = 4;
 export const GAMBIT_PIECES_MAX = 2 * (KG_MAX_UNITS + 1);
 /** The longest refusal word on the wire. */
 const WORD_MAX = 40;
-/** KG6: the most cash-outs and rated results a table keeps queued for the relay to sign. */
+/** KG6: the most cash-outs and rated results a stored table may hold queued for the relay to sign - the LOAD's bound
+ *  (gambitTableValid; AUDIT KG II E20): every save signs and keeps them first, so a queue grows only while its writes fail. */
 export const GAMBIT_QUEUE_MAX = 16;
+/** AUDIT KG II A1 (Iliac Hand's AUDIT CARDS-6 E13, ILIAC_LATE_MS): a stand that names the game before the one under way,
+ *  heard this soon after that one's deal and before the seat acted in it, was pressed over the deal - no contest. */
+export const GAMBIT_LATE_MS = 3000;
 
 /** A new table at a cloth of `chairs` (2..6) - KG6: `gold` the realm's gold table, every Ready a stake - or null. */
 export function newGambitTable({ chairs, gold = false }) {
@@ -244,7 +249,7 @@ function deal(/** @type {any} */ t, /** @type {number} */ now, /** @type {() => 
   t.endAt = null;
   t.clockAt = now + GAMBIT_TURN_MS;
   t.dealtAt = now;
-  for (const s of t.seats) { s.ready = false; s.army = null; s.idle = 0; s.stake = null; }
+  for (const s of t.seats) { s.ready = false; s.army = null; s.idle = 0; s.stake = null; s.spoke = false; }   // AUDIT KG II A1: none has acted in it
   return [room(t, [{ t: 'game', gameNo: t.gameNo, layout: game.layout, crowns: t.seats.map((/** @type {any} */ s) => s.crown), at: now }])];
 }
 
@@ -273,6 +278,7 @@ export function gambitCommand(t, { id, cmd, gameNo, now, rand32 }) {
     return [room(t, [finish(t, now, -1, 'void')])];   // the relay's source broke: no contest
   }
   t.seats[p].idle = 0;   // at the table
+  t.seats[p].spoke = true;   // AUDIT KG II A1: this seat has acted in the game - its stand concedes it
   return stepped(t, out, now);
 }
 
@@ -288,14 +294,18 @@ export function gambitForfeit(t, { id, gameNo, now }) {
 
 /**
  * A player stands (or leaves the room, or its socket goes - the mod's FORFEIT online): a game under way is the other
- * seat's. Answers the messages - none when it was not seated. `idle`: the clock stood it up.
- * @param {any} t @param {{id: string, now: number, idle?: boolean}} p
+ * seat's. Answers the messages - none when it was not seated. `idle`: the clock stood it up. AUDIT KG II A1: `gameNo`,
+ * the game its panel showed when it pressed - a stand naming the game BEFORE the one under way, heard within
+ * GAMBIT_LATE_MS of that one's deal and before the seat acted in it, was pressed over the deal: it concedes nothing, and
+ * the game it never saw is let go (no contest - each stake home, nothing rated).
+ * @param {any} t @param {{id: string, now: number, gameNo?: number, idle?: boolean}} p
  */
-export function gambitStand(t, { id, now, idle = false }) {
+export function gambitStand(t, { id, now, gameNo, idle = false }) {
   const p = gambitSeatOf(t, id);
   if (p < 0) return [];
   const events = [];
-  if (t.game) events.push(finish(t, now, p, idle ? 'idle' : 'left'));
+  const late = !!t.game && Number.isInteger(gameNo) && gameNo < t.gameNo && now - t.dealtAt <= GAMBIT_LATE_MS && !t.seats[p].spoke;
+  if (t.game) events.push(late ? finish(t, now, -1, 'void') : finish(t, now, p, idle ? 'idle' : 'left'));
   else stakeBack(t, t.seats[p], 'stood');   // KG6: a stake never dealt goes home whole
   const { name, chair } = t.seats[p];
   t.seats[p] = null;
@@ -402,6 +412,7 @@ export function gambitTableValid(t) {
     if (s === null) continue;
     if (!s || typeof s !== 'object' || typeof s.id !== 'string' || typeof s.name !== 'string' || !intIn(s.chair, 0, t.chairs - 1) || !intIn(s.crown, 0, GAMBIT_CROWN_COUNT - 1)) return false;
     if (typeof s.ready !== 'boolean' || !intIn(s.idle ?? 0, 0, GAMBIT_IDLE_TURNS)) return false;
+    if (s.spoke !== undefined && typeof s.spoke !== 'boolean') return false;   // AUDIT KG II A1
     if (s.army !== null && !(Array.isArray(s.army) && armyRefusal(s.army) === null)) return false;
     if ((s.sub ?? null) !== null && typeof s.sub !== 'string') return false;   // KG6
     if ((s.stake ?? null) !== null && !(t.gold === true && stakeOk(s.stake))) return false;
@@ -411,8 +422,12 @@ export function gambitTableValid(t) {
   if ((t.pot ?? null) !== null && !(t.game && Array.isArray(t.pot) && t.pot.length === 2 && t.pot.every(stakeOk) && t.pot[0].amount === t.pot[1].amount)) return false;
   if ((t.id ?? null) !== null && !(typeof t.id === 'string' && GAMBIT_GAME_ID_RE.test(t.id))) return false;
   if ((t.subs ?? null) !== null && !(Array.isArray(t.subs) && t.subs.length === 2 && t.subs.every((/** @type {any} */ x) => x === null || typeof x === 'string'))) return false;
-  if (!queueOk(t.cashouts, (/** @type {any} */ x) => typeof x.j === 'string' && typeof x.s === 'string' && Number.isSafeInteger(x.r) && x.r >= 0 && typeof x.w === 'string')) return false;
-  if (!queueOk(t.results, (/** @type {any} */ x) => typeof x.j === 'string' && Array.isArray(x.f) && (x.r === 0 || x.r === 1) && typeof x.h === 'string')) return false;
+  // AUDIT KG II A8: only what the relay can sign and send - a cash-out a receipt can carry (else it is never signed, never
+  // shifted, and every one behind it waits), a result with its two accounts and the two seats it goes to
+  const seatId = (/** @type {any} */ x) => x === null || (typeof x === 'string' && x.length > 0 && x.length <= 64);
+  if (!queueOk(t.cashouts, (/** @type {any} */ x) => seatId(x.to ?? null) && typeof x.j === 'string' && STAKE_ID_RE.test(x.j) && typeof x.s === 'string' && ID_RE.test(x.s) && Number.isSafeInteger(x.r) && x.r >= 0 && typeof x.w === 'string')) return false;
+  if (!queueOk(t.results, (/** @type {any} */ x) => typeof x.j === 'string' && GAMBIT_GAME_ID_RE.test(x.j) && Array.isArray(x.f) && x.f.length === 2 && x.f.every((/** @type {any} */ s) => typeof s === 'string' && ID_RE.test(s)) && x.f[0] !== x.f[1]
+    && (x.r === 0 || x.r === 1) && typeof x.h === 'string' && Array.isArray(x.to) && x.to.length === 2 && x.to.every(seatId))) return false;
   if (!Number.isFinite(t.nextDealAt) || !Number.isFinite(t.clockAt) || !(t.endAt === null || Number.isFinite(t.endAt))) return false;
   if (t.game !== null && !(validGambitState(t.game) && t.seats.every(Boolean))) return false;
   return true;

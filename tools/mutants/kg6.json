@@ -256,7 +256,7 @@
  {
   "name": "KG6-A-pair-day",
   "file": "server-account/src/gambit.js",
-  "old": "    const rated = Number(pair?.n ?? 0) < ARENA_PAIR_DAY_MAX && Number(pairSeason?.n ?? 0) < ARENA_PAIR_SEASON_MAX;",
+  "old": "    const rated = !dayFull && !seasonFull;",
   "new": "    const rated = true;",
   "tests": [
    "test/kg6_season.test.js"
@@ -373,8 +373,8 @@
  {
   "name": "KG6-H-order-sent",
   "file": "src/scenes/gambitTableGame.js",
-  "old": "crown: crownIndex(g.crown), stake: r.stake });",
-  "new": "crown: crownIndex(g.crown) });",
+  "old": "crown: crownIndex(g.crown), stake: r.stake })",
+  "new": "crown: crownIndex(g.crown) })",
   "tests": [
    "test/kg6_season.test.js"
   ]

@@ -202,7 +202,8 @@ export async function claimGambit(ctx, player, receipt, publicKey) {
     // games' own (each row's `played`, its receipt's second), either side of this one's
     const pair = await db.prepare(PAIR_SQL('played > ?3 - 86400 AND played < ?3 + 86400')).bind(a, b, c.i).first();
     const pairSeason = await db.prepare(PAIR_SQL('season = ?3')).bind(a, b, season).first();
-    const rated = Number(pair?.n ?? 0) < ARENA_PAIR_DAY_MAX && Number(pairSeason?.n ?? 0) < ARENA_PAIR_SEASON_MAX;
+    const dayFull = Number(pair?.n ?? 0) >= ARENA_PAIR_DAY_MAX, seasonFull = Number(pairSeason?.n ?? 0) >= ARENA_PAIR_SEASON_MAX;
+    const rated = !dayFull && !seasonFull;
     const [na, nb] = rated ? eloAfter(ra.rating, rb.rating, c.r === 0 ? 1 : 0) : [ra.rating, rb.rating];
     const ins = await db.prepare(`INSERT OR IGNORE INTO gambit_games (game, season, a, b, result, how, ra0, rb0, ra1, rb1, rated, played, at)
         SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13
@@ -211,7 +212,8 @@ export async function claimGambit(ctx, player, receipt, publicKey) {
     const row = await db.prepare('SELECT * FROM gambit_games WHERE game = ?1').bind(c.j).first();
     if (Number(ins?.meta?.changes ?? 0) > 0) {
       if (rated) { try { if (await topMayMove(ctx, season, a, b, na, nb)) await storeGambitChampion(ctx, season, nowS); } catch { /* the game is recorded; the #1 is counted again by its age */ } }
-      return { recorded: true, ...(await gameAnswer(ctx, player.id, row)) };
+      // AUDIT KG II D11: a game kept and not counted says which cap held it - the pair's day, or its season
+      return { recorded: true, ...(await gameAnswer(ctx, player.id, row)), ...(rated ? {} : { cap: seasonFull ? 'season' : 'day' }) };
     }
     if (row) return { recorded: false, why: 'claimed', ...(await gameAnswer(ctx, player.id, row)) };
   }

@@ -126,6 +126,13 @@ test('KG6 THE BOARD AND ITS GRANDMASTER: the season\'s #1 over ten games against
   assert.ok(TITLES.includes('grandmaster'));
   assert.equal(TITLE_TEXT.grandmaster, 'Grandmaster');
   assert.ok(TITLE_RGBA.grandmaster, 'its colour');
+  // AUDIT KG II D12: a purple of its own - #b438d2, more than 30 from every title's (the house's bar, crystalfist's)
+  const hex = (c) => `#${c.slice(0, 3).map((x) => Math.round(x * 255).toString(16).padStart(2, '0')).join('')}`;
+  assert.equal(hex(TITLE_RGBA.grandmaster), '#b438d2');
+  for (const other of TITLES.filter((x) => x !== 'grandmaster' && TITLE_RGBA[x])) {
+    const d = Math.hypot(...[0, 1, 2].map((i) => (TITLE_RGBA.grandmaster[i] - TITLE_RGBA[other][i]) * 255));
+    assert.ok(d > 30, `apart from the ${other}'s (${d.toFixed(0)})`);
+  }
 });
 
 test('KG6 THE CARRIER: a rated result kept on its own store and offered at once; settled, let go; a guest\'s kept; another account\'s never offered (mutants: the reader; the store)', async () => {
@@ -201,10 +208,10 @@ test('KG6 THE GOLD TABLE\'S PANEL: the mod\'s online stakes picked under the arm
   await new Promise((r) => setTimeout(r, 0));
   const shown = text(g.g.hud.root);
   assert.match(shown, /Season 4: the board/);
-  assert.match(shown, /1\. Eira - 1612 \(14 won, 2 lost\)/);
+  assert.match(shown, /1\. Eira - rating 1612 \(14 wins, 2 losses\)/);   // PIN MOVED (AUDIT KG II D20): the counts' plurals
   assert.match(shown, /You: rank 2, rating 1530/);
   assert.match(shown, /Grandmaster: Eira/);
-  assert.match(shown, /after 10 rated games against 5 different players/);
+  assert.match(shown, /once they have played 10 rated games against 5 different players\. A game counts only when both players have registered accounts/);   // PIN MOVED (AUDIT KG II D10): registered, not signed in
   g.close();
   assert.equal(freed.length, made.length);
 });

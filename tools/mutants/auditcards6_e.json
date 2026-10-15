@@ -1,6 +1,6 @@
 [
   {"name": "AC6-E1-layer-gate", "file": "src/ui/touch.js", "old": "      if (x < w / 2 && stickId === null && onStick && !hooks.cardHeld?.()) {", "new": "      if (x < w / 2 && stickId === null && onStick) {", "tests": ["test/auditcards6_e.test.js"]},
-  {"name": "AC6-E1-host-word", "file": "src/scenes/worldModes.js", "old": "    cardPressHeld: () => mode === 'interior' && !!cardSeat && !!(cardGame?.handPress || cardGame?.drag),", "new": "    cardPressHeld: () => false,", "tests": ["test/auditcards6_e.test.js"]},
+  {"name": "AC6-E1-host-word", "file": "src/scenes/worldModes.js", "old": "    cardPressHeld: () => mode === 'interior' && !!cardSeat && !!(cardGame?.handPress || cardGame?.drag || gambitGame?.fingerHeld?.()),", "new": "    cardPressHeld: () => false,", "tests": ["test/auditcards6_e.test.js"]},
   {"name": "AC6-E1-world-hook", "file": "src/scenes/world.js", "old": "    cardHeld: () => !!modes?.cardPressHeld?.(),   // AUDIT CARDS-6 E1", "new": "    cardHeld: () => false,   // AUDIT CARDS-6 E1", "tests": ["test/auditcards6_e.test.js"]},
   {"name": "AC6-E1-exterior-hook", "file": "src/scenes/exterior.js", "old": "    cardHeld: () => !!modes?.cardPressHeld?.(),   // AUDIT CARDS-6 E1: a finger the cards took is never the stick (ui/touch.js)\n", "new": "", "tests": ["test/auditcards6_e.test.js"]},
   {"name": "AC6-E2-no-cancel", "file": "src/scenes/worldModes.js", "old": "    window.addEventListener('pointercancel', cancel, true);\n", "new": "", "tests": ["test/auditcards6_e.test.js"]},

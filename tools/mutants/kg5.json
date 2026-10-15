@@ -335,7 +335,7 @@
  {
   "name": "KG5-M-one-at-a-time",
   "file": "src/systems/gambitRemoteTable.js",
-  "old": "    if (this.sentAt !== null || this.queue.length) return null;",
+  "old": "    if (this.sentAt !== null || this.queue.length) { if (this.held.length < GAMBIT_HELD_MAX) this.held.push(cmd); return null; }",
   "new": "    // one at a time",
   "tests": [
    "test/kg5_client.test.js"
@@ -389,8 +389,8 @@
  {
   "name": "KG5-H-close-stands",
   "file": "src/scenes/gambitTableGame.js",
-  "old": "      if (mySeat() >= 0) send({ op: 'stand' });   // KG5: up from the relay's board",
-  "new": "      // KG5: up from the relay's board",
+  "old": "      if (online()) standUp();   // KG5: up from the relay's board",
+  "new": "      if (online()) g.sitting = false;   // KG5: up from the relay's board",
   "tests": [
    "test/kg5_client.test.js"
   ]
@@ -398,7 +398,7 @@
  {
   "name": "KG5-H-regulars-stand",
   "file": "src/scenes/gambitTableGame.js",
-  "old": "    if (mySeat() >= 0) send({ op: 'stand' });\n    g.mode = 'regulars';",
+  "old": "    standUp();\n    g.mode = 'regulars';",
   "new": "    g.mode = 'regulars';",
   "tests": [
    "test/kg5_client.test.js"
@@ -416,8 +416,8 @@
  {
   "name": "KG5-H-deal-opens",
   "file": "src/scenes/gambitTableGame.js",
-  "old": "    if (st?.game && (dealt || !s || s.gameNo !== st.gameNo)) openOnline(st, now);",
-  "new": "    if (st?.game && dealt && s) openOnline(st, now);",
+  "old": "    if (st?.game && (dealt || !s || s.gameNo !== st.gameNo)) openOnline(st, now, dealt);",
+  "new": "    if (st?.game && dealt && s) openOnline(st, now, dealt);",
   "tests": [
    "test/kg5_client.test.js"
   ]
@@ -425,8 +425,8 @@
  {
   "name": "KG5-H-watch-step",
   "file": "src/ui/gambitTableHud.js",
-  "old": "        out.actions.push({ id: 'regulars', label: GAMBIT_ONLINE_PRESS.regulars, enabled: true });\n        out.actions.push({ id: 'stand', label: GAMBIT_PRESS.stand, enabled: true, kind: 'quiet' });\n      }\n      const staked",
-  "new": "        out.actions.push({ id: 'stand', label: GAMBIT_PRESS.stand, enabled: true, kind: 'quiet' });\n      }\n      const staked",
+  "old": "        out.actions.push({ id: 'regulars', label: GAMBIT_ONLINE_PRESS.regulars, enabled: true, strip: true });\n        out.actions.push({ id: 'stand', label: GAMBIT_PRESS.stand, enabled: true, kind: 'quiet', strip: true });",
+  "new": "        out.actions.push({ id: 'stand', label: GAMBIT_PRESS.stand, enabled: true, kind: 'quiet', strip: true });",
   "tests": [
    "test/kg5_client.test.js"
   ]

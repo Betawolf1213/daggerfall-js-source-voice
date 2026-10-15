@@ -71,7 +71,7 @@ import {
 } from '../ui/gambitTableWords.js';
 import { RemoteGambitTable, RemoteGambitSession } from '../systems/gambitRemoteTable.js';
 import { GAMBIT_ONLINE_STAKES } from '../net/gambitStakes.js';
-import { stakeShort, stakeDiffers } from '../ui/gambitTableWords.js';
+import { stakeShort, stakeDiffers, stakeChoose, stakeRefusal } from '../ui/gambitTableWords.js';
 import { gambitPlaces, gambitPressCell, gambitLean, gambitCardHeight, GAMBIT_CARD_FOOT } from '../world/gambitCloth.js';
 import { createGambitMotion } from '../world/gambitMotion.js';
 import { prefersReducedMotion } from '../systems/hitFlash.js';
@@ -96,6 +96,9 @@ export const GAMBIT_LEAN_S = 0.6;
 /** KG4 (14.7): on a touch device the touch layer's presses stand at the screen's top - the lean keeps the board under
  *  this many CSS px. */
 export const GAMBIT_TOUCH_TOP_PX = 64;
+/** AUDIT KG II C5: the least of the world's view a clear screen is worth fitting the board into - below it (More's sheet
+ *  over a landscape phone's whole width) the lean keeps the last it fitted. */
+export const GAMBIT_CLEAR_MIN = 0.04;
 
 /**
  * THE CLEAR SCREEN (14.7; MEASURE KG4): the part of the world's view the lean fits the board into - the largest of what
@@ -105,6 +108,7 @@ export const GAMBIT_TOUCH_TOP_PX = 64;
  * @param {{w: number, h: number, rect?: {x: number, y: number, w: number, h: number}|null}} view the canvas (CSS px) and the
  *   world's strip on it (hudLarge.js worldViewportRect: shares, y from the foot - Unity's)
  * @param {boolean} [touch]
+ * AUDIT KG II C5: null when no part left clear is worth fitting into (under GAMBIT_CLEAR_MIN of the view).
  */
 export function gambitClear(box, { w, h, rect = null }, touch = false) {
   const R = rect ?? { x: 0, y: 0, w: 1, h: 1 };
@@ -118,7 +122,8 @@ export function gambitClear(box, { w, h, rect = null }, touch = false) {
     { x0: fx(box.right), x1: 1, y0, y1: 1 },
     { x0: 0, x1: 1, y0, y1: fy(box.top) },
   ];
-  return options.reduce((a, b) => (area(b) > area(a) ? b : a));
+  const best = options.reduce((a, b) => (area(b) > area(a) ? b : a));
+  return area(best) >= GAMBIT_CLEAR_MIN * R.w * w * R.h * h ? best : null;
 }
 
 /** A REGULAR'S CROWN (10.4): the regular's seed's - the four in the deck's suit order, by the seed mod 4 - and the next
@@ -142,7 +147,7 @@ export const gambitRegulars = (regulars) => regulars.map((r) => ({ ...r, tier: t
  *   online?: {send: (w: any) => boolean, myId: () => string|null, now: () => number, table: number, chairs: number,
  *     chair: number, chairFeet: (k: number) => number[]|null, welcomes?: () => number, gold?: boolean,
  *     stake?: (amount: number) => Promise<any>, purse?: () => (number|null), seated?: (id: string) => void,
- *     board?: () => Promise<any>}|null}} d
+ *     board?: () => Promise<any>, standDue?: (due: boolean) => void}|null}} d
  *   `online` KG5: the relay's King's Gambit table at this cloth (its index, its chairs, the player's chair), or null;
  *   KG6: `gold` the realm's gold table - `stake` the service's hold on a stake, `purse` the record's gold, `seated` the
  *   stake book told the relay sat it - and `board` the season's.
@@ -170,6 +175,13 @@ export function openGambitTableGame(d) {
     // season board as read
     stakePick: /** @type {number|null} */ (null), staking: false, stakeId: /** @type {string|null} */ (null),
     board: /** @type {any} */ (null), boardOpen: false,
+    // AUDIT KG II B3: the game open was opened unseated - watched, whatever the seats say by its end; A2: a sit on its
+    // way (the relay may seat it after the panel has gone)
+    watcher: false, sitting: false,
+    // AUDIT KG II C3: a finger the cloth took, until it lifts
+    finger: false,
+    lastCmd: /** @type {any} */ (null),   // AUDIT KG II D16: the last command sent
+    clearShown: /** @type {any} */ (null),   // AUDIT KG II C5: the last clear screen the lean fitted
   };
   g.motion.lay(g.places.end);
   /** A sound of the table's own, now or `after` ms on, from the board's middle (the motion's clock plays it). */
@@ -196,7 +208,7 @@ export function openGambitTableGame(d) {
   /** KG5: the online board's own - my seat at it (-1 unseated), whether I watch a game under way. */
   const online = () => g.mode === 'online' && !!g.remote;
   const mySeat = () => (online() ? g.remote.seat() : -1);
-  const watching = () => online() && mySeat() < 0 && !!g.session;
+  const watching = () => online() && !!g.session && g.watcher;   // AUDIT KG II B3: a seat stood up by its result still played it
   /** KG5: the board's two seats as the panel reads them (section 18), or null with the regulars. */
   const onlineModel = () => {
     if (!online()) return null;
@@ -224,7 +236,7 @@ export function openGambitTableGame(d) {
       online: onlineModel(), canOnline: !!d.online, board: g.board, boardOpen: g.boardOpen,
       phase: g.phase, regulars: rows(), regular: g.regular, friendly: d.friendly, purse: purse(), stakeMult: g.stakeMult, crown: g.crown,
       army: g.army, pressed: g.pressed, said: g.said,
-      game: s && g.game ? { state: s.state, crowns: g.game.crowns, name: g.game.name, stake: g.game.stake, over: s.shown ? s.over : null, dealt: g.game.dealt, nightSpent: g.game.nightSpent } : null,
+      game: s && g.game ? { state: s.state, crowns: g.game.crowns, name: g.game.name, stake: g.game.stake, pot: g.game.pot ?? 0, over: s.shown ? s.over : null, decided: !!s.over, dealt: g.game.dealt, nightSpent: g.game.nightSpent } : null,   // AUDIT KG II C6: decided before its result is shown
       selected: g.selected, staged: g.staged, info: g.info, why: g.why, armed: g.armed,
       guideOpen: guideOpen(), wordsOpen: g.wordsOpen, armiesOpen: g.armiesOpen, log: g.log, touch: touch(), more: g.more,
     });
@@ -288,6 +300,8 @@ export function openGambitTableGame(d) {
     if (events.length) g.motion.feed(events, now, s.state);   // KG4: the pieces' motion, from the law's own words
     const watched = watching();   // KG5: a watcher's log would call the host's pieces "yours" - the board says it
     for (const e of events) {
+      // AUDIT KG II B11: a press held while another was on its way, refused on the board it was sent on
+      if (e.t === 'refused') { g.why = e.why === 'link' ? onlineRefusal(e.why) : refusalWords(e.why, { piece: e.cmd?.piece != null ? nameOf(e.cmd.piece) : '', target: e.cmd?.target != null ? nameOf(e.cmd.target) : '' }); continue; }
       const line = watched ? null : logLine(e, { regular: g.game.name, names: nameOf });
       if (line) g.log.push(line);
       if (e.t === 'decided') {
@@ -295,7 +309,7 @@ export function openGambitTableGame(d) {
         // FinishMatch: the fanfare and the coins, or the groan, at the result's beat
         if (watched) continue;
         if (e.winner === 0) { sound(SOUND.ArenaFanfareLevelUp, GAMBIT_RESULT_MS); if (g.game?.stake > 0) sound(SOUND.GoldPieces, GAMBIT_RESULT_MS + 600); }
-        else if (e.winner === 1) sound(SOUND.Groan, GAMBIT_RESULT_MS);
+        else if (e.winner === 1 && e.by !== 'forfeit') sound(SOUND.Groan, GAMBIT_RESULT_MS);   // AUDIT KG II C11: the mod's forfeit is silent (ChooseArmy clears the pending sounds, IL_098f - never FinishMatch)
       }
     }
     g.log = g.log.slice(-GAMBIT_LOG_MAX);
@@ -303,7 +317,7 @@ export function openGambitTableGame(d) {
       // a selection the game took away - its piece fallen, the turn passed - is let go
       const st = s.state;
       const sel = g.selected != null ? pieceById(st, g.selected) : null;
-      if (!sel || st.turn !== 0 || st.ending || st.over) { g.selected = null; g.staged = null; }
+      if (!sel || st.turn !== 0 || st.ending || st.over || s.over) { g.selected = null; g.staged = null; }   // AUDIT KG II C6: a game decided lets go too
       if (g.info?.piece != null && !pieceById(st, g.info.piece)) g.info = null;
     }
     if (s.shown && g.phase === 'battle') { g.phase = 'over'; g.armed = null; g.staged = null; g.selected = null; g.more = false; }
@@ -355,8 +369,10 @@ export function openGambitTableGame(d) {
     const pc = pieceAt(st, c, r);
     if (pc && pc.side === 0) {
       g.info = { piece: pc.id }; g.staged = null;
-      g.selected = mine ? (g.selected === pc.id ? null : pc.id) : null;
-      if (g.selected === pc.id) sound(SOUND.ButtonClick);   // OnCellClicked: a piece chosen
+      // OnCellClicked: one's own piece chosen - again, if it was (the mod's IL 0x4620: never let go by its own press;
+      // AUDIT KG II C14 - the port had toggled it off)
+      g.selected = mine ? pc.id : null;
+      if (mine) sound(SOUND.ButtonClick);
       return;
     }
     if (pc && sel && mine && foesInRange(st, sel).some((x) => x.id === pc.id)) {
@@ -372,7 +388,7 @@ export function openGambitTableGame(d) {
     }
     g.info = pc ? { piece: pc.id } : { cell: [c, r] };
     g.staged = null;
-    if (!pc) g.selected = null;   // an empty cell out of reach lets the piece go (the mod's)
+    g.selected = null;   // the mod's: a press on anything else - an empty cell out of reach, a foe out of range - lets the piece go (AUDIT KG II C14)
   }
   /** @param {string} id @param {any} [value] */
   function press(id, value) {
@@ -387,7 +403,7 @@ export function openGambitTableGame(d) {
     if (id === 'holdem') { d.onHoldem(); return; }
     if (id === 'iliac') { d.onIliac(); return; }
     if (id === 'stand') {
-      if (g.session?.playing() && g.armed !== 'stand') { g.armed = 'stand'; g.armedAt = now; paint(); return; }
+      if (g.session?.playing() && !watching() && g.armed !== 'stand') { g.armed = 'stand'; g.armedAt = now; paint(); return; }   // AUDIT KG II B6: a watcher's costs nothing
       d.onStand();   // a game under way is forfeited by the close (every road off the seat)
       return;
     }
@@ -458,28 +474,43 @@ export function openGambitTableGame(d) {
   function send(w) {
     if (!d.online) return false;
     g.lastOp = w.op;
+    if (w.op === 'act') g.lastCmd = w.cmd;   // AUDIT KG II D16: a refusal of it names its piece and target
     const ok = d.online.send({ ...w, table: d.online.table });
     if (!ok && w.op !== 'look' && w.op !== 'stand') g.why = onlineRefusal('link');
+    // AUDIT KG II B12: a stand the link would not carry is the host's to say again each frame (Hold'em's AUDIT CARDS-3
+    // B4) - a ready seat the relay kept would be dealt in and clocked out of its stake; a sit takes it back
+    if (w.op === 'stand' || (ok && w.op === 'sit')) d.online.standDue?.(w.op === 'stand' && !ok);
     return ok;
   }
+  /** Sit at the board's free seat. */
+  const sitDown = () => { g.sitting = send({ op: 'sit', chair: d.online.chair, chairs: d.online.chairs, crown: crownIndex(g.crown) }); };
+  /** AUDIT KG II A1 + A2: up from the board - seated, or a sit on its way (Iliac Hand's AUDIT CARDS-6 E11) - naming the
+   *  game the panel showed, so a game dealt as the press went is not this player's to concede (E13). */
+  const standUp = () => { if (mySeat() >= 0 || g.sitting) send({ op: 'stand', gameNo: g.remote.state?.gameNo ?? 0 }); g.sitting = false; };
   /** The online board's presses; true when the press was the board's. */
   function onlinePress(/** @type {string} */ id, /** @type {any} */ value, /** @type {number} */ now) {
     const me = mySeat();
     if (id === 'regulars') { toRegulars(); return true; }
     if (id === 'board' && d.online.board) { readBoard(); return true; }   // KG6
     if (g.phase === 'setup') {
-      if (id === 'sit') { if (me < 0) send({ op: 'sit', chair: d.online.chair, chairs: d.online.chairs, crown: crownIndex(g.crown) }); return true; }
+      if (id === 'sit') { if (me < 0) sitDown(); return true; }
       if (id === 'crown' && Number.isInteger(value) && GAMBIT_CROWNS[value]) { g.crown = GAMBIT_CROWNS[value]; d.entity.gambitCrown = g.crown; return true; }
       return id === 'next' || id === 'regular' || id === 'stake';   // the regulars' presses are not the board's
     }
     if (g.phase === 'army') {
       const ready = me >= 0 && g.remote.ready(me);
-      if (id === 'leave') { send({ op: 'stand' }); g.phase = 'setup'; return true; }
+      if (id === 'leave') { standUp(); g.phase = 'setup'; return true; }
       if (id === 'ready') {
         const no = armyRefusal(g.army);
         if (no) { g.why = refusalWords(no); return true; }
-        if (me < 0 || g.staking) return true;
-        if (d.online.gold) { readyStaked(); return true; }   // KG6: the stake held by the service first
+        if (me < 0 || g.staking || ready || g.stakeId) return true;   // AUDIT KG II B1: one stake on its way, and none past a Ready
+        if (d.online.gold) {   // KG6: the stake held by the service first
+          // AUDIT KG II B8: a pick the other seat's stake has closed is never asked of the realm
+          const pick = onlineModel()?.stakes?.find((/** @type {any} */ x) => x.chosen) ?? null;
+          if (!pick?.enabled) { g.why = pick?.why ?? stakeChoose(); return true; }
+          readyStaked();
+          return true;
+        }
         send({ op: 'ready', army: g.army.slice(), crown: crownIndex(g.crown) });
         return true;
       }
@@ -498,6 +529,8 @@ export function openGambitTableGame(d) {
     if (g.phase === 'battle' && watching()) return true;   // a watcher's presses are the regulars and Stand up
     if (g.phase === 'over') {
       if (id === 'again') { g.phase = 'army'; g.session = null; g.game = null; g.look = null; g.motion.reset?.(); return true; }
+      // AUDIT KG II B7: a watcher at a board a seat has come free at sits down from the result
+      if (id === 'sit') { if (me < 0) { g.phase = 'setup'; g.session = null; g.game = null; g.look = null; g.motion.reset?.(); sitDown(); } return true; }
       return id === 'army';
     }
     return false;
@@ -515,9 +548,10 @@ export function openGambitTableGame(d) {
     try { r = await d.online.stake(amount); } catch { r = { ok: false, error: 'offline' }; }
     g.staking = false;
     if (g.closed) return;
-    if (!r?.ok) { g.why = onlineRefusal('stake refused'); paint(); return; }
-    g.stakeId = r.id ?? null;
-    if (mySeat() >= 0) send({ op: 'ready', army: g.army.slice(), crown: crownIndex(g.crown), stake: r.stake });
+    if (!r?.ok) { g.why = stakeRefusal(r); paint(); return; }   // AUDIT KG II B16: the realm's own word - nothing held, or an answer lost
+    // the stake book's id till the relay sits it (AUDIT KG II B1: or refuses it, or the socket changes) - a stake never
+    // sent is the book's to void back
+    g.stakeId = mySeat() >= 0 && send({ op: 'ready', army: g.army.slice(), crown: crownIndex(g.crown), stake: r.stake }) ? r.id ?? null : null;
     paint();
   }
   /** KG6: THE SEASON BOARD - read from the service, shown in its section; pressed again, folded. */
@@ -533,7 +567,7 @@ export function openGambitTableGame(d) {
   }
   /** Play a regular instead: up from the board (a game under way forfeited), the regulars' setup. */
   function toRegulars() {
-    if (mySeat() >= 0) send({ op: 'stand' });
+    standUp();
     g.mode = 'regulars';
     g.phase = 'setup'; g.session = null; g.game = null; g.look = null; g.armed = null;
     g.places = gambitPlaces(d.frame, d.mySeatFeet);
@@ -548,14 +582,15 @@ export function openGambitTableGame(d) {
   }
   /** The game the relay dealt (or the one under way, told by a look), opened as this seat reads it - a watcher the
    *  host's side. @param {any} st the relay's table @param {number} now */
-  function openOnline(st, now) {
+  function openOnline(st, now, dealt) {
     const me = mySeat(), side = me === 1 ? 1 : 0;
+    g.watcher = me < 0;
     const host = st.seats[0], guest = st.seats[1];
     g.places = gambitPlaces(d.frame, d.online.chairFeet(host?.chair ?? d.online.chair) ?? d.mySeatFeet, { flip: side === 1 });
     g.motion.reset?.();
     g.motion.lay(g.places.end);
     const session = new RemoteGambitSession({
-      side, game: st.game, gameNo: st.gameNo, now,
+      side, game: st.game, gameNo: st.gameNo, now, watch: me < 0, midway: !dealt,
       send: (cmd) => send({ op: 'act', gameNo: st.gameNo, cmd }), forfeit: () => send({ op: 'forfeit', gameNo: st.gameNo }),
     });
     const crownOf = (/** @type {any} */ x) => GAMBIT_CROWNS[x?.crown] ?? GAMBIT_CROWNS[0];
@@ -565,7 +600,8 @@ export function openGambitTableGame(d) {
     g.session = /** @type {any} */ (session);
     g.settled = false;
     g.game = {
-      stake: st.pot ? Math.floor(st.pot / 2) : 0, regular: name, name, tier: null, crowns,   // KG6: each player's stake in the pot
+      stake: me >= 0 && st.pot ? Math.floor(st.pot / 2) : 0, regular: name, name, tier: null, crowns,   // KG6: each player's stake in the pot - a watcher's none (AUDIT KG II B4)
+      pot: st.pot ?? 0,   // AUDIT KG II D5: the pot, as a watcher is told it
       dealt: [0, 1].map((k) => view.pieces.filter((p) => p.side === k).length),
       names: new Map(view.pieces.map((p) => [p.id, pieceName(p, crowns)])), nightSpent: false,
     };
@@ -573,7 +609,7 @@ export function openGambitTableGame(d) {
     g.selected = null; g.staged = null; g.info = null; g.why = null; g.armed = null; g.more = false; g.log = [];
     const king = view.pieces.find((p) => p.side === 0 && p.king);
     g.cursor = king ? [king.col, king.row] : KG_KING_CELL.slice();
-    if (me >= 0) d.say(dealLine(name, 0));
+    if (me >= 0) d.say(dealLine(name, g.game.stake));   // AUDIT KG II B5: the gold table's said
     pump(now);
   }
   /** A FRAME OF THE RELAY'S for this table (scenes/worldModes.js routes them): the table told, a game opened or fed, the
@@ -584,20 +620,29 @@ export function openGambitTableGame(d) {
     const events = g.remote.apply(f, d.online.now());
     if (typeof f.error === 'string') {
       // the law's word for a command, the room's for the rest ('full' is both - a sit's and a full health's)
-      g.why = g.lastOp === 'act' ? refusalWords(f.error) : onlineRefusal(f.error);
+      // AUDIT KG II D16: the room's own words on a command (too late, gone) are the room's; the law's name the command's
+      // piece and target
+      const c = g.lastCmd;
+      g.why = g.lastOp === 'act' && !['stale', 'no game', 'not seated'].includes(f.error)
+        ? refusalWords(f.error, { piece: c?.piece != null ? nameOf(c.piece) : '', target: c?.target != null ? nameOf(c.target) : '' })
+        : onlineRefusal(f.error);
       if (g.session instanceof RemoteGambitSession) g.session.sentAt = null;
+      g.stakeId = null;   // AUDIT KG II B1: a Ready refused is a stake never sat - the stake book's to void back
+      if (mySeat() < 0) g.sitting = false;   // AUDIT KG II A2: a sit refused
       if (online()) paint();
       return;
     }
     if (!online()) return;   // playing the regulars: the board's frames are told, and wait for the online setup
     const st = g.remote.state;
     const me = mySeat();
+    if (me >= 0) g.sitting = false;   // AUDIT KG II A2: the sit landed - the seat says it now
     // KG6: the relay spent my stake (my seat ready with it): the stake book keeps it as sat, owed its cash-out
     if (g.stakeId && me >= 0 && st?.seats?.[me]?.stake) { d.online.seated?.(g.stakeId); g.stakeId = null; }
     const dealt = events.some((/** @type {any} */ e) => e.t === 'game');
     const s = g.session instanceof RemoteGambitSession ? g.session : null;
-    if (st?.game && (dealt || !s || s.gameNo !== st.gameNo)) openOnline(st, now);
+    if (st?.game && (dealt || !s || s.gameNo !== st.gameNo)) openOnline(st, now, dealt);
     else if (s && s.gameNo === (st?.game ? st.gameNo : st?.last?.gameNo)) s.feed(events, st);
+    else if (s && !s.over && !st?.game) { g.session = null; g.game = null; g.look = null; g.phase = 'setup'; g.motion.reset?.(); }   // AUDIT KG II B2: a game the relay no longer holds, nor its end
     if (!g.session) {
       if (me >= 0 && g.phase === 'setup') g.phase = 'army';
       else if (me < 0 && g.phase === 'army') g.phase = 'setup';   // stood up by the relay (the clock, another table)
@@ -615,13 +660,17 @@ export function openGambitTableGame(d) {
     const { w, h, rect = null } = view, cam = g.cam;
     const ray = rayDirFromScreen(at[0], at[1], w, h, cam.proj, cam.view, cam.eye, rect);
     const p = ray ? tablePoint(cam.eye, ray, g.places.top) : null;
-    const built = ray ? gambitPressCell(g.places, g.session.state, cam.eye, ray) : null;   // KG4: the built board - a card's face, a wall's top
+    const built = ray ? gambitPressCell(g.places, g.session.state, cam.eye, ray, g.selected) : null;   // KG4: the built board - a card's face, a wall's top (AUDIT KG II C7: the chosen card where it is drawn, lifted)
     if (!built && (!p || !onFelt(p))) return false;
+    if (how.touch) g.finger = true;   // AUDIT KG II C3: the cloth's until it lifts - never the touch layer's stick
     const now = d.now();
     g.armed = null;
     if ((how.button ?? 0) !== 0) { press('cancel'); return true; }   // another button on the table cancels - never the swing
     let cell = built;
-    if (how.touch) {
+    // AUDIT KG II C13: a finger on a foe's card is that foe (14.3: its information box, a strike if it is ringed) - never
+    // snapped to one of the player's own beside it; a press on the mat, a wall or one's own card snaps
+    const pressed = built ? pieceAt(g.session.state, built[0], built[1]) : null;
+    if (how.touch && pressed?.side !== 1) {
       // UNDER A FINGER: the nearest of the player's pieces, the lit cells and the ringed foes within GAMBIT_SNAP_PX
       const m = model();
       const st = g.session.state;
@@ -685,7 +734,9 @@ export function openGambitTableGame(d) {
     if (g.session) { g.session.tick(now); changed = pump(now) || changed; }
     if (online()) {
       const w = d.online?.welcomes?.() ?? 0;
-      if (w !== g.welcomes) { g.welcomes = w; send({ op: 'look' }); }   // a new socket: the relay stood the old one up - ask again
+      // a new socket: the relay stood the old one up (a stake it sat comes home as a cash-out) - ask again, until the gate
+      // lets the look go (AUDIT KG II B17)
+      if (w !== g.welcomes) { g.stakeId = null; g.sitting = false; if (send({ op: 'look' })) g.welcomes = w; }
       const c = g.remote.state?.game ? g.remote.clockLeft(d.online.now()) : null;
       if (c !== g.clockShown) { g.clockShown = c; changed = true; }
     }
@@ -723,7 +774,9 @@ export function openGambitTableGame(d) {
       g.leanAt = now;
       g.leanK = prefersReducedMotion() ? want : want > g.leanK ? Math.min(want, g.leanK + dt / GAMBIT_LEAN_S) : Math.max(want, g.leanK - dt / GAMBIT_LEAN_S);
       if (g.leanK <= 0) return null;
-      const clear = gambitClear(g.hud?.root?.getBoundingClientRect?.() ?? null, view, touch());
+      // AUDIT KG II C5: a panel over the whole view (More's sheet on a landscape phone) keeps the last clear screen
+      const clear = gambitClear(g.hud?.root?.getBoundingClientRect?.() ?? null, view, touch()) ?? g.clearShown ?? undefined;
+      g.clearShown = clear ?? null;
       const L = gambitLean(g.places, { aspect: view.aspect, fovY: view.fovY, clear });
       const k = g.leanK * g.leanK * (3 - 2 * g.leanK);
       const eye = [0, 1, 2].map((i) => seat.eye[i] + (L.eye[i] - seat.eye[i]) * k);
@@ -738,6 +791,11 @@ export function openGambitTableGame(d) {
     box: () => g.hud?.root?.getBoundingClientRect?.() ?? null,
     /** Whether a battle is under way (dealt and undecided). */
     playing: () => !g.closed && !!g.session?.playing(),
+    /** AUDIT KG II C3: whether a finger the cloth took is still down; and its lift. */
+    fingerHeld: () => !g.closed && g.finger,
+    fingerUp() { g.finger = false; },
+    /** AUDIT KG II C4: whether the board's keys are live (the battle's phase) - the pad's d-pad its cursor. */
+    boardUp: () => !g.closed && g.phase === 'battle',
     /** Whether gold is down on the table - a stake held: the save waits on it, as on the Hold'em chips (5.7). */
     staked: () => !g.closed && !!g.session?.playing() && (g.game?.stake ?? 0) > 0,
     /** KG5: whether this player sits at the relay's board here. */
@@ -747,8 +805,8 @@ export function openGambitTableGame(d) {
      *  Once. */
     close({ concede = true } = {}) {
       if (g.closed) return;
-      if (mySeat() >= 0) send({ op: 'stand' });   // KG5: up from the relay's board - a game under way is the other player's
-      else if (concede && g.session?.playing() && !online()) { g.session.forfeit(d.now()); pump(d.now()); }
+      if (online()) standUp();   // KG5: up from the relay's board - a game under way is the other player's
+      else if (concede && g.session?.playing()) { g.session.forfeit(d.now()); pump(d.now()); }
       g.closed = true;
       g.hud?.destroy();
       g.draw?.destroy();

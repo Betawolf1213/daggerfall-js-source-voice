@@ -401,7 +401,9 @@ test('KG3 A PRESS ON THE CLOTH is a cell through the frame\'s own lens - a fine 
   const s2 = projectToScreen(m.g.g.places.at(mv.col, mv.row), W, H, CAM.proj, CAM.view, null);
   m.g.pointer([s2.x, s2.y], { w: W, h: H }, {});
   assert.equal(m.g.g.selected, mv.id);
-  const to = reachable(ms(), mv)[0];
+  // PIN MOVED (AUDIT KG II C7): the chosen card is tested where it is drawn, lifted - the mat right behind it is its face
+  // now, so the cell pressed is one the card does not stand in front of
+  const to = reachable(ms(), mv).find(([c, r]) => c !== mv.col || r >= mv.row);
   const t = projectToScreen(m.g.g.places.at(to[0], to[1]), W, H, CAM.proj, CAM.view, null);
   m.g.pointer([t.x, t.y], { w: W, h: H }, {});
   assert.equal(m.g.g.staged, null, 'no stage under a fine pointer');
@@ -670,12 +672,22 @@ test('KG4b THE TABLE\'S SOUNDS AT THE HOST (5.6, 17.4): opening the game DiceRol
   r.g.press('cell', [mine.col, mine.row]);
   r.tick(10);
   assert.equal(clips().at(-1), SOUND.ButtonClick, 'a piece chosen');
-  r.g.press('forfeit'); r.g.press('forfeit');
-  const n = heard.length;
-  r.tick(GAMBIT_RESULT_MS - 50);
+  // PIN MOVED (AUDIT KG II C11): the mod's forfeit plays nothing (ChooseArmy clears the pending sounds, never FinishMatch);
+  // a loss on the board groans at the result's beat
+  const lost = rig({ play: (clip, at) => heard.push([clip, at]) });
+  lost.g.press('regular', 1); lost.g.press('stake', 2); lost.g.press('next'); lost.g.press('autofill'); lost.g.press('start');
+  lost.tick(5000);
+  lost.g.g.session._decide(1, 'king', lost.now);
+  lost.tick(1);   // the frame that hears it
+  let n = heard.length;
+  lost.tick(GAMBIT_RESULT_MS - 50);
   assert.equal(heard.length, n, 'nothing before the result\'s beat');
-  r.tick(100);
+  lost.tick(100);
   assert.deepEqual(clips().slice(n), [SOUND.Groan], 'the loss groans at the beat - no fanfare, no coins');
+  r.g.press('forfeit'); r.g.press('forfeit');
+  n = heard.length;
+  r.tick(GAMBIT_RESULT_MS + 100);
+  assert.deepEqual(clips().slice(n), [], 'a forfeit is silent, as the mod\'s');
   const WM = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
   assert.match(WM, /play: \(clip, at\) => audio\?\.play3d\?\.\(clip, at, 1, \{ maxDistance: 16 \}\),/, 'the room\'s 3D sound, at the cloth');
 });

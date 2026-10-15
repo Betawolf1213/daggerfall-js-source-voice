@@ -101,6 +101,9 @@ test('KG5 THE ONLINE SESSION: the guest reads the board turned (its own side 0 a
   assert.equal(g.act({ type: 'end' }, 6001), null);
   assert.equal(sent.length, 1, 'one command on its way at a time');
   g.tick(6000 + GAMBIT_SENT_MS);
+  // PIN MOVED (AUDIT KG II B11): the press made meanwhile was held, and goes once the first is let go
+  assert.deepEqual(sent.at(-1), { type: 'end' }, 'a command never answered is let go - and the one held goes');
+  g.tick(6000 + 2 * GAMBIT_SENT_MS);
   assert.equal(g.sentAt, null, 'a command never answered is let go');
   // the relay's result: decided at once, shown after the beat
   g.feed([{ t: 'result', gameNo: 1, winner: 0, how: 'forfeit', names: ['Ana', 'Bors'] }], { ...turned[0].frame.state, game: null, last: { gameNo: 1, game: t.game } });
@@ -234,7 +237,7 @@ test('KG5 TWO PLAYERS OVER THE RELAY: each sits at the board, builds an army and
   await C.pump();
   assert.equal(C.g.g.phase, 'battle', 'a game under way, watched');
   assert.match(shown(C), /You are watching peer-a play peer-b/);
-  assert.deepEqual(acts(C), ['Play a regular instead', 'Stand up']);
+  assert.deepEqual(acts(C), ['Play a regular instead', 'Stand up', 'More']);   // PIN MOVED (AUDIT KG II D2): More, a phone watcher's door to the sheet
   const before = C.ws.sent.length;
   const cp = C.g.g.session.state.pieces.find((x) => x.side === 0 && reachable(C.g.g.session.state, x).length);
   C.g.press('cell', [cp.col, cp.row]); C.g.press('cell', reachable(C.g.g.session.state, cp)[0]); await C.pump();

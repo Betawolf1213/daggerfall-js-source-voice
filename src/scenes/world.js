@@ -328,7 +328,7 @@ import { createMarketBook } from '../net/marketBook.js';   // PROF5: the market'
 import { createCardStakes } from '../net/cardStakes.js';   // CARDS6: a realm character's card stakes
 import { createIliacClaims } from '../net/iliacClaims.js';   // CARDS10: the ranked games' results carried to the service
 import { createGambitClaims } from '../net/gambitClaims.js';   // KG6: and The King's Gambit's rated games'
-import { seasonCounted, seasonKept, seasonGuest } from '../ui/gambitTableWords.js';   // KG6: what the season's claims say
+import { seasonCounted, seasonKept, seasonGuest, seasonFoeGuest } from '../ui/gambitTableWords.js';   // KG6: what the season's claims say
 import { createWritBook } from '../net/writBook.js';   // PROF6: guild writs, commissions, the guild Stores
 import { wearCondition, wearOf, WEAR_WHOLE } from '../net/marketLaw.js';   // PROF5: a bought piece's wear; PROF6: a commission's piece unworn
 import { commissionFilledBy } from '../net/writLaw.js';   // AUDIT 31 L8: a piece that answers a commission, the law's own test
@@ -1980,8 +1980,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const gambitClaims = params.has('online')
     ? createGambitClaims({ claim: (r) => gambitDoor.claim(r), store: { get: (k) => _spoilsStore.get(k), set: (k, v) => _spoilsStore.set(k, v) }, me: () => gambitDoor.me(),
       nowMs: () => Date.now() + _sharedOffsetMs, nowS: () => (_sharedClockHeard ? Math.floor((Date.now() + _sharedOffsetMs) / 1000) : null),   // the relay's clock, as Iliac Hand's carrier reads it (AUDIT CARDS-6 D9)
-      onCounted: (a) => townTalk?.say?.(a.rated ? seasonCounted(a.rating, a.delta) : seasonKept()),
-      onGuest: () => townTalk?.say?.(seasonGuest()) })
+      onCounted: (a) => townTalk?.say?.(a.rated ? seasonCounted(a.rating, a.delta) : seasonKept(a.cap)),   // AUDIT KG II D11: which cap
+      onGuest: () => townTalk?.say?.(seasonGuest()), onFoeGuest: () => townTalk?.say?.(seasonFoeGuest()) })   // AUDIT KG II D10
     : null;
   // PROF6 (bible/06-Systems/Professions-Arc.md 28): the writs' book - a guild writ posted, supplied, withdrawn; a
   // commission posted, filled (the piece KEPT before it is asked), cancelled, declined; the guild Stores (net/writBook.js).
@@ -19271,6 +19271,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     paused: () => gamePaused(),
     cardTable: () => !!modes?.cardSeated?.(),   // CARDS-TOUCH: seated at a card table, the finger is the table's (ui/touch.js)
     cardHeld: () => !!modes?.cardPressHeld?.(),   // AUDIT CARDS-6 E1: a finger the cards took is never the stick (ui/touch.js)
+    board: { up: () => !!modes?.gambitBoardUp?.() },   // AUDIT KG II C4: at a King's Gambit battle the pad's d-pad is the board's cursor (ui/gamepadInput.js)
   };
   const touch = attachTouch(canvas, inputHooks);
   const gamepad = attachGamepad(canvas, inputHooks);   // GP1: null without the Gamepad API

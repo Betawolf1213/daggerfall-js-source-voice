@@ -460,10 +460,8 @@ structure ours.
   send, its welcome gate and its frames in `net/online.js` and `scenes/world.js`; the alarm, the socket's close and the
   room's sweep.
 - BUILT (KG5, section 18): every seam above, the table's law `net/gambitTable.js`, relay world204.
-- BUILT (KG6, section 19): the gold table through CARDS6's escrow, and the season board with its GRANDMASTER.
-- LATER (KG6, section 10.7): gold tables through the realm's escrow (CARDS6's stake orders and receipts - an arm of their
-  own in `server-account/src/cards.js`, whose escrow checks Hold'em's buy-ins in big blinds; AUDIT KG C24) and a season
-  board (CARDS10's, the Arena's way).
+- BUILT (KG6, section 19): the gold table through CARDS6's escrow (an arm of its own in `server-account/src/cards.js`,
+  AUDIT KG C24), and the season board with its GRANDMASTER (CARDS10's, the Arena's way).
 
 ### 5.9 THE FOUR HOSTS
 
@@ -1465,11 +1463,11 @@ cards, as sections 5.3, 5.4, 10.1, 10.7, 14.3, 14.7 and 14.8 decided.
   warning's pulsing ring and its bobbing "!" - each over KG3's painted mark.
 - THE SHOT (10.7): four bright squares on the line from the shooter to its target over the bolt's 0.3 s, at a card's
   mid-height.
-- THE PRESS ON THE BUILT BOARD (14.3): `gambitCloth.js:"export function gambitPressCell(places, board, eye, dir) {"` -
+- THE PRESS ON THE BUILT BOARD (14.3): `gambitCloth.js:"export function gambitPressCell(places, board, eye, dir, selected = null) {"` -
   the nearest of a standing card's face (its cell), a wall's top (the wall's cell, which presses nothing), a pillar's top
   and the mat; never the cell a ray reaches on the mat behind a card. Under a finger a piece snaps by its card's middle,
   where the finger sees it.
-- THE LEAN (10.7, 14.7): `gambitCloth.js:"export function gambitLean(places, { aspect, fovY, clear = { x0: 0, x1: 1, y0: 0, y1: 1 }, pitch = GAMBIT_LEAN_PITCH }) {"`
+- THE LEAN (10.7, 14.7): `gambitCloth.js:"export function gambitLean(places, { aspect, fovY, clear: given = { x0: 0, x1: 1, y0: 0, y1: 1 }, pitch = GAMBIT_LEAN_PITCH }) {"`
   - SOLVED, not guessed: pitched `GAMBIT_LEAN_PITCH` (55 degrees) down over the board, the eye moved back along its line
   of sight and slid square to it until the board's corners and its head row's cards standing fill `GAMBIT_LEAN_FILL` of
   the CLEAR screen and stand centred in it. The clear screen
@@ -1485,6 +1483,12 @@ cards, as sections 5.3, 5.4, 10.1, 10.7, 14.3, 14.7 and 14.8 decided.
   standing, `chair=long` a long side's chair; `__gambitState` the board's corners and a cell's size on the screen.
   `tools/cardPanelsProbe.mjs` gives the three panels' one probe The King's Gambit's setup, army, battle and result, and
   `tools/cardsPhoneProbe.mjs` its frame cost.
+- THE FOUR HOSTS (5.9; AUDIT KG II C12 - this section had named `scenes/worldModes.js` alone): `scenes/worldModes.js`
+  (interiors) - WIRED: the lean (the frame's `cam.pos`), the board's draw in the room's pass, KG4b's `play3d` at the
+  cloth, and since AUDIT KG II the pad's and the finger's presses at a battle (C1-C4: the Escape action, LeftClick's
+  alias, `cardPressHeld`, `gambitBoardUp`). `scenes/world.js` and `scenes/exterior.js` - WIRED for C4 alone (the pad's
+  `board` hook, `ui/gamepadInput.js`); both mount the same modes, no seam of their own besides. `scenes/dungeonContext.js`
+  - FLAGGED: it stands no tavern, so no board to lean over.
 
 ### 17.1 THE MEASURES
 
@@ -1561,7 +1565,8 @@ SpellImpactPoison 87, SpellImpactFire 89, Hit3-5 110-112, PainSound 299, Groan 4
     and BodyFall 0.3 s on if it killed; a new warning pair SpookyMid; the deal DrawWeapon;
   - the table: opening the game DiceRoll; a stake put down GoldPieces; a unit joining, Auto-fill, a piece chosen and End
     turn (when the player can act) ButtonClick; the result at its 1.3 s beat - a win ArenaFanfareLevelUp and, with gold
-    down, GoldPieces 0.6 s after; a loss (a forfeit's too) the Groan.
+    down, GoldPieces 0.6 s after; a loss on the board the Groan - a forfeit nothing (AUDIT KG II C11: the line had said a
+    forfeit groans too; the mod's Forfeit runs ChooseArmy, whose `pendingSounds.Clear` (IL_098f) leaves FinishMatch unreached).
 - ON THE MOTION'S CLOCK (`world/gambitMotion.js` - `cue`, `sounds`): every one of the game's cued against the same
   schedule the pieces move by, so a blow rings when it lands on the cloth and a queued order's sounds wait with it; the
   table's own cued there too by the host. A pick among a set is the table's own source's (`createGambitMotion`'s `pick`).
@@ -1610,7 +1615,7 @@ mirror, spectators, the clock; friendly.
   third game they say "Another game is being played at this table."
 - THE WIRE (`net/wire.js`): `parseClient`'s `gambit` arm after a hello only, GAMBIT_FRAME_MAX (a Ready at its longest
   - twelve ids and a crown - fits); `validGambitIn` (each op's fields, a command's numbers in range) and
-  `validGambitOut` (a refusal, the room's events by kind, the table and its game the law's). GAMBIT_RELAY_MIN 203 and
+  `validGambitOut` (a refusal, the room's events by kind, the table and its game the law's). GAMBIT_RELAY_MIN 204 (AUDIT KG II B14) and
   `relaySupportsGambit` - an older relay closes the socket on the frame. RELAY world204 (world203 on its branch, renumbered past main's FIVE-ASKS world202 at the merge): `net/gambitTable.js`,
   `net/kingsGambit.js`, `characters/enemyBasics.js` and `systems/mathf.js` joined the bundle (`test/relayversion.test.js`
   RELAY_GRAPH); world203 is KG-SET's, renumbered past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merges.
@@ -1634,8 +1639,8 @@ mirror, spectators, the clock; friendly.
   regular; a game under way watched by a player at the cloth unseated - the host's side as side 0, both sides named by
   their players, no log, no press of the game's, no lean; the result's own line (the other gone, away, giving up); Play
   again builds the army for another game. A new welcome asks the table again; every road off the seat stands up from the
-  board, forfeiting a game under way. The panel's words through the text core, 37 keys drafted in every language the
-  catalog keeps (`ui/gambitTableWords.js`: GAMBIT_ONLINE_PRESS, onlineSeat, clockChip, onlineStep, onlineEnd,
+  board, forfeiting a game under way. The panel's words through the text core, 37 keys drafted in the thirteen whole
+  languages (the twelve drafting languages owe them - AUDIT KG II D23: the line had said every language the catalog keeps) (`ui/gambitTableWords.js`: GAMBIT_ONLINE_PRESS, onlineSeat, clockChip, onlineStep, onlineEnd,
   onlineRefusal, watchWin; the log's `timeout` and the other side's forfeit), the turn's clock on a chip.
 - THE TAVERN WATCHES (`scenes/worldModes.js`): a King's Gambit table within CARD_WATCH_M is asked once each approach and
   its board drawn on its cloth from the host's chair (`gambitOnlineFrame`, `gambitWatchFrame`, `gambitWatchDraw`), let
@@ -1657,9 +1662,15 @@ the result's beat); the guest's board on the cloth; the client's session (the ga
 over the relay - sit, Ready, the deal, a move on both boards in one place, the turn round, the watcher's board and keys,
 a forfeit and its words, Play again, Play a regular instead, every mesh freed. PINS MOVED: every pin that names the
 relay version (world204); `cards10_client` and `auditcards6_e`'s 'other game' words. Mutants: `tools/mutants/kg5.json`,
-49, all dead; `kg3.json`'s KG3-S-beat-turn-end (the beat's one home moved to the table's law), KG3-H-concession and
+48, all dead (49 at KG5 - KG6 retired KG5-R-gold-table with the gold table's refusal it pinned; AUDIT KG II E6); `kg3.json`'s KG3-S-beat-turn-end (the beat's one home moved to the table's law), KG3-H-concession and
 KG3-H-loads-road, `kg4.json`'s KG4-G-lean-phase and `worldhover.json`'s setMode pair re-aimed by content, dead.
 
+- THE FOUR HOSTS (5.9; AUDIT KG II B15 - this section had not named them): `scenes/worldModes.js` (interiors) - WIRED:
+  `openGambitGame`'s online hooks, the room's frames (`gambitOnlineFrame`), the watched boards (`gambitWatchFrame`,
+  `gambitWatchDraw`) and a stand the link would not carry said again (`gambitStandsDue`, AUDIT KG II B12).
+  `scenes/world.js` - WIRED: `online.onGambit` and `host.gambitOnline`. `scenes/exterior.js` - mounts the same modes; no
+  seam of its own (its taverns' tables are the interiors'). `scenes/dungeonContext.js` - FLAGGED: it stands no tavern,
+  so no board online.
 - **Not yet:** gold online and the season board (KG6 - section 19).
 - **Ledger:** section A row THE KING'S GAMBIT - ONLINE.
 
@@ -1673,8 +1684,10 @@ floor) wears GRANDMASTER - the mod's highest tier's name."
 - THE STAKES' ONE HOME (`net/gambitStakes.js`, a leaf every end imports): GAMBIT_ONLINE_STAKES, the mod's five; and
   GAMBIT_STAKE_BB, the big blind a King's Gambit stake is held at in CARDS6's escrow - 1, which no Hold'em table plays
   (`holdemTable.js` HOLDEM_BBS 2, 10, 50) - so the escrow tells the games apart, and the service's bound on a cash-out
-  (`cashoutCards`: no more than every stake that came to the room, table and big blind) counts a pot's two stakes alone,
-  never a Hold'em buy-in at the same red table.
+  (`cashoutCards`: no more than every stake that came to the room, table and big blind over the receipt's life) counts
+  the table's King's Gambit stakes alone, never a Hold'em buy-in at the same red table - and, since AUDIT KG II A4 (the
+  sentence said "a pot's two stakes alone", which that sum is not: it is every King's Gambit stake at the table in 30
+  days), a King's Gambit cash-out is no more than twice its own stake, the pot it can have won.
 - THE ESCROW'S ARM (`server-account/src/cards.js` stakeCards; AUDIT KG C24, "an arm of their own"): a stake at
   GAMBIT_STAKE_BB is one of the five, at the room's gold table alone ('bad-table' elsewhere), never a top-up
   ('bad-buy-in'); held off the realm record and answered with the service's stake order, as a Hold'em buy-in is.
@@ -1696,8 +1709,9 @@ floor) wears GRANDMASTER - the mod's highest tier's name."
   in a 'refused' cash-out. `_gambitOwedOut` at every save: each cash-out by CARDS6's own `_holdemReceipt` (kept for its
   account, sent on the card table's word - the client's stake book claims it), each rated result minted
   (`net/gambitReceipt.js` g1) and kept owed to both accounts (`gowed:`, Iliac Hand's law) until the device acks it,
-  told again at a look, a sit and a hello; each off its queue only once kept; an empty table never forgotten with one
-  unsigned. The sweep lets expired `gowed:` go.
+  told again at a look, a sit and a hello; each off its queue only once kept - but a result that will not mint (no key
+  the relay can sign with) is let go, said on the console, never kept (AUDIT KG II A7: the sentence had said none was);
+  an empty table never forgotten with one unsigned. The sweep lets expired `gowed:` go.
 - THE RECEIPT (`net/gambitReceipt.js`, `g1`): `{j, f, r, h, i, e}` - the game, the two accounts (the host's first), the
   winning seat (no draw: a game nobody won is no receipt), how (`king`, `forfeit`, `idle`, `left`), a week's life; the
   version inside the signed bytes, so an Iliac Hand receipt is never a King's Gambit one, nor the other way.
@@ -1719,6 +1733,11 @@ floor) wears GRANDMASTER - the mod's highest tier's name."
   the relay sat it, and the cash-outs come home by its claim. The result says the pot (the win's both stakes, the
   loss's one), as a regular's game says its stake. The season board from either table (Season board).
 - 28 keys drafted in the thirteen whole languages; the game's name kept, as everywhere.
+- THE FOUR HOSTS (5.9; AUDIT KG II B15): `scenes/worldModes.js` - WIRED: the rated results carried and acked, the gold
+  table's hooks (`gambitGoldOk`, the stake, the purse, `seated`, the season board). `scenes/world.js` - WIRED:
+  `gambitDoor`, `gambitClaims` (and its tick, in every mode), `host.gambitSeason`. `scenes/exterior.js` - mounts the
+  same modes; the claims' tick is world.js's, so a result is carried outdoors too. `scenes/dungeonContext.js` - FLAGGED:
+  no tavern, no gold table; the claims' tick runs there as everywhere (world.js's).
 
 ### 19.1 Pins and mutants
 
@@ -1731,6 +1750,49 @@ King's Gambit stakes alone. `test/kg6_season.test.js` (5): the receipt; the clai
 mint, the minute clock, the lapse); the carrier; the gold table's panel (the picks' bounds, the staked Ready, the book
 told, the board shown). PINS MOVED: `kg5_relay`'s gold table (it seats now, its Ready a stake); every pin that names the
 account version (acct134 - acct133 on its branch, renumbered past main's LAMP-KEEPER II at the merge); the relay's law row (world204, its bundle with gambitStakes.js and gambitReceipt.js).
-Mutants: `tools/mutants/kg6.json`, 44, all dead.
+Mutants: `tools/mutants/kg6.json`, 44, all dead; `kg5.json`'s KG5-R-gold-table retired with the gold table's
+refusal it pinned (AUDIT KG II E6: the section had not said so).
 
 - **Ledger:** section A row THE KING'S GAMBIT - GOLD AND THE SEASON.
+
+## 20. AUDIT KG II (2026-10-15): the slices since the first audit, read cold
+
+The owner: "Lets do last comprehensive audit and ensure perfection." Five cold lanes on a frozen snapshot (6e4441a72) -
+the money and the relay, the online client, the board and the offline game and its sounds, the UI and the words in
+every whole language, the record and its tests and mutants - 83 findings, every one reproduced before it was acted on;
+the page is `01-Overview/Audit-Kings-Gambit-II.md`, each finding with its verdict. What it changed, as the sections
+above now say it:
+
+- A STAKE IS NEVER LOST TO A PRESS (A1, B1, B8, B12, C1-C3): every stand names the game its panel showed - one naming
+  the game before, heard within GAMBIT_LATE_MS of the deal and before the seat acted, lets the game go, each stake home
+  (`gambitStand`'s `gameNo`, `spoke`; Iliac Hand's AUDIT CARDS-6 E13); one stake on its way at a time and none past a
+  Ready, a pick the other seat's stake closed never asked of the realm; a stand the link would not carry said again
+  each frame (`gambitStandsDue`); the pad's Start (an Escape action's key) and A's LeftClick alias (Mouse0) the
+  board's while a battle is on, and a finger the cloth took never the touch layer's stick (`cardPressHeld`).
+- THE GAME ONLINE AS THE RELAY HOLDS IT (B2, B3, B10, B11, B13, B17, B18, A2): a game ended while the socket was away
+  read off the table's `last`; a watcher is one who opened the game unseated; a press made while one is on its way held
+  (GAMBIT_HELD_MAX) and sent once the board is told; a watched board let go with its table; a sit on its way stood up
+  when the panel goes; a new socket's look asked until it goes; no muster for a game come upon mid-way.
+- THE RELAY'S MONEY LINES PINNED (A3, A8, E1-E5, E9-E12, E20): the order's room, the drained room's no contest, a
+  room that cannot sign, a queue kept until signed, the stored queues' ids, a broken source no contest at a blow, a
+  turn's end and the deal, the season's caps, a rating written only on the ratings read, the #1 recounted; the escrow
+  holds a King's Gambit cash-out to twice its stake (A4).
+- THE BOARD (C4-C9, C13, C14): the d-pad the board's cursor under the Plus crossbar (the pad's `board` hook); the lean
+  never thrown away by a sheet over the whole view (GAMBIT_CLEAR_MIN); the beat after a forfeit nobody's turn; the
+  chosen card pressed where it is drawn, lifted; the information box's foes by name and its cell's hazard; a regular's
+  night the tavern's; a finger on a foe's card that foe; one's own piece chosen again, never toggled off (the mod's
+  OnCellClicked, IL 0x4620); a forfeit silent (C11 - 17.4).
+- THE PANEL AND ITS WORDS (D1-D23, B4-B7, B16): the three online presses' words put back in the thirteen whole
+  languages; the phone's strip - the watcher's presses and More, the clock first; a watcher's game nobody's own and its
+  pot the winner's; the guide and the words at the board online; the stake picks first; every quiet press says why;
+  the relay's own words with a way forward and a command's refusal naming its piece; the realm's own stake refusals;
+  the season's cap and a foe with no account said; the Grandmaster's own purple, #b438d2; plurals, range, the glossary.
+  53 keys drafted in the thirteen whole languages, and 82 rows put right beside them (D1's three in each; D22's
+  slips - ko, it, bg, fr, de, da, ru - and 17 French rows given the house's no-break space).
+- THE RECORD (A5-A7, B14, B15, C12, E6-E8, E16-E19): the four hosts named in sections 17, 18 and 19; the relay's
+  minimum 204; the dead sentences deleted; the counts and the index made true.
+- **Pins:** `test/auditkg2_relay.test.js` (12), `auditkg2_online.test.js` (11), `auditkg2_board.test.js` (8),
+  `auditkg2_panel.test.js` (6), `auditkg2_season.test.js` (3). **Mutants:** `tools/mutants/auditkg2.json`, 73, all
+  dead; seventeen records re-aimed by content. RELAY world204 re-hashed in place (undeployed); ACCOUNT acct134
+  (undeployed).
+- **Ledger:** section A row THE KING'S GAMBIT - AUDIT KG II.

@@ -34,14 +34,14 @@ export function iliacClaimVerdict(answer) {
  *   claim: (receipt: string) => Promise<any>,
  *   store?: { get: (k: string) => any, set: (k: string, v: any) => void }|null,
  *   nowS?: () => (number|null), nowMs?: () => number, me?: () => (string|null),
- *   onCounted?: (data: any) => void, onGuest?: () => void,
+ *   onCounted?: (data: any) => void, onGuest?: () => void, onFoeGuest?: () => void,
  *   read?: (r: unknown) => any, key?: string,
  * }} deps `claim` is net/accountClient.js accountIliac's - `{ ok, data }` or `{ ok: false, error, why? }`; `onCounted`
  *   told each answer that recorded a game (its result, its rating) - and each that found it recorded already with this
  *   account's rating on it (AUDIT CARDS-6 E18); `onGuest` once a receipt a guest carried. KG6: `read` and `key` another
  *   game's receipt and its own store (net/gambitClaims.js - The King's Gambit's season, the same carrier)
  */
-export function createIliacClaims({ claim, store = null, nowS = () => Math.floor(Date.now() / 1000), nowMs = () => Date.now(), me = () => null, onCounted = () => {}, onGuest = () => {}, read = readIliacReceipt, key = ILIAC_CLAIMS_KEY }) {
+export function createIliacClaims({ claim, store = null, nowS = () => Math.floor(Date.now() / 1000), nowMs = () => Date.now(), me = () => null, onCounted = () => {}, onGuest = () => {}, onFoeGuest = () => {}, read = readIliacReceipt, key = ILIAC_CLAIMS_KEY }) {
   let running = null, again = false, lastAt = -Infinity, lastMe;
   const settled = new Set(), guestSaid = new Set();
   const live = (r) => { const c = typeof r === 'string' ? read(r) : null; const t = nowS(); return c && c.signed && (t == null || c.e > t) ? c : null; };
@@ -74,6 +74,8 @@ export function createIliacClaims({ claim, store = null, nowS = () => Math.floor
       // first was ever told: the loser of a game the winner carried never heard his rating fall
       else if (answer?.ok && answer.data?.why === 'claimed' && Number.isFinite(answer.data?.rating)) onCounted(answer.data);
       else if (answer?.ok && answer.data?.why === 'guest' && !guestSaid.has(r)) { guestSaid.add(r); onGuest(); }
+      // AUDIT KG II D10: the other seat no registered account - nothing on the board, said once (not a silent drop)
+      else if (answer?.ok && answer.data?.why === 'foe-unregistered') onFoeGuest();
       if (iliacClaimVerdict(answer) === 'done') { settled.add(r); keep(kept().filter((k) => k !== r)); }
     }
     return recorded;

@@ -910,8 +910,8 @@
  {
   "name": "KG3-H-concession",
   "file": "src/scenes/gambitTableGame.js",
-  "old": "      else if (concede && g.session?.playing() && !online()) { g.session.forfeit(d.now()); pump(d.now()); }",
-  "new": "      else if (!concede && !concede && !online()) { g.session.forfeit(d.now()); pump(d.now()); }",
+  "old": "      else if (concede && g.session?.playing()) { g.session.forfeit(d.now()); pump(d.now()); }",
+  "new": "      else if (!concede && g.session?.playing()) { g.session.forfeit(d.now()); pump(d.now()); }",
   "tests": [
    "test/kg3_host.test.js"
   ]
@@ -919,8 +919,8 @@
  {
   "name": "KG3-H-loads-road",
   "file": "src/scenes/gambitTableGame.js",
-  "old": "      else if (concede && g.session?.playing() && !online()) {",
-  "new": "      else if (g.session?.playing() && !online()) {",
+  "old": "      else if (concede && g.session?.playing()) {",
+  "new": "      else if (g.session?.playing()) {",
   "tests": [
    "test/kg3_host.test.js"
   ]

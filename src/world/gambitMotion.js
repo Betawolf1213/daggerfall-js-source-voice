@@ -168,6 +168,7 @@ export function createGambitMotion({ pick = () => 0 } = {}) {
           // THE MUSTER: each side's king first, then its units in the deployment's order - the law's own
           known.clear(); moves.clear(); fallen.clear(); throws.clear(); floats = []; shots = []; cues = []; piles[0] = piles[1] = 0;
           see(state);
+          if (e.midway) continue;   // AUDIT KG II B18: a game opened under way (a watcher come near) was mustered long ago
           cue(SOUND.DrawWeapon, at);   // StartBattle
           for (const side of [0, 1]) {
             const mine = (state?.pieces ?? []).filter((/** @type {any} */ p) => p.side === side);

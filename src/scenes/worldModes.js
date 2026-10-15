@@ -702,7 +702,9 @@ export function createWorldModes(host) {
     const seeds = regularSeeds(names.length);
     const gg = openGambitTableGame({
       renderer, entity: playerEntity, say, holdCursor, relock: () => host.relock?.(), rand32: cardRand32, now: () => performance.now(),
-      day: cardDay, key: cardTableKey(), friendly: !!host.realmAct || isOnlinePage(),   // 5.7: online, the regulars play for fun
+      // AUDIT KG II C9: a regular's night is the TAVERN's (both its tables seat the same regulars) - never paid out afresh
+      // at the other table
+      day: cardDay, key: cardTavernKey(), friendly: !!host.realmAct || isOnlinePage(),   // 5.7: online, the regulars play for fun
       regulars: free.map((chair, i) => (names[i] ? { name: names[i], seed: seeds[i].seed, chair } : null)).filter(Boolean),
       frame: tableFrame(t), mySeatFeet: seats[cardSeat.seat].feet, touch: () => isTouchDevice(),
       onHoldem: () => { closeGambitGame(); if (cardSeat) openCardGame((cardSeat.free?.length ?? 0) + 1); },
@@ -720,6 +722,7 @@ export function createWorldModes(host) {
         stake: (amount) => host.cardStakes.stake({ room: host.cardOnline.room(), table: cardSeat.table, bb: GAMBIT_STAKE_BB, amount, place: cardPlaceName() }),
         purse: () => host.cardStakes?.purse?.() ?? null, seated: (id) => host.cardStakes?.seated?.(id),
         board: () => host.gambitSeason?.board?.() ?? Promise.resolve({ ok: false }),
+        standDue: gambitStandDue(cardSeat.table),   // AUDIT KG II B12
       } : null,
     });
     closeGambitWatch(cardSeat.table);   // KG5: the cloth is the game's now, not a watcher's
@@ -757,12 +760,17 @@ export function createWorldModes(host) {
       if (!cancel && (el?.closest?.('.dfgambit') || /^(INPUT|TEXTAREA|SELECT)$/.test(el?.tagName ?? '') || el?.isContentEditable)) return;
       if (k === 'press' && cursorKeyClaimed(e)) return;   // KB1: online, ActivateCursor's key (Enter) is the chat's when it takes this press
       if (e.repeat && (cancel || k === 'press')) { if (gg.playing()) { e.stopImmediatePropagation?.(); e.preventDefault?.(); } return; }   // a held press presses once
+      // AUDIT KG II C2: the pad's A is the board's press AND LeftClick's alias (Mouse0) - ActivateCenterObject, whose release
+      // stands the seat up; while a battle is on the alias is the board's too (a real mouse press is a pointerdown, decided above)
+      if (e.code === 'Mouse0' && gg.playing()) { e.stopImmediatePropagation?.(); e.preventDefault?.(); return; }
       if (!gg.key(e.code)) return;
       e.stopImmediatePropagation?.(); e.preventDefault?.();
     };
     // the cloth's three, taken and let go as one list - and the host's own keydown stays the one this file registers by
     // name (test/modalkeys.test.js V4 and test/inputmap.test.js U43 read the host's handler from that registration)
-    const on = /** @type {[string, (e: any) => void][]} */ ([['pointerdown', down], ['mousedown', mouseDown], ['keydown', key]]);
+    // AUDIT KG II C3: a finger the cloth took is held until it lifts - never the touch layer's stick (cardPressHeld)
+    const lift = (e) => { if (e.pointerType === 'touch' || e.pointerType === 'pen') gg.fingerUp?.(); };
+    const on = /** @type {[string, (e: any) => void][]} */ ([['pointerdown', down], ['mousedown', mouseDown], ['keydown', key], ['pointerup', lift], ['pointercancel', lift]]);
     for (const [type, fn] of on) window.addEventListener(type, fn, true);
     return () => { for (const [type, fn] of on) window.removeEventListener(type, fn, true); };
   }
@@ -787,6 +795,9 @@ export function createWorldModes(host) {
       gambitWatches.set(f.table, w);
     }
     w.remote.apply(f, Date.now());
+    const st = w.remote.state;
+    if (Number.isInteger(st?.seats?.[0]?.chair)) w.hostChair = st.seats[0].chair;   // AUDIT KG II B13: the host's, kept past its stand
+    if (!st?.game && !(st?.seats ?? []).some(Boolean)) closeGambitWatch(f.table);   // AUDIT KG II B13: its last seat stood - the relay forgets the table
   }
   /** KG6: whether this character plays for gold online - a realm character at a relay that deals Hold'em's escrow (its
    *  cash-outs come on the card table's word). */
@@ -799,7 +810,6 @@ export function createWorldModes(host) {
   function gambitWatchFrame() {
     if (!interiorCtx || !host.gambitOnline?.ok?.()) return;
     (interiorCtx.tables ?? []).forEach((_, i) => {
-      if (holdemGoldTable(i)) return;   // the red table plays no King's Gambit online before KG6
       const near = cardTableNear(i, CARD_WATCH_M);
       if (near && !gambitLooked.has(i) && !(cardSeat && cardSeat.table === i) && host.gambitOnline.send({ op: 'look', table: i })) gambitLooked.add(i);
       else if (!near && !cardTableNear(i, CARD_WATCH_M + CARD_WATCH_SLACK_M)) gambitLooked.delete(i);
@@ -810,7 +820,7 @@ export function createWorldModes(host) {
   function gambitWatchDraw(i, w, eye) {
     const st = w.remote.state, game = st?.game ?? st?.last?.game, t = interiorCtx?.tables?.[i];
     if (!game || !t) return;
-    const seats = cardSeatsOf(i), host0 = seats[st.seats?.[0]?.chair ?? 0] ?? seats[0];
+    const seats = cardSeatsOf(i), host0 = seats[st.seats?.[0]?.chair ?? w.hostChair ?? 0] ?? seats[0];
     if (!host0) return;
     const places = gambitPlaces(tableFrame(t), host0.feet);
     const look = { layout: game.layout, tiles: game.tiles, hazards: game.hazards, pieces: game.pieces.map((p) => ({ id: p.id, side: p.side, col: p.col, row: p.row, king: p.king, unit: p.unit })), selected: null, lit: [], range: [], targets: [], cursor: null, staged: null };
@@ -830,6 +840,8 @@ export function createWorldModes(host) {
    *  seed of the town and the building's key: AUDIT CARDS-2 L9, a building key is its block's, alike in every town), as
    *  many as the table's free chairs. */
   const cardTableKey = () => `${homeTownOf(interiorBuilding) >>> 0}:${(interiorBuilding?.buildingKey ?? 0) >>> 0}:${cardSeat?.table ?? 0}`;
+  /** AUDIT KG II C9: the tavern's own key - its regulars' (the same at each of its tables). */
+  const cardTavernKey = () => `${homeTownOf(interiorBuilding) >>> 0}:${(interiorBuilding?.buildingKey ?? 0) >>> 0}`;
   const tavernRegulars = (n) => regularSeeds(n).map((r) => residentName(r.seed, r.bank, r.gender));
   /** CARDS4b: each regular's seed, bank and gender - the namer's own, so the same seed dresses him (world/cardRegulars.js). */
   const regularSeeds = (n) => {
@@ -1324,7 +1336,12 @@ export function createWorldModes(host) {
   function cardStand(i) { if (!host.cardOnline?.send({ op: 'stand', table: i })) cardStandsDue.set(i, interiorCtx); }
   function cardStandsFrame() {
     for (const [i, ctx] of cardStandsDue) if (ctx !== interiorCtx || host.cardOnline?.send({ op: 'stand', table: i })) cardStandsDue.delete(i);
+    for (const [i, ctx] of gambitStandsDue) if (ctx !== interiorCtx || host.gambitOnline?.send?.({ op: 'stand', table: i })) gambitStandsDue.delete(i);   // AUDIT KG II B12
   }
+  // AUDIT KG II B12: THE KING'S GAMBIT'S STAND THAT DID NOT GO, said again each frame as Hold'em's is - a ready seat the
+  // relay kept is dealt in and clocked out of its stake. The game's panel marks it (true), or takes it back with a sit.
+  const gambitStandsDue = new Map();   // table index -> the interior it was said in
+  const gambitStandDue = (i) => (due) => { if (due) gambitStandsDue.set(i, interiorCtx); else gambitStandsDue.delete(i); };
   // CARDS5: THE ROOM'S OTHER TABLES, WATCHED (section 2: a player standing near a table sees the community cards and
   // the pot, never a hand). The relay tells the whole room every table's events; a table this player does not sit at is
   // laid on its cloth all the same - a scene and a draw of its own, freed when its last seat stands, the room changes or
@@ -12704,7 +12721,12 @@ export function createWorldModes(host) {
     // CARDS2b: seated at a card table with no window up, Escape stands you up and is spent there - as a gathering act's
     // end spends it above - so the pause menu opens on the next one, standing
     if (mode === 'interior' && chairSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) { standFromChair(); e.preventDefault(); return; }   // SIT1: and off a chair
-    if (mode === 'interior' && cardSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) { standFromCardTable(); e.preventDefault(); return; }
+    if (mode === 'interior' && cardSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) {
+      // AUDIT KG II C1: every key bound to Escape (the pad's Start among them) is the board's cancel while a King's Gambit
+      // battle is under way - Stand up asked twice, as the raw Escape the cloth takes is - never a stake lost at one press
+      if (gambitGame?.playing()) { gambitGame.key('Escape'); e.preventDefault(); return; }
+      standFromCardTable(); e.preventDefault(); return;
+    }
     // U43: THE ONE DISPATCH. GameManager.Update (:509-557) is a single
     // flat chain with no scene gate at all - the window a key opens
     // does not care where the player is standing. The port had three
@@ -13753,7 +13775,10 @@ export function createWorldModes(host) {
     cardSeated: () => mode === 'interior' && !!cardSeat,
     /** AUDIT CARDS-6 E1: the cards hold a press (the hand, the chips carried) - the finger put down is the table's even on
      *  the touch layer's stick half (ui/touch.js `cardHeld`); the cards' pointerdown runs before the layer's touchstart. */
-    cardPressHeld: () => mode === 'interior' && !!cardSeat && !!(cardGame?.handPress || cardGame?.drag),
+    // AUDIT KG II C3: and a finger the King's Gambit cloth took
+    cardPressHeld: () => mode === 'interior' && !!cardSeat && !!(cardGame?.handPress || cardGame?.drag || gambitGame?.fingerHeld?.()),
+    /** AUDIT KG II C4: a King's Gambit battle on the seat - the pad's bare d-pad is the board's cursor, not its world actions. */
+    gambitBoardUp: () => mode === 'interior' && !!cardSeat && !!gambitGame?.boardUp?.(),
     hover,
     wheel,
     /** A mode-owned window is up (the hosts' look gate reads this

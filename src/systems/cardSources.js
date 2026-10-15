@@ -44,9 +44,9 @@ import { BOSS_CARD_IDS } from './bossCards.js';
 
 const M = MOBILE_TYPES;
 /** Each foe's own card, by its mobile type: a creature its own, a calling the guild card it wears. A foe the first set
- *  has no card for drops none: the Grizzly Bear, the Sabertooth Tiger, the Spider, the Slaughterfish, the Mummy, the
- *  Frost and Fire Daedra, and the Bard, the Acrobat, the Monk, the Archer, the Ranger and the watch (AUDIT CARDS-6 A12:
- *  this list named six of the thirteen). */
+ *  has no card for drops none: the Bard, the Acrobat, the Monk and the watch (AUDIT CARDS-6 A12: this list named six of
+ *  the thirteen; KG-SET gave the Grizzly Bear, the Sabertooth Tiger, the Spider, the Slaughterfish, the Mummy, the Frost
+ *  and Fire Daedra, the Archer and the Ranger their own - AUDIT KG II E19: the list still named them). */
 export const FOE_CARDS = Object.freeze({
   [M.Rat]: 'rat', [M.Imp]: 'imp', [M.Spriggan]: 'spriggan', [M.GiantBat]: 'giant-bat', [M.Orc]: 'orc', [M.Centaur]: 'centaur',
   [M.Werewolf]: 'werewolf', [M.Nymph]: 'nymph', [M.OrcSergeant]: 'orc-sergeant', [M.Harpy]: 'harpy', [M.Wereboar]: 'wereboar',

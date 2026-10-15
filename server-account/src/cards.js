@@ -119,6 +119,8 @@ export async function cashoutCards(ctx, player, env, { character, realm = null, 
   const into = await db.prepare(`SELECT COALESCE(SUM(amount), 0) AS n FROM card_stakes WHERE room = ?1 AND tbl = ?2 AND bb = ?3 AND at <= ?4 AND at >= ?5`)
     .bind(row.room, row.tbl, row.bb, c.i, c.i - CARD_RECEIPT_TTL_S).first();
   if (c.r > Number(into?.n ?? 0)) return { error: 'cards-receipt', why: 'sum' };
+  // AUDIT KG II A4: a King's Gambit pot is two like stakes - its winner leaves with no more than twice its own
+  if (Number(row.bb) === GAMBIT_STAKE_BB && c.r > 2 * Number(row.amount)) return { error: 'cards-receipt', why: 'sum' };
   // AUDIT CARDS-4 A7: home to the region it was staked from - never the one the client names
   const home = Number(row.region);
   if (!regionOk(home)) return { error: 'bad-region' };

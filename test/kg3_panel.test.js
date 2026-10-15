@@ -219,7 +219,7 @@ test('KG3 the information box: a piece - its side, its numbers, its reach in wor
   const { st } = dealt(4);
   const king = st.pieces.find((p) => p.side === 0 && p.king);
   const box = infoBox(st, { piece: king.id }, ['daggerfall', 'orsinium'], 'Bors');
-  assert.deepEqual(box.lines, ['Gothryd, King of Daggerfall - yours', `Level ${KG_KING_LEVEL} - Attack ${KG_KINGS[0].atk} - Melee: strikes the cell beside it`, `Health ${KG_KING_HP} of ${KG_KING_HP}`, `Moves up to ${KG_MOVE_RANGE} cells a move.`, 'No foe in reach now.', 'If this king falls, you lose.']);
+  assert.deepEqual(box.lines, ['Gothryd, King of Daggerfall - yours', `Level ${KG_KING_LEVEL} - Attack ${KG_KINGS[0].atk} - Melee: strikes the cell beside it`, `Health ${KG_KING_HP} of ${KG_KING_HP}`, `Moves up to ${KG_MOVE_RANGE} cells a move.`, 'No foe in range now.', 'If this king falls, you lose.']);   // PIN MOVED (AUDIT KG II D21): range, a blow's word
   const theirKing = st.pieces.find((p) => p.side === 1 && p.king);
   assert.equal(infoBox(st, { piece: theirKing.id }, ['daggerfall', 'orsinium'], 'Bors').lines.at(-1), 'If this king falls, Bors loses.');
   assert.equal(infoBox(st, { piece: theirKing.id }, ['daggerfall', 'orsinium'], 'Bors').lines[0], 'Gortwog, King of Orsinium - Bors\'s');
@@ -290,7 +290,7 @@ test('KG3 every refusal word the law answers is said in words - gambitRefusal\'s
   for (const w of words) assert.notEqual(refusalWords(w, { piece: 'Rat', target: 'Imp' }), fallback, w);
   assert.equal(refusalWords('shape'), fallback, 'a malformed command is the catch-all\'s');
   assert.equal(refusalWords('cell', { piece: 'Rat' }), 'Rat cannot reach that cell.');
-  assert.equal(refusalWords('range', { target: 'Imp' }), 'Imp is out of reach.');
+  assert.equal(refusalWords('range', { target: 'Imp' }), 'Imp is out of range.');   // PIN MOVED (AUDIT KG II D21)
   assert.equal(refusalWords('units'), `Your army is full: ${KG_MAX_UNITS} units.`);
   // every word the law's two refusals can say is one of them (the law's own sources, read)
   const { st } = dealt(2);
@@ -445,13 +445,22 @@ test('KG3 THE WORDS ARE ITS OWN (CARDS-PLUS\'s law, the third panel): every clas
   paint(battle(finishTurn(gambitAct(st, 0, { type: 'end' }).state, xorshift(1)).state));
   const over = (o, stake = 100, spent = false) => gambitHudModel({ phase: 'over', game: { state: st, crowns: ['daggerfall', 'orsinium'], name: 'Bors', stake, over: o, dealt: [1, 1], nightSpent: spent } });
   for (const o of [{ winner: 0, by: 'king' }, { winner: 1, by: 'forfeit' }, { winner: null, by: 'void' }]) paint(over(o, 100, true));
+  // AUDIT KG II D15: the board online too - its seats, the gold table's picks, the season board, a watcher, a result
+  const seats = [{ name: 'Ana', ready: true, mine: false, stake: 50 }, { name: 'Ves', ready: false, mine: true, stake: null }];
+  const online = { seats, names: ['Ana', 'Ves'], canSit: false, ready: false, step: 'theirReady', stepArgs: { name: 'Ana', a: 'Ana', b: 'Ves' }, watching: false, clock: 42, gold: true,
+    stakes: [10, 50, 200].map((n) => ({ n, enabled: n === 50, chosen: n === 50, why: n === 50 ? null : 'Ana stakes 50 gold: stake the same to play.' })), staking: false, canBoard: true };
+  const board = { season: { n: 4 }, rows: [{ rank: 1, name: 'Eira', rating: 1612, wins: 14, losses: 2 }, { rank: 2, name: 'Ves', rating: 1530, wins: 6, losses: 4, you: true }], me: { rating: 1530, wins: 6, losses: 4, games: 10 }, champion: { name: 'Eira' }, titleNeeds: { games: 10, foes: 5 } };
+  paint(gambitHudModel({ phase: 'setup', online: { ...online, step: 'sit', canSit: true }, canOnline: true, crown: 'daggerfall', board, boardOpen: true }));
+  paint(gambitHudModel({ phase: 'army', online, canOnline: true, army: autoFill([], KG_POINT_BUDGET, xorshift(3)), crown: 'daggerfall' }));
+  paint(gambitHudModel({ phase: 'battle', online: { ...online, watching: true }, game: { state: st, crowns: ['daggerfall', 'orsinium'], name: 'Ana', stake: 0, pot: 100, over: null, dealt: dealtCounts }, touch: true }));
+  paint(gambitHudModel({ phase: 'over', online: { ...online, watching: true, canSit: true, step: 'sit' }, game: { state: st, crowns: ['daggerfall', 'orsinium'], name: 'Ana', stake: 0, pot: 100, over: { winner: 0, by: 'king', how: 'king' }, dealt: dealtCounts }, board, boardOpen: true }));
   all(hud.root, 'fold')[0].fire('click');
   for (const w of classesIn(hud.root)) words.add(w);
   for (const w of ['dfgambit', 'collapsed', 'dfgambit-battle', 'dfgambit-more', 'tablehead', 'tabletitle', 'fold', 'msg', 'warn', 'wait', 'turn', 'tableacts', 'log', 'on',
     'dfgambit-body', 'dfgambit-block', 'dfgambit-what', 'dfgambit-list', 'dfgambit-regular', 'dfgambit-step', 'dfgambit-lit', 'dfgambit-chip', 'dfgambit-regname', 'dfgambit-line',
     'dfgambit-dim', 'dfgambit-sec', 'dfgambit-tiles', 'dfgambit-stake', 'dfgambit-crown', 'dfgambit-chips', 'dfgambit-face', 'dfgambit-grid', 'dfgambit-unit', 'dfgambit-off',
     'dfgambit-uname', 'dfgambit-cost', 'dfgambit-armyrow', 'dfgambit-grow', 'dfgambit-chiprow', 'dfgambit-pips', 'dfgambit-pip', 'dfgambit-info', 'dfgambit-piece',
-    'dfgambit-meter', 'dfgambit-fill', 'dfgambit-result', 'dfgambit-head', 'dfgambit-won', 'dfgambit-lost', 'dfgambit-para', 'dfgambit-term']) assert.ok(words.has(w), `the painter wrote ${w} (the sweep reads what it paints)`);
+    'dfgambit-meter', 'dfgambit-fill', 'dfgambit-result', 'dfgambit-head', 'dfgambit-won', 'dfgambit-lost', 'dfgambit-para', 'dfgambit-term', 'dfgambit-seat', 'dfgambit-rank']) assert.ok(words.has(w), `the painter wrote ${w} (the sweep reads what it paints)`);
   for (const w of ['card', 'row', 'note', 'head', 'side', 'acts', 'chip', 'won', 'lost', 'sel']) assert.equal(words.has(w), false, `the bare '${w}'`);
   const { rules: all_ } = await uiSheetRules();
   const own = new Set([...words].filter((w) => /^dfgambit(-|$)/.test(w)));

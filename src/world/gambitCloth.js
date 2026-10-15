@@ -91,10 +91,10 @@ export const GAMBIT_CARD_FOOT = GAMBIT_DISC_H - GAMBIT_SLOT_DEPTH;
  * face, square to the board's rows, both sides alike), a wall's top, a pillar's top, and the mat itself, or null off the
  * board. A press on a card's face is its cell, as the press on its cell is; one on a wall's top is the wall's cell (which
  * presses nothing - the law moves no piece there), never the cell the ray would reach on the mat behind it.
- * @param {ReturnType<typeof gambitPlaces>} places @param {{tiles: number[], pieces: {col: number, row: number}[]}} board
- * @param {number[]} eye @param {number[]} dir
+ * @param {ReturnType<typeof gambitPlaces>} places @param {{tiles: number[], pieces: {id?: number, col: number, row: number}[]}} board
+ * @param {number[]} eye @param {number[]} dir @param {number|null} [selected] the chosen piece's id (its card lifted)
  */
-export function gambitPressCell(places, board, eye, dir) {
+export function gambitPressCell(places, board, eye, dir, selected = null) {
   /** @type {{t: number, cell: number[]}|null} */ let best = null;
   const take = (/** @type {number} */ t, /** @type {number[]} */ cell) => { if (t > 0 && (!best || t < best.t)) best = { t, cell }; };
   const planeY = (/** @type {number} */ y) => (Math.abs(dir[1]) > 1e-9 ? (y - eye[1]) / dir[1] : -1);
@@ -110,7 +110,8 @@ export function gambitPressCell(places, board, eye, dir) {
     const den = dir[0] * n[0] + dir[2] * n[1];
     if (Math.abs(den) < 1e-9) continue;
     const t = ((o[0] - eye[0]) * n[0] + (o[2] - eye[2]) * n[1]) / den;
-    const q = pointAt(t), [u] = local(q, p.col, p.row), y = q[1] - (places.top + GAMBIT_CARD_FOOT);
+    // AUDIT KG II C7: the chosen card stands lifted as it is drawn (gambitTableDraw.js) - its press is tested there too
+    const q = pointAt(t), [u] = local(q, p.col, p.row), y = q[1] - (places.top + GAMBIT_CARD_FOOT + (p.id === selected ? GAMBIT_SELECT_LIFT : 0));
     if (Math.abs(u) <= half && y >= 0 && y <= H) take(t, [p.col, p.row]);
   }
   for (let r = 0; r < KG_ROWS; r++) for (let c = 0; c < KG_COLS; c++) {
@@ -140,7 +141,9 @@ export const GAMBIT_LEAN_FILL = 0.94;
  * @param {ReturnType<typeof gambitPlaces>} places
  * @param {{aspect: number, fovY: number, clear?: {x0: number, x1: number, y0: number, y1: number}, pitch?: number}} view
  */
-export function gambitLean(places, { aspect, fovY, clear = { x0: 0, x1: 1, y0: 0, y1: 1 }, pitch = GAMBIT_LEAN_PITCH }) {
+export function gambitLean(places, { aspect, fovY, clear: given = { x0: 0, x1: 1, y0: 0, y1: 1 }, pitch = GAMBIT_LEAN_PITCH }) {
+  // AUDIT KG II C5: a clear screen with no extent fits nothing - the whole view instead (the eye never thrown away)
+  const clear = given && given.x1 - given.x0 > 0 && given.y1 - given.y0 > 0 ? given : { x0: 0, x1: 1, y0: 0, y1: 1 };
   const f = [-places.toHost[0] * Math.cos(pitch), -Math.sin(pitch), -places.toHost[1] * Math.cos(pitch)];   // toward the head, down
   const rt = [places.right[0], 0, places.right[1]];
   const up = [f[1] * rt[2] - f[2] * rt[1], f[2] * rt[0] - f[0] * rt[2], f[0] * rt[1] - f[1] * rt[0]];   // forward x right: the screen's up (the world's left hand - Unity's axes)

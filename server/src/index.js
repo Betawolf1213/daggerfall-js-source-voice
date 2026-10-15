@@ -3813,7 +3813,7 @@ export class Room {
       //
       // Kings-Gambit.md section 5.8: "a King's Gambit table in the relay beside Hold'em's and Iliac Hand's" - the relay
       // builds the board and rolls every die from its own CSPRNG, a command is the law's, the room told every event, a
-      // turn clock (net/gambitTable.js). An interior's room only; the green table only (the red one's gold is KG6's).
+      // turn clock (net/gambitTable.js). An interior's room only; KG6: the red table for gold (CARDS6's escrow).
       const now = Date.now();
       if (!String(a.key ?? '').startsWith('interior:')) return;
       if (!this._spend(ws, now, holdemGate, 'gambitBucket', 'gambitDrops', 'too many card words', CHAT_STRIKES_MAX)) return;
@@ -4704,7 +4704,7 @@ export class Room {
       if (await this._iliacUp(a.id, now)) await this._iliacSave();
       msgs = r;
     } else if (!t) { refuse('no table'); return; }
-    else if (m.op === 'stand') msgs = gambitStand(t, { id: a.id, now });
+    else if (m.op === 'stand') msgs = gambitStand(t, { id: a.id, now, gameNo: m.gameNo });   // AUDIT KG II A1: the game its panel showed
     else {
       const r = m.op === 'ready' ? await this._gambitReady(a, m, now)
         : m.op === 'unready' ? gambitUnready(t, { id: a.id, now })

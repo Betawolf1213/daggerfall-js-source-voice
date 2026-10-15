@@ -144,12 +144,15 @@ test('KG5 A FORFEIT AND A STAND: the forfeit keeps its chair, the stand (a socke
   assert.deepEqual([e2[0].t, e2[0].winner, e2[0].how, e2[1].t], ['result', 0, 'left', 'leave']);
   assert.equal(t.seats[1], null);
   // the relay's source broke at a blow: no contest
-  const v = dealt(11);
-  const atk = v.t.game.pieces.find((p) => p.side === 0 && foesInRange(v.t.game, p).length);
-  if (atk) {
-    const r = gambitCommand(v.t, { id: 'a', cmd: { type: 'attack', piece: atk.id, target: foesInRange(v.t.game, atk)[0].id }, gameNo: 1, now: 1, rand32: () => -1 });
-    assert.equal(r[0].frame.events[0].how, 'void');
-  }
+  // PIN MOVED (AUDIT KG II E1): no seed dealt a blow in reach, so this never ran - the attacker stood beside its foe now
+  const v = dealt(11), vg = v.t.game;
+  vg.tiles = vg.tiles.map(() => KG_TILE.floor); vg.hazards = [];
+  const atk = vg.pieces.find((p) => p.side === 0 && !p.king && !p.ranged), foe = vg.pieces.find((p) => p.side === 1 && !p.king);
+  for (const p of vg.pieces) if (p !== atk && p !== foe) { p.col = p.side ? 14 - (p.id % 7) : p.id % 7; p.row = p.side ? 0 : 12; }
+  atk.col = 7; atk.row = 6; foe.col = 7; foe.row = 5;
+  assert.ok(foesInRange(vg, atk).some((x) => x.id === foe.id));
+  const r = gambitCommand(v.t, { id: 'a', cmd: { type: 'attack', piece: atk.id, target: foe.id }, gameNo: 1, now: 1, rand32: () => -1 });
+  assert.equal(r[0].frame.events[0].how, 'void');
 });
 
 test('KG5 A WHOLE GAME AT THE RELAY: two seats played by the regulars\' careful rules through the table\'s own commands and clock, to a king\'s fall - every frame the client\'s check takes, the end said once (mutant: a frame the client refuses)', () => {

@@ -254,7 +254,7 @@ export const TITLE_RGBA = Object.freeze({
   iliacchampion: Object.freeze([0.239, 0.608, 0.820, 1]),   // #3d9bd1
   // KG6: the GRANDMASTER in a king's purple - a crown's, the board's royal; deeper than the Hierophant's violet and warmer
   // than the Iliac Champion's sea-blue
-  grandmaster: Object.freeze([0.612, 0.341, 0.792, 1]),   // #9c57ca
+  grandmaster: Object.freeze([0.706, 0.22, 0.824, 1]),   // #b438d2 - AUDIT KG II D12: #9c57ca stood 18 apart from the Protector's; this one stands 49 from every title
   // CHAP4c: a chapter's seats' - a guild banner's steel blue for its Master, paler for an officer, weathered grey for a
   // Master who lost the seat; lighter and greyer than the Herald's azure, darker than the Champion's silver
   chaptermaster: Object.freeze([0.498, 0.698, 0.898, 1]),   // #7fb2e5

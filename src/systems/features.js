@@ -1000,7 +1000,7 @@ export const FEATURES = Object.freeze([
     // the mod's own name and its author, as every mod row carries them (AUDIT SURV E) - the bundle names none, so the
     // credits' own unnamed form (ui/credits.js), as Oblivion Remaster Like Leveling's row names its source
     get title() { return t('features.mod.title', '{title} by {author}', { title: 'The King\u2019s Gambit', author: t('credits.author.unnamed', 'Unnamed ({source})', { source: 'thekingsgambit.dfmod' }) }); },
-    get note() { return t('features.mod.kingsGambit.note', 'A battle of armies and kings on a tavern\'s card table, against its regulars, for gold or for fun. Off, the tables offer Hold\'em and Iliac Hand alone.'); },
+    get note() { return t('features.mod.kingsGambit.note', 'A battle of armies and kings on a tavern\'s card table - against its regulars for gold or for fun, or online against another player, with a season board. Off, the tables offer Hold\'em and Iliac Hand alone.'); },
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['mod']),
     control: Object.freeze({ store: 'prefs', key: KINGS_GAMBIT_KEY, initial: true, online: 'player' }),

@@ -13,11 +13,15 @@
 //     own foot; its commands are turned back before they go (unflipCommand), and the cloth lays the turned board where
 //     the host's lies (world/gambitCloth.js gambitPlaces `flip`). A watcher reads the host's.
 //   - A COMMAND GOES TO THE RELAY: the law's own check first, here, on the board as told (a refusal said at once, in the
-//     law's word); a lawful one is sent and nothing moves until the relay says so - one command on its way at a time.
+//     law's word); a lawful one is sent and nothing moves until the relay says so - one command on its way at a time,
+//     a press made meanwhile held and sent once the board is told, checked again on it (AUDIT KG II B11).
 //   - THE OTHER SIDE'S ACTIONS SHOWN APART (10.7, the mod's RemoteActionGap): a frame carrying the opponent's action
-//     waits GAMBIT_REMOTE_GAP_MS after the last one shown, so the motion and the log read each in turn.
+//     waits GAMBIT_REMOTE_GAP_MS after the last one shown, so the motion and the log read each in turn - a watcher's,
+//     both sides' (AUDIT KG II B10).
 //   - THE END IS THE RELAY'S: the room's `result` - a king's fall, a forfeit, a seat stood up by the clock or gone, no
-//     contest - decides the game; the result is shown after the mod's beat (GAMBIT_RESULT_MS). Friendly: no gold.
+//     contest - decides the game; the result is shown after the mod's beat (GAMBIT_RESULT_MS). Friendly: no gold. A
+//     result this socket never heard (it dropped, and the relay gave the game away) is read off the table's `last` when
+//     the next look tells it (AUDIT KG II B2).
 //
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import { gambitRefusal } from '../net/kingsGambit.js';
@@ -28,6 +32,8 @@ import { GAMBIT_RESULT_MS } from './gambitTableSession.js';
 const LAW_ACTIONS = Object.freeze(['move', 'attack', 'potion', 'end']);
 /** A command unanswered this long is let go (a frame lost to a dropped socket - the next welcome asks the table again). */
 export const GAMBIT_SENT_MS = 4000;
+/** AUDIT KG II B11: the presses held while one is on its way - a turn's worth and its End. */
+export const GAMBIT_HELD_MAX = 4;
 
 export class RemoteGambitTable {
   /** @param {{myId: string|null}} p */
@@ -71,11 +77,15 @@ export const overBy = (how) => (how === 'king' ? 'king' : how === 'void' ? 'void
 
 export class RemoteGambitSession {
   /**
-   * One dealt game, read from seat `side` (0 the host, 1 the guest - a watcher reads the host's).
-   * @param {{side: number, game: any, gameNo: number, send: (cmd: any) => boolean, forfeit: () => boolean, now: number}} p
+   * One dealt game, read from seat `side` (0 the host, 1 the guest - a watcher reads the host's). `watch`: a watcher's -
+   * both sides' actions shown apart (AUDIT KG II B10); `midway`: a game opened under way, not dealt this frame - no deal's
+   * muster, no StartBattle (AUDIT KG II B18).
+   * @param {{side: number, game: any, gameNo: number, send: (cmd: any) => boolean, forfeit: () => boolean, now: number, watch?: boolean, midway?: boolean}} p
    */
-  constructor({ side, game, gameNo, send, forfeit, now }) {
+  constructor({ side, game, gameNo, send, forfeit, now, watch = false, midway = false }) {
     this.side = side === 1 ? 1 : 0;
+    this.watch = !!watch;
+    /** @type {any[]} */ this.held = [];   // AUDIT KG II B11: presses made while one was on its way
     this.gameNo = gameNo;
     this.sendCmd = send;
     this.sendForfeit = forfeit;
@@ -88,7 +98,7 @@ export class RemoteGambitSession {
     /** @type {{winner: number|null, by: 'king'|'forfeit'|'void', how: string}|null} */ this.over = null;
     this.stake = 0;
     this.state = this.view(game);
-    this._say({ t: 'game', layout: this.state.layout, stake: 0 }, now);
+    this._say({ t: 'game', layout: this.state.layout, stake: 0, ...(midway ? { midway: true } : {}) }, now);
   }
 
   /** The relay's board as this seat reads it. @param {any} game */
@@ -102,9 +112,13 @@ export class RemoteGambitSession {
    * @param {any[]} events @param {any} state
    */
   feed(events, state) {
-    const game = state?.game ?? (state?.last?.gameNo === this.gameNo ? state.last.game : null);
-    const theirs = events.some((e) => LAW_ACTIONS.includes(e.t) && e.side === 1 - this.side);
-    this.queue.push({ events, game, theirs });
+    const last = state?.last?.gameNo === this.gameNo ? state.last : null;
+    const game = state?.game ?? last?.game ?? null;
+    const theirs = events.some((e) => LAW_ACTIONS.includes(e.t) && (this.watch || e.side === 1 - this.side));
+    // AUDIT KG II B2: the game ended while this socket was away (the relay stood it up - 'left' - and told the room, not
+    // it): the table's `last` says how, as the next look tells it
+    const told = !state?.game && last && !events.some((e) => e.t === 'result');
+    this.queue.push({ events: told ? [...events, { t: 'result', gameNo: last.gameNo, winner: last.winner, how: last.how }] : events, game, theirs });
   }
 
   /** The clock moves: the queued frames shown in turn - the other side's actions GAMBIT_REMOTE_GAP_MS apart - and the
@@ -118,6 +132,13 @@ export class RemoteGambitSession {
       if (q.theirs) this.shownAt = now;
       this._show(q, now);
     }
+    // AUDIT KG II B11: a press held while another was on its way goes once the board is told - checked again on it
+    while (this.held.length && this.sentAt === null && !this.queue.length) {
+      const cmd = this.held.shift();
+      const no = this.over ? null : gambitRefusal(this.state, 0, cmd) ?? this._send(cmd, now);
+      if (no) this._say({ t: 'refused', why: no, cmd }, now);
+    }
+    if (this.over) this.held = [];
     if (this.over && !this.shown && this.resultAt !== null && now >= this.resultAt) { this.shown = true; this._say({ t: 'result', ...this.over }, now); }
   }
 
@@ -143,7 +164,12 @@ export class RemoteGambitSession {
     if (this.over || !this.state) return 'over';
     const no = gambitRefusal(this.state, 0, cmd);
     if (no) return no;
-    if (this.sentAt !== null || this.queue.length) return null;   // one command on its way at a time - the press waits on the board as told
+    // one command on its way at a time: a press made meanwhile is held, sent once the board is told (AUDIT KG II B11)
+    if (this.sentAt !== null || this.queue.length) { if (this.held.length < GAMBIT_HELD_MAX) this.held.push(cmd); return null; }
+    return this._send(cmd, now);
+  }
+  /** A lawful command to the relay: null, or 'link' when the link will not carry it. @param {any} cmd @param {number} now */
+  _send(cmd, now) {
     if (!this.sendCmd(this.side === 1 ? unflipCommand(cmd) : cmd)) return 'link';
     this.sentAt = now;
     return null;
