@@ -1,5 +1,7 @@
 -- FIRM1 (2026-10-13) - THE FIRMAMENT: a character's passive tree (bible/06-Systems/Firmament.md; the law
--- src/net/firmamentLaw.js, the sky src/net/firmamentTree.js).
+-- src/net/firmamentLaw.js, the sky src/net/firmamentTree.js). Written as 0113; renumbered past main's 0113_lamp_title at
+-- the audit's merge (MIGRATION-PREFIX). Every statement IF NOT EXISTS, so a test service that applied it as 0113 takes
+-- this name as a no-op.
 --
 --   npx wrangler d1 migrations apply daggerfall-accounts --remote
 --

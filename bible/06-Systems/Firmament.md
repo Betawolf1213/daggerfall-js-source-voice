@@ -1,7 +1,7 @@
 # The Firmament - a passive tree for everything you can do online (FIRM1)
 
 > Design page and record (2026-10-13). One pull request, five parts: the sky and the law (`src/net/firmamentTree.js`,
-> `src/net/firmamentLaw.js`), the account service (`server-account/src/firmament.js`, migration 0113), the client's book
+> `src/net/firmamentLaw.js`), the account service (`server-account/src/firmament.js`, migration 0114), the client's book
 > and powers (`src/net/firmamentBook.js`, `src/systems/firmamentLive.js`, `src/systems/firmamentPowers.js`), the window
 > (`src/ui/firmamentWindow.js`, `src/ui/firmamentOver.js`) and the lab (`firmament.html`). Where this page and the code
 > disagree, the code's own headers and the pins are what runs.
@@ -137,7 +137,7 @@ The numbers are a first cut, every one named in one table (`STAT_DEFS`, the star
 one number. The existing balance levers beside it are untouched: Renown's own health and magicka, Master Skills' foe
 edge (`skillSoftcap.js combatEdge`), the loot's and the sets' caps.
 
-## 5. The account service (`server-account/src/firmament.js`, migration 0113)
+## 5. The account service (`server-account/src/firmament.js`, migration 0114)
 
 - `POST /v1/firmament/state { character }` - the tree, the purses read off the Renown track and the profession tracks,
   what is left, the refund's price.
@@ -145,7 +145,8 @@ edge (`skillSoftcap.js combatEdge`), the loot's and the sets' caps.
   the purses the service counts. One change is one request id (`firmament_sets`): asked twice it is answered from its
   row and charged once; made over a tree another change already replaced, it is refused (`firm-stale`).
 - Behind **`FIRMAMENT_OPEN`** (`off` / `dev` / `on`) in `wrangler.toml`, shipped at `dev` (AUDIT UICALM-FIRM1 L2 M5: the
-  drop had set `on` under this line's own comment). The switch is the tree's WHOLE hand: shut, its stars move no trade
+  drop had set `on` under this line's own comment), then opened: **`on`** (FIRMAMENT-ON, 2026-10-15, the owner at the
+  audit's merge: "switch it on for players") - everyone's. The switch is the tree's WHOLE hand: shut, its stars move no trade
   either (`firmStatsFrom` - L2 M4), and the client's book holds no tree in force on a shut read.
 - **The tree's hand on the trades is the service's**: a harvest reads the tree in its own round trip
   (`professions.js harvestNode`) - `yield.<profession>` on the quantity (the service's own die for the fraction, drawn

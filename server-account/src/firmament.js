@@ -1,6 +1,6 @@
 // @ts-check
 // ═══════════════════════════════════════════════════════════════════
-// FIRM1 (2026-10-13) - THE FIRMAMENT, AS THE SERVICE KEEPS IT: a character's passive tree (migration 0113), its two
+// FIRM1 (2026-10-13) - THE FIRMAMENT, AS THE SERVICE KEEPS IT: a character's passive tree (migration 0114), its two
 // purses read off what this service already holds - the Renown track (renownTracks.js) for Stars, the profession
 // tracks (professions.js) for Craft points - and every change judged by the one law both ends read
 // (src/net/firmamentLaw.js). The record is bible/06-Systems/Firmament.md.

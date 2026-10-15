@@ -180,10 +180,10 @@
     ]
   },
   {
-    "name": "AUF-L2M5-shipped-on",
+    "name": "AUF-L2M5-shut-to-players",
     "file": "server-account/wrangler.toml",
-    "old": "FIRMAMENT_OPEN = \"dev\"",
-    "new": "FIRMAMENT_OPEN = \"on\"",
+    "old": "FIRMAMENT_OPEN = \"on\"",
+    "new": "FIRMAMENT_OPEN = \"dev\"",
     "tests": [
       "test/audit_uicalm_firm1.test.js"
     ]

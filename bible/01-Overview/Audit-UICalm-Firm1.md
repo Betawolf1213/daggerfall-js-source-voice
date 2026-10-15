@@ -48,13 +48,13 @@ cost or a word.
 | L2 M2 | MED | `send()` reused a kept change's id for a newer tree - a kept change that had landed answered the new tree as its repeat | FIXED: an id names one tree on both ends (the book mints a new one; the service refuses another tree under a made id, `firm-rid`) |
 | L2 M3 | MED | The Worker's own `rate` and `maintenance` refusals dropped a kept change | FIXED: kept and asked again (`UNHEARD`) |
 | L2 M4 | MED | `FIRMAMENT_OPEN` shut `/state` alone: a closed sky still gave the trades their yield and XP | FIXED: the switch is the tree's whole hand (`firmStatsFrom`); a shut read leaves no tree in force |
-| L2 M5 / L5 M2 | MED | `wrangler.toml` shipped `"on"` under its own "Shipped at dev" | FIXED: `"dev"`, as the record says |
+| L2 M5 / L5 M2 | MED | `wrangler.toml` shipped `"on"` under its own "Shipped at dev" | FIXED: `"dev"`, as the record said - then opened at the merge, the owner's word ("switch it on for players"): `"on"`, the config, its comment and the design page saying it together (FIRMAMENT-ON) |
 | L2 L1 / L5 H6 | LOW | `/respec` for a non-realm character charged nothing on the service | FIXED: `realm-needed` on both ends - online play is the realm's |
 | L2 L2 | LOW | A realm character's delete left its sky's rows | FIXED: `deleteRealm` takes them |
 | L2 L3 | LOW | The temper's XP took no hand of the tree | FIXED: `scaleXp` as the anvil's. KEPT, recorded: the motherlode's and a writ's XP (their own routes, unscaled by design) |
 | L2 L4 | LOW | A kept change refused on its retry was dropped with no word | FIXED: the refusal said (`read()`) |
 | L2 L5 / L4 L4 | LOW | Fifteen refusals read "The stars refused." | FIXED: the account's own words where the window has none (`accountRefusalText`) |
-| L2 N1 | NIT | Migration 0113's index is read by no statement | KEPT: the migration may already stand on a test server; a later migration may drop it |
+| L2 N1 | NIT | The Firmament migration's index is read by no statement | KEPT: the migration may already stand on a test server; a later migration may drop it. (Written as 0113, renumbered 0114 past main's `0113_lamp_title` at the merge - MIGRATION-PREFIX) |
 | L3 H1 | HIGH | The foot's two new plaques wrapped it past the stage's fixed reserve: on phones, landscape, 1024x600 and a German desk, a tap on Offline, Load or Back opened Settings | FIXED: the foot says its height (`--px-foot-h`, measured) and the stage ends there; a phone's and a short screen's plaques share one row. 224 door checks take their own tap |
 | L3 M1 | MED | The Grimoire book's leaves broke on short, wide screens ("Thine Own Tale" into "Offline", 932x430) | FIXED: the book wants 561px of height (`BOOK_MQ`) |
 | L3 M2 | MED | A double click on Offline opened Load Game, drawn under the pointer | FIXED: a double click's second click is no door's |

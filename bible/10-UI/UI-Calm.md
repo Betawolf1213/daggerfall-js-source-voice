@@ -160,7 +160,7 @@ the summary board looks cut off ... massively polish all this and do the same fo
 - **The Firmament says why a read failed** (`ui/firmamentWindow.js` `readFailText`, `net/firmamentBook.js`
   `state.status`): a refused `/v1/firmament/state` had left the purses at their empty defaults - "0 of 0", Renown 1 - as
   if that were the answer (a test server whose account service had not been deployed with the Firmament, or whose
-  migration 0113 was not applied, showed a Renown 5 character no stars). It names a 404 (no Firmament on that service),
+  migration 0114 (written as 0113) was not applied, showed a Renown 5 character no stars). It names a 404 (no Firmament on that service),
   a closed switch, no session, no word, or the status.
 
 ## Not done here
