@@ -90,8 +90,15 @@ test('PORTRAIT3D: headFrame looks the face full on - the eye before it on +Z, wh
   const wide = headFrame(b, { aspect: 33 / 30 });
   assert.ok(Math.abs((1 / wide.proj[0]) / (1 / wide.proj[5]) - 33 / 30) < 1e-6, 'the HUD\'s 33 x 30');
   const u = 1 / MW_UNITS_PER_METER;
-  assert.deepEqual(Array.from(headPortraitModel()), Array.from(multiply(trs(0, 0, 0, 0, 0, 0, -u, u, u), NIF_TO_PASS)), 'figure()\'s model at yaw 0: the portrait the body, not its mirror');
-  assert.match(src('src/combat/fpArm.js'), /multiply\(trs\(0, 0, 0, 0, yawDeg, 0, -u \* rs\.weight, u \* rs\.height, u \* rs\.weight\), NIF_TO_PASS\)/, 'the figure it matches');
+  // PIN MOVED (PORTRAIT3D-FACE - a player's screenshot: a Nord's card showing only his hair): figure()'s model at yaw 0
+  // IS turned 180 (drawThird's +180 stands the body's front toward its eye on +Z); this pinned the transform without the
+  // turn, and every portrait was the back of a head
+  assert.deepEqual(Array.from(headPortraitModel()), Array.from(multiply(trs(0, 0, 0, 0, 180, 0, -u, u, u), NIF_TO_PASS)), 'figure()\'s model at yaw 0, its turn and all: the portrait the body, not its mirror');
+  assert.match(src('src/combat/fpArm.js'), /const yawDeg = \(yaw \* 180 \/ Math\.PI\) \+ 180;\n\s*const model = multiply\(trs\(0, 0, 0, 0, yawDeg, 0, -u \* rs\.weight, u \* rs\.height, u \* rs\.weight\), NIF_TO_PASS\)/, 'the figure it matches - its +180');
+  // the body's front (Morrowind's forward, +Y - the steel plate's bake, the rigs' walk) lands nearer the eye than its back
+  const front = transformPoint(headPortraitModel(), 0, 20, 100), back = transformPoint(headPortraitModel(), 0, -20, 100);
+  assert.ok(front[2] > back[2], `the face toward the eye on +Z (front z ${front[2].toFixed(3)}, back z ${back[2].toFixed(3)})`);
+  assert.ok(Math.abs(front[1] - back[1]) < 1e-9 && front[1] > 0, 'upright: the crown up, front and back at one height');
 });
 
 test('PORTRAIT3D: headBounds frames the head\'s own pieces, and of a hood that hangs from more than the head, only what lies round the head', () => {

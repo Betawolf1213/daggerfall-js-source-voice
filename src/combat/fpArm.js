@@ -2307,8 +2307,12 @@ export function headFrame(bounds, { air = 1.08, aspect = 1 } = {}) {
   return { view, proj: ortho(halfH * a, halfH, 0.1, span * 8), eye };
 }
 
-/** PORTRAIT3D: the model a portrait's assembly is drawn under - figure()'s own, x negated, in metres, Z-up stood Y-up. */
-export const headPortraitModel = () => multiply(trs(0, 0, 0, 0, 0, 0, -1 / MW_UNITS_PER_METER, 1 / MW_UNITS_PER_METER, 1 / MW_UNITS_PER_METER), NIF_TO_PASS);
+/** PORTRAIT3D: the model a portrait's assembly is drawn under - figure()'s own at yaw 0, x negated, in metres, Z-up
+ *  stood Y-up, AND TURNED TO FACE THE EYE: figure()'s +180 (drawThird's), which stands the body's front on +Z where
+ *  headFrame's eye is. PORTRAIT3D-FACE (2026-10-15, a player's screenshot via the owner - a Nord's card on the online
+ *  characters page showing only his hair): the first cut took the transform and left the turn, so every portrait was
+ *  of the back of the head. */
+export const headPortraitModel = () => multiply(trs(0, 0, 0, 0, 180, 0, -1 / MW_UNITS_PER_METER, 1 / MW_UNITS_PER_METER, 1 / MW_UNITS_PER_METER), NIF_TO_PASS);
 
 /** PORTRAIT3D: the box a portrait frames, in the pass frame - the head's pieces (`heads`, by slot: the skin's head and
  *  hair, a helm's parts) and, of a part that also hides the head and hangs from more than it (a townsperson's hooded
