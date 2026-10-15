@@ -293,10 +293,10 @@ Gauntlets, The Battlemage's Greaves, The Battlemage's Boots, The Spire-Shield (K
 | 6 | **Battlemage's Reprieve** - a foe's blow that takes you under 20% (from at or over it, still standing - never a killing blow, a saved one, a fall or a spell) raises a shield of a share of your maximum health for 6 s, spent point for point on whatever comes, and shields your allies within 8 m for half of it; then it must recover | 15% -> 40%; recovers 240 -> 120 s |
 
 The cast is told by a seam of its own (`systems/playerCasts.js`, at the one cast engine's release - `scenes/hostMagic.js`
-`done()`), and the return comes through the one magicka a power gives (`systems/playerHeal.js` `gainMana`, moved there from
-`systems/lootPowers.js` whole). The allies' half is no reach of the set's: a player's vitals are their own client's
-(ALLY-CAST), so the host's door (`setSetPowersAllies`) casts a Shield at each ally and their client lands it as its own
-pool. 6 s is no whole number of magic rounds (a round is 5 s of the shared clock online), so an ally's Shield is rounded up
+`done()`), and the return comes through the one magicka a power gives (`systems/playerHeal.js` `manaMine`: SCHOOLS3's
+home of the one magicka gift, which EG15 had also moved there whole from `systems/lootPowers.js`, as `gainMana`). The
+allies' half is no reach of the set's: a player's vitals are their own client's (ALLY-CAST), so the host's door
+(`setSetPowersAllies`) casts a Shield at each ally and their client lands it as its own pool. 6 s is no whole number of magic rounds (a round is 5 s of the shared clock online), so an ally's Shield is rounded up
 to whole rounds and given one more, as Eventide's is: three rounds, at least the 6 s the card says (10 to 15). Its points
 ride the cast frame's byte (255 at most). **The Spire's recovery** (`Elite-Gates.md` section 15): in an Elite Breach the
 Reprieve, Unbroken, The Hour Turns and Shed Skin are no timers - spent there, each is held to the next Redoubt taken, and
@@ -1037,4 +1037,8 @@ SD9d's and SERPENT-SET's set lists and records, SET3's states and voice, SERPENT
 engine's release tail (FIX-F's, AUDIT 36's and QG1's: the tell sits after the raise, before the clear); their records
 re-aimed by content (SET1's order, SD9d's three, SERPENT-SET's four, SET3's three, AUDIT 625's Shed Skin guard, RENOWN1's
 save and AUDIT RENOWN1's magery), every one dead. The records' import of the pay law brings `net/egPay.js` into the
-account Worker's bundle, so the account deploy's path filter names it (ACC4).
+account Worker's bundle, so the account deploy's path filter names it (ACC4). At the arc's merge of main #880 to #899
+(a43a033e63, 2026-10-14), main's SCHOOLS3 had moved the same gift into `systems/playerHeal.js` as `manaMine`. That is its
+one home now (ONE EXPORT): Discipline's return calls `manaMine`, `systems/lootPowers.js` reads it as `gainMana`, and
+`eg15_panoply`'s pins and EG15-return-share were re-aimed and judged dead (`Elite-Gates.md` section 31's note after
+AUDIT EG IV).
