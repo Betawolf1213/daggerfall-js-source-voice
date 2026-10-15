@@ -7,7 +7,7 @@ Two calls were Mac's, asked: "Store as loose" (LOOT-LOOSE) and "One body per acc
 | | Report | What it was | Done |
 |---|---|---|---|
 | 1 | "Random encounter from box - Slaughter fish" | SEARCH1's crate foe drew from the dungeon's layout roster, swimmers and all | SLAUGHTER-BOX |
-| 2 | "Happened after a server restart ... friend who is a duplicate of them" | a cell's room kept two sockets of one account | ONE-BODY (relay world206) |
+| 2 | "Happened after a server restart ... friend who is a duplicate of them" | a cell's room kept two sockets of one account | ONE-BODY (relay world207) |
 | 3 | "the town of penbrugh every animal and food stand item turned into freaks" | a town mod's factioned market flats stood Morrowind bodies | STALL-FLATS |
 | 4 | "The NPC's are clustered into groups and all have their heads down and they just rotate" | the same | STALL-FLATS |
 | 5 | "No boots model on legendary boots" | chain boots have no imperial chain model; the figure stood bare skin | BARE-BOOTS |
@@ -44,7 +44,7 @@ are loose stands, so the fix holds for the room; no relay change. `06-Systems/Se
 
 ## ONE-BODY: a place stands one body an account (2)
 
-`server/src/index.js` the hello's one-socket law; `src/net/wire.js` RELAY_VERSION `world206`.
+`server/src/index.js` the hello's one-socket law; `src/net/wire.js` RELAY_VERSION `world207` (`world206` on its branch, renumbered past main's SERPENT5 `world206` at the merge).
 
 FOUND. A relay deploy restarts every room and drops every socket (`relay-deploy.yml`). Peers are kept by peer id, and
 a cell's room (`world:x,y` - the open country and the towns) or a world room (a dungeon, an interior) let one account
@@ -58,7 +58,7 @@ and a socket still heartbeating stands for good. AUDIT ONESEAT R3 had recorded t
 CHANGED (Mac, asked: "One body per account"). A cell's room and a world room close an account's older socket when it
 says hello again under another id (CLOSE_REPLACED, its leave sent to the room), as the gate's, the siege's and the Super
 dungeon's rooms already did. Two tabs of one account in a place are one player now - the older rule ("two players")
-reversed. Relay `world206`, its law row in `test/relayversion.test.js`; the deploy drops every player once. Pinned in
+reversed. Relay `world207`, its law row in `test/relayversion.test.js`; the deploy drops every player once. Pinned in
 `test/fb1015c_onebody.test.js`; five relay pins that modelled two tabs of one account in a place moved (PIN MOVED in
 each); `tools/mutants/fb1015c_onebody.json`.
 
