@@ -990,7 +990,8 @@ import { createStandingHorses, isStandingHorseFlat } from '../world/standingHors
 import { isStandFlat, standFlatId, standFlatRecord } from '../world/standFlats.js';   // STAND-FLAT: a town horse and a person's flat no StaticNPC holds, a batch each
 import { DECOR_DRAW, decorCullVerdict, offerDecorFigures } from './decorRoom.js';   // PERF-YARD: a placed piece's verdict, from the host's view test; MWNPC18: a yard's figures in their bodies
 import { createHomeYards, yardLampRows } from './homeYards.js';   // HOME-YARD: the town's yards, and the owner's decorator outside; YARD-LIGHT: a yard's lamps as the night's scene lights
-import { modelFootRects, footRectsAt, homeYardWallet } from './homeYards.js';   // INSTANCES' HOST-SPLIT: and the yard's wallet, out of bootWorld   // FB1009 HOME-FOOT: a building's ground, its models' faces seen from above
+import { modelFootRects, footRectsAt } from './homeYards.js';   // FB1009 HOME-FOOT: a building's ground, its models' faces seen from above
+import { homeYardWallet } from './homeYards.js';   // INSTANCES' HOST-SPLIT: the yard's wallet, out of bootWorld (it reads only the player)
 import { loadIcon } from '../ui/textureCanvas.js';   // HOME-YARD: the decorator's pictures
 import { decorScanDeps } from '../systems/decorScan.js';   // HOME-YARD: the catalogue's scan (DECOR-DUNGEON: one constructor for both hosts)
 import { DOOR_TYPE } from '../world/meshReader.js';   // ARENA1: the undercroft's stair is a dungeon entrance (DECOR-DUNGEON: GLOBAL_SCALE went with the yards' scan deps, systems/decorScan.js)
