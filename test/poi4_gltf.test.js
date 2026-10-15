@@ -53,6 +53,8 @@ function refusal(fn) {
 const codes = (model) => model.warnings.map((w) => w.code);
 /** A number to six places, a negative zero as zero. */
 const r6 = (v) => Math.round(v * 1e6) / 1e6 + 0;
+/** linear -> sRGB, the IEC 61966-2-1 curve written out (AUDIT POI R10: the game's colours are sRGB, glTF's linear). */
+const srgb = (c) => (c <= 0.0031308 ? c * 12.92 : 1.055 * c ** (1 / 2.4) - 0.055);
 /** A GLB's two chunks back out: its JSON parsed, its BIN's bytes. */
 function chunksOf(bytes) {
   const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -104,8 +106,10 @@ test('POI-4 GLB: a textured quad read from its chunks and baked into the game\'s
   assert.deepEqual(part.materials, [0]);
   assert.ok('mesh' in decodePoiMesh(encodePoiMesh(m)));
   const mat = poiMaterialOf(model.materials[0]);
+  // PIN MOVED (AUDIT POI R10): the file's factors are glTF's LINEAR colours, the game's sRGB - [0.5, 0.6, 0.7] and the
+  // glow [0.1, 0.2, 0.3] x its strength 2 were copied as they stood; now each colour turned, the glow's strength after
   assert.deepEqual(mat, {
-    texture: 0, color: [0.5, 0.6, 0.7, 1], emissive: null, emissiveColor: [0.2, 0.4, 0.6], alpha: 'cutout', cutoff: 0.25,
+    texture: 0, color: [...[0.5, 0.6, 0.7].map((c) => r6(srgb(c))), 1], emissive: null, emissiveColor: [0.1, 0.2, 0.3].map((c) => r6(srgb(c) * 2)), alpha: 'cutout', cutoff: 0.25,
     twoSided: true, wrap: ['clamp', 'repeat'], filter: 'nearest', uv: { offset: [0, 0], scale: [1, 1], rotation: 0 },
   });
 });
@@ -250,7 +254,9 @@ test('POI-4 REFUSALS: not glTF 2.0; Draco and meshopt compression named and refu
   const json = (acc, nodes = [{ mesh: 0 }]) => ({ asset, scenes: [{ nodes: [0] }], nodes, meshes: [{ primitives: [{ attributes: { POSITION: 0 } }] }], buffers: [{ byteLength: bin.byteLength }], bufferViews: views, accessors: [acc] });
   assert.deepEqual(refusal(() => readGltf(glb(json({ bufferView: 0, componentType: 5126, count: 3, type: 'VEC3' }), bin))), { code: 'past-end', what: 'accessor', index: 0 });
   assert.deepEqual(refusal(() => readGltf(glb(json({ bufferView: 0, componentType: 5126, count: 1, type: 'VEC3' }, [{ children: [0] }]), bin))), { code: 'node-cycle', index: 0 });
-  const warned = readGltf(glb({ ...json({ bufferView: 0, componentType: 5126, count: 1, type: 'VEC3' }), meshes: [{ primitives: [{ attributes: { POSITION: 0, COLOR_0: 0 }, mode: 1 }, { attributes: { POSITION: 0, COLOR_0: 0 } }] }], animations: [{}], nodes: [{ mesh: 0, skin: 0 }] }, bin));
+  // PIN MOVED (AUDIT POI G6): skins are read now (their saved pose baked), so the node's skin is one the file has - a skin
+  // named and missing is refused `missing`, as a missing texture or node is
+  const warned = readGltf(glb({ ...json({ bufferView: 0, componentType: 5126, count: 1, type: 'VEC3' }), meshes: [{ primitives: [{ attributes: { POSITION: 0, COLOR_0: 0 }, mode: 1 }, { attributes: { POSITION: 0, COLOR_0: 0 } }] }], animations: [{}], nodes: [{ mesh: 0, skin: 0 }], skins: [{ joints: [0] }] }, bin));
   assert.deepEqual(codes(warned), ['skin', 'animation', 'points-lines', 'vertex-colours']);
 });
 

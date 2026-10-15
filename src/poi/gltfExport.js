@@ -15,14 +15,19 @@
 //     primitive a submesh, each wearing its material; the vertices shared by its primitives.
 //   - MATERIALS as the importer reads them: base colour factor and texture, emissive (normalised, the strength past one
 //     in KHR_materials_emissive_strength) and its texture, alpha mode and cutoff, double-sidedness; metallic 0 and
-//     roughness 1 (the game draws no PBR). The picture's offset, repeats and turn as KHR_texture_transform on both
+//     roughness 1 (the game draws no PBR). Colours from the game's sRGB to glTF's linear. The picture's offset, repeats and turn as KHR_texture_transform on both
 //     textures (the importer bakes it into the UVs). Samplers from the wrap and filter. Pictures embedded as stored -
 //     PNG, JPEG, or WebP through EXT_texture_webp (then required: there is no fallback image).
-//   - LIGHTS as KHR_lights_punctual point lights (colour, intensity, range = reach), on nodes of their own - optional:
-//     a tool that does not read them leaves them, and the importer sets them aside saying so.
+//   - LIGHTS as KHR_lights_punctual point lights (colour, intensity, range = reach), on nodes of their own, in that
+//     extension's units and the game's own numbers beside them - optional: a tool that does not read them leaves them.
 //
 // Pure - typed arrays in, bytes out. Not a DFU member. Ledger A (POI).
 // ═══════════════════════════════════════════════════════════════════
+
+// AUDIT POI R10: glTF's colour factors are LINEAR (the specification); the game's colours are sRGB (the editor's pickers,
+// poiRuntime.js bakeAlbedo multiplying the picture's own bytes) - turned as Unity's Mathf.GammaToLinearSpace turns them,
+// from its one home
+import { srgbToLinear } from '../systems/dynamicSkies.js';
 
 const GLB_MAGIC = 0x46546c67, CHUNK_JSON = 0x4e4f534a, CHUNK_BIN = 0x004e4942;
 const WRAP_CODE = { repeat: 10497, clamp: 33071, mirror: 33648 };
@@ -39,7 +44,7 @@ export const mirrorQuatX = (q) => [q[0], -q[1] + 0, -q[2] + 0, q[3]];
  *   name: string,
  *   parts: { name?: string, key: string, mesh: { positions: ArrayLike<number>, normals: ArrayLike<number>, uvs: ArrayLike<number>, indices: ArrayLike<number>, submeshes: { start: number, count: number }[] },
  *     t: number[], r: number[], s: number[], materials: any[] }[],
- *   lights?: { t: number[], color: number[], radius: number, intensity: number }[],
+ *   lights?: { t: number[], color: number[], radius: number, intensity: number, flicker?: boolean }[],
  *   pictures?: Map<string, { bytes: Uint8Array, format: 'png' | 'jpeg' | 'webp' }>,
  * }} model `pictures` each texture's stored bytes by its name (a picture not given is left out, its material plain)
  * @returns {Uint8Array}
@@ -105,17 +110,24 @@ export function writeGlb({ name, parts, lights = [], pictures = new Map() }) {
 
   // ── MATERIALS ──
   const material = (m, label) => {
-    const out = { name: label, pbrMetallicRoughness: { baseColorFactor: [...m.color], metallicFactor: 0, roughnessFactor: 1 }, doubleSided: !!m.twoSided };
+    // AUDIT POI R10: the colour turned to linear, its alpha (no colour) as it is
+    const out = { name: label, pbrMetallicRoughness: { baseColorFactor: [srgbToLinear(m.color[0]), srgbToLinear(m.color[1]), srgbToLinear(m.color[2]), m.color[3]], metallicFactor: 0, roughnessFactor: 1 }, doubleSided: !!m.twoSided };
     if (m.texture) { const ti = texture(m.texture, m); if (ti !== null) out.pbrMetallicRoughness.baseColorTexture = textureRef(ti, m); }
     const strength = Math.max(...m.emissiveColor, 0);
     if (strength > 0) {
       const k = Math.max(strength, 1);
-      out.emissiveFactor = m.emissiveColor.map((c) => c / k);
+      // AUDIT POI R10: the glow's colour turned to linear, its strength laid on after (the editor's glow is its colour times
+      // its strength, the importer's poiMaterialOf the same turned back)
+      out.emissiveFactor = m.emissiveColor.map((c) => srgbToLinear(c / k));
       if (k > 1) { out.extensions = { KHR_materials_emissive_strength: { emissiveStrength: k } }; used.add('KHR_materials_emissive_strength'); }
     }
     if (m.emissive) {
       const ti = texture(m.emissive, m);
-      if (ti !== null) { out.emissiveTexture = textureRef(ti, m); out.emissiveFactor ??= [1, 1, 1]; }
+      // AUDIT POI G4: glTF's glow is its factor times its picture, the game's its colour times its picture (poiRuntime.js
+      // bakeEmission) - so the factor is the one written above, and a glow picture at no strength (the editor's default)
+      // writes none, glTF's [0, 0, 0]: it glows no more in a builder's tool, nor back in the editor, than in the game. A
+      // factor of [1, 1, 1] laid under it made a picture that did not glow come back glowing.
+      if (ti !== null) out.emissiveTexture = textureRef(ti, m);
     }
     if (m.alpha === 'cutout') { out.alphaMode = 'MASK'; out.alphaCutoff = m.cutoff; } else if (m.alpha === 'blend') out.alphaMode = 'BLEND';
     g.materials.push(out);
@@ -155,7 +167,16 @@ export function writeGlb({ name, parts, lights = [], pictures = new Map() }) {
   // ── LIGHTS ──
   if (lights.length) {
     used.add('KHR_lights_punctual');
-    g.extensions = { KHR_lights_punctual: { lights: lights.map((l) => ({ type: 'point', color: [...l.color], intensity: l.intensity, range: l.radius })) } };
+    // AUDIT POI G7: KHR_lights_punctual's point intensity is in candela and its colour linear; the game's intensity is a
+    // multiplier (0 to 10) of a colour picked in sRGB - written as glTFast writes a light of Unity's built-in pipeline
+    // (KhrLightsPunctual.cs ConvertToLight: `uLight.intensity * Mathf.PI`, `uLight.color.linear`), the game's frame's own,
+    // and the game's own numbers beside them in `extras.poi`, which the importer takes back while the light still says
+    // what they say (gltfImport.js poiLightOf). Written as it was, the intensity reached Blender as a four-hundredth of a
+    // watt.
+    g.extensions = { KHR_lights_punctual: { lights: lights.map((l) => ({
+      type: 'point', color: l.color.map(srgbToLinear), intensity: l.intensity * Math.PI, range: l.radius,
+      extras: { poi: { color: [...l.color], intensity: l.intensity, radius: l.radius, flicker: !!l.flicker } },
+    })) } };
     lights.forEach((l, i) => {
       g.nodes.push({ name: `light ${i + 1}`, translation: [-l.t[0] + 0, l.t[1], l.t[2]], extensions: { KHR_lights_punctual: { light: i } } });
       g.nodes[0].children.push(g.nodes.length - 1);

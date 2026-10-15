@@ -13,21 +13,22 @@
 //     store answers `existed` for bytes it has, so a model imported twice costs nothing the second time), the
 //     materials' image indices turned into the pictures' names, each meta kept for the law's asset check
 //     (poiAssetProblems). A refusal stops the import and says which part, in the store's word.
-//   - THE ASSET (`{ name, parts }`): what the editor places (scenes/poiEditorHost.js placeAsset) - each part's mesh, its
-//     submeshes, its materials and where it stands from the model's origin.
+//   - THE ASSET (`{ name, parts, lights }`): what the editor places (scenes/poiEditorHost.js placeAsset) - each part's
+//     mesh, its submeshes, its materials and where it stands from the model's origin; the model's point lights where they
+//     stand from it (gltfImport.js poiLightOf).
 //
 // Not a DFU member. Ledger A (POI).
 // ═══════════════════════════════════════════════════════════════════
 
 import { encodePoiMesh, poiMeshError } from './poiMesh.js';
 import { poiImageMetaOf } from './poiImage.js';
-import { poiMaterialOf } from './gltfImport.js';
-import { lawName } from './poiEdit.js';
+import { poiMaterialOf, poiLightOf } from './gltfImport.js';
+import { lawName, newLight } from './poiEdit.js';
 
 /**
  * A baked model as an import: its parts held to the mesh law, their materials the document's, its images read by their
- * headers. `{ name, parts: [{ name, position, bytes, submeshes, vertices, triangles, materials }], images, warnings,
- * refused }` - `refused` the parts past a limit (`{ name, code }`), never uploaded.
+ * headers. `{ name, parts: [{ name, position, bytes, submeshes, vertices, triangles, materials }], lights, images,
+ * warnings, refused }` - `refused` the parts past a limit (`{ name, code }`), never uploaded.
  * @param {any} model readGltf's @param {any[]} baked bakeGltf's
  */
 export function prepareImport(model, baked) {
@@ -39,7 +40,8 @@ export function prepareImport(model, baked) {
   });
   const parts = [], refused = [];
   for (const p of baked) {
-    const code = poiMeshError(p.mesh);
+    // a part the bake would not build past a limit comes with the law's code already (gltfImport.js bakeGltf)
+    const code = p.refused ?? poiMeshError(p.mesh);
     if (code) { refused.push({ name: p.name, code }); continue; }
     const materials = p.materials.map((mi) => {
       const m = poiMaterialOf(model.materials?.[mi]);
@@ -58,12 +60,14 @@ export function prepareImport(model, baked) {
       materials,
     });
   }
-  return { name: lawName(model.name), parts, images, warnings, refused };
+  // AUDIT POI G7: the model's point lights come with it - a light written out by this editor as it was
+  const lights = (model.lights ?? []).map((l) => poiLightOf(l, newLight()));
+  return { name: lawName(model.name), parts, lights, images, warnings, refused };
 }
 
 /**
  * Upload a prepared import: every image the parts wear and every mesh, once each, by name. Answers
- * `{ ok: true, asset: { name, parts }, metas }` (metas: sha -> the store's meta, `kind` beside it) or
+ * `{ ok: true, asset: { name, parts, lights }, metas }` (metas: sha -> the store's meta, `kind` beside it) or
  * `{ ok: false, error, why?, part? }` - the store's word, and the part it stopped on.
  * @param {ReturnType<typeof prepareImport>} prep
  * @param {(bytes: Uint8Array, kind: 'mesh' | 'texture') => Promise<any>} put poiPutAsset over the session's door
@@ -95,5 +99,5 @@ export async function uploadImport(prep, put, progress = () => {}) {
     });
     progress(++done, total);
   }
-  return { ok: true, asset: { name: prep.name, parts }, metas };
+  return { ok: true, asset: { name: prep.name, parts, lights: structuredClone(prep.lights ?? []) }, metas };
 }

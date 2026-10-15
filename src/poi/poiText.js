@@ -80,10 +80,14 @@ const GLTF = {
   'file-missing': (a) => t('poi.gltf.fileMissing', 'This model needs the file {uri}. Choose it together with the .gltf.', a),
   // AUDIT POI U13: glTF's own object names said as words of each language, never dropped in ("a accessor", in English in
   // every language)
-  missing: (a) => t('poi.gltf.missing', 'This model refers to {what, select, accessor {an accessor} bufferView {a buffer view} buffer {a buffer} image {an image} texture {a texture} node {a node} other {a piece of itself}} that is not there.', a),
+  missing: (a) => t('poi.gltf.missing', 'This model refers to {what, select, accessor {an accessor} bufferView {a buffer view} buffer {a buffer} image {an image} texture {a texture} node {a node} skin {a skin} joint {a joint} vertex {a vertex} other {a piece of itself}} that is not there.', a),
   'past-end': (a) => t('poi.gltf.pastEnd', 'This model\'s data is cut short: {what, select, accessor {an accessor} bufferView {a buffer view} other {a piece of it}} runs past its end.', a),
   'node-cycle': () => t('poi.gltf.nodeCycle', 'This model\'s node tree loops back on itself.'),
   'accessor-type': () => t('poi.gltf.accessorType', 'This model stores a mesh attribute in a form glTF does not allow.'),
+  // AUDIT POI G3: a file that asks for more than any POI could hold, a node of two parents, and anything else malformed
+  'too-large': () => t('poi.gltf.tooLarge', 'This model is too large to import. Simplify it, or import it in pieces.'),
+  'node-parents': () => t('poi.gltf.nodeParents', 'This model\'s node tree is not a tree: an object in it has two parents.'),
+  malformed: () => t('poi.gltf.malformed', 'This model\'s file is damaged or does not follow glTF 2.0. Export it again.'),
 };
 
 /** @type {Record<string, (a: any) => string>} */
@@ -98,6 +102,10 @@ const GLTF_WARN = {
   'no-uvs': () => t('poi.gltfWarn.noUvs', 'A textured material\'s mesh has no UVs: unwrap it in the UV editor.'),
   'emission-uv-set': () => t('poi.gltfWarn.emissionUvSet', 'A glow map uses a second UV set; it is drawn with the first.'),
   'image-format': () => t('poi.gltfWarn.imageFormat', 'A picture that is not PNG, JPEG or WebP was left out.'),
+  // AUDIT POI G5, G8: a glow placed unlike its picture; an extension used and not read
+  'emission-transform': () => t('poi.gltfWarn.emissionTransform', 'A glow map is placed or repeated differently from its picture; it is drawn as the picture is.'),
+  instancing: () => t('poi.gltfWarn.instancing', 'Objects repeated by GPU instancing were imported once each. Export again with GPU instancing off.'),
+  'extension-ignored': (a) => t('poi.gltfWarn.extensionIgnored', 'This model uses {ext}, which the editor does not read: what it adds was left out.', a),
 };
 
 /** @type {Record<string, (a: any) => string>} */

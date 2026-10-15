@@ -67,7 +67,8 @@ function store() {
     if (path === '/v1/poi/rollback') return ok({ id: body.id, rev: body.rev, live: true });
     if (path === '/v1/poi/shelf' && (init.method ?? 'GET') === 'GET') return ok({ items: s.items });
     const one = /^\/v1\/poi\/shelf\/(lib-[0-9a-f]{12})$/.exec(path);
-    if (one) return ok({ id: one[1], item: s.entries.get(one[1]), by: 'Mapper' });
+    // an entry the shelf has not got is not-found, as the store answers (poi.js shelfEntry) - the pack's import asks first
+    if (one) return s.entries.has(one[1]) ? ok({ id: one[1], item: s.entries.get(one[1]), by: 'Mapper' }) : no('not-found', 404);
     if (path === '/v1/poi/shelf') return ok({ id: body.item.id, at: 1 });
     if (path === '/v1/poi/unshelve') return ok({ id: body.id, gone: true });
     const h = /^\/v1\/poi\/doc\/(poi-[0-9a-f]{12})$/.exec(path);
