@@ -721,17 +721,17 @@ export function egForgeLineClear(spec, f, B = LAW_SPAN_BUILD) {
   const clear = (k, i) => !ham[k - 1] || !hammerLive(ham[k - 1], i * dtMs);   // on conveyor k (1-based) at step i
   for (let q = 0; q < CROSS_SAMPLES; q++) {
     const s0 = Math.round((q * EG_SOLVE_HORIZON_S) / CROSS_SAMPLES / EG_SOLVE_STEP_S);
-    /** on[k][i]: standing on piece k (0 the ground before, 1.. the conveyors) at step i, unstruck */
+    /** on[k][i]: on piece k (0 the ground before, 1.. the conveyors) at step i - unstruck only while its hammer is not live */
     const on = Array.from({ length: rails.length + 1 }, () => new Uint8Array(N));
     on[0][s0] = 1;
     let across = false;
     for (let i = s0; i < N && !across; i++) for (let k = 0; k <= rails.length && !across; k++) {
-      if (!on[k][i]) continue;
-      if (i + 1 < N && (k === 0 || clear(k, i + 1))) on[k][i + 1] = 1;   // stay
+      if (!on[k][i] || !clear(k, i)) continue;   // a body under a live hammer is struck: it goes no further, stayed or landed
+      if (i + 1 < N) on[k][i + 1] = 1;   // stay
       if (!launch[k][i]) continue;
       const j = i + flight[k];
       if (k === rails.length) across = true;   // off the last conveyor onto the ground after it
-      else if (j < N && clear(k + 1, j)) on[k + 1][j] = 1;
+      else if (j < N) on[k + 1][j] = 1;
     }
     if (!across) return false;
   }

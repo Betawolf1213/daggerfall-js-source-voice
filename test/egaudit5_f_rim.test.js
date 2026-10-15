@@ -38,7 +38,7 @@ function hall({ seed, h, n = 2, strata = [] }) {
   return { B, spec, frames, step, put, now: () => now };
 }
 
-test('AUDIT EG V L1-21 THE MOLTEN RIM KEEPS ITS WAYS (section 18: "the outer 3 m of every disc of a Court is magma (a fight hall\'s way in and out keeps its edge)"): the director zones each Court disc\'s magma and, over it, a causeway (a haven) on every way across - the course\'s landing, Grath\'s bridges, the Wyrm\'s stairs, the Twin Lords\' bridge - so a screen casts back on none of them (egRimCastsBack): THE SPAN BUILD\'s leap from the approach lands on the Court wherever the solver lets it, and a member walks every bridge and stair; the rest of the ring casts back as before; its zones ride the wire and stand again when the fight\'s newest zones push them out (mutants: no causeway; a causeway only to the band\'s inner edge; the haven read as magma; the rim never stood again)', () => {
+test('AUDIT EG V L1-21 THE MOLTEN RIM KEEPS ITS WAYS (section 18: "the outer 3 m of every disc of a Court is magma (a fight hall\'s way in and out keeps its edge)"): the director zones each Court disc\'s magma and, over it, a causeway (a haven) on every way across - the course\'s landing, Grath\'s bridges, the Wyrm\'s stairs, the Twin Lords\' bridge - so a screen casts back on none of them (egRimCastsBack): THE SPAN BUILD\'s leap from the approach lands on the Court wherever the solver lets it, and a member walks every bridge and stair, its edges as its middle; the rest of the ring casts back as before; its zones ride the wire and stand again when the fight\'s newest zones push them out (mutants: no causeway; a causeway stopped at the disc\'s edge; no causeway on a lane, a band, a stair or the landing; the causeways never zoned; the haven read as magma; the rim never stood again; a rim zone pushed out read as standing)', () => {
   const courts = { isles: [1, 115], perches: [1, 105], disc20: [1, 110], twins: [3, 110], pit: [1, 125], crypt: [3, 105], glade: [4, 110] };
   for (const [ground, [seed, h]] of Object.entries(courts)) {
     const w = hall({ seed, h, strata: ['moltenrim'] }), spec = w.spec, F = w.B.F, t = w.now();
@@ -52,16 +52,17 @@ test('AUDIT EG V L1-21 THE MOLTEN RIM KEEPS ITS WAYS (section 18: "the outer 3 m
     // the way in: the approach's last leap, wherever THE SPAN BUILD lands it on the Court, and on to the stone inside the magma
     const last = egSpanPairs(spec).filter((p) => p.a && !p.b && (p.a.road ?? 0) === 0).pop();
     const reach = egJumpReach(0).reach;
-    for (let d = 0; d <= reach - last.a.after + EG_RIM_IN_M + 0.6; d += 0.1) {
-      const x = last.a.x, z = last.edge + d;
-      assert.equal(egRimCastsBack(F.zones, x, z, t), false, `${ground}: the way in, ${d.toFixed(1)} m past the leap's edge`);
+    for (const off of [-(last.a.w / 2 - 0.25), 0, last.a.w / 2 - 0.25]) for (let d = 0; d <= reach - last.a.after + EG_RIM_IN_M + 0.6; d += 0.1) {
+      const x = last.a.x + off, z = last.edge + d;
+      assert.equal(egRimCastsBack(F.zones, x, z, t), false, `${ground}: the way in, ${d.toFixed(1)} m past the leap's edge, ${off.toFixed(2)} m across`);
     }
     // ...where the ring alone (law 7's rim, AUDIT EG IV) cast the landing back
     assert.equal(egRimCastsBack(F.zones.filter((z) => z.kind === 'void'), last.a.x, last.edge + 0.5, t), true, 'the ring alone casts it back');
-    // every lane, band and stair that meets a disc's rim: walked along its line, nowhere cast back
-    for (const way of [...spec.lanes.map((l) => [l.ax, l.az, l.bx, l.bz]), ...spec.bands.filter((b) => b.role === 'bridge').map((b) => [b.x, b.z0, b.x, b.z1]), ...spec.ramps.map((q) => [q.ax, q.az, q.bx, q.bz])]) {
-      for (let k = 0; k <= 100; k++) {
-        const x = way[0] + ((way[2] - way[0]) * k) / 100, z = way[1] + ((way[3] - way[1]) * k) / 100;
+    // every lane, band and stair that meets a disc's rim: walked along its line and along both its edges, nowhere cast back
+    for (const [ax, az, bx, bz, hw] of [...spec.lanes.map((l) => [l.ax, l.az, l.bx, l.bz, l.hw]), ...spec.bands.filter((b) => b.role === 'bridge').map((b) => [b.x, b.z0, b.x, b.z1, b.halfW]), ...spec.ramps.map((q) => [q.ax, q.az, q.bx, q.bz, q.hw])]) {
+      const L = Math.hypot(bx - ax, bz - az), nx = -(bz - az) / L, nz = (bx - ax) / L;
+      for (const off of [-(hw - 0.25), 0, hw - 0.25]) for (let k = 0; k <= 100; k++) {
+        const x = ax + ((bx - ax) * k) / 100 + nx * off, z = az + ((bz - az) * k) / 100 + nz * off;
         assert.equal(egRimCastsBack(F.zones, x, z, t), false, `${ground}: along its way at (${x.toFixed(2)}, ${z.toFixed(2)})`);
       }
     }

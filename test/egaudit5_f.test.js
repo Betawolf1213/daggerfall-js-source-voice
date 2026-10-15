@@ -162,7 +162,7 @@ test('AUDIT EG V L5-5 THE SINKING STAIR\'S ISLAND (sections 8.9, 11.3: "Its cour
   assert.ok(egHallOf(8, 26, 8).frags.some((f) => f.play === 'sinking'), 'seed 8\'s, its own');
 });
 
-test('AUDIT EG V L5-11 A SPAN\'S PASSAGES BY CIRCLE (section 11.4: "in circles 1-2 every span carries one passage; in circles 3-10, one or two; deeper, up to three"): from law 8 a forked span\'s way to the fork runs through a passage one span in two from circle 3 and every span from circle 11 (never under three ranks of the span decrees, whose sections take its room) - both roads pass through it - and deeper the Low Road\'s still ground is a second passage where the hall has room; every hall inside EG_HALL_LEN_MAX; law 7 laid one (mutants: no passage on the way to the fork; the third never; the third past the hall\'s room)', () => {
+test('AUDIT EG V L5-11 A SPAN\'S PASSAGES BY CIRCLE (section 11.4: "in circles 1-2 every span carries one passage; in circles 3-10, one or two; deeper, up to three"): from law 8 a forked span\'s way to the fork runs through a passage one span in two from circle 3 and every span from circle 11 (never under three ranks of the span decrees, whose sections take its room) - both roads pass through it - and deeper the Low Road\'s still ground is a second passage where the hall has room; every hall inside EG_HALL_LEN_MAX; law 7 laid one (mutants: no passage on the way to the fork; a trunk passage under three ranks of the span decrees; the deep spans\' way a passage one in two; the third never)', () => {
   const seen = {};
   for (let seed = 1; seed <= 20; seed++) for (let c = 1; c <= 24; c++) for (const geo of c <= 1 ? [0] : [0, 1, 3, 8]) {
     const h = 5 * (c - 1) + 2, s = egHallOf(seed, h, geo);
@@ -224,7 +224,7 @@ test('AUDIT EG V L5-9 THE ECLIPSE\'S REACH (section 11.2: "the nearest is never 
   assert.ok(n >= 40, `${n} Eclipse halls`);
 });
 
-test('AUDIT EG V L5-6 THE SET PIECES\' MARGIN (section 11.3: "proven by the solver at the span build with at least 25% margin"): from law 8 THE TIMED SOLVER holds every pair of a set piece\'s course to a window of EG_WINDOW_MIN x EG_SET_MARGIN in every 12 s and its next within EG_WAIT_MAX / EG_SET_MARGIN, the Collapsing Tube to be outrun by THE SPAN BUILD with the margin (egTubeFair\'s, read by the law), and the Forge Line to be crossed from every start clear of its hammers (egForgeLineClear); the Forge Line\'s conveyors stand THE ENVELOPE\'s least gap apart, so every Brink keeps its set piece (mutants: the margin dropped; the hammers judged nowhere; a struck crossing passed; the conveyors 3.2 m apart)', () => {
+test('AUDIT EG V L5-6 THE SET PIECES\' MARGIN (section 11.3: "proven by the solver at the span build with at least 25% margin"): from law 8 THE TIMED SOLVER holds every pair of a set piece\'s course to a window of EG_WINDOW_MIN x EG_SET_MARGIN in every 12 s and its next within EG_WAIT_MAX / EG_SET_MARGIN, the Collapsing Tube to be outrun by THE SPAN BUILD with the margin (egTubeFair\'s, read by the law), and the Forge Line to be crossed from every start clear of its hammers (egForgeLineClear); the Forge Line\'s conveyors stand THE ENVELOPE\'s least gap apart, so every Brink keeps its set piece (mutants: the margin dropped; the window\'s margin dropped; the hammers judged nowhere; a struck crossing passed; a body under a live hammer let on; the conveyors 3.2 m apart)', () => {
   assert.deepEqual([EG_SET_MARGIN, EG_SET_KITS], [1.25, ['sinking', 'moonpath', 'forgeline']]);
   assert.deepEqual({ ...EG_HAMMER_LINE }, { period: 5000, tell: 1400, live: 300, r: 3 });
   assert.deepEqual([EG_HAZARDS.hammerline.period, EG_HAZARDS.hammerline.tell, EG_HAZARDS.hammerline.live], [5000, 1400, 300], 'one home');
@@ -263,9 +263,16 @@ test('AUDIT EG V L5-6 THE SET PIECES\' MARGIN (section 11.3: "proven by the solv
   assert.equal(egForgeLineClear(slow, line), false, 'struck on every crossing');
   assert.equal(egForgeLineClear({ ...slow, hazards: [] }, line), true, 'unstruck with no hammer');
   assert.match(egSpanProof(slow).why.join(), /clear of its hammers/, 'the solver refuses it');
+  // THE WINDOW'S MARGIN: a Moon Path's conveyor reached only at the foot of its 2 m roll - 0.6 s open in every 12 s, its longest
+  // wait 2.85 s: inside the plain bounds, under the margin's 0.625 s - refused for the margin alone
+  const moon = { i: 0, kind: 'rail', span: 0, x: 0, y: 0, z: 10, w: 3, d: 3, amp: 2, period: 3, phase: 0, beat: 0, gap: 5.22, road: 0, kit: 'moonpath', after: 2.4 };
+  const [into] = egSpanPairs({ v: 8, steps: [moon] }), wm = egPairWindows(into, B);
+  assert.ok(wm.worst12 >= EG_WINDOW_MIN && wm.worst12 < EG_WINDOW_MIN * EG_SET_MARGIN && wm.wait <= EG_WAIT_MAX / EG_SET_MARGIN, `a window of ${wm.worst12} s, a wait of ${wm.wait} s`);
+  assert.match(egSpanProof({ v: 8, steps: [moon] }).why.join(), /0: a window of 0\.60 s in some 12 s, under a set piece's margin/);
+  assert.doesNotMatch(egSpanProof({ v: 8, steps: [{ ...moon, kit: null }] }).why.join(), /window|wait/, 'no set piece: no margin');
 });
 
-test('AUDIT EG V L5-2 THE TIMED SOLVER ON THE LAW\'S CLOCK (section 9: "the law files decide only in integers ... a source sweep refuses"): from law 8 the solver takes every piece\'s place on THE LAW\'S CLOCK (a whole-degree table of sines, a literal, read between its degrees - egLawSin) and compares squares, never Math.hypot - so a law-8 hall is laid with every transcendental refused outright, while a law-7 one asks Math.sin; the sweep holds net/egSpanLaw.js\'s generator, the law\'s clock and the solver free of every one (mutants: a Drift\'s or a Rail\'s or a Pendulum\'s place on Math.sin under law 8; the hypot back)', () => {
+test('AUDIT EG V L5-2 THE TIMED SOLVER ON THE LAW\'S CLOCK (section 9: "the law files decide only in integers ... a source sweep refuses"): from law 8 the solver takes every piece\'s place on THE LAW\'S CLOCK (a whole-degree table of sines, a literal, read between its degrees - egLawSin) and compares squares, never Math.hypot - so a law-8 hall is laid with every transcendental refused outright, while a law-7 one asks Math.sin; the sweep holds net/egSpanLaw.js\'s generator, the law\'s clock and the solver free of every one (mutants: a Drift\'s or a Rail\'s or a Pendulum\'s place on Math.sin under law 8; a shaft crossed on the screens\' clock; the hypot back)', () => {
   // the table: the sine of every whole degree, times a million, rounded
   assert.equal(EG_SIN_DEG.length, 91);
   for (let d = 0; d <= 90; d++) assert.equal(EG_SIN_DEG[d], Math.round(Math.sin((d * Math.PI) / 180) * 1e6), `sin ${d}`);
@@ -278,6 +285,11 @@ test('AUDIT EG V L5-2 THE TIMED SOLVER ON THE LAW\'S CLOCK (section 9: "the law 
     BANNED.forEach((k) => { Math[k] = () => { throw new Error(`Math.${k} asked`); }; });
     assert.doesNotThrow(() => lay(8), 'law 8 decides on the law\'s clock alone');
     assert.throws(() => lay(7), /Math\.sin asked/, 'law 7 on the screens\' clock');
+    // a shaft's own crossing on its hall's law: a Drift in a shaft proven with the screens' clock refused
+    const drift = { i: 0, kind: 'drift', span: 0, x: 0, y: 0, z: 10, w: 3, d: 3, amp: 1, period: 4, phase: 0, beat: 0, gap: 2.4, road: 0, kit: null, after: 2.4 };
+    const shaft = { steps: [drift], frags: [{ cls: 'shaft', z0: 5, z1: 15, road: 0 }] };
+    assert.doesNotThrow(() => assert.equal(egSpanProof({ ...shaft, v: 8 }).ok, true), 'law 8\'s shaft on the law\'s clock');
+    assert.throws(() => egSpanProof({ ...shaft, v: 7 }), /Math\.sin asked/);
   } finally { BANNED.forEach((k, i) => { Math[k] = kept[i]; }); egHeroSeam(EG_HERO_FRAGS); }
   // the source sweep: the generator, the law's clock and the solver ask no transcendental
   const src = readFileSync('src/net/egSpanLaw.js', 'utf8');
