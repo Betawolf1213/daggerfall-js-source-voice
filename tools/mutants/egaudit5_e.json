@@ -211,7 +211,7 @@
   {
     "name": "EGA5E-tether-bounds-wide",
     "file": "src/render/gateTelegraph.js",
-    "old": "telegraphStrip(sh)?.w ?? sh.halfW + M);",
+    "old": "stripW(sh) || sh.halfW + M);",
     "new": "sh.halfW + M);",
     "tests": [
       "test/egaudit5_e_look.test.js"
@@ -220,8 +220,8 @@
   {
     "name": "EGA5E-tether-floor-unstripped",
     "file": "src/world/egTelegraph.js",
-    "old": "n = egClipTris(f.tris, B, out, n, telegraphStrip(sh));",
-    "new": "n = egClipTris(f.tris, B, out, n);",
+    "old": "strip = telegraphStrip(sh, K.strip);",
+    "new": "strip = null;",
     "tests": [
       "test/egaudit5_e_look.test.js"
     ]
@@ -229,7 +229,7 @@
   {
     "name": "EGA5E-strip-clip-across-unread",
     "file": "src/world/egTelegraph.js",
-    "old": "      n = cutLine(_pa, n, _pb, vx, vz, va - strip.w);\n",
+    "old": "      n = cutLine(_pa, n, _pb, 2);\n",
     "new": "",
     "tests": [
       "test/egaudit5_e_look.test.js"
@@ -238,8 +238,8 @@
   {
     "name": "EGA5E-strip-clip-whole-unchecked",
     "file": "src/world/egTelegraph.js",
-    "old": "const whole = strip ? inStrip(tris[t], tris[t + 1]) && inStrip(tris[t + 2], tris[t + 3]) && inStrip(tris[t + 4], tris[t + 5]) :",
-    "new": "const whole = strip ? inStrip(tris[t], tris[t + 1]) :",
+    "old": "const whole = strip ? inStrip(tris, t) && inStrip(tris, t + 2) && inStrip(tris, t + 4) :",
+    "new": "const whole = strip ? inStrip(tris, t) :",
     "tests": [
       "test/egaudit5_e_look.test.js"
     ]
@@ -350,6 +350,260 @@
     "new": "const { n: N } = EG_LAMP_BUDGET, R = 30,",
     "tests": [
       "test/egaudit5_e_look.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-plan-fresh-a-frame",
+    "file": "src/world/egTelegraph.js",
+    "old": "const K = keep ?? egFloorPlanKeep(), ranked = K.ranked, draws = K.plan.draws;",
+    "new": "const K = egFloorPlanKeep(), ranked = K.ranked, draws = K.plan.draws;",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-plan-draw-slots-anew",
+    "file": "src/world/egTelegraph.js",
+    "old": "const d = (K.slots[K.used++] ??= { sh: null, f: null, first: 0, count: 0, over: null, i: 0, own: { r: 0, courts: [[0, 0]] } });",
+    "new": "const d = { sh: null, f: null, first: 0, count: 0, over: null, i: 0, own: { r: 0, courts: [[0, 0]] } }; K.used++;",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-plan-ranks-anew",
+    "file": "src/world/egTelegraph.js",
+    "old": "r = (K.ranks[i] ??= { sh: null, i: 0, k0: 0, k1: 0, k2: 0 });",
+    "new": "r = { sh: null, i: 0, k0: 0, k1: 0, k2: 0 };",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-plan-heights-a-set",
+    "file": "src/world/egTelegraph.js",
+    "old": "      if (!landsAt(floors, sh, f.y)) continue;",
+    "new": "      { const ys = egShapeYs(floors, sh); if (ys && !ys.has(f.y)) continue; }",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-clip-edge-handed-boxed",
+    "file": "src/world/egTelegraph.js",
+    "old": "  const at = box[bi];\n",
+    "new": "  const at = [box[bi]][0];\n",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-bounds-box-ignored",
+    "file": "src/render/gateTelegraph.js",
+    "old": "  const b = out ?? [0, 0, 0, 0];\n",
+    "new": "  const b = [0, 0, 0, 0];\n",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-plan-keep-unpassed",
+    "file": "src/scenes/egFight.js",
+    "old": "egFloorPlan(_shapes, floors, myFeet(), floorBuf, undefined, planKeep)",
+    "new": "egFloorPlan(_shapes, floors, myFeet(), floorBuf)",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-company-every-ask",
+    "file": "src/scenes/egFight.js",
+    "old": "    if (companyMemo && t0 === companyAt && frameNo === companyFrame && E0 === companyState) return companyMemo;\n",
+    "new": "",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-blowby-anew",
+    "file": "src/scenes/egFight.js",
+    "old": "      const blowBy = _blowBy;\n      blowBy.clear();",
+    "new": "      const blowBy = new Map(); _blowBy.clear();",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-live-anew",
+    "file": "src/scenes/egFight.js",
+    "old": "      const live = _live;\n      live.clear();",
+    "new": "      const live = new Set(); _live.clear();",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-lords-anew",
+    "file": "src/scenes/egFight.js",
+    "old": "      const lordIds = _lordIds;\n      lordIds.clear();",
+    "new": "      const lordIds = new Set(); _lordIds.clear();",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-blows-filtered",
+    "file": "src/scenes/egFight.js",
+    "old": "      for (const bl of F.blows) if (!bl.cut || t - bl.cut < EG_FEINT_FADE_MS) _orderIn.push(bl);",
+    "new": "      for (const bl of F.blows.filter((q) => !q.cut || t - q.cut < EG_FEINT_FADE_MS)) _orderIn.push(bl);",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-marks-filtered",
+    "file": "src/scenes/egFight.js",
+    "old": "      for (const m of F.mk) if (m[0] === meSub && m[2] > t) { if (m[1] === 6) challenged = true; if (m[1] === 5) caged = true; }",
+    "new": "      for (const m of F.mk.filter((q) => q[0] === meSub && q[2] > t)) { if (m[1] === 6) challenged = true; if (m[1] === 5) caged = true; }",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-subs-anew",
+    "file": "src/scenes/egFight.js",
+    "old": "      const subs = _subs;\n      subs.clear();",
+    "new": "      const subs = new Set(); _subs.clear();",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-given-anew",
+    "file": "src/scenes/egFight.js",
+    "old": "      const given = _given, tg = now();",
+    "new": "      const given = new Map(), tg = now();",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-tether-closure",
+    "file": "src/scenes/egFight.js",
+    "old": "        const a = tetherEnd(tx[0], F, t, f, meSub), b = tetherEnd(tx[1], F, t, f, meSub);",
+    "new": "        const endOf = (x) => tetherEnd(x, F, t, f, meSub), a = endOf(tx[0]), b = endOf(tx[1]);",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-mist-list-anew",
+    "file": "src/world/egLook.js",
+    "old": "export function egMistSheetsAt(sheets, t, out = []) {\n  let pool = _sheetSlots.get(out), n = 0;",
+    "new": "export function egMistSheetsAt(sheets, t, out0 = []) {\n  const out = []; let pool = _sheetSlots.get(out), n = 0;",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-mist-slots-lost",
+    "file": "src/world/egLook.js",
+    "old": "s = (pool[n] ??= { rect: [0, 0, 0, 0], y: 0, alpha: 0 });",
+    "new": "s = { rect: [0, 0, 0, 0], y: 0, alpha: 0 };",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-mist-look-unkept",
+    "file": "src/scenes/egLookDraw.js",
+    "old": "egMistSheetsAt(sheets, ts, sheetsAt)",
+    "new": "egMistSheetsAt(sheets, ts)",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-arch-empty-draws-anew",
+    "file": "src/scenes/egArch.js",
+    "old": "egArchDraw(a.place, a.open, a.spin)) : NO_LIST),",
+    "new": "egArchDraw(a.place, a.open, a.spin)) : []),",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-arch-empty-targets-anew",
+    "file": "src/scenes/egArch.js",
+    "old": "      if (!arches.size) return NO_LIST;   // AUDIT EG V (L6-4)",
+    "new": "      if (!arches.size) return [];   // AUDIT EG V (L6-4)",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-arch-clears-anew",
+    "file": "src/scenes/egArch.js",
+    "old": "      if (!arches.size) { if (clearsKey) { clearsKey = ''; clearsArr = NO_CLEARS; } return; }",
+    "new": "      if (!arches.size) { clearsArr = Object.freeze([]); return; }",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-occluder-ray-anew",
+    "file": "src/scenes/worldModes.js",
+    "old": "    const ray = feet ? _egOccRay : _egOccNone;   // AUDIT EG V (L6-4): the ray kept, written a frame",
+    "new": "    const ray = feet ? { eye: null, points: [null, [0, 0, 0]], dt: 0 } : { eye: null, points: null, dt: 0 };",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-panel-rebuilt-every-frame",
+    "file": "src/ui/egHud.js",
+    "old": "  const same = panel && panelSame(panelKey, model, recap, focus);",
+    "new": "  const same = false;",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-panel-card-words-unread",
+    "file": "src/ui/egHud.js",
+    "old": " || x.line !== y.line ||",
+    "new": " ||",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-panel-focus-unread",
+    "file": "src/ui/egHud.js",
+    "old": "  if (!k || k.focus !== focus || k.recap !== recap) return false;",
+    "new": "  if (!k || k.recap !== recap) return false;",
+    "tests": [
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-plan-heights-unread",
+    "file": "src/world/egTelegraph.js",
+    "old": "if (floors[k].y === y) return true; any = true; }",
+    "new": "any = true; }",
+    "tests": [
+      "test/egz_telegraph.test.js",
+      "test/egaudit5_e_alloc.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-plan-heights-any-floor",
+    "file": "src/world/egTelegraph.js",
+    "old": "  return !any;\n}",
+    "new": "  return true;\n}",
+    "tests": [
+      "test/egz_telegraph.test.js",
+      "test/egaudit5_e_alloc.test.js"
     ]
   }
 ]

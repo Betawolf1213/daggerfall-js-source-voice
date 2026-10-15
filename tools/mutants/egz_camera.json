@@ -678,8 +678,8 @@
   {
     "name": "EGZN-chest-unread",
     "file": "src/scenes/worldModes.js",
-    "old": "points: [mwv.focal, [feet[0], feet[1] + EG_OCCLUDE_CHEST_M, feet[2]]], dt }",
-    "new": "points: [mwv.focal], dt }",
+    "old": "const c = ray.points[1]; c[0] = feet[0]; c[1] = feet[1] + EG_OCCLUDE_CHEST_M; c[2] = feet[2];",
+    "new": "const c = ray.points[1]; c[0] = mwv.focal[0]; c[1] = mwv.focal[1]; c[2] = mwv.focal[2];",
     "tests": [
       "test/egz_camera_host.test.js"
     ]

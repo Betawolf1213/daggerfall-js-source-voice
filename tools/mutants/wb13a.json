@@ -130,8 +130,8 @@
   {
     "name": "WB13a-a-quad-short-of-its-shape",
     "file": "src/render/gateTelegraph.js",
-    "old": "case TELEGRAPH_KIND.cone: case TELEGRAPH_KIND.disc: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r + M);",
-    "new": "case TELEGRAPH_KIND.cone: case TELEGRAPH_KIND.disc: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r);",
+    "old": "case TELEGRAPH_KIND.cone: case TELEGRAPH_KIND.disc: return boxInto(b, sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r + (sh.kind === TELEGRAPH_KIND.disc && sh.pool === TELEGRAPH_POOL_SPIRE.ring ? TELEGRAPH_RING_REACH : M));",
+    "new": "case TELEGRAPH_KIND.cone: case TELEGRAPH_KIND.disc: return boxInto(b, sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r);",
     "tests": [
       "test/wb13a_telegraphs.test.js"
     ]

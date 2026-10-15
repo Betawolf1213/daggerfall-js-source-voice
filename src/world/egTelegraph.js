@@ -96,9 +96,13 @@ export function egFightFloors(spec) {
 }
 
 const _pa = [], _pb = [];
-/** One polygon (x, z flat in `src`, `n` points) cut to the side of axis `ax` (0 x, 1 z) where `sign` * (v - `at`) >= 0, into
- *  `dst`. Answers its points. */
-function cutPoly(src, n, dst, ax, at, sign) {
+/** AUDIT EG V (L6-2, L6-4): a strip's four sides as planes `(nx, nz, c)` - inside where nx * x + nz * z >= c - set once a clip
+ *  and read in place (a double handed to a call is boxed). */
+const _planes = new Float64Array(12);
+/** One polygon (x, z flat in `src`, `n` points) cut to the side of axis `ax` (0 x, 1 z) where `sign` * (v - `box[bi]`) >= 0,
+ *  into `dst`. Answers its points. */
+function cutPoly(src, n, dst, ax, box, bi, sign) {
+  const at = box[bi];
   let m = 0;
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n, a = src[i * 2 + ax], b = src[j * 2 + ax], ina = sign * (a - at) >= 0, inb = sign * (b - at) >= 0;
@@ -111,9 +115,10 @@ function cutPoly(src, n, dst, ax, at, sign) {
   }
   return m;
 }
-/** AUDIT EG V (L6-2): one polygon (x, z flat in `src`, `n` points) cut to the side of the line where nx * x + nz * z >= `c`,
- *  into `dst`. Answers its points. */
-function cutLine(src, n, dst, nx, nz, c) {
+/** AUDIT EG V (L6-2): one polygon (x, z flat in `src`, `n` points) cut to the inside of strip plane `p` (_planes), into `dst`.
+ *  Answers its points. */
+function cutLine(src, n, dst, p) {
+  const nx = _planes[p * 3], nz = _planes[p * 3 + 1], c = _planes[p * 3 + 2];
   let m = 0;
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n, da = nx * src[i * 2] + nz * src[i * 2 + 1] - c, db = nx * src[j * 2] + nz * src[j * 2 + 1] - c;
@@ -124,6 +129,12 @@ function cutLine(src, n, dst, nx, nz, c) {
     }
   }
   return m;
+}
+/** AUDIT EG V (L6-2): is the point at `tris[t]` inside the strip's four planes (_planes)? */
+function inStrip(tris, t) {
+  const x = tris[t], z = tris[t + 1];
+  for (let p = 0; p < 12; p += 3) if (_planes[p] * x + _planes[p + 1] * z - _planes[p + 2] < 0) return false;
+  return true;
 }
 /**
  * A floor's triangles (`tris`, x, z pairs) clipped to `box` [x0, z0, x1, z1] (null: whole) into `out` from float `at` -
@@ -136,30 +147,34 @@ function cutLine(src, n, dst, nx, nz, c) {
  */
 export function egClipTris(tris, box, out, at, strip = null) {
   let w = at;
-  // the strip's four sides: along it from its start to its length, across it either side of its line (its vertex stage's
-  // own frame - render/gateTelegraph.js TELEGRAPH_VS, `vec2(uWalkU.y, -uWalkU.x)`)
-  const ux = strip ? strip.u[0] : 0, uz = strip ? strip.u[1] : 0, vx = uz, vz = -ux;
-  const ua = strip ? ux * strip.a[0] + uz * strip.a[1] : 0, va = strip ? vx * strip.a[0] + vz * strip.a[1] : 0;
-  const inStrip = (x, z) => { const s = ux * x + uz * z - ua, q = vx * x + vz * z - va; return s >= 0 && s <= strip.len && q >= -strip.w && q <= strip.w; };
+  if (strip) {
+    // the strip's four sides: along it from its start to its length, across it either side of its line (its vertex stage's
+    // own frame - render/gateTelegraph.js TELEGRAPH_VS, `vec2(uWalkU.y, -uWalkU.x)`)
+    const ux = strip.u[0], uz = strip.u[1], ua = ux * strip.a[0] + uz * strip.a[1], va = uz * strip.a[0] - ux * strip.a[1];
+    _planes[0] = ux; _planes[1] = uz; _planes[2] = ua;
+    _planes[3] = -ux; _planes[4] = -uz; _planes[5] = -(ua + strip.len);
+    _planes[6] = uz; _planes[7] = -ux; _planes[8] = va - strip.w;
+    _planes[9] = -uz; _planes[10] = ux; _planes[11] = -(va + strip.w);
+  }
   for (let t = 0; t + 5 < tris.length; t += 6) {
     if (!box) { for (let k = 0; k < 6; k++) out[w++] = tris[t + k]; continue; }
     let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
     for (let k = 0; k < 6; k += 2) { x0 = Math.min(x0, tris[t + k]); x1 = Math.max(x1, tris[t + k]); z0 = Math.min(z0, tris[t + k + 1]); z1 = Math.max(z1, tris[t + k + 1]); }
     if (x1 < box[0] || x0 > box[2] || z1 < box[1] || z0 > box[3]) continue;
-    const whole = strip ? inStrip(tris[t], tris[t + 1]) && inStrip(tris[t + 2], tris[t + 3]) && inStrip(tris[t + 4], tris[t + 5]) : x0 >= box[0] && x1 <= box[2] && z0 >= box[1] && z1 <= box[3];
+    const whole = strip ? inStrip(tris, t) && inStrip(tris, t + 2) && inStrip(tris, t + 4) : x0 >= box[0] && x1 <= box[2] && z0 >= box[1] && z1 <= box[3];
     if (whole) { for (let k = 0; k < 6; k++) out[w++] = tris[t + k]; continue; }
     for (let k = 0; k < 6; k++) _pa[k] = tris[t + k];
     let n;
     if (strip) {
-      n = cutLine(_pa, 3, _pb, ux, uz, ua);
-      n = cutLine(_pb, n, _pa, -ux, -uz, -(ua + strip.len));
-      n = cutLine(_pa, n, _pb, vx, vz, va - strip.w);
-      n = cutLine(_pb, n, _pa, -vx, -vz, -(va + strip.w));
+      n = cutLine(_pa, 3, _pb, 0);
+      n = cutLine(_pb, n, _pa, 1);
+      n = cutLine(_pa, n, _pb, 2);
+      n = cutLine(_pb, n, _pa, 3);
     } else {
-      n = cutPoly(_pa, 3, _pb, 0, box[0], 1);
-      n = cutPoly(_pb, n, _pa, 0, box[2], -1);
-      n = cutPoly(_pa, n, _pb, 1, box[1], 1);
-      n = cutPoly(_pb, n, _pa, 1, box[3], -1);
+      n = cutPoly(_pa, 3, _pb, 0, box, 0, 1);
+      n = cutPoly(_pb, n, _pa, 0, box, 2, -1);
+      n = cutPoly(_pa, n, _pb, 1, box, 1, 1);
+      n = cutPoly(_pb, n, _pa, 1, box, 3, -1);
     }
     for (let k = 1; k + 1 < n; k++) { out[w++] = _pa[0]; out[w++] = _pa[1]; out[w++] = _pa[k * 2]; out[w++] = _pa[k * 2 + 1]; out[w++] = _pa[k * 2 + 2]; out[w++] = _pa[k * 2 + 3]; }
   }
@@ -174,11 +189,27 @@ export function egClipTris(tris, box, out, at, strip = null) {
  * @returns {Set<number>|null}
  */
 export function egShapeYs(floors, sh) {
-  if (sh.kind === TELEGRAPH_KIND.all || sh.kind === TELEGRAPH_KIND.spokes) return null;
-  const pts = sh.kind === TELEGRAPH_KIND.discs ? sh.points : sh.kind === TELEGRAPH_KIND.lane ? [sh.origin, sh.end] : [sh.origin];
+  if (!pinsFloors(sh)) return null;
   const ys = new Set();
-  for (const f of floors) for (const p of pts) if (holds(f.piece, p[0], p[1], EG_FLOOR_NEAR_M)) ys.add(f.y);
+  for (const f of floors) if (anchorOn(f, sh)) ys.add(f.y);
   return ys.size ? ys : null;
+}
+/** Does a shape land on chosen floors at all (never the whole floor's or the spokes')? */
+const pinsFloors = (sh) => sh.kind !== TELEGRAPH_KIND.all && sh.kind !== TELEGRAPH_KIND.spokes;
+/** Does fight floor `f`'s plan hold an anchor of shape `sh` within EG_FLOOR_NEAR_M (its centre; a lane's two ends; each of a
+ *  discs' points)? */
+function anchorOn(f, sh) {
+  const M = EG_FLOOR_NEAR_M;
+  if (sh.kind === TELEGRAPH_KIND.discs) { for (let j = 0; j < sh.points.length; j++) if (holds(f.piece, sh.points[j][0], sh.points[j][1], M)) return true; return false; }
+  return holds(f.piece, sh.origin[0], sh.origin[1], M) || (sh.kind === TELEGRAPH_KIND.lane && holds(f.piece, sh.end[0], sh.end[1], M));
+}
+/** AUDIT EG V (L6-4): egShapeYs's answer read in place for floor height `y` - whether the shape lands at `y` (any height when
+ *  no floor holds an anchor of it, or it is a whole floor's) - so the floor plan keeps no Set a shape a frame. */
+function landsAt(floors, sh, y) {
+  if (!pinsFloors(sh)) return true;
+  let any = false;
+  for (let k = 0; k < floors.length; k++) { if (!anchorOn(floors[k], sh)) continue; if (floors[k].y === y) return true; any = true; }
+  return !any;
 }
 
 /**
@@ -190,9 +221,9 @@ export function egShapeYs(floors, sh) {
  * @param {any} hz the hazard as the spec says it
  */
 export const egHazardSurface = (hz) => (EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN);
-/** How far my feet stand from a shape's ground (its bounds' box; nought inside it or for a whole floor's). */
-function nearOf(sh, feet) {
-  const B = telegraphBounds(sh);
+/** How far my feet stand from a shape's ground (its bounds' box, into `out`; nought inside it or for a whole floor's). */
+function nearOf(sh, feet, out = null) {
+  const B = telegraphBounds(sh, out);
   if (!B) return 0;
   return Math.hypot(Math.max(B[0] - feet[0], 0, feet[0] - B[2]), Math.max(B[1] - feet[1], 0, feet[1] - B[3]));
 }
@@ -205,37 +236,61 @@ function nearOf(sh, feet) {
  * until `max` draws. A shape with its own surface (`sh.y` - a span piece's, a holder's feet) is one draw of its own quad at
  * that height (`over` its own circle); in a hall with no fight floor every shape is (the hall's court, `over` null). Answers
  * `{ draws, buf, n }`: each draw `{ sh, f, first, count, over }` (`f` the floor, its vertices first..first+count; null: the
- * quad), mine last; `n` the floats written. Pure but for `buf`.
+ * quad), mine last; `n` the floats written. AUDIT EG V (L6-4): `keep` (egFloorPlanKeep - the fight holds one) the plan's
+ * own slots, so a frame's plan makes nothing new: its ranks, its draws, its bounds and strip, and the
+ * plan it answers (its draws rewritten next frame). Pure but for `buf` and `keep`.
  * @param {any[]} shapes @param {ReturnType<typeof egFightFloors>} floors @param {number[]|null} feet @param {Float32Array|null} buf
+ * @param {number} [max] @param {ReturnType<typeof egFloorPlanKeep>|null} [keep]
  */
-export function egFloorPlan(shapes, floors, feet, buf, max = EG_FLOOR_DRAWS_MAX) {
-  const ranked = shapes.map((sh, i) => ({ sh, i, k0: sh.mine || (feet && telegraphField(sh, feet[0], feet[1]).inside) ? 0 : 1, k1: Number.isFinite(sh.order) ? sh.order : Infinity, k2: feet ? nearOf(sh, feet) : 0 }));
-  ranked.sort((a, b) => a.k0 - b.k0 || a.k1 - b.k1 || a.k2 - b.k2 || a.i - b.i);
+export function egFloorPlan(shapes, floors, feet, buf, max = EG_FLOOR_DRAWS_MAX, keep = null) {
+  const K = keep ?? egFloorPlanKeep(), ranked = K.ranked, draws = K.plan.draws;
+  ranked.length = 0; draws.length = 0; K.used = 0;
+  for (let i = 0; i < shapes.length; i++) {
+    const sh = shapes[i], r = (K.ranks[i] ??= { sh: null, i: 0, k0: 0, k1: 0, k2: 0 });
+    r.sh = sh; r.i = i; r.k0 = sh.mine || (feet && telegraphField(sh, feet[0], feet[1]).inside) ? 0 : 1; r.k1 = Number.isFinite(sh.order) ? sh.order : Infinity; r.k2 = feet ? nearOf(sh, feet, K.N) : 0;
+    ranked.push(r);
+  }
+  ranked.sort(byRank);
   let out = buf ?? new Float32Array(4096), n = 0;
-  const draws = [];
-  for (const r of ranked) {
+  for (let q = 0; q < ranked.length; q++) {
     if (draws.length >= max) break;
-    const sh = r.sh;
+    const r = ranked[q], sh = r.sh;
     if (!(sh.alpha > 0.001)) continue;
-    const B = telegraphBounds(sh);
+    const B = telegraphBounds(sh, K.B);
     if (Number.isFinite(sh.y) || !floors.length) {
-      const over = Number.isFinite(sh.y) && B ? { r: Math.hypot(B[2] - B[0], B[3] - B[1]) / 2, courts: [[(B[0] + B[2]) / 2, (B[1] + B[3]) / 2]] } : null;
-      draws.push({ sh, f: null, first: 0, count: 0, over, i: r.i });
+      const d = planDraw(K, sh, null, 0, 0, r.i);
+      if (Number.isFinite(sh.y) && B) { d.over = d.own; d.own.r = Math.hypot(B[2] - B[0], B[3] - B[1]) / 2; d.own.courts[0][0] = (B[0] + B[2]) / 2; d.own.courts[0][1] = (B[1] + B[3]) / 2; }
+      draws.push(d);
       continue;
     }
-    const ys = egShapeYs(floors, sh);
-    for (const f of floors) {
+    const strip = telegraphStrip(sh, K.strip);   // AUDIT EG V (L6-2): a tether's floor cut to its own strip
+    for (let k = 0; k < floors.length; k++) {
+      const f = floors[k];
       if (draws.length >= max) break;
-      if (ys && !ys.has(f.y)) continue;
+      if (!landsAt(floors, sh, f.y)) continue;   // the heights it lands on (egShapeYs), read in place
       if (B && (B[2] < f.box[0] || B[0] > f.box[2] || B[3] < f.box[1] || B[1] > f.box[3])) continue;
       if (out.length < n + f.tris.length * 5) { const grown = new Float32Array(Math.max(out.length * 2, n + f.tris.length * 5)); grown.set(out.subarray(0, n)); out = grown; }
       const at = n;
-      n = egClipTris(f.tris, B, out, n, telegraphStrip(sh));   // AUDIT EG V (L6-2): a tether's floor cut to its own strip
-      if (n > at) draws.push({ sh, f, first: at / 2, count: (n - at) / 2, over: null, i: r.i });
+      n = egClipTris(f.tris, B, out, n, strip);
+      if (n > at) draws.push(planDraw(K, sh, f, at / 2, (n - at) / 2, r.i));
     }
   }
-  draws.sort((a, b) => (a.sh.mine ? 1 : 0) - (b.sh.mine ? 1 : 0) || a.i - b.i);
-  return { draws, buf: out, n };
+  draws.sort(mineLast);
+  K.plan.buf = out; K.plan.n = n;
+  return K.plan;
+}
+/** AUDIT EG V (L6-4): what egFloorPlan keeps between a caller's frames (scenes/egFight.js holds one a fight): its rank and
+ *  draw slots, its bounds' and its nearest's boxes, its strip, and the plan it answers. */
+export const egFloorPlanKeep = () => ({ ranks: [], ranked: [], slots: [], used: 0, B: [0, 0, 0, 0], N: [0, 0, 0, 0], strip: { a: [0, 0], u: [0, 0], len: 0, w: 0 }, plan: { draws: [], buf: null, n: 0 } });
+/** THE TELEGRAPH BUDGET's order (egFloorPlan): mine and what holds my feet, then the blows' rank, then the nearest, then place. */
+const byRank = (a, b) => a.k0 - b.k0 || a.k1 - b.k1 || a.k2 - b.k2 || a.i - b.i;
+/** Mine drawn last, on top (section 25.4). */
+const mineLast = (a, b) => (a.sh.mine ? 1 : 0) - (b.sh.mine ? 1 : 0) || a.i - b.i;
+/** A draw of `keep`'s next slot - `{ sh, f, first, count, over, i }`, its own circle (`own`) kept for an own surface's quad. */
+function planDraw(K, sh, f, first, count, i) {
+  const d = (K.slots[K.used++] ??= { sh: null, f: null, first: 0, count: 0, over: null, i: 0, own: { r: 0, courts: [[0, 0]] } });
+  d.sh = sh; d.f = f; d.first = first; d.count = count; d.over = null; d.i = i;
+  return d;
 }
 
 // ── THE PERIL ARROW (section 25.5) ─────────────────────────────────────────────────────────────────────────────

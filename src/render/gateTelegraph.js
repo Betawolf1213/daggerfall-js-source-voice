@@ -186,26 +186,30 @@ export function poolShapes(pools, now, color, style = TELEGRAPH_STYLE.fire) {
  * WB13a: THE GROUND A SHAPE'S QUAD COVERS - its bounds in the court's frame, [x0, z0, x1, z1], TELEGRAPH_REACH past the
  * shape (its glow, its keyline, its shockwave), or null for a shape over its whole court (the Nova's ring, the Spokes,
  * the whole floor's). Every pass drew the whole 49 m court: a Legion-Lord's frame on a phone shaded 1.65M fragments,
- * most of them to discard. Pure.
- * @param {any} sh
+ * most of them to discard. AUDIT EG V (L6-4): into `out` when given (the Spire's floor plan keeps one), else a new array.
+ * Pure but for `out`.
+ * @param {any} sh @param {number[]|null} [out]
  * @returns {number[]|null}
  */
-export function telegraphBounds(sh) {
+export function telegraphBounds(sh, out = null) {
   const M = TELEGRAPH_REACH;
-  const box = (x0, z0, x1, z1, pad) => [x0 - pad, z0 - pad, x1 + pad, z1 + pad];
+  const b = out ?? [0, 0, 0, 0];
   switch (sh?.kind) {
-    case TELEGRAPH_KIND.cone: case TELEGRAPH_KIND.disc: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r + (sh.kind === TELEGRAPH_KIND.disc && sh.pool === TELEGRAPH_POOL_SPIRE.ring ? TELEGRAPH_RING_REACH : M));   // AUDIT EG V (L6-2): a Vestige aura's ring draws no glow
-    case TELEGRAPH_KIND.mark: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], telegraphMarkReach(sh));   // AOE-PERF: his mark draws no glow
-    case TELEGRAPH_KIND.lane: return box(Math.min(sh.origin[0], sh.end[0]), Math.min(sh.origin[1], sh.end[1]), Math.max(sh.origin[0], sh.end[0]), Math.max(sh.origin[1], sh.end[1]), telegraphStrip(sh)?.w ?? sh.halfW + M);   // AUDIT EG V (L6-2): a path's or a tether's no wider than its strip
+    case TELEGRAPH_KIND.cone: case TELEGRAPH_KIND.disc: return boxInto(b, sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r + (sh.kind === TELEGRAPH_KIND.disc && sh.pool === TELEGRAPH_POOL_SPIRE.ring ? TELEGRAPH_RING_REACH : M));   // AUDIT EG V (L6-2): a Vestige aura's ring draws no glow
+    case TELEGRAPH_KIND.mark: return boxInto(b, sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], telegraphMarkReach(sh));   // AOE-PERF: his mark draws no glow
+    case TELEGRAPH_KIND.lane: return boxInto(b, Math.min(sh.origin[0], sh.end[0]), Math.min(sh.origin[1], sh.end[1]), Math.max(sh.origin[0], sh.end[0]), Math.max(sh.origin[1], sh.end[1]), stripW(sh) || sh.halfW + M);   // AUDIT EG V (L6-2): a path's or a tether's no wider than its strip
     case TELEGRAPH_KIND.discs: {
       if (!sh.points?.length) return null;
       let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
       for (const p of sh.points) { x0 = Math.min(x0, p[0]); z0 = Math.min(z0, p[1]); x1 = Math.max(x1, p[0]); z1 = Math.max(z1, p[1]); }
-      return box(x0, z0, x1, z1, sh.r + M);
+      return boxInto(b, x0, z0, x1, z1, sh.r + M);
     }
     default: return null;
   }
 }
+
+/** AUDIT EG V (L6-4): box `b` set to [x0, z0, x1, z1] `pad` out. */
+function boxInto(b, x0, z0, x1, z1, pad) { b[0] = x0 - pad; b[1] = z0 - pad; b[2] = x1 + pad; b[3] = z1 + pad; return b; }
 
 /**
  * FIELD BUGS 2026-10-13e AOE-PERF: HOW FAR FROM WHERE HE STANDS HIS MARK CAN DRAW ANYTHING - its pass draws its ring
@@ -224,16 +228,25 @@ export const telegraphMarkReach = (sh) => Math.max(sh.r + TELEGRAPH_MARK_RING, M
  * TELEGRAPH_REACH past it, and a Sapper walking in from the rim made that a fifth of the screen. AUDIT EG V (L6-2): the
  * Spire's two tethers are strips too (Elite-Gates.md section 25.5 - the Spire's stage, EG-ZG's pools): a stay-close chain
  * (TELEGRAPH_POOL_SPIRE.chain) draws its links inside the lane alone, and a pull-apart tether (TELEGRAPH_POOL_SPIRE.pull) its
- * line inside it and its break tick out to twice its half-width and TELEGRAPH_TICK_REACH - its strip that wide. Pure.
- * @param {any} sh
+ * line inside it and its break tick out to twice its half-width and TELEGRAPH_TICK_REACH - its strip that wide. AUDIT EG V
+ * (L6-4): into `out` when given (its `a` and `u` pairs kept), else a new strip. Pure but for `out`.
+ * @param {any} sh @param {{ a: number[], u: number[], len: number, w: number }|null} [out]
  */
-export function telegraphStrip(sh) {
-  if (!sh || sh.kind !== TELEGRAPH_KIND.lane) return null;
-  const across = sh.pool === TELEGRAPH_POOL.path || sh.pool === TELEGRAPH_POOL_SPIRE.chain ? sh.halfW : sh.pool === TELEGRAPH_POOL_SPIRE.pull ? 2 * sh.halfW + TELEGRAPH_TICK_REACH : NaN;
-  if (!Number.isFinite(across)) return null;
+export function telegraphStrip(sh, out = null) {
+  const w = stripW(sh);
+  if (!(w > 0)) return null;
   const dx = sh.end[0] - sh.origin[0], dz = sh.end[1] - sh.origin[1], l = Math.hypot(dx, dz);
-  const ux = l > 1e-6 ? dx / l : 0, uz = l > 1e-6 ? dz / l : 1, w = across + TELEGRAPH_TIGHT_PAD;
-  return { a: [sh.origin[0] - ux * w, sh.origin[1] - uz * w], u: [ux, uz], len: l + 2 * w, w };
+  const ux = l > 1e-6 ? dx / l : 0, uz = l > 1e-6 ? dz / l : 1;
+  if (!out) return { a: [sh.origin[0] - ux * w, sh.origin[1] - uz * w], u: [ux, uz], len: l + 2 * w, w };
+  out.a[0] = sh.origin[0] - ux * w; out.a[1] = sh.origin[1] - uz * w; out.u[0] = ux; out.u[1] = uz; out.len = l + 2 * w; out.w = w;
+  return out;
+}
+/** AUDIT EG V (L6-2): a path's or a tether's own strip's half-width (telegraphStrip's `w` - its lane's reach, a pull-apart's
+ *  break tick, TELEGRAPH_TIGHT_PAD past it), or NaN for any other shape. Pure. */
+function stripW(sh) {
+  if (!sh || sh.kind !== TELEGRAPH_KIND.lane) return NaN;
+  const across = sh.pool === TELEGRAPH_POOL.path || sh.pool === TELEGRAPH_POOL_SPIRE.chain ? sh.halfW : sh.pool === TELEGRAPH_POOL_SPIRE.pull ? 2 * sh.halfW + TELEGRAPH_TICK_REACH : NaN;
+  return across + TELEGRAPH_TIGHT_PAD;
 }
 
 const wrap = (a) => a - 2 * Math.PI * Math.floor((a + Math.PI) / (2 * Math.PI));

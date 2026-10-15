@@ -355,8 +355,8 @@
   {
     "name": "EGLOOK-mist-over-the-line",
     "file": "src/world/egLook.js",
-    "old": "const top = Math.min(line, EG_MIST.rise - EG_MIST.below);",
-    "new": "const top = EG_MIST.rise - EG_MIST.below;",
+    "old": "const top = Math.min(line, EG_MIST.rise - EG_MIST.below), r = (m.rect ??= sheetOf(m).rect),",
+    "new": "const top = EG_MIST.rise - EG_MIST.below, r = (m.rect ??= sheetOf(m).rect),",
     "tests": [
       "test/eglook_lines.test.js"
     ]
@@ -721,7 +721,7 @@
   {
     "name": "EGLOOK-client-lines-dropped",
     "file": "src/scenes/egClient.js",
-    "old": "const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette);",
+    "old": "const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette, renderer?._worldViewportPx);",
     "new": "const over = false;",
     "tests": [
       "test/eglook_hosts.test.js"

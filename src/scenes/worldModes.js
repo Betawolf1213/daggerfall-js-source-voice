@@ -9458,9 +9458,18 @@ export function createWorldModes(host) {
    *  eye and a free camera try nothing, and whatever was dithering comes back whole. */
   function egOccludeFrame(mwv, dt) {
     const feet = mwv?.thirdPerson && mwv.focal && !host.egWitness?.() && !decorTool.flying() ? player.bodyFeetAt?.() ?? player.feetAt() : null;
-    egOcc.frame(feet ? { eye: mwv.eye, points: [mwv.focal, [feet[0], feet[1] + EG_OCCLUDE_CHEST_M, feet[2]]], dt } : { dt });
+    const ray = feet ? _egOccRay : _egOccNone;   // AUDIT EG V (L6-4): the ray kept, written a frame
+    if (feet) { ray.eye = mwv.eye; ray.points[0] = mwv.focal; const c = ray.points[1]; c[0] = feet[0]; c[1] = feet[1] + EG_OCCLUDE_CHEST_M; c[2] = feet[2]; }
+    ray.dt = dt;
+    egOcc.frame(ray);
     egOcc.draw(dungeonCtx?.texRemap ?? null);
   }
+  /** AUDIT EG III (lane6 #1): THE WITNESS VIEW's eye cast against this context's own rock (its sphere's free distance, or
+   *  null) - AUDIT EG V (L6-4): one function, never a closure a Spire frame. */
+  const egEyeCast = (o, r, d, m) => { const h = player.collider?.sphereCast?.(o, r, d, m)?.dist; return Number.isFinite(h) ? h : null; };
+  /** AUDIT EG V (L6-4; Elite-Gates.md section 11.9): the occluders' ray - the eye, the focal and the chest - and the frame
+   *  with none, kept: every Spire frame made one and its chest point. */
+  const _egOccRay = { eye: null, points: [null, [0, 0, 0]], dt: 0 }, _egOccNone = { eye: null, points: null, dt: 0 };
   /** EG-PLAY: A BODY STOOD ELSEWHERE IN THE CIRCLE (a pull to the next hall's plate, the void's cast-back) - the action
    *  teleport's way (its settle, the eye with it), facing `yaw`, and the spans told where the void would cast it back to. */
   function egPlace(at, yaw = null) {
@@ -10818,7 +10827,7 @@ export function createWorldModes(host) {
       spherecast: (o, r, d, m) => { const h = player.collider?.sphereCast?.(o, r, d, m)?.dist; return Number.isFinite(h) ? h : null; },   // MAC-A: castSphere's seam beside the ray - the camera's two obstacle guards are sphere casts (camera.cpp:186, :200)
     });
     if (decorTool.flying()) mwv.eye = cam.pos;   // DECOR1d: the free camera looks from its own eye, never over the body's shoulder
-    if (mode === 'dungeon' && isEgHall(dungeonLoc)) host.egWitnessEye?.(mwv, dt, (o, r, d, m) => { const h = player.collider?.sphereCast?.(o, r, d, m)?.dist; return Number.isFinite(h) ? h : null; });   // AUDIT EG III (lane6 #1, Elite-Gates.md section 16.5): THE WITNESS VIEW's eye and THE FALL's sink - the Spire's frame is this one; damped, and colliding with this context's own rock
+    if (mode === 'dungeon' && isEgHall(dungeonLoc)) host.egWitnessEye?.(mwv, dt, egEyeCast);   // AUDIT EG III (lane6 #1, Elite-Gates.md section 16.5): THE WITNESS VIEW's eye and THE FALL's sink - the Spire's frame is this one; damped, and colliding with this context's own rock
     if (cardSeat) mwv.eye = cam.pos;   // CARDS2: seated, the seat's own view - first person (Tavern-Cards.md section 2)
     const view = betterAmbience.view(lookAt(mwv.eye, [mwv.eye[0] + fwd[0], mwv.eye[1] + fwd[1], mwv.eye[2] + fwd[2]], [0, 1, 0]));   // BA1: the shaker sits between the follower and the camera
     const aimView = view.slice();   // AUDIT CLIMB-ARC F10: the view the player aims with, before the climb's feel

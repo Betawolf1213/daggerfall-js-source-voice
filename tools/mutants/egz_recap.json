@@ -551,8 +551,8 @@
   {
     "name": "EGZ-recap-a-board-line-never-redraws",
     "file": "src/ui/egHud.js",
-    "old": "recap.title + recap.why + (recap.board ?? '')",
-    "new": "recap.title + recap.why",
+    "old": "if (recap && (k.title !== recap.title || k.why !== recap.why || k.board !== (recap.board ?? ''))) return false;",
+    "new": "if (recap && (k.title !== recap.title || k.why !== recap.why)) return false;",
     "tests": [
       "test/egz_recap.test.js"
     ]

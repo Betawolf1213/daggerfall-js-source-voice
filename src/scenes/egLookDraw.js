@@ -11,7 +11,8 @@
 //                  ring, the Redoubt's beacon, the recall's and the pings' blue pillars, the witness's marks
 //                  (world/egLights.js egSpireLights), added over the lines: light, never paint.
 // Each pass is built the first time it is wanted and kept for the breach; a circle's edges are made once a circle (its
-// static buffer), its streamers and mist sheets written a frame into kept arrays. `release()` frees all of it - every exit
+// static buffer), its streamers and mist sheets written a frame into kept arrays (AUDIT EG V L6-4: the mist's too - it made
+// a new list of new sheets a frame). `release()` frees all of it - every exit
 // of the breach reaches it through the client's leave (scenes/egClient.js). No GL, no draw: every method answers false.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
@@ -32,7 +33,7 @@ export function createEgLookDraw({ gl = null } = {}) {
   /** @type {EgLightPass|null} */ let lights = null;   // EG-ZE
   const tried = { lines: false, mist: false, sky: false, lights: false };
   let key = '', band = 0, sections = [], sheets = [], edgeCount = 0, trackCount = 0;
-  const streamers = new Float32Array(EG_STREAMERS_MAX * 6), alphas = new Float32Array(EG_STREAMERS_MAX);
+  const streamers = new Float32Array(EG_STREAMERS_MAX * 6), alphas = new Float32Array(EG_STREAMERS_MAX), sheetsAt = [];
   const build = (name, make) => {
     if (tried[name] || !gl) return null;
     tried[name] = true;
@@ -61,7 +62,7 @@ export function createEgLookDraw({ gl = null } = {}) {
     /** THE MIST, before the telegraphs and the lines: each sheet at its surge's line on the shared clock `ts` (s). */
     drawUnder(proj, view, eye, ts, fog = null) {
       if (!key || !sheets.length) return false;
-      const at = egMistSheetsAt(sheets, ts);
+      const at = egMistSheetsAt(sheets, ts, sheetsAt);   // AUDIT EG V (L6-4): written into its kept list
       if (!at.length) return false;
       mist ??= build('mist', () => (gl ? new EgMistPass(gl) : null));
       return !!mist?.draw(proj, view, eye, at, EG_MIST.color, ts, fog);

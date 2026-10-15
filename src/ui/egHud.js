@@ -223,6 +223,10 @@ export const egAccordDoes = (key) => { const A = EG_ACCORDS.find((x) => x.key ==
  */
 export function egPanelModel(E, me, now, voted = {}) {
   if (!E?.b || E.end) return null;
+  // AUDIT EG V (L6-4): nothing to offer or ask (the common frame) - nothing worked out, nothing made
+  let asking = false;
+  for (const a of E.as ?? []) if (a[2] > now) { asking = true; break; }
+  if (!E.offer?.v?.length && !asking) return null;
   const run = me ? egRunOfMember(E, me) : null;
   // EG-ZS (section 15: "The offer card names it: *Takes an Accord with Mira's Hunter's Mark.*"): each living companion's
   // Vestiges, by name, for the Accord a card would take with them (net/egVestige.js egCardAccords)
@@ -328,7 +332,7 @@ export function egChartFell(E) {
 }
 
 // ── the drawing ─────────────────────────────────────────────────────────────────────────────────────────────
-let root = null, parts = null, panel = null, panelKey = '';
+let root = null, parts = null, panel = null, panelKey = /** @type {any} */ (null);   // AUDIT EG V (L6-4): what the panel drew (panelSame)
 const SHOWN = () => ({ vis: '', kicker: null, title: null, count: null, countCls: null, line: null, sub: null, company: null, run: null, dec: null, mark: null });
 let shown = SHOWN();
 const KEYS = ['kicker', 'title', 'count', 'line', 'sub', 'run', 'dec', 'mark', 'company'];
@@ -373,11 +377,14 @@ export function drawEgHud(model, { hidden = false, doc = globalThis.document } =
  */
 export function drawEgPanel(model, { hidden = false, doc = globalThis.document, onPick = () => {}, onVote = () => {}, onSurplus = () => {}, recap = null, focus = -1, relShown = null, words = null } = {}) {
   const want = !hidden && (!!model || !!recap);
-  if (!want) { if (panel) { panel.remove?.(); panel = null; panelKey = ''; } return; }
+  if (!want) { if (panel) { panel.remove?.(); panel = null; panelKey = null; } return; }
   if (!doc?.createElement) return;
-  const key = JSON.stringify([model, recap ? recap.title + recap.why + (recap.board ?? '') : '', focus]).replace(/"left":\d+/g, '');   // EG-G1: the pad's focus redraws; EG-ZF: the board's line, when the claim brings it
+  // EG-G1: the pad's focus redraws; EG-ZF: the board's line, when the claim brings it. AUDIT EG V (L6-4): the panel stands
+  // while what its nodes say stands - read field by field against the last it drew (panelSame), never the whole model
+  // serialised a frame; the seconds left are written in place
+  const same = panel && panelSame(panelKey, model, recap, focus);
   const leftOf = (q) => model?.asks?.find((a) => a.q === q)?.left ?? 0;
-  if (panel && key === panelKey) {
+  if (same) {
     for (const el of panel.querySelectorAll?.('[data-left]') ?? []) el.textContent = `${Math.ceil(leftOf(el.getAttribute('data-left')) / 1000)}s`;
     if (recap && relShown != null && words) for (const el of panel.querySelectorAll?.('[data-rel]') ?? []) el.textContent = words.recapReliquaries(relShown);   // EG-G1: the Reliquaries open one by one
     return;
@@ -386,7 +393,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
   panel?.remove?.();
   panel = doc.createElement('div');
   panel.className = 'eg-panel';
-  panelKey = key;
+  panelKey = { model, recap, title: recap?.title ?? '', why: recap?.why ?? '', board: recap?.board ?? '', focus };
   const h = (text) => { const e = doc.createElement('h3'); e.textContent = text; return e; };
   if (recap && words) {
     // EG-G1 (section 27.6): THE RECAP, whole - the depth, the time and why, a strip per circle, the company member by
@@ -445,9 +452,39 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
   (doc.body ?? doc.documentElement)?.append(panel);
 }
 
+/** AUDIT EG V (L6-4): does the panel drawn of `k` (panelKey - the model, the recap and its words, the focus it drew) say
+ *  what `model`, `recap` and `focus` would: each card (its words, its capstone, its Accord, its pick), the take and the
+ *  Surplus, each ask (its question, title, choices and my vote) - every field the nodes show but the seconds left? Reads
+ *  in place, makes nothing. */
+function panelSame(k, model, recap, focus) {
+  if (!k || k.focus !== focus || k.recap !== recap) return false;
+  if (recap && (k.title !== recap.title || k.why !== recap.why || k.board !== (recap.board ?? ''))) return false;
+  const a = k.model, b = model;
+  if (a === b) return true;
+  if (!a || !b) return false;
+  const oa = a.offer, ob = b.offer;
+  if (!oa !== !ob) return false;
+  if (oa) {
+    if (oa.n !== ob.n || oa.surplus !== ob.surplus || oa.cards.length !== ob.cards.length) return false;
+    for (let i = 0; i < oa.cards.length; i++) {
+      const x = oa.cards[i], y = ob.cards[i];
+      if (x.key !== y.key || x.card !== y.card || x.name !== y.name || x.line !== y.line || x.completes !== y.completes || x.accord !== y.accord) return false;
+    }
+  }
+  const qa = a.asks ?? NO_ASKS, qb = b.asks ?? NO_ASKS;
+  if (qa.length !== qb.length) return false;
+  for (let i = 0; i < qa.length; i++) {
+    const x = qa[i], y = qb[i];
+    if (x.q !== y.q || x.title !== y.title || x.mine !== y.mine || x.opts.length !== y.opts.length) return false;
+    for (let j = 0; j < x.opts.length; j++) if (x.opts[j] !== y.opts[j]) return false;
+  }
+  return true;
+}
+const NO_ASKS = Object.freeze([]);
+
 /** The page is going (a test's reset): the nodes leave with it. */
 export function destroyEgHud() {
   root?.remove?.(); panel?.remove?.();
-  root = null; parts = null; panel = null; panelKey = '';
+  root = null; parts = null; panel = null; panelKey = null;
   shown = SHOWN();
 }

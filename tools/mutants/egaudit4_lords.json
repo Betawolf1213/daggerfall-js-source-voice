@@ -382,7 +382,7 @@
   {
     "name": "EGA4-lords-errands-screen-unread",
     "file": "src/scenes/egFight.js",
-    "old": "      for (const [i, n] of F.pg?.as ?? []) given.set(i, [...(given.get(i) ?? []), n]);",
+    "old": "      for (const [i, n] of F.pg?.as ?? []) { let ns = given.get(i); if (!ns) given.set(i, (ns = [])); ns.push(n); }",
     "new": "",
     "tests": [
       "test/egaudit4_lords_errands.test.js"
