@@ -11,10 +11,13 @@
 //         names; L1-10 the lords' place in THE UNION FLOOR; L1-11 the Kynmarcher's standards at his wake; L1-12 the Night-Stalker's
 //         true umbra unread until it glints; L1-15 a snap's clock a link; L1-17 the fight's end; L1-18 a chained shape's dim
 //         outline; L1-23 Paired Hearts the Colossus's own; L1-25 the Twins' touch the census's; L1-26 the Haven Nova over a floor of
-//         many pieces; L1-29 each lord's own mirrors; L1-30 a told bridge scorches no one; L9-7 a champion's ring on no floor.
+//         many pieces; L1-29 each lord's own mirrors; L1-30 a told bridge scorches no one; L9-7 a champion's ring on no floor;
+//   L1-24, L1-27, L1-28  the page said as built - the Clan Muster's duel at his third phase's turn, the Night-Stalker's Blood
+//         Thrall its own kind, the Armsmaster's two challenged in the one ring.
 // The screen's halves (L1-7's draw, L1-12's glint, L1-13, L1-14, L1-18's outline, L1-22) are pinned in egaudit5_b_client.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { egHallOf, egOnFight, EG_SEALED_MS, EG_DECREE_BY_KEY, EG_LORDS } from '../src/net/egLaw.js';
 import { egBreachNew, egEnter, egStep, egBlow, egCount, egFall, egStateOf, egStrataSecond, champRing, EG_CHAMP_RING_M, EG_CHAMP_RING_MIN_M } from '../src/net/egBrain.js';
 import { egLordsNew, egLordsWake, egLordsStep, egLordsOf, egLordsAwake, egLordsFell, egLordHit, egLordHitX, egLordAspect, egObjsOf, egObjBroken, egChainShared, egHavenRouteM, egHavenFloor,
@@ -26,7 +29,7 @@ import { egFightView } from '../src/net/egWalkGraph.js';
 import { egFromFront, egFromBehind, egLegionRaise, egLegionStep, EG_KIND } from '../src/net/egLegion.js';
 import { egFeatBits } from '../src/net/egFeats.js';
 
-import { HIT_KINDS, dpsRef } from '../src/net/gateBrain.js';
+import { HIT_KINDS, dpsRef, PHASE_AT } from '../src/net/gateBrain.js';
 import { gateAspectOf } from '../src/net/gateMods.js';
 import { validEgOut, EG_YAW_WIRE_MAX, EG_OUTLINE_WIRE_MAX } from '../src/net/wire.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
@@ -466,7 +469,7 @@ test('AUDIT EG V L1-11 THE CITADEL PLANTED AS HE WAKES (sections 8.5 and 8.6: "a
   const plain = { ...K, key: 'kynreeve' };
   assert.ok(Math.abs(egLordHitX(F, K, 'acct-0', null, HIT_KINDS.Melee, S.now() + 4000) - egLordHitX(F, plain, 'acct-0', null, HIT_KINDS.Melee, S.now() + 4000) * 0.4) < 1e-9, 'three standing: x0.4');
 });
-test('AUDIT EG V L1-12 THE THREE SHADOWS READ ONLY BY THEIR GLINT (section 13.2, "Tells only the engine can give"; section 13.3: "the true one glints with its WIND"): in his second phase the Night-Stalker vanishes - three umbral discs said alike (no part, no state), his own row left where he vanished; EG_UMBRA_GLINT_MS before he rises the true one\'s state is said (1, its glint); he rises on it (mutants: the true disc\'s part said; his row set on it at once; no glint said; the glint said at once)', () => {
+test('AUDIT EG V L1-12 THE THREE SHADOWS READ ONLY BY THEIR GLINT (section 13.2, "Tells only the engine can give"; section 13.3: "the true one glints with its WIND"): in its second phase the Night-Stalker vanishes - three umbral discs said alike (no part, no state), its own row left where it vanished; EG_UMBRA_GLINT_MS before it rises the true one\'s state is said (1, its glint); it rises on it (mutants: the true disc\'s part said; its row set on it at once; no glint said; the glint said at once)', () => {
   const C = court(1, 55, 'stalker', { n: 2 }), here = C.subs.map((sub, j) => ({ sub, x: C.f.x + 3 + j, z: C.f.z }));
   C.L.hp = C.L.max * 0.6;
   let f0 = 0;
@@ -476,16 +479,16 @@ test('AUDIT EG V L1-12 THE THREE SHADOWS READ ONLY BY THEIR GLINT (section 13.2,
   assert.equal(rows.length, 3, 'three umbral discs');
   assert.deepEqual(rows.map((t) => [t[3], t[15], t[16]]), [[0, 0, 0], [0, 0, 0], [0, 0, 0]], 'said alike: no part, no state');
   const umbras = egObjsOf(C.F, 'umbra'), real = umbras.find((u) => u.real);
-  assert.ok(real && Math.hypot(at[0] - real.x, at[1] - real.z) > 0.01 || umbras.length === 3, 'his row where he vanished');
+  assert.ok(real && Math.hypot(at[0] - real.x, at[1] - real.z) > 0.01 || umbras.length === 3, 'its row where it vanished');
   assert.ok(!C.frames.slice(f0).some((f) => f.k === 'emv' && f.m.some((t) => t[0] === C.L.i && Math.hypot(t[1] - real.x, t[2] - real.z) < 0.01)), 'never set on the true disc while he hides');
   const t0 = C.now();
   let glint = null, still = true;
   while (!glint && C.now() < t0 + EG_UMBRA_MS) { glint = C.step(here).find((f) => f.k === 'eob' && f.st === 1) ?? null; still &&= C.L.x === at[0] && C.L.z === at[1]; }
-  assert.ok(still && Math.hypot(at[0] - real.x, at[1] - real.z) > 0.01, 'every beat he hides, his row where he vanished - never on the true disc');
+  assert.ok(still && Math.hypot(at[0] - real.x, at[1] - real.z) > 0.01, 'every beat it hides, its row where it vanished - never on the true disc');
   assert.ok(glint && glint.i === real.i, 'the true one glints');
-  assert.ok(glint.at - (t0 - 250) >= EG_UMBRA_MS - EG_UMBRA_GLINT_MS - 250, `${EG_UMBRA_GLINT_MS} ms before he rises, never sooner`);
+  assert.ok(glint.at - (t0 - 250) >= EG_UMBRA_MS - EG_UMBRA_GLINT_MS - 250, `${EG_UMBRA_GLINT_MS} ms before it rises, never sooner`);
   while (egHas(C.L, EG_FL.hidden) && C.now() < t0 + EG_UMBRA_MS + 1000) C.step(here);
-  assert.ok(!egHas(C.L, EG_FL.hidden) && Math.hypot(C.L.x - real.x, C.L.z - real.z) < 0.01, 'he rises on it');
+  assert.ok(!egHas(C.L, EG_FL.hidden) && Math.hypot(C.L.x - real.x, C.L.z - real.z) < 0.01, 'it rises on it');
   assert.deepEqual([EG_UMBRA_MS, EG_UMBRA_GLINT_MS], [6000, 2000]);
 });
 
@@ -654,4 +657,45 @@ test('AUDIT EG V L1-7 and L1-18 THE LEGION\'S HALVES (sections 8.7, 13.2 and 14)
   assert.deepEqual([ch.at - ch.wu, egBlowOutlineFrom(ch), ch.wu], [first.at, first.at - first.wu, egChainGapMs(first.wu, ch.s)], 'its outline from the word, its fill from the first\'s landing');
   const turn = F.moves.filter((t) => t[0] === a.i).at(-1);
   assert.ok(turn && turn[9] === egYawOf(a) && Math.abs(a.yaw - Math.PI / 2) < 0.05, 'its turn said with its facing');
+});
+
+// ── L1-24, L1-27, L1-28: THE PAGE SAID AS BUILT ───────────────────────────────────────────────────────────
+const page = readFileSync(new URL('../bible/11-Multiplayer/Elite-Gates.md', import.meta.url), 'utf8');
+/** A stretch of the page from heading `a` to the next `b`, its whitespace one space. */
+const pageFrom = (a, b) => { const i = page.indexOf(a); assert.ok(i >= 0, `the page has ${a}`); return page.slice(i, page.indexOf(b, i + a.length)).replace(/\s+/g, ' '); };
+test('AUDIT EG V L1-24, L1-27 and L1-28 THE PAGE SAID AS BUILT (sections 13.2 and 13.3): Garoth\'s Clan Muster calls a duel at each of his two phase turns, the one at his third phase\'s turn holding his fall (never a "third duel"); the Night-Stalker\'s lone member is bound to a Blood Thrall, its own kind (never a Harrier body); the Armsmaster\'s second phase at n >= 4 challenges two members into the one ring with clamp(n - 2, 1, 3) braziers (never two Challenges) - the page says each as the producers stand it (its old words fail it)', () => {
+  const s132 = pageFrom('### 13.2 The law every lord keeps', '\n### '), s133 = pageFrom('### 13.3 The roster', '\n### ');
+  // L1-24: two duels, at his two turns - the second holds his fall
+  const [gs, gh] = hallWhere((s) => s.kind === 'court' && s.lord === 'garoth');
+  const G = court(gs, gh, 'garoth', { n: 2 }), duels = [];
+  const gHere = () => G.subs.map((sub, j) => ({ sub, x: G.L.x + 2 + j, z: G.L.z }));
+  for (const frac of [0.6, 0.3]) {
+    G.L.hp = Math.floor(G.L.max * frac);
+    const o = G.step(gHere());
+    assert.ok(words(o).includes('challenge'), `a duel called at his turn (phase ${G.L.ph})`);
+    duels.push([G.L.ph, G.L.hold]);
+    for (let k = 0; k < 80 && G.F.mem.challenge; k++) G.step(gHere());
+    assert.equal(G.F.mem.challenge, null, 'it ends by its own 15 s');
+  }
+  assert.deepEqual(duels, [[2, PHASE_AT[1]], [3, 0]], 'two duels, at his two turns - the one at his third phase\'s turn holds his fall');
+  assert.ok(s132.includes('Muster\'s duel at his third phase\'s turn holds his fall') && !/third duel/.test(s132), '13.2: the duel at his third phase\'s turn');
+  // L1-27: alone, a Blood Thrall - its own kind - bound to the member
+  const N = court(1, 55, 'stalker', { n: 1 }), lone = () => [{ sub: N.subs[0], x: N.f.x + 3, z: N.f.z }];
+  let th = null;
+  for (let k = 0; k < 160 && !th; k++) { N.step(lone()); th = N.F.tethers.map((t) => N.F.bodies.find((b) => b.i === t[0])).find(Boolean) ?? null; }
+  assert.ok(th && th.role === EG_ROLE.add, 'alone: a body bound to the member');
+  assert.equal(egBodyWire(th)[2], EG_KIND.thrall, 'a Blood Thrall, never a Harrier');
+  const stalker = s133.slice(s133.indexOf('9. **The Night-Stalker'), s133.indexOf('10. **Valkynaz Seyth'));
+  assert.ok(stalker.includes('binds a Blood Thrall 4 m away') && !/Harrier body/.test(stalker), '13.3: a Blood Thrall, its own kind');
+  // L1-28: at n = 4, his second phase's Challenge: two members marked into the one ring
+  const A = court(1, 10, 'armsmaster', { n: 4 }), four = () => A.subs.map((sub, j) => ({ sub, x: A.L.x + 2 + j, z: A.L.z + 1 }));
+  A.L.hp = Math.floor(A.L.max * 0.6);
+  A.step(four());
+  assert.equal(A.L.ph, 2, 'his second phase');
+  for (let k = 0; k < 80 && !A.F.mem.challenge; k++) A.step(four());
+  const ch = A.F.mem.challenge;
+  assert.ok(ch && ch.by === A.L.i, 'his Challenge');
+  assert.deepEqual([ch.subs.length, ch.r, A.F.pg.ring?.[2], egObjsOf(A.F, 'brazier').length], [2, 6, 6, 2], 'two challenged into the one ring of r 6, its braziers clamp(n - 2, 1, 3)');
+  const second = s133.slice(s133.indexOf('*the second challenge*'), s133.indexOf('**the Last Lesson**'));
+  assert.ok(second.includes('two members challenged at once into the one ring') && !/two Challenges at once/.test(second) && second.includes('`clamp(n - 2, 1, 3)`'), '13.3: two challenged into the one ring');
 });

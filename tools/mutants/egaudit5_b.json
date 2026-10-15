@@ -399,7 +399,7 @@
     ]
   },
   {
-    "name": "AUDIT EG V L1-12: his row set on the true disc as he vanishes",
+    "name": "AUDIT EG V L1-12: its row set on the true disc as it vanishes",
     "file": "src/net/egLords.js",
     "old": "        F.mem.riseAt = spots[trueAt];",
     "new": "        F.mem.riseAt = spots[trueAt]; egPlace(F, L, spots[trueAt][0], spots[trueAt][1], now);",
