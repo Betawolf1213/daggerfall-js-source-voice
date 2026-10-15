@@ -30,9 +30,10 @@ import { t } from '../systems/textManager.js';   // L10N4: the words through the
 import { accountRefusalText } from '../net/accountClient.js';
 import { poiDocProblems, poiAssetProblems, POI_LIMITS, POI_ALPHA, POI_WRAP, POI_FILTER } from '../poi/poiLaw.js';
 import { eulerOfQuat, quatOfEuler, lawName, newLight } from '../poi/poiEdit.js';
-import { problemText, problemWhere, gltfErrorText, gltfWarningText, meshErrorText } from '../poi/poiText.js';
+import { problemText, problemWhere, gltfErrorText, gltfWarningText, meshErrorText, imageErrorText } from '../poi/poiText.js';
 import { poiSaveDraft, poiSubmit, poiWithdraw, poiRetire, poiList, poiHistory, poiPutAsset } from '../poi/poiService.js';
-import { decodePoiMesh } from '../poi/poiMesh.js';
+import { decodePoiMesh, encodePoiMesh } from '../poi/poiMesh.js';
+import { createPoiUvPanel } from './poiUvPanel.js';   // POI-5: the UV editor
 import { poiImageMetaOf } from '../poi/poiImage.js';
 import { readGltf, bakeGltf } from '../poi/gltfImport.js';
 import { prepareImport, uploadImport } from '../poi/poiImport.js';
@@ -96,6 +97,8 @@ export function stepText(label) {
     case 'duplicate': return t('poi.editor.step.duplicate', 'duplicate');
     case 'revert': return t('poi.editor.step.revert', 'put back as saved');
     case 'light': return t('poi.editor.step.light', 'light');
+    case 'material': return t('poi.editor.step.material', 'material');
+    case 'uv': return t('poi.editor.step.uv', 'UVs');
     default: return t('poi.editor.step.edit', 'edit');
   }
 }
@@ -144,9 +147,11 @@ export function createAssetFacts(fetchAsset, onLearned = () => {}) {
  *   doc?: Document, edit: any, editor: any, feed: any,
  *   io: () => (import('../poi/poiService.js').PoiIo | null), me: { handle: string | null, builder: boolean, approver: boolean },
  *   onExit: (how: 'back' | 'here') => void, onEnter?: () => void, onJump?: () => void, readFile?: (f: any) => Promise<Uint8Array>,
- * }} deps `onEnter` the launcher's press (the editor opened again after an exit)
+ *   decodeImage?: ((bytes: Uint8Array) => Promise<{ width: number, height: number, data: Uint8Array | Uint8ClampedArray }>) | null,
+ * }} deps `onEnter` the launcher's press (the editor opened again after an exit); `decodeImage` a picture decoded (the UV
+ *   editor draws the material's under its UVs - poi/poiImageDecode.js)
  */
-export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, me, onExit, onEnter = () => {}, onJump = () => {}, readFile = async (f) => new Uint8Array(await f.arrayBuffer()) }) {
+export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, me, onExit, onEnter = () => {}, onJump = () => {}, readFile = async (f) => new Uint8Array(await f.arrayBuffer()), decodeImage = null }) {
   injectPoiPanelStyle(doc);
   const el = (tag, cls = '', text = null) => { const n = doc.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const btn = (text, onClick, cls = 'dfpoi-btn') => { const b = el('button', cls, text); b.type = 'button'; b.addEventListener('click', (e) => { e.stopPropagation?.(); onClick(); }); return b; };
@@ -164,7 +169,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   let list = null;           // the store's POIs (poiList), once asked
   let search = '';
   let closing = null;        // the POI whose close asks again (it holds unsaved changes)
-  let busy = false;
+  let busy = 0;   // the store's acts in flight (a picture's upload may overlap a save)
   const facts = createAssetFacts((sha) => feed.asset(sha, { auth: io()?.secret ?? null }), () => schedule());
 
   const say = (text, kind = 'ok') => { status.textContent = text; status.dataset.kind = kind; };
@@ -358,6 +363,30 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
       out.push(field(t('poi.editor.twoSided', 'Both sides'), check(m.twoSided, (v) => change('material', mat((x) => { x.twoSided = v; })))));
       out.push(field(t('poi.editor.wrap', 'Repeat'), ...[0, 1].map((ax) => select(m.wrap[ax], POI_WRAP.map((w) => [w, wrapModeText(w)]), (v) => change('material', mat((x) => { x.wrap = ax ? [x.wrap[0], v] : [v, x.wrap[1]]; }))))));
       out.push(field(t('poi.editor.filter', 'Picture'), select(m.filter, POI_FILTER.map((f) => [f, f === 'linear' ? t('poi.editor.filterLinear', 'smooth') : t('poi.editor.filterNearest', 'pixelated')]), (v) => change('material', mat((x) => { x.filter = v; })))));
+      // POI-5: THE MATERIAL'S PICTURES - its picture and its glow's, each chosen from a file (read by its header, uploaded
+      // by its name) or taken off; the glow's colour and its strength (the law's emissive colour is the two multiplied)
+      const pictureRow = (label, field2) => {
+        const sha = m[field2];
+        const name = el('span', 'dfpoi-grow', sha ? sha.slice(0, 10) : t('poi.editor.noPicture', 'none'));
+        if (sha) name.title = sha;
+        return field(label, name,
+          btn(t('poi.editor.choosePicture', 'Choose...'), () => choosePicture((got) => change('material', mat((x) => { x[field2] = got; })))),
+          ...(sha ? [btn(t('poi.editor.clearPicture', 'Take off'), () => change('material', mat((x) => { x[field2] = null; })))] : []));
+      };
+      out.push(pictureRow(t('poi.editor.picture', 'Its picture'), 'texture'));
+      out.push(pictureRow(t('poi.editor.glowPicture', 'Glow picture'), 'emissive'));
+      const strength = Math.max(...m.emissiveColor, 0);
+      const glow = el('input');
+      glow.type = 'color';
+      glow.value = `#${m.emissiveColor.map((c) => Math.round((strength > 0 ? c / strength : 0) * 255).toString(16).padStart(2, '0')).join('')}`;
+      const glowAs = (hex, k2) => [1, 3, 5].map((i) => Math.min(16, (parseInt(hex.slice(i, i + 2), 16) / 255) * k2));
+      glow.addEventListener('change', () => change('material', mat((x) => { x.emissiveColor = glowAs(glow.value, Math.max(...x.emissiveColor, 0) || 1); })));
+      out.push(field(t('poi.editor.glow', 'Glow'), glow, numberInput(strength, (k2) => change('material', mat((x) => { x.emissiveColor = glowAs(glow.value, k2); })), { step: 0.1, min: 0, max: 16 })));
+      // where the picture lies on the faces: KHR_texture_transform's offset, scale and turn (stored in radians)
+      out.push(field(t('poi.editor.uvOffset', 'Picture offset'), ...vec(m.uv.offset, (v) => change('material', mat((x) => { x.uv = { ...x.uv, offset: v }; })), { step: 0.01, min: -10000, max: 10000 })));
+      out.push(field(t('poi.editor.uvScale', 'Picture repeats'), ...vec(m.uv.scale, (v) => change('material', mat((x) => { x.uv = { ...x.uv, scale: v.map((c) => (Math.abs(c) < 1e-4 ? 1e-4 : c)) }; })), { step: 0.1, min: -10000, max: 10000 })));
+      out.push(field(t('poi.editor.uvTurn', 'Picture turn (degrees)'), numberInput((m.uv.rotation * 180) / Math.PI, (deg) => change('material', mat((x) => { x.uv = { ...x.uv, rotation: (deg * Math.PI) / 180 }; })), { step: 1, min: -3600, max: 3600 })));
+      out.push(btn(t('poi.editor.editUvs', 'Edit UVs...'), () => openUv(sel.id, part.key, k)));
     });
     out.push(btn(t('poi.editor.removePart', 'Remove this part'), () => removeSelection()));
     return out;
@@ -409,9 +438,9 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     const dirty = edit.dirty(id);
     const { list: ps, checking } = problemsOf(d);
     const save = btn(t('poi.editor.save', 'Save draft (Ctrl+S)'), () => saveDraft(id));
-    save.disabled = busy || !dirty || ps.length > 0 || checking;
+    save.disabled = busy > 0 || !dirty || ps.length > 0 || checking;
     const submit = btn(t('poi.editor.submit', 'Send for approval'), () => submitPoi(id));
-    submit.disabled = busy || ps.length > 0 || checking || entry.state === 'submitted' || entry.state === 'live' && !dirty;
+    submit.disabled = busy > 0 || ps.length > 0 || checking || entry.state === 'submitted' || entry.state === 'live' && !dirty;
     const out = [el('div', 'dfpoi-h', t('poi.editor.acts', 'Draft')), el('div', 'dfpoi-row')];
     out[1].append(save, submit);
     const more = el('div', 'dfpoi-row');
@@ -429,8 +458,8 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
   async function act(fn) {
     const i = io();
     if (!i) { say(accountRefusalText('no-session'), 'bad'); return null; }
-    busy = true; schedule();
-    try { return await fn(i); } finally { busy = false; schedule(); }
+    busy++; schedule();
+    try { return await fn(i); } finally { busy--; schedule(); }
   }
   async function saveDraft(id) {
     const d = edit.docOf(id), e = edit.entryOf(id);
@@ -494,6 +523,55 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     edit.open(id, { doc: pick.doc, base: h.liveRev ?? null, rev: mine ? mine.rev : null, state: mine ? mine.state : live ? 'live' : 'draft' });
     edit.select({ id, part: null });
     say(t('poi.editor.opened', 'Opened {name}.', { name: pick.doc.name }));
+  }
+  /** A picture from a file: read by its header (refused in words), uploaded by its name, handed to `use`. */
+  async function takePicture(bytes, use) {
+    const meta = poiImageMetaOf(bytes);
+    if ('error' in meta) { say(imageErrorText(meta.error), 'bad'); return false; }
+    const r = await act((i) => poiPutAsset(i, bytes, 'texture'));
+    if (!r) return false;
+    if (!r.ok) { say(refusal(r), 'bad'); return false; }
+    facts.put(r.data.sha, { kind: 'texture', ...r.data.meta });
+    use(r.data.sha);
+    return true;
+  }
+  function choosePicture(use) {
+    const input = el('input');
+    input.type = 'file'; input.accept = '.png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp';
+    input.addEventListener('change', async () => { const f = input.files?.[0]; if (f) await takePicture(await readFile(f), use); });
+    input.click?.();
+  }
+  /** POI-5: the UV editor over a part's material - the part's mesh fetched and read, the material's picture under it;
+   *  applied, the mesh made again is uploaded by its name and the part wears it (one step). */
+  let uvDialog = null;
+  async function openUv(id, key, k) {
+    const d = edit.docOf(id), part = d?.parts.find((p) => p.key === key);
+    if (!part || uvDialog) return;
+    const auth = io()?.secret ?? null;
+    let bytes;
+    try { bytes = await feed.asset(part.mesh, { auth }); } catch { say(t('poi.editor.uvNoMesh', 'The part\'s model would not load.'), 'bad'); return; }
+    const dm = decodePoiMesh(bytes);
+    if ('error' in dm) { say(meshErrorText(dm.error), 'bad'); return; }
+    const tex = part.materials[k]?.texture;
+    const picture = tex && decodeImage ? feed.asset(tex, { auth }).then((b) => decodeImage(b)).catch(() => null) : Promise.resolve(null);
+    uvDialog = createPoiUvPanel({
+      doc, mesh: dm.mesh, sub: k, materials: part.materials.length, picture,
+      title: t('poi.editor.uvTitle', 'UVs: {name}', { name: part.name || part.key }),
+      onApply: async (mesh) => {
+        let out;
+        try { out = encodePoiMesh(mesh); } catch (e) { say(meshErrorText(String(e?.message ?? '').replace(/^poi mesh: /, '')), 'bad'); return false; }
+        const r = await act((i) => poiPutAsset(i, out, 'mesh'));
+        if (!r) return false;
+        if (!r.ok) { say(refusal(r), 'bad'); return false; }
+        facts.put(r.data.sha, { kind: 'mesh', ...r.data.meta });
+        edit.edit(id, 'uv', (x) => { const p = x.parts.find((q) => q.key === key); if (p) p.mesh = r.data.sha; });
+        say(t('poi.editor.uvApplied', 'The UVs are applied: the part wears its new model.'));
+        return true;
+      },
+      onClose: () => { uvDialog = null; },
+    });
+    root.append(uvDialog.root);
+    uvDialog.root.focus?.();
   }
   function removeSelection() {
     const sel = edit.selection();
@@ -584,10 +662,15 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     /** The keyboard's acts the editor hands back (Ctrl+S, Delete, Ctrl+D). */
     acts: { save: () => { const s = edit.selection(); if (s) saveDraft(s.id); }, del: () => removeSelection(), duplicate: () => duplicateSelection() },
     open: (id) => openPoi(id),
+    /** POI-5: the UV editor over a part's material, and a picture taken from bytes - the panel's own buttons' doors, a
+     *  test's too. */
+    openUv: (id, key, k) => openUv(id, key, k),
+    uvDialog: () => uvDialog,
+    takePicture: (bytes, use) => takePicture(bytes, use),
     refreshList: () => refreshList(),
     /** Whether a press landed on the panel (the world leaves it alone). */
     owns: (target) => !!target && typeof root.contains === 'function' && root.contains(target),
-    destroy() { offEdit(); closeDialog(); root.remove?.(); },
+    destroy() { offEdit(); closeDialog(); uvDialog?.close(); root.remove?.(); },
   };
 }
 

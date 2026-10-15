@@ -31,7 +31,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and CARDS-PLUS's CARD PANEL KIT (`cardPanelKit.js`: the chrome both card tables' panels wear, and the kit cut to them on the classic skin; `11-Multiplayer/Tavern-Cards.md` section 38)
 - and POI-2's POINTS OF INTEREST ON THE MAPS (`poiMapMark.js`: every approved POI whose document asks for a mark, a violet circle on its pixel with its label, on both maps; `06-Systems/POI-Editor-Arc.md` POI-2)
 - and POI-3's EDITOR PANEL (`poiEditorPanel.js`: the POI editor's bar, outliner, inspector, what is wrong, the store's acts and the import dialog; `06-Systems/POI-Editor-Arc.md` POI-3b)
-360 modules
+- and POI-5's UV EDITOR (`poiUvPanel.js`: one material's UVs over its picture - selected by vertex, edge, face or island, moved, turned, sized, seamed, unwrapped, projected, packed, its texel density read and set, applied to the part as one step; `06-Systems/POI-Editor-Arc.md` POI-5)
+361 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

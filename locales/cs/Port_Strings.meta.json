@@ -10129,6 +10129,16 @@
   "tr": "db02c9c8dc04",
   "by": "claude-in-session"
  },
+ "poi.editor.choosePicture": {
+  "en": "1f77e83907c4",
+  "tr": "000da9241cf4",
+  "by": "claude-in-session"
+ },
+ "poi.editor.clearPicture": {
+  "en": "1c99c72cdd1d",
+  "tr": "744ed93af119",
+  "by": "claude-in-session"
+ },
  "poi.editor.close": {
   "en": "bbfa773e5a63",
   "tr": "ae2883a526af",
@@ -10157,6 +10167,11 @@
  "poi.editor.discard": {
   "en": "081a29d40ba0",
   "tr": "379d61e2a86a",
+  "by": "claude-in-session"
+ },
+ "poi.editor.editUvs": {
+  "en": "b0d8cfc307c2",
+  "tr": "90d0a7f943ca",
   "by": "claude-in-session"
  },
  "poi.editor.editing": {
@@ -10212,6 +10227,16 @@
  "poi.editor.flicker": {
   "en": "eccb6da7d16c",
   "tr": "b358317e38cf",
+  "by": "claude-in-session"
+ },
+ "poi.editor.glow": {
+  "en": "d5545dea16e6",
+  "tr": "5d0964606a41",
+  "by": "claude-in-session"
+ },
+ "poi.editor.glowPicture": {
+  "en": "fb57a44e8af8",
+  "tr": "09c37355d381",
   "by": "claude-in-session"
  },
  "poi.editor.groundAbsolute": {
@@ -10334,6 +10359,11 @@
   "tr": "f34a0f1dd5c3",
   "by": "claude-in-session"
  },
+ "poi.editor.noPicture": {
+  "en": "71f8e7976e4c",
+  "tr": "4fb867433e1b",
+  "by": "claude-in-session"
+ },
  "poi.editor.noProblems": {
   "en": "314f910b2907",
   "tr": "f7978c85fda6",
@@ -10372,6 +10402,11 @@
  "poi.editor.part": {
   "en": "88be9d62d71b",
   "tr": "c94ec57b05fd",
+  "by": "claude-in-session"
+ },
+ "poi.editor.picture": {
+  "en": "c4ea8ca08e62",
+  "tr": "fa191db3c9d9",
   "by": "claude-in-session"
  },
  "poi.editor.place": {
@@ -10614,6 +10649,11 @@
   "tr": "37cd11498195",
   "by": "claude-in-session"
  },
+ "poi.editor.step.material": {
+  "en": "97912524f347",
+  "tr": "bb47aeb17bf0",
+  "by": "claude-in-session"
+ },
  "poi.editor.step.move": {
   "en": "379d6ce99a8a",
   "tr": "6a0bd0cef80e",
@@ -10642,6 +10682,11 @@
  "poi.editor.step.turn": {
   "en": "b09c738b5976",
   "tr": "38c16a34da74",
+  "by": "claude-in-session"
+ },
+ "poi.editor.step.uv": {
+  "en": "07356e9f4ee6",
+  "tr": "3b60fecc82b2",
   "by": "claude-in-session"
  },
  "poi.editor.strength": {
@@ -10712,6 +10757,36 @@
  "poi.editor.uploading": {
   "en": "5fd342f328dc",
   "tr": "6e0ecf71d6bf",
+  "by": "claude-in-session"
+ },
+ "poi.editor.uvApplied": {
+  "en": "407186dfca54",
+  "tr": "91c3a092483f",
+  "by": "claude-in-session"
+ },
+ "poi.editor.uvNoMesh": {
+  "en": "576011606583",
+  "tr": "cd7083bcece1",
+  "by": "claude-in-session"
+ },
+ "poi.editor.uvOffset": {
+  "en": "402a01e9a2ee",
+  "tr": "ddc4b51f0209",
+  "by": "claude-in-session"
+ },
+ "poi.editor.uvScale": {
+  "en": "ccf51d0449ca",
+  "tr": "57c18896b0b0",
+  "by": "claude-in-session"
+ },
+ "poi.editor.uvTitle": {
+  "en": "d5e6b9882dca",
+  "tr": "74db85cd7c74",
+  "by": "claude-in-session"
+ },
+ "poi.editor.uvTurn": {
+  "en": "d4779123919f",
+  "tr": "0fc240ae797a",
   "by": "claude-in-session"
  },
  "poi.editor.withdraw": {
@@ -11157,6 +11232,166 @@
  "poi.text.unknownCode": {
   "en": "58446f6d73dc",
   "tr": "91bdabc6b10e",
+  "by": "claude-in-session"
+ },
+ "poi.uv.apply": {
+  "en": "0ac154a31a26",
+  "tr": "655a2fc16b29",
+  "by": "claude-in-session"
+ },
+ "poi.uv.box": {
+  "en": "239ca5767afa",
+  "tr": "9f1b88178ed7",
+  "by": "claude-in-session"
+ },
+ "poi.uv.clearSeam": {
+  "en": "c4c976565af9",
+  "tr": "8ad940cae3c4",
+  "by": "claude-in-session"
+ },
+ "poi.uv.cylinder": {
+  "en": "817b354dc01a",
+  "tr": "69dbe4708500",
+  "by": "claude-in-session"
+ },
+ "poi.uv.density": {
+  "en": "cf92ddb282f6",
+  "tr": "cf92ddb282f6",
+  "by": "claude-in-session"
+ },
+ "poi.uv.edge": {
+  "en": "8440b9eb7d03",
+  "tr": "fa4c96959cca",
+  "by": "claude-in-session"
+ },
+ "poi.uv.face": {
+  "en": "203bc66d7067",
+  "tr": "69f0955f1e4e",
+  "by": "claude-in-session"
+ },
+ "poi.uv.fit": {
+  "en": "c9723be679f5",
+  "tr": "4e758559461a",
+  "by": "claude-in-session"
+ },
+ "poi.uv.flipU": {
+  "en": "bd506b834561",
+  "tr": "32e68eef3b40",
+  "by": "claude-in-session"
+ },
+ "poi.uv.flipV": {
+  "en": "8738390b5aa8",
+  "tr": "42696a368b81",
+  "by": "claude-in-session"
+ },
+ "poi.uv.island": {
+  "en": "132a732d69f0",
+  "tr": "9778e048a441",
+  "by": "claude-in-session"
+ },
+ "poi.uv.margin": {
+  "en": "636b603a8dc8",
+  "tr": "b05136847865",
+  "by": "claude-in-session"
+ },
+ "poi.uv.markSeam": {
+  "en": "74e839282dad",
+  "tr": "36ad731e4fbc",
+  "by": "claude-in-session"
+ },
+ "poi.uv.move": {
+  "en": "76cdb9507216",
+  "tr": "451c7637a4e1",
+  "by": "claude-in-session"
+ },
+ "poi.uv.noPicture": {
+  "en": "885b7b894680",
+  "tr": "91536882a31c",
+  "by": "claude-in-session"
+ },
+ "poi.uv.pack": {
+  "en": "152a5035bf6b",
+  "tr": "6aaee0fe748e",
+  "by": "claude-in-session"
+ },
+ "poi.uv.packTurn": {
+  "en": "d08561e5189b",
+  "tr": "234464680b41",
+  "by": "claude-in-session"
+ },
+ "poi.uv.planarX": {
+  "en": "fdb9349b71a3",
+  "tr": "232f66d72e23",
+  "by": "claude-in-session"
+ },
+ "poi.uv.planarY": {
+  "en": "456df32e17b4",
+  "tr": "b56033fb9f8a",
+  "by": "claude-in-session"
+ },
+ "poi.uv.planarZ": {
+  "en": "4af949d1ebd8",
+  "tr": "06669bb06ceb",
+  "by": "claude-in-session"
+ },
+ "poi.uv.project": {
+  "en": "2a16a5bd4ff6",
+  "tr": "8fcd3a425d02",
+  "by": "claude-in-session"
+ },
+ "poi.uv.seamHint": {
+  "en": "0969d4fa3260",
+  "tr": "95fcf93abb3f",
+  "by": "claude-in-session"
+ },
+ "poi.uv.setDensity": {
+  "en": "a89b8296cd4c",
+  "tr": "17ef4668be47",
+  "by": "claude-in-session"
+ },
+ "poi.uv.size": {
+  "en": "b7152342a267",
+  "tr": "c44666a3eb14",
+  "by": "claude-in-session"
+ },
+ "poi.uv.sphere": {
+  "en": "0446c388357c",
+  "tr": "99dae74ff626",
+  "by": "claude-in-session"
+ },
+ "poi.uv.turn": {
+  "en": "368e8081b781",
+  "tr": "b556acdf32ef",
+  "by": "claude-in-session"
+ },
+ "poi.uv.turnLeft": {
+  "en": "28ab946dedc2",
+  "tr": "429452238809",
+  "by": "claude-in-session"
+ },
+ "poi.uv.turnRight": {
+  "en": "d4bfb7ccfbc5",
+  "tr": "2bda900424df",
+  "by": "claude-in-session"
+ },
+ "poi.uv.unwrap": {
+  "en": "35cf8b34bb55",
+  "tr": "992393611cfd",
+  "by": "claude-in-session"
+ },
+ "poi.uv.unwrapHint": {
+  "en": "df466d1f22cc",
+  "tr": "d6c13bd63de7",
+  "by": "claude-in-session"
+ },
+ "poi.uv.unwrapped": {
+  "en": "6b2db98e6f39",
+  "tr": "bd014b005cc9",
+  "by": "claude-in-session"
+ },
+ "poi.uv.vertex": {
+  "en": "e5648eccf2ad",
+  "tr": "bcc1ee25e48b",
   "by": "claude-in-session"
  },
  "poi.where.light": {

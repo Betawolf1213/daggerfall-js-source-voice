@@ -26383,7 +26383,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       win?.activateTeleportationTravel();
       if (win) townTalk.showOverlay(win);
     }
-    panel = createPoiEditorPanel({ edit, editor, feed: poiFeed, io, me, onExit: exit, onEnter: enter, onJump: jump });
+    panel = createPoiEditorPanel({ edit, editor, feed: poiFeed, io, me, onExit: exit, onEnter: enter, onJump: jump, decodeImage: decodePoiImage });
     document.body.append(panel.root);
     poiEditor = editor;
     enter();

@@ -42,7 +42,7 @@ the glTF reader is the port's own and every model draws through `Renderer.create
 | POI-2 | The game: the feed read and kept, POIs streamed with the pixels they stand on in the exterior hosts, drawn, collided, lit, marked on the map; a new approval picked up without a reload | built |
 | POI-3 | The editor mode: the role gate, a free camera, the map to fly to, place / move / rotate / scale with gizmos and ground snap, an outliner and inspector, undo and redo, drafts saved and submitted | built (POI-3a the core, POI-3b the world and the panel) |
 | POI-4 | The glTF 2.0 / GLB importer: accessors (sparse too), the node tree baked, materials, embedded and side-by-side images, samplers, KHR_texture_transform; the frame turned to the game's; the asset library | the reader built; the import and its upload built (POI-3b); a library shared between builders planned |
-| POI-5 | The material editor and the full UV editor: selection by vertex, edge, face and island; move, rotate, scale; seams; LSCM unwrap; island packing; projections; texel density | planned |
+| POI-5 | The material editor and the full UV editor: selection by vertex, edge, face and island; move, rotate, scale; seams; LSCM unwrap; island packing; projections; texel density | built |
 | POI-6 | The approver's queue in the editor (before and after, at the place, with the law's report), history and rollback; export and import of a POI pack; a GLB back out for a round trip | planned |
 
 ## POI-1 - the format and the store (2026-10-14, acct133)
@@ -264,3 +264,38 @@ the import, and the world's wiring by source; `tools/mutants/poi3b.json` 12, all
 
 Pinned by `test/poi4_gltf.test.js` (6); `tools/mutants/poi4.json` 11, all dead. The asset library, the upload and the
 editor's import dialog come with POI-3.
+
+## POI-5 - the material editor and the UV editor (2026-10-14)
+
+Mac, asked what "UV map" covers: **"Full UV editor"**.
+
+- **THE MATERIAL EDITOR** (`src/ui/poiEditorPanel.js`, a part's materials in the inspector): its picture and its glow
+  picture - **Choose...** a file, read by its header (`decodeImage`, the import's reader: one the store would refuse is
+  said in words and nothing is uploaded), uploaded once by its name and worn as one step; **Take off**. The glow's colour
+  and its strength (the colour times the strength, up to 16 - KHR_materials_emissive_strength's meaning). Where the
+  picture lies: its offset, its repeats, its turn (in degrees on the panel, radians in the document). **Edit UVs...**
+  opens the UV editor over that material.
+- **THE UV EDITOR'S GEOMETRY** (`src/poi/uvMesh.js`, pure): a mesh as its triangles' corners, each with a UV, its
+  vertices WELDED by position; an edge is a SEAM where its faces disagree on its UVs (the model's own seams found, never
+  invented; the builder marks or clears more); an ISLAND the faces reached across edges that are not seams; a UV VERTEX
+  every corner of an island at one point. UVs in glTF's order (v down from the picture's top) - the game turns them at
+  the draw. The tools: move, turn and size about a point, flip; PROJECTIONS (planar along X, Y or Z, box, cylindrical,
+  spherical) in metres, a unit of UV a metre, the picture never mirrored as the face is seen from its front; the UNWRAP
+  by least-squares conformal maps (Levy et al. 2002) - per island, its two farthest vertices pinned, the normal
+  equations factored DIRECTLY (`src/poi/sparseCholesky.js`: CSparse's up-looking Cholesky - the elimination tree, each
+  row's reach, a symbolic count before the numeric pass - in a geometric NESTED DISSECTION's order, which keeps the
+  factor near-linear on a surface; an 80,000-triangle sheet in under three seconds), conjugate gradients only where the
+  factor is refused; PACKING (each island turned to its smallest box by the hull's edges - lying down on a tie - shelved
+  tallest first, the scale the largest that fits, by halving); TEXEL DENSITY read and set in the picture's pixels a
+  metre. Back to a mesh (`meshFromSession`): a vertex for each distinct position and UV, split exactly where the UVs
+  part, the submeshes' order kept.
+- **THE UV EDITOR'S HANDS** (`src/poi/uvEdit.js`, pure): one material's faces at a time; four ways to select (vertex,
+  edge, face, island), a click the nearest within reach, Shift adding and taking away, a box everything inside; every
+  tool over the selection (the whole material when none) and one step of its own undo (100 steps), a drag one step
+  however long.
+- **THE PANEL** (`src/ui/poiUvPanel.js`): a dialog over the editor, a canvas - the material's picture, the square's grid,
+  the faces, the seams red, the selection lit. 1 2 3 4 the modes, M T S the drag's tool, Ctrl+Z / Ctrl+Y, Ctrl+A,
+  Escape; the wheel zooms at the pointer, the middle button (or Alt) pans. **Apply to the part** makes the mesh again,
+  uploads it by its new name and the part wears it - one step of the POI's undo; closing lets it all go.
+
+Pinned by `test/poi5_uv.test.js` (7) and `test/poi5_panel.test.js` (2); `tools/mutants/poi5.json` 19, all dead.
