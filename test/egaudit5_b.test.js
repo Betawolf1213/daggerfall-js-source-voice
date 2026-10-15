@@ -15,11 +15,11 @@
 // The screen's halves (L1-7's draw, L1-12's glint, L1-13, L1-14, L1-18's outline, L1-22) are pinned in egaudit5_b_client.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egOnFight, EG_SEALED_MS, EG_DECREE_BY_KEY } from '../src/net/egLaw.js';
-import { egBreachNew, egEnter, egStep, egBlow, egCount, egFall, egStateOf, champRing, EG_CHAMP_RING_M, EG_CHAMP_RING_MIN_M } from '../src/net/egBrain.js';
+import { egHallOf, egOnFight, EG_SEALED_MS, EG_DECREE_BY_KEY, EG_LORDS } from '../src/net/egLaw.js';
+import { egBreachNew, egEnter, egStep, egBlow, egCount, egFall, egStateOf, egStrataSecond, champRing, EG_CHAMP_RING_M, EG_CHAMP_RING_MIN_M } from '../src/net/egBrain.js';
 import { egLordsNew, egLordsWake, egLordsStep, egLordsOf, egLordsAwake, egLordsFell, egLordHit, egLordHitX, egLordAspect, egObjsOf, egObjBroken, egChainShared, egHavenRouteM, egHavenFloor,
-  EG_HAVENS_MAX, EG_ZONE_FIGHT_MS, EG_UMBRA_MS, EG_UMBRA_GLINT_MS } from '../src/net/egLords.js';
-import { egFightNew, egHas, EG_FL, EG_ROLE, egBlowsStep, egAim, egBodyWire, egYawOf, egFightState } from '../src/net/egBodies.js';
+  zoneOut, EG_HAVENS_MAX, EG_ZONE_FIGHT_MS, EG_UMBRA_MS, EG_UMBRA_GLINT_MS } from '../src/net/egLords.js';
+import { egFightNew, egHas, EG_FL, EG_ROLE, egBlowsStep, egAim, egBodyWire, egYawOf, egFightState, egPlace } from '../src/net/egBodies.js';
 import { egErrandMs, egInShape, shDisc, shLane, egChainGapMs, egBlowOutlineFrom, EG_ESCAPE_MPS, EG_OUTLINE_MAX_MS } from '../src/net/egShape.js';
 import { egUnionHolds, egZoneLandings, egFloorLess } from '../src/net/egFloor.js';
 import { egFightView } from '../src/net/egWalkGraph.js';
@@ -358,4 +358,244 @@ test('AUDIT EG V L1-15 EACH LINK ITS OWN SNAP (section 13.4: "A pair stretched p
   for (let k = 0; k < 24; k++) C.step(here);
   const snaps = C.frames.slice(f0).filter((f) => f.k === 'eb' && f.nm === 'The Chain Snaps').map((f) => f.on.join('|'));
   for (const key of Object.keys(at)) assert.equal(snaps.filter((s) => s === key).length, 2, `the pair ${key} snaps twice in 6 s`);
+});
+
+// ── L1-9: A NAMED FAILURE BLOW COUNTED ON WHOM IT NAMES ────────────────────────────────────────────────────────────────
+test('AUDIT EG V L1-9 THE CHAIN SNAPS COUNTED ON THE PAIR IT NAMES, BY THE CENSUS (section 13.2\'s CHECK class: "lands on them wherever they stand, never on another"): three members, a pair chained by Morvayn\'s own tick stretched 12 m - its snap (`on` the pair) said; the pair runs 6 m clear before it lands and the odd member steps into its marks: the director\'s census (egCount over the trails) counts the snap on each of the pair and never on the odd member (mutants: the census by the marks - egInBlow for a named blow; a named member counted off its trail)', () => {
+  const S = breachAt(7, 50, { n: 3 });
+  wakeCourt(S);
+  const F = S.B.F, cr = S.spec.fl.find((f) => f.t === 'd');
+  S.subs.forEach((s, j) => S.at(s, cr.x - 2 + 2 * j, cr.z));
+  for (let k = 0; k < 4 * 20 && !(F.mem.chains ?? []).length; k++) S.step();
+  const [pa, pb] = F.mem.chains[0], odd = S.subs.find((s) => s !== pa && s !== pb);
+  S.at(pa, cr.x - 6, cr.z); S.at(pb, cr.x + 6, cr.z); S.at(odd, cr.x, cr.z - 9);
+  let snap = null;
+  for (let k = 0; k < 12 && !snap; k++) snap = S.step().find((f) => f.k === 'eb' && f.nm === 'The Chain Snaps') ?? null;
+  assert.ok(snap && [...snap.on].sort().join() === [pa, pb].sort().join(), 'the snap names the pair');
+  const cs0 = Object.fromEntries(S.subs.map((s) => [s, S.B.mem[s].cs?.[0] ?? 0]));   // blows struck (the snap bears Morvayn's venom: seen, its share the member's own save)
+  const [mx, mz] = [snap.s[0][1], snap.s[0][2]];
+  S.at(pa, cr.x - 6, cr.z + 6); S.at(pb, cr.x + 6, cr.z + 6); S.at(odd, mx, mz);   // the pair clear of its marks, the odd member in one
+  for (let k = 0; k < 8; k++) S.step();
+  const got = Object.fromEntries(S.subs.map((s) => [s, (S.B.mem[s].cs?.[0] ?? 0) - cs0[s]]));
+  assert.ok(got[pa] >= 1 && got[pb] >= 1, `the pair, wherever they ran (${JSON.stringify(got)})`);
+  assert.equal(got[odd], 0, 'never the member standing in its marks it does not name');
+  assert.ok((F.cg?.['The Chain Snaps'] ?? []).sort().join() === [pa, pb].sort().join(), 'its catch the pair\'s');
+});
+
+// ── L1-10: THE LORDS' PLACE IN THE UNION FLOOR ─────────────────────────────────────────────────────────────────────────
+test('AUDIT EG V L1-10 THE LORDS\' PLACE IN THE UNION FLOOR (section 13.2: "Pendulums, vents and the place\'s hazards are tested in the same set"): Grath\'s burning bridge and Ilthys\'s falling floor are the place\'s own, no CHECK - each a landing in the set; a fallen island (a void) is no ground to flee to - a blow that would leave a member on a bridge only the void is held; a told burn lands in the set at its onset; and a set its landings empty without the new blow holds nothing more (mutants: the bridge a CHECK again; the void ground; the zones out of the set; held whatever empties it)', () => {
+  // the place's blows said as landings, never CHECKs, by the kits themselves
+  const C = court(1, 5, 'hound', { n: 2 }), here = C.subs.map((sub, j) => ({ sub, x: C.f.x + 3 + j, z: C.f.z }));
+  C.L.hp = C.L.max * 0.6;
+  let bridge = null;
+  for (let k = 0; k < 4 * 20 && !bridge; k++) bridge = C.step(here).find((f) => f.k === 'eb' && f.nm === 'Burning Bridge') ?? null;
+  assert.ok(bridge && bridge.ch === 0 && bridge.sp === 12_000, 'the bridge burns, the place\'s own fire - no CHECK');
+  const I = court(1, 25, 'ilthys', { n: 2 }), ih = I.subs.map((sub, j) => ({ sub, x: I.f.x + 3 + j, z: I.f.z }));
+  I.L.hp = I.L.max * 0.3;
+  let falls = null;
+  for (let k = 0; k < 4 * 12 && !falls; k++) falls = I.step(ih).find((f) => f.k === 'eb' && f.nm === 'The Floor Falls') ?? null;
+  assert.ok(falls && falls.ch === 0, 'the Last Charge\'s third: no CHECK');
+  // a member mid-bridge between two islands; a disc over the whole bridge 3 s on
+  const G = court(1, 5, 'hound', { n: 1 }), spec = G.spec, F = G.F, now = G.now();
+  const br = spec.fl.find((f) => f.t === 'l'), isles = spec.fl.filter((f) => f.t === 'd');
+  const mx = (br.ax + br.bx) / 2, mz = (br.az + br.bz) / 2, ends = isles.filter((d) => Math.hypot(d.x - br.ax, d.z - br.az) < d.r + 1 || Math.hypot(d.x - br.bx, d.z - br.bz) < d.r + 1);
+  assert.equal(ends.length, 2, 'the bridge joins two islands');
+  const me = [{ sub: 'acct-0', x: mx, z: mz }], disc = () => ({ o: G.L.i, s: [shDisc(mx, mz, 13)], at: G.now() + 3000, wu: 3000, p: 0.3, b: 0, el: null, nm: 'Test Slam' });
+  F.blows.length = 0; F.held = []; F.zones = [];
+  assert.ok(egAim(F, spec, disc(), me, now, []), 'both islands standing: there is ground to flee to - said');
+  F.blows.length = 0; F.held = [];
+  const out = [];
+  for (const d of ends) zoneOut(F, 'void', shDisc(d.x, d.z, d.r), now - 1000, now + 15_000, out);
+  assert.equal(egAim(F, spec, disc(), me, now, []), null, 'both its islands fallen: only the void beyond - held');
+  assert.equal(F.held.length, 1);
+  // a told burn lands in the set at its onset; a court burning whole holds nothing more
+  F.blows.length = 0; F.held = []; F.zones = [];
+  const z = zoneOut(F, 'burn', shDisc(mx, mz, 40), now + 1500, now + 60_000, out);
+  assert.deepEqual(egZoneLandings(F.zones, now, now + 3000).map((l) => [l.at, l.s[0]]), [[z.from, z.s]], 'its onset a landing in the window');
+  assert.deepEqual(egZoneLandings(F.zones, now, now + 1000), [], 'none past the window');
+  assert.ok(egAim(F, spec, { ...disc(), s: [shDisc(mx, mz, 2)] }, me, now, []), 'the whole floor burning at its onset: the new blow empties nothing more - said');
+  const onFloor = (x, zz) => egOnFight(spec, x, zz);
+  F.zones = [];
+  zoneOut(F, 'void', shDisc(ends[0].x, ends[0].z, ends[0].r), now, now + 15_000, out);
+  const less = egFloorLess(onFloor, F.zones, now, now + 3000);
+  assert.deepEqual([onFloor(ends[0].x, ends[0].z), less(ends[0].x, ends[0].z), less(mx, mz)], [true, false, true], 'the fallen island no floor, the bridge floor');
+  assert.equal(egFloorLess(onFloor, F.zones, now + 20_000, now + 23_000), onFloor, 'risen again: the floor whole');
+});
+
+// ── L1-11, L1-12: NOTHING OF AN ERRAND BEFORE ITS TIME ──────────────────────────────────────────────────────────────────
+test('AUDIT EG V L1-11 THE CITADEL PLANTED AS HE WAKES (sections 8.5 and 8.6: "asleep, it takes no blow"): a Proving Walk\'s Kynmarcher stands no standard while he sleeps - nothing of his errand to break before his ring wakes him - and plants three as he wakes, each 20% off his blows (mutants: the standards stood with him)', () => {
+  const [seed, h, spec] = hallWhere((s) => s.kind === 'proving' && s.champ === 'kynmarcher');
+  const S = breachAt(seed, h, { n: 2 }), F = S.B.F, K = egLordsOf(F)[0];
+  assert.equal(K.key, 'kynmarcher');
+  for (let k = 0; k < 8; k++) S.step();
+  assert.deepEqual([K.up2, egObjsOf(F, 'standard').length], [false, 0], 'asleep: no standard');
+  const ring = champRing(spec);
+  for (const sub of S.subs) S.at(sub, ring.x, ring.z);
+  for (let k = 0; k < 40 && !K.up2; k++) S.step();
+  assert.deepEqual([K.up2, egObjsOf(F, 'standard').length], [true, 3], 'awake: three planted');
+  const plain = { ...K, key: 'kynreeve' };
+  assert.ok(Math.abs(egLordHitX(F, K, 'acct-0', null, HIT_KINDS.Melee, S.now() + 4000) - egLordHitX(F, plain, 'acct-0', null, HIT_KINDS.Melee, S.now() + 4000) * 0.4) < 1e-9, 'three standing: x0.4');
+});
+test('AUDIT EG V L1-12 THE THREE SHADOWS READ ONLY BY THEIR GLINT (section 13.2, "Tells only the engine can give"; section 13.3: "the true one glints with its WIND"): in his second phase the Night-Stalker vanishes - three umbral discs said alike (no part, no state), his own row left where he vanished; EG_UMBRA_GLINT_MS before he rises the true one\'s state is said (1, its glint); he rises on it (mutants: the true disc\'s part said; his row set on it at once; no glint said; the glint said at once)', () => {
+  const C = court(1, 55, 'stalker', { n: 2 }), here = C.subs.map((sub, j) => ({ sub, x: C.f.x + 3 + j, z: C.f.z }));
+  C.L.hp = C.L.max * 0.6;
+  let f0 = 0;
+  for (let k = 0; k < 4 * 40; k++) { const n = C.frames.length; const o = C.step(here); if (o.some((f) => f.k === 'esay' && f.w === 'vanish') && C.L.ph === 2) { f0 = n; break; } }
+  assert.ok(f0 > 0 && egHas(C.L, EG_FL.hidden), 'vanished in his second phase');
+  const at = [C.L.x, C.L.z], rows = C.frames.slice(f0).filter((f) => f.k === 'ead').flatMap((f) => f.a).filter((t) => t[2] === 22);
+  assert.equal(rows.length, 3, 'three umbral discs');
+  assert.deepEqual(rows.map((t) => [t[3], t[15], t[16]]), [[0, 0, 0], [0, 0, 0], [0, 0, 0]], 'said alike: no part, no state');
+  const umbras = egObjsOf(C.F, 'umbra'), real = umbras.find((u) => u.real);
+  assert.ok(real && Math.hypot(at[0] - real.x, at[1] - real.z) > 0.01 || umbras.length === 3, 'his row where he vanished');
+  assert.ok(!C.frames.slice(f0).some((f) => f.k === 'emv' && f.m.some((t) => t[0] === C.L.i && Math.hypot(t[1] - real.x, t[2] - real.z) < 0.01)), 'never set on the true disc while he hides');
+  const t0 = C.now();
+  let glint = null;
+  while (!glint && C.now() < t0 + EG_UMBRA_MS) glint = C.step(here).find((f) => f.k === 'eob' && f.st === 1) ?? null;
+  assert.ok(glint && glint.i === real.i, 'the true one glints');
+  assert.ok(glint.at - (t0 - 250) >= EG_UMBRA_MS - EG_UMBRA_GLINT_MS - 250, `${EG_UMBRA_GLINT_MS} ms before he rises, never sooner`);
+  while (egHas(C.L, EG_FL.hidden) && C.now() < t0 + EG_UMBRA_MS + 1000) C.step(here);
+  assert.ok(!egHas(C.L, EG_FL.hidden) && Math.hypot(C.L.x - real.x, C.L.z - real.z) < 0.01, 'he rises on it');
+  assert.deepEqual([EG_UMBRA_MS, EG_UMBRA_GLINT_MS], [6000, 2000]);
+});
+
+// ── L1-17: TO THE FIGHT'S END ──────────────────────────────────────────────────────────────────────────────────────────
+test('AUDIT EG V L1-17 "FOR THE REST OF THE FIGHT" IS THE FIGHT\'S END (sections 13.3 and 13.4): Both Courts Burn and the Long Night stand EG_ZONE_FIGHT_MS (an hour), never ten minutes (mutants: 600 s kept)', () => {
+  const T = court(1, 35, 'twins', { n: 4 }), th = T.subs.map((sub, j) => ({ sub, x: T.f.x + 3 + j, z: T.f.z }));
+  for (const L of egLordsOf(T.F)) L.hp = L.max * 0.3;
+  const o = T.step(th), burns = o.filter((f) => f.k === 'ez' && f.kind === 'burn');
+  assert.equal(burns.length, 2, 'both courts');
+  for (const z of burns) assert.equal(z.until - T.now(), EG_ZONE_FIGHT_MS);
+  const S = court(1, 75, 'seyth', { n: 2 }), sh = S.subs.map((sub, j) => ({ sub, x: S.f.x + 3 + j, z: S.f.z }));
+  S.L.hp = S.L.max * 0.3;
+  const dark = S.step(sh).find((f) => f.k === 'edark');
+  assert.equal(dark?.until - S.now(), EG_ZONE_FIGHT_MS, 'the Long Night');
+  assert.equal(EG_ZONE_FIGHT_MS, 3_600_000);
+});
+
+// ── L1-18: A CHAINED SHAPE'S DIM OUTLINE ───────────────────────────────────────────────────────────────────────────────
+test('AUDIT EG V L1-18 A CHAINED SHAPE\'S FILL STARTS WHEN THE FIRST LANDS (sections 13.2 and 14: "The second shape\'s dim outline appears with the first shape\'s ... its fill starts when the first lands"): Grath in fury\'s second step, alone - each chained shape is said with the first (its outline from the first\'s word, `ol`), its fill (`wu`) THE CHAINED GAP from the first\'s landing; the wire carries `ol` within its bound (mutants: the fill from the first\'s word; the outline\'s lead unsaid; the bound)', () => {
+  const C = court(12345, 5, 'hound', { n: 1 });
+  const pairs = [];
+  for (let k = 0; k < 4 * 120 && pairs.length < 2; k++) {
+    const o = C.step([{ sub: 'acct-0', x: C.L.x + C.L.r + 1, z: C.L.z }], { covenant: 1 });
+    for (const f of o.filter((x) => x.k === 'eb' && x.nm.endsWith('(fury)'))) { const first = o.find((x) => x.k === 'eb' && x.o === f.o && `${x.nm} (fury)` === f.nm); if (first) pairs.push([first, f]); }   // said with the first, in its beat
+  }
+  assert.ok(pairs.length >= 1, 'fury\'s chain thrown');
+  for (const [first, ch] of pairs) {
+    assert.equal(ch.wu, egChainGapMs(first.wu, first.s), 'its fill the chained gap');
+    assert.equal(ch.at - ch.wu, first.at, 'its fill from the first\'s landing');
+    assert.equal(egBlowOutlineFrom(ch), first.at - first.wu, 'its dim outline from the first\'s word');
+    assert.ok(validEgOut(JSON.parse(JSON.stringify(ch)))?.ol === ch.ol, 'the wire carries it');
+  }
+  assert.equal(EG_OUTLINE_MAX_MS, EG_OUTLINE_WIRE_MAX, 'one bound, pinned equal (wire.js imports no law of the Spire\'s)');
+  const [, ch] = pairs[0];
+  assert.equal(validEgOut({ ...JSON.parse(JSON.stringify(ch)), ol: EG_OUTLINE_WIRE_MAX + 1 }), null, 'past its bound');
+});
+
+// ── L1-23, L1-25, L1-29, L1-30: EACH LORD'S OWN ────────────────────────────────────────────────────────────────────────
+test('AUDIT EG V L1-23 PAIRED HEARTS IN THE COLOSSUS\'S OWN SECOND PHASE (section 13.3): THE TWIN COURT stands the Colossus second - a heart broken while the Court\'s lord has turned and the Colossus has not is no pair\'s break; in the Colossus\'s second phase it is (mutants: the first lord\'s phase read)', () => {
+  const [seed, h] = hallWhere((s) => s.kind === 'court' && s.c >= 21 && s.lord !== 'colossus' && !EG_LORDS[s.lord]?.valk && egStrataSecond(['twincourt'], s.lord, s.c) === 'colossus', { from: 105, to: 600, step: 5, seeds: 40 });
+  const S = breachAt(seed, h, { n: 2, strata: ['twincourt'] });
+  assert.ok(S, 'a Twin Court with the Colossus second');
+  wakeCourt(S);
+  const F = S.B.F, [L0] = egLordsOf(F), Co = egLordsOf(F).find((L) => L.key === 'colossus');
+  turnTo(S, L0, 0.6);
+  assert.deepEqual([L0.ph, Co.ph], [2, 1]);
+  const breakOne = () => { const hs = egObjsOf(F, 'heart'), hrt = hs.find((x) => hs.some((y) => y !== x && y.pair === x.pair)); egObjBroken(F, S.spec, hrt, 'M0', S.now(), []); return hrt.pair; };   // one of a pair standing whole
+  const p1 = breakOne();
+  assert.equal(F.mem.pairBroke?.[p1], undefined, 'the Court\'s lord turned, the Colossus not: no pair\'s break');
+  turnTo(S, Co, 0.6);
+  const p2 = breakOne();
+  assert.ok(F.mem.pairBroke?.[p2] > 0, 'its own second phase: the pair\'s five seconds');
+});
+test('AUDIT EG V L1-25 THE TWINS\' TOUCH BY THE CENSUS\'S RECKONING AT THE LANDING (section 13.3: "A blow struck them when the relay\'s reckoning of the poses finds them in it as it lands (the census\'s)"): a Vael blow lands - the member in it at its landing who steps out before the next beat is Fire-touched; the one who steps in after it is not (mutants: the touch by the beat\'s poses)', () => {
+  const S = breachAt(1, 35, { n: 2 });
+  wakeCourt(S);
+  const F = S.B.F, vael = egLordsOf(F).find((L) => L.key === 'twins' && L.pt === 0), cr = S.spec.fl.find((f) => f.t === 'd');
+  const [inn, late] = S.subs, x = cr.x + 3, z = cr.z + 3;
+  S.at(inn, x, z); S.at(late, x + 9, z);
+  F.blows.length = 0; F.pend = []; F.held = [];
+  const at = S.now() + 1700;
+  assert.ok(egAim(F, S.spec, { o: vael.i, s: [shDisc(x, z, 3)], at, wu: 1500, p: 0.3, b: 0, el: 'fire', nm: 'Clan Bolt' }, [], at - 1500, []));
+  while (S.now() + 250 < at) S.step();
+  S.step();   // the beat past its landing: the census holds the poses at it
+  S.at(inn, x + 9, z); S.at(late, x, z);   // the one in it steps out, the other in
+  for (let k = 0; k < 6; k++) S.step();
+  const fire = (s) => !!F.marks.find((m) => m[0] === s && m[1] === 2 && m[2] === at + 12_000);
+  assert.deepEqual([fire(inn), fire(late)], [true, false], 'the touch where the census found them at its landing');
+});
+test('AUDIT EG V L1-29 EACH LORD COUNTS ITS OWN MIRRORS (section 18, THE OLD MASTERS): at Redoubt 25 Garoth\'s borrowed Mirrorcourt beside the Last Spellmaster - his two mirrors rise while the Spellmaster\'s images stand, and the Spellmaster\'s images while his mirrors stand, each its own (mutants: every mirror counted by both)', () => {
+  const S = breachAt(7, 125, { n: 2, strata: ['oldmasters'] });
+  wakeCourt(S);
+  const F = S.B.F, G = egLordsOf(F).find((L) => L.key === 'garoth'), M = egLordsOf(F).find((L) => L.key === 'spellmaster');
+  assert.ok(G && M, 'Garoth and the Last Spellmaster');
+  G.hp = G.max * 0.3; M.hp = M.max * 0.7;
+  const mine = (L) => egLordsOf(F).filter((x) => egHas(x, EG_FL.mirror) && x.by === L.i);
+  let both = false;
+  for (let k = 0; k < 4 * 90 && !both; k++) {
+    S.subs.forEach((sub, j) => { const L = j ? M : G; S.at(sub, L.x + L.r + 2, L.z); });
+    S.step();
+    both = mine(G).length === 2 && mine(M).length === 3;
+  }
+  assert.ok(both, `his two mirrors and its three images stand together (${mine(G).length}, ${mine(M).length})`);
+  assert.ok(mine(G).every((x) => x.key === 'garoth') && mine(M).every((x) => x.key === 'spellmaster' && x.image), 'each its own lord\'s');
+});
+test('AUDIT EG V L1-30 SCORCHED ONLY ON A BRIDGE THAT BURNS (section 13.3: "Leading Grath onto a burning bridge ... leaves him Scorched"): a bridge told and not yet burning scorches no one; burning, it does (mutants: the tell\'s three seconds counted as burning)', () => {
+  const C = court(1, 5, 'hound', { n: 2 }), F = C.F, G = C.L, far = { sub: 'acct-1', x: C.f.x, z: C.f.z - 8 };
+  G.hp = G.max * 0.6;
+  let told = null;
+  for (let k = 0; k < 4 * 20 && !told; k++) told = C.step([{ sub: 'acct-0', x: C.f.x + 4, z: C.f.z }, far]).find((f) => f.k === 'eb' && f.nm === 'Burning Bridge') ?? null;
+  assert.ok(told, 'a bridge told');
+  const [, ax, az, bx, bz] = told.s[0], mid = [(ax + bx) / 2, (az + bz) / 2];
+  const hunt = () => { F.mem.scent = [{ sub: 'acct-1', until: C.now() + 8000 }]; G.atk = null; G.stunUntil = 0; egPlace(F, G, mid[0], mid[1], C.now()); };
+  hunt();
+  C.step([{ sub: 'acct-0', x: C.f.x + 4, z: C.f.z }, far]);
+  assert.ok(!(G.scorchUntil > C.now()), 'told, not burning: not scorched');
+  while (C.now() < told.at) C.step([{ sub: 'acct-0', x: C.f.x + 4, z: C.f.z }, far]);
+  hunt();
+  C.step([{ sub: 'acct-0', x: C.f.x + 4, z: C.f.z }, far]);
+  assert.ok(G.scorchUntil > C.now(), 'burning: Scorched');
+});
+
+// ── L1-26: THE HAVEN NOVA OVER ANOTHER LORD'S GROUND ──────────────────────────────────────────────────────────────────
+test('AUDIT EG V L1-26 THE HAVEN NOVA OVER A FLOOR OF MANY PIECES (sections 13.2, THE ERRAND FLOOR, and 18, THE OLD MASTERS): the Last Spellmaster beside Grath on his islands and beside the Twin Lords on their courts lays his havens over the whole floor - every island and court a haven - and his Nova\'s wind-up is the errand floor of the route WALKED over it (egHavenFloor), at least the straight-line route from the farthest floor point; his own court of one disc keeps its measure (mutants: the route over the first disc alone; havens on the first disc alone; the walk across the magma)', () => {
+  for (const key of ['hound', 'twins']) {
+    const [seed, h, spec] = hallWhere((s) => s.kind === 'court' && s.lord === key && s.band === 3 && s.c % 2 === 1, { from: 105, to: 600, step: 5 });
+    const S = breachAt(seed, h, { n: 4, strata: ['oldmasters'] });
+    wakeCourt(S);
+    const F = S.B.F, M = egLordsOf(F).find((L) => L.key === 'spellmaster');
+    assert.ok(M, `${key}: the Spellmaster beside`);
+    const hearts = spec.fl.map((f) => (f.t === 'd' ? [f.x, f.z] : [(f.ax + f.bx) / 2, (f.az + f.bz) / 2]));
+    let nova = null;
+    for (let k = 0; k < 4 * 120 && !nova; k++) { S.subs.forEach((sub, j) => S.at(sub, ...hearts[j % hearts.length])); nova = S.step().find((f) => f.k === 'eb' && f.nm === 'Haven Nova') ?? null; }
+    assert.ok(nova, `${key}: the Nova`);
+    const havens = []; for (let i = 1; i + 2 < nova.s[0].length; i += 3) havens.push([nova.s[0][i], nova.s[0][i + 1], nova.s[0][i + 2]]);
+    assert.ok(havens.length <= EG_HAVENS_MAX, 'within its stamp');
+    for (const d of spec.fl.filter((f) => f.t === 'd')) assert.ok(havens.some(([x, z]) => Math.hypot(x - d.x, z - d.z) <= d.r), `${key}: a haven on every island and court`);
+    // the farthest floor point, straight to the nearest haven's edge - the route walked is never under it
+    let far = 0;
+    for (const f of spec.fl) {
+      const R = f.t === 'd' ? f.r : Math.hypot(f.bx - f.ax, f.bz - f.az) / 2 + f.hw, cx = f.t === 'd' ? f.x : (f.ax + f.bx) / 2, cz = f.t === 'd' ? f.z : (f.az + f.bz) / 2;
+      for (let x = cx - R; x <= cx + R; x += 0.5) for (let z = cz - R; z <= cz + R; z += 0.5) if (egOnFight(spec, x, z)) { let d = Infinity; for (const [hx, hz, hr] of havens) d = Math.min(d, Math.max(0, Math.hypot(x - hx, z - hz) - hr)); far = Math.max(far, d); }
+    }
+    assert.ok(nova.wu >= egErrandMs(far), `${key}: its wind-up ${nova.wu} ms, the straight route's floor ${egErrandMs(far)} ms`);
+    const base = havens.slice(0, 3), H = egHavenFloor(spec, base, egHavenRouteM(base, spec.fl.find((f) => f.t === 'd')));   // four members: three havens a court would lay, then the floor's
+    assert.deepEqual([nova.wu, havens], [egErrandMs(H.routeM), H.havens], `${key}: the walked route's errand floor`);
+  }
+});
+
+// ── L9-7: A CHAMPION'S RING ON NO FLOOR; NEW-1: A MEMBER INSIDE A LORD ─────────────────────────────────────────────────
+test('AUDIT EG V L9-7 A CHAMPION\'S RING WHERE NO FLOOR HOLDS ITS SPOT (sections 8.5 and 8.6): a proving court\'s champion stood off every floor wakes at a ring of EG_CHAMP_RING_M (13 m) about its spot, never under EG_CHAMP_RING_MIN_M (mutants: the constant; the no-floor edge\'s metre)', () => {
+  assert.deepEqual([EG_CHAMP_RING_M, EG_CHAMP_RING_MIN_M], [13, 4]);
+  const [, , spec] = hallWhere((s) => s.kind === 'proving');
+  const off = { ...spec, foe: { x: spec.foe.x + 500, z: spec.foe.z + 500 } };
+  assert.ok(!(spec.fl ?? []).some((f) => egOnFight({ fl: [f] }, off.foe.x, off.foe.z)), 'no floor holds it');
+  assert.deepEqual(champRing(off), { x: off.foe.x, z: off.foe.z, r: EG_CHAMP_RING_M });
+});
+test('AUDIT EG V NEW-1 A MEMBER INSIDE A LORD\'S BODY NEVER FREEZES IT (section 13.2): with the company standing within Garoth\'s body radius he still strikes - a member there is at no gap, never past every blow\'s reach; before, every blow\'s least gap refused and no walk came (mutants: the gap below nought kept)', () => {
+  const S = breachAt(7, 125, { n: 2 });
+  wakeCourt(S);
+  const G = egLordsOf(S.B.F)[0], f0 = S.frames.length;
+  for (let k = 0; k < 4 * 20; k++) { S.at('acct-0', G.x + G.r * 0.6, G.z); S.at('acct-1', G.x - G.r * 0.6, G.z); S.step(); }
+  assert.ok(S.frames.slice(f0).filter((f) => f.k === 'eb' && f.o === G.i).length >= 3, 'he strikes the members inside him');
 });

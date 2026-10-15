@@ -249,7 +249,7 @@ export function egAim(F, spec, o, here, now, out, lead = 0) {
  * @param {any} F @param {any} spec @param {any} blow @param {{sub: string, x: number, z: number}[]} here @param {number} now @param {any[]} out @param {string[]} told
  */
 function egSay(F, spec, blow, here, now, out, told) {
-  blow.at = Math.max(blow.at, now + blow.wu);
+  blow.at = Math.max(blow.at, now + blow.wu + (blow.ol ?? 0));   // AUDIT EG V (lane1 #18): a chained shape's outline lead kept whole too - its fill from the first's landing, however late their word
   if (!blow.ch && here.length) {
     const onFloor = egFloorLess(egFloorTest(spec), F.zones, now, blow.at), pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egPlaceLandings(spec, F.wokeAt, now, blow.at), ...egZoneLandings(F.zones, now, blow.at)];
     for (const m of here) {
