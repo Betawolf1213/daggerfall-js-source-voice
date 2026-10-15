@@ -1,0 +1,597 @@
+// @ts-check
+// ═══════════════════════════════════════════════════════════════════
+// POI-3 (2026-10-14) - THE EDITOR'S PANEL: EVERYTHING A BUILDER READS AND PRESSES.
+//
+// Mac: "a tool my developers can use without having to access the codebase ... the best it can be" (bible/06-Systems/
+// POI-Editor-Arc.md POI-3). The editor's screen over the world (scenes/poiEditorHost.js draws the handles in it):
+//
+//   - THE BAR (top): the tools (select, move, turn, size - Q W E R), the space (world or the thing's own - X), snap and
+//     its steps, undo and redo with what they would undo, the eye's speed, a new POI, an import, the map, and the way
+//     out (back to where the body stands, or down to the ground under the eye).
+//   - THE OUTLINER (left): the POIs being edited - each its state (new, a draft, sent for approval, live, changed) and
+//     its parts and lights to select - and every POI the store holds, searched, to open.
+//   - THE INSPECTOR (right): the selection's every field, each change one step of the undo: a POI's name, words, tags,
+//     place (its height above the ground or fixed, its turn as Unity's three angles, its size), its mark on the map and
+//     its lights; a part's name, offset, turn, size, solidity, shadow and materials. Then what is wrong with it - the
+//     law's every problem in the builder's language, each said where it is (poi/poiText.js) - and the store's acts:
+//     save the draft, send it for approval, take it back, ask for a live POI's retirement, put back what was saved.
+//   - THE IMPORT (a dialog): a .glb, or a .gltf with its files; its parts, what was left out and why, what is past a
+//     limit; uploaded once each by name (poi/poiImport.js) and placed where the next click is.
+//
+// A REFUSAL IS A SENTENCE: the store's word through the account client's own table (accountRefusalText); a problem
+// through the law's. TEXT, NEVER MARKUP: every name a builder typed is written with `textContent`. The panel takes no
+// press it does not use - everything else falls through to the editor's world - and its fields keep the keyboard
+// while they have it (the editor's keys are not heard while one is focused: ui/input.js isTextEntryTarget).
+//
+// Not a DFU member. Ledger A (POI).
+// ═══════════════════════════════════════════════════════════════════
+
+import { t } from '../systems/textManager.js';   // L10N4: the words through the text core
+import { accountRefusalText } from '../net/accountClient.js';
+import { poiDocProblems, poiAssetProblems, POI_LIMITS, POI_ALPHA, POI_WRAP, POI_FILTER } from '../poi/poiLaw.js';
+import { eulerOfQuat, quatOfEuler, lawName, newLight } from '../poi/poiEdit.js';
+import { problemText, problemWhere, gltfErrorText, gltfWarningText, meshErrorText } from '../poi/poiText.js';
+import { poiSaveDraft, poiSubmit, poiWithdraw, poiRetire, poiList, poiHistory, poiPutAsset } from '../poi/poiService.js';
+import { decodePoiMesh } from '../poi/poiMesh.js';
+import { poiImageMetaOf } from '../poi/poiImage.js';
+import { readGltf, bakeGltf } from '../poi/gltfImport.js';
+import { prepareImport, uploadImport } from '../poi/poiImport.js';
+
+export const POI_PANEL_STYLE_ID = 'dfpoi-style';
+export const POI_PANEL_CSS = `
+.dfpoi { position: fixed; inset: 0; pointer-events: none; z-index: 40; font: 12px/1.35 system-ui, sans-serif; color: #e9e4d9; }
+.dfpoi * { box-sizing: border-box; }
+.dfpoi-dock { pointer-events: auto; position: absolute; background: rgba(14, 16, 19, .93); border: 1px solid #6b5230; border-radius: 6px; overflow: auto; }
+.dfpoi-bar { top: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; align-items: center; padding: 4px 6px; flex-wrap: wrap; max-width: calc(100vw - 16px); }
+.dfpoi-left { top: 56px; left: 8px; width: 250px; bottom: 40px; padding: 6px; }
+.dfpoi-right { top: 56px; right: 8px; width: 300px; bottom: 40px; padding: 6px; }
+.dfpoi-status { bottom: 8px; left: 50%; transform: translateX(-50%); padding: 4px 10px; max-width: calc(100vw - 16px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dfpoi-status[data-kind="bad"] { border-color: #b4483c; color: #f2b7ae; }
+.dfpoi-btn { font: inherit; color: inherit; background: #2a2620; border: 1px solid #6b5230; border-radius: 4px; padding: 3px 7px; cursor: pointer; }
+.dfpoi-btn:hover { background: #3a332a; }
+.dfpoi-btn[aria-pressed="true"] { background: #6b5230; color: #fff; }
+.dfpoi-btn:disabled { opacity: .45; cursor: default; }
+.dfpoi-sep { width: 1px; align-self: stretch; background: #6b5230; margin: 0 3px; }
+.dfpoi-h { font-weight: 600; margin: 8px 0 4px; color: #d8b77a; }
+.dfpoi-row { display: flex; gap: 4px; align-items: center; margin: 2px 0; }
+.dfpoi-row > label { flex: 0 0 82px; color: #b9b2a3; }
+.dfpoi-row > .dfpoi-grow { flex: 1 1 auto; min-width: 0; }
+.dfpoi input, .dfpoi select, .dfpoi textarea { font: inherit; color: inherit; background: #1d1b18; border: 1px solid #4b3c27; border-radius: 3px; padding: 2px 4px; min-width: 0; }
+.dfpoi input[type="number"] { width: 64px; }
+.dfpoi textarea { width: 100%; min-height: 48px; resize: vertical; }
+.dfpoi-item { padding: 2px 4px; border-radius: 3px; cursor: pointer; display: flex; gap: 6px; align-items: baseline; }
+.dfpoi-item:hover { background: #2a2620; }
+.dfpoi-item[aria-selected="true"] { background: #4b3c27; }
+.dfpoi-item .dfpoi-chip { margin-left: auto; font-size: 11px; color: #b9b2a3; }
+.dfpoi-sub { padding-left: 14px; }
+.dfpoi-problem { color: #f2b7ae; cursor: pointer; margin: 2px 0; }
+.dfpoi-problem .dfpoi-where { color: #d8b77a; }
+.dfpoi-ok { color: #a9d39a; }
+.dfpoi-dialog { pointer-events: auto; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(520px, calc(100vw - 16px)); max-height: calc(100vh - 32px); overflow: auto; padding: 10px; background: rgba(14, 16, 19, .97); border: 1px solid #6b5230; border-radius: 6px; }
+.dfpoi-warn { color: #e8cf8a; margin: 2px 0; }
+.dfpoi[data-on="0"] .dfpoi-dock, .dfpoi[data-on="0"] .dfpoi-dialog { display: none; }
+.dfpoi-launch { pointer-events: auto; position: absolute; left: 8px; bottom: 8px; display: none; }
+.dfpoi[data-on="0"] .dfpoi-launch { display: block; }
+`;
+
+/** The sheet, once. */
+export function injectPoiPanelStyle(doc = document) {
+  if (doc.getElementById?.(POI_PANEL_STYLE_ID)) return;
+  const el = doc.createElement('style');
+  el.id = POI_PANEL_STYLE_ID;
+  el.textContent = POI_PANEL_CSS;
+  (doc.head ?? doc.body).append(el);
+}
+
+/** A step's label (poiEdit.js labels) as the undo button says it. @param {string | null} label */
+export function stepText(label) {
+  switch (label) {
+    case 'create': return t('poi.editor.step.create', 'new POI');
+    case 'remove': return t('poi.editor.step.remove', 'remove POI');
+    case 'move': return t('poi.editor.step.move', 'move');
+    case 'turn': return t('poi.editor.step.turn', 'turn');
+    case 'size': return t('poi.editor.step.size', 'size');
+    case 'add part': case 'add parts': return t('poi.editor.step.addPart', 'add part');
+    case 'remove part': return t('poi.editor.step.removePart', 'remove part');
+    case 'duplicate': return t('poi.editor.step.duplicate', 'duplicate');
+    case 'revert': return t('poi.editor.step.revert', 'put back as saved');
+    case 'light': return t('poi.editor.step.light', 'light');
+    default: return t('poi.editor.step.edit', 'edit');
+  }
+}
+/** A POI's state in the outliner. @param {any} entry poiEdit.js's @param {boolean} dirty */
+export function stateText(entry, dirty) {
+  const base = entry.state === 'new' ? t('poi.editor.state.new', 'new')
+    : entry.state === 'draft' ? t('poi.editor.state.draft', 'draft')
+      : entry.state === 'submitted' ? t('poi.editor.state.submitted', 'sent for approval')
+        : entry.state === 'live' ? t('poi.editor.state.live', 'live')
+          : entry.state === 'rejected' ? t('poi.editor.state.rejected', 'sent back')
+            : String(entry.state);
+  return dirty && entry.state !== 'new' ? t('poi.editor.state.changed', '{state}, changed', { state: base }) : base;
+}
+
+/**
+ * The facts the law's asset check reads, by sha256 (`{ kind: 'mesh', submeshes }` / `{ kind: 'texture', w, h }`, null
+ * for one the store does not have) - known from an import's upload, else fetched and read once. Undefined while a
+ * fetch is out: a problem is never said about an asset not yet heard of.
+ * @param {(sha: string) => Promise<Uint8Array>} fetchAsset
+ */
+export function createAssetFacts(fetchAsset, onLearned = () => {}) {
+  const facts = new Map();
+  return {
+    put(sha, meta) { facts.set(sha, meta); },
+    /** The fact, or undefined while it is being learnt. */
+    of(sha) {
+      if (facts.has(sha)) return facts.get(sha);
+      facts.set(sha, undefined);
+      fetchAsset(sha).then((bytes) => {
+        const m = decodePoiMesh(bytes);
+        if (!('error' in m)) facts.set(sha, { kind: 'mesh', submeshes: m.mesh.submeshes.length });
+        else { const im = poiImageMetaOf(bytes); facts.set(sha, 'error' in im ? null : { kind: 'texture', w: im.w, h: im.h }); }
+        onLearned();
+      }, (e) => {
+        // a 404 is an asset the store does not have; anything else (offline) is not known - asked again next time
+        if (/: 404$/.test(String(e?.message ?? ''))) { facts.set(sha, null); onLearned(); } else facts.delete(sha);
+      });
+      return undefined;
+    },
+    known: (sha) => facts.get(sha) !== undefined,
+  };
+}
+
+/**
+ * @param {{
+ *   doc?: Document, edit: any, editor: any, feed: any,
+ *   io: () => (import('../poi/poiService.js').PoiIo | null), me: { handle: string | null, builder: boolean, approver: boolean },
+ *   onExit: (how: 'back' | 'here') => void, onEnter?: () => void, onJump?: () => void, readFile?: (f: any) => Promise<Uint8Array>,
+ * }} deps `onEnter` the launcher's press (the editor opened again after an exit)
+ */
+export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, me, onExit, onEnter = () => {}, onJump = () => {}, readFile = async (f) => new Uint8Array(await f.arrayBuffer()) }) {
+  injectPoiPanelStyle(doc);
+  const el = (tag, cls = '', text = null) => { const n = doc.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+  const btn = (text, onClick, cls = 'dfpoi-btn') => { const b = el('button', cls, text); b.type = 'button'; b.addEventListener('click', (e) => { e.stopPropagation?.(); onClick(); }); return b; };
+  const swallow = (e) => e.stopPropagation?.();
+  const dock = (cls) => { const d = el('div', `dfpoi-dock ${cls}`); for (const ty of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'wheel', 'contextmenu', 'touchstart']) d.addEventListener(ty, swallow); return d; };
+
+  const root = el('div', 'dfpoi');
+  root.dataset.on = '0';
+  const bar = dock('dfpoi-bar'), left = dock('dfpoi-left'), right = dock('dfpoi-right'), status = dock('dfpoi-status');
+  // closed, the editor is one button in the corner: the world plays, the drafts still stand on this screen
+  const launch = btn(t('poi.editor.open', 'POI editor'), () => onEnter(), 'dfpoi-btn dfpoi-launch');
+  root.append(bar, left, right, status, launch);
+  /** @type {any} */
+  let dialog = null;
+  let list = null;           // the store's POIs (poiList), once asked
+  let search = '';
+  let closing = null;        // the POI whose close asks again (it holds unsaved changes)
+  let busy = false;
+  const facts = createAssetFacts((sha) => feed.asset(sha, { auth: io()?.secret ?? null }), () => schedule());
+
+  const say = (text, kind = 'ok') => { status.textContent = text; status.dataset.kind = kind; };
+  const refusal = (r) => (r?.error ? accountRefusalText(r.error) : t('poi.editor.failed', 'That did not go through.'));
+
+  // ── RENDERING ────────────────────────────────────────────────────
+  let queued = false;
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    Promise.resolve().then(() => { queued = false; render(); });
+  }
+  const focusedIn = (n) => { const a = doc.activeElement; return !!a && a !== doc.body && typeof n.contains === 'function' && n.contains(a); };
+  function render() {
+    if (!focusedIn(bar)) renderBar();
+    renderLeft();
+    // a field being typed in keeps its text: the inspector is drawn again once it lets go of the keyboard
+    if (!focusedIn(right)) renderRight();
+  }
+  for (const d of [bar, left, right]) d.addEventListener('focusout', () => schedule());
+
+  function renderBar() {
+    const tool = (m, text, key) => { const b = btn(`${text} (${key})`, () => editor.setMode(m)); b.setAttribute('aria-pressed', String(editor.mode() === m)); return b; };
+    const undo = btn(t('poi.editor.undo', 'Undo'), () => { edit.undo(); });
+    undo.disabled = !edit.canUndo();
+    if (edit.canUndo()) undo.title = t('poi.editor.undoWhat', 'Undo {what} (Ctrl+Z)', { what: stepText(edit.undoLabel()) });
+    const redo = btn(t('poi.editor.redo', 'Redo'), () => { edit.redo(); });
+    redo.disabled = !edit.canRedo();
+    if (edit.canRedo()) redo.title = t('poi.editor.redoWhat', 'Redo {what} (Ctrl+Y)', { what: stepText(edit.redoLabel()) });
+    const space = btn(editor.space() === 'world' ? t('poi.editor.spaceWorld', 'World axes (X)') : t('poi.editor.spaceLocal', 'Own axes (X)'), () => editor.setSpace(editor.space() === 'world' ? 'local' : 'world'));
+    const snap = btn(t('poi.editor.snap', 'Snap'), () => editor.setSnap(!editor.snapOn()));
+    snap.setAttribute('aria-pressed', String(editor.snapOn()));
+    snap.title = t('poi.editor.snapHint', 'Snap to the steps. Hold Ctrl to snap for one drag.');
+    const steps = editor.snapSteps();
+    const stepIn = (k, title) => { const i = numberInput(steps[k], (v) => { if (v > 0) editor.setSnap(editor.snapOn(), { [k]: v }); }, { step: k === 'turn' ? 1 : 0.05, min: 0 }); i.title = title; return i; };
+    const speed = el('span', '', t('poi.editor.speed', 'Eye {speed} m/s', { speed: Math.round(editor.eyeSpeed() * 10) / 10 }));
+    speed.title = t('poi.editor.speedHint', 'Hold the right mouse button to fly: your movement keys, Jump and Crouch up and down, Run faster, the wheel the speed.');
+    const exitBack = btn(t('poi.editor.exitBack', 'Exit to where I stood'), () => onExit('back'));
+    const exitHere = btn(t('poi.editor.exitHere', 'Exit here'), () => onExit('here'));
+    exitHere.title = t('poi.editor.exitHereHint', 'Leave the editor standing on the ground under the eye.');
+    bar.replaceChildren(
+      tool('select', t('poi.editor.toolSelect', 'Select'), 'Q'), tool('move', t('poi.editor.toolMove', 'Move'), 'W'),
+      tool('turn', t('poi.editor.toolTurn', 'Turn'), 'E'), tool('size', t('poi.editor.toolSize', 'Size'), 'R'),
+      el('span', 'dfpoi-sep'), space, snap,
+      stepIn('move', t('poi.editor.snapMove', 'Move step (m)')), stepIn('turn', t('poi.editor.snapTurn', 'Turn step (degrees)')), stepIn('size', t('poi.editor.snapSize', 'Size step')),
+      el('span', 'dfpoi-sep'), undo, redo, el('span', 'dfpoi-sep'), speed, el('span', 'dfpoi-sep'),
+      btn(t('poi.editor.newPoi', 'New POI'), () => { editor.placeNew(t('poi.editor.newName', 'New place')); say(t('poi.editor.placeHint', 'Click the ground where it stands. Esc to stop.')); }),
+      btn(t('poi.editor.import', 'Import model'), () => openImport()),
+      btn(t('poi.editor.map', 'Map'), () => onJump()),
+      el('span', 'dfpoi-sep'), exitBack, exitHere,
+    );
+  }
+
+  function renderLeft() {
+    const sel = edit.selection();
+    const out = [el('div', 'dfpoi-h', t('poi.editor.editing', 'Editing'))];
+    const ids = edit.ids();
+    if (!ids.length) out.push(el('div', 'dfpoi-sub', t('poi.editor.editingNone', 'Nothing open. Open a POI below, or make a new one.')));
+    for (const id of ids) {
+      const d = edit.docOf(id), e = edit.entryOf(id);
+      const row = el('div', 'dfpoi-item');
+      row.setAttribute('aria-selected', String(sel?.id === id && sel.part == null && sel.light == null));
+      row.append(el('span', '', d.name || id), el('span', 'dfpoi-chip', stateText(e, edit.dirty(id))));
+      row.addEventListener('click', () => edit.select({ id, part: null }));
+      out.push(row);
+      for (const part of d.parts) {
+        const pr = el('div', 'dfpoi-item dfpoi-sub', part.name || part.key);
+        pr.setAttribute('aria-selected', String(sel?.id === id && sel.part === part.key));
+        pr.addEventListener('click', () => edit.select({ id, part: part.key }));
+        out.push(pr);
+      }
+      (d.lights ?? []).forEach((_, i) => {
+        const lr = el('div', 'dfpoi-item dfpoi-sub', t('poi.where.light', 'Light {n}', { n: i + 1 }));
+        lr.setAttribute('aria-selected', String(sel?.id === id && sel.light === i));
+        lr.addEventListener('click', () => edit.select({ id, part: null, light: i }));
+        out.push(lr);
+      });
+    }
+    out.push(el('div', 'dfpoi-h', t('poi.editor.all', 'All POIs')));
+    const listBox = el('div', 'dfpoi-listbox');
+    const find = el('input', 'dfpoi-grow');
+    find.type = 'search'; find.value = search; find.placeholder = t('poi.editor.search', 'Search by name');
+    find.addEventListener('input', () => { search = find.value; renderList(listBox); });
+    const findRow = el('div', 'dfpoi-row');
+    findRow.append(find);
+    out.push(findRow, btn(t('poi.editor.refresh', 'Refresh the list'), () => refreshList()));
+    renderList(listBox);
+    out.push(listBox);
+    // the search being typed in keeps its field: only the list under it is drawn again
+    if (!focusedIn(left)) left.replaceChildren(...out);
+    else { const old = left.querySelector?.('.dfpoi-listbox'); if (old) renderList(old); }
+  }
+  function renderList(box) {
+    if (!list) { box.replaceChildren(el('div', 'dfpoi-sub', t('poi.editor.listUnasked', 'Press Refresh to see the store\'s POIs.'))); return; }
+    const q = search.trim().toLowerCase();
+    const rows = list.filter((p) => !q || String(p.name).toLowerCase().includes(q)).slice(0, 200).map((p) => {
+      const row = el('div', 'dfpoi-item');
+      row.append(el('span', '', String(p.name)), el('span', 'dfpoi-chip', p.liveRev ? t('poi.editor.state.live', 'live') : t('poi.editor.state.unapproved', 'not yet approved')));
+      row.addEventListener('click', () => openPoi(p.id));
+      return row;
+    });
+    box.replaceChildren(...(rows.length ? rows : [el('div', 'dfpoi-sub', t('poi.editor.listNone', 'No POI matches.'))]));
+  }
+
+  /** A number field that commits on change (Enter or leaving it). */
+  function numberInput(value, commit, { step = 0.1, min = -Infinity, max = Infinity } = {}) {
+    const i = el('input');
+    i.type = 'number'; i.step = String(step); i.value = String(Math.round(value * 1e4) / 1e4);
+    if (Number.isFinite(min)) i.min = String(min);
+    if (Number.isFinite(max)) i.max = String(max);
+    i.addEventListener('change', () => { const v = Number(i.value); if (Number.isFinite(v)) commit(Math.min(max, Math.max(min, v))); });
+    return i;
+  }
+  const field = (label, ...controls) => { const r = el('div', 'dfpoi-row'); r.append(el('label', '', label), ...controls); return r; };
+  const vec = (v, commit, opts) => v.map((c, k) => numberInput(c, (x) => { const n = [...v]; n[k] = x; commit(n); }, opts));
+  const select = (value, options, commit) => {
+    const s = el('select');
+    for (const [v, text] of options) { const o = el('option', '', text); o.value = v; if (v === value) o.selected = true; s.append(o); }
+    s.value = value;
+    s.addEventListener('change', () => commit(s.value));
+    return s;
+  };
+  const check = (value, commit) => { const c = el('input'); c.type = 'checkbox'; c.checked = !!value; c.addEventListener('change', () => commit(!!c.checked)); return c; };
+  const text = (value, commit, max) => { const i = el('input', 'dfpoi-grow'); i.type = 'text'; i.value = value ?? ''; i.maxLength = max; i.addEventListener('change', () => commit(i.value)); return i; };
+
+  function renderRight() {
+    const sel = edit.selection();
+    if (!sel) { right.replaceChildren(el('div', 'dfpoi-h', t('poi.editor.nothingSelected', 'Nothing selected')), el('div', '', t('poi.editor.selectHint', 'Click a POI in the world or the list. Its first click takes the POI, the next its part.'))); return; }
+    const d = edit.docOf(sel.id), entry = edit.entryOf(sel.id);
+    const change = (label, fn) => edit.edit(sel.id, label, fn);
+    const out = [];
+    if (sel.part != null) out.push(...partFields(d, sel, change));
+    else if (sel.light != null) out.push(...lightFields(d, sel, change));
+    else out.push(...poiFields(d, change));
+    out.push(...problemRows(d, sel.id));
+    out.push(...actRows(sel.id, d, entry));
+    right.replaceChildren(...out);
+  }
+
+  function poiFields(d, change) {
+    const p = d.place;
+    const out = [el('div', 'dfpoi-h', t('poi.editor.poi', 'POI'))];
+    out.push(field(t('poi.editor.name', 'Name'), text(d.name, (v) => change('rename', (x) => { x.name = lawName(v); }), POI_LIMITS.name)));
+    const about = el('textarea');
+    about.value = d.about ?? ''; about.maxLength = POI_LIMITS.about;
+    about.addEventListener('change', () => change('about', (x) => { if (about.value.trim()) x.about = about.value; else delete x.about; }));
+    out.push(el('div', 'dfpoi-row', t('poi.editor.about', 'Description')), about);
+    out.push(field(t('poi.editor.tags', 'Tags'), text((d.tags ?? []).join(', '), (v) => change('tags', (x) => {
+      const tags = v.split(',').map((s) => lawName(s, POI_LIMITS.tag)).filter(Boolean).slice(0, POI_LIMITS.tags);
+      if (tags.length) x.tags = tags; else delete x.tags;
+    }), 300)));
+    out.push(el('div', 'dfpoi-h', t('poi.editor.place', 'Place')));
+    out.push(field(t('poi.editor.mapPixel', 'Map square'), el('span', '', `${p.px}, ${p.py}`)));
+    out.push(field(t('poi.editor.spot', 'Spot (m)'), ...vec([p.x, p.z], ([x, z]) => change('move', (doc) => { doc.place.x = Math.min(Math.max(x, 0), 819.19); doc.place.z = Math.min(Math.max(z, 0), 819.19); }))));
+    out.push(field(t('poi.editor.stands', 'Stands'), select(p.ground, [['snap', t('poi.editor.groundSnap', 'on the ground')], ['absolute', t('poi.editor.groundAbsolute', 'at a fixed height')]], (v) => change('ground', (x) => { x.place.ground = v; }))));
+    out.push(field(p.ground === 'snap' ? t('poi.editor.lift', 'Above ground (m)') : t('poi.editor.height', 'Height (m)'), numberInput(p.y, (v) => change('move', (x) => { x.place.y = v; }), { step: 0.05, min: -4000, max: 4000 })));
+    out.push(field(t('poi.editor.turn', 'Turn (degrees)'), ...vec(eulerOfQuat(p.r), (e) => change('turn', (x) => { x.place.r = quatOfEuler(e); }), { step: 1 })));
+    out.push(field(t('poi.editor.size', 'Size'), numberInput(p.s, (v) => change('size', (x) => { x.place.s = v; }), { step: 0.05, min: 0.01, max: 100 })));
+    out.push(el('div', 'dfpoi-h', t('poi.editor.mark', 'On the map')));
+    const marker = d.marker ?? { show: false };
+    out.push(field(t('poi.editor.markShow', 'Show a mark'), check(marker.show, (v) => change('mark', (x) => { x.marker = { ...(x.marker ?? {}), show: v }; }))));
+    out.push(field(t('poi.editor.markLabel', 'Label'), text(marker.label ?? '', (v) => change('mark', (x) => { const l = lawName(v, POI_LIMITS.label); x.marker = { ...(x.marker ?? { show: false }) }; if (l) x.marker.label = l; else delete x.marker.label; }), POI_LIMITS.label)));
+    out.push(el('div', 'dfpoi-h', t('poi.editor.lights', 'Lights')));
+    out.push(btn(t('poi.editor.addLight', 'Add a light'), () => edit.edit(d.id, 'light', (x) => { x.lights = [...(x.lights ?? []), newLight()]; }, { id: d.id, part: null, light: (d.lights?.length ?? 0) })));
+    return out;
+  }
+
+  function partFields(d, sel, change) {
+    const part = d.parts.find((p) => p.key === sel.part);
+    if (!part) return [];
+    const at = (fn) => (x) => { const p = x.parts.find((q) => q.key === sel.part); if (p) fn(p, x); };
+    const out = [el('div', 'dfpoi-h', t('poi.editor.part', 'Part'))];
+    out.push(field(t('poi.editor.name', 'Name'), text(part.name ?? '', (v) => change('rename', at((p) => { const n = lawName(v); if (n) p.name = n; else delete p.name; })), POI_LIMITS.name)));
+    out.push(field(t('poi.editor.key', 'Key'), el('span', '', part.key)));
+    out.push(field(t('poi.editor.offset', 'Offset (m)'), ...vec(part.t, (v) => change('move', at((p) => { p.t = v; })), { step: 0.05, min: -2000, max: 2000 })));
+    out.push(field(t('poi.editor.turn', 'Turn (degrees)'), ...vec(eulerOfQuat(part.r), (e) => change('turn', at((p) => { p.r = quatOfEuler(e); })), { step: 1 })));
+    out.push(field(t('poi.editor.scale', 'Scale'), ...vec(part.s, (v) => change('size', at((p) => { p.s = v.map((c) => (Math.abs(c) < 0.001 ? 0.001 : c)); })), { step: 0.05, min: -1000, max: 1000 })));
+    out.push(field(t('poi.editor.solid', 'Solid'), check(part.collide === 'mesh', (v) => change('solid', at((p) => { p.collide = v ? 'mesh' : 'none'; })))));
+    out.push(field(t('poi.editor.shadow', 'Casts a shadow'), check(part.shadow, (v) => change('shadow', at((p) => { p.shadow = v; })))));
+    out.push(el('div', 'dfpoi-h', t('poi.editor.materials', 'Materials')));
+    part.materials.forEach((m, k) => {
+      const mat = (fn) => at((p) => fn(p.materials[k]));
+      out.push(el('div', 'dfpoi-sub', t('poi.where.material', 'material {n}', { n: k + 1 })));
+      const colour = el('input');
+      colour.type = 'color';
+      colour.value = `#${m.color.slice(0, 3).map((c) => Math.round(c * 255).toString(16).padStart(2, '0')).join('')}`;
+      colour.addEventListener('change', () => change('material', mat((x) => { const v = colour.value; x.color = [parseInt(v.slice(1, 3), 16) / 255, parseInt(v.slice(3, 5), 16) / 255, parseInt(v.slice(5, 7), 16) / 255, x.color[3]]; })));
+      out.push(field(t('poi.editor.colour', 'Colour'), colour, numberInput(m.color[3], (a) => change('material', mat((x) => { x.color = [x.color[0], x.color[1], x.color[2], a]; })), { step: 0.05, min: 0, max: 1 })));
+      out.push(field(t('poi.editor.alpha', 'Edges'), select(m.alpha, POI_ALPHA.map((a) => [a, alphaText(a)]), (v) => change('material', mat((x) => { x.alpha = v; })))));
+      if (m.alpha === 'cutout') out.push(field(t('poi.editor.cutoff', 'Cut at'), numberInput(m.cutoff, (v) => change('material', mat((x) => { x.cutoff = v; })), { step: 0.05, min: 0, max: 1 })));
+      out.push(field(t('poi.editor.twoSided', 'Both sides'), check(m.twoSided, (v) => change('material', mat((x) => { x.twoSided = v; })))));
+      out.push(field(t('poi.editor.wrap', 'Repeat'), ...[0, 1].map((ax) => select(m.wrap[ax], POI_WRAP.map((w) => [w, wrapModeText(w)]), (v) => change('material', mat((x) => { x.wrap = ax ? [x.wrap[0], v] : [v, x.wrap[1]]; }))))));
+      out.push(field(t('poi.editor.filter', 'Picture'), select(m.filter, POI_FILTER.map((f) => [f, f === 'linear' ? t('poi.editor.filterLinear', 'smooth') : t('poi.editor.filterNearest', 'pixelated')]), (v) => change('material', mat((x) => { x.filter = v; })))));
+    });
+    out.push(btn(t('poi.editor.removePart', 'Remove this part'), () => removeSelection()));
+    return out;
+  }
+
+  function lightFields(d, sel, change) {
+    const l = d.lights?.[sel.light];
+    if (!l) return [];
+    const at = (fn) => (x) => { const q = x.lights[sel.light]; if (q) fn(q); };
+    const out = [el('div', 'dfpoi-h', t('poi.where.light', 'Light {n}', { n: sel.light + 1 }))];
+    out.push(field(t('poi.editor.offset', 'Offset (m)'), ...vec(l.t, (v) => change('light', at((q) => { q.t = v; })), { step: 0.1, min: -2000, max: 2000 })));
+    const colour = el('input');
+    colour.type = 'color';
+    colour.value = `#${l.color.map((c) => Math.round(c * 255).toString(16).padStart(2, '0')).join('')}`;
+    colour.addEventListener('change', () => change('light', at((q) => { const v = colour.value; q.color = [1, 3, 5].map((i) => parseInt(v.slice(i, i + 2), 16) / 255); })));
+    out.push(field(t('poi.editor.colour', 'Colour'), colour));
+    out.push(field(t('poi.editor.reach', 'Reach (m)'), numberInput(l.radius, (v) => change('light', at((q) => { q.radius = v; })), { step: 0.5, min: 0.5, max: 100 })));
+    out.push(field(t('poi.editor.strength', 'Strength'), numberInput(l.intensity, (v) => change('light', at((q) => { q.intensity = v; })), { step: 0.1, min: 0, max: 10 })));
+    out.push(field(t('poi.editor.flicker', 'Flickers'), check(l.flicker, (v) => change('light', at((q) => { q.flicker = v; })))));
+    out.push(btn(t('poi.editor.removeLight', 'Remove this light'), () => edit.edit(d.id, 'light', (x) => { x.lights.splice(sel.light, 1); }, { id: d.id, part: null, light: null })));
+    return out;
+  }
+
+  /** The document's problems: the law's, then its assets' once every asset is known. */
+  function problemsOf(d) {
+    const law = poiDocProblems(d);
+    const shas = [];
+    for (const part of d.parts ?? []) { shas.push(part.mesh); for (const m of part.materials ?? []) { if (m.texture) shas.push(m.texture); if (m.emissive) shas.push(m.emissive); } }
+    const known = shas.every((s) => facts.of(s) !== undefined);
+    return { list: known ? [...law, ...poiAssetProblems(d, (s) => facts.of(s))] : law, checking: !known };
+  }
+  function problemRows(d, id) {
+    const { list: ps, checking } = problemsOf(d);
+    const out = [el('div', 'dfpoi-h', t('poi.editor.problems', 'What is wrong'))];
+    if (!ps.length) out.push(el('div', checking ? '' : 'dfpoi-ok', checking ? t('poi.editor.checking', 'Checking its models and pictures...') : t('poi.editor.noProblems', 'Nothing - it can be saved.')));
+    for (const p of ps.slice(0, 40)) {
+      const row = el('div', 'dfpoi-problem');
+      const where = problemWhere(p.path, d);
+      if (where) row.append(el('span', 'dfpoi-where', `${where}: `));
+      row.append(problemText(p));
+      const pi = /^parts\[(\d+)\]/.exec(p.path);
+      if (pi) row.addEventListener('click', () => edit.select({ id, part: d.parts[Number(pi[1])]?.key ?? null }));
+      out.push(row);
+    }
+    return out;
+  }
+
+  function actRows(id, d, entry) {
+    const dirty = edit.dirty(id);
+    const { list: ps, checking } = problemsOf(d);
+    const save = btn(t('poi.editor.save', 'Save draft (Ctrl+S)'), () => saveDraft(id));
+    save.disabled = busy || !dirty || ps.length > 0 || checking;
+    const submit = btn(t('poi.editor.submit', 'Send for approval'), () => submitPoi(id));
+    submit.disabled = busy || ps.length > 0 || checking || entry.state === 'submitted' || entry.state === 'live' && !dirty;
+    const out = [el('div', 'dfpoi-h', t('poi.editor.acts', 'Draft')), el('div', 'dfpoi-row')];
+    out[1].append(save, submit);
+    const more = el('div', 'dfpoi-row');
+    if (entry.state === 'submitted') more.append(btn(t('poi.editor.withdraw', 'Take back to draft'), () => withdrawPoi(id)));
+    if (entry.base != null) more.append(btn(t('poi.editor.retire', 'Ask to retire it'), () => retirePoi(id)));
+    if (dirty && entry.saved) more.append(btn(t('poi.editor.revert', 'Put back as saved'), () => edit.edit(id, 'revert', (x) => { const s = JSON.parse(entry.saved); for (const k of Object.keys(x)) delete x[k]; Object.assign(x, s); })));
+    more.append(btn(closing === id ? t('poi.editor.closeUnsaved', 'Close without saving?') : t('poi.editor.close', 'Close'), () => closePoi(id)));
+    if (entry.state === 'new' && !entry.saved) more.append(btn(t('poi.editor.discard', 'Throw it away'), () => { edit.remove(id); }));
+    out.push(more);
+    if (!me.builder) out.push(el('div', 'dfpoi-warn', accountRefusalText('poi-not-builder')));
+    return out;
+  }
+
+  // ── THE STORE'S ACTS ─────────────────────────────────────────────
+  async function act(fn) {
+    const i = io();
+    if (!i) { say(accountRefusalText('no-session'), 'bad'); return null; }
+    busy = true; schedule();
+    try { return await fn(i); } finally { busy = false; schedule(); }
+  }
+  async function saveDraft(id) {
+    const d = edit.docOf(id), e = edit.entryOf(id);
+    if (!d) return false;
+    const { list: ps } = problemsOf(d);
+    if (ps.length) { say(t('poi.editor.fixFirst', 'Fix what is wrong before saving ({n}).', { n: ps.length }), 'bad'); return false; }
+    const sent = structuredClone(d);
+    const r = await act((i) => poiSaveDraft(i, sent, e.base));
+    if (!r) return false;
+    if (!r.ok) { say(refusal(r), 'bad'); return false; }
+    edit.markSaved(id, { rev: r.data.rev, state: 'draft', doc: sent });
+    say(t('poi.editor.saved', 'Saved: draft {rev}.', { rev: r.data.rev }));
+    return true;
+  }
+  async function submitPoi(id) {
+    if (edit.dirty(id) && !(await saveDraft(id))) return;
+    const e = edit.entryOf(id);
+    const r = await act((i) => poiSubmit(i, id, e.rev));
+    if (!r) return;
+    if (!r.ok) { say(refusal(r), 'bad'); return; }
+    edit.markSaved(id, { rev: e.rev, state: 'submitted' });
+    say(t('poi.editor.submitted', 'Sent for approval. An approver will look at it.'));
+  }
+  async function withdrawPoi(id) {
+    const e = edit.entryOf(id);
+    const r = await act((i) => poiWithdraw(i, id, e.rev));
+    if (!r) return;
+    if (!r.ok) { say(refusal(r), 'bad'); return; }
+    edit.markSaved(id, { rev: e.rev, state: 'draft' });
+    say(t('poi.editor.withdrawn', 'Taken back: it is a draft again.'));
+  }
+  async function retirePoi(id) {
+    const r = await act((i) => poiRetire(i, id));
+    if (!r) return;
+    say(r.ok ? t('poi.editor.retireAsked', 'Asked: an approver will decide whether it leaves the world.') : refusal(r), r.ok ? 'ok' : 'bad');
+  }
+  function closePoi(id) {
+    if (edit.dirty(id) && closing !== id) { closing = id; schedule(); return; }
+    closing = null;
+    edit.close(id);
+  }
+  async function refreshList() {
+    const r = await act((i) => poiList(i));
+    if (!r) return;
+    if (!r.ok) { say(refusal(r), 'bad'); return; }
+    list = r.data.pois ?? [];
+    schedule();
+  }
+  /** Open a POI from the store: my own open draft of it if I have one, else its live revision, else its newest. */
+  async function openPoi(id) {
+    if (edit.has(id)) { edit.select({ id, part: null }); return; }
+    const r = await act((i) => poiHistory(i, id));
+    if (!r) return;
+    if (!r.ok) { say(refusal(r), 'bad'); return; }
+    const h = r.data;
+    const docs = (h.revs ?? []).filter((x) => x.kind === 'doc' && x.doc);
+    const mine = [...docs].reverse().find((x) => (x.state === 'draft' || x.state === 'submitted') && me.handle && String(x.author).toLowerCase() === me.handle.toLowerCase());
+    const live = docs.find((x) => x.rev === h.liveRev);
+    const pick = mine ?? live ?? docs.at(-1);
+    if (!pick) { say(t('poi.editor.nothingToOpen', 'It has no document to open.'), 'bad'); return; }
+    edit.open(id, { doc: pick.doc, base: h.liveRev ?? null, rev: mine ? mine.rev : null, state: mine ? mine.state : live ? 'live' : 'draft' });
+    edit.select({ id, part: null });
+    say(t('poi.editor.opened', 'Opened {name}.', { name: pick.doc.name }));
+  }
+  function removeSelection() {
+    const sel = edit.selection();
+    if (!sel) return;
+    if (sel.part != null) edit.edit(sel.id, 'remove part', (x) => { x.parts = x.parts.filter((p) => p.key !== sel.part); }, { id: sel.id, part: null });
+    else if (sel.light != null) edit.edit(sel.id, 'light', (x) => { x.lights.splice(sel.light, 1); }, { id: sel.id, part: null, light: null });
+    else if (edit.entryOf(sel.id)?.state === 'new' && !edit.entryOf(sel.id)?.saved) edit.remove(sel.id);
+    else say(t('poi.editor.deleteSaved', 'A saved POI is taken out of the world by asking to retire it.'), 'bad');
+  }
+  function duplicateSelection() {
+    const sel = edit.selection();
+    if (!sel || sel.part == null) return;
+    edit.edit(sel.id, 'duplicate', (x) => {
+      const p = x.parts.find((q) => q.key === sel.part);
+      if (!p) return;
+      const copy = structuredClone(p);
+      const taken = new Set(x.parts.map((q) => q.key));
+      let n = 2; while (taken.has(`${p.key}-${n}`.slice(0, 32))) n++;
+      copy.key = `${p.key}-${n}`.slice(0, 32);
+      x.parts.push(copy);
+    });
+  }
+
+  // ── THE IMPORT ───────────────────────────────────────────────────
+  function openImport() {
+    const box = el('div', 'dfpoi-dialog');
+    for (const ty of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'wheel', 'contextmenu', 'touchstart']) box.addEventListener(ty, swallow);
+    const files = el('input');
+    files.type = 'file'; files.multiple = true; files.accept = '.glb,.gltf,.bin,.png,.jpg,.jpeg,.webp';
+    let split = 'whole';
+    const splitSel = select(split, [['whole', t('poi.editor.splitWhole', 'One part')], ['nodes', t('poi.editor.splitNodes', 'A part for each object')]], (v) => { split = v; if (lastRead) show(lastRead); });
+    const body = el('div');
+    let lastRead = null, prep = null;
+    const cancel = btn(t('poi.editor.cancel', 'Cancel'), () => closeDialog());
+    const place = btn(t('poi.editor.uploadPlace', 'Upload and place'), () => upload());
+    place.disabled = true;
+    const acts = el('div', 'dfpoi-row');
+    acts.append(place, cancel);
+    box.append(el('div', 'dfpoi-h', t('poi.editor.importTitle', 'Import a model (glTF 2.0)')), el('div', '', t('poi.editor.importHint', 'Choose a .glb, or a .gltf with its .bin and pictures.')), files, field(t('poi.editor.split', 'Make'), splitSel), body, acts);
+    files.addEventListener('change', async () => {
+      const list = [...(files.files ?? [])];
+      const main = list.find((f) => /\.(glb|gltf)$/i.test(f.name));
+      if (!main) { body.replaceChildren(el('div', 'dfpoi-problem', t('poi.editor.importNoModel', 'Choose a .glb or .gltf file.'))); return; }
+      const side = new Map();
+      for (const f of list) if (f !== main) side.set(f.name, await readFile(f));
+      try {
+        lastRead = readGltf(await readFile(main), { files: side });
+        show(lastRead);
+      } catch (e) {
+        lastRead = null; prep = null; place.disabled = true;
+        body.replaceChildren(el('div', 'dfpoi-problem', e?.code ? gltfErrorText(e.code, e.args) : t('poi.editor.importFailed', 'The file could not be read.')));
+      }
+    });
+    function show(model) {
+      prep = prepareImport(model, bakeGltf(model, { split: /** @type {'whole' | 'nodes'} */ (split) }));
+      const rows = [el('div', 'dfpoi-h', t('poi.editor.importParts', 'Parts'))];
+      for (const p of prep.parts) rows.push(el('div', 'dfpoi-sub', t('poi.editor.importPart', '{name}: {vertices, number} vertices, {triangles, number} triangles, {materials} materials', { name: p.name || '-', vertices: p.vertices, triangles: p.triangles, materials: p.submeshes })));
+      for (const r of prep.refused) rows.push(el('div', 'dfpoi-problem', `${r.name || '-'}: ${meshErrorText(r.code)}`));
+      for (const w of prep.warnings) rows.push(el('div', 'dfpoi-warn', gltfWarningText(w.code, w)));
+      body.replaceChildren(...rows);
+      place.disabled = !prep.parts.length;
+    }
+    async function upload() {
+      if (!prep?.parts.length) return;
+      place.disabled = true;
+      const r = await act((i) => uploadImport(prep, (bytes, kind) => poiPutAsset(i, bytes, kind), (n, of) => say(t('poi.editor.uploading', 'Uploading {n} of {of}...', { n, of }))));
+      if (!r) { place.disabled = false; return; }
+      if (!r.ok) { say(refusal(r), 'bad'); place.disabled = false; return; }
+      for (const [sha, meta] of r.metas) facts.put(sha, meta);
+      closeDialog();
+      editor.placeAsset(r.asset, t('poi.editor.newName', 'New place'));
+      say(t('poi.editor.placeModel', 'Click where it stands. Esc to stop.'));
+    }
+    dialog = box;
+    root.append(box);
+  }
+  function closeDialog() { dialog?.remove?.(); dialog = null; }
+
+  const offEdit = edit.onChange(() => schedule());
+  render();
+  return {
+    root,
+    /** Shown open (the editor's docks) or closed (its launcher alone). */
+    setOn(/** @type {boolean} */ on) { root.dataset.on = on ? '1' : '0'; if (on) schedule(); },
+    /** The editor's own change (a tool, the hover, the selection made in the world). */
+    refresh: () => schedule(),
+    say,
+    /** The keyboard's acts the editor hands back (Ctrl+S, Delete, Ctrl+D). */
+    acts: { save: () => { const s = edit.selection(); if (s) saveDraft(s.id); }, del: () => removeSelection(), duplicate: () => duplicateSelection() },
+    open: (id) => openPoi(id),
+    refreshList: () => refreshList(),
+    /** Whether a press landed on the panel (the world leaves it alone). */
+    owns: (target) => !!target && typeof root.contains === 'function' && root.contains(target),
+    destroy() { offEdit(); closeDialog(); root.remove?.(); },
+  };
+}
+
+/** The alpha modes as the builder reads them. */
+export const alphaText = (a) => (a === 'opaque' ? t('poi.editor.alphaOpaque', 'opaque') : a === 'cutout' ? t('poi.editor.alphaCutout', 'cutout') : t('poi.editor.alphaBlend', 'see-through'));
+/** The wrap modes as the builder reads them. */
+export const wrapModeText = (w) => (w === 'repeat' ? t('poi.editor.wrapRepeat', 'repeat') : w === 'clamp' ? t('poi.editor.wrapClamp', 'clamp') : t('poi.editor.wrapMirror', 'mirror'));

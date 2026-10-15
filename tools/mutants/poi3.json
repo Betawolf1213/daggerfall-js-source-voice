@@ -236,8 +236,8 @@
   {
     "name": "POI3-the-drag-not-one-step",
     "file": "src/scenes/poiEditorHost.js",
-    "old": "if (r) { const sel = { id: drag.id, part: drag.part }; edit.preview((doc) => apply(doc, r, sel)); }",
-    "new": "if (r) { const sel = { id: drag.id, part: drag.part }; edit.commit(); edit.edit(drag.id, 'move', (doc) => apply(doc, r, sel)); }",
+    "old": "if (r) { const sel = { id: drag.id, part: drag.part, light: drag.light }; edit.preview((doc) => apply(doc, r, sel)); }",
+    "new": "if (r) { const sel = { id: drag.id, part: drag.part, light: drag.light }; edit.commit(); edit.edit(drag.id, 'move', (doc) => apply(doc, r, sel)); }",
     "tests": [
       "test/poi3_edit.test.js"
     ]
@@ -272,8 +272,35 @@
   {
     "name": "POI3-keys-heard-while-flying",
     "file": "src/scenes/poiEditorHost.js",
-    "old": "if (eye.look) { eye.keys.add(e.code); return true; }",
-    "new": "if (eye.look) { eye.keys.add(e.code); }",
+    "old": "      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) eye.keys.add(a); return true; }",
+    "new": "      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) eye.keys.add(a); }",
+    "tests": [
+      "test/poi3_edit.test.js"
+    ]
+  },
+  {
+    "name": "POI3-a-light-drag-moves-the-poi",
+    "file": "src/scenes/poiEditorHost.js",
+    "old": "    if (sel.light != null) { const l = doc.lights?.[sel.light]; if (l && r.move) movePart(doc.place, l, r.move); return; }",
+    "new": "    if (false) { return; }",
+    "tests": [
+      "test/poi3_edit.test.js"
+    ]
+  },
+  {
+    "name": "POI3-a-turn-offered-a-light",
+    "file": "src/scenes/poiEditorHost.js",
+    "old": "if (!tg || !v || (tg.light && mode !== 'move')) return null;",
+    "new": "if (!tg || !v) return null;",
+    "tests": [
+      "test/poi3_edit.test.js"
+    ]
+  },
+  {
+    "name": "POI3-flight-by-the-raw-key",
+    "file": "src/scenes/poiEditorHost.js",
+    "old": "      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) eye.keys.add(a); return true; }",
+    "new": "      if (eye.look) { eye.keys.add(e.code === 'KeyW' ? 'MoveForwards' : e.code); return true; }",
     "tests": [
       "test/poi3_edit.test.js"
     ]

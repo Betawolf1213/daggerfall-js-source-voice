@@ -9,8 +9,9 @@
 //
 //   - THE EYE (`cameraFrame`): the editor flies a camera of its own - the world's `cam` itself, so the streamer and the
 //     floating origin follow it as they follow the dev fly-cam - while the body stands where the builder left it (held:
-//     the world steps no motor while the editor is open). The right mouse button held: the mouse looks, WASD flies
-//     along the look, Q and E down and up, Shift faster, Ctrl slower, the wheel the speed - an engine's own scene view.
+//     the world steps no motor while the editor is open). The right mouse button held: the mouse looks, the builder's
+//     own movement keys fly along the look (the registry's actions, as the decorator's flight reads them - a rebind
+//     reaches it), Jump or Float Up up, Crouch or Float Down down, Run faster, the wheel the speed - an engine's scene view.
 //     The middle button pans; Alt with the left orbits the selection; F frames it.
 //   - THE CURSOR (`pointerDown` ...): the pointer is free. A click is a pick: a gizmo handle first (a drag begins), then
 //     the part under the ray (poiHost.pick - its triangles, exactly), then nothing (the selection let go). The first
@@ -22,6 +23,13 @@
 //     stands where the click is.
 //   - THE DRAFTS ON SCREEN: the working set laid over the live POIs (poiFeed.js setOverlay) whenever it moves - the drag
 //     is drawn as it is made; a draft's colliders wait for the drag to end (poiHost.js collideDrafts).
+//
+// THE FOUR HOSTS (bible/Home.md): scenes/world.js - WIRED (`?editor`, a builder's alone - mountPoiEditor: the motor held
+// and the eye the frame's while it is open, its drafts laid over the feed before the POI host's frame, its lines after the
+// translucent pass, leaving back to the body or onto what is under the eye; refused online with the other powers,
+// systems/onlineLane.js). scenes/worldModes.js - its interiors stand no POI: the editor opens outdoors alone.
+// scenes/exterior.js - stands no POI (scenes/poiHost.js's flag): nothing here reaches it.
+// scenes/dungeonContext.js - stands no street: nothing here reaches it.
 //
 // Not a DFU member. Ledger A (POI).
 // ═══════════════════════════════════════════════════════════════════
@@ -36,7 +44,9 @@ import { rayDirFromScreen } from '../player/tapRay.js';
 import { canvasPoint } from '../player/travelPick.js';
 
 /** The eye's speed (m/s): where it starts, its bounds, the wheel's step (a factor), Shift's and Ctrl's. */
-export const POI_EYE = Object.freeze({ speed: 12, min: 0.5, max: 600, wheel: 1.25, fast: 4, slow: 0.25, look: 0.0035, pitch: 1.55 });
+export const POI_EYE = Object.freeze({ speed: 12, min: 0.5, max: 600, wheel: 1.25, fast: 4, look: 0.0035, pitch: 1.55 });
+/** The registry's actions the eye flies by (systems/inputActions.js): never a raw key - a rebind reaches the editor. */
+export const POI_EYE_ACTIONS = Object.freeze(['MoveForwards', 'MoveBackwards', 'MoveLeft', 'MoveRight', 'Jump', 'FloatUp', 'Crouch', 'FloatDown', 'Run']);
 /** How far a pick reaches (m) - the streamed world's far edge. */
 export const POI_PICK_REACH = 6000;
 /** A drag begins once the pointer has moved this far (CSS px) - a click that wobbled is still a click. */
@@ -74,11 +84,12 @@ export function boxLines(b, color) {
  *   sceneToPixel: (p: number[]) => ({ px: number, py: number, x: number, z: number } | null),
  *   groundHit: (o: number[], d: number[]) => ({ point: number[] | null, dist: number }),
  *   surfaceAt: (x: number, z: number) => number,
- *   onChange?: () => void,
+ *   onChange?: () => void, pass?: any, actionOf?: (e: any) => (string | null),
  * }} deps `view` the frame the world last drew (its matrices, eye and canvas); `groundHit` the ground (and the world's
- *   meshes) under a ray; `sceneToPixel` a scene point as a map pixel and the spot in its frame
+ *   meshes) under a ray; `sceneToPixel` a scene point as a map pixel and the spot in its frame; `pass` the lines' pass
+ *   (render/poiGizmoPass.js) the frame's `drawLines` draws through
  */
-export function createPoiEditorHost({ edit, feed, host, view, translation, sceneToPixel, groundHit, surfaceAt, onChange = () => {} }) {
+export function createPoiEditorHost({ edit, feed, host, view, translation, sceneToPixel, groundHit, surfaceAt, onChange = () => {}, pass = null, actionOf = () => null }) {
   let on = false;
   /** @type {'select' | 'move' | 'turn' | 'size'} */
   let mode = 'move';
@@ -90,11 +101,11 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
   let ctrlHeld = false;
   /** @type {string | null} */
   let hover = null;
-  /** @type {null | { handle: string, state: any, id: string, part: string | null, start: any }} */
+  /** @type {null | { handle: string, state: any, id: string, part: string | null, light: number | null, start: any }} */
   let drag = null;
   /** @type {null | { x: number, y: number, moved: boolean, button: number }} */
   let press = null;
-  /** @type {null | { kind: 'poi', name: string } | { kind: 'part', asset: any }} */
+  /** @type {null | { kind: 'poi', name: string } | { kind: 'part', asset: any, fallbackName?: string }} */
   let placing = null;
   /** @type {number[] | null} */
   let placeAt = null;   // where the placing mark stands (scene frame)
@@ -124,6 +135,12 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       ground = g - t[1];
     }
     const origin = [t[0] + doc.place.x, t[1] + ground + doc.place.y, t[2] + doc.place.z];
+    if (sel.light != null) {
+      // a light: where it shines from, moved alone (it has no turn and no size of its own)
+      const l = doc.lights?.[sel.light];
+      if (!l) return null;
+      return { c: add(origin, mul(quatRotate(doc.place.r, l.t), doc.place.s)), axes: AXES_WORLD, doc, sel, light: l };
+    }
     if (sel.part == null) {
       const axes = space === 'local' || mode === 'size' ? AXES_WORLD.map((a) => quatRotate(doc.place.r, a)) : AXES_WORLD;
       return { c: origin, axes, doc, sel };
@@ -141,7 +158,7 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
     if (mode === 'select') return null;
     const tg = target();
     const v = view();
-    if (!tg || !v) return null;
+    if (!tg || !v || (tg.light && mode !== 'move')) return null;
     const vd = sub(tg.c, v.eye);
     const l = Math.hypot(vd[0], vd[1], vd[2]) || 1;
     const viewDir = mul(vd, 1 / l);
@@ -151,6 +168,7 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
 
   /** Apply a drag's answer to a document - absolute from the drag's start (edit.preview hands the start's copy). */
   function apply(doc, r, sel) {
+    if (sel.light != null) { const l = doc.lights?.[sel.light]; if (l && r.move) movePart(doc.place, l, r.move); return; }   // a light moves in its POI's frame, as a part does
     const part = sel.part == null ? null : doc.parts.find((p) => p.key === sel.part);
     if (r.move) { if (part) movePart(doc.place, part, r.move); else movePlace(doc.place, r.move); }
     if (r.turn && r.turn.deg) { if (part) rotatePart(doc.place, part, r.turn.axis, r.turn.deg); else rotatePlace(doc.place, r.turn.axis, r.turn.deg); }
@@ -193,18 +211,24 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       edit.create({ px: px.px, py: px.py, x: px.x, z: px.z, y: lift, name: placing.name });
     } else {
       const asset = placing.asset;
-      // no POI held: a new one stands round the part, named for it
-      if (!edit.selection()) edit.create({ px: px.px, py: px.py, x: px.x, z: px.z, y: lift, name: asset.name });
+      // no POI held: a new one stands round the model, named for it (or as the UI names a new one)
+      if (!edit.selection()) edit.create({ px: px.px, py: px.py, x: px.x, z: px.z, y: lift, name: asset.name || placing.fallbackName || '' });
       const tg = target();
       if (!tg) return;
       const local = worldToPlace(tg.doc.place, sub(at, tg.sel.part == null ? tg.c : originOf(tg)));
+      // every part of the model at once - one step - each where it stands from the model's origin, in the POI's own frame
+      // (the model turns and sizes with its POI, as one thing)
+      const pieces = asset.parts ?? [asset];
       let key = null;
-      edit.edit(tg.sel.id, 'add part', (doc) => {
-        const part = newPart(doc, { mesh: asset.mesh, submeshes: asset.submeshes, name: asset.name, materials: asset.materials ?? null, t: local });
-        key = part.key;
-        doc.parts.push(part);
+      edit.edit(tg.sel.id, pieces.length > 1 ? 'add parts' : 'add part', (doc) => {
+        for (const piece of pieces) {
+          const off = piece.t ?? [0, 0, 0];
+          const part = newPart(doc, { mesh: piece.mesh, submeshes: piece.submeshes, name: piece.name, materials: piece.materials ?? null, t: [local[0] + off[0], local[1] + off[1], local[2] + off[2]] });
+          key ??= part.key;
+          doc.parts.push(part);
+        }
       });
-      if (key) edit.select({ id: tg.sel.id, part: key });
+      if (key) edit.select({ id: tg.sel.id, part: pieces.length > 1 ? null : key });
     }
     placing = null; placeAt = null;
     told();
@@ -247,8 +271,9 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
     placing: () => placing,
     /** Stand a new POI where the next click is (its name the UI's, in the builder's language). */
     placeNew(/** @type {string} */ name) { placing = { kind: 'poi', name }; told(); },
-    /** Stand a library asset as a part of the selected POI where the next click is. */
-    placeAsset(asset) { placing = { kind: 'part', asset }; told(); },
+    /** Stand a library asset - a model's parts (`{ name, parts }`) or one part - in the selected POI where the next click
+     *  is (none selected: a new POI round it, `fallbackName` its name when the model has none). */
+    placeAsset(asset, fallbackName = '') { placing = { kind: 'part', asset, fallbackName }; told(); },
     cancelPlacing() { placing = null; placeAt = null; told(); },
 
     /**
@@ -257,18 +282,18 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
      */
     cameraFrame(dt, cam) {
       if (!on || !eye.look) return;
-      const k = eye.keys;
+      const k = eye.keys;   // the actions held (POI_EYE_ACTIONS)
       const f = lookDir(cam.yaw, cam.pitch), r = [Math.cos(cam.yaw), 0, -Math.sin(cam.yaw)];
       let mv = [0, 0, 0];
-      if (k.has('KeyW')) mv = add(mv, f);
-      if (k.has('KeyS')) mv = sub(mv, f);
-      if (k.has('KeyD')) mv = add(mv, r);
-      if (k.has('KeyA')) mv = sub(mv, r);
-      if (k.has('KeyE')) mv = add(mv, [0, 1, 0]);
-      if (k.has('KeyQ')) mv = sub(mv, [0, 1, 0]);
+      if (k.has('MoveForwards')) mv = add(mv, f);
+      if (k.has('MoveBackwards')) mv = sub(mv, f);
+      if (k.has('MoveRight')) mv = add(mv, r);
+      if (k.has('MoveLeft')) mv = sub(mv, r);
+      if (k.has('Jump') || k.has('FloatUp')) mv = add(mv, [0, 1, 0]);
+      if (k.has('Crouch') || k.has('FloatDown')) mv = sub(mv, [0, 1, 0]);
       const l = Math.hypot(mv[0], mv[1], mv[2]);
       if (!(l > 0)) return;
-      const sp = eye.speed * (k.has('ShiftLeft') || k.has('ShiftRight') ? POI_EYE.fast : 1) * (k.has('ControlLeft') || k.has('ControlRight') ? POI_EYE.slow : 1);
+      const sp = eye.speed * (k.has('Run') ? POI_EYE.fast : 1);
       const step = mul(mv, (sp * dt) / l);
       for (let a = 0; a < 3; a++) cam.pos[a] += step[a];
     },
@@ -329,7 +354,7 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
         if (state) {
           const sel = edit.selection();
           edit.begin(sel.id, mode === 'move' ? 'move' : mode === 'turn' ? 'turn' : 'size');
-          drag = { handle: hover, state, id: sel.id, part: sel.part ?? null, start: null };
+          drag = { handle: hover, state, id: sel.id, part: sel.part ?? null, light: sel.light ?? null, start: null };
           told();
           return true;
         }
@@ -347,7 +372,7 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       if (drag) {
         const ray = rayAt(e.clientX, e.clientY);
         const r = ray ? dragResult(drag.state, ray.o, ray.d, snapNow()) : null;
-        if (r) { const sel = { id: drag.id, part: drag.part }; edit.preview((doc) => apply(doc, r, sel)); }
+        if (r) { const sel = { id: drag.id, part: drag.part, light: drag.light }; edit.preview((doc) => apply(doc, r, sel)); }
         return true;
       }
       if (press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > POI_CLICK_SLOP) press.moved = true;
@@ -387,7 +412,7 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       if (!on) return false;
       const mod = e.ctrlKey || e.metaKey;
       if (e.code === 'ControlLeft' || e.code === 'ControlRight') ctrlHeld = true;
-      if (eye.look) { eye.keys.add(e.code); return true; }
+      if (eye.look) { const a = actionOf(e); if (a && POI_EYE_ACTIONS.includes(a)) eye.keys.add(a); return true; }   // flying: the builder's own bindings
       if (mod && e.code === 'KeyZ') { if (e.shiftKey) edit.redo(); else edit.undo(); told(); return true; }
       if (mod && e.code === 'KeyY') { edit.redo(); told(); return true; }
       if (mod && e.code === 'KeyS') { acts.save?.(); return true; }
@@ -413,7 +438,8 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
     keyUp(/** @type {{ code: string }} */ e) {
       if (!on) return false;
       if (e.code === 'ControlLeft' || e.code === 'ControlRight') ctrlHeld = false;
-      eye.keys.delete(e.code);
+      const a = actionOf(e);
+      if (a) eye.keys.delete(a);
       return true;
     },
 
@@ -427,7 +453,7 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
 
     /** The lines to draw this frame: `{ inWorld, onTop }` - the selection's boxes where the models stand, the gizmo and
      *  the placing mark over everything. */
-    lines() {
+    lineSets() {
       const inWorld = [], onTop = [];
       if (!on) return { inWorld, onTop };
       const sel = edit.selection();
@@ -438,6 +464,20 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
           if (!p?.box) continue;
           const color = sel.part === part.key ? POI_BOX_COLOR.part : POI_BOX_COLOR.poi;
           if (sel.part == null || sel.part === part.key) { inWorld.push(...boxLines(p.box, color)); onTop.push(...boxLines(p.box, [color[0], color[1], color[2], 0.22])); }
+        }
+      }
+      // the selected POI's lights, each a small star where it shines from - the one selected lit
+      if (sel) {
+        const doc = edit.docOf(sel.id);
+        const t0 = doc ? translation(doc.place.px, doc.place.py, [0, 0, 0]) : null;
+        const g0 = doc?.place.ground === 'snap' ? surfaceAt(t0[0] + doc.place.x, t0[2] + doc.place.z) - t0[1] : 0;
+        if (doc && Number.isFinite(g0)) {
+          const origin = [t0[0] + doc.place.x, t0[1] + g0 + doc.place.y, t0[2] + doc.place.z];
+          (doc.lights ?? []).forEach((l, i) => {
+            const c = add(origin, mul(quatRotate(doc.place.r, l.t), doc.place.s)), k = 0.35;
+            const color = sel.light === i ? POI_HANDLE_COLOR.hover : [l.color[0], l.color[1], l.color[2], 0.9];
+            for (const a of AXES_WORLD) onTop.push({ a: sub(c, mul(a, k)), b: add(c, mul(a, k)), color });
+          });
         }
       }
       const g = gizmo();
@@ -453,6 +493,15 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
         onTop.push({ a: add(placeAt, [-k, 0, 0]), b: add(placeAt, [k, 0, 0]), color: c }, { a: add(placeAt, [0, 0, -k]), b: add(placeAt, [0, 0, k]), color: c }, { a: placeAt, b: add(placeAt, [0, 2, 0]), color: c });
       }
       return { inWorld, onTop };
+    },
+    /** Draw this frame's lines through the pass: the boxes where the models stand, then the handles over everything.
+     *  Answers whether anything drew (the host marks its foreign pass then). One call from the frame (PERF-V8: the
+     *  world's frame stays under V8's ceiling). */
+    drawLines(proj, viewM) {
+      if (!on || !pass) return false;
+      const { inWorld, onTop } = api.lineSets();
+      const a = pass.draw(proj, viewM, inWorld, { onTop: false }), b = pass.draw(proj, viewM, onTop, { onTop: true });
+      return a || b;
     },
     /** The selection's pivot (the gizmo's centre) - the UI's readout and a test's. */
     pivot: () => target()?.c ?? null,

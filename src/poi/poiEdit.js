@@ -153,7 +153,7 @@ export function uniqueKey(doc, wanted) {
   for (let n = 2; ; n++) { const k = `${base}-${n}`; if (!taken.has(k)) return k; }
 }
 /** A name as the law takes it: printable, trimmed, bounded. */
-export const lawName = (s, max = POI_LIMITS.name) => String(s ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max).trim();
+export const lawName = (s, max = /** @type {number} */ (POI_LIMITS.name)) => String(s ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max).trim();
 
 /** A material as the document keeps it: the default's every field, `over` laid on it. */
 export const newMaterial = (over = {}) => ({ ...structuredClone(DEFAULT_MATERIAL), ...structuredClone(over) });

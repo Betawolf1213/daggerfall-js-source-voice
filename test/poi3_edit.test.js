@@ -257,9 +257,9 @@ test('POI-3 WORDS: every code the law, the glTF reader, the mesh and the picture
   assert.ok(lawCodes.size >= 40, `the walk found the law's codes (${lawCodes.size})`);
   for (const c of lawCodes) assert.ok(!unknown(problemText({ code: c, max: 1, min: 0, have: 1, want: 2, key: 'k', bytes: 1 })), `law code ${c} unsaid`);
   const gl = src('src/poi/gltfImport.js');
-  for (const c of new Set([...gl.matchAll(/fail\('([a-z-]+)'/g)].map((m) => m[1]))) assert.ok(!unknown(gltfErrorText(c, { ext: 'x', uri: 'y', what: 'z' })), `glTF code ${c} unsaid`);
-  for (const c of new Set([...gl.matchAll(/warn\('([a-z-]+)'/g)].map((m) => m[1]))) assert.ok(!unknown(gltfWarningText(c)), `glTF warning ${c} unsaid`);
-  for (const c of new Set([...src('src/poi/poiImage.js').matchAll(/error: '([a-z-]+)'/g)].map((m) => m[1]))) assert.ok(!unknown(imageErrorText(c)), `picture code ${c} unsaid`);
+  for (const c of new Set([...gl.matchAll(/fail\('([a-z0-9-]+)'/g)].map((m) => m[1]))) assert.ok(!unknown(gltfErrorText(c, { ext: 'x', uri: 'y', what: 'z' })), `glTF code ${c} unsaid`);
+  for (const c of new Set([...gl.matchAll(/warn\('([a-z0-9-]+)'/g)].map((m) => m[1]))) assert.ok(!unknown(gltfWarningText(c)), `glTF warning ${c} unsaid`);
+  for (const c of new Set([...src('src/poi/poiImage.js').matchAll(/error: '([a-z0-9-]+)'/g)].map((m) => m[1]))) assert.ok(!unknown(imageErrorText(c)), `picture code ${c} unsaid`);
   assert.match(meshErrorText('too-many-vertices'), /262,144/);
   assert.match(meshErrorText('index-range'), /malformed/, 'every other mesh code a damaged model');
   assert.match(problemText({ code: 'never-heard' }), /never-heard/);
@@ -303,7 +303,7 @@ test('POI-3 THE DOOR: a draft PUT as JSON with the bearer to the draft route; an
 
 // ── THE PASS AND THE HOST IN THE WORLD ─────────────────────────────
 import { packLines, PoiGizmoPass, POI_LINES_FS } from '../src/render/poiGizmoPass.js';
-import { createPoiEditorHost, boxLines } from '../src/scenes/poiEditorHost.js';
+import { createPoiEditorHost, boxLines, POI_HANDLE_COLOR } from '../src/scenes/poiEditorHost.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
 import { projectToScreen } from '../src/player/tapRay.js';
 
@@ -352,6 +352,8 @@ test('POI-3 THE LINES\' PASS: a segment a quad of six vertices, each its ends, s
   assert.equal(boxLines([0, 0, 0, 1, 1, 1], [1, 1, 1, 1]).length, 12);
 });
 
+/** The registry's default actions for the keys a test presses (systems/inputActions.js DEFAULT_BINDINGS), and a rebind. */
+const BOUND = (e) => ({ KeyW: 'MoveForwards', KeyS: 'MoveBackwards', KeyA: 'MoveLeft', KeyD: 'MoveRight', Space: 'Jump', ShiftLeft: 'Run', KeyI: 'MoveForwards' })[e.code] ?? null;
 /** The editor in a world of one pixel: a real camera (the game's mirrored lens), a flat ground at nought. */
 function editorWorld() {
   const ed = createPoiEdit({ rand: counting() });
@@ -371,7 +373,7 @@ function editorWorld() {
     translation: (px, py, out = [0, 0, 0]) => { out[0] = (px - 10) * S; out[1] = 0; out[2] = -(py - 20) * S; return out; },
     sceneToPixel: (p) => { const px = 10 + Math.floor(p[0] / S), py = 20 - Math.floor(p[2] / S); return { px, py, x: p[0] - (px - 10) * S, z: p[2] + (py - 20) * S }; },
     groundHit: (o, d) => { if (!(d[1] < 0)) return { point: null, dist: Infinity }; const t = -o[1] / d[1]; return { point: [o[0] + d[0] * t, 0, o[2] + d[2] * t], dist: t }; },
-    surfaceAt: () => 0,
+    surfaceAt: () => 0, actionOf: BOUND,
   });
   const screen = (p) => { const v = frame(); const s = projectToScreen(p, W, Hh, v.proj, v.view); return { clientX: s.x, clientY: s.y }; };
   return { ed, editor, cam, screen, overlays, boxes, frame };
@@ -438,7 +440,7 @@ test('POI-3 THE EDITOR\'S CLICKS, KEYS AND EYE: a click on a POI takes it, the n
   W.ed.edit(id, 'add', (d) => { d.parts.push(newPart(d, { mesh: SHA, submeshes: 1, name: 'Hut' })); });
   W.ed.select(null);
   // a host whose pick finds the hut: a fresh editor over the same edit model
-  const pickEd = createPoiEditorHost({ edit: W.ed, feed: { setOverlay() {} }, host: { pick: () => ({ id, key: 'hut', dist: 5 }), partOf: () => ({ box: [3, 0, 5, 5, 2, 7] }) }, view: W.frame, translation: (px, py, o = [0, 0, 0]) => { o[0] = (px - 10) * POI_PIXEL_M; o[1] = 0; o[2] = -(py - 20) * POI_PIXEL_M; return o; }, sceneToPixel: () => null, groundHit: () => ({ point: null, dist: Infinity }), surfaceAt: () => 0 });
+  const pickEd = createPoiEditorHost({ actionOf: BOUND, edit: W.ed, feed: { setOverlay() {} }, host: { pick: () => ({ id, key: 'hut', dist: 5 }), partOf: () => ({ box: [3, 0, 5, 5, 2, 7] }) }, view: W.frame, translation: (px, py, o = [0, 0, 0]) => { o[0] = (px - 10) * POI_PIXEL_M; o[1] = 0; o[2] = -(py - 20) * POI_PIXEL_M; return o; }, sceneToPixel: () => null, groundHit: () => ({ point: null, dist: Infinity }), surfaceAt: () => 0 });
   pickEd.enter();
   const click = (x = 400, y = 300) => { pickEd.pointerDown({ clientX: x, clientY: y, button: 0 }); pickEd.pointerUp({ clientX: x, clientY: y, button: 0 }); };
   pickEd.setMode('select');
@@ -446,7 +448,7 @@ test('POI-3 THE EDITOR\'S CLICKS, KEYS AND EYE: a click on a POI takes it, the n
   assert.deepEqual(W.ed.selection(), { id, part: null, light: null }, 'the POI first');
   click();
   assert.deepEqual(W.ed.selection(), { id, part: 'hut', light: null }, 'then its part');
-  const { inWorld, onTop } = pickEd.lines();
+  const { inWorld, onTop } = pickEd.lineSets();
   assert.equal(inWorld.length, 12, 'the part\'s box where it stands');
   assert.ok(onTop.length >= 12);
   const missEd = createPoiEditorHost({ edit: W.ed, feed: { setOverlay() {} }, host: { pick: () => null, partOf: () => null }, view: W.frame, translation: (px, py, o = [0, 0, 0]) => o, sceneToPixel: () => null, groundHit: () => ({ point: null, dist: Infinity }), surfaceAt: () => 0 });
@@ -465,6 +467,8 @@ test('POI-3 THE EDITOR\'S CLICKS, KEYS AND EYE: a click on a POI takes it, the n
   pickEd.pointerDown({ clientX: 400, clientY: 300, button: 2 });
   pickEd.keyDown({ code: 'KeyW' }, W.cam);
   assert.equal(pickEd.mode(), 'size', 'a key held for flight is no tool');
+  pickEd.keyUp({ code: 'KeyW' });
+  pickEd.keyDown({ code: 'KeyI' }, W.cam);   // the builder's own binding for forwards: the registry's action, never the raw key
   pickEd.cameraFrame(0.5, W.cam);
   const f = [Math.sin(W.cam.yaw) * Math.cos(W.cam.pitch), Math.sin(W.cam.pitch), Math.cos(W.cam.yaw) * Math.cos(W.cam.pitch)];
   near(W.cam.pos, start.map((c, i) => c + f[i] * pickEd.eyeSpeed() * 0.5), 1e-9);
@@ -480,3 +484,28 @@ test('POI-3 THE EDITOR\'S CLICKS, KEYS AND EYE: a click on a POI takes it, the n
   assert.equal(pickEd.active(), false);
   assert.equal(pickEd.keyDown({ code: 'KeyW' }, W.cam), false, 'closed: it hears nothing');
 });
+
+test('POI-3 A LIGHT HELD: its pivot where it shines from, under its POI\'s turn and size; the move handle alone (a light has no turn or size); a drag moves the light in its POI\'s frame and never the POI; every light of the POI marked, the one held lit (mutants: the drag moves the POI; a turn offered)', () => {
+  const W = editorWorld();
+  W.editor.enter();
+  const id = W.ed.create({ px: 10, py: 20, x: 4, z: 6, name: 'Lamp' });
+  W.ed.edit(id, 'light', (d) => { d.place.s = 2; d.place.r = quatOfEuler([0, 90, 0]); d.lights.push(newLight([1, 1, 0])); }, { id, part: null, light: 0 });
+  near(W.editor.pivot(), [4, 2, 4], 1e-4, 'its local +x the world\'s -z, doubled; its height doubled');
+  W.editor.setMode('turn');
+  assert.equal(W.editor.lineSets().onTop.filter((l) => l.color === POI_HANDLE_COLOR_HOVER()).length, 3, 'the light\'s own star lit');
+  assert.equal(W.editor.lineSets().onTop.length, 3, 'and nothing else: no ring offered for a light');
+  W.editor.setMode('move');
+  const c = W.editor.pivot();
+  const arm = (() => { const v = W.frame(); const d = [c[0] - v.eye[0], c[1] - v.eye[1], c[2] - v.eye[2]], l = Math.hypot(...d); return gizmoSize(v.eye, d.map((x) => x / l), c, v.fovY, v.h); })();
+  const grab = [c[0] + 0.6 * arm, c[1], c[2]];
+  W.editor.pointerMove(W.screen(grab), W.cam);
+  assert.equal(W.editor.hovered(), 'x');
+  W.editor.pointerDown({ ...W.screen(grab), button: 0 });
+  W.editor.pointerMove(W.screen([grab[0] + 2, grab[1], grab[2]]), W.cam);
+  W.editor.pointerUp({ ...W.screen([grab[0] + 2, grab[1], grab[2]]), button: 0 });
+  const d = W.ed.docOf(id);
+  assert.deepEqual([d.place.x, d.place.z], [4, 6], 'the POI where it stood');
+  near(W.editor.pivot(), [6, 2, 4], 0.05, 'the light two metres east');
+  near(d.lights[0].t, [1, 1, 1], 0.03, 'in its POI\'s frame: the world\'s east its +z (a yaw of 90), halved by its size');
+});
+const POI_HANDLE_COLOR_HOVER = () => POI_HANDLE_COLOR.hover;

@@ -343,6 +343,7 @@ test('KB1 law 5, swept: no gameplay code reads a key the registry binds by its r
   const RESERVED = {
     'src/scenes/world.js': { Escape: 'the back-button latch the accelerator reads (DFU GetBackButton is the literal Escape)', AltLeft: 'preventDefault only - the browser menu steals focus on Alt', KeyH: 'Travel Options\' help, the travel panel\'s own key while it is up' },
     'src/scenes/exterior.js': { Escape: 'the back-button latch', AltLeft: 'preventDefault only' },
+    'src/scenes/poiEditorHost.js': { KeyZ: 'the POI editor\'s Ctrl+Z, its own undo while it is open (the world hears no key then; its flight reads the registry)', KeyY: 'its Ctrl+Y, the redo', KeyS: 'its Ctrl+S, the draft saved', KeyD: 'its Ctrl+D, a part duplicated' },
     'src/scenes/dungeon.js': { AltLeft: 'preventDefault only' },
     'src/scenes/townTalk.js': { KeyE: 'an open talk window\'s confirm alias - the window\'s key, while it is up' },
     'src/player/pointerLock.js': { Escape: 'the BROWSER\'s unlock key, not the pause action: a real press is noted so the one the browser swallowed is not delivered twice (ESC-LOCK) - the pause itself is read through the registry' },

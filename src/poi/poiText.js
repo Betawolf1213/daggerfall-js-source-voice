@@ -69,6 +69,7 @@ const PROBLEM = {
 /** @type {Record<string, (a: any) => string>} */
 const GLTF = {
   'not-gltf': () => t('poi.gltf.notGltf', 'This is not a glTF 2.0 file.'),
+  'not-gltf2': () => t('poi.gltf.notGltf2', 'This glTF file is not version 2.0. Export it again as glTF 2.0.'),
   'glb-chunk': () => t('poi.gltf.glbChunk', 'This .glb file is damaged: a part of it is missing or cut short.'),
   'glb-no-json': () => t('poi.gltf.glbNoJson', 'This .glb file has no scene in it.'),
   'glb-no-bin': () => t('poi.gltf.glbNoBin', 'This .glb file is missing its binary data.'),

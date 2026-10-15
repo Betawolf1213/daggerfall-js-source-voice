@@ -40,8 +40,8 @@ the glTF reader is the port's own and every model draws through `Renderer.create
 |---|---|---|
 | POI-1 | The format (document, mesh, texture header) and the store: roles, content-addressed uploads, drafts, submissions, the approver's word, retirement, rollback, the live feed | built |
 | POI-2 | The game: the feed read and kept, POIs streamed with the pixels they stand on in the exterior hosts, drawn, collided, lit, marked on the map; a new approval picked up without a reload | built |
-| POI-3 | The editor mode: the role gate, a free camera, the map to fly to, place / move / rotate / scale with gizmos and ground snap, an outliner and inspector, undo and redo, drafts saved and submitted | the core built (POI-3a); the world's wiring and the panel next |
-| POI-4 | The glTF 2.0 / GLB importer: accessors (sparse too), the node tree baked, materials, embedded and side-by-side images, samplers, KHR_texture_transform; the frame turned to the game's; the asset library | the reader built; the library with POI-3 |
+| POI-3 | The editor mode: the role gate, a free camera, the map to fly to, place / move / rotate / scale with gizmos and ground snap, an outliner and inspector, undo and redo, drafts saved and submitted | built (POI-3a the core, POI-3b the world and the panel) |
+| POI-4 | The glTF 2.0 / GLB importer: accessors (sparse too), the node tree baked, materials, embedded and side-by-side images, samplers, KHR_texture_transform; the frame turned to the game's; the asset library | the reader built; the import and its upload built (POI-3b); a library shared between builders planned |
 | POI-5 | The material editor and the full UV editor: selection by vertex, edge, face and island; move, rotate, scale; seams; LSCM unwrap; island packing; projections; texel density | planned |
 | POI-6 | The approver's queue in the editor (before and after, at the place, with the law's report), history and rollback; export and import of a POI pack; a GLB back out for a round trip | planned |
 
@@ -181,14 +181,58 @@ Pure where it can be, so the editor and the tests read it the same way:
   wait while the editor drags it (`collideDrafts`) - a draft moved every frame would file its collider every frame.
 - **THE LINES** (`src/render/poiGizmoPass.js`): the gizmo, a selection's boxes and the placing mark as screen-width
   quads, feathered, a batch on top (untested) or in the world (tested), never writing depth, the state put back.
-- **THE EDITOR IN THE WORLD** (`src/scenes/poiEditorHost.js`, built and tested, wired with POI-3b): its own eye (the
-  right button held: look, WASD along the look, Q and E down and up, Shift and Ctrl, the wheel the speed; the middle
+- **THE EDITOR IN THE WORLD** (`src/scenes/poiEditorHost.js`): its own eye (the
+  right button held: look, the builder's own movement bindings along the look - the registry's actions, never a raw
+  key, so a rebind reaches it - Jump or Float Up up, Crouch or Float Down down, Run faster, the wheel the speed; the middle
   button pans; Alt orbits the selection; F frames it); a free cursor whose click is a pick - a handle first, then the part
   under the ray (the first click on a POI takes the POI, the next its part), then nothing; Q W E R the tools, X the
-  space, Ctrl+Z / Ctrl+Y; placing a new POI or a library part where the click meets the ground.
+  space, Ctrl+Z / Ctrl+Y; placing a new POI or a library part where the click meets the ground. Wired by POI-3b.
 
-Pinned by `test/poi3_edit.test.js` (12) and `test/poi2_runtime.test.js`'s host pick; `tools/mutants/poi3.json` 31, all
-dead.
+Pinned by `test/poi3_edit.test.js` (13) and `test/poi2_runtime.test.js`'s host pick; `tools/mutants/poi3.json` 34, all
+dead. A LIGHT HELD (POI-3b): its pivot where it shines from, the move handle alone, dragged in its POI's frame, every
+light of the POI marked as a small star.
+
+## POI-3b - the editor in the world, and its panel (2026-10-14)
+
+**HOW A BUILDER USES IT.** Sign in to the game with an account the store calls a builder (developers, every handle in
+`BUILDER_HANDLES`, and the approvers in `APPROVER_HANDLES` - `server-account/wrangler.toml`), load a game, and open
+`/play/?editor` (offline: the flag is refused online with the other powers, `systems/onlineLane.js`). Outdoors and on
+foot, the editor opens over the world; its corner button opens it again after an exit.
+
+- **THE DOOR** (`src/scenes/world.js` startPoiEditor / mountPoiEditor): the store asked who this account is
+  (`/v1/poi/me`) before anything is made - not a builder, the store's own sentence and nothing more (the store asks the
+  role again at every write: the door is a courtesy, not the lock). While it is open the motor is held and the frame's
+  eye is the editor's (`cam` itself - the streamer and the floating origin follow it), no hand is drawn, and no blow
+  lands on the body left standing (`registerPlayerDamageMod('poi-editor')`). Its drafts are laid over the feed before
+  the POI host reads it; a draft's assets are asked with the builder's bearer; its lines are drawn after the
+  translucent pass and the pass marked. Its presses are taken in the window's capture phase - the world hears none of
+  them, the browser keeps its own (F5, F12), the panel and a typed field theirs. Leaving: **back** (the eye given back
+  to the body; a body whose pixel went while the eye was away fetched by `_teleportToPixel`, the one door that rebuilds
+  a place, `ohTeleportToWorld`'s way) or **here** (stood on what is under the eye - `floorLanding`). The **map** jumps:
+  the body taken to the square picked by the same door, the eye above it.
+- **THE PANEL** (`src/ui/poiEditorPanel.js`): the bar (the tools Q W E R, world or own axes X, snap and its three steps,
+  undo and redo saying what they undo, the eye's speed, New POI, Import model, Map, the two exits); the outliner (each
+  POI being edited with its state - new, draft, sent for approval, live, sent back, changed - its parts and lights;
+  every POI the store holds, searched, to open: my own open draft of it when I have one, its live revision otherwise,
+  with the base it was made from); the inspector (a POI's name, description, tags, spot, how it stands - on the ground
+  or at a fixed height - its height, its turn as Unity's three angles, its size, its mark and label, its lights; a
+  part's name, offset, turn, scale, solidity, shadow and materials - colour and its alpha, edges (opaque, cutout,
+  see-through) and the cut, both sides, repeat per axis, smooth or pixelated); every field one step of the undo. Then
+  **what is wrong**, in words and said where, the asset check waiting until every asset is known (an asset the store
+  has not got is said; one not yet heard of - offline - is not); and the store's acts - Save draft (held while anything
+  is wrong or unknown), Send for approval, Take back to draft, Ask to retire it, Put back as saved, Close (asking again
+  over unsaved work), Throw it away (a new POI). A refusal is the store's own sentence (`accountRefusalText`). A field
+  being typed in keeps its text: the panel is drawn again once it lets go of the keyboard.
+- **THE IMPORT** (`src/poi/poiImport.js`, the panel's dialog): a .glb, or a .gltf with its .bin and pictures; one part,
+  or a part for each object; its parts listed (vertices, triangles, materials), what was left out and why, what is past
+  a limit (refused by its code, never uploaded); each picture read by its header (one the store would refuse set aside,
+  its materials plain), each picture and mesh uploaded once by its name (`existed` for bytes the store has), the
+  materials' images their pictures' names, and the model placed - every part at once, one step, each where it stands
+  from the model's origin in its POI's frame - where the next click meets the ground (or a model on it); no POI held, a
+  new one stands round it.
+
+Pinned by `test/poi3b_panel.test.js` (6) - the panel headless over the shared fake document (test/chargenDom.mjs),
+the import, and the world's wiring by source; `tools/mutants/poi3b.json` 12, all dead.
 
 ## POI-4 - the glTF 2.0 reader (2026-10-14)
 
