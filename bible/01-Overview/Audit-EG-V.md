@@ -719,7 +719,8 @@ migration `0116_poi.sql`, and the relay stayed `world204`. The arc's account hal
 `ACCOUNT_VERSION` `acct136`, the migration `0117_elite_breach.sql` - with every account pin chain, the wrangler line,
 the tables pin and the mutant records on the version lines; `RELAY_VERSION` stays `world205`. POI-3's editor lines joined
 the world host's foreign passes beside the arc's two (30 call sites; 37 host call sites across the passes), and the held
-map's legend reads the arch and the POIs both.
+map's legend reads the arch and the POIs both. CI's whole gate found POI-1's `POI_TEXTURE_ARCHIVE` (600000,
+`poi/poiRuntime.js`) in no row of EG-G2's registry: registered.
 
 ## Still owed
 
