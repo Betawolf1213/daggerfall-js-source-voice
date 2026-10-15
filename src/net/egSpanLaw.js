@@ -479,6 +479,8 @@ const LAW_SPAN_BUILD = Object.freeze({ run: EG_SPAN_RUN_MPS, reach: egJumpReach,
 const LAW_FAST_BUILD = Object.freeze({ run: EG_FAST_RUN_MPS, reach: egFastReach, at: egPieceAtLaw, hits: LAW_SPAN_BUILD.hits, pend: egPendAtLaw });
 /** The builds a hall of spec law `v` is proven at: THE LAW'S CLOCK from EG_SOLVE_LAW, the screens' before. */
 const buildsOf = (v) => ((v ?? 0) >= EG_SOLVE_LAW ? [LAW_SPAN_BUILD, LAW_FAST_BUILD] : [SPAN_BUILD, FAST_BUILD]);
+/** THE SPAN BUILD a hall of spec law `v` is proven at (egPairWindows' `B` - for a test and a tool). */
+export const egSpanBuildOf = (v) => buildsOf(v)[0];
 
 /**
  * A course's chain: each step with what stands before it (the step it follows, or the still ground of a plate, an island
@@ -681,7 +683,7 @@ export function egSpanProof(spec) {
     // AUDIT EG V - spec law 8 (section 11.3): THE COLLAPSING TUBE outrun with its margin, and THE FORGE LINE crossed clear of
     // its hammers from every start
     if (spec.tube && EG_SPAN_RUN_MPS < EG_SET_MARGIN * spec.tube.mps) why.push(`the Collapsing Tube falls at ${spec.tube.mps} m/s, past the span build's run over its margin`);
-    for (const f of spec.frags ?? []) if (f.play === 'forgeline' && !forgeLineClear(spec, f, B)) why.push(`the Forge Line at ${f.z0} m: no crossing clear of its hammers from some start`);
+    for (const f of spec.frags ?? []) if (f.play === 'forgeline' && !egForgeLineClear(spec, f, B)) why.push(`the Forge Line at ${f.z0} m: no crossing clear of its hammers from some start`);
   }
   // THE MEDIAN, road by road: no road whose ordinary crossing runs far past its best
   if (!why.length) for (const road of [0, 1]) {
@@ -707,7 +709,7 @@ const hammerLive = (hz, ms) => { const u = (((ms + Math.round((hz.phase ?? 0) * 
  * all). Pure.
  * @param {any} spec @param {any} f its set piece (`frags`, play 'forgeline') @param {any} [B]
  */
-function forgeLineClear(spec, f, B = LAW_SPAN_BUILD) {
+export function egForgeLineClear(spec, f, B = LAW_SPAN_BUILD) {
   const rails = (spec.steps ?? []).filter((s) => s.kit === 'forgeline' && s.z >= f.z0 && s.z <= f.z1 && (s.road ?? 0) === (f.road ?? 0));
   if (!rails.length) return true;
   const ham = rails.map((s) => (spec.hazards ?? []).find((h) => h.kind === 'hammerline' && Math.abs(h.z - s.z) < 0.01) ?? null);
