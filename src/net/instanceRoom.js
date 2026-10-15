@@ -30,9 +30,9 @@ export const INSTANCE_OWNER_HEX = 16;
 export const INSTANCE_EPOCH_HEX = 8;
 /** The instance tag's spelling, ONE home: net/wire.js composes WORLD_ROOM from it. */
 export const INSTANCE_TAG_SOURCE = '\\.i[0-9a-f]{16}\\.[0-9a-f]{8}';
-/** The relay that admits an instance (net/wire.js RELAY_VERSION world207 - world206 on its branch, renumbered past SERPENT5's at the merge): an older one keeps no memory for the key, gates
+/** The relay that admits an instance (net/wire.js RELAY_VERSION world208 - world206 then world207 on its branch, renumbered past SERPENT5's and ONE-BODY's at the merges): an older one keeps no memory for the key, gates
  *  nobody out of it, and drops the party pose's `ins` - so no page offers an instance until its relay says this. */
-export const INSTANCE_RELAY_MIN = 207;
+export const INSTANCE_RELAY_MIN = 208;
 /** Does the relay whose welcome said `v` admit instances? */
 export const relaySupportsInstances = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= INSTANCE_RELAY_MIN; };
 

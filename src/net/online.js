@@ -1923,7 +1923,7 @@ export class OnlineSession {
         this._lastParty = null; this._lastPartyAt = -Infinity;   // SOC2: a fresh socket is a fresh attachment at the hub - the next party pose goes whole
         this.amapOk = false;   // PARTY-MAP: likewise, the welcome says
         this.staffTeleportOk = false;
-        this.instanceOk = false;   // INSTANCES: likewise - a relay rolled back behind world207 keeps no instance
+        this.instanceOk = false;   // INSTANCES: likewise - a relay rolled back behind world208 keeps no instance
         this.relayCfgOk = false;   // SCALE5b: likewise
         this.findOk = false;   // AUDIT SCALE II C-1: likewise - a relay rolled back behind the shards closes the hub link on `find`
         this.travOk = false;   // AUDIT DEEP T3-5: this socket's relay says whether it knows `trav` on ITS welcome (a rollback to world121 closes on one)

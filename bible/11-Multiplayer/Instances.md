@@ -56,7 +56,7 @@ An instance is its place's public world room with an owner and an epoch after it
 - **roomKeyFor** (net/online.js) keys an identity's `instance` in place of its public room. One that cannot be keyed is
   no room - never the public one.
 
-## 3. The relay's door (server/src/index.js, world207)
+## 3. The relay's door (server/src/index.js, world208)
 
 - **The hello** of an instance room: `_instanceAdmit`, asked before anything is written (the owned room's law). Its owner
   and staff come in. Anyone else is asked of the hub - `_instanceKinOf`, a POST to INSTANCE_INTERNAL_KIN with the
@@ -65,8 +65,8 @@ An instance is its place's public world room with an owner and an epoch after it
   `private instance`; the hub silent is `busy` (CLOSE_BUSY - the page tries again), never a way in.
 - **The party pose** carries `ins` - the member's instance as `<owner>.<epoch>` (instanceWord), inside only - so a
   partner at the same door is offered to join it.
-- **RELAY_VERSION world207** (NOT YET DEPLOYED; world206 on its branch, renumbered past main's SERPENT5 at the merge). net/instanceRoom.js joins the bundle. A page offers an instance only to
-  a relay whose welcome says INSTANCE_RELAY_MIN (207) or later (`online.instanceOk`): an older one keeps no memory for
+- **RELAY_VERSION world208** (NOT YET DEPLOYED; world206 then world207 on its branch, renumbered past main's SERPENT5 and ONE-BODY at the merges). net/instanceRoom.js joins the bundle. A page offers an instance only to
+  a relay whose welcome says INSTANCE_RELAY_MIN (208) or later (`online.instanceOk`): an older one keeps no memory for
   the key, gates nobody out of it, and drops `ins`.
 
 ## 4. The door (systems/instancePlaces.js, scenes/instanceDoor.js)
@@ -151,7 +151,7 @@ are `holdOpen` and never asked: the public Hold, as before.
   Hold, a partner, a building, the quest-elsewhere line), the funnel executed from its source, and the hosts by source.
 - `tools/mutants/instances.json` (24), all dead; the lists re-aimed by content where this arc moved their lines -
   holdonce, dsize1, sdonline, holdshared, soc1 and hostsplit - 119 dead in all, none surviving.
-- PIN MOVED: RELAY_VERSION world207 in every file that names it, and `test/relayversion.test.js`'s row and graph;
+- PIN MOVED: RELAY_VERSION world208 in every file that names it, and `test/relayversion.test.js`'s row and graph;
   the quest stamp and the re-lay (dsize1_mediumdungeons, sdonline, sd20g_delve), the funnels' and the identity's
   shapes (audit68_worldmodes, holdonce, holdshared, privateInterior, interiorsave, dungeonentry, mapkeep, world6,
   auditworld34, audit28_smallerdungeons, uxb1e_onlinesync), the relay's calls between rooms (scale2b), the account
@@ -161,7 +161,7 @@ are `holdOpen` and never asked: the public Hold, as before.
 
 ## 9. Open
 
-- **The relay deploy.** world207 is NOT YET DEPLOYED. Until it is, no page offers an instance, and a quest's dungeon is
+- **The relay deploy.** world208 is NOT YET DEPLOYED. Until it is, no page offers an instance, and a quest's dungeon is
   entered whole in its public room (the fallback).
 - **Every dungeon.** Mac chose quests', the Hold's and buildings'. A door at any dungeon is one row of instanceOffer
   away.
