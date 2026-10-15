@@ -60,6 +60,19 @@ ${P} .px-menu[data-level="offline"] .px-page-games .px-pagenote { color: ${CALM_
 /* Settings and Overhauls stand in the foot's box, beside Screenshots and About (appendPxFoot) - four plaques in a row,
    wrapping to two rows before they would run under the doors */
 .px-footright { flex-wrap: wrap; justify-content: flex-end; max-width: min(640px, 60vw); }
+/* AUDIT UICALM-FIRM1 L3 H1: THE STAGE ENDS WHERE THE FOOT BEGINS (--px-foot-h, measured: appendPxFoot) - its fixed
+   reserve (PX8, DOOR-FIT, SUPPORT1) was the one-row foot's, the two-question door's foot is taller, and a door that ran
+   on under it took no tap (Settings did). The stage scrolls above the foot instead; unmeasured, the fixed reserve
+   stands. A phone's plaques wrap in a row rather than stand four high. */
+.px-home:not(.px-over)[style*="--px-foot-h"] > .px-stage:not(.px-acctstage) { height: calc(100% - var(--px-foot-h)); padding-bottom: 12px; }
+@media (max-width: 480px), (max-height: 560px) {
+  .px-home:not(.px-over) .px-foot { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
+  .px-home:not(.px-over) .px-footright, .px-home:not(.px-over) .px-footleft { display: contents; }
+  .px-home:not(.px-over) .px-foot .px-build { order: 9; flex-basis: 100%; text-align: center; }
+}
+@media (max-width: 480px) {
+  .px-home:not(.px-over) .px-foot .px-about { font-size: 13px; letter-spacing: 0.06em; padding: 6px 10px; }
+}
 @media (max-width: 480px) {
   .px-menu[data-level="top"] .doorbtn { min-height: 76px; font-size: 26px; }
   .px-menu .door-sub { font-size: 13px; }

@@ -4482,7 +4482,16 @@ function appendPxFoot(home) {
     foot.append(right);
   }
   home.append(foot);
+  // AUDIT UICALM-FIRM1 L3 H1: THE STAGE RESERVES THE FOOT IT HAS (PX8's law, measured): UI-CALM's two plaques wrap the
+  // foot to a second row the stage's fixed reserve did not hold, and Settings stood over Offline, Load and Back - a tap
+  // on a door opened Settings. The foot says its height (--px-foot-h) and the sheet keeps the stage's foot clear of it.
+  footObs?.disconnect?.();
+  const reserve = () => { const h = Math.ceil(foot.getBoundingClientRect?.().height ?? 0); if (h > 0) home.style?.setProperty?.('--px-foot-h', `${h}px`); };
+  reserve();
+  try { footObs = new globalThis.ResizeObserver(reserve); footObs.observe(foot); } catch { footObs = null; }   // no observer: the sheet's own reserve stands
 }
+/** The foot's watch (appendPxFoot) - one at a time, the last door's. */
+let footObs = /** @type {ResizeObserver|null} */ (null);
 
 // ── PX3: THE PAUSE WINDOW ────────────────────────────────────────
 // HOLDINGS (2026-10-03, Mac: "Lets add a new tab to the pause menu as the stat page is starting to get bloated"): what the

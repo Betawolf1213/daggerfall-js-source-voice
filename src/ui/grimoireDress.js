@@ -1648,7 +1648,10 @@ ${G} .lv-skrole, ${G} .lv-skrole .g { color: ${T.inkSoft} !important; text-shado
  *  foot on the screen's foot - which keeps the picture's own "Biography" off the top on a 16:9 screen and under the
  *  wordmark on a 16:10 one - and writes its doors on those pages. */
 export const DESK_BOOK = Object.freeze({ x: 75 / 960, y: 208 / 600, w: 755 / 960, h: 372 / 600, spine: 13 / 755 });
-const BOOK_MQ = '(min-width: 900px) and (min-aspect-ratio: 5/4)';
+/** AUDIT UICALM-FIRM1 L3 M1: and tall enough for the two questions' leaves - under PX8's short line the book's fixed type ran
+ *  "Thine Own Tale" into "Offline", its rule through the word and the lines off the page (932x430, 1280x480); there the
+ *  one page held up stands instead, as on a phone */
+const BOOK_MQ = '(min-width: 900px) and (min-aspect-ratio: 5/4) and (min-height: 561px)';
 /** The painted book's spine stands at 388 of its 786 pixels: each half drawn across its own column. */
 export const BOOK_SPINE = 388 / 786;
 export function rosterCss() {
