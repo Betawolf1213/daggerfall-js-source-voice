@@ -157,7 +157,7 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
     return { width: t.getWidth(record), height: t.getHeight(record) };
   };
   const _standInMisses = new Set();   // WD3: the stand-in records said once each
-  const uploadRecord = (archive, record, { opaque = false, mips, removeMask = false, dye = null, dyeTarget = null } = {}) => {   // DYE-ICON: `dyeTarget` - the swatch the classic arm dyes (itemDye.js itemDyeTarget)   // DW3: `dye` - GetItemImage asks the replacement by the item's dye (ItemHelper.cs:458); the icon uploads under a per-dye variant and answers which   // REVIEW 2026-09-05: `mips: false` for item icons (ImageReader.cs:59 builds UI art with no chain); HM1: `removeMask` = ItemHelper's GetItemImage(removeMask: true), the item icons' door - 0xFF becomes the cutout before the upload
+  const uploadRecord = (archive, record, { opaque = false, mips, removeMask = false, dye = null, dyeTarget = null, cutout = false } = {}) => {   // DYE-ICON: `dyeTarget` - the swatch the classic arm dyes (itemDye.js itemDyeTarget)   // DW3: `dye` - GetItemImage asks the replacement by the item's dye (ItemHelper.cs:458); the icon uploads under a per-dye variant and answers which   // REVIEW 2026-09-05: `mips: false` for item icons (ImageReader.cs:59 builds UI art with no chain); HM1: `removeMask` = ItemHelper's GetItemImage(removeMask: true), the item icons' door - 0xFF becomes the cutout before the upload   // DF-ART: `cutout` - a model's picture whose glass is seen through (renderer.uploadTexture's RW1 cut-out; the port's ships' windows)
     const t = textureFiles.get(archive); freshen(archive);   // AUDIT VE R1
     const bitmap = t.getDFBitmap(record, 0);
     // Spectral archives (ghost/wraith/Lysandus) take the verbatim
@@ -225,7 +225,7 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
     // AUDIT RETRO1 A4: a replacement is flagged - TextureReader's retro arm (no mip chain) never reaches TryImportTexture's.
     // AUDIT GN2-PF5: a stand-in the port paints as a hull's classic art (markClassicArt) is no replacement
     const replacement = !!swap && !classicArt.has(Number(archive));
-    renderer.uploadTexture(archive, record, color32, variant !== undefined ? { opaque, mips, variant, replacement } : { opaque, mips, replacement });
+    renderer.uploadTexture(archive, record, color32, variant !== undefined ? { opaque, mips, variant, replacement, cutout } : { opaque, mips, replacement, cutout });
     // Exterior windows also get their emission mask (R2, MaterialReader
     // semantics: glass texels glow with the active window style).
     // DS1: a stand-in (a mod-only archive) has no classic bitmap to cut a

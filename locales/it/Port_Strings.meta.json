@@ -3029,6 +3029,26 @@
   "tr": "cda088f08346",
   "by": "claude-in-session"
  },
+ "body.face.curated": {
+  "en": "4ca651d7c69a",
+  "tr": "cb9c5c2b4786",
+  "by": "claude-in-session"
+ },
+ "body.outfit.second": {
+  "en": "1db02fb23c59",
+  "tr": "7b2ca2bebaa8",
+  "by": "claude-in-session"
+ },
+ "body.outfit.unbound": {
+  "en": "7f1c6d12ebee",
+  "tr": "61fc74431f0c",
+  "by": "claude-in-session"
+ },
+ "body.outfit.unknown": {
+  "en": "e83bb293cbcc",
+  "tr": "3416cbf4e879",
+  "by": "claude-in-session"
+ },
  "cards.iliac.foe.committed": {
   "en": "82606b0cf26d",
   "tr": "741b80d3a6f4",
@@ -4397,6 +4417,16 @@
  "features.moddedLighting.title": {
   "en": "8b9109c203b8",
   "tr": "d7ccca921b6a",
+  "by": "claude-in-session"
+ },
+ "features.mwBillboardLook.note": {
+  "en": "b637d8bc86a9",
+  "tr": "5d19a8f750e0",
+  "by": "claude-in-session"
+ },
+ "features.mwBillboardLook.title": {
+  "en": "1ba578fcc93d",
+  "tr": "95ef45112170",
   "by": "claude-in-session"
  },
  "features.navalCombat.aimCamera": {

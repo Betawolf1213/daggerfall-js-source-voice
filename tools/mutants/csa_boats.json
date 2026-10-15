@@ -451,8 +451,8 @@
   {
     "name": "CSA-B-mesh-textures-cutout",
     "file": "src/scenes/comeSailAwayPool.js",
-    "old": "try { await pipeline.getTexture(sm.textureArchive); pipeline.uploadRecord(sm.textureArchive, sm.textureRecord, { opaque: true }); }\n          catch (e) { warnOnce(`tex:",
-    "new": "try { await pipeline.getTexture(sm.textureArchive); pipeline.uploadRecord(sm.textureArchive, sm.textureRecord); }\n          catch (e) { warnOnce(`tex:",
+    "old": "{ opaque: true, cutout: cutOf(sm.textureArchive, sm.textureRecord) }); }\n          catch (e) { warnOnce(`tex:",
+    "new": "{ cutout: cutOf(sm.textureArchive, sm.textureRecord) }); }\n          catch (e) { warnOnce(`tex:",
     "tests": [
       "test/csa_pool.test.js"
     ]

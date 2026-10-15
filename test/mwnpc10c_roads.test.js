@@ -68,17 +68,23 @@ test('MWNPC10c-2 residentLook: a class\'s sprite its class\'s look in their own 
   assert.ok(wornByRole(priest, 'priest') && !priest.items.some((it) => it.equipSlot === EQUIP_SLOTS.LegsClothes), 'a priest at the door in his robes');
   const beggar = residentLook({}, res({ job: 'beggar' }), { still: true });
   assert.ok(wornByRole(beggar, FOLK_DRESS.male[0].role), 'a beggar the street\'s outfit');
-  const own = residentLook({}, res({ archive: 383 }));
-  assert.ok(wornByRole(own, FOLK_DRESS.male[2].role), 'their own outfit, as their sprite (the third variant, the traveller)');
-  assert.deepEqual([own.race, own.gender], ['Redguard', 'male']);
-  assert.deepEqual(residentLook({}, res({ archive: 383 })), own, 'one person wherever drawn - their id\'s seed, never a spawn\'s roll');
-  const dyes = new Set(Array.from({ length: 12 }, (_, i) => residentLook({}, res({ id: `L7.t${i}` })).items[0].dye));
+  // PIN MOVED (MW-FOLK1, bible/04-Characters/Townsfolk-Outfits.md): 383, this pin's sprite, wears the outfit its
+  // picture draws (ownClothingModels.js TOWNSFOLK_OUTFITS) - the wardrobe's own outfit as their sprite is a Breton 391's
+  const pictured = residentLook({}, res({ archive: 383 }));
+  assert.deepEqual([pictured.outfit, pictured.items], ['townsfolk_383', []], 'their sprite\'s own outfit, nothing of the wardrobe with it');
+  const own = residentLook({}, res({ race: 'Breton', archive: 391 }));
+  assert.ok(own.items.length && wornByRole(own, FOLK_DRESS.male[2].role), 'their own outfit, as their sprite (the third variant, the traveller)');
+  assert.deepEqual([own.race, own.gender, own.outfit], ['Breton', 'male', undefined]);
+  assert.deepEqual(residentLook({}, res({ race: 'Breton', archive: 391 })), own, 'one person wherever drawn - their id\'s seed, never a spawn\'s roll');
+  assert.deepEqual(residentLook({}, res({ archive: 383 })), pictured);
+  const dyes = new Set(Array.from({ length: 12 }, (_, i) => residentLook({}, res({ id: `L7.t${i}`, race: 'Breton', archive: 391 })).items[0].dye));
   assert.ok(dyes.size > 2, `a street not one colour (${[...dyes]})`);
   assert.notDeepEqual(residentLook({}, res({ job: 'courtier' })), residentLook({}, res({ job: 'courtier' }), { still: true }), 'a courtier walking is in their outfit');
   const duty = residentLook({}, res({ archive: GUARD_TEXTURE, guard: true, job: 'guard' }));
   assert.ok(duty.items.some((it) => it.group === 'Armor'), 'on duty: the watch\'s plate');
   const off = residentLook({}, res({ archive: GUARD_TEXTURE, civvies: 381, guard: true, job: 'guard' }));
   assert.ok(!off.items.some((it) => it.group === 'Armor'), 'off duty: his own clothes');
+  assert.equal(off.outfit, 'townsfolk_381', 'PIN MOVED (MW-FOLK1): his own clothes the outfit his civvies\' sprite draws');
 });
 
 function recordingLane() {
