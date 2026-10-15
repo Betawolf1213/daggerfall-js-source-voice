@@ -25,5 +25,41 @@
     "tests": [
       "test/hostceiling.test.js"
     ]
+  },
+  {
+    "name": "HOST-SPLIT-NAVAL-the-naval-ceiling-dropped",
+    "file": "test/hostceiling.test.js",
+    "old": "  ['src/scenes/navalHost.js', 'createNavalHost', 3_942, MODULE],   // HOST-SPLIT NAVAL: a *Host.js grown into a knot of its own (3,692 code lines)\n",
+    "new": "",
+    "tests": [
+      "test/hostceiling.test.js"
+    ]
+  },
+  {
+    "name": "HOST-SPLIT-NAVAL-the-knot-never-reached",
+    "file": "test/hostceiling.test.js",
+    "old": "const KNOT = 2_000;",
+    "new": "const KNOT = 100_000;",
+    "tests": [
+      "test/hostceiling.test.js"
+    ]
+  },
+  {
+    "name": "HOST-SPLIT-NAVAL-the-walk-by-the-first-create-export-alone",
+    "file": "test/hostceiling.test.js",
+    "old": "    for (const { fn, name } of outermost(ast, KNOT)) {",
+    "new": "    for (const { fn, name } of outermost(ast, KNOT).filter((x) => x.name === /^export function (create\\w+)\\(/m.exec(src)?.[1])) {",
+    "tests": [
+      "test/hostceiling.test.js"
+    ]
+  },
+  {
+    "name": "HOST-SPLIT-NAVAL-the-sail-runtime-ceiling-dropped",
+    "file": "test/hostceiling.test.js",
+    "old": "  ['src/systems/comeSailAway.js', 'createComeSailAwayRuntime', 2_315, MODULE],   // AUDIT HOST-SPLIT NAVAL: the Come Sail Away runtime, one scope of 2,065 code lines\n",
+    "new": "",
+    "tests": [
+      "test/hostceiling.test.js"
+    ]
   }
 ]

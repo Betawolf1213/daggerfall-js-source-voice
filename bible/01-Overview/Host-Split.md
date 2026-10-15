@@ -44,11 +44,18 @@ New behaviour goes into a module the host wires - `fishHost.js` and
 the host constructs it once and calls it. The host's own function gains the
 wiring, not the feature. (Not every one of the 28 `*Host.js` modules is that
 shape: `navalHost.js`'s `createNavalHost` is itself a single scope of 4,865
-lines - the same knot, one size down, with no ceiling of its own yet.) On the
+lines - the same knot, one size down. HOST-SPLIT NAVAL (2026-10-15) gave it a
+ceiling of its own, and any function in `src/` that grows past 2,000 code lines
+is now held to one too: the suite walks `src/` and reads every outermost
+function, whatever its name or shape. AUDIT HOST-SPLIT NAVAL found the first walk
+read only each `*Host.js`'s first `export function create...` - five hosts never
+measured - and a knot outside the folder already standing: Come Sail Away's
+runtime, `createComeSailAwayRuntime`, 2,065 code lines, held now too.) On the
 relay the new code goes into a Room method of its own, as the SCALE5 arms did.
 
-`test/hostceiling.test.js` holds it: each host function - the four hosts and
-the relay's `_message` - has a ceiling in CODE lines, its length when measured
+`test/hostceiling.test.js` holds it: each host function - the four hosts, the
+two modules grown into knots of their own (`createNavalHost`,
+`createComeSailAwayRuntime`) and the relay's `_message` - has a ceiling in CODE lines, its length when measured
 plus 250 - a fix's room, not a feature's. Comments and blank lines do not count
 (AUDIT HOST-SPLIT 0: a third of bootWorld is the bible's own explanation, and a
 ceiling on raw lines made deleting it the cheapest room). A change that pushes
