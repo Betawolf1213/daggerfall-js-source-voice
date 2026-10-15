@@ -169,9 +169,15 @@ export function kitMendWagon(item) {
   return { ok: true, text: WAGON_UPKEEP_TEXT.kitDone(wagonWord(item), Math.round(wagonSoundness(item) * 100)) };
 }
 
-/** The pace a wagon's state lets its team pull it at (1 for none) - WAGON-TIERS: only where its tier's wear slows it
- *  (Hard); on Boons every state rolls at DFU's pace. */
-export const wagonPace = (item, rules = WAGON_UPKEEP_HARD) => (isWagonItem(item) && rules.wearSlows ? wagonState(item).pace : 1);
+/** The pace a wagon's state lets its team pull it at (1 for none) - WAGON-TIERS: its state's slowness only where its
+ *  tier's wear slows it (Hard; on Boons every state rolls at DFU's pace), and a Sound wagon's earned pace where its tier
+ *  pays one (Boons: upkeepTiers.js WAGON_SOUND_BOON - Mac, "Sound wagon rolls faster"). The team's own Strength under
+ *  its load is horse care's, multiplied on after (upkeepRuntime.js rideScale), as every ride pace is. */
+export function wagonPace(item, rules = WAGON_UPKEEP_HARD) {
+  if (!isWagonItem(item)) return 1;
+  const s = wagonState(item);
+  return (rules.wearSlows ? s.pace : 1) * (s.key === 'sound' ? rules.soundPace : 1);
+}
 /** WAGON-TIERS: whether a counter buys `item` as a whole wagon - a wagon on a tier whose wear does not price it (Boons;
  *  and Off, `rules` null - DFU's plain wagon, which never wore). Hard prices it by its condition (systems/tradeModes.js
  *  saleConditionPercentage, Roleplay & Realism: Items' conditionCostBase). `rules` the live tier's (null for Off); a

@@ -11,6 +11,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   WAGON_UPKEEP_TIER_IDS, WAGON_UPKEEP_DEFAULT, WAGON_UPKEEP_STORED, WAGON_UPKEEP_RULES, WAGON_UPKEEP_HARD, wagonUpkeepTierOfStored, isStoredWagonUpkeep,
+  WAGON_SOUND_BOON, HORSE_CARE_HARD,
 } from '../src/systems/upkeepTiers.js';
 import { wagonUpkeepRules, WAGON_UPKEEP_PREF } from '../src/systems/upkeepSwitch.js';
 import { getPref, setPref, loadPrefs, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
@@ -63,9 +64,10 @@ test('WAGON-TIERS THE ONE KEY: Off, Boons and Hard on the `wagonUpkeep` key - th
   assert.equal(WAGON_UPKEEP_DEFAULT, 'boons');
   assert.deepEqual({ ...WAGON_UPKEEP_STORED }, { off: false, boons: 'boons', hard: 'hard' });
   assert.deepEqual(JSON.parse(JSON.stringify(WAGON_UPKEEP_RULES)), {
-    boons: { id: 'boons', wearSlows: false, wearPrices: false },
-    hard: { id: 'hard', wearSlows: true, wearPrices: true },
+    boons: { id: 'boons', wearSlows: false, wearPrices: false, soundPace: 1.1 },
+    hard: { id: 'hard', wearSlows: true, wearPrices: true, soundPace: 1 },
   });
+  assert.equal(WAGON_SOUND_BOON, 1.1, 'Mac: "Sound wagon rolls faster" - the one number, in the leaf');
   assert.equal(WAGON_UPKEEP_HARD, WAGON_UPKEEP_RULES.hard, 'a law handed no rules runs the system as it stood');
   assert.deepEqual([false, 'boons', 'hard', true, 'Hard', undefined].map(wagonUpkeepTierOfStored), ['off', 'boons', 'hard', 'boons', 'boons', 'boons']);
   assert.deepEqual([false, 'boons', 'hard', true, 'off', 0].map(isStoredWagonUpkeep), [true, true, true, false, false, false]);
@@ -124,7 +126,7 @@ test('WAGON-TIERS BOONS IS NEVER WORSE THAN DFU\'S PLAIN WAGON: every kind in ev
           const up = hostUpkeep([w]);
           for (const load of [0, 0.5, 1]) {
             const pace = up.rideScale('Cart', load);
-            if (tier === 'boons') assert.equal(pace, 1, `Boons ${kind} ${state} load ${load}: DFU's pace`);
+            if (tier === 'boons') assert.equal(pace, state === 'sound' ? WAGON_SOUND_BOON : 1, `Boons ${kind} ${state} load ${load}: DFU's pace - a Sound wagon's earned one`);
             else assert.equal(pace, { sound: 1, worn: 1, rickety: 0.85, failing: 0.7, last: 0.7, nought: 0.7 }[state], `Hard ${kind} ${state}: the state's pace`);
           }
           if (tier === 'boons') assert.equal(sale(w), whole, `Boons ${kind} ${state}: sold as a whole wagon`);
@@ -218,7 +220,7 @@ test('WAGON-TIERS NO RED WHERE WEAR COSTS NOTHING, AND EACH TIER\'S WORDS: on Bo
   });
   // the Stable page's lines, through its own builder (ui/holdingsPages.js wagonLines, by the page's words)
   const page = rd('src/ui/holdingsPages.js');
-  assert.match(page, /const advice = w\.wearSlows === false && \(w\.stateKey === 'failing' \|\| w\.stateKey === 'rickety'\) \? WAGON_ADVICE_BOONS\[w\.stateKey\]/);
+  assert.match(page, /const advice = w\.wearSlows === false && Object\.hasOwn\(WAGON_ADVICE_BOONS, w\.stateKey\) \? WAGON_ADVICE_BOONS\[w\.stateKey\]/);
   assert.match(page, /get rickety\(\) \{ return t\('holdings\.wagon\.boons\.rickety', 'Rickety - it still rolls at its pace\.'\); \}/);
   assert.match(page, /get failing\(\) \{ return t\('holdings\.wagon\.boons\.failing', 'Failing - it still rolls at its pace\.'\); \}/);
 });
@@ -239,4 +241,61 @@ test('WAGON-TIERS THE ONE ACCESSOR AND THE FOUR HOSTS: no module but the switch 
   assert.match(rd('src/scenes/world.js'), /function mendAtYard\(\) \{\n\s*if \(!wagonUpkeepRules\(\)\) \{ setMidScreenText\('The wright has no work for you\.'\); return true; \}/, 'world.js: the Wagon Yard\'s wright');
   assert.match(rd('src/systems/tradeModes.js'), /export function saleConditionPercentage\(item, \{ online = isOnlinePage\(\) \} = \{\}\) \{\n(\s*\/\/[^\n]*\n)*\s*if \(wagonSoldWhole\(item, wagonUpkeepRules\(\)\)\) return 100;/, 'tradeModes.js: a counter\'s sale');
   for (const host of ['worldModes.js', 'dungeonContext.js']) assert.ok(!/wagonUpkeep/.test(rd(`src/scenes/${host}`)), `${host}: no transport`);
+});
+
+test('WAGON-TIERS A SOUND WAGON ROLLS FASTER (Mac, 2026-10-15: "Sound wagon rolls faster"): on Boons a wagon kept Sound - 60% of whole and up, a kit\'s ceiling included - rolls at WAGON_SOUND_BOON times DFU\'s pace, and Worn, Rickety and Failing at DFU\'s; Hard and Off unchanged; the boon composes with the team\'s own pace as every ride pace does (the product, through the motor the Overworld drives), online as offline - the player\'s own, as Climates & Calories\' boons are; the Stable page says it (mutants: the boon gone; Boons not paying it; Hard paying it; the law not reading it; a worn wagon earning it; the boon unsaid)', async () => {
+  const { PlayerMotor } = await import('../src/player/motor.js');
+  const { Collider } = await import('../src/player/collider.js');
+  const { TRANSPORT_MODES } = await import('../src/systems/transport.js');
+  const { teamDraftScale, steedStats } = await import('../src/systems/steedCare.js');
+  const at = { whole: 1400, sound: 840, under: 839, worn: 700, rickety: 300, failing: 100 };
+  const want = {
+    boons: { whole: 1.1, sound: 1.1, under: 1, worn: 1, rickety: 1, failing: 1 },
+    hard: { whole: 1, sound: 1, under: 1, worn: 1, rickety: 0.85, failing: 0.7 },
+    off: { whole: 1, sound: 1, under: 1, worn: 1, rickety: 1, failing: 1 },
+  };
+  for (const online of [true, false]) {
+    onPage(online, () => {
+      for (const tier of ['boons', 'hard', 'off']) {
+        setPref(WAGON_UPKEEP_PREF, tier === 'off' ? false : tier);
+        const got = Object.fromEntries(Object.entries(at).map(([k, c]) => [k, hostUpkeep([wagon('openWagon', c)]).rideScale('Cart')]));
+        assert.deepEqual(got, want[tier], `${online ? 'online' : 'offline'} ${tier}`);
+      }
+    });
+  }
+  // a kit mends to 60% at most - Sound, so the field's mend keeps the boon
+  onPage(false, () => {
+    const w = wagon('cart', 500);
+    const items = [w, mintCondition(setItemFields({ group: 'UselessItems2', templateIndex: UPKEEP_ITEM.WagonKit, stackCount: 1 }))];
+    const up = hostUpkeep(items);
+    assert.equal(up.rideScale('Cart'), 1, 'worn: DFU\'s pace');
+    assert.equal(up.act('kit', 0, { near: true, wagonNear: true, pass: () => {} }).ok, true);
+    assert.deepEqual([wagonCondition(w), up.rideScale('Cart')], [840, WAGON_SOUND_BOON], 'mended to the kit\'s 60%: Sound, and the boon earned');
+  });
+  // it composes with the team's own pace - horse care's Strength under a load - as the product, as every ride pace does
+  onPage(false, () => {
+    const team = [{ group: 'Transportation', templateIndex: 94, horseSeed: 55, horseFed: 1e6 + 600 }, wagon('cart')];
+    const up = createUpkeep({ items: () => team, now: () => 1e6, horseCare: () => HORSE_CARE_HARD, wagonUpkeep: wagonUpkeepRules });
+    const draft = teamDraftScale(steedStats(team[0], 1e6, HORSE_CARE_HARD).stats.strength, 1, HORSE_CARE_HARD);
+    assert.ok(draft < 1, `the team drags under a full load (${draft})`);
+    const k = up.rideScale('Cart', 1);
+    assert.ok(Math.abs(k - WAGON_SOUND_BOON * draft) < 1e-9, `the boon times the team's pace (${k})`);
+    // through the motor - the Overworld's and every host's ride: its speed is its ride's base times the scale
+    const I = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    const col = new Collider(() => 0);
+    col.addMesh('floor', new Float32Array([-500, 0, -500, 500, 0, -500, 500, 0, 500, -500, 0, 500]), new Uint32Array([0, 1, 2, 0, 2, 3]), I);
+    const speedAt = (scale) => {
+      const m = new PlayerMotor(col, { speed: 50, running: 40, agility: 50, strength: 50, endurance: 50, willpower: 50, swimming: 0, climbing: 0 });
+      m.spawn(0, 0.1, 0);
+      const still = { forward: 0, strafe: 0, run: false, sneak: false, jump: false, up: false, down: false };
+      for (let f = 0; f < 5; f++) m.update(1 / 60, still, 0);
+      m.transportMode = TRANSPORT_MODES.Cart;
+      m.rideSpeedScale = scale;
+      m.update(1 / 60, { ...still, forward: 1 }, 0);
+      return m.speed;
+    };
+    assert.ok(Math.abs(speedAt(WAGON_SOUND_BOON) / speedAt(1) - WAGON_SOUND_BOON) < 1e-9, 'the motor rides the boon as it rides every pace');
+  });
+  assert.match(rd('src/scenes/world.js'), /player\.rideSpeedScale = upkeep\.rideScale\(player\.transportMode, wagonLoadShare\(\)\);/, 'world.js - the Overworld\'s and the journeys\' host - hands the motor the one scale');
+  assert.match(rd('src/ui/holdingsPages.js'), /get sound\(\) \{ return t\('holdings\.wagon\.boons\.sound', 'Sound - it rolls faster for it\.'\); \}/, 'the Stable page says the boon on Boons');
 });

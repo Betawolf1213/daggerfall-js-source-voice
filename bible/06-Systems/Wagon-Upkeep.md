@@ -26,7 +26,7 @@ DFU does.
 | Tier | Stored (the `wagonUpkeep` pref) | What the wagon pays |
 |---|---|---|
 | Off | `false` - the old switch's own | nothing: it is DFU's plain wagon - it never wears, rolls at its team's pace, and a counter buys it whole |
-| Boons - the default | nothing (PREF1: a default is never stored) | nothing: never worse than DFU's plain wagon |
+| Boons - the default | nothing (PREF1: a default is never stored) | nothing: never worse than DFU's plain wagon - and a Sound one rolls faster |
 | Hard | `'hard'` | the system as WAGONS4 and WAGON-MEND built it - everything below this section, as it stood |
 
 Boons' rules, each a field of `WAGON_UPKEEP_RULES` because the tiers differ on it:
@@ -35,13 +35,19 @@ Boons' rules, each a field of `WAGON_UPKEEP_RULES` because the tiers differ on i
    the Wagon Yard's Mend and the kit are the world's in both tiers - a Boons wagon worn to Failing is Failing, and the
    yard and the kit make it whole as on Hard.
 2. **Nothing is ever taken.** A Rickety or Failing wagon rolls at DFU's pace (`wearSlows`: `wagonUpkeep.js` wagonPace
-   is 1 in every state), and a counter buys it as a whole wagon (`wearPrices`: `wagonUpkeep.js` wagonSoldWhole, read
+   is never under 1 on Boons), and a counter buys it as a whole wagon (`wearPrices`: `wagonUpkeep.js` wagonSoldWhole, read
    by `systems/tradeModes.js` saleConditionPercentage - on Hard Roleplay & Realism: Items' conditionCostBase prices it
    by its condition, a Caravan at its last point a fifth of a whole one's price). Off sells it whole too: DFU's wagon
    never wore. A team's own drag under a load is horse care's (Strength, `teamDraftScale` - none on its Boons).
-3. **No earning to keep.** WAGONS4 gave a kept wagon nothing over DFU's - a sound wagon rolls at its team's pace on
-   every tier - so Boons is the system with its costs taken out, and on Boons a mend buys back the condition alone.
-   What a kept wagon should EARN, if anything, is Mac's to name: no number was invented for it.
+3. **A wagon kept earns.** Mac, 2026-10-15: *"Sound wagon rolls faster"* - DECIDED. On Boons a Sound wagon (60% of
+   whole and up, so a kit's 60% keeps it) rolls at 1.10 times DFU's pace (`upkeepTiers.js` WAGON_SOUND_BOON, the rules'
+   `soundPace`, read by `wagonUpkeep.js` wagonPace through the one accessor); Worn, Rickety and Failing roll at DFU's.
+   Hard and Off are unchanged (a Sound wagon at its team's pace). The boon composes as every ride pace does: the
+   runtime multiplies it with the team's own pace under its load (horse care's Strength, `upkeepRuntime.js`
+   rideScale), and the hosts hand the product to the motor (`player.rideSpeedScale`) - the Overworld's and the
+   journeys' host, `scenes/world.js`, as every other - so it is the ride's speed wherever the wagon is driven; a fast
+   travel's days read no ride pace, this one's as none before it. The Stable page says it: "Sound - it rolls faster
+   for it."
 4. **No red** (RED MEANS IT COSTS). Where wear costs nothing a failing wagon's chip on the saddle panel stops at amber
    (`ui/enhancedSaddle.js`), its bar on the Stable page is rickety's plain (`ui/holdingsPages.js` wagonMeterTone), the
    panel says no pace to get back, the Stable page says "Rickety - it still rolls at its pace." and "Failing - it
@@ -58,15 +64,18 @@ boolean switch is gone; the shelf's key has one reader.
 
 **Online.** Every tier, Off included, is the player's (`online: 'player'`) - Climates & Calories' reading
 (MODS-ONLINE-3), as horse care's: a tier decides only what THIS player's wagon pays. The condition rides the wire as it
-always did, and a counter's price is the seller's tier's.
+always did, and a counter's price is the seller's tier's. A Sound wagon's boon is the player's own online, as
+Climates & Calories' boons are (AUDIT C&C B1, BOONS ONLINE: KEPT): every tier is every player's to choose, and the boon
+is earned by keeping the wagon - as a fast horse's earned pace already rode online.
 
 **Moving the players already on it** (`systems/uiPrefs.js` loadPrefs, horse care's way). A stored Off (the old
 switch's `false`) is Off with nothing converted; the old default, On, was never stored (PREF1), so a player who never
 touched the switch plays the new default, Boons; an On written to the shelf lands on Hard, written so at the next save;
 any other value is dropped at the load. No save holds the switch.
 
-Pinned: `test/wagontiers.test.js` (6 - the one key, the switch online, Boons never worse than DFU's plain wagon, the
-shelf, no red and each tier's words, the one accessor); mutants `tools/mutants/wagontiers.json` (20, all dead). The pins
+Pinned: `test/wagontiers.test.js` (7 - the one key, the switch online, Boons never worse than DFU's plain wagon, the
+shelf, no red and each tier's words, the one accessor, a Sound wagon's boon); mutants `tools/mutants/wagontiers.json`
+(26, all dead). The pins
 written before the tiers pin Hard, PIN MOVED where their vocabulary did: the upkeep is handed Hard's rules where it was
 handed `true`.
 
@@ -78,7 +87,7 @@ was is whole. The item card's Condition and a sale's condition price (Roleplay &
 were already reading it - on Hard; Boons and Off sell a wagon whole (The tiers). Its VALUE never falls: the item law
 holds a marked wagon to its kind's floor, and wear is its condition alone.
 
-| State | From | Its team's pace (Hard; on Boons 1 in every state) |
+| State | From | Its team's pace (Hard; on Boons 1.1 Sound, 1 every other state) |
 |---|---|---|
 | Sound | 60% | 1 |
 | Worn | 30% | 1 |

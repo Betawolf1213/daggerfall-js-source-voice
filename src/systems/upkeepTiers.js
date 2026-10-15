@@ -98,8 +98,10 @@ export const horseCareRulesForTier = (tier) => (typeof tier === 'string' && Obje
 //   BOONS  THE DEFAULT: the same world - it wears by the road, a journey and the watch, its states are said, a Wagon
 //          Yard and a kit mend it - and NOTHING IS EVER TAKEN: a worn wagon rolls at DFU's pace (`wearSlows`) and a
 //          counter buys it as a whole one (`wearPrices`), so it is never worse than DFU's plain wagon. NO RED where wear
-//          costs nothing (ui/enhancedSaddle.js, ui/holdingsPages.js read `wearSlows`). WAGONS4 has no earning to keep -
-//          a kept wagon earns nothing over DFU's, on any tier - so Boons is Hard with its costs taken out.
+//          costs nothing (ui/enhancedSaddle.js, ui/holdingsPages.js read `wearSlows`). And A WAGON KEPT EARNS (Mac,
+//          2026-10-15: "Sound wagon rolls faster"): a Sound one - 60% of whole and up - rolls at WAGON_SOUND_BOON times
+//          DFU's pace (`soundPace`), every other state at DFU's. Online the boon is the player's own, earned by keeping
+//          the wagon, as Climates & Calories' boons are (AUDIT C&C B1, BOONS ONLINE: KEPT).
 //   HARD   WAGONS4 and WAGON-MEND as they shipped: a Rickety wagon rolls at 0.85 of its pace, a Failing one at 0.7, and
 //          a counter prices it by its condition (Roleplay & Realism: Items' conditionCostBase).
 //
@@ -123,17 +125,22 @@ export const WAGON_UPKEEP_OLD_ON_TIER = 'hard';
 /** The tier a stored value names; anything else reads as the default (the shelf drops it at the load). */
 export const wagonUpkeepTierOfStored = (v) => WAGON_TIER_OF_STORED.get(v) ?? WAGON_UPKEEP_DEFAULT;
 
-/** What each tier charges - a field only where the tiers differ (the world's numbers live in wagonUpkeep.js). */
+/** WAGON-TIERS (Mac, 2026-10-15: "Sound wagon rolls faster"): a Sound wagon's pace on Boons, times DFU's - the one
+ *  number of the boon, read through the tier's rules (`soundPace`, wagonUpkeep.js wagonPace). */
+export const WAGON_SOUND_BOON = 1.1;
+/** What each tier charges and earns - a field only where the tiers differ (the world's numbers live in wagonUpkeep.js). */
 export const WAGON_UPKEEP_RULES = deepFreeze({
   boons: {
     id: 'boons',
     wearSlows: false,    // a Rickety or Failing wagon rolls at its state's pace (WAGON_STATES), under DFU's
     wearPrices: false,   // a counter prices a wagon by its condition, under a whole one's
+    soundPace: WAGON_SOUND_BOON,   // a Sound wagon's pace, times its state's
   },
   hard: {
     id: 'hard',
     wearSlows: true,
     wearPrices: true,
+    soundPace: 1,
   },
 });
 /** The system as it stood: what a law runs when it is handed no rules. */

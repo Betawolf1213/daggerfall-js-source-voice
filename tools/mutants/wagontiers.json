@@ -47,8 +47,8 @@
   {
     "name": "WAGON-TIERS-the-laws-floor",
     "file": "src/systems/wagonUpkeep.js",
-    "old": "(isWagonItem(item) && rules.wearSlows ? wagonState(item).pace : 1)",
-    "new": "(isWagonItem(item) ? wagonState(item).pace : 1)",
+    "old": "return (rules.wearSlows ? s.pace : 1) * (s.key === 'sound'",
+    "new": "return s.pace * (s.key === 'sound'",
     "tests": [
       "test/wagontiers.test.js"
     ]
@@ -137,7 +137,7 @@
   {
     "name": "WAGON-TIERS-boons-in-hards-words",
     "file": "src/ui/holdingsPages.js",
-    "old": "const advice = w.wearSlows === false && (w.stateKey === 'failing' || w.stateKey === 'rickety') ? WAGON_ADVICE_BOONS[w.stateKey]",
+    "old": "const advice = w.wearSlows === false && Object.hasOwn(WAGON_ADVICE_BOONS, w.stateKey) ? WAGON_ADVICE_BOONS[w.stateKey]",
     "new": "const advice = false ? WAGON_ADVICE_BOONS[w.stateKey]",
     "tests": [
       "test/wagontiers.test.js"
@@ -175,6 +175,60 @@
     "file": "src/scenes/exterior.js",
     "old": "    horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,\n",
     "new": "    horseCare: horseCareRules, wagonUpkeep: () => null,\n",
+    "tests": [
+      "test/wagontiers.test.js"
+    ]
+  },
+  {
+    "name": "WAGON-TIERS-the-sound-boon-gone",
+    "file": "src/systems/upkeepTiers.js",
+    "old": "export const WAGON_SOUND_BOON = 1.1;",
+    "new": "export const WAGON_SOUND_BOON = 1;",
+    "tests": [
+      "test/wagontiers.test.js"
+    ]
+  },
+  {
+    "name": "WAGON-TIERS-the-boon-not-boons",
+    "file": "src/systems/upkeepTiers.js",
+    "old": "    soundPace: WAGON_SOUND_BOON,   // a Sound wagon's pace",
+    "new": "    soundPace: 1,   // a Sound wagon's pace",
+    "tests": [
+      "test/wagontiers.test.js"
+    ]
+  },
+  {
+    "name": "WAGON-TIERS-hard-earns-the-boon",
+    "file": "src/systems/upkeepTiers.js",
+    "old": "    wearPrices: true,\n    soundPace: 1,\n",
+    "new": "    wearPrices: true,\n    soundPace: WAGON_SOUND_BOON,\n",
+    "tests": [
+      "test/wagontiers.test.js"
+    ]
+  },
+  {
+    "name": "WAGON-TIERS-the-boon-unread",
+    "file": "src/systems/wagonUpkeep.js",
+    "old": "return (rules.wearSlows ? s.pace : 1) * (s.key === 'sound' ? rules.soundPace : 1);",
+    "new": "return (rules.wearSlows ? s.pace : 1);",
+    "tests": [
+      "test/wagontiers.test.js"
+    ]
+  },
+  {
+    "name": "WAGON-TIERS-a-worn-wagon-earns",
+    "file": "src/systems/wagonUpkeep.js",
+    "old": "(s.key === 'sound' ? rules.soundPace : 1)",
+    "new": "(s.key !== 'failing' ? rules.soundPace : 1)",
+    "tests": [
+      "test/wagontiers.test.js"
+    ]
+  },
+  {
+    "name": "WAGON-TIERS-the-boon-unsaid",
+    "file": "src/ui/holdingsPages.js",
+    "old": "  get sound() { return t('holdings.wagon.boons.sound', 'Sound - it rolls faster for it.'); },",
+    "new": "",
     "tests": [
       "test/wagontiers.test.js"
     ]
