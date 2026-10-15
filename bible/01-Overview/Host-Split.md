@@ -44,7 +44,9 @@ New behaviour goes into a module the host wires - `fishHost.js` and
 the host constructs it once and calls it. The host's own function gains the
 wiring, not the feature. (Not every one of the 28 `*Host.js` modules is that
 shape: `navalHost.js`'s `createNavalHost` is itself a single scope of 4,865
-lines - the same knot, one size down, with no ceiling of its own yet.) On the
+lines - the same knot, one size down. HOST-SPLIT NAVAL (2026-10-15) gave it a
+ceiling of its own, and a module that grows past 2,000 code lines is now held
+to one too: the suite walks `src/scenes/*Host.js` for it.) On the
 relay the new code goes into a Room method of its own, as the SCALE5 arms did.
 
 `test/hostceiling.test.js` holds it: each host function - the four hosts and

@@ -22,7 +22,7 @@
 //   request's to fix, by moving code out or by a raise with its reason.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseModuleWithComments, findHostFunction, codeLines } from '../tools/hostScope.mjs';
@@ -46,6 +46,7 @@ const CEILINGS = [
   ['src/scenes/worldModes.js', 'createWorldModes', 7_159, MODULE],
   ['src/scenes/dungeonContext.js', 'buildDungeonContext', 5_446, MODULE],
   ['src/scenes/exterior.js', 'bootExterior', 3_446, MODULE],
+  ['src/scenes/navalHost.js', 'createNavalHost', 3_942, MODULE],   // HOST-SPLIT NAVAL: a *Host.js grown into a knot of its own (3,692 code lines)
   ['server/src/index.js', '_message', 1_093, METHOD],   // the relay's Room is 473 methods already - its knot is the one dispatcher
 ];
 
@@ -63,7 +64,7 @@ const measure = (file, fn) => {
   return sizes.get(key);
 };
 
-test('HOST-SPLIT THE HOSTS DO NOT GROW: bootWorld, createWorldModes, buildDungeonContext, bootExterior and the relay\'s _message each stay under their ceiling in code lines - new behaviour goes into a module the host wires (a Room method, on the relay), not into the host\'s own scope; on a pull request and on a contributor\'s machine, never on a deploy (mutants: a ceiling under its host; comments counted)', { skip: SKIP }, () => {
+test('HOST-SPLIT THE HOSTS DO NOT GROW: bootWorld, createWorldModes, buildDungeonContext, bootExterior, navalHost\'s createNavalHost and the relay\'s _message each stay under their ceiling in code lines - new behaviour goes into a module the host wires (a Room method, on the relay), not into the host\'s own scope; on a pull request and on a contributor\'s machine, never on a deploy (mutants: a ceiling under its host; comments counted)', { skip: SKIP }, () => {
   const over = [];
   for (const [file, fn, ceiling, instead] of CEILINGS) {
     const n = measure(file, fn);
@@ -79,4 +80,26 @@ test('HOST-SPLIT A CEILING COMES DOWN WITH ITS HOST: no ceiling stands more than
     if (ceiling - n > 2 * ROOM) slack.push(`${file} ${fn}: ${n} code lines under a ceiling of ${ceiling} - lower it to ${n + ROOM} in test/hostceiling.test.js`);
   }
   assert.deepEqual(slack, []);
+});
+
+/** A *Host.js module's constructor this long is a knot of its own, not a module the host wires (HOST-SPLIT NAVAL). */
+const KNOT = 2_000;
+
+test('HOST-SPLIT NAVAL A MODULE THAT BECOMES A HOST GETS A CEILING: every src/scenes/*Host.js constructor past KNOT code lines - a module the host wires that grew into one scope of its own, as navalHost\'s createNavalHost did unnoticed to 4,865 lines - stands in CEILINGS, found by walking the folder, not by a list (mutants: the naval ceiling dropped; the knot never reached)', { skip: SKIP }, () => {
+  const dir = join(ROOT, 'src/scenes');
+  const held = new Set(CEILINGS.map(([file, fn]) => `${file}#${fn}`));
+  const loose = [], knots = [];
+  let walked = 0;
+  for (const f of readdirSync(dir).filter((n) => /Host\.js$/.test(n)).sort()) {
+    const fn = /^export function (create\w+)\(/m.exec(readFileSync(join(dir, f), 'utf8'))?.[1];
+    if (!fn) continue;
+    walked++;
+    const file = `src/scenes/${f}`, n = measure(file, fn);
+    if (n > KNOT) knots.push(fn);
+    if (n > KNOT && !held.has(`${file}#${fn}`)) loose.push(`${file} ${fn}: ${n} code lines and no ceiling - add ['${file}', '${fn}', ${n + ROOM}, MODULE] to CEILINGS in test/hostceiling.test.js`);
+  }
+  assert.ok(walked >= 20, `only ${walked} *Host.js constructors found - the walk is reading the wrong folder`);
+  // and the line reaches the knot it was drawn for - when the last one is taken apart, this assertion goes with it
+  assert.ok(knots.includes('createNavalHost'), `KNOT (${KNOT}) reaches no module the walk measured: ${JSON.stringify(knots)}`);
+  assert.deepEqual(loose, []);
 });
