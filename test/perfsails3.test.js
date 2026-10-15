@@ -76,8 +76,8 @@ test('PERF-SAILS3: everything the pool draws, records for the shadows, bakes and
     if (f % 25 === 0) await new Promise((res) => setTimeout(res, 5));   // the bakes' and the meshes' uploads land
   }
   assert.deepEqual(counts(), { meshN: 359, batchN: 224 }, 'the meshes and the flats made');
-  // the same run on the pool before PERF-SAILS3 (origin/main d8ccf7fd6)
-  assert.equal(h.digest('hex'), '6fb2ddd4da7d56c962e6f26049cfb3a8ac3ea5bd11d4216b51cb573b1d3bbb6d');
+  // the same run on the pool before PERF-SAILS3 (origin/main 395099cec, DF-ART III's ships in it; 6fb2ddd4... on d8ccf7fd6, before DF-ART, the same both sides then too)
+  assert.equal(h.digest('hex'), '1912a297284d9343285654e909fc5ef3fd3e241a612bb2adf9492b74eadf2cfe');
 });
 
 test('PERF-SAILS3: a boat\'s walk is written where it stood and her plan is kept while her nodes are the same - made again when a part is switched off, on again, or a component is added, and the draw follows each (mutants: the plan kept past a walk of other nodes; past a component added; the walk\'s lists emptied every frame)', async () => {

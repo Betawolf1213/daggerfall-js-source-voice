@@ -225,7 +225,7 @@ Same answer: everything the pool draws (each mesh, its matrix's bits, the textur
 uploads as a bake, stands as a flat (its origin, size, emission, look) and lights, frame by frame, over twelve ships
 standing and rocking with a part switched off and on, a renderer off and on, a variant, a ship faded and one removed,
 the origin moved, a flat scaled, a part turned and the town's lights put out - one sha256 on origin/main d8ccf7fd6 and
-on this tree (`test/perfsails3.test.js`; a one-ulp change to the flats' scale moves it).
+on this tree, and again after DF-ART III changed the ships' pictures (origin/main 395099cec and this tree merged on it) (`test/perfsails3.test.js`; a one-ulp change to the flats' scale moves it).
 
 `tools/csaBench.mjs`, twelve ships (7,384 objects), the frame and its draw, three runs each: standing 1.19-1.25 ->
 0.52-0.53 ms, rocking (`BOB=1`) 1.47-1.59 -> 0.71-0.74.

@@ -52,10 +52,11 @@ import { mat4FromQuatPosScale, quatRotateInto } from '../world/quat.js';
 import { colliderPoses, boxColliderTriangles, invertAffine, BUILTIN_COLLIDER_MESHES } from '../world/prefabColliders.js';   // DECK-WALK: a hull's colliders at rest
 import { buildDeck } from '../systems/naval/navalDeck.js';   // DECK-WALK: her walkable deck
 import { hullBuild, setGalleonStanding, setShipStanding } from '../systems/naval/navalShips.js';   // AUDIT GN-G4: and hull 2's build follows the hull that stands (SHIPS-2: hull 4's and hull 1's)
-import { registerGalleonArt, GALLEON_ARCHIVE, galleonCut } from '../world/galleonArt.js';   // GALLEON: the new galleon's own pictures, on the texture door before her meshes ask
-import { registerCarrackArt, CARRACK_ARCHIVE, carrackCut } from '../world/carrackArt.js';   // SHIPS-2: and the new carrack's,
+import { registerGalleonArt, GALLEON_ARCHIVE, galleonCut, galleonGlow, GALLEON_NIGHT } from '../world/galleonArt.js';   // GALLEON: the new galleon's own pictures, on the texture door before her meshes ask
+import { registerCarrackArt, CARRACK_ARCHIVE, carrackCut, carrackGlow, CARRACK_NIGHT } from '../world/carrackArt.js';   // SHIPS-2: and the new carrack's,
 import { registerLargeBoatArt, LARGE_BOAT_ARCHIVE, largeBoatCut } from '../world/largeBoatArt.js';   // and the new large boat's
 import { addVendorTextures } from '../systems/textureReplacement.js';
+import { toColor32 } from '../formats/color32Order.js';
 
 /** DungeonLightHandler.CheckLight's reach: UnscaledBlockRange x MeshReader.GlobalScale. */
 export const LANTERN_HANDLER_REACH = DUNGEON_LIGHT_HANDLER.unscaledBlockRange * GLOBAL_SCALE;
@@ -64,17 +65,35 @@ export const LANTERN_HANDLER_REACH = DUNGEON_LIGHT_HANDLER.unscaledBlockRange * 
 export const CSA_LIGHTS_MAX = 8;
 /** AUDIT NAV1 (the presentation): the hull whose FlagObject a flagless sea ship is given (the Small Ship - graftColours). */
 export const FLAG_DONOR_HULL = 2;
-/** SHIPS-2: THE PORT'S OWN SHIPS' PICTURES - each standing ship's archive, how it is put on the texture door, and which
- *  of its records hold glass to see through (DF-ART, Mac: "windows should always be see through" - uploaded cut-outs;
- *  the stern windows' night glow went with their glass), by the models' key for the ship (systems/comeSailAwayModels.js
+/** SHIPS-2: THE PORT'S OWN SHIPS' PICTURES - each standing ship's archive, how it is put on the texture door, which
+ *  of its records hold glass to see through (DF-ART, Mac: "windows should always be see through" - uploaded cut-outs),
+ *  each of those records' NIGHT TWIN and the twin's glow (Mac, of the stern windows: "See-through by day, lit at night" -
+ *  world/galleonArt.js NIGHT_RECORD_OFFSET), by the models' key for the ship (systems/comeSailAwayModels.js
  *  PORT_SHIPS). */
 export const PORT_ART = Object.freeze({
-  galleon: Object.freeze({ archive: GALLEON_ARCHIVE, register: registerGalleonArt, cut: galleonCut }),
-  carrack: Object.freeze({ archive: CARRACK_ARCHIVE, register: registerCarrackArt, cut: carrackCut }),
-  largeBoat: Object.freeze({ archive: LARGE_BOAT_ARCHIVE, register: registerLargeBoatArt, cut: largeBoatCut }),
+  galleon: Object.freeze({ archive: GALLEON_ARCHIVE, register: registerGalleonArt, cut: galleonCut, night: GALLEON_NIGHT, glow: galleonGlow }),
+  carrack: Object.freeze({ archive: CARRACK_ARCHIVE, register: registerCarrackArt, cut: carrackCut, night: CARRACK_NIGHT, glow: carrackGlow }),
+  largeBoat: Object.freeze({ archive: LARGE_BOAT_ARCHIVE, register: registerLargeBoatArt, cut: largeBoatCut, night: Object.freeze({}), glow: () => null }),
 });
+const artOf = (archive) => Object.values(PORT_ART).find((a) => a.archive === archive);
 /** Whether a picture holds glass to see through, whichever port ship's archive it is in (false for any other). */
-const cutOf = (archive, record) => !!Object.values(PORT_ART).find((a) => a.archive === archive)?.cut(record);
+const cutOf = (archive, record) => !!artOf(archive)?.cut(record);
+/** A see-through picture's night twin (its record), whichever port ship's archive it is in (null for any other). */
+const nightOf = (archive, record) => artOf(archive)?.night[record] ?? null;
+/** THE STERN WINDOWS LIT: every see-through record of the port's ships drawn as its night twin - its glass whole, its
+ *  panes glowing - while the lanterns are lit (`frame`'s cityLightsOn, the lanterns' own switch: lanternLightUpdate).
+ *  By day her glass is a hole and the eye sees into her great cabin; a hole draws nothing, its glow included, so at
+ *  night the glass is whole again and glows as it did before DF-ART. One Map, so the renderer's per-sub-mesh lookups
+ *  (drawMesh's `_evRemap`) stay cached night after night. */
+export const NIGHT_REMAP = new Map(Object.values(PORT_ART).flatMap((a) => Object.entries(a.night).map(([r, n]) => [`${a.archive}_${r}`, `${a.archive}_${n}`])));
+const _nightRemaps = new WeakMap();   // a host's remap -> it with NIGHT_REMAP's twins, made once
+/** The remap a night draw takes: NIGHT_REMAP, or a host's own remap with its twins added (the host's key wins). */
+export function nightRemapOf(texRemap) {
+  if (!texRemap?.size) return NIGHT_REMAP;
+  let m = _nightRemaps.get(texRemap);
+  if (!m) { m = new Map([...NIGHT_REMAP, ...texRemap]); _nightRemaps.set(texRemap, m); }
+  return m;
+}
 
 /** Each active object under `root` with its world matrix, depth first - the parent's matrix carried down once. */
 export function* activeObjects(root) {
@@ -174,6 +193,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
   const _walkStack = [], _walkRecs = [];
   const _local = new Float32Array(16);
   let walkStamp = 0, _makings = 0;
+  let cityLights = false;   // THE STERN WINDOWS LIT: the lanterns lit at the last frame (frame), the draw's night twins
   const ROOT_MADE = -2;
   const recOf = (n) => {
     let r = n._walkRec;
@@ -350,7 +370,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     preloading ??= (async () => {
       if (!(await ensureModels())) return false;
       for (let hull = 0; hull < HULL_NAMES.length; hull++) await prepare(hull);
-      // AUDIT GN2-PF3: her pictures built (her archive's first ask builds all twenty-three on the vendor door - DF-ART:
+      // AUDIT GN2-PF3: her pictures built (her archive's first ask builds all twenty-five on the vendor door - DF-ART:
       // read from the player's ARENA2) while the world loads - they were her first mesh's ask (meshFor) or a sail
       // bake's, at the first draw of a hull 2: a 50-120 ms stall the first time she came into view
       // SHIPS-2: every standing port ship's so
@@ -513,6 +533,19 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     }
   }
 
+  /** A boat's sub-mesh's picture up through the pipeline's own door (after its archive's getTexture): a model's face,
+   *  a cut-out where its glass is seen through - and that record's night twin with it, whole, its glow its emission
+   *  (renderer.uploadEmissionTexture: lit by the window style, as every lit window is; AUDIT GN2-PF5: capped by Retro
+   *  Mode as her classic art is, a pack's picture never). */
+  function uploadFace(archive, record) {
+    pipeline.uploadRecord(archive, record, { opaque: true, cutout: cutOf(archive, record) });
+    const night = nightOf(archive, record);
+    if (night == null) return;
+    pipeline.uploadRecord(archive, night, { opaque: true });
+    const glow = artOf(archive).glow(night);
+    if (glow) renderer?.uploadEmissionTexture?.(archive, night, toColor32(glow), { replacement: !pipeline.isClassicArt?.(archive) });
+  }
+
   /** A renderer's drawn model, uploaded once with its textures; null this frame while it loads. */
   function meshFor(key, build) {
     if (meshes.has(key)) return meshes.get(key);
@@ -522,8 +555,9 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
         if (!model) { meshes.set(key, null); return; }
         for (const sm of model.subMeshes) {
           // DF-ART (Mac: "windows should always be see through"): her stern gallery's glass a hole - the picture a
-          // cut-out, its glass seen through into her great cabin (SHIPS-2: the carrack's transom gallery the same)
-          try { await pipeline.getTexture(sm.textureArchive); pipeline.uploadRecord(sm.textureArchive, sm.textureRecord, { opaque: true, cutout: cutOf(sm.textureArchive, sm.textureRecord) }); }
+          // cut-out, its glass seen through into her great cabin (SHIPS-2: the carrack's transom gallery the same) -
+          // and its night twin lit (`uploadFace`)
+          try { await pipeline.getTexture(sm.textureArchive); uploadFace(sm.textureArchive, sm.textureRecord); }
           catch (e) { warnOnce(`tex:${sm.textureArchive}`, `[come-sail-away] TEXTURE.${sm.textureArchive} will not load - the boats' faces in it draw nothing`, e); }
         }
         meshes.set(key, renderer.createMesh(model));
@@ -572,7 +606,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     if (!model) return;
     (async () => {
       for (const sm of model.subMeshes) {
-        try { await pipeline.getTexture(sm.textureArchive); pipeline.uploadRecord(sm.textureArchive, sm.textureRecord, { opaque: true, cutout: cutOf(sm.textureArchive, sm.textureRecord) }); } catch { /* the face draws nothing */ }
+        try { await pipeline.getTexture(sm.textureArchive); uploadFace(sm.textureArchive, sm.textureRecord); } catch { /* the face draws nothing */ }
       }
       if (!bakes.has(script)) return;   // the boat went while the textures loaded
       k.gpu = renderer.createMesh({ ...model, positions: k.positions.slice(), normals: k.normals.slice() });
@@ -610,6 +644,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
    */
   function frame(gameDt, world = {}) {
     const playerPosition = world.playerPosition ?? [0, 0, 0];
+    cityLights = !!world.cityLightsOn;   // THE STERN WINDOWS LIT: the draw's night twins (NIGHT_REMAP)
     walkStamp++;   // AUDIT PRE-MERGE 0928 R5: this frame's one walk, read below and by the draw
     const lit = _lanternFrame;
     lit.dt = gameDt; lit.cityLightsOn = !!world.cityLightsOn; lit.playerPosition = playerPosition;
@@ -684,6 +719,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
    */
   function draw(r = renderer, texRemap = null) {
     if (!models || !r?.drawMesh) return 0;
+    if (cityLights) texRemap = nightRemapOf(texRemap);   // THE STERN WINDOWS LIT: her glass whole and glowing
     const cull = _cullOn && !!r._proj && !!r._view;
     if (cull) spherePlanes(multiply(r._proj, r._view, _cullPv), _cullPlanes);
     const eye = r._camPos ?? null;

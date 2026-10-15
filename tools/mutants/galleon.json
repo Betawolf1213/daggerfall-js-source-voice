@@ -94,8 +94,8 @@
   {
     "name": "GALLEON-every-picture-a-cut-out",
     "file": "src/world/classicArt.js",
-    "old": "  return { entries, cut: (/** @type {number} */ record) => hasGlass(sources[record]) };",
-    "new": "  return { entries, cut: () => true };",
+    "old": "    entries, cut: (/** @type {number} */ record) => hasGlass(sources[record]),",
+    "new": "    entries, cut: () => true,",
     "tests": [
       "test/galleon_model.test.js"
     ],
