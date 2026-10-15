@@ -79,6 +79,7 @@ function face(faces, who) {
       const d = ctx.createImageData(img.width, img.height);
       d.data.set(new Uint8ClampedArray(img.colors.buffer, img.colors.byteOffset, img.colors.byteLength));
       ctx.putImageData(d, 0, 0);
+      if (img.scale > 0) Object.assign(cv.style, { width: `${img.width / img.scale}px`, height: `${img.height / img.scale}px`, imageRendering: 'auto' });   // PORTRAIT3D: a Morrowind head, at the record's size
       glyph.remove();
       box.append(cv);
     }).catch(() => {});

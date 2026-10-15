@@ -1231,6 +1231,7 @@ ${Object.keys(DIAL_ICONS).map((k) => { const [w, h] = dialIconSize(k); return `$
 ${Object.keys(DIAL_ICONS).map((k) => { const [w, h] = dialIconSize(k); return `${DIAL_CLASSIC} .px-dial .px-arm[data-grim-icon="${k}"] .px-c { width: calc(var(--dial-classic-w-${k}, ${w}px) * var(--dial-k)); height: calc(var(--dial-classic-h-${k}, ${h}px) * var(--dial-k));
   background-image: var(--dial-classic-${k}, var(${artVar(dialArtName(k))}, none)); }`; }).join('\n')}
 ${DIAL_CLASSIC}[data-grim-dial-art="classic"] .px-dial .px-arm[data-grim-icon] .px-c { image-rendering: pixelated; }
+${DIAL_CLASSIC}[data-grim-dial-art="classic"][data-grim-dial-face="head"] .px-dial .px-arm[data-grim-icon="skills"] .px-c { image-rendering: auto; }   /* PORTRAIT3D: the Morrowind head, smooth (ui/dialClassicArt.js readHeadDial) */
 ${G} .px-dial .px-arm[data-grim-icon]::after { content: none; }
 ${G} .px-dial .px-arm[data-grim-icon]::before { background: rgba(216,176,74,0.4); }
 ${G} .px-dial .px-arm[data-grim-icon]:is(.on, :hover)::before { background: ${T.goldLeaf}; }

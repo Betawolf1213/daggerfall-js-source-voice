@@ -1,8 +1,24 @@
 # Port Doctrine
 
-What "1:1" means here, decided at project start. This is the constitution of the port. Changes to this doc need Mac's explicit approval.
+The constitution of the project. Changes to this doc need Mac's explicit approval. It began as the definition of what "1:1" meant for a port, decided at project start; since SCOPE1 (the next section) the project is its own game, and the sections after it are the record of the foundation we built from and the rules that still hold.
 
-## Ported 1:1 (faithful translation from Daggerfall Unity C#)
+## Scope - our own game, DFU the reference (SCOPE1, 2026-10-14)
+
+Mac, 2026-10-14: "We now longer are trying to have DFU 1:1 parity, we are our own project at this point. Documents should state this but also still utilize DFU as a reference."
+
+DFO Online is its own game. Parity with Daggerfall Unity is no longer the goal, and a difference from DFU is no longer a defect in itself. DFU stays the reference:
+
+- **Look there first.** Before building a system DFU has, read DFU's version and grep the tree for its name AND its constants (`Home.md`, ONE DFU MEMBER, ONE EXPORT). It is a decade of work and usually the right place to start.
+- **Readers stay exact.** The player's ARENA2 is the data DFU reads. Every format reader (`02-Formats/Readers-Arc.md`: BSA, the palettes, TEXTURE, IMG/CIF, ARCH3D, BLOCKS, MAPS, sound and music, and the readers added since the arc closed - SKY, GFX, FLIC, FLATS.CFG, CFA and the rest) reads it exactly as DFU does, and their corpus gates stand.
+- **Name the departure.** A change that leaves DFU's behaviour says so where it is recorded: the DFU member it departs from (`FormulaHelper.CalculateX`, `StaticNPC.cs:309`) and why. A cite to DFU stays when we move past it - it is how the next reader finds the original. A departure from a member DFU has takes its row in `Port-Ledger.md` section A (Approved departures), approved via the arc that made it, as departures always have.
+- **A pin follows the rule we chose.** A test that pins a DFU law (`Home.md`, A PIN MUST FAIL) pins it because we still follow it. A deliberate change edits the pin and its doc in the same change - it is not blocked by them - and the pins that stay keep their mutation guarantee.
+- **The ledger is a map, not a debt.** `Port-Ledger.md` section C records what DFU has that we do not - an option for a later slice, not an obligation. `Road-To-1-1.md` closes with this section.
+- **THE NATIVE-WINDOW RULE binds the windows that keep DFU's layout.** Every drawn element of such a window still cites its DFU source before it ships. A window redesigned on purpose cites its own design record instead, and says so where it is recorded - `Home.md` carries the same sentence beside the rule. ONE DFU MEMBER, ONE EXPORT is unchanged: grep the tree for a DFU member and its constants before porting it, and keep one copy.
+- **Older pages are history.** "1:1", "faithful" and "parity" across the arc pages and audits describe the goal they were written under. They are not rewritten; this section governs new work.
+
+What does not change: the non-negotiables below (no ARENA2 in the repo, and no render of it beyond the exceptions they name), Attribution, and every other Process rule in `Home.md`.
+
+## Ported from DFU - the foundation (built 1:1 before SCOPE1)
 
 - Binary format readers: BSA containers, TEXTURE.???, IMG/CIF, ARCH3D.BSA, BLOCKS.BSA, MAPS.BSA, sound/music formats.
 - Game math: FormulaHelper in full - damage, skills, leveling, resistances, loot tables.
@@ -10,7 +26,7 @@ What "1:1" means here, decided at project start. This is the constitution of the
 - Systems: quest machine (quest script parsing + execution), items, magic and spellmaker, guilds, calendar, banking, crime/legal.
 - Save-relevant state shapes stay compatible in spirit: same fields, same semantics.
 
-Translation rule: read the DFU C# source, translate logic verbatim into JS, keep original constants and table values byte-exact. Simplification is allowed in structure (fewer layers, no Unity scaffolding), never in behavior.
+Translation rule (the rule these were built under; since SCOPE1 it holds whenever a slice chooses to port a member as DFU has it): read the DFU C# source, translate logic verbatim into JS, keep original constants and table values byte-exact. Simplification is allowed in structure (fewer layers, no Unity scaffolding), never in behavior - a change in behavior is a departure, made on purpose and named.
 
 ## Rebuilt on our stack (deliberate departures)
 
@@ -34,6 +50,8 @@ Translation rule: read the DFU C# source, translate logic verbatim into JS, keep
 Format knowledge and game logic derive from Daggerfall Unity (MIT license, Interkarma and contributors) and the UESP/dfworkshop format documentation. LICENSE and README must credit DFU when the repo ships anything public-facing.
 
 ## Phase plan
+
+The 1:1 port's plan, kept as its record - SCOPE1 ended the goal it served.
 
 1. **Readers-Arc** (COMPLETE - all 8 readers shipped with corpus gates; status corrected at AUDIT 18, it still read "active"): BSA -> TEXTURE/IMG/CIF -> ARCH3D -> BLOCKS -> MAPS. Each validated against real data before the next.
 2. **World-Arc**: block assembly + terrain on our renderer, palette-correct.

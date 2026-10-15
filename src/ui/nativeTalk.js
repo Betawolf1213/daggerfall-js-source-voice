@@ -345,6 +345,11 @@ let _portraitKey = null;         // `${file}#${record}` - what _portrait holds o
 let _portraitWarned = false;
 const _portraitFiles = new Map();   // file -> Promise<CifRciFile>
 const _portraitTex = new Map();     // key -> { tex, w, h }
+// PORTRAIT3D: the Morrowind head a session's NPC wears, once its picture lands - one texture per picture (heads are
+// shared by the NPCs who wear them), and the session it was asked for, so a late picture never lands on the next NPC
+const _headTex = new WeakMap();     // picture -> { tex, w, h, rgba, id }
+let _headSeq = 0;
+let _portraitSession = 0;
 
 function _loadPortraitFile(file) {
   let pr = _portraitFiles.get(file);
@@ -360,11 +365,13 @@ function _loadPortraitFile(file) {
 }
 
 /** SetNPCPortrait(FacePortraitArchive, recordId) (:360-385). */
-export function setNpcPortrait(archive, recordId) {
+export function setNpcPortrait(archive, recordId, { picture = null } = {}) {
   const file = PORTRAIT_ARCHIVE[archive] ?? (HEADS_FILE.test(String(archive)) ? String(archive) : PORTRAIT_ARCHIVE.CommonFaces);
   const key = `${file}#${recordId}`;
   _portraitKey = key;
   _portrait = _portraitTex.get(key) ?? null;
+  const session = ++_portraitSession;
+  if (picture && _portraitDeps) setHeadPortrait(session, key, picture);   // PORTRAIT3D: the head over the record, once it lands
   if (_portrait || !_portraitDeps) return;
   // DFMOD1: an attached mod's portrait of the record (DREAM's TFAC00I0.RCI_<n>-0) first - drawn into the same 64x64
   // rect at its own resolution; the classic record when no mod carries it or it will not decode
@@ -393,9 +400,29 @@ export function setNpcPortrait(archive, recordId) {
   });
 }
 
+/** PORTRAIT3D (2026-10-15, the owner: "#2 is exactly I wanted. Which also affects the talk window for npcs"): THE NPC'S
+ *  FACE AS THE MORROWIND HEAD ITS BODY WEARS. `picture(renderer)` answers it (characters/headPortraits.js npcHeadImage)
+ *  or null; while it renders the record above stands, and a session it is no longer for takes nothing. It takes the
+ *  record's place under a key of its own, so the enhanced panel - which repaints when the key moves - paints it too;
+ *  the classic window draws it in PORTRAIT_RECT as it draws a mod's portrait, at its own resolution (DFMOD1). */
+function setHeadPortrait(session, key, picture) {
+  Promise.resolve().then(() => picture(_portraitDeps.renderer)).then((img) => {
+    if (!img || session !== _portraitSession || !_portraitDeps) return;
+    let entry = _headTex.get(img);
+    if (!entry) {
+      const c32 = toScreenOrder(img);
+      const id = ++_headSeq;
+      entry = { tex: _portraitDeps.renderer.uploadTexture('cif', `mwhead#${id}`, c32), w: img.width, h: img.height, rgba: new Uint8ClampedArray(c32.colors.buffer, c32.colors.byteOffset, c32.colors.byteLength), id };
+      _headTex.set(img, entry);
+    }
+    _portraitKey = `${key}#mwhead${entry.id}`;
+    _portrait = entry;
+  }).catch(() => {});
+}
+
 /** ClearNPCPortrait - the port's own: a session with no portrait set
  *  must not inherit the last NPC's face. */
-export function clearNpcPortrait() { _portrait = null; _portraitKey = null; }
+export function clearNpcPortrait() { _portrait = null; _portraitKey = null; _portraitSession++; }
 export const npcPortraitKey = () => _portraitKey;
 /** ET1: the landed portrait as pixels - { rgba, w, h } - or null while
  *  it loads or when none is set. The enhanced panel paints it into a

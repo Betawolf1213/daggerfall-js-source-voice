@@ -321,7 +321,7 @@ test('MW-LOAD: every synchronous archive read in fpArm.js is covered, in its own
     ['resolveTorchPart', 'MW-D51: resolveWeaponParts\' twin for the carried light; all three call sites preload through torchPartPaths'],
     ['resolveHipLanternPart', 'HT-WAIST: resolveTorchPart\'s twin for the lantern at the waist; both call sites preload through hipLanternPartPaths'],
     ['nifBytes', 'MWNPC3: the copy door - its archive is the caller\'s, and every call of it is a read this scan sweeps'],
-    ['ownBodyPart', 'MW-BRIG2: synchronous, its `find` the caller\'s; its one call site (buildTpBody) loads ahead of it'],
+    ['ownBodyPart', 'MW-BRIG2: synchronous, its `find` the caller\'s; its call sites (buildTpBody, and PORTRAIT3D renderHeadAssembly) load ahead of it'],
   ]);
   const nameOf = (line) => (line.match(/(?:function\s+)?([A-Za-z][\w$]*)\s*\(/) || [])[1] ?? '?';
 
@@ -364,8 +364,9 @@ test('MW-LOAD: every synchronous archive read in fpArm.js is covered, in its own
   assert.equal(callsCovered('resolveTorchPart({', 'loadFromArchives\\([\\s\\S]*torchPartPaths\\(|torchPartPaths\\('), 3);
   // HT-WAIST resolveHipLanternPart: buildTpBody and setHipLight's slow path.
   assert.equal(callsCovered('resolveHipLanternPart({', 'loadFromArchives\\([\\s\\S]*hipLanternPartPaths\\(|hipLanternPartPaths\\('), 2);
-  // MWNPC3 ownBodyPart: the third-person build's part loop, inside its load.
-  assert.equal(callsCovered('...ownBodyPart(', 'loadFromArchives\\('), 1);
+  // MWNPC3 ownBodyPart: the third-person build's part loop, inside its load. PIN MOVED (PORTRAIT3D): and the head
+  // portrait's assembly (renderHeadAssembly), inside its own
+  assert.equal(callsCovered('...ownBodyPart(', 'loadFromArchives\\('), 2);
   // collectArmTextures: the two builds and the swap's two rigs.
   // renderGroundMesh's own call is the ICON's, and the icon opens its
   // door in preloadIcon before the synchronous getter is ever reached -
