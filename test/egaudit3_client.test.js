@@ -252,9 +252,9 @@ test('AUDIT EG III lane4 #5 THE EDGE LINE AND THE GHOSTS IN THE DANGER PALETTE (
   assert.deepEqual(G.calls.filter((c) => c[0] === 'uniform3f' && c[1] === 'uColor').at(-1).slice(2), [...SD_GHOST.color], 'the Hour\'s own: its gold');
   // the hands that carry it
   assert.match(rd('src/scenes/egSpan.js'), /vp\?\.\[2\] \?\? 0, vp\?\.\[3\] \?\? 0, egGhostRgb\(access\?\.palette\)\);/);
-  // PIN MOVED (AUDIT EG V, e: L6-3 - the look's drawOver takes the world image's rect after the palette)
-  assert.match(rd('src/scenes/egLookDraw.js'), /drawOver\(proj, view, eye, ts, fog = null, pal = null, vp = null\) \{\n      if \(!key \|\| !lines\) return false;\n      lines\.palette\(pal\);/);
-  assert.match(rd('src/scenes/egClient.js'), /L\?\.drawOver\(proj, view, eye, ts, fog, egAccessNow\(win\)\.palette, renderer\?\._worldViewportPx\)/);
+  // PIN MOVED (AUDIT EG V, e: L6-3 - the look's drawOver takes the world image's rect after the palette; h: and THE TRAIL after it)
+  assert.match(rd('src/scenes/egLookDraw.js'), /drawOver\(proj, view, eye, ts, fog = null, pal = null, vp = null, trail = null, tn = 0\) \{\n      if \(!key \|\| !lines\) return false;\n      lines\.palette\(pal\);/);
+  assert.match(rd('src/scenes/egClient.js'), /L\?\.drawOver\(proj, view, eye, ts, fog, egAccessNow\(win\)\.palette, renderer\?\._worldViewportPx, trail\.n \? trail\.segs : null, trail\.n\)/);
 });
 
 // ── lane4 #6, #7: THE LOOK, THE SWAP'S WORKER ───────────────────────────────────────────────────────────────────────

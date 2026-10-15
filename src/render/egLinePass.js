@@ -9,7 +9,10 @@
 // (world/egLook.js egCircleEdges); the streamers a small dynamic one written a frame from the breath's clock.
 //   THE EDGE LINE  gold at its luminance (EG_EDGE_LINE.luma, the ambient rung - never pulsing), opaque over what it lies on;
 //   A TRACK        the same gold, dashed EG_TRACK.dash on and off along its travel;
-//   A STREAMER     white (the place's own timed hazard), throbbing at two beats a second (under WCAG's three).
+//   A STREAMER     white (the place's own timed hazard), throbbing at two beats a second (under WCAG's three);
+//   THE TRAIL      AUDIT EG V (h; section 8.2): the first across's route once a span's door opens, the same gold faint
+//                  (EG_TRAIL.alpha) and wider (EG_TRAIL.width), never pulsing - a small dynamic buffer of its own, written a
+//                  frame (world/egLook.js egTrailSegs), freed with the pass.
 // READABLE IN THE FOG (section 25.6): every line keeps a fog visibility of at least EG_FOG_FLOOR.floor within its
 // `within` metres (world/egLook.js egFogKept - the same numbers), mixed toward the frame's own fog colour, and is drawn
 // after every transparent volume (the mist - render/egMistPass.js) by its host (scenes/egLookDraw.js). Depth-tested,
@@ -18,7 +21,7 @@
 // A foreign pass: it owns its program and its state; the host marks it. Not a DFU member. Ledger A (ELITE-GATES).
 import { buildProgram } from './glProgram.js';
 import { FOG_FACTOR_GLSL } from './labGrass.js';
-import { EG_LINE_KIND, EG_TRACK, EG_FOG_FLOOR, egEdgeLineColor, egEdgeLinePx } from '../world/egLook.js';
+import { EG_LINE_KIND, EG_TRACK, EG_FOG_FLOOR, EG_TRAIL, egEdgeLineColor, egEdgeLinePx } from '../world/egLook.js';
 
 /** Floats a vertex: aA xyz, aB xyz, aM (side, end, kind, alpha). */
 export const EG_LINE_FLOATS = 10;
@@ -72,7 +75,7 @@ void main() {
   vec2 n = vec2(-d.y, d.x);
   bool far = aM.y > 0.5;
   vec4 c = far ? cb : ca;
-  float w = vKind == ${EG_LINE_KIND.streamer} ? uWidth * 0.75 : uWidth;
+  float w = vKind == ${EG_LINE_KIND.streamer} ? uWidth * 0.75 : vKind == ${EG_LINE_KIND.trail} ? uWidth * ${EG_TRAIL.width.toFixed(1)} : uWidth;
   c.xy += (n * aM.x + d * (far ? 1.0 : -1.0)) * (w * 0.5) / h * c.w;   // square caps: the corners meet
   c.z -= 0.0004 * c.w;   // a hair toward the eye: the line wins over the stone it lies on
   gl_Position = c;
@@ -101,6 +104,7 @@ void main() {
   float a = 1.0;
   if (vKind == ${EG_LINE_KIND.track}) { if (fract(vAlong / ${(2 * EG_TRACK.dash).toFixed(3)}) > 0.5) discard; c = uGold * 0.85; }
   else if (vKind == ${EG_LINE_KIND.streamer}) { c = uWhite; a = vAlpha * (0.75 + 0.25 * cos(6.283185307179586 * 2.0 * uTime)); }
+  else if (vKind == ${EG_LINE_KIND.trail}) a = ${EG_TRAIL.alpha.toFixed(2)};
   float d = distance(vWorld, uCamPos);
   float kept = uFogFloor.x * (1.0 - smoothstep(uFogFloor.y, uFogFloor.y + uFogFloor.z, d));
   float f = max(fogFactorAt(vWorld), kept);
@@ -129,6 +133,8 @@ export class EgLinePass {
     this._static = null; this.staticCount = 0;
     this._dyn = mk(gl.DYNAMIC_DRAW, EG_STREAMERS_MAX * 6 * EG_LINE_FLOATS * 4);
     this._dynData = new Float32Array(EG_STREAMERS_MAX * 6 * EG_LINE_FLOATS);
+    this._trail = mk(gl.DYNAMIC_DRAW, EG_TRAIL.max * 6 * EG_LINE_FLOATS * 4);   // AUDIT EG V (h): THE TRAIL's own
+    this._trailData = new Float32Array(EG_TRAIL.max * 6 * EG_LINE_FLOATS);
     this._mk = mk;
     this._vp = new Float32Array(16);
     this._gold = egEdgeLineColor();
@@ -160,11 +166,11 @@ export class EgLinePass {
   /**
    * Draw the circle's lines and `streamers` (six floats a segment, `n` of them, an alpha each in `alphas`) onto the frame
    * - `fog` the frame's ({ mode, density, range, color, camPos }), `seconds` any clock, `vw` x `vh` the world image (px).
-   * Answers whether anything drew.
+   * AUDIT EG V (h): and THE TRAIL's `tn` segments `trail` (six floats a segment). Answers whether anything drew.
    */
-  draw(proj, view, eye, seconds, fog = null, streamers = null, n = 0, alphas = null, vw = 0, vh = 0) {
+  draw(proj, view, eye, seconds, fog = null, streamers = null, n = 0, alphas = null, vw = 0, vh = 0, trail = null, tn = 0) {
     this.drawn = 0;
-    if (!this.staticCount && !(n > 0)) return false;
+    if (!this.staticCount && !(n > 0) && !(tn > 0 && trail)) return false;
     const gl = this.gl, U = this.u, V = this._vp;
     for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) V[c * 4 + r] = proj[r] * view[c * 4] + proj[4 + r] * view[c * 4 + 1] + proj[8 + r] * view[c * 4 + 2] + proj[12 + r] * view[c * 4 + 3];
     const h = vh || gl.drawingBufferHeight;
@@ -193,6 +199,14 @@ export class EgLinePass {
       gl.drawArrays(gl.TRIANGLES, 0, k * 6);
       this.drawn++;
     }
+    if (tn > 0 && trail) {
+      const k = Math.min(tn, EG_TRAIL.max);
+      egLineVertices(trail, EG_LINE_KIND.trail, null, k, this._trailData, 0);
+      gl.bindVertexArray(this._trail.vao); gl.bindBuffer(gl.ARRAY_BUFFER, this._trail.vbo);
+      gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._trailData, 0, k * 6 * EG_LINE_FLOATS);
+      gl.drawArrays(gl.TRIANGLES, 0, k * 6);
+      this.drawn++;
+    }
     gl.bindVertexArray(null);
     gl.depthMask(true); gl.disable(gl.BLEND); gl.enable(gl.CULL_FACE);
     return this.drawn > 0;
@@ -201,6 +215,7 @@ export class EgLinePass {
     const gl = this.gl;
     this.setCircle(null);
     gl.deleteBuffer(this._dyn.vbo); gl.deleteVertexArray(this._dyn.vao); gl.deleteProgram(this.program);
+    gl.deleteBuffer(this._trail.vbo); gl.deleteVertexArray(this._trail.vao);   // AUDIT EG V (h): THE TRAIL's
   }
 }
 const NO_FOG_RANGE = new Float32Array([0, 1]);

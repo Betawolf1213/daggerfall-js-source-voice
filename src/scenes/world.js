@@ -29991,7 +29991,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     for (const d of visiblePeers) {
       const look = peerDraw(d.shown?.cv | 0, veilOn, _veilT, d.id);
       if (look.kind === 'hidden') { _hiddenPeers.add(d.id); continue; }   // INVIS-NET: the classic lane - the concealed stand nowhere here
-      if (look.kind === 'conceal') _veils.set(d.id, look.visual);
+      const veil = look.kind === 'conceal' ? look.visual : egClient?.allyVeil(social?.accountOfPeer?.(d.id), d.shown, onlineToScene) ?? null; if (veil) _veils.set(d.id, veil);   // AUDIT EG V (h; Elite-Gates.md section 8.2): an ally on the Spire's traversal ground at 60% (scenes/egClient.js allyVeil)
       seen.push(d);
     }
     peerCandlesFrame(seen, dt);   // PEERLIGHT2: the others' Light spells - candle and light, in the live mode's engine; INVIS-NET x PEERLIGHT2 (the merge): hung only before a player drawn here, so the classic lane's concealed carry no candle to give them away
