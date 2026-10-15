@@ -153,13 +153,13 @@ test('FIRM1 service: THE TREE\'S HAND ON A HARVEST - the haul\'s XP the professi
   const plain = await haul();
   assert.equal(plain.status, 200, JSON.stringify(plain.body));
   assert.equal(plain.body.xp, harvestXp(5, 55, false));
-  const tree = walk('st.start', 'st.lk');   // the Steed's life keystone: Master and Commander, +10% Fishing XP
+  const tree = walk('st.start', 'st.lk');   // the Steed's life keystone: Master and Commander, +3% Fishing XP (FIRM2: every sign's stars sum under the cap)
   assert.equal((await s.set(mac, tree)).status, 200);
   const pct = xpPct(treeStats(tree), 'fishing');
-  assert.ok(pct >= 10, `the walk out carries Fishing XP (${pct})`);
+  assert.ok(pct >= 1, `the walk out carries Fishing XP (${pct})`);
   const fished = await haul();
   assert.equal(fished.body.xp, scaleXp(harvestXp(5, 55, false), pct));
-  assert.ok(fished.body.xp > plain.body.xp);
+  assert.ok(fished.body.xp >= plain.body.xp);   // FIRM2: a haul of five XP floors a few percent to nothing
 });
 
 test('FIRM1 service: THE RESPEC - the whole sky back for 10,000 gold, paid on a realm character\'s record in the respec\'s own batch; asked twice, charged once; short of gold, nothing moves', async () => {
