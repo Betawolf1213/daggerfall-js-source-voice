@@ -16,6 +16,7 @@ Discord threads from 2026-10-13 and 2026-10-14, handed over as screenshots, read
 | 9 | "Mountain clipping and invisible" - "Mountain is invisible and you can go through it and get stuck" (BigOOF) | a video, no place named | asked of the player |
 | 10 | "Daedra Summoning bugged" - "Summoned Hermaeus Mora at the Mages Guild online, paid 100k. No video, no offer, no message. The save now has Hermaeus Mora (faction 8) flags = 65 (Summoned set), and quest W0C00Y00 is not among the active quests"; then "trying to summon Mora in the Dak'Fron region - which does not meet the requirements for the quest" | DFU's own order: the gold spent and the Summoned flag set BEFORE the prince's quest is made, and a quest that cannot be made there (W0C00Y00 wants a palace in the region) offered nothing and said nothing | fixed (SUMMON-OFFER); the stuck save mended by staff (SUMMON-REPAIR) |
 | 11 | "Equipped items Disappear after looting in PvP zone" - "When you kill a player in a PvP zone and loot an item they have equipped, the item disappears from the player's inventory but does not appear in yours" | the room judged the killer's take of the piece by the drop's friend law (PVPDUNGEONS): a killer the fallen's guild counted a friend (or one sharing a party with them by the take) was refused the piece the account service had already taken off the fallen's record for them | fixed (PVP-LOOT); then Mac's two decisions - guildmates are kin in the zone, and the fallen loses the piece only once the killer has it (the two-phase handoff) |
+| 12 | "Currently on the final part of the quest to 'Travel to the second town named by the poisonmaker'. However coming to the location it has NPCs, but NO Houses, except for a player house which is marked as the residence I need for the quest, but it's just.. a player house..?" (Buckinghouse Farmstead) | HOME1's "no quest picks a player's home" asked only the towns this page had asked; the Dark Brotherhood's The Acceptance Test picks its second town's residence in a town never walked into, so the farmstead's only house - another player's home - was the quest's | fixed (QUEST-HOME) |
 
 ## STORES-CRASH: the Stores page walks a station's nodes as the browser mints them (1)
 
@@ -267,3 +268,70 @@ THE FOUR HOSTS, the escrow. `scenes/world.js` WIRED - the fall's and the seizure
 carried and the fallen's piece taken back on the zone's frame (`world.js:"const wildEscrowFrame = () =>"`), the death
 screen's word on it; `scenes/dungeonContext.js` and `scenes/worldModes.js` name no piece (above), so they hold none in
 escrow; `scenes/exterior.js`, offline, NOT WIRED on purpose.
+
+## QUEST-HOME: no quest picks a player's home, in any town (12)
+
+`server-account/src/homes.js` homeLayouts; `src/systems/onlineHomes.js` hearEveryTown, homeStands; `src/scenes/world.js`
+takeHomeLayouts and the quest machine's `isPlayerHome`. Read on main's `7c291d36`.
+
+THE REPORT. The last step of a quest, "Travel to the second town named by the poisonmaker": Buckinghouse Farmstead,
+whose map named one building, "The Mesmerized Residence", the quest's residence - and its door read "To <owner>'s
+home", Vote up, Vote down: another player's online home. The player tried the quest repair, then restarted the quest.
+
+FOUND. The quest is the Dark Brotherhood's The Acceptance Test (`L0A01L00`): its letter sends the player to the
+poisonmaker (`_apothecary_`, a Chemist, at `Place _apo_ remote apothecary`), who sends them to poison `_npc_`'s wine at
+`_mansion_` - `Place _mansion_ remote house1`, "in __mansion_", the second town - and its three people's homes are
+generated residences too (Person.cs AssignHomeTown, `remote house`). Every one is chosen when the quest starts, in a town
+of the region the player has not been to (SelectRemoteTownSite's darts). HOME1 kept a player's online home out of the
+choice - the collector's `isPlayerHome` (`systems/quest/place.js` _collectQuestSitesOfBuildingType; a departure, DFU
+has one player) - but the seam asked `onlineHomes.homeAt`, which knows a town only once this page has asked it, at its
+gate or a door; HOME1's own record carried it as a known limit. So the rule held in the player's own town alone: a
+remote town's houses were all fair game, and a farmstead has one. The door then did what HOME1 built it to do for a
+quest's holder (the quest rung, PlayerActivate.IsActiveQuestBuilding): it let them into a stranger's furnished home,
+which is what the player found.
+
+FIXED. The layouts read every online boot already makes before its first town stands (WD3, `/v1/homes/layouts`) names
+every town's homes by building as well: `homes`, `[mapId, [buildingKey, ...]]` a town, keys ascending - every home, a
+guild's hall and a deed held - read beside the towns and kept with them under the generation read before both
+(STORM-SHED 2's `homes_gen`); a town's homes were any session's to read already (homesInTown). The registry keeps it beside the towns
+it asks (`hearEveryTown`), and the quest machine's `isPlayerHome` asks `homeStands`: a player's home in any town. The
+service is acct134 (acct133 on its branch, one bump past LAMP-KEEPER II at the merge; no migration); a client on an older service hears no `homes` and keeps what it knew. A quest made
+before the fix whose site is a home is chosen again (below) - restarting it chooses afresh.
+
+CLOSED BOTH (Mac, 2026-10-15: "Close both", of the two limits the boot's read left - a house bought after a page's read,
+and a quest whose residence was chosen before its house was bought). THE LIVE LIST: every act that moves a home - a
+claim, a deed held or sold, a hall bought or sold, an arena move, a sale, a character deleted - answers `homeOrders`
+(`server-account/src/index.js` homeOrdersOf over each act's `moved`, `src/net/homeLaw.js` homeMoved): a home order
+signed with the identity key (`src/net/identityToken.js` kind `home` - `bm` the town, `bu` its buildings homes now, `bd`
+homes no more). The client's one door hands every one to the page's ear (`src/net/accountClient.js` onHomeOrders), the
+page's hub link carries it (`src/net/online.js` sendHomeOrder, once the hub's welcome names world203 - HOME_RELAY_MIN, 201 on its branch: main's world201 and world202 know no home frame and close the socket on one), and the hub -
+the one room every online player holds a socket to - checks it with the key it holds and fans `{t:'home', l:[...]}` to
+every hub socket, a shard's by the bus, holding the words of the last ten minutes for a page whose boot read went out
+before them and whose link opened after (`server/src/index.js` the `home` arm, _hubHelloWords; HOME_WORDS_KEY). Every
+page's registry takes the word (`src/systems/onlineHomes.js` hearHome) beside the boot's read, and the quest machine's
+`isPlayerHome` reads both. No poll: a home's move is said once, by the act. THE RE-PICK: whenever a page learns of
+homes (the boot's read, a hub word, a town's answer, a load whose layouts stand), every building site the player has not
+reached whose building is a player's home now is chosen again in its own town by the place's own law (`src/systems/
+quest/place.js` repickHomedSite - SetupLocalSite's search, Place.cs:717-736: the declared P2/P3, a house kind's
+any-house fallback, a person's home its house; the collector keeping out every home and every building a quest holds),
+what was assigned to it carried onto the new building's markers, its site links following, its name drawn anew so the
+journal names the residence the quest stands in, and its map mark moved - the old house's quest stamp undiscovered, the
+new one discovered under the quest's name where the player had it on the map (`src/systems/quest/machine.js`
+reseatHomedSites; `src/scenes/world.js` questSiteMovedHere). A site the player has stood in is REACHED for good
+(`siteDetails.reached`, marked by the interior mount, `src/scenes/questBridge.js` mountScene ->
+QuestMachine.noteSiteReached, and saved with the site) and never moved; the quest rung opens the home to them, as before.
+A save from before the mark says nothing of where its player stood: its sites read as not reached.
+A Ledger A departure (`01-Overview/Port-Ledger.md`, the HOME1 row's A QUEST'S SITE IS NEVER ANOTHER PLAYER'S HOME): Daggerfall Unity
+never moves a quest site. What stays: a site whose town holds no other building of its kind stays in the home (its
+rung); a deleted account's homes go by the database's cascade, which no client carries, so the pages online keep them as
+homes until their next boot (a quest passes over them meanwhile).
+
+Pinned by `test/fb1014_questhome.test.js` (6) - the real Worker, the client's own door, the real registry, the real relay
+over a real hub room and the real client session on its hub link, and the reporter's own quest taken by the real machine:
+the boot's read; the reporter's region; the wiring; the home order and word; the live list (a house bought after a
+page's boot read never holds a quest picked after it, a page that joins later hears the held word, a sale says the
+house a house again); the re-pick (a site not reached chosen again in its own town, its link and name following; a
+reached one kept) - `tools/mutants/fb1014_questhome.json`, 24, all dead (the 24th, HOME_RELAY_MIN back at 201, added at the merge). PIN MOVED in `test/wd3_online.test.js` (the
+read's `homes`), `test/home1.test.js` (the seam; the claim's order), `test/arena4b_homes.test.js` (the move's order),
+`test/guild1c.test.js` and `test/renown1.test.js` (ORDER_KINDS), the account service's version pins (acct134, acct133 on its branch) and the
+relay's (world203, world201 on its branch, `test/relayversion.test.js` its law row - `src/net/homeLaw.js` joins the relay's bundle).

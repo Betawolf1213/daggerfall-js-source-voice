@@ -125,6 +125,7 @@ import { GUILD_ID_RE, GUILD_TAG_RE, GUILD_MEMBER_RE } from './guildLaw.js';   //
 import { ribbonClaimOk } from './heraldryLaw.js';   // SEASON1 part two: a Season's banner ribbon - heraldryLaw.js imports nothing, so the worker's graph stays flat
 import { worksOf } from './siegeRef.js';   // SEAT2b part two (b): a siege's works on its pass - siegeRef.js imports nothing
 import { houseClaimOk } from './houseLaw.js';   // LEGACY7: a house rides the token - houseLaw.js imports nothing, so the worker's graph stays flat
+import { homeMapIdOk, homeBuildingKeyOk, HOME_ORDER_KEYS_MAX } from './homeLaw.js';   // QUEST-HOME: a home order names a town and its buildings in the homes' own shapes - homeLaw.js imports nothing
 
 /** The only version this file will read or write. It names the
  *  algorithm, so the payload cannot. */
@@ -571,7 +572,7 @@ async function openSealed(token, publicKey, { subtle, nowS, skewS, valid }) {
  *  second: 'renown', a character's Renown that ROSE while its player was
  *  already in a room, carried in by that player's own client (the token
  *  that let them in said the Renown they had then). */
-export const ORDER_KINDS = Object.freeze(['mute', 'renown', 'guild', 'guildout', 'siege', 'stake', 'deck', 'remains']);   // INT9: a fall's drop, the service's word on what it took   // CARDS10: a ranked seat's deck, vouched for   // GUILD1c: a character's guild now, and a member or a guild gone   // SEAT2a: a battle's pass
+export const ORDER_KINDS = Object.freeze(['mute', 'renown', 'guild', 'guildout', 'siege', 'stake', 'deck', 'remains', 'home']);   // QUEST-HOME: a town's homes moved, the service's word for every page online   // INT9: a fall's drop, the service's word on what it took   // CARDS10: a ranked seat's deck, vouched for   // GUILD1c: a character's guild now, and a member or a guild gone   // SEAT2a: a battle's pass
 /** An order lives a minute - long enough to be carried to every room
  *  the moderator holds, short enough that a leaked one is stale before
  *  anyone could use it for anything but what it already said. */
@@ -610,9 +611,42 @@ export function orderValid(c) {
   const noRemains = REMAINS_FIELDS.every((f) => c[f] === undefined);
   if (c.o !== 'remains' && !noRemains) return false;
   if (c.o === 'remains' && (!remainsOrderValid(c) || c.mu !== undefined || c.lv !== undefined || c.dh !== undefined || !noGuild || !noSiege || !noStake)) return false;
+  // QUEST-HOME: a home order carries its own fields and no other kind's; no other kind carries a home's
+  const noHome = HOME_ORDER_FIELDS.every((f) => c[f] === undefined);
+  if (c.o !== 'home' && !noHome) return false;
+  if (c.o === 'home' && (!homeOrderValid(c) || c.mu !== undefined || c.lv !== undefined || c.dh !== undefined || !noGuild || !noSiege || !noStake || !noRemains)) return false;
   if (!Number.isSafeInteger(c.i) || !Number.isSafeInteger(c.e)) return false;
   if (c.e <= c.i || c.e - c.i > ORDER_TTL_S) return false;
   return true;
+}
+
+/* ═══ QUEST-HOME: THE HOME ORDER (bible/01-Overview/Field-Bugs-2026-10-14.md QUEST-HOME; Mac, 2026-10-15: "Close both") ══
+ *
+ * A home bought, held or given up must reach every page online at once: a quest picks its residence in towns its player
+ * never asked about, off the boot's read of every town's homes (server-account/src/homes.js homeLayouts), and a read at
+ * the boot knows nothing of a house bought after it. The relay has no door to the service, so the service hands the
+ * acting player's client ITS WORD on what moved, an order the hub checks with the key it already holds and fans to
+ * everyone online: `{o:'home', s, bm, bu?, bd?, i, e}` - account `s`'s act left town `bm`'s buildings `bu` homes (a claim,
+ * a deed held, a hall bought, an arena move's new house) and `bd` homes no more (a sale, a deed sold, a hall sold, an
+ * arena move's old house, a character deleted). One town an order; at least one building; never one twice.
+ */
+/** A home order's fields - no other order kind carries one. */
+export const HOME_ORDER_FIELDS = Object.freeze(['bm', 'bu', 'bd']);
+/** Whether a claim set's home fields are a home order's. */
+export function homeOrderValid(c) {
+  if (!homeMapIdOk(c.bm)) return false;
+  const on = c.bu ?? [], off = c.bd ?? [];
+  if (!Array.isArray(on) || !Array.isArray(off) || (c.bu !== undefined && !on.length) || (c.bd !== undefined && !off.length)) return false;
+  const all = [...on, ...off];
+  return all.length > 0 && all.length <= HOME_ORDER_KEYS_MAX && all.every(homeBuildingKeyOk) && new Set(all).size === all.length;
+}
+/** QUEST-HOME: MINT A HOME ORDER - the service's word that account `s`'s act left town `bm`'s buildings `bu` homes and
+ *  `bd` homes no more (either may be empty, never both). */
+export async function mintHomeOrder({ s, bm, bu = [], bd = [] }, privateKey, { subtle, nowS, ttlS = ORDER_TTL_S }) {
+  if (!Number.isSafeInteger(nowS)) throw new TypeError('mintHomeOrder needs an integer epoch-seconds clock');
+  const claims = { o: 'home', s, bm, ...(bu.length ? { bu: [...bu] } : {}), ...(bd.length ? { bd: [...bd] } : {}), i: nowS, e: nowS + ttlS };
+  if (!orderValid(claims)) throw new TypeError('mintHomeOrder refused an order it could not verify');
+  return sealClaims(claims, privateKey, subtle);
 }
 
 /* ═══ CARDS6: THE STAKE (bible/11-Multiplayer/Tavern-Cards.md section 23) ═══════════════════════════════════════════

@@ -821,6 +821,26 @@ export function _resetBusyForTests() { _busy = { n: 0, until: 0 }; }
 export const busyUntil = () => _busy.until;
 const holdFor = (/** @type {number} */ ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 
+/** QUEST-HOME: the page's ears for a home that moved (onHomeOrders). */
+const _homeOrderEars = new Set();
+/**
+ * FIELD BUGS 2026-10-14 QUEST-HOME (Mac, 2026-10-15: "Close both"): THE PAGE'S EAR FOR A HOME THAT MOVED. An answer of
+ * the service's that says a home was bought, held or given up carries its signed orders (`homeOrders`,
+ * server-account/src/index.js homeOrdersOf) - and each is handed to every ear here, whichever book made the act (a
+ * door's claim, a bank's deed sold, a guild's hall, an arena move, a character deleted), to be carried to the hub, whose
+ * fan reaches every page online (scenes/world.js). One door, so no act can forget to say it. Answers the ear's removal.
+ * @param {(order: string) => void} ear
+ */
+export function onHomeOrders(ear) { _homeOrderEars.add(ear); return () => { _homeOrderEars.delete(ear); }; }
+/** QUEST-HOME: an answer's home orders handed to every ear - an ear's fault is never the call's. */
+function heardHomeOrders(/** @type {any} */ data) {
+  if (!Array.isArray(data?.homeOrders)) return;
+  for (const order of data.homeOrders) {
+    if (typeof order !== 'string' || !order) continue;
+    for (const ear of [..._homeOrderEars]) { try { ear(order); } catch { /* an ear's fault is never the call's */ } }
+  }
+}
+
 export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = null, keepalive = false, now = Date.now, rand = Math.random, hold = holdFor }, path, body = null) {
   const headers = { accept: 'application/json' };
   if (body) headers['content-type'] = 'application/json';
@@ -895,6 +915,7 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
   // data it let a kept purchase go unminted and cached a blank market for a minute. A 204 says it has nothing to say.
   if (!parsed && res.status !== 204) { forgetD1Bookmark(); return { ok: false, error: 'offline', unknown: true, status: res.status }; }   // AUDIT SCALE II A-6: `offline`, as one never made
   _busy = { n: 0, until: _busy.until };   // BUSY-GATE: an answer starts the count again; a hold already running runs out
+  heardHomeOrders(data);   // QUEST-HOME: a home bought, held or given up, said to every page online
   return { ok: true, data, status: res.status };
 }
 

@@ -183,8 +183,8 @@
   {
     "name": "AUDIT-HOME-PRICE-C2-the-claim-silent",
     "file": "server-account/src/homes.js",
-    "old": "return { ok: true, home: homeOf(row), ...realmSaleOf(row), realm: { seq: prep.seq } };",
-    "new": "return { ok: true, home: homeOf(row), realm: { seq: prep.seq } };",
+    "old": "return { ok: true, home: homeOf(row), ...realmSaleOf(row), realm: { seq: prep.seq }, moved: homeMoved(claim.mapId, [claim.buildingKey]) };",
+    "new": "return { ok: true, home: homeOf(row), realm: { seq: prep.seq }, moved: homeMoved(claim.mapId, [claim.buildingKey]) };",
     "tests": [
       "test/homeprice.test.js",
       "test/home1.test.js"

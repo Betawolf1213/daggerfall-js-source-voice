@@ -83,7 +83,8 @@ test('WD3 online, the service: a claim keeps the layout its client\'s town stand
   const guest = (await call('/v1/auth/guest', { ...(await import('../src/net/legalLaw.js')).ACCEPTED })).body.secret;
   const read = await call('/v1/homes/layouts', {}, guest);
   assert.equal(read.status, 200);
-  assert.deepEqual(read.body, { towns: [[TOWN, BV], [CLASSIC_TOWN, null]] });
+  // PIN MOVED (FIELD BUGS 2026-10-14 QUEST-HOME, test/fb1014_questhome.test.js): and every town's homes by building
+  assert.deepEqual(read.body, { towns: [[TOWN, BV], [CLASSIC_TOWN, null]], homes: [[TOWN, [0x10203, 0x10305]], [CLASSIC_TOWN, [0x101, 0x202]]] });
   assert.equal((await call('/v1/homes/layouts', {})).status, 401, 'a stranger reads nothing');
   // the first home sold: the town keeps the layout its homes stand in (the next oldest took it)
   assert.equal((await call('/v1/homes/release', { mapId: TOWN, buildingKey: 0x10203, realm: await realmJoinAt(env, aldric.secret, a.character) }, aldric.secret)).status, 200);
