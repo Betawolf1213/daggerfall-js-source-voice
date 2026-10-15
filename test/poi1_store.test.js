@@ -330,7 +330,7 @@ test('POI-1 STORE: the feed kept in the isolate - asked again inside its keep, n
 });
 
 test('POI-1 RECORDS: the store is in the migrations, the roles in the config, its shared law in the account deploy\'s filter', () => {
-  assert.match(src('server-account/migrations/0113_poi.sql'), /CREATE TABLE IF NOT EXISTS poi_revs/);
+  assert.match(src('server-account/migrations/0114_poi.sql'), /CREATE TABLE IF NOT EXISTS poi_revs/);
   const toml = src('server-account/wrangler.toml');
   assert.match(toml, /^APPROVER_HANDLES = "Lattymoy"$/m);
   assert.match(toml, /^BUILDER_HANDLES = ""$/m);

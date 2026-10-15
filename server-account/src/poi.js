@@ -10,7 +10,7 @@
 // approver, a developer (DEVELOPER_HANDLES) or a handle in BUILDER_HANDLES. A guest is neither. Read fresh at every call,
 // so a handle taken off a list loses the door at its next request.
 //
-// THE FLOW (migration 0113): a builder uploads assets (content-addressed: the bytes' sha256 is the name, checked here) and
+// THE FLOW (migration 0114): a builder uploads assets (content-addressed: the bytes' sha256 is the name, checked here) and
 // saves a DRAFT revision of a POI - one open draft per author per POI, saved over until it is SUBMITTED. An approver
 // APPROVES a submitted revision (it becomes the POI's live one, its assets readable by anyone) or REJECTS it with a word.
 // Taking a POI out of the world is a submitted 'retire' revision, approved the same way. A ROLLBACK points the POI at an

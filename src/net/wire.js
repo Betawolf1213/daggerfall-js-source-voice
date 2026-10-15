@@ -407,9 +407,11 @@ export const WORLD_TTL_MS = 30 * 24 * 3600 * 1000;
  *  room's layout dead this long, and a container the room emptied this long ago, come back: the foe rebuilt fresh at
  *  its marker by the host (the stream then says so), the container this client's own roll again. The stamps are the
  *  relay's clock (a wall millisecond, the shared clock's own), on the memory's records and on every act; a record
- *  with no stamp (a memory written before WORLD8) is applied as it stands. */
-export const RESPAWN_MS = 3600 * 1000;
-/** WORLD8: whether a stamp is past the hour by `nowMs` - false for no stamp, no clock (offline), or a stamp ahead. */
+ *  with no stamp (a memory written before WORLD8) is applied as it stands. RESPAWN-30 (2026-10-14, Mac: "Reduce dungeon
+ *  cooldown from 1 hour to 30 minutes" - "I meant the chest and foe respawn"): half an hour, the zone's halls' and a Super
+ *  dungeon's (systems/dungeonRespawn.js - a normal dungeon keeps its twenty minutes and an elite one its forty). */
+export const RESPAWN_MS = 30 * 60 * 1000;
+/** WORLD8: whether a stamp is past RESPAWN_MS by `nowMs` - false for no stamp, no clock (offline), or a stamp ahead. */
 export const respawnDue = (stampMs, nowMs) => Number.isFinite(stampMs) && Number.isFinite(nowMs) && nowMs - stampMs >= RESPAWN_MS;
 /** WORLD2: the largest foes frame (UTF-16 units) - the host's live foes, a delta a few times a second. */
 export const FOES_FRAME_MAX = 64 * 1024;
@@ -1367,7 +1369,8 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world201';   // CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG"; bible/06-Systems/Community-Arc.md CHAT-TRADE; NOT YET DEPLOYED): the Trade and LFG channels, `chat:trade` and `chat:lfg`, joined CHAT_ROOMS - the relay opens them as it opens a language's; nothing else in the law moved. The client's Trade and LFG tabs wait for this relay (TRADE_CHAN_RELAY_MIN)
+export const RELAY_VERSION = 'world202';   // FIVE-ASKS (2026-10-14, Mac's five asks - bible/01-Overview/Five-Asks-2026-10-14.md; NOT YET DEPLOYED; world201 on its branch, renumbered past main's CHAT-TRADE world201 at the merge): RESPAWN-30, the dungeons' chest and foe respawn half an hour (RESPAWN_MS - the zone's halls and an Abyss Dungeon), and LAMP-KEEPER II's I Love Lamp in the titles' vocabulary (net/identityToken.js TITLES) the relay's claims check reads.
+// world201:   CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG"; bible/06-Systems/Community-Arc.md CHAT-TRADE; NOT YET DEPLOYED): the Trade and LFG channels, `chat:trade` and `chat:lfg`, joined CHAT_ROOMS - the relay opens them as it opens a language's; nothing else in the law moved. The client's Trade and LFG tabs wait for this relay (TRADE_CHAN_RELAY_MIN)
 // world200:   PEER-ACTS (2026-10-13, GATHER-FEEL II; Mac: "Do the not done" - bible/06-Systems/Professions-Arc.md 5.1 "Others see it" and section 45; NOT YET DEPLOYED; world199 on its branch, renumbered past main's AUDIT ETHER-OW world199 at the merge): THE POSE CARRIES A GATHERING ACT - `ga` the act (POSE_GATHER_ACTS: the axe at a trunk, the pick at a stone, a kneel by hand, with the sickle, with the Basket, with the knife, the net wound, flying, waiting, tugged, hauled) and `gm` the net's throw in whole metres, absent off an act; `gb` the beats (a count and the last beat's kind), on its own as `hk` is; validPose bounds them (a code past the table no act, a count of none no beat), poseChanged sends them at once. An older relay's validPose drops them: the others see and hear nothing of an act, as before.
 // world199:   AUDIT ETHER-OW C2-1 (2026-10-13, bible/01-Overview/Audit-Ether-OW.md; NOT YET DEPLOYED): THE WATCH'S GROUND, ONE HOME - the relay's mint asks net/watchReceipt.js watchPixelOk (the Bay's map, whole pixels) where it wrote the bounds itself; the account service's receipt check and the Motherlodes' site read the same law, so a Motherlode stands only where a receipt can name its pixel. The relay's answers are as they were: a new bundle, so a new name (SLAM8).
 // world198:   SPAWN-REBIRTH (2026-10-12, bible/01-Overview/Field-Bugs-2026-10-12h.md; NOT YET DEPLOYED): A CELL KEEPS A SPAWNED DUNGEON'S ROW UNTIL IT STANDS AGAIN - net/overworldLaw.js owRowUntil (its death, the earlier of its two clocks, and OW_REBIRTH_MIN, twenty-four real hours), never OW_ROW_KEEP_MIN's sixty real days; the fold lets a life that is over go before it folds, so a later life's first entry is taken whole; the prune and the welcome read the same end.
