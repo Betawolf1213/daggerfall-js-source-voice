@@ -50,6 +50,7 @@ import { egCircleSpecs, egBandOfCircle, EG_TEXT } from '../net/egLaw.js';
 import { EG_FRAGS } from '../net/egFragLaw.js';
 import { egSlagX, EG_SLAG_SPOUTS } from '../net/egSpanLaw.js';   // EG-ZC: the slag's spouts
 import { egBandDress, EG_DRESS } from './egBandArt.js';   // EG-G2: the band's dress
+import { egAtmosOf } from './egAtmos.js';   // EG-LOOK (Elite-Gates-Look.md section 7): each band's air and light
 import { FIRE_WALLS_ARCHIVE } from './emissiveTextures.js';   // EG-ZH: the Caverns' fire falls wear Daggerfall's own fire
 import { egHeroFragInto, egHeroFragCollider, EG_HERO_FRAG_MESHES } from './egHeroFragModel.js';   // EG-HERO-LAY: a hall's hero, drawn and collided
 import { GATE_PART } from './gateModel.js';
@@ -68,8 +69,13 @@ export const EG_LAMP = Object.freeze({ h: 2.6, range: 14, color: Object.freeze([
  *  landing, `h` up its far wall and `off` out from its face (m) - the wall a body carried too far meets, seen from the
  *  takeoff before the jump. */
 export const EG_DROP_LAMP = Object.freeze({ h: 4.5, off: 1.5 });
-/** The made level's fog and light: the Hour's brass haze, a little deeper - the Spire hangs in a darker void. */
-export const EG_HALL_FOG = Object.freeze({ mode: 'exp', density: 0.006, color: Object.freeze([0.12, 0.08, 0.07]) });
+/** The made level's fog: EG-LOOK (Elite-Gates-Look.md section 7) - each band's own (world/egAtmos.js), the Galleries' the
+ *  level's default (a probe or a pass with no circle in hand). */
+export const EG_HALL_FOG = egAtmosOf(0).fog;
+/** EG-LOOK: circle `c`'s band's fog (world/egAtmos.js) - the dungeon arm's haze in the Spire. */
+export const egHallFog = (c) => egAtmosOf(egBandOfCircle(Number.isSafeInteger(c) && c > 0 ? c : 1)).fog;
+/** EG-LOOK: circle `c`'s band's grade (world/egAtmos.js) - the lane's grade in the Spire (the Hour's, before). */
+export const egHallGrade = (c) => egAtmosOf(egBandOfCircle(Number.isSafeInteger(c) && c > 0 ? c : 1)).grade;
 
 /**
  * THE MADE LOCATION - a name, a region, a climate, the map table's row (map id 0: no world room keys off it; the breach's
@@ -665,10 +671,11 @@ export function egLightsWith(lit, extra, lamps, eye) {
   }
   return v;
 }
-/** The level's light (a dungeon trilight and its key): the Hour's warmth under a deeper void, the key from above and
- *  behind the halls (+z). One object, its arrays set again each call. */
-const _egLight = { tri: { sky: [0.14, 0.13, 0.16], equator: [0.13, 0.1, 0.08], ground: [0.36, 0.16, 0.06] }, key: { scale: 0.7, dir: [0, 0.62 / Math.hypot(0.62, 1), 1 / Math.hypot(0.62, 1)], color: [0.92, 0.88, 0.82] } };
-export const egHallLighting = () => _egLight;
+/** The level's light (a dungeon trilight and its key) - EG-LOOK (Elite-Gates-Look.md section 7): circle `c`'s band's own
+ *  (world/egAtmos.js - the realm's light from below, the Spire's lost sky or the moon from above), the Galleries' with no
+ *  circle. One frozen object a band, made once. */
+const _egLight = [0, 1, 2, 3].map((b) => Object.freeze({ tri: egAtmosOf(b).tri, key: egAtmosOf(b).key }));
+export const egHallLighting = (c = 1) => _egLight[egBandOfCircle(Number.isSafeInteger(c) && c > 0 ? c : 1)];
 /** The words the level's refusals say (the dungeon host's save, map and rest arms). */
 export const EG_HALL_TEXT = Object.freeze({ noSave: EG_TEXT.noSave, noMap: EG_TEXT.noMap, noRest: EG_TEXT.noRest });
 

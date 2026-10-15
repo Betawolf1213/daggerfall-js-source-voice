@@ -714,8 +714,8 @@
   {
     "name": "EGZN-bands-albedo-kept",
     "file": "src/scenes/egCircleHost.js",
-    "old": "      for (const rec of EG_DRESS_RECORDS) { if (renderer?.releaseTexture?.(arch, rec)) n++;",
-    "new": "      for (const rec of EG_DRESS_RECORDS) { if (false) n++;",
+    "old": "      for (const rec of EG_BAND_RECORDS) { if (renderer?.releaseTexture?.(arch, rec)) n++;",
+    "new": "      for (const rec of EG_BAND_RECORDS) { if (false) n++;",
     "tests": [
       "test/egz_camera_host.test.js"
     ]

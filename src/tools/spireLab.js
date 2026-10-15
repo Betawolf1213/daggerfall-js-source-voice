@@ -10,7 +10,8 @@
 //
 //   ?band=0-3        a circle of that band (its first: 1, 6, 11, 16)    ?c=<circle> instead      ?seed=<n> (7 by default)
 //   ?h=<slot 0-4>    the hall of the circle the views stand in
-//   ?view=plate|course|court|sky|over|edge   a camera (the panel's list)
+//   ?view=plate|course|court|sky|over|edge|under|wide   a camera (the panel's list) - EG-LOOK: `under` a court's foundations
+//                    from below its rim, `wide` the wreck and the Spire overhead from far out
 //   ?t=<seconds>     the shared clock, pinned           ?still the clock stopped     ?lane=off the classic set
 //   ?palette=standard|contrast|deutan|tritan  ?fill=50-100   a danger disc on the court in that look (?shape=off: none)
 //   ?mist            a circle with a Mist Stair or the Sinking Stair, the camera over its sheet, the clock at its surge
@@ -23,10 +24,10 @@ import { EL_LANE, dungeonFog, dungeonTrilight, exposureFor } from '../render/enh
 import { applyFog } from '../render/underwaterFog.js';
 import { skyGain } from '../render/deadlands.js';
 import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL } from '../render/gateTelegraph.js';
-import { SD_HOUR_GRADE } from '../world/sdLook.js';
 import { realmArt } from '../world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../world/sdRealm.js';
-import { buildEgCircleModel, egCircleLights, egLightsWith, egHallLighting, egToDungeon, egHallCentre, EG_HALL_FOG } from '../world/egHall.js';
+import { buildEgCircleModel, egCircleLights, egLightsWith, egHallLighting, egHallFog, egHallGrade, egToDungeon, egHallCentre } from '../world/egHall.js';
+import { createEgGroundLook } from '../scenes/egGroundLook.js';   // EG-LOOK: the ruin and the wreck, as the circle's host stands them
 import { egBandArt, egBandArchive } from '../world/egBandArt.js';
 import { buildEgLookModel, egMistSheets } from '../world/egLook.js';
 import { egPaletteOf, egFillOf } from '../ui/egAccess.js';   // the shelf's palette and fill, their one home
@@ -67,6 +68,8 @@ const lamps = egCircleLights(SEED, C, 0);
 const dynamicDraws = [];
 const span = createEgSpan({ renderer, seed: SEED, c: C, geo: 0 });
 span.stand({ dynamicDraws, collider: null });
+const ground = createEgGroundLook({ renderer, lite: params.has('lite') });   // EG-LOOK (?lite: the phones' tier)
+for (const d of ground.stand(SEED, C, 0)) dynamicDraws.push(d);
 const look = createEgLookDraw({ gl });
 look.setCircle(SEED, C, 0);
 const telegraph = new GateTelegraphRenderer(gl, { spire: true });
@@ -81,6 +84,8 @@ const VIEWS = {
   over: { at: [40, 45, (SPEC.len ?? 80) * 0.2], yaw: -40, pitch: -30 },
   edge: { at: [(SPEC.arrive?.r ?? 5) - 1.5, 1.2, (SPEC.arrive?.z ?? 0) + 1], yaw: 70, pitch: -24 },
   mist: MIST ? { at: [(MIST.x0 + MIST.x1) / 2, MIST.hz.y + 6.5, MIST.z0 - 3], yaw: 0, pitch: -38 } : null,
+  under: { at: [court.x + (court.r ?? 12) + 14, (court.y ?? 0) - 9, court.z - 6], yaw: -110, pitch: 18 },   // EG-LOOK: the court's foundations, from a span below its rim
+  wide: { at: [-70, 26, (SPEC.len ?? 80) * 0.15], yaw: 55, pitch: 4 },   // EG-LOOK: the wreck drifting, the Spire overhead
 };
 const viewSel = $('view');
 for (const k of Object.keys(VIEWS)) if (VIEWS[k]) { const o = document.createElement('option'); o.value = o.textContent = k; viewSel.append(o); }
@@ -137,7 +142,7 @@ canvas.addEventListener('pointermove', (e) => { if (!drag) return; cam.yaw -= (e
 canvas.addEventListener('pointerup', () => { drag = null; });
 let last = performance.now();
 window.__frame = 0;
-window.__lab = { circle: C, band: BAND, hall: egFirstHallOf(C) + SLOT, batch: () => span.batchStats(), look: () => look.state(), eye: (x, y, z, yawDeg, pitchDeg) => { cam.pos = [x, y, z]; cam.yaw = (yawDeg * Math.PI) / 180; cam.pitch = (pitchDeg * Math.PI) / 180; }, view: (n) => { viewSel.value = n; setView(n); } };
+window.__lab = { circle: C, band: BAND, hall: egFirstHallOf(C) + SLOT, batch: () => span.batchStats(), look: () => look.state(), stats: () => ({ ground: ground.stats(), draws: dynamicDraws.filter((d) => !d.hidden && !d.culled).length }), eye: (x, y, z, yawDeg, pitchDeg) => { cam.pos = [x, y, z]; cam.yaw = (yawDeg * Math.PI) / 180; cam.pitch = (pitchDeg * Math.PI) / 180; }, view: (n) => { viewSel.value = n; setView(n); } };
 
 function frame(now) {
   const dt = Math.min(0.1, (now - last) / 1000); last = now;
@@ -158,11 +163,12 @@ function frame(now) {
   const proj = mirrorProjectionX(perspective((65 * Math.PI) / 180, w / h, 0.1, 2000));
   const lane = !!renderer.lightingLane;
   // the circle, as the dungeon arm draws it (scenes/worldModes.js - the Spire's light, its haze, the Hour's grade, its lamps)
-  const L = egHallLighting(), T = dungeonTrilight(lane, L.tri);
+  const L = egHallLighting(C), T = dungeonTrilight(lane, L.tri);
   renderer.setLighting(equator(T), 0, undefined, T);
   renderer.setMoonlight(L.key);
-  applyFog(renderer, dungeonFog(lane, EG_HALL_FOG));
-  renderer.setSceneGrade?.(SD_HOUR_GRADE);
+  applyFog(renderer, dungeonFog(lane, egHallFog(C)));
+  renderer.setSceneGrade?.(egHallGrade(C));
+  ground.frame(cam.pos, clock);   // EG-LOOK: the eye's hall's ruin drawn, the wreck placed about it (scenes/egCircleHost.js egCircleFrame)
   const lit = egLightsWith(EMPTY_LIT, [], lamps, cam.pos);
   renderer.setPointLights(lit.data, null, lit.colors);
   renderer.setClearColor(INTERIOR_CLEAR);
@@ -172,7 +178,7 @@ function frame(now) {
   span.cull(proj, view);   // the dungeon arm's own line, before its draws
   if (lookMesh) renderer.drawMesh(lookMesh, identity(), null, NO_SHADOW);
   for (const d of dynamicDraws) if (!d.hidden && !d.culled) renderer.drawMesh(d.gpu, d.object.matrix, d.texRemap ?? null, d.noShadow ? NO_SHADOW : WITH_SHADOW);
-  if (look.drawSky(proj, view, clock, courtFogNow(), skyGain(renderer._fogColor, EG_HALL_FOG.color))) renderer.markForeignPass();
+  if (look.drawSky(proj, view, clock, courtFogNow(), skyGain(renderer._fogColor, egHallFog(C).color))) renderer.markForeignPass();
   // the fight's pass: the mist, the telegraphs, the lines last (scenes/egClient.js drawPass)
   if (look.drawUnder(proj, view, cam.pos, clock, courtFogNow())) renderer.markForeignPass();
   for (const sh of shapesNow(clock)) { telegraph.draw(sh, proj, view, cam.pos, clock, courtFogNow(), centre, null, floor); if (telegraph.drawn > 0) renderer.markForeignPass(); }

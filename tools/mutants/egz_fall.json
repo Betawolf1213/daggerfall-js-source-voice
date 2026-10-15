@@ -344,8 +344,8 @@
   {
     "name": "EGZO-the-dress-short",
     "file": "src/world/egBandArt.js",
-    "old": "return EG_DRESS_RECORDS.map((rec) => egBandArtOf(band, rec));",
-    "new": "return EG_DRESS_RECORDS.slice(1).map((rec) => egBandArtOf(band, rec));",
+    "old": "return EG_BAND_RECORDS.map((rec) => egBandArtOf(band, rec));",
+    "new": "return EG_BAND_RECORDS.slice(1).map((rec) => egBandArtOf(band, rec));",
     "tests": [
       "test/egz_fall.test.js"
     ]

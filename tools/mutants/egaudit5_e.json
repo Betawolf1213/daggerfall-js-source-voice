@@ -655,8 +655,8 @@
   {
     "name": "EGA5E-swap-band-unposted",
     "file": "src/scenes/egSwap.js",
-    "old": "geo: geo || 0, band, given: given ?? null });",
-    "new": "geo: geo || 0, given: given ?? null });",
+    "old": "geo: geo || 0, band, given: given ?? null, lite: !!lite });",
+    "new": "geo: geo || 0, given: given ?? null, lite: !!lite });",
     "tests": [
       "test/egaudit5_e_swap.test.js"
     ]
@@ -691,8 +691,8 @@
   {
     "name": "EGA5E-prebuild-dress-asked-when-up",
     "file": "src/scenes/egCircleHost.js",
-    "old": "egBandWhole(band) ? -1 : band, r.given);",
-    "new": "band, r.given);",
+    "old": "egBandWhole(band) ? -1 : band, r.given, ground.lite);",
+    "new": "band, r.given, ground.lite);",
     "tests": [
       "test/egaudit5_e_swap.test.js"
     ]
@@ -709,8 +709,8 @@
   {
     "name": "EGA5E-NEW2-swap-never-hands",
     "file": "src/scenes/egSwap.js",
-    "old": "band, given: given ?? null });",
-    "new": "band, given: null });",
+    "old": "band, given: given ?? null, lite: !!lite });",
+    "new": "band, given: null, lite: !!lite });",
     "tests": [
       "test/egaudit5_e_swap.test.js"
     ]
@@ -727,8 +727,8 @@
   {
     "name": "EGA5E-NEW2-host-never-hands",
     "file": "src/scenes/egCircleHost.js",
-    "old": "-1 : band, r.given);",
-    "new": "-1 : band);",
+    "old": "-1 : band, r.given, ground.lite);",
+    "new": "-1 : band, null, ground.lite);",
     "tests": [
       "test/egaudit5_e_swap.test.js"
     ]
@@ -772,7 +772,7 @@
   {
     "name": "EGA5E-band-whole-at-first",
     "file": "src/scenes/egCircleHost.js",
-    "old": "?.size ?? 0) >= EG_DRESS_RECORDS.length;",
+    "old": "?.size ?? 0) >= EG_BAND_RECORDS.length;",
     "new": "?.size ?? 0) >= 1;",
     "tests": [
       "test/egaudit5_e_swap.test.js"

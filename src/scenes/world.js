@@ -441,7 +441,7 @@ import { createGateVeil } from '../ui/gateVeil.js';   // WB6c: the step through 
 import { gateScoreSongs, createCourtScore, GATE_SONGS, SCORE_SILENCE } from '../systems/gateScore.js';   // WB7: the Warden's score - the court's own music
 import { sdScoreSongs, createHourScore, sdScorePlace, SD_SCORE_SILENCE } from '../systems/sdScore.js';   // SD13: the Hour's own score
 import { createSpireScoreHost } from '../systems/egScore.js';   // EG-G2: the Spire's own score (Elite-Gates.md section 26)
-import { EG_HALL_FOG } from '../world/egHall.js';   // EG-G2: the Spire's haze, its sky's gain
+import { egHallFog } from '../world/egHall.js';   // EG-G2: the Spire's haze, its sky's gain (EG-LOOK: its band's own)
 import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_TEXT, SPOILS_SPENT_RESEND_MS } from './spoilsPool.js';
 import { breachBookFor, BREACH_BOOK_TEXT } from '../systems/breachBook.js';   // WB12c: the first ember brings the Guild's book
 import { bossPlace } from '../world/gateBoss.js';   // AUDIT WBX F3: where he fell - a charge's head, a leap's flight - frozen by the link's fold   // WB5: a fallen boss's spoils, spewed, glowing and taken
@@ -30959,7 +30959,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     egBatches: () => egClient?.batches() ?? [],   // EG-PLAY: the hall's bodies and the way home's portal
     egLights: () => { _egLightList.length = 0; for (const L of egClient?.lights() ?? NO_EG_LIGHTS) _egLightList.push(L); for (const L of sdSpoilsPool?.lights() ?? NO_EG_LIGHTS) _egLightList.push(L); return _egLightList; },   // EG-PLAY: the fight's glows, before the Spire's lamps; EG-E: and a Redoubt's spoils' - AUDIT EG III (lane4 #10): one list refilled a frame
     drawEgFight: ({ proj, view, eye }) => { const t = performance.now() / 1000, fog = courtFogNow(); const a = !!egClient?.drawPass(proj, view, eye, t, fog), b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); if (a || b) renderer.markForeignPass(); },   // EG-PLAY: the telegraphs, vents and rifts; EG-E: a Redoubt's spoils' lines
-    drawEgSky: ({ proj, view, eye }) => { if (egClient?.drawSky(proj, view, eye, deadlandsSeconds(), courtFogNow(), skyGain(renderer._fogColor, EG_HALL_FOG.color))) renderer.markForeignPass(); },   // EG-G2: the Spire's own sky (render/egSkyPass.js) - the band's void, the Spire's underside
+    drawEgSky: ({ proj, view, eye }) => { if (egClient?.drawSky(proj, view, eye, deadlandsSeconds(), courtFogNow(), skyGain(renderer._fogColor, egHallFog(modes?.egHallCircle?.()).color))) renderer.markForeignPass(); },   // EG-G2: the Spire's own sky (render/egSkyPass.js) - the band's void, the Spire's underside
     egWayHome: () => egClient?.wayHome(),   // EG-PLAY: a Redoubt's way home, pressed
     egCastBack: () => egClient?.castBack(),   // EG-PLAY: the void's cost
     egWitness: () => !!egClient?.witnessing(),   // AUDIT EG III (lane4 #1, lane6 #1): a witness's body, held under the hall - the spans never cast it back, the dither pass tries nothing for it

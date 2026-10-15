@@ -23,10 +23,11 @@ import { realmArt } from '../src/world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
 import { egBandOfCircle, egSpecGive } from '../src/net/egLaw.js';   // EG-G2 (merged): the band's dress and the waystones go up with a swapped circle; AUDIT EG V (L6-8): the built circle's halls taken as given
-import { egBandArt, egBandArchive, EG_DRESS_RECORDS, EG_BEAT_TELL_RECORDS } from '../src/world/egBandArt.js';
+import { egBandArt, egBandArchive, EG_DRESS_RECORDS, EG_BEAT_TELL_RECORDS, EG_BAND_RECORDS } from '../src/world/egBandArt.js';
 import { createEgOccluders } from '../src/scenes/egOcclude.js';   // EG-ZN: the circle's occluders' dither pass, in the stand's own source
 import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
+import { createEgGroundLook } from '../src/scenes/egGroundLook.js';   // EG-LOOK: the circle's ruin and its band's wreck, stood with it
 
 const SEED = 0x5eed1234;
 const B = '0123456789abcdef';
@@ -163,9 +164,9 @@ function swapRig({ workerFactory = () => syncWorker() } = {}) {
   const host = { egGateOpen: () => false };
   // PIN MOVED (EG-ZN): the circle's occluders' dither pass stands in the same source (scenes/egOcclude.js), and the band
   // dress's records it frees at the breach's end
-  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'egSpecGive', 'getState',
+  const wm = new Function('createEgGroundLook', 'host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_BAND_RECORDS', 'egSpecGive', 'getState',
     `let mode = 'dungeon', dungeonLoc = getState().loc, dungeonCtx = getState().ctx;\nconst wm = { get mode() { return mode; }, get dungeonLoc() { return dungeonLoc; }, get dungeonCtx() { return dungeonCtx; } };\n${wmSrc.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap(getState().swapDeps);')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egGatesFrame, set mode(m) { mode = m; }, get lamps() { return _egLamps; }, get gates() { return _egGates; }, get meshKey() { return _egMeshKey; }, egSwap };`)(
-    host, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, egSpecGive,
+    createEgGroundLook, host, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_BAND_RECORDS, egSpecGive,
     () => ({ loc, ctx, swapDeps: { workerFactory } }));
   const body = { pos: realmToDungeon(0, 0.05, 1.5), grounded: true, height: 1.8 };
   const count = () => ({ live: live.size, buckets: [...collider._buckets.keys()].sort(), draws: dynamicDraws.length, hallTris: collider._buckets.get('eg:hall')?.tris.length ?? 0 });
@@ -193,7 +194,7 @@ test('EG10 THE SWAP IN PLACE, EXECUTED - THE FREE PINS (scenes/worldModes.js egS
   for (let c = 2; c <= 21; c++) {
     // PIN MOVED (AUDIT EG V, e: L6-9, L6-8 - the rest's frames put up the new band's dress a record a frame and take the
     // new circle's halls a hall a frame; the rest is many frames, so a prebuild a frame of it)
-    for (let k = 0; k < EG_DRESS_RECORDS.length + 5; k++) assert.equal(R.wm.egPrebuild({ ...eh, c }), 'ready', 'built during the rest (the worker answered)');
+    for (let k = 0; k < EG_BAND_RECORDS.length + 5; k++) assert.equal(R.wm.egPrebuild({ ...eh, c }), 'ready', 'built during the rest (the worker answered)');
     const t0 = R.textures;
     assert.equal(R.wm.egSwapCircle({ ...eh, c }), true, `circle ${c} stood in place`);
     assert.equal(R.textures, t0, 'no texture uploaded by a swap - a new band\'s dress went up while the Court rested (EG-G2, merged)');

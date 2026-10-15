@@ -17,11 +17,12 @@ import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts }
 import { realmArt } from '../src/world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
-import { egBandArt, egBandArchive, EG_DRESS_RECORDS } from '../src/world/egBandArt.js';
+import { egBandArt, egBandArchive, EG_DRESS_RECORDS, EG_BAND_RECORDS } from '../src/world/egBandArt.js';
 import { createEgOccluders } from '../src/scenes/egOcclude.js';
 import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
 import { egBeatTellDown } from '../src/scenes/egSpan.js';
+import { createEgGroundLook } from '../src/scenes/egGroundLook.js';   // EG-LOOK: the circle's ruin and its band's wreck, stood with it
 
 const SEED = 0x5eed1234, B = '0123456789abcdef';
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -62,9 +63,9 @@ function rig(workerFactory) {
   const st = { loc: { egBreach: B, egSeed: SEED, egCircle: 4, egGeo: 0 }, worker: workerFactory };
   const paintSpy = (band) => { painted.push(band); return egBandArt(band); };
   const giveSpy = (s) => { given.push(s.h); return egSpecGive(s); };
-  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'egBeatTellDown', 'egSpecGive', 'st',
+  const wm = new Function('createEgGroundLook', 'host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_BAND_RECORDS', 'egBeatTellDown', 'egSpecGive', 'st',
     `let mode = 'dungeon', dungeonLoc = st.loc, dungeonCtx = null;\nconst wm = { get mode() { return mode; }, get dungeonLoc() { return dungeonLoc; }, get dungeonCtx() { return dungeonCtx; } };\n${src.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, set ctx(c) { dungeonCtx = c; }, set mode(m) { mode = m; } };`)(
-    { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, paintSpy, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, egBeatTellDown, giveSpy, st);
+    createEgGroundLook, { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, paintSpy, egBandArchive, buildEgLookModel, createEgOccluders, EG_BAND_RECORDS, egBeatTellDown, giveSpy, st);
   const ctx = { dynamicDraws: [], collider: new Collider(() => -Infinity), addActivationNamer() {}, addTeardown() {}, egRecircle() {} };
   wm.ctx = ctx;
   return { wm, ctx, ups, painted, given, st };
@@ -78,7 +79,7 @@ test('AUDIT EG V L6-8, L6-9 THE WORKER\'S BUILD (world/egCircleParts.js egCircle
   assert.equal(m.key, plain.key);
   assert.deepEqual(m.lamps, plain.lamps);
   assert.deepEqual(m.specs.map((s) => JSON.stringify(s)), egCircleSpecs(SEED, c, 0).map((s) => JSON.stringify(s)), 'its five halls, the law\'s own');
-  assert.deepEqual(m.art.map(([rec]) => rec), [...EG_DRESS_RECORDS], 'every record of the dress');
+  assert.deepEqual(m.art.map(([rec]) => rec), [...EG_BAND_RECORDS], 'every record of the dress');
   assert.deepEqual(m.art.map(([, a]) => [...a.albedo.colors.slice(0, 64)]), egBandArt(band).map(([, a]) => [...a.albedo.colors.slice(0, 64)]), 'the band\'s own');
   assert.equal(egCircleBuild({ seed: SEED, c, geo: 0 }).art, null, 'no band asked: no dress');
   const bufs = new Set(egCirclePartsTransfers(m));
@@ -89,7 +90,7 @@ test('AUDIT EG V L6-8, L6-9 THE WORKER\'S BUILD (world/egCircleParts.js egCircle
     w.onmessage = (ev) => got.push(ev.data);
     w.postMessage({ t: 'build', id: 3, seed: SEED, c, geo: 0, band });
     assert.equal(got.length, 1);
-    assert.deepEqual([got[0].t, got[0].id, got[0].parts.specs.length, got[0].parts.art.length], ['built', 3, 5, EG_DRESS_RECORDS.length]);
+    assert.deepEqual([got[0].t, got[0].id, got[0].parts.specs.length, got[0].parts.art.length], ['built', 3, 5, EG_BAND_RECORDS.length]);
   } finally { W.restore(); }
 });
 
@@ -134,12 +135,12 @@ test('AUDIT EG V L6-9 THE NEXT BAND\'S DRESS, PAINTED IN THE WORKER AND PUT UP A
   try {
     const R = rig(W.factory), band1 = egBandOfCircle(6);
     R.wm.standEgHall(R.ctx, eh(5));
-    assert.equal(bandUps(R.ups, egBandOfCircle(5)), EG_DRESS_RECORDS.length, 'the standing circle\'s band at its stand');
+    assert.equal(bandUps(R.ups, egBandOfCircle(5)), EG_BAND_RECORDS.length, 'the standing circle\'s band at its stand');
     R.painted.length = 0;
     const per = [];
-    for (let k = 0; k < EG_DRESS_RECORDS.length; k++) { const n0 = R.ups.length; assert.equal(R.wm.egPrebuild(eh(6)), 'ready'); per.push(R.ups.length - n0); }
-    assert.deepEqual(per, EG_DRESS_RECORDS.map(() => 1), 'a record a rest frame');
-    assert.equal(bandUps(R.ups, band1), EG_DRESS_RECORDS.length, 'the next band whole');
+    for (let k = 0; k < EG_BAND_RECORDS.length; k++) { const n0 = R.ups.length; assert.equal(R.wm.egPrebuild(eh(6)), 'ready'); per.push(R.ups.length - n0); }
+    assert.deepEqual(per, EG_BAND_RECORDS.map(() => 1), 'a record a rest frame');
+    assert.equal(bandUps(R.ups, band1), EG_BAND_RECORDS.length, 'the next band whole');
     assert.deepEqual(R.painted, [], 'none of it painted on this thread');
     const n1 = R.ups.length;
     assert.equal(R.wm.egSwapCircle(eh(6)), true);
@@ -155,7 +156,7 @@ test('AUDIT EG V L6-9 THE NEXT BAND\'S DRESS, PAINTED IN THE WORKER AND PUT UP A
     assert.equal(R.wm.egPrebuild(eh(11)), 'ready');
     assert.equal(bandUps(R.ups, band2) - u0, 2);
     assert.equal(R.wm.egSwapCircle(eh(11)), true);
-    assert.equal(bandUps(R.ups, band2) - u0, EG_DRESS_RECORDS.length, 'the swap put up the rest of it');
+    assert.equal(bandUps(R.ups, band2) - u0, EG_BAND_RECORDS.length, 'the swap put up the rest of it');
     assert.deepEqual(R.painted, [], 'and painted none');
     // a rest cut short and no swap in place (the old step): the stand puts up what is left of it, each record once
     R.wm.standEgHall(R.ctx, eh(15));
@@ -163,7 +164,7 @@ test('AUDIT EG V L6-9 THE NEXT BAND\'S DRESS, PAINTED IN THE WORKER AND PUT UP A
     assert.equal(R.wm.egPrebuild(eh(16)), 'ready');
     assert.equal(R.wm.egPrebuild(eh(16)), 'ready');
     R.wm.standEgHall(R.ctx, eh(16));
-    assert.equal(bandUps(R.ups, band3) - u1, EG_DRESS_RECORDS.length, 'the stand put up the rest of it, none twice');
+    assert.equal(bandUps(R.ups, band3) - u1, EG_BAND_RECORDS.length, 'the stand put up the rest of it, none twice');
     assert.deepEqual(R.painted, [band3], 'painted here, under the veil');
   } finally { W.restore(); }
   // no worker: nothing painted in the rest; the old step's stand paints it under the veil

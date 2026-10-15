@@ -22,7 +22,7 @@ import {
   egFallDepth, egFallPitch, egFallEye, egFallCamera,
 } from '../src/world/egUnderside.js';
 import { createMeshKit } from '../src/world/meshKit.js';
-import { EG_DRESS, EG_DRESS_RECORDS, egBandArt, egBandArtOf, egBandArchive } from '../src/world/egBandArt.js';
+import { EG_DRESS, egBandArt, egBandArtOf, egBandArchive, EG_BAND_RECORDS } from '../src/world/egBandArt.js';
 import { EG_STAIR_FS, EG_UNDERSIDE_FS, EG_STAIR_MODE, EG_STAIR_LOOK, EG_UNDERSIDE_LOOK, EG_MOON, EG_VOID_GLSL, EgStairRenderer } from '../src/render/egStairPass.js';
 import { sdSkyBasisInto } from '../src/render/sdSky.js';
 import { lookAtInto, perspectiveInto } from '../src/render/shadowPass.js';
@@ -185,9 +185,9 @@ test('EG-ZO THE SLICES AND THE PICTURES (world/egUnderside.js egUndersideParts, 
     for (const [rec, art] of parts.art) assert.deepEqual([...art.albedo.colors], [...dress.get(rec).albedo.colors], `band ${b} record ${rec}: the band's own picture`);
   }
   assert.ok(!EG_UNDERSIDE_RECORDS.includes(EG_DRESS.cobble), 'the walkways\' tesserae never painted for a fall');
-  assert.deepEqual(egBandArt(2).map((a) => a[0]), [...EG_DRESS_RECORDS], 'the whole dress, every record once, in its order');
-  for (const rec of EG_DRESS_RECORDS) assert.deepEqual([...egBandArtOf(1, rec)[1].albedo.colors], [...new Map(egBandArt(1)).get(rec).albedo.colors]);
-  assert.throws(() => egBandArtOf(0, 81), /no record 81/);
+  assert.deepEqual(egBandArt(2).map((a) => a[0]), [...EG_BAND_RECORDS], 'the whole dress, every record once, in its order');
+  for (const rec of EG_BAND_RECORDS) assert.deepEqual([...egBandArtOf(1, rec)[1].albedo.colors], [...new Map(egBandArt(1)).get(rec).albedo.colors]);
+  assert.throws(() => egBandArtOf(0, 82), /no record 82/);   // PIN MOVED (EG-LOOK): 81 is the kit's chain now (world/egKit.js)
   assert.equal(egBandArtOf(9, EG_DRESS.floor)[1].albedo.width, egBandArtOf(3, EG_DRESS.floor)[1].albedo.width, 'the band clamped');
   assert.deepEqual([...egBandArtOf(9, EG_DRESS.root)[1].albedo.colors], [...egBandArtOf(3, EG_DRESS.root)[1].albedo.colors]);
 });

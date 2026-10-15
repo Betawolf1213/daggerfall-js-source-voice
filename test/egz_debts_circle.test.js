@@ -15,11 +15,12 @@ import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts }
 import { realmArt } from '../src/world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
-import { egBandArt, egBandArchive, EG_DRESS_RECORDS } from '../src/world/egBandArt.js';
+import { egBandArt, egBandArchive, EG_DRESS_RECORDS, EG_BAND_RECORDS } from '../src/world/egBandArt.js';
 import { createEgOccluders } from '../src/scenes/egOcclude.js';
 import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
 import { egBeatTellDown } from '../src/scenes/egSpan.js';   // AUDIT EG III (lane4 #4): the band dress's owner frees the Beats' pictures too
+import { createEgGroundLook } from '../src/scenes/egGroundLook.js';   // EG-LOOK: the circle's ruin and its band's wreck, stood with it
 
 const SEED = 12345;
 const B = '0123456789abcdef';
@@ -59,10 +60,10 @@ function rig() {
     releaseTexture: (a, r) => { log.push(['tex', `${a}_${r}`]); return true; }, evictEmissionTexture: (k) => { log.push(['glow', k]); return true; },
   };
   const st = { loc: { egBreach: B, egSeed: SEED, egCircle: 4, egGeo: 0 } };
-  wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'egBeatTellDown', 'egSpecGive', 'st',
+  wm = new Function('createEgGroundLook', 'host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_BAND_RECORDS', 'egBeatTellDown', 'egSpecGive', 'st',
     `let mode = 'dungeon', dungeonLoc = st.loc, dungeonCtx = null;\nconst wm = { get mode() { return mode; }, get dungeonLoc() { return dungeonLoc; }, get dungeonCtx() { return dungeonCtx; } };\n${src.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, egCircleDown, egOcc, set ctx(c) { dungeonCtx = c; }, set mode(m) { mode = m; },
       get mesh() { return _egMesh; }, get look() { return _egLookMesh; }, get gates() { return _egGates; }, get lamps() { return _egLamps; }, get key() { return _egMeshKey; }, get draw() { return _egDraw; } };`)(
-    { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, egBeatTellDown, egSpecGive,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress
+    createEgGroundLook, { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_BAND_RECORDS, egBeatTellDown, egSpecGive,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress
     Object.assign(st, { worker: syncWorker }));
   return { wm, st, live, log, get made() { return made; }, get twice() { return twice; }, get heldAtFree() { return heldAtFree; } };
 }
@@ -95,7 +96,7 @@ test('EG-ZP THE CIRCLE LET GO WITH ITS CONTEXT (scenes/worldModes.js egCircleDow
   assert.equal(R.log.length, freed);
   // and only then the dress it wore
   const n = R.wm.egBandsDown();
-  assert.equal(n, EG_DRESS_RECORDS.length * 2, 'the band dress freed at the breach\'s end');
+  assert.equal(n, EG_BAND_RECORDS.length * 2, 'the band dress freed at the breach\'s end');
   const lastMesh = R.log.map((e) => e[0]).lastIndexOf('mesh'), firstTex = R.log.findIndex((e) => e[0] !== 'mesh');
   assert.ok(lastMesh >= 0 && firstTex > lastMesh, 'the circle before its dress');
 });

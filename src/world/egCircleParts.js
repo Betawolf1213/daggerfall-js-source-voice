@@ -12,6 +12,8 @@
 import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts } from './egHall.js';
 import { egCircleSpecs, egSpecGive } from '../net/egLaw.js';
 import { egBandArt } from './egBandArt.js';
+import { buildEgRuinParts } from './egRuin.js';   // EG-LOOK (Elite-Gates-Look.md section 3): THE RUIN, a mesh a hall
+import { buildEgVista } from './egVista.js';   // EG-LOOK (section 4): THE WRECK, a band's
 
 /** The circle a build is for: its breach's seed, its number and its ground (the span decrees' `geo`) - the mode
  *  machine's own key for the level it stands (scenes/worldModes.js standEgHall). */
@@ -37,13 +39,16 @@ export function egCircleParts(seed, c, geo = 0) {
  * dress painted (`art` - world/egBandArt.js egBandArt's `[record, { albedo, emission }]`, put up a record a frame of the
  * Court's rest - scenes/worldModes.js egPrebuild). AUDIT EG V (E NEW-2; section 22, THE LAW PIN): `given` - a breach of
  * another law's halls as its room gave them - taken as given first (net/egLaw.js egSpecGive), so the worker builds that
- * breach's own circle: its module holds no hall the page was given. Pure but for the halls given.
- * @param {{ seed: number, c: number, geo?: number, band?: number, given?: any[] | null }} m
+ * breach's own circle: its module holds no hall the page was given. Pure but for the halls given. EG-LOOK (Elite-Gates-
+ * Look.md sections 3 and 4): and THE RUIN (`ruins` - world/egRuin.js, a mesh a hall) and, with the band's dress, THE WRECK
+ * (`vista` - world/egVista.js), at the phones' tier when `lite`.
+ * @param {{ seed: number, c: number, geo?: number, band?: number, given?: any[] | null, lite?: boolean }} m
  */
 export function egCircleBuild(m) {
   for (const s of Array.isArray(m.given) ? m.given : []) egSpecGive(s);
   const geo = m.geo ?? 0, band = Number.isInteger(m.band) && m.band >= 0 && m.band <= 3 ? m.band : -1;
-  return { ...egCircleParts(m.seed, m.c, geo), specs: egCircleSpecs(m.seed, m.c, geo), art: band >= 0 ? egBandArt(band) : null };
+  const lite = !!m.lite;
+  return { ...egCircleParts(m.seed, m.c, geo), specs: egCircleSpecs(m.seed, m.c, geo), art: band >= 0 ? egBandArt(band) : null, ruins: buildEgRuinParts(m.seed, m.c, geo, { lite }), vista: band >= 0 ? buildEgVista(band, { lite }) : null };
 }
 /** Every buffer a built circle carries - what its worker hands over rather than copies (AUDIT EG V L6-9: its band's
  *  dress's pixels too). */
@@ -54,5 +59,8 @@ export function egCirclePartsTransfers(parts) {
   model(parts?.model); take(parts?.tris);
   for (const g of parts?.gates ?? []) { model(g.model); take(g.tris); }
   for (const [, art] of parts?.art ?? []) { take(art?.albedo?.colors); take(art?.emission?.colors); }
+  for (const r of parts?.ruins ?? []) model(r.model);   // EG-LOOK: the ruin's meshes and the wreck's
+  for (const w of parts?.vista?.wings ?? []) model(w.model);
+  model(parts?.vista?.under?.model);
   return [...out];
 }

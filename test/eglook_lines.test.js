@@ -28,6 +28,7 @@ import { breathSeen } from '../src/world/sdSteps.js';
 import { egMistAt } from '../src/net/egFragLaw.js';
 import { egLookShapes, fillStamp } from '../src/scenes/egFight.js';
 import { EG_BAND_ARCHIVES } from '../src/world/pseudoArchives.js';
+import { EG_ATMOS } from '../src/world/egAtmos.js';   // EG-LOOK: each band's own air
 // MERGED WITH EG-G1: the palettes and the fill are the shelf's (ui/egAccess.js) - one home, read here
 import { EG_DANGER_PALETTES, egPaletteOf, egFillOf } from '../src/ui/egAccess.js';
 
@@ -252,25 +253,28 @@ test('EG-G2 THE DANGER PALETTES, THE FILL AND THE QUIET COMPANY (sections 25.4 a
 
 test('EG-G2 THE LAB CHECK (section 25.2): the danger edge against the magma and against a burning pool, a haven against a danger fill, the place\'s white against solid gold and against the gone - each pair told apart (CIE ΔE at least 12) at 10 m and 30 m of every band\'s fog, in colour, and under deuteranopia, protanopia and tritanopia with the palette meant for it; in ?grey the white against the danger edge by luminance alone; the colour-blind presets separate under their own simulation where the Standard\'s red against gold would not (mutants: the deutan preset\'s safety moved onto its edge; the floor dropped from the fog)', () => {
   const magma = [1.0, 0.47, 0.12], pool = [0.45, 0.18, 0.06], fill = [0.4, 0.08, 0.06], gone = [0.01, 0.01, 0.012];
-  const fogs = [EG_HALL_FOG.color, [0.16, 0.15, 0.22], [0.03, 0.032, 0.05], [0.3, 0.07, 0.02]];
+  // PIN MOVED (EG-LOOK, Elite-Gates-Look.md section 7): each band's own fog, its colour at its own density (world/egAtmos.js),
+  // then the old stresses at the Galleries' - [colour, density]
+  const fogs = [...EG_ATMOS.map((a) => [a.fog.color, a.fog.density]), ...[[0.16, 0.15, 0.22], [0.03, 0.032, 0.05], [0.3, 0.07, 0.02]].map((c) => [c, EG_HALL_FOG_DENSITY])];
   const pairs = (P) => [['edge/magma', P.danger, magma], ['edge/pool', P.danger, pool], ['haven/fill', P.safety, fill], ['white/gold', P.hazard, P.safety], ['white/gone', P.hazard, gone]];
   const views = { standard: [null], contrast: [null], deutan: ['deutan', 'protan'], tritan: ['tritan'] };
   for (const [name, hows] of Object.entries(views)) {
     const P = EG_DANGER_PALETTES[name];
-    for (const fog of fogs) for (const d of [10, 30]) for (const how of hows) for (const [what, a, b] of pairs(P)) {
+    for (const [fog, rho] of fogs) for (const d of [10, 30]) for (const how of hows) for (const [what, a, b] of pairs(P)) {
       if (name === 'standard' && what === 'edge/magma') continue;   // the Standard's: THE SPIRE DANGER EDGE against the Hour's magma is the next check's
-      const A = egSeen(egThroughFog(a, d, EG_HALL_FOG_DENSITY, fog, true), how), B = egSeen(egThroughFog(b, d, EG_HALL_FOG_DENSITY, fog, true), how);
+      const A = egSeen(egThroughFog(a, d, rho, fog, true), how), B = egSeen(egThroughFog(b, d, rho, fog, true), how);
       assert.ok(egDeltaE(A, B) >= EG_LAB.deltaE, `${name} ${how ?? 'colour'} ${what} at ${d} m in fog ${fog}: ΔE ${egDeltaE(A, B).toFixed(1)}`);
     }
   }
   // the Standard: the crimson edge against the molten orange the Galleries\' and the Wellhead's magma wears, in colour
-  for (const d of [10, 30]) assert.ok(egDeltaE(egThroughFog(EG_DANGER_PALETTES.standard.danger, d, EG_HALL_FOG_DENSITY, fogs[0], true), egThroughFog(magma, d, EG_HALL_FOG_DENSITY, fogs[0], true)) >= EG_LAB.deltaE, 'crimson is never the magma\'s orange');
+  for (const [fog, rho] of [fogs[0], fogs[3]]) for (const d of [10, 30]) assert.ok(egDeltaE(egThroughFog(EG_DANGER_PALETTES.standard.danger, d, rho, fog, true), egThroughFog(magma, d, rho, fog, true)) >= EG_LAB.deltaE, 'crimson is never the magma\'s orange');   // the Galleries' fog and the Wellhead's
   // ?grey: the place's white against the danger edge by luminance alone
-  for (const d of [10, 30]) { const a = egLab(egSeen(egThroughFog(EG_DANGER_PALETTES.standard.hazard, d, EG_HALL_FOG_DENSITY, fogs[2], true), 'grey')), b = egLab(egSeen(egThroughFog(EG_DANGER_PALETTES.standard.danger, d, EG_HALL_FOG_DENSITY, fogs[2], true), 'grey')); assert.ok(Math.abs(a[0] - b[0]) >= EG_LAB.greyL, `grey at ${d} m`); }
+  const [shade, shadeRho] = fogs[2];   // the Shade's near-black
+  for (const d of [10, 30]) { const a = egLab(egSeen(egThroughFog(EG_DANGER_PALETTES.standard.hazard, d, shadeRho, shade, true), 'grey')), b = egLab(egSeen(egThroughFog(EG_DANGER_PALETTES.standard.danger, d, shadeRho, shade, true), 'grey')); assert.ok(Math.abs(a[0] - b[0]) >= EG_LAB.greyL, `grey at ${d} m`); }
   // the presets earn their place: under deuteranopia the Standard's haven against its edge reads closer than the deutan preset's
   const std = EG_DANGER_PALETTES.standard, du = EG_DANGER_PALETTES.deutan;
   assert.ok(egDeltaE(egSeen(du.safety, 'deutan'), egSeen(du.danger, 'deutan')) > egDeltaE(egSeen(std.safety, 'deutan'), egSeen(std.danger, 'deutan')) + 10, 'the deutan preset separates where the Standard does not');
   // the floor matters: without it, the Shade's fog at 30 m brings the white and the gone together
-  const noFloor = egDeltaE(egThroughFog(std.hazard, 30, 0.08, fogs[2], false), egThroughFog(gone, 30, 0.08, fogs[2], false)), floor = egDeltaE(egThroughFog(std.hazard, 30, 0.08, fogs[2], true), egThroughFog(gone, 30, 0.08, fogs[2], true));
+  const noFloor = egDeltaE(egThroughFog(std.hazard, 30, 0.08, shade, false), egThroughFog(gone, 30, 0.08, shade, false)), floor = egDeltaE(egThroughFog(std.hazard, 30, 0.08, shade, true), egThroughFog(gone, 30, 0.08, shade, true));
   assert.ok(floor > noFloor * 2, `the fog floor keeps the read: ${floor.toFixed(1)} against ${noFloor.toFixed(1)}`);
 });

@@ -119,7 +119,7 @@ import { applyFog, DUNGEON_FOG } from '../render/underwaterFog.js';
 import { gateArenaLocation, gateArenaBlocks, isGateArena, buildCourtModel, buildWalkSlabModel, walkSlabs, slabMatrix, courtFloorTris, courtLightsNear, withCourtLights, courtDoorAabb, COURT_ARCHIVE, COURT_FOG, COURT_TEXT } from '../world/gateArena.js';   // WB3b: the Burning Court - a level made in code on this host's dungeon arm
 import { isSdRealm, sdRealmLocation, sdRealmBlocks, buildRealmModel, realmColliderTris, realmLightsWith, realmLighting, SD_REALM_ARCHIVE, SD_REALM_FOG } from '../world/sdRealm.js';   // SD5a: the Shattered Hour, a made level as the court is
 import { realmArt } from '../world/sdRealmArt.js';   // SD5a: its art, made in code
-import { isEgHall, egHallLocation, egHallBlocks, egLightsWith, egHallLighting, EG_HALL_FOG } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle, a made level as the Hour is
+import { isEgHall, egHallLocation, egHallBlocks, egLightsWith, egHallLighting, egHallFog, egHallGrade } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle, a made level as the Hour is
 import { egRoomKey } from '../net/egLaw.js';   // EG-PLAY: its room, its halls, its words
 import { createEgCircleHost } from './egCircleHost.js';   // HOST-SPLIT (EG-LOOK): an Elite Breach's circle on this screen, moved out of this host
 import { EG_OCCLUDE_CHEST_M } from './egOcclude.js';   // EG-ZN (section 11.8): the occluders between the camera and the body dithered out
@@ -9573,7 +9573,7 @@ export function createWorldModes(host) {
   /** EG-PLAY: AN ELITE BREACH'S CIRCLE on this screen - its mesh, its band's dress, its waystones, its portcullises, its
    *  occluders and THE SWAP (scenes/egCircleHost.js - HOST-SPLIT, EG-LOOK: moved out of this host, its seams read here). */
   const egCircle = createEgCircleHost({ renderer, host, wm: { get mode() { return mode; }, get dungeonCtx() { return dungeonCtx; }, get dungeonLoc() { return dungeonLoc; } } });
-  const { standEgHall, egGatesFrame, egPrebuild, egSwapCircle, egBandsDown, egOcc, egSwap } = egCircle;
+  const { standEgHall, egCircleFrame, egPrebuild, egSwapCircle, egBandsDown, egOcc, egSwap } = egCircle;
   /** EG-ZN (2026-10-12, Elite-Gates.md section 11.8): THE OCCLUDERS DITHERED, this frame - after its beginFrame (the shadow
    *  record open) and before the dynamic draws: the circle's rock a ray from the third-person eye to my body (its pivot and
    *  its chest) crosses dithered out, the rest of the circle drawn whole (scenes/egOcclude.js). First person, a witness's
@@ -11011,7 +11011,7 @@ export function createWorldModes(host) {
       renderer.setIndirectLight(NO_INDIRECT_POS, 0, NO_INDIRECT_COLOR);
       if (isGateArena(dungeonLoc)) { const _cl = courtLighting(deadlandsFlash(_deadS)); const _ct = dungeonTrilight(!!renderer.lightingLane, _cl.tri); renderer.setLighting(courtEquatorOf(_ct), 0, undefined, _ct); renderer.setMoonlight(_cl.key); }   // WB6a: the court is no dungeon - lit red from the sky, orange from the fire under it, and by the vortex's fire from behind the boss (the moon's term: the one directional light a dungeon frame leaves dark); the lane's dark rides the trilight as the fog's does   // WB6b: a strike in the sky flares over it, the moment the sky draws it
       if (isSdRealm(dungeonLoc)) { const _rl = realmLighting(); const _rt = dungeonTrilight(!!renderer.lightingLane, _rl.tri, _hourTri); renderer.setLighting(courtEquatorOf(_rt), 0, undefined, _rt); renderer.setMoonlight(_rl.key); }   // SD5a: the Hour's brass light and its clock-face's key, the court's way
-      if (isEgHall(dungeonLoc)) { const _el = egHallLighting(); const _et = dungeonTrilight(!!renderer.lightingLane, _el.tri, _hourTri); renderer.setLighting(courtEquatorOf(_et), 0, undefined, _et); renderer.setMoonlight(_el.key); }   // EG-PLAY: the Spire's light, the Hour's way
+      if (isEgHall(dungeonLoc)) { const _el = egHallLighting(dungeonLoc.egCircle); const _et = dungeonTrilight(!!renderer.lightingLane, _el.tri, _hourTri); renderer.setLighting(courtEquatorOf(_et), 0, undefined, _et); renderer.setMoonlight(_el.key); }   // EG-PLAY: the Spire's light, the Hour's way
       if (isArenaFloor(dungeonLoc)) renderer.setLighting(new Float32Array(ARENA_FLOOR_AMBIENT), 0);   // ARENA2: an open sky over the sand at the torches' hour - the stands seen across it, not a dungeon's dark
       // AUDIT 26 F001: a dungeon mesh is textured by SetDungeonTextures
       // (DaggerfallMesh.cs:153-169), which calls GetMaterial with NO
@@ -11031,7 +11031,7 @@ export function createWorldModes(host) {
       { const _fog = dungeonFog(!!renderer.lightingLane, betterAmbience.dungeonFog() ?? DUNGEON_FOG); applyFog(renderer, dungeonCtx.underwaterFogSettings?.(cam.pos[1], player.pos, _fog) ?? _fog); }
       if (isArenaFloor(dungeonLoc)) applyFog(renderer, dungeonFog(!!renderer.lightingLane, ARENA_FLOOR_FOG));   // ARENA2: the night air over the colosseum, thin enough to see the far tiers
       if (isSdRealm(dungeonLoc)) { applyFog(renderer, dungeonFog(!!renderer.lightingLane, SD_REALM_FOG, _hourFog), _hourFogColor); renderer.setSceneGrade?.(SD_HOUR_GRADE); }   // SD5a: the Hour's brass haze over the dungeon's; SD-LOOK: and its grade - the eye held down, the void black   // AUDIT SD IV (R5): into kept ones, nothing made
-      if (isEgHall(dungeonLoc)) { applyFog(renderer, dungeonFog(!!renderer.lightingLane, EG_HALL_FOG, _hourFog), _hourFogColor); renderer.setSceneGrade?.(SD_HOUR_GRADE); egGatesFrame(); }   // EG-PLAY: the Spire's haze and the Hour's grade; its portcullises stood or sunk
+      if (isEgHall(dungeonLoc)) { applyFog(renderer, dungeonFog(!!renderer.lightingLane, egHallFog(dungeonLoc.egCircle), _hourFog), _hourFogColor); renderer.setSceneGrade?.(egHallGrade(dungeonLoc.egCircle)); egCircleFrame(mwv.eye); }   // EG-PLAY: the Spire's haze; EG-LOOK: its band's own haze and grade (world/egAtmos.js); its portcullises stood or sunk, its ruin and wreck placed about the eye (scenes/egCircleHost.js)
       if (isGateArena(dungeonLoc)) applyFog(renderer, dungeonFog(!!renderer.lightingLane, COURT_FOG));   // WB3b: the Deadlands' air in the court, over the dungeon's   // AUDIT-EL F6   // BA1: FoggyDungeons' linear fog is the base the water murk overrides
       // AUDIT DISC19: THE CANDLE BURNS WHITE UNDERGROUND TOO. One shared
       // colour lit every light down here - the dungeon's 0.8, or the lane's

@@ -436,8 +436,8 @@
   {
     "name": "EGZP-count-unsaid",
     "file": "src/scenes/egCircleHost.js",
-    "old": "    return gone.size;\n  }\n  /** EG-ZN (section 29",
-    "new": "    return 0;\n  }\n  /** EG-ZN (section 29",
+    "old": "    return gone.size + ground.down(ctx.dynamicDraws);",
+    "new": "    return 0 + ground.down(ctx.dynamicDraws);",
     "tests": [
       "test/egz_debts_circle.test.js"
     ]

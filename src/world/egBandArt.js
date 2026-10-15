@@ -47,11 +47,17 @@ import { beatArt, SD_STEPS_RECORD, SD_BEAT_EMBER_FRAME, SD_STEPS_ATLAS, SD_STEP_
 import { SD_BEAT_DISSOLVE } from './sdStepsModel.js';
 import { SD_BEAT_SIZE } from './sdSteps.js';
 import { EG_DANGER_PALETTE_KEYS, egPaletteOf } from '../ui/egAccess.js';
+import { EG_KIT_RECORD, EG_KIT_RECORDS } from './egKit.js';   // EG-LOOK (Elite-Gates-Look.md section 8): the kit's records
 
 /** THE RECORDS each band paints (the Hour's own numbers - world/sdRealm.js - and the liquid's new 33). */
 export const EG_DRESS = Object.freeze({ floor: 0, brass: 1, root: 2, arena: 4, cobble: 31, edge: 32, molten: 33, pillar: 56 });
 /** @type {ReadonlyArray<number>} */
 export const EG_DRESS_RECORDS = Object.freeze(Object.values(EG_DRESS));
+/** EG-LOOK (Elite-Gates-Look.md section 8): EVERY RECORD A BAND PAINTS - the ground's (EG_DRESS_RECORDS, the ones a built
+ *  model's Hour-archive faces move onto - egBandDress) and the kit's (world/egKit.js EG_KIT_RECORDS: the ruin, the wreck
+ *  and the spans' pieces name them in the band's archive directly). What a band's dress puts up, holds whole and frees. */
+/** @type {ReadonlyArray<number>} */
+export const EG_BAND_RECORDS = Object.freeze([...EG_DRESS_RECORDS, ...EG_KIT_RECORDS]);
 /** The liquid's light at its brightest texel: at or under EG_MOLTEN_LUMA_MAX (section 11.9 - where magma meets a fight
  *  floor it never outshines a telegraph), never more than EG_MOLTEN_GLOW of its albedo. */
 export const EG_MOLTEN_GLOW = 0.75;
@@ -239,12 +245,16 @@ function pillarArt(band) {
 const PAINTERS = Object.freeze({
   [EG_DRESS.floor]: floorArt, [EG_DRESS.brass]: metalArt, [EG_DRESS.root]: rootArt, [EG_DRESS.arena]: arenaArt,
   [EG_DRESS.cobble]: walkArt, [EG_DRESS.edge]: edgeArt, [EG_DRESS.molten]: moltenArt, [EG_DRESS.pillar]: pillarArt,
+  // EG-LOOK (section 8): the kit's records
+  [EG_KIT_RECORD.shaft]: pillarArt, [EG_KIT_RECORD.moulding]: metalArt, [EG_KIT_RECORD.voussoir]: pillarArt, [EG_KIT_RECORD.relief]: pillarArt,
+  [EG_KIT_RECORD.banner]: arenaArt, [EG_KIT_RECORD.coffer]: rootArt, [EG_KIT_RECORD.statue]: pillarArt, [EG_KIT_RECORD.fixture]: metalArt,
+  [EG_KIT_RECORD.found]: rootArt, [EG_KIT_RECORD.wreck]: pillarArt, [EG_KIT_RECORD.crystal]: moltenArt, [EG_KIT_RECORD.chain]: metalArt,
 });
 /** Every picture band `band` (0-3) wears, by record: `[record, { albedo, emission }]` - what a host uploads under the
  *  band's archive (egBandArchive) before it draws the band's halls. Pure: the same pixels every call. */
 /** @returns {Array<[number, { albedo: import('./sdPixelKit.js').Img, emission: import('./sdPixelKit.js').Img }]>} */
 export function egBandArt(band) {
-  return EG_DRESS_RECORDS.map((rec) => egBandArtOf(band, rec));
+  return EG_BAND_RECORDS.map((rec) => egBandArtOf(band, rec));
 }
 /** EG-ZO (2026-10-12, Elite-Gates.md section 7): ONE of band `band`'s pictures, `[record, { albedo, emission }]` - painted
  *  alone, for a pass that wears a few of the band's records (the Spire's underside on the stair - world/egUnderside.js:

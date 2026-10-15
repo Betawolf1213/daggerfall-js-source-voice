@@ -54,15 +54,16 @@ export function createEgSwap({ workerFactory = undefined } = {}) {
   return {
     /** Ask for circle `c`'s level (`seed`, `geo`) - nothing if it is the one asked already; answers its state. AUDIT EG V
      *  (L6-9): `band` (0-3) has the worker paint that band's dress with it (world/egCircleParts.js egCircleBuild); -1 none.
-     *  (E NEW-2): `given` - the circle's halls as a breach of another law's room gave them, handed to the worker. */
-    want(seed, c, geo = 0, band = -1, given = null) {
+     *  (E NEW-2): `given` - the circle's halls as a breach of another law's room gave them, handed to the worker. EG-LOOK:
+     *  `lite` the phones' tier for the ruin and the wreck it builds with them. */
+    want(seed, c, geo = 0, band = -1, given = null, lite = false) {
       const key = egCircleKey(seed, c, geo), g = !!given;
       if (dead) return null;
       if (job?.key === key && job.g === g) return stateOf(key);
       const w = ensure();
       if (!w) return null;
       job = { key, id: nextId++, parts: null, g };
-      try { w.postMessage({ t: 'build', id: job.id, seed: seed >>> 0, c, geo: geo || 0, band, given: given ?? null }); } catch { fail(); return null; }
+      try { w.postMessage({ t: 'build', id: job.id, seed: seed >>> 0, c, geo: geo || 0, band, given: given ?? null, lite: !!lite }); } catch { fail(); return null; }
       return stateOf(key);   // a worker may have answered already
     },
     /** AUDIT EG V (L6-8, L6-9): the built level for that circle, read while it waits to be handed over (its specs and its
