@@ -2,8 +2,8 @@
   {
     "name": "GILDED2-a-line-over-the-band",
     "file": "src/systems/gilded.js",
-    "old": "    line('slayer', 30, 'daedra'),",
-    "new": "    line('slayer', 31, 'daedra'),",
+    "old": "    line('stat', 15, 'endurance'),",
+    "new": "    line('stat', 16, 'endurance'),",
     "tests": [
       "test/gilded2_world.test.js"
     ]
@@ -110,8 +110,8 @@
   {
     "name": "GILDED2-the-undertow-uncapped",
     "file": "src/systems/lootPowers.js",
-    "old": "case 'undertow': if (weapon) { _undertow.set(target, Math.min(p.max, (_undertow.get(target) ?? 0) + 1));",
-    "new": "case 'undertow': if (weapon) { _undertow.set(target, (_undertow.get(target) ?? 0) + 1);",
+    "old": "n: Math.min(p.max, undertowStacks(target, now) + 1)",
+    "new": "n: undertowStacks(target, now) + 1",
     "tests": [
       "test/gilded2_world.test.js"
     ]
@@ -119,8 +119,8 @@
   {
     "name": "GILDED2-one-count-for-every-foe",
     "file": "src/systems/lootPowers.js",
-    "old": "case 'undertow': pct += p.pct * (_undertow.get(target) ?? 0); break;",
-    "new": "case 'undertow': pct += p.pct * (_undertow.get(_lastUndertow?.foe ?? target) ?? 0); break;",
+    "old": "_undertow.set(target, { n: Math.min(p.max, undertowStacks(target, now) + 1)",
+    "new": "_undertow.set(weapon, { n: Math.min(p.max, undertowStacks(target, now) + 1)",
     "tests": [
       "test/gilded2_world.test.js"
     ]
@@ -128,8 +128,8 @@
   {
     "name": "GILDED2-no-tide-heal",
     "file": "src/systems/lootPowers.js",
-    "old": "{ healMine(me, (me.maxHealth * p.heal) / 100); _lastUndertow = null; }",
-    "new": "{ _lastUndertow = null; }",
+    "old": "{ healMine(me, (me.maxHealth * p.heal) / 100); _undertow.delete(foe); }",
+    "new": "{ _undertow.delete(foe); }",
     "tests": [
       "test/gilded2_world.test.js"
     ]
@@ -137,8 +137,8 @@
   {
     "name": "GILDED2-any-kill-heals",
     "file": "src/systems/lootPowers.js",
-    "old": "case 'undertow': if (_lastUndertow?.foe === foe && now - _lastUndertow.at <= TOLL_REFUND_S)",
-    "new": "case 'undertow': if (_lastUndertow)",
+    "old": "{ const u = _undertow.get(foe); if (u && now - u.at <= TOLL_REFUND_S)",
+    "new": "{ const u = { at: now }; if (u && now - u.at <= TOLL_REFUND_S)",
     "tests": [
       "test/gilded2_world.test.js"
     ]
@@ -160,6 +160,69 @@
     "tests": [
       "test/int1_itemlaw.test.js",
       "test/tech1_roster.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-no-window",
+    "file": "src/systems/lootPowers.js",
+    "old": "until: now + p.seconds, at: now",
+    "new": "until: Infinity, at: now",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-struck-one-spared",
+    "file": "src/systems/lootPowers.js",
+    "old": "  if (!(amount > 0)) return;\n  again(target, amount);\n",
+    "new": "  if (!(amount > 0)) return;\n",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-the-wards-blow-answered",
+    "file": "src/systems/lootPowers.js",
+    "old": "if (!mine(attacker) || !(damage > 0) || !target || target.isPlayer || target.warded) return;",
+    "new": "if (!mine(attacker) || !(damage > 0) || !target || target.isPlayer) return;",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-one-heal-a-swing",
+    "file": "src/systems/lootPowers.js",
+    "old": "healMine(me, (me.maxHealth * p.heal) / 100); _undertow.delete(foe); }",
+    "new": "healMine(me, (me.maxHealth * p.heal) / 100); _undertow = new WeakMap(); }",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-AUDIT-reach-past-3m",
+    "file": "src/systems/lootPowers.js",
+    "old": "case 'dragonfire': if (weapon && foeGroup(target) === p.group) dragonfire(target, (damage * p.share) / 100, p.metres, p.group);",
+    "new": "case 'dragonfire': if (weapon && foeGroup(target) === p.group) dragonfire(target, (damage * p.share) / 100, p.metres * 1.13, p.group);",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-AUDIT-the-oaths-picture-in-its-place",
+    "file": "src/scenes/spoilsPool.js",
+    "old": "record: p.tier === 'gilded' ? null : flat() }));",
+    "new": "record: flat() }));",
+    "tests": [
+      "test/gilded2_world.test.js"
+    ]
+  },
+  {
+    "name": "GILDED2-AUDIT-collections-blind-to-the-rung",
+    "file": "src/ui/collectionsPage.js",
+    "old": "  for (const r of codexGilded()) gilded.append(...codexLine(el, r, rerender));\n",
+    "new": "",
+    "tests": [
+      "test/auditcards5_ui.test.js"
     ]
   }
 ]

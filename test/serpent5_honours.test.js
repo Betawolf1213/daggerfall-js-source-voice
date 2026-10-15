@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { d1 } from './accountDb.mjs';
+import { d1, standService } from './accountDb.mjs';
 import { createGuest } from '../server-account/src/accounts.js';
 import {
   claimSerpent, serpentHonoursRoll, SERPENT_HONOUR_TITLE, SERPENT_HONOUR_AURA, SERPENT_TITLE_CHANCE, SERPENT_AURA_CHANCE,
@@ -26,7 +26,7 @@ import { createSerpentClaims, SERPENT_CLAIM_TEXT, SERPENT_HONOUR_KEYS } from '..
 import { TITLE_TEXT, AURA_TEXT, AURA_PAINT, TITLE_RGBA, TITLE_GRADIENT, TITLE_EDGE, COIL_SEA, COIL_TIDE, COIL_FOAM } from '../src/ui/playerBadge.js';
 import {
   AURA_LOOK, AURA_GROUND_R, AURA_CLOCK_PERIOD, AURA_FS, MAELSTROM_R, MAELSTROM_EYE_R, MAELSTROM_ARMS, MAELSTROM_H,
-  MAELSTROM_CURL_H, MAELSTROM_HZ, MAELSTROM_RGB, maelstromRatesWhole, maelstromSpin, maelstromArmAngle,
+  MAELSTROM_CURL_H, MAELSTROM_HZ, MAELSTROM_RGB, MAELSTROM_DROPS, maelstromRatesWhole, maelstromSpin, maelstromArmAngle, maelstromCrest, maelstromDropAt, MAELSTROM_SHADE, MAELSTROM_DROP_TOP,
 } from '../src/render/auraRing.js';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
 
@@ -95,6 +95,11 @@ test('SERPENT5 THE CLAIM: a dealing ship\'s first write rolls the grants off its
   const next = await claim(db, title, A, await receipt(A.id, DAY + 2, priv), pubKey);
   assert.deepEqual([next.title, next.aura, next.titleNew, next.auraNew], [true, false, false, false], 'a title held already: said, never new');
   assert.equal(rowOf(db, A.id).serpent_honours, 3, 'held for good');
+  assert.deepEqual({ ...db._raw.prepare('SELECT title, aura FROM serpent_kills WHERE day = ? AND account = ?').get(DAY + 2, A.id) }, { title: 1, aura: 0 }, 'AUDIT WORLD-REWARDS E3: the kill\'s row says what IT granted, each its own column');
+  const aura = seedFor(false, true);
+  const third = await claim(db, aura, A, await receipt(A.id, DAY + 4, priv), pubKey);
+  assert.deepEqual([third.title, third.aura, third.titleNew, third.auraNew], [false, true, false, false], 'AUDIT WORLD-REWARDS E1: an aura held already - said, never new');
+  assert.deepEqual({ ...db._raw.prepare('SELECT title, aura FROM serpent_kills WHERE day = ? AND account = ?').get(DAY + 4, A.id) }, { title: 0, aura: 1 });
   const quiet = await claim(db, none, B, await receipt(B.id, DAY, priv), pubKey);
   assert.deepEqual([quiet.title, quiet.aura, quiet.titleNew, quiet.auraNew, rowOf(db, B.id).serpent_honours], [false, false, false, false, 0]);
   assert.equal((await claim(db, both, B, await receipt(B.id, DAY, priv), pubKey)).why, 'claimed');
@@ -118,6 +123,25 @@ test('SERPENT5 HELD: Coilbreaker off the row\'s first bit, The Maelstrom off its
   assert.ok(equipRefusal('coilbreaker', row(0)), 'not held, not worn');
   assert.equal(auraRefusal('maelstrom', row(2)), null, 'the aura worn');
   assert.ok(auraRefusal('maelstrom', row(0)), 'not held, not worn');
+});
+
+test('SERPENT5 THE ROUTE (AUDIT WORLD-REWARDS E9): through the real Worker, the session\'s own row - /v1/serpent/claim answers the grants a forced draw rolls (title, aura, and both new), lays them on the row, and the next kill\'s answer reads the row the session resolved (held: never new); the account\'s held titles carry them', async () => {
+  const s = await standService();
+  const ann = await s.registered('Coilann', { character: CH });
+  const P = Object.getPrototypeOf(globalThis.crypto), real = P.getRandomValues;
+  const forced = (seed) => { P.getRandomValues = function (b) { if (b?.length === 4) { b.set([(seed >>> 24) & 255, (seed >>> 16) & 255, (seed >>> 8) & 255, seed & 255]); return b; } return real.call(this, b); }; };
+  const serpent = async (day) => s.call('/v1/serpent/claim', { receipt: await mintSerpentReceipt({ d: day, b: 'sethrakul', s: ann.id, c: 99, x: 'dealt', h: 4, l: 20 }, s.gateKey, { subtle, nowS: Math.floor(Date.now() / 1000) }), character: CH, name: ann.handle }, ann.secret);
+  try {
+    forced(seedFor(true, true));
+    const first = await serpent(DAY);
+    assert.equal(first.status, 200);
+    assert.deepEqual([first.body.recorded, first.body.title, first.body.aura, first.body.titleNew, first.body.auraNew], [true, true, true, true, true], 'the route passes the grants through');
+    const next = await serpent(DAY + 2);
+    assert.deepEqual([next.body.recorded, next.body.title, next.body.aura, next.body.titleNew, next.body.auraNew], [true, true, true, false, false], 'the session\'s row resolved: held, never new');
+  } finally { P.getRandomValues = real; }
+  const row = s.env.DB._raw.prepare('SELECT * FROM players WHERE id = ?').get(ann.id);
+  assert.equal(row.serpent_honours, 3);
+  assert.ok(titlesHeld(row).includes('coilbreaker') && aurasHeld(row).includes('maelstrom'), 'held off the row the session reads');
 });
 
 // ── the vocabulary and the badge ──────────────────────────────────────
@@ -159,13 +183,16 @@ test('SERPENT5 THE CARRIER: a counted kill\'s grants said whenever it granted on
   assert.deepEqual(SERPENT_HONOUR_KEYS, { title: 'coilbreaker', aura: 'maelstrom' });
   assert.ok(TITLES.includes(SERPENT_HONOUR_KEYS.title) && AURAS.includes(SERPENT_HONOUR_KEYS.aura), 'the vocabulary\'s spelling');
   const fresh = await run({ title: true, aura: true, titleNew: true, auraNew: true });
-  assert.ok(fresh.said.includes(SERPENT_CLAIM_TEXT.title) && fresh.said.includes(SERPENT_CLAIM_TEXT.aura));
+  assert.ok(fresh.said.includes(SERPENT_CLAIM_TEXT.title()) && fresh.said.includes(SERPENT_CLAIM_TEXT.aura()));
   assert.deepEqual(fresh.popped, [['title', 'coilbreaker'], ['aura', 'maelstrom']]);
   const held = await run({ title: true, aura: false, titleNew: false, auraNew: false });
-  assert.ok(held.said.includes(SERPENT_CLAIM_TEXT.title) && !held.said.includes(SERPENT_CLAIM_TEXT.aura));
+  assert.ok(held.said.includes(SERPENT_CLAIM_TEXT.title()) && !held.said.includes(SERPENT_CLAIM_TEXT.aura()));
   assert.deepEqual(held.popped, [], 'held already: said, never popped');
+  const heldAura = await run({ title: false, aura: true, titleNew: false, auraNew: false });
+  assert.ok(heldAura.said.includes(SERPENT_CLAIM_TEXT.aura()) && !heldAura.said.includes(SERPENT_CLAIM_TEXT.title()));
+  assert.deepEqual(heldAura.popped, [], 'AUDIT WORLD-REWARDS E1: an aura held already - said, never popped');
   const old = await run({});
-  assert.ok(!old.said.includes(SERPENT_CLAIM_TEXT.title) && old.popped.length === 0, 'a service from before acct135: nothing');
+  assert.ok(!old.said.includes(SERPENT_CLAIM_TEXT.title()) && !old.said.includes(SERPENT_CLAIM_TEXT.aura()) && old.popped.length === 0, 'a service from before acct135: nothing (AUDIT WORLD-REWARDS E2: the aura\'s line neither)');
   await run({ titleNew: true }, () => { throw new Error('the page\'s'); });   // never the carrier's
   assert.match(src('src/scenes/world.js'), /createSerpentClaims\(\{[\s\S]{0,900}announce: \(kind, key\) => announceHonour\(kind, key\),   \/\/ SERPENT5/);
 });
@@ -176,7 +203,9 @@ test('SERPENT5 THE LOOK\'S LAW: the ninth kind, added whole (no shade, no mesh, 
   assert.deepEqual({ ...AURA_LOOK.maelstrom }, { kind: 8, ringR: MAELSTROM_R, flameH: MAELSTROM_H, glyphs: 0 });
   assert.equal(new Set(Object.values(AURA_LOOK).map((l) => l.kind)).size, Object.keys(AURA_LOOK).length, 'every look its own kind');
   assert.ok(MAELSTROM_R < AURA_GROUND_R && MAELSTROM_EYE_R < MAELSTROM_R && MAELSTROM_CURL_H < MAELSTROM_H);
-  assert.deepEqual(MAELSTROM_RGB, { sea: COIL_SEA.slice(0, 3), tide: COIL_TIDE.slice(0, 3), foam: COIL_FOAM.slice(0, 3) });
+  const shade = (c) => c.slice(0, 3).map((x) => Math.round(x * MAELSTROM_SHADE * 1000) / 1000);
+  assert.equal(MAELSTROM_SHADE, 0.72, 'AUDIT WORLD-REWARDS D1: The First Hour\'s shade (FIRST_SHADE) - the foam never washes out to white over a lit floor');
+  assert.deepEqual(MAELSTROM_RGB, { sea: shade(COIL_SEA), tide: shade(COIL_TIDE), foam: shade(COIL_FOAM) });
   assert.ok(maelstromRatesWhole());
   assert.ok(Math.abs(Math.abs(maelstromSpin(AURA_CLOCK_PERIOD)) - TAU * MAELSTROM_HZ.spin * AURA_CLOCK_PERIOD) < 1e-9 && Number.isInteger(MAELSTROM_HZ.spin * AURA_CLOCK_PERIOD), 'whole turns over the clock');
   assert.ok(maelstromSpin(1) < maelstromSpin(0), 'its angle falls - clockwise on the screen');
@@ -188,6 +217,10 @@ test('SERPENT5 THE LOOK\'S LAW: the ninth kind, added whole (no shade, no mesh, 
     assert.ok(inner !== null && inner < r, `an arm at ${r} m is nearer the eye half a second on (${inner})`);
   }
   assert.match(AURA_FS, /if \(uAura == 8\) \{ vec3 c = uKind == 0 \? maelstromGround\(vP\) : maelstromWall\(vP\);/);
+  // AUDIT WORLD-REWARDS D2: never a pow of a negative - GLSL leaves it undefined, and the interpreter's Math.pow answers a
+  // negative base with an even exponent as a positive number, so only the source can hold the guard (AUDIT SD II's law)
+  assert.match(AURA_FS, /float maelstromArm\(float r, float a\) \{[\s\S]{0,260}return pow\(max\(0\.5 \+ 0\.5 \* cos\(ph\), 0\.0\), /);
+  assert.equal(MAELSTROM_DROP_TOP, 0.9, 'AUDIT WORLD-REWARDS D4: a drop\'s arc tops out inside the strip');
 });
 
 const at = (kind, vP, { t = 30.5, kindle = 1 } = {}) => {
@@ -219,6 +252,10 @@ test('SERPENT5 THE POOL, the shader RUN: foam where its arms stand at the clock\
     const lip = lum(at(0, polar(MAELSTROM_R, (i / 12) * TAU))), past = lum(at(0, polar(MAELSTROM_R + 0.1, (i / 12) * TAU)));
     assert.ok(lip > past + 0.12, `the lip's foam at ${i}/12 (${lip.toFixed(3)} over the water past it, ${past.toFixed(3)})`);
   }
+  // AUDIT WORLD-REWARDS E5: the surf RUNS round the lip - the same place on the lip breaks and eases with the clock
+  let surf = 0;
+  for (let i = 0; i < 12; i++) { const p = polar(MAELSTROM_R, (i / 12) * TAU); surf = Math.max(surf, Math.abs(lum(at(0, p, { t: 30.5 })) - lum(at(0, p, { t: 31.25 })))); }
+  assert.ok(surf > 0.1, `the surf runs round the lip (${surf.toFixed(3)})`);
   for (let i = 0; i < 24; i++) assert.ok(lum(at(0, polar(0.08, (i / 24) * TAU))) < 0.02, `the eye: open water (${i}/24)`);
   assert.equal(lum(at(0, polar(0.5, a), { kindle: 0 })), 0, 'unkindled: nothing');
   assert.ok(at(0, [0, 0]).every((x) => Number.isFinite(x)), 'the middle, never a NaN');
@@ -239,6 +276,18 @@ test('SERPENT5 THE CURL AND THE SPRAY, the shader RUN: the curl\'s crest of foam
   let high = 0;
   for (let i = 0; i < 160; i++) for (const tt of [10, 20, 30, 40]) if (lum(at(1, [i / 160, 0.6], { t: tt + i * 0.013 })) > 0.3) high++;
   assert.ok(high > 0, `spray over the curl (${high})`);
+  // AUDIT WORLD-REWARDS E5: each drop where maelstromDropAt says - carried round WITH the pool, up off the crest and down
+  let drops = 0;
+  for (const tt of [12.3, 47.9, 88.1]) {
+    for (let m = 0; m < MAELSTROM_DROPS; m++) {
+      const d = maelstromDropAt(m, tt);
+      if (d.life < 0.15 || d.life > 0.6) continue;
+      const c = maelstromCrest(d.u, tt), hy = c + (MAELSTROM_H * MAELSTROM_DROP_TOP - c) * 4 * d.life * (1 - d.life);
+      assert.ok(lum(at(1, [d.u, hy / MAELSTROM_H], { t: tt })) > 0.3, `drop ${m} at ${tt} s where the pool has carried it`);
+      drops++;
+    }
+  }
+  assert.ok(drops > 10, `drops sampled (${drops})`);
   const crestV = crestAt(uArm) / MAELSTROM_H;
   assert.equal(lum(at(1, [uArm, crestV], { t, kindle: 0.1 })), 0, 'kindled up from the feet: a tenth kindled, not yet at the crest');
   assert.ok(lum(at(1, [uArm, crestV * 0.3], { t, kindle: 0.1 })) > 0, 'but at the feet already');

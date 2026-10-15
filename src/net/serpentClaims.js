@@ -19,6 +19,7 @@
 // Pure - the call, the store and the clocks are handed in. Not a DFU member. Ledger A (SERPENT1).
 import { readSerpentReceipt } from './serpentReceipt.js';
 import { serpentBossById } from './serpentLaw.js';
+import { t } from '../systems/textManager.js';   // AUDIT WORLD-REWARDS C2: the Old Coil's grants said in the player's language, each read when it is said
 
 /** The device's serpent receipts not yet settled with the account service: `[{ r, ch, nm, lv, cid }]` - the receipt, the
  *  character that fought it, its name, its level (the hoard rolls at it), and this device's claim id. */
@@ -44,8 +45,8 @@ export const SERPENT_ME_POLL_MS = 1000;
 export const SERPENT_CLAIM_TEXT = Object.freeze({
   recorded: (n, xp, boss) => `The Bay will remember ${boss.name}'s fall. Serpents slain: ${n}.${xp > 0 ? ` +${xp} Renown XP.` : ''}`,   // AUDIT SERPENT B11: the table's name
   guest: 'This serpent is not on your record yet: only registered accounts keep one. Add a username this week and it counts.',
-  title: 'The Bay names you Coilbreaker.',   // SERPENT5
-  aura: 'The Maelstrom turns about you.',   // SERPENT5
+  title: () => t('serpent.honour.title', 'The Bay names you Coilbreaker.'),   // SERPENT5; AUDIT WORLD-REWARDS C2: routed (the lamp's own way)
+  aura: () => t('serpent.honour.aura', 'The Maelstrom turns about you.'),   // SERPENT5
 });
 
 /** SERPENT5 (2026-10-15, Sea-Serpent.md section 17): the words the Old Coil grants, in the vocabulary's spelling
@@ -132,8 +133,8 @@ export function createSerpentClaims({ claim, store = null, nowS = () => Math.flo
           for (const line of Array.isArray(lines) ? lines : [lines]) if (typeof line === 'string' && line) say(line);
           // SERPENT5: THE OLD COIL'S GRANTS - said whenever this kill granted one, popped only when it is new (the Hour's law,
           // net/sdClaims.js: a re-roll of a held one is said, never announced as "New"); a service from before acct135 says neither
-          if (answer.data.title === true) say(SERPENT_CLAIM_TEXT.title);
-          if (answer.data.aura === true) say(SERPENT_CLAIM_TEXT.aura);
+          if (answer.data.title === true) say(SERPENT_CLAIM_TEXT.title());
+          if (answer.data.aura === true) say(SERPENT_CLAIM_TEXT.aura());
           if (answer.data.titleNew === true) hear(announce, 'title', SERPENT_HONOUR_KEYS.title);
           if (answer.data.auraNew === true) hear(announce, 'aura', SERPENT_HONOUR_KEYS.aura);
           hear(onRecorded, answer.data, e);

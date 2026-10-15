@@ -483,8 +483,16 @@ export const MAELSTROM_DROPS = 16;
 /** Its rates, in turns a second: the pool's turn, the light's breath, the surf round the lip, the drops' arcs. */
 export const MAELSTROM_HZ = Object.freeze({ spin: 1 / 12, pulse: 1 / 4, surf: 1 / 3, drop: 1 / 6 });
 export const maelstromRatesWhole = () => Object.values(MAELSTROM_HZ).every((r) => r > 0 && Number.isInteger(Math.round(r * AURA_CLOCK_PERIOD * MAELSTROM_ARMS * 1e6) / 1e6) && Number.isInteger(Math.round(r * AURA_CLOCK_PERIOD * 1e6) / 1e6));
-/** The Coilbreaker's own colours (ui/playerBadge.js COIL_*): the open sea, the tide, the foam. */
-export const MAELSTROM_RGB = Object.freeze({ sea: Object.freeze(COIL_SEA.slice(0, 3)), tide: Object.freeze(COIL_TIDE.slice(0, 3)), foam: Object.freeze(COIL_FOAM.slice(0, 3)) });
+/** AUDIT WORLD-REWARDS D1: the Coilbreaker's colours as the pass ADDS them - at MAELSTROM_SHADE, The First Hour's own law
+ *  (FIRST_SHADE): at full strength the near-white foam washed out to white over a lit floor (4,706 pixels clipped at a
+ *  0.55 floor, where The Turning Hour clipped 497) and the sea's hue read as mint-white; shaded, 444. */
+export const MAELSTROM_SHADE = 0.72;
+const coilShaded = (/** @type {readonly number[]} */ c) => Object.freeze(c.slice(0, 3).map((x) => Math.round(x * MAELSTROM_SHADE * 1000) / 1000));
+/** The Coilbreaker's own colours (ui/playerBadge.js COIL_*), shaded: the open sea, the tide, the foam. */
+export const MAELSTROM_RGB = Object.freeze({ sea: coilShaded(COIL_SEA), tide: coilShaded(COIL_TIDE), foam: coilShaded(COIL_FOAM) });
+/** AUDIT WORLD-REWARDS D4: a drop's arc tops out at this share of the wall - at its whole height the drop's top half stood
+ *  past the strip's edge, cut off at its apex. */
+export const MAELSTROM_DROP_TOP = 0.9;
 /** The pool's turn at clock time `t` (s), radians: its angle FALLS - clockwise as the eye sees the ground (the one
  *  mirror's law, turningDialAngle's above). The shader's own (maelstromSpin). Pure. */
 export const maelstromSpin = (t) => -Math.PI * 2 * MAELSTROM_HZ.spin * t;
@@ -493,6 +501,17 @@ export const maelstromSpin = (t) => -Math.PI * 2 * MAELSTROM_HZ.spin * t;
  *  The shader's own crest (maelstromArm). Pure. */
 export function maelstromArmAngle(r, t, k = 0) {
   return maelstromSpin(t) - (MAELSTROM_TWIST / MAELSTROM_ARMS) * Math.log(r / MAELSTROM_R) + (Math.PI * 2 * k) / MAELSTROM_ARMS;
+}
+/** The curl's crest at `u` round the strip (0..1) at `t`, m - higher under an arm. The shader's own (maelstromWall). Pure. */
+export const maelstromCrest = (u, t) => MAELSTROM_CURL_H * (0.7 + 0.3 * Math.cos(MAELSTROM_ARMS * (u * Math.PI * 2 - maelstromSpin(t))));
+/** AUDIT WORLD-REWARDS E5: where drop `m` of the spray is at `t` - its place round the strip (0..1), carried round WITH
+ *  the pool (maelstromSpin's turn: it drifted a few hundredths a life and snapped back, at a tenth of the pool's pace),
+ *  and its life (0..1, thrown up off the crest and back down). The shader's own (maelstromWall's hashes). Pure. */
+export function maelstromDropAt(m, t) {
+  const hash = (a, b, c) => { const x = Math.sin(m * a + b) * c; return x - Math.floor(x); };
+  const h1 = hash(41.37, 1.7, 43758.5453), h2 = hash(17.93, 3.1, 24634.6345);
+  const f = (x) => x - Math.floor(x);
+  return { u: f(h1 + maelstromSpin(t) / (Math.PI * 2)), life: f((t / Math.round(1 / MAELSTROM_HZ.drop)) * (1 + (m % 3)) + h2) };
 }
 
 /** AEGIS: HOW EACH AURA IS DRAWN - its kind in the shader (`uAura`), its ring's radius, its wall's height and how many
@@ -868,7 +887,7 @@ float maelstromBreath() { return 0.85 + 0.15 * sin(uTime * TAU ${hzGlsl(MAELSTRO
 // an arm's crest at (r, a): one on it, falling away between (maelstromArmAngle's spiral)
 float maelstromArm(float r, float a) {
   float ph = ${MAELSTROM_ARMS.toFixed(1)} * (a - maelstromSpin()) + ${MAELSTROM_TWIST.toFixed(1)} * log(max(r, 0.02) / ${MAELSTROM_R.toFixed(3)});
-  return pow(0.5 + 0.5 * cos(ph), ${MAELSTROM_SHARP.toFixed(1)});
+  return pow(max(0.5 + 0.5 * cos(ph), 0.0), ${MAELSTROM_SHARP.toFixed(1)});   // AUDIT WORLD-REWARDS D2: never a pow of a negative (a cos a hair under -1 - AUDIT SD II L2 F12's law)
 }
 vec3 maelstromGround(vec2 p) {
   float r = length(p);
@@ -901,8 +920,8 @@ vec3 maelstromWall(vec2 q) {
     float fm = float(m);
     float h1 = fract(sin(fm * 41.37 + 1.7) * 43758.5453), h2 = fract(sin(fm * 17.93 + 3.1) * 24634.6345);
     float life = fract(uTime ${hzGlsl(MAELSTROM_HZ.drop)} * (1.0 + mod(fm, 3.0)) + h2);
-    float hy = crest + (uFlameH - crest) * 4.0 * life * (1.0 - life);
-    vec2 dm = vec2((fract(u - h1 + 0.03 * life + 0.5) - 0.5) * circ, y - hy);
+    float hy = crest + (uFlameH * ${MAELSTROM_DROP_TOP.toFixed(2)} - crest) * 4.0 * life * (1.0 - life);   // AUDIT WORLD-REWARDS D4: the arc's top inside the strip
+    vec2 dm = vec2((fract(u - h1 - maelstromSpin() / TAU + 0.5) - 0.5) * circ, y - hy);   // AUDIT WORLD-REWARDS E5: carried round WITH the pool (maelstromDropAt)
     spray += exp(-dot(dm, dm) / 0.0003) * (1.0 - smoothstep(0.7, 1.0, life));
   }
   col += mix(MS_TIDE, MS_FOAM, 0.7) * 0.55 * spray * breath;

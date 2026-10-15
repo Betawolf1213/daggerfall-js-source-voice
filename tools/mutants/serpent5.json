@@ -187,5 +187,86 @@
     "tests": [
       "test/serpent5_honours.test.js"
     ]
+  },
+  {
+    "name": "SERPENT5-AUDIT-the-foam-unshaded",
+    "file": "src/render/auraRing.js",
+    "old": "export const MAELSTROM_SHADE = 0.72;",
+    "new": "export const MAELSTROM_SHADE = 1;",
+    "tests": [
+      "test/serpent5_honours.test.js"
+    ]
+  },
+  {
+    "name": "SERPENT5-AUDIT-a-pow-of-a-negative",
+    "file": "src/render/auraRing.js",
+    "old": "return pow(max(0.5 + 0.5 * cos(ph), 0.0),",
+    "new": "return pow(0.5 + 0.5 * cos(ph),",
+    "tests": [
+      "test/serpent5_honours.test.js"
+    ]
+  },
+  {
+    "name": "SERPENT5-AUDIT-drops-past-the-edge",
+    "file": "src/render/auraRing.js",
+    "old": "float hy = crest + (uFlameH * ${MAELSTROM_DROP_TOP.toFixed(2)} - crest)",
+    "new": "float hy = crest + (uFlameH - crest)",
+    "tests": [
+      "test/serpent5_honours.test.js"
+    ]
+  },
+  {
+    "name": "SERPENT5-AUDIT-spray-left-behind",
+    "file": "src/render/auraRing.js",
+    "old": "vec2 dm = vec2((fract(u - h1 - maelstromSpin() / TAU + 0.5) - 0.5) * circ, y - hy);",
+    "new": "vec2 dm = vec2((fract(u - h1 + 0.5) - 0.5) * circ, y - hy);",
+    "tests": [
+      "test/serpent5_honours.test.js"
+    ]
+  },
+  {
+    "name": "SERPENT5-AUDIT-surf-stands-still",
+    "file": "src/render/auraRing.js",
+    "old": "sin(a * 7.0 + uTime * TAU ${hzGlsl(MAELSTROM_HZ.surf)})",
+    "new": "sin(a * 7.0)",
+    "tests": [
+      "test/serpent5_honours.test.js"
+    ]
+  },
+  {
+    "name": "SERPENT5-AUDIT-aura-new-when-held",
+    "file": "server-account/src/serpents.js",
+    "old": "auraNew: aura && !(prior & SERPENT_HONOUR_AURA),",
+    "new": "auraNew: aura,",
+    "tests": [
+      "test/serpent5_honours.test.js"
+    ]
+  },
+  {
+    "name": "SERPENT5-AUDIT-aura-popped-when-held",
+    "file": "src/net/serpentClaims.js",
+    "old": "if (answer.data.auraNew === true) hear(announce,",
+    "new": "if (answer.data.aura === true) hear(announce,",
+    "tests": [
+      "test/serpent5_honours.test.js"
+    ]
+  },
+  {
+    "name": "SERPENT5-AUDIT-an-older-service-says-the-maelstrom",
+    "file": "src/net/serpentClaims.js",
+    "old": "if (answer.data.aura === true) say(SERPENT_CLAIM_TEXT.aura());",
+    "new": "if (answer.data.aura !== false) say(SERPENT_CLAIM_TEXT.aura());",
+    "tests": [
+      "test/serpent5_honours.test.js"
+    ]
+  },
+  {
+    "name": "SERPENT5-AUDIT-the-kills-row-aura-is-the-title",
+    "file": "server-account/src/serpents.js",
+    "old": "title ? 1 : 0, aura ? 1 : 0),",
+    "new": "title ? 1 : 0, title ? 1 : 0),",
+    "tests": [
+      "test/serpent5_honours.test.js"
+    ]
   }
 ]

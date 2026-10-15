@@ -853,6 +853,9 @@ stood is paid its hoard and its Renown as before, and nothing here.
 hoard's very last draw, one dealing ship's hoard in a hundred (`systems/serpentSpoils.js`, after the technique pass), so
 every hoard rolled before it is what it was for its seed.
 
+AUDIT WORLD-REWARDS (`01-Overview/Audit-World-Rewards.md`) read this section's slice cold; what it moved is marked
+where it stands.
+
 **Coilbreaker and The Maelstrom** - the Hour's grants' law (`11-Multiplayer/Super-Dungeons.md` section 11, sds.js) rung
 for rung, in `server-account/src/serpents.js`:
 
@@ -875,7 +878,8 @@ for rung, in `server-account/src/serpents.js`:
   and `titleNew`, `auraNew` (whether the account did not hold it before - the session's row, read before the write).
 
 **Said and popped** (`net/serpentClaims.js`): a counted kill that granted one says "The Bay names you Coilbreaker." /
-"The Maelstrom turns about you." in the chat, and - when it is new - hands the loot banner's honour door
+"The Maelstrom turns about you." in the chat - in the player's language (AUDIT WORLD-REWARDS C2: routed through the text
+core, `serpent.honour.title` / `.aura`, drafted in-session in the thirteen whole languages, as the lamp's lines are) - and - when it is new - hands the loot banner's honour door
 (`ui/lootBanner.js` `announceHonour`, HONOUR-BANNER) `SERPENT_HONOUR_KEYS`, wired by the world host beside the Hour's.
 A re-roll of a held one is said, never popped as "New"; a service from before acct135 says neither. THE FOUR HOSTS:
 the carrier is `scenes/world.js`'s alone, and so is its one new line - the serpent is fought at sea from the streaming
@@ -894,19 +898,31 @@ symbols): the whirlpool Sethrakul raises about a ship, at the wearer's feet.
   (`maelstromSpin`'s angle falls, the one mirror's law), so a point of an arm falls INWARD and the arms draw in
   (`maelstromArmAngle`); a lip of foam breaking round it at `MAELSTROM_R`, the surf running round the lip.
 - THE WALL (the strip at the lip, `MAELSTROM_H` high): the curl of water, its crest of foam riding the arms round
-  (higher under an arm); spray thrown up off the crest, `MAELSTROM_DROPS` drops each on its own arc and back down,
-  carried round with the pool. It kindles UP, the spray rising from the feet.
+  (higher under an arm, `maelstromCrest`); spray thrown up off the crest, `MAELSTROM_DROPS` drops each on its own arc
+  and back down, carried round WITH the pool (`maelstromDropAt` - AUDIT E5: it drifted a few hundredths a life and
+  snapped back, at a tenth of the pool's pace), each arc topping out inside the strip (`MAELSTROM_DROP_TOP`, AUDIT D4:
+  at its whole height a drop's top half stood past the strip's edge). It kindles UP, the spray rising from the feet.
 - Every rate whole over the aura clock (`maelstromRatesWhole`), so the pool never jumps where the clock wraps; its colours
-  the title's own (`MAELSTROM_RGB` reads `COIL_*`).
+  the title's own, SHADED as the pass adds them (`MAELSTROM_RGB` reads `COIL_*` at `MAELSTROM_SHADE` 0.72, The First
+  Hour's own law - AUDIT D1: at full strength the near-white foam washed out to white over a lit floor, 4,706 pixels
+  clipped at a 0.55 floor in a real WebGL2 frame where The Turning Hour clips 497; shaded, 415), and never a pow of a
+  negative (AUDIT D2, AUDIT SD II's law). Compiled, linked and drawn in a real browser by `tools/auraProbe.mjs` (AUDIT
+  D3): its arms where the law stands them, its eye dark, no jump at the clock's wrap, nothing unkindled, its curl at the
+  lip from the side.
 
 **Versions and deploy order.** The two words join the token's closed lists last (`net/identityToken.js` `TITLES`,
 `AURAS`), and the relay reads them off every hello's token - so the RELAY deploys first (`world205`; its bundle's files
 unchanged, only identityToken.js's bytes), then the account service (acct135, with migration 0116). An account service
 ahead of its relay would sign a word the relay refuses, and the token would be refused whole.
 
-**The pins.** `test/serpent5_honours.test.js` - the roll, the claim (through the real migrations, node:sqlite), held,
-the vocabulary and the badge, the carrier, the look's law and the shader RUN (`test/glsl.mjs`: the arms at the clock's
-own turn, the eye, the lip, the curl and the spray). `tools/mutants/serpent5.json`: 21, all dead. The vocabulary's
+**The pins.** `test/serpent5_honours.test.js` (9) - the roll, the claim (through the real migrations, node:sqlite; an aura
+held is never new, the kill's row each its own column), the ROUTE (AUDIT E9: the real Worker, the session's own row, a
+forced draw), held, the vocabulary and the badge, the carrier (an aura held, said and never popped; a service from
+before acct135 saying neither line), the look's law and the shader RUN (`test/glsl.mjs`: the arms at the clock's own
+turn, the eye, the lip and the surf running round it, the curl, every drop where `maelstromDropAt` says, the pow's
+guard by source). `tools/mutants/serpent5.json`: 30, all dead (the audit's nine among them). AUDIT C1: the Hour's own
+popup pin (`test/lootbanner.test.js`) is anchored to the Hour's carrier now - the Old Coil's door is the same text, and
+the bare line matched it with the Hour's gone. The vocabulary's
 enumerations moved with it, each saying so (ACC3, AEGIS, PRIMARCH, CRYSTAL-FIST, SERAPH-WINGS, SHADOW-CLOAK, SD9c,
 HOURS-FIRST, CHAP4c, CHAP6e, LAMP-KEEPER II), and every record that named the lists' old tails was re-aimed by content.
 

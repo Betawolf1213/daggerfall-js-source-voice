@@ -352,7 +352,7 @@ export function seedTestLoot(entity, rolls = Math.random) {
   // LOOT21 (section 13): the two Ayleid stones, found at the deepest sources - here to be used
   put(welkyndStone());
   put(varlaStone());
-  // GILDED1 (bible/06-Systems/Gilded.md): THE HOURLOCK, the Gilded rung's one record - minted whole, as the Brass Remnant
+  // GILDED1 (bible/06-Systems/Gilded.md): THE HOURLOCK, the Gilded rung's first record - minted whole, as the Brass Remnant
   // drops it - and a stack of its shot, so the toll can be heard; after every draw the room made before
   put(mintHourlock());
   put(createPellets(30));

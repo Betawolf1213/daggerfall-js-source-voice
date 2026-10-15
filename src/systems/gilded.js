@@ -95,26 +95,31 @@ export const HOUR_TOLLS = Object.freeze({
 });
 
 /** GILDED2: DRAGONFIRE - the Dragonfire Oath's power (systems/lootPowers.js, kind 'dragonfire'). A landed blow on a foe of
- *  `group` bursts on every OTHER foe of it within `metres`, for `share`% of the blow - Akatosh's fire, which no Daedra
- *  resists (no element's share is taken of it). Read once at import, frozen. */
+ *  `group` burns it again for `share`% of the blow, and every OTHER foe of it within `metres` for as much - Akatosh's fire,
+ *  which no Daedra resists (no element's share is taken of it). AUDIT WORLD-REWARDS B1: the struck one's burn is what
+ *  reaches a body the relay runs (the gate's Warden and his host, an Elite Gate's legion) - owed to its blow's own claim,
+ *  as Open Hand's second blow is (playerDoor.js oweFoe); the burst on the others reaches only the foes the world runs.
+ *  Read once at import, frozen. */
 export const DRAGONFIRE = Object.freeze({
   name: 'Dragonfire', kind: 'dragonfire', group: 'daedra', share: 33, metres: 3,
-  brief: 'Bursts on Daedra: 33% within 3m',   // inside the card's row (sigilSets.js BRIEF_MAX)
-  text: 'Each of its blows that lands on a Daedra bursts in Dragonfire: every other Daedra within 3 m takes a third of it, and no Daedra resists it',
+  brief: 'Daedra burn +33%, and all in 3m',   // inside the card's row (sigilSets.js BRIEF_MAX)
+  text: 'Each of its blows that lands on a Daedra burns it again in Dragonfire for a third of the blow, and every other Daedra within 3 m for as much - and no Daedra resists it',
 });
 /** GILDED2: UNDERTOW - the Sunken Sovereign's power (systems/lootPowers.js, kind 'undertow'). Each of its blows that LANDS on
- *  a foe drags it deeper: its next blows on that foe strike `pct`% harder for each landed before, up to `max`; a foe it
- *  fells gives `heal`% of my health back. Read once at import, frozen. */
+ *  a foe drags it deeper: its next blows on that foe strike `pct`% harder for each landed before, up to `max`, while the
+ *  tide holds - a foe it has not struck for `seconds` is let go (AUDIT WORLD-REWARDS B4: a body kept for a whole fight, a
+ *  crystal of the next Reckoning, kept its stacks for good); a foe it fells gives `heal`% of my health back. Read once at
+ *  import, frozen. */
 export const UNDERTOW = Object.freeze({
-  name: 'Undertow', kind: 'undertow', pct: 10, max: 5, heal: 10,
+  name: 'Undertow', kind: 'undertow', pct: 10, max: 5, seconds: 6, heal: 10,
   brief: '+10%/hit on a foe; kills heal',   // inside the card's row (sigilSets.js BRIEF_MAX)
-  text: 'Each of its blows that lands drags the foe deeper: +10% to its next blows on that foe, up to +50%, and a foe it fells heals you 10% of your health',
+  text: 'Each of its blows that lands drags the foe deeper: +10% to its next blows on that foe for 6 s, up to +50%, and a foe it fells heals you 10% of your health',
 });
 
 /** A record's line, frozen. */
 const line = (id, value, param) => Object.freeze(param === undefined ? { id, value } : { id, param, value });
 
-/** THE HOURLOCK - the Gilded rung's one record. Its make the gun's own Dwarven brass, gilded; its lines the Legendary
+/** THE HOURLOCK - the Gilded rung's first record (GILDED2: the world's two after it). Its make the gun's own Dwarven brass, gilded; its lines the Legendary
  *  band's top (lootRarity.js AFFIX_RANGES); its power HOUR_TOLLS. */
 export const HOURLOCK = Object.freeze({
   id: 'the-hourlock',
@@ -133,8 +138,9 @@ export const HOURLOCK = Object.freeze({
 });
 
 /** GILDED2: THE DRAGONFIRE OATH - the gate Warden's. A Daedric Dai-Katana (two hands, Long Blade): an Akaviri Dragonguard's
- *  blade, carried through the first gate and never carried back. Its lines the Legendary band's top - and its slayer's
- *  the Daedra's, as its power is (DRAGONFIRE). */
+ *  blade, carried through the first gate and never carried back. Its lines the Legendary band's top; its power DRAGONFIRE
+ *  (AUDIT WORLD-REWARDS B1: its fourth line Endurance, no longer a slayer of the Daedra - the power's burn on the struck
+ *  Daedra is its edge there now, and the two together were three quarters over the best of the melee). */
 export const DRAGONFIRE_OATH = Object.freeze({
   id: 'the-dragonfire-oath',
   name: 'The Dragonfire Oath',
@@ -145,7 +151,7 @@ export const DRAGONFIRE_OATH = Object.freeze({
     line('damage', 40),
     line('stat', 15, 'strength'),
     line('skill', 30, SKILLS.LongBlade),
-    line('slayer', 30, 'daedra'),
+    line('stat', 15, 'endurance'),
   ]),
   power: DRAGONFIRE,
   lore: 'A Dragonguard carried it through the first gate and never carried it back. The Deadlands blackened its steel; the Dragonfire in its gilding never went out.',

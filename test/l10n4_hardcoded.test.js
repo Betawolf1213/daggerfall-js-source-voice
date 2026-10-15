@@ -130,7 +130,7 @@ const HARDCODED = {
   'src/net/sdMarks.js': 37,
   'src/net/sdRemnant.js': 9,
   'src/net/serpentBrain.js': 9,
-  'src/net/serpentClaims.js': 6,   // SERPENT5: the Old Coil's two grants said, as the Hour's are (sdClaims.js)
+  'src/net/serpentClaims.js': 4,
   'src/net/serpentHerald.js': 4,
   'src/net/serpentLaw.js': 7,
   'src/net/serpentLink.js': 6,

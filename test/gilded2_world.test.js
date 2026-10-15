@@ -33,14 +33,18 @@ import { itemLongName } from '../src/systems/itemInfo.js';
 import { BRIEF_MAX, setSetsDueling, _resetSigilSetsForTests } from '../src/systems/sigilSets.js';
 import { _resetSetPowersForTests } from '../src/systems/sigilSetPowers.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';
-import { setPlayerDoor } from '../src/systems/playerDoor.js';
 import { equipItem } from '../src/systems/equip.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { rollSpoils } from '../src/systems/gateSpoils.js';
 import { rollSerpentSpoils } from '../src/systems/serpentSpoils.js';
+import { spoilsList } from '../src/scenes/spoilsPool.js';   // AUDIT WORLD-REWARDS A1: the floor's pictures
+import { RANDOM_TREASURE_ICONS } from '../src/systems/loot.js';
+import { seededRng } from '../src/systems/wind.js';
+import { SPOILS_GLOW_MAX } from '../src/render/spoilsGlow.js';
 import { salvageRefusal, reforgeRefusal } from '../src/systems/reforge.js';
 import { itemMakerRefuses } from '../src/systems/enchanting.js';
 import { EFFECT_FLAGS } from '../src/systems/spellcast.js';
+import { setPlayerDoor, takeOwed } from '../src/systems/playerDoor.js';   // AUDIT WORLD-REWARDS B1: a relay body's burn, owed to its claim
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
@@ -51,7 +55,7 @@ const lines = (r) => r.affixes.map((a) => [a.id, a.param ?? null, a.value]);
 
 // ── the records ───────────────────────────────────────────────────────
 
-test('GILDED2 THE RECORDS: the Hourlock, then the gate\'s Dragonfire Oath (a Daedric Dai-Katana: +40% damage, +15 Strength, +30 Long Blade, +30% on Daedra) and the serpent\'s Sunken Sovereign (an Ebony Saber: +40% damage, +15 Agility, +30 Long Blade, 10% leech) - every line the Legendary band\'s TOP and no higher, a power each, frozen whole (mutants: a line over the band; the Oath\'s make; the Sovereign\'s slayer)', () => {
+test('GILDED2 THE RECORDS: the Hourlock, then the gate\'s Dragonfire Oath (a Daedric Dai-Katana: +40% damage, +15 Strength, +30 Long Blade, +15 Endurance - AUDIT WORLD-REWARDS B1: no slayer) and the serpent\'s Sunken Sovereign (an Ebony Saber: +40% damage, +15 Agility, +30 Long Blade, 10% leech) - every line the Legendary band\'s TOP and no higher, a power each, frozen whole (mutants: a line over the band; the Oath\'s make; the Sovereign\'s slayer)', () => {
   assert.deepEqual(GILDED_RECORDS, [HOURLOCK, DRAGONFIRE_OATH, SUNKEN_SOVEREIGN]);
   assert.deepEqual(GILDED_RECORDS.map((r) => r.id), ['the-hourlock', 'the-dragonfire-oath', 'the-sunken-sovereign']);
   assert.equal(new Set(GILDED_RECORDS.map((r) => r.id)).size, 3, 'three ids');
@@ -69,13 +73,13 @@ test('GILDED2 THE RECORDS: the Hourlock, then the gate\'s Dragonfire Oath (a Dae
     assert.ok(r.lore && r.hint, 'its lore and its own hint');
   }
   assert.deepEqual([DRAGONFIRE_OATH.name, DRAGONFIRE_OATH.templateIndex, DRAGONFIRE_OATH.material], ['The Dragonfire Oath', WEAPONS.Dai_Katana, WEAPON_MATERIALS.Daedric]);
-  assert.deepEqual(lines(DRAGONFIRE_OATH), [['damage', null, 40], ['stat', 'strength', 15], ['skill', SKILLS.LongBlade, 30], ['slayer', 'daedra', 30]]);
+  assert.deepEqual(lines(DRAGONFIRE_OATH), [['damage', null, 40], ['stat', 'strength', 15], ['skill', SKILLS.LongBlade, 30], ['stat', 'endurance', 15]]);
   assert.deepEqual([SUNKEN_SOVEREIGN.name, SUNKEN_SOVEREIGN.templateIndex, SUNKEN_SOVEREIGN.material], ['The Sunken Sovereign', WEAPONS.Saber, WEAPON_MATERIALS.Ebony]);
   assert.deepEqual(lines(SUNKEN_SOVEREIGN), [['damage', null, 40], ['stat', 'agility', 15], ['skill', SKILLS.LongBlade, 30], ['leech', null, 10]]);
   assert.equal(DRAGONFIRE_OATH.power, DRAGONFIRE);
   assert.deepEqual({ kind: DRAGONFIRE.kind, group: DRAGONFIRE.group, share: DRAGONFIRE.share, metres: DRAGONFIRE.metres }, { kind: 'dragonfire', group: 'daedra', share: 33, metres: 3 });
   assert.equal(SUNKEN_SOVEREIGN.power, UNDERTOW);
-  assert.deepEqual({ kind: UNDERTOW.kind, pct: UNDERTOW.pct, max: UNDERTOW.max, heal: UNDERTOW.heal }, { kind: 'undertow', pct: 10, max: 5, heal: 10 });
+  assert.deepEqual({ kind: UNDERTOW.kind, pct: UNDERTOW.pct, max: UNDERTOW.max, seconds: UNDERTOW.seconds, heal: UNDERTOW.heal }, { kind: 'undertow', pct: 10, max: 5, seconds: 6, heal: 10 });
 });
 
 // ── the mint ──────────────────────────────────────────────────────────
@@ -154,6 +158,30 @@ test('GILDED2 THE GATE\'S AND THE SERPENT\'S: the Oath the Warden\'s spoils\' LA
   assert.match(strip(read('src/systems/serpentSpoils.js')), /techniquePass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const sovereign = dealt \? rollSunkenSovereign\(rolls\) : null;\s*if \(sovereign\) pieces\.push\(\{ item: sovereign, tier: sovereign\.rarity \}\);\s*return \{ gold, pieces, embers: serpentEmbers\(\), card, gems \};/);
 });
 
+test('GILDED2 THE FLOOR (AUDIT WORLD-REWARDS A1): in a spoils the Oath came in, every other picture is the one the seed gave it - the pieces\', the ember\'s, the gold\'s, the card\'s and the gems\' - and the Oath\'s is drawn LAST; the Oath still leaves among the pieces, inside the glow\'s eight (mutants: the Oath\'s picture in its place)', () => {
+  on();
+  let n = 0;
+  for (let i = 1; i <= 6000 && n < 12; i++) {
+    const k = (i * 2654435761) >>> 0;
+    const list = spoilsList(k, 5);
+    const at = list.findIndex((e) => e.item?.gilded === 'the-dragonfire-oath');
+    if (at < 0) continue;
+    n++;
+    const look = seededRng((k ^ 0x5eed) >>> 0), flat = () => RANDOM_TREASURE_ICONS[Math.floor(look() * RANDOM_TREASURE_ICONS.length)];
+    const pieces = list.filter((e) => e.kind === 'item' && e.tier !== 'aetheric' && e.tier !== 'artifact' && e.tier !== 'common' && e.tier !== 'gilded');
+    const regalia = list.filter((e) => e.tier === 'aetheric' && e.item?.aetheric);
+    const card = list.filter((e) => e.tier === 'aetheric' && !e.item?.aetheric), gems = list.filter((e) => e.kind === 'item' && e.tier === 'common');
+    const ember = list.find((e) => e.tier === 'artifact'), gold = list.find((e) => e.kind === 'gold');
+    const want = [...pieces, ...regalia].map(() => flat());
+    assert.deepEqual([...pieces, ...regalia].map((e) => e.record), want, `seed ${k}: the pieces' pictures, the seed's`);
+    assert.deepEqual([ember.record, gold.record], [flat(), flat()], `seed ${k}: the ember's and the gold's, the seed's`);
+    assert.deepEqual([...card, ...gems].map((e) => e.record), [...card, ...gems].map(() => flat()), `seed ${k}: the card's and the gems', the seed's`);
+    assert.equal(list[at].record, flat(), `seed ${k}: the Oath's, last`);
+    assert.ok(at < SPOILS_GLOW_MAX, `seed ${k}: the Oath inside the glow's eight (at ${at})`);
+  }
+  assert.ok(n >= 5, `Oath spoils seen (${n})`);
+});
+
 // ── the powers ────────────────────────────────────────────────────────
 
 let T = 0;
@@ -169,22 +197,22 @@ const foe = (careerIndex, extra = {}) => ({ careerIndex, career: {}, health: 100
 const rec = (name, entity, x, z = 0) => ({ name, entity, ai: { feet: [x, 0, z] }, dead: false });
 const DAEDROTH = 27, FIRE_DAEDRA = 26, ORC = 7;
 
-test('GILDED2 DRAGONFIRE: a landed blow of the Oath on a Daedra bursts on every OTHER Daedra within 3 m for a third of it, unresisted (a fire-immune Daedra takes it whole) - never on a foe of another kind, never past 3 m, never from a blow on a foe that is not one; another weapon\'s blows nothing; asleep in a duel (mutants: every foe burns; the struck one burns too; the element\'s share taken)', () => {
+test('GILDED2 DRAGONFIRE: a landed blow of the Oath on a Daedra burns it again for a third, and every OTHER Daedra within 3 m for as much, unresisted (a fire-immune Daedra takes it whole) - never another kind of foe, never past 3 m, never from a blow on a foe that is not one; AUDIT WORLD-REWARDS B1: a body the relay runs (no record - the gate\'s Warden, his host, an Elite Gate\'s legion) takes its burn OWED to its blow\'s own claim, and no other is reached from it; B3: a blow the ward turns, nothing; another weapon\'s blows nothing; asleep in a duel (mutants: every foe burns; the struck one spared; the element\'s share taken; the relay\'s body unburnt; the ward\'s blow answered)', () => {
   fresh();
   const me = player();
   const oath = wear(me, mintGilded(DRAGONFIRE_OATH));
-  const struck = foe(DAEDROTH), near1 = foe(FIRE_DAEDRA, { career: { immunityFlags: EFFECT_FLAGS.Fire } }), near2 = foe(29), far = foe(31), orc = foe(ORC), human = foe(0, { affinity: 'Human' });
-  const foes = [rec('struck', struck, 0), rec('near1', near1, 1.5), rec('near2', near2, 0, 2.9), rec('far', far, 3.4), rec('orc', orc, 1)];
+  const struck = foe(DAEDROTH), near1 = foe(FIRE_DAEDRA, { career: { immunityFlags: EFFECT_FLAGS.Fire } }), near2 = foe(29), far = foe(31), past = foe(25), orc = foe(ORC), human = foe(0, { affinity: 'Human' });
+  const foes = [rec('struck', struck, 0), rec('near1', near1, 1.5), rec('near2', near2, 0, 2.9), rec('far', far, 3.4), rec('past', past, 3.05), rec('orc', orc, 1)];   // AUDIT WORLD-REWARDS E4: one just past 3 m
   const hurts = [];
   setPlayerDoor({ foes: () => foes.filter((f) => !f.dead), feet: () => [0, 0, 0], hurtFoe: (f, n) => hurts.push([f.name, n]), player: () => me });
   assert.deepEqual(LP.wornPowers(me).map((p) => p.id), ['the-dragonfire-oath']);
   assert.equal(LP.foeGroup(struck), 'daedra');
   LP.lootStrike(me, struck, 90, oath);
-  assert.deepEqual(hurts.sort(), [['near1', 30], ['near2', 30]], 'a third, to the Daedra within 3 m - unresisted, the struck one spared, the orc and the far one untouched');
+  assert.deepEqual(hurts.sort(), [['near1', 30], ['near2', 30], ['struck', 30]], 'a third again to the struck Daedra, a third to each within 3 m - unresisted, the orc and the far one untouched');
   assert.equal(LP.elementShare(near1, 'fire'), 0, 'the fire-immune one, immune to any flame but this');
   hurts.length = 0;
   LP.lootStrike(me, orc, 90, oath);
-  assert.deepEqual(hurts, [], 'a blow on a foe that is no Daedra bursts nothing');
+  assert.deepEqual(hurts, [], 'a blow on a foe that is no Daedra burns nothing');
   foes.push(rec('human', human, 0.5));
   LP.lootStrike(me, human, 90, oath);
   assert.deepEqual(hurts, [], 'nor on a class foe');
@@ -195,12 +223,21 @@ test('GILDED2 DRAGONFIRE: a landed blow of the Oath on a Daedra bursts on every 
   LP.lootStrike(me, struck, 90, oath);
   assert.deepEqual(hurts, [], 'asleep in a duel');
   setSetsDueling(false);
-  // its slayer line rides its blows at a Daedra alone: +30% of the blow there, none at the orc
-  const atDaedra = LP.lootBlow(oath, 100, me, struck, {}), atOrc = LP.lootBlow(oath, 100, me, orc, {});
-  assert.deepEqual([atDaedra, atOrc], [130, 100], 'the slayer\'s +30% on Daedra');
+  // B1: a body the relay runs - the Warden's stand-in, a Ward-Bearer of his host - is no record of the door: its burn is
+  // OWED to the claim its blow sends (dungeonContext.js landOnBoss/landOnHost take it), and no other is reached from it
+  const warden = foe(31);
+  LP.lootStrike(me, warden, 90, oath);
+  assert.deepEqual(hurts, [], 'no record, no burst');
+  assert.equal(takeOwed(warden), 30, 'its burn rides its own claim');
+  assert.equal(takeOwed(warden), 0, 'taken once');
+  // B3: a blow the ward turns - the strike told before the court turns it - burns nothing and owes nothing
+  warden.warded = true;
+  LP.lootStrike(me, warden, 90, oath);
+  assert.equal(takeOwed(warden), 0, 'the ward turned it whole');
+  assert.equal(LP.lootBlow(oath, 100, me, struck, {}), 100, 'no slayer line now - the burn is its edge on a Daedra');
 });
 
-test('GILDED2 UNDERTOW: the Sovereign\'s landed blows on a foe are that foe\'s - +10% a blow before, up to +50%; another foe starts at nought; a blow asked and never landed counts nothing; a foe it fells (within TOLL_REFUND_S of its last landed blow on it) heals 10% of my health, once; another weapon neither reads nor moves it (mutants: no cap; one count for every foe; no heal; any kill heals)', () => {
+test('GILDED2 UNDERTOW: the Sovereign\'s landed blows on a foe are that foe\'s - +10% a blow before, up to +50%, for 6 s from the last (B4: let go after); another foe starts at nought; a blow asked and never landed counts nothing, nor one the ward turns (B3); a foe it fells (within TOLL_REFUND_S of its last landed blow on it) heals 10% of my health, once - and each foe one swing fells, its own (B2); another weapon neither reads nor moves it (mutants: no cap; one count for every foe; no heal; any kill heals; no window; one heal a swing)', () => {
   fresh();
   const me = player();
   const sov = wear(me, mintGilded(SUNKEN_SOVEREIGN));
@@ -216,6 +253,17 @@ test('GILDED2 UNDERTOW: the Sovereign\'s landed blows on a foe are that foe\'s -
   assert.equal(LP.lootBlow(other, 100, me, a, {}), 100, 'another weapon reads none of it');
   LP.lootStrike(me, b, 100, other);
   assert.equal(land(b), 120, 'nor moves it');
+  // B4: the tide lets go - six seconds from the last landed blow on it, the foe is at nought again
+  T = 5.9;
+  assert.equal(LP.lootBlow(sov, 100, me, a, {}), 150, 'held while the tide holds');
+  T = 6.1;
+  assert.equal(LP.lootBlow(sov, 100, me, a, {}), 100, 'let go past it');
+  assert.equal(land(a), 100, 'and it starts again from nought');
+  // B3: a blow the ward turns counts nothing
+  const w = foe(31, { warded: true });
+  for (let i = 0; i < 4; i++) land(w);
+  w.warded = false;
+  assert.equal(LP.lootBlow(sov, 100, me, w, {}), 100, 'the ward\'s blows dragged nothing');
   // the kill: the tide's heal
   me.health = 50;
   T = 10; land(a); const after = me.health;   // its leech heals a little of the blow itself
@@ -229,6 +277,12 @@ test('GILDED2 UNDERTOW: the Sovereign\'s landed blows on a foe are that foe\'s -
   assert.equal(me.health, before, 'a fall past the bound is not its');
   T = 30; reportPlayerKill(foe(ORC));
   assert.equal(me.health, before, 'a foe it never struck heals nothing');
+  // B2: one swing strikes two, then the hosts fell them - each its own heal
+  me.health = 40;
+  const d = foe(ORC), e = foe(ORC);
+  T = 40; land(d); land(e); const swung = me.health;
+  T = 40.2; reportPlayerKill(d); reportPlayerKill(e);
+  assert.equal(me.health, swung + 20, 'two felled, two heals');
 });
 
 // ── the look ──────────────────────────────────────────────────────────
