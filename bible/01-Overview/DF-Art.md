@@ -12,6 +12,10 @@ should always be see through. Ensure texture swapping still works for wagons"*. 
 on, the LeFay plaque is its own painted bronze again, every window that has something behind it is seen through, and
 the wagons' paints are driven through the real pool, every kind and every choice.
 
+Then (DF-ART III, 2026-10-15): *"Wait... you removed the backlit windows from the ship.."*. Asked, Mac chose
+**see-through by day, lit at night**: by day the ships' stern windows are open and you see into the great cabin; when
+the lanterns are lit, the glass is whole again and glows warm, as before. The caravan stays see-through always.
+
 ## The law
 
 Each of those models still names its pictures under its own pseudo-archive and records (`src/world/galleonArt.js`
@@ -44,14 +48,24 @@ off, made whole by its mirror, the glass between its leads cut out (`cutGlass`: 
 Every model's window wears it, and its host uploads it a cut-out (`hasGlass` says which): the caravan's, laid into its
 walls inside and out; the galleon's stern gallery and the carrack's transom, through the pipeline's own door
 (`uploadRecord`'s `cutout`, `comeSailAwayPool.js` cutOf). Behind the galleon's stern windows is her great cabin, its
-forward wall about 9 m in; behind the carrack's transom her hull, 13-23 m. The stern windows' night glow went with their
-glass: a cut-out's hole draws nothing, emission included.
+forward wall about 9 m in; behind the carrack's transom her hull, 13-23 m.
+
+**THE SHIPS' STERN WINDOWS ARE LIT AT NIGHT** (Mac: *"See-through by day, lit at night"*). A cut-out's hole draws
+nothing, emission included, so a window can't be open and glowing at once. Each see-through record of a ship has a
+**night twin** `NIGHT_RECORD_OFFSET` (100) past it (`galleonArt.js` GALLEON_NIGHT, `carrackArt.js` CARRACK_NIGHT):
+`LIT_WINDOW`, the same window framed the same way with its glass whole. Its glow (`paneGlow`: PANE_GLOW on its glass,
+its leads and frame dark) is cut as the twin is built (`classicStandIns`' `glowRecs`) and uploaded as the twin's
+emission, capped by Retro Mode as her classic art is. While the lanterns are lit (the pool's `frame` reads
+`cityLightsOn`, the lanterns' own switch), the pool draws every ship through `NIGHT_REMAP`: each stern record drawn as
+its twin. It is one Map, or a host's remap with the twins added (made once each), so the renderer's per-sub-mesh lookups
+stay cached. The emission is the window style's, so the glass glows as every lit window does. A pack that repaints a
+stern window repaints its twin too (`38131_106`, `_121`; `38141_106`).
 
 ## The models
 
 | Model | Archive | What it wears now | Where |
 |---|---|---|---|
-| Galleon, carrack, large boat | 38131, 38141, 38171 | Come Sail Away's records for every part. The galleon's stern gallery and the carrack's transom are Daggerfall's leaded window, seen through (`SEE_THROUGH_WINDOW`). The throats wear the darkest 067 wood. | `galleonArt.js`, `carrackArt.js`, `largeBoatArt.js` (stand-ins on the texture door, `classicStandIns`) |
+| Galleon, carrack, large boat | 38131, 38141, 38171 | Come Sail Away's records for every part. The galleon's stern gallery and the carrack's transom are Daggerfall's leaded window, seen through by day (`SEE_THROUGH_WINDOW`) and lit at night (their night twins, `LIT_WINDOW`). The throats wear the darkest 067 wood. | `galleonArt.js`, `carrackArt.js`, `largeBoatArt.js` (stand-ins on the texture door, `classicStandIns`) |
 | Wagons and caravan | 38181 | Plank boards (050), its woods, the spoked wheel (087_7), iron, sailcloth for the tilt and leather for the harness. The caravan's walls are a flat swatch with Daggerfall's leaded window laid in, seen through. The rear has its door (074_0), inside and out. A look is a swatch (000/001), a woven fabric (049), a wood, a rug, chequered tiles (152_1), plaster or the night sky (355). | `wagonArt.js` WAGON_SOURCES, LOOK_PICTURES, `caravanWall`; uploaded by `scenes/horseCartPool.js` and `scenes/caravanRoom.js` |
 | Stable, Wagon Yard, Joinery | 38221 | Weathered wood, a building's planking, wooden shingles, straw, earth, stones, water and iron. Each signboard is Daggerfall's planks (050_6) repeated at their own texel size with the yard's word lettered on in the old sign-painter's capitals: STABLES, WAGONS, JOINERY; the Joinery's carries Daggerfall's own shop sign of an axe and a sword (333_18) at its left. | `merchantYardArt.js` YARD_SOURCES; `scenes/merchantYardsHost.js` |
 | Shipyard, lighthouse | 38231 | The yards' records at the yards' records, plus coursed stone (324), lime (041), slates, a warm pane, the leaded window made whole, the hull, rope, canvas and door from Come Sail Away, cobbles, a parchment notice and gold; its two boards lettered SHIPS and CREW as the yards' are. The beacon's flame is Daggerfall's brazier fire (210_0) cut from over its bowl, and the embers are banked fire (356). | `portArt.js` PORT_SOURCES; `scenes/portHost.js` |
@@ -66,8 +80,10 @@ Mac chose all Daggerfall, so these painted things are gone:
 - the galleon's and the carrack's painted liveries;
 - the signboards' painted boards and emblems (the horseshoe, the wheel, the saw, the anchor, the coil) - their words are
   back, on Daggerfall's planks;
-- the regions' and the gods' drawn charges, now replaced by Daggerfall's tapestries;
-- the ships' stern windows' night glow, with their glass.
+- the regions' and the gods' drawn charges, now replaced by Daggerfall's tapestries.
+
+The ships' stern windows' night glow went with their glass in DF-ART II and came back in DF-ART III, on their night
+twins.
 
 GALLEON-2's *"textures should be 64x64"* was about the painted canvas. Each record now keeps its own Daggerfall size,
 as Come Sail Away's own hulls do.
@@ -90,7 +106,8 @@ as Come Sail Away's own hulls do.
 ## How it loads
 
 - **The ships** go through the texture door as stand-ins, built at the pool's preload (`scenes/comeSailAwayPool.js`,
-  AUDIT GN2-PF3) and uploaded through the pipeline's own door - a window a cut-out.
+  AUDIT GN2-PF3) and uploaded through the pipeline's own door - a window a cut-out, and its night twin with it, whole,
+  its glow its emission (`uploadFace`).
 - **Every other host** reads its records from the player's ARENA2 off the frame (`classicPictures` through
   `classicRgbaOf`, the pipeline's own reader) and uploads them as they land.
 - **The port** waits for its art before it makes its meshes (L5-5's law, now read once rather than painted a few a
@@ -108,19 +125,24 @@ which is how their models' uvs lay them). The ships and the wagons go in color32
 
 ## Pinned
 
-- `test/dfart_classicart.test.js` (9): a record whole and opaque; a missing record left out; the window's glass and its
+- `test/dfart_classicart.test.js` (10): a record whole and opaque; a missing record left out; the window's glass and its
   leads; a window seen through and `hasGlass`; a lettered board (tiled, a clear inset, the word last); the composed
-  wall's place, its mirror and its glass; the cut record; the stand-ins and their cut-outs; the port's rows.
+  wall's place, its mirror and its glass; the cut record; the stand-ins and their cut-outs; a window lit at night
+  (`LIT_WINDOW`, `paneGlow`, the stand-ins' glow); the port's rows.
 - `test/dfart_wagonlooks.test.js` (2): every outside paint of every kind through the real pool, and every inside paint
   of the caravan's room.
-- **The models' own suites**, moved onto the sources: `galleon_model`, `auditgalleon2_prefab` (PF3, PF5, TS7 - her
-  windows a hole exactly at their glass), `auditgalleon_prefab` (R8/R11), `auditgalleon_sea` (T4(b) - her windows
-  uploaded cut-outs), `ships2_carrack`, `ships2_largeboat`, `wagons1`, `wagons2`, `wagons3`, `wagonuv1`,
+- **The models' own suites**, moved onto the sources: `galleon_model` (her night twins whole, glowing exactly where the
+  day window is open), `auditgalleon2_prefab` (PF3 the glow cut at the preload, PF5 the twins' glow capped with them,
+  TS7 - her windows a hole exactly at their glass, their twins lit exactly there), `auditgalleon_prefab` (R8/R11),
+  `auditgalleon_sea` (T4(b) - her windows uploaded cut-outs, their twins whole and glowing, drawn through NIGHT_REMAP
+  while the lanterns are lit and never by day), `ships2_carrack` (her transom's twin), `ships2_largeboat`, `wagons1`, `wagons2`, `wagons3`, `wagonuv1`,
   `merchantyards1` and `carpyard1` (the words lettered), `beacontower`, `shipyards1_place`, `shipyards1_audit_port`
   (L5-5), `lefay1_monument` (the old plaque's own tests back) and `wd3_standins`; the pipeline door's pins
   (`incident_dungeon_seams`, `texturereplacement`) moved for its `cutout`.
 - **Retired with the painted code they tested:** AUDIT GALLEON R12, whose figures the painted art's comment gave.
-- **Mutants.** `tools/mutants/dfart.json` (14, all dead). In the arcs' own lists, records were re-aimed by content
+- **Mutants.** `tools/mutants/dfart.json` (26, all dead - DF-ART III's twelve: the night remap dropped, worn by day, the
+  twin unglowing, uncapped or cut, a host's remap lost, a new remap each night, the leads lit, the glow never kept or on
+  every record, the lit window cut, the carrack unlit). In the arcs' own lists, records were re-aimed by content
   onto the new code (all dead) and retired with what they broke: R11's seams, R12's texel, the joinery's saw, GALLEON-2's
   slices and 64, the ships' clock seeds and sizes, and the stern windows' glow's two replacement flags. The plaque's three
   (its cut, its lip, its bevel) and the joinery's J are back with what they pin.
