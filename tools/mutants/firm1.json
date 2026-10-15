@@ -43,8 +43,8 @@
   {
     "name": "FIRM1-blow-group-uncapped",
     "file": "src/net/firmamentLaw.js",
-    "old": "  let pct = Math.max(BLOW_FLOOR, Math.min(BLOW_CAP, general));",
-    "new": "  let pct = Math.max(BLOW_FLOOR, general);",
+    "old": "  let pct = Math.max(BLOW_FLOOR, Math.min(BLOW_CAP, gain) + price);",
+    "new": "  let pct = Math.max(BLOW_FLOOR, gain + price);",
     "tests": [
       "test/firm1_law.test.js"
     ]

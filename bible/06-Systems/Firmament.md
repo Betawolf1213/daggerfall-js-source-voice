@@ -63,7 +63,9 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
   Mercantile, +10 Etiquette) - carries a negative (the lead dev, same day: "the crafting and gathering nodes shouldnt
   have negatives"); the law's suite pins it.
 - **Persisted data**: an allocation is a list of star keys (`wr.c1.3`). A key never changes once shipped; a star taken out
-  of the sky is refunded by the law (`cleanKeys` drops a key no table holds). The keys are pinned by hash
+  of the sky is refunded by the law (`cleanKeys` drops a key no table holds), and every star that reached the start only
+  through it drops with it, free (`unpackTree` keeps the stars still joined - AUDIT UICALM-FIRM1 L1 L4: the orphans had
+  stayed in the row paying their stats, and a later refund billed them). The keys are pinned by hash
   (`test/firm1_law.test.js`), so a layout change that would move one fails the suite.
 
 ## 4. The purses and the law (`src/net/firmamentLaw.js`)
@@ -105,13 +107,17 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
 
 ### 4.1 The budget - why PvE stays where it is
 
-1. **Every channel is capped** for the whole sky, however it is spent (`STAT_DEFS`): an attribute +15, a combat skill
-   +15, a spell's damage +30%, its price 25% off at most, casting speed +15%, blows at most 15% lighter, +75 health and
+1. **Every channel is capped** for the whole sky, however it is spent (`STAT_DEFS`), a key star's raw points and a small
+   star's share of the same attribute, skill, Health or Spell Points held TOGETHER to its one budget
+   (`firmamentPowers.js` capAt - AUDIT UICALM-FIRM1 L1 H1: capped apart they made +21 Strength and +86 Health): an
+   attribute +15, a combat skill +15, a spell's damage +30%, its price 25% off at most, casting speed +15%, blows at most 15% lighter, +75 health and
    magicka, a 10% chance to evade a blow ...
 2. **The blow's channels are capped again as a group** at the moment of the blow (`blowPct`): any weapon, melee, the
    weapon's family and the foe's kind together at most +30%; its conditions (an unaware foe, a wounded wielder) after
    that, and the whole at most +50%. The spell's price likewise (`castCostPct`).
-3. **Keystones count against the same caps.** The whole sky allocated at once - every one of its 518 stars - is still
+3. **Keystones count against the same caps** - their gains with every other star's, and their PRICE paid after the
+   cap, per channel (`treeStats`) and per group at the blow and the cast (`blowPct`, `castCostPct`), so a build already
+   past a cap still pays it (AUDIT UICALM-FIRM1 L1 M2). The whole sky allocated at once - every one of its 518 stars - is still
    held to the budget; the pin allocates it and checks every channel.
 4. **The Craft purse can never reach a fight**: every life star's stats are life channels (pinned star by star).
 5. **The sky sleeps** offline (Daggerfall is exactly as it was), in a refereed fight (the duel, the arena), while
@@ -122,7 +128,10 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
    `scenes/world.js` the six sheets), a player's blow lands on the referee's vitality and never through the sky's damage
    door, and a player felled feeds no kill star.
 6. **Points are scarce and slow**: the Stars come with Renown, which the service bounds an hour, and Renown 50 is
-   hundreds of hours. A Renown 20 character has 38 Stars against 302 combat stars - a specialisation, not a god.
+   hundreds of hours. A Renown 20 character has 38 Stars against 295 combat stars to buy (302 with the seven free starts) - a
+   specialisation, not a god. The Craft purse may pay the road to a combat star where the r400 ring's life crossroads lie
+   on it (AUDIT UICALM-FIRM1 L1 N2, KEPT: the letter of "life ring alone" - a Craft point buys a life star, never a
+   combat one).
 
 The numbers are a first cut, every one named in one table (`STAT_DEFS`, the stars' own stats), so a balance pass moves
 one number. The existing balance levers beside it are untouched: Renown's own health and magicka, Master Skills' foe
@@ -135,27 +144,39 @@ edge (`skillSoftcap.js combatEdge`), the loot's and the sets' caps.
 - `POST /v1/firmament/set { character, tree, rid }` - **the whole tree** the character wants, judged by the law against
   the purses the service counts. One change is one request id (`firmament_sets`): asked twice it is answered from its
   row and charged once; made over a tree another change already replaced, it is refused (`firm-stale`).
-- Behind **`FIRMAMENT_OPEN`** (`off` / `dev` / `on`) in `wrangler.toml`, shipped at `dev`.
+- Behind **`FIRMAMENT_OPEN`** (`off` / `dev` / `on`) in `wrangler.toml`, shipped at `dev` (AUDIT UICALM-FIRM1 L2 M5: the
+  drop had set `on` under this line's own comment). The switch is the tree's WHOLE hand: shut, its stars move no trade
+  either (`firmStatsFrom` - L2 M4), and the client's book holds no tree in force on a shut read.
 - **The tree's hand on the trades is the service's**: a harvest reads the tree in its own round trip
   (`professions.js harvestNode`) - `yield.<profession>` on the quantity (the service's own die for the fraction, drawn
   only for a tree that moves it, so every other die falls as it did) and `xp.<profession>` on the XP. A smelt, a craft,
-  a brew and a disenchant read it for their XP (`xp.smithing`, `xp.building`, `xp.outfitting`, `xp.provisioning`,
-  `xp.enchanting`).
+  a temper, a brew and a disenchant read it for their XP (`xp.smithing`, `xp.building`, `xp.outfitting`,
+  `xp.provisioning`, `xp.enchanting`; the temper's AUDIT UICALM-FIRM1 L2 L3). A motherlode's strike and a writ's
+  delivery do not (KEPT: a strike's share is the event's own, the same for every striker).
+- A realm character's delete takes its sky with it (`realm.js deleteRealm`; its `firmament_sets` stay, the ids' memory -
+  L2 L2).
 - Refunds burn into the one ledger as `firmament` (`marksLaw.js MARKS_KINDS`).
 - `POST /v1/firmament/respec { character, rid, realm?, region? }` - **the whole sky back for 10,000 gold**. A realm
   character's record pays it in the respec's own batch (`realm.js prepareRealmRecord`, `realmGoldLaw.js payFromSave` -
   the purse, its letters, then the Empire's account), asked first where the record stands (`realmActFirst`), so a respec
   whose answer was lost is read as landed and charged once; short of gold it is refused (`realm-gold`) and nothing
   moves. The client reserves the gold first and a refusal gives back exactly what it took (`firmamentBook.js respec`,
-  `realmSaves.js realmGoldAct`).
+  `realmSaves.js realmGoldAct`). With no realm record there is no respec (`realm-needed` - AUDIT UICALM-FIRM1 L2 L1: it
+  had been made free, answering `gold` it never took).
 
 ## 6. The client (`firmamentBook.js`, `firmamentLive.js`, `firmamentPowers.js`)
 
-- **The book** reads the state when Renown is first heard and at every rise, and when the window opens. A change is
-  coalesced (ASYNC NEVER DROPS: the newest tree waits behind the one in flight), kept with its id when its answer does
-  not come and asked again at the next read.
-- **`firmamentLive.js`** is a leaf: the tree in force, online alone. The gathering acts read it there (the herb's window,
-  `act.herbalism`; the tug's, `act.fishing`) and so does the sail (`comeSailAway.js` freeDrive: `sailSpeed` on her pace).
+- **The book** reads the state when Renown is first heard and at every rise, when the window opens and when the seat is
+  taken back (`world.js takeSeat`). A change is coalesced (ASYNC NEVER DROPS: the newest tree waits behind the one in
+  flight), kept with its id when its answer does not come (`offline`, `server`, `no-session`, `firm-rate`, and the
+  Worker's own `rate` and `maintenance`) and asked again at the next read; a kept change the service then refuses is
+  said, not dropped. AN ID NAMES ONE TREE: a kept change's id is asked again for that tree alone, a newer tree is its
+  own request, and the service refuses another tree under a made change's id (`firm-rid`). No change is taken while a
+  respec is on its way (`firm-busy`). (AUDIT UICALM-FIRM1 L2 M1-M3, L4.)
+- **`firmamentLive.js`** is a leaf: the tree in force, online alone, and asleep while mentoring (`setFirmamentMentoring`,
+  from `world.js` partyFrame - the fold and the layer move that frame). The gathering acts read it there (the herb's
+  window, `act.herbalism`; the tug's, `act.fishing`) and so does the sail under either helm (`comeSailAway.js` firmSail:
+  `sailSpeed` on SAIL-FREE's pace and on the Classic drive).
 - **`firmamentPowers.js`** lays the channels on the seams (registered at import with the one cast engine,
   `scenes/hostMagic.js`): the fold, the blow, the spell's power, pierce, price and pace, the damage door, the blow
   evasion, the absorption chance, the kill and the magic round's regeneration, and the health and magicka on
