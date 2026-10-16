@@ -11,6 +11,7 @@ main's `7e0424e0`.
 | 4 | "Shipyard formatting is cooked" - "The text here may need a bit of work, as you can see!" | a shipyard row's acts track was `auto`: grid grew it to every press and the name box on one line before the words' track had a pixel, so a ship's words stood a word a line | fixed (YARD-ROWS) |
 | 5 | "items not repairing at all with 'repairs objects'" ... "my weapon WILL repair but no other worn items are repairing with repair objects" | a tick mended a pool weapon the classic Dagger's share (32) and every other piece DFU's point - a steel cuirass's 6,144 a point a tick, its % still for an hour while the blade's climbed | fixed (MEND-ARMOUR) |
 | 6 | "turning horse care off completely hides my other horses" | the upkeep's model listed horses only under a care tier, and the page drew the other horses and "Ride this one" only under one: Off (and the classic skin) the ridden horse alone | fixed (HORSE-CARE-OFF) |
+| 7 | "I've been using a 3x disintegrate as my main spell lately ... I believe it bypasses the kill/spare on revenants. And it seems it does this to other players' revenants, too" | a Disintegrate is a whole blow, and both damage doors passed every whole blow over a revenant's last stand, will and kneel; a party member's blow reaches the owner as a kill (`z`), so anyone's Disintegrate closed anyone's revenant, record and all, its owner never asked | fixed (RVN-OWNERS-CHOICE) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -222,3 +223,51 @@ fb1016_horsecareoff.json` (7, all dead).
 
 What the reporter is owed: your other horses were never gone, only their cards. With horse care Off the Stable page
 shows every horse you own and lets you ride any of them; only the feeding and the stats wait for horse care.
+
+## RVN-OWNERS-CHOICE: a revenant's fate is its owner's - only the owner's own Disintegrate closes it (7)
+
+`src/systems/revenantFate.js` ownersWholeKill; `src/scenes/exteriorFoes.js` damageFoe; `src/scenes/dungeonContext.js`
+damageFoe.
+
+THE REPORT. "I erased a Revenant fro[m]...": "I've been using a 3x disintegrate as my main spell lately ... I believe it
+bypasses the kill/spare on revenants. And it seems it does this to other players' revenants, too. As cool as the tech is
+being able to disintegrate a rev to never have to deal with them sort of like a delete button. It probably shouldn't be
+doable to other peoples revs." The screenshot: "Sekrath the Undying (dead)", and "Isn't he supposed to give you a
+choice?".
+
+FOUND. A Disintegrate is a whole blow (`effects.js:"sinks.hurt(left, { whole: true });"`), and both damage doors passed
+every whole blow over the revenant gates - the last stand and the yield read `!_whole` - to the death arm and
+`revenantSlain`, which closes the record. The rule was recorded on purpose ("a Disintegrate kills it outright",
+Revenants.md 11, 19, 20; Feud-Arc.md 14.2, 15.1), written for the owner. A revenant is never handed over (REVENANT-HEIR),
+so a party member's blow on it goes to the owner as a kill (`z: 1`, AUDIT PSCALE1 DOORS-1) and the owner's door applied
+it whole - the street's, the dungeon's landPeerBlow, a peer's strike spell alike: anyone's Disintegrate closed anyone's
+revenant, record and all. Measured on the old doors over two real street pools: Bob's real Disintegrate (5,255) on his
+copy of Ann's revenant sent `z: 1`; applied at Ann's door the revenant died and its record closed - at rank 3 with no last
+stand; underground the same. A stat drained to zero killed it outright too (that tick names no striker).
+
+CHANGED (the owner: "Stop trying to match DFU"; the reporter: "It probably shouldn't be doable to other peoples revs"):
+- A whole blow closes a revenant outright only as the owner's own - the player's blow (`fromPlayer`, never `peer`) at
+  the door that holds the record (`revenantFate.js:"export function ownersWholeKill("`); a revenant is never handed over,
+  so that door is always its owner's. Both doors' last-stand and yield gates ask it.
+- Anyone else's whole blow - a party member's forwarded `z`, their strike spell, a foe's spell, a companion's, a drained
+  stat's tick - is a killing blow like any other: at rank 3 and up the last stand; once stood with its will unbroken it
+  tears away; else it kneels. No `slain` goes back, the record stays open, the kill-or-spare is the owner's. The owner's
+  own Disintegrate and Razor still kill outright. `_whole` still keeps a kill undivided by the party's toughness.
+- Named in Revenants.md (15, notes in 11, 19, 20) and Feud-Arc.md (1.2, 14.2, 15.1). Offline, a stat drained to zero now
+  kneels the player's own revenant too (its tick names nobody); Kill closes it.
+
+THE FOUR HOSTS: world.js and worldModes.js - WIRED through exteriorFoes' one door (no host line); dungeonContext.js -
+WIRED, its own door's two gates edited in place (no code line added); exterior.js - the same door, still FLAGGED as in
+Feud-Arc 32 (no `fates`, so its revenants die to any killing blow; no net, so no peer's blow reaches it). Pinned by
+`test/fb1016_rvnownerschoice.test.js` (5, the second the report over two real street pools); `tools/mutants/
+fb1016_rvnownerschoice.json` (13, all dead). PINS MOVED: `revenant_fate.test.js` (the dungeon yield seam) and
+`rvn4_stand.test.js` (the dungeon stand seam); mutants REVENANT-FATE-dies-as-before, RVN4-the-street-stand-unasked,
+-the-street-whole-stood, -the-dungeon-stand-unasked and -the-dungeon-room-stood re-aimed by content (both lists: 85
+dead, 1 recorded equivalent).
+
+FLAGGED: `audit24_lifetimes.test.js`'s proximity bound (`health <= 0` within 4,200 characters of `releaseFoeBatch(f)`)
+now stands at 4,160 in exteriorFoes' death arm - the next line there moves it.
+
+What the reporter is owed: you were right - a Disintegrate deleted any revenant, yours or another player's, and nobody
+was asked. Another player's Disintegrate now beats a revenant the way any killing blow does - it makes its last stand,
+tears away or kneels - and only its owner chooses. Your own Disintegrate still finishes your own.
