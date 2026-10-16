@@ -109,7 +109,7 @@ import { createUpkeep, horseWhereOf, upkeepReach, registerUpkeepUses } from '../
 import { createSaddleHost } from './saddleHost.js';   // STEED-UI: world.js's twin - the saddle panel
 import { getBinding } from '../systems/inputActions.js';   // STEED-UI: the saddle panel's keys, named as the helm names them
 import { buttonText } from '../systems/controlsConfig.js';
-import { horseCareOn, wagonUpkeepOn } from '../systems/upkeepSwitch.js';
+import { horseCareRules, wagonUpkeepRules } from '../systems/upkeepSwitch.js';   // HORSE-TIERS / WAGON-TIERS: each upkeep's tier through its one accessor
 import { setGallopGate, setRideWalk } from '../systems/transport.js';   // HORSE-WALK: horse care's walk beside its gallop
 import { wagonKgFor, activeWagonKind, horseCountOf, wagonTeamShort } from '../systems/wagonKinds.js';   // HCC: ItemHelper.WagonKgLimit - WAGONS1: the driven wagon's
 import { SEATED_EYE_HEIGHT } from '../player/seatPose.js';   // WAGONS3: the driver's seated eye
@@ -272,7 +272,7 @@ import { windfallResponse } from '../systems/windfall.js';   // WINDFALL1: a flo
 import { createWindAudio, windSoundOn } from '../systems/windAudio.js';   // WIND3: the wind, heard
 import { PrecipitationRenderer } from '../render/precipitation.js';
 import { warmPrograms } from '../render/warmPrograms.js';
-import { setWeather, setHeardWeather, heardWeather, currentWeather, currentWeatherRaw, tickWeather, weatherJumpStamp, sampleWeatherField, weatherCrossingStamp, currentFieldCells, currentWeatherIntensity, currentCloudBase, currentWindApproach, currentMapSystems, sampleWeatherIndoors, weatherArrivalStamp, mapGround } from '../systems/weatherSim.js';   // W1: the live weather state; WEATHER2b: the field; WEATHER3b: the map's intensity; WEATHER3c: its sky and wind
+import { setWeather, setHeardWeather, heardWeather, fallingWeather, currentWeather, currentWeatherRaw, tickWeather, weatherJumpStamp, sampleWeatherField, weatherCrossingStamp, currentFieldCells, currentWeatherIntensity, currentCloudBase, currentWindApproach, currentMapSystems, sampleWeatherIndoors, weatherArrivalStamp, mapGround } from '../systems/weatherSim.js';   // W1: the live weather state; WEATHER2b: the field; WEATHER3b: the map's intensity; WEATHER3c: its sky and wind
 import { createDistantStorms, thunderSourceAt, THUNDER_SOURCE_M } from '../systems/distantStorms.js';   // WEATHER3d: the storms at a distance
 import { createStormLights } from '../systems/lightning.js';   // BOLT: the strikes themselves (world.js's twin note)
 import { LightningBoltsRenderer } from '../render/lightningBolts.js';   // BOLT: the channels, drawn
@@ -1367,7 +1367,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     const sheltered = m === 'exterior' && !!playerEntity.isResting && !!camps.tentNear(feet);   // AUDIT C&C I2: a rest at a tent sleeps under its roof
     return {
       climateIndex: locClimateIndex,
-      month: dateFromClassicMinutes(wm).month, hour, weather,
+      month: dateFromClassicMinutes(wm).month, hour, weather, falling: fallingWeather(weather),   // WET-FALL: the skin reads what the street's frame saw fall
       insideBuilding: m === 'interior', insideDungeon: m === 'dungeon',
       inSunlight: m === 'exterior' && sunlit({ hour, weather, sheltered }),   // AUDIT C&C: the sun's one law, the replay's too
       swimming: m === 'exterior' && !!player.isPlayerSwimming, transport: !!player.riding,
@@ -1793,17 +1793,17 @@ export async function bootExterior(canvas, renderer, params, status) {
   // STEED1 / WAGONS4: world.js's twin - horse care and wagon upkeep over this host's pack and the character's clock
   const upkeep = createUpkeep({
     items: () => playerEntity.items ?? [], now: () => ownMinutes(),
-    horseCare: horseCareOn, wagonUpkeep: wagonUpkeepOn,
+    horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,
     where: () => horseWhereOf(hccRuntimeOn()?.stableView() ?? null),
     stores: () => (upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()).wagonNear ? playerEntity.wagonItems ?? [] : []),   // the wagon's load, where it is in reach
     say: (l) => townTalk.say(l),
   });
   /** The clock passed by an act of upkeep (a kit's hour), as a camp meal's: the ticker, then the encounters it owes. */
   const upkeepPass = (n) => { playerTicker.advance(n); runEncounterTick(walkMode ? player.pos : cam.pos, true); };
-  setRideWalk((mode) => upkeep.rideWalks(mode));   // HORSE-WALK: horse care's horse walks unless it gallops (bible/06-Systems/Horse-Care.md) - the fixed city stands no Overworld and runs no journey, so no road keeps the ride's pace here (world.js rideOnTheRoad)
+  setRideWalk((mode, runAsked) => upkeep.rideWalks(mode, runAsked));   // HORSE-WALK: horse care's horse walks unless it gallops (bible/06-Systems/Horse-Care.md) - the fixed city stands no Overworld and runs no journey, so no road keeps the ride's pace here (world.js rideOnTheRoad)
   setGallopGate((mode, mods) => upkeep.gallopGate(mode, mods));
   registerUpkeepUses(upkeep, {
-    reach: () => upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()), horseCare: horseCareOn, wagonUpkeep: wagonUpkeepOn,
+    reach: () => upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()), horseCare: horseCareRules, wagonUpkeep: wagonUpkeepRules,
     pass: upkeepPass,
   });
   const wagonLoadShare = () => { const lim = wagonKgFor(playerEntity); return lim > 0 ? totalWeight(playerEntity.wagonItems ?? []) / lim : 0; };
@@ -3071,7 +3071,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     horseCart: hccRuntimeOn,   // HCC: the wagon's storage access is the runtime's word
     entity: playerEntity,
     icons: { getTexture, uploadRecord, textures: renderer.textures },
-    usingRightHand: () => (modes?.liveArm?.()?.rig ?? weaponRig).playerWeapon.usingRightHand,   // DISC12: the pack's figure holds the hand in USE
+    usingRightHand: () => (modes?.liveArm?.()?.rig ?? weaponRig).playerWeapon.usingRightHand, handArm: () => (modes?.liveArm?.()?.rig ?? weaponRig).handArm?.(),   // DISC12: the pack's figure holds the hand in USE; TWO-HANDS (AUDIT 2): both of a pair, through its door
     openCharSheet: () => { if (charSheetDoorReady()) townTalk.showOverlay(makeCharSheetWindow()); },   // MAC-C: the pack's other window key crosses over rather than doing nothing - the same door the sheet's own Items button takes back the other way
     ...useHooks,   // U53: the one bag
     // U8e: OnPop mints the world pile. G5: with the drop icon the
@@ -3925,6 +3925,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     paused: () => gamePaused(),
     cardTable: () => !!modes?.cardSeated?.(),   // CARDS-TOUCH: seated at a card table, the finger is the table's (ui/touch.js)
     cardHeld: () => !!modes?.cardPressHeld?.(),   // AUDIT CARDS-6 E1: a finger the cards took is never the stick (ui/touch.js)
+    board: { up: () => !!modes?.gambitBoardUp?.() },   // AUDIT KG II C4: at a King's Gambit battle the pad's d-pad is the board's cursor (ui/gamepadInput.js)
   };
   const touch = attachTouch(canvas, inputHooks);
   const gamepad = attachGamepad(canvas, inputHooks);   // GP1: null without the Gamepad API
@@ -5132,7 +5133,7 @@ export async function bootExterior(canvas, renderer, params, status) {
       const bob = headBobber.update(dt, cam, {
         health: playerEntity.health, paused: gamePaused(), climbing: !!player.climb?.isClimbing, grounded: !!player.grounded,
         swimming: !!player.isPlayerSwimming, running: !!player.isRunning, crouching: !!player.crouching, riding: !!player.riding, levitating: !!player.levitating,   // TR1: the Horse bob style   // XL-1: HeadBobber.cs:101 and :215 both read playerEnterExit.IsPlayerSwimming, never the motor's flag
-        velocity: player.moveSpeed || 0, moving: !!(player.moveForward || player.moveStrafe),
+        velocity: player.moveSpeed || 0, moving: !!(player.moveForward || player.moveStrafe), out: player,   // TWO-HANDS (AUDIT): the bob's timer for the running hands' stride (player/motor.js motionBagOf)
       });
       const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);   // HANDEDNESS (mat4's law): right = (cos, 0, -sin)
       player.bobOffset = [cy * bob[0], bob[1], -sy * bob[0]];
@@ -5199,6 +5200,7 @@ export async function bootExterior(canvas, renderer, params, status) {
         covered: townTalk.hudCovered || (modes?.hudCovered ?? false) || gamePaused() || !hudRenderEnabled(),
         touch: !!touch, mouseFree: show && (cursorActive() || !document.pointerLockElement),
         freeKey: saddleKeyLabel('FreeMouse'), keyOf: saddleKeyLabel,
+        toggle: show && hccActionPressed('SaddlePanel'),   // UI-CALM: the panel's key (F2) - up and away
       });
     }
     arenaFrame(dt);   // ARENA-FIX 12: the bout on the city's floor or the instance's - before the modal return, as the world host's
@@ -5412,7 +5414,7 @@ export async function bootExterior(canvas, renderer, params, status) {
           metres, road: _surfPath, load: wagonLoadShare(),
           wagonGoes: mode === TRANSPORT_MODES.Cart || !!hccRuntimeOn()?.view?.()?.teamFollowing,
         });
-        saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping);   // STEED-UI: the saddle panel's pace and gait
+        saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping, player.rideWalking);   // STEED-UI: the saddle panel's pace and gait; HORSE-TIERS: the walk the motor took
       }
       // PlayerHeightChanger's sink reads `OnExteriorWater == Swimming`
       // alone (:127, :294, :326, :550) - WaterWalking splashes but
@@ -6305,12 +6307,12 @@ export async function bootExterior(canvas, renderer, params, status) {
           // matters because a watchman standing over a quest foe must
           // still be the one the swing finds.
           if (exteriorFoes.resolvePlayerHit(weaponRig.playerWeapon, eye, fwd, player.pos, makeInView(proj, view, multiply), guardHitSound, { swing })) {
-            tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon);
+            tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon, weaponRig.playerWeapon.blowWeight);
             surfacePlayer();
           } else
           cityGuards.resolveCivilianHit(weaponRig.playerWeapon, eye, fwd, player.pos, _guardPool(),
             { onMurder: () => _crimeResponse(), onHitSound: guardHitSound, swing }).then((r) => {
-            if (r?.carriedHit) tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon);
+            if (r?.carriedHit) tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon, weaponRig.playerWeapon.blowWeight);
             if (r?.crime) surfacePlayer();
             // ROAD-B: WeaponEnvDamage's static-door arm (:474-477),
             // world.js's twin - THE FOUR HOSTS RULE.
@@ -6408,7 +6410,7 @@ export async function bootExterior(canvas, renderer, params, status) {
           largeHud: largeHudOptions({ renderer, fetchBytes, palette }, playerEntity),
           // AUDIT 39: the enhanced HUD's two hand plaques - see world.js.
           readied: magic?.readied?.() ?? null,
-          weapon: weaponRig.playerWeapon.weapon ?? null,
+          weapon: weaponRig.playerWeapon.restingWeapon ?? null,   // TWO-HANDS (AUDIT): the lead's, never the off hand's mid-blow
           // QS4: THE PHONE'S OWN DOORS. The diamond's cells take a finger
           // on a touch-first device (ui/enhancedHud.js's second departure),
           // and a door the host never handed over is a control that

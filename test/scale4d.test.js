@@ -66,7 +66,7 @@ test('SCALE4d the mint runs on ONE D1 session opened first-primary - its first s
   // again and stored) - on the binding, and nothing else of the mint
   // (the board a #1 is counted over reads arena_pvp, as the token's own rating read does - that one is a claim read, and
   // rides the session; the honours' own tables are the Grand Champion's, the kept #1s and Iliac Hand's)
-  const honours = /arena_pve|arena_champions|iliac_/, onBinding = /arena_pve|arena_champions|arena_pvp|iliac_/;
+  const honours = /arena_pve|arena_champions|iliac_|gambit_/, onBinding = /arena_pve|arena_champions|arena_pvp|iliac_|gambit_/;   // PIN MOVED (KG6): and The King's Gambit's (gambit.js), Iliac Hand's twin
   assert.ok(asked.some((q) => honours.test(q)), 'the honours read on the binding');
   assert.deepEqual(asked.filter((q) => !onBinding.test(q)), [], 'nothing but the honours on the binding');
   assert.deepEqual(s.statements.filter((q) => honours.test(q)), [], 'and none of them on the session');
@@ -84,11 +84,14 @@ test('SCALE4d every other route stays on the binding - no session opened (mutant
     const r = await S.call(path, body, who.secret);
     assert.equal(r.status, 200, `${path} answered (${JSON.stringify(r.body)})`);
   }
-  // PIN MOVED (DISPLAY-REPLICA, 2026-10-13): the realm's lines ride a session now (test/display_replica.test.js) - a
-  // town's yards, which an isolate keeps for every caller, stay on the binding
+  assert.equal(raw._sessions.length, 0, 'no session for either write');
+  // PIN MOVED (DISPLAY-REPLICA, 2026-10-13): the realm's lines ride a session now (test/display_replica.test.js); PIN MOVED
+  // (YARDS-REPLICA, 2026-10-16): and a town's yards, which an isolate keeps for every caller, ride ONE session of their
+  // own - any instance's, the route itself on the binding (test/yards_replica.test.js holds the rest)
   const yards = await S.fetch('https://accounts.invalid/v1/homes/yards', { method: 'POST', headers: { authorization: `Bearer ${who.secret}`, 'content-type': 'application/json' }, body: '{"mapId":1}' });
   assert.equal(yards.status, 200, 'a town\'s yards answered');
-  assert.equal(raw._sessions.length, 0, 'no session for any of them');
+  assert.deepEqual(raw._sessions.map((x) => x.constraint), ['first-unconstrained'], 'the yards\' read on a session of its own');
+  assert.match(raw._sessions[0].statements.join('\n'), /FROM home_decor WHERE map_id = \? AND yard = 1/);
 });
 
 test('SCALE4d the claims a session mints are the claims the binding mints - byte for byte, the same token (mutant: none; the oracle is the binding)', async () => {

@@ -57,6 +57,7 @@ import { PlaceFoe } from '../src/systems/quest/actions.js';
 import { addQuestResourceObjects, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../src/systems/quest/sceneMount.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { effectiveLevel } from '../src/systems/mentorMode.js';
+import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8').replace(/^﻿/, '');
@@ -203,6 +204,7 @@ function classCfg() {
 function context(collider, { idleH = 3.2, batH = 1, playerFeet = [25.6, 0, 22.4] } = {}) {
   const foes = [], bound = [];
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     ENEMY_BASICS, collider, foes, flyerStandFeet, enemyControllerHeight, keepRebuiltSpawn, freeLodgedFeet, clearPast, floorLanding,
     SEARCH_FOE_SPACING, SEARCH_DOOR_REACH_M, lastPlayerFeet: playerFeet, actions: { objects: new Map() }, objectAabb: () => null,
     MobileUnit: class { static resolveGender(g) { return g === 'female' ? 'female' : 'male'; } },
@@ -455,6 +457,7 @@ test('CRATE-FREE interior: a building\'s quest marker inside a house crate - wor
   // INTEGRATION (FIELD BUGS 2026-10-04d, PIN MOVED): QUEST-MARKERS' backstop runs in the same stand - the room's
   // collider (the host's own) and the backstop's spots join the scope; the marker has a floor under it, so it stands
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     interiorCtx: { parentPt: (x, y, z) => [x, y, z], collider: c }, interiorFoes: { spawnFoe: (...a) => pool.spawnFoe(...a).then((f) => { stood.push(f); return f; }) }, interiorFoeStands: [], console,
     markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH,
   };
@@ -722,4 +725,19 @@ test('CRATE-FREE real data: every building interior of BLOCKS.BSA - none of its 
     });
   }
   assert.deepEqual([buildings, markers, lodged], [6832, 1905, []]);
+});
+
+test('QUEST-FOE-WALL (FIELD BUGS 2026-10-15c, the Discord: "Quest enemy spawned inside object" - B0B70Y16 Dragonslayer\'s Dragonling in The Elyrrya Tradition): a body inside a PILLAR to the ceiling - no lid in reach, uncapped or capped past it - is lodged, and is freed beside it; beside the pillar, or in a sleeve open at both ends, nobody is (mutants: the column unheld; two walls enough with no lid; the lid\'s reach)', () => {
+  const columnAt = (x, z, s = 0.5, h = 4) => [boxFaces([x - s, 0, z - s], [x + s, h, z + s]).filter((f) => f.n[1] === 0)];
+  const cappedAt = (x, z, s = 0.5, h = 6) => [boxFaces([x - s, 0, z - s], [x + s, h, z + s]).filter((f) => f.n[1] !== -1)];
+  assert.equal(lodgedIn(room([columnAt(0, 0)]), [0.1, 0, 0.05]), true, 'inside a pillar running to the ceiling: no lid, every bearing in its skin');
+  assert.equal(lodgedIn(room([cappedAt(0, 0)]), [0.1, 0, 0.05]), true, 'inside a pillar capped past the lid\'s reach');
+  assert.equal(lodgedIn(room([columnAt(0, 0)]), [1.5, 0, 0]), false, 'beside it, in the room');
+  assert.equal(lodgedIn(room([[boxFaces([-0.5, 0, -1], [0.5, 4, 1]).filter((f) => f.n[0] !== 0)]]), [0, 0, 0]), false, 'a sleeve open at both ends: a way through, held by nothing');
+  assert.equal(lodgedIn(room([[crateFaces([4.3, 0, 4.3], [6.6, 2.6, 6.6])]]), [5.9, 0, 5.9]), true, 'a crate over a man\'s head in a corner: two walls and its lid in reach still hold him');
+  const c = room([columnAt(0, 0)]);
+  const feet = [0.1, 0, 0.05];
+  assert.equal(freeLodgedFeet(c, feet, { height: 3.2 }), true, 'freed');
+  assert.ok(Math.abs(feet[0]) > 0.5 || Math.abs(feet[2]) > 0.5, `out of the pillar: ${feet.map((v) => v.toFixed(2))}`);
+  assert.equal(lodgedIn(c, feet), false);
 });

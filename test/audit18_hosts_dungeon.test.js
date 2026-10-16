@@ -169,6 +169,10 @@ test('audit18 sweep: all three spawn sites run the one shared equip chain', () =
   const guards = hostSrc('cityGuards.js');
   // RF2: the equip chain rides the ONE enemy-loot seam (hostCombat.spawnEnemyLoot) - a host calls that, once per branch
   assert.equal((dungeon.match(/\bspawnEnemyLoot\(/g) ?? []).length, 2, 'class + monster branch');
+  // PIN MOVED (HOST-SPLIT, FIELD BUGS 2026-10-14): a room body's base - PARTY-LOOT's, the same one seam on the room's
+  // terms - left buildDungeonContext with its block for src/scenes/roomLootHost.js, which the dungeon host constructs
+  assert.equal((hostSrc('roomLootHost.js').match(/\bspawnEnemyLoot\(/g) ?? []).length, 1, 'a room body\'s base (PIN MOVED, PARTY-LOOT: the same one seam on the room\'s terms)');
+  assert.match(dungeon, /= createRoomLoot\(\{   \/\/ HOST-SPLIT: src\/scenes\/roomLootHost\.js/, 'and the dungeon host constructs it');
   assert.equal((guards.match(/\bspawnEnemyLoot\(/g) ?? []).length, 1, 'the city watch');
   for (const [name, src] of allHosts()) {
     if (name === 'hostCombat.js') continue;   // the one shared home
@@ -551,14 +555,16 @@ test('audit18 sweep: enemy loot rolls the PLAYER gender at both dungeon spawn si
   const src = hostSrc('dungeonContext.js');
   assert.equal((src.match(/spawnEnemyLoot\(entity, e\.mobileType, basics, D\.playerEntity, \{ \.\.\.eliteLootOpts\(e\), where: 'dungeon' \}\)/g) ?? []).length, 2);
   assert.equal(/generateItems\([^)]*gender: e\.gender/.test(src), false);
-  assert.match(hostSrc('hostCombat.js'), /generateItems\(enemyLootTableKey\(mobileType, basics\?\.lootTableKey \?\? '-'\), \{ level: effectiveLevel\(player\), gender: player\.gender \}, undefined, \{ itemChanceScale, mobileType \}\)/, 'the PLAYER\'s gender (SOFTCAP2: at the mentor\'s level), LootTables.cs:212/:229/:237');
+  assert.match(hostSrc('hostCombat.js'), /generateItems\(enemyLootTableKey\(mobileType, basics\?\.lootTableKey \?\? '-'\), \{ level: effectiveLevel\(player\), gender: player\.gender \}, rolls, \{ itemChanceScale, mobileType \}\)/, 'the PLAYER\'s gender (SOFTCAP2: at the mentor\'s level), LootTables.cs:212/:229/:237');   // PIN MOVED (PARTY-LOOT): on the caller's dice - the player a room's base hands in is the room's roller
 });
 
 test('audit18 sweep: the swing fatigue and the tally arm are wired into the dungeon rig', () => {
   const src = hostSrc('dungeonContext.js');
   assert.equal((src.match(/drainFatigue\(SWING_FATIGUE_COST\)/g) ?? []).length, 2,   // BALANCE1: DFU's swing loss on exertion's scale
     'the melee swing and the bow release');
-  assert.equal((src.match(/tallySwingSkills\(playerEntity, playerWeapon\.weapon\)/g) ?? []).length, 2);
+  // PIN MOVED (TWO-HANDS AUDIT 2, bible/05-Combat/Two-Hands.md): the tally counts the swing's weight - an off-hand blow of
+  // a pair 0.8 of a use (hostCombat.js tallySwingSkills), every other swing 1 as before
+  assert.equal((src.match(/tallySwingSkills\(playerEntity, playerWeapon\.weapon, playerWeapon\.blowWeight\)/g) ?? []).length, 2);
   assert.ok(/const hitEnemy = resolvePlayerHit\(/.test(src), 'the tally arm needs hitEnemy');
 });
 

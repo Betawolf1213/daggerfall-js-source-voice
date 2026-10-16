@@ -229,6 +229,9 @@ export default defineConfig({
         // can be opened on demand, at any size, with no ARENA2 on disk.
         // tools/levelUpProbe.mjs drives this page.
         levelUp: 'levelup.html',
+        // FIRM1: THE FIRMAMENT LAB - the passive tree's window over made-up purses, no service and no ARENA2, in either
+        // dress (`?dress=grimoire`), so the sky can be judged and driven by hand
+        firmament: 'firmament.html',
         // The texture-archive contact sheet: every record of one
         // TEXTURE.nnn laid out and numbered, to read off which record
         // an item template points at. The player's own ARENA2 through

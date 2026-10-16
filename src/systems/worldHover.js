@@ -24,6 +24,7 @@
 // WHICH MODEL, the draw decides WHICH FACE"), and the reason AUDIT 39's
 // skin gate can stay above ensure() where it belongs.
 import { rarityAttr } from '../systems/lootRarity.js';   // LR1: a pile's rows wear their tier
+import { isPersonalLoot } from './roomLoot.js';   // PARTY-LOOT: a row that is this player's own (their bonus), told apart from the room's base
 import { itemNameParts } from '../systems/itemInfo.js';   // RF6: ResolveItemLongName's name part (LR1: an unidentified item reads as its template on the plaque too)
 
 /** How many rows the plaque shows at once. FIELD BUGS 2026-10-11g LOOT-SCROLL ("Can't scroll loot pile / corpse": "I
@@ -94,6 +95,7 @@ export function hoverLines(items, max = HOVER_MAX) {
     name: itemNameParts(it).name || 'Something',   // RF6: the long name's name part - a potion its %po, a soul trap its soul; LR1: unidentified is the bare template (the resolver already answers a template-less item its own name)
     stack: (it.stackCount ?? 1) > 1 ? it.stackCount : 0,
     rarity: rarityAttr(it),   // LR1: null with the switch off or for Common
+    mine: isPersonalLoot(it),   // PARTY-LOOT: this player's own bonus - every other row is the same for everyone in the room
     item: it,
   }));
   const shown = rows.slice(0, max);
@@ -370,6 +372,6 @@ export function plaqueWindow(f, lit = -1, from = 0, max = HOVER_MAX) {
 
 export function frameSignature(f) {
   if (!f) return null;
-  const rows = f.rows.map((r) => `${r.name}\u0002${r.stack}\u0002${r.rarity ?? ''}`).join('\u001f');
+  const rows = f.rows.map((r) => `${r.name}\u0002${r.stack}\u0002${r.rarity ?? ''}${r.mine ? '\u0002m' : ''}`).join('\u001f');   // PARTY-LOOT: a row's owner is painted, so it is signed
   return `${f.key}|${f.kind}|${f.renown ?? ''}|${f.title}|${f.subs.join('\u001f')}|${rows}|${f.rest}|${f.empty ? 'e' : ''}${f.tone ? `|${f.tone}` : ''}`;   // RENOWN1: the boxed Renown is painted, so it is signed; UXB1-N: a tone that changes repaints
 }

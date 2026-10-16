@@ -31,7 +31,7 @@ import { resurrectionSpell } from '../systems/resurrect.js';   // RESURRECT1
 import { sharedCartographySpell } from '../systems/partyMap.js';   // PARTY-MAP
 import { signatureOffers } from '../systems/signatureSpells.js';   // SCHOOLS3: a path's signature spell on the Buy Spells shelf
 import { isOnlinePage } from '../systems/onlineLane.js';   // RESURRECT1: the shelf's online arm
-import { horseCareOn } from '../systems/upkeepSwitch.js';   // STEED1: a Stable prices its horses by what they are while horses are cared for
+import { horseCareRules } from '../systems/upkeepSwitch.js';   // STEED1: a Stable prices its horses by what they are while horses are cared for (HORSE-TIERS: any tier but Off, through the one accessor)
 import { bloodDecalDeps } from '../combat/bloodSwitch.js';   // BLOOD1a
 import { createBloodMarks } from '../combat/bloodMarks.js';   // BLOOD1a
 import { doorWorldAabb, doorWorldPosition, doorWorldNormal, interiorLanding, exteriorLanding, dungeonEntranceLanding, climbLadder, floorLanding, repositionFeetY, standsOnFloor, interiorVoidRescue, standFromVoid, NOTHING_OF_VALUE_TEXT, INTERIOR_VOID_TEXT } from '../player/enterExit.js';   // FIELD BUGS 2026-10-04d VOID-ENTRY: the floor a landing stands on, the failsafe, and their two lines
@@ -171,6 +171,8 @@ import { trackHudPointer } from '../ui/hudActiveSpells.js';   // U46: the spell-
 import { ImgFile } from '../formats/imgFile.js';   // AUDIT 21 hosts F7: loadHud's reader
 // E2: the shop shelf browse/buy layer (node-pure laws in shopStock.js)
 import { ChoiceWindow } from '../ui/talkWindow.js';
+import { questMountsHere } from '../systems/instancePlaces.js';   // INSTANCES: where a quest's things stand online (bible/11-Multiplayer/Instances.md)
+import { instanceWord } from '../net/instanceRoom.js';   // INSTANCES (the audit): the instance a place was entered as, recorded (a save, an anchor, a staff landing)
 import { YesNoBoxWindow } from '../ui/yesNoBox.js';   // UXB1-M: DFU's YesNo box - the private-property question
 import { FntFile } from '../formats/fntFile.js';
 import { makeFont } from '../ui/text.js';
@@ -210,7 +212,7 @@ import { applyDeathPenalty, deathPenaltyText } from '../systems/deathPenalty.js'
 import { revenantTakes } from '../systems/revenant.js';   // AUDIT FEUD (RVN8): the in-place respawn's theft, as the world host's
 import { endPlayerFights } from '../systems/harmMark.js';   // AUDIT FEUD (RVN10): ...and its fights ended
 import { tokenRows } from '../ui/messageBox.js';
-import { staticNpcRoute, showsJoinButton, serviceAccess, onPushEffects, NO_POTION_INGREDIENTS, isServiceBox, SERVICE_LABEL, SERVICE_DESTINATION } from '../systems/guildServiceFlow.js';
+import { staticNpcRoute, showsJoinButton, serviceAccess, onPushEffects, rankNeedsLines, NO_POTION_INGREDIENTS, isServiceBox, SERVICE_LABEL, SERVICE_DESTINATION } from '../systems/guildServiceFlow.js';
 import { isIngredient } from '../systems/potions.js';   // F201: MakePotionService's scan
 import { isPotionRecipe, USE_TEXT, expandItemMacro } from '../systems/useItem.js';   // AUDIT 63 F42: IsPotionRecipe (DaggerfallUnityItem.cs:344-347); RR1: the light's own "You douse the %it."
 import { canAccessService , hasCustomMerchantService, getCustomMerchantService, getCustomMerchantServiceLabel } from '../systems/guildServices.js';   // G4: does THIS guild also sell soul gems?
@@ -234,9 +236,16 @@ import { cardTableSeats, nearestFreeSeat, takenSeats, seatFloorOk, leavesSeat, S
 import { seatTopByte } from '../player/seatPose.js';   // CARDS2b: the seat on the pose
 import { CardTableSession, stakesFor, buyInRange, seatPatrons, regularsFor, regularsAfter } from '../systems/cardTableSession.js';   // CARDS4: the table's evening
 import { RemoteCardTable } from '../systems/cardRemoteTable.js';   // CARDS5: the relay's table as this client sees it
-import { HOLDEM_STAKE_MAX_BB, HOLDEM_TOPUP_MIN_BB } from '../net/holdemTable.js';   // CARDS6 follow-up: a gold seat's top-up
-import { regularsToStand, regularBark, BARK_MS } from '../world/cardRegulars.js';   // CARDS4b: the regulars in their chairs
+import { HOLDEM_STAKE_MAX_BB, HOLDEM_TOPUP_MIN_BB, holdemGoldTable } from '../net/holdemTable.js';   // CARDS6 follow-up: a gold seat's top-up
+import { regularsToStand, regularBark, regularLook, BARK_MS } from '../world/cardRegulars.js';   // CARDS4b: the regulars in their chairs
 import { openIliacTableGame } from './iliacTableGame.js';   // CARDS10: Iliac Hand on the seat
+import { openGambitTableGame, gambitTableOn } from './gambitTableGame.js';   // KG3: The King's Gambit on the seat
+import { gambitBoardKey } from '../ui/gambitTableHud.js';   // KG3: the board's own keys (14.3)
+import { RemoteGambitTable } from '../systems/gambitRemoteTable.js';   // KG5: a watched King's Gambit table, as the relay tells it
+import { readGambitReceipt } from '../net/gambitReceipt.js';   // KG6: a rated game's result, acked by its id
+import { GAMBIT_STAKE_BB } from '../net/gambitStakes.js';   // KG6: a King's Gambit stake's mark in the escrow
+import { gambitPlaces } from '../world/gambitCloth.js';   // KG5: a watched board on its cloth
+import { createGambitTableDraw } from '../render/gambitTableDraw.js';   // KG5: and drawn there
 import { readIliacReceipt } from '../net/iliacReceipt.js';   // AUDIT CARDS-6 C1: a ranked result kept, its game said back to the relay
 import { iliacGrade } from '../systems/iliacPatrons.js';   // CARDS10: the tavern's grade - its regulars' decks and play
 import { cardPackPrice, buyCardPack } from '../systems/cardSources.js';   // CARDS9: the house sells packs at its card table
@@ -306,7 +315,7 @@ import { goldAmount, totalGoldAmount, deductGold, addGold, payUndoable, setCrime
 import { getReputation, getFlag, setFlag, FACTION_FLAGS } from '../systems/factionRep.js';
 // G7: the last unbuilt guild service - the summoning calendar, the
 // cost, Sheogorath's hijack and the roll.
-import { daedraForSummoner, attemptSummoning, SUMMON_TEXT, DAEDRIC_FOES, summonMacroValues, summonsByName, summonByNameBoxes, summonQuestionRows } from '../systems/daedraSummoning.js';   // IF: the punishment table; DAEDRA1: %dae's one source
+import { daedraForSummoner, attemptSummoning, SUMMON_TEXT, DAEDRIC_FOES, summonMacroValues, summonsByName, summonByNameBoxes, summonQuestionRows, noQuestText } from '../systems/daedraSummoning.js';   // IF: the punishment table; DAEDRA1: %dae's one source; SUMMON-OFFER: the word when no quest can be made
 import { expandRowValues } from '../systems/quest/questMacros.js';   // DAEDRA1: MH1's one walk, with the shared context riding it
 import { currentWeather } from '../systems/weatherSim.js';   // AUDIT AT F3: the WORD; its flags come from weather.js's one derivation
 import { weatherFlags } from '../world/weather.js';   // AUDIT AT F3: WeatherManager's four public flags, derived once from SetWeather's switch
@@ -379,7 +388,7 @@ import { decorScanDeps } from '../systems/decorScan.js';   // DECOR-DUNGEON: the
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { loadIcon } from '../ui/textureCanvas.js';
 import { isTouchDevice } from '../ui/touchDevice.js';
-import { setCursorActive, holdCursor } from '../player/pointerLock.js';
+import { setCursorActive, holdCursor, cursorKeyClaimed } from '../player/pointerLock.js';
 import { decorKey } from '../systems/decorCatalogue.js';
 import { BULLETIN_BOARD_MODEL_ID } from '../world/rmbLayout.js';   // GUILD1e: Daggerfall's own board, placed in a guild's hall
 import { accountRefusalText } from '../net/accountClient.js';
@@ -453,6 +462,7 @@ import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';   // HAL
 import { chapterHallFactor, chapterHallShelf, chapterHallShut, CHAPTER_HALL_SHUT_LINE, seatedBook } from '../net/npcChapterLaw.js';   // CHAP3c: a hall's chapter's band on its training, spells and shelf; CHAP4b: a seat's rank at its halls
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import '../ui/tutorialPopup.js';   // TUT1: the popup's handler, registered by this host (the four hosts' rule)
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a tinted copy of a light is that light (the dungeon's flame tint, the abyss's candle)
 /** BOUNTY1: the plaque over a town's bounty board. */
 const BOUNTY_BOARD_TEXT = 'Bounty Board';
 const NOTICE_BOARD_TEXT = 'Notice Board';   // ONE-BOARD: a town's Notice Board, while it is open to this account
@@ -575,6 +585,7 @@ export function createWorldModes(host) {
     cam.pos = player.eyeAt();   // EV1: back to the body's own eye
     closeCardGame({ cashOut });   // CARDS4: every road off the seat cashes the table out
     closeIliacGame({ concede: cashOut });   // CARDS10: and concedes an Iliac game under way (a load's road: the game the load threw away)
+    closeGambitGame({ concede: cashOut });   // KG3: and forfeits a King's Gambit under way (a load's road: nothing settles - the save predates the deal)
   }
   // SIT1 (world/chairSeat.js; Mac: "Implement the ability to interact and sit on chairs. Morrowind model should use the
   // sitting animation we use for the card game"): A CHAIR SAT ON. A press on one of the room's chairs, benches or thrones
@@ -637,6 +648,7 @@ export function createWorldModes(host) {
     if (!cardSeat) return;
     if (cardGame) closeCardGame();
     closeIliacGame();
+    closeGambitGame();   // KG3: one game a cloth
     const t = interiorCtx?.tables?.[cardSeat.table];
     if (!t) return;
     const seats = cardSeatsOf(cardSeat.table);
@@ -653,6 +665,7 @@ export function createWorldModes(host) {
       packPrice: cardPackHere, buyPack: buyCardPackHere,
       onHoldem: () => { closeIliacGame(); if (cardSeat) openCardGame((cardSeat.free?.length ?? 0) + 1); },
       onStand: () => standFromCardTable(),
+      gambit: gambitTableOn, onGambit: () => openGambitGame(),   // KG3: the third game, offered while its Features switch is on
       // CARDS10: a relay that deals Iliac Hand - the room's table at this cloth (the same index and chairs as Hold'em's)
       online: host.iliacOnline?.ok?.() ? {
         send: (w) => !!host.iliacOnline.send(w), myId: () => host.iliacOnline.id(), now: () => host.iliacOnline.now(),
@@ -663,6 +676,159 @@ export function createWorldModes(host) {
       } : null,
     });
     iliacGame.regulars = regs;   // CARDS4b's look for the regular in his chair (cardRegularsNow)
+  }
+  // KG3 (bible/11-Multiplayer/Kings-Gambit.md section 3): THE KING'S GAMBIT ON THE SEAT - the third slot beside the other
+  // two (each game opens by closing the others, and every road off the seat closes all three), its half in
+  // scenes/gambitTableGame.js; its listeners on the cloth and the keys are the game's, gone with it
+  let gambitGame = null;
+  /** KG3: the game closes (a battle under way forfeited) - the slot emptied first (THE SLOT IS EMPTIED BEFORE THE OCCUPANT
+   *  IS TOLD), the cloth's listeners let go. */
+  function closeGambitGame({ concede = true } = {}) {
+    const gg = gambitGame;
+    if (!gg) return;
+    gambitGame = null;
+    gg.unlisten?.();
+    gg.close({ concede });
+  }
+  /** KG3: The King's Gambit opens on the seat - the other two games gone, a regular for every free chair (section 10.5: the
+   *  room's own, named and seeded as at the other two games). */
+  function openGambitGame() {
+    if (!cardSeat || !gambitTableOn()) return;
+    if (cardGame) closeCardGame();
+    closeIliacGame();
+    closeGambitGame();
+    const t = interiorCtx?.tables?.[cardSeat.table];
+    if (!t) return;
+    const seats = cardSeatsOf(cardSeat.table);
+    const free = cardSeat.free ?? [];
+    const names = tavernRegulars(Math.max(1, Math.min(5, free.length)));
+    const seeds = regularSeeds(names.length);
+    const gg = openGambitTableGame({
+      renderer, entity: playerEntity, say, holdCursor, relock: () => host.relock?.(), rand32: cardRand32, now: () => performance.now(),
+      // AUDIT KG II C9: a regular's night is the TAVERN's (both its tables seat the same regulars) - never paid out afresh
+      // at the other table
+      day: cardDay, key: cardTavernKey(), friendly: !!host.realmAct || isOnlinePage(),   // 5.7: online, the regulars play for fun
+      regulars: free.map((chair, i) => (names[i] ? { name: names[i], seed: seeds[i].seed, chair } : null)).filter(Boolean),
+      frame: tableFrame(t), mySeatFeet: seats[cardSeat.seat].feet, touch: () => isTouchDevice(),
+      onHoldem: () => { closeGambitGame(); if (cardSeat) openCardGame((cardSeat.free?.length ?? 0) + 1); },
+      onIliac: () => openIliacGame(),
+      onStand: () => standFromCardTable(),
+      play: (clip, at) => audio?.play3d?.(clip, at, 1, { maxDistance: 16 }),   // KG4b: the table's sounds at the cloth - the room's 3D sound, never PEERFX1's observed one-shot (Kings-Gambit.md 5.6)
+      // KG5 (Kings-Gambit.md section 18): a relay that runs The King's Gambit - the room's board at this cloth; KG6
+      // (section 19): at the red table for gold, a realm character's (CARDS6's escrow: the stake held by the service, its
+      // cash-out the relay's) - anyone else plays the regulars there - and the season's board from either
+      online: host.gambitOnline?.ok?.() && (!holdemGoldTable(cardSeat.table) || gambitGoldOk()) ? {
+        send: (w) => !!host.gambitOnline.send(w), myId: () => host.gambitOnline.id(), now: () => host.gambitOnline.now(),
+        table: cardSeat.table, chairs: seats.length, chair: cardSeat.seat, chairFeet: (k) => seats[k]?.feet ?? null,
+        welcomes: () => host.gambitOnline.welcomes?.() ?? 0,
+        gold: holdemGoldTable(cardSeat.table),
+        stake: (amount) => host.cardStakes.stake({ room: host.cardOnline.room(), table: cardSeat.table, bb: GAMBIT_STAKE_BB, amount, place: cardPlaceName() }),
+        purse: () => host.cardStakes?.purse?.() ?? null, seated: (id) => host.cardStakes?.seated?.(id),
+        board: () => host.gambitSeason?.board?.() ?? Promise.resolve({ ok: false }),
+        standDue: gambitStandDue(cardSeat.table),   // AUDIT KG II B12
+      } : null,
+    });
+    closeGambitWatch(cardSeat.table);   // KG5: the cloth is the game's now, not a watcher's
+    gg.regulars = new Map(seeds.map((r, i) => [names[i], r]));   // CARDS4b's look for each regular in their chair (cardRegularsNow)
+    gambitGame = gg;
+    gg.unlisten = gambitListen(gg);
+  }
+  /** KG3 (Kings-Gambit.md section 14.3): THE CLOTH UNDER THE HAND, AND THE KEYS. While a battle is on, a press on the table
+   *  is the game's - a cell, or the felt round the board - never the seat's swing or its activate, which stand the player
+   *  up; and the arrows, the d-pad, Enter, Space and the pad's A walk and press the board's cursor, Escape and the pad's B
+   *  cancel (with nothing to cancel, Escape asks the Stand up press, which asks twice while a stake is down). A press on
+   *  the panel, a key typed in a field, a key the chat claims, and anything under a window are not the cloth's; a key on
+   *  the panel is the panel's, but Escape (the panel reads none, and the seat's Escape would stand up at once). Taken at
+   *  the capture phase, before the seat's listeners hear them, as Hold'em's hand and chips are (cardPointerListen). */
+  function gambitListen(gg) {
+    if (typeof window === 'undefined' || !window.addEventListener) return null;
+    let swallowMouse = false;
+    const live = () => gg === gambitGame && !!cardSeat && mode === 'interior' && !interiorPaused() && !townTalk?.overlayActive;
+    const onPanel = (e) => e.target?.closest?.('.dfgambit') || insidePanelBox(e, gg.box?.());
+    const down = (e) => {
+      if (!live() || onPanel(e)) return;
+      const r = canvas.getBoundingClientRect?.() ?? { left: 0, top: 0 };
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      const took = gg.pointer([e.clientX - r.left, e.clientY - r.top], { w, h, rect: worldViewportRect(w, h) }, { touch: e.pointerType === 'touch' || e.pointerType === 'pen', button: e.button ?? 0 });
+      if (!took) return;
+      swallowMouse = true;   // the mouse press a taken pointerdown leaves behind is the cloth's too
+      e.stopImmediatePropagation?.(); e.preventDefault?.();
+    };
+    const mouseDown = (e) => { if (!swallowMouse) return; swallowMouse = false; e.stopImmediatePropagation?.(); e.preventDefault?.(); };
+    const key = (e) => {
+      if (!live()) return;
+      const k = gambitBoardKey(e.code);   // the board's own keys, the panel's to name (KB1 law 5: no bound key read raw here)
+      const cancel = k === 'cancel';
+      const el = e.target;
+      if (!cancel && (el?.closest?.('.dfgambit') || /^(INPUT|TEXTAREA|SELECT)$/.test(el?.tagName ?? '') || el?.isContentEditable)) return;
+      if (k === 'press' && cursorKeyClaimed(e)) return;   // KB1: online, ActivateCursor's key (Enter) is the chat's when it takes this press
+      if (e.repeat && (cancel || k === 'press')) { if (gg.playing()) { e.stopImmediatePropagation?.(); e.preventDefault?.(); } return; }   // a held press presses once
+      // AUDIT KG II C2: the pad's A is the board's press AND LeftClick's alias - ActivateCenterObject, whose release stands
+      // the seat up; while a battle is on, a pad-made activate (never the person's own key - a road off the seat) is the
+      // board's too (a real mouse press is a pointerdown, decided above)
+      if (gg.playing() && !e.isTrusted && actionOf(e, keys) === 'ActivateCenterObject') { e.stopImmediatePropagation?.(); e.preventDefault?.(); return; }
+      if (!gg.key(e.code)) return;
+      e.stopImmediatePropagation?.(); e.preventDefault?.();
+    };
+    // the cloth's three, taken and let go as one list - and the host's own keydown stays the one this file registers by
+    // name (test/modalkeys.test.js V4 and test/inputmap.test.js U43 read the host's handler from that registration)
+    // AUDIT KG II C3: a finger the cloth took is held until it lifts - never the touch layer's stick (cardPressHeld)
+    const lift = (e) => { if (e.pointerType === 'touch' || e.pointerType === 'pen') gg.fingerUp?.(); };
+    const on = /** @type {[string, (e: any) => void][]} */ ([['pointerdown', down], ['mousedown', mouseDown], ['keydown', key], ['pointerup', lift], ['pointercancel', lift]]);
+    for (const [type, fn] of on) window.addEventListener(type, fn, true);
+    return () => { for (const [type, fn] of on) window.removeEventListener(type, fn, true); };
+  }
+  /** KG5: the relay's King's Gambit table's frames (world.js online.onGambit): the open game's at its own cloth; any
+   *  other table's a watched board, laid on its cloth while the player stands near it (section 18: the room is told every
+   *  event, so the tavern watches the board). */
+  function gambitOnlineFrame(f) {
+    // KG6: a rated game's result is carried wherever the player is now - kept on the device, then the relay told it is
+    if (typeof f?.receipt === 'string') {
+      const j = readGambitReceipt(f.receipt)?.j;
+      host.gambitClaims?.add(f.receipt);
+      if (host.gambitClaims && j) host.gambitOnline?.send?.({ op: 'ack', table: f.table, j });   // Iliac Hand's AUDIT CARDS-6 C1: kept here (or settled, or never to count) - the relay owes it no longer
+      return;
+    }
+    if (mode !== 'interior' || !interiorCtx || !Number.isInteger(f?.table)) return;
+    if (cardSeat && f.table === cardSeat.table) { gambitGame?.relay?.(f); return; }   // this cloth is the seat's - its game's, or another game's
+    if (typeof f.error === 'string' || !f.state) return;
+    let w = gambitWatches.get(f.table);
+    if (!w) {
+      if (!(f.state.game || f.state.last?.game) || !cardTableNear(f.table, CARD_WATCH_M) || !interiorCtx.tables?.[f.table]) return;
+      w = { remote: new RemoteGambitTable({ myId: null }), draw: createGambitTableDraw(renderer), ctx: interiorCtx };
+      gambitWatches.set(f.table, w);
+    }
+    w.remote.apply(f, Date.now());
+    const st = w.remote.state;
+    if (Number.isInteger(st?.seats?.[0]?.chair)) w.hostChair = st.seats[0].chair;   // AUDIT KG II B13: the host's, kept past its stand
+    if (!st?.game && !(st?.seats ?? []).some(Boolean)) closeGambitWatch(f.table);   // AUDIT KG II B13: its last seat stood - the relay forgets the table
+  }
+  /** KG6: whether this character plays for gold online - a realm character at a relay that deals Hold'em's escrow (its
+   *  cash-outs come on the card table's word). */
+  const gambitGoldOk = () => !!host.cardOnline?.ok?.() && !!host.cardStakes?.goldOk?.();
+  const gambitWatches = new Map();   // KG5: table index -> { remote, draw, ctx }
+  const gambitLooked = new Set();   // KG5: the near tables asked once each approach
+  function closeGambitWatch(i) { const w = gambitWatches.get(i); if (!w) return; gambitWatches.delete(i); w.draw.destroy(); }
+  function closeGambitWatches() { for (const i of [...gambitWatches.keys()]) closeGambitWatch(i); gambitLooked.clear(); }
+  /** KG5: the watched boards' turn of the frame - a table come near asked once (`look`), one walked away from let go. */
+  function gambitWatchFrame() {
+    if (!interiorCtx || !host.gambitOnline?.ok?.()) return;
+    (interiorCtx.tables ?? []).forEach((_, i) => {
+      const near = cardTableNear(i, CARD_WATCH_M);
+      if (near && !gambitLooked.has(i) && !(cardSeat && cardSeat.table === i) && host.gambitOnline.send({ op: 'look', table: i })) gambitLooked.add(i);
+      else if (!near && !cardTableNear(i, CARD_WATCH_M + CARD_WATCH_SLACK_M)) gambitLooked.delete(i);
+    });
+    for (const [i, w] of gambitWatches) if (w.ctx !== interiorCtx || !cardTableNear(i, CARD_WATCH_M + CARD_WATCH_SLACK_M) || (cardSeat && cardSeat.table === i)) closeGambitWatch(i);
+  }
+  /** KG5: a watched board on its cloth - laid from the host's chair, the game as it stands (or the board it ended on). */
+  function gambitWatchDraw(i, w, eye) {
+    const st = w.remote.state, game = st?.game ?? st?.last?.game, t = interiorCtx?.tables?.[i];
+    if (!game || !t) return;
+    const seats = cardSeatsOf(i), host0 = seats[st.seats?.[0]?.chair ?? w.hostChair ?? 0] ?? seats[0];
+    if (!host0) return;
+    const places = gambitPlaces(tableFrame(t), host0.feet);
+    const look = { layout: game.layout, tiles: game.tiles, hazards: game.hazards, pieces: game.pieces.map((p) => ({ id: p.id, side: p.side, col: p.col, row: p.row, king: p.king, unit: p.unit })), selected: null, lit: [], range: [], targets: [], cursor: null, staged: null };
+    w.draw.draw({ places, look, crowns: [st.seats?.[0]?.crown ?? 3, st.seats?.[1]?.crown ?? 0], poses: null, eye, now: performance.now() });
   }
   /** CARDS10: the relay's Iliac table's frames (world.js online.onIliac): a ranked game's receipt is carried wherever the
    *  player is now; the rest is the open game's, at its table. */
@@ -678,6 +844,8 @@ export function createWorldModes(host) {
    *  seed of the town and the building's key: AUDIT CARDS-2 L9, a building key is its block's, alike in every town), as
    *  many as the table's free chairs. */
   const cardTableKey = () => `${homeTownOf(interiorBuilding) >>> 0}:${(interiorBuilding?.buildingKey ?? 0) >>> 0}:${cardSeat?.table ?? 0}`;
+  /** AUDIT KG II C9: the tavern's own key - its regulars' (the same at each of its tables). */
+  const cardTavernKey = () => `${homeTownOf(interiorBuilding) >>> 0}:${(interiorBuilding?.buildingKey ?? 0) >>> 0}`;
   const tavernRegulars = (n) => regularSeeds(n).map((r) => residentName(r.seed, r.bank, r.gender));
   /** CARDS4b: each regular's seed, bank and gender - the namer's own, so the same seed dresses him (world/cardRegulars.js). */
   const regularSeeds = (n) => {
@@ -698,6 +866,8 @@ export function createWorldModes(host) {
   const CARD_SIT_AGAIN_MS = 1500;
   function openCardGame(seatCount) {
     if (cardGame) closeCardGame();
+    closeIliacGame();   // KG3: one game a cloth - each opens by closing the others
+    closeGambitGame();
     const stakes = stakesFor(interiorBuilding?.quality ?? 10);
     // CARDS6: online, a realm character plays for gold at the relay's table - its stake held by the service (net/cardStakes.js)
     const goldOnline = cardTableGold(cardSeat?.table ?? -1) && !!host.cardOnline?.ok?.() && !!host.cardStakes?.goldOk?.();   // TAVERN-TABLES: at the gold table alone - a realm character plays for chips at the other
@@ -802,13 +972,14 @@ export function createWorldModes(host) {
     g.paintedAt = performance.now();
     g.hud.render(cardHudModel({ phase: g.phase, view: table?.view() ?? null, legal: table?.legal() ?? null, buyIn: g.buyIn, stakes: g.stakes, friendly: g.friendly, log: g.log, why: g.why, refused: g.refused ?? null,
       online: g.remote ? { waiting: g.remote.seated < 2 && !g.remote.state?.hand, clock: Math.ceil(g.remote.clockLeft(g.paintedAt) / 1000), error: g.remote.error, regulars: !!cardSeat?.free.length && !g.goldOnline } : null,
-      gold: !!g.goldOnline, staking: !!g.staking, topUp: cardTopUpAmount(g), iliac: true, packPrice: cardPackHere() }));   // CARDS6; section 24: the top-up; CARDS9/10: a pack, and the other game
+      gold: !!g.goldOnline, staking: !!g.staking, topUp: cardTopUpAmount(g), iliac: true, gambit: gambitTableOn(), packPrice: cardPackHere() }));   // CARDS6; section 24: the top-up; CARDS9/10: a pack, and the other game; KG3: and the third
   }
   function cardPress(game, id, value) {
     if (game !== cardGame) return;   // a press from a panel already gone
     const now = performance.now();
     if (id === 'stand') { standFromCardTable(); return; }
     if (id === 'iliac') { openIliacGame(); return; }   // CARDS10: the other game at this table
+    if (id === 'gambit') { openGambitGame(); return; }   // KG3: and the third
     if (id === 'pack') { const r = buyCardPackHere(); say(r.ok ? `You buy a pack of Iliac Hand cards for ${r.price} gold. Use it from your pack to open it.` : `A pack costs ${r.price} gold - your purse is short.`); paintCardGame(); return; }   // CARDS9: the house's packs
     if (game.remote) {
       // CARDS5: the relay's table - an action is a word to it, and the relay answers with the table; alone, the regulars
@@ -861,6 +1032,7 @@ export function createWorldModes(host) {
     if (chairSeat && !(playerEntity.health > 0)) standFromChair();   // SIT1: nor on chairs
     if (cardSeat && !(playerEntity.health > 0)) { standFromCardTable(); return; }   // AUDIT CARDS-2: the exhaustion's collapse sets health to 0 past every hurt listener - the dead do not sit at cards
     cardWatchFrame();
+    gambitWatchFrame();   // KG5: and the King's Gambit boards near
     cardStandsFrame();
     const g = cardGame;
     if (g?.remote) { cardRemoteFrame(g, now); return; }
@@ -921,6 +1093,17 @@ export function createWorldModes(host) {
   }
   /** CARDS4b: the regulars at this table to stand this frame - none at a relay's table or a game not dealt. */
   function cardRegularsNow(now) {
+    const gg = gambitGame;
+    if (gg && cardSeat) {   // KG3: The King's Gambit's regulars sit in the chairs its setup lists them by, its words over them
+      const seats = cardSeatsOf(cardSeat.table);
+      const peers = takenSeats(seats, host.seatedPeers?.() ?? []);   // AUDIT CARDS-3 E-N3's law: a player in a regular's chair - the chair is theirs
+      return gg.regularsNow(now).filter((r) => !peers.includes(r.chair)).map((r) => {
+        const chair = seats[r.chair], who = gg.regulars?.get(r.name);
+        if (!chair || !who) return null;
+        const id = `gambit:${cardTableKey()}:${r.chair}`;
+        return { key: id, res: { id, name: r.name, look: regularLook(who.seed, who.bank, who.gender) }, feet: chair.feet, yaw: chair.yaw, st: seatTopByte(chair.top), say: r.say };
+      }).filter(Boolean);
+    }
     const ig = iliacGame?.g;
     if (ig?.session && cardSeat) {   // CARDS10: Iliac Hand's regular sits in the chair he plays from
       const seats = cardSeatsOf(cardSeat.table);
@@ -960,17 +1143,17 @@ export function createWorldModes(host) {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     return g.heldAt.some((p) => { const s = projectToScreen(p, w, h, f.proj, f.view, worldViewportRect(w, h)); return s.front && Math.hypot(s.x - g.mouse[0], s.y - g.mouse[1]) < h * 0.09; });
   }
+  /** AUDIT CARDS-6 E2: a pointer inside a card table panel's box on the page - the panel is the point inside its box as
+   *  well as its own target (a pointer held on the canvas keeps the canvas as its target over the panel). Hold'em's and
+   *  The King's Gambit's (KG3) one test. */
+  const insidePanelBox = (e, b) => !!b && b.width > 0 && e.clientX >= b.left && e.clientX <= b.right && e.clientY >= b.top && e.clientY <= b.bottom;
   function cardPointerListen(g) {
     if (typeof window === 'undefined' || !window.addEventListener) return null;
     const mine = () => g === cardGame && !!cardSeat;
     // AUDIT CARDS-6 E2: the panel is also the point inside its box - a pointer held on the canvas keeps the canvas as its
     // target over the panel (the capture below; a touch always did, its capture implicit), and a chip let go over the
     // panel is still never the bet (AUDIT CARDS-3 C6)
-    const onPanel = (e) => {
-      if (e.target?.closest?.('.dfcards')) return true;
-      const b = g.hud?.root?.getBoundingClientRect?.();
-      return !!b && b.width > 0 && e.clientX >= b.left && e.clientX <= b.right && e.clientY >= b.top && e.clientY <= b.bottom;
-    };
+    const onPanel = (e) => e.target?.closest?.('.dfcards') || insidePanelBox(e, g.hud?.root?.getBoundingClientRect?.());
     // AUDIT CARDS-6 E2: A PRESS IS ITS OWN POINTER'S. The press on the hand and the chips carried each keep the pointer
     // that made them (`id`); another finger's move, letting go or cancel is not theirs (a second finger on the hand took
     // the press's place, and the first lifting still folded the hand). A press let go where the window never heard it -
@@ -1157,7 +1340,12 @@ export function createWorldModes(host) {
   function cardStand(i) { if (!host.cardOnline?.send({ op: 'stand', table: i })) cardStandsDue.set(i, interiorCtx); }
   function cardStandsFrame() {
     for (const [i, ctx] of cardStandsDue) if (ctx !== interiorCtx || host.cardOnline?.send({ op: 'stand', table: i })) cardStandsDue.delete(i);
+    for (const [i, ctx] of gambitStandsDue) if (ctx !== interiorCtx || host.gambitOnline?.send?.({ op: 'stand', table: i })) gambitStandsDue.delete(i);   // AUDIT KG II B12
   }
+  // AUDIT KG II B12: THE KING'S GAMBIT'S STAND THAT DID NOT GO, said again each frame as Hold'em's is - a ready seat the
+  // relay kept is dealt in and clocked out of its stake. The game's panel marks it (true), or takes it back with a sit.
+  const gambitStandsDue = new Map();   // table index -> the interior it was said in
+  const gambitStandDue = (i) => (due) => { if (due) gambitStandsDue.set(i, interiorCtx); else gambitStandsDue.delete(i); };
   // CARDS5: THE ROOM'S OTHER TABLES, WATCHED (section 2: a player standing near a table sees the community cards and
   // the pot, never a hand). The relay tells the whole room every table's events; a table this player does not sit at is
   // laid on its cloth all the same - a scene and a draw of its own, freed when its last seat stands, the room changes or
@@ -1921,7 +2109,7 @@ export function createWorldModes(host) {
     if (person.isPerson !== true) return (s._mwLook = null);
     const dict = townTalk?.factionDict ?? null;
     if (!dict || !questBridge) return null;   // never before the faction table
-    const data = { ...questStandNpcData(s, person, buildingKey), billboardArchiveIndex: s.archive, billboardRecordIndex: s.record };   // the born pair: the child's law
+    const data = { ...questStandNpcData(s, person, buildingKey), billboardArchiveIndex: s.archive, billboardRecordIndex: s.record, questPerson: true };   // the born pair: the child's law; STALL-FLATS: a person by the quest's word
     return personLook(s, data, dict.get(person.factionId ?? 0) ?? null);
   };
   /** MWNPC8c: a list of quest stands offered on `lane` - a stood, active person at their base where the marker they ride
@@ -3002,6 +3190,10 @@ export function createWorldModes(host) {
     // whichever site the player stands in.
     if (dungeonCtx && mode === 'dungeon') {
       if (relayingBuilt) return;   // QUEST-VOID: the re-lay's own placements ask for this mount - the one below stands them
+      // INSTANCES: a re-laid public room online stands none of a quest's things - its markers are the dungeon whole's
+      // (systems/instancePlaces.js questMountsHere); it says once where they are, and moves nothing (QUEST-VOID's re-lay
+      // would carry them into this room's blocks)
+      if (!questMountsHere({ online: !!host.dungeonOnline?.(), builtSize: builtDungeonSize(dungeonLoc) })) { host.instanceDoor?.questElsewhere?.(dungeonLoc); return; }
       // QUEST-VOID (questRepair.js relayBuiltDungeon): a quest target on a marker this build has not - its foe in the
       // void, its item in rock - is laid again on the dungeon as built before anything stands.
       relayingBuilt = true;
@@ -3547,7 +3739,7 @@ export function createWorldModes(host) {
   function openYardCounter(kind, regionIndex, tradeMode, name, mapId = 0) {
     const b = yardCounter(kind, regionIndex, name);
     const stock = () => yardStock(kind, {
-      mapId, day: Math.floor(worldMinutes() / 1440), online: isOnlinePage(), priced: horseCareOn(),
+      mapId, day: Math.floor(worldMinutes() / 1440), online: isOnlinePage(), priced: !!horseCareRules(),
       owned: (playerEntity.items ?? []).map((it) => it?.horseSeed).filter(Number.isInteger),
     });
     const win = openTradeWindow({ items: tradeMode === 'Sell' ? [] : stock() }, b, tradeMode === 'Sell' ? 'Sell' : 'Buy');
@@ -4681,6 +4873,7 @@ export function createWorldModes(host) {
   function interiorIdentity() {
     return {
       ...(privateVisitRoom ? { privateRoom: privateVisitRoom, ...(privateVisitOwner ? { cabinOwner: privateVisitOwner } : {}) } : {}),
+      ...(placeInstance ? { ins: instanceWord(placeInstance) } : {}),   // INSTANCES (the audit): the instance it was entered as - a load, an anchor and a staff landing go back in
       ...(interiorCabin ? (isCaravanRoom(interiorCabin) ? { caravanRoom: readCaravanRoom(interiorCabin) } : { sailingCabin: readSailingCabin(interiorCabin) }) : {}),   // WAGONS1: the caravan's own field
       door: {
         blockIndex: exteriorDoor.blockIndex,
@@ -5918,8 +6111,11 @@ export function createWorldModes(host) {
         revealLocation,   // G8: the TG/DB map reveals - MACRO-4: through the popup's own wrapper, which keeps the name for %dng
         // F114: OwnsHouse per CURRENT region (DaggerfallBankManager.cs:136).
         ownsHouse: () => ownsHouse(playerEntity.houses ?? [], interiorBuilding?.regionIndex ?? 0),
-        rankCeiling: host.rollRankCeiling?.() ?? null,   // CHAP4b: 7 online while the Roll holds - 8 and 9 are seats
+        rankCeiling: host.rollPace?.(guild.factionId)?.ceiling ?? null,   // CHAP4b: 7 online while the Roll holds - 8 and 9 are seats; ROLL-PACE: and no further than its pace since joining
+        promoteWhenEarned: sharedClockOn() && !!host.rollPace?.(guild.factionId),   // PROMO-NOW: online, a promotion does not wait the 28 days - ROLL-PACE: while the Roll paces it
       }),
+      // PROMO-NOW: online, the popup says what the next rank asks (the enhanced skin's line; the classic window is DFU's)
+      rankNeeds: () => { const pace = sharedClockOn() ? host.rollPace?.(guild.factionId) ?? null : null; return sharedClockOn() ? rankNeedsLines(playerEntity, guild, seated(), store, { rankCeiling: pace?.book ?? null, pace, now: ownDate(), book: memberships }) : null; },   // ROLL-PACE: and when the pace holds it; SEAT-LINE: read seated - a seat's own hall asks nothing more; STANDING-WORDS: the review's date and its book
       onJoin: () => {
         // JoinButton_OnMouseClick (:497-525). joinDecision is null for
         // the two invitation-only guilds, which DFU reaches by
@@ -5949,7 +6145,7 @@ export function createWorldModes(host) {
       onService: () => {
         const shut = shutBox();   // AUDIT CHAP5 D2
         if (shut) return shut;
-        const access = serviceAccess(guild, membershipOf(seated(), guild), service);   // CHAP4b: a seat's rank here
+        const access = serviceAccess(guild, membershipOf(seated(), guild), service, { rankCeiling: host.rollPace?.(guild.factionId)?.book ?? null });   // CHAP4b: a seat's rank here; SEAT-WORDS: a seat's service says so (AUDIT GUILD-WORDS II F-3: ROLL-PACE's door)
         if (!access.allowed) {
           return { rows: access.textId ? rows(access.textId) : [access.text] };
         }
@@ -6272,8 +6468,9 @@ export function createWorldModes(host) {
     if (destination === 'guildServiceDaedraSummoning') {
       // G7 - the last of the twenty destinations. Two boxes: "is it a
       // summoning day" and, if it is, "are you REALLY sure" - and the
-      // answer to the second spends two hundred thousand gold before
-      // anything is rolled.
+      // answer to the second spends two hundred thousand gold whatever
+      // the roll, unless the prince who answers has no quest that can
+      // be made here (SUMMON-OFFER).
       const dict = townTalk?.factionDict ?? null;
       const summonerId = summonerFactionId ?? b?.factionId ?? 0;
       const summoner = dict?.get(summonerId) ?? null;
@@ -6339,13 +6536,20 @@ export function createWorldModes(host) {
           gold: totalGoldAmount(playerEntity),
           daedraRep: (fid) => getReputation(store, fid),
           hasSummoned: (fid) => getFlag(store, fid, FACTION_FLAGS.Summoned),
+          // SUMMON-OFFER (bible/01-Overview/Field-Bugs-2026-10-14.md): the prince's quest, asked for where DFU asks
+          // (GetQuest, after the roll) and BEFORE the gold is spent or the prince recorded - null where it cannot
+          // be made (a remote site the region does not have: W0C00Y00's palace)
+          offerQuest: (questName) => questBridge?.offerDaedricQuest?.(questName, summonerId) ?? null,
           ...weather,
         });
         if (r.kind === 'poor') {
           return { rows: [{ text: `The summoning would cost ${r.cost} gold.`, center: true }] };
         }
-        // The gold goes BEFORE the roll and is not refunded: you paid
-        // for the summoning, not for the prince turning up.
+        // SUMMON-OFFER: he answered and has no quest that can be made here - nothing spent, nothing recorded, and
+        // said (DFU took the gold, set the flag and showed nothing)
+        if (r.kind === 'noQuest') return { rows: [{ text: noQuestText(r.daedra), center: true }] };
+        // The gold is not refunded on a failure: you paid for the
+        // summoning, not for the prince turning up.
         deductGold(playerEntity, r.cost);
         surfacePlayer();
         if (r.kind === 'failed') {
@@ -6368,7 +6572,7 @@ export function createWorldModes(host) {
           return { rows: box(r.textId, r.daedra, `${getLocalizedFactionName(r.daedra.factionId, r.daedra.name)} has met you before.`) };   // L10N3e: the prince as %dae shows him (PersistentFactionData.cs:176)
         }
         setFlag(store, r.daedra.factionId, r.flag);
-        const offered = questBridge?.offerDaedricQuest?.(r.quest, summonerId) ?? null;
+        const offered = r.offered;   // SUMMON-OFFER: made before the gold went
         // G7b: the prince's own .FLC window carries the OFFER step -
         // DaggerfallDaedraSummonedWindow, the film with the offer
         // read over it in four-line chunks. The step has ONE
@@ -6380,7 +6584,7 @@ export function createWorldModes(host) {
         const mountBoxes = () => {
           // DAEDRA1: the prince's own offer is a TEXT.RSC record like
           // any other and was handed over raw here too
-          const boxes = offered ? questBridge.offerBoxes(offered, (id) => say(id, r.daedra)) : [];
+          const boxes = questBridge.offerBoxes(offered, (id) => say(id, r.daedra));
           if (!boxes.length || !guildServiceArtLoaded() || !_shopFont) return;
           let offerWin = null;
           offerWin = new ServiceFlowWindow(boxes, {
@@ -6388,7 +6592,7 @@ export function createWorldModes(host) {
           });
           mountServiceWindow(offerWin);
         };
-        if (offered?.kind === 'offer' && r.daedra.video) {
+        if (r.daedra.video) {
           fetchBytes(r.daedra.video).then((bytes) => {
             let sw = null;
             sw = new DaedraSummonedWindow({
@@ -6406,8 +6610,8 @@ export function createWorldModes(host) {
           }).catch(() => mountBoxes());
           return null;
         }
-        if (offered) { mountBoxes(); return null; }
-        return { rows: [{ text: `${getLocalizedFactionName(r.daedra.factionId, r.daedra.name)} answers your summons.`, center: true }] };   // L10N3e: the prince as %dae shows him (PersistentFactionData.cs:176)
+        mountBoxes();
+        return null;
       };
       if (byName) {
         // SUMMON-NAME: the sixteen by name, then DFU's question about the one named - a flow, whose boxes take a list.
@@ -6435,7 +6639,7 @@ export function createWorldModes(host) {
         void homes.ensure(dir?.mapId ?? 0);
         return { rows: [{ text: accountRefusalText('home-layout'), center: true }] };
       }
-      const decision = receiveHouseDecision(kept, {   // AUDIT CHAP4 E2: the book's rank
+      const decision = receiveHouseDecision(kept, { rankCeiling: host.rollPace?.(guild.factionId)?.book ?? null,   // AUDIT CHAP4 E2: the book's rank; SEAT-WORDS: online none (II F-3)
         ownsHouse: ownsHouse(playerEntity.houses, region),
         housesForSale: homes ? currentHousesForSale().filter((h) => !homes.homeAt(dir?.mapId ?? 0, h.buildingKey)) : currentHousesForSale(),
         alreadyOwnResult: TRANSACTION_RESULT.ALREADY_OWN_HOUSE,
@@ -6968,6 +7172,7 @@ export function createWorldModes(host) {
   // exit names the settlement rather than the region.
   const DUNGEON_EXIT_TOWN_TYPES = [LOCATION_TYPES.TownCity, LOCATION_TYPES.TownHamlet, LOCATION_TYPES.TownVillage];
   let dungeonLoc = null;    // B2: the mounted dungeon's dfLocation (playerInside's dungeon arm)
+  let placeInstance = null;   // INSTANCES (the audit): the instance the place I stand in was entered as ({ owner, epoch }), null its public room - set as a dungeon or a building is built, gone with the mode (setMode)
   let dungeonReturn = null; // entrance-door candidates of the group
   let transitioning = false;
   const transitionGate = createTransitionGate();   // AUDIT 68 X3-transition-build-race: one door build at a time, and one the world moved under is never published
@@ -7060,7 +7265,7 @@ export function createWorldModes(host) {
    * the next line - so the sixth mode turns the suite red rather than
    * leaking a street.
    */
-  const setMode = (next) => { dropDoorCache(); if (next !== mode) interiorWeapon.silenceTorch();   /* DISC6: the building's rig leaves the frame - its torch loop with it */ if (next !== 'interior') closeCardWatches();   /* CARDS5: the watched tables' cloths go with the interior */ mode = next; if (next !== 'interior') { privateVisitRoom = null; privateVisitOwner = null; } };
+  const setMode = (next) => { dropDoorCache(); if (next !== mode) interiorWeapon.silenceTorch();   /* DISC6: the building's rig leaves the frame - its torch loop with it */ if (next !== 'interior') closeCardWatches();   /* CARDS5: the watched tables' cloths go with the interior */ if (next !== 'interior') closeGambitWatches();   /* KG5: and the watched boards */ mode = next; if (next !== 'interior') { privateVisitRoom = null; privateVisitOwner = null; } if (next === 'exterior') placeInstance = null; };
   function exteriorDoorTargets() {
     const gen = doorGeneration?.();
     if (gen !== undefined && _doorCache && _doorCache.gen === gen) return _doorCache;
@@ -7412,7 +7617,7 @@ export function createWorldModes(host) {
       // stands and lists them (it drew none, and the click fell through to HOME-OFFER's box at every house)
       const houseVerbs = homeDoorVerbs(bd, home);
       _doorText = staticDoorName('building', {
-        displayName: home ? homeDoorTitle(home) : homeDoorName(shownBuildingName(db, bd.name), !!houseVerbs),   // EMPIRE-BANK: a bank's name now
+        displayName: home ? homeDoorTitle(home, questSiteHere(bd) && db.isOverrideName ? db.displayName : null) : homeDoorName(shownBuildingName(db, bd.name), !!houseVerbs),   // EMPIRE-BANK: a bank's name now; QUEST-RESIDENCE: a quest's home its name
         locationName: currentLocationName(),
         buildingType: bd.buildingType,
         unlocked: home ? true : resolveBuildingUnlocked(bd),
@@ -7635,7 +7840,7 @@ export function createWorldModes(host) {
     const db = getDiscoveredBuilding(locId, bd.buildingKey);
     if (!db) return;
     const home = homeOf(bd);   // HOME1: a player's home is named for its owner, as its door is
-    townTalk?.say?.(home ? homeDoorTitle(home) : db.displayName);
+    townTalk?.say?.(home ? homeDoorTitle(home, questSiteHere(bd) && db.isOverrideName ? db.displayName : null) : db.displayName);   // QUEST-RESIDENCE
     if (!unlocked && bd.buildingType < BUILDING_TYPES.Temple
       && bd.buildingType !== BUILDING_TYPES.HouseForSale) {
       // WORLD-HOVER: the sentence has ONE home now (buildingLocks.
@@ -7713,7 +7918,7 @@ export function createWorldModes(host) {
     // DUEL1 (Mac: the ring "keeps them from going outside of the duel space"): no door out of a duel - a building or a
     // dungeon is not the ring. The press is spent on the refusal, as an out-of-reach door's is.
     if (!isBash && (hit.door.doorType === DOOR_TYPE.DUNGEON_ENTRANCE || hit.door.doorType === DOOR_TYPE.BUILDING) && host.duelHolds?.()) { setMidScreenText(DUEL_DOOR_TEXT); return true; }
-    if (hit.door.doorType === DOOR_TYPE.DUNGEON_ENTRANCE) return tryEnterDungeon(hit, entries);
+    if (hit.door.doorType === DOOR_TYPE.DUNGEON_ENTRANCE) return enterDungeonDoor(hit, entries);   // INSTANCES: the door asks, the entry is handed its answer
     if (hit.door.doorType !== DOOR_TYPE.BUILDING || hit.recordIndex === undefined) return false;
     // R1: THE EXTERIOR DOOR LOCK (ActivateStaticDoor, PlayerActivate.cs
     // :512-568). Closed hours lock the town: the unlocked ladder runs
@@ -7938,7 +8143,7 @@ export function createWorldModes(host) {
             // handler and painted CRASH over a game still running. The
             // catch is the one the two host call sites already put on
             // the non-deferred arm.
-            townTalk.showOverlay(new ChoiceWindow({ lines }), () => { enterInteriorCore(hit, entries).catch((e) => console.error(e)); });
+            townTalk.showOverlay(new ChoiceWindow({ lines }), () => { enterBuildingDoor(hit, entries).catch((e) => console.error(e)); });   // INSTANCES: the door asks once the greeting closes
             return true;
           }
           // The HUD arm speaks and does NOT defer (:1379-1386); 'none'
@@ -7965,8 +8170,17 @@ export function createWorldModes(host) {
         }
       }
     }
-    return enterInteriorCore(hit, entries);
+    return enterBuildingDoor(hit, entries);   // INSTANCES: the door asks, the entry is handed its answer
   }
+  /** INSTANCES (the audit, bible/11-Multiplayer/Instances.md): A PLAYER'S DOOR ASKS - public or an instance, where there is
+   *  a choice (scenes/instanceDoor.js atDoor), awaited BEFORE the entry, which is handed the answer and never asks itself
+   *  (every other way in takes the door's rule, entryFor); a Leave spends the press. A home or a house of mine keeps none. */
+  const doorStands = (hit) => mode === 'exterior' && (!hit?.localDoor || doorTargets().some((e) => e.localDoor === hit.localDoor));   // the world did not move while the door asked (a teleport, a load)
+  const enterDungeonDoor = (hit, entries) => (host.instanceDoor ? host.instanceDoor.atDoor(host.instanceDoor.dungeonSite(hit?.dfLocation), (entry) => (doorStands(hit) ? tryEnterDungeon(hit, entries, { entry }) : true)) : tryEnterDungeon(hit, entries));
+  const enterBuildingDoor = (hit, entries) => {
+    const bd = buildingDataForDoor?.(hit) ?? null, door = host.instanceDoor;
+    return door ? door.atDoor(door.buildingSite(questSceneCtx?.()?.mapId ?? 0, bd, { layout: visitLayoutNow(), home: !!bd && (!!(host.onlineHomes && homeOf(bd)) || houseOwnedAt(bd, bd.buildingKey)) }), (entry) => (doorStands(hit) ? enterInteriorCore(hit, entries, null, entry) : true)) : enterInteriorCore(hit, entries);
+  };
 
   // ═══ HOME1 — THE OFFER, THE OWNER'S MENU, THE SALE ═════════════════════════════════════════════════════════════
   /** The press that comes back from a home's box and goes on to the door, as Daggerfall's Info click does. */
@@ -8305,10 +8519,13 @@ export function createWorldModes(host) {
     destroyPeopleBehaviours(ctx.people);
     ctx.destroy();
   }
-  async function enterInteriorCore(hit, entries, restore = null) {
+  async function enterInteriorCore(hit, entries, restore = null, entry = null) {   // INSTANCES: `entry` - the door's answer (enterBuildingDoor)
     const link = host.linkedBankCabin?.();
     if (!hit.sailingCabin && !restore && link && SHIP_INTERIOR_MAP_IDS[link.type] === questSceneCtx?.()?.mapId) return host.enterLinkedBankCabin?.() ?? false;
-    return gatedTransition((live) => interiorTransition(hit, entries, restore, live));
+    // INSTANCES (bible/11-Multiplayer/Instances.md): THE ENTRY IS DECIDED, NEVER ASKED HERE - a player's door hands its
+    // popup's answer; a restore (a load, an anchor, a staff landing) the instance it recorded where it may still be had
+    const door = host.instanceDoor, place = entry ?? (restore?.ins != null && door ? await door.entryFor(door.buildingSite(questSceneCtx?.()?.mapId ?? 0, restore.building ?? buildingDataForDoor?.(hit) ?? null, { layout: visitLayoutNow() }), { ins: restore.ins, staff: restore.staff === true }) : null);
+    return gatedTransition((live) => interiorTransition(hit, entries, restore, live, place));
   }
   async function enterSailingCabin(saved, pos = null, visit = null) {
     if (mode !== 'exterior' || !host.sailingCabin) return false;
@@ -8344,7 +8561,7 @@ export function createWorldModes(host) {
     if (!host.sailingCabin?.canRestore(cabin, sailingBoat)) return false;
     return enterSailingCabin(cabin, pos);
   }
-  async function interiorTransition(hit, entries, restore, live) {
+  async function interiorTransition(hit, entries, restore, live, place = null) {   // INSTANCES: `place` - the entry decided ({ instance })
     // TR5: TransportManager.HandleTransition (:196-202) - a BUILDING
     // interior puts you back on foot. The law shipped in TR1 with no
     // caller; this is it.
@@ -8540,6 +8757,7 @@ export function createWorldModes(host) {
       // AUDIT 68 S23-failed-entry-stale-building: the identity and the
       // three PlayerActivate.cs:1120-1122 latches, committed with the
       // context and not before it.
+      placeInstance = place?.instance ?? null;   // INSTANCES: the room this building is entered as
       standFromChair();   // SIT1: nor on a chair
       standFromCardTable();   // CARDS2b (AUDIT CARDS B1): a new room seats nobody yet - CARDS4: and an old table's chips come home
       interiorBuilding = building;
@@ -9372,7 +9590,7 @@ export function createWorldModes(host) {
   }
   /** OH-E: SuppressAbyssLights' candle - the Light spell's light at half its intensity (the colour channel's white) and
    *  half its range while the abyss's presentation holds. */
-  const abyssCandle = (l, abyss) => (l && abyss ? { ...l, range: l.range * abyss.magicLightScale, color: (l.color ?? [1, 1, 1]).map((c) => c * abyss.magicLightScale) } : l);
+  const abyssCandle = (l, abyss) => (l && abyss ? adoptLight({ ...l, range: l.range * abyss.magicLightScale, color: (l.color ?? [1, 1, 1]).map((c) => c * abyss.magicLightScale) }, l) : l);   // LIGHT-ID: the candle's copy is the candle's light
   /** OH-E: ApplyAbyssAmbientLight's RenderSettings.ambientLight under a Trilight - its sky colour, the rest as given. */
   const abyssTrilight = (tri, abyss) => (tri && abyss ? { ...tri, sky: abyss.renderAmbient.slice(0, 3) } : tri);
   /** OH-D: There's a Hole in the Bottom of the Ocean's TransitionDungeonInterior(null, default(StaticDoor), clone, true) -
@@ -9390,26 +9608,33 @@ export function createWorldModes(host) {
     mapTableData: loc.mapTableData && { ...loc.mapTableData },
     dungeon: loc.dungeon && { ...loc.dungeon, blocks: loc.dungeon.blocks?.map((b) => ({ ...b })) },
   });
-  async function tryEnterDungeon(hit, entries, { preferEnterMarker = false, fromLoad = false, holdOpen = false } = {}) {
+  async function tryEnterDungeon(hit, entries, { preferEnterMarker = false, fromLoad = false, holdOpen = false, entry = null, recorded = undefined } = {}) {
+    // INSTANCES (bible/11-Multiplayer/Instances.md): THE ENTRY IS DECIDED, NEVER ASKED HERE (the audit: a popup asked from
+    // here answered "not entered" to a quest's transfer, which then stood the player at dungeon coordinates outside) - a
+    // player's door hands its popup's answer (enterDungeonDoor); every other way in takes the door's rule
+    // (scenes/instanceDoor.js entryFor): what a load, an anchor or a staff landing `recorded`, a quest's place its
+    // instance, else the public room. The new game's start (`holdOpen`, nothing recorded) is the Hold's public room.
+    const place = entry ?? (holdOpen && recorded === undefined ? null : await host.instanceDoor?.entryFor?.(host.instanceDoor.dungeonSite(hit?.dfLocation), recorded)) ?? null;
     // HOLD-ONCE (2026-10-12, asked: "Let's make it where players outside of privateers hold cannot re enter"): online,
     // Privateer's Hold is entered once - by the new game's start (or a save made inside it, or staff landing by a player
     // there: `holdOpen`); its door, a Recall to an anchor set inside and a quest's transfer are refused. Offline, DFU's.
-    if (!fromLoad && !holdOpen && host.dungeonOnline?.() && isPrivateersHold(hit?.dfLocation)) { say(HOLD_ONCE_TEXT); return false; }
+    // INSTANCES: its PUBLIC room - an instance of it is entered any time
+    if (!fromLoad && !holdOpen && !place?.instance && host.dungeonOnline?.() && isPrivateersHold(hit?.dfLocation)) { say(HOLD_ONCE_TEXT); return false; }
     return gatedTransition(async (live) => {   // AUDIT 68 X3-transition-build-race
       // PVPDUNGEONS: the zone's tier rules - the hub's word on my lock is awaited INSIDE the gate (AUDIT 68 X3: awaited
       // before it, a teleport, a recall or a load during the hub's four seconds did not stale the door, and the dungeon
       // was built from wherever the world had moved to; a second press now waits its turn instead of racing the first)
       if (host.wildDungeonGate && !(await host.wildDungeonGate(hit, fromLoad))) return false;
       if (!live()) return false;   // the world moved during the hub's word: no build at all
-      return dungeonTransition(hit, entries, preferEnterMarker, live, fromLoad);
+      return dungeonTransition(hit, entries, preferEnterMarker, live, fromLoad, place);
     });
   }
-  async function dungeonTransition(hit, entries, preferEnterMarker, live, fromLoad = false) {
+  async function dungeonTransition(hit, entries, preferEnterMarker, live, fromLoad = false, place = null) {   // INSTANCES: `place` - the entry decided (an instance builds the dungeon whole)
     // AUDIT 28 W4: SMALLER DUNGEONS - the location that gets BUILT is
     // sized by MapsFile's law (setting, main-story gate, and a live
     // quest's frozen state through its SiteLink), on a clone; the
     // cached location the exterior shares is never touched.
-    const sized = dungeonLocationFor(hit.dfLocation, { questMachine: questBridge?.machine, online: host.dungeonOnline?.() ?? false });   // AUDIT WORLD34 B2: online, the room's one layout - SD-ONLINE: the world's size for the dungeon (WB3b: the court's one block passes through whole)
+    const sized = dungeonLocationFor(hit.dfLocation, { questMachine: questBridge?.machine, online: host.dungeonOnline?.() ?? false, whole: !!place?.whole });   // INSTANCES: an instance, or a quest's dungeon where none can be had, is the dungeon whole   // AUDIT WORLD34 B2: online, the room's one layout - SD-ONLINE: the world's size for the dungeon (WB3b: the court's one block passes through whole)
     if (!sized || !sized.hasDungeon) return false;
     // OH-E: MapsFile.GetLocation reads each caller its own DFLocation - a struct, its Dungeon.Blocks array fresh - where
     // the port's is the maps cache's one object. The dungeon's summary is its own here, so a writer on it (There's a
@@ -9439,6 +9664,7 @@ export function createWorldModes(host) {
         { renderer, arch, getGpuMesh: dungeonHold.getGpuMesh, cpuModels, getTexture, uploadRecord: dungeonHold.uploadRecord, uploadRecordFrame: dungeonHold.uploadRecordFrame, palette, placeHold: dungeonHold },
         dfLocation, hit.blocksFile ?? blocks, dfLocation.climate.climateType, {   // WB3b: the court's blocks file answers its one made block
           standingLook,   // MWNPC8b: the dungeon's people read for their bodies as the building's are (dungeonContext.js drawPeople)
+          placeRecord: () => (place?.instance ? { ins: instanceWord(place.instance) } : {}),   // INSTANCES (the audit): the save's word for the instance this build is (a load re-enters it)
           automapFromLoad: fromLoad,   // MAP-KEEP: a load enters the saved record on the LOAD arm - its colour tier kept, nothing stamped or pruned
           placePlayer: placeLoadedPlayer,   // DIAL-LOAD: the host's load law, for every load the context runs - not routeKey's alone
           onStartLoad: () => host.cameraRecoilReset?.(),   // AUDIT DISC28: OnStartLoad's reel reset, the world's own camera (its load resets it too)
@@ -9618,7 +9844,7 @@ export function createWorldModes(host) {
           gateHost: () => host.gateHost?.() ?? null,   // WB11c: the Legion-Lord's host as bodies my blows meet (none but under the trial)
           onHostHit: (hit) => !!host.onHostHit?.(hit),   // WB11c: and the door a blow's number on one leaves through
           arenaRival: () => host.arenaRival?.() ?? null,   // ARENA4: my opponent on a relay's sand as a body my blows meet (none outside such a bout)
-          wildBodies: () => host.wildBodies?.() ?? null, wildStrike: (id, w, sw) => !!host.wildStrike?.(id, w, sw), wildSpellMarks: () => host.wildSpellMarks?.() ?? null, wildSpellOut: (id, sp) => !!host.wildSpellOut?.(id, sp),   // PVPDUNGEON: a fair player of the zone, struck in its dungeons
+          wildBodies: () => host.wildBodies?.() ?? null, wildStrike: (id, w, sw, o) => !!host.wildStrike?.(id, w, sw, o), wildSpellMarks: () => host.wildSpellMarks?.() ?? null, wildSpellOut: (id, sp) => !!host.wildSpellOut?.(id, sp),   // PVPDUNGEON: a fair player of the zone, struck in its dungeons
           onArenaHit: (hit) => !!host.onArenaHit?.(hit),   // ARENA4: and the door a blow's number on them leaves through - to the referee
           spoilContents: (key) => host.spoilContents?.(key) ?? null,   // WB9f: a piece of his spoils, listed on the plaque
           onActions: (data) => host.onActions?.(data), peers: () => host.peers?.() ?? null, selfId: () => host.selfId?.() ?? null, party: () => host.partyNear?.() ?? [], nodeMarks: (feet) => host.professionMarks?.(feet) ?? null, questMarks: () => dungeonQuestMarksHere(),   // GUIDE8: the Exact tier's quest resources, on the dungeon's map and compass; NODE-MARKS: the dungeon's nodes on its compass, at its own feet; WORLD3: a door moved goes out; the peers the foes see; whose blow a puppet's is
@@ -9627,6 +9853,8 @@ export function createWorldModes(host) {
           companionBodies: () => host.companionBodies?.() ?? null,   // COMPANION-KIT: my companions underground (the dungeon's own records)
           fates: !!host.openRevenantFate, shakeCamera: (k) => host.shakeCamera?.(k),   // REVENANT-FATE: the host opens a beaten revenant's choice; an execution's blow felt
           onLootClaimed: () => host.onLootClaimed?.(),   // AUDIT WORLD4 C2/D5: a claimed container makes the room's memory due this frame
+          partyLevels: () => host.partyLevels?.() ?? [],   // PARTY-LOOT: the party's levels, which a room container's base is minted at (the outer host's)
+          roomHost: () => host.roomHost?.() ?? null,   // PARTY-LOOT: the room's seat, whose word grants a take (the outer host's)
           // A10: the Recall prompt (Teleport.cs:81-98). The outer host
           // owns it - the plan's arms are its pixel teleport, its mode
           // teardown and its dungeon mount - so a cast underground in
@@ -9865,6 +10093,7 @@ export function createWorldModes(host) {
       betterAmbience.onTransition({ dungeon: { regionName: dfLocation.regionName, name: dfLocation.name, inCastle: () => !!ctx.insideDungeonCastle?.(), exitPos: ctx.enterMarker ? [ctx.enterMarker.x, ctx.enterMarker.y, ctx.enterMarker.z] : null } });   // BA1: OnTransitionDungeonInterior - the fog seeded by the dungeon's name, the rain source at "DungeonExit"
       _insideTavern = false;   // ROAD-B B4: PlayerEnterExit.cs:1112 - the dungeon transition clears the tavern latch too (and, verbatim, not the residence one)
       _insidePartyRestExempt = false;   // TAVERN-REST1/GUILD-REST1: cleared on the same transition as the tavern latch above
+      placeInstance = place?.instance ?? null;   // INSTANCES: the room this dungeon is entered as
       dungeonLoc = dfLocation;
       host.profDungeonEntered?.(ctx);   // PROF2: the day's veins on this dungeon's walls (bible/06-Systems/Professions-Arc.md 23)
       standCrownHall(ctx, dfLocation).catch(() => {});   // CROWN-HALL: the throne room's pieces, about its ruler
@@ -9922,7 +10151,7 @@ export function createWorldModes(host) {
    *  candidates the exit landing is computed from. The classic start
    *  used to boot scenes/dungeon.js, which has no exit path at all, so
    *  Privateer's Hold was a sealed box: the whole reason this exists. */
-  async function startInDungeon({ locationKey = null, fromLoad = false, holdOpen = false } = {}) {   // HOLD-ONCE: `holdOpen` - the new game's start and a staff landing may enter Privateer's Hold online
+  async function startInDungeon({ locationKey = null, fromLoad = false, holdOpen = false, recorded = undefined } = {}) {   // INSTANCES: `recorded` - a load's, an anchor's, a staff landing's word for the place (scenes/instanceDoor.js entryFor)   // HOLD-ONCE: `holdOpen` - the new game's start and a staff landing may enter Privateer's Hold online
     const entries = doorTargets();
     // CRUX1 (2026-09-22, "the final dungeon mission is unbeatable"):
     // AND WITHOUT A DOOR. DFU's StartDungeonInterior(location) builds
@@ -9947,7 +10176,7 @@ export function createWorldModes(host) {
     // DE1: this is StartDungeonInterior, not the door transition - the
     // player is placed inside without ever walking through, so the
     // ENTER marker wins and the facing is plain north.
-    return tryEnterDungeon(hit, entries, { preferEnterMarker: true, fromLoad, holdOpen });   // MAP-KEEP: a save's own dungeon, entered on the load arm
+    return tryEnterDungeon(hit, entries, { preferEnterMarker: true, fromLoad, holdOpen, recorded });   // MAP-KEEP: a save's own dungeon, entered on the load arm
   }
 
   function tryExitDungeon({ pressCast = false, interact = false, actClick = false } = {}) {
@@ -10318,6 +10547,7 @@ export function createWorldModes(host) {
     decorTool.frame({ dt, cam, overlayUp: overlayHeld, interior: mode === 'interior' });   // DECOR1d: the button, the panel's scan, the free camera
     if (mode === 'interior') cardGameFrame(performance.now());   // CARDS4: the card table's patrons think and deal on, under any window
     if (mode === 'interior') iliacGame?.frame(performance.now());   // CARDS10: and the Iliac regular thinks and the turn turns over
+    if (mode === 'interior') gambitGame?.frame(performance.now());   // KG3: and The King's Gambit's regular, at the mod's beats
     host.cardRegulars?.(mode === 'interior' ? cardRegularsNow(performance.now()) : [], dt, cam.pos);   // CARDS4b: the regulars in their chairs, drawn as peers are (world.js) - none outside a building
     // Q4-v: the quest layer's modal frame. Behaviours update every
     // frame (Unity Update runs whatever Time.timeScale is); the
@@ -10588,6 +10818,13 @@ export function createWorldModes(host) {
     if (mode === 'interior') decorTool.cameraOverride(cam);   // DECOR1d: the free camera's eye, while a piece is placed
     if (mode === 'interior' && chairSeat && !(interiorOverlay instanceof DeathScreen)) { cam.pos = chairSeat.eye.slice(); player.drawFeet = chairSeat.feet; player.drawYaw = chairSeat.yaw; }   // SIT1: the seated eye, and the body drawn on the chair
     if (mode === 'interior' && cardSeat && !(interiorOverlay instanceof DeathScreen)) cam.pos = cardSeat.eye.slice();   // CARDS2: the seated eye - never over a death's sink and tilt (AUDIT CARDS B2): the dead fall from the body's own eye
+    // KG4 (Kings-Gambit.md 10.7): THE LEAN - a King's Gambit battle is played from the seat leaning over the board, fitted
+    // to the screen the panel leaves clear; the seat's own eye and look otherwise
+    const gambitLeanNow = mode === 'interior' && cardSeat && gambitGame && !(interiorOverlay instanceof DeathScreen)
+      ? gambitGame.lean(performance.now(), { w: canvas.clientWidth, h: canvas.clientHeight, rect: worldViewportRect(canvas.clientWidth, canvas.clientHeight), aspect: largeHudWorldAspect(canvas.clientWidth, canvas.clientHeight), fovY: fieldOfView() }, { eye: cam.pos, fwd })
+      : null;
+    if (gambitLeanNow) cam.pos = gambitLeanNow.eye;
+    const lookFwd = gambitLeanNow?.fwd ?? fwd;
     host.climbFeel?.frame(dt, overlayHeld);   // CLIMB4: the climb's camera, off this frame's motor (the world host's handle - one body) - AUDIT CLIMB-ARC F2/F4: held while the motor is
     // A8 - POINTER PARITY, THE FLAG AT THIS LINE RETIRED. Mouse0 is
     // DFU's ActivateCenterObject: the readied spell fires on its
@@ -10691,7 +10928,7 @@ export function createWorldModes(host) {
     });
     if (decorTool.flying()) mwv.eye = cam.pos;   // DECOR1d: the free camera looks from its own eye, never over the body's shoulder
     if (cardSeat) mwv.eye = cam.pos;   // CARDS2: seated, the seat's own view - first person (Tavern-Cards.md section 2)
-    const view = betterAmbience.view(lookAt(mwv.eye, [mwv.eye[0] + fwd[0], mwv.eye[1] + fwd[1], mwv.eye[2] + fwd[2]], [0, 1, 0]));   // BA1: the shaker sits between the follower and the camera
+    const view = betterAmbience.view(lookAt(mwv.eye, [mwv.eye[0] + lookFwd[0], mwv.eye[1] + lookFwd[1], mwv.eye[2] + lookFwd[2]], [0, 1, 0]));   // BA1: the shaker sits between the follower and the camera; KG4: the lean's look over the board
     const aimView = view.slice();   // AUDIT CLIMB-ARC F10: the view the player aims with, before the climb's feel
     host.climbFeel?.view(view, !decorTool.flying() && !mwv.thirdPerson);   // CLIMB4: the climb's pitch, roll and eye - first person, never the decorator's free camera
     host.reportFrame?.(proj, view);   // AUDIT 62 F16/F28: TI1's tap ray and lock dot ride the host's last frame, and only its EXTERIOR render wrote one
@@ -10767,7 +11004,7 @@ export function createWorldModes(host) {
       iilSyncLane(renderer, true);   // IIL2: the mod's own shadows, on its classic-look lane, when the row asks
       const _iilOn = iilActive(renderer.lightingLane);
       const _iilDg = _iilOn ? iilDungeonLights(dungeonCtx.iilLightFlats ?? []) : null;
-      const _dgTint = (l) => (l && !l.aura ? { ...l, color: _iilOn ? iilTorch(l).color : _dgColor } : l);   // IIL1: the player's flames in the mod's torch colour; AUDIT 3 (SERAPH-WINGS): an aura's light (`aura`) keeps its own - the wings' gold is no flame
+      const _dgTint = (l) => (l && !l.aura ? adoptLight({ ...l, color: _iilOn ? iilTorch(l).color : _dgColor }, l) : l);   // IIL1: the player's flames in the mod's torch colour; AUDIT 3 (SERAPH-WINGS): an aura's light (`aura`) keeps its own - the wings' gold is no flame
       // LA-AUDIT A5: on the lane, one torch past the cap, for the cap's fade (capFadePairs; the court's braziers ride
       // after every light, so the gate's court keeps the cut)
       const _dgFade = !!renderer.lightingLane && !isGateArena(dungeonLoc);
@@ -10805,7 +11042,7 @@ export function createWorldModes(host) {
       renderer.drawFoeTelegraphs?.(drawableBlows(tacticsNow(), player.pos));   // TACT4: a foe's wind-up on the ground
       renderer.drawFoeTelegraphs?.(techniqueMarksNow());   // TECH1: and the player's own marks, after the foes' (bible/05-Combat/Weapon-Techniques.md)
       if (isGateArena(dungeonLoc)) host.drawGateBodies?.(canvas, proj, view, mwv.eye, dt);   // MWNPC10: the court's creatures in their bodies (their batches ride extraBillboards)
-      if (dungeonCtx.uiOverlayActive) dungeonCtx.showBodyFlats?.();   // AUDIT MW-NPC C6: no body is drawn under a window - its corpse flat is
+      if (dungeonCtx.uiOverlayActive) dungeonCtx.drawWindowBodies?.(canvas, { proj, view, eye: cam.pos });   // AUDIT MW-NPC C6, FB1015 LOOT-BODY: under a window drawFoes' last bodies, frozen
       dungeonCtx.bloodMarks?.draw?.(camRight, UP_Y);   // BLOOD1a: the dungeon's own marks, on this host's pass   // BLOOD1b: and its chunks, on this host's own basis
       dungeonCtx.drawPeople?.(canvas, proj, view, mwv.eye, dt, offerDungeonQuestStands);   // MWNPC8b: the people in their bodies - before the level's billboards draw; MWNPC8c: and the quest's
       renderer.drawBillboards([...dungeonCtx.billboardBatches, ...dungeonCtx.campBatches(), ...dungeonCtx.torchBatches(), ...(host.extraBillboards?.() ?? [])], camRight, UP_Y);   // ONLINE1: the peers on the dungeon's own pass; HT1 the dropped torches; SURV3 the campfires
@@ -11028,7 +11265,9 @@ export function createWorldModes(host) {
     decorTool.drawMounts(renderer);   // DECOR2c: and the one being hung
     if (cardGame?.scene) cardDrawGame(cardGame, proj, view, mwv.eye);   // CARDS3: the cards and chips on the cloth - CARDS3b: the player's own two held before the eye
     iliacGame?.draw(performance.now());   // CARDS10: an Iliac game's cards on the cloth
+    gambitGame?.draw(performance.now(), { proj, view, eye: mwv.eye });   // KG3: The King's Gambit's board - and the lens its next press is read through
     for (const w of cardWatches.values()) if (w.remote.state) w.draw.draw(w.scene.poses(performance.now() / 1000, w.remote.view()));   // CARDS5: and the tables this player watches
+    for (const [i, w] of gambitWatches) gambitWatchDraw(i, w, mwv.eye);   // KG5: and the King's Gambit boards
     interiorCtx.flatAnims.tick(dt);   // FA1
     // MWNPC8a: the standing people offered their bodies, before the room's billboards draw (cast-only where one stands)
     const _peopleOn = peopleBodies.frame();
@@ -11170,7 +11409,7 @@ export function createWorldModes(host) {
         const shot = { summoned: false };   // STUCK-ARROWS: DFU's isArrowSummoned, carried by the shaft
         if (spendAmmoFor(playerEntity.items, interiorWeapon.playerWeapon.weapon, shot)) {
           drainInteriorFatigue(SWING_FATIGUE_COST);
-          tallySwingSkills(playerEntity, interiorWeapon.playerWeapon.weapon);
+          tallySwingSkills(playerEntity, interiorWeapon.playerWeapon.weapon, interiorWeapon.playerWeapon.blowWeight);
           interiorArrows.fire(player.eye, eyeDir(), { fromPlayer: true, weapon: interiorWeapon.playerWeapon.weapon, muzzle: interiorWeapon.thunderlockMuzzle(fieldOfView()), summoned: shot.summoned }); interiorWeapon.noteShot?.(interiorWeapon.playerWeapon.weapon);   // SPELLFX1: the peers draw it   // FIELD-GUN17: the barrel's own offset when the hand holds the gun, null for every bow - the rig answers, the lane forks   // #64: LastBowUsed rides the shaft - the impact prices off it   // ROAD-H H1c: ArrowFlight.fire applies GetAimPosition's player arm (the bow hand), as DFU's missile does its own
         }
         continue;
@@ -11205,7 +11444,7 @@ export function createWorldModes(host) {
       if (interiorFoes?.resolvePlayerHit(interiorWeapon.playerWeapon, cam.pos, eyeDir(), player.pos,
         // AUDIT 58: the PLAYER's blow landing on a foe - EnemySounds.cs:125's 1.1, not PlayerFootsteps' 1
         makeInView(proj, view, multiply), interiorHitSound, { swing })) {
-        tallySwingSkills(playerEntity, interiorWeapon.playerWeapon.weapon);
+        tallySwingSkills(playerEntity, interiorWeapon.playerWeapon.weapon, interiorWeapon.playerWeapon.blowWeight);
         continue;
       }
       envAttack(interiorCtx.actions, interiorCtx.collider, player.eye, eyeDir());
@@ -11328,7 +11567,7 @@ export function createWorldModes(host) {
           hudHidden: !!townTalk?.hudHidden || hidesHud(interiorOverlay),   // AUDIT PRE-MERGE 0928 U8: a window that takes the HUD away outright, large HUD and all (MAP-FIELD2's word - Come Sail Away's position map, PauseGame(true, true), mounts in this slot too)
           // AUDIT 39: the enhanced HUD's two hand plaques - see world.js.
           readied: magic?.readied?.() ?? null,
-          weapon: interiorWeapon.playerWeapon.weapon ?? null,
+          weapon: interiorWeapon.playerWeapon.restingWeapon ?? null,   // TWO-HANDS (AUDIT): the lead's, never the off hand's mid-blow
           weaponSheathed: !!interiorWeapon.playerWeapon.sheathed });   // AUDIT 28 W2: the arrow counter's drawn-bow gate   // U45
       host.csaDrawWindWidget?.();   // CSA-E: Come Sail Away's wind widget over the HUD
     }
@@ -12533,7 +12772,12 @@ export function createWorldModes(host) {
     // CARDS2b: seated at a card table with no window up, Escape stands you up and is spent there - as a gathering act's
     // end spends it above - so the pause menu opens on the next one, standing
     if (mode === 'interior' && chairSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) { standFromChair(); e.preventDefault(); return; }   // SIT1: and off a chair
-    if (mode === 'interior' && cardSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) { standFromCardTable(); e.preventDefault(); return; }
+    if (mode === 'interior' && cardSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) {
+      // AUDIT KG II C1: every key bound to Escape (the pad's Start among them) is the board's cancel while a King's Gambit
+      // battle is under way - Stand up asked twice, as the raw Escape the cloth takes is - never a stake lost at one press
+      if (gambitGame?.playing()) { gambitGame.key('Escape'); e.preventDefault(); return; }
+      standFromCardTable(); e.preventDefault(); return;
+    }
     // U43: THE ONE DISPATCH. GameManager.Update (:509-557) is a single
     // flat chain with no scene gate at all - the window a key opens
     // does not care where the player is standing. The port had three
@@ -12950,8 +13194,8 @@ export function createWorldModes(host) {
     // ONLINE1: what the host needs to name the room - the mounted dungeon's
     // location, the interior's building; null in the exterior
     // ARENA4: the floor's instance standing a relay's bout is that bout's room (`arena:b<id>`)
-    roomIdentity: () => (mode === 'dungeon' ? (isGateArena(dungeonLoc) ? { kind: 'gate', day: dungeonLoc.gate } : isSdRealm(dungeonLoc) ? { kind: 'sd', s: dungeonLoc.sdRealm } : isArenaFloor(dungeonLoc) && dungeonLoc.arenaBout ? { kind: 'arena', o: dungeonLoc.arenaBout } : { kind: 'dungeon', mapId: dungeonLoc?.mapTableData?.mapId ?? null, regionIndex: dungeonLoc?.regionIndex ?? -1, name: dungeonLoc?.name ?? '', size: builtDungeonSize(dungeonLoc) })   // WB3b: the court's room is its gate's own; SD-ONLINE: a dungeon's room is its layout's (the size it was BUILT at); HOLD-SHARED (2026-10-12): Privateer's Hold keys its shared room as every dungeon does (HOLD-SOLO's `solo` reverted)
-      : mode === 'interior' ? { kind: 'interior', buildingKey: interiorBuilding?.buildingKey ?? 0, layout: _visitLayout, ...(interiorCabin ? { boatUid: interiorCabin.uid } : {}), ...(_intShared?.owned ? { private: true, privateRoom: privateVisitRoom } : {}) } : null),   // personal interiors share presence in an owner-specific room, never world memory/loot
+    roomIdentity: () => (mode === 'dungeon' ? (isGateArena(dungeonLoc) ? { kind: 'gate', day: dungeonLoc.gate } : isSdRealm(dungeonLoc) ? { kind: 'sd', s: dungeonLoc.sdRealm } : isArenaFloor(dungeonLoc) && dungeonLoc.arenaBout ? { kind: 'arena', o: dungeonLoc.arenaBout } : { kind: 'dungeon', mapId: dungeonLoc?.mapTableData?.mapId ?? null, regionIndex: dungeonLoc?.regionIndex ?? -1, name: dungeonLoc?.name ?? '', size: builtDungeonSize(dungeonLoc), instance: placeInstance })   // WB3b: the court's room is its gate's own; SD-ONLINE: a dungeon's room is its layout's (the size it was BUILT at); HOLD-SHARED (2026-10-12): Privateer's Hold keys its shared room as every dungeon does (HOLD-SOLO's `solo` reverted)
+      : mode === 'interior' ? { kind: 'interior', buildingKey: interiorBuilding?.buildingKey ?? 0, layout: _visitLayout, instance: placeInstance, ...(interiorCabin ? { boatUid: interiorCabin.uid } : {}), ...(_intShared?.owned ? { private: true, privateRoom: privateVisitRoom } : {}) } : null),   // personal interiors share presence in an owner-specific room, never world memory/loot
     get dungeonLocation() { return dungeonLoc; },   // B2: playerInside's dungeon arm
     /** X7: the Identify SPELL's window (Identify.cs:71-76 pushes the
      *  trade window itself). The spell can be cast anywhere, but the
@@ -13582,7 +13826,10 @@ export function createWorldModes(host) {
     cardSeated: () => mode === 'interior' && !!cardSeat,
     /** AUDIT CARDS-6 E1: the cards hold a press (the hand, the chips carried) - the finger put down is the table's even on
      *  the touch layer's stick half (ui/touch.js `cardHeld`); the cards' pointerdown runs before the layer's touchstart. */
-    cardPressHeld: () => mode === 'interior' && !!cardSeat && !!(cardGame?.handPress || cardGame?.drag),
+    // AUDIT KG II C3: and a finger the King's Gambit cloth took
+    cardPressHeld: () => mode === 'interior' && !!cardSeat && !!(cardGame?.handPress || cardGame?.drag || gambitGame?.fingerHeld?.()),
+    /** AUDIT KG II C4: a King's Gambit battle on the seat - the pad's bare d-pad is the board's cursor, not its world actions. */
+    gambitBoardUp: () => mode === 'interior' && !!cardSeat && !!gambitGame?.boardUp?.(),
     hover,
     wheel,
     /** A mode-owned window is up (the hosts' look gate reads this
@@ -13611,6 +13858,8 @@ export function createWorldModes(host) {
     get footstepKind() { return _modeFootstepKind; },
     cardTableLive: () => !!cardGame?.session && !cardGame.friendly,   // AUDIT CARDS-2 H1: chips on the table - the save refuses (world.js worldQuickSave); AUDIT CARDS-3 E-N5: a friendly game's chips are no gold
     iliacStaked: () => !!iliacGame?.staked?.(),
+    gambitStaked: () => !!gambitGame?.staked?.(),   // KG3: gold staked on The King's Gambit - the save waits (world.js's two doors)
+    gambitOnlineFrame,   // KG5: the relay's King's Gambit table's frames (world.js online.onGambit)
     iliacOnlineFrame,   // CARDS10: the relay's Iliac table's frames (world.js online.onIliac)   // CARDS10: a game of Iliac Hand for keeps under way - a card in play the save would not know (world.js worldQuickSave)
     cardOnlineFrame,   // CARDS5: the relay's card table's frames (world.js online.onHoldem)
     /** CARDS2b: the seat the pose says (scenes/world.js's sender): the feet and the facing the body is drawn at, and the
@@ -13966,7 +14215,7 @@ export function createWorldModes(host) {
         };
       }
       if (mode === 'dungeon') {
-        return { worldContext: WORLD_CONTEXT.Dungeon, local: [...player.pos], buildingKey: 0, interior: null };
+        return { worldContext: WORLD_CONTEXT.Dungeon, local: [...player.pos], buildingKey: 0, interior: null, dungeon: { ...(placeInstance ? { ins: instanceWord(placeInstance) } : {}), whole: builtDungeonSize(dungeonLoc) === 'full' } };   // INSTANCES (the audit): the room and the layout the position stands in
       }
       return { worldContext: WORLD_CONTEXT.Exterior, local: null, buildingKey: 0, interior: null };
     },
@@ -14051,7 +14300,7 @@ export function createWorldModes(host) {
         // A staff snapshot carries only the door identity. Resolve the building
         // locally so ownership, room identity and the exit door remain intact.
         if (cabin) { if (!await restoreSailingCabin(saved, pos, sailingBoat)) return false; }
-        else await enterInteriorCore(entry, entries, { building: strictDoor || privateRoom ? buildingDataForDoor?.(entry) ?? null : saved.building ?? null, pos, privateRoom });
+        else await enterInteriorCore(entry, entries, { building: strictDoor || privateRoom ? buildingDataForDoor?.(entry) ?? null : saved.building ?? null, pos, privateRoom, ...(saved.ins != null && !privateRoom ? { ins: saved.ins, staff: saved.staff === true } : {}) });   // INSTANCES: and the instance it recorded
       } catch (e) {
         console.error('[worldModes] restoreInterior failed:', e);
         return false;

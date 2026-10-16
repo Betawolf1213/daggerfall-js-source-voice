@@ -78,15 +78,27 @@ function insertSteps(db, { player, char, seq, nowS }, rows, onConflict) {
 const overKeys = (/** @type {any} */ db, /** @type {string[]} */ keys, /** @type {any[]} */ binds, /** @type {(m: string) => string} */ sql) =>
   chunks(keys, UID_CHUNK).map((part) => db.prepare(sql(marks(part.length, binds.length + 1))).bind(...binds, ...part));
 
+/** SAVE-BATCH (2026-10-16, the account database's primary at its ceiling of round trips - bible/11-Multiplayer/
+ *  Scale-Arc.md SAVE-BATCH): the ledger's two reads of a character's own rows - the keys it holds or claims, its known
+ *  copies - as statements, so a checkpoint sends them in the batch that reads its record (each was a round trip of its
+ *  own, and a checkpoint is a third of the primary's statements). */
+export const ledgerReads = (/** @type {any} */ db, /** @type {string} */ char) => [
+  db.prepare('SELECT uid, char_id, state, fp, claim_char, claim_at FROM item_uids WHERE char_id = ?1 OR claim_char = ?1').bind(char),
+  db.prepare('SELECT uid FROM item_dupes WHERE char_id = ?').bind(char),
+];
+
 /**
  * THE LEDGER'S STEP for one checkpoint: the pieces the record holds (judge.js ledgerPieces - `{ key, fp }`, repeats kept)
  * against the ledger. Answers `{ steps, copies, forged, charged }` - the statements for the checkpoint's batch; `copies`
  * the keys this record holds twice (each a copy of its own, charged to it); `forged` the keys it shows on another piece
  * than theirs (the verdict's law findings); `charged` how many claims this checkpoint proved copies (charged to their
  * claimants, in `steps`).
+ * SAVE-BATCH (2026-10-16): `known` - the two reads of the character's own rows (ledgerReads) answered already, in the
+ * batch that read its record (realm.js checkpointRealm) - or null, and they are asked here.
  * @param {any} db @param {{ player: string, char: string, seq: number, nowS: number }} at @param {{ key: string, fp: string }[]} pieces
+ * @param {{ mine: any, dupes: any } | null} [known]
  */
-export async function ledgerStep(db, at, pieces) {
+export async function ledgerStep(db, at, pieces, known = null) {
   const { char, nowS } = at;
   /** @type {any[]} */
   const steps = [];
@@ -102,9 +114,10 @@ export async function ledgerStep(db, at, pieces) {
   // what the ledger knows: the rows this character holds or claims, its known copies, and the rest by key
   /** @type {Map<string, any>} */
   const rows = new Map();
-  const mine = await db.prepare('SELECT uid, char_id, state, fp, claim_char, claim_at FROM item_uids WHERE char_id = ?1 OR claim_char = ?1').bind(char).all();
+  const [mineRead, dupesRead] = known ? [null, null] : ledgerReads(db, char);
+  const mine = known ? known.mine : await mineRead.all();
   for (const r of mine?.results ?? []) rows.set(r.uid, r);
-  const copiesKnown = new Set(((await db.prepare('SELECT uid FROM item_dupes WHERE char_id = ?').bind(char).all())?.results ?? []).map((/** @type {any} */ r) => r.uid));
+  const copiesKnown = new Set(((known ? known.dupes : await dupesRead.all())?.results ?? []).map((/** @type {any} */ r) => r.uid));
   for (const part of chunks([...shown.keys()].filter((k) => !rows.has(k) && !copiesKnown.has(k)), UID_CHUNK)) {
     const r = await db.prepare(`SELECT uid, char_id, state, fp, claim_char, claim_at FROM item_uids WHERE uid IN (${marks(part.length, 1)})`).bind(...part).all();
     for (const row of r?.results ?? []) rows.set(row.uid, row);
@@ -238,8 +251,10 @@ export function chargeSteps(db, char, keys, nowS) {
  * the record - in the service's hands (`escrow`: a listing, a vault, a stake) or no one's (spent, destroyed) - and the
  * pieces come into it, this record's whoever held them (the service's word). A batch moving two records runs both
  * records' `left` before either's `entered` (realmTrade.js), so a piece passing between them lands where it went.
+ * MAC (2026-10-14, the two-phase handoff): `escrow` a Set of keys - those pieces alone into the service's hands (a
+ * killer's worn piece, held for its collect - server-account/src/wild.js), the rest let go.
  * @param {any} db @param {{ player: string, char: string, seq: number, nowS: number }} at
- * @param {{ key: string, fp: string }[]} before @param {{ key: string, fp: string }[]} after @param {{ escrow?: boolean }} [o]
+ * @param {{ key: string, fp: string }[]} before @param {{ key: string, fp: string }[]} after @param {{ escrow?: boolean | Set<string> }} [o]
  */
 export function ledgerMoves(db, at, before, after, { escrow = false } = {}) {
   const was = new Map(before.map((p) => [p.key, p.fp]));
@@ -247,9 +262,12 @@ export function ledgerMoves(db, at, before, after, { escrow = false } = {}) {
   const gone = [...was.keys()].filter((k) => !now.has(k));
   /** @type {[string, string][]} */
   const came = [...now].filter(([k]) => !was.has(k));
-  const left = escrow
-    ? overKeys(db, gone, [at.char, at.nowS], (m) => `UPDATE item_uids SET state = 'escrow', char_id = '', claim_char = NULL, claim_at = NULL, at = ?2 WHERE uid IN (${m}) AND char_id = ?1 AND state = 'held'`)
-    : letGoSteps(db, gone, at.char, at.nowS);
+  const held = escrow === true ? gone : escrow instanceof Set ? gone.filter((k) => escrow.has(k)) : [];
+  const freed = gone.filter((k) => !held.includes(k));
+  const left = [
+    ...overKeys(db, held, [at.char, at.nowS], (m) => `UPDATE item_uids SET state = 'escrow', char_id = '', claim_char = NULL, claim_at = NULL, at = ?2 WHERE uid IN (${m}) AND char_id = ?1 AND state = 'held'`),
+    ...letGoSteps(db, freed, at.char, at.nowS),
+  ];
   const entered = [
     ...insertSteps(db, at, came, `ON CONFLICT (uid) DO UPDATE SET player = excluded.player, char_id = excluded.char_id, seen_seq = excluded.seen_seq,
       state = 'held', fp = excluded.fp, claim_char = CASE WHEN item_uids.claim_char = excluded.char_id THEN NULL ELSE item_uids.claim_char END,

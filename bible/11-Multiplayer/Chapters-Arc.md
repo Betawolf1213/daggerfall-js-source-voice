@@ -212,7 +212,7 @@ claim as the page went, which never landed - the realm session gives its lease u
 | Source | Trust | Reputation | Cap |
 |---|---|---|---|
 | A hall writ delivered (section 4) | Service-witnessed (the Stores took the units) | +2 with the posting guild | The writ supply and the account's 3 a day (AUDIT CHAP3 R9: a receipt writ is the next row's, outside the 3) |
-| Anything DFU's law moves on the client - a guild quest (DFU's +5; QFAIL-FREE: a failure costs nothing online), a donation, the ally and enemy spread | Client-reported, bounded | What moved | 15 a guild faction a character a UTC day, from every claim together |
+| Anything DFU's law moves on the client - a guild quest (DFU's +5; QFAIL-FREE: a failure costs nothing online; REPUTE-GATE, AUDIT GUILD-WORDS II: online the Mages Guild's Guard the Guild and Protect an Honored Mage wait for the standing their headers name), a donation, the ally and enemy spread | Client-reported, bounded | What moved | 15 a guild faction a character a UTC day, from every claim together |
 | A gate or raid receipt in a region where the character's guild keeps a chapter (AUDIT CHAP2 R24: a serpent's names no region - section 11) | Relay-signed | +1 with each guild the character belongs to (BUILT, CHAP2b - and +2 more for the chapter's receipt writ, its first of the day there, section 4) | The receipt's own day (a gate one a day, a raid `RAID_CLAIMS_DAY_MAX` - AUDIT CHAP3 E2: six a game day of two real hours, so up to seventy-two raids a UTC day, each a witnessed act; their +1 stands outside the 15 a day, as DECIDED, and their Merit is bounded by the 600) |
 | Any LOSS of reputation (a crime against a guild; AUDIT CHAP2 D5: a probation and an expulsion move no reputation - `Guild.cs` only drops the membership) | Client-reported | DFU's law | None - a client that lies against itself is believed |
 
@@ -247,7 +247,10 @@ stand above its divine on the Roll until the owed is paid; no DFU law reads the 
 DECIDED. `baseCalculateNewRank` and `updateRank` run unchanged, over the Roll's reputation and the save's skills.
 FACT: the skills are the client's word until Realm phase 3 checks a save; a lied skill buys a rank that costs no rival
 anything, which law 3 allows. BUILT (CHAP1): the 28-day gate and REP6's probation stay DFU's, on the client's own
-calendar, untouched; the Roll records the rank the client reports, bounded by its own reputation (3.2; AUDIT CHAP2 D5:
+calendar, untouched (PROMO-NOW, 2026-10-15, Mac: "No wait" - online a PROMOTION no longer waits the 28 days; a
+demotion, a probation and an expulsion still do, `01-Overview/Field-Bugs-2026-10-15.md`; ROLL-PACE, the same day: and no
+further than the Roll's pace since it saw the membership begin - ROLL_GAIN_DAY_MAX a UTC day, the first counted - read
+off the Roll's own reputation, never the page's unclaimed number, `01-Overview/Field-Bugs-2026-10-15f.md`); the Roll records the rank the client reports, bounded by its own reputation (3.2; AUDIT CHAP2 D5:
 this said the rank as reported) - so between DFU's reviews, or for a Thieves Guild or Brotherhood member (they never
 expel), the recorded rank may sit BELOW the book's: the Roll's bound, not a demotion. AUDIT CHAP2 C2 (= D1): the tab
 compares its book with the book it last SENT, never with the Roll's record of it, so that difference is claimed once,
@@ -274,6 +277,19 @@ chapters' seats, won by Merit - your rank there is 7." - GUILD3a: "...for its ch
 unmoved and unannounced, and the review never demotes for it - so DFU's demotion record is never shown for a seat's rule.
 Offline the ceiling is none and every review is DFU's whole. AUDIT CHAP4 C3: the ceiling holds from the page's first
 frame - before the Roll's first word DFU's review promoted to 8 and 9, then the word took them back.
+SEAT-LINE (2026-10-15, `01-Overview/Field-Bugs-2026-10-15g.md`; Mac: "Explain the seat"): the hall's line (PROMO-NOW)
+said nothing at 7, so a capped Archmage was told nothing at all; at the ceiling it now says the next rank is a seat and
+what a seat asks - the seat's line in reputation, the Turning's Merit, the tenure and the account's age - read off the
+book seated, so a seat's holder at its own halls is told nothing more.
+SEAT-WORDS (2026-10-16, the same page): a service a seat's rank opens, refused at any rank (AUDIT GUILD-WORDS L1-1),
+says it is a chair's where DFU's record 3100 promised a review - the player's words call ranks 8 and 9 chairs (AUDIT
+GUILD-WORDS II C-2; a seat is a town's); a knight asking for the order's house is told a chair brings none (E2 below);
+the hold's line pops the Guild Chapters tutorial page, as a member's first word online does; and the notice board's
+guide says a guild's own review stops at 7. STANDING-WORDS (the same page): every adoption says what the Roll's word
+moved since its last ("Standing: Mages Guild +25 (now 40, 10 more to come)" - a quest's whole reward, the owed with it;
+what an answer paid of what was owed is the service's own word since AUDIT GUILD-WORDS II B-4), the pace's line is
+said only where the owed grew, and the owed is kept for the hall's line and the Standing page (3.3's pace, said where it
+is felt).
 
 AUDIT CHAP4 (D2, E2), RECORDED: what DFU GIVES ONCE at rank 8 or 9 and the character keeps is not given online - a seat
 is held, not a rank earned for good. A knightly order's rank-8 and rank-9 armour and its rank-9 house read the BOOK's

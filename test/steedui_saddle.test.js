@@ -7,6 +7,7 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { HORSE_CARE_HARD as HARD, WAGON_UPKEEP_HARD as WHARD } from '../src/systems/upkeepTiers.js';   // HORSE-TIERS / WAGON-TIERS (PIN MOVED): the upkeep is handed each tier's rules - these pins pin the system as it stood, Hard
 import { readFileSync } from 'node:fs';
 import {
   saddleGait, saddleSpeedText, saddleTitle, saddleMeters, saddleButtons, saddleHint, fedText, drawEnhancedSaddle, hideEnhancedSaddle,
@@ -125,13 +126,13 @@ test('STEED-UI the line under the title: what the horse needs first - winded, st
   assert.equal(saddleHint(S({ mode: 'Cart', wagon: { name: 'Open Wagon', stateKey: 'failing' } }), { mouseFree: true }), 'The open wagon is failing - mend it to get its pace back');
 });
 
-test('STEED-UI the panel on a page: mounted under the compass, titled, its gait and pace, its meters and buttons; a key hint on a button with a key (none on a finger); a click answers its hook, a dark one nothing; covered it hides, uncovered it stands again updated in place - made again only when its set changes; nothing to read, it goes (mutants: STEEDUI-covered, STEEDUI-rebuilt-every-frame, STEEDUI-dark-presses)', () => {
+test('STEED-UI the panel on a page (UI-CALM: as the Always choice stands it): mounted over the vitals, titled, its gait and pace, its meters and buttons; a key hint on a button with a key (none on a finger); a click answers its hook, a dark one nothing; covered it hides, uncovered it stands again updated in place - made again only when its set changes; nothing to read, it goes (mutants: STEEDUI-covered, STEEDUI-rebuilt-every-frame, STEEDUI-dark-presses)', () => {
   const doc = fakeDoc();
   const calls = [];
   const hooks = Object.fromEntries(['feed', 'treat', 'kit', 'cargo', 'stable', 'view', 'dismount'].map((a) => [a, () => calls.push(a)]));
   const keyOf = (a) => ({ HorseMount: 'H', TogglePerspective: 'MOUSE4', Run: 'LEFTSHIFT' })[a] ?? '';
   try {
-    const root = drawEnhancedSaddle({ saddle: S({ speed: 10, galloping: true, view: true }), keyOf, mouseFree: false, freeKey: 'Y' }, hooks, { doc });
+    const root = drawEnhancedSaddle({ panel: 'always', saddle: S({ speed: 10, galloping: true, view: true }), keyOf, mouseFree: false, freeKey: 'Y' }, hooks, { doc });
     assert.ok(root && root.id === ENHANCED_SADDLE_ID && doc.body.children.includes(root) && enhancedSaddleMounted());
     assert.ok(doc.head.children.some((c) => c.id === 'enhanced-saddle-style' && c.textContent === SADDLE_CSS), 'its sheet, once');
     assert.equal(enhancedSaddleBar(), one(root, 'saddlepanel-bar'));
@@ -151,7 +152,7 @@ test('STEED-UI the panel on a page: mounted under the compass, titled, its gait 
     assert.deepEqual(calls, ['feed', 'stable', 'view', 'dismount']);
     // the frame after: the breath spent, the feed dark (full) - updated in place, the same nodes
     const feedNode = btn('feed'), breathNode = meter('breath');
-    drawEnhancedSaddle({ saddle: S({ speed: 0, view: true, horse: { ...S().horse, breath: 0.1, winded: true, full: true } }), keyOf, mouseFree: true }, hooks, { doc });
+    drawEnhancedSaddle({ panel: 'always', saddle: S({ speed: 0, view: true, horse: { ...S().horse, breath: 0.1, winded: true, full: true } }), keyOf, mouseFree: true }, hooks, { doc });
     assert.equal(btn('feed'), feedNode, 'not rebuilt');
     assert.equal(meter('breath'), breathNode, 'not rebuilt');
     assert.equal(one(meter('breath'), 'saddlepanel-fill').style.width, '10.0%');
@@ -164,10 +165,10 @@ test('STEED-UI the panel on a page: mounted under the compass, titled, its gait 
     btn('feed').fire('click');
     assert.equal(calls.length, 4, 'a dark button answers nothing');
     // a window over the HUD
-    drawEnhancedSaddle({ saddle: S(), covered: true, keyOf }, hooks, { doc });
+    drawEnhancedSaddle({ panel: 'always', saddle: S(), covered: true, keyOf }, hooks, { doc });
     assert.equal(root.style.display, 'none');
     assert.equal(enhancedSaddleBar(), null);
-    drawEnhancedSaddle({ saddle: S({ apples: 1 }), keyOf, touch: true }, hooks, { doc });
+    drawEnhancedSaddle({ panel: 'always', saddle: S({ apples: 1 }), keyOf, touch: true }, hooks, { doc });
     assert.equal(root.style.display, '');
     assert.notEqual(btn('feed'), feedNode, 'a new set (the apple, the view gone): made again');
     assert.deepEqual(all(root, 'saddlepanel-btn').map((b) => b.dataset.act), ['feed', 'treat', 'stable', 'dismount']);
@@ -186,7 +187,7 @@ test('STEED-UI the upkeep\'s read: the ridden horse - its breath while ridden (n
   const items = [h, w, oats(2), apple(1), kit(1)];
   const store = [oats(3), kit(2)];
   const sw = { horse: true, wagon: true };
-  const up = createUpkeep({ items: () => items, now: () => t, horseCare: () => sw.horse, wagonUpkeep: () => sw.wagon, stores: () => store });
+  const up = createUpkeep({ items: () => items, now: () => t, horseCare: () => (sw.horse ? HARD : null), wagonUpkeep: () => (sw.wagon ? WHARD : null), stores: () => store });
   const r = up.saddle('Horse');
   assert.equal(r.horse.breath, 1);
   assert.equal(r.horse.winded, false);
@@ -205,7 +206,7 @@ test('STEED-UI the upkeep\'s read: the ridden horse - its breath while ridden (n
   // on a bench, the team's hungriest horse is the one shown hungry and fed - the bond stays the lead's
   const lead = horse(41, { horseFed: T0 + 600, horseBond: 300 }), second = horse(42, { horseFed: T0 - 60 }), spare = horse(43, { horseFed: T0 - 5000 });
   const teamPack = [lead, second, spare, wagon('openWagon')];
-  const tu = createUpkeep({ items: () => teamPack, now: () => T0, horseCare: () => true, wagonUpkeep: () => true });
+  const tu = createUpkeep({ items: () => teamPack, now: () => T0, horseCare: () => HARD, wagonUpkeep: () => WHARD });
   const bench = tu.saddle('Cart').horse;
   assert.deepEqual([bench.hungerKey, bench.feed, bench.team, bench.tier], ['hungry', 1, 2, 'Accepting'], 'the second of the Open Wagon\'s two - the spare is in no harness');
   assert.deepEqual([tu.saddle('Horse').horse.hungerKey, tu.saddle('Horse').horse.feed, tu.saddle('Horse').horse.team], ['fed', 0, 1], 'astride: the one ridden');
@@ -302,7 +303,7 @@ test('STEED-UI the four hosts: world.js and exterior.js build the one glue over 
   const world = rd('src/scenes/world.js'), ext = rd('src/scenes/exterior.js');
   for (const [name, s] of [['world.js', world], ['exterior.js', ext]]) {
     assert.match(s, /const saddleHost = createSaddleHost\(\{\n {4}upkeep, runtime: \(\) => hccRuntimeOn\(\), items: \(\) => playerEntity\.items \?\? \[\],/, `${name}: the glue`);
-    assert.match(s, /saddleHost\.motion\(gamePaused\(\) \? 0 : dt, metres, galloping\);/, `${name}: the motion`);
+    assert.match(s, /saddleHost\.motion\(gamePaused\(\) \? 0 : dt, metres, galloping, player\.rideWalking\);/, `${name}: the motion - HORSE-TIERS (PIN MOVED): and the walk the motor took`);
     assert.match(s, /openStable: \(\) => hudCtx\.togglePause\(\{ at: 'holdings' \}\)/, `${name}: the Stable`);
     assert.match(s, /pass: upkeepPass/, `${name}: the kit's hour`);
     assert.ok(s.includes("isEnhancedPlus() && typeof document !== 'undefined' && walkMode"), `${name}: Enhanced Plus only`);
@@ -335,7 +336,7 @@ test('STEED-UI the Stable page, polished: the bond a bar to the next word with t
   const a = horse(31, { horseFed: T0 + 14 * 60 + 10, horseBond: 450 });
   const w = wagon('caravan', 300);
   const items = [a, w, oats(2)];
-  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => true, wagonUpkeep: () => true });
+  const u = createUpkeep({ items: () => items, now: () => T0, horseCare: () => HARD, wagonUpkeep: () => WHARD });
   setHoldingsProvider(stableProviderFor({ runtime: null, on: () => false, hasHorse: () => true, hasCart: () => true, wagonKind: () => 'caravan', items: () => items, upkeep: u }));
   resetHoldingsPages();
   try {

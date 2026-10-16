@@ -213,7 +213,7 @@
   {
     "name": "TECH1-law-the-version",
     "file": "src/systems/itemLaw.js",
-    "old": "export const ITEM_LAW_VERSION = 4;",
+    "old": "export const ITEM_LAW_VERSION = 5;",
     "new": "export const ITEM_LAW_VERSION = 1;",
     "tests": [
       "test/tech1_roster.test.js",
@@ -304,8 +304,8 @@
   {
     "name": "TECH1-the-swing-weight-unread",
     "file": "src/combat/playerWeapon.js",
-    "old": "      const damage = techOn(foe) ? scaleBlowDamage(rolled, blowMult(tb, foe)) : rolled;",
-    "new": "      const damage = rolled;",
+    "old": "      const blow = techOn(foe) ? scaleBlowDamage(rolled, blowMult(tb, foe)) : rolled;",
+    "new": "      const blow = rolled;",
     "tests": [
       "test/tech1_runner.test.js"
     ]
@@ -675,7 +675,7 @@
   {
     "name": "TECH1-AUDIT-the-service-behind-the-law",
     "file": "server-account/src/service.js",
-    "old": "export const ACCOUNT_VERSION = 'acct133';",
+    "old": "export const ACCOUNT_VERSION = 'acct140';",
     "new": "export const ACCOUNT_VERSION = 'acct107';",
     "tests": [
       "test/tech1_roster.test.js"

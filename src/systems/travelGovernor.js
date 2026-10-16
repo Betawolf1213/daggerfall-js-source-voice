@@ -17,7 +17,10 @@
 // drives, the host counts the pixels of the grid that it has not built -
 // every ring but the outermost (AUDIT DEEP2 B-2: once the view's reach,
 // measured down the top edge's middle, which missed the picture's
-// corners). Any for TV_GOV_HOLD_S and the ceiling HALVES (to a
+// corners) - and, of those, only the ones the stream is still building
+// (LOAD-OWED: a pixel whose build threw is let go by the stream, and a
+// count that kept it held the clock at x1 with nothing loading). Any for
+// TV_GOV_HOLD_S and the ceiling HALVES (to a
 // multiple of five, Travel Options' own spinner step - timeScale.js
 // accelLimitOf), and again only after TV_GOV_SETTLE_S more (AUDIT DEEP2
 // B-2); none for TV_GOV_CLEAR_S and it climbs back a step
@@ -98,7 +101,8 @@ export function viewReach({ height, pitch, fovY, back = 0, far = Infinity }) {
 }
 
 /** The pixels whose squares lie within `radius` (Chebyshev) of `center` that `isBuilt` says are not - the count the
- *  governor reads. */
+ *  governor reads. LOAD-OWED: the host's `isBuilt` answers true for a pixel nothing is building, so the count is what the
+ *  stream still owes (scenes/world.js travelViewGovern). */
 export function unbuiltAround(center, radius, isBuilt) {
   let n = 0;
   for (let y = center.y - radius; y <= center.y + radius; y++) {

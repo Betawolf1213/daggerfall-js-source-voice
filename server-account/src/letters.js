@@ -42,6 +42,7 @@ import { mintId, accountKind, displayName, isMuted, overRate } from './accounts.
 import { ID_RE } from '../../src/net/identityToken.js';   // NAME-AS: a friend's letter, addressed by account
 import { titleWorn, glyphsShown } from './titles.js';
 import { withIliacHonours, withIliacHonoursAll } from './iliac.js';   // CARDS10: and Iliac Hand's season #1's title
+import { withGambitHonours, withGambitHonoursAll } from './gambit.js';   // KG6: and The King's Gambit's GRANDMASTER
 import { withArenaHonours, withArenaHonoursAll } from './arena.js';   // AUDIT PRE-MERGE 1003 S8: the arena's honours on a sender's badge
 import { HANDLE_RE } from '../../src/net/handleShape.js';
 import {
@@ -113,6 +114,7 @@ export async function inboxOf({ db, nowS, primary = db }, reader, env) {   // SC
     // SCALE4g: ON THE BINDING - a #1 found stale is counted again and STORED (arena.js championNow), never off a replica
     // (AUDIT SCALE4d A1's law, where the heartbeat's session reads the rest)
     for (const p of await withIliacHonoursAll({ db: primary }, await withArenaHonoursAll({ db: primary }, found, nowS), nowS)) rows.set(p.id, p);   // AUDIT PRE-MERGE 1003 S8: the Grand Champion's title, the #1's laurel
+    for (const p of await withGambitHonoursAll({ db: primary }, [...rows.values()], nowS)) rows.set(p.id, p);   // KG6: and The King's Gambit's GRANDMASTER
   }
   const letters = results.map((l) => ({
     id: l.id, from: l.from_name, ...badgeOf(rows.get(l.from_id), env, nowS),
@@ -135,7 +137,7 @@ export async function readLetter({ db, nowS }, reader, env, id) {
   const row = await withIliacHonours({ db }, await withArenaHonours({ db }, await db.prepare('SELECT * FROM players WHERE id = ?').bind(l.from_id).first(), nowS), nowS);   // AUDIT PRE-MERGE 1003 S8; CARDS10: and Iliac Hand's
   return {
     letter: {
-      id: l.id, from: l.from_name, ...badgeOf(row, env, nowS), subject: l.subject, body: l.body,
+      id: l.id, from: l.from_name, ...badgeOf(await withGambitHonours({ db }, row, nowS), env, nowS), subject: l.subject, body: l.body,   // KG6: the GRANDMASTER's too
       sentAt: l.sent_at, readAt: l.read_at ?? nowS,
     },
   };

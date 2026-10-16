@@ -309,7 +309,9 @@ and landed after: the yard stood the removed piece again and dropped the new one
 alone - for the town's minute. **Why.** The answer replaced the town's whole cache, `sync` stood the yard from it, and
 `keep()` covered only the writes made before the read set out. **The fix** (`scenes/homeYards.js`): the owner's writes
 are kept by turn, and an answer asked before a write keeps the owner's latest list for that building - LOOK-STALE's law,
-for the yards' own registry.
+for the yards' own registry. PRIMARY-TRIPS audit (2026-10-16, `11-Multiplayer/Scale-Arc.md` B1): and any answer within
+YARD_WRITE_HOLD_MS of the write too - the service keeps a town's answer an isolate and reads it off a replica, so one
+asked after the write can still be from before it.
 
 **Found on the way, not changed.** Where the town's answer names no pieces for the owner's yard, the yard keeps its own
 pool, so a piece removed from another tab stands on this screen until the yard is made again.

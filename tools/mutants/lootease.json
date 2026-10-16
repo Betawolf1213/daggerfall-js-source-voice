@@ -124,7 +124,7 @@
   {
     "name": "KIT-ROLL-the-whole-ladder",
     "file": "src/systems/foeLootCap.js",
-    "old": "entity.level, entity.mobileType), boss: false, weights: plainFoeRarityWeights() };",
+    "old": "entity.level, entity.mobileType), boss: false, weights: plainFoeRarityWeights(quarters) };",
     "new": "entity.level, entity.mobileType), boss: false };",
     "why": "the kit on the whole ladder: 0.09 is blue",
     "tests": [
@@ -203,8 +203,8 @@
   {
     "name": "KIT-ROLL-dungeon-kill-door",
     "file": "src/scenes/dungeonContext.js",
-    "old": "      rollCorpseKit(foe.entity, { luck: liveStat(playerEntity, 'luck') });",
-    "new": "      void (foe.entity, { luck: liveStat(playerEntity, 'luck') });",
+    "old": "      if (!_roomBody) rollCorpseKit(foe.entity, { luck: liveStat(playerEntity, 'luck') });",
+    "new": "      if (!_roomBody) void (foe.entity, { luck: liveStat(playerEntity, 'luck') });",
     "why": "the dungeon's kill rolls no kit",
     "tests": [
       "test/search1_searchables.test.js"
@@ -213,8 +213,8 @@
   {
     "name": "KIT-ROLL-dungeon-joiner-door",
     "file": "src/scenes/dungeonContext.js",
-    "old": "if (r.d === 1 && !f.dead) { rollCorpseKit(",
-    "new": "if (r.d === 1 && !f.dead) { void (",
+    "old": "if (r.d === 1 && !f.dead && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(",
+    "new": "if (r.d === 1 && !f.dead && !(roomLootOn() && roomCanonOfFoe(f) != null)) { void (",
     "why": "a joiner's copy of the body rolls no kit",
     "tests": [
       "test/search1_searchables.test.js",
@@ -225,8 +225,8 @@
   {
     "name": "KIT-ROLL-dungeon-arrival-door",
     "file": "src/scenes/dungeonContext.js",
-    "old": "if (wire && sf.dead && !f.dead && sf.items == null) { rollCorpseKit(",
-    "new": "if (wire && sf.dead && !f.dead && sf.items == null) { void (",
+    "old": "if (wire && sf.dead && !f.dead && sf.items == null && !(roomLootOn() && roomCanonOfFoe(f) != null)) { rollCorpseKit(",
+    "new": "if (wire && sf.dead && !f.dead && sf.items == null && !(roomLootOn() && roomCanonOfFoe(f) != null)) { void (",
     "why": "an arrival's body rolls no kit",
     "tests": [
       "test/search1_searchables.test.js",

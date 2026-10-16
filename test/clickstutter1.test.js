@@ -34,7 +34,8 @@ test('OW-DUNGEON-DOT a found dungeon\'s plate in the grid is the dungeons\' - it
   assert.equal(markGroup('place dungeon'), 'dungeons');
   assert.equal(markGroup('place'), 'towns');
   assert.equal(markGroup('far dungeon'), 'dungeons');
-  const w = src('src/scenes/world.js');
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  const w = src('src/scenes/travelViewMarks.js');
   assert.match(w, /const isDungeon = TV_DUNGEON_TYPES\.has\(p\.summary\.loc\?\.mapTableData\?\.locationType\);/);
   assert.match(w, /kind: isDungeon \? 'place dungeon' : 'place'/);
 });

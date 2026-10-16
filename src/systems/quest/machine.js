@@ -293,7 +293,7 @@ import { Quest, nextUid, isShelved } from './quest.js';   // QUEST-SHELF: a ques
 import { localizedQuestDisplayName } from './localizedQuest.js';   // L10N3c: ParseQuest's -LOC DisplayName
 import { Task } from './task.js';
 import { Person } from './person.js';
-import { Place } from './place.js';
+import { Place, SITE_TYPES } from './place.js';   // QUEST-HOME: a building site, reached
 import { Item } from './item.js';
 import { Foe } from './foe.js';
 import { Clock } from './clock.js';
@@ -332,6 +332,9 @@ const isProtectedQuest = (quest) => questNameIn(PROTECTED_QUESTS, quest.questNam
 /** QUEST-SHELF (its audit): a partner's envelope never carries a shelf - THE ENVELOPE IS NOT TRUSTED (AUDIT DROPS A1), and
  *  a copy set aside is never handed on (getShareableQuestData), so the fields are the receiver's alone. */
 const NO_SHELF = Object.freeze({ shelvedAt: null, shelvedSites: null });
+/** INSTANCES: a party member's copy of a quest is this player's own quest - its instance its own, minted when one first
+ *  opens (systems/instancePlaces.js questInstanceEpoch), never the sender's epoch. */
+const NO_INSTANCE = Object.freeze({ instanceEpoch: null });
 
 /** QUEST1 "COUNTS AS ACCEPT/ADVANCE": restoreSaveData deliberately
  *  never replays an action - a LOAD must not refire a reward, reset a
@@ -1224,7 +1227,7 @@ export class QuestMachine {
    *  this quest has its final local UID, reaches the exact link a
    *  fresh accept would have made. */
   receiveSharedQuest(questData) {
-    questData = { ...this._onThisClock(questData), ...NO_SHELF };   // TIME3: the sender's countdowns, on this character's clock
+    questData = { ...this._onThisClock(questData), ...NO_SHELF, ...NO_INSTANCE };   // TIME3: the sender's countdowns, on this character's clock
     const quest = this._newQuest();
     const uid = nextUid();
     // AUDIT DROPS A3: an envelope the restore chokes on is REFUSED (null), never half a quest on the live table
@@ -1408,7 +1411,7 @@ export class QuestMachine {
     // stood in another layout) - kept below, the partner's assignments carried onto it (Place.keepOwnSite)
     const sitesBefore = new Map();
     for (const r of quest.resources.values()) if (r.isPlace && r.siteDetails) sitesBefore.set(r.symbol?.name, structuredClone(r.siteDetails));
-    quest.restoreSaveData({ ...questData, uid }, this._saveResolvers());
+    quest.restoreSaveData({ ...questData, uid, instanceEpoch: quest.instanceEpoch ?? null }, this._saveResolvers());   // INSTANCES: and its instance - this copy's own (NO_INSTANCE)
     for (const r of quest.resources.values()) if (r.isPlace && sitesBefore.has(r.symbol?.name)) r.keepOwnSite?.(sitesBefore.get(r.symbol?.name));
     for (const r of quest.resources.values()) {
       if (r.isClock && !r.clockFinished && finishedBefore.has(r.symbol?.name)) {
@@ -1806,11 +1809,7 @@ export class QuestMachine {
   _reseatMovedOf(quest, world) {
     if (!world || quest.questComplete) return 0;
     let moved = 0;
-    const follow = (place) => {
-      for (const link of this.siteLinks) {
-        if (link.questUID === quest.uid && link.placeSymbol?.name === place.symbol?.name) Object.assign(link, linkSiteOf(place));   // AUDIT QA2: the whole site, its town with it
-      }
-    };
+    const follow = (place) => this._followSite(quest, place);
     for (const resource of quest.resources.values()) {
       if (!resource.isPerson || !resource.reseatMovedQuestor?.(world)) continue;
       moved++;
@@ -1826,6 +1825,56 @@ export class QuestMachine {
     for (const resource of quest.resources.values()) if (resource.isPlace) resource.mendCuratedMarkers?.(world);
     return moved;
   }
+  /** A Place's site links moved to where it stands now - the whole site, its town with it (AUDIT QA2). One walk, the
+   *  layouts' re-seat's and a homed site's (reseatHomedSites). */
+  _followSite(quest, place) {
+    for (const link of this.siteLinks) {
+      if (link.questUID === quest.uid && link.placeSymbol?.name === place.symbol?.name) Object.assign(link, linkSiteOf(place));   // AUDIT QA2: the whole site, its town with it
+    }
+  }
+
+  /**
+   * FIELD BUGS 2026-10-14 QUEST-HOME (Mac, 2026-10-15: "Close both"): EVERY BUILDING SITE NOT YET REACHED THAT IS A
+   * PLAYER'S HOME NOW, CHOSEN AGAIN in its own town (Place.repickHomedSite), its site links following and the host told
+   * (`world.questSiteMoved(quest, place, was)` - the town map's mark and the talk's discovery move with it). Asked
+   * whenever the page learns of homes (the world host, its homesLearned: the boot's read of every town, the hub's word that one moved, a
+   * town's own answer). A quest complete, or set aside (QUEST-SHELF), moves nothing. Answers how many moved.
+   */
+  reseatHomedSites(world = this.deps.world ?? null) {
+    if (!world?.isPlayerHome) return 0;
+    let moved = 0;
+    for (const quest of this.quests.values()) {
+      if (quest.questComplete || isShelved(quest)) continue;
+      for (const resource of quest.resources.values()) {
+        if (!resource.isPlace) continue;
+        const was = resource.siteDetails;
+        if (!resource.repickHomedSite?.(world)) continue;
+        moved++;
+        this._followSite(quest, resource);
+        try { world.questSiteMoved?.(quest, resource, was); } catch (e) { console.error('[quest] a homed site\'s map and talk:', e?.message ?? e); }
+      }
+    }
+    return moved;
+  }
+
+  /** QUEST-HOME: THE PLAYER STANDS INSIDE town `mapId`'s building `buildingKey` - every incomplete quest's site there is
+   *  REACHED, for good (`siteDetails.reached`, saved with the site): what the player found in it is never moved
+   *  (Place.repickHomedSite). The interior mount's (scenes/questBridge.js mountScene). Answers how many were new. */
+  noteSiteReached(mapId, buildingKey) {
+    if (!(buildingKey > 0)) return 0;
+    let n = 0;
+    for (const quest of this.quests.values()) {
+      if (quest.questComplete) continue;
+      for (const resource of quest.resources.values()) {
+        const sd = resource.isPlace ? resource.siteDetails : null;
+        if (sd?.siteType !== SITE_TYPES.Building || sd.mapId !== mapId || sd.buildingKey !== buildingKey || sd.reached) continue;
+        sd.reached = true;
+        n++;
+      }
+    }
+    return n;
+  }
+
   /** QUESTOR-MOVED: a quest that ARRIVED (a partner's share, a resync) is mended as a load mends a save's
    *  (the world host's applyLayoutPins) - a copy taken before the town mods names a questor and sites in a layout it no
    *  longer stands in. Not before the host knows its towns' layouts: the world seam's `townLayoutsKnown()` (online,

@@ -97,7 +97,7 @@ export const CATEGORIES = Object.freeze([
     sec("rules", "Rules & armour", [
       "feat:mod-pcaao", "MeleeAttacks/MeleeAttackFriendlyProtection", "MeleeAttacks/MeleeAttackDetection"]),
     sec("weapons", "Weapons in hand", [
-      "feat:mod-weapon-widget", "feat:mod-shield-widget", "feat:mod-readied-spellcasting-hands", "feat:mod-diverse-weapons", "feat:bows-left-hand", "Enhancements/BowLeftHandWithSwitching"]),
+      "feat:weapon-glow", "feat:mod-weapon-widget", "feat:mod-shield-widget", "feat:mod-readied-spellcasting-hands", "feat:mod-diverse-weapons", "feat:bows-left-hand", "Enhancements/BowLeftHandWithSwitching"]),
     sec("morrowind", "With Morrowind data", [
       "feat:mod-weapon-sheathing", "feat:steel-helm", "feat:mw-spell-effects", "feat:mw-npc-bodies", "feat:mw-billboard-look"]),
     sec("aftermath", "Seeing & bleeding", [
@@ -111,7 +111,7 @@ export const CATEGORIES = Object.freeze([
     sec("weather", "Weather & ambience", [
       "feat:weather-events", "feat:mod-better-ambience"]),
     sec("towns", "Towns & people", [
-      "feat:living-world", "feat:mod-beautiful-villages", "feat:mod-beautiful-cities", "feat:mod-windmills-kamer", "feat:town-watch"]),
+      "feat:living-world", "feat:mod-beautiful-villages", "feat:mod-beautiful-cities", "feat:mod-windmills-kamer", "feat:mod-kings-gambit", "feat:town-watch"]),
     sec("encounters", "Wilderness & encounters", [
       "feat:mod-world-of-daggerfall", "feat:wilderness-camps", "feat:road-encounters", "feat:mod-world-events-raiding-parties"]),
     sec("travel", "Travel", [
@@ -123,7 +123,7 @@ export const CATEGORIES = Object.freeze([
     // L10N1b: the language the game's words are shown in, and under it a Daggerfall Unity translation pack (L10N3b)
     sec("language", "Language", ["port:language"]),
     sec("hud", "HUD", [
-      "port:hudScale", "port:hudLock", "port:hudBars", "port:hudReset", "port:foeBarStyle", "feat:quick-slots", "GUI/Crosshair",
+      "port:hudScale", "port:hudLock", "port:hudBars", "port:hudReset", "feat:calm-hud", "port:foeBarStyle", "feat:quick-slots", "GUI/Crosshair",
       "GUI/EnableVitalsIndicators", "GUI/InteractionModeIcon", "GUI/EnableArrowCounter", "GUI/IconsPositioningScheme", "feat:near-death-warning",
       "Enhancements/NearDeathWarning"]),
     sec("messages", "Messages & prompts", [

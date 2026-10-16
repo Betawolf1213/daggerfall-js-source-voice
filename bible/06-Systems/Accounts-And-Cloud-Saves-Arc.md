@@ -5654,3 +5654,30 @@ finding reproduced before it was paid.
 press is hidden for a registered row with no codes - none exists. B9: `tools/accountCardProbe.mjs`'s three font checks
 fail on main as on this branch (they expect the launcher's faces; the skin is Pixelify since L10N3d). B10: on the
 `codes` stage a wrong password is told "That username and password do not match", as the `password` stage is.
+
+## DEV5 — trashBattery no longer a developer (2026-10-16)
+
+Mac: "Remove trashBattery ingame as a dev". `server-account/wrangler.toml` reads `DEVELOPER_HANDLES =
+"Lattymoy,LostMyLeg,Tabby,RookieG"`. The list is read fresh at every token and every call (ACC3), so the whole set DEV2
+granted goes with the handle once the account worker deploys: the Developer title and the `dev` glyph, the Seraph Wings,
+RED1's /red, MOD1's /mute and /unmute and the protection from being muted (`canModerate`), every developer-only act
+(`isDeveloper`) and the POI editor's builder door (`poi.js`; BUILDER_HANDLES does not name them). A title or aura the
+row still stores is not worn (`titleWorn`, `auraWorn`: a stored choice, a grant checked now), so no column is cleared
+and no migration runs. Nothing else changes: the DEATHLOOP1 and DEATH-BODY1 records keep their
+reports, which are history. Pins: `test/titlen.test.js` (the list; the handle in any case holds no title, glyph, wings or
+moderating, and wears neither what it stored); `tools/mutants/titlen.json` DEV5-trashbattery-still-listed (the handle
+left on the list - dead), and DEV3's and DEV4's records re-aimed by content.
+
+## DEV6 — Roderic a developer (2026-10-16)
+
+Mac: "Give roderic the developer access ingame (title/glyph)". `server-account/wrangler.toml` reads `DEVELOPER_HANDLES =
+"Lattymoy,LostMyLeg,Tabby,RookieG,Roderic"`. The list is read fresh at every token and every call (ACC3), so the whole set
+DEV2 granted reaches the handle once the account worker deploys: the Developer title and the `dev` glyph, the Seraph
+Wings (SERAPH-WINGS, `DEVELOPER_AURA`), RED1's /red, MOD1's /mute and /unmute and the protection from being muted
+(`canModerate`), every developer-only act (`isDeveloper`) and the POI editor's builder door (`poi.js`). Case-folded as
+every list is (`handleList`): the account registered as `roderic`, `Roderic` or `RODERIC` is the one named; a near name
+(`Roderick`, `Roderi`) is another account and holds none of it, as DEV4 settled. No column is written and no migration
+runs - the title and the wings are a grant checked now, worn once the player equips them. Pins: `test/titlen.test.js`
+(the list; the handle in any case holds the title, the glyph, the wings and the moderating; four near names refused);
+`tools/mutants/titlen.json` DEV6-roderic-not-granted (the handle left off the list - dead), and DEV3's, DEV4's and
+DEV5's records re-aimed by content.

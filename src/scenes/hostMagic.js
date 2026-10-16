@@ -49,6 +49,7 @@ import { silenceBlocksCast, silencedText, pressButtonToFireSpellText, DOOR_SPELL
 import { calculateCastCost, castSchool, EFFECT_COST_TABLE } from '../systems/spellcost.js';   // SCHOOLS3: castSchool - the school a signature spell teaches
 import { tellSpellLanded } from '../systems/spellPower.js';   // SCHOOLS3: my spell landed - the paths' riders answer it
 import '../systems/arcanePowers.js';   // AUDIT SCHOOLS L2 F8: what the paths DO, registered with THE ONE CAST ENGINE every page builds - the standalone dungeon page (scenes/dungeon.js) had their price and potency and none of their powers
+import '../systems/firmamentPowers.js';   // FIRM1: what the Firmament DOES, registered with the one cast engine every page builds, as the paths' are
 import { applySpell, spellReflectedText, hasActiveEffect, isSoulTrapEffect, spellSways } from '../systems/effects.js';   // WBX7: a soul trap meets the court's boss too
 import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { potionBundle } from '../systems/potions.js';   // U44: DrinkPotion's bundle

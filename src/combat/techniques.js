@@ -102,9 +102,11 @@ const fresh = () => ({
 let _s = fresh();
 
 /** The item a technique is read from: the weapon in the hand that swings (DFU's used hand - PlayerWeapon.weapon, the equip
- *  table's own object), or bare-handed the Gauntlets worn. The beast's claws have none. */
+ *  table's own object), or bare-handed the Gauntlets worn. The beast's claws have none. TWO-HANDS (AUDIT): with both hands
+ *  up, the LEAD's - a technique is always the lead hand's (PlayerWeapon.techniqueStrike), and the off hand's blows must not
+ *  swap the chip or cancel an aim. */
 export function techniqueItem(entity, pw) {
-  const w = pw?.weapon ?? null;
+  const w = pw?.restingWeapon ?? pw?.weapon ?? null;
   if (w?.werecreatureClaws) return null;
   if (w) return w;
   return entity?.equip?.slots?.[EQUIP_SLOTS.Gloves] ?? null;
@@ -493,7 +495,9 @@ export function refusal(hand, ctx) {
   if (t.mech === 'leap' || t.mech === 'dash') {
     const m = ctx.door?.motor?.();
     if (!m) return NOT_HERE_TEXT;
-    if (m.climb?.isClimbing || m._wall || m._pkMove || m.swimming || m.onExteriorWater || m.isPlayerSwimming || m.levitating || m.slowFalling || m.riding || m.isDown?.() || !m.grounded) return CANNOT_LEAP_TEXT;   // AUDIT TECH1: the open water too - DFU refuses a jump there
+    // KICK-AIR (Mac, 2026-10-15): the air refuses a leap or a dash - but not one the roster marks `airborne` (the Flying
+    // Kick), which goes from a jump, a fall, a step off a ledge; every other refusal here is its too
+    if (m.climb?.isClimbing || m._wall || m._pkMove || m.swimming || m.onExteriorWater || m.isPlayerSwimming || m.levitating || m.slowFalling || m.riding || m.isDown?.() || (!m.grounded && !t.airborne)) return CANNOT_LEAP_TEXT;   // AUDIT TECH1: the open water too - DFU refuses a jump there
   }
   return null;
 }

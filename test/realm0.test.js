@@ -50,7 +50,7 @@ function onPage(search, fn) {
 }
 
 test('REALM P0.1: an online boot drops every power flag before anything reads it - offline, F304 stands', () => {
-  for (const f of ['shot', 'fly', 'nofoes', 'tp', 'timescale', 'class', 'spell', 'weapon', 'spawn', 'region', 'loc', 'tod', 'weather', 'wseed', 'season']) {
+  for (const f of ['shot', 'fly', 'nofoes', 'tp', 'timescale', 'class', 'spell', 'weapon', 'spawn', 'region', 'loc', 'tod', 'weather', 'wseed', 'season', 'editor']) {   // PIN MOVED (POI-3): the editor's eye a power too
     assert.ok(ONLINE_REFUSED_FLAGS.includes(f), `?${f} is refused online`);
   }
   const all = ONLINE_REFUSED_FLAGS.map((f) => `${f}=1`).join('&');
@@ -300,7 +300,7 @@ test('REALM P0.4: online a pile\'s gold is divided back by the level, every key,
   for (const f of ['src/scenes/dungeonContext.js', 'src/scenes/interiorContext.js', 'src/scenes/world.js']) {
     const calls = [...src(f).matchAll(/addPileLootExtras\(([^\n]*)/g)].map((m) => m[1]);
     assert.ok(calls.length >= 1, `${f} mints a pile`);
-    for (const c of calls) assert.match(c, /\{ (locationIndex: [^,]+, luck(: liveStat\(playerEntity, 'luck'\))?, )?level(: (?:playerEntity\.level|effectiveLevel\(playerEntity\)))?(, where: '[a-z]+')? \}\)/, `${f}: ${c}`);   // THE MERGE: main's AUDIT OH-F B3 names the dungeon's own pile (`where`); MERGE 2: FORAGE3's index and luck before the level; SOFTCAP2: a mentor's pile at the group's level
+    for (const c of calls) assert.match(c, /\{ (locationIndex: [^,]+, luck(: liveStat\(playerEntity, 'luck'\))?, )?level(: (?:playerEntity\.level|effectiveLevel\(playerEntity\)))?(, where: '[a-z]+')?(, quarters)? \}\)/, `${f}: ${c}`);   // PIN MOVED (PARTY-LOOT): the dungeon's pile hands its Renown share on too   // THE MERGE: main's AUDIT OH-F B3 names the dungeon's own pile (`where`); MERGE 2: FORAGE3's index and luck before the level; SOFTCAP2: a mentor's pile at the group's level
   }
 });
 

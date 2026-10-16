@@ -1195,8 +1195,8 @@
   {
     "name": "PROF11-svc-work-smelt-xp",
     "file": "server-account/src/professions.js",
-    "old": "const xp = r.act ? masonXp(count, rank, { clean: act }) : r.xp ?",
-    "new": "const xp = r.xp ?",
+    "old": "const xp = scaleXp(r.act ? masonXp(count, rank, { clean: act }) : r.xp ?",
+    "new": "const xp = scaleXp(r.xp ?",
     "tests": [
       "test/prof11_service.test.js",
       "test/prof11_client.test.js"

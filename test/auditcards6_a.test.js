@@ -40,6 +40,7 @@ import { sdSpoilsList } from '../src/systems/sdSpoils.js';
 import { seededRng } from '../src/systems/wind.js';
 import { RANDOM_TREASURE_ICONS } from '../src/systems/loot.js';
 import { gemKindOf } from '../src/systems/lootRarity.js';   // GEM2: a boss's gem
+import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const packsIn = (list) => (list ?? []).filter(isPackRecord).reduce((s, it) => s + (it.stackCount ?? 1), 0);
@@ -150,10 +151,10 @@ test('AUDIT CARDS-6 A3: a joiner\'s copy of a body - the stream\'s death of it a
   // the stream's death: applyFoeRecord, run on a joiner
   const foes = [{ mobileType: MOBILE_TYPES.Rat, dead: false, gender: 'male', entity: ratBody(), ai: { feet: [0, 0, 0], yaw: 0, isHostile: true, target: null } }];
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     ...doorDeps(), foes, _layoutFoes: 1, _retyping: new Set(), _authority: false, validFoeRecord, opts: { selfId: () => 'peer-7' },
     renownFoeDied: () => {}, reportPlayerKill: () => {}, sayEnemyDied: () => null, hudText: { add: () => {} },
     setFoeDead: (f, d) => { f.dead = d; }, retypeFoe: async () => false,
-    streamLaidBody: () => false,   // PIN MOVED (PARTY-LOOT): the runner's word landing on the body the stream laid - test/partyloot.test.js's seam, not this one
   };
   const api = mount(`${srcOf(find((x) => x.type === 'VariableDeclaration' && x.declarations.some((d) => d.id?.name === 'REMOTE_KILL')))}
     ${srcOf(find((x) => x.type === 'FunctionDeclaration' && x.id?.name === 'applyFoeRecord'))} return { applyFoeRecord };`, state);
@@ -169,10 +170,10 @@ test('AUDIT CARDS-6 A3: a joiner\'s copy of a body - the stream\'s death of it a
   withRandom(0.99, () => m.applyFoeRecord(miss[0], { i: 0, d: 1, f: [0, 0, 0] }));
   assert.deepEqual(miss[0].entity.items, []);
   // an arrival's body the room's memory hands without its list: patchFoe's copy arm, run
-  const arm = srcOf(find((x) => x.type === 'IfStatement' && DC.slice(x.test.start, x.test.end) === 'wire && sf.dead && !f.dead && sf.items == null'));
+  const arm = srcOf(find((x) => x.type === 'IfStatement' && DC.slice(x.test.start, x.test.end) === 'wire && sf.dead && !f.dead && sf.items == null && !(roomLootOn() && roomCanonOfFoe(f) != null)'));   // PIN MOVED (PARTY-LOOT): never a room's body, whose card is its base's
   const body = (wire, sf) => {
     const f = { dead: false, entity: ratBody() };
-    withRandom(0, () => mount(`${arm} return f;`, { ...doorDeps(), wire, sf, f }));
+    withRandom(0, () => mount(`${arm} return f;`, { ...ROOM_LOOT_OFF, ...doorDeps(), wire, sf, f }));
     return f.entity.items.filter(isIliacCard).map((c) => c.card);
   };
   assert.deepEqual(body(true, { dead: true, items: null }), ['rat'], 'the arrival\'s copy draws its own');
@@ -282,12 +283,16 @@ test('AUDIT CARDS-6 A8: the card\'s picture is drawn LAST in its hoard - every e
     ]) {
       // PIN MOVED (GEM2, bible/06-Systems/Gem-Sockets.md): the boss's gems' pictures are drawn after the card's - every
       // record before them still the look-stream's draw it was
+      // PIN MOVED (AUDIT WORLD-REWARDS A1, bible/01-Overview/Audit-World-Rewards.md): the Gate's Dragonfire Oath's picture
+      // is drawn after the gems' - every record before it still the look-stream's draw it was
+      const oath = name === 'gate' ? list.filter((p) => p.tier === 'gilded') : [];
       const cards = list.filter((p) => p.item?.templateIndex === 581);
       const gems = list.filter((p) => gemKindOf(p.item));
-      const rest = list.filter((p) => p.item?.templateIndex !== 581 && !gemKindOf(p.item));
+      const rest = list.filter((p) => p.item?.templateIndex !== 581 && !gemKindOf(p.item) && !oath.includes(p));
       for (const p of rest) assert.equal(p.record, icon(look), `${name} seed ${s}: ${p.kind} ${p.item?.name ?? ''}`);
       for (const c of cards) assert.equal(c.record, icon(look), `${name} seed ${s}: the card, after them`);
-      for (const g of gems) assert.equal(g.record, icon(look), `${name} seed ${s}: the gems, last`);
+      for (const g of gems) assert.equal(g.record, icon(look), `${name} seed ${s}: the gems, after the card`);
+      for (const o of oath) assert.equal(o.record, icon(look), `${name} seed ${s}: the Oath, last`);
       assert.equal(gems.length, name === 'gate' ? 1 : 2);
       if (cards.length && name === 'gate') gate++;
       if (cards.length && name === 'abyss') abyss++;

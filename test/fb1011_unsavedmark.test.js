@@ -16,7 +16,7 @@ import { createBindings, resetDefaults, getBinding } from '../src/systems/inputA
 import { createUnsavedKeybinds, setUnsavedBinding, applyUnsavedKeybinds, unsavedEdits } from '../src/systems/controlsConfig.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-const FREE = 'F2';   // no default holds it (the report's own pick)
+const FREE = 'F1';   // no default holds it (the report's own pick was F2 - UI-CALM gave it to SaddlePanel)
 
 function fakeEl(tag) {
   const n = {
@@ -71,7 +71,7 @@ test('UNSAVED-MARK the pane: the Overworld row bound and not saved says so, the 
     assert.equal(one(view.body, 'ctl-pending'), undefined);
     assert.ok(!one(view.body, 'ctl-head').className.includes('ctl-owed'));
     bind('TravelView', FREE);
-    assert.equal(one(row('TravelView'), 'ctl-key').textContent, 'F2', 'the row shows the key - as it did');
+    assert.equal(one(row('TravelView'), 'ctl-key').textContent, FREE, 'the row shows the key - as it did');
     assert.ok(row('TravelView').className.split(/\s+/).includes('ctl-unsaved'), 'and now says it is not saved');
     assert.equal(one(row('TravelView'), 'ctl-unsaved-note').textContent, UNSAVED_ROW);
     assert.equal(find(view.body, 'ctl-unsaved').length, 1, 'that row alone');

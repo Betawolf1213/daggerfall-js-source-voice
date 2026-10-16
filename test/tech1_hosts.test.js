@@ -25,7 +25,8 @@ const rigBag = (src, open) => { const i = src.indexOf(open); assert.ok(i >= 0, o
 
 test('TECH1 THE ACTION: WeaponTechnique appended last, a port row the classic windows yield, on Mouse3 alone, in Combat - and a touch corner\'s, a d-pad\'s and a pad button\'s to choose (mutants: inserted mid-list; another key; the group)', () => {
   assert.equal(TECHNIQUE_ACTION, 'WeaponTechnique');
-  assert.equal(ACTIONS.at(-2), 'WeaponTechnique', 'appended - the classic grid and a saved file resolve by position (SPYGLASS\' glass after it - PIN MOVED)');
+  assert.equal(ACTIONS.at(-3), 'WeaponTechnique',   // PIN MOVED (UI-CALM: the saddle panel's key last)
+    'appended - the classic grid and a saved file resolve by position (SPYGLASS\' glass after it - PIN MOVED)');
   assert.ok(PORT_ACTIONS.includes('WeaponTechnique'));
   assert.deepEqual(DEFAULT_BINDINGS.filter(([, a]) => a === 'WeaponTechnique'), [['Mouse3', 'WeaponTechnique']]);
   assert.deepEqual(DEFAULT_BINDINGS.filter(([c]) => c === 'Mouse3'), [['Mouse3', 'WeaponTechnique']], 'one key, one action');
@@ -55,7 +56,10 @@ test('TECH1 THE RIG: the one runner stepped AHEAD of the gesture on the swing\'s
   assert.match(rig, /_techDt = dt;\s*_techCtx \?\?= \{/, 'AUDIT TECH-FX: the dt set before the context is read, the context made once');
   assert.match(rig, /return claimShot\(held\.evs, _techCtx\);/);
   assert.match(rig, /tc\.holding = !!_heldHit;/, 'a Morrowind arm\'s held hit is a loose still to come (MW-D42)');   // PIN MOVED (AUDIT TECH-FX)
-  assert.match(code('src/combat/playerWeapon.js'), /techniqueStrike\(strike\) \{\s*if \(!machineAttack\(this\.machine, strike\)\) return false;/);
+  // PIN MOVED (TWO-HANDS, bible/05-Combat/Two-Hands.md): the machine's attack through _attack, which starts it the same
+  // way and names the strike's hand - a technique's always the lead's, never a flurry's
+  assert.match(code('src/combat/playerWeapon.js'), /techniqueStrike\(strike\) \{\s*if \(!this\._attack\(strike, \{ lead: true \}\)\) return false;/);
+  assert.match(code('src/combat/playerWeapon.js'), /const s = lead \? \{ hand: this\.leadHand, flurry: false, off: false \} : this\._nextStrike\(\);\s*if \(!machineAttack\(this\.machine, state\)\) return false;/);
 });
 
 test('TECH1 THE FOUR HOSTS: exterior.js, world.js, worldModes.js\' interior arm and dungeonContext.js each hand their rig the door - the motor, their own arrow lane, their own fatigue door, the view - and draw the player\'s marks in their ground pass; the dungeon\'s motor and view are its outer host\'s (dungeon.js, worldModes.js) (mutants: a host\'s door dropped; a lane not its own; a ground pass without the marks)', () => {

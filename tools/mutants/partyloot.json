@@ -1,377 +1,272 @@
 [
   {
-    "name": "PARTY-LOOT-no-word-at-the-death",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "      sayBodyLoot(foe);   // PARTY-LOOT",
-    "new": "      void foe;   // PARTY-LOOT",
+    "name": "PARTY-LOOT-pile-base-reads-the-players-luck",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    const t = { rolls, level: terms.lv, gender, luck: ROOM_BASE_LUCK, quarters: ROOM_BASE_QUARTERS, find: ROOM_BASE_FIND };",
+    "new": "    const t = { rolls, level: terms.lv, gender, luck: liveStat(playerEntity, 'luck'), quarters: ROOM_BASE_QUARTERS, find: ROOM_BASE_FIND };",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-word-before-the-handlers-finds",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "      raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck') });   // UL1",
-    "new": "      sayBodyLoot(foe); raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck') });   // UL1",
+    "name": "PARTY-LOOT-pile-base-at-the-players-level",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    const t = { rolls, level: terms.lv, gender, luck: ROOM_BASE_LUCK, quarters: ROOM_BASE_QUARTERS, find: ROOM_BASE_FIND };",
+    "new": "    const t = { rolls, level: effectiveLevel(playerEntity), gender, luck: ROOM_BASE_LUCK, quarters: ROOM_BASE_QUARTERS, find: ROOM_BASE_FIND };",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-an-early-word-dropped",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "      if (!lootHolder(canon)) { holdEarlyLoot(canon, rec); continue; }",
-    "new": "      if (!lootHolder(canon)) { continue; }",
+    "name": "PARTY-LOOT-body-base-on-math-random",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "      spawnEnemyLoot(e, f.mobileType, ENEMY_BASICS[f.mobileType], roller, { ...eliteLootOpts(f.src), where: 'dungeon', ...o, rejects });",
+    "new": "      spawnEnemyLoot(e, f.mobileType, ENEMY_BASICS[f.mobileType], roller, { ...eliteLootOpts(f.src), where: 'dungeon', ...o, rolls: Math.random, rejects });",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-laid-body-never-handed-its-word",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    if (laid) streamLaidBody(f);   // PARTY-LOOT",
-    "new": "    if (laid) void f;   // PARTY-LOOT",
+    "name": "PARTY-LOOT-base-rolled-under-the-players-mods",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    asTheRoom(() => {\n      if (h.pile) items = roomPileBase(h, terms, rolls, gender);",
+    "new": "    ((fn) => fn())(() => {\n      if (h.pile) items = roomPileBase(h, terms, rolls, gender);",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-no-wait",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "if (!_lootSeen.has(k)) f._lootDueAt = performance.now() + LOOT_WORD_WAIT_MS;",
-    "new": "if (!_lootSeen.has(k)) f._lootDueAt = null;",
+    "name": "PARTY-LOOT-word-overwrites-the-state",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    const { state, changed, answered } = mergeRoomWord(st, w);\n    _roomState.set(canon, state);",
+    "new": "    const { state, changed, answered } = mergeRoomWord(null, w);\n    _roomState.set(canon, state);",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-held-press-dropped",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "{ _lootHeld = { key, mode, pileKeys, at: performance.now() }; return 0; }",
-    "new": "{ return 0; }",
+    "name": "PARTY-LOOT-bonus-said-to-the-room",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "      if (seen.at.has(obj) || isPersonalLoot(obj)) continue;   // the bonus is the player's own - taken and put back at will",
+    "new": "      if (seen.at.has(obj)) continue;   // the bonus is the player's own - taken and put back at will",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-held-press-never-opened",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    return api.takeLoot(h.key, h.mode, h.pileKeys) > 0;",
-    "new": "    return false;",
+    "name": "PARTY-LOOT-minted-at-the-minters-own-level",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    const lv = roomBaseLevel(playerEntity?.level ?? 1, opts.partyLevels?.() ?? []);",
+    "new": "    const lv = roomBaseLevel(playerEntity?.level ?? 1, []);",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-wait-never-ends",
+    "name": "PARTY-LOOT-joiner-shows-its-own-roll-unborn",
     "file": "src/scenes/dungeonContext.js",
-    "old": "!_lootSeen.has(k) && performance.now() < f._lootDueAt;",
-    "new": "!_lootSeen.has(k) && performance.now() < Infinity;",
+    "old": "      if ((kind === 'loot' || kind === 'corpse') && roomUnborn(key)) return null;   // PARTY-LOOT: a room container with no terms yet names nothing - its list is the room's, not this copy's\n",
+    "new": "",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-held-press-over-another-window",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    if (stale || !lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;\n    return api.takeLoot(",
-    "new": "    if (stale || !lootableBody(f)) return false;\n    return api.takeLoot(",
+    "name": "PARTY-LOOT-joiner-keeps-its-own-roll-on-the-body",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    f.entity.items.length = 0;   // UNBORN holds nothing: this copy's own roll is no reader's (LOOT11's light, Hunting's body key, the save); the sweep counts its wait from here (mintUnbornRoom)\n",
+    "new": "",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-close-always-speaks",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "if (missed && sameLoot(lootHolder(k), sig)) { applyLoot([missed]); return false; }",
-    "new": "if (false) { applyLoot([missed]); return false; }",
+    "name": "PARTY-LOOT-no-bonus-at-all",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    const key = `${base.name}|${who}`;\n    const was = _roomBonus.get(canon);",
+    "new": "    const key = `${base.name}|${who}`;\n    const was = _roomBonus.get(canon);\n    if (who) return { key, pieces: [], composed: false };",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-open-keeps-no-list",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    _lootOpenSig = _lootSeen.has(k) ? lootSig(items) : null;",
-    "new": "    _lootOpenSig = null;",
+    "name": "PARTY-LOOT-spent-never-settled",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    if (!b || !b.composed || b.list !== list) return;   // a list a load replaced holds copies, and says nothing of what was taken",
+    "new": "    if (b) return;   // a list a load replaced holds copies, and says nothing of what was taken",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-claims-window-keeps-its-list",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    _lootOpenSig = _lootSeen.has(k) ? lootSig(items) : null;",
-    "new": "    _lootOpenSig = lootSig(items);",
+    "name": "PARTY-LOOT-legacy-list-landed-over-the-base",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    base.items.forEach((_, i) => st.taken.add(i));\n    st.stored = items;",
+    "new": "    st.stored = items;",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-word-under-the-window-not-kept",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "{ _lootOpenMissed = rec; n++; continue; }",
-    "new": "{ n++; continue; }",
+    "name": "PARTY-LOOT-take-counts-only-rise",
+    "file": "src/systems/roomLoot.js",
+    "old": "  for (const [i, n] of w.c ?? []) { const was = st.counts.get(i); if (was === undefined || n < was) { st.counts.set(i, n); changed = true; } }",
+    "new": "  for (const [i, n] of w.c ?? []) { st.counts.set(i, n); changed = true; }",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-mount-claims-around-lootOpened",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "      if (_w && _k) lootOpened(_k, source);",
-    "new": "      if (_w && _k) publishLoot(_k, { claim: true });",
+    "name": "PARTY-LOOT-spawn-table-on-math-random",
+    "file": "src/scenes/hostCombat.js",
+    "old": "{ level: effectiveLevel(player), gender: player.gender }, rolls, { itemChanceScale, mobileType });",
+    "new": "{ level: effectiveLevel(player), gender: player.gender }, undefined, { itemChanceScale, mobileType });",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-close-says-around-lootClosed",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "if (lootKey) lootClosed(lootKey);",
-    "new": "if (lootKey) publishLoot(lootKey);",
+    "name": "PARTY-LOOT-room-scope-never-raised",
+    "file": "src/systems/onlineLane.js",
+    "old": "  if (_roomRoll > 0) return true;   // PARTY-LOOT: while a room's base rolls, every mod is the room's whole (asTheRoom, below)\n",
+    "new": "",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-no-cap",
+    "name": "PARTY-LOOT-the-build-rolls-its-own-pile-online",
     "file": "src/scenes/dungeonContext.js",
-    "old": "while (_lootEarly.size > LOOT_EARLY_MAX)",
-    "new": "while (_lootEarly.size > Infinity)",
+    "old": "        const items = onlineRoom() ? [] : rollPileItems();",
+    "new": "        const items = rollPileItems();",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-no-age",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "if (e && performance.now() - e.at <= LOOT_EARLY_MS && applyLoot([e.rec]) > 0) return true;",
-    "new": "if (e && applyLoot([e.rec]) > 0) return true;",
+    "name": "PARTY-LOOT-ARB-joiner-keeps-its-take",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    const give = roomLift(obj, k);\n",
+    "new": "    const give = 0;\n",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-any-key-held",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "if (canon.startsWith('corpse:') ? !(Number(canon.slice(7)) < _layoutFoes) : !canon.startsWith('enc:')) return;",
-    "new": "if (false) return;",
+    "name": "PARTY-LOOT-ARB-host-keeps-what-was-granted",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "      if (g < k) { roomLift(obj, k - g); if (!g) setMidScreenText(ROOM_TAKEN_TEXT); }",
+    "new": "      if (false) { roomLift(obj, k - g); if (!g) setMidScreenText(ROOM_TAKEN_TEXT); }",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-said-offline",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    if (!onlineRoom() || !_authority) return false;\n    const i = foes.indexOf(f);\n    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);\n    return k ? publishLoot(k, { claim: true }) : false;",
-    "new": "    if (!_authority) return false;\n    const i = foes.indexOf(f);\n    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);\n    return k ? publishLoot(k, { claim: true }) : false;",
+    "name": "PARTY-LOOT-ARB-the-loser-is-not-told",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    else if (!_roomWon.has(key)) setMidScreenText(ROOM_TAKEN_TEXT);",
+    "new": "    else if (false) setMidScreenText(ROOM_TAKEN_TEXT);",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-physical-body-stood-early",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "      if (lootWordDue(f, u)) return null;",
-    "new": "      if (false) return null;",
+    "name": "PARTY-LOOT-ARB-a-taken-piece-granted-again",
+    "file": "src/systems/roomLoot.js",
+    "old": "    if (cl.p < baseLength && !state.taken.has(cl.p)) {",
+    "new": "    if (cl.p < baseLength) {",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-held-press-never-asked",
+    "name": "PARTY-LOOT-ARB-the-seat-judges-nothing",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    heldLootTick();   // PARTY-LOOT",
-    "new": "    void 0;   // PARTY-LOOT",
+    "old": "    if (on) roomTakeSeat();   // PARTY-LOOT: the claims the last host left unanswered are this seat's to judge now\n",
+    "new": "",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-every-dead-frame-a-laying",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    const laid = r.d === 1 && !f.dead;",
-    "new": "    const laid = r.d === 1;",
+    "name": "PARTY-LOOT-ARB-the-seat-judges-in-its-own-order",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    for (const [canon, st] of [..._roomState]) if (st.claims.size) roomJudge(canon, st, roomClaimOrder);",
+    "new": "    for (const [canon, st] of [..._roomState]) if (st.claims.size) roomJudge(canon, st);",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-stack-count-unread",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "items.every((it, j) => it === sig[j][0] && it?.stackCount === sig[j][1]);",
-    "new": "items.every((it, j) => it === sig[j][0]);",
+    "name": "PARTY-LOOT-ARB-any-peer-says-the-state",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    return seat == null ? host._foesFrom == null : from === seat;",
+    "new": "    return true;",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-item-identity-unread",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "items.every((it, j) => it === sig[j][0] && it?.stackCount === sig[j][1]);",
-    "new": "items.every((it, j) => it?.stackCount === sig[j][1]);",
+    "name": "PARTY-LOOT-ARB-a-peer-says-the-stored-pieces",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    if (!roomHostSaid(from)) { w.x = []; w.c = []; w.y = []; if (!birth) { w.s = null; w.si = null; } }",
+    "new": "    if (!roomHostSaid(from)) { w.x = []; w.c = []; w.y = []; }",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-a-word-heard-again-not-the-newest",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    _lootEarly.delete(canon);\n    _lootEarly.set(canon, { rec, at: performance.now() });",
-    "new": "    _lootEarly.set(canon, { rec, at: performance.now() });",
+    "name": "PARTY-LOOT-ARB-a-claim-in-anothers-name",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    w.q = from == null ? [] : w.q.filter((cl) => claimOf(cl.id, from));",
+    "new": "    w.q = from == null ? [] : w.q;",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-a-word-heard-ignored-by-the-wait",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    return !!k && f?._lootDueAt != null && !_lootSeen.has(k) && performance.now() < f._lootDueAt;",
-    "new": "    return !!k && f?._lootDueAt != null && performance.now() < f._lootDueAt;",
+    "name": "PARTY-LOOT-ARB-a-claim-never-comes-back",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "      if (m.claim && !m.lapsed && nowMs - m.at >= ROOM_CLAIM_TIMEOUT_MS) { m.lapsed = true; composeRoomContainer(m.canon); }",
+    "new": "      if (false) { m.lapsed = true; composeRoomContainer(m.canon); }",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-deaths-word-not-a-claim",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    return k ? publishLoot(k, { claim: true }) : false;\n  }\n  /** PARTY-LOOT: the runner's stream",
-    "new": "    return k ? publishLoot(k) : false;\n  }\n  /** PARTY-LOOT: the runner's stream",
+    "name": "PARTY-LOOT-ARB-a-late-verdict-dropped",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "      if (m.claim && !m.lapsed && nowMs - m.at >= ROOM_CLAIM_TIMEOUT_MS) { m.lapsed = true; composeRoomContainer(m.canon); }",
+    "new": "      if (m.claim && !m.lapsed && nowMs - m.at >= ROOM_CLAIM_TIMEOUT_MS) { _roomMine.clear(); composeRoomContainer(m.canon); }",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-deaths-word-by-the-pools-index",
+    "name": "PARTY-LOOT-ARB-the-claim-unread-each-frame",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);\n    return k ? publishLoot(k, { claim: true }) : false;",
-    "new": "    const k = i < 0 ? null : lootKeyOf(`corpse:${i}`);\n    return k ? publishLoot(k, { claim: true }) : false;",
+    "old": "    roomClaimTick(_ecvT * 1000);   // PARTY-LOOT: the takes this frame - judged by the host, claimed of it by anyone else\n",
+    "new": "",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-laid-body-by-the-pools-index",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);\n    if (!k) return false;",
-    "new": "    const k = i < 0 ? null : lootKeyOf(`corpse:${i}`);\n    if (!k) return false;",
+    "name": "PARTY-LOOT-ARB-a-pending-take-shows",
+    "file": "src/systems/roomLoot.js",
+    "old": "    const left = (state.counts.get(i) ?? (counted ? /** @type {number} */ (full[i]) : 1)) - (places.get(i) ?? 0);",
+    "new": "    const left = (state.counts.get(i) ?? (counted ? /** @type {number} */ (full[i]) : 1));",
     "tests": [
       "test/partyloot.test.js"
     ]
   },
   {
-    "name": "PARTY-LOOT-the-press-mode-forgotten",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "{ _lootHeld = { key, mode, pileKeys, at: performance.now() }; return 0; }",
-    "new": "{ _lootHeld = { key, at: performance.now() }; return 0; }",
+    "name": "PARTY-LOOT-ARB-a-put-said-as-a-take",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    for (const obj of seen.list) {\n      if (seen.at.has(obj) || isPersonalLoot(obj)) continue;",
+    "new": "    for (const obj of []) {\n      if (seen.at.has(obj) || isPersonalLoot(obj)) continue;",
     "tests": [
       "test/partyloot.test.js"
-    ]
-  },
-  {
-    "name": "PARTY-LOOT-the-tick-asks-takeLoot-inside-the-wait",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    if (!stale && lootWordDue(f, roomLootKey(h.key))) return false;\n    _lootHeld = null;",
-    "new": "    _lootHeld = null;",
-    "tests": [
-      "test/partyloot.test.js"
-    ],
-    "equivalent": true,
-    "why": "takeLoot asks lootWordDue itself and holds the press again, so the tick's own check only spares that call every frame while the word is due"
-  },
-  {
-    "name": "PARTY-LOOT-the-open-keeps-a-stale-held-word",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    _lootOpenMissed = null;\n    return publishLoot(k, { claim: true });",
-    "new": "    return publishLoot(k, { claim: true });",
-    "tests": [
-      "test/partyloot.test.js"
-    ],
-    "equivalent": true,
-    "why": "every loot window's close runs its onClose and so lootClosed, which clears the held word - the open's own reset is belt-and-braces"
-  },
-  {
-    "name": "PARTY-LOOT-the-wait-armed-on-a-spoken-body",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    if (!_lootSeen.has(k)) f._lootDueAt = performance.now() + LOOT_WORD_WAIT_MS;",
-    "new": "    f._lootDueAt = performance.now() + LOOT_WORD_WAIT_MS;",
-    "tests": [
-      "test/partyloot.test.js"
-    ],
-    "equivalent": true,
-    "why": "lootWordDue asks _lootSeen itself, so a stamp on a body the room has spoken about never holds a press"
-  },
-  {
-    "name": "PARTY-LOOT-the-stale-press-opened",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    if (stale || !lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;",
-    "new": "    if (!lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;",
-    "tests": [
-      "test/partyloot.test.js"
-    ]
-  },
-  {
-    "name": "PARTY-LOOT-WIRE-no-word-at-the-death",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "      sayBodyLoot(foe);   // PARTY-LOOT",
-    "new": "      void foe;   // PARTY-LOOT",
-    "tests": [
-      "test/partyloot_wire.test.js"
-    ]
-  },
-  {
-    "name": "PARTY-LOOT-WIRE-an-early-word-dropped",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "      if (!lootHolder(canon)) { holdEarlyLoot(canon, rec); continue; }",
-    "new": "      if (!lootHolder(canon)) { continue; }",
-    "tests": [
-      "test/partyloot_wire.test.js"
-    ]
-  },
-  {
-    "name": "PARTY-LOOT-WIRE-the-laid-body-never-handed-its-word",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    if (laid) streamLaidBody(f);   // PARTY-LOOT",
-    "new": "    if (laid) void f;   // PARTY-LOOT",
-    "tests": [
-      "test/partyloot_wire.test.js"
-    ]
-  },
-  {
-    "name": "PARTY-LOOT-WIRE-no-wait",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "if (!_lootSeen.has(k)) f._lootDueAt = performance.now() + LOOT_WORD_WAIT_MS;",
-    "new": "if (!_lootSeen.has(k)) f._lootDueAt = null;",
-    "tests": [
-      "test/partyloot_wire.test.js"
-    ]
-  },
-  {
-    "name": "PARTY-LOOT-WIRE-the-held-press-never-opened",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "    return api.takeLoot(h.key, h.mode, h.pileKeys) > 0;",
-    "new": "    return false;",
-    "tests": [
-      "test/partyloot_wire.test.js"
-    ]
-  },
-  {
-    "name": "PARTY-LOOT-WIRE-the-heal-re-reads-nothing",
-    "file": "src/scenes/world.js",
-    "old": "    const data = modes?.placeActionRecords?.([..._actPend]);",
-    "new": "    const data = null;",
-    "tests": [
-      "test/partyloot_wire.test.js"
-    ]
-  },
-  {
-    "name": "PARTY-LOOT-WIRE-a-room-word-never-reaches-the-dungeon",
-    "file": "src/scenes/worldModes.js",
-    "old": "      if (mode === 'dungeon') return dungeonCtx ? !!dungeonCtx.applyActions?.(id, data) : false;",
-    "new": "      if (mode === 'dungeon') return false;",
-    "tests": [
-      "test/partyloot_wire.test.js"
     ]
   }
 ]

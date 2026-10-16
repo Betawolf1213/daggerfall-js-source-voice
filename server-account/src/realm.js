@@ -47,6 +47,7 @@
 
 import { SAVE_MAX_BYTES } from './service.js';
 import { GUILD_RANK_MASTER } from '../../src/net/guildLaw.js';   // AUDIT REALM L1-F7: a deleted guildmaster hands the guild over first
+import { homeMoved } from '../../src/net/homeLaw.js';   // QUEST-HOME: the homes a deleted character took with it
 import { liquidWealthOf, customsAllowance, REALM_BIRTH_LEVEL, REALM_BIRTH_WEALTH_MAX } from '../../src/net/realmGoldLaw.js';
 import { cardWorthOf, cardPacksOf, customsCardAllowance, STARTER_DECK_WORTH } from '../../src/net/cardWorthLaw.js';   // CARDS9: the cards' customs - the client's law   // AUDIT REALM2 S1: the first save, measured as customs measures it
 import { ID_RE, armsIssuable } from '../../src/net/identityToken.js';   // CUSTOMS-PASS: an account named by its id; INT7: the arms' claim
@@ -57,7 +58,8 @@ import { linkFirstPlay } from './founderLink.js';   // FOUNDER5: a character bro
 import { saveTextOf, REALM_TEXT_MAX_BYTES } from '../../src/net/realmSaveCodec.js';   // REALM-GZIP: a save read packed or plain
 import { lineageBirthRefusal, houseOn, endUnionsOf } from './legacy.js';   // LEGACY7: a realm character born as a person of the account's own line
 import { wealthOf, ledgerPieces, classicCount, WEALTH_VERSION } from './judge.js';   // INT5: what the service's own writes move, witnessed; INT4: the pieces it moves
-import { piecesRefusal, ledgerMoves, releaseSteps } from './ledger.js';   // INT4: a piece the record may give, and the ledger moved with it
+import { piecesRefusal, ledgerMoves, releaseSteps, ledgerReads } from './ledger.js';   // INT4: a piece the record may give, and the ledger moved with it; SAVE-BATCH: its reads in the checkpoint's first batch
+import { budgetKept, budgetRead, budgetFrom } from './budget.js';   // SAVE-BATCH: and the budget's config, where the isolate kept none
 import { verdictOn } from './verdict.js';   // INT2-INT5: the verdict on every checkpoint, in the checkpoint's own batch
 
 /** Realm characters an ACCOUNT may hold. A new one past it is refused; nothing is ever deleted to make room. */
@@ -541,8 +543,21 @@ export async function craftHoldOf(/** @type {any} */ db, /** @type {string} */ p
 export async function checkpointRealm({ db, bucket, rand, nowS }, playerId, { id, lease, seq, summary = null }, body, bytes) {
   if (!bucket) return { error: 'no-storage' };
   if (!REALM_ID_RE.test(id) || typeof lease !== 'string' || !LEASE_RE.test(lease) || !Number.isSafeInteger(seq) || /** @type {number} */ (seq) < 1) return { error: 'body' };
-  const row = await db.prepare(`SELECT seq, lease, obj, prev, origin_id, summary, dead_at, ${JUDGE_COLUMNS},
-    (SELECT played_s FROM players p WHERE p.id = realm_characters.player) AS played_now FROM realm_characters WHERE id = ? AND player = ?`).bind(id, playerId).first();
+  // SAVE-BATCH (2026-10-16, the account database's primary at its ceiling of round trips - bible/11-Multiplayer/
+  // Scale-Arc.md SAVE-BATCH): the record's row, the ledger's two reads of the character's own rows and (where this isolate
+  // kept none) the budget's config, in ONE batch - each was a round trip of its own, and checkpoints were a third of the
+  // primary's statements. One snapshot, read before anything is judged, as the reads were
+  const keptConfig = budgetKept(db);
+  const [rowRes, mineRes, dupesRes, configRes] = await db.batch([
+    db.prepare(`SELECT seq, lease, obj, prev, origin_id, summary, dead_at, ${JUDGE_COLUMNS},
+    (SELECT played_s FROM players p WHERE p.id = realm_characters.player) AS played_now FROM realm_characters WHERE id = ? AND player = ?`).bind(id, playerId),
+    ...ledgerReads(db, id),
+    ...(keptConfig ? [] : [budgetRead(db)]),
+  ]);
+  // PRIMARY-TRIPS audit: the config read is kept the moment it lands - kept after the save's opening and the baseline's
+  // R2 read, a staff edit's forgetting in between was undone by the older row, kept a minute more
+  const config = keptConfig ?? budgetFrom(db, configRes?.results?.[0] ?? null);
+  const row = rowRes?.results?.[0] ?? null;
   if (!row) return { error: 'no-realm-character' };
   if (row.dead_at != null) return { error: 'dead' };   // LEGACY7: the tombstone - nothing of the dead is written again
   if (row.lease !== lease) return { error: 'lease' };
@@ -568,7 +583,8 @@ export async function checkpointRealm({ db, bucket, rand, nowS }, playerId, { id
   // ...over the baseline the first judgement reads - or, the wealth measure moved since the last (judge.js WEALTH_VERSION),
   // the stored record measured again under the new one
   const baseline = row.wealth == null || row.wealth_v !== WEALTH_VERSION ? await baselineOf(bucket, row, save) : null;
-  const v = await verdictOn({ db, nowS }, { player: playerId, char: id, seq: /** @type {number} */ (seq), key }, row, save, summaryNow, baseline);
+  const known = { mine: mineRes, dupes: dupesRes, config };
+  const v = await verdictOn({ db, nowS }, { player: playerId, char: id, seq: /** @type {number} */ (seq), key }, row, save, summaryNow, baseline, known);
   await bucket.put(key, body);
   /** @type {any} the judge's columns as they stand after the batch - the verdict's, or (its rev moved) the row's */
   let stood = null;
@@ -664,7 +680,8 @@ export function realmAtOf(/** @type {any} */ v) {
  * row's `witnessed` takes it in the same step, so the budget never charges a gain the service itself made. INT6: the
  * last checkpoint judged clean is never `prev` to drop.
  * @param {any} ctx @param {string} playerId @param {{ id: string, lease: string, seq: number }} at
- * @param {(save: any) => string | null} change @param {{ outbound?: boolean }} [opts]
+ * @param {(save: any) => string | null} change @param {{ outbound?: boolean, escrow?: boolean | Set<string>, seize?: boolean }} [opts]
+ *   `escrow`: the pieces leaving in the service's hands (ledger.js ledgerMoves - true all, a Set those keys)
  */
 export async function prepareRealmRecord({ db, bucket, rand, nowS }, playerId, at, change, { outbound = false, escrow = false, seize = false } = {}) {
   if (!bucket) return { error: 'no-storage' };
@@ -725,7 +742,7 @@ export async function prepareRealmRecord({ db, bucket, rand, nowS }, playerId, a
  * join reads the new one (the staff rollback's way, review.js). Answers prepareRealmRecord's `{ steps, key, prev, seq }`,
  * guarded on the sequence it read, or `{ error }`.
  * @param {any} ctx @param {string} playerId @param {string} charId
- * @param {(save: any) => string | null} change @param {{ escrow?: boolean }} [opts]
+ * @param {(save: any) => string | null} change @param {{ escrow?: boolean | Set<string> }} [opts]
  */
 export async function seizeRealmRecord(ctx, playerId, charId, change, { escrow = true } = {}) {
   const row = await ctx.db.prepare('SELECT seq, lease FROM realm_characters WHERE id = ? AND player = ? AND dead_at IS NULL').bind(charId, playerId).first();
@@ -856,12 +873,16 @@ export async function deleteRealm({ db, bucket, nowS = Math.floor(Date.now() / 1
   const late = await homeHeld();
   if (late) return late;
   await dropCharacterObjects(bucket, playerId, id, [row.obj, row.prev]);
-  await db.batch([
+  // QUEST-HOME (Mac, 2026-10-15: "Close both"): the homes the delete takes, a house again to every page online - read
+  // with the delete in one batch, so the answer names exactly what went
+  const [gone] = await db.batch([
+    db.prepare('SELECT map_id, building_key FROM homes WHERE player = ? AND char_id = ? ORDER BY map_id, building_key').bind(playerId, id),
     db.prepare('DELETE FROM homes WHERE player = ? AND char_id = ?').bind(playerId, id),
     db.prepare('DELETE FROM guild_members WHERE player = ? AND char_id = ?').bind(playerId, id),
     db.prepare('DELETE FROM renown_tracks WHERE player = ? AND char_id = ?').bind(playerId, id),
     db.prepare('DELETE FROM prof_stores WHERE player = ? AND char_id = ?').bind(playerId, id),   // PROF-DELETE
     db.prepare('DELETE FROM prof_tracks WHERE player = ? AND char_id = ?').bind(playerId, id),   // PROF-DELETE
+    db.prepare('DELETE FROM firmament WHERE player = ? AND char_id = ?').bind(playerId, id),   // AUDIT UICALM-FIRM1 L2 L2: its sky with it (firmament_sets stay - the ids' memory, so a replay is answered, never made again)
     db.prepare('DELETE FROM prof_unbruised WHERE player = ? AND char_id = ?').bind(playerId, id),   // AUDIT PROF-541 B5: the unbruised count goes with the Stores it counts
     db.prepare('DELETE FROM prof_carried WHERE player = ? AND char_id = ?').bind(playerId, id),   // BAG1: and what it was counted as carrying
     db.prepare('DELETE FROM npc_roll WHERE player = ? AND char_id = ?').bind(playerId, id),   // CHAP1: its standing with the guilds (npcRoll.js)
@@ -874,7 +895,10 @@ export async function deleteRealm({ db, bucket, nowS = Math.floor(Date.now() / 1
     endUnionsOf(db, id, nowS, 'gone'),   // LEGACY7 part three: a union ends with the character
     db.prepare('DELETE FROM realm_wed_halves WHERE char_id = ?').bind(id),
   ]);
-  return { ok: true };
+  /** @type {Map<number, number[]>} */
+  const towns = new Map();
+  for (const h of gone?.results ?? []) towns.set(h.map_id, [...(towns.get(h.map_id) ?? []), h.building_key]);
+  return { ok: true, ...(towns.size ? { moved: [...towns].flatMap(([mapId, keys]) => homeMoved(mapId, [], keys)) } : {}) };
 }
 
 /** HOME-RENT (2026-09-30): THE TENANCIES STILL RUNNING in a character's homes - a sale (homes.js) or the character's

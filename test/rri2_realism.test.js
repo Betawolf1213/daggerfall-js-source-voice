@@ -412,10 +412,10 @@ test('RRI2 wiring: the install registers the six delegates; the read-through sit
   assert.match(rd('src/systems/loot.js'), /export const lootMatrix = \(key\) => rriLootMatrix\(key\) \?\? LOOT_MATRICES\[key\] \?\? LOOT_MATRICES\['-'\];/, 'the matrix read-through (GetMatrix, one home since OH-E)');
   assert.match(rd('src/systems/loot.js'), /return generateRandomLoot\(lootMatrix\(lootTableKey\), who, rolls, opts\);/, '...and GenerateItems reads it');
   // FORAGE3 + OH-E: the pile's event is one home now - raised after the J..O tail for every key, RRI's subscriber seeded first
-  assert.match(rd('src/systems/loot.js'), /randomlyAddPotionRecipe\(2, items, rolls\);\n  \}\n[\s\S]{0,900}?if \(lootTableKey !== '-'\) raiseTabledLootSpawned\(\{ locationIndex, key: lootTableKey, items, rolls, luck, where \}\);\n  return items;\n\}/, 'the pile: LootTables.OnLootSpawned after the J..O tail - for every key GenerateLoot finds (AUDIT OH-F B3: the rolling host rides along)');
+  assert.match(rd('src/systems/loot.js'), /randomlyAddPotionRecipe\(2, items, rolls\);\n  \}\n[\s\S]{0,900}?if \(lootTableKey !== '-'\) raiseTabledLootSpawned\(\{ locationIndex, key: lootTableKey, items, rolls, luck, where, quarters \}\);\n  return items;\n\}/, 'the pile: LootTables.OnLootSpawned after the J..O tail - for every key GenerateLoot finds (AUDIT OH-F B3: the rolling host rides along)');
   assert.match(rd('src/systems/loot.js'), /const _tabledLootHandlers = new Map\(\[\n  \[RRI_VENDOR, \(\{ items, rolls \}\) => \{ if \(conditionBasedPricesOn\(\)\) randomConditionLootItems\(items, rolls\); \}\],\n\]\);/, 'RRI\'s the first subscriber');
   const hc = rd('src/scenes/hostCombat.js');
-  assert.match(hc, /addEnemyLootExtras\(entity\.items, basics, rolls\);\n[\s\S]{0,700}?if \(conditionBasedPricesOn\(\)\) randomConditionLootItems\(\[\.\.\.new Set\(\[\.\.\.entity\.items, \.\.\.\(eq\?\.worn \?\? \[\]\)\]\)\], rolls\);\n  enemyLootSpawned\.raise\([^\n]*\n(?:  (?:\/\/|const plain = plainFoeLootRule\(|if \(plain\) entity\.lootCap = )[^\n]*\n)*  rollCorpseLoot/, 'the corpse: EnemyEntity.OnLootSpawned after the trio, before the port\'s arm (RRI\'s own subscriber, then the list - OH-E)');
+  assert.match(hc, /addEnemyLootExtras\(entity\.items, basics, rolls, \{ quarters: ease \}\);\n[\s\S]{0,1100}?if \(conditionBasedPricesOn\(\)\) randomConditionLootItems\(\[\.\.\.new Set\(\[\.\.\.entity\.items, \.\.\.\(eq\?\.worn \?\? \[\]\)\]\)\], rolls\);\n  enemyLootSpawned\.raise\([^\n]*\n(?:  (?:\/\/|const plain = plainFoeLootRule\(|if \(plain\) entity\.lootCap = )[^\n]*\n)*  rollCorpseLoot/, 'the corpse: EnemyEntity.OnLootSpawned after the trio, before the port\'s arm (RRI\'s own subscriber, then the list - OH-E)');   // PIN MOVED (PARTY-LOOT): the extras take the roll's Renown share, and the keep's line names what it let go
   assert.match(hc, /const worn = eq\.worn \?\? all;\n  eq\.worn = worn;/, 'the assigner\'s worn subset is what the table takes');
   assert.match(hc, /for \(const it of worn\) \{\n    const slot = getEquipSlot\(entity, it\);/, 'and only that');
   const wm = rd('src/scenes/worldModes.js');
@@ -428,7 +428,9 @@ test('RRI2 wiring: the install registers the six delegates; the read-through sit
   assert.match(rd('src/systems/repairService.js'), /conditionBasedPricesOn\(\) \? conditionRepairCostBase\(baseItemValue, condition, max, instantRepairs\) : Math\.trunc\(10 \* baseItemValue \/ 100\)/);
   assert.match(rd('src/systems/chargenSession.js'), /assignStartingSpells\(setIndex, spellsByIndex, result\.career\)/);
   assert.match(rd('src/systems/chargenSession.js'), /assignStartingEquipment\(playerEntity, \{ classIndex: result\.careerIndex/);
-  assert.match(rd('src/combat/weaponWidget.js'), /const animCtx = \(\) => \(\{ entity: ctx\?\.entity \?\? null, weaponType: w\.currentWeaponType, usingRightHand: usingRightHand\(\) \}\);/);
+  // PIN MOVED (TWO-HANDS, bible/05-Combat/Two-Hands.md): the clone's own three fields, unless the rig hands its swing's
+  // ctx (a hand of a pair: the striking hand and the strike's tempo - the clock the machine runs on)
+  assert.match(rd('src/combat/weaponWidget.js'), /const animCtx = \(\) => ctx\?\.animCtx\?\.\(\) \?\? \(\{ entity: ctx\?\.entity \?\? null, weaponType: w\.currentWeaponType, usingRightHand: usingRightHand\(\) \}\);/);
   assert.equal((rd('src/combat/weaponWidget.js').match(/widgetAnimTickTime\(w\.currentWeaponType, liveSpeed\(\), w\.s\.swing, animCtx\(\)\)/g) ?? []).length, 4, 'every tick asks with the ctx');
   assert.equal(conditionPercentage({ currentCondition: 1, maxCondition: 3 }), 33, 'ConditionPercentage: C# integer division');
   assert.equal(conditionPercentage({ currentCondition: 0, maxCondition: 0 }), 100);

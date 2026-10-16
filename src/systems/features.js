@@ -101,6 +101,9 @@ export const GROUP_ORDER = Object.freeze(['sight', 'interface', 'sound', 'world'
  *  defaults - the other direction closes a cycle and the shelf loads
  *  before the row exists. */
 export const WINDMILLS_KEY = 'windmills';
+/** KG3: The King's Gambit's switch key - declared here with its row, as the Windmills' is (the game reads it through
+ *  `uiPrefs`, which reads this page's defaults). */
+export const KINGS_GAMBIT_KEY = 'kingsGambit';
 
 /** Where a control's value lives. */
 export const STORES = Object.freeze(['prefs', 'settings', 'mods']);
@@ -368,30 +371,53 @@ export const FEATURES = Object.freeze([
     control: Object.freeze({ store: 'prefs', key: 'worldDungeonSizes', initial: false, online: true }),   // world/smallerDungeons.js WORLD_DUNGEON_SIZES_PREF; forced on online, the room's sizes
   }),
   // STEED1 (2026-10-11, the owner: "Horse should have stamina, feeding them grows your bond and improves their stats.
-  // Every horse should have different stats"): HORSE CARE (bible/06-Systems/Horse-Care.md, systems/steedCare.js). On by
-  // default; online every horse is under it, so the lane forces it on there. HORSE-WALK (2026-10-12): its horse walks
-  // unless the run gallops it.
+  // Every horse should have different stats"): HORSE CARE (bible/06-Systems/Horse-Care.md, systems/steedCare.js).
+  // HORSE-WALK (2026-10-12): its horse walks unless the run gallops it.
+  // HORSE-TIERS (2026-10-15, Mac: "Allow turn off. Rework this system to be more in line with how we handle climates and
+  // calories boons."): TIERS ON THE ONE KEY, as Climates & Calories' row has them - Off (DFU's horse, stored as the old
+  // switch's own `false`), Boons (the default, never stored - BOONS-DEFAULT's way) and Hard (the system as it stood, by
+  // name); systems/upkeepTiers.js HORSE_CARE_STORED and HORSE_CARE_DEFAULT, which test/horsetiers.test.js holds the
+  // row to. The player's online, every tier, as every Climates & Calories tier is (MODS-ONLINE-3's reading: a tier
+  // decides only what THIS player's horse pays) - the lane forced it on there until Mac's word.
   Object.freeze({
     id: 'horse-care',
     group: 'world',
-    title: 'Horse care',
-    note: 'Every horse has its own Speed, Stamina, Endurance and Strength, and walks unless you hold Run to gallop on its '
-      + 'breath. Feeding it grows your bond and every stat with it, and a hungry horse is weaker; online it is always on.',
-    effect: 'Takes effect at once.',
+    get title() { return t('features.horseCare.title', 'Horse care'); },   // HORSE-TIERS: the row's words in the player's language (L10N4's ratchet)
+    get note() { return t('features.horseCare.note', 'Every horse has its own Speed, Stamina, Endurance and Strength, walks unless you hold Run to gallop on its '
+      + 'breath, and grows with the bond feeding it builds. On Boons neglect costs nothing and it is never slower than the '
+      + 'classic horse; on Hard a hungry horse is weaker; Off is the classic horse.'); },
+    get effect() { return t('features.horseCare.effect', 'Takes effect at once. Online, each player picks their own.'); },
     kinds: Object.freeze(['enhanced']),
-    control: Object.freeze({ store: 'prefs', key: 'horseCare', initial: true, online: true }),   // systems/upkeepSwitch.js HORSE_CARE_PREF
+    control: Object.freeze({
+      store: 'prefs', key: 'horseCare', initial: 'boons', online: 'player',   // systems/upkeepSwitch.js HORSE_CARE_PREF; HORSE-TIERS: upkeepTiers.js HORSE_CARE_DEFAULT
+      tiers: Object.freeze([tier(false, OFF), tier('boons', () => t('features.horseCare.boons', 'Boons')), tier('hard', () => t('features.horseCare.hard', 'Hard'))]),
+      // UI-CALM (2026-10-14): when the saddle panel stands (ui/enhancedSaddle.js saddleShown) - the player's own, offline
+      // and online: When needed (its key, F2; a need; the first seconds in the saddle), Always (STEED-UI's), Off
+      also: Object.freeze([Object.freeze({ store: 'prefs', key: 'saddlePanel', initial: 'auto', online: 'player' })]),
+      parts: Object.freeze([Object.freeze({
+        key: 'saddlePanel', get label() { return t('features.horseCare.saddlePanel', 'Saddle panel'); },
+        get tiers() { return [['auto', t('features.horseCare.saddleAuto', 'When needed')], ['always', t('features.horseCare.saddleAlways', 'Always')], ['off', OFF()]]; },
+      })]),
+    }),
   }),
   // WAGONS4 (2026-10-11, the owner: "Wagons have durability and require upkeep to keep from breaking down and becoming
-  // unusable"): WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md, systems/wagonUpkeep.js). On by default; forced on online.
+  // unusable"): WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md, systems/wagonUpkeep.js).
+  // WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers"): horse care's model on its own key - Off (DFU's plain wagon, stored
+  // as the old switch's own `false`), Boons (the default, never stored: it wears and is mended, and wear costs nothing)
+  // and Hard (the system as it stood, by name); systems/upkeepTiers.js WAGON_UPKEEP_STORED and WAGON_UPKEEP_DEFAULT,
+  // which test/wagontiers.test.js holds the row to. The player's online, every tier (MODS-ONLINE-3's reading).
   Object.freeze({
     id: 'wagon-upkeep',
     group: 'world',
-    title: 'Wagon upkeep',
-    note: 'Your wagon wears as it rolls and on long journeys, and worn out it breaks down until a Wagon Yard or a Wagon '
-      + 'Repair Kit mends it. Online it is always on.',
-    effect: 'Takes effect at once.',
+    get title() { return t('features.wagonUpkeep.title', 'Wagon upkeep'); },
+    get note() { return t('features.wagonUpkeep.note', 'Your wagon wears as it rolls and on long journeys, and a Wagon Yard or a Wagon Repair Kit mends it. '
+      + 'On Boons wear costs nothing; on Hard a worn wagon is slower and sells for less; Off is the classic wagon.'); },
+    get effect() { return t('features.wagonUpkeep.effect', 'Takes effect at once. Online, each player picks their own.'); },
     kinds: Object.freeze(['enhanced']),
-    control: Object.freeze({ store: 'prefs', key: 'wagonUpkeep', initial: true, online: true }),   // systems/upkeepSwitch.js WAGON_UPKEEP_PREF
+    control: Object.freeze({
+      store: 'prefs', key: 'wagonUpkeep', initial: 'boons', online: 'player',   // systems/upkeepSwitch.js WAGON_UPKEEP_PREF; WAGON-TIERS: upkeepTiers.js WAGON_UPKEEP_DEFAULT
+      tiers: Object.freeze([tier(false, OFF), tier('boons', () => t('features.wagonUpkeep.boons', 'Boons')), tier('hard', () => t('features.wagonUpkeep.hard', 'Hard'))]),
+    }),
   }),
   // FT2 (2026-09-14): LAND VIEW DISTANCE - the first CONDENSED row. Two
   // controls for one radius: the pref (LV1, the enhanced lane's 1..6)
@@ -669,6 +695,21 @@ export const FEATURES = Object.freeze([
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['enhanced']),
     control: Object.freeze({ store: 'prefs', key: 'enhancedCombatVisuals', initial: true, online: true }),   // ECV1: on by default like the other enhanced visuals; the rules are untouched either way
+  }),
+  // WEAPON-GLOW1 (2026-10-16, Mac: "designed our own sort of animated outline for each element ... the same, more
+  // detailed design for the morrowind weapons"): WHAT A WEAPON'S ELEMENT LOOKS LIKE IN THE HAND - systems/weaponGlow.js
+  // the law, render/weaponGlowGlsl.js the drawing, bible/05-Combat/Weapon-Glow.md the page. A look, read every frame
+  // (weaponGlowOn; `?weaponglow=off` the kill door), so a press takes effect at once; the player's own online - a
+  // peer's weapon glows on my screen by MY switch, off the word their look carries.
+  Object.freeze({
+    id: 'weapon-glow',
+    group: 'sight',
+    get title() { return t('features.weaponGlow.title', 'Weapon glow'); },
+    get note() { return t('features.weaponGlow.note', 'A weapon with a fire, frost or shock damage bonus wears a moving outline of its element, '
+      + 'brighter the stronger it is, and an enchanted Morrowind weapon glows. Off draws weapons as before.'); },   // AUDIT WEAPON-GLOW DOC-2: a bonus (a Legendary's power and a cast-when-strikes spell deal elemental damage and show none), and "as before" (the original - OpenMW - glows an enchanted part; off, the port draws it bare)
+    get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
+    kinds: Object.freeze(['enhanced']),
+    control: Object.freeze({ store: 'prefs', key: 'weaponGlow', initial: true, online: 'player' }),   // WEAPON-GLOW1: systems/weaponGlow.js WEAPON_GLOW_PREF
   }),
   // QUICK-LOOT B4 (2026-09-22, Mac: Arc B of the world-hover arcs, and
   // "How does skyrim do it" when the shape was put to him). Vanilla
@@ -987,6 +1028,21 @@ export const FEATURES = Object.freeze([
     kinds: Object.freeze(['mod']),
     control: Object.freeze({ store: 'prefs', key: WINDMILLS_KEY, initial: true, online: 'player' }),
   }),
+  // KG3 (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md section 10.7): THE KING'S GAMBIT, the card table's third game.
+  // The bundle ships no settings file, so the row is declared for the mod by id, as the Windmills' is; on by default (MO1,
+  // "All mods should be enabled by default"); off, no card table offers it. In the world's group: the record's "Gameplay
+  // tab" is a settings tab, no Features group (FOUND AT KG3). Read as a table's panel is painted - at once.
+  Object.freeze({
+    id: 'mod-kings-gambit',
+    group: 'world',
+    // the mod's own name and its author, as every mod row carries them (AUDIT SURV E) - the bundle names none, so the
+    // credits' own unnamed form (ui/credits.js), as Oblivion Remaster Like Leveling's row names its source
+    get title() { return t('features.mod.title', '{title} by {author}', { title: 'The King\u2019s Gambit', author: t('credits.author.unnamed', 'Unnamed ({source})', { source: 'thekingsgambit.dfmod' }) }); },
+    get note() { return t('features.mod.kingsGambit.note', 'Armies and kings at a tavern\'s card table, against a regular or another player, for gold or fun. Off, the tables offer Hold\'em and Iliac Hand alone.'); },
+    get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
+    kinds: Object.freeze(['mod']),
+    control: Object.freeze({ store: 'prefs', key: KINGS_GAMBIT_KEY, initial: true, online: 'player' }),
+  }),
   modFeature('seasons-iliac-bay', () => t('features.effect.worldLoads', 'Takes effect when the world next loads.'), 'sight'),   // FT18: was world
   modFeature('low-poly-trees', () => t('features.effect.worldLoads', 'Takes effect when the world next loads.'), 'sight'),   // LPT1: read once, as the world loads
   modFeature('heat-haze', () => t('features.effect.atOnce', 'Takes effect at once.'), 'sight'),   // HAZE1: the exterior hosts read its switch every frame (the enhanced outdoors')
@@ -1236,6 +1292,18 @@ export const FEATURES = Object.freeze([
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['classic']),
     control: Object.freeze({ store: 'settings', key: 'Enhancements/CombatVoices' }),
+  }),
+  // UI-CALM (2026-10-14, a player: "Not everything needs to be visible constantly. Show information when it's
+  // relevant."): THE CALM HUD (ui/enhancedHud.js HUD_CALM_PREF) - the vitals rest while full and untouched, and come
+  // back with the first point lost or spent. On by default; the player's own, online too.
+  Object.freeze({
+    id: 'calm-hud',
+    group: 'interface',
+    get title() { return t('features.calmHud.title', 'Calm HUD'); },
+    get note() { return t('features.calmHud.note', 'Your health, fatigue and magicka bars fade away while all three are full, and come back the moment one changes.'); },
+    get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
+    kinds: Object.freeze(['enhanced']),
+    control: Object.freeze({ store: 'prefs', key: 'hudCalm', initial: true, online: 'player' }),
   }),
   Object.freeze({
     id: 'near-death-warning',

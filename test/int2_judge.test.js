@@ -152,15 +152,18 @@ test('INT2/INT6: a staff hold landing between a checkpoint\'s read and its write
   const s = await stand();
   const { who, R } = await s.seat('ivo');
   const mac = await s.registered('mac');
-  // the race: staff's hold lands as the checkpoint's batch is about to run
-  const batch = s.env.DB.batch.bind(s.env.DB);
+  // the race: staff's hold lands after the checkpoint's reads, as its write is about to run - hooked at the object's put,
+  // which runs between them (PRIMARY-TRIPS audit: SAVE-BATCH made the reads a batch too, so a hook at the first batch
+  // landed BEFORE the reads, which saw the hold, and the guard this pins was never reached)
+  const put = s.env.SAVES.put.bind(s.env.SAVES);
   let once = true;
-  s.env.DB.batch = async (stmts) => {
+  s.env.SAVES.put = async (...a) => {
     if (once) { once = false; s.raw.prepare("UPDATE realm_characters SET held = 'staff', judge_rev = judge_rev + 1 WHERE id = ?").run(R.id); }
-    return batch(stmts);
+    return put(...a);
   };
   const r = await s.put(who, R, freshSave({ name: 'ivo' }));
-  s.env.DB.batch = batch;
+  s.env.SAVES.put = put;
+  assert.equal(once, false, 'the hold landed between the reads and the write');
   assert.deepEqual([r.status, r.body.tradeHeld, s.row(R.id).held], [200, 'staff', 'staff'], 'the save landed, and staff\'s hold stands');
   assert.equal((await s.call('/v1/mod/realm-clear', { id: R.id }, mac.secret)).status, 200);
   // a finding staff judge wrong: cleared once, excused after
@@ -175,7 +178,8 @@ test('INT2/INT6: a staff hold landing between a checkpoint\'s read and its write
 
 test('INT3: EVERY ROUTE THAT HANDS A REALM CHARACTER\'S VALUE ON SAYS SO - no prepareRealmRecord that takes goods or gold out of a record without `outbound`, the sinks aside (a home and its decor bought from the realm, a guild founded); and the trade asks the hold of each side that gives', () => {
   const dir = new URL('../server-account/src/', import.meta.url);
-  const SINKS = { 'homes.js': 1, 'decor.js': 1, 'guilds.js': 1 };   // payFromSave into nobody's hands: the realm's own price
+  // payFromSave into nobody's hands: the realm's own price (FIRM1: the Firmament's respec, its gold burnt in the change's batch)
+  const SINKS = { 'homes.js': 1, 'decor.js': 1, 'guilds.js': 1, 'firmament.js': 1 };
   const found = {};
   for (const f of readdirSync(dir).filter((n) => n.endsWith('.js'))) {
     const src = readFileSync(new URL(f, dir), 'utf8');

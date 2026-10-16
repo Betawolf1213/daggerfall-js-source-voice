@@ -223,8 +223,12 @@ test('YARDS-FOUND THE HOSTS: the streaming host hands its yards to the town map 
   const w = read('src/scenes/world.js');
   assert.match(w, /\n\s+yards: b\.merchantYards \?\? null,   \/\/ YARDS-FOUND/, 'the town map');
   assert.match(w, /\n\s+yards: cur\.merchantYards \?\? null,   \/\/ YARDS-FOUND/, 'the talk directory');
-  assert.match(w, /for \(const m of merchantYards\?\.overworldMarks\(\) \?\? \[\]\) marks\.push\(m\);/, 'the Overworld');
-  assert.ok(w.indexOf('merchantYards?.overworldMarks()') > w.indexOf('function travelViewMarks()'), 'in the Overworld\'s marks');
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js, the yards
+  // read live off the host that hands them over
+  const tvm = read('src/scenes/travelViewMarks.js');
+  assert.match(tvm, /for \(const m of host\.merchantYards\?\.overworldMarks\(\) \?\? \[\]\) marks\.push\(m\);/, 'the Overworld');
+  assert.ok(tvm.indexOf('merchantYards?.overworldMarks()') > tvm.indexOf('function travelViewMarks()'), 'in the Overworld\'s marks');
+  assert.match(w, /createTravelViewMarks\(\{[^]*?\n\s+get merchantYards\(\) \{ return merchantYards; \},[^]*?\n\s+\}\);/, 'handed over live');
   const door = read('src/ui/townMapDoor.js');
   assert.match(door, /if \(deps\.yards\?\.length\) deps = \{ \.\.\.deps, blocks: yardTownBlocks\(deps\.blocks \?\? \[\], deps\.yards\) \};\n\s+if \(heldMapWorn\(\)\) \{/, 'laid before either map is built');
   const tt = read('src/scenes/townTalk.js');

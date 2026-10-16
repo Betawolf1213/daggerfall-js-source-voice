@@ -61,9 +61,18 @@ const kept = new WeakMap();
 const keyOf = (/** @type {any} */ db) => (db && typeof db === 'object' ? db[DB_ROOT] ?? db : null);
 /** The config standing: staff's, else the first setting. */
 export async function budgetConfig(/** @type {any} */ db) {
+  return budgetKept(db) ?? budgetFrom(db, await budgetRead(db).first());
+}
+/** SAVE-BATCH (2026-10-16): the config this isolate keeps (BUDGET_CONFIG_KEEP_MS), or null - so a checkpoint asks its row
+ *  in the batch that reads the character's record, and only when it has none. */
+export function budgetKept(/** @type {any} */ db) {
   const k = kept.get(keyOf(db) ?? {});
-  if (k && Date.now() - k.at < BUDGET_CONFIG_KEEP_MS) return k.config;
-  const row = await db.prepare("SELECT value FROM realm_config WHERE key = 'budget'").first();
+  return k && Date.now() - k.at < BUDGET_CONFIG_KEEP_MS ? k.config : null;
+}
+/** SAVE-BATCH: the config's row, as a statement. */
+export const budgetRead = (/** @type {any} */ db) => db.prepare("SELECT value FROM realm_config WHERE key = 'budget'");
+/** The config its row says (staff's, else the first setting), kept for the binding. */
+export function budgetFrom(/** @type {any} */ db, /** @type {any} */ row) {
   let c = null;
   try { c = budgetConfigOf(JSON.parse(row?.value ?? 'null')); } catch { c = null; }
   const config = c ?? BUDGET_DEFAULT;
@@ -110,8 +119,9 @@ export async function grantSpoils(db, playerId) {
 
 /** LW15 (bible/06-Systems/Living-World-II.md "LW15"): THE SERVICE'S OWN FAUCETS - gold it pays that no player paid (a
  *  patron's purchase: market.js reckonPatrons) - kept by the hour and kind (realm_faucets) beside the wealth's hours, so
- *  staff read what the living world mints before the budget is enforced (Living World II decision 7). */
-export const FAUCET_KINDS = Object.freeze(['patron']);
+ *  staff read what the living world mints before the budget is enforced (Living World II decision 7). SUMMON-REPAIR: and
+ *  staff's own refunds (review.js `repair`) - gold no player paid, named as its own kind. */
+export const FAUCET_KINDS = Object.freeze(['patron', 'repair']);
 /** One faucet's gold written to its hour. @param {any} db @param {string} kind @param {number} hour @param {number} gold */
 export const faucetStatement = (db, kind, hour, gold) => db.prepare(
   'INSERT INTO realm_faucets (hour, kind, gold, n) VALUES (?1, ?2, ?3, 1) ON CONFLICT (hour, kind) DO UPDATE SET gold = realm_faucets.gold + excluded.gold, n = realm_faucets.n + 1',

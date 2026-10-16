@@ -217,22 +217,22 @@ test('AUDIT C&C S1: THE PACK\'S TWO PLAQUES STAND IN ONE ROW ON THE FIGURE\'S FI
 
 // ═══ S3, S10, S12 - THE HUD'S PLATE ═════════════════════════════════════
 
-test('AUDIT C&C S3: THE PLATE IS A HUD PIECE OF ITS OWN, INSIDE THE COMPASS - the compass\'s X turns the compass off and leaves the plate (it took the plate with it while the plate\'s own part stood on), the plate\'s own X turns it off, the compass\'s move is undone on it and the plate moves on its own - HUD-MOVE\'s real sweep over the real HUD', async () => {
-  assert.deepEqual({ ...HUD_PIECES.find((p) => p.id === 'temp') }, { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'compass' });
+test('AUDIT C&C S3: THE PLATE IS A HUD PIECE OF ITS OWN, INSIDE ANOTHER (UI-CALM: the quick block, the corner\'s caption) - the outer piece\'s X turns it off and leaves the plate (it took the plate with it while the plate\'s own part stood on), the plate\'s own X turns it off, the compass\'s move is undone on it and the plate moves on its own - HUD-MOVE\'s real sweep over the real HUD', async () => {
+  assert.deepEqual({ ...HUD_PIECES.find((p) => p.id === 'temp') }, { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'quick' });
   const doc = hudDoc();
   await withHud(doc, async ({ drawEnhancedHud }) => {
     const e = realPlayer('casual');
     minute(e, MOUNTAIN_NIGHT, 1001);
     drawEnhancedHud(e, 0, 0, {});
-    const plate = doc.querySelector('.hud .hud-temp'), compass = doc.querySelector('.hud .hud-compass');
-    assert.equal(plate.parentNode, compass, 'in the page, inside the compass');
+    const plate = doc.querySelector('.hud .hud-temp'), compass = doc.querySelector('.hud .hud-quick');   // UI-CALM: the outer piece is the quick block
+    assert.equal(plate.parentNode?.parentNode, compass, 'in the page, inside the quick block (its caption)');
     const sweep = (layout) => { setPref(HUD_LAYOUT_PREF, layout); sweepHudLayout(doc); };
-    sweep({ compass: { off: true } });
-    assert.deepEqual([compass.dataset.hm, plate.dataset.hm], ['compass', 'temp']);
+    sweep({ quick: { off: true } });
+    assert.deepEqual([compass.dataset.hm, plate.dataset.hm], ['quick', 'temp']);
     assert.deepEqual([compass.hasAttribute('data-hm-off'), plate.hasAttribute('data-hm-off')], [true, false], 'the compass off, the plate not');
     sweep({ temp: { off: true } });
     assert.deepEqual([compass.hasAttribute('data-hm-off'), plate.hasAttribute('data-hm-off')], [false, true], 'its own X');
-    sweep({ compass: { x: 300, y: 40 } });
+    sweep({ quick: { x: 300, y: 40 } });
     assert.deepEqual([compass.style['--hmx'], compass.style['--hmy']], ['300px', '40px']);
     assert.deepEqual([plate.style['--hmx'], plate.style['--hmy']], ['-300px', '-40px'], 'the compass\'s move undone on it: it stands where it stood');
     sweep({ temp: { x: -200, y: 300 } });
@@ -240,108 +240,7 @@ test('AUDIT C&C S3: THE PLATE IS A HUD PIECE OF ITS OWN, INSIDE THE COMPASS - th
   });
   // the sheet: the compass turned off leaves the plate standing, unless it is off too - the quick block's own law for
   // the buffs inside it
-  assert.ok(HUD_LAYOUT_CSS.includes('\n.hud-compass[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }\n'));
-});
-
-test('AUDIT C&C S3, S10, S12: WHERE THE PLATE STANDS - measured from the whole plate every time (it stayed compact after a HUD scale of 2 came back to 1), the whole plate right of the compass short of the edge, the glyph and the number where only they and a costing mark fit, else hung under the compass\'s right end and kept on the screen (a phone at 1.25 to 2 lost it past the edge) - and clear of the FPS read-out, a foe\'s bar, the quest card and the party list (not of one the player switched off): below what stands there, or aside where even that meets something; measured at once as a foe\'s bar comes; never under the player\'s hand', async () => {
-  const doc = hudDoc();
-  await withHud(doc, async ({ drawEnhancedHud }) => {
-    const e = realPlayer('casual');
-    minute(e, MOUNTAIN_NIGHT, 1001);
-    const draw = (n = 1) => { for (let i = 0; i < n; i++) drawEnhancedHud(e, 0, 0, {}); };
-    draw();
-    const plate = doc.querySelector('.hud .hud-temp');
-    // the plate's box as the sheet lays it: whole or compact right of the compass, or hung under the compass's right end,
-    // moved in by --hud-temp-in and down by --hud-temp-drop (in its own pixels, k screen pixels each)
-    const at = { compassRight: 980, compassBottom: 46, top: 18, whole: [990, 1192], compact: [990, 1060], k: 1 };
-    plate.offsetHeight = 24;
-    plate.getBoundingClientRect = () => {
-      const px = (v) => parseFloat(plate.style[v] ?? '0') || 0;
-      const h = 24 * at.k;
-      if (plate.classList.contains('temp-hung')) {
-        const w = at.compact[1] - at.compact[0], right = at.compassRight - px('--hud-temp-in') * at.k, top = at.compassBottom + (6 + px('--hud-temp-drop')) * at.k;
-        return { left: right - w, right, top, bottom: top + h, width: w, height: h };
-      }
-      const [l, r] = plate.classList.contains('compact') ? at.compact : at.whole;
-      return { left: l, right: r, top: at.top, bottom: at.top + h, width: r - l, height: h };
-    };
-    const box = (cls, id, r) => { const n = doc.mk('div'); n.className = cls; n.id = id; n.getBoundingClientRect = () => ({ ...r, width: r.right - r.left, height: r.bottom - r.top }); doc.body.append(n); return n; };
-    const state = () => [plate.className, plate.style['--hud-temp-in'] ?? null, plate.style['--hud-temp-drop'] ?? null];
-    draw(31);
-    assert.deepEqual(state(), ['hud-temp', null, null], 'a desktop with room: the whole plate');
-    // S12: the FPS read-out over the top right (1440: its long GPU line runs left past the compass's end)
-    const fps = box('', 'fps-counter', { left: 829, right: 1432, top: 8, bottom: 134 });
-    draw(30);
-    assert.deepEqual(state(), ['hud-temp compact temp-hung', null, '90px'], 'under the compass\'s right end, eight under the read-out\'s foot');
-    const card = box('qtrack', '', { left: 900, right: 1100, top: 150, bottom: 200 });
-    draw(30);
-    assert.deepEqual(state(), ['hud-temp compact temp-hung temp-aside', null, '90px'], 'where even that meets something: aside');
-    card.remove();
-    const party = box('dfparty', '', { left: 900, right: 1100, top: 150, bottom: 200 });
-    draw(30);
-    assert.deepEqual(state(), ['hud-temp compact temp-hung temp-aside', null, '90px'], 'the party list as the quest card');
-    // a piece the player switched off (HUD-MOVE's X: hidden, its box kept) stands in nothing's way
-    const style = globalThis.getComputedStyle;
-    globalThis.getComputedStyle = (n) => ({ visibility: n === party ? 'hidden' : 'visible', getPropertyValue: () => '' });
-    try {
-      draw(30);
-      assert.deepEqual(state(), ['hud-temp compact temp-hung', null, '90px'], 'the party list switched off');
-    } finally { globalThis.getComputedStyle = style; }
-    party.remove(); fps.remove();
-    draw(30);
-    assert.deepEqual(state(), ['hud-temp', null, null], 'room again: whole again');
-    // S10: a HUD scale of 2 on a 1280 screen, and back to 1 - measured at once on each, from the whole plate
-    globalThis.innerWidth = 1280;
-    Object.assign(at, { compassRight: 1160, whole: [1045, 1449], compact: [1045, 1185] });
-    setPref('hudScale', 2);
-    draw();
-    assert.deepEqual(state(), ['hud-temp compact', null, null], 'scale 2: the glyph and the number');
-    Object.assign(at, { compassRight: 900, whole: [910, 1112], compact: [910, 980] });
-    setPref('hudScale', 1);
-    draw();
-    assert.deepEqual(state(), ['hud-temp', null, null], 'scale 1: whole again at once');
-    // S3: a phone 390 wide - at a HUD scale of 1 the compact plate stands beside the compass, 7px from the edge
-    globalThis.innerWidth = 390;
-    Object.assign(at, { compassRight: 312, compassBottom: 38, top: 10, whole: [318, 383], compact: [318, 383] });
-    draw();
-    assert.deepEqual(state(), ['hud-temp compact', null, null]);
-    // ...there with its costing mark on the screen at every level (the mark stands 5px past the plate's box): 388 wide
-    // still beside, 387 hung (a 360 phone stood it a pixel from the edge, and the mark past it)
-    globalThis.innerWidth = 388;
-    draw();
-    assert.deepEqual(state(), ['hud-temp compact', null, null], 'the mark\'s reach, exactly');
-    globalThis.innerWidth = 387;
-    draw();
-    assert.deepEqual(state(), ['hud-temp compact temp-hung', null, null], 'a pixel short of it: hung');
-    globalThis.innerWidth = 390;
-    // ...at 2 the compass's own end is past the screen's (429): hung under it, moved in by 24 of its own pixels (48)
-    setPref('hudScale', 2);
-    Object.assign(at, { compassRight: 429, compassBottom: 66, whole: [441, 571], compact: [441, 571], k: 2 });
-    draw();
-    assert.deepEqual(state(), ['hud-temp compact temp-hung', '24px', null]);
-    // a foe's bar comes under the compass: the plate measured at once, and below the bar's foot
-    const foe = doc.querySelector('.hud .hud-foe');
-    foe.getBoundingClientRect = () => ({ left: 90, right: 300, top: 82, bottom: 142, width: 210, height: 60 });
-    foe.classList.add('on');
-    draw();
-    assert.deepEqual(state(), ['hud-temp compact temp-hung', '24px', '36px'], 'the frame the bar came');
-    // and the phone's quest card under the bar: nowhere left - aside, the strip's tile saying the reading meanwhile
-    const pcard = box('qtrack', '', { left: 122, right: 382, top: 196, bottom: 260 });
-    draw(30);
-    assert.deepEqual(state(), ['hud-temp compact temp-hung temp-aside', '24px', '36px']);
-    // never under the player's hand: dragged (the HUD editor), it stands as it is until it is let go
-    pcard.remove(); foe.classList.remove('on');
-    plate.setAttribute('data-hm-drag', '');
-    draw(31);
-    assert.deepEqual(state(), ['hud-temp compact temp-hung temp-aside', '24px', '36px'], 'held: not measured');
-    plate.removeAttribute('data-hm-drag');
-    draw(30);
-    assert.deepEqual(state(), ['hud-temp compact temp-hung', '24px', null], 'let go: measured again');
-  });
-  // the sheet: the hung plate under the compass's right end, in by --hud-temp-in, down by --hud-temp-drop; aside, gone
-  const hung = decls(ruleOf(ENHANCED_CSS, '.hud-temp.temp-hung').body);
-  assert.deepEqual(hung, { left: 'auto', right: 'var(--hud-temp-in, 0px)', top: 'calc(100% + 6px + var(--hud-temp-drop, 0px))', transform: 'none' });
-  assert.deepEqual(decls(ruleOf(ENHANCED_CSS, '.hud-temp.temp-aside').body), { display: 'none !important' });
+  assert.ok(HUD_LAYOUT_CSS.includes('\n.hud-quick[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }'));
 });
 
 // ═══ S4 - THE GRIMOIRE DRESS ════════════════════════════════════════════
@@ -704,42 +603,3 @@ test('AUDIT C&C (lens S): EVERY LINE OF THE STATUS PAGE\'S THIRD BOX FITS THE CL
   assert.equal(widest.length, 53, 'and the felt line is the widest, as it was');
 });
 
-test('AUDIT C&C (lens S): THE PLATE KEEPS CLEAR OF THE TWO PIECES FIXED AT THE TOP RIGHT - an arena session\'s button and a journey\'s pace box stand 64 px down and 12 in; on an 800-pixel screen at a HUD scale of 2 the compact plate beside the compass stood on the button: it hangs under the compass\'s right end, below the button, and stands beside the compass again once the button goes (mutant: the button not kept clear of)', async () => {
-  const doc = hudDoc();
-  await withHud(doc, async ({ drawEnhancedHud }) => {
-    const e = realPlayer('casual');
-    minute(e, MOUNTAIN_NIGHT, 1001);
-    const draw = (n = 1) => { for (let i = 0; i < n; i++) drawEnhancedHud(e, 0, 0, {}); };
-    draw();
-    const plate = doc.querySelector('.hud .hud-temp');
-    // the S3 harness's plate: beside the compass whole or compact, or hung under its right end - at a HUD scale of 2 (k)
-    const at = { compassRight: 700, compassBottom: 46, top: 18, whole: [710, 912], compact: [710, 780], k: 2 };
-    plate.offsetHeight = 24;
-    plate.getBoundingClientRect = () => {
-      const px = (v) => parseFloat(plate.style[v] ?? '0') || 0;
-      const h = 24 * at.k;
-      if (plate.classList.contains('temp-hung')) {
-        const w = at.compact[1] - at.compact[0], right = at.compassRight - px('--hud-temp-in') * at.k, top = at.compassBottom + (6 + px('--hud-temp-drop')) * at.k;
-        return { left: right - w, right, top, bottom: top + h, width: w, height: h };
-      }
-      const [l, r] = plate.classList.contains('compact') ? at.compact : at.whole;
-      return { left: l, right: r, top: at.top, bottom: at.top + h, width: r - l, height: h };
-    };
-    const box = (cls, id, r) => { const n = doc.mk('div'); n.className = cls; n.id = id; n.getBoundingClientRect = () => ({ ...r, width: r.right - r.left, height: r.bottom - r.top }); doc.body.append(n); return n; };
-    const state = () => [plate.className, plate.style['--hud-temp-in'] ?? null, plate.style['--hud-temp-drop'] ?? null];
-    draw(31);
-    assert.deepEqual(state(), ['hud-temp compact', null, null], 'the glyph and the number beside the compass');
-    const arena = box('arena-session-btn', '', { left: 700, right: 788, top: 64, bottom: 92 });
-    draw(30);
-    assert.deepEqual(state(), ['hud-temp compact temp-hung', null, '21px'], 'hung under the compass\'s end, eight under the button\'s foot');
-    arena.remove();
-    draw(30);
-    assert.deepEqual(state(), ['hud-temp compact', null, null], 'the button gone: beside the compass again');
-    // the pace box stands where the button does, by the id its own module gives it
-    assert.equal(PACE_BOX_ID, 'travel-pace-box');
-    const pace = box('', PACE_BOX_ID, { left: 600, right: 788, top: 64, bottom: 200 });
-    draw(30);
-    assert.equal(plate.classList.contains('compact') && (plate.classList.contains('temp-hung') || plate.classList.contains('temp-aside')), true, 'not on the pace box');
-    pace.remove();
-  }, 800);
-});

@@ -182,7 +182,7 @@
   {
     "name": "DUEL1-stub-swing-mods-ignored",
     "file": "src/combat/duelCombat.js",
-    "old": "    weapon, damageMod: swing.damage, toHitMod: swing.toHit,",
+    "old": "    weapon, damageMod: swing.damage, toHitMod: swing.toHit + (off ? offHandToHit(stub.stats.agility) : 0),",
     "new": "    weapon, damageMod: 0, toHitMod: 0,",
     "tests": [
       "test/duel_combat.test.js"

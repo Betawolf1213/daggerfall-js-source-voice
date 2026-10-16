@@ -167,7 +167,7 @@ test('DUEL1 WHERE A BLOW MAY COME FROM: the striker\'s claimed feet near where t
 
 test('DUEL1 hosts by source: the swing reaches my opponent before any pool and is theirs when it left; my shaft on them is a strike and a foe\'s stops on them; my harmful spells meet them as a mark (touch, missile, blast, area) through the duel\'s door; INT8: my blow out a number rolled on my own sheet for the referee, the defender\'s half gone; the travel map, a journey, rest and every door refuse a duellist (mutants: the melee arm after the pools; the shaft\'s damage dealt at home; a defender\'s half left; a door out of the ring)', () => {
   const w = rd('src/scenes/world.js');
-  assert.match(w, /if \(duelMeleeHit\(cam\.pos, makeInView\(proj, view, multiply\)\)\) \{\s*\n\s*tallySwingSkills\(playerEntity, weaponRig\.playerWeapon\.weapon\);\s*\n\s*surfacePlayer\(\);\s*\n\s*\} else if \(!cityGuards\.resolvePlayerHit/, 'the duel arm first, the ladder after');
+  assert.match(w, /if \(duelMeleeHit\(cam\.pos, makeInView\(proj, view, multiply\)\)\) \{\s*\n\s*tallySwingSkills\(playerEntity, weaponRig\.playerWeapon\.weapon, weaponRig\.playerWeapon\.blowWeight\);\s*\n\s*surfacePlayer\(\);\s*\n\s*\} else if \(!cityGuards\.resolvePlayerHit/, 'the duel arm first, the ladder after');
   assert.match(w, /\.filter\(\(t\) => !t\.dead && t\.ai\)\.map\(\(t\) => \(\{ feet: t\.ai\.feet, ref: t \}\)\), \.\.\.duelArrowTargets\(\)\]/);
   assert.match(w, /onFoeHit: \(m, t\) => \(t\?\.duel \? undefined : exteriorFoes\.arrowHitFoe\(m, t\)\)/);
   // PIN MOVED (AUDIT-SEATS): the shaft's target's id rides too - outside a duel, a battle's foe it struck (G5's shaft)
@@ -180,7 +180,7 @@ test('DUEL1 hosts by source: the swing reaches my opponent before any pool and i
   assert.equal(/_duelScope|duelSpare|registerDuelFell|duelBlowIn/.test(w), false, 'no defender\'s half left');
   // PIN MOVED (AUDIT C&C H5): rolled against the neutral stand-in - the stub of my own sheet it was rolled against
   // cancelled every attribute I brought and charged me for my own luck (test/auditcc_pvp.test.js)
-  assert.match(w, /const r = resolveDuelStrike\(\{ by, a, \.\.\.\(w \? \{ w \} : \{\}\), \.\.\.\(sw \? \{ sw \} : \{\}\), \.\.\.at \}, duelStandIn\(\)\);/, 'rolled on my own sheet against the neutral stand-in');
+  assert.match(w, /const r = resolveDuelStrike\(\{ by, a, \.\.\.\(w \? \{ w \} : \{\}\), \.\.\.\(sw \? \{ sw \} : \{\}\), \.\.\.at, \.\.\.\(off \? \{ off \} : \{\}\) \}, duelStandIn\(\)\);/, 'rolled on my own sheet against the neutral stand-in');   // PIN MOVED (TWO-HANDS AUDIT): and the off hand's terms
   assert.match(w, /const n = duelMgr\.blow\('strike', \{ by, p: campToWire\(player\.feetAt\(\)\), d: Math\.trunc\(r\.dmg\),/, 'sent as a number');
   assert.match(w, /const n = duelMgr\.blow\('spell', \{ p: campToWire\(player\.feetAt\(\)\), d: siegeCastClamp\(harm, false\) \}\);/, 'a spell\'s harm, counted at home');
   // NAV-H (2026-09-28): a hostile ship in reach joined the same doors, after the duel and the foes

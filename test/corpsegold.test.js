@@ -16,6 +16,7 @@ import { renownFoeCarry, renownFoeRevived } from '../src/net/renownTracker.js';
 import { registerFoeDoor } from '../src/systems/artifactEffects.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { goldStack, isGoldPieces } from '../src/systems/inventory.js';
+import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 
 const D = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const AST = acorn.parse(D, { ecmaVersion: 'latest', sourceType: 'module' });
@@ -76,6 +77,7 @@ const deadRecord = (mobileType) => ({ health: 0, maxHealth: 10, dead: true, feet
 function restoreHarness(foes) {
   let roll = 500;
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     foes, _layoutFoes: foes.length, _locationKey: 'dungeon:7', _sharedStamp: 'mine', _sharedApplied: false,
     _lootSeen: new Set(), _lootUnreadable: new Set(), _lootAt: new Map(), _lootOpenKey: null, _lootTooBig: new Set(), _retyping: new Set(), _sharedById: new Map(),
     lootPiles: [], billboardBatches: [], _ctxDead: false, playerEntity: { isPlayer: true, items: [] },
@@ -98,9 +100,6 @@ function restoreHarness(foes) {
     ${fnSrc('bodyRecords')}
     ${fnSrc('lootableBody')}
     ${fnSrc('lootHolder')}
-    ${declSrc('LOOT_EARLY_MAX')}
-    ${declSrc('_lootEarly')}
-    ${fnSrc('holdEarlyLoot')}   // PIN MOVED (PARTY-LOOT): a word about a body not laid yet is held for it (test/partyloot.test.js) - the memory's, read while the rebuild awaits its art, is held too and lands by the rebuild's own door below
     ${fnSrc('applyLoot')}
     ${fnSrc('freeCorpse')}
     ${fnSrc('spawnCorpse')}

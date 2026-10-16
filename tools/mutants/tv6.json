@@ -91,7 +91,7 @@
   },
   {
     "name": "TV6-lairs-named",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "label: '?', kind: 'lair' });",
     "new": "label: g.loc.name, kind: 'lair' });",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "TV6-lairs-a-journey",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "label: '?', kind: 'lair' });",
     "new": "label: '?', kind: 'lair', pick: true, edge: true });",
     "tests": [

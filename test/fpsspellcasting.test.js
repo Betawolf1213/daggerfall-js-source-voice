@@ -318,6 +318,8 @@ test('HAND-SEAM: the casting hands upload CLAMPED (NEAREST, no wrap) under their
   const src = readFileSync(new URL('../src/combat/fpsSpellCasting.js', import.meta.url), 'utf8');
   assert.match(src, /tex: renderer\.uploadTexture\('img', `fpsc:\$\{fileName\}:\$\{r\}`, c32, \{ clamp: true \}\),/, 'the hands ask for the clamp');
   const r = readFileSync(new URL('../src/render/renderer.js', import.meta.url), 'utf8');
-  assert.match(r, /\$\{opts\.clamp && !opts\.smooth \? '#clamp' : ''\}`;/, 'and a clamped upload keys apart from a tiling one of the same art');
-  assert.match(r, /const \{ wrap, filter \} = textureParams\(gl, opts\);\s*\n\s*gl\.texParameteri\(gl\.TEXTURE_2D, gl\.TEXTURE_WRAP_S, wrap\);\s*\n\s*gl\.texParameteri\(gl\.TEXTURE_2D, gl\.TEXTURE_WRAP_T, wrap\);/, 'the upload applies what textureParams answers');
+  // PIN MOVED (POI-2, render/meshAlpha.js): the key ends on a POI sampler's suffix after the clamp's, and the wrap is a
+  // texture's own sampler's where it asks for one - else, as before, what textureParams answers (the hands ask for none)
+  assert.match(r, /\$\{opts\.clamp && !opts\.smooth \? '#clamp' : ''\}\$\{opts\.sampler && !opts\.smooth \? samplerKey\(opts\.sampler\) : ''\}`;/, 'and a clamped upload keys apart from a tiling one of the same art');
+  assert.match(r, /const \{ wrap, filter \} = textureParams\(gl, opts\);[^\n]*\n(?:\s*\/\/[^\n]*\n)?\s*const own = opts\.sampler && !opts\.smooth \? samplerParams\([^\n]*\n\s*gl\.texParameteri\(gl\.TEXTURE_2D, gl\.TEXTURE_WRAP_S, own \? own\.wrapS : wrap\);\s*\n\s*gl\.texParameteri\(gl\.TEXTURE_2D, gl\.TEXTURE_WRAP_T, own \? own\.wrapT : wrap\);/, 'the upload applies what textureParams answers');
 });

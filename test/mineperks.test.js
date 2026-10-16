@@ -426,9 +426,11 @@ test('AUDIT MINE-PERKS a Motherlode\'s hour is said on THIS machine\'s clock wit
   assert.match(w, /const lodeWords = \{ oreName: \(m\) => materialLabel\(m\)\.replace\(\/ Ore\$\/, ''\), clock: \(s\) => localWhenText\(s \* 1000 - _sharedOffsetMs, Date\.now\(\)\) \};/);
   assert.match(w, /const lodeSense = \(\) => !!motherlodeBook && profBook\?\.state\.open === true && profBook\.track\('mining'\)\.specs\?\.\[100\] === 'motherlode-sense';/);
   assert.match(w, /if \(!lodeSense\(\)\) return \[\];\n\s*return lodeMapMarks\(motherlodeBook\.sensedAll\(_lodesSensed\), Math\.floor\(\(Date\.now\(\) \+ _sharedOffsetMs\) \/ 1000\), lodeWords\);/);
-  assert.match(w, /if \(lodeSense\(\)\) \{\n\s*const nowS = [^\n]*\n\s*for \(const l of motherlodeBook\.sensedAll\(_lodesSensed\)\) \{/);
-  assert.match(w, /marks\.push\(\{ key: `lode:\$\{l\.key\}`, at: tvSceneKept\(h, x, z, TV_PLACE_LIFT\), label: lodeLabel\(l, nowS, lodeWords\), sub: farDistanceText\(km\), kind: 'gather mining', color: LODE_COMPASS_CSS, edge: true \}\);/);
-  assert.match(w, /for \(const k of \[\.\.\._tvLodeHold\.keys\(\)\]\) if \(!keep\.has\(k\)\) _tvLodeHold\.delete\(k\);/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  const tvm = read('src/scenes/travelViewMarks.js');
+  assert.match(tvm, /if \(lodeSense\(\)\) \{\n\s*const nowS = [^\n]*\n\s*for \(const l of motherlodeBook\.sensedAll\(_lodesSensed\)\) \{/);
+  assert.match(tvm, /marks\.push\(\{ key: `lode:\$\{l\.key\}`, at: tvSceneKept\(h, x, z, TV_PLACE_LIFT\), label: lodeLabel\(l, nowS, lodeWords\), sub: farDistanceText\(km\), kind: 'gather mining', color: LODE_COMPASS_CSS, edge: true \}\);/);
+  assert.match(tvm, /for \(const k of \[\.\.\._tvLodeHold\.keys\(\)\]\) if \(!keep\.has\(k\)\) _tvLodeHold\.delete\(k\);/);
 });
 
 test('MINE-PERKS every map reads them: the held map (its poll, its sheet, its legend), the classic region page (its texels and its repaint), the ink, and the world host\'s dep - a Sense\'s alone (mutants: any unwired; shown without the Sense)', () => {

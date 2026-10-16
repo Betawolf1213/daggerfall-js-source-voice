@@ -406,7 +406,8 @@ test('AUDIT RENOWN1 UI-5/UI-7/WIRE-2c: the answer\'s plan - the order carried WH
   const w = src('src/scenes/world.js');
   assert.match(w, /const a = renownAnswer\(data, sent, renownSaid\);/);
   assert.match(w, /if \(a\.order\) online\?\.sendRenownOrder\?\.\(a\.order, a\.level\);/, 'the order carried on the plan\'s word alone');
-  assert.match(w, /if \(a\.announce !== null\) \{ renownSaid = a\.announce; townTalk\.say\(`Your Renown is now \$\{a\.announce\}\.`\); \}/);
+  assert.match(w, /if \(a\.announce !== null\) renownRose\(a\.announce\);/);   // FIRM1: said as a level is
+  assert.match(w, /const renownRose = \(level\) => \{\n    const was = renownSaid \?\? level - 1;\n    renownSaid = level;/, 'the rise said once, against what was said');
   assert.match(w, /if \(renownNow !== null && level <= renownNow\) return renownNow;/, 'the page\'s own level only rises (UI-7 W2)');
   assert.match(w, /onStop: \(error\) => tradeSay\(`\$\{accountRefusalText\(error\)\} This character is earning no Renown\.`\),/, 'UI-4: a refusal that ends reporting is said');
 });
@@ -443,7 +444,7 @@ test('AUDIT RENOWN1 GAME-1/GAME-7/GAME-10: the city watch never pays, whoever\'s
   assert.match(d, /if \(f\.mobileType >= 128 && Number\.isInteger\(f\.entity\?\.level\) && f\.entity\.level >= 0 && f\.entity\.level <= FOE_LEVEL_MAX\) r\.l = f\.entity\.level;/, 'GAME-3: the host streams a class foe\'s level');
   assert.match(d, /if \(r\.l !== undefined && f\.mobileType >= 128\) f\.streamedLevel = r\.l;/, 'and the joiner keeps it');
   assert.match(d, /if \(landed && !f\.dead\) renownFoeCarry\(f, rec\);/, 'a live foe rebuilt keeps my blows; a dead one\'s rebuild does not');
-  assert.match(d, /_lootAt\.delete\(`corpse:\$\{pi\}`\); \}\n(?:\s*if \(f\._encId != null\) \{[^\n]*\n)?\s*renownFoeRevived\(f\);/, 'un-death forgets them');   // REST-SYNC re-aim: a shared body's loot record forgotten between
+  assert.match(d, /_lootAt\.delete\(`corpse:\$\{pi\}`\);(?: forgetRoomContainer\(`corpse:\$\{pi\}`\);)? \}[^\n]*\n(?:\s*if \(f\._encId != null\) \{[^\n]*\n)?\s*renownFoeRevived\(f\);/, 'un-death forgets them');   // PIN MOVED (PARTY-LOOT): the room's base and takes for the body go with it too   // REST-SYNC re-aim: a shared body's loot record forgotten between
   assert.match(d, /nf\.entity\.health -= missing;[^\n]*\n\s*renownFoeCarry\(f, nf\);/, 'the dungeon\'s Wabbajack carries them');
   assert.match(src('src/scenes/world.js'), /nf\.entity\.health -= missing;[^\n]*\n\s*renownFoeCarry\(f, nf\);/, 'and the street\'s');
   for (const file of ['src/scenes/exteriorFoes.js', 'src/scenes/dungeonContext.js']) {

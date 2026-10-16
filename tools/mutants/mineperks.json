@@ -356,7 +356,7 @@
   },
   {
     "name": "AUDIT-MINE-PERKS-overworld-unwired",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "          marks.push({ key: `lode:${l.key}`, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), label: lodeLabel(l, nowS, lodeWords), sub: farDistanceText(km), kind: 'gather mining', color: LODE_COMPASS_CSS, edge: true });\n",
     "new": "",
     "tests": [

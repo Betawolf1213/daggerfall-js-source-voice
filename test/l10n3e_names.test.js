@@ -24,13 +24,14 @@ const NAMED = {
   'src/scenes/dungeonContext.js': 2,
   'src/scenes/exterior.js': 4,
   'src/scenes/hostCombat.js': 1,
+  'src/scenes/instanceDoor.js': 1,   // INSTANCES (the audit): the door's popup names its dungeon in the player's language
   'src/scenes/townTalk.js': 2,
   'src/scenes/world.js': 8,
-  'src/scenes/worldModes.js': 6,
+  'src/scenes/worldModes.js': 5,   // SUMMON-OFFER: the summoning's no-offer line moved to the law module (daedraSummoning.js noQuestText)
   'src/systems/affiliations.js': 1,
   'src/systems/answerPipeline.js': 3,
   'src/systems/banking.js': 2,
-  'src/systems/daedraSummoning.js': 1,
+  'src/systems/daedraSummoning.js': 2,   // SUMMON-OFFER: noQuestText's prince
   'src/systems/decorItems.js': 1,
   'src/systems/enchantmentCatalogue.js': 2,
   'src/systems/itemInfo.js': 4,
@@ -45,6 +46,7 @@ const NAMED = {
   'src/systems/topicTree.js': 1,
   'src/systems/worldTick.js': 1,
   'src/ui/bankWindow.js': 1,
+  'src/ui/gambitTableWords.js': 1,   // KG3: a unit's name at The King's Gambit's table, through DFU's own list (Kings-Gambit.md 14.6)
   'src/ui/nativeInventory.js': 1,
   'src/ui/questJournal.js': 2,
   'src/ui/travelMapWindow.js': 5,

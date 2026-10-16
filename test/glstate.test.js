@@ -152,7 +152,8 @@ test('EV6: the skies neither query CURRENT_PROGRAM nor restore - the hosts mark 
     // HAZE1: and the heat haze's grab and ring, one more in both hosts (drawn once the opaque world is whole)
     // WINDFALL1: and Windfall's leaves and snow flurries, one more in both hosts (before the haze, which bends them)
     // SD2c: and a Super dungeon's omen, one more in the world host (after the rite's smoke - PIN MOVED)
-    const want = host === 'src/scenes/world.js' ? 27 : 7;   // SD-LOOK: the Rift's window, its floor light and its halos, one seam (PIN MOVED)   // SD8d: the Brass Remnant's blows on the arena's floor (PIN MOVED)   // SD5b: the Shattered Hour's sky (PIN MOVED)   // HOTFIX 1003l: the sky over the arena's floor, through the world host's drawSky hook   // CROWN-HALL: the banners' cloth in a castle's throne room (PIN MOVED)   // LOOT11: the loot lines' two seams, the street's pass and the modes' hook
+    // POI-3: and the POI editor's lines, one more in the world host (its boxes and handles, after the translucent pass - PIN MOVED)
+    const want = host === 'src/scenes/world.js' ? 28 : 7;   // SD-LOOK: the Rift's window, its floor light and its halos, one seam (PIN MOVED)   // SD8d: the Brass Remnant's blows on the arena's floor (PIN MOVED)   // SD5b: the Shattered Hour's sky (PIN MOVED)   // HOTFIX 1003l: the sky over the arena's floor, through the world host's drawSky hook   // CROWN-HALL: the banners' cloth in a castle's throne room (PIN MOVED)   // LOOT11: the loot lines' two seams, the street's pass and the modes' hook
     assert.equal((s.match(/renderer\.markForeignPass\(\);/g) || []).length, want,
       `${host} marks its foreign seams (the sky, the rain, the sand, the wisps, the bolts${want === 6 ? ', and the grass' : ''})`);
   }
@@ -946,7 +947,8 @@ test('PERF-2D: every draw sees exactly the state it saw when the bracket was per
 test('PERF-2D: the source law - every draw in renderer.js is a 2D primitive or closes the run first', () => {
   const src = readFileSync('src/render/renderer.js', 'utf8').split('\n');
   const TWO_D = new Set(['drawScreenQuad', 'drawScreenQuadRun', 'drawScreenOverlayQuad',
-    '_ensureScreenQuadProgram', '_ensureScreenQuadRunProgram', '_ensureOverlayProgram']);
+    '_ensureScreenQuadProgram', '_ensureScreenQuadRunProgram', '_ensureOverlayProgram',
+    'drawScreenQuadGlow', '_ensureWeaponGlowQuadProgram', '_glowField']);   // WEAPON-GLOW1: the fourth primitive - a weapon sprite's outline over its frame; AUDIT WEAPON-GLOW SPR-1: and its field's bake, drawn inside the primitive's own run
   let method = null; const seen = new Map();   // method -> {closed, drew}
   for (const line of src) {
     const m = /^  (_?[A-Za-z][A-Za-z0-9_]*)\(.*\)\s*\{\s*$/.exec(line);

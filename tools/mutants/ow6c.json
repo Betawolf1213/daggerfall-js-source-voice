@@ -141,7 +141,7 @@
   },
   {
     "name": "OW6-C-marks-undrawn",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "    for (const c of travelViewCamps()) marks.push(",
     "new": "    for (const c of []) marks.push(",
     "tests": [

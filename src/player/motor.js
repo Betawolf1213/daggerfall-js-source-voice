@@ -93,6 +93,9 @@ export function motionBagOf(player) {
     // CLIMB4: and a hold on the wall (the hang, the free climb) - both hands on the stone: the weapon lowered, the
     // torch stowed, the shield down
     climbing: !!(player.climb?.isClimbing || player.mantling || player.onWall),
+    // TWO-HANDS (AUDIT): the head bob's own timer (player/headBobber.js, handed out each frame) - the running hands pump on
+    // it; null with head bobbing off, when they keep their own stride
+    bobTimer: Number.isFinite(player.bobTimer) ? player.bobTimer : null,
     // EOTB-IL: what Eye Of The Beholder's PlayerBillboard reads off PlayerMotor beside the above - the sneak
     // (its frame time doubles), FreezeMotor (a frozen motor is "stopped"), OnExteriorWater == Swimming (the sprite's
     // top at the swim line), and the live capsule height (the billboard's parent is the capsule's centre)
@@ -693,7 +696,8 @@ export class PlayerMotor {
    * TECH1 (bible/05-Combat/Weapon-Techniques.md): A TECHNIQUE'S FLIGHT - a leap or a dash a weapon's technique makes
    * (combat/techniques.js): `dir` the horizontal unit it flies along, `along` metres a second along it, `up` metres a
    * second up. The body flies as a jump flies - the airborne arm keeps the momentum, the collider stops it on what it
-   * meets, gravity brings it down, the fall counts from the launch - and the Jump spell's air control does not steer it
+   * meets, gravity brings it down, the fall counts from the launch (or, launched mid-fall, from where that fall began:
+   * KICK-AIR) - and the Jump spell's air control does not steer it
    * (`techFlight`, cleared on the ground: a leap's flight keeps its launch, as a parkour leap's does). Refused (false) to a
    * body the hands hold (a climb, a hold, a mantle), the water or the air (a swim, a levitation, a slow fall), the saddle,
    * a knockdown and a held motor - nothing there leaps.
@@ -709,8 +713,9 @@ export class PlayerMotor {
     this.groundedTime = 0;
     this.groundKey = null;
     this.jumping = true;
-    this.falling = false;
-    this.fallStart = this.pos[1];
+    // KICK-AIR (Mac, 2026-10-15): a flight from the air (the Flying Kick - techniqueRoster.js `airborne`) leaves a fall
+    // under way where it began, so a kick is never a feather fall; from the ground, or a jump's rise, it counts from here
+    if (!(this.falling && this.fallStart > this.pos[1])) { this.falling = false; this.fallStart = this.pos[1]; }
     this.techFlight = true;
     return true;
   }
@@ -776,7 +781,7 @@ export class PlayerMotor {
   /** HORSE-WALK: the classic base GetBaseSpeed's riding arm adds - DFU's own walk base where horse care walks the horse
    *  (transport.js rideWalks), so the walk is its base as a walk is on foot and a pace under half of it is a sneak's;
    *  else the mode's ride base (rideBaseFor). GetRunSpeed's riding arm never reads it: the gallop is the ride base's. */
-  _rideBaseNow() { return rideWalks(this.transportMode) ? DF_WALK_BASE : rideBaseFor(this.transportMode); }
+  _rideBaseNow() { return rideWalks(this.transportMode, this._runMode) ? DF_WALK_BASE : rideBaseFor(this.transportMode); }   // HORSE-TIERS: the run asked rides with the question
   /** STEED1/WAGONS4: the ride's pace scale, a finite positive number (1 for anything else). */
   _rideScale() { const k = this.rideSpeedScale; return Number.isFinite(k) && k > 0 ? k : 1; }
   /** GetSwimSpeed(GetBaseSpeed()) - LevitateMotor's swim: GetBaseSpeed skips the crouch arm while it swims. */
@@ -3160,7 +3165,7 @@ export class PlayerMotor {
     // HORSE-WALK: horse care's horse WALKS unless it gallops - GetBaseSpeed's riding arm on the walk's base
     // (_rideBaseNow), the run on the ride base as ever (GetRunSpeed's riding arm). DFU's ride, which every picture
     // already drew as a gallop (eotbBillboard.js GALLOP_SPEED, horseModel.js HORSE_GAIT_FROM), is the gallop's base now.
-    this.rideWalking = rideBase != null && !this.isRunning && rideWalks(this.transportMode);
+    this.rideWalking = rideBase != null && !this.isRunning && rideWalks(this.transportMode, this._runMode);   // HORSE-TIERS: a gallop asked and refused - Boons' DFU pace, Hard's walk
     if (this.isRunning) {
       speed = runSpeed(this.stats.speed, this.stats.running, this.crouching, rideBase);
       if (rideBase != null) speed *= this._rideScale();   // STEED1: a gallop at the horse's own pace

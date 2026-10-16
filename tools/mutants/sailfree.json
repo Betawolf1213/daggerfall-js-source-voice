@@ -124,8 +124,8 @@
   {
     "name": "SAIL-FREE-drive-in-the-raw-wind",
     "file": "src/systems/comeSailAway.js",
-    "old": "f(galeWind(seaWind(vMagnitude(state.windVectorCurrent))))) * f(SAIL_FREE.pace));",
-    "new": "f(galeWind(vMagnitude(state.windVectorCurrent)))) * f(SAIL_FREE.pace));",
+    "old": "f(galeWind(seaWind(vMagnitude(state.windVectorCurrent))))) * f(SAIL_FREE.pace * firmSail()));",
+    "new": "f(galeWind(vMagnitude(state.windVectorCurrent)))) * f(SAIL_FREE.pace * firmSail()));",
     "tests": [
       "test/sailfree.test.js"
     ]

@@ -58,12 +58,16 @@ its name by what it is drawn for:
 
 - **The hairs - certain.** The red band paints the headband's own island (0111); the widow's peak runs along its own
   hair's island (widow); the third is the 01.
-- **The eyepatch - h0423, by the export's pairing.** The eyepatch is the one face painting that is not mirror-even (its
-  eye band differs from its mirror image by 37.6, the plain faces' by 9), so it wears a full-face layout: on h04's,
-  which reads both sides of the face from one half of the painting, it is two eyepatches (the owner caught exactly that
-  in an exploration render). h0411 and h0423 share their layout texel for texel, so the layouts cannot tell them apart;
-  the export pairs h0423 with the red headband (object `.003`), and an eyepatch and a headband are one look: h0423.
-- **h04 and h0411 - judged.** The two plain faces - a black-and-grey beard and a brown one - fit either mesh alike: both
+- **The eyepatch - h0411, by the export's author (MW-HEADS3).** The eyepatch is the one face painting that is not
+  mirror-even (its eye band differs from its mirror image by 37.6, the plain faces' by 9), so it wears a full-face
+  layout: on h04's, which reads both sides of the face from one half of the painting, it is two eyepatches (the owner
+  caught exactly that in an exploration render). h0411 and h0423 share their layout texel for texel, so the layouts
+  cannot tell them apart. The first match guessed h0423, the export pairing it with the red headband (object `.003`);
+  the export's author, through the owner (2026-10-15): "the eyepatch head was assigned the wrong hair / it gave me the
+  rambo hair / ... its using the eyepatch on the wrong head / so the wrong head was given the wrong texture". So the
+  eyepatch is h0411's - object `.002`'s face, whose hair in the export is the 01 - and the plain brown beard h0423's:
+  the two committed paintings' names swapped (their bytes as sent), the two DDSs re-baked, the meshes unchanged.
+- **h04 and the brown beard - judged.** The two plain faces - a black-and-grey beard and a brown one - fit either mesh alike: both
   paintings are near mirror-even, both paint beard over h04's sculpted chin (where its surface stands off the other two
   faces' - 64 vertices by more than 0.1, the chin's with a few at the nose and brow; AUDIT MW-HEADS1 L3-F13), and the detail of each falls in the same share of each layout. The black-and-grey painting is
   h04, its full beard over h04's own fuller sculpt, by eye on the renders; **the owner's to confirm** - a swap is two
@@ -96,9 +100,10 @@ a face chooses among the same pools, on the doors it always used:
 
 - **an NPC's face walked off its seed** (`characters/wardrobe.js` npcFaceOf, MWNPC17): the data's pools, never the
   port's own (MW-HEADS2) - every one of their pairs reached;
-- **the player's curated face** (`mwFaceTable.json`, which wins first): portrait 0 h0411 + 0111, 1 h0411 + widow,
-  2 h04 + 01, 3 h04 + widow, 4 h0411 + 0111, 5 h04 + 0111, 6 h0423 + 0111 (the eyepatch, with the export's own
-  headband), 7 h0411 + 01, 8 h0411 + widow, 9 h04 + widow - each by likeness to Daggerfall's Breton portraits;
+- **the player's curated face** (`mwFaceTable.json`, which wins first): portrait 0 h0423 + 0111, 1 h0423 + widow,
+  2 h04 + 01, 3 h04 + widow, 4 h0423 + 0111, 5 h04 + 0111, 6 h0411 + 01 (the eyepatch, in its own object's hair -
+  MW-HEADS3: never the headband), 7 h0423 + 01, 8 h0423 + widow, 9 h04 + widow - each by likeness to Daggerfall's
+  Breton portraits (the brown beard's five moved with its painting from h0411 to h0423);
 - **the measured match** (MW-D35) and the face index's walk below it choose among the same pools - though for a Breton
   man the curated ten answer every portrait, so no match is measured for him (AUDIT MW-HEADS1 L2-F6: the matcher
   stands down wherever the curated table answers both halves among the pools - it measured all six parts on every
@@ -138,7 +143,7 @@ standing down only where the table answers both halves, the walk over the data's
 player's the data's, the vampire's head, and the viewer's sheet by source; and through the binder a retail head takes, six rigid pieces under the Head
 node, unmirrored, their own geometry, no note; and a REAL BUILD of a Breton man on retail's skeleton - the port's own
 head and hair where its archive loaded (makeVendoredArchive over the shipped files, as the page serves them), portrait
-6's eyepatch and headband bound under the Head node with no portrait read, and the data's head and hair bound where it
+6's eyepatch and its hair (MW-HEADS3: the 01) bound under the Head node with no portrait read, and the data's head and hair bound where it
 did not, the match asked - and a body not a player's in the data's, its archive loaded or not (MW-HEADS2). MW-HEADS2's
 doors by source: the local player's build and the peers' ask, the people's lanes, an NPC's talk-window face and an
 escort's do not, the face match's memo keyed on its pools, the third-person body asking as the build was asked.
@@ -147,7 +152,7 @@ pool another key, the same pool the same. PIN MOVED (AUDIT MW-HEADS1): `test/fpa
 the archives' directory) and MW-D35 (the matcher is handed the build's pools), `test/mwload_records.test.js` (the
 key's source), `test/arrowPick.test.js` (eighteen doors pass the one directory). PIN MOVED: `test/mwnpc17_wardrobe.test.js` MWNPC17d's walk and
 MWNPC17e's street re-aimed from the Breton men (whose pools are the port's own now) to the Nord men, and its memo pin
-read with MW-FOLK1's outfit key. `tools/mutants/mwheads2.json` (14, all dead - every Breton man in them again, the player not, the body or the
+read with MW-FOLK1's outfit key. `tools/mutants/mwheads2.json` (16, all dead - the eyepatch in the headband again, the eyepatch's painting on the other head; every Breton man in them again, the player not, the body or the
 match or a peer or the local player not asking, the peers built as people, an escort or an NPC's portrait a player's, one
 memo for two pools, the bake's +Y, the match reading the back, every member of the line a player on the Family tab).
 `test/portrait3d.test.js`: an NPC's portrait walked over the data's, an escort's the data's, a player's the port's own;

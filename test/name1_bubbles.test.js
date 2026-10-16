@@ -415,7 +415,10 @@ test('NAME1 + BUBBLE1: the wiring in scenes/world.js - the layer is made ONCE be
   const w = rd('src/scenes/world.js');
   const bare = w.replace(/\/\/[^\n]*/g, ' ');
   assert.match(w, /import \{ createNameLayer, nameLayerWanted \} from '\.\.\/ui\/nameLayer\.js';/);
-  assert.match(w, /import \{ RemotePlayers, composeLook, createSightCache, NAME_RANGE \} from '\.\.\/net\/remotePlayers\.js';/);   // AUDIT 68 S22: sightBlockedBy is the cache's to call, never the host's (AUDIT NAMES N2-2: NAME_RANGE, the Overworld's reach for one who shares nothing)
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks - NAME_RANGE's one reader in the host - left world.js for
+  // scenes/travelViewMarks.js, and the import went with its reader
+  assert.match(w, /import \{ RemotePlayers, composeLook, createSightCache \} from '\.\.\/net\/remotePlayers\.js';/);
+  assert.match(rd('src/scenes/travelViewMarks.js'), /import \{ NAME_RANGE \} from '\.\.\/net\/remotePlayers\.js';/);   // AUDIT 68 S22: sightBlockedBy is the cache's to call, never the host's (AUDIT NAMES N2-2: NAME_RANGE, the Overworld's reach for one who shares nothing)
   assert.match(bare, /let online = null, remotePlayers = null, peerBodies = null, nameLayer = null, nameSight = null,/, 'one handle each, held for the session');
   // AUDIT NAME1 F7 + OVH3: the DOM face takes the gate the chat panel the bubbles belong to takes - a document, on either skin.
   assert.match(bare, /if \(nameLayerWanted\(\)\) nameLayer = createNameLayer\(\{\}\);/, 'made where there is a document to put it in');

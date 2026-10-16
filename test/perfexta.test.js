@@ -13,7 +13,7 @@ import assert from 'node:assert/strict';
 import { Renderer, WORLD_FRAME } from '../src/render/renderer.js';
 import { EL_LANE, EL_MESH_FS, EL_BB_FS } from '../src/render/enhancedLighting.js';
 import * as bounds from '../src/render/bounds.js';   // a namespace: on the base the placement grid is missing, and only its pins fail
-import { sunCascadeMatrices, pointFaceMatrices, shadowFarFor, swayLean, spheresTouch, foldSignature, SHADOW_LIGHT_FLATS, SHADOW_NO_CAST_ARCHIVES, SHADOW_GLSL, SHADOW_SUN_SIZE, SHADOW_LO_REBUILDS, SHADOW_TUNING } from '../src/render/shadowPass.js';
+import { sunCascadeMatrices, pointFaceMatrices, shadowFarFor, swayLean, spheresTouch, foldSignature, SHADOW_LIGHT_FLATS, SHADOW_NO_CAST_ARCHIVES, SHADOW_GLSL, SHADOW_SUN_SIZE, SHADOW_LO_REBUILDS, SHADOW_TUNING, SHADOW_POINT_CASTERS } from '../src/render/shadowPass.js';
 import { StaticBatchBuilder, keyResolver } from '../src/render/staticBatch.js';
 SHADOW_TUNING.override = false;   // FLICKER-FIX: these tests pin EL8's schedule (SHADOW_LO_REBUILDS, the cadences)
 
@@ -777,13 +777,14 @@ test('PERF-EXT (the review): A ROOM DRAWN WHOLE ASKS NO PLACEMENT - a still tave
     };
     return { r, sp, batches, L, frame, drop: (b) => { list = list.filter((x) => x !== b); } };
   };
-  // drawn whole: the lo tier holds every lamp, and a still frame reads no placement
+  // drawn whole: the lo tier holds every lamp past the twelve (LIGHT-ID: the twelve read their 512 maps and keep none),
+  // and a still frame reads no placement
   const room = build();
   for (let f = 0; f < 6; f++) room.frame(true);
   const counter = countPlacements(room.sp, room.batches);
   for (let f = 0; f < 3; f++) {
     const st = room.frame(true);
-    assert.equal(st.loSlots, 20, 'every lamp keeps its lo map');
+    assert.equal(st.loSlots, 20 - SHADOW_POINT_CASTERS, 'every lamp past the twelve keeps its lo map');
     assert.equal(st.loFaces, 0, 'a still room redraws none');
   }
   assert.equal(counter.n, 0, `a still room drawn whole read ${counter.n} placements in three frames (the first cut: every lamp's lo walk, a cube query a batch)`);
@@ -793,14 +794,17 @@ test('PERF-EXT (the review): A ROOM DRAWN WHOLE ASKS NO PLACEMENT - a still tave
   const streetCount = countPlacements(street.sp, street.batches);
   street.frame(false);
   assert.ok(streetCount.n > 0, `outside a room drawn whole the signature asks the quads (${streetCount.n} reads)`);
-  // correct by the sphere: a flat freed rebuilds every lo map it was drawn into, and none it could not reach
+  // correct by the sphere: a flat freed rebuilds every lo map it was drawn into, and none it could not reach - the lo
+  // maps of the lamps that read them (LIGHT-ID)
   const far = (i) => shadowFarFor(room.L[i * 4 + 3]);
   const c = new Float64Array(4);
+  const readsLo = [...Array(20).keys()].filter((i) => room.sp.casterOf[i] >= SHADOW_POINT_CASTERS);
+  assert.equal(readsLo.length, 20 - SHADOW_POINT_CASTERS);
   let pick = null, must = -1, may = 0;
   for (const b of room.batches) {
     const rad = bounds.placementRadius(bounds.quadHalfDiagonal(b.size), 0);
     let m = 0, y = 0;
-    for (let i = 0; i < 20; i++) {
+    for (const i of readsLo) {
       const x = room.L[i * 4], ly = room.L[i * 4 + 1], z = room.L[i * 4 + 2];
       const s = bounds.batchSphere(b, c);
       if (spheresTouch(s[0], s[1], s[2], s[3], x, ly, z, far(i))) y++;
