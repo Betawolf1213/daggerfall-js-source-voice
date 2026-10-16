@@ -289,8 +289,10 @@ against the code, two paths made copies no player chose, and the hold made every
   writer's word wins, and a shelf's word carries each piece's `uid`. A word from before the reader took a piece - another
   player's close of a window opened earlier, the room's memory of an earlier visit - put it back, the reader took it
   again, and the pack held one piece twice: a copy at the next checkpoint. Stealing from a vendor and selling the piece
-  back met it most. Now a word never lands a piece the reader carries (its own lists' ledger keys, `systems/itemIds.js`
-  carriedLedgerKeys - the key rule, `ledgerKeyOf`, moved there from the judge, which hands it on) nor one piece twice.
+  back met it most. Now a word never lands a piece the reader carries (its own lists' ledger keys and the rule that keys a piece,
+  `systems/itemIds.js` carriedPieces - the rule, `ledgerKeyOf`, moved there from the judge, which hands it on - given to
+  the shelf's module by the host, which never imports the item law: its registration on `systems/loot.js` changes what
+  every reader of the wire lands) nor one piece twice.
   STILL OPEN: a second player whose window was open on the stale shelf can still buy or steal the piece the first
   already took; that buyer's copy is the contested claim below - locked, no strike. The dungeon's containers were not
   traced.
