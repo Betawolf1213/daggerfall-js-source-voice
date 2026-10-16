@@ -3163,7 +3163,9 @@ test('PX26 F4: the interior lane sends the jump-state inputs - without them the 
 test('PX26 F1/F2/F3: the menu figure carries the hand, instantly, and a mid-build swap is not dropped', () => {
   const arm = readFileSync('src/combat/fpArm.js', 'utf8');
   // F1: the portrait shows the weapon whether or not it is drawn
-  const fig = arm.slice(arm.indexOf('    figure({ yaw = 0, height = 384 } = {}) {'), arm.indexOf('    figure({ yaw = 0, height = 384 } = {}) {') + 3000);
+  // PIN MOVED (TWO-HANDS AUDIT): the window 3000 -> 3400 - the portrait poses a carried pair with both arms up (its
+  // `mirror:`) and flags the left hand's blade, which moved the flag lines past the old edge
+  const fig = arm.slice(arm.indexOf('    figure({ yaw = 0, height = 384 } = {}) {'), arm.indexOf('    figure({ yaw = 0, height = 384 } = {}) {') + 3400);
   assert.match(fig, /if \(r\.slot === 'weapon'\) r\.hidden = false;/, 'a paperdoll shows what you carry, drawn or not');
   assert.match(fig, /else if \(r\.slot === 'arrow'\) r\.hidden = !arrowShown;/, 'the arrow still follows its shoot keys');
   // F2: the pack hands the rig the hand as well as the worn table

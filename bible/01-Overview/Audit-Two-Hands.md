@@ -47,16 +47,16 @@ Severity: **Blocker** breaks the feature or its balance for everyone; **Major** 
 | L2 3 / L4 2 | MAJOR | The running hands never appeared with the Weapon Widget, Handheld Torches and Shield Widget off: the eye the ground speed is read from was tracked only under those mods | FIXED: the eye tracked every frame, above the mods' gate |
 | L2 4 | MAJOR | With the Weapon Widget on, the left hand took the widget's Bob and Inertia sway in the mirror: the hands breathed apart walking and spread on a turn | FIXED: the mirrored hand's rect carries the sway in its own screen direction (`pairRect`) - the mod's own rule for a mirrored sprite |
 | L2 5 | MAJOR | A punch thrown on the run was hidden for about 0.27 s | FIXED: the striking hand drawn by the pair over the running fists, from the punch's first frame |
-| L3 1 | BLOCKER | On the game's own skeletons (no Weapon Bone Left) the Morrowind pair showed one weapon and the left hand never swung | MW |
-| L3 2 | MAJOR | An arm placed from another pose left the torso | MW |
-| L3 3 | MAJOR | The carry that prevents pops eased every bone apart in absolute space: joints left their bones mid-carry | MW |
-| L3 4 | MAJOR | The running hands jumped at the edges of a climb and when the map was raised | MW |
-| L3 5 | MAJOR | A left-hand slash swept the opposite way to the one asked for | MW |
+| L3 1 | BLOCKER | On the game's own skeletons (no Weapon Bone Left) the Morrowind pair showed one weapon and the left hand never swung | FIXED: a Weapon Bone Left made by the mirror from the skeleton's own Weapon Bone (`offWeaponBoneAddon`) on every body; the composition stands on the pair being held, not on the blade being bound |
+| L3 2 | MAJOR | An arm placed from another pose left the torso | FIXED: the mirror law in each bone's own frame, every arm's locals hung from this frame's parent - a twisted chest's shoulder 9.07 units off, now 0.00; and the first law's own slide (a mirrored knee, a shoulder 0.52 units, a finger 10% off its bone) gone with it |
+| L3 3 | MAJOR | The carry that prevents pops eased every bone apart in absolute space: joints left their bones mid-carry | FIXED: carried per bone in its own frame - worst bone mid-carry 71% off its length, now 0.0%; the Shield Bone stays on its hand |
+| L3 4 | MAJOR | The running hands jumped at the edges of a climb and when the map was raised | FIXED: the run solved under the climb in a slot of its own - onto the wall 1.19 -> 0.52 (the climb's own ease), a sheet up 1.05 -> 0.005 |
+| L3 5 | MAJOR | A left-hand slash swept the opposite way to the one asked for | FIXED: a mirrored blow plays the mirror strike's backhand - the left hand's StrikeLeft the right's StrikeRight in the glass, frame for frame |
 | L2 6 | MINOR | After the hands stopped being two mid-strike (a quickslot), the hand in use stayed the striking hand's: a bare fist drawn and struck while a katana was held | FIXED: `activeHand` the striking hand's only while the hands are two |
 | L2 7 | MINOR | The pump kept its own clock, out of step with the head bob | FIXED: the stride on the HeadBobber's own timer (`runPhaseOfBob`, the motion bag's `bobTimer`) |
 | L2 9 | MINOR | H with a pair up billed BowLeftHandWithSwitching's switch delay, a swap's, where nothing changes hands | FIXED: no bill with both hands up |
 | L2 10 | MINOR | The left clone was stepped every frame of single-hand play, never drawn | FIXED: stepped while a pair is up or until it has settled hidden |
-| L3 6-11 | MINOR | A view's arms starting stale; the pair's draw unmirrored where its sheathe is; the portrait's left blade by the view it was opened from; a failed left swap refused forever; a full mirror pass a frame; the running hands sliding with the look with follow-camera off | MW |
+| L3 6-11 | MINOR | A view's arms starting stale; the pair's draw unmirrored where its sheathe is; the portrait's left blade by the view it was opened from; a failed left swap refused forever; a full mirror pass a frame; the running hands sliding with the look with follow-camera off | FIXED, each: a fresh carry takes its composition at once and a view switch resets it; the pair composed from the draw's first frame; the portrait shows the pair from either view; the failed swap tried again; no whole-skeleton matrices a frame (0.101 -> 0.011 ms, 302 -> 109 collections over 20k frames); the run laid on the pitched lens (0.40 -> 0.033 rad, the rest a fixture's unreachable targets) |
 | L4 4 | MINOR | The enhanced HUD's hand plaque and a technique's weapon flipped to the off hand's item on its every blow (an aim cancelled) | FIXED: `restingWeapon` - the lead's - in all four hosts and the technique |
 | L4 6 | MINOR | "A pair never meets a light" was false under Handheld Torches' RelaxedLanterns | FIXED: the record says when it does |
 | L4 7 | MINOR | The Fighting tutorial still taught H as a swap | FIXED: "Two weapons or two fists both fight; H picks the lead" |
@@ -78,11 +78,15 @@ Severity: **Blocker** breaks the feature or its balance for everyone; **Major** 
 ## Pinned
 
 `test/twohands.test.js` (20) - every FIXED finding of L1, L2, L4 and L5 above, by execution through the real machine,
-formula, rig and Weapon Widget; `test/twohands_mw.test.js` - L3's. Mutants: `tools/mutants/twohands.json` (112, 39 of
-them the audit's `TWOHANDS-AUDIT-*`: each fix reverted, and L5's 16 scratch mutants of the record's claims, three of
-which still lived after the first fixes - the sheathed run from below, the pair on the climb, one hand's H line -
-until pinned), every one dead. PIN MOVED (AUDIT): `a12_lefthand` (the bow-switch arm on a bow in the left hand),
-`audit_seats_client` G5, `auditcc_pvp` H5 and `duel_combat` DUEL1 (the off hand's terms between players),
-`enhancedHud` AUDIT 39 (the plaque reads the resting weapon), `ww2_idlebob` WW2 (the motion bag's `bobTimer`). Records
-re-aimed where the fixes moved their lines, each re-run: `auditcc_pvp.json` (four), `climb4.json`, `duel.json`, and
-six of `twohands.json`'s own.
+formula, rig and Weapon Widget; `test/twohands_mw.test.js` (23) - L3's, on the retail biped and the fixture arm, with
+`tools/mutants/twohands_mw.json` (40, dead) and the twelve `twohands.json` records aimed into the Morrowind lane
+re-run on its fixed code. Mutants: `tools/mutants/twohands.json` (110, 39 of them the audit's `TWOHANDS-AUDIT-*`: each
+fix reverted, and L5's 16 scratch mutants of the record's claims, three of which still lived after the first fixes -
+the sheathed run from below, the pair on the climb, one hand's H line - until pinned), every one dead. PIN MOVED
+(AUDIT): `a12_lefthand` (the bow-switch arm on a bow in the left hand), `audit_seats_client` G5, `auditcc_pvp` H5 and
+`duel_combat` DUEL1 (the off hand's terms between players), `enhancedHud` AUDIT 39 (the plaque reads the resting
+weapon), `ww2_idlebob` WW2 (the motion bag's `bobTimer`); for L3, `climb6`, `fparm`, `reversedSwing`,
+`fb1012b_headheld` and `ws1_sheathing`. Records re-aimed where the fixes moved their lines, each re-run:
+`auditcc_pvp.json` (four), `climb4.json`, `duel.json`, and six of `twohands.json`'s own. Two `twohands.json` records
+whose source L3 rewrote (`TWOHANDS-mirror-one-reflection`, `TWOHANDS-arm-off-weapon-any-node`) moved to
+`twohands_mw.json`, re-aimed.

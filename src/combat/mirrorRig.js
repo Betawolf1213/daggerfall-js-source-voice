@@ -9,36 +9,66 @@
 // It holds NO number about any skeleton (combat/climbRig.js's rule, CLIMB6): every bone's counterpart is found by its
 // NAME (Bip01's "L"/"R", the attach family's "Left"/"Right", Morrowind's "Weapon Bone" and "Weapon Bone Left"), the
 // mirror's plane is the skeleton's own middle (halfway between its two upper arms at rest), and a bone's mirror is
-// taken against the REST pose of both bones - so the rule holds whatever way a skeleton's left bones' own axes run:
+// taken against the REST pose of both bones - so the rule holds whatever way a skeleton's left bones' own axes run.
 //
-//     M'(b) = S . M(m(b)) . Rest(m(b))^-1 . S . Rest(b)
+// THE LAW, IN EACH BONE'S OWN FRAME (TWO-HANDS AUDIT). A bone moves as its counterpart moves, in the mirror, FROM ITS
+// OWN REST: its counterpart's motion from rest in its parent's frame (its local delta, RestL(m)^-1 . L(m)) is carried
+// into this bone's axes by the mirror and laid on this bone's own rest local -
 //
-// where M is a bone's posed transform in the graph's space, Rest its rest transform there, m(b) its counterpart (itself
-// for a bone on the middle) and S the reflection through the middle plane. At rest it is the rest; a skinned vertex of
-// the left arm lands where the right arm's mirrored vertex does (the bind pose is symmetric); a part on "Weapon Bone
-// Left" - which rule 13 already draws mirrored (attach.cpp's "Left" test, the bow's own law) - lands as the mirror of the
-// right hand's weapon. A bone with no counterpart (the Shield Bone on the left forearm) keeps its local and rides its
-// mirrored parent.
+//     L'(b) = RestL(b) . K^(b)^-1 . [ RestL(m)^-1 . L(m) ] . K^(b),     K^(b) = the 3x3 of Rest(m)^-1 . S . Rest(b)
+//
+// where L is a bone's local (its transform against its parent), RestL its rest local, Rest its rest in the graph's
+// space, m = m(b) its counterpart (itself for a bone on the middle) and S the reflection through the middle plane; K^
+// is a constant of the skeleton, read once. At rest it is the rest; mirrored twice it is the pose; every bone's
+// rotation in the graph's space is the mirror law's own, M'(b) = S . M(m) . Rest(m)^-1 . S . Rest(b) - so a skinned
+// vertex of the left arm turns as the right arm's mirrored vertex does, and a part on "Weapon Bone Left" (which rule 13
+// draws mirrored - attach.cpp's "Left" test, the bow's own law) turns as the mirror of the right hand's weapon. Where
+// the rest pose is its own mirror (the fixture arm) it IS that law, translations and all. Where it is not, the
+// difference is the point: the graph law hung each bone at the mirror of its counterpart's frame, so a turned
+// counterpart swung the bone's JOINT off its parent by the rest's own asymmetry - on the retail biped, whose rest
+// stands its legs 6.7 units off their mirror, a bent knee's mirror slid the other knee off its thigh, a turned upper arm
+// slid the shoulder 0.52 units off the clavicle and a finger joint 10% off its bone. Here every joint stays where its
+// parent carries it. A bone with no counterpart (the Shield Bone on the left forearm) keeps its local and rides its
+// mirrored parent. Two more things follow, and both are the point:
+//   - AN ARM SET FROM ANOTHER POSE HANGS FROM THIS FRAME'S BODY. Its bones' locals are the other pose's (copied, or
+//     mirrored as above), so its shoulder stays where this frame's chest carries it - the source torso's twist never
+//     moves it. (The first draft set an arm absolutely in the graph's space: on the retail biped, a 25-degree spine twist
+//     left the shoulder 9.07 units off the chest. It is cur(P) . srcP^-1 . srcT(b), re-rooted on the parent P.)
+//   - THE MIRROR READS NO MATRIX OF THE FRAME. A whole skeleton's transforms were composed for every frame (the clip's,
+//     each pose's, every bone placed and every other bone ridden); the frame now reads only the locals it mirrors.
 //
 // THE REQUEST (all optional):
 //   full  - the whole pose mirrored: the torso turns the other way and each arm takes the other's;
-//   limbs - { L, R }: an arm set absolutely, after `full`, from a pose: `{ pose, side, mirror }` - `pose` a poseSkeleton
-//           map (null: the clip's own, as it stood before any change here), `side` the arm of it to read, `mirror`
-//           whether that arm is mirrored onto this side or copied as it stands;
-//   carry - the no-pop: `{ key, dt, tau, state }` - a change of `key` (the composition) carries every bone this module
-//           wrote from where it was last frame onto its new place over `tau` (ClimbPose's LIMB_TAU law); `state` is the
-//           caller's object the carry lives in between frames.
+//   limbs - { L, R }: an arm set, after `full`, from a pose: `{ pose, side, mirror }` - `pose` a poseSkeleton map (null:
+//           the clip's own, as it stood before any change here; a map of the arm alone serves - limbSkeleton), `side`
+//           the arm of it to read, `mirror` whether that arm is mirrored onto this side or copied as it stands. Either
+//           way the arm hangs from this frame's parent;
+//   dip   - { L, R }: radians each arm is turned DOWN at its shoulder, over all of the above (the guard: the arm not
+//           striking lowered while the other strikes - TWO-HANDS AUDIT, Mac: "the other weapon in hand should lower
+//           slightly"). The upper arm turns about its own joint in the upright plane through shoulder and wrist, so the
+//           arm stays on its shoulder and every bone keeps its length; the caller eases the angle (handsLaw.js guardStep);
+//   carry - the no-pop: `{ key, dt, tau, state }` - a change of `key` (the composition) carries every bone from where it
+//           was drawn last frame onto its new place over `tau` (ClimbPose's LIMB_TAU law); `state` is the caller's
+//           object the carry lives in between frames, one per rig. A state that has drawn nothing (new, or reset - the
+//           rig was not drawn: a view just entered, a rebuild) takes its first composition at once: there is nothing
+//           on the screen to carry from.
 // Answers the refs it wrote, or null when nothing was asked.
+//
+// THE SECOND WEAPON'S BONE (offWeaponBoneAddon): Morrowind's retail skeletons carry no "Weapon Bone Left" - in OpenMW it
+// is an optional node under the left hand that only a modded skeleton has (the bow's attach bone, which falls back to
+// "Weapon Bone" without it). A skeleton without one is given one made BY THIS MIRROR from its own Weapon Bone, so the
+// left hand's weapon is the right's in the glass on every skeleton.
 
 import { mat33Mul } from '../formats/mwNifMesh.js';
 import { HELD_BONE_ALIASES } from './heldPose.js';
+import { rotAxisAngle } from './climbRig.js';
 
 // ---- the algebra: affines { a: row-major 3x3 (rotation x uniform scale), t: [3] }, column vectors ------------------
 
 const apply = (m, v) => [m[0] * v[0] + m[1] * v[1] + m[2] * v[2], m[3] * v[0] + m[4] * v[1] + m[5] * v[2], m[6] * v[0] + m[7] * v[1] + m[8] * v[2]];
 const mul = (A, B) => { const t = apply(A.a, B.t); return { a: mat33Mul(A.a, B.a), t: [t[0] + A.t[0], t[1] + A.t[1], t[2] + A.t[2]] }; };
 const scaleOf = (a) => Math.hypot(a[0], a[3], a[6]) || 1;
-/** The inverse of an affine whose 3x3 is a rotation times a uniform scale (every node's). */
+/** The inverse of an affine whose 3x3 is a rotation times a uniform scale (every node's) - or a reflection times one. */
 function inv(A) {
   const s2 = scaleOf(A.a) ** 2;
   const a = A.a;
@@ -46,7 +76,6 @@ function inv(A) {
   const t = apply(ia, A.t);
   return { a: ia, t: [-t[0], -t[1], -t[2]] };
 }
-const unscaled = (a) => { const s = scaleOf(a); return Float32Array.from(a, (v) => v / s); };
 const transposed = (m) => Float32Array.from([m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]]);
 /** A rotation matrix as a unit quaternion [x, y, z, w]. */
 function quatOf(r) {
@@ -59,22 +88,55 @@ function quatOf(r) {
   const n = Math.hypot(x, y, z, w) || 1;
   return [x / n, y / n, z / n, w / n];
 }
-function matOf([x, y, z, w]) {
-  return Float32Array.from([
-    1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w),
-    2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w),
-    2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y),
-  ]);
+/** A unit quaternion's rotation matrix, into `out`. */
+function matInto(out, [x, y, z, w]) {
+  out[0] = 1 - 2 * (y * y + z * z); out[1] = 2 * (x * y - z * w); out[2] = 2 * (x * z + y * w);
+  out[3] = 2 * (x * y + z * w); out[4] = 1 - 2 * (x * x + z * z); out[5] = 2 * (y * z - x * w);
+  out[6] = 2 * (x * z - y * w); out[7] = 2 * (y * z + x * w); out[8] = 1 - 2 * (x * x + y * y);
+  return out;
 }
-/** The rotation a share `k` of the way from identity to `q` (the short way). */
-function quatPow(q, k) {
+/** The rotation a share `k` of the way from identity to `q` (the short way), into `out`. */
+function quatPowInto(out, q, k) {
   let [x, y, z, w] = q;
   if (w < 0) { x = -x; y = -y; z = -z; w = -w; }
   const ang = 2 * Math.acos(Math.min(1, w));
   const s = Math.sin(ang / 2);
-  if (s < 1e-9) return [0, 0, 0, 1];
+  if (s < 1e-9) { out[0] = 0; out[1] = 0; out[2] = 0; out[3] = 1; return out; }
   const h = (ang * k) / 2, sh = Math.sin(h) / s;
-  return [x * sh, y * sh, z * sh, Math.cos(h)];
+  out[0] = x * sh; out[1] = y * sh; out[2] = z * sh; out[3] = Math.cos(h);
+  return out;
+}
+
+// The frame's scratch (TWO-HANDS AUDIT: the mirror allocates its answer and nothing else). The module never re-enters
+// itself, so one set serves every rig.
+const scratchAffine = () => ({ a: new Float64Array(9), t: new Float64Array(3) });
+const T0 = scratchAffine(), T1 = scratchAffine(), T2 = scratchAffine();
+const Q = [0, 0, 0, 1], QM = new Float64Array(9);
+/** out = A . B (affines; `out` aliases neither). */
+function mulInto(out, A, B) {
+  const a = A.a, b = B.a, o = out.a;
+  for (let r = 0; r < 3; r++) {
+    const a0 = a[r * 3], a1 = a[r * 3 + 1], a2 = a[r * 3 + 2];
+    o[r * 3] = a0 * b[0] + a1 * b[3] + a2 * b[6];
+    o[r * 3 + 1] = a0 * b[1] + a1 * b[4] + a2 * b[7];
+    o[r * 3 + 2] = a0 * b[2] + a1 * b[5] + a2 * b[8];
+    out.t[r] = a0 * B.t[0] + a1 * B.t[1] + a2 * B.t[2] + A.t[r];
+  }
+  return out;
+}
+/** A pose entry (`{ rotation, translation, scale }`, a bone's local) as an affine, into `out`. */
+function affineInto(out, e) {
+  const s = e.scale ?? 1;
+  for (let i = 0; i < 9; i++) out.a[i] = e.rotation[i] * s;
+  out.t[0] = e.translation[0]; out.t[1] = e.translation[1]; out.t[2] = e.translation[2];
+  return out;
+}
+/** An affine as a fresh pose entry - the one thing the frame allocates per bone it writes. */
+function entryOf(m) {
+  const s = scaleOf(m.a);
+  const rotation = new Float32Array(9);
+  for (let i = 0; i < 9; i++) rotation[i] = m.a[i] / s;
+  return { rotation, translation: [m.t[0], m.t[1], m.t[2]], scale: s };
 }
 
 // ---- the skeleton's mirror, read off it once ---------------------------------------------------------------------
@@ -94,21 +156,14 @@ const CLAVICLE = { L: ['bip01 l clavicle', ATTACH_OF['bip01 l clavicle']], R: ['
 const UPPER = { L: ['bip01 l upperarm', ATTACH_OF['bip01 l upperarm']], R: ['bip01 r upperarm', ATTACH_OF['bip01 r upperarm']] };
 const HAND = { L: ['bip01 l hand', ATTACH_OF['bip01 l hand']], R: ['bip01 r hand', ATTACH_OF['bip01 r hand']] };
 
-const _plans = new WeakMap();
-/**
- * The mirror's plan for a skeleton in the graph space `root` (memoised per skeleton and space): every bone's counterpart
- * ref, its rest transform and its inverse, the middle plane's x, the bones in parent-first order, and each arm's bones
- * (its clavicle - else its upper arm - and everything under it). Null for a skeleton with no pair of arms.
- */
-export function mirrorPlan(skeleton, root, skelMats) {
+/** The plan, read off the skeleton as it stands (mirrorPlan memoises it; offWeaponBoneAddon reads it fresh, before the
+ *  skeleton it is read from takes the node it makes). */
+function buildPlan(skeleton, root, skelMats) {
   if (!skeleton?.nodes || !skeleton.byName) return null;
-  let per = _plans.get(skeleton);
-  if (!per) { per = new Map(); _plans.set(skeleton, per); }
-  if (per.has(root)) return per.get(root);
   const find = (names) => { for (const n of names) { if (!n) continue; const r = skeleton.byName.get(n); if (r !== undefined) return r; } return null; };
   const rest = skelMats(skeleton, new Map(), root);
   const upL = find(UPPER.L), upR = find(UPPER.R);
-  if (upL == null || upR == null || !rest.get(upL) || !rest.get(upR)) { per.set(root, null); return null; }
+  if (upL == null || upR == null || !rest.get(upL) || !rest.get(upR)) return null;
   const x0 = (rest.get(upL).t[0] + rest.get(upR).t[0]) / 2;
   const children = new Map();
   for (const [ref, node] of skeleton.nodes) {
@@ -137,123 +192,203 @@ export function mirrorPlan(skeleton, root, skelMats) {
   // a bone IN an arm whose name has no side (the left forearm's Shield Bone, the right hand's Weapon Bone on a rig with
   // no Weapon Bone Left) is no bone of the middle: it has no counterpart, and rides its arm
   for (const s of ['L', 'R']) for (const ref of arms[s]) if (counterpart.get(ref) === ref) counterpart.set(ref, null);
-  const plan = {
-    x0, order, counterpart, restOf, restInv, children,
-    S: { a: Float32Array.from([-1, 0, 0, 0, 1, 0, 0, 0, 1]), t: [2 * x0, 0, 0] },
+  const S = { a: Float32Array.from([-1, 0, 0, 0, 1, 0, 0, 0, 1]), t: [2 * x0, 0, 0] };
+  // THE MIRROR IN EACH BONE'S FRAME (the header's law): L'(b) = A(b) . L(m) . B(b), two constants a bone -
+  // B(b) = K^(b), the 3x3 of K(b) = Rest(m)^-1 . S . Rest(b), and A(b) = RestL(b) . K^(b)^-1 . RestL(m)^-1
+  const restLocal = (ref) => { const r = skeleton.nodes.get(ref).rest; return { a: Float32Array.from(r.rotation, (v) => v * (r.scale ?? 1)), t: [r.translation[0], r.translation[1], r.translation[2]] }; };
+  const linear = (m) => ({ a: m.a, t: [0, 0, 0] });
+  const link = new Map();
+  for (const ref of order) {
+    const m = counterpart.get(ref);
+    if (m == null || !restOf.has(ref) || !restOf.has(m)) continue;
+    const Kb = linear(mul(mul(restInv.get(m), S), restOf.get(ref)));
+    link.set(ref, { m, A: mul(mul(restLocal(ref), inv(Kb)), inv(restLocal(m))), B: Kb });
+  }
+  const armSkeleton = (s) => ({ nodes: new Map(arms[s].map((ref) => [ref, skeleton.nodes.get(ref)])), byName: skeleton.byName });
+  return {
+    x0, order, counterpart, restOf, restInv, children, link,
+    S,
     arms,
+    armSkeletons: { L: armSkeleton('L'), R: armSkeleton('R') },
     hands: { L: find(HAND.L), R: find(HAND.R) },
+    uppers: { L: upL, R: upR },
+    targets: new Map(),   // the frame's scratch: the composition's locals before they are written
   };
+}
+
+const _plans = new WeakMap();
+/**
+ * The mirror's plan for a skeleton in the graph space `root` (memoised per skeleton and space): every bone's counterpart
+ * ref, its rest transform and its inverse, the middle plane's x, the bones in parent-first order, each arm's bones (its
+ * clavicle - else its upper arm - and everything under it), and each paired bone's mirror in its own frame (`link`).
+ * Null for a skeleton with no pair of arms.
+ */
+export function mirrorPlan(skeleton, root, skelMats) {
+  if (!skeleton?.nodes || !skeleton.byName) return null;
+  let per = _plans.get(skeleton);
+  if (!per) { per = new Map(); _plans.set(skeleton, per); }
+  if (per.has(root)) return per.get(root);
+  const plan = buildPlan(skeleton, root, skelMats);
   per.set(root, plan);
   return plan;
 }
 
-/** Bone `ref`'s mirror, given the source's posed transforms `src`: S . M(m) . Rest(m)^-1 . S . Rest(b). Null when the
- *  bone has no counterpart (it rides its parent). */
-function mirrored(plan, src, ref) {
-  const m = plan.counterpart.get(ref);
-  if (m == null) return null;
-  const Mm = src.get(m), Rm = plan.restInv.get(m), Rb = plan.restOf.get(ref);
-  if (!Mm || !Rm || !Rb) return null;
-  return mul(mul(mul(mul(plan.S, Mm), Rm), plan.S), Rb);
+/**
+ * The bones of `skeleton` a limb request `l` for arm `side` reads from its pose - the arm it copies (its own) or the arm
+ * it mirrors (the other) - as a skeleton of their own (`{ nodes, byName }`), so a pose of another clip is sampled for
+ * them alone (mwSkin.js poseSkeleton walks `nodes`). The whole skeleton where it has no pair of arms.
+ */
+export function limbSkeleton(skeleton, root, skelMats, side, l) {
+  const plan = mirrorPlan(skeleton, root, skelMats);
+  if (!plan || !l) return skeleton;
+  const from = l.side === 'L' || l.side === 'R' ? l.side : side;
+  return plan.armSkeletons[l.mirror && from !== side ? from : side];
 }
 
-/** Write bone `ref`'s posed transform as `target` (graph space): its new local against its parent's transform `mats`
- *  holds now, and `mats` updated. */
-function place(skeleton, pose, mats, ref, target) {
-  const node = skeleton.nodes.get(ref);
-  if (!node) return;
-  const parent = mats.get(node.parent);
-  const local = parent ? mul(inv(parent), target) : target;
-  const s = scaleOf(local.a);
-  const rotation = Float32Array.from(local.a, (v) => v / s);
-  pose.set(ref, { rotation, translation: [local.t[0], local.t[1], local.t[2]], scale: s });
-  mats.set(ref, target);
+/** Bone `link`'s mirrored local, given its counterpart's local `e` (a pose entry): A . L(m) . B (the header's law,
+ *  RestL(b) . K^-1 . RestL(m)^-1 . L(m) . K^), a fresh entry. */
+function mirrorLocal(link, e) {
+  affineInto(T0, e);
+  mulInto(T1, T0, link.B);
+  return entryOf(mulInto(T2, link.A, T1));
 }
-/** A bone that keeps its local: its transform recomputed under its (moved) parent. */
-function ride(skeleton, pose, mats, ref) {
-  const node = skeleton.nodes.get(ref);
-  if (!node) return;
-  const parent = mats.get(node.parent);
-  const local = pose.get(ref) ?? node.rest;
-  const la = Float32Array.from(local.rotation, (v) => v * local.scale);
-  const m = { a: la, t: [local.translation[0], local.translation[1], local.translation[2]] };
-  mats.set(ref, parent ? mul(parent, m) : m);
+const sameLocal = (p, q) => {
+  if (p === q) return true;
+  if (Math.abs((p.scale ?? 1) - (q.scale ?? 1)) > 1e-6) return false;
+  for (let i = 0; i < 3; i++) if (Math.abs(p.translation[i] - q.translation[i]) > 1e-6) return false;
+  for (let i = 0; i < 9; i++) if (Math.abs(p.rotation[i] - q.rotation[i]) > 1e-6) return false;
+  return true;
+};
+/** A local carried a share `k` of its offset `off` back toward where it was drawn: its rotation turned by k of the
+ *  offset's turn, its joint moved by k of the offset's move, its scale by k of the ratio - all in its parent's frame,
+ *  so it rides wherever its (carried) parent is drawn. A fresh entry. */
+function carried(off, base, k) {
+  matInto(QM, quatPowInto(Q, off.q, k));
+  const r = base.rotation, rotation = new Float32Array(9);
+  for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) rotation[i * 3 + j] = QM[i * 3] * r[j] + QM[i * 3 + 1] * r[3 + j] + QM[i * 3 + 2] * r[6 + j];
+  const t = base.translation;
+  return { rotation, translation: [t[0] + off.d[0] * k, t[1] + off.d[1] * k, t[2] + off.d[2] * k], scale: (base.scale ?? 1) * off.ds ** k };
 }
 
 /**
  * THE MIRROR ON THE SKELETON, written into `pose` (a poseSkeleton map) after the clip's - see the header for the
- * request. `skelMats` is the assembly's (mwSkin skeletonSpaceMatrices), `root` its space (GRAPH_ROOT).
+ * request. `skelMats` is the assembly's (mwSkin skeletonSpaceMatrices) - the plan's rests are read with it once - and
+ * `root` its space (GRAPH_ROOT).
  * @returns {number[] | null} the refs written
  */
 export function applyMirrorRig(skeleton, pose, root, skelMats, req) {
-  // nothing composed, no composition changing and none still carrying: the clip's pose stands as it is
-  const st0 = req?.carry?.state ?? null;
+  const c = req?.carry ?? null;
+  const st = c?.state ?? null;
   const composing = !!(req && (req.full || req.limbs?.L || req.limbs?.R));
-  const carrying = !!st0 && (!!st0.from || st0.key !== req.carry.key);
-  if (!req || (!composing && !carrying)) return null;
+  const dipping = !!(req?.dip && (req.dip.L > 0 || req.dip.R > 0));
+  // a carry that has drawn nothing yet takes its first composition as it stands: there is no drawn pose to carry from
+  if (st && st.key === undefined) { st.key = c.key; st.from = null; st.k = 0; st.last = null; }
+  const carrying = !!st && (!!st.from || st.key !== c.key);
+  // nothing composed, no composition changing and none still carrying, no arm lowered: the clip's pose stands as it is
+  if (!req || (!composing && !carrying && !dipping)) { if (st) st.last = null; return null; }
   const plan = mirrorPlan(skeleton, root, skelMats);
-  if (!plan) return null;
-  const clip = skelMats(skeleton, pose, root);   // the clip's own pose, before anything here
-  const mats = new Map(clip);
-  const targets = new Map();
-  const srcMats = new Map();   // a pose map's transforms, once each
-  const matsFor = (p) => {
-    if (!p) return clip;
-    if (!srcMats.has(p)) srcMats.set(p, skelMats(skeleton, p, root));
-    return srcMats.get(p);
-  };
-  // 1. the whole body in the mirror (a bone with no counterpart rides its parent)
-  if (req.full) for (const ref of plan.order) { const t = mirrored(plan, clip, ref); if (t) targets.set(ref, t); }
-  // 2. an arm set from a pose: its own side's arm copied, or the other side's mirrored onto it
+  if (!plan) { if (st) { st.key = c.key; st.from = null; st.last = null; } return null; }
+  // the clip's own pose: nothing is written into `pose` before step 4, so every read below sees the clip
+  const clip = pose;
+  const clipL = (ref) => clip.get(ref) ?? skeleton.nodes.get(ref).rest;
+  const targets = plan.targets;
+  targets.clear();
+  // 1. the whole body in the mirror (a bone with no counterpart keeps its local and rides its mirrored parent)
+  if (req.full) for (const ref of plan.order) { const k = plan.link.get(ref); if (k) targets.set(ref, mirrorLocal(k, clipL(k.m))); }
+  // 2. an arm set from a pose: its own side's arm copied, or the other side's mirrored onto it - each bone's local read
+  // off that pose, so the arm hangs from this frame's parent wherever this frame's torso stands
   for (const side of /** @type {const} */ (['L', 'R'])) {
     const l = req.limbs?.[side];
     if (!l) continue;
-    const src = matsFor(l.pose ?? null);
+    const src = l.pose ?? clip;
+    const srcL = (ref) => src.get(ref) ?? skeleton.nodes.get(ref).rest;
     const from = l.side === 'L' || l.side === 'R' ? l.side : side;
     for (const ref of plan.arms[side]) {
-      if (l.mirror && from !== side) { const t = mirrored(plan, src, ref); if (t) targets.set(ref, t); else targets.delete(ref); }
-      else if (src.get(ref)) targets.set(ref, src.get(ref));
+      if (l.mirror && from !== side) { const k = plan.link.get(ref); if (k) targets.set(ref, mirrorLocal(k, srcL(k.m))); else targets.delete(ref); }
+      else targets.set(ref, srcL(ref));
     }
   }
-  // 3. the carry: a new composition starts every bone from where it was drawn last frame - the last composed frame's
-  // matrices, or, when nothing was composed, the clip's own (this frame's: the frame before it stood one step back)
-  const c = req.carry;
-  if (c?.state) {
-    const st = c.state;
+  // 3. the carry, IN EACH BONE'S OWN FRAME: a new composition starts every bone from the local it was drawn with last
+  // frame (the last composed frame's, or - nothing composed - the clip's own: this frame's, the frame before stood one
+  // step back), its offset to its new local - the turn prev . now^-1, the joint's move, the scale's ratio - eased away.
+  // Children ride their carried parents, so no joint leaves its bone and a bone no composition writes (the Shield Bone)
+  // never leaves its hand.
+  if (st) {
     if (st.key !== c.key) {
       const prevOf = st.last ?? clip;
       st.key = c.key;
       st.from = new Map();
-      // each bone's offset from its new place to where it was drawn: its turn about its own joint (the rotations'
-      // difference, prev . now^-1 of the 3x3s) and its joint's move - eased apart, so a far joint never swings on an arc
       for (const ref of plan.order) {
-        const prev = prevOf.get(ref), now = targets.get(ref) ?? clip.get(ref);
-        if (!prev || !now) continue;
-        const d = [prev.t[0] - now.t[0], prev.t[1] - now.t[1], prev.t[2] - now.t[2]];
-        let same = Math.hypot(d[0], d[1], d[2]) < 1e-6;
-        for (let i = 0; same && i < 9; i++) same = Math.abs(prev.a[i] - now.a[i]) < 1e-6;
-        if (!same) st.from.set(ref, { q: quatOf(mat33Mul(unscaled(prev.a), transposed(unscaled(now.a)))), d });
+        const prev = prevOf.get(ref) ?? clipL(ref), now = targets.get(ref) ?? clipL(ref);
+        if (sameLocal(prev, now)) continue;
+        st.from.set(ref, {
+          q: quatOf(mat33Mul(prev.rotation, transposed(now.rotation))),
+          d: [prev.translation[0] - now.translation[0], prev.translation[1] - now.translation[1], prev.translation[2] - now.translation[2]],
+          ds: (prev.scale ?? 1) / (now.scale ?? 1),
+        });
       }
       st.k = st.from.size ? 1 : 0;
     } else if (st.k > 0) st.k *= Math.exp(-Math.max(0, c.dt || 0) / Math.max(1e-4, c.tau || 0.06));
     if (st.k < 1e-3) { st.k = 0; st.from = null; }
   }
-  // 4. written parent first, so each local is taken against its parent's new place
+  // 4. written: the composition's locals, each carried by its offset while the carry stands
+  const k = st?.from ? st.k : 0;
+  const keep = !!st && (composing || !!st.from);
+  const last = keep ? (st.drawn ??= new Map()) : null;
+  if (last) last.clear();
   const wrote = [];
   for (const ref of plan.order) {
-    let t = targets.get(ref);
-    const carry = c?.state?.from?.get(ref);
-    if (carry && c.state.k > 0) {
-      const base = t ?? clip.get(ref);
-      const k = c.state.k;
-      t = { a: mat33Mul(matOf(quatPow(carry.q, k)), base.a), t: [base.t[0] + carry.d[0] * k, base.t[1] + carry.d[1] * k, base.t[2] + carry.d[2] * k] };
-    }
-    if (t) { place(skeleton, pose, mats, ref, t); wrote.push(ref); }
-    else ride(skeleton, pose, mats, ref);
+    let out = targets.get(ref);
+    const off = k > 0 ? st.from.get(ref) : null;
+    if (off) out = carried(off, out ?? clipL(ref), k);
+    // every bone's drawn local is kept, written or the clip's: a bone the clip moves under a change of composition (the
+    // striking arm as its blow begins) is carried from where it was drawn as the bones the composition writes are - the
+    // two hands' blows ease in alike
+    if (last) last.set(ref, out ?? clipL(ref));
+    if (!out) continue;
+    pose.set(ref, out);
+    wrote.push(ref);
   }
+  // 5. the guard: an arm lowered at its shoulder, over the composition and its carry (which keep the arm as composed -
+  // the guard's weight eases on its own, so a change of composition under it carries nothing of it)
+  if (dipping) for (const side of /** @type {const} */ (['L', 'R'])) if (dipArm(skeleton, pose, plan, side, req.dip[side]) && !wrote.includes(plan.uppers[side])) wrote.push(plan.uppers[side]);
+  targets.clear();
   // what was drawn, for the next change to start from - kept only while a composition or its carry stands
-  if (c?.state) c.state.last = composing || c.state.from ? mats : null;
+  if (st) st.last = last;
   return wrote.length ? wrote : null;
+}
+
+const IDENT3 = Float32Array.from([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+/**
+ * THE GUARD: arm `side`'s upper arm turned DOWN by `angle` radians about its own joint - in the upright plane through the
+ * shoulder and the wrist as the pose has them, so the hand drops and the arm stays on its shoulder (no joint moves off
+ * its parent, no bone changes its length). Worked in the upper arm's parent's frame: the graph's up (Morrowind's +Z)
+ * read there off the chain's rotations, the wrist read off the arm's own locals. True when it turned the arm.
+ */
+function dipArm(skeleton, pose, plan, side, angle) {
+  const up = plan.uppers[side], hand = plan.hands[side];
+  if (!(angle > 0) || up == null || hand == null) return false;
+  const loc = (ref) => pose.get(ref) ?? skeleton.nodes.get(ref).rest;
+  // the parent's rotation in the graph's space (a uniform scale turns no way)
+  const chain = [];
+  for (let r = skeleton.nodes.get(up).parent; skeleton.nodes.has(r); r = skeleton.nodes.get(r).parent) chain.push(r);
+  let Rp = IDENT3;
+  for (let i = chain.length - 1; i >= 0; i--) Rp = mat33Mul(Rp, loc(chain[i]).rotation);
+  const upward = [Rp[6], Rp[7], Rp[8]];   // the graph's +Z in the parent's frame (Rp^T . z)
+  // the wrist from the shoulder, in the parent's frame: the arm's locals from the upper arm down to the hand
+  const down = [];
+  for (let r = hand; r !== up; r = skeleton.nodes.get(r).parent) { if (!skeleton.nodes.has(r)) return false; down.push(r); }
+  let A = { a: Float32Array.from(IDENT3), t: [0, 0, 0] };
+  for (const ref of [up, ...down.reverse()]) { const e = loc(ref); A = mul(A, { a: Float32Array.from(e.rotation, (v) => v * (e.scale ?? 1)), t: e.translation }); }
+  const s0 = loc(up).translation;
+  const d = [A.t[0] - s0[0], A.t[1] - s0[1], A.t[2] - s0[2]];
+  // the axis that lowers it: d x up (a turn about it by a negative angle takes d toward -up)
+  const n = [d[1] * upward[2] - d[2] * upward[1], d[2] * upward[0] - d[0] * upward[2], d[0] * upward[1] - d[1] * upward[0]];
+  const nl = Math.hypot(n[0], n[1], n[2]);
+  if (!(nl > 1e-6 * Math.hypot(d[0], d[1], d[2]))) return false;   // an arm hanging plumb has no way down
+  const e = loc(up);
+  pose.set(up, { rotation: mat33Mul(rotAxisAngle([n[0] / nl, n[1] / nl, n[2] / nl], -angle), e.rotation), translation: e.translation, scale: e.scale });
+  return true;
 }
 
 /**
@@ -268,4 +403,50 @@ export function strikingSide(skeleton, root, skelMats, poseA, poseB) {
   const l = travel(plan.hands.L), r = travel(plan.hands.R);
   if (!(Math.max(l, r) > 1e-6)) return null;
   return r >= l ? 'R' : 'L';
+}
+
+// ---- the left hand's weapon bone --------------------------------------------------------------------------------
+
+/** What a made Weapon Bone Left is said to come from in an assembly's `injected` (WS1's record of the addons, where a
+ *  file's path stands): the function that made it. */
+export const WEAPON_BONE_LEFT_SOURCE = 'mirrorRig.offWeaponBoneAddon';
+
+/**
+ * TWO-HANDS AUDIT: A WEAPON BONE LEFT FOR A SKELETON THAT HAS NONE, made by the mirror from the skeleton's own Weapon
+ * Bone - a bone addon (WS1's shape: a parsed NIF whose one marked node hangs under a node the skeleton has) for
+ * mwSkin.js injectSkeletonNodes. Retail Morrowind's skeletons (xbase_anim, xbase_anim.1st) have none: OpenMW treats
+ * "Weapon Bone Left" as an optional node under the left hand (a bow's attach bone falls back to "Weapon Bone" without
+ * it), so the left hand's weapon had nowhere to hang. The node is hung under the Weapon Bone's parent's counterpart (the
+ * left hand), and its rest in the graph's space is
+ *
+ *     Rest(Weapon Bone Left) = S . Rest(Weapon Bone) . X          (X = diag(-1, 1, 1))
+ *
+ * - the Weapon Bone in the mirror, its own x turned back by X: rule 13 draws every part on a "Left" node with x negated
+ * (attach.cpp's substring test), so a sword hung here lands as the mirror of the sword in the right hand, which is what
+ * a second hand holds. Its local is Rest(left hand)^-1 . S . Rest(Weapon Bone) . X. On a skeleton that carries both
+ * nodes (the fixture arm) the authored Weapon Bone Left is exactly this (pinned).
+ * The node is named as Morrowind names it (the bow's attach bone, WEAPON_ATTACH_BONE's MarksmanBow row): the Weapon
+ * Bone's own name and " Left" - the counterpart counterpartName gives it, and the "Left" rule 13 reads.
+ * Null where nothing is to be made: a Weapon Bone Left is there, no Weapon Bone, no pair of arms, or the Weapon Bone's
+ * parent has no counterpart.
+ */
+export function offWeaponBoneAddon(skeleton, root, skelMats) {
+  const wb = skeleton?.byName?.get('weapon bone');
+  if (wb === undefined || skeleton.byName.has(counterpartName('weapon bone'))) return null;
+  const plan = buildPlan(skeleton, root, skelMats);   // not memoised: the skeleton is about to take the node
+  if (!plan) return null;
+  const pr = skeleton.nodes.get(wb).parent;
+  const pl = plan.counterpart.get(pr);
+  if (pl == null || pl === pr || !plan.restOf.has(wb) || !plan.restInv.has(pl)) return null;
+  const X = { a: Float32Array.from([-1, 0, 0, 0, 1, 0, 0, 0, 1]), t: [0, 0, 0] };
+  const local = mul(plan.restInv.get(pl), mul(mul(plan.S, plan.restOf.get(wb)), X));
+  const s = scaleOf(local.a);
+  return {
+    roots: [0],
+    records: [
+      { type: 'NiNode', name: skeleton.nodes.get(pl).name, rotation: Float32Array.from([1, 0, 0, 0, 1, 0, 0, 0, 1]), translation: [0, 0, 0], scale: 1, children: [1], extra: -1 },
+      { type: 'NiNode', name: `${skeleton.nodes.get(wb).name} Left`, rotation: Float32Array.from(local.a, (v) => v / s), translation: [local.t[0], local.t[1], local.t[2]], scale: s, children: [], extra: 2 },
+      { type: 'NiStringExtraData', string: 'BONE', next: -1 },
+    ],
+  };
 }

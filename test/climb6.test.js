@@ -468,9 +468,14 @@ test('CLIMB6 C16: THE FOUR HOSTS hand the rig the snapshot (world, exterior, int
   assert.match(fp, /climb: thirdClimb\(climbWorld, cam\),/, 'the body\'s pose');
   // PIN MOVED (TWO-HANDS): off the stone the same slot carries the running hands - the climb's request first, the run's
   // only where there is none (was: `climb: held ? null : firstClimb(climbWorld, cam),`)
-  assert.match(fp, /climb: held \? null : \(firstClimb\(climbWorld, cam\) \?\? firstRun\(cam\)\),/, 'the arms\' pose (the sheet\'s hands are the sheet\'s)');
+  // PIN MOVED (TWO-HANDS AUDIT): the climb's request stands alone in the slot again, and the run is solved UNDER it at
+  // what the climb leaves (`run:`, poseAssembly) - choosing one dropped the other whole the frame a climb began (was:
+  // `climb: held ? null : (firstClimb(climbWorld, cam) ?? firstRun(cam)),`)
+  assert.match(fp, /const fClimb = held \? null : firstClimb\(climbWorld, cam\);[^\n]*\n(?:[^\n]*\n){0,6}?\s*climb: fClimb,/, 'the arms\' pose (the sheet\'s hands are the sheet\'s)');
   assert.match(fp, /if \(climbHands && \(r\.slot === 'weapon' \|\| r\.slot === 'arrow' \|\| r\.slot === 'torch'\)\) r\.hidden = true;/, 'nothing in hands on the stone');
   assert.match(rd('src/combat/weaponRig.js'), /if \(_climbLower > 0 && !armsClimb\)/, 'posed arms stay on the screen');
   assert.match(rd('src/net/peerBodies.js'), /b\.cam\.climb = \(b\.climbTrack \?\?= new PeerClimbTrack\(\)\)\.input\(peer\.shown, f, b\.yaw, this\._now\(\), this\._collider\(\)\);/, 'the peers\' bodies');
-  assert.match(rd('src/formats/mwFirstPerson.js'), /applyFirstPersonNeck\([^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*assembly\.climbFit = climb \? applyClimbRig\(skeleton, pose, GRAPH_ROOT, fns\.skelMats, climb\) : null;\n\s*const mats = fns\.skelMats/, 'the hook between the neck and the matrices');
+  // PIN MOVED (TWO-HANDS AUDIT): the running hands' reach is solved between the neck and the climb, under the climb's
+  // request (`assembly.runFit`) - the climb's hook is still the last before the matrices
+  assert.match(rd('src/formats/mwFirstPerson.js'), /applyFirstPersonNeck\([^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*assembly\.runFit = run \? applyClimbRig\(skeleton, pose, GRAPH_ROOT, fns\.skelMats, run\) : null;\n(?:\s*\/\/[^\n]*\n)*\s*assembly\.climbFit = climb \? applyClimbRig\(skeleton, pose, GRAPH_ROOT, fns\.skelMats, climb\) : null;\n\s*const mats = fns\.skelMats/, 'the hook between the neck and the matrices');
 });

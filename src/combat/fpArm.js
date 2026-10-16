@@ -41,7 +41,7 @@
 
 import { lookAt, multiply, ortho, perspective, transformPoint, trs, wrapAngle } from '../world/mat4.js';
 import { ClimbPose, POSE } from '../player/climbPose.js';   // CLIMB6: the climb's limbs, in the world; TWO-HANDS: its limb law (LIMB_TAU) eases the mirror's compositions
-import { runWeightStep, runPhaseStep, pumpTarget3D, RUN_3D } from './handsLaw.js';   // TWO-HANDS: the run's pump, the sprite lane's stroke on the 3D body
+import { runWeightStep, runPhaseStep, pumpTarget3D, RUN_3D, mirrorStrike, guardStep, GUARD } from './handsLaw.js';   // TWO-HANDS: the run's pump, the sprite lane's stroke on the 3D body; a mirrored blow's way across the screen; the guard's weight
 import { strikingSide, mirrorPlan } from './mirrorRig.js';   // TWO-HANDS: which fist a hand-to-hand clip throws; the wrists, for the pins
 import { climbRequestToRig, climbRequestToFirstPerson } from './climbRig.js';   // CLIMB6: ...and in each rig's space
 import { seatRequestFor, seatedCamera, saddleRequestFor } from '../player/seatPose.js';   // CARDS2b: the seat in the rig's space; WAGONS3: and the body still on it; COATS3D: and astride
@@ -1718,23 +1718,52 @@ function sayNoArrow(notes) {
  *  here is the right hand's sword in the mirror, which is what a second hand holds. */
 export const OFF_WEAPON_BONE = weaponAttachBone(MW_WEAPON_TYPE.MarksmanBow);
 /**
- * TWO-HANDS: THE LEFT HAND'S WEAPON - the same record, the same mesh and the same door the right hand's takes
- * (resolveWeaponParts: the port's own models, Morrowind's records by type, material and shape), hung on the left hand's
- * node in a part of its own slot ('offweapon'). No arrow: a pair is two melee weapons (combat/handsLaw.js DUAL_TYPES).
- * A skeleton with no Weapon Bone Left draws no second weapon and says so - a sword hung anywhere else would hang
- * unmirrored, the wrong way round in the hand.
+ * TWO-HANDS AUDIT: THE PAIR'S GUARD ON THE BODY, sized by the sprite lane's: its hand drops GUARD.DOWN design pixels of
+ * DFU's 200-high surface (combat/climbHands.js NATIVE_H), so the arm here drops that share of the arms' own picture - the
+ * angle at the eye below (FP_FIELD_OF_VIEW's height), carried to the shoulder by the first-person arm's own proportions
+ * at rest (pairGuardDip). No number about any skeleton: each rig's angle is read off its arm.
  */
+const GUARD_SURFACE_H = 200;
+export const GUARD_LENS_DROP = Math.atan((GUARD.DOWN / GUARD_SURFACE_H) * 2 * Math.tan(FP_FIELD_OF_VIEW / 2));
+/**
+ * The angle each arm turns down at its shoulder at full guard (combat/mirrorRig.js `dip`): GUARD_LENS_DROP times the eye's
+ * distance to the wrist over the shoulder's - a small turn at the shoulder moves the wrist that many times farther than
+ * the same turn at the eye would, so on the picture the hand drops GUARD_LENS_DROP. Read at the build's rest pose (the
+ * idle's first frame), per side; the body takes the same angles (one body, one guard). Zeros where a bone is missing.
+ */
+export function pairGuardDip(arm, cameraRef) {
+  const plan = arm?.skeleton && arm.mats && arm.fns ? mirrorPlan(arm.skeleton, GRAPH_ROOT, arm.fns.skelMats) : null;
+  const eye = arm?.mats?.get(cameraRef)?.t;
+  const side = (s) => {
+    const sh = plan?.uppers?.[s] != null ? arm.mats.get(plan.uppers[s])?.t : null, wr = plan?.hands?.[s] != null ? arm.mats.get(plan.hands[s])?.t : null;
+    if (!eye || !sh || !wr) return 0;
+    const reach = Math.hypot(wr[0] - sh[0], wr[1] - sh[1], wr[2] - sh[2]);
+    return reach > 1e-6 ? GUARD_LENS_DROP * Math.hypot(wr[0] - eye[0], wr[1] - eye[1], wr[2] - eye[2]) / reach : 0;
+  };
+  return { L: side('L'), R: side('R') };
+}
 /** A weapon slot's note when the skeleton has no node to hang it on, and when a swap to it fails - the right hand's
  *  sentences, the left hand's too (TWO-HANDS: one sentence, two slots). */
 const noBoneNote = (slot, bone, what) => `${slot}: this skeleton has no "${bone}" bone to hang ${what} on`;
 const swapFailedNote = (slot, msg) => `${slot}: the swap to this weapon failed - ${msg}`;
-export function resolveOffWeaponParts({ weapon, allWeapons, find, skeletonBytes, has = null }) {
+/**
+ * TWO-HANDS: THE LEFT HAND'S WEAPON - the same record, the same mesh and the same door the right hand's takes
+ * (resolveWeaponParts: the port's own models, Morrowind's records by type, material and shape), hung on the left hand's
+ * node in a part of its own slot ('offweapon'). No arrow: a pair is two melee weapons (combat/handsLaw.js DUAL_TYPES).
+ * The node is asked of the skeleton AS ASSEMBLED (`hasBone`, as the holster asks - TWO-HANDS AUDIT): retail's carry no
+ * Weapon Bone Left in their bytes, and the player's rigs are given one made by the mirror from their own Weapon Bone
+ * (assembleFirstPersonArm's `offWeaponBone`, combat/mirrorRig.js offWeaponBoneAddon). Without `hasBone` the bytes are
+ * asked. A skeleton that has none even so draws no second weapon and says so - a sword hung anywhere else would hang
+ * unmirrored, the wrong way round in the hand.
+ */
+export function resolveOffWeaponParts({ weapon, allWeapons, find, skeletonBytes, has = null, hasBone = null }) {
   if (!weapon) return { parts: [], info: null, notes: [] };
   const r = resolveWeaponParts({ weapon, hasAmmo: false, allWeapons, find, skeletonBytes, has });
   const main = r.parts.find((p) => p.slot === 'weapon');
   const notes = r.notes.filter((n) => /^weapon[ :@]/.test(n)).map((n) => n.replace(/^weapon/, 'offweapon'));
   if (!main) return { parts: [], info: null, notes };
-  if (!skeletonHasBone(skeletonBytes, OFF_WEAPON_BONE)) {
+  const carries = hasBone ? hasBone(OFF_WEAPON_BONE) : skeletonHasBone(skeletonBytes, OFF_WEAPON_BONE);
+  if (!carries) {
     return { parts: [], info: null, notes: [...notes, noBoneNote('offweapon', OFF_WEAPON_BONE, r.weaponInfo?.name ?? main.slot)] };
   }
   return { parts: [{ slot: 'offweapon', bones: [OFF_WEAPON_BONE], bytes: main.bytes }], info: { ...r.weaponInfo, bone: OFF_WEAPON_BONE }, notes };
@@ -2022,7 +2051,7 @@ async function buildTpBody({
     const resolvedHip = resolveHipLanternPart({ hipLight, allLights, find, skeletonBytes, has: archiveHas(archives), hasBone: boneProbe(skeletonBytes, boneSources) });
     partBytes.push(...resolvedHip.parts);
 
-    let arm = await assembleFirstPersonArm({ skeletonBytes, parts: partBytes, boneSources, parseNif: parseNifOnce });   // MWNPC3: one parse a mesh, every body
+    let arm = await assembleFirstPersonArm({ skeletonBytes, parts: partBytes, boneSources, parseNif: parseNifOnce, offWeaponBone: true });   // MWNPC3: one parse a mesh, every body; TWO-HANDS AUDIT: the left hand's weapon bone
     if (!arm.ok) {
       return { ok: false, stage: arm.stage || 'assembly', error: arm.error, notes: [...missing, ...(arm.notes || [])], rows };
     }
@@ -2034,7 +2063,7 @@ async function buildTpBody({
         const path = `meshes/${r.model}`, arc = find(path);
         return arc ? [{ slot: r.slot, bones: r.bones, bytes: nifBytes(arc, path) }] : [];
       });
-      const again = back.length ? await assembleFirstPersonArm({ skeletonBytes, parts: [...partBytes, ...back], boneSources, parseNif: parseNifOnce }) : null;
+      const again = back.length ? await assembleFirstPersonArm({ skeletonBytes, parts: [...partBytes, ...back], boneSources, parseNif: parseNifOnce, offWeaponBone: true }) : null;
       if (again?.ok) {
         arm = again;
         skinRows.push(...bare);
@@ -2792,7 +2821,7 @@ export async function buildFpArm({
         esm: esmDiagnosis(esmNames, parts, race),
       };
     }
-    const arm = await assembleFirstPersonArm({ skeletonBytes, parts: partBytes, parseNif: parseNifOnce });   // MWNPC3: one parse a mesh, every body
+    const arm = await assembleFirstPersonArm({ skeletonBytes, parts: partBytes, parseNif: parseNifOnce, offWeaponBone: true });   // MWNPC3: one parse a mesh, every body; TWO-HANDS AUDIT: the left hand's weapon bone
     stage('meshes');
     // MW-D11: the textures the assembled pieces NAME, resolved through
     // rule 36's path law and decoded now - while the archives are still
@@ -3042,6 +3071,8 @@ export async function buildFpArm({
       // MW-D34: adjustScale's factors for the drawn body and the
       // camera's focal height.
       raceScale,
+      // TWO-HANDS AUDIT: the pair's guard, each arm's angle at the shoulder - read at this rest pose (pairGuardDip)
+      guardDip: pairGuardDip(arm, cameraRef),
       // MW-D24: the third-person body, or its named refusal.
       third,
       werewolf: !!werewolf,   // WEREWOLF1: this rig is the wolf
@@ -3486,7 +3517,8 @@ export function createFpArm() {
   let offKey = null, pendingOff;
   const mirrorCarry = { first: {}, third: {} };
   const strikeSides = new Map();
-  const runPump = { wanted: false, speed: 0, w: 0, phase: 0 };
+  const runPump = { wanted: false, speed: 0, w: 0, phase: 0, given: null, targets: null };
+  const pairGuard = { L: 0, R: 0 };   // TWO-HANDS AUDIT: each hand's guard weight - the arm lowered while the other strikes
   let heldMemo = null;           // { base, spec, inner, tracks, sampler }
   let lastFrame = null;          // { model, view, proj, rect } - what draw() last composed with
   /** MW-GUN-FEEL: the gun's kick and reload this frame - `{ pitch, back, down }` (combat/gunFeel.js armGunPose), set by
@@ -4149,23 +4181,34 @@ export function createFpArm() {
   // ---- TWO-HANDS: the second hand on the body (combat/mirrorRig.js) and the run's pump -----------------------------
   const attackingNow = () => upper === UPPER_BODY.AttackWindUp || upper === UPPER_BODY.AttackRelease || upper === UPPER_BODY.AttackEnd;
   /** The left hand's weapon shows on rig `r`: a pair is held, a weapon is in hand (drawn, no spell), and the rig bound
-   *  one on its Weapon Bone Left. */
+   *  one on its Weapon Bone Left. The blade's alone - the arm's composition is pairHeld's. */
   const offShown = (r) => handsMode === 'dual' && weaponInHand() && !!(r && r.offWeapon);
+  /**
+   * TWO-HANDS AUDIT: THE PAIR IS IN THE HANDS - both weapons drawn, no spell in them - from the first frame of the right
+   * hand's draw to the last of its sheathe (Equipping and Unequipping whole: the hands go to the hilts before the attach
+   * key and leave them after the detach). The second arm is composed exactly then, on every rig, whether or not the rig
+   * could hang the left blade (offShown, the blade's own, keeps the weapon's attach and detach keys). The draw was
+   * composed only from its attach key, the sheathe to its end: the left arm drew unmirrored and was carried up mid-draw.
+   */
+  const pairHeld = () => handsMode === 'dual' && !spellStance() && (weaponShown || upper === UPPER_BODY.Equipping || upper === UPPER_BODY.Unequipping);
   /** The idle clip as it stands - the hand at rest under the other's blow. Null with no idle playing. */
   const idleClip = () => (idleState && idleSource ? { tracks: idleSource.trackMap, sampleTrack, time: poseTime(idleState) } : null);
   /**
-   * Which fist the blow's clip throws on rig `r` - measured, not assumed (Morrowind's hand-to-hand groups throw with
+   * Which fist attack `type`'s clip throws on rig `r` - measured, not assumed (Morrowind's hand-to-hand groups throw with
    * either hand by attack): the wrist that travels the farther from the attack's "start" to its "hit" (mirrorRig.js
-   * strikingSide), sampled once per clip and kept. Null where the keys or the bones are not there to measure.
+   * strikingSide), in the source that carries both keys of the weapon group (the one the blow plays from), sampled once
+   * per clip and kept. A backhand plays the same two poses, so it is the same answer (TWO-HANDS AUDIT: asked before the
+   * blow is played - attack() picks the clip's way by it). Null where the keys or the bones are not there to measure.
    */
-  function clipStrikeSide(rigKey, r) {
-    const key = `${rigKey}:${actionState.group}:${attackType}:${attackReversed ? 1 : 0}`;
+  function clipStrikeSide(rigKey, r, type) {
+    const key = `${rigKey}:${weaponGroup}:${type}`;
     if (strikeSides.has(key)) return strikeSides.get(key);
     let side = null;
-    const t0 = getTextKeyTime(actionSource.keys, `${weaponGroup}: ${attackType} start`);
-    const t1 = getTextKeyTime(actionSource.keys, `${weaponGroup}: ${attackType} hit`);
+    const pick = weaponGroup && r.sources ? pickAnimSource(r.sources, weaponGroup, resetClip, { start: `${type} start`, stop: `${type} hit` }) : null;
+    const t0 = pick ? getTextKeyTime(pick.source.keys, `${weaponGroup}: ${type} start`) : -1;
+    const t1 = pick ? getTextKeyTime(pick.source.keys, `${weaponGroup}: ${type} hit`) : -1;
     if (t0 >= 0 && t1 >= 0 && r.arm && r.arm.fns && r.arm.skeleton) {
-      const at = (time) => r.arm.fns.poseSkeleton(r.arm.skeleton, actionSource.trackMap, sampleTrack, time, { accumRoot: r.accumRoot });
+      const at = (time) => r.arm.fns.poseSkeleton(r.arm.skeleton, pick.source.trackMap, sampleTrack, time, { accumRoot: r.accumRoot });
       side = strikingSide(r.arm.skeleton, GRAPH_ROOT, r.arm.fns.skelMats, at(t0), at(t1));
     }
     strikeSides.set(key, side);
@@ -4183,10 +4226,10 @@ export function createFpArm() {
    * for a sheet held, the stone, a spell, the dead, a beast.
    */
   function mirrorFor(rigKey, r, dt) {
-    const req = { carry: { key: 'none', dt, tau: POSE.LIMB_TAU, state: mirrorCarry[rigKey] } };
+    const req = { carry: { key: 'none', dt, tau: POSE.LIMB_TAU, state: mirrorCarry[rigKey] }, dip: pairDip() };   // TWO-HANDS AUDIT: the guard, under every gate below (it eases away on its own)
     if (!r || !r.ok || dead || nonBiped() || held || climbHands || spellStance() || r.werewolf) return req;
     const idle = idleClip();
-    if (offShown(r)) {
+    if (pairHeld()) {   // TWO-HANDS AUDIT: the pair in the hands, not the left blade bound - a rig that cannot hang it still holds two
       if (attackingNow() && attackHand === 'L') {
         req.full = true;
         if (idle) req.limbs = { R: { clip: idle, side: 'R', mirror: false } };
@@ -4200,8 +4243,8 @@ export function createFpArm() {
       }
       return req;
     }
-    if (handsMode === 'fists' && attackingNow() && attackHand && actionState && actionSource) {
-      const side = clipStrikeSide(rigKey, r);
+    if (handsMode === 'fists' && attackingNow() && attackHand && attackType) {
+      const side = clipStrikeSide(rigKey, r, attackType);
       if (side && side !== attackHand) {
         req.full = true;
         if (idle) req.limbs = { [side]: { clip: idle, side, mirror: false } };
@@ -4210,39 +4253,72 @@ export function createFpArm() {
     }
     return req;
   }
+  /**
+   * TWO-HANDS AUDIT: THE PAIR'S GUARD (Mac: "When attacking with a weapon, the other weapon in hand should lower
+   * slightly") - the sprite lane's law on the body: while one hand of a pair strikes, the OTHER arm is lowered, its weight
+   * eased in fast and out slower (handsLaw.js guardStep: GUARD.IN_TAU, GUARD.OUT_TAU), one weight a hand, stepped once a
+   * frame. Stepped whatever the composition, so an arm lowered as its pair is put away rises on the same law.
+   */
+  function stepPairGuard(dt) {
+    for (const h of /** @type {const} */ (['L', 'R'])) {
+      pairGuard[h] = guardStep(pairGuard[h], pairHeld() && attackingNow() && !!attackHand && attackHand !== h, dt);
+      if (pairGuard[h] < 1e-3) pairGuard[h] = 0;
+    }
+  }
+  /** TWO-HANDS AUDIT: the angle each arm is lowered at its shoulder this frame (mirrorRig.js's `dip`), or null. */
+  const pairDip = () => (pairGuard.L > 0 || pairGuard.R > 0 ? { L: pairGuard.L * (built?.guardDip?.L ?? 0), R: pairGuard.R * (built?.guardDip?.R ?? 0) } : null);
+  /** TWO-HANDS AUDIT: THE PORTRAIT'S PAIR (figure()) - a pair carried is a pair shown: the left arm the drawn stance's
+   *  right in the mirror, as the world holds a pair at rest (mirrorFor's 'dual'); still - no carry, a portrait has no last
+   *  frame. Null with one hand. The portrait posed without it showed one arm up and the left blade by whatever the last
+   *  world frame of the body had flagged. */
+  const portraitMirror = () => (handsMode === 'dual' ? { limbs: { L: { pose: null, side: 'R', mirror: true } } } : null);
   /** The run's pump, stepped once a frame: its weight (up as a run starts, away as it ends, at once for a punch - the
-   *  sprite lane's law) and its stride's phase. First person alone: the body's own run group swings its arms. */
+   *  sprite lane's law) and its stride's phase - the rig's own when it hands one (setRunHands' `phase`: the head bob's
+   *  clock, so the hands stroke with the steps the camera bobs on), else walked by the speed. First person alone: the
+   *  body's own run group swings its arms. */
   function stepRunPump(dt) {
     runPump.w = runWeightStep(runPump.w, runPump.wanted && viewMode === 'first', attackingNow(), dt);
     if (!runPump.wanted && runPump.w < 1e-3) runPump.w = 0;
-    if (runPump.wanted || runPump.w > 0) runPump.phase = runPhaseStep(runPump.phase, runPump.speed, dt);
+    if (runPump.wanted || runPump.w > 0) runPump.phase = Number.isFinite(runPump.given) ? runPump.given : runPhaseStep(runPump.phase, runPump.speed, dt);
   }
   /**
    * THE RUNNING HANDS, the first-person arms' (handsLaw.js RUN_3D): each hand at its stroke's place on the arms' own
    * picture - a line from the rig's eye (the camera node, as firstClimb takes it) through its share of the frame, the
    * point `d` metres out along it - reached by the climb's solver (combat/climbRig.js) with the fist clenched, the palm
-   * turned in and the elbow out and back. Null while the pump has no weight.
+   * turned in and the elbow out and back. Every line and way is laid in the arm LENS's frame (TWO-HANDS AUDIT, as
+   * climbRequestToFirstPerson lays the climb's): pitched with the look where the arms follow the law (follow-camera
+   * off), so the stroke stands where it does on the picture whichever way the player looks - laid on the unpitched
+   * frame, a look half a radian down lifted the hands 0.4 rad up the picture. At the pump's own weight: it is solved
+   * UNDER the climb's request (poseAssembly's `run`), which takes the hands on from wherever the run put them. Null
+   * while the pump has no weight.
    */
   function firstRun(cam) {
+    runPump.targets = null;
     if (!(runPump.w > 0) || !cam || !built.arm.mats) return null;
     const node = built.arm.mats.get(built.cameraRef);
     if (!node) return null;
     const eye = [node.t[0] + fpOffset[0], node.t[1] + fpOffset[1], node.t[2] + fpOffset[2]];
     const tanV = Math.tan(FP_FIELD_OF_VIEW / 2);
     const aspect = lastFrame && lastFrame.rect && lastFrame.rect.h > 0 ? lastFrame.rect.w / lastFrame.rect.h : 16 / 9;
+    const lensPitch = followCam ? 0 : (cam.pitch || 0);
+    const cl = Math.cos(lensPitch), sl = Math.sin(lensPitch);
+    // across, ahead and up on the lens (its right [1,0,0], its forward [0,cl,sl], its up [0,-sl,cl]) in the rig's space
+    const lens = (x, y, z) => [x, y * cl - z * sl, y * sl + z * cl];
     const unit = (v) => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
     const hand = (side) => {
       const p = pumpTarget3D(runPump.phase, side);
       const out = side === 'R' ? 1 : -1;
-      const dir = unit([out * p.x * tanV * aspect, 1, p.y * tanV]);
+      const dir = unit(lens(out * p.x * tanV * aspect, 1, p.y * tanV));
       const k = p.d * MW_UNITS_PER_METER;
       return {
         at: [eye[0] + dir[0] * k, eye[1] + dir[1] * k, eye[2] + dir[2] * k],
-        fingers: unit([-out * 0.25, 0.9, 0.35]), palm: [-out, 0, 0], pole: unit([out * 0.5, -0.6, -0.6]),
+        fingers: unit(lens(-out * 0.25, 0.9, 0.35)), palm: lens(-out, 0, 0), pole: unit(lens(out * 0.5, -0.6, -0.6)),
         curl: RUN_3D.CURL, w: 1,
       };
     };
-    return { w: runPump.w, hands: { L: hand('L'), R: hand('R') } };
+    const hands = { L: hand('L'), R: hand('R') };
+    runPump.targets = { eye, L: hands.L.at, R: hands.R.at };   // what the hands were asked to reach, for the card and the pins
+    return { w: runPump.w, hands };
   }
   function torchVisible() {
     if (!torchLit || !built || !built.ok) return false;
@@ -5318,7 +5394,6 @@ export function createFpArm() {
       if (!type) return null;
       attackType = type;
       attackHand = hand === 'L' || hand === 'R' ? hand : leadHand;   // TWO-HANDS: the blow's hand - the clip's, or its mirror's
-      attackReversed = type === 'slash' && strikeReversed(strike);   // MS1: the backhand - the slash alone has a side
       attackStrength = 1;
       resetIdleOnAttackEnd = true;
       // `hold` is the caller's machine, not a guess about bows. The
@@ -5330,6 +5405,13 @@ export function createFpArm() {
       // game path never sends.
       holdWindUp = !!hold;
       upper = UPPER_BODY.AttackWindUp;
+      // MS1: the backhand - the slash alone has a side. TWO-HANDS AUDIT: A BLOW THE BODY THROWS IN THE MIRROR (its
+      // composition the whole body mirrored - a pair's left hand, the fist its clip does not throw with: mirrorFor, the
+      // one law) KEEPS THE WAY THE PLAYER ASKED across the screen - the sprite lane's law (handsLaw.js mirrorStrike):
+      // its clip is the MIRROR strike's, so a left hand's sweep to the left is the right hand's backhand in the glass.
+      // The clip was picked for the strike unmirrored and then mirrored: every left-hand slash swept the other way.
+      const inMirror = !!mirrorFor(viewMode, rig(), 0).full;
+      attackReversed = type === 'slash' && strikeReversed(inMirror ? mirrorStrike(strike) : strike);
       const k = attackKeys(type, 1, { reversed: attackReversed });
       // MW-D42 (Mac: the arrow is not shown on the bow during the
       // animation): THE NOCK HAS A FLOOR AT THE DRAW. Rule 24's "shoot
@@ -5462,11 +5544,14 @@ export function createFpArm() {
       handsMode = mode === 'fists' || mode === 'dual' ? mode : 'single';
       leadHand = lead === 'L' ? 'L' : 'R';
     },
-    /** TWO-HANDS: the run's pump - wanted (handsLaw.js runHandsWanted: a run on the feet with nothing in either hand) and
-     *  the metres a second over the ground its stride walks by. Every frame. */
-    setRunHands(wanted, { speed = 0 } = {}) {
+    /** TWO-HANDS: the run's pump - wanted (handsLaw.js runHandsWanted: a run on the feet with nothing in either hand),
+     *  the metres a second over the ground its stride walks by, and - when the rig has one - the stride's `phase` itself
+     *  (the head bob's clock as the stroke's, handsLaw.js: one step one stroke, the right forward as the left foot falls),
+     *  which the pump then takes as it stands instead of walking its own. Every frame; a frame without a phase walks. */
+    setRunHands(wanted, { speed = 0, phase = null } = {}) {
       runPump.wanted = !!wanted;
       runPump.speed = Number.isFinite(speed) ? speed : 0;
+      runPump.given = Number.isFinite(phase) ? phase : null;
     },
     /** TWO-HANDS: the first-person arms are posed on the run - the pump's weight on the hands, no sheet in them, no stone
      *  under them. The rig opens its draw gate on it (a sheathed run is the everyday one), as it does for the climb. */
@@ -5478,6 +5563,9 @@ export function createFpArm() {
       const wrist = (s) => (plan && plan.hands[s] != null ? arm.mats.get(plan.hands[s])?.t?.slice() ?? null : null);
       return {
         mode: handsMode, lead: leadHand, attackHand, offKey, offWeapon: arm ? built.offWeapon ?? null : null,
+        pair: pairHeld(),   // TWO-HANDS AUDIT: the pair in the hands - what the second arm's composition stands on
+        composed: mirrorCarry[viewMode]?.key ?? null,   // TWO-HANDS AUDIT: the composition the view's rig was last posed with ('none', 'dual', 'dual:L', ...)
+        guard: { ...pairGuard },   // TWO-HANDS AUDIT: each arm's guard weight (lowered while the other strikes)
         offPieces: arm ? arm.pieces.filter((p) => p.slot === 'offweapon').length : 0,
         offHidden: mesh && mesh.ranges ? mesh.ranges.filter((r) => r.slot === 'offweapon').map((r) => !!r.hidden) : [],
         mirrored: arm ? arm.mirrored ?? null : null,
@@ -5500,6 +5588,7 @@ export function createFpArm() {
       if (key && built.offFailed === key) return false;   // a swap that failed on THIS rig is not asked again (setWeapon's law)
       busy = true;
       const token = built;
+      token.offFailed = null;   // TWO-HANDS AUDIT: setWeapon's law whole - another weapon asks, and the one that failed may ask again after it
       return (async () => {
         try {
           const d = buildDeps || await import('../scenes/dataSource.js');
@@ -5507,9 +5596,12 @@ export function createFpArm() {
           if (built !== token) return false;
           const find = (p) => findLoaded(archives, p);
           if (item) await loadFromArchives(archives, weaponPartPaths({ weapon: item, hasAmmo: false, allWeapons: token.allWeapons, has: archiveHas(archives) }));
-          const res = resolveOffWeaponParts({ weapon: item, allWeapons: token.allWeapons, find, skeletonBytes: token.skeletonBytes, has: archiveHas(archives) });
+          // TWO-HANDS AUDIT: the left hand's node asked of each skeleton AS ASSEMBLED (the holster's law) - the one the mirror
+          // made where the bytes have none (assembleFirstPersonArm's `offWeaponBone`)
+          const boneOf = (r) => (n) => r.arm.skeleton.byName.has(String(n).toLowerCase());
+          const res = resolveOffWeaponParts({ weapon: item, allWeapons: token.allWeapons, find, skeletonBytes: token.skeletonBytes, has: archiveHas(archives), hasBone: boneOf(token) });
           const t = thirdBuilt && thirdBuilt.ok ? thirdBuilt : null;
-          const tRes = t ? resolveOffWeaponParts({ weapon: item, allWeapons: token.allWeapons, find, skeletonBytes: t.skeletonBytes, has: archiveHas(archives) }) : null;
+          const tRes = t ? resolveOffWeaponParts({ weapon: item, allWeapons: token.allWeapons, find, skeletonBytes: t.skeletonBytes, has: archiveHas(archives), hasBone: boneOf(t) }) : null;
           const gen = token.catalog?.gen ?? null;
           for (const [r, parts] of t ? [[token, res.parts], [t, tRes.parts]] : [[token, res.parts]]) {
             r.arm.pieces = r.arm.pieces.filter((p) => p.slot !== 'offweapon');
@@ -5521,7 +5613,11 @@ export function createFpArm() {
           }
           token.offWeapon = res.info;
           token.notes = [...(token.notes || []).filter((n) => !/^offweapon[ :@]/.test(n)), ...res.notes];
-          if (t) { t.offWeapon = tRes.info; releaseThirdMesh(); thirdPacked = null; }
+          if (t) {
+            t.offWeapon = tRes.info;
+            t.notes = [...(t.notes || []).filter((n) => !/^offweapon[ :@]/.test(n)), ...tRes.notes];   // TWO-HANDS AUDIT: the body's card says why too
+            releaseThirdMesh(); thirdPacked = null;
+          }
           releaseMesh();
           packed = null;
           offKey = key;
@@ -5882,6 +5978,7 @@ export function createFpArm() {
       const climbWorld = climbLaw.update(dt, (cam && cam.climb) || null);
       climbHands = climbWorld.w >= 0.5 && !!(cam && cam.climb);
       stepRunPump(dt);   // TWO-HANDS: the running hands' weight and stride
+      stepPairGuard(dt);   // TWO-HANDS AUDIT: the pair's guard
       // refreshCurrentAnims' order, and it is not arbitrary: the weapon
       // state is stepped FIRST because the idle refresh below depends on
       // it - "idle handled last as it can depend on the other states"
@@ -6031,12 +6128,19 @@ export function createFpArm() {
         const hm = heldTracksFor(fTracks, fSampler);
         fTracks = hm.tracks; fSampler = hm.sampler;
       }
+      const fClimb = held ? null : firstClimb(climbWorld, cam);   // CLIMB6: the hands reach the stone they hold (the sheet's hands are the sheet's)
       posePartClocks(built.arm, weaponClockValue(), { frameTime: partClock });   // MW-BOW1: the bow draws, the arrow with it
       poseAssembly(built.arm, {
         tracks: fTracks,
         sampleTrack: fSampler,
         time: poseTime(state),   // MS1: a backhand's window runs backwards
-        climb: held ? null : (firstClimb(climbWorld, cam) ?? firstRun(cam)),   // CLIMB6: the hands reach the stone they hold (the sheet's hands are the sheet's); TWO-HANDS: off the stone, the running hands
+        climb: fClimb,
+        // TWO-HANDS AUDIT: the running hands, UNDER the climb's request - the run solved at its weight, the climb over it
+        // at its own, each wrist eased by the climb from where the run put it: (1 - c) . run + c . climb, so the run
+        // weighs run.w . (1 - climb.w) and the climb climb.w; under a sheet raised, the run's weight alone, easing out.
+        // No choosing: the slot took the climb OR the run, and the frame a climb started (a sheet came up) the run's
+        // hands were dropped whole - a wrist 1.0 units in a frame where the stroke moves it 0.08 - and came back whole
+        run: firstRun(cam),
         mirror: mirrorFor('first', built, dt),   // TWO-HANDS: the second hand - the pair's left arm, a left-hand blow
         // Rule 56's accum root is STICKY and rig-wide, so it does not
         // follow the source the way the tracks do.
@@ -6272,6 +6376,10 @@ export function createFpArm() {
       }
       viewMode = want;
       actionState = null; actionSource = null; attackType = null; holdWindUp = false;
+      // TWO-HANDS AUDIT: each rig's carry starts afresh - the rig now drawn was not drawn in the other view, so there is
+      // nothing on the screen for a composition change to carry from (a carry kept across the switch eased the arms in
+      // from where they stood when the player LEFT this view); a fresh carry takes its first composition as it stands
+      mirrorCarry.first = {}; mirrorCarry.third = {};
       resetMovement();
       resetJump();   // MW-D39: the clip state came from the OTHER rig's sources; the next frame re-derives
       if (upper !== UPPER_BODY.None && upper !== UPPER_BODY.WeaponEquipped) {
@@ -6619,6 +6727,7 @@ export function createFpArm() {
           sampleTrack,
           time: pose.state.startTime,
           accumRoot: t.accumRoot,
+          mirror: portraitMirror(),   // TWO-HANDS AUDIT
         });
       }
       uploadThirdMesh(t);
@@ -6632,6 +6741,7 @@ export function createFpArm() {
       // an inventory.
       for (const r of thirdMesh.ranges) {
         if (r.slot === 'weapon') r.hidden = false;
+        else if (r.slot === 'offweapon') r.hidden = !(handsMode === 'dual' && t.offWeapon);   // TWO-HANDS AUDIT: the left hand's, while a pair is carried - never the last world frame's flag
         else if (r.slot === 'arrow') r.hidden = !arrowShown;
         else if (r.slot === 'torch') r.hidden = !torchLit;   // MW-D51: a portrait shows what you carry - the lit light, whatever the hand holds
         else if (r.slot === HIP_LIGHT_SLOT) r.hidden = !hipLit;   // HT-WAIST: and the lantern at the waist, lit
@@ -6743,6 +6853,7 @@ export function createFpArm() {
           ? (thirdBuilt.ok
             ? { ok: true, pieces: thirdBuilt.pieces, skeletonPath: thirdBuilt.skeletonPath,
                 weapon: thirdBuilt.weapon, groups: thirdBuilt.groups ? thirdBuilt.groups.length : 0,
+                offWeapon: thirdBuilt.offWeapon ?? null,   // TWO-HANDS AUDIT: the left hand's, on the body's own skeleton
                 skin: thirdMesh ? (thirdMesh.skin ? 'gpu' : 'cpu') : null }   // MWNPC1: where the body's skin runs
             : { ok: false, stage: thirdBuilt.stage, error: thirdBuilt.error })
           : null,

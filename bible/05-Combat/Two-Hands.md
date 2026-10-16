@@ -222,35 +222,64 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
 
 - **The mirror rig** (`mirrorRig.js`) holds no number about any skeleton (CLIMB6's rule). Every bone's counterpart is
   found by its NAME (`counterpartName`: Bip01's L/R, the attach family's Left/Right, Weapon Bone and Weapon Bone Left);
-  the plane is the skeleton's own middle (halfway between its upper arms at rest); a bone's mirror is taken against the
-  REST pose of both bones, so it holds whichever way a skeleton's left axes run:
-  `M'(b) = S . M(m(b)) . Rest(m(b))^-1 . S . Rest(b)`. At rest it is the rest; a skinned vertex of the left arm lands
-  where the right arm's mirrored vertex does (pinned on the retail biped `xbase_anim_sh.nif` to 1.2e-4). A bone with no
-  counterpart keeps its local and rides its mirrored parent; a bone INSIDE an arm with no counterpart (the Shield Bone)
-  is unpaired, so it never crosses the body.
+  the plane is the skeleton's own middle (halfway between its upper arms at rest). **The law, in each bone's own frame**
+  (AUDIT, L3 2): a bone moves as its counterpart moves, in the mirror, FROM ITS OWN REST -
+  `L'(b) = RestL(b) . K^(b)^-1 . [RestL(m)^-1 . L(m)] . K^(b)`, `K^(b)` the 3x3 of `Rest(m)^-1 . S . Rest(b)`, a
+  constant of the skeleton. Every bone's rotation is the graph law's (`M'(b) = S . M(m) . Rest(m)^-1 . S . Rest(b)`) and
+  every joint stays on its parent; where the rest is its own mirror (the fixture arm) it IS the graph law, translations
+  and all. The first cut hung each bone at the mirror of its counterpart's frame: on the retail biped (`xbase_anim_sh`),
+  whose rest stands 6.7 units off its own mirror at the knees, a turned upper arm slid the shoulder 0.52 units off the
+  clavicle and a finger joint 10% off its bone. Measured: rotations to 5e-4 on retail, the fixture exact to 1e-5. A bone
+  with no counterpart keeps its local and rides its mirrored parent; a bone INSIDE an arm with no counterpart (the Shield
+  Bone) is unpaired, so it never crosses the body.
+- **An arm set from another pose hangs from this frame's body** (AUDIT, L3 2): its bones' locals are read off that pose
+  (copied, or mirrored as above), so its shoulder stays where this frame's chest carries it (the first cut set it in the
+  graph's space: a 25-degree spine twist left the shoulder 9.07 units off the chest). Another clip's arm is sampled for
+  that arm alone (`limbSkeleton`), and the frame reads only the locals it mirrors - no whole-skeleton matrices (AUDIT,
+  L3 10: 0.101 -> 0.011 ms a frame).
 - **Posed in the assembly** (`mwFirstPerson.js` `poseAssembly`'s `mirror`): right after the clip poses the skeleton,
   ahead of the neck and the climb's IK, on both rigs (the first-person arms and the third-person body).
-- **The compositions** (`fpArm.js` `mirrorFor`):
+- **The compositions** (`fpArm.js` `mirrorFor`), while the pair is IN THE HANDS (`pairHeld`: from the first frame of the
+  draw to the last of the sheathe - AUDIT, L3 7; the blades still appear and vanish on the attach and detach keys):
   - a pair at rest - the left arm the right's mirror: both weapons up, as the stance holds the one;
   - the right's blow - the clip swings the right; the left holds the idle's right arm, mirrored;
   - the left's blow - the whole body in the mirror (the left swings the clip's blow, the torso turns with it) and the
-    right arm the idle's own;
+    right arm the idle's own; **a mirrored blow keeps the way the player asked** (AUDIT, L3 5): it plays the backhand of
+    the mirror strike (`mirrorStrike`), so the left hand's StrikeLeft is the right hand's StrikeRight in the glass;
   - the fists - as the clip has them, but a blow thrown by the hand its clip does not throw with is the whole body in
     the mirror, the other fist held where the idle holds it. Which fist a clip throws is MEASURED, not assumed: the
     wrist that travels the farther from the attack's "start" to its "hit" (`strikingSide`), once per clip.
-  Nothing for a sheet held, the stone, a spell, the dead, a beast.
-- **No pop** (the carry): every change of composition carries every bone from where it was drawn last frame onto its
-  new place over `POSE.LIMB_TAU` (ClimbPose's limb law) - its rotation by a decaying share of the difference, its
-  translation the same.
+  Nothing for a sheet held, the stone, a spell, the dead, a beast. The inventory portrait shows the pair, both arms up
+  (AUDIT, L3 8).
+- **The guard on the body** (Mac: "the other weapon in hand should lower slightly"): while one hand of a pair strikes,
+  the other arm turns DOWN at its shoulder - never translated, so it stays on the body and every bone keeps its length -
+  eased by the sprite lane's weight (`guardStep`). Its size is the sprite guard's share of the picture (9 of 200 design
+  px, `GUARD_LENS_DROP` 0.0519 rad at the eye), carried to the shoulder by each rig's own arm (`pairGuardDip`):
+  measured on the fixture, the held wrist drops 0.0513 rad on the picture at the other hand's hit frame.
+- **No pop** (the carry, AUDIT, L3 3 and 6): every change of composition carries every bone, IN ITS OWN FRAME, from the
+  local it was drawn with last frame onto its new one over `POSE.LIMB_TAU` (ClimbPose's limb law) - its turn, its
+  joint's move and its scale eased away, children riding their carried parents, so no joint leaves its bone (worst bone
+  during a carry 71% -> 0.0%; the Shield Bone stays on its hand). A carry that has drawn nothing (a new rig, a view just
+  entered) takes its first composition at once.
 - **The left hand's weapon**: the right hand's record, mesh and door, hung on `Weapon Bone Left` in a slot of its own
-  (`offweapon`) - rule 13 already draws a "Left" bone's part mirrored (the bow's law). Shown while a pair is drawn,
-  hidden sheathed, under a sheet, on the stone or in a spell; a skeleton without Weapon Bone Left binds none.
-  `setOffWeapon` queues behind a build like `setWeapon`.
-- **The running hands** (`RUN_3D`): the same stride, snap and weight as the sprite lane's, each hand at its stroke's
-  place on the arms' own picture - a line from the rig's eye through a share of the frame, a point `d` metres out -
+  (`offweapon`) - rule 13 already draws a "Left" bone's part mirrored (the bow's law). **A skeleton without one is
+  given one by the mirror** (AUDIT, L3 1 - the blocker: Morrowind's retail skeletons carry no Weapon Bone Left, OpenMW's
+  optional node a modded skeleton has, so the pair drew one weapon and the left hand never swung): `offWeaponBoneAddon`
+  hangs it under the left hand at `S . Rest(Weapon Bone) . X` (X turns its x back, rule 13 negating it), through the
+  addons' own door on both of `buildFpArm`'s assemblies - the player's, a peer's and an NPC's body alike - recorded in
+  the assembly's `injected` as `mirrorRig.offWeaponBoneAddon`. On the fixture, which carries one, the made bone equals
+  the authored exactly. A bow never hangs on it (it reads the actor's own bytes). Shown while a pair is drawn, hidden
+  sheathed, under a sheet, on the stone or in a spell. `setOffWeapon` queues behind a build like `setWeapon`, and a
+  failed left swap is tried again the next time (AUDIT, L3 9).
+- **The running hands** (`RUN_3D`): the same stride, snap and weight as the sprite lane's, the stride the rig's own
+  head-bob phase when handed one (`setRunHands`' `phase`), each hand at its stroke's place on the arms' own picture - a
+  line from the rig's eye through a share of the frame, laid in the arm LENS's pitched frame (AUDIT, L3 11: with
+  follow-camera off a look half a radian down lifted the hands 0.4 rad up the picture), a point `d` metres out -
   reached by the climb's solver (`climbRig.js`) with the fist clenched, the palm in, the elbow out and back; first
-  person alone (the body's own run group swings its arms in third). The first-person climb slot carries it
-  (`firstClimb(...) ?? firstRun(cam)`).
+  person alone (the body's own run group swings its arms in third). **Solved under the climb** (AUDIT, L3 4): its own
+  `run` slot in `poseAssembly`, before the climb's request, which eases each wrist on from where the run put it - the
+  first frame onto the wall moved the wrists 1.19 units, now 0.52 (the climb's own ease), the frame a sheet comes up
+  1.05, now 0.005.
 
 ## Departures from DFU (Port-Ledger A, TWO-HANDS)
 
@@ -273,7 +302,12 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   hangs the one weapon.
 - **The Beholder's sprite body** (EOTB): third person on the sprite body shows one weapon.
 - **Werecreature claws**: the beast stays single (DFU's racial override, one claw sprite).
-- **Skeletons without Weapon Bone Left**: no left weapon is drawn on them; the pair still swings.
+- **A skeleton with no Weapon Bone at all**: no left weapon is made for it (there is nothing to mirror); the pair still
+  composes and swings.
+- **A rebuild drops the left blade for a frame**: an equip-follow rebuild (`setWorn`) leaves it hidden until the next
+  frame binds it.
+- **The 3D run on the fixture's scale**: the fixture arm's run targets stand ~28 units out from a ~1.5-unit arm, so its
+  pins measure the targets asked (identical at every look) rather than a reach.
 - **The test suite holds no ARENA2**: the sprite lane is pinned through a real rig on a synthetic WEAPON CIF (its
   painted arms set as WEAPON10's are), the Morrowind lane on the retail biped and the fixture arm. The real art was
   probed outside the suite (Audit-Two-Hands.md, "Evidence").
@@ -285,10 +319,12 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   exchange, the resting weapon, the off strike), the off hand's blow in the formula and between players, the rig on a
   synthetic CIF - the fists, the guard, the widget's two clones, the pair, the running hands (the stroke, the bob's
   clock, what takes a hand, the mods), the branch by source, a left-handed player.
-- `test/twohands_mw.test.js` (10): the mirror rig on the retail biped (counterparts, the plan, the law, no pop, which
-  fist a clip throws) and the arm over the fixture arm (the left weapon, the pair, the fists, the running hands, by
-  source).
-- `tools/mutants/twohands.json`: 112 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
+- `test/twohands_mw.test.js` (23): the mirror rig on the retail biped (counterparts, the plan, the law in each bone's
+  frame - every joint on its parent, a twisted chest, the carry per bone, the made Weapon Bone Left, which fist a clip
+  throws) and the arm over the fixture arm (the left weapon on a skeleton without one, the pair from draw to sheathe,
+  the mirrored blow's way, the guard's dip, the fists, the running hands under the climb and on the pitched lens, the
+  portrait, a retried swap, by source). `tools/mutants/twohands_mw.json`: 40 mutants, all dead.
+- `tools/mutants/twohands.json`: 110 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
   each claim the record made that no pin could fail; 14 the running arm's and the lowered weapon's, `TWOHANDS-ARM-*`,
   `TWOHANDS-LOWER-*`).
 - PIN MOVED, each with its note: `a12_lefthand` (H's lines with both hands up; the bow-switch arm on its own case, a
@@ -300,7 +336,10 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   FIELD-GUN13 (the gate), `auditrr` F1 and `rri2_realism` (the swing's ctx is `swingCtx`, the clone's the rig's when
   handed one), `tech1_hosts` (a technique through `_attack`, the lead's), `fb1003_widgetlook` (the clone's frame built
   by `cloneFrame`), `mwload_fparm` MW-LOAD (`resolveOffWeaponParts` a door its callers open), `arrowPick` MW-D50 (the
-  left weapon's three archive reads).
+  left weapon's three archive reads); and the Morrowind lane's audit (L3): `reversedSwing` (a mirrored blow's
+  backhand), `fb1012b_headheld` and `ws1_sheathing` (both assemblies ask for the made Weapon Bone Left), `climb6` again
+  (the run's own slot under the climb), `fparm` again (the portrait's window, its pair), `twohands_mw` (`setRunHands`'
+  phase).
 - Mutant records whose anchors this slice moved, re-aimed by content and re-run (all dead): `arrow2`,
   `auditdisc28_arrest`, `climb4`, `climbhands2`, `disc10`, `l10n3dcrossings` (two), `mwcast1`, `mwhand`, `sw1`, `tech1`,
   `torchvis`.
