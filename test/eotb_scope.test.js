@@ -169,7 +169,7 @@ test('AUDIT-EOTB scope: every row claiming a PORT names a symbol that is really 
   // The whole point. A row saying "ported" is a claim, and a claim
   // nothing checks is how "1:1" survived seven slices.
   for (const [k, v] of PORTED) {
-    const src = rd(`src/player/${v.mod}`);
+    const src = rd(`src/player/eyeOfTheBeholder/${v.mod}`);   // TIDY2: the arc's folder
     const decl = new RegExp(`(?:function|const|let|var)\\s+${v.port}\\b|\\b${v.port}\\s*\\(`);
     assert.match(src, decl, `${k} -> ${v.mod}: ${v.port} must exist`);
   }
@@ -217,7 +217,7 @@ test('AUDIT-EOTB scope: THE DEAD EXPORTS - what is ported, exported, and called 
   };
   walk('src');
   const code = new Map(files.map((f) => [f, strip(rd(f))]));
-  const arc = files.filter((f) => /\/player\/eotb[^/]*\.js$/.test(f));
+  const arc = files.filter((f) => /\/player\/(?:eyeOfTheBeholder\/)?eotb[^/]*\.js$/.test(f));   // TIDY2: in the arc's folder
   assert.ok(arc.length >= 5, 'the arc has its five modules');
 
   const dead = [];
@@ -231,7 +231,7 @@ test('AUDIT-EOTB scope: THE DEAD EXPORTS - what is ported, exported, and called 
     for (const n of names) {
       const own = (s.match(new RegExp(`\\b${n}\\b`, 'g')) ?? []).length;
       const elsewhere = [...code].some(([f, t]) => f !== m && new RegExp(`\\b${n}\\b`).test(t));
-      if (own <= 1 && !elsewhere) dead.push(`${m.replace('src/player/', '')}:${n}`);
+      if (own <= 1 && !elsewhere) dead.push(`${m.split('/').pop()}:${n}`);
     }
   }
 

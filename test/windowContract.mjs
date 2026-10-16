@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const read = (p) => readFileSync(join(ROOT, p), 'utf8');
-export const jsIn = (dir) => readdirSync(join(ROOT, dir)).filter((f) => f.endsWith('.js')).map((f) => `${dir}/${f}`).sort();
+export const jsIn = (dir) => readdirSync(join(ROOT, dir), { recursive: true }).filter((f) => f.endsWith('.js')).map((f) => `${dir}/${f}`).sort();
 
 /** Every door in ui/ - the modules a host opens a window through. */
 export const doors = () => jsIn('src/ui').filter((p) => /Door\.js$/.test(p));

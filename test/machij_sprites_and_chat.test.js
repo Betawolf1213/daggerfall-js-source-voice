@@ -311,7 +311,7 @@ test('MAC-P: the arm asks for the same light the sprites do, through the same sw
   const arm = read('src/combat/fpArm.js');
   assert.match(arm, /const vmLight = fpLightingOn\(\) \? \(renderer\.flatLightAt\?\.\(\) \?\? null\) : null;/);
   assert.match(arm, /renderCharacterSprite\(mesh, NIF_TO_PASS, proj, view, fw, fh, \{ lensLocal: true, viewmodelLight: vmLight \}\)/);
-  assert.match(arm, /import \{ fpLightingOn \} from '\.\.\/fpsWeapon\.js';/,
+  assert.match(arm, /import \{ fpLightingOn \} from '\.\/fpsWeapon\.js';/,
     'one switch, not two - the sprite lane and the arm lane are the same setting');
   // the UI read-back keeps its OWN studio: a picture on a panel is not in the room
   const rend = read('src/render/renderer.js');

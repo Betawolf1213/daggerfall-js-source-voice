@@ -484,7 +484,7 @@ test('E1: the retired DEPARTURES are gone from both automap windows, and the Led
   const quotedOnly = (body, phrase, name) => {
     let at = body.indexOf(phrase);
     while (at !== -1) {
-      assert.ok(body.slice(Math.max(0, at - 900), at).includes('RETIRED'),
+      assert.ok(body.slice(Math.max(0, at - 1200), at).includes('RETIRED'),   // TIDY2: 1200 - the record stood at exactly 900, and a path rewritten inside it is longer
         `${name}: "${phrase}" stands as a live claim, not as a retirement's quotation`);
       at = body.indexOf(phrase, at + 1);
     }

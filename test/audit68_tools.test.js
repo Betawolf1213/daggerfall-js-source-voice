@@ -38,7 +38,7 @@ test('AUDIT 68 S01-bake-on-import-race: importing a bake for its parser writes n
     ['scripts/bakeSettingsText.mjs', 'vendor/dfu-settings/GameSettings.txt', 'src/systems/settings/settingsText.js'],
   ]) {
     const d = tree(t, [script, 'tools/lib', input]);
-    mkdirSync(join(d, 'src/systems'), { recursive: true });
+    mkdirSync(join(d, dirname(out)), { recursive: true });   // TIDY2: wherever the bake's output stands
     const imp = node(['--input-type=module', '-e', `await import(${JSON.stringify(pathToFileURL(join(d, script)).href)});`]);
     assert.equal(imp.status, 0, imp.stderr);
     assert.equal(existsSync(join(d, out)), false,

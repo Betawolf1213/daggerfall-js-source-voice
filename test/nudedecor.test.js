@@ -226,7 +226,7 @@ test('NUDE-HOSTS by source: every file of src/ that batches a billboard is named
   assert.deepEqual(hosts.filter((f) => !named.includes(f)), [], 'a new billboard host: name it here - does it draw a person?');
   assert.deepEqual(named.filter((f) => !hosts.includes(f)), [], 'a named host batches no billboard any more: take it off');
   for (const f of PERSON_HOSTS) {
-    assert.match(src(f), /from '\.\.\/\.\.\/characters\/nudeFlats\.js'/, `${f} imports the table's door`);
+    assert.match(src(f), /from '(?:\.\.\/)+characters\/nudeFlats\.js'/, `${f} imports the table's door`);   // TIDY2: from a host, or from one in a feature folder
     assert.match(src(f).replace(/^\s*\/\/.*$/gm, ''), /\bdrawnFlat\(/, `${f} draws people: it asks drawnFlat`);
   }
   // Come Sail Away draws its prefabs' people (systems/comeSailAway/comeSailAwayBoat.js setupBillboardHelper: `BillboardHelper-AAA_RRR`)

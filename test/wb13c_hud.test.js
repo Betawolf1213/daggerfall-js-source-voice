@@ -261,8 +261,9 @@ test('WB13c the classic face is loaded by the gate\'s own screens - each asks fo
     kill();
   }
   destroyGateBanner();
+  // TIDY2: the gate's screens in its folder
   for (const f of ['gateBossBar', 'gateMarksView', 'gateDamageChart', 'gateBanner', 'gateGroundView']) {
-    assert.match(read(`src/ui/${f}.js`), /if \(doc\.head\) injectEnhancedFonts\(doc\);/, f);
+    assert.match(read(`src/ui/gate/${f}.js`), /if \(doc\.head\) injectEnhancedFonts\(doc\);/, f);
   }
   assert.match(MARKS_CARD_CSS, /\.wb-marks-text \{ font-size: 13px; opacity: 0\.92; \}\n\.wb-marks-tip \{ font-size: 13px; opacity: 0\.85; color: #e9c9a6; \}/);
   const plus = read('src/ui/enhanced/enhancedPlusStyle.js');

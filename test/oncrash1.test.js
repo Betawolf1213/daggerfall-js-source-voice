@@ -295,7 +295,7 @@ test('ONCRASH1 C2: THE SWEEP IS A SWEEP - no hand-rolled angle wrap anywhere und
   }
   assert.deepEqual(offenders, [], `a value stepped by a whole turn - the shape of every hand-rolled wrap: ${offenders.join(', ')}. Use world/mat4.js wrapAngle, which answers in one step whatever the input.`);
   assert.match(code('src/world/mat4.js'), /export function wrapAngle\s*\(/, 'the wrap lives in the math module');
-  assert.match(code('src/player/lockOn.js'), /from '\.\.\/\.\.\/world\/mat4\.js'/, 'lockOn no longer carries its own body');
+  assert.match(code('src/player/lockOn.js'), /from '\.\.\/world\/mat4\.js'/, 'lockOn no longer carries its own body');
 });
 
 test('ONCRASH1 A3: validSharedFoe IS the memory\'s door - every field by its own law, a bad one refusing the record WHOLE, a vocabulary it will not say it will not hear (mutant: the feet checked for being an array and nothing else, which is what patchFoe throws on)', () => {

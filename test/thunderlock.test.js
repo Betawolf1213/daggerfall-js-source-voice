@@ -103,7 +103,7 @@ test('it is scored on ARCHERY, through the law every host already asks', () => {
   assert.equal(hostWeaponSkillUsed(130), SKILLS.Archery);
   assert.equal(hostWeaponSkillUsed(113), SKILLS.ShortBlade);
   const host = readFileSync('src/scenes/hostCombat.js', 'utf8');
-  assert.match(host, /from '\.\.\/\.\.\/characters\/weapons\.js'/, 'and it reads the one home rather than restating it');
+  assert.match(host, /from '\.\.\/characters\/weapons\.js'/, 'and it reads the one home rather than restating it');
 });
 
 test('its damage span is its own, and the DFU spans are exactly what they were', () => {
@@ -1400,7 +1400,7 @@ test('FIELD-GUN18: the orb is scaled off the archive’s own size, at BOTH lanes
 
   // and both read the one leaf rather than a number each
   for (const f of ['src/combat/arrowFlight.js', 'src/scenes/dungeonContext.js']) {
-    assert.match(readFileSync(f, 'utf8'), /ORB_SCALE \} from '\.\.\/\.\.\/characters\/thunderlockIds\.js'/, `${f} imports it`);
+    assert.match(readFileSync(f, 'utf8'), /ORB_SCALE \} from '\.\.\/characters\/thunderlockIds\.js'/, `${f} imports it`);
   }
 });
 

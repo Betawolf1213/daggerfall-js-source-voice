@@ -206,7 +206,7 @@ test('SD20c THE BRASS AIR\'S GRADE ON THE SKY IS ITS HAZE\'S (V8): world/superDu
   };
   for (const [p, last] of Object.entries(passes)) {
     const src = read(p);
-    assert.match(src, /import \{ SD_BRASS_GLSL \} from '\.\.\/\.\.\/world\/superDungeon\/sdBrassSky\.js';/, p);
+    assert.match(src, /import \{ SD_BRASS_GLSL \} from '\.\.\/world\/superDungeon\/sdBrassSky\.js';/, p);
     assert.match(src, /\nuniform float uBrass;[^\n]*\n[\s\S]*?\$\{SD_BRASS_GLSL\}/, `${p}: its uniform and the grade`);
     assert.match(src, last, `${p}: its final colour graded after the dread's`);
     assert.match(src, /this\.brass = 0;/, `${p}: none until it is said`);

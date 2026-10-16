@@ -241,7 +241,7 @@ test('IM1: a dungeon-loot book carries its id - CreateRandomBook\'s message roll
   // share, so the source pin on loot.js's expression can no longer see
   // the draw order. The claim is the same and it is now BEHAVIOURAL -
   // the id is drawn first and the variant second (ItemBuilder.cs:261-262).
-  const loot = readFileSync(join(SRC, 'systems', 'loot.js'), 'utf8');
+  const loot = readFileSync(join(SRC, 'systems/loot/loot.js'), 'utf8');   // TIDY2: one path, so a move rewrites it
   assert.match(loot, /halving\(matrix\.BK, \(\) => createRandomBook\(rolls\)\)/,
     'the loot mint IS CreateRandomBook');
   // A stream that answers 0 then 0.99 must take the FIRST book id and

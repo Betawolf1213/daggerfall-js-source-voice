@@ -378,7 +378,7 @@ test('GEM2 the world bosses: the Warden one gem, the Old Coil one to a ship that
   assert.match(read('src/systems/serpent/serpentSpoils.js'), /const card = dealt \? bossCardRoll\('serpent', rolls\) : null;\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = dealt \? bossGems\('serpent', rolls\) : \[\];/);
   assert.match(read('src/systems/superDungeon/sdSpoils.js'), /const card = bossCardRoll\('abyss', rolls\);\s*(\/\/[^\n]*\n\s*)*socketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*weaponSocketPass\(pieces\.map\(\(p\) => p\.item\), rolls\);\s*const gems = bossGems\('abyss', rolls\);/);
   // the hosts carry the rows: the world tick, every host's shared module and the headless law import them
-  for (const [f, re] of [['src/systems/worldTick.js', /^import '\.\.\/gems\.js';/m], ['src/scenes/shared.js', /import '\.\.\/\.\.\/systems\/gems\.js';/], ['src/systems/item/itemLaw.js', /^import '\.\.\/gems\.js';/m]]) assert.match(read(f), re, f);
+  for (const [f, re] of [['src/systems/worldTick.js', /^import '\.\/gems\.js';/m], ['src/scenes/shared.js', /import '\.\.\/systems\/gems\.js';/], ['src/systems/item/itemLaw.js', /^import '\.\.\/gems\.js';/m]]) assert.match(read(f), re, f);
   off();
 });
 
