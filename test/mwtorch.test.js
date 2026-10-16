@@ -294,7 +294,7 @@ test('MW-D51/52 pins: the rig hands the lit light over per frame and at the buil
   // PIN MOVED (TWO-HANDS): the weapon handed over is `armItem` (the right hand's item with both hands up), and the hands'
   // mode and the left hand's weapon ride beside it before the light (was: `fpArm.setWeapon(playerWeapon.weapon, ...)`
   // straight above `fpArm.setTorch`)
-  assert.match(rig, /fpArm\.setWeapon\(armItem, \{ hasAmmo: hasAmmoFor\(entity\?\.items, armItem\), ammoCount: ammoCountFor\(entity\?\.items, armItem\) \}\);[^\n]*\n\s*fpArm\.setHands\([^\n]*\n\s*fpArm\.setOffWeapon\([^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*fpArm\.setTorch\(isLitTorch\(entity\?\.lightSource\)\);/, 'the per-frame hand-over, beside the weapon');
+  assert.match(rig, /fpArm\.setWeapon\(armItem, \{ hasAmmo: hasAmmoFor\(entity\?\.items, armItem\), ammoCount: ammoCountFor\(entity\?\.items, armItem\) \}\);[^\n]*\n\s*fpArm\.setHands\([^\n]*\n(?:\s*const offItem = [^\n]*\n)?\s*fpArm\.setOffWeapon\([^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*fpArm\.setTorch\(isLitTorch\(entity\?\.lightSource\)\);/, 'the per-frame hand-over, beside the weapon');   // PIN MOVED (TWO-HANDS x WEAPON-GLOW1): the left item named once, its blade and its glow
   assert.equal(isLitTorch({ templateIndex: TEMPLATES.Torch }), true);
   assert.equal(isLitTorch({ templateIndex: TEMPLATES.Lantern }), false, 'a lantern is the classic lane’s');
   assert.equal(isLitTorch(null), false);

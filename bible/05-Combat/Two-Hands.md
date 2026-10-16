@@ -300,6 +300,9 @@ one, never one hand's glow on both:
   slot with its own glow, each its own pass (`Renderer._drawWeaponGlows`: 'weapon', then 'offweapon'); a third-person
   picture is padded for the larger of the two outlines (`characterSprite.js` `drawRigSpriteBox`'s `glowLook`, one look
   or two).
+- PIN MOVED, each with its note: `weaponglow1` (the clone's set and outline per item, the arm's held item and left
+  blade, the pad's looks), `coats3d_horse3d`, `invislook` and `prbow1_bow` (the third-person draw's `glowLook: padLooks`),
+  `mwtorch` (the left item named once).
 
 ## Departures from DFU (Port-Ledger A, TWO-HANDS)
 
