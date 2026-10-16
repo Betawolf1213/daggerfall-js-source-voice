@@ -73,10 +73,10 @@ test('DA12: the launcher answers a controller - the game\'s own pad loop, one mo
   assert.match(pad, /^attachMenuPad\(\{ focusStyle: false \}\);$/m, 'the page\'s CSP refuses a style written by script');
   // served by its one name: packed beside the page, the source tree's own unpacked
   const main = rd('app/main.cjs');
-  assert.match(main, /const MENU_PAD = app\.isPackaged \? path\.join\(LAUNCHER_DIR, 'menuPad\.js'\) : path\.join\(__dirname, '\.\.', 'src', 'ui', 'menuPad\.js'\);/);
+  assert.match(main, /const MENU_PAD = app\.isPackaged \? path\.join\(LAUNCHER_DIR, 'menuPad\.js'\) : path\.join\(__dirname, '\.\.', 'src', 'ui', 'menu', 'menuPad\.js'\);/);
   assert.match(main, /const p = parts\.length === 1 && parts\[0\] === 'menuPad\.js'\s*\? MENU_PAD/);
   const build = JSON.parse(rd('app/package.json')).build;
-  assert.deepEqual(build.files.find((f) => f?.from === '../src/ui'), { from: '../src/ui', to: 'launcher', filter: ['menuPad.js'] });
+  assert.deepEqual(build.files.find((f) => f?.from === '../src/ui/menu'), { from: '../src/ui/menu', to: 'launcher', filter: ['menuPad.js'] });   // TIDY2: the menu's folder
   // the pad's focus is drawn by the page's own stylesheet
   const css = rd('app/launcher/launcher.css');
   for (const sel of ['.plaque.pad-focus', '.play:not(:disabled).pad-focus', '.link.pad-focus', '.check input.pad-focus', '.feed.pad-focus']) {
