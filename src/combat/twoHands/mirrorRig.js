@@ -35,7 +35,8 @@
 //     moves it. (The first draft set an arm absolutely in the graph's space: on the retail biped, a 25-degree spine twist
 //     left the shoulder 9.07 units off the chest. It is cur(P) . srcP^-1 . srcT(b), re-rooted on the parent P.)
 //   - THE MIRROR READS NO MATRIX OF THE FRAME. A whole skeleton's transforms were composed for every frame (the clip's,
-//     each pose's, every bone placed and every other bone ridden); the frame now reads only the locals it mirrors.
+//     each pose's, every bone placed and every other bone ridden); the frame now reads only the locals it mirrors - and,
+//     mirrored across the picture (`plane`, below), the chains to the eye and to each arm's parent alone (chainWorld).
 //
 // THE REQUEST (all optional):
 //   full  - the whole pose mirrored: the torso turns the other way and each arm takes the other's;
@@ -43,6 +44,9 @@
 //           the clip's own, as it stood before any change here; a map of the arm alone serves - limbSkeleton), `side`
 //           the arm of it to read, `mirror` whether that arm is mirrored onto this side or copied as it stands. Either
 //           way the arm hangs from this frame's parent;
+//   plane - { ref, dx }: a mirrored arm is the mirror across the PICTURE's middle - the upright plane through the eye
+//           (node `ref` as the clip poses it, `dx` across) - placed in the graph's space rather than hung from the chest
+//           (pictureMirrorArm; the first-person arms, whose clips do not pose the body about the eye);
 //   dip   - { L, R }: radians each arm is turned DOWN at its shoulder, over the composition (the guard: the arm not
 //           striking lowered while the other strikes - TWO-HANDS AUDIT, Mac: "the other weapon in hand should lower
 //           slightly"). The upper arm turns about its own joint in the upright plane through shoulder and wrist, so the
@@ -216,6 +220,7 @@ function buildPlan(skeleton, root, skelMats) {
     hands: { L: find(HAND.L), R: find(HAND.R) },
     uppers: { L: upL, R: upR },
     targets: new Map(),   // the frame's scratch: the composition's locals before they are written
+    pictureK: new Map(),   // each bone's K(b), full, read the first time an arm is mirrored across the picture (pictureMirrorArm)
   };
 }
 
@@ -302,13 +307,19 @@ export function applyMirrorRig(skeleton, pose, root, skelMats, req) {
   // 1. the whole body in the mirror (a bone with no counterpart keeps its local and rides its mirrored parent)
   if (req.full) for (const ref of plan.order) { const k = plan.link.get(ref); if (k) targets.set(ref, mirrorLocal(k, clipL(k.m))); }
   // 2. an arm set from a pose: its own side's arm copied, or the other side's mirrored onto it - each bone's local read
-  // off that pose, so the arm hangs from this frame's parent wherever this frame's torso stands
+  // off that pose, so the arm hangs from this frame's parent wherever this frame's torso stands; under `plane` a mirrored
+  // arm is the mirror ACROSS THE PICTURE instead (pictureMirrorArm)
+  let world = null;
   for (const side of /** @type {const} */ (['L', 'R'])) {
     const l = req.limbs?.[side];
     if (!l) continue;
     const src = l.pose ?? clip;
     const srcL = (ref) => src.get(ref) ?? skeleton.nodes.get(ref).rest;
     const from = l.side === 'L' || l.side === 'R' ? l.side : side;
+    if (l.mirror && from !== side && req.plane) {
+      world ??= chainWorld(skeleton, root, clipL);
+      if (pictureMirrorArm(skeleton, plan, world, req.plane, side, from, srcL, clipL, targets)) continue;
+    }
     for (const ref of plan.arms[side]) {
       if (l.mirror && from !== side) { const k = plan.link.get(ref); if (k) targets.set(ref, mirrorLocal(k, srcL(k.m))); else targets.delete(ref); }
       else targets.set(ref, srcL(ref));
@@ -367,7 +378,63 @@ export function applyMirrorRig(skeleton, pose, root, skelMats, req) {
   return wrote.length ? wrote : null;
 }
 
+/**
+ * THE ARM MIRRORED ACROSS THE PICTURE (`plane`, the first-person arms - Mac, of the pair in first person: "No left
+ * arm"). The law in each bone's frame hangs the mirrored arm from this frame's chest, so it lands where the right one
+ * stands only when the chest stands on the eye's own middle. Morrowind's first-person clips pose the body to put the
+ * weapon hand in view, not about the eye, and the pair's left arm hung from that body was out of the picture whole while
+ * the right stood in it. With a plane, a mirrored arm is placed in the graph's space as the mirror of the other through
+ * the upright plane through the eye (`plane.ref`, the camera node as this frame's clip poses it, moved `plane.dx`
+ * across - the lens's own centre: fpArm's eye looks down the rig's +Y, so its picture's middle is that x):
+ *
+ *     W'(b) = P . W(m) . K(b),     K(b) = Rest(m)^-1 . S . Rest(b),     P = the reflection through x = the eye's x
+ *
+ * each bone's local re-rooted on its parent as drawn (the arm's own above it, the chest's for its top). At rest with the
+ * eye on the middle it is the rest; whatever the body does, the left hand stands in the picture exactly where the right
+ * would stand in the glass - the sprite lane's own law (combat/twoHands/twoHands.js). The arm's top stands where the picture puts
+ * it, off the chest by as far as the body stands off the eye: in first person no chest is drawn (the "An arm set from
+ * another pose" rule above is the body's, kept for the third-person rig and every arm COPIED). A bone with no
+ * counterpart in the other arm (the Shield Bone) keeps its local and rides its parent. False (nothing written) where the
+ * eye is not on the skeleton.
+ */
+function pictureMirrorArm(skeleton, plan, world, plane, side, from, srcL, clipL, targets) {
+  if (!skeleton.nodes.has(plane.ref)) return false;
+  const eye = world.get(plane.ref).t;
+  const P = { a: S3, t: [2 * (eye[0] + (plane.dx || 0)), 0, 0] };
+  const src = new Map(), drawn = new Map();
+  const parentWorld = (ref, own) => { const p = skeleton.nodes.get(ref).parent; return own.get(p) ?? world.get(p); };
+  for (const ref of plan.arms[from]) src.set(ref, mul(parentWorld(ref, src), affineOf(srcL(ref))));
+  for (const ref of plan.arms[side]) {
+    const m = plan.counterpart.get(ref);
+    const Wm = m != null ? src.get(m) : null;
+    const up = parentWorld(ref, drawn);
+    if (!Wm || !plan.restOf.has(ref)) { drawn.set(ref, mul(up, affineOf(clipL(ref)))); targets.delete(ref); continue; }
+    let K = plan.pictureK.get(ref);
+    if (!K) { K = mul(mul(plan.restInv.get(m), plan.S), plan.restOf.get(ref)); plan.pictureK.set(ref, K); }
+    const W = mul(mul(P, Wm), K);
+    drawn.set(ref, W);
+    targets.set(ref, entryOf(mul(inv(up), W)));
+  }
+  return true;
+}
+/** The graph-space transforms of the clip's pose, read only along the chains asked (the eye's, an arm's parent's) - the
+ *  frame composes no whole skeleton (TWO-HANDS AUDIT, L3 10). As mwSkin.js skeletonSpaceMatrices reads them: the root,
+ *  and anything not a bone, the identity. */
+function chainWorld(skeleton, root, localOf) {
+  const memo = new Map();
+  const get = (ref) => {
+    if (ref === root || ref == null || ref < 0 || !skeleton.nodes.has(ref)) return IDENT_AFFINE;
+    let m = memo.get(ref);
+    if (!m) { m = mul(get(skeleton.nodes.get(ref).parent), affineOf(localOf(ref))); memo.set(ref, m); }
+    return m;
+  };
+  return { get };
+}
+/** A pose entry as a fresh affine. */
+const affineOf = (e) => { const s = e.scale ?? 1; return { a: Float32Array.from(e.rotation, (v) => v * s), t: [e.translation[0], e.translation[1], e.translation[2]] }; };
+
 const IDENT3 = Float32Array.from([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+const IDENT_AFFINE = Object.freeze({ a: IDENT3, t: [0, 0, 0] });
 /**
  * THE GUARD: arm `side`'s upper arm turned DOWN by `angle` radians about its own joint - in the upright plane through the
  * shoulder and the wrist as the locals `loc` (a bone's local by ref) have them, so the hand drops and the arm stays on its
