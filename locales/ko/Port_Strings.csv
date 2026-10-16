@@ -1574,6 +1574,7 @@ instance.door.line,"공유 세계로 들어가시겠습니까, 아니면 당신�
 instance.door.mine,"내 인스턴스"
 instance.door.public,"공개"
 instance.door.questHere,"이곳에서 할 퀘스트 일은 당신의 인스턴스에서 기다리고 있습니다."
+instance.door.refused,"그 인스턴스에는 들어갈 수 없습니다 - 주인과 그 파티만 머물 수 있습니다."
 instance.door.unavailable,"인스턴스를 열 수 없습니다. 잠시 후 다시 시도하세요."
 lamp.granted,"램프가 따스하게 빛납니다. 칭호 I Love Lamp를 얻었습니다."
 lamp.guest,"칭호 I Love Lamp를 유지하려면 계정에 사용자 이름을 추가하세요."

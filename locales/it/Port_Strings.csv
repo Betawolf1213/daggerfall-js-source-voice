@@ -1574,6 +1574,7 @@ instance.door.line,"Entrare nel mondo condiviso o in un'istanza tutta tua per te
 instance.door.mine,"La tua istanza"
 instance.door.public,"Pubblico"
 instance.door.questHere,"Ciò che la tua missione chiede qui ti aspetta nella tua istanza."
+instance.door.refused,"Quell'istanza ti è chiusa: possono starci solo il suo proprietario e il suo gruppo."
 instance.door.unavailable,"Non è stato possibile aprire la tua istanza. Riprova tra un momento."
 lamp.granted,"La lampada brilla calda. Hai ottenuto il titolo I Love Lamp."
 lamp.guest,"Aggiungi un nome utente al tuo account per mantenere il titolo I Love Lamp."

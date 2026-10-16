@@ -138,7 +138,7 @@ test('AUDIT 28 W4: Quest.Start freezes the state (Quest.cs:284), the save carrie
 
 test('AUDIT 28 W4: the entry seam - the location that gets BUILT is the sized clone, with the bridge\'s machine', () => {
   const modes = read('src/scenes/worldModes.js');
-  assert.match(modes, /const sized = dungeonLocationFor\(hit\.dfLocation, \{ questMachine: questBridge\?\.machine, online: host\.dungeonOnline\?\.\(\) \?\? false, whole: !!door\?\.whole \}\);/,
+  assert.match(modes, /const sized = dungeonLocationFor\(hit\.dfLocation, \{ questMachine: questBridge\?\.machine, online: host\.dungeonOnline\?\.\(\) \?\? false, whole: !!place\?\.whole \}\);/,   // PIN MOVED (INSTANCES' audit): \`place\`, the entry decided
     'tryEnterDungeon does not size the location (AUDIT WORLD34 B2: and online, the room\'s one layout - SD-ONLINE: the medium size; PIN MOVED, INSTANCES: and an instance, or a quest\'s dungeon where none can be had, whole)');
   assert.match(modes, /const dfLocation = ownDungeonLocation\(sized\);/, 'OH-E: and builds its own copy of it (MapsFile.GetLocation reads each caller its own)');
   const fn = modes.slice(modes.indexOf('async function tryEnterDungeon('));

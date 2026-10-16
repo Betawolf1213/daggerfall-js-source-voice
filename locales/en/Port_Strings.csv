@@ -1574,6 +1574,7 @@ instance.door.line,"Enter the shared world, or an instance of your own for you a
 instance.door.mine,"Your instance"
 instance.door.public,"Public"
 instance.door.questHere,"Your quest's business here waits in your instance."
+instance.door.refused,"That instance is closed to you - only its owner and their party may stand in it."
 instance.door.unavailable,"Your instance could not be opened. Try again in a moment."
 lamp.granted,"The lamp glows warmly. You have earned the title I Love Lamp."
 lamp.guest,"Add a username to your account to keep the title I Love Lamp."

@@ -1008,7 +1008,6 @@ import { createSunbaby, sunbabyLight, SUNBABY_WEATHER, sunbabyKey, createSunbaby
 import { relayKnowsLiveEvent } from '../net/wire.js';   // SUNBABY1: a word staged only on a relay that knows it
 import { createStaffTeleportClient, validStaffDestination, staffDestinationKey, followStaffPlayer } from '../net/staffTeleport.js';
 import { privateInteriorPrefix, privateInteriorRoom, privateBoatRoom, privateInteriorOf } from '../net/privateInterior.js';
-import { instanceWord } from '../net/instanceRoom.js';   // INSTANCES: the party pose says the instance I stand in
 import { createInstanceDoor } from './instanceDoor.js';   // INSTANCES: public or an instance, at the door (bible/11-Multiplayer/Instances.md)
 // TESTBUILD: every player may use the staff's /god (/godmode), /fly, /heal, /tp - god mode also lifts the zone's travel law and makes map journeys instant
 const TEST_GODMODE = false;
@@ -15381,7 +15380,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       local: inside.local,
       yaw: cam.yaw, pitch: cam.pitch,
       buildingKey: inside.buildingKey,
-      interior: inside.interior,
+      interior: inside.interior, dungeon: inside.dungeon ?? null,   // INSTANCES (the audit): a dungeon's room and layout, which the Recall hands back
     });
   }
 
@@ -15467,7 +15466,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         // door the quest respawner uses (:626-630 RespawnPlayer with
         // insideDungeon true). The anchor's local transform lands
         // after it, which is the respawner's RestorePosition (:242).
-        landed = !!(await modes?.startInDungeon?.());
+        landed = !!(await modes?.startInDungeon?.({ recorded: a.dungeon ?? {} }));   // INSTANCES (the audit): the room and layout the anchor was set in - an anchor from before records the public room
         if (landed) {
           // `landed` implies modes existed, but the wave-37 law is the
           // GUARD ON THE OBJECT above its declaration - hold the shape.
@@ -16998,7 +16997,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         } else {
           _wodInside = true;   // WOD6: a dungeon save lands inside - no marker hears this load
           await _teleportToPixel(pixel.x, pixel.y, null, { modEvent: 'load' });   // SIB2: SaveLoadManager.OnLoad
-          const entered = await (modes?.startInDungeon?.({ locationKey: extras.locationKey, fromLoad: true }) ?? false);   // StartDungeonInterior: the enter marker first, the saved position over it; CASTLE1: the SAVED dungeon's door, not the first one loaded
+          const entered = await (modes?.startInDungeon?.({ locationKey: extras.locationKey, fromLoad: true, recorded: extras.dungeon ?? {} }) ?? false);   // StartDungeonInterior: the enter marker first, the saved position over it; CASTLE1: the SAVED dungeon's door, not the first one loaded
           if (entered) { playerSpawned = true; await modes?.restoreDungeonSave?.(extras); }   // AUDIT OH-F B1: RestoreEnemyData whole before the mod loop below
           else { _wodInside = false; townTalk.say('(the dungeon has no entrance here - character restored at its door)'); }   // WOD6: it landed outside after all
           if (!entered) csaElsewhere = true;   // CSA-J (the audit): outside at its door, not where the save stood
@@ -21943,7 +21942,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const wc = inDungeon ? null : state.worldCoords(player.pos);
     const pixel = inDungeon ? { ...state.current } : playerTravelPixel();
     let dest = {
-      kind: mode, pixel,
+      kind: mode, pixel, ...(inDungeon ? inside?.dungeon ?? {} : {}),   // INSTANCES (the audit): a dungeon's room and layout (`ins`, `whole`) - a gate's and an Abyss's law keeps neither
       pos: inDungeon ? [...player.pos] : [wc.x, player.pos[1] - state.compensation[1], wc.z],
       yaw: cam.yaw, pitch: cam.pitch,
     };
@@ -21954,7 +21953,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const door = inside?.interior?.door;
       dest.door = door && { ...door, buildingKey: door.buildingKey >>> 0 };
       dest.layout = identity?.layout ?? 'classic';
-      if (privateRoom) dest.privateRoom = privateRoom;
+      if (privateRoom) dest.privateRoom = privateRoom; else if (inside?.interior?.ins) dest.ins = inside.interior.ins;   // INSTANCES (the audit): and the instance the player stands in
       if (modes?.sailingCabin) { dest.sailingCabin = modes?.sailingCabin; dest.cabinOwner = modes?.cabinOwner ?? online?.id; }
     }
     if (inDungeon) {
@@ -21994,9 +21993,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _wodInside = d.kind !== 'exterior';
     await _teleportToPixel(d.pixel.x, d.pixel.y); if (!allowed()) throw new Error('Teleport cancelled: your player is no longer ready.');
     let entered = d.kind === 'exterior';
-    if (d.kind === 'interior') entered = await modes?.restoreInterior?.({ door: d.door, ...(d.layout != null ? { layout: d.layout } : {}), ...(d.privateRoom ? { privateRoom: d.privateRoom } : {}), ...(d.sailingCabin ? { sailingCabin: d.sailingCabin, cabinOwner: d.cabinOwner } : {}) }, null, { strictDoor: true });
+    if (d.kind === 'interior') entered = await modes?.restoreInterior?.({ door: d.door, ...(d.layout != null ? { layout: d.layout } : {}), ...(d.privateRoom ? { privateRoom: d.privateRoom } : {}), ...(d.sailingCabin ? { sailingCabin: d.sailingCabin, cabinOwner: d.cabinOwner } : {}), ...(d.ins ? { ins: d.ins, staff: true } : {}) }, null, { strictDoor: true });
     else if (d.kind === 'dungeon') {
-      entered = await modes?.startInDungeon?.({ locationKey: d.locationKey ?? null, holdOpen: true });   // HOLD-ONCE: staff may land by a player in Privateer's Hold
+      entered = await modes?.startInDungeon?.({ locationKey: d.locationKey ?? null, holdOpen: true, recorded: { ins: d.ins ?? null, whole: d.whole === true, staff: true } });   // HOLD-ONCE: staff may land by a player in Privateer's Hold
       entered = entered && (modes?.dungeonLocation?.mapTableData?.mapId >>> 0) === d.mapId;
     } else if (d.kind === 'gate') entered = await modes?.enterGateArena?.(d.gate);
     else if (d.kind === 'abyss') {
@@ -26906,8 +26905,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const mate = party.members.find((m) => m.acct === party.leader && near(m)) ?? party.members.find(near);
     return mate?.p.ly ?? 0;
   };
-  /** INSTANCES: my party pose's `ins` - the instance the room I stand in is (net/instanceRoom.js instanceWord), inside. */
-  const partyInstanceWord = (mode) => { const w = mode === 'exterior' ? null : instanceWord(modes?.roomIdentity?.()?.instance); return w ? { ins: w } : {}; };
   const composePartyPose = () => {
     const mode = modes?.mode ?? 'exterior';
     const px = playerTravelPixel();   // AUDIT SOC B18: read ONCE - this ran twice a second, and it used to read the pixel three times and compose a whole look (every equipped item) for three fields
@@ -26943,7 +26940,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // validPartyPose already zeroes it outside a building, but this
       // host names its OWN law rather than leaning on the wire's).
       bk: mode === 'interior' ? (modes?.interiorBuilding?.buildingKey ?? null) : null,
-      ...partyInstanceWord(mode),   // INSTANCES: the instance I stand in (`ins`), so a partner at its door is offered to join it
+      ...instanceDoor.poseWord(mode, online?.room),   // INSTANCES: the instance room I stand in (`ins`), so a partner at its door is offered to join it
       // PARTY-REST4 (2026-09-21, per-request: "15m away from the leader do not change the healrate party
       // member MUST heal their health near the leader" - the bug this closed): a follower's mirror was
       // computing its OWN restKind() - a position check (bed/houseOwned/ship/byFire) asked of THEIR OWN feet,
@@ -29764,6 +29761,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // deleted elsewhere, or the account signed out and another in: the realm's own end, to the Online door with the realm's
     // word (the relay's words are for a build from before the realm), before anything else this frame draws over it
     if (realmSession && !realmSession.lost && realmDoorShut(online)) { realmLost('no-realm-character'); return; }
+    if (instanceDoor.refused(online)) modes?.forceExitToExterior?.();   // INSTANCES (the audit): an instance's door shut on me (not of its owner's party - a kick, a lapse) - out, as the realm's door does, never left inside it alone
     // ONE-SEAT (Mac: "the player can only have one character only at a time"): another tab or window of this player has
     // the seat - out of every room once, then nobody drawn and nothing sent, the dead's own law (D12), until the player
     // presses Play online here
@@ -30275,10 +30273,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     draw: ({ renderer: r, planes }) => drawOutsideStreet(r, planes),
   });
   // INSTANCES (bible/11-Multiplayer/Instances.md): THE DOOR - public or an instance, at a dungeon or a building a quest of
-  // mine names, at Privateer's Hold, where a partner stands an instance; built once, asked by the modes host's two funnels
-  // (scenes/instanceDoor.js). The room's key reads what it was entered as (roomIdentity's `instance`, below)
+  // mine names, at Privateer's Hold, where a partner stands an instance; built once, asked by the modes host - a player's
+  // door its popup, every other way in its rule (scenes/instanceDoor.js). The room's key reads what the place was entered as
   const instanceDoor = createInstanceDoor({ online: () => onlineOn, instanceOk: () => !!(online?.instanceOk || chatLinks?.get('world')?.instanceOk), account: () => social?.acct ?? null, character: () => realmSession?.id ?? null,
-    members: () => social?.others() ?? [], pixel: () => playerTravelPixel(), questMachine: () => questBridge?.machine ?? null, showOverlay: (w) => townTalk.showOverlay(w), say: (l) => townTalk.say(l) });
+    members: () => social?.others() ?? [], questMachine: () => questBridge?.machine ?? null, openOverlay: (w, onClosed) => townTalk.pushOverlay(w, onClosed), say: (l) => townTalk.say(l), wild: () => { const m = wildMapMask(), p = playerTravelPixel(); return !!m && wildInside(m, p.x, p.y); } });   // `wild`: inside the open zone nothing keeps an instance - its dungeons sealed, its halls the relay's to refuse
   // VAR, not const: the pointer and wheel listeners far above close over
   // this binding and are live before it is assigned, so it must exist
   // and read undefined rather than throw a TDZ ReferenceError. Every

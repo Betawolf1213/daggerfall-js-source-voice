@@ -94,16 +94,16 @@ test('private interiors: live-door restore resolves building locally, rejects wr
 });
 
 test('private interiors: visiting never reads or overwrites personal caches; save/Recall retains private instance', () => {
-  const fn = (name, supplied) => { const scope = { privateVisitOwner: null, interiorCabin: null, _sceneHeldForLayout: null, _visitLayout: 'classic', layoutLocationKeyOfMapId: () => 1, questSceneCtx: () => ({ mapId: -1 }), visitLayoutNow: () => 'classic', ...supplied }; return Function(...Object.keys(scope), `return (${declarations.get(name)});`)(...Object.values(scope)); };
+  const fn = (name, supplied) => { const scope = { privateVisitOwner: null, interiorCabin: null, placeInstance: null, _sceneHeldForLayout: null, _visitLayout: 'classic', layoutLocationKeyOfMapId: () => 1, questSceneCtx: () => ({ mapId: -1 }), visitLayoutNow: () => 'classic', ...supplied }; return Function(...Object.keys(scope), `return (${declarations.get(name)});`)(...Object.values(scope)); };
   const guard = { privateVisitRoom: room, currentInteriorScene: () => assert.fail('visitor cannot touch personal cache'), _keptHidden: [] };
   fn('cacheInteriorScene', guard)(); fn('restoreInteriorScene', guard)();
   assert.equal(fn('decorOwnerHere', { privateVisitRoom: room })(), false, 'visiting grants no furnishing/storage rights');
   const identity = fn('interiorIdentity', { privateVisitRoom: room, exteriorDoor: { blockIndex: 1, recordIndex: 2, doorIndex: 0 }, interiorBuilding: { buildingKey: -2 } })();
   assert.equal(identity.privateRoom, room);
-  // INSTANCES: `host` (no door) and `questSceneCtx` - the identity asks the door what the building was entered as: none here
-  const roomIdentity = Function('mode', '_intShared', 'privateVisitRoom', 'interiorBuilding', 'interiorCabin', '_visitLayout', 'host', 'questSceneCtx', `return ({${properties.get('roomIdentity')}}).roomIdentity();`)('interior', { owned: true }, room, { buildingKey: -2 }, null, 'classic', {}, () => ({ mapId: 1 }));
+  // INSTANCES: `placeInstance` - the mode's own word for what the building was entered as: none here (PIN MOVED, the audit)
+  const roomIdentity = Function('mode', '_intShared', 'privateVisitRoom', 'interiorBuilding', 'interiorCabin', '_visitLayout', 'placeInstance', `return ({${properties.get('roomIdentity')}}).roomIdentity();`)('interior', { owned: true }, room, { buildingKey: -2 }, null, 'classic', null);
   assert.deepEqual(roomIdentity, { kind: 'interior', buildingKey: -2, layout: 'classic', instance: null, private: true, privateRoom: room });
-  const onlineHome = Function('mode', '_intShared', 'privateVisitRoom', 'interiorBuilding', 'interiorCabin', '_visitLayout', 'host', 'questSceneCtx', `return ({${properties.get('roomIdentity')}}).roomIdentity();`)('interior', { owned: false, home: true }, null, { buildingKey: 8 }, null, 'classic', {}, () => ({ mapId: 1 }));
+  const onlineHome = Function('mode', '_intShared', 'privateVisitRoom', 'interiorBuilding', 'interiorCabin', '_visitLayout', 'placeInstance', `return ({${properties.get('roomIdentity')}}).roomIdentity();`)('interior', { owned: false, home: true }, null, { buildingKey: 8 }, null, 'classic', null);
   assert.deepEqual(onlineHome, { kind: 'interior', buildingKey: 8, layout: 'classic', instance: null }, 'persistent online homes retain their existing shared room');
 });
 

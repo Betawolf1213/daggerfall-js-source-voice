@@ -1574,6 +1574,7 @@ instance.door.line,"Entrar no mundo compartilhado ou em uma instância própria 
 instance.door.mine,"Sua instância"
 instance.door.public,"Público"
 instance.door.questHere,"O que sua missão pede aqui espera por você na sua instância."
+instance.door.refused,"Essa instância está fechada para você - só o dono e o grupo dele podem ficar nela."
 instance.door.unavailable,"Não foi possível abrir sua instância. Tente de novo em um momento."
 lamp.granted,"A lamparina brilha, calorosa. Você conquistou o título I Love Lamp."
 lamp.guest,"Adicione um nome de usuário à sua conta para manter o título I Love Lamp."

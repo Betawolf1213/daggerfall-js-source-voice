@@ -1574,6 +1574,7 @@ instance.door.line,"Gå ind i den fælles verden eller i din egen instans for di
 instance.door.mine,"Din instans"
 instance.door.public,"Offentlig"
 instance.door.questHere,"Det, din opgave kræver her, venter i din instans."
+instance.door.refused,"Den instans er lukket for dig - kun dens ejer og ejerens gruppe må være i den."
 instance.door.unavailable,"Din instans kunne ikke åbnes. Prøv igen om et øjeblik."
 lamp.granted,"Lampen gløder varmt. Du har gjort dig fortjent til titlen I Love Lamp."
 lamp.guest,"Tilføj et brugernavn til din konto for at beholde titlen I Love Lamp."

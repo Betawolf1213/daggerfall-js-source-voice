@@ -39,9 +39,13 @@ export const relaySupportsInstances = (v) => { const m = /^world(\d+)$/.exec(typ
 
 /** The hub's internal door a place room asks whether an account's party holds an instance's owner (partyHoldsOwner). */
 export const INSTANCE_INTERNAL_KIN = '/internal/instance/kin';
-/** How long a place room keeps the hub's answer for one account and owner - short, so a party just joined (or left) is
- *  heard within it. */
+/** How long a place room keeps the hub's YES for one account and owner, and how often it asks again for a member it let
+ *  in as the owner's party while that member stays (a kick, a lapse, the owner gone out of the party) - a no is never
+ *  kept, so a party just joined is heard at once. */
 export const INSTANCE_KIN_KEEP_MS = 15_000;
+/** The relay's refusal of an instance's door - its error frame's word, one home for both ends (the page says it: its
+ *  own instance door, scenes/instanceDoor.js refused). */
+export const INSTANCE_DOOR_WORD = 'private instance';
 
 /** The public rooms an instance may stand beside: a dungeon whole and a building - the two world rooms of a place. */
 const PUBLIC_ROOM = /^(?:dungeon:m[1-9]\d{0,9}|interior:m[1-9]\d{0,9}\.[1-9]\d{0,7})$/;
@@ -91,17 +95,20 @@ export function instanceOfWord(word) {
 }
 
 /**
- * THE RELAY'S DOOR: may the account `subject` (the token's verified subject - never a hello field) stand in the instance
- * room `key`? Its owner, staff, and - asked of `kin(subject, owner)`, the hub's word (partyHoldsOwner) - a member of the
- * owner's party. Anything but an instance's key: false.
+ * THE RELAY'S DOOR: by what right may the account `subject` (the token's verified subject - never a hello field) stand in
+ * the instance room `key`? 'staff', 'owner', or 'party' - asked of `kin(subject, owner)`, the hub's word
+ * (partyHoldsOwner), a member of the owner's party, whom the room asks again while it stays. Null for none, and for
+ * anything but an instance's key.
  */
-export async function instanceAdmits(key, subject, { staff = false, kin = null } = {}) {
+export async function instanceAdmission(key, subject, { staff = false, kin = null } = {}) {
   const r = instanceOf(key);
-  if (!r || !identity(subject)) return false;
-  if (staff) return true;
-  if (r.owner === await instanceOwnerOf(subject)) return true;
-  return typeof kin === 'function' ? !!(await kin(subject, r.owner)) : false;
+  if (!r || !identity(subject)) return null;
+  if (staff) return 'staff';
+  if (r.owner === await instanceOwnerOf(subject)) return 'owner';
+  return typeof kin === 'function' && await kin(subject, r.owner) ? 'party' : null;
 }
+/** May the account `subject` stand in the instance room `key`? (instanceAdmission's yes or no.) */
+export const instanceAdmits = async (key, subject, opts = {}) => (await instanceAdmission(key, subject, opts)) != null;
 
 /** THE HUB'S ANSWER: does the party whose members are `members` (account ids) hold `subject` and another member whose
  *  digest is `owner`? */

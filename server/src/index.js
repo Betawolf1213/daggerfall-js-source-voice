@@ -180,7 +180,7 @@
 // once here rather than a little at a time.
 import { routeStaffTeleport } from './staffTeleport.js';
 import { privateInteriorOf, privateInteriorAdmits, caravanKeyOf } from '../../src/net/privateInterior.js';   // WAGONS2-VISIT: and a caravan's own room
-import { isInstanceRoom, instanceAdmits, partyHoldsOwner, INSTANCE_INTERNAL_KIN, INSTANCE_KIN_KEEP_MS } from '../../src/net/instanceRoom.js';   // INSTANCES: an instance's room, its door and the hub's party answer (bible/11-Multiplayer/Instances.md)
+import { isInstanceRoom, instanceOf, instanceAdmission, partyHoldsOwner, INSTANCE_INTERNAL_KIN, INSTANCE_KIN_KEEP_MS, INSTANCE_DOOR_WORD } from '../../src/net/instanceRoom.js';   // INSTANCES: an instance's room, its door and the hub's party answer (bible/11-Multiplayer/Instances.md)
 import { isStaff } from '../../src/net/staffCommands.js';
 import { RELAY_CFG_TTL_MS, RELAY_INTERNAL_CFG, mayRelayCfg, relayCfgValue } from '../../src/net/relayCfg.js';   // SCALE5b: the relay's settings, at run time
 import { busOf, shardOf, isChannelShard, isChannelBus, isRegionBus, isCourtCopy, courtOfCopy, upOf, HUB_INTERNAL_UP, HUB_INTERNAL_DOWN, HUB_BATCH_MS, HUB_SYNC_MS, HUB_COUNT_MS, HUB_BATCH_MAX, CLOSE_HUB, HUB_FIND_MAX, HUB_FIND_ROOM_HZ_MAX, HUB_GUILD_WHO_MAX, HUB_WHO_KEEP_MS, HUB_FRAME_MAX, HUB_UP_HZ_MAX, HUB_UP_BURST, shardKeeps, foldFind, HUB_BATCH_BYTES, HUB_UP_QUEUE_BYTES, HUB_INTERNAL_RESYNC, HUB_SILENT_MS, SHARD_LAW_KEYS, HUB_KEY_KEY, VHUBS_KEY } from '../../src/net/hubShards.js';   // SCALE5c: the hub, sixteen ways
@@ -293,7 +293,7 @@ import { newTable, topUp as holdemTopUp, sit as holdemSit, sitRefusal as holdemS
 // BUNDLE - net/wildLaw.js (a place room's REMAINS: what a body in the open zone dropped, kept here so the room alone
 // decides who takes each record - it imports wire.js alone). bible/11-Multiplayer/Wild-Zone.md.
 import { newRemains, foldFall, takeFrom, remainsNamedFor, collectAsk, remainsWords, remainsLive, remainsEmpty, remainsSpent, remainsTakeover, remainsEvict, remainsOf, wildRemainsKey, WILD_REMAINS_PREFIX } from '../../src/net/wildLaw.js';
-import { wildGate, wildDirected, WILD_HZ_MAX, WDUN_HZ_MAX, WDUN_HERE_MS, WDUN_INTERNAL_RESET, WDUN_INTERNAL_KIN, WDUN_INTERNAL_GONE, WILD_INTERNAL_VIT, wdunRoomKey, wdunHall, WILD_REMAINS_MS as WDUN_PILE_MS } from './relay.js';
+import { wildGate, wildDirected, WILD_HZ_MAX, WDUN_HZ_MAX, WDUN_HERE_MS, WDUN_INTERNAL_RESET, WDUN_INTERNAL_KIN, WDUN_INTERNAL_GONE, WILD_INTERNAL_VIT, wdunRoomKey, wdunHall, wdunHallOfRoom, WILD_REMAINS_MS as WDUN_PILE_MS } from './relay.js';
 import { WDUN_KEY, wdunOf, wdunPrune, wdunEnter, wdunHere, wdunLeave, wdunDie, wdunGone, wdunState, wdunCrows, wdunBound, wdunGiantDie, wdunGiants } from '../../src/net/wildLaw.js';   // PVPDUNGEONS: the zone's halls, kept by the hub
 import { validSdRecord, sdRelayGate, validSdFoundTell, chatRegionRoom, SD_INTERNAL_CENSUS, SD_INTERNAL_FOUND, SD_INTERNAL_LIVE, SD_TELL_RETRY_MS, SD_KEY, SD_FOUND_KEY, SD_REALM_KEY, sdDeadKey, SD_REGION_COUNT, SD_FIGHTERS_MAX, sdPzRelayGate, SD_ORRERY_KEY, sdFightRelayGate, SD_BRAIN_MIN, SD_NO_WORDS, SD_FIGHT_KEY, SD_INTERNAL_FELL, validSdFellTell, SD_RC_PREFIX, sdReceiptKey, SD_HERE_HOLD_MS, SD_SLOT_KEY, SD_HELD_KEY } from './relay.js';   // SD3: the Super dungeon's frame, its record and its doors (the wire's, through relay.js)
 import { sdFirst, sdRise, sdFind, sdFell, sdGone, sdDue, pickSdRegion, sdFindBelieved, sdNearSite, sdHolds, sdAdmits, isSdRoom, sdSlotOfRoom, SD_NO_CLOSED, SD_NO_FULL, SD_NO_FALLEN } from '../../src/net/sdLaw.js';   // SD3: the Super dungeon's law - the director's moves, the census's pick, the find, the realm's room
@@ -738,7 +738,8 @@ export class Room {
     this._wdunSavedAt = 0;          // PVPDUNGEONS: a heartbeat writes at most every WDUN_HERE_MS; a lock, a death, a reset at once
     this._wdunRate = new WeakMap(); // PVPDUNGEONS: each socket's own bucket for wdun words
     this._wdunKin = new Map();      // PVPDUNGEONS: a place room's answers from the hub, `taker|owner` -> { kin, at }
-    this._instanceKin = new Map();  // INSTANCES: an instance room's answers from the hub, `subject|owner` -> { kin, at } (INSTANCE_KIN_KEEP_MS)
+    this._instanceKin = new Map();  // INSTANCES: an instance room's yeses from the hub, `subject|owner` -> { kin, at } (INSTANCE_KIN_KEEP_MS)
+    this._instanceAsked = new WeakMap();   // INSTANCES (the audit): when a member let in as the owner's party was last asked again (_instanceRecheck)
     this._wildLoad = null;          // WILD1: a place room's remains (net/wildLaw.js) - read from storage once an instance life, by its prefix; storage is the truth, written at every change
     this._owLoad = null;            // OW6L: a cell's overworld ledger (net/overworldLaw.js) - the one storage read an instance life, its promise shared by every word and hello that lands while it runs; storage is the truth, written at every change
     this._roomOw = null;            // OW6L: a cell's budget for fanning its ledger's changes (OW_ROOM_HZ_MAX) - on the instance, as the chat's is
@@ -2561,6 +2562,7 @@ export class Room {
     // where the player stands, and stood there wrong until the next heartbeat corrected it five seconds on. A
     // stop is one frame per walk, so it is fanned whole like a keepalive, under the same floor: a client toggling
     // `mv` at the gate's ceiling buys the same two whole fans a second a keepalive flood does, and no more.
+    if (a.ip) this._instanceRecheck(ws, a, now);   // INSTANCES (the audit): a member let in as the owner's party, asked again while it stays
     const unmoved = posed && !!a.pose && !poseChanged(a.pose, m.p);
     const stopped = posed && !!a.pose && (a.pose.mv | 0) !== 0 && (m.p.mv | 0) === 0;
     const still = (unmoved || stopped) && now - (a.kept ?? 0) >= KEEPALIVE_FAN_MS;
@@ -2751,8 +2753,9 @@ export class Room {
       // every newcomer with her. A realm's gate is spent after the token, by account (`_battleHelloGate`): an account the
       // realm has admitted before waits on itself alone, a newcomer on the room's bucket too
       const realmRoom = isSdRoom(a.key);
+      const instRoom = isInstanceRoom(a.key);   // INSTANCES (the audit): nor an instance's - its key is known to every member it ever had
       let gate = null;
-      if (!battle && !floor && !realmRoom) {
+      if (!battle && !floor && !realmRoom && !instRoom) {
         // the room's hello gate (A6): a storm is 2N frames a cycle for everyone in a place; a channel's hello costs no roster, so its gate runs deeper - never off (AUDIT CHAT A1)
         gate = tokenGate(this._hellos, now, chat ? CHAT_HELLO_HZ_MAX : HELLO_HZ_MAX);   // SCALE2b: in memory - see `_hellos`
         this._hellos = gate.bucket;
@@ -2771,8 +2774,10 @@ export class Room {
         this._refuse(ws, 'private room'); return;
       }
       // INSTANCES: AN INSTANCE ADMITS ITS OWNER, STAFF AND THE OWNER'S PARTY - asked before anything is written (the owned
-      // room's law above); the hub silent is busy, and the page tries again
-      if (isInstanceRoom(a.key)) { const no = await this._instanceAdmit(a.key, who, now); if (no) { this._refuse(ws, no, no === 'busy' ? CLOSE_BUSY : undefined); return; } }
+      // room's law above), its hello gate spent first by account (_instanceHello); the hub silent is busy, and the page
+      // tries again. A member let in as the party is marked (`ip`) - the room asks again while it stays
+      let instParty = false;
+      if (instRoom) { const v = await this._instanceHello(a.key, who, now); if (v.no) { this._refuse(ws, v.no, v.no === 'busy' ? CLOSE_BUSY : undefined); return; } instParty = v.as === 'party'; }
       // WB3: A GATE'S ROOM ADMITS ONLY INSIDE ITS DAY'S WINDOW, asked before anything is written (the token's law just
       // above): a newcomer while the gate is open and its boss stands, a fighter already in the fight (a reconnect, a
       // player cast out and back) until the wrath's end. The Worker refused the key outside the window already; this is
@@ -2870,7 +2875,7 @@ export class Room {
         // AUDIT SCALE II R2-4: and kept, so a woken instance whose sockets say nothing still knows it
         if (this._hubKeyKept !== this._hubKey) { this._hubKeyKept = this._hubKey; try { await this.state.storage.put(HUB_KEY_KEY, this._hubKey); } catch { this._hubKeyKept = null; } }
       }
-      if (!this._setAttach(ws, { ...a, ...placed, ...shown, ...(shard ? { vid, hm: { acct: m.acct ?? null, as: m.asecret ?? null, ps: m.ps === 1 ? 1 : 0, sc: m.secret } } : copy ? { vid } : {}), id: m.id, name: who.name, title: who.title, ...(who.ts ? { ts: who.ts } : {}), glyphs: who.glyphs, gx: who.gx, au: who.au, ...(who.rb ? { rb: who.rb } : {}), lv: who.lv, ...guild, ...(who.hn ? { hn: who.hn, hc: who.hc, hb: who.hb, hg: who.hg } : {}), ...(who.ci && !chat && !isSocialRoom(a.key) ? { ci: who.ci } : {}), ...(armsOk(who.wa) && !chat && !isSocialRoom(a.key) ? { wa: who.wa } : {}), gio: who.gio, sub: who.subject, ...(siegeSide ? { sd: siegeSide } : {}), mu: who.mu, pose: chat ? null : m.pose, since: replaced?.since ?? now, ...arena, ...charLv, ...linked, ...(m.w2 === 1 ? { w2: 1 } : {}) })) { this._refuse(ws, 'hello too large'); return; }   // MOD1: `sub` the verified account (what a mute names), `mu` until when it may not talk   // RENOWN1: `lv` the Renown level the token carried
+      if (!this._setAttach(ws, { ...a, ...placed, ...shown, ...(shard ? { vid, hm: { acct: m.acct ?? null, as: m.asecret ?? null, ps: m.ps === 1 ? 1 : 0, sc: m.secret } } : copy ? { vid } : {}), id: m.id, name: who.name, title: who.title, ...(who.ts ? { ts: who.ts } : {}), glyphs: who.glyphs, gx: who.gx, au: who.au, ...(who.rb ? { rb: who.rb } : {}), lv: who.lv, ...guild, ...(who.hn ? { hn: who.hn, hc: who.hc, hb: who.hb, hg: who.hg } : {}), ...(who.ci && !chat && !isSocialRoom(a.key) ? { ci: who.ci } : {}), ...(armsOk(who.wa) && !chat && !isSocialRoom(a.key) ? { wa: who.wa } : {}), gio: who.gio, sub: who.subject, ...(instParty ? { ip: 1 } : {}), ...(siegeSide ? { sd: siegeSide } : {}), mu: who.mu, pose: chat ? null : m.pose, since: replaced?.since ?? now, ...arena, ...charLv, ...linked, ...(m.w2 === 1 ? { w2: 1 } : {}) })) { this._refuse(ws, 'hello too large'); return; }   // MOD1: `sub` the verified account (what a mute names), `mu` until when it may not talk   // RENOWN1: `lv` the Renown level the token carried
       if (!chat && m.pose && this._trailing({ key: a.key, sub: who.subject })) this._trailPose(ws, m.pose, now);   // AUDIT INT11: a fighter's socket new to the room stands where its hello put it, from now - on its trail, or none says when
       // SRV-N: `v` rides EVERY welcome, a channel's included. A player in the enhanced skin holds a presence socket
       // and one chat socket per tab; whichever reconnects first after a hand deploy is the one that notices, and the
@@ -8580,16 +8585,39 @@ export class Room {
     const pa = parties(ra), pb = parties(rb);
     return json({ kin: pa.some((x) => pb.includes(x)) });
   }
-  /** INSTANCES (bible/11-Multiplayer/Instances.md): an instance room's door for the account `who` names - null admitted;
-   *  'private instance' for anyone but its owner, staff and the owner's party; 'busy' while the hub does not answer. */
-  async _instanceAdmit(key, who, now) {
+  /** INSTANCES (bible/11-Multiplayer/Instances.md): an instance room's door for the account `who` names - `{ as }` admitted
+   *  (instanceAdmission's right: 'owner', 'staff', 'party'), or `{ no }`: INSTANCE_DOOR_WORD for anyone else, and for
+   *  everyone at a zone hall (net/wire.js wdunHallOfRoom - a hall keeps no instance); 'busy' while the hub does not
+   *  answer, or past the account's own hello gate. THE GATE IS BY ACCOUNT, after the token (AUDIT SD II L7 M1's, a
+   *  realm's): every member an instance ever had knows its key, and the room's own bucket, spent before the token, was a
+   *  door any of them could hold shut with junk. */
+  async _instanceHello(key, who, now) {
+    if (!(await this._battleHelloGate(who?.subject, 'fighter', now)).pass) return { no: 'busy' };
+    if (wdunHallOfRoom(instanceOf(key)?.base)) return { no: INSTANCE_DOOR_WORD };
     let silent = false;
     const kin = async (subject, owner) => { const k = await this._instanceKinOf(subject, owner, now); if (k == null) silent = true; return k === true; };
-    if (await instanceAdmits(key, who?.subject, { staff: isStaff(who?.glyphs), kin })) return null;
-    return silent ? 'busy' : 'private instance';
+    const as = await instanceAdmission(key, who?.subject, { staff: isStaff(who?.glyphs), kin });
+    return as ? { as } : { no: silent ? 'busy' : INSTANCE_DOOR_WORD };
+  }
+  /** INSTANCES (the audit): A MEMBER LET IN AS THE OWNER'S PARTY IS ASKED AGAIN WHILE IT STAYS - the hello's word was the
+   *  party as it stood then; one kicked, lapsed, or whose party the owner left is refused out of the room within
+   *  INSTANCE_KIN_KEEP_MS of the hub saying so (the close hands the host's seat on, _leave). Asked off its pose and never
+   *  awaited by it (the room's hottest path); the hub silent leaves it in, and a later pose asks again. */
+  _instanceRecheck(ws, a, now) {
+    const at = this._instanceAsked.get(ws);
+    if (at != null && now - at < INSTANCE_KIN_KEEP_MS) return;
+    this._instanceAsked.set(ws, now);
+    const r = instanceOf(a.key);
+    if (!r || !a.sub) return;
+    this._instanceKinOf(a.sub, r.owner, now).then(async (kin) => {
+      if (kin !== false || this._dead.has(ws)) return;
+      this._refuse(ws, INSTANCE_DOOR_WORD);
+      await this._reap();   // out of any door: its leave said now (the tick's own reap, AUDIT CARDS-3 A3)
+    }).catch((e) => console.warn('[instance] recheck', e?.message ?? e));
   }
   /** INSTANCES: the hub's word whether `subject`'s party holds the account whose digest is `owner` - true, false, or null
-   *  while the hub does not answer (never kept). Kept INSTANCE_KIN_KEEP_MS a pair; the stalest pair goes first. */
+   *  while the hub does not answer. A yes is kept INSTANCE_KIN_KEEP_MS a pair (the stalest pair goes first); a no never
+   *  is - a member just invited is heard at once. */
   async _instanceKinOf(subject, owner, now) {
     const key = `${subject}|${owner}`, had = this._instanceKin.get(key);
     if (had && now - had.at < INSTANCE_KIN_KEEP_MS) return had.kin;
@@ -8600,8 +8628,8 @@ export class Room {
       const res = await rooms.get(rooms.idFromName(SOCIAL_ROOM)).fetch(new Request(`https://relay.internal${INSTANCE_INTERNAL_KIN}`, { method: 'POST', body: JSON.stringify({ a: subject, o: owner }), signal: AbortSignal.timeout(ROOM_CALL_MS) }));
       if (res?.ok) kin = !!(await res.json())?.kin;
     } catch (e) { console.warn('[instance] kin', e?.message ?? e); }
-    if (kin == null) return null;
     this._instanceKin.delete(key);
+    if (kin !== true) return kin;
     if (this._instanceKin.size >= 512) this._instanceKin.delete(this._instanceKin.keys().next().value);
     this._instanceKin.set(key, { kin, at: now });
     return kin;
@@ -8612,8 +8640,10 @@ export class Room {
     try { body = await request.json(); } catch { body = null; }
     const a = typeof body?.a === 'string' ? body.a : null, o = typeof body?.o === 'string' ? body.o : null;
     if (!a || !o || a.length > 128 || o.length > 64) return json({ error: 'bad kin' }, 400);
-    const pid = (await this._acct(a))?.party ?? null;
-    const party = pid ? await this._party(pid) : null;
+    // the party as it stands (the audit): a seat lapsed past PARTY_OFFLINE_MS is walked out first, as every hub reading of
+    // the party walks it (_myParty) - a stored seat nobody had walked yet admitted a lapsed member, and a lapsed owner's party
+    const rec = await this._acct(a);
+    const [party] = rec ? await this._myParty(a, rec, Date.now()) : [null];
     return json({ kin: await partyHoldsOwner(party?.members ?? null, a, o) });
   }
   /** A place room's question to the hub, kept a minute per pair (a fat remains is many takes). */

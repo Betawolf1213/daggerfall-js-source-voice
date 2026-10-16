@@ -1574,6 +1574,7 @@ instance.door.line,"Vstoupit do společného světa, nebo do vlastní instance p
 instance.door.mine,"Tvá instance"
 instance.door.public,"Veřejný svět"
 instance.door.questHere,"To, co tu žádá tvůj úkol, na tebe čeká v tvé instanci."
+instance.door.refused,"Tato instance je pro tebe zavřená - stát v ní smí jen její majitel a jeho družina."
 instance.door.unavailable,"Tvou instanci se nepodařilo otevřít. Zkus to za chvíli znovu."
 lamp.granted,"Lampa hřejivě září. Titul I Love Lamp je teď tvůj."
 lamp.guest,"Přidej ke svému účtu uživatelské jméno a titul I Love Lamp ti zůstane."

@@ -1574,6 +1574,7 @@ instance.door.line,"Intri în lumea comună sau într-o instanță a ta, pentru 
 instance.door.mine,"Instanța ta"
 instance.door.public,"Public"
 instance.door.questHere,"Ce cere misiunea ta aici te așteaptă în instanța ta."
+instance.door.refused,"Instanța aceea îți este închisă - doar proprietarul ei și grupul lui pot sta în ea."
 instance.door.unavailable,"Instanța ta nu a putut fi deschisă. Încearcă din nou peste o clipă."
 lamp.granted,"Lampa strălucește cald. Ai câștigat titlul I Love Lamp."
 lamp.guest,"Adaugă un nume de utilizator contului tău ca să păstrezi titlul I Love Lamp."

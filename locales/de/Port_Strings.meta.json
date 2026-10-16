@@ -7874,6 +7874,11 @@
   "tr": "09abf5ca04c6",
   "by": "claude-in-session"
  },
+ "instance.door.refused": {
+  "en": "b9f2dc1beb4c",
+  "tr": "f08a5b103ef3",
+  "by": "claude-in-session"
+ },
  "instance.door.unavailable": {
   "en": "7ef00096d28e",
   "tr": "84de43011461",
