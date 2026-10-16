@@ -14,8 +14,8 @@
 import { ChoiceWindow } from '../ui/talkWindow.js';
 import { t } from '../systems/textManager.js';
 import { SITE_TYPES } from '../systems/quest/place.js';
-import { instanceOwnerOf, instanceEpochOf, questOpener, HOLD_OPENER } from '../net/instanceRoom.js';
-import { openerQuestOf, partnerInstances, instanceOffer, questDungeonWhole, questsAtSite } from '../systems/instancePlaces.js';
+import { instanceOwnerOf, holdEpochOf } from '../net/instanceRoom.js';
+import { openerQuestOf, partnerInstances, instanceOffer, questDungeonWhole, questsAtSite, questInstanceEpoch } from '../systems/instancePlaces.js';
 import { isPrivateersHold } from '../systems/startDungeon.js';   // HOLD-ONCE: online the Hold's public room is entered once - its instance any time
 
 /** The words, one home - drafted in the thirteen whole languages (locales/), keys under `instance.door`. */
@@ -44,16 +44,21 @@ export function createInstanceDoor(deps) {
     if (ownerFor !== a) { ownerFor = a; owner = await instanceOwnerOf(a); }
     return owner;
   }
-  /** The instance I open at `site`: my owner, and the epoch of the quest that names it (the oldest), or the Hold's. */
+  /** The instance I open at `site`: my owner, and the epoch of the quest that names it (the oldest - its own, kept in its
+   *  save: questInstanceEpoch), or the Hold's (my character's). */
   async function mine(site) {
     const o = await myOwner();
-    const c = deps.character?.() ?? null;
-    const q = site.isHold ? null : openerQuestOf(deps.questMachine?.(), site);
-    const opener = site.isHold ? HOLD_OPENER : questOpener(q?.uid);
-    const epoch = c && opener ? await instanceEpochOf(c, opener) : null;
+    const epoch = site.isHold ? await holdEpochOf(deps.character?.() ?? null) : questInstanceEpoch(openerQuestOf(deps.questMachine?.(), site));
     return o && epoch ? { owner: o, epoch } : null;
   }
 
+  /** The party's instances standing at `place` whose owners are in the party (systems/instancePlaces.js partnerInstances) -
+   *  each member's owner digest worked out here, the page's half. */
+  async function partnersAt(place) {
+    const members = deps.members?.() ?? [];
+    const owners = new Map(await Promise.all(members.map(async (m) => [m?.acct, await instanceOwnerOf(m?.acct)])));
+    return partnerInstances(members, place, (acct) => owners.get(acct) ?? null);
+  }
   /**
    * THE DOOR'S QUESTION, asked by a host before it builds a place the player walks into (never a load's: `skip`).
    * `site`: { siteType (SITE_TYPES.Dungeon | SITE_TYPES.Building), mapId, buildingKey, px, py (its map pixel), isHold }.
@@ -76,11 +81,9 @@ export function createInstanceDoor(deps) {
       if (!inst) { deps.say?.(INSTANCE_TEXT.unavailable()); return { go: false }; }
       return settle(inst, true);
     }
-    const me = instanceOk ? await myOwner() : null;
     const px = deps.pixel?.() ?? { x: null, y: null };
     const place = { px: px.x, py: px.y, in: site.siteType === SITE_TYPES.Building ? 2 : 1, bk: site.siteType === SITE_TYPES.Building ? (Number(site.buildingKey) >>> 0) : null };
-    // a member standing in MY instance is my own row, never a stranger's to join
-    const partners = instanceOk ? partnerInstances(deps.members?.() ?? [], place).filter((p) => p.owner !== me) : [];
+    const partners = instanceOk ? await partnersAt(place) : [];
     const rows = instanceOffer({ online, instanceOk, isHold: !!site.isHold, questHere, partners });
     if (!rows) return settle(null, questDungeonWhole({ online, instanceOk, questHere }));
     const options = rows.map((row, i) => ({

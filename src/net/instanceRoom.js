@@ -9,13 +9,14 @@
 //
 // - `owner`, 16 hex: the account's digest (instanceOwnerOf). The relay checks it against the subject its token verified,
 //   never a hello field (instanceAdmits).
-// - `epoch`, 8 hex: the character's and what opened the room (instanceEpochOf) - a quest (questOpener: its uid) or
-//   Privateer's Hold (HOLD_OPENER). Mac, of what an instance remembers: "Kept per owner, 30-min respawn" and "Kept until
-//   quest ends" - a quest that ends never keys its room again, so the room's memory goes with it, forgotten
-//   INSTANCE_TTL_MS (net/wire.js) after the room last drained.
+// - `epoch`, 8 hex: what opened the room - a quest's own, minted at random the first time its instance opens and kept
+//   in the quest's save (systems/instancePlaces.js questInstanceEpoch), or Privateer's Hold's, the character's digest
+//   (holdEpochOf). Mac, of what an instance remembers: "Kept per owner, 30-min respawn" and "Kept until quest ends" - a
+//   quest that ends takes its epoch with it, so no later quest keys its room (a uid would: quest.js nextUid restarts past
+//   the uids a save still holds), and the room's memory is forgotten INSTANCE_TTL_MS (net/wire.js) after it last drained.
 //
 // A DUNGEON'S INSTANCE IS THE DUNGEON WHOLE - Daggerfall's own layout, never the world's small or medium size (no `.m` /
-// `.s`; smallerDungeons.js dungeonSizeFor's `instance`): every page in it builds one layout, whose foes, doors and piles
+// `.s`; smallerDungeons.js dungeonSizeFor's `whole`): every page in it builds one layout, whose foes, doors and piles
 // the room's streams and memory address by index, and the layout a quest's markers are chosen on (QUEST-CAPS's caps and
 // a re-laid start block that walks into one - Hold of Coppering's medium build - are the public world's alone).
 //
@@ -50,19 +51,17 @@ const EPOCH_RE = new RegExp(`^[0-9a-f]{${INSTANCE_EPOCH_HEX}}$`);
 /** An account's or a character's id, as the private rooms read one (net/privateInterior.js). */
 const identity = (v) => typeof v === 'string' && /^[A-Za-z0-9_-]{4,64}$/.test(v);
 
-/** What opens Privateer's Hold's instance - no quest: the Hold itself (HOLD-ONCE: online its public room is entered once). */
-export const HOLD_OPENER = 'hold';
-/** What opens a quest's instance: its uid. Null for no uid. */
-export const questOpener = (uid) => (Number.isSafeInteger(uid) && uid > 0 ? `quest:${uid}` : null);
+/** Is `v` an epoch's spelling - eight lower-case hex? */
+export const isInstanceEpoch = (v) => typeof v === 'string' && EPOCH_RE.test(v);
 
 /** The owner's digest of an account, or null for no account. */
 export async function instanceOwnerOf(account) {
   return identity(account) ? digest(`instance:account:${account}`, INSTANCE_OWNER_HEX / 2) : null;
 }
-/** The epoch of a character's instance opened by `opener` (HOLD_OPENER, questOpener), or null. */
-export async function instanceEpochOf(character, opener) {
-  if (!identity(character) || typeof opener !== 'string' || !opener || opener.length > 64) return null;
-  return digest(`instance:epoch:${character}:${opener}`, INSTANCE_EPOCH_HEX / 2);
+/** The epoch of a character's instance of Privateer's Hold - no quest opens it, the Hold itself does (HOLD-ONCE: online
+ *  its public room is entered once), so it is the character's for good - or null for no character. */
+export async function holdEpochOf(character) {
+  return identity(character) ? digest(`instance:epoch:${character}:hold`, INSTANCE_EPOCH_HEX / 2) : null;
 }
 
 /** The instance `{ owner, epoch }` of the public room `publicKey` - its key, or null for a room no instance stands beside
@@ -70,7 +69,7 @@ export async function instanceEpochOf(character, opener) {
 export function instanceRoomOf(publicKey, instance) {
   if (typeof publicKey !== 'string' || !PUBLIC_ROOM.test(publicKey)) return null;
   const owner = instance?.owner, epoch = instance?.epoch;
-  if (typeof owner !== 'string' || !OWNER_RE.test(owner) || typeof epoch !== 'string' || !EPOCH_RE.test(epoch)) return null;
+  if (typeof owner !== 'string' || !OWNER_RE.test(owner) || !isInstanceEpoch(epoch)) return null;
   return `${publicKey}.i${owner}.${epoch}`;
 }
 /** An instance room's parts - `{ base, owner, epoch }`, `base` its public room - or null for any other key. */
@@ -83,7 +82,7 @@ export const isInstanceRoom = (key) => instanceOf(key) != null;
 /** A party pose's word for the instance a member stands in (`ins`: its owner and epoch, 25 characters), or null. */
 export function instanceWord(instance) {
   const owner = instance?.owner, epoch = instance?.epoch;
-  return typeof owner === 'string' && OWNER_RE.test(owner) && typeof epoch === 'string' && EPOCH_RE.test(epoch) ? `${owner}.${epoch}` : null;
+  return typeof owner === 'string' && OWNER_RE.test(owner) && isInstanceEpoch(epoch) ? `${owner}.${epoch}` : null;
 }
 /** The instance a party pose's `ins` names, `{ owner, epoch }`, or null. */
 export function instanceOfWord(word) {

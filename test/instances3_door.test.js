@@ -12,7 +12,7 @@ import { QuestMachine } from '../src/systems/quest/machine.js';
 import { Place, SITE_TYPES } from '../src/systems/quest/place.js';
 import { loadQuestTables } from '../src/systems/quest/tables.js';
 import { relayQuestOnline } from '../src/systems/quest/questRepair.js';
-import { questsAtSite, openerQuestOf, questMountsHere, questDungeonWhole, partnerInstances, instanceOffer } from '../src/systems/instancePlaces.js';
+import { questsAtSite, openerQuestOf, questMountsHere, questDungeonWhole, partnerInstances, instanceOffer, questInstanceEpoch } from '../src/systems/instancePlaces.js';
 import { createInstanceDoor, INSTANCE_TEXT } from '../src/scenes/instanceDoor.js';
 import { dungeonSizeFor, smallerDungeonsStateNow, SMALLER_DUNGEONS_STATE, ONLINE_DUNGEONS_STATE, onlineDungeonSize } from '../src/world/smallerDungeons.js';
 import { isPrivateersHold, HOLD_ONCE_TEXT } from '../src/systems/startDungeon.js';
@@ -95,21 +95,56 @@ test('INSTANCES the load\'s re-lay: a quest stamped at any size but the whole ha
   assert.equal(relayQuestOnline(q), false, 'again: nothing');
 });
 
-test('INSTANCES a partner\'s instance at this door: a member inside this place (its pixel, a dungeon or this building) with an instance - one row an instance; a member away, elsewhere or in the public room is none', () => {
-  const ins = '0123456789abcdef.89abcdef';
+test('INSTANCES a quest\'s instance is its own for its life: its epoch minted once and kept by its save - never its uid, which a later quest is minted again after a reload; a partner\'s copy mints its own and a resync keeps it (mutants: minted every entry; the save forgets it; a copy takes the sender\'s; a resync takes the partner\'s)', () => {
+  const m = new QuestMachine();
+  const q = questAt(m, CRYPT);
+  let n = 0;
+  const rand = () => ['aaaaaaaa', 'bbbbbbbb', 'cccccccc'][n++];
+  assert.equal(q.instanceEpoch, null, 'no room until one opens');
+  assert.equal(questInstanceEpoch(null, rand), null);
+  assert.equal(questInstanceEpoch(q, rand), 'aaaaaaaa');
+  assert.equal(questInstanceEpoch(q, rand), 'aaaaaaaa', 'minted once: every entry of its life one room');
+  const data = JSON.parse(JSON.stringify(q.getSaveData()));
+  assert.equal(data.instanceEpoch, 'aaaaaaaa');
+  const reloaded = new QuestMachine();
+  reloaded.restoreSaveData(JSON.parse(JSON.stringify(m.getSaveData())));
+  assert.equal(reloaded.getQuest(q.uid).instanceEpoch, 'aaaaaaaa', 'the save keeps it');
+  // the defect this closes: an ended quest leaves the machine, and nextUid restarts past the uids a save still holds -
+  // so a later quest is minted a finished one's uid. Its room is still its own.
+  const later = questAt(new QuestMachine(), CRYPT);
+  later.uid = q.uid;
+  assert.equal(questInstanceEpoch(later, rand), 'bbbbbbbb', 'the same uid, another quest, another room');
+  // a party member's copy
+  const friend = new QuestMachine();
+  const copy = friend.receiveSharedQuest(data);
+  assert.ok(copy);
+  assert.equal(copy.instanceEpoch, null, 'a copy is my own quest - never the sender\'s epoch');
+  assert.equal(questInstanceEpoch(copy, rand), 'cccccccc');
+  friend.updateSharedQuest(copy.questName, data);
+  assert.equal(friend.getQuest(copy.uid).instanceEpoch, 'cccccccc', 'a resync keeps the copy\'s own');
+});
+
+test('INSTANCES a partner\'s instance at this door: a member inside this place (its pixel, a dungeon or this building) in an instance whose OWNER is in the party - one row a room, named by its owner; a member away, elsewhere, in the public room, or in a stranger\'s room is none', () => {
+  const ann = '0123456789abcdef', fi = 'fedcba9876543210', stranger = '1111111111111111';
+  const owners = { a1: ann, a6: fi, a2: '2222222222222222', a3: '3333333333333333', a4: '4444444444444444', a5: '5555555555555555', a7: '7777777777777777' };
+  const ownerOf = (acct) => owners[acct] ?? null;
   const at = { px: 210, py: 99, in: 1, bk: null };
   const members = [
-    { acct: 'a1', name: 'Ann', online: true, p: { px: 210, py: 99, in: 1, ins } },
-    { acct: 'a2', name: 'Bo', online: true, p: { px: 210, py: 99, in: 1, ins } },
-    { acct: 'a3', name: 'Cy', online: true, p: { px: 210, py: 99, in: 1 } },
-    { acct: 'a4', name: 'Di', online: true, p: { px: 211, py: 99, in: 1, ins: 'fedcba9876543210.01234567' } },
-    { acct: 'a5', name: 'Ed', online: false, p: { px: 210, py: 99, in: 1, ins: 'fedcba9876543210.01234567' } },
-    { acct: 'a6', name: 'Fi', online: true, p: { px: 210, py: 99, in: 2, bk: 7, ins: 'fedcba9876543210.01234567' } },
+    { acct: 'a2', name: 'Bo', online: true, p: { px: 210, py: 99, in: 1, ins: `${ann}.89abcdef` } },   // Bo stands in Ann's room
+    { acct: 'a1', name: 'Ann', online: true, p: { px: 1, py: 1, in: 0 } },                               // Ann, its owner, outside
+    { acct: 'a3', name: 'Cy', online: true, p: { px: 210, py: 99, in: 1 } },                             // the public room
+    { acct: 'a4', name: 'Di', online: true, p: { px: 211, py: 99, in: 1, ins: `${fi}.01234567` } },     // another place
+    { acct: 'a5', name: 'Ed', online: false, p: { px: 210, py: 99, in: 1, ins: `${fi}.01234567` } },   // away
+    { acct: 'a6', name: 'Fi', online: true, p: { px: 210, py: 99, in: 2, bk: 7, ins: `${fi}.01234567` } },
+    { acct: 'a7', name: 'Gus', online: true, p: { px: 210, py: 99, in: 1, ins: `${stranger}.01234567` } },   // a room of nobody in the party
   ];
-  assert.deepEqual(partnerInstances(members, at), [{ acct: 'a1', name: 'Ann', owner: '0123456789abcdef', epoch: '89abcdef' }]);
-  assert.deepEqual(partnerInstances(members, { px: 210, py: 99, in: 2, bk: 7 }).map((p) => p.name), ['Fi'], 'a building by its key');
-  assert.deepEqual(partnerInstances(members, { px: 210, py: 99, in: 2, bk: 8 }), []);
-  assert.deepEqual(partnerInstances(members, { px: 210, py: 99, in: 0 }), [], 'outdoors there is no instance');
+  assert.deepEqual(partnerInstances(members, at, ownerOf), [{ acct: 'a1', name: 'Ann', owner: ann, epoch: '89abcdef' }], 'named by its owner, not the member seen in it; a stranger\'s room is not offered - the relay would refuse it');
+  assert.deepEqual(partnerInstances(members, { px: 210, py: 99, in: 2, bk: 7 }, ownerOf).map((p) => p.name), ['Fi'], 'a building by its key');
+  assert.deepEqual(partnerInstances(members, { px: 210, py: 99, in: 2, bk: 8 }, ownerOf), []);
+  assert.deepEqual(partnerInstances(members, { px: 210, py: 99, in: 0 }, ownerOf), [], 'outdoors there is no instance');
+  assert.deepEqual(partnerInstances(members, at), [], 'no owner known, nothing offered');
+  const twice = [...members, { acct: 'a8', name: 'Hal', online: true, p: { px: 210, py: 99, in: 1, ins: `${ann}.89abcdef` } }];
+  assert.equal(partnerInstances(twice, at, ownerOf).length, 1, 'two members in one room are one row');
 });
 
 test('INSTANCES what the door offers: offline or at an older relay nothing; a quest\'s place public or mine; the Hold mine alone; a partner\'s join; a place with nothing but its public room no popup', () => {
@@ -136,7 +171,7 @@ function door({ instanceOk = true, online = true, quest = true, members = [] } =
 const COPPERING = { name: 'Ruins of The Hold of Coppering', mapTableData: { mapId: CRYPT.mapId } };
 const HOLD = { name: "Privateer's Hold", mapTableData: { mapId: PRIVATEERS_HOLD_MAP_ID } };
 
-test('INSTANCES the door: a quest\'s dungeon asks - the popup\'s rows numbered, Public, Your instance, Leave; my instance is my account\'s digest and my character\'s and the quest\'s; the room then reads it', async () => {
+test('INSTANCES the door: a quest\'s dungeon asks - the popup\'s rows numbered, Public, Your instance, Leave; my instance is my account\'s digest and the quest\'s own epoch (minted once, kept on the quest); the room then reads it', async () => {
   const { d, q, shown } = door();
   let back = null;
   const first = await d.askDungeon(COPPERING, { enter: (row) => { back = row; } });
@@ -148,8 +183,10 @@ test('INSTANCES the door: a quest\'s dungeon asks - the popup\'s rows numbered, 
   shown[0].input('Digit2');
   assert.deepEqual(back, { kind: 'mine' });
   const second = await d.askDungeon(COPPERING, { chosen: back });
-  const inst = { owner: hex('instance:account:acct-alice', 8), epoch: hex(`instance:epoch:char_alice:quest:${q.uid}`, 4) };
+  assert.match(q.instanceEpoch, /^[0-9a-f]{8}$/, 'the quest\'s epoch, minted as its instance first opened');
+  const inst = { owner: hex('instance:account:acct-alice', 8), epoch: q.instanceEpoch };
   assert.deepEqual(second, { go: true, instance: inst, whole: true });
+  assert.deepEqual((await d.askDungeon(COPPERING, { chosen: { kind: 'mine' } })).instance, inst, 'and the same room every entry of its life');
   assert.deepEqual(d.dungeonInstance(CRYPT.mapId), inst);
   assert.equal(d.dungeonInstance(4242), null, 'another dungeon');
   assert.deepEqual(await d.askDungeon(COPPERING, { chosen: { kind: 'public' } }), { go: true, instance: null, whole: false });
@@ -177,15 +214,16 @@ test('INSTANCES the door: the Hold offers my instance alone (its line says why);
   assert.deepEqual(hold.shown[0].lines, ["Privateer's Hold", INSTANCE_TEXT.holdLine()]);
   const holdInst = await hold.d.askDungeon(HOLD, { chosen: { kind: 'mine' } });
   assert.deepEqual(holdInst.instance, { owner: hex('instance:account:acct-alice', 8), epoch: hex('instance:epoch:char_alice:hold', 4) });
-  const mine = hex('instance:account:acct-alice', 8);
+  const mine = hex('instance:account:acct-alice', 8), ann = hex('instance:account:acct-ann1', 8);
   const members = [
-    { acct: 'a1', name: 'Ann', online: true, p: { px: 210, py: 99, in: 1, ins: '0123456789abcdef.89abcdef' } },
-    { acct: 'a2', name: 'Bo', online: true, p: { px: 210, py: 99, in: 1, ins: `${mine}.01234567` } },
+    { acct: 'acct-ann1', name: 'Ann', online: true, p: { px: 210, py: 99, in: 1, ins: `${ann}.89abcdef` } },
+    { acct: 'acct-bob2', name: 'Bo', online: true, p: { px: 210, py: 99, in: 1, ins: `${mine}.01234567` } },
+    { acct: 'acct-cyd3', name: 'Cy', online: true, p: { px: 210, py: 99, in: 1, ins: '1111111111111111.01234567' } },
   ];
   const party = door({ quest: false, members });
   await party.d.askDungeon(COPPERING, { enter: () => {} });
-  assert.deepEqual(party.shown[0].options.map((o) => o.label), [`1 - ${INSTANCE_TEXT.public()}`, `2 - ${INSTANCE_TEXT.join('Ann')}`, `3 - ${INSTANCE_TEXT.leave()}`]);
-  assert.deepEqual(await party.d.askDungeon(COPPERING, { chosen: { kind: 'join', owner: '0123456789abcdef', epoch: '89abcdef' } }), { go: true, instance: { owner: '0123456789abcdef', epoch: '89abcdef' }, whole: true });
+  assert.deepEqual(party.shown[0].options.map((o) => o.label), [`1 - ${INSTANCE_TEXT.public()}`, `2 - ${INSTANCE_TEXT.join('Ann')}`, `3 - ${INSTANCE_TEXT.leave()}`], 'my own room is no join row, a stranger\'s none at all');
+  assert.deepEqual(await party.d.askDungeon(COPPERING, { chosen: { kind: 'join', owner: ann, epoch: '89abcdef' } }), { go: true, instance: { owner: ann, epoch: '89abcdef' }, whole: true });
 });
 
 test('INSTANCES the door: a building a quest names asks as a dungeon does; a re-laid public room says once an entry where the quest\'s things are', async () => {

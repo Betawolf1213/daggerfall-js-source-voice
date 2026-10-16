@@ -153,24 +153,54 @@
     "why": "a partner's instance in another building of the town is offered at this door"
   },
   {
-    "name": "INSTANCES-MINE-AS-JOIN",
-    "file": "src/scenes/instanceDoor.js",
-    "old": ".filter((p) => p.owner !== me)",
-    "new": "",
+    "name": "INSTANCES-PARTNER-OWNER-UNCHECKED",
+    "file": "src/systems/instancePlaces.js",
+    "old": "    const owner = list.find((o) => typeof o?.acct === 'string' && ownerOf(o.acct) === inst.owner);",
+    "new": "    const owner = m;",
     "tests": [
       "test/instances3_door.test.js"
     ],
-    "why": "a member standing in my own instance is offered as theirs"
+    "why": "a room whose owner is no party member is offered (the relay refuses it), and a room is named by whoever is seen in it"
   },
   {
-    "name": "INSTANCES-QUEST-EPOCH-HOLD",
-    "file": "src/scenes/instanceDoor.js",
-    "old": "    const opener = site.isHold ? HOLD_OPENER : questOpener(q?.uid);",
-    "new": "    const opener = HOLD_OPENER;",
+    "name": "INSTANCES-QUEST-EPOCH-EVERY-ENTRY",
+    "file": "src/systems/instancePlaces.js",
+    "old": "  if (!isInstanceEpoch(quest.instanceEpoch)) quest.instanceEpoch = random();",
+    "new": "  quest.instanceEpoch = random();",
     "tests": [
       "test/instances3_door.test.js"
     ],
-    "why": "every quest opens one room for good - its memory never goes with the quest"
+    "why": "every entry a new room - an instance remembers nothing"
+  },
+  {
+    "name": "INSTANCES-QUEST-EPOCH-UNSAVED",
+    "file": "src/systems/quest/quest.js",
+    "old": "    this.instanceEpoch = isInstanceEpoch(data.instanceEpoch) ? data.instanceEpoch : null;   // INSTANCES: an older envelope's quest mints one at its first instance",
+    "new": "    this.instanceEpoch = null;",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "a load forgets the quest's room - its instance a new one each session"
+  },
+  {
+    "name": "INSTANCES-COPY-TAKES-SENDERS",
+    "file": "src/systems/quest/machine.js",
+    "old": "    questData = { ...this._onThisClock(questData), ...NO_SHELF, ...NO_INSTANCE };   // TIME3: the sender's countdowns, on this character's clock",
+    "new": "    questData = { ...this._onThisClock(questData), ...NO_SHELF };   // TIME3: the sender's countdowns, on this character's clock",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "a partner's copy carries the sender's epoch"
+  },
+  {
+    "name": "INSTANCES-RESYNC-TAKES-PARTNERS",
+    "file": "src/systems/quest/machine.js",
+    "old": "    quest.restoreSaveData({ ...questData, uid, instanceEpoch: quest.instanceEpoch ?? null }, this._saveResolvers());   // INSTANCES: and its instance - this copy's own (NO_INSTANCE)",
+    "new": "    quest.restoreSaveData({ ...questData, uid }, this._saveResolvers());",
+    "tests": [
+      "test/instances3_door.test.js"
+    ],
+    "why": "a resync swaps my copy's room for whatever the partner's envelope says"
   },
   {
     "name": "INSTANCES-WHOLE-IGNORED",

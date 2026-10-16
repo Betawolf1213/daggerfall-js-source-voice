@@ -6,8 +6,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import {
-  instanceOwnerOf, instanceEpochOf, instanceRoomOf, instanceOf, isInstanceRoom, instanceAdmits, partyHoldsOwner,
-  instanceWord, instanceOfWord, questOpener, HOLD_OPENER, relaySupportsInstances, INSTANCE_RELAY_MIN,
+  instanceOwnerOf, holdEpochOf, isInstanceEpoch, instanceRoomOf, instanceOf, isInstanceRoom, instanceAdmits, partyHoldsOwner,
+  instanceWord, instanceOfWord, relaySupportsInstances, INSTANCE_RELAY_MIN,
 } from '../src/net/instanceRoom.js';
 import { isWorldRoom, worldTtlMsFor, WORLD_TTL_MS, INSTANCE_TTL_MS, roomOf, RELAY_VERSION } from '../src/net/wire.js';
 import { roomKeyFor } from '../src/net/online.js';
@@ -15,17 +15,16 @@ import { roomKeyFor } from '../src/net/online.js';
 const hex = (s, bytes) => createHash('sha256').update(s).digest('hex').slice(0, bytes * 2);
 const INST = { owner: '0123456789abcdef', epoch: '89abcdef' };
 
-test('INSTANCES: the owner is the account\'s digest, the epoch the character\'s and its opener\'s - eight and four bytes of SHA-256, salted apart', async () => {
+test('INSTANCES: the owner is the account\'s digest, the Hold\'s epoch the character\'s - eight and four bytes of SHA-256, salted apart; an epoch is eight lower-case hex (a quest\'s is its own, instances3)', async () => {
   assert.equal(await instanceOwnerOf('acct_1234'), hex('instance:account:acct_1234', 8));
-  assert.equal(await instanceEpochOf('char_99', questOpener(42)), hex('instance:epoch:char_99:quest:42', 4));
-  assert.equal(await instanceEpochOf('char_99', HOLD_OPENER), hex('instance:epoch:char_99:hold', 4));
-  assert.notEqual(await instanceEpochOf('char_99', questOpener(42)), await instanceEpochOf('char_99', questOpener(43)), 'a new quest is a new room - the old one\'s memory goes with its quest');
-  assert.notEqual(await instanceEpochOf('char_99', questOpener(42)), await instanceEpochOf('char_98', questOpener(42)), 'two characters of one account never share a quest\'s room by its uid');
+  assert.equal(await holdEpochOf('char_99'), hex('instance:epoch:char_99:hold', 4));
+  assert.notEqual(await holdEpochOf('char_99'), await holdEpochOf('char_98'), 'two characters of one account never share the Hold\'s room');
   assert.equal(await instanceOwnerOf('a b'), null);
   assert.equal(await instanceOwnerOf(null), null);
-  assert.equal(await instanceEpochOf('char_99', ''), null);
-  assert.equal(questOpener(0), null);
-  assert.equal(questOpener(7), 'quest:7');
+  assert.equal(await holdEpochOf(''), null);
+  assert.equal(await holdEpochOf(null), null);
+  assert.equal(isInstanceEpoch('89abcdef'), true);
+  for (const bad of ['89ABCDEF', '89abcde', '89abcdef0', 7, null]) assert.equal(isInstanceEpoch(bad), false, String(bad));
 });
 
 test('INSTANCES: the key - a dungeon whole or a building, the owner and the epoch after it; never beside a re-laid dungeon, a cell or an owned room', () => {

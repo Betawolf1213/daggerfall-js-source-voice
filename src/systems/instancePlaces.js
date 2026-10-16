@@ -8,7 +8,7 @@
 // The room is net/instanceRoom.js's; the popup and the digests are scenes/instanceDoor.js's; the hosts only ask.
 import { SITE_TYPES } from './quest/place.js';
 import { isShelved } from './quest/quest.js';
-import { instanceOfWord } from '../net/instanceRoom.js';
+import { instanceOfWord, isInstanceEpoch } from '../net/instanceRoom.js';
 
 /** A quest that still runs and stands in the world: not ended, not thrown away, not set aside (QUEST-SHELF). */
 const live = (q) => !!q && !q.questComplete && !q.questTombstoned && !isShelved(q);
@@ -47,6 +47,23 @@ export function openerQuestOf(machine, site) {
   return best;
 }
 
+/** Eight random hex - a quest's instance epoch, from the platform's own generator. */
+const randomEpoch = () => [...globalThis.crypto.getRandomValues(new Uint8Array(4))].map((b) => b.toString(16).padStart(2, '0')).join('');
+
+/**
+ * A QUEST'S INSTANCE IS ITS OWN, FOR ITS LIFE: the epoch of the room `quest` opens - minted the first time it opens one
+ * and kept on the quest (`instanceEpoch`, in its save: quest.js getSaveData), so every entry of its life keys one room
+ * and no other quest's ever does. Never the uid: quest.js nextUid restarts past the uids a save still holds, and an ended
+ * quest leaves the machine, so a later quest is minted a finished one's uid - and would have walked into its room. A
+ * party member's copy is its own quest (machine.js receiveSharedQuest mints its own; a resync keeps the copy's). Null
+ * for no quest.
+ */
+export function questInstanceEpoch(quest, random = randomEpoch) {
+  if (!quest) return null;
+  if (!isInstanceEpoch(quest.instanceEpoch)) quest.instanceEpoch = random();
+  return isInstanceEpoch(quest.instanceEpoch) ? quest.instanceEpoch : null;
+}
+
 /** Where a quest's things stand online: a dungeon whole (an instance, a main story's keep, a dungeon the world gives
  *  its whole size, or a quest's dungeon entered whole where no instance can be had) - never a re-laid public room, whose
  *  blocks are not the ones the quest's markers name. Offline, wherever the quest's own frozen size builds (DFU's law). */
@@ -57,21 +74,28 @@ export const questMountsHere = ({ online, builtSize }) => !online || builtSize =
 export const questDungeonWhole = ({ online, instanceOk, questHere }) => !!(online && !instanceOk && questHere);
 
 /**
- * The party's instances at this door: each member whose party pose stands inside this place (`place`: { px, py, in,
- * bk } - in 1 a dungeon, 2 a building, whose key must match) with an instance (`ins`). Answers [{ acct, name, owner,
- * epoch }] in the party's order, one an instance (two members in one instance are one row - its owner's, else the first).
+ * The party's instances at this door: each instance a member's party pose stands inside this place in (`place`: { px,
+ * py, in, bk } - in 1 a dungeon, 2 a building, whose key must match; the pose's `ins` its word) whose OWNER is in the
+ * party - the relay's own law (net/instanceRoom.js instanceAdmits: its owner's party), so the door offers what the relay
+ * admits and nothing it would refuse. `ownerOf(acct)` is a member's owner digest (instanceOwnerOf, worked out by the page).
+ * Answers [{ acct, name, owner, epoch }], one row a room, named by its owner (who may stand elsewhere); my own rooms are
+ * not here - I am not among `members` (the door's own row is mine).
+ * @param {any[]|null|undefined} members
+ * @param {{px:any, py:any, in:number, bk?:number|null}|null|undefined} place
+ * @param {(acct: string) => string|null} [ownerOf]
  */
-export function partnerInstances(members, place) {
+export function partnerInstances(members, place, ownerOf = () => null) {
   const out = [];
   if (!place || (place.in !== 1 && place.in !== 2)) return out;
-  for (const m of members ?? []) {
+  const list = members ?? [];
+  for (const m of list) {
     const p = m?.p;
     if (!p || m.online === false || p.px !== place.px || p.py !== place.py || p.in !== place.in) continue;
     if (place.in === 2 && p.bk !== place.bk) continue;
     const inst = instanceOfWord(p.ins);
-    if (!inst) continue;
-    if (out.some((o) => o.owner === inst.owner && o.epoch === inst.epoch)) continue;
-    out.push({ acct: m.acct ?? null, name: typeof m.name === 'string' ? m.name : '', ...inst });
+    if (!inst || out.some((o) => o.owner === inst.owner && o.epoch === inst.epoch)) continue;
+    const owner = list.find((o) => typeof o?.acct === 'string' && ownerOf(o.acct) === inst.owner);
+    if (owner) out.push({ acct: owner.acct, name: typeof owner.name === 'string' ? owner.name : '', ...inst });
   }
   return out;
 }
