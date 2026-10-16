@@ -262,6 +262,7 @@ import { peopleAreVisible, updateNpcPresence } from '../characters/interiorPeopl
 import { exteriorLockpickingChance, lookAtLockText, LOCKPICKING_SUCCESS_TEXT, LOCKPICKING_FAILURE_TEXT, isActionDoorObject } from '../world/actionSystem.js';   // AUDIT 63 F42: GetComponent<DaggerfallActionDoor>() with a name
 import { tallyCrimeGuildRequirements } from '../systems/crimeGuilds.js';   // CG2: the break-in tally
 import { theftBasket, privatePropertyTheft, shopShelfTheft } from '../systems/theft.js';   // PT1: the two stealing laws
+import { landSold } from '../systems/stolenGoods.js';   // STOLEN-GOODS: a stolen piece sold is the merchant's to be rid of, never shelved
 import { buildingGreeting, shopQualityPresentation } from '../systems/buildingGreeting.js';
 import { setUnleveledLootWorld, unleveledLootPreTransition, unleveledLootExteriorTransition } from '../systems/unleveledLoot.js';   // UL1: PlayerEnterExit's world and its transition events   // BG1: the shop quality + the householder's greeting
 import { discoverBuilding, undiscoverBuilding, getDiscoveredBuilding, getLastLockpickAttempt, setLastLockpickAttempt, shownBuildingName } from '../systems/discovery.js';   // H3: selling a house takes its name back off the map
@@ -3652,7 +3653,7 @@ export function createWorldModes(host) {
       // to this one.
       const shelfBefore = shelf.items.length;
       const win = interiorInventory({
-        loot: { items: () => shelf.items },
+        loot: { items: () => shelf.items, stolen: true },   // STOLEN-GOODS: a take off a shut shop's shelf is a theft - the piece is marked as it lands
         onClose: () => {
           if (shopShelfTheft(shelfBefore, shelf.items.length)) tallyCrimeGuildRequirements(playerEntity, true, 1);
           decorDeliverCarried();   // DECOR2b: furniture taken off the shelf is delivered, never carried
@@ -3969,7 +3970,7 @@ export function createWorldModes(host) {
       for (const it of staged) {
         const i = playerEntity.items.indexOf(it);
         if (i >= 0) playerEntity.items.splice(i, 1);
-        shelf.items.push(it);   // sold goods land on the open shelf
+        landSold(shelf.items, it);   // sold goods land on the open shelf - STOLEN-GOODS: an honest piece; a stolen one is gone
         setJunk(it, false);   // AUDIT LOOT II C5: the junk mark is the seller's word for what goes - gone, it is the merchant's, unmarked if bought back
       }
     } else if (mode === 'Repair') {
@@ -4090,7 +4091,7 @@ export function createWorldModes(host) {
     if (isEquipped(it)) unequipSlot(playerEntity, it.equipSlot);
     addGold(playerEntity, price);
     playerEntity.items.splice(playerEntity.items.indexOf(it), 1);
-    shelf.items.push(it);   // sold goods land on the open shelf (DFU's remoteItems)
+    landSold(shelf.items, it);   // sold goods land on the open shelf (DFU's remoteItems) - STOLEN-GOODS: an honest piece; a stolen one is gone
     setJunk(it, false);   // AUDIT LOOT II C5: sold, its junk mark ends
     tallySkill(playerEntity, SKILLS.Mercantile, 1);
     surfacePlayer();
@@ -9120,7 +9121,7 @@ export function createWorldModes(host) {
           const openLoot = (privateProperty = false) => {
             const before = privateProperty ? [...(c.items ?? [])] : null;
             const win = interiorInventory({
-              loot: { items: () => c.items, storage: !privateProperty },   // SHIP-STORE: an owned house's or ship's cupboard is the player's storage, two-way
+              loot: { items: () => c.items, storage: !privateProperty, stolen: privateProperty },   // SHIP-STORE: an owned house's or ship's cupboard is the player's storage, two-way; STOLEN-GOODS: a stranger's is a theft, each take marked as it lands
               onClose: () => {
                 if (!privateProperty) return;
                 const out = privatePropertyTheft({

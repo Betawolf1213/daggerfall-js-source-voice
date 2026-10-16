@@ -54,6 +54,7 @@ import { localizedText, formatText } from './textManager.js';   // L10N3d: DFU's
 import { REMAINS_LIST } from './legacy/heirloom.js';   // AUDIT LEGACY II H4: a remains' list, open
 import { BAG_WORDS, isBagItem, holdsOtherBag } from '../net/bagLaw.js';   // BAG1: a loaded Materials Bag never leaves the pack; ONE-BAG: one to a character
 import { SMALL_CART_KG } from './wagonKinds.js';   // WAGONS1: DFU's 750, one literal
+import { markStolen, clearStolen } from './stolenGoods.js';   // STOLEN-GOODS: a take from someone else's keeping is marked as it lands (a leaf)
 
 /** ItemHelper.WagonKgLimit (:56). */
 export const WAGON_KG_LIMIT = SMALL_CART_KG;   // WAGONS1: the Small Cart's - each kind's own is systems/wagonKinds.js wagonKgLimitOf, handed in as `wagonKg`
@@ -467,8 +468,13 @@ export function clearLightSourceOnLeave(item, entity, fromLocal) {
  * close-and-callback (:1585-1591). A guild reward pile of gold is
  * therefore taken WITHOUT closing the picker, which is DFU's quirk and
  * not the port's. Every other move answers the record that arrived.
+ *
+ * STOLEN-GOODS (FIELD BUGS 2026-10-16): `stolen` - the move takes a piece out of someone else's keeping (a shut
+ * shop's shelf, a stranger's cupboard: systems/inventorySession.js theftTarget) - marks the record that travels; and
+ * `putBack` - the move puts a piece into that keeping - clears it. Both BEFORE it lands, because the landing is where
+ * a stack merges (systems/stolenGoods.js). Coin carries no mark: the gold arm spends it into the counter first.
  */
-export function applyTransfer(item, plan, from, to, { entity = null, fromLocal = false, toPlayer = false, rolls = Math.random } = {}) {
+export function applyTransfer(item, plan, from, to, { entity = null, fromLocal = false, toPlayer = false, rolls = Math.random, stolen = false, putBack = false } = {}) {
   clearLightSourceOnLeave(item, entity, fromLocal);
   if (toPlayer && isGoldPieces(item)) {
     const coin = _splitOff(item, plan, from, rolls);
@@ -477,7 +483,7 @@ export function applyTransfer(item, plan, from, to, { entity = null, fromLocal =
     addGoldPieces(entity, coin.stackCount ?? 1);
     return null;
   }
-  const landed = _applyTransfer(item, plan, from, to, rolls);
+  const landed = _applyTransfer(item, plan, from, to, rolls, (moved) => { if (stolen) markStolen([moved]); else if (putBack) clearStolen(moved); });
   if (toPlayer && landed) tellTaken(landed);   // LOOT8: a piece taken into the pack - the loot window's, quick loot's
   return landed;
 }
@@ -513,10 +519,11 @@ function _splitOff(item, plan, from, rolls) {
   item.stackCount = stack - plan.amount;
   return { ...item, stackCount: plan.amount };
 }
-function _applyTransfer(item, plan, from, to, rolls = Math.random) {
+function _applyTransfer(item, plan, from, to, rolls = Math.random, beforeLanding = null) {
   const moved = _splitOff(item, plan, from, rolls);
   const at = from.indexOf(moved);
   if (at >= 0) from.splice(at, 1);
+  beforeLanding?.(moved);   // STOLEN-GOODS: the theft's mark, written before the merge below can take the record
   // AUDIT 64 F54: DoTransferItem's own position
   // (DaggerfallInventoryWindow.cs:1573-1579) - "Always place quest
   // item pickups to front of list / Otherwise use preferred order":

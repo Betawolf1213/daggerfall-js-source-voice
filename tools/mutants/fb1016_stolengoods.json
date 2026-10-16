@@ -1,0 +1,290 @@
+[
+  {
+    "name": "FB1016-STOLEN-GOODS-native-steal-unmarked",
+    "file": "src/ui/nativeTrade.js",
+    "old": "      markStolen(this.basket);   // STOLEN-GOODS: the lot is stolen - marked before TransferAll merges it into the pack's stacks\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-enhanced-steal-unmarked",
+    "file": "src/ui/enhancedTrade.js",
+    "old": "    markStolen(items);   // STOLEN-GOODS: the basket, or the one piece picked - marked before it merges into the pack's stacks\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-sold-stolen-shelved",
+    "file": "src/systems/stolenGoods.js",
+    "old": "  if (isStolen(item)) return false;\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-mark-not-true",
+    "file": "src/systems/stolenGoods.js",
+    "old": "if (it && typeof it === 'object' && !Array.isArray(it)) it[STOLEN_MARK] = true;",
+    "new": "if (it && typeof it === 'object' && !Array.isArray(it)) it[STOLEN_MARK] = 1;",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-count-a-stack-as-nothing",
+    "file": "src/systems/stolenGoods.js",
+    "old": "it.stackCount > 0 ? it.stackCount : 1), 0);",
+    "new": "it.stackCount > 0 ? it.stackCount : 0), 0);",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-take-unmarked",
+    "file": "src/systems/itemTransfer.js",
+    "old": "(moved) => { if (stolen) markStolen([moved]); else if (putBack) clearStolen(moved); }",
+    "new": "(moved) => { if (false) markStolen([moved]); else if (putBack) clearStolen(moved); }",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-marked-after-the-merge",
+    "file": "src/systems/itemTransfer.js",
+    "old": "  const landed = _applyTransfer(item, plan, from, to, rolls, (moved) => { if (stolen) markStolen([moved]); else if (putBack) clearStolen(moved); });",
+    "new": "  const landed = _applyTransfer(item, plan, from, to, rolls); if (landed && stolen) markStolen([landed]); else if (landed && putBack) clearStolen(landed);",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-put-back-kept",
+    "file": "src/systems/itemTransfer.js",
+    "old": "else if (putBack) clearStolen(moved); }",
+    "new": "else if (false) clearStolen(moved); }",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-every-loot-a-theft",
+    "file": "src/systems/inventorySession.js",
+    "old": "  return remoteTargetType(deps, state) === REMOTE_TARGET_TYPES.Loot && deps.loot?.stolen === true;",
+    "new": "  return remoteTargetType(deps, state) === REMOTE_TARGET_TYPES.Loot;",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-the-wagon-a-theft",
+    "file": "src/systems/inventorySession.js",
+    "old": "  return remoteTargetType(deps, state) === REMOTE_TARGET_TYPES.Loot && deps.loot?.stolen === true;",
+    "new": "  return deps.loot?.stolen === true;",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-native-take-unwired",
+    "file": "src/ui/nativeInventory.js",
+    "old": "          stolen: theftTarget(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) });",
+    "new": "          stolen: false });",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-native-put-back-unwired",
+    "file": "src/ui/nativeInventory.js",
+    "old": "          putBack: theftTarget(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) });",
+    "new": "          putBack: false });",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-enhanced-take-unwired",
+    "file": "src/ui/enhancedInventory.js",
+    "old": "toPlayer: true, stolen: theftTarget(deps, sessionState()) });",
+    "new": "toPlayer: true, stolen: false });",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-enhanced-put-back-unwired",
+    "file": "src/ui/enhancedInventory.js",
+    "old": "fromLocal: true, putBack: theftTarget(deps, sessionState()) });",
+    "new": "fromLocal: true, putBack: false });",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-enhanced-card-silent",
+    "file": "src/ui/enhancedInventory.js",
+    "old": "  if (isStolen(picked)) into.append(el('p', 'boundline', stolenLine()));   // STOLEN-GOODS: what a counter and a court do with it\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-stolen-merged-into-clean",
+    "file": "src/systems/inventory.js",
+    "old": "    isStolen(a) === isStolen(b);",
+    "new": "    true;",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-split-clean",
+    "file": "src/systems/inventory.js",
+    "old": "  if (isStolen(stack)) markStolen([picked]);   // STOLEN-GOODS: and the theft's (systems/stolenGoods.js) - nor is a split\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-undeclared",
+    "file": "src/systems/itemFields.js",
+    "old": "  stolen: bool(),\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-a-receivers-mark",
+    "file": "src/net/realmTradeLaw.js",
+    "old": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'acquired', 'wagonEntry', 'horseBond', 'horseFed']);",
+    "new": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'acquired', 'wagonEntry', 'horseBond', 'horseFed', 'stolen']);",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-worn-left-in-its-slot",
+    "file": "src/systems/court.js",
+    "old": "      if (isEquipped(it)) unequipItem(player, it);\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-torch-left-lit",
+    "file": "src/systems/court.js",
+    "old": "      if (player.lightSource === it) setLightSource(player, null);\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-bag-unsearched",
+    "file": "src/systems/court.js",
+    "old": "  for (const list of [player?.items, player?.bagItems]) {",
+    "new": "  for (const list of [player?.items]) {",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-nothing-taken",
+    "file": "src/scenes/arrestFlow.js",
+    "old": "    if (trial) trial.taken = confiscateStolen(playerEntity);\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-taken-at-every-release",
+    "file": "src/scenes/arrestFlow.js",
+    "old": "    if (trial) trial.released = true;   // PLEA-LOOP: the court's last act - no step of this trial acts after it\n",
+    "new": "    if (trial) trial.released = true;   // PLEA-LOOP: the court's last act - no step of this trial acts after it\n    if (trial && !trial.taken) trial.taken = confiscateStolen(playerEntity);\n",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-line-unsaid",
+    "file": "src/scenes/arrestFlow.js",
+    "old": "    if (trial?.taken?.length) say(confiscatedText(piecesOf(trial.taken)));   // STOLEN-GOODS: what the verdict took (finish)\n",
+    "new": "",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-counted-by-records",
+    "file": "src/scenes/arrestFlow.js",
+    "old": "say(confiscatedText(piecesOf(trial.taken)));",
+    "new": "say(confiscatedText(trial.taken.length));",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-said-under-the-prison-screen",
+    "file": "src/scenes/arrestFlow.js",
+    "old": "    if (trial) trial.taken = confiscateStolen(playerEntity);\n",
+    "new": "    if (trial) { trial.taken = confiscateStolen(playerEntity); if (trial.taken.length) say(confiscatedText(piecesOf(trial.taken))); trial.taken = []; }\n",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-counter-shelves-it",
+    "file": "src/scenes/worldModes.js",
+    "old": "        landSold(shelf.items, it);   // sold goods land on the open shelf - STOLEN-GOODS: an honest piece; a stolen one is gone",
+    "new": "        shelf.items.push(it);   // sold goods land on the open shelf - STOLEN-GOODS: an honest piece; a stolen one is gone",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-keyed-list-shelves-it",
+    "file": "src/scenes/worldModes.js",
+    "old": "    landSold(shelf.items, it);   // sold goods land on the open shelf (DFU's remoteItems) - STOLEN-GOODS: an honest piece; a stolen one is gone",
+    "new": "    shelf.items.push(it);   // sold goods land on the open shelf (DFU's remoteItems) - STOLEN-GOODS: an honest piece; a stolen one is gone",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-shut-shelf-unmarked",
+    "file": "src/scenes/worldModes.js",
+    "old": "loot: { items: () => shelf.items, stolen: true },",
+    "new": "loot: { items: () => shelf.items },",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-strangers-cupboard-unmarked",
+    "file": "src/scenes/worldModes.js",
+    "old": "storage: !privateProperty, stolen: privateProperty },",
+    "new": "storage: !privateProperty },",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  },
+  {
+    "name": "FB1016-STOLEN-GOODS-own-cupboard-a-theft",
+    "file": "src/scenes/worldModes.js",
+    "old": "storage: !privateProperty, stolen: privateProperty },",
+    "new": "storage: !privateProperty, stolen: true },",
+    "tests": [
+      "test/fb1016_stolengoods.test.js"
+    ]
+  }
+]

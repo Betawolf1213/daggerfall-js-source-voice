@@ -122,6 +122,7 @@ import {
   groundRefusalOf,   // HOUSE-DROP: the host's word against the ground
   storeCapacityOf,   // COMPANION-WEIGHT: a storage's own weight limit
   planBagToggle, hasMaterialsBag,   // BAG1: the Materials Bag, a list beside the wagon's
+  theftTarget,   // STOLEN-GOODS: a take from someone else's keeping is a theft
 } from '../systems/inventorySession.js';
 import { bagStoreRefusal, bagMayLeave } from '../systems/materialsBag.js';   // BAG1: only materials go in the bag; AUDIT2 H11: and a loaded one stays
 import { shiftDrop } from '../systems/physicalItems.js';   // PI1: Physical Items' shift-drop, one law for both packs
@@ -147,6 +148,7 @@ import { setIdOf, setById, setLines, setSigilLines } from '../systems/sigilSets.
 import { isLocked, toggleLocked, lockRefuses, lockedText, LOCKED_LINE } from '../systems/itemLock.js';   // LOCK1
 import { isJunk, junkable, toggleJunk, lockLiftsJunk, JUNK_LINE } from '../systems/itemJunk.js';   // LOOT18
 import { isBound, BOUND_LINE, boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/itemBound.js';   // SS1: a bound piece says so on its card   // SS3: and goes nowhere but the wagon and the player's own storage
+import { isStolen, stolenLine } from '../systems/stolenGoods.js';   // STOLEN-GOODS: a stolen piece says so on its card
 import { letterRefusesPut, letterPutText } from '../systems/peerWord.js';   // HACKED-GOLD: online a letter of credit goes nowhere a peer's word could hand it on
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1
@@ -1639,7 +1641,7 @@ function stow(item) {
   // applyTransfer - is a no-op, so a LIT TORCH dropped on the ground
   // went on lighting the player from where it lay. INV2 made that a
   // gesture; it was already the button's.
-  applyTransfer(item, { ...plan, amount }, deps.items?.() ?? [], to, { entity: deps.entity, fromLocal: true });
+  applyTransfer(item, { ...plan, amount }, deps.items?.() ?? [], to, { entity: deps.entity, fromLocal: true, putBack: theftTarget(deps, sessionState()) });   // STOLEN-GOODS: put back, it is its owner's again
   if (qty.item === item) qty = { item: null, text: '' };
   // AUDIT INV2 B-F9: `stow` was written for the BUTTON, whose argument
   // is always `picked`; a drag hands it any row. Closing a tooltip the
@@ -1696,7 +1698,7 @@ function take(item) {
   // interception (:1562-1571) fires and answers null - its `return`
   // skips the choose-one close below, and there is no arriving record
   // for the tab to follow.
-  const taken = applyTransfer(item, { ...plan, amount }, from, bag, { entity: deps.entity, toPlayer: true });
+  const taken = applyTransfer(item, { ...plan, amount }, from, bag, { entity: deps.entity, toPlayer: true, stolen: theftTarget(deps, sessionState()) });   // STOLEN-GOODS: a shut shop's shelf, a stranger's cupboard - marked as it lands
   if (qty.item === item) qty = { item: null, text: '' };
   if (taken === null) { picked = null; refresh(); render(); return; }
   // G6 (:1585-1591): ONE is the whole gift. The window closes and the
@@ -3138,6 +3140,7 @@ function infoCard(picked, side, ready = render, { body = false } = {}) {
   if (isLocked(picked)) into.append(el('p', 'lockline', LOCKED_LINE));   // LOCK1
   if (isJunk(picked)) into.append(el('p', 'boundline junkline', JUNK_LINE));   // LOOT18: the lock's line style, without its padlock
   if (isBound(picked)) into.append(el('p', 'boundline', BOUND_LINE));   // SS1: the lock's line style, without its padlock
+  if (isStolen(picked)) into.append(el('p', 'boundline', stolenLine()));   // STOLEN-GOODS: what a counter and a court do with it
   const dl = el('dl', 'stats');
   // CARD-FIT: each pair in its own group, so a narrow card flows them two a line and never breaks a pair across two
   const pair = (k, v) => { if (v != null) { const g = el('div', 'pair'); g.append(el('dt', null, k), el('dd', null, String(v))); dl.append(g); } };

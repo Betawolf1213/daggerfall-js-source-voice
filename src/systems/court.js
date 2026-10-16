@@ -55,6 +55,9 @@ import { skillValue, tallySkill, SKILLS } from './skills.js';
 import { goldPiecesOf, addGoldPieces, LETTER_OF_CREDIT_TEMPLATE } from './inventory.js';   // E4: the counter's two members; B1: letters are tender
 import { getPeopleOfCurrentRegion } from './talk.js';   // T3a shipped the lookup
 import { changeReputation } from './factionRep.js';     // S25
+import { isEquipped, unequipItem } from './equip.js';   // STOLEN-GOODS: a worn stolen piece is taken off before it is taken
+import { setLightSource } from './lightSource.js';   // STOLEN-GOODS: and a stolen torch in hand goes out with it (DISC7's one door)
+import { isStolen } from './stolenGoods.js';   // STOLEN-GOODS: the theft's mark
 
 /** PlayerEntity.CrimeCommitted's SETTER (:2345-2355), the ONE home
  *  every crime write goes through (V4): a transformed lycanthrope is
@@ -589,6 +592,30 @@ export function resolveGuiltyVerdict(court, player) {
   if (court.daysInPrison > 0) return { outcome: 'prison', days: court.daysInPrison };
   raiseRepForSentence(player, court);
   return { outcome: 'released' };
+}
+
+/** STOLEN-GOODS (FIELD BUGS 2026-10-16; the report: "when you're sent to prison, all the stolen items stay with you and
+ *  aren't taken away"): A GUILTY VERDICT TAKES THE STOLEN GOODS. Every piece the character carries with the theft's
+ *  mark (systems/stolenGoods.js) - in the pack, worn or held among it, and in the Materials Bag that rides in it - is
+ *  the court's: a worn piece is taken off first (its armour and its enchantments' stop, equip.js unequipItem), a lit
+ *  torch goes out with it, and the record leaves the list. The wagon and a home's storage are not searched: the court
+ *  takes what the prisoner carries. The arrest flow calls it at every guilty exit (scenes/arrestFlow.js finish - a
+ *  sentence served, a fine paid, banishment); an acquittal and a guild's rescue never reach it. Answers what was
+ *  taken. DFU's court takes nothing (DaggerfallCourtWindow has no item line) - the port's own, Ledger A. */
+export function confiscateStolen(player) {
+  const taken = [];
+  for (const list of [player?.items, player?.bagItems]) {
+    if (!Array.isArray(list)) continue;
+    for (let i = list.length - 1; i >= 0; i--) {
+      const it = list[i];
+      if (!isStolen(it)) continue;
+      if (isEquipped(it)) unequipItem(player, it);
+      if (player.lightSource === it) setLightSource(player, null);
+      list.splice(i, 1);
+      taken.unshift(it);
+    }
+  }
+  return taken;
 }
 
 /** AUDIT 17e F6 - PlayerGPS_OnExitLocationRect

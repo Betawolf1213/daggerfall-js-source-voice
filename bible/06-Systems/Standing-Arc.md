@@ -136,6 +136,36 @@ warned first. A standing back at zero or above ends the probation.
 DFU's -2 through the faction tree. TIME3's countdowns run on your own clock, so travel and rests time quests out, and
 that -2 was what players read as standing decaying. A success still pays +5; offline DFU's -2 stands.
 
+## STOLEN-GOODS - a stolen piece is marked, a fence's last stop, and the court takes it
+
+FIELD BUGS 2026-10-16 (`01-Overview/Field-Bugs-2026-10-16.md`, STOLEN-GOODS; the Discord: "you steal something from the
+shelf and can sell it back to an NPC, and he'll put the item back on the shelf again, and it just goes in a circle ...
+Also, when you're sent to prison, all the stolen items stay with you"). Three rules, the port's own - DFU's items carry
+no theft, its Sell discards every sold piece (ConfirmTrade's `remoteItems.Clear()`, DaggerfallTradeWindow.cs:1051) and
+its court (DaggerfallCourtWindow) takes nothing:
+
+- **The mark.** A piece taken from someone else's keeping carries `stolen: true` (`systems/stolenGoods.js`; declared in
+  `itemFields.js`, so the save, the wire and a realm trade carry it - a hand-off launders nothing, it is never a
+  receiver's mark). Written at every theft arm, as the piece moves: the open shop's Steal on both skins (`nativeTrade.js`
+  _doSteal, `enhancedTrade.js` runSteal - the success arm), and every take through the inventory window over a loot
+  target the host marks `stolen` - a shut shop's shelf and a stranger's cupboard (`worldModes.js` openShelf and the
+  `container:` arm; `inventorySession.js` theftTarget, `itemTransfer.js` applyTransfer). Marked BEFORE the piece lands,
+  because a landing is where a stack merges; a stolen piece stacks only with stolen kin and a split keeps the mark
+  (`inventory.js` stacksWith, splitStack). A piece put back into the keeping it came from is its owner's again. A
+  pickpocket pinches coin, and coin carries no mark.
+- **The fence.** A merchant pays for a stolen piece and is rid of it: it never reaches a shelf (`stolenGoods.js`
+  landSold, both of `worldModes.js`'s sale arms - the counter's commitTrade and the keyed doSell), so it cannot be
+  bought back and stolen again. An honest sale still lands on the open shelf (Port-Ledger T2, narrowed).
+- **The court.** Every guilty exit - a sentence served, a fine paid, banishment, the failed defence's verdict, and so
+  the watch's "come quietly" - takes every stolen piece the prisoner carries: the pack's, worn or held (taken off its
+  slot first; a lit torch goes out), and the Materials Bag's (`court.js` confiscateStolen, called by `arrestFlow.js`
+  finish at the verdict). The release says it once: "The guards take the stolen goods you carried (N items)." An
+  acquittal and a guild's rescue take nothing - no crime found, and the guild got you out. The wagon and a home's
+  storage are not searched, and the watch's fine on the spot is a fine, not a search.
+
+Pinned by `test/fb1016_stolengoods.test.js` (7) over the real shelves, both skins' Steal and inventory, the Sell window
+and the arrest flow; `tools/mutants/fb1016_stolengoods.json` (32, all dead).
+
 ## What stays punishing
 
 A crime is still charged the moment the watch catches you, and stays charged if you get away - or die: an online death
