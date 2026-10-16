@@ -265,7 +265,7 @@ import { dungeonTier } from '../systems/dungeonTier.js';   // SD4a: the location
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';
 import { foeTitle } from '../systems/foeTitle.js';   // FOE-TITLE: what a revenant, a champion or an elite is called
 import { revenantFleeStep, revenantFleeHealth, revenantDeed, revenantSlain, revenantSay, revenantFleeEvent, revenantCorneredEvent, revenantEscapeEvent, revenantSlainEvent, revenantUnbrokenEvent, revenantFlinch, revenantSignatureEvent, revenantById, applyRevenant, grantRevenantLoot, revenantForLair, releaseRevenantStand, revenantSpawnOptions, revenantTauntEvent, revenantWakeEvent, revenantToReturn, REVENANT_TAUNT_DISTANCE } from '../systems/revenant.js';   // RVN7d: a revenant in its lair, its taunt, its band, a rest's return
-import { revenantMayYield, beginYield, yieldStep, slipEvent, kneelPose, beginExecution, executionStep, finishExecution, beginSpare, spareDone, fateDissolve, fateModel, dropFateHeld, revenantWillHolds, beginTearAway, revenantLastStandDue, beginLastStand, roarStep } from '../systems/revenantFate.js';   // REVENANT-FATE: beaten, it yields - kill it or spare it (the open world's law, one home)
+import { revenantMayYield, beginYield, yieldStep, slipEvent, kneelPose, beginExecution, executionStep, finishExecution, beginSpare, spareDone, fateDissolve, fateModel, dropFateHeld, revenantWillHolds, beginTearAway, revenantLastStandDue, beginLastStand, roarStep, ownersWholeKill } from '../systems/revenantFate.js';   // REVENANT-FATE: beaten, it yields - kill it or spare it (the open world's law, one home); RVN-OWNERS-CHOICE: a whole blow closes it only as its owner's
 import { setBatchDissolve } from '../systems/dissolve.js';   // DISSOLVE
 import { createPortalSet } from './portalFx.js';   // COMPANION-PORTAL   // REVENANT-DUNGEON: a special foe of mine alone may run, and get away
 import { bloodDecalDeps } from '../combat/bloodSwitch.js';   // BLOOD1a
@@ -6827,12 +6827,13 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // body down is nobody's felling) - the layer hands it on, a felling's striker
       if (foe.companion != null) { foe.entity.health = 1; if (!foe._knockedOut) foe._knockedBy = striker; foe._knockedOut = true; return; }
       // REVENANT-FATE: one of the player's revenants, the player's ALONE here (offline, or past the room's shared run -
-      // REVENANT-DUNGEON's own gate), yields instead of dying; a kill (a Disintegrate's whole) is a kill
+      // REVENANT-DUNGEON's own gate), yields instead of dying; a kill (a Disintegrate's whole) is a kill - MY kill alone
+      // (RVN-OWNERS-CHOICE, exteriorFoes' twin: a party member's on my lair's stand kneels it, the choice mine)
       // RVN4 (Feud-Arc.md 15.1): one of rank 3 and up, once a stand, comes back instead - its last stand (a room's shared
       // foe online never: the yield's own gate); a kill is a kill
-      if (!_whole && foe.entity?.revenant?.id && (!onlineRoom() || !isRoomFoe(foe)) && revenantLastStandDue(foe)) { lastStandDungeonFoe(foe); return; }
+      if (foe.entity?.revenant?.id && !ownersWholeKill(_whole, { fromPlayer, peer }) && (!onlineRoom() || !isRoomFoe(foe)) && revenantLastStandDue(foe)) { lastStandDungeonFoe(foe); return; }
       // RVN3 (Feud-Arc.md 14.2): one of rank 3 and up whose will this fight has not broken does not kneel - it tears away
-      if (opts.fates && !_whole && (!onlineRoom() || !isRoomFoe(foe)) && revenantMayYield(foe)) { if (revenantWillHolds(foe)) tearAwayDungeonFoe(foe); else yieldDungeonFoe(foe); return; }
+      if (opts.fates && !ownersWholeKill(_whole, { fromPlayer, peer }) && (!onlineRoom() || !isRoomFoe(foe)) && revenantMayYield(foe)) { if (revenantWillHolds(foe)) tearAwayDungeonFoe(foe); else yieldDungeonFoe(foe); return; }
       // X5: SOUL TRAP intercepts the kill, exactly where DFU's
       // EnemyEntity.SetHealth override does (:157-177) - before the
       // death, on every damage source alike. A successful roll with no
