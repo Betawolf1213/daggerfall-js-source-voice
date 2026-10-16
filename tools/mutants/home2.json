@@ -148,8 +148,26 @@
   {
     "name": "DEPLOY-FLAKE-a-5xx-not-asked-again",
     "file": ".github/workflows/account-deploy.yml",
-    "old": "if [ \"$got\" != \"404\" ] && [ \"${got#5}\" = \"$got\" ]; then break; fi",
-    "new": "if [ \"$got\" != \"404\" ]; then break; fi",
+    "old": "if [ \"$got\" != \"404\" ] && [ \"$got\" != \"000\" ] && [ \"${got#5}\" = \"$got\" ]; then break; fi",
+    "new": "if [ \"$got\" != \"404\" ] && [ \"$got\" != \"000\" ]; then break; fi",
+    "tests": [
+      "test/systems/home2.test.js"
+    ]
+  },
+  {
+    "name": "SMOKE-HANG-no-answer-not-asked-again",
+    "file": ".github/workflows/account-deploy.yml",
+    "old": "if [ \"$got\" != \"404\" ] && [ \"$got\" != \"000\" ] && [ \"${got#5}\" = \"$got\" ]; then break; fi",
+    "new": "if [ \"$got\" != \"404\" ] && [ \"${got#5}\" = \"$got\" ]; then break; fi",
+    "tests": [
+      "test/systems/home2.test.js"
+    ]
+  },
+  {
+    "name": "SMOKE-HANG-a-curl-failure-not-read-as-000",
+    "file": ".github/workflows/account-deploy.yml",
+    "old": "-H 'content-type: application/json' -d \"$data\") || got=000",
+    "new": "-H 'content-type: application/json' -d \"$data\")",
     "tests": [
       "test/systems/home2.test.js"
     ]

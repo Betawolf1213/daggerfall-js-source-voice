@@ -9549,11 +9549,16 @@ red deploy reads as a service that is not there.
   path it does not know. Every new route's call goes through it. DEPLOY-FLAKE (2026-10-04, the owner: "A test
   failed on deploy"): a 5xx is asked again too. PR #592's run took its migration and its Worker, then read
   `renown/xp -> 500` once, seconds after the gate-key probe had read 500 and then 400. A 5xx comes from a batch that
-  failed whole and wrote nothing; one that still fails after half a minute is a broken route.
+  failed whole and wrote nothing; one that still fails after half a minute is a broken route. SMOKE-HANG
+  (2026-10-16, the owner's screenshot of PR #947's account deploy): no answer (`000`, curl 28 after 15 s) is asked
+  again too, as the guest mint's loops in the same file already ask it. #950's run read `homes/town -> 000` and
+  #947's `homes/decor -> 000` - the busiest reads, on a database that sheds load (Scale-Arc PRIMARY-TRIPS) - and
+  failed deploys whose Worker had taken and whose every other call answered. A hang that did write is no false pass
+  (a second first beat answers `playedS` above 0 and fails); a route that hangs on every ask still fails.
 
 Pinned: `test/systems/home2.test.js` (4) - the law, the plaque's fold executed, the door by source, the deploy; re-aimed by
 content in `test/server/home1.test.js` (House5, the Info-only offer) and `test/systems/worldhover.test.js` (the door cache).
-`tools/mutants/home2.json` (16, all dead); `home1.json` and `worldhover.json` records re-aimed.
+`tools/mutants/home2.json` (19 with DEPLOY-FLAKE's and SMOKE-HANG's, all dead); `home1.json` and `worldhover.json` records re-aimed.
 
 ## DECOR1 (2026-09-25, Mac: "building our own unique version instead of porting" Kaedius's Decorator; decor "Gold per placement"; asked, the catalogue "Everything Daggerfall furnishes", priced "By size", opened from "A UI element that can be clicked to open the decorate panel. Allows free cam mode for placement and an intuitive scrolling menu with filters", offline "kept in the save") - the decorator, from the ground up
 
