@@ -565,7 +565,7 @@ test('LEGACY7 part three the law beneath: wedPlayer and its end held to their ow
   const v = house();
   v.host.deathOutcome();
   await settle(2);
-  assert.deepEqual(v.tombs, ['fell']);
+  assert.deepEqual(v.tombs, ['fell', 'fell'], 'a fall, held at the door and its window closed at the reset');   // PIN MOVED (FIELD BUGS 2026-10-16b REZ-BLOODLINE AUDIT R1)
   // and the session carries it
   const asked = [];
   const fetch = async (url, init) => { asked.push(JSON.parse(init.body)); return { ok: true, status: 200, headers: { get: () => 'application/json' }, json: async () => ({ ok: true, deadAt: 5 }) }; };

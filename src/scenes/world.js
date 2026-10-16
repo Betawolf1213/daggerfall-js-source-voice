@@ -28363,7 +28363,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     killerOf: (cid, ownAt) => revenantKillerOf(cid, ownAt), inheritFoe: (rec) => inheritRevenant(playerEntity, rec),
     // LEGACY7: online, the realm's copy of the line follows each write, and a fall is the realm's tombstone
     stored: (f) => { legacyRealmLine?.push(f); },
-    tombstone: (why, o) => (realmSession ? realmSession.die(why, o) : false),   // LEGACY7 part three: 'retired' keeps a union with another player's character; REZ-BLOODLINE: `o.keepalive` as the page goes
+    tombstone: (why, o) => (realmSession ? realmSession.die(why, o) : false), raiseDeath: (at) => (realmSession ? realmSession.raise(at) : { ok: true }),   // LEGACY7 part three: 'retired' keeps a union with another player's character; REZ-BLOODLINE: `o.keepalive` as the page goes; AUDIT R1: `o.hold` the death door's fall, and a party's Resurrect asked of the realm under the lease that fell (no realm, nothing held there)
     realmId: () => realmSession?.id ?? null,   // LEGACY7 part three: the realm character this tab plays (two players wed)
     look: () => composeLook(playerEntity),   // LEGACY7 part four: what the one played wears - how the world draws them while another is played
     houseHere: () => { const b = (modes?.mode ?? 'exterior') === 'interior' ? modes?.interiorBuilding : null; return b?.buildingKey > 0 && b.townMapId ? { mapId: b.townMapId >>> 0, buildingKey: b.buildingKey } : null; },
@@ -29768,8 +29768,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // caster's pose) as new, and rose the instant it fell
       if (!_respawning) {
         if (!_rezSeen) _rezSeen = rezSnapshot(social?.others() ?? []);
-        const rez = social?.acct && modes?.sdRealmSlot?.() == null ? rezFor(social.others(), social.acct, _rezSeen) : null;   // SD-ONELIFE: no Resurrect in the Hour - one life (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`)
-        if (rez && legacyHost?.raise() !== false) { resurrectInPlace(rez); return; }   // REZ-BLOODLINE (FIELD BUGS 2026-10-16): a Bloodline death held for it is let go; one decided for good stays down (legacyHost.js raise)
+        const rez = social?.acct && modes?.sdRealmSlot?.() == null ? rezFor(social.others(), social.acct, _rezSeen) ?? legacyHost?.raised() ?? null : null;   // SD-ONELIFE: no Resurrect in the Hour - one life (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`); REZ-BLOODLINE AUDIT R1: or the call the realm let go, the caster's pose done carrying it
+        if (rez && legacyHost?.raise(rez) !== false) { resurrectInPlace(rez); return; }   // REZ-BLOODLINE (FIELD BUGS 2026-10-16): a Bloodline death held for it is let go; one decided for good stays down (legacyHost.js raise); AUDIT R1: the realm asked first - down until it answers
       }
       peerBodies.destroy(); remotePlayers.sync([], onlineToScene); peerRiders?.destroy(); peerWalkers?.destroy(); peerCandlesFrame([], dt); return;   // PEERLIGHT2: and no candle hangs over the dead; AUDIT RIDE: and no rider stands frozen over it either
     }   // AUDIT WORLD B6: the dungeon's and the building's death screens stand in the mode's slot   // AUDIT MWBODY B7: and no body stands frozen over the death screen

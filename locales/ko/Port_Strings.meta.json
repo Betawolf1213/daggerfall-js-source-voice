@@ -2209,6 +2209,11 @@
   "tr": "f8883213f22b",
   "by": "claude-in-session"
  },
+ "account.refusal.notDead": {
+  "en": "7ec337b612c7",
+  "tr": "8829170f1324",
+  "by": "claude-in-session"
+ },
  "account.refusal.notDeveloper": {
   "en": "c7c70b6e50ef",
   "tr": "fc29104962ad",
@@ -2657,6 +2662,16 @@
  "account.refusal.queue": {
   "en": "e47dae0b7d71",
   "tr": "9f4b099a529e",
+  "by": "claude-in-session"
+ },
+ "account.refusal.raiseLate": {
+  "en": "ae77d9b3ac34",
+  "tr": "9517f51ab5a5",
+  "by": "claude-in-session"
+ },
+ "account.refusal.raiseNoLine": {
+  "en": "98c0bce174d7",
+  "tr": "d56afecd6074",
   "by": "claude-in-session"
  },
  "account.refusal.rankedNeedsAccount": {
@@ -8227,6 +8242,16 @@
  "legacy.court.cooled": {
   "en": "01ad0d23411e",
   "tr": "b18ebe639b42",
+  "by": "claude-in-session"
+ },
+ "legacy.rez.refused": {
+  "en": "90cc6dc5ad37",
+  "tr": "d60fa3a3882d",
+  "by": "claude-in-session"
+ },
+ "legacy.rez.unheard": {
+  "en": "9a86cc2b125e",
+  "tr": "fa7496a5ffe8",
   "by": "claude-in-session"
  },
  "level.renown.risen": {

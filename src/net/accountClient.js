@@ -669,6 +669,10 @@ const REFUSAL_WORDS = {
   'wed-partner': () => t('account.refusal.wedPartner', 'They cannot be wed now - they are wed already, of no house, or no longer the one who stood with you.'),   // AUDIT LEGACY III O1
   'lineage-too-large': () => t('account.refusal.lineageTooLarge', 'Your family\'s record has grown past what the realm keeps for one family.'),   // AUDIT LEGACY III O2/P1
   'wed-spent': () => t('account.refusal.wedSpent', 'That wedding was not yours to answer.'),
+  // REZ-BLOODLINE AUDIT R1 (server-account/src/legacy.js realmRaise): a party's Resurrect the realm will not take back
+  'not-dead': () => t('account.refusal.notDead', 'The realm holds no death of that character to take back.'),
+  'raise-late': () => t('account.refusal.raiseLate', 'Too late - that death stands for good now.'),
+  'raise-no-line': () => t('account.refusal.raiseNoLine', 'Only a character of a house (Project Legacy) is held for a Resurrect.'),
   // AUDIT REALM2 S2: the online acts that cost gold are a realm character's
   'realm-only': () => t('account.refusal.realmOnly', 'Only an online character of the realm can do that.'),
   // REALM P2.1: a trade's sid another pair settled (server-account/src/realmTrade.js)
