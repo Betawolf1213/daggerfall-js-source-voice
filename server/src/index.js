@@ -2562,7 +2562,6 @@ export class Room {
     // where the player stands, and stood there wrong until the next heartbeat corrected it five seconds on. A
     // stop is one frame per walk, so it is fanned whole like a keepalive, under the same floor: a client toggling
     // `mv` at the gate's ceiling buys the same two whole fans a second a keepalive flood does, and no more.
-    if (a.ip) this._instanceRecheck(ws, a, now);   // INSTANCES (the audit): a member let in as the owner's party, asked again while it stays
     const unmoved = posed && !!a.pose && !poseChanged(a.pose, m.p);
     const stopped = posed && !!a.pose && (a.pose.mv | 0) !== 0 && (m.p.mv | 0) === 0;
     const still = (unmoved || stopped) && now - (a.kept ?? 0) >= KEEPALIVE_FAN_MS;
@@ -2591,6 +2590,7 @@ export class Room {
     if (m.t === 'ping') { this._send(ws, '{"t":"pong"}'); return; }   // a ping that reached the object (the runtime answers the exact one in its sleep)
     if (chat) return;   // a channel is no place: a pose there is kept by no one and reaches no one
     if (posed) this._metrics.c.poses++;   // SCALE2b: a pose taken - the one a room fans
+    if (a.ip) this._instanceRecheck(ws, a, now);   // INSTANCES (the audit): a member let in as the owner's party, asked again while it stays - off a pose the gate took
     // INT8: a duel's fighter's place is the referee's (a run it allows; the ring's edge), and every pose a room with a
     // bout takes beats the bouts - a fighter gone or out ends its bout on the next frame anyone sends
     if (posed && this._duelRef?.bouts.size) { duelPose(this._duelRef, a.sub, m.p, now); await this._duelBeat(now); }
@@ -8610,7 +8610,7 @@ export class Room {
     const r = instanceOf(a.key);
     if (!r || !a.sub) return;
     this._instanceKinOf(a.sub, r.owner, now).then(async (kin) => {
-      if (kin !== false || this._dead.has(ws)) return;
+      if (kin !== false || this._dead.has(ws) || !this.state.getWebSockets().includes(ws)) return;   // gone on its own meanwhile: its leave was said once
       this._refuse(ws, INSTANCE_DOOR_WORD);
       await this._reap();   // out of any door: its leave said now (the tick's own reap, AUDIT CARDS-3 A3)
     }).catch((e) => console.warn('[instance] recheck', e?.message ?? e));

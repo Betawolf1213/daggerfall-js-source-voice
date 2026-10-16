@@ -503,5 +503,15 @@
       "test/instances3_door.test.js"
     ],
     "why": "a Recall into a dungeon always comes back to its public room - the instance and the whole layout the anchor stood in forgotten"
+  },
+  {
+    "name": "INSTANCES-RECHECK-REFUSES-THE-GONE",
+    "file": "server/src/index.js",
+    "old": " || !this.state.getWebSockets().includes(ws)) return;   // gone on its own meanwhile: its leave was said once",
+    "new": ") return;",
+    "tests": [
+      "test/instances2_relay.test.js"
+    ],
+    "why": "a member who closed its tab while the hub was asked is refused after - its leave said twice"
   }
 ]

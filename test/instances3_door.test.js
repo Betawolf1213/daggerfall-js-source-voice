@@ -172,7 +172,7 @@ function door({ instanceOk = true, online = true, quest = true, members = [], ov
   return { d, q, m, shown, said };
 }
 /** Let the door's own awaits (the digests) run until \`cond\`. */
-const until = async (cond) => { for (let i = 0; i < 50 && !cond(); i++) await new Promise((r) => setImmediate(r)); };
+const until = async (cond, ms = 5000) => { const end = Date.now() + ms; while (!cond() && Date.now() < end) await new Promise((r) => setTimeout(r, 2)); };   // the digests are the platform's thread pool's: time, not ticks, under a loaded machine
 const COPPERING = { name: 'Ruins of The Hold of Coppering', mapTableData: { mapId: CRYPT.mapId } };
 const HOLD = { name: "Privateer's Hold", mapTableData: { mapId: PRIVATEERS_HOLD_MAP_ID } };
 const ME = hex('instance:account:acct-alice', 8), ANN = hex('instance:account:acct-ann1', 8);
@@ -379,9 +379,9 @@ test('INSTANCES a player\'s door (worldModes.js enterDungeonDoor, enterBuildingD
 
 test('INSTANCES the hosts, by source: the place\'s instance is the MODE\'s - set as a dungeon or a building is built, gone with the mode, read by the room\'s identity; recorded by the save, the anchor and a staff landing, and handed back by each; a re-laid public room mounts no quest\'s things; world.js keys the room and the party pose by what the relay joined', () => {
   assert.match(fns.get('dungeonTransition'), /whole: !!place\?\.whole \}\)/);
-  assert.match(fns.get('dungeonTransition'), /dungeonLoc = dfLocation;\n\s*placeInstance = place\?\.instance \?\? null;/);
+  assert.match(fns.get('dungeonTransition'), /placeInstance = place\?\.instance \?\? null;[^\n]*\n\s*dungeonLoc = dfLocation;/);
   assert.match(fns.get('dungeonTransition'), /placeRecord: \(\) => \(place\?\.instance \? \{ ins: instanceWord\(place\.instance\) \} : \{\}\),/);
-  assert.match(fns.get('interiorTransition'), /privateVisitRoom = restore\?\.privateRoom \?\? null;\n\s*placeInstance = place\?\.instance \?\? null;/);
+  assert.match(fns.get('interiorTransition'), /placeInstance = place\?\.instance \?\? null;[^\n]*\n(?:\s*stand[A-Za-z]+\(\);[^\n]*\n)*\s*interiorBuilding = building;/);
   assert.match(WM, /if \(next === 'exterior'\) placeInstance = null;/, 'gone with the mode');
   assert.equal((WM.match(/instance: placeInstance/g) ?? []).length, 2, 'the identity of a dungeon and of a building');
   assert.match(fns.get('interiorIdentity'), /\.\.\.\(placeInstance \? \{ ins: instanceWord\(placeInstance\) \} : \{\}\)/);

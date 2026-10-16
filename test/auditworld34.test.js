@@ -214,7 +214,7 @@ test('AUDIT WORLD34 B2: online, ONE layout - the layout the room addresses by in
   assert.equal(useSmallerDungeon(loc, { setting: false, questMachine: machine, online: true }), false, 'online: not even the quest\'s');
   assert.equal(dungeonSizeFor(loc, { setting: true, medium: false, questMachine: machine, online: true }), onlineDungeonSize(loc), 'SD-ONLINE: the world\'s one size for it - no setting and no quest\'s copy reaches it');
   const m = rd('src/scenes/worldModes.js'), w = rd('src/scenes/world.js');
-  assert.match(m, /dungeonLocationFor\(hit\.dfLocation, \{ questMachine: questBridge\?\.machine, online: host\.dungeonOnline\?\.\(\) \?\? false, whole: !!door\?\.whole \}\)/, 'the entry seam asks');   // PIN MOVED (INSTANCES): and the door's `whole` - an instance is the dungeon whole, its own room
+  assert.match(m, /dungeonLocationFor\(hit\.dfLocation, \{ questMachine: questBridge\?\.machine, online: host\.dungeonOnline\?\.\(\) \?\? false, whole: !!place\?\.whole \}\)/, 'the entry seam asks');   // PIN MOVED (INSTANCES): and the door's `whole` - an instance is the dungeon whole, its own room   // PIN MOVED (INSTANCES' audit): `place`, the entry decided
   assert.match(w, /dungeonOnline: \(\) => onlineOn,/, 'and the world host answers');
   assert.equal((w.match(/questMachine: questBridge\?\.machine, online: params\.has\('online'\), whole: params\.has\('online'\) \}\)/g) ?? []).length, 2, 'the quest layer\'s two location doors too (the page flag: a quest parsed at chargen reaches them before `onlineOn` is declared; PIN MOVED, INSTANCES: online they ask for the dungeon whole)');
   const d = rd('src/scenes/dungeonContext.js');

@@ -11,7 +11,7 @@ import { SOCIAL_ROOM, CLOSE_POLICY, CLOSE_BUSY, INSTANCE_TTL_MS, WORLD_TTL_MS, P
 
 const refusal = (ws) => ws.sent.find((m) => m.t === 'error')?.m ?? null;
 /** The relay's out-of-door work (a re-check's hub ask and its refusal) let run to its end. */
-const settle = async () => { for (let i = 0; i < 5; i++) await new Promise((r) => setImmediate(r)); };
+const settle = async () => { for (let i = 0; i < 5; i++) await new Promise((r) => setImmediate(r)); await new Promise((r) => setTimeout(r, 60)); };   // the hub's answer rides digests (the platform's thread pool): time, not ticks, on a loaded machine
 const POSE = { x: 1000, y: 0.3, z: 1000, yaw: 0, pitch: 0, mv: 0 };
 /** A hub whose party p1 seats `members` (accounts `acct-<name>`), each record pointing at it. */
 function partyHub(world, members, away = {}) {
@@ -124,6 +124,30 @@ test('INSTANCES at the relay (the audit): a member let in as the owner\'s party 
     assert.ok(r.sockets.includes(alice), 'its owner stays');
     at += INSTANCE_KIN_KEEP_MS; await r.pose(alice, POSE); await settle();
     assert.ok(r.sockets.includes(alice), 'and is never asked');
+  } finally { Date.now = realNow; }
+});
+
+test('INSTANCES at the relay (the audit): a member gone on its own while the hub was asked is not refused after - its leave said once, never twice', async () => {
+  const realNow = Date.now; let at = 7_000_000;
+  Date.now = () => at;
+  try {
+    const world = fakeRooms({ now: () => at });
+    const hub = partyHub(world, ['acct-alice', 'acct-bobby']);
+    const r = world.room(await instanceOf('acct-alice'));
+    const alice = r.connect(); await r.hello(alice, 'alice');
+    const bob = r.connect(); await r.hello(bob, 'bobby');
+    hub.store.set('party:p1', { id: 'p1', leader: 'acct-alice', members: ['acct-alice'], invites: [], away: {} });
+    hub.store.set('acct:acct-bobby', { name: 'bobby', party: null });
+    hub.wake(); r.room._instanceKin.clear();
+    at += INSTANCE_KIN_KEEP_MS;
+    const refusals = r.room._metrics.c.refusals;
+    await r.pose(bob, POSE);   // the ask goes out...
+    await r.drop(bob);         // ...and bob closes his tab before the hub answers
+    await settle();
+    assert.equal(refusal(bob), null, 'no refusal sent to a socket already gone');
+    assert.equal(r.room._metrics.c.refusals, refusals, 'nor counted - the room refused nobody');
+    const bobId = bob.att.id;
+    assert.equal(alice.sent.filter((m) => m.t === 'leave' && m.id === bobId).length, 1, 'his leave said once');
   } finally { Date.now = realNow; }
 });
 

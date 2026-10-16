@@ -8757,11 +8757,11 @@ export function createWorldModes(host) {
       // AUDIT 68 S23-failed-entry-stale-building: the identity and the
       // three PlayerActivate.cs:1120-1122 latches, committed with the
       // context and not before it.
+      placeInstance = place?.instance ?? null;   // INSTANCES: the room this building is entered as
       standFromChair();   // SIT1: nor on a chair
       standFromCardTable();   // CARDS2b (AUDIT CARDS B1): a new room seats nobody yet - CARDS4: and an old table's chips come home
       interiorBuilding = building;
       privateVisitRoom = restore?.privateRoom ?? null;
-      placeInstance = place?.instance ?? null;   // INSTANCES: the room this building is entered as
       privateVisitOwner = restore?.cabinOwner ?? null;
       interiorCabin = hit.sailingCabin ?? null;
       if (interiorCabin && !privateVisitRoom) addPermanentScene(sceneCache(), privateRoomSceneName(interiorCabin));
@@ -10093,8 +10093,8 @@ export function createWorldModes(host) {
       betterAmbience.onTransition({ dungeon: { regionName: dfLocation.regionName, name: dfLocation.name, inCastle: () => !!ctx.insideDungeonCastle?.(), exitPos: ctx.enterMarker ? [ctx.enterMarker.x, ctx.enterMarker.y, ctx.enterMarker.z] : null } });   // BA1: OnTransitionDungeonInterior - the fog seeded by the dungeon's name, the rain source at "DungeonExit"
       _insideTavern = false;   // ROAD-B B4: PlayerEnterExit.cs:1112 - the dungeon transition clears the tavern latch too (and, verbatim, not the residence one)
       _insidePartyRestExempt = false;   // TAVERN-REST1/GUILD-REST1: cleared on the same transition as the tavern latch above
-      dungeonLoc = dfLocation;
       placeInstance = place?.instance ?? null;   // INSTANCES: the room this dungeon is entered as
+      dungeonLoc = dfLocation;
       host.profDungeonEntered?.(ctx);   // PROF2: the day's veins on this dungeon's walls (bible/06-Systems/Professions-Arc.md 23)
       standCrownHall(ctx, dfLocation).catch(() => {});   // CROWN-HALL: the throne room's pieces, about its ruler
       standArenaWall(ctx, dfLocation).catch(() => {});   // ARENA5: the Hall of Champions' plaque wall, about its Keeper

@@ -363,7 +363,7 @@ test('SD3 the relay by source: the hub\'s alarm beats the director beside the sw
   assert.match(r, /if \(realmRoom\) \{\n {8}const known = !!who\.subject && \(await this\._sdRealmOf\(sdSlotOfRoom\(a\.key\)\)\)\.in\.includes\(who\.subject\);\n {8}gate = await this\._battleHelloGate\(who\.subject \?\? m\.id, known \? 'fighter' : 'watch', now\);/);
   assert.match(r, /const no = await this\._sdAdmit\(a\.key, who\.subject, now, who\.kind !== 'linked'\);/);
   assert.match(r, /if \(no === SD_NO_BUSY\) \{ this\._refuse\(ws, 'busy', CLOSE_BUSY\); return; \}/);
-  assert.match(r, /if \(!battle && !floor && !realmRoom\) \{/);
+  assert.match(r, /if \(!battle && !floor && !realmRoom && !instRoom\) \{/);   // PIN MOVED (INSTANCES' audit): nor an instance's - its gate by account after the token
   const on = read('src/net/online.js');
   assert.match(on, /if \(r && isSocialRoom\(room\)\) this\._deliver\('sd', \(\) => this\.onSd\?\.\(r, room\)\);/);
   assert.match(on, /this\.serpentOk = !!h\.serpentOk; this\.sdOk = !!h\.sdOk;/);

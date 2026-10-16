@@ -29763,7 +29763,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // deleted elsewhere, or the account signed out and another in: the realm's own end, to the Online door with the realm's
     // word (the relay's words are for a build from before the realm), before anything else this frame draws over it
     if (realmSession && !realmSession.lost && realmDoorShut(online)) { realmLost('no-realm-character'); return; }
-    if (instanceDoor.refused(online)) modes?.forceExitToExterior?.();   // INSTANCES (the audit): an instance's door shut on me (not of its owner's party - a kick, a lapse) - out, as the realm's door does, never left inside it alone
     // ONE-SEAT (Mac: "the player can only have one character only at a time"): another tab or window of this player has
     // the seat - out of every room once, then nobody drawn and nothing sent, the dead's own law (D12), until the player
     // presses Play online here
@@ -29811,6 +29810,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     }   // AUDIT WORLD B6: the dungeon's and the building's death screens stand in the mode's slot   // AUDIT MWBODY B7: and no body stands frozen over the death screen
     _rezSeen = null;   // AUDIT CONTRIB A6: alive - the next death takes its own snapshot of what the party's poses say
     if (checkpointDue(now, _checkpointAt)) { if (realmSession?.idle) realmSession.idle(() => onlineCheckpoint()); else onlineCheckpoint(); }   // SCALE2b: the periodic one may be answered by the save the service holds (realmSaves.js idle)   // REALM P0.5: every two real minutes, alive and in the seat (the first such frame persists the join's call-in)
+    if (instanceDoor.refused(online)) modes?.forceExitToExterior?.();   // INSTANCES (the audit): alive, an instance's door shut on me (not of its owner's party - a kick, a lapse) - out, as the realm's door does, never left inside it alone
     const mode = modes?.mode ?? 'exterior';   // audit24_wave37: guarded on the OBJECT above its own declaration (the frame runs after it)
     const cabin = modes?.sailingCabin;
     const overworld = mode === 'exterior';
