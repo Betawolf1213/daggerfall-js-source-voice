@@ -235,7 +235,7 @@ test('MODS-ONLINE-2: a mod the player owns reaches no wire, no save and no roll'
     'oblivion-remaster-leveling': ['src/systems/oblivionLeveling.js'],
     'handheld-torches': ['src/systems/handheldTorches.js'],
   };
-  const BANNED = /\bsendWorld\b|\bsendAct\b|from '\.\.\/net\/|getSaveData|restoreSaveData|snapshotPlayer/;
+  const BANNED = /\bsendWorld\b|\bsendAct\b|from '(?:\.\.\/)+net\/|getSaveData|restoreSaveData|snapshotPlayer/;   // AUDIT TIDY TEST-5: net/ at any depth
 
   for (const [vendor, files] of Object.entries(OWN_MODULES)) {
     assert.ok(ONLINE_PLAYERS_OWN_MODS.includes(vendor), `${vendor} is on the player's list`);

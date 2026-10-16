@@ -25,7 +25,7 @@ try {
     await page.emulateMedia({ reducedMotion: reduced ? 'reduce' : 'no-preference' });
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
-    await page.goto('http://localhost:5241/src/ui/profHud.js', { waitUntil: 'domcontentloaded' }); console.error('loaded', tag);   // a page of the origin - the modules import from it; never the landing (U60)
+    await page.goto('http://localhost:5241/src/ui/professions/profHud.js', { waitUntil: 'domcontentloaded' }); console.error('loaded', tag);   // a page of the origin - the modules import from it; never the landing (U60)
     await page.evaluate(() => { document.head.querySelectorAll('style, link[rel=stylesheet]').forEach((n) => n.remove()); document.body.innerHTML = ''; document.body.style.cssText = 'margin:0;height:100vh;background:linear-gradient(#8aa0b5 0 48%, #55663f 48% 70%, #3f4d30 70%)'; const x = document.createElement('div'); x.style.cssText = 'position:fixed;left:50%;top:50%;width:9px;height:9px;transform:translate(-50%,-50%);background:linear-gradient(#e6dcc0,#e6dcc0) center/100% 1px no-repeat,linear-gradient(#e6dcc0,#e6dcc0) center/1px 100% no-repeat'; document.body.append(x); });
     const scenes = await page.evaluate(async () => {
       const { createProfHud } = await import('/src/ui/professions/profHud.js');

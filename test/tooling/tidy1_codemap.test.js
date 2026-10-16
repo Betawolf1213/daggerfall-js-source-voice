@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { planMove, rewriteSpecifiers, rewritePaths, rewriteRecords, rewriteQuotedImports, specifierChanges, blindSpots, brokenBy, relayHits, composeLedger, unresolvedIn, LEDGER, TEXT_EXT } from '../../tools/moveModule.mjs';
+import { planMove, rewriteSpecifiers, rewritePaths, rewriteRecords, rewriteQuotedImports, specifierChanges, blindSpots, brokenBy, relayHits, composeLedger, unresolvedIn, globRe, LEDGER, TEXT_EXT } from '../../tools/moveModule.mjs';
 
 // TIDY1 (2026-10-16, bible/01-Overview/Code-Map.md): THE MAP OF WHERE THINGS LIVE, AND THE TOOL THAT MOVES THEM.
 // The map is held to the tree both ways - a directory of code nobody wrote a row for fails, and so does a row for a
@@ -303,3 +303,60 @@ test('TIDY2: every relative import in the code resolves - the game, the two Work
   assert.deepEqual(bad, [], 'a relative import names nothing - a move left it behind, or a merged branch wrote it for a path that moved');
 });
 
+test('AUDIT TIDY SRC-1: every import.meta.glob names a folder that stands, and files in it - a moved module re-bases its globs', () => {
+  // Vite's glob is a compile-time macro and node never runs it (each module guards it with IN_BROWSER): a pattern off a
+  // module's folder that names nothing ships an empty map, silently. TIDY2 moved three modules a folder deeper and left
+  // eleven of their globs one folder short - the build went out without the quest pack, Dynamic Skies' presets and every
+  // Eye of the Beholder and class-skin sprite (the move tool now re-bases a moved module's globs, GLOBBED)
+  const files = tracked();
+  const all = new Set(files);
+  const dirs = new Set(files.flatMap((f) => f.split('/').slice(0, -1).map((_, i, a) => a.slice(0, i + 1).join('/'))));
+  const EMPTY = new Map([   // patterns that match nothing on purpose - a place a later file goes
+    ['src/scenes/localeData.js', 'a bundled translation pack (`locales/<tag>/pack/`) and its credits (`translators.json`) are a translator\'s to add (locales/README.md)'],
+  ]);
+  const code = files.filter((f) => /^(src|server|server-account|app|tools|scripts)\/.*\.(m?js|cjs)$/.test(f) && f !== 'tools/moveModule.mjs');
+  const bad = [];
+  let n = 0;
+  for (const f of code) {
+    const text = rd(f);
+    if (!text.includes('import.meta.glob(')) continue;
+    for (const call of text.matchAll(/\bimport\.meta\.glob\(\s*(\[[^\]]*\]|(['"])[^'"\n]*\2)/g)) {
+      for (const m of call[1].matchAll(/(['"])(!?)(\.{1,2}\/[^'"\n]*)\1/g)) {
+        if (m[2]) continue;
+        n++;
+        const pat = posix.normalize(posix.join(posix.dirname(f), m[3]));
+        const at = pat.search(/[*?{[]/);
+        const dir = pat.slice(0, pat.lastIndexOf('/', at < 0 ? pat.length : at));
+        if (!dirs.has(dir)) { bad.push(`${f}: ${m[3]} - ${dir}/ is no folder`); continue; }
+        const re = globRe(pat);
+        if (!EMPTY.has(f) && !files.some((x) => re.test(x))) bad.push(`${f}: ${m[3]} - matches no file`);
+      }
+    }
+  }
+  assert.ok(n >= 25, `only ${n} glob patterns read - the scan missed them`);
+  assert.deepEqual(bad, []);
+  assert.ok(all.has('src/scenes/localeData.js'), 'the empty-on-purpose list names a file that stands');
+});
+
+
+test('AUDIT TIDY: the move tool re-bases a moved module\'s globs, names a glob a move empties, and reads a root path off a host', () => {
+  // SRC-1: GLOBBED - a moved module's import.meta.glob, one pattern or an array (a negated one too), its static folder
+  // re-based and its pattern kept; a module that stays keeps its globs
+  const moved = new Map([['src/scenes/questData.js', 'src/scenes/quest/questData.js']]);
+  const src = [
+    "const q = import.meta.glob('../../vendor/dfu-quests/Quests/*.txt', { query: '?raw', import: 'default' });",
+    "const b = import.meta.glob(['../../locales/*/pack/**/*.csv', '!../../locales/x/*.csv'], { eager: true });",
+  ].join('\n');
+  assert.equal(rewriteSpecifiers(src, 'src/scenes/questData.js', 'src/scenes/quest/questData.js', moved).text, [
+    "const q = import.meta.glob('../../../vendor/dfu-quests/Quests/*.txt', { query: '?raw', import: 'default' });",
+    "const b = import.meta.glob(['../../../locales/*/pack/**/*.csv', '!../../../locales/x/*.csv'], { eager: true });",
+  ].join('\n'));
+  assert.equal(rewriteSpecifiers(src, 'src/scenes/questData.js', 'src/scenes/questData.js', new Map()).text, src);
+  // a module that stays, globbing a folder a file moved out of: named
+  const left = planMove([['src/systems/skyA.js', 'src/systems/sky/skyA.js']], new Map([['src/scenes/loader.js', "const all = import.meta.glob('../systems/sky*.js');"]]));
+  assert.equal(left.blind.filter((b) => /import\.meta\.glob/.test(b)).length, 1);
+  // SRC-4: a root path in a URL off a host is a root path; a page's own spelling after a host is not
+  const mv = new Map([['src/ui/profHud.js', 'src/ui/professions/profHud.js']]);
+  assert.equal(rewritePaths("page.goto('http://localhost:5241/src/ui/profHud.js'); fetch('https://x.io/ui/profHud.js');", mv).text,
+    "page.goto('http://localhost:5241/src/ui/professions/profHud.js'); fetch('https://x.io/ui/profHud.js');");
+});

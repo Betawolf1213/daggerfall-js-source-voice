@@ -101,10 +101,11 @@ test('ENH-NOTICE3: the seam is imported where the hosts build their deps, and no
   const dirs = ['src/systems', ...(existsSync(new URL('../../src/mods', import.meta.url)) ? ['src/mods'] : [])];
   const offenders = [];
   for (const d of dirs) {
-    for (const f of readdirSync(new URL(`../../${d}/`, import.meta.url)).filter((f) => f.endsWith('.js'))) {
+    // AUDIT TIDY TEST-2: every module, its feature folders' among them, and the box classes at any depth
+    for (const f of readdirSync(new URL(`../../${d}/`, import.meta.url), { recursive: true }).map(String).filter((f) => f.endsWith('.js'))) {
       if (f === 'notify.js') continue;
       const src = rd(`${d}/${f}`);
-      if (/from '\.\.\/ui\/actionText\.js'|from '\.\.\/ui\/talkWindow\.js'/.test(src)) offenders.push(`${d}/${f}`);
+      if (/from '(?:\.\.\/)+ui\/(?:actionText|talkWindow)\.js'/.test(src)) offenders.push(`${d}/${f}`);
     }
   }
   assert.deepEqual(offenders, [], 'a system or a mod module importing a box class is a producer naming the window - it must name the kind through the host\'s deps (or systems/notify.js)');

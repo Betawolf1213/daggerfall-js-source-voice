@@ -303,7 +303,7 @@ test('G3: every host that owns a held-keys Set fills the RING before its dispatc
   // ladder - so every key that DISPATCHED returned above the add and
   // never entered the ring. Harmless while nothing read the order;
   // load-bearing now.
-  const hosts = readdirSync(SCENES).filter((f) => f.endsWith('.js')
+  const hosts = readdirSync(SCENES, { recursive: true }).map(String).filter((f) => f.endsWith('.js')   // AUDIT TIDY TEST-3: the folders too
     && /\n {2}const keys = new Set\(\);\n/.test(body(f)));
   assert.deepEqual(hosts.sort(), ['dungeon.js', 'exterior.js', 'interior.js', 'world.js'],
     'the held-keys Set owners in the tree (worldModes reads the outer host\'s)');

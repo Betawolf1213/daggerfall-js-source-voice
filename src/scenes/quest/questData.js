@@ -14,8 +14,8 @@
 import { loadQuestTables } from '../../systems/quest/tables.js';
 import { applyForageFix } from '../../systems/foraging/foragingLaw.js';   // FORAGE-FIX: Foraging's quest and list patches, applied as they are read
 
-const tableFiles = import.meta.glob('../../vendor/dfu-quests/Tables/*.txt', { query: '?raw', import: 'default' });
-const questFiles = import.meta.glob('../../vendor/dfu-quests/Quests/*.txt', { query: '?raw', import: 'default' });
+const tableFiles = import.meta.glob('../../../vendor/dfu-quests/Tables/*.txt', { query: '?raw', import: 'default' });
+const questFiles = import.meta.glob('../../../vendor/dfu-quests/Quests/*.txt', { query: '?raw', import: 'default' });
 // RR3: a vendored mod's Quests/ folder - its QuestList-<name>.txt lands
 // with the tables (the registered list's seam) and its quest sources
 // with the pack's (GetQuest checks the mod's folder the same way).
@@ -23,10 +23,10 @@ const questFiles = import.meta.glob('../../vendor/dfu-quests/Quests/*.txt', { qu
 // (the manifest's LooseQuestsList: DFU's GetQuest finds a loaded mod's
 // quest by name, AnyModContainsQuest; the source seam here is that).
 const modQuestFiles = {
-  ...import.meta.glob('../../vendor/roleplay-realism/Quests/*.txt', { query: '?raw', import: 'default' }),
-  ...import.meta.glob('../../vendor/warm-ashes-ships/Quests/*.txt', { query: '?raw', import: 'default' }),
+  ...import.meta.glob('../../../vendor/roleplay-realism/Quests/*.txt', { query: '?raw', import: 'default' }),
+  ...import.meta.glob('../../../vendor/warm-ashes-ships/Quests/*.txt', { query: '?raw', import: 'default' }),
   // FORAGE1: Foraging's list and its 22 quests, verbatim - FORAGE-FIX's patches applied as they are read (below)
-  ...import.meta.glob('../../vendor/foraging/Quests/*.txt', { query: '?raw', import: 'default' }),
+  ...import.meta.glob('../../../vendor/foraging/Quests/*.txt', { query: '?raw', import: 'default' }),
 };
 
 const stripBom = (s) => s.replace(/^﻿/, '');

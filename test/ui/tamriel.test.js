@@ -522,6 +522,7 @@ test('TAMRIEL1 sweep: the window paints the continent AFTER the Bay\'s ink and u
   assert.ok(!/TMAP00I0\.IMG|readFileSync|import .*imgFile/.test(geo), 'authored, never traced from the picture');
   const frame = read('src/world/tamriel/tamrielFrame.js');
   assert.match(frame, /export const BAY_ORIGIN = Object\.freeze\(\{ x: 862, y: 975 \}\);/, 'the one authored offset, named once');
-  assert.ok(!/from '\.\.\/net\//.test(frame + geo + read('src/world/tamriel/tamrielGround.js')), 'TAMRIEL2-WORKER: nothing of net/ under the frame, the geography or the ground - the terrain worker reads them');
+  // AUDIT TIDY TOOL-1: a net/ import at any depth
+  assert.ok(!/from '(?:\.\.\/)+net\//.test(frame + geo + read('src/world/tamriel/tamrielGround.js')), 'TAMRIEL2-WORKER: nothing of net/ under the frame, the geography or the ground - the terrain worker reads them');
   assert.ok(!/BAY_ORIGIN\s*=|862, 975/.test(ink + geo + read('src/world/tamriel/tamrielRaster.js')), 'and nowhere else');
 });

@@ -471,7 +471,7 @@ one bump (world211 - world209 on the branch, renumbered past main's at the merge
 | TIDY6 | `01-Overview/`'s 265 dated records apart from its 12 overview pages: `audits/` (149), `bugs/` (108), `handoffs/` (8). The root's lab pages stay where they are: GitHub Pages serves each at its path (`/sky.html`), with no redirects, and the labs are deployed to be opened on a phone - moving them would break every link to one. | Done |
 
 **Layer first, then feature** - the question the plan left open, settled by doing it. The arena's code spans five
-layers (16 modules in `src/systems/`, 6 in `src/net/`, 5 in `src/world/`, 3 in `src/scenes/`, 2 in `src/ui/`). A
+layers (16 modules in `src/systems/`, 6 in `src/net/`, 5 in `src/world/`, 3 in `src/scenes/`, 4 in `src/ui/`). A
 feature-first tree (`src/features/arena/` holding all of them) puts a feature in one place, but the bundles that
 must never pull UI in (the relay, the account Worker) would then need a rule inside every feature folder instead of
 one at the layer. Layer first is what the tree already did (`src/systems/naval/`, `src/systems/quest/`), and the

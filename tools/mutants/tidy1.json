@@ -286,5 +286,50 @@
     "tests": [
       "test/tooling/tidy1_codemap.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-TIDY-A1-a-left-glob-unnamed",
+    "file": "tools/moveModule.mjs",
+    "old": "      if (lost.length) blind.push(`${file}: '${m[1]}' matched ${lost.length} moved file(s) where they stood and not where they go (${lost[0][1]}) - a glob, rewrite it by hand`);",
+    "new": "      if (false) blind.push(`${file}: '${m[1]}' matched ${lost.length} moved file(s) where they stood and not where they go (${lost[0][1]}) - a glob, rewrite it by hand`);",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-TIDY-A1-a-star-crosses-folders",
+    "file": "tools/moveModule.mjs",
+    "old": "    else if (c === '*') out += '[^/]*';",
+    "new": "    else if (c === '*') out += '.*';",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-TIDY-SRC1-a-glob-left",
+    "file": "tools/moveModule.mjs",
+    "old": "      const out = folderFrom(file, dir, home) + pat.slice(dir.length);",
+    "new": "      const out = pat;",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-TIDY-SRC1-an-emptied-glob-unnamed",
+    "file": "tools/moveModule.mjs",
+    "old": "        if (lost.length && home === file) blind.push(",
+    "new": "        if (false) blind.push(",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-TIDY-SRC4-a-host-path-left",
+    "file": "tools/moveModule.mjs",
+    "old": "    if (plain.get(key)[1]) return all;",
+    "new": "    return all;",
+    "tests": [
+      "test/tooling/tidy1_codemap.test.js"
+    ]
   }
 ]

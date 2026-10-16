@@ -512,7 +512,7 @@ test('U47: the window is the guard, not its click method - and F11 no longer goe
   // and holds every one of them to ui/input.js:"One list, because"'s "every host
   // that registers a keydown calls this FIRST".
   const SCENES = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'src', 'scenes');
-  const hosts = readdirSync(SCENES).filter((f) => f.endsWith('.js')
+  const hosts = readdirSync(SCENES, { recursive: true }).map(String).filter((f) => f.endsWith('.js')   // AUDIT TIDY TEST-3: the folders too
     && /\n  addEventListener\('keydown', \(e\) => \{/.test(readFileSync(join(SCENES, f), 'utf8')));
   assert.deepEqual(hosts.sort(), ['dungeon.js', 'exterior.js', 'interior.js', 'world.js', 'worldModes.js'],
     'the host-level keydowns in the tree - a sixth joins this list by existing, not by being remembered');

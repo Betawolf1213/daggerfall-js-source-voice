@@ -19,7 +19,7 @@
 // out of nothing:
 //
 // - FOUNDING: the service founds first, then the purse pays (HOME1's
-//   order, net/../systems/onlineHomes.js buyOnlineHome) - and a founder
+//   order, systems/online/onlineHomes.js buyOnlineHome) - and a founder
 //   who can no longer pay disbands the guild it just founded, its
 //   treasury being empty.
 // - A DEPOSIT: the purse pays first, then the treasury is asked to hold

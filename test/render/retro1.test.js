@@ -508,7 +508,7 @@ test('RETRO1: the five are LIVE, read by systems/retroMode.js, and the screen sp
   assert.deepEqual(ENUM_LAW['Video/PostProcessingInRetroMode'].values, ['Off', 'Posterization (full)', 'Posterization (-sky)', 'Palettization (full)', 'Palettization (-sky)']);
   assert.deepEqual([NUMBER_LAW['Video/PalettizationLUTShift'].min, NUMBER_LAW['Video/PalettizationLUTShift'].max], [0, 7], 'the consumer\'s clamp (AUDIT RETRO1 C7: 8 is a black world)');
   assert.match(src('main.js'), /renderer\.setRetroSource\(retroFrameConfig\);/, 'the renderer asks the settings through main.js');
-  assert.doesNotMatch(src('render/renderer.js'), /^import[^\n]*from '\.\.\/systems\/(?:settings|retroMode)\.js'/m, 'render/ imports no settings');
+  assert.doesNotMatch(src('render/renderer.js'), /^import[^\n]*from '\.\.\/systems\/(?:[\w-]+\/)*(?:settings|retroMode)\.js'/m, 'render/ imports no settings');   // AUDIT TIDY TEST-5: in its folder too
   assert.doesNotMatch(src('render/retroPass.js'), /^import[^\n]*from '\.\.\/systems\//m, 'the pass is a leaf');
 });
 

@@ -148,6 +148,17 @@ export function rewriteSpecifiers(text, file, home, moved, exists = null) {
       n++;
       return `${lead}${quote}${keep}${quote}${plus}`;
     });
+    // GLOBBED (AUDIT TIDY SRC-1): `import.meta.glob('../../vendor/x/*.png')` - Vite's compile-time macro, a pattern off the
+    // module's own folder, one string or an array of them. Its static folder is re-based as a template's is; the rest
+    // is the pattern's. Missed, the glob matches nothing and Vite says nothing: the build ships without the files
+    text = text.replace(/\bimport\.meta\.glob\(\s*(\[[^\]]*\]|(['"])[^'"\n]*\2)/g, (all, arg) => all.replace(/(['"])(!?)(\.{1,2}\/[^'"\n]*)\1/g, (s, q, neg, pat) => {
+      const at = pat.search(/[*?{[]/);
+      const dir = at < 0 ? pat.slice(0, pat.lastIndexOf('/') + 1) : pat.slice(0, pat.lastIndexOf('/', at) + 1);
+      const out = folderFrom(file, dir, home) + pat.slice(dir.length);
+      if (out === pat) return s;
+      n++;
+      return `${q}${neg}${out}${q}`;
+    }));
   }
   return { text, n };
 }
@@ -197,6 +208,13 @@ export function rewritePaths(text, moved, names = byName(moved)) {
     if (own && lead === '/') return all;
     n++;
     return lead + to;
+  });
+  // a root path in a URL off a host (`http://localhost:5241/src/ui/x.js`, AUDIT TIDY SRC-4): the host's `/` stands
+  // after a word, where the pass above reads no root path
+  text = text.replace(new RegExp(`(\\bhttps?:\\/\\/[\\w.-]+(?::\\d+)?\\/)(${alt(plain)})(?![\\w\\-])`, 'g'), (all, host, key) => {
+    if (plain.get(key)[1]) return all;
+    n++;
+    return host + plain.get(key)[0];
   });
   text = text.replace(new RegExp(`(?<![\\w\\-.])(?<!\\\\/)(\\\\/|\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?(${alt(esc2)})(?![\\w\\-])`, 'g'), (all, lead = '', key) => {
     const [to, own] = esc2.get(key);
@@ -361,6 +379,18 @@ export function planMove(moves, texts, exists = null) {
     if (t !== text || home !== file) writes.set(home, t);
     if (n) counts.set(home, n);
     if (/\.(js|mjs|cjs)$/.test(home)) blind.push(...blindSpots(t, home, fromDirs, moved, names));
+  }
+  // a module's import.meta.glob over a folder a moved file left: the pattern stands, the file it matched does not
+  for (const [file, text] of texts) {
+    if (!/\.(m?js|cjs)$/.test(file) || FROZEN.some((re) => re.test(file)) || !text.includes('import.meta.glob(')) continue;
+    const home = moved.get(file) ?? file;
+    for (const call of text.matchAll(/\bimport\.meta\.glob\(\s*(\[[^\]]*\]|(['"])[^'"\n]*\2)/g)) {
+      for (const m of call[1].matchAll(/(['"])!?(\.{1,2}\/[^'"\n]*)\1/g)) {
+        const re = globRe(posix.normalize(posix.join(posix.dirname(file), m[2])));
+        const lost = moves.filter(([f, to]) => re.test(f) && !globRe(posix.normalize(posix.join(posix.dirname(home), m[2]))).test(to));
+        if (lost.length && home === file) blind.push(`${home}: import.meta.glob('${m[2]}') matched ${lost.length} moved file(s) where they stood and not where they go (${lost[0][1]})`);
+      }
+    }
   }
   // a workflow's path GLOB is no path to rewrite: one that matched a moved file where it stood and does not where it
   // goes stops running that workflow for it, silently (AUDIT TIDY: `src/ui/intro*.js` lost the four intro modules)

@@ -48,7 +48,9 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
-const jsIn = (dir) => readdirSync(join(ROOT, dir)).filter((f) => f.endsWith('.js')).map((f) => `${dir}/${f}`);
+// AUDIT TIDY TEST-1: a layer's every module, its feature folders' among them - one level read 82 of render/'s and 94 of
+// net/'s once TIDY2 filed the rest into folders, and a module there could drop its @ts-check unseen
+const jsIn = (dir) => jsUnder(dir);
 
 /**
  * EVERY .js under a directory, at any depth.

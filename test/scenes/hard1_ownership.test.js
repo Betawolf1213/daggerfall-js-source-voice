@@ -346,7 +346,8 @@ test('HARD1: a context that frees a GPU batch is a context this gate knows about
 });
 
 function readdirSafe(dir) {
-  return readdirSync(join(ROOT, dir)).filter((f) => f.endsWith('.js'));
+  // AUDIT TIDY TEST-3: the scenes' feature folders too - decor/decorTool.js's destroy() fell out of the sweep at TIDY2
+  return readdirSync(join(ROOT, dir), { recursive: true }).map(String).filter((f) => f.endsWith('.js'));
 }
 
 /** Every .js under a directory, at any depth (AUDIT-HARD - see `homes`). */

@@ -343,7 +343,7 @@ test('LOOT-BANNER THE WIRING: drawHud reads the player entity it is handed on ev
   assert.deepEqual(B.bannerLayout({ base: 480, notice: { top: 100, bottom: 300 }, lower: 790, heights: [60, 60] }), { top: 480, shown: 2 }, 'notices far above: its own place');
   assert.deepEqual(B.bannerLayout({ base: 480, notice: { top: 380, bottom: 700 }, lower: 790, heights: [60, 60, 60] }), { top: 710, shown: 1 }, 'a short band shows the newest');
   assert.match(read('src/systems/loot/lootCodex.js'), /if \(!quiet && !presentCodexFind\(item, key\.kind\)\) \{/);
-  assert.doesNotMatch(read('src/systems/loot/lootCodex.js'), /from '\.\.\/ui\//, 'the codex imports no face');
+  assert.doesNotMatch(read('src/systems/loot/lootCodex.js'), /from '(?:\.\.\/)+ui\//, 'the codex imports no face');   // AUDIT TIDY TOOL-1: at any depth
 });
 
 // ── HONOUR-BANNER (2026-10-14, Mac: "The title/aura in the abyss dungeon should also have a loot popup"; the lamp's "ensure
