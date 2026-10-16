@@ -1,9 +1,11 @@
 // VIRT (2026-10-16) - THE LONG PACK, DRIVEN IN A BROWSER AND TIMED.
 //
-// A container of 700 pieces over a few hundred kinds of picture, and a pack page of 700: how long the window takes to
-// open cold and warm, how many times it repaints while its pictures land, how long a pick takes, and whether the long
-// list is still the whole list - its last row reachable at the foot of its scroll, the scroll as tall as the rows, the
-// drawn rows at the places the whole list puts them. The archives are SYNTHETIC (tools/enhancedIconProbe.mjs's device:
+// A container of 700 pieces over 351 kinds (312 pictures), the player's own storage of 700 beside the pack, and a pack
+// page of 700: how long the window takes to open cold and warm, how many times it repaints while its pictures land, how
+// long a press takes, and whether the long list is still the whole list - every drawn row at its piece's own place to
+// the pixel and none in view missing, the list one height at every scroll, its columns still, its last piece flush at
+// the foot, a press's act done and its scroll kept, a search's scroll kept. AUDIT VIRT added the rest: a hover card
+// whose row a scroll took away, a carried tile across a scroll, a focused row scrolled away. The archives are SYNTHETIC (tools/enhancedIconProbe.mjs's device:
 // a valid TEXTURE file built here and served by intercepting the fetch) - no ARENA2 is read, and the timings are this
 // machine's, said as such. Run it on a tree without VIRT for the before.
 //
@@ -62,80 +64,151 @@ globalThis.__open = async (n, where) => {
 };
 globalThis.__close = close;
 const listOf = (where) => document.querySelector(where === 'pack' ? '#enhanced-inventory .packlists' : '#enhanced-inventory .remotelist');
+const colOf = (where) => (where === 'pack' ? listOf(where).querySelector('.packcol') : listOf(where));
+const rowsIn = (where) => [...colOf(where).querySelectorAll('.itemrow')];
+const itemsOf = (where) => (where === 'pack' ? e.items : loot);
 globalThis.__state = (where) => {
   const l = listOf(where);
   if (!l) return null;
   const rows = [...l.querySelectorAll('.itemrow')];
-  return { rows: rows.length, initials: rows.filter((r) => !r.querySelector('.tile.has-icon')).length,
-    scrollHeight: l.scrollHeight, clientHeight: l.clientHeight, repaints: JSON.parse(globalThis.__pack()).repaints };
+  const p = JSON.parse(globalThis.__pack());
+  return { rows: rows.length, initials: rows.filter((r) => !r.querySelector('.tile.has-icon')).length, tiles: document.querySelectorAll('#enhanced-inventory .tile').length,
+    scrollHeight: l.scrollHeight, clientHeight: l.clientHeight, repaints: p.repaints, landings: p.landings ?? null, painted: p.painted ?? null };
 };
-/** The list scrolled to its foot: the last piece's row is there, and nothing but it stands below the band. */
+/** The list scrolled to its foot: the row drawn last is the last piece - by the piece itself, not its name - flush. */
 globalThis.__foot = async (where) => {
   const l = listOf(where);
   l.scrollTop = l.scrollHeight;
   await frame(); await frame();
-  const rows = [...l.querySelectorAll('.itemrow')];
-  const last = rows.at(-1);
-  const want = (where === 'pack' ? e.items.filter((it) => it.group === 'Weapons') : loot).at(-1);
+  const last = rowsIn(where).at(-1);
   const lb = l.getBoundingClientRect(), rb = last.getBoundingClientRect();
-  return { lastIsLast: last.title === want.name || last.querySelector('.tile')?.title?.startsWith?.(want.name) || last.textContent.includes(want.name),
-    gapBelow: Math.round(lb.bottom - rb.bottom), scrollTop: l.scrollTop, scrollHeight: l.scrollHeight };
+  return { lastIsLast: last._padItem === itemsOf(where).at(-1), gapBelow: Math.round(lb.bottom - rb.bottom), scrollTop: l.scrollTop, scrollHeight: l.scrollHeight };
 };
-/** A pick in the middle of the list: the click's own time, to the frame. */
+/** A press on a row in the middle of the list: its own time to the frame, and that it DID its act - a loot row's press
+ *  takes the piece (IG7), a pack row's picks it and opens its card - with the list's scroll kept. */
 globalThis.__pickMiddle = async (where) => {
   const l = listOf(where);
   l.scrollTop = l.scrollHeight / 2;
   await frame(); await frame();
   const lb = l.getBoundingClientRect();
-  const row = [...l.querySelectorAll('.itemrow')].find((r) => r.getBoundingClientRect().top > lb.top + 40);
+  const row = rowsIn(where).find((r) => r.getBoundingClientRect().top > lb.top + 40);
+  const item = row._padItem, count = itemsOf(where).length;
   const before = Math.round(l.scrollTop);
   const t0 = performance.now();
   row.click();
   const clicked = performance.now() - t0;
   await frame();
+  const framed = performance.now() - t0;
+  await frame();
+  const did = where === 'pack'
+    ? !!document.querySelector('#enhanced-inventory .pack-dock .itemrow.on') && !!document.querySelector('.packtip')
+    : !loot.includes(item) && loot.length === count - 1 && e.items.includes(item);
   // the repaint built a new list: its scroll is the one the player sees
-  return { clicked, framed: performance.now() - t0, scrollBefore: before, scrollAfter: Math.round(listOf(where).scrollTop), tip: !!document.querySelector('.packtip') };
+  return { clicked, framed, did, scrollBefore: before, scrollAfter: Math.round(listOf(where).scrollTop) };
 };
-/** At a share of the scroll, every drawn row is the piece the whole list puts at its place: its line by its top, its
- *  column by its order in the line, the piece at that index named on the row. Off by one row anywhere and it says so. */
+/** At a share of the scroll, every drawn row stands EXACTLY where the whole list stands its piece - its line by its
+ *  index, its column by the column's own left - and every piece whose place meets the band is drawn. */
 globalThis.__placed = async (where, frac, query = '') => {
   const l = listOf(where);
   l.scrollTop = Math.round((l.scrollHeight - l.clientHeight) * frac);
   await frame(); await frame();
-  const col = where === 'pack' ? l.querySelector('.packcol') : l;
-  const rows = [...col.querySelectorAll('.itemrow')];
-  const tops = rows.map((r) => r.getBoundingClientRect().top);
-  const first = tops[0], cols = tops.filter((t) => Math.abs(t - first) < 1).length;
-  const pitch = tops.find((t) => t > first + 1) - first;
-  // the dock's column moves with its scroller; the loot list IS its scroller, so its content top is its box's less the scroll
-  const top = col.getBoundingClientRect().top + parseFloat(getComputedStyle(col).paddingTop) - (col === l ? l.scrollTop : 0);
+  const col = colOf(where);
+  const rows = rowsIn(where);
   const { itemLine } = await import('/src/ui/enhancedInventory.js');
-  const items = (where === 'pack' ? e.items : loot).filter((it) => !query || itemLine(it, e).name.toLowerCase().includes(query));
-  let wrong = 0, seen = 0, k = 0, lineAt = null, firstWrong = null;
+  const items = itemsOf(where).filter((it) => !query || itemLine(it, e).name.toLowerCase().includes(query));
+  const idx = rows.map((r) => items.indexOf(r._padItem));
+  const boxes = rows.map((r) => r.getBoundingClientRect());
+  const cols = boxes.filter((b) => Math.abs(b.top - boxes[0].top) < 1).length;
+  const pitch = boxes.find((b) => b.top > boxes[0].top + 1).top - boxes[0].top;
+  // the dock's column moves with its scroller; the loot list IS its scroller, so its content top is its box's less the scroll
+  const top0 = col.getBoundingClientRect().top + parseFloat(getComputedStyle(col).paddingTop) - (col === l ? l.scrollTop : 0);
+  const lefts = new Map();
+  let wrong = 0, firstWrong = null;
   rows.forEach((r, i) => {
-    const line = Math.round((tops[i] - top) / pitch);
-    k = line === lineAt ? k + 1 : 0; lineAt = line;
-    const idx = line * cols + k;
-    const name = r.querySelector('.itemname > span')?.textContent;
-    seen++;
-    const want = items[idx] ? itemLine(items[idx], e).name + ((items[idx].stackCount ?? 1) > 1 ? ' ×' + items[idx].stackCount : '') : null;
-    if (name !== want) { wrong++; firstWrong ??= { i, idx, name, want, top: Math.round(tops[i] - top) }; }
+    const want = top0 + Math.floor(idx[i] / cols) * pitch, c = idx[i] % cols;
+    if (!lefts.has(c)) lefts.set(c, boxes[i].left);
+    if (idx[i] < 0 || Math.abs(boxes[i].top - want) > 0.5 || Math.abs(boxes[i].left - lefts.get(c)) > 0.5) {
+      wrong++; firstWrong ??= { i, idx: idx[i], top: Math.round(boxes[i].top - top0), want: Math.round(want - top0) };
+    }
   });
   const lb = l.getBoundingClientRect();
-  const visible = rows.filter((r) => { const b = r.getBoundingClientRect(); return b.bottom > lb.top && b.top < lb.bottom; }).length;
-  return { frac, scrollTop: Math.round(l.scrollTop), drawn: seen, visible, cols, pitch, wrong, firstWrong, items: items.length };
+  const lo = Math.max(lb.top, 0), hi = Math.min(lb.bottom, innerHeight);
+  const drawn = new Set(idx);
+  let missing = 0;
+  for (let k = Math.max(0, Math.floor((lo - top0) / pitch)) * cols; k < Math.min(items.length, (Math.floor((hi - top0) / pitch) + 1) * cols); k++) if (!drawn.has(k)) missing++;
+  return { frac, scrollTop: Math.round(l.scrollTop), scrollHeight: l.scrollHeight, scrollWidth: l.scrollWidth, clientWidth: l.clientWidth,
+    drawn: rows.length, cols, pitch, lefts: [...lefts.entries()].sort((x, y) => x[0] - y[0]).map(([, v]) => Math.round(v * 10) / 10), wrong, missing, firstWrong, items: items.length };
 };
-/** The store's search, typed: the refill's own time, and the rows it shows placed as the filtered list puts them. */
+/** The store's search, typed deep in the list: the refill's own time, its focus, and its scroll kept as the whole list
+ *  kept it (at most the filtered list's own foot). */
 globalThis.__search = async (q) => {
   const f = document.querySelector('#enhanced-inventory .storesearch, .loot-win .storesearch');
-  if (!f) return null;
+  const l = listOf('storage');
+  if (!f || !l) return null;
+  l.scrollTop = Math.round(l.scrollHeight * 0.6);
+  await frame(); await frame();
+  const before = l.scrollTop;
   f.focus();
   const t0 = performance.now();
   f.value = q;
   f.dispatchEvent(new Event('input'));
   const typed = performance.now() - t0;
-  return { typed, focused: document.activeElement === f };
+  await frame(); await frame();
+  return { typed, focused: document.activeElement === f, before, after: l.scrollTop, max: l.scrollHeight - l.clientHeight };
 };
+/** A hover card from the pad - its cursor's enter, and no leave until it moves - and the list scrolled far under it:
+ *  the row it stood beside goes with the window, and the card with the row. */
+globalThis.__tipAway = async (where) => {
+  const l = listOf(where);
+  l.scrollTop = 0;
+  await frame(); await frame();
+  const row = rowsIn(where)[2];
+  row.onmouseenter?.();
+  const shown = !!document.querySelector('.inv-tip');
+  l.scrollTop = l.scrollHeight;
+  await frame(); await frame();
+  return { shown, rowGone: !row.isConnected, tip: !!document.querySelector('.inv-tip') };
+};
+/** A mouse carrying a tile, and the list scrolled under the still pointer and back: the ghost names the act at the new
+ *  point, and the carried tile is dimmed where it stands. */
+globalThis.__dragScroll = async () => {
+  const l = listOf('pack');
+  l.scrollTop = 0;
+  await frame(); await frame();
+  const rows = rowsIn('pack');
+  const src = rows[1], b = src.getBoundingClientRect();
+  // a row on a later line that the pointer can reach - the phone's window lays its own chrome over some of the dock
+  const reach = (r) => { const q = r.getBoundingClientRect(); return document.elementFromPoint(q.left + q.width / 2, q.top + q.height / 2)?.closest?.('.itemrow') === r; };
+  const to = rows.find((r) => r.getBoundingClientRect().top > b.bottom && reach(r))?.getBoundingClientRect();
+  if (!to) return null;
+  const ev = (type, x, y) => new PointerEvent(type, { pointerId: 7, clientX: x, clientY: y, button: 0, pointerType: 'mouse', bubbles: true, cancelable: true });
+  src.dispatchEvent(ev('pointerdown', b.left + b.width / 2, b.top + b.height / 2));
+  window.dispatchEvent(ev('pointermove', to.left + to.width / 2, to.top + to.height / 2));
+  await frame();
+  const before = document.querySelector('.dragghost .ghostact')?.textContent ?? null;
+  l.scrollTop = 2500;
+  await frame(); await frame();
+  const after = document.querySelector('.dragghost .ghostact')?.textContent ?? null;
+  l.scrollTop = 0;
+  await frame(); await frame();
+  const dimmed = document.querySelectorAll('#enhanced-inventory .itemrow.dragging').length;
+  window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 7, bubbles: true }));
+  await frame();
+  return { before, after, dimmed };
+};
+/** A row holding the keyboard's focus, scrolled away by a jump to the end: the focus stays on the list, not the page. */
+globalThis.__focusAway = async () => {
+  const l = listOf('pack');
+  l.scrollTop = 0;
+  await frame(); await frame();
+  const row = rowsIn('pack')[0];
+  row.focus();
+  l.scrollTop = l.scrollHeight;
+  await frame(); await frame();
+  const a = document.activeElement;
+  return { rowGone: !row.isConnected, onList: a !== document.body && (a === l || l.contains(a) || a.contains(l)), held: a?.className ?? a?.tagName };
+};
+globalThis.__scrollTop = (where) => Math.round(listOf(where).scrollTop);
 </script></body></html>`;
 
 /** A 768-byte ART_PAL, a grey ramp. */
@@ -209,11 +282,13 @@ try {
       const s = await page.evaluate((w) => globalThis.__state(w), where);
       if (!s) continue;
       if (s.initials === 0) { last = s; break; }
-      still = last && last.initials === s.initials && last.repaints === s.repaints ? still + 1 : 0;
+      still = last && last.initials === s.initials && last.landings === s.landings ? still + 1 : 0;
       last = s;
     }
     r.settleMs = Date.now() - t0;
     r.settled = last;
+    await page.waitForTimeout(1000);
+    r.later = await page.evaluate((w) => globalThis.__state(w), where);
     r.longTasks = await page.evaluate(() => ({ count: globalThis.__long.length, ms: Math.round(globalThis.__long.reduce((a, b) => a + b, 0)), worst: Math.round(Math.max(0, ...globalThis.__long)) }));
     r.warm = await page.evaluate(([n, w]) => globalThis.__open(n, w), [N, where]);
     r.warmState = await page.evaluate((w) => globalThis.__state(w), where);
@@ -221,18 +296,42 @@ try {
     r.foot = await page.evaluate((w) => globalThis.__foot(w), where);
     r.placed = [];
     for (const f of [0, 0.13, 0.5, 0.77, 1, 0.31]) r.placed.push(await page.evaluate(([w, x]) => globalThis.__placed(w, x), [where, f]));
+    r.tipAway = await page.evaluate((w) => globalThis.__tipAway(w), where);
     if (where === 'storage') {
-      r.search = await page.evaluate(() => globalThis.__search('dagger'));
+      r.search = await page.evaluate(() => globalThis.__search('a'));
       r.searchPlaced = [];
-      for (const f of [0, 0.5, 1]) r.searchPlaced.push(await page.evaluate(([w, x]) => globalThis.__placed(w, x, 'dagger'), [where, f]));
+      for (const f of [0, 0.5, 1]) r.searchPlaced.push(await page.evaluate(([w, x]) => globalThis.__placed(w, x, 'a'), [where, f]));
+    }
+    if (where === 'pack') {
+      // the press above left its card up - a phone's is a sheet over the dock's foot: put away, as a player would
+      if (await page.locator('.packtip').count()) { await page.keyboard.press('Escape'); await page.waitForTimeout(200); }
+      r.drag = await page.evaluate(() => globalThis.__dragScroll());
+      r.focus = await page.evaluate(() => globalThis.__focusAway());
+      if (r.focus.onList) { await page.keyboard.press('Home'); await page.waitForTimeout(300); }
+      r.focusHome = await page.evaluate(() => globalThis.__scrollTop('pack'));
     }
     res[where] = r;
     const tag = `${v.name} ${where}`;
-    check(`${tag}: the pick keeps the list's scroll`, r.pick.scrollAfter === r.pick.scrollBefore, `${r.pick.scrollBefore} -> ${r.pick.scrollAfter}`);
-    check(`${tag}: the foot of the scroll shows the last piece, flush`, r.foot.lastIsLast && Math.abs(r.foot.gapBelow) <= 8, JSON.stringify(r.foot));
-    for (const p of [...r.placed, ...(r.searchPlaced ?? [])]) check(`${tag}: at ${p.frac} of the scroll every drawn row is the piece at its place`, p.wrong === 0 && p.visible > 0, `${p.drawn} drawn, ${p.visible} seen, ${p.wrong} wrong${p.firstWrong ? ` ${JSON.stringify(p.firstWrong)}` : ''}`);
-    if (r.search) check(`${tag}: the search keeps its focus`, r.search.focused);
-    console.log(`     ${tag}: cold ${Math.round(r.cold.framed)} ms, settled in ${r.settleMs} ms over ${r.settled?.repaints} repaints, ${r.longTasks.count} long tasks (${r.longTasks.ms} ms); warm ${Math.round(r.warm.framed)} ms; a pick ${Math.round(r.pick.framed)} ms${r.search ? `; a search ${Math.round(r.search.typed)} ms` : ''}; ${r.warmState.rows} rows drawn, ${r.warmState.scrollHeight} px of list`);
+    check(`${tag}: every drawn row's picture landed`, r.settled?.initials === 0, JSON.stringify(r.settled));
+    if (r.later?.landings != null) {
+      check(`${tag}: and the landing passes stopped (none in the second after)`, r.later.landings === r.settled.landings, `${r.settled.landings} -> ${r.later.landings}`);
+      check(`${tag}: each tile was painted at most once`, r.later.painted <= r.later.tiles, `${r.later.painted} painted, ${r.later.tiles} tiles`);
+    }
+    check(`${tag}: a press did its act, and kept the list's scroll`, r.pick.did && r.pick.scrollAfter === r.pick.scrollBefore, JSON.stringify(r.pick));
+    check(`${tag}: the foot of the scroll shows the last piece itself, flush`, r.foot.lastIsLast && Math.abs(r.foot.gapBelow) <= 8, JSON.stringify(r.foot));
+    const all = [...r.placed, ...(r.searchPlaced ?? [])];
+    for (const p of all) check(`${tag}: at ${p.frac} of the scroll${p.items < N - 1 ? ' (searched)' : ''} every drawn row stands at its piece's place, and none in view is missing`, p.wrong === 0 && p.missing === 0 && p.drawn > 0, `${p.drawn} drawn, ${p.wrong} wrong, ${p.missing} missing${p.firstWrong ? ` ${JSON.stringify(p.firstWrong)}` : ''}`);
+    check(`${tag}: the list is one height at every scroll, its foot's`, r.placed.every((p) => p.scrollHeight === r.foot.scrollHeight), r.placed.map((p) => p.scrollHeight).join(', '));
+    check(`${tag}: its columns stand still as it scrolls, inside the window`, r.placed.every((p) => JSON.stringify(p.lefts) === JSON.stringify(r.placed[0].lefts) && p.scrollWidth <= p.clientWidth), r.placed.map((p) => `${p.lefts.join('/')}${p.scrollWidth > p.clientWidth ? ` (${p.scrollWidth}>${p.clientWidth})` : ''}`).join(' | '));
+    check(`${tag}: a hover card whose row a scroll took away is put away`, r.tipAway.shown && (!r.tipAway.rowGone || !r.tipAway.tip), JSON.stringify(r.tipAway));
+    if (r.search) {
+      check(`${tag}: the search keeps its focus`, r.search.focused);
+      check(`${tag}: and the list's scroll, as the whole list kept it`, Math.abs(r.search.after - Math.min(r.search.before, r.search.max)) <= 1, JSON.stringify(r.search));
+    }
+    if (where === 'pack') check(`${tag}: a row to carry a tile onto is in reach`, !!r.drag);
+    if (r.drag) check(`${tag}: a carried tile across a scroll - the ghost names the act at the new point, the carried tile dimmed`, !!r.drag.before && r.drag.after === r.drag.before && r.drag.dimmed === 1, JSON.stringify(r.drag));
+    if (r.focus) check(`${tag}: a focused row scrolled away leaves the focus on the list, and Home scrolls it home`, r.focus.onList && r.focusHome === 0, `${JSON.stringify(r.focus)}, Home -> ${r.focusHome}`);
+    console.log(`     ${tag}: cold ${Math.round(r.cold.framed)} ms, settled in ${r.settleMs} ms over ${r.settled?.repaints} repaints${r.settled?.landings != null ? ` and ${r.settled.landings} landing passes` : ''}, ${r.longTasks.count} long tasks (${r.longTasks.ms} ms); warm ${Math.round(r.warm.framed)} ms; a press ${Math.round(r.pick.framed)} ms${r.search ? `; a search ${Math.round(r.search.typed)} ms` : ''}; ${r.warmState.rows} rows drawn, ${r.warmState.scrollHeight} px of list`);
   }
   check(`${v.name}: no page errors`, errors.length === 0, errors.join(' | '));
   await ctx.close();

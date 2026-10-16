@@ -694,13 +694,15 @@ let lockHandler = null;
 let resizeHandler = null;
 let fitSig = '';
 const packFitSig = () => `${gridBox()}|${wornBox(false)}|${wornBox(true)}|${screenDpr()}`;
-// U54: how many times this screen has rebuilt itself. VIRT: a cold icon
-// no longer repaints it when it lands - the tile waiting on it takes its
-// picture in place (liveTile) - so the count is the mount and the acts,
-// and a picture landing adds nothing. A cache that forgot its in-flight
-// records would still decode each one again per pass; the probe measures
-// the count, which is the only way that shows.
+// U54: how many times this screen has rebuilt itself - the mount and the
+// acts. VIRT: a cold icon no longer repaints it when it lands; the tile
+// waiting on it takes its picture in place (liveTile). AUDIT VIRT: so a
+// landing is counted where it now happens - the passes that put pictures
+// into tiles and the tiles they put them into (`__pack`'s `landings` and
+// `painted`): a pass that set off another without end would never stop
+// counting, and a tile is painted once.
 let repaints = 0;
+let landings = 0, painted = 0;
 
 /** "1 item", not "1 items". A count printed by a template literal is
  *  right eleven times out of twelve and wrong on the twelfth, which is
@@ -1052,6 +1054,9 @@ function dragTo(x, y) {
   drag.x = x; drag.y = y;
   if (!drag.moved) return;
   dragHighlight();
+  // AUDIT VIRT: the carried row, dimmed where it stands now - a long list's window that scrolled it away and back drew
+  // it again, and the dim stayed on the row it took away
+  if (drag.row?.isConnected === false) drag.row = [...document.querySelectorAll('.itemrow')].find((n) => rowItems.get(n) === drag.item) ?? drag.row;
   drag.row?.classList.add('dragging');
   const want = dropIntent(drag.item, document.elementFromPoint?.(x, y), drag.item, drag.source);
   drag.want = want;
@@ -1255,8 +1260,11 @@ const onDragAbort = (e) => { if (drag && (e.pointerId === undefined || e.pointer
 // the highlight and the verb went on naming a row the pointer had left
 // while the release hit-tested the one really under it - the player was
 // shown one row and given another ten away. The intent is recomputed at
-// the unchanged point.
-const onDragScroll = () => { if (drag?.moved) dragTo(drag.x, drag.y); };
+// the unchanged point. AUDIT VIRT: after the long lists' windows follow
+// the scroll - this listener hears it first, and the point stood over a
+// spacer whose rows were still to be drawn: the ghost said nothing over
+// the row a release then moved the piece to.
+const onDragScroll = () => { if (drag?.moved) { syncLists(); dragTo(drag.x, drag.y); } };
 
 /** MAC-M2: `source` is 'local' for a pack row and 'worn' for a panel on
  *  the body. It is a WORD, not a node - AUDIT INV2 A-F3's law stands and
@@ -2356,7 +2364,8 @@ function characterCol() {
  * ARENA2 behind it - a test page, a failed archive, a record past the
  * end - still tells a Longsword from a Lockpick in a list you are
  * scanning, which is what the prototype's tile was for. When the real
- * record lands the whole screen repaints and the letters give way.
+ * record lands `ready` is told and the letters give way - a row's tile
+ * in place (liveTile, VIRT), a card by its own repaint.
  */
 function itemTile(line, box, ready = render, snap = true) {
   // MW-D38: the Morrowind ground mesh stands in for the sprite when a
@@ -2406,8 +2415,11 @@ export const itemStatSuffix = (line) => {
 // tier, every stat - and no buttons; a right click opens the item's actions (wear, use, drop, store, take, the
 // quickslots) as a small menu at the pointer. Both float over the window on <body>, so a repaint of the lists does not
 // take them with it; a repaint, a scroll, Escape or a click elsewhere puts them away.
-let tipEl = null, tipFor = null, menuEl = null, menuOff = null;   // DROPS-AUDIT F9: tipFor - the item the card is for
-function hideTip() { tipEl?.remove(); tipEl = null; tipFor = null; }
+let tipEl = null, tipFor = null, tipRow = null, menuEl = null, menuOff = null;   // DROPS-AUDIT F9: tipFor - the item the card is for; AUDIT VIRT: tipRow - the row it stands beside
+function hideTip() { tipEl?.remove(); tipEl = null; tipFor = null; tipRow = null; }
+/** AUDIT VIRT: a long list's window moved - a hover card whose row it took away goes with it. A mouse leaves the row
+ *  first and the card goes then; a pad's cursor says nothing until it moves, and its card stood beside nothing. */
+const rowsMoved = () => { if (tipRow && tipRow.isConnected === false) hideTip(); };
 function closeMenu() { menuEl?.remove(); menuEl = null; menuOff?.(); menuOff = null; }
 export function hidePlusFloaters() { hideTip(); closeMenu(); }
 function placeBeside(node, anchor, x, y) {
@@ -2469,6 +2481,7 @@ function showTip(item, from, row) {
   document.body.append(tipEl);
   fitTip(tipEl);   // AUDIT SET U13
   placeBeside(tipEl, row);
+  tipRow = row;
 }
 /** SHOP-HOVER (2026-10-08, the owner: "hovering over items in all shops shows the same it does in your inventory"): THE
  *  PACK'S HOVER CARD for a window that is not the pack - the shop counter's both lists. `ctx` is that window's own
@@ -2595,14 +2608,16 @@ function tileLanded() {
 }
 function paintLandedTiles() {
   _tilesQueued = false;
+  landings++;
   for (const [tile, t] of _waitingTiles) {
     if (!host || tile.isConnected === false) { _waitingTiles.delete(tile); continue; }
     const fresh = itemTile(t.line, t.box, tileLanded, t.snap);
-    if (!fresh.classList.contains('has-icon')) continue;   // still on its way (a record lands before its fitting)
+    if (!fresh.classList.contains('has-icon')) continue;   // its picture is still being made - the pass is every waiting tile's, and another picture woke it
     _waitingTiles.delete(tile);
     const bar = tile.querySelector('.wear');
     if (bar) fresh.append(bar);
     tile.replaceWith(fresh);
+    painted++;
   }
 }
 /** A row's or a panel's picture, as `itemTile` draws it - and when it is not made yet, its initials now and the picture
@@ -2886,6 +2901,7 @@ const storeNameOf = (it) => lineOf(it).name;   // VIRT: the row's own line, read
  *  filtered list takes the right piece from the whole store. */
 function fillRemoteList(list, filtering = STORE_FILTER_KINDS.has(remote.kind) && remote.items.length > 0) {
   dropLists(list);   // VIRT: a refill (the filter's) lets go of the window it replaces
+  const kept = list.scrollTop;   // AUDIT VIRT: and keeps its scroll, as the whole list kept it
   list.innerHTML = '';
   const shown = filtering ? filterStore(remote.items, storeFilter, storeNameOf) : remote.items;
   if (!remote.items.length) {
@@ -2893,8 +2909,14 @@ function fillRemoteList(list, filtering = STORE_FILTER_KINDS.has(remote.kind) &&
       ? 'Nothing dropped here yet.'
       : 'Empty.'));
   } else if (!shown.length) list.append(el('p', 'packempty', 'Nothing here matches.'));
-  // VIRT: a long pile draws the rows on screen; a refill in place (the filter's) is aimed at once, a repaint's after it lands
-  keepList(virtualRows(list, shown, (it) => itemRow(it, 'remote'))).sync();
+  // VIRT: a long pile draws the rows on screen - a refill in place (the filter's) is aimed here, a repaint's list once
+  // it is in the document. AUDIT VIRT: measured, and its spacers stood, BEFORE the scroll is given back - aimed at once,
+  // the first rows were the list's whole height when the browser laid it out, and a search typed deep in a store threw
+  // the scroll to their foot
+  const v = keepList(virtualRows(list, shown, (it) => itemRow(it, 'remote'), { onAim: rowsMoved }));
+  v.sync({ draw: false });
+  if (kept) list.scrollTop = kept;
+  v.sync();
 }
 
 /**
@@ -2987,7 +3009,7 @@ function listCol() {
   if (!rows.length) {
     col.append(el('p', 'packempty', 'Nothing in this pack answers to that page.'));
   }
-  keepList(virtualRows(col, rows, (it) => itemRow(it)));   // VIRT: a long page draws the tiles on screen
+  keepList(virtualRows(col, rows, (it) => itemRow(it), { onAim: rowsMoved }));   // VIRT: a long page draws the tiles on screen
   return col;
 }
 
@@ -4212,6 +4234,7 @@ export function mountEnhancedInventory(hostEl, d = {}) {
   notice = null;
   goldEntry = null;
   repaints = 0;
+  landings = 0; painted = 0;   // AUDIT VIRT
   // U57: the three things opening the window already decided -
   // selectedActionMode, CheckWagonAccess and SetChooseOne - read once,
   // from the module the classic window reads them from. The pack has
@@ -4250,7 +4273,7 @@ export function mountEnhancedInventory(hostEl, d = {}) {
   resizeHandler = () => { const sig = packFitSig(); if (sig !== fitSig) { fitSig = sig; if (host) render(); } else syncLists({ remeasure: true }); };
   globalThis.addEventListener?.('resize', resizeHandler);
   globalThis.__pack = () => JSON.stringify({
-    tab, repaints, count: model.count, worn: model.worn.size,
+    tab, repaints, landings, painted, count: model.count, worn: model.worn.size,
     side, remoteKind: remote.kind, remoteCount: remote.count,
     figure: hostEl.querySelector('.figure-doll img') ? 'doll' : 'schematic',
     wornRows: [...hostEl.querySelectorAll('.wornrow')].length,

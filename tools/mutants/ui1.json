@@ -327,8 +327,8 @@
   {
     "name": "AUDIT-UI-A4-the-cache-unbounded",
     "file": "src/ui/textureCanvas.js",
-    "old": "while (fitted.size > FIT_CACHE_MAX) {",
-    "new": "while (fitted.size > Infinity) {",
+    "old": "    if (fitted.size <= FIT_CACHE_MAX && fittedBytes <= FIT_CACHE_BYTES) break;",
+    "new": "    break;",
     "tests": [
       "test/ui1_slots.test.js"
     ]

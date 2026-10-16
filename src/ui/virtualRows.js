@@ -32,10 +32,12 @@ const OVERSCAN_LINES = 2;
  * and runs again on every scroll of the list or any box that clips it. `sync({ draw: false })` only measures and sizes
  * the spacers - what a repaint needs before it gives a scroll position back. `sync({ remeasure: true })` reads the
  * layout again (a resize). `dispose()` lets go of the scroll listeners; a list replaced by a repaint is disposed.
+ * `onAim` is told each time the window moves - rows went and came, and whatever stood beside one that went is the
+ * caller's to put away.
  * @param {any} container @param {any[]} items @param {(item: any) => any} build
- * @param {{ min?: number, first?: number }} [opts]
+ * @param {{ min?: number, first?: number, onAim?: (() => void) | null }} [opts]
  */
-export function virtualRows(container, items, build, { min = VIRTUAL_MIN, first = VIRTUAL_FIRST } = {}) {
+export function virtualRows(container, items, build, { min = VIRTUAL_MIN, first = VIRTUAL_FIRST, onAim = null } = {}) {
   const total = items.length;
   if (total < min) {
     for (const it of items) container.append(build(it));
@@ -99,8 +101,22 @@ export function virtualRows(container, items, build, { min = VIRTUAL_MIN, first 
     for (const s of scrollers) { const r = s.getBoundingClientRect(); lo = Math.max(lo, r.top); hi = Math.min(hi, r.bottom); }
     // CUT AWAY WHOLE - a box round the list (a phone's window, below its fold) hides all of it: the window still follows
     // the list's own scroll, so what its scroller holds in view is drawn the moment the list is shown
-    if (!(hi > lo) && scrollers.length) { const r = scrollers[0].getBoundingClientRect(); return [r.top, r.bottom]; }
+    const own = ownScroller();
+    if (!(hi > lo) && own) { const r = own.getBoundingClientRect(); return [r.top, r.bottom]; }
     return [lo, hi];
+  };
+  /** AUDIT VIRT: the box that scrolls the list - the first round it with more to show than it holds. The first that
+   *  merely clips can be the list's own column (the dock's, `overflow: auto` and never past its content), whose box is
+   *  the whole list: aimed at, it drew every row. */
+  const ownScroller = () => scrollers?.find((s) => s.scrollHeight > s.clientHeight) ?? scrollers?.[0] ?? null;
+  /** AUDIT VIRT: the row holding the keyboard's focus went with the window (a key's jump scrolled it away), and the focus
+   *  fell to the page - a page that scrolls nothing, so the next Home or Page Down did nothing. The list's own scroller
+   *  takes it, out of the Tab order, and the keys go on scrolling the list. */
+  const keepFocus = () => {
+    const s = ownScroller();
+    if (!s) return;
+    if (!s.hasAttribute?.('tabindex')) s.tabIndex = -1;
+    s.focus?.({ preventScroll: true });
   };
 
   const spacer = (s, h, atTop) => {
@@ -128,7 +144,9 @@ export function virtualRows(container, items, build, { min = VIRTUAL_MIN, first 
 
   /** The window moved to rows [ns, ne): the rows that stay are not touched, the rest removed or built. */
   const aim = (ns, ne) => {
-    for (const [i, n] of nodes) if (i < ns || i >= ne) { n.remove(); nodes.delete(i); }
+    const active = (container.ownerDocument ?? globalThis.document)?.activeElement ?? null;
+    let lostFocus = false;
+    for (const [i, n] of nodes) if (i < ns || i >= ne) { if (active && n.contains?.(active)) lostFocus = true; n.remove(); nodes.delete(i); }
     const keepA = Math.max(ns, start), keepB = Math.min(ne, end);
     const add = (i, before) => { const n = build(items[i]); nodes.set(i, n); container.insertBefore(n, before); };
     if (keepA < keepB) {
@@ -140,6 +158,8 @@ export function virtualRows(container, items, build, { min = VIRTUAL_MIN, first 
     }
     start = ns; end = ne;
     place();
+    if (lostFocus) keepFocus();
+    onAim?.();
   };
 
   function sync({ draw = true, remeasure = false } = {}) {
