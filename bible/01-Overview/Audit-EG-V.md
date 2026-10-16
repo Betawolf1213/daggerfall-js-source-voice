@@ -818,9 +818,11 @@ them once more:
     - a second device handed a held Redoubt receipt;
     - *You find a Weir Key* said twice on a re-claim;
   - lane 9: `EG_LONG_STEP_LOOK` (10) against section 17.2's "for one span".
-- **The arc's cut out of the hosts** (HOST-SPLIT): the circle's group in `createWorldModes` (`standEgHall`, the band's
-  dress, the look, the gates, the swap and the occluders - some 210 lines) to a module the host wires, and the arc's
-  wiring in `bootWorld`, each ceiling lowered with it (the second merge of main, above).
+- **The arc's cut out of the hosts** (HOST-SPLIT): the circle's group in `createWorldModes` - PAID (EG-LOOK, 2026-10-15):
+  `standEgHall`, the band's dress, the look, the gates, the swap and the occluders moved verbatim to
+  `scenes/egCircleHost.js` (`egCircleHost.js:"export function createEgCircleHost("`), the mode machine's `mode`,
+  `dungeonCtx` and `dungeonLoc` read live through `wm`; `createWorldModes` 7,263 -> 7,131 code lines and its ceiling down
+  by the 132 it moved (7,350 -> 7,218). Still owed: the arc's wiring in `bootWorld`, its ceiling lowered with it.
 - **A browser with the game's data**: nothing here was seen running. Every fix is tested headless, against the
   director's own frames, the relay's Room, the account Worker and the real player motor.
 - **EG21's tuning in the field**, still the owner's.

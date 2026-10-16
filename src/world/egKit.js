@@ -61,5 +61,10 @@ export const EG_KIT_STYLE = Object.freeze([
 export const egKitStyle = (band) => EG_KIT_STYLE[Math.max(0, Math.min(3, band | 0))];
 
 /** THE LORDS' PRESENCE (Elite-Gates-Look.md section 9): how much larger than its body a lord's sprite is drawn - the body's
- *  scale (net/egLaw.js EG_LORDS, the relay's bodyR and the client's hit target) is unchanged; the sprite alone grows. */
+ *  scale (net/egLaw.js EG_LORDS, the relay's bodyR and the client's hit target) is unchanged; the sprite alone grows.
+ *  `lord` every Court lord (the Twins each), `valkynaz` the four of EG_LORDS `valk` (Ilthys, Morvayn, Seyth, Garoth),
+ *  `champion` the Kyn ranks (net/egLaw.js EG_CHAMPIONS); a mirror its own lord's (scenes/egFight.js egPresenceOf). Over the
+ *  bodies' own scales (2.5-5) the drawn order holds: a champion 3.5x, a Court lord 4-8x, a Valkynaz 5.4-7.2x growing band by
+ *  band - and the champion and the Valkynaz wear the legion's Daedra Lord's sprite (mobile 31, drawn at 1.3), so the ranks
+ *  read side by side: 2.7 and 4.2-5.5 times the add. */
 export const EG_LORD_PRESENCE = Object.freeze({ lord: 1.6, valkynaz: 1.8, champion: 1.4 });

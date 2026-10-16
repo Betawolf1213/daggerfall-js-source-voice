@@ -9,7 +9,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { egBandArt, egBandPalette, egBandArchive, egBandDress, egLuma, egMoltenGlow, EG_BAND_RAMPS, EG_DRESS, EG_DRESS_RECORDS, EG_MOLTEN_GLOW, EG_MOLTEN_LUMA_MAX, EG_BAND_RECORDS } from '../src/world/egBandArt.js';
+import { egBandArt, egBandPalette, egBandArchive, egBandDress, egLuma, egMoltenGlow, EG_BAND_RAMPS, EG_DRESS, EG_DRESS_RECORDS, EG_MOLTEN_GLOW, EG_MOLTEN_LUMA_MAX, EG_BAND_RECORDS, EG_CUTOUT_RECORDS, EG_SEAM_LUMA_MAX } from '../src/world/egBandArt.js';
 import { EG_BAND_ARCHIVES } from '../src/world/pseudoArchives.js';
 import { offPalette } from '../src/world/sdPixelKit.js';
 import { SD_RAMP } from '../src/world/sdLook.js';
@@ -44,19 +44,28 @@ test('EG-G2 THE BANDS\' RAMPS (section 25.1): five steps or more each, dark to l
   assert.deepEqual([0, 1, 2, 3].map(egBandArchive), [...EG_BAND_ARCHIVES]);
 });
 
-test('EG-G2 THE ART, PAINTED (Port-Doctrine: painted in code, never a render of game data): every band paints its twenty-one records - the ground\'s eight and the kit\'s thirteen (EG-LOOK, PIN MOVED), the same pixels every call, opaque, every albedo texel in the band\'s own palette; structure does not glow - the floor, the undersides, the courts, the walks and the walls black, the metal lit on its rubbed rows alone at the Hour\'s share, the edge line at the Hour\'s; the liquid lit, its every texel at or under 0.45 (mutants: a texel painted off the palette; the floor glowing; the liquid past its cap)', () => {
+test('EG-G2 THE ART, PAINTED (Port-Doctrine: painted in code, never a render of game data): every band paints its twenty-one records - the ground\'s eight and the kit\'s thirteen (EG-LOOK, PIN MOVED), the same pixels every call, opaque but the cutouts (EG-LOOK, PIN MOVED: the banner and the fixture, their holes 1-bit), every albedo texel in the band\'s own palette; structure does not glow - the floor, the undersides, the walks and the walls black, the courts black but the Cairn\'s soul-light hairlines (EG-LOOK, PIN MOVED: its own light in their joints, under EG_SEAM_LUMA_MAX), the metal lit on its rubbed rows alone at the Hour\'s share, the edge line at the Hour\'s; the liquid lit, its every texel at or under 0.45 (mutants: a texel painted off the palette; the floor glowing; the liquid past its cap)', () => {
   for (let b = 0; b < 4; b++) {
     const art = egBandArt(b), again = egBandArt(b), pal = egBandPalette(b);
     assert.deepEqual(art.map(([r]) => r), [...EG_BAND_RECORDS], `band ${b}: its twenty-one records - the ground\'s eight and the kit\'s thirteen (EG-LOOK, PIN MOVED)`);
-    for (const [k, [rec, { albedo, emission }]] of art.entries()) {
+    for (const [k, [rec, { albedo, emission, cutout }]] of art.entries()) {
       assert.deepEqual(albedo.colors, again[k][1].albedo.colors, `band ${b} record ${rec}: the same pixels`);
       assert.deepEqual(emission.colors, again[k][1].emission.colors);
       assert.equal(albedo.colors.length, albedo.width * albedo.height * 4);
       assert.equal(emission.width, albedo.width); assert.equal(emission.height, albedo.height);
       assert.equal(offPalette(albedo, pal), 0, `band ${b} record ${rec}: in its palette`);
-      assert.ok(texels(albedo).every((t) => t[3] === 255), 'opaque');
+      // PIN MOVED (EG-LOOK, Elite-Gates-Look.md section 8): the banner's torn foot and the fixture's flames are cutouts -
+      // their holes 1-bit (the renderer's RW1 rule), and every other picture as opaque as it was
+      if (EG_CUTOUT_RECORDS.includes(rec)) { assert.equal(cutout, true, `band ${b} record ${rec}: a cutout`); assert.ok(texels(albedo).every((t) => t[3] === 255 || t[3] === 0), 'its holes 1-bit'); assert.ok(texels(albedo).some((t) => t[3] === 0), 'it has holes'); }
+      else { assert.ok(!cutout, `band ${b} record ${rec}: no cutout`); assert.ok(texels(albedo).every((t) => t[3] === 255), 'opaque'); }
       const lit = texels(emission).filter((t) => t[0] || t[1] || t[2]);
-      if ([EG_DRESS.floor, EG_DRESS.root, EG_DRESS.arena, EG_DRESS.cobble, EG_DRESS.pillar].includes(rec)) assert.equal(lit.length, 0, `band ${b} record ${rec}: structure does not glow`);
+      if ([EG_DRESS.floor, EG_DRESS.root, EG_DRESS.cobble, EG_DRESS.pillar].includes(rec)) assert.equal(lit.length, 0, `band ${b} record ${rec}: structure does not glow`);
+      // PIN MOVED (EG-LOOK, section 1.2: "soul-light hairlines in the joints of the courts (the band's own light, L2)"):
+      // the courts dark but the Cairn's, whose seams alone are lit, under the fight floor's cap
+      if (rec === EG_DRESS.arena) {
+        if (b !== 1) assert.equal(lit.length, 0, `band ${b}: its court does not glow`);
+        else { assert.ok(lit.length > 0 && lit.length <= albedo.width * 2, 'the Cairn\'s court: its hairlines alone'); assert.ok(lit.every((t) => egLuma(t) <= EG_SEAM_LUMA_MAX), 'under the seam\'s cap'); }
+      }
       if (rec === EG_DRESS.brass) {
         assert.ok(lit.length > 0 && lit.length <= albedo.width * 4, 'the metal: its rubbed rows alone');
         const A = texels(albedo), E = texels(emission);
@@ -123,5 +132,6 @@ test('EG-G2 THE DRESS (layer three\'s "the dress is the Hour\'s records"): every
   // PIN MOVED (AUDIT EG V, e: L6-9 - a band's dress goes up a record at a time, the swap's worker painting it: the helper
   // paints only a band not whole, and each record goes up once under the band's archive - egBandRec)
   assert.match(W, /if \(egBandWhole\(band\) \|\| !renderer\?\.uploadTexture\) return;\n    try \{ for \(const \[rec, art\] of egBandArt\(band\)\) egBandRec\(band, rec, art\);/, 'the host paints a band not whole');
-  assert.match(W, /if \(up\.has\(rec\) \|\| !renderer\?\.uploadTexture\) return;\n    _egBands\.add\(band\); up\.add\(rec\);\n    try \{ renderer\.uploadTexture\(egBandArchive\(band\), rec, art\.albedo\); renderer\.uploadEmissionTexture\?\.\(egBandArchive\(band\), rec, art\.emission, \{ white: true \}\);/, 'the host uploads the band\'s art under its archive, once a band');
+  // PIN MOVED (EG-LOOK, section 8): and a cutout picture (the banner, the fixture) asks the renderer for its holes
+  assert.match(W, /if \(up\.has\(rec\) \|\| !renderer\?\.uploadTexture\) return;\n    _egBands\.add\(band\); up\.add\(rec\);\n    try \{ renderer\.uploadTexture\(egBandArchive\(band\), rec, art\.albedo, art\.cutout \? \{ cutout: true \} : undefined\); renderer\.uploadEmissionTexture\?\.\(egBandArchive\(band\), rec, art\.emission, \{ white: true \}\);/, 'the host uploads the band\'s art under its archive, once a band, a cutout as one');
 });

@@ -19,6 +19,7 @@ import { EG_KIND, EG_LEGION_KINDS, egLegionRaise, walkGraph } from '../src/net/e
 import { egFightView, egWalkGraph, egWalkNext, egWayOn, egRegionAt, egArchCut, EG_NODE_REACH_M } from '../src/net/egWalkGraph.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { egLookOf } from '../src/scenes/egFight.js';
+import { EG_LORD_PRESENCE } from '../src/world/egKit.js';   // EG-LOOK (section 9): the sprite at the lord's presence
 import { dpsRef } from '../src/net/gateBrain.js';
 
 const T0 = 1_800_000_000_000;
@@ -230,7 +231,10 @@ test('EG-ZQ THE COLOSSAL\'S SIZE ON THE WIRE (section 14, Colossal; EG5\'s depar
     const b = E.fight.bodies.find((x) => x.i === L.i);
     assert.equal(b.sz, size, 'the screen holds it');
     const seen = egLookOf(b, S.spec.band);
-    assert.equal(seen.scale, look.scale * size, 'and draws him at it');
+    // PIN MOVED (EG-LOOK, Elite-Gates-Look.md section 9 - the lords drawn oversized): `scale` stays his BODY at it, the one the
+    // reach below reads; the sprite is drawn at it times his presence (`drawn` - a Court lord's 1.6), never `scale` grown
+    assert.equal(seen.scale, look.scale * size, 'his body at it');
+    assert.equal(seen.drawn, look.scale * size * EG_LORD_PRESENCE.lord, 'and draws him at it, at his presence');
     assert.equal(Math.max(0.8, (1.8 * seen.scale) / 3), L.r, 'its reach to him the relay\'s own radius');
   }
   // the wire's bounds

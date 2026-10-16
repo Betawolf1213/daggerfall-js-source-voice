@@ -392,8 +392,8 @@
   {
     "name": "EGA4-lords-errands-screen-placeless",
     "file": "src/scenes/egFight.js",
-    "old": "const [x, z] = egBodyPlace(b, tg), at =",
-    "new": "const [x, z] = [0, 0], at =",
+    "old": "const [x, z] = egBodyPlace(b, t);",
+    "new": "const [x, z] = [0, 0];",
     "tests": [
       "test/egaudit4_lords_errands.test.js"
     ]
