@@ -241,21 +241,25 @@ Wired by `combat/weaponRig.js`, the one surface all four hosts mount (no host ca
   frame, with nothing of the pump drawn, takes the bob's phase at once. Worst one-frame jump at a stutter-step: 37 px.
   - **THE RUNNING ARM IS THE ART'S OWN** (Mac, of the first cut: "theres no arm portion of the sprite, so it looks like
     floating hands"). The first cut lifted the bare hand's idle - `WEAPON10.CIF` record 0, a 63x53 fist cut at the
-    wrist, painted to stand on the view's bottom edge - up to 0.42 of its height, and the cut floated. The one record of
-    the bare hand's art that lifts a fist on its own forearm from the frame's foot is the right arm's rising punch
-    (record 5, StrikeDownRight: the fist coming up on its grey sleeve, then the follow-through across). So a
-    running hand is drawn in those frames (`ARM_STATE`, `ARM_FRAMES`), the frame by how far up its stroke is (the
-    stroke snaps, |sin|^0.7) - **frames 1, 2 and 3, the ones whose arm leaves the frame through its foot alone**: frame
-    0's sleeve also leaves through its right side (14 rows cut down its right column above its foot's row) and the stroke's outward swing
-    drew that cut into the view (Mac: "The sprite on the right moves to the right and exposes where it clips off");
-    frame 4's leaves through its left (8). Measured on the shipped file and pinned there (the ARENA2 test); frame 2's
-    knuckles touch its top row (3 px), Daggerfall's own punch frame as it draws it. Each is placed as FPSWeapon places a
-    frame - **its foot on the view's bottom edge, never
-    lifted** (OnGUI's `height - h`): the pump only LOWERS a sprite (1.05 of its height at the back of the stroke, out
-    of the view - the hand passing the hip), so the forearm always runs off the screen. Across the view it stands where
-    its fist rests (the idle's own place), 0.06 of the width toward the middle at the top and 0.03 out at the bottom;
-    the left hand is record 5's right arm in the mirror (the one rule). Measured on the real art: the fist at the top of
-    the stroke stands about half way up the view on its forearm, and only one arm is up at a time.
+    wrist, painted to stand on the view's bottom edge - up to 0.42 of its height, and the cut floated. So a running
+    hand is a frame of the bare hand's art that holds a fist on its own grey forearm from the frame's foot:
+    **record 2 (StrikeDownLeft, the right arm's jab across), frame 1** (`ARM_STATE`, `ARM_FRAME`) - a closed fist seen
+    from its BACK, knuckles leading toward the middle, as the idle fist is seen, on its forearm reaching in from the
+    outer foot, 67 of the view's 200 design pixels. TWO-HANDS FIELD, Mac after the merge, twice. The merged cut drew
+    record 5 (StrikeDownRight, the uppercut), its frames 1, 2 and 3 by how far up the stroke was with a snap
+    (|sin|^0.7) that held the hand at the top - "Too high, like uppercuts": 2 and 3 are the punch's peak, a fist on an
+    upright forearm 98 pixels high, half the screen, every stride. Its lowest frame alone then - "Why is the underhand
+    showing when extended and not the fist": an uppercut shows the fist's INSIDE, curled fingers toward the eye, in
+    every frame. Record 2's frame 1 leaves its frame through its FOOT alone (no row cut down either side, measured on
+    the shipped file and pinned there, the ARENA2 test; record 5's frame 0 had 14 rows down its right, which the
+    stroke's outward swing drew into the view - Mac: "The sprite on the right moves to the right and exposes where it
+    clips off"). The STROKE is the motion: an even sine, fastest through the middle. It is placed as FPSWeapon places a
+    frame - **its foot on the view's bottom edge at the top of the stroke, never lifted** (OnGUI's `height - h`): the
+    stroke only LOWERS it (`DROP` 1.05 of its height at the back, out of the view - the hand passing the hip, half of
+    it at the stroke's middle), so the forearm always runs off the screen. Across the view it stands where its fist
+    rests (the idle's own place), 0.06 of the width toward the middle at the top and 0.03 out at the bottom; the left
+    hand is record 2's right arm in the mirror (the one rule). Measured on the real art: the fist at the top of the
+    stroke stands a third of the way up the view (the idle fists 27%), one arm rising as the other drops.
   - **The art changes under the view, never in sight**: as the run starts, the fists' own rest (the idle, where the pair
     draws it) goes DOWN out of the view over the first half of the run's weight (`SWAP` 0.5) and the arms come up from
     under it over the second; as it ends, the reverse (a sheathed body's fists were down - the arms simply rise). The
@@ -299,9 +303,28 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   L3 10: 0.101 -> 0.011 ms a frame).
 - **Posed in the assembly** (`mwFirstPerson.js` `poseAssembly`'s `mirror`): right after the clip poses the skeleton,
   ahead of the neck and the climb's IK, on both rigs (the first-person arms and the third-person body).
+- **In first person, mirrored across the picture** (TWO-HANDS FIELD, Mac after the merge, of the pair in first person:
+  "No left arm"): the rule above hangs a mirrored arm from this frame's chest, so it lands where the right one stands
+  only while the chest stands on the eye's own middle - the fixture arm's, not Morrowind's, whose first-person clips
+  pose the body to put the weapon hand in view. The pair's left arm was out of the picture whole. The first-person
+  rig's mirrored arms are placed in the graph's space as the mirror of the other through the upright plane through
+  the eye (`mirrorRig.js` `plane`, `pictureMirrorArm`: `W'(b) = P . W(m) . K(b)`, `K(b) = Rest(m)^-1 . S . Rest(b)`,
+  P the reflection through the eye's x - the camera node as the clip poses it, moved `fpOffset` across; the lens
+  looks down the rig's +Y, so that x is the picture's middle). The left hand stands in the picture where the right
+  stands in the glass - the sprite lane's law. Its top stands off the chest by as far as the body stands off the eye;
+  no chest is drawn in first person. The body in third person keeps the chest's rule. Only the chains to the eye and
+  to each arm's parent are read (`chainWorld`) - the frame composes no whole skeleton (L3 10). Arms COPIED (the fists,
+  the idle's own arm) are untouched; the left-hand blow mirrors the whole body, the eye with it, so its picture was
+  the glass's already.
 - **The compositions** (`fpArm.js` `mirrorFor`), while the pair is IN THE HANDS (`pairHeld`: from the first frame of the
   draw to the last of the sheathe - AUDIT, L3 7; the blades still appear and vanish on the attach and detach keys):
-  - a pair at rest - the left arm the right's mirror: both weapons up, as the stance holds the one;
+  - a pair at rest - the left arm the right's mirror: both weapons up, as the stance holds the one; **on the move, the
+    right's mirror HALF A STRIDE ON** (TWO-HANDS FIELD, Mac after the merge: "Both arms swing the same direction"): the
+    movement clip that poses the body, sampled half its loop later (`strideOppositeTime` - its group's own loop keys,
+    so the window is the same from the first frame; one loop is one whole stride, the hip swaying once a loop), so the
+    arms swing against each other as the clip's own two do, each blade carried as the right carries its own. The merged
+    cut mirrored the frame's own right arm and swung both together. A clip over the walk (the draw, a recoil, a blow)
+    poses the arms itself;
   - the right's blow - the clip swings the right; the left holds the idle's right arm, mirrored;
   - the left's blow - the whole body in the mirror (the left swings the clip's blow, the torso turns with it) and the
     right arm the idle's own; **a mirrored blow keeps the way the player asked** (AUDIT, L3 5): it plays the backhand of
@@ -427,12 +450,18 @@ one, never one hand's glow on both:
   exchange, the resting weapon, the off strike), the off hand's blow in the formula and between players, the rig on a
   synthetic CIF - the fists, the guard, the widget's two clones, the pair, the running hands (the stroke, the bob's
   clock, what takes a hand, the mods), the branch by source, a left-handed player.
-- `test/twohands_mw.test.js` (29 - AUDIT 2's six for L3): the mirror rig on the retail biped (counterparts, the plan, the law in each bone's
+- `test/twohands_mw.test.js` (32 - AUDIT 2's six for L3; the field reports' three: the stride's other half, a pair
+  walking in third person swinging its arms against each other on a female body's two sources, the first-person pair
+  mirrored across an eye moved off the chest): the mirror rig on the retail biped (counterparts, the plan, the law in each bone's
   frame - every joint on its parent, a twisted chest, the carry per bone, the made Weapon Bone Left, which fist a clip
   throws) and the arm over the fixture arm (the left weapon on a skeleton without one, the pair from draw to sheathe,
   the mirrored blow's way, the guard's dip, the fists, the running hands under the climb and on the pitched lens, the
-  portrait, a retried swap, by source). `tools/mutants/twohands_mw.json`: 70 mutants, all dead.
-- `tools/mutants/twohands.json`: 182 mutants, all dead (65 of them AUDIT 2's, `TWOHANDS-AUDIT2-*` and `TWOHANDS-SPRITE2-*`; 39 the first audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
+  portrait, a retried swap, by source). `tools/mutants/twohands_mw.json`: 78 mutants, all dead (8 the field reports',
+  `FIELD-*`: each fix reverted).
+- `tools/mutants/twohands.json`: 184 mutants, all dead (4 the field reports', `TWOHANDS-FIELD-*`: the run on the
+  uppercut, on a high frame, the snap, the fist held at the top - AUDIT 2's `RUN_PUMP-shape` and the first audit's
+  `run-pump-frame-by-stroke` retired with the code they reverted, `hands-in-step` and two `TWOHANDS-ARM-*` re-aimed
+  onto the one frame; 65 of them AUDIT 2's, `TWOHANDS-AUDIT2-*` and `TWOHANDS-SPRITE2-*`; 39 the first audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
   each claim the record made that no pin could fail; 14 the running arm's and the lowered weapon's, `TWOHANDS-ARM-*`,
   `TWOHANDS-LOWER-*`; 12 the pair's glow, `TWOHANDS-GLOW-*`).
 - PIN MOVED, each with its note: `a12_lefthand` (H's lines with both hands up; the bow-switch arm on its own case, a
