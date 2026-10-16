@@ -19376,6 +19376,18 @@ from the scratchpad, the pack mounted over a wagon of thirteen):
 
 
 
+## LOOT-BULK - a container filtered, and Take all / Stash all (2026-10-16)
+
+DFU's inventory window filters only the local list (AddLocalItem) and moves one row per click. The enhanced remote pane already filtered the player's own stores (WAGON-FILTER, above). A container — a chest, a corpse — now carries that same bar, and a rarity menu beside it.
+
+- **The bar.** Search, then the pack's pages (and Materials), then rarity. The rarity menu lists only the tiers that container holds, in `RARITY_ORDER`, each as its label and its count ("Rare (3)"). All is always there. The chosen tier stays at nought. With the loot-rarity ladder off, the menu is not drawn and no tier is applied. The search still reads the row's own name.
+- **Take all** walks those rows from the top, and its button stays on that list. **Stash all** walks the current pack page from the top, into the container or the wagon, and its button sits centred on the bottom edge of the pack's item list. On a corpse the pack stays closed (MAC-M2), so that button is not on the corpse window; a fresh pack starts on Weapons. Each row goes through the one plan a click uses (`planTake`, `planStore`).
+- **Where it stops.** The first row the pack or the destination cannot hold stays, and so does everything under it. A row refused for another reason is left where it is and the walk continues. A stack that only partly fits is the last row moved. Stash all into a room container stops at 64 rows (`LOOT_LIST_MAX`): a longer list is never told to the other players, who hear the container when its window closes, not row by row.
+- **What does not change.** The ground and a reward tray have no bar and no buttons. The classic skin draws none of this.
+
+Pins: `test/lootbulk.test.js`. The reward tray's lack of a bar, which kills a filter forced onto every remote, stays in `test/shiftstow.test.js`.
+
+
 ## TELL9 - THE FIGHT ON SCREEN (2026-10-04)
 
 The Feud arc's screen slice (`bible/12-Enhanced-AI/Feud-Arc.md` section 11 and its TELL9 record), on the enhanced HUD

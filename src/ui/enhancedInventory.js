@@ -126,7 +126,8 @@ import {
 import { bagStoreRefusal, bagMayLeave } from '../systems/materialsBag.js';   // BAG1: only materials go in the bag; AUDIT2 H11: and a loaded one stays
 import { shiftDrop } from '../systems/physicalItems.js';   // PI1: Physical Items' shift-drop, one law for both packs
 import { BAG_KG_LIMIT } from '../net/bagLaw.js';
-import { STORE_FILTER_KINDS, filterStore, storeFilterOptions, freshStoreFilter } from './storeFilter.js';   // WAGON-FILTER: the wagon, the storage and the bag, filtered
+import { STORE_FILTER_KINDS, filterStore, storeFilterOptions, storeRarityOptions, freshStoreFilter } from './storeFilter.js';   // WAGON-FILTER: the wagon, the storage and the bag, filtered; LOOT-BULK: a container too, and its rarity
+import { bulkVerdict, runBulk, listAtCap, CONTAINER_LIST_CAP, CONTAINER_FULL } from './storeBulk.js';   // LOOT-BULK: Take all / Stash all
 import { entityMaxEncumbrance } from '../combat/formulas.js';   // AUDIT 26: PlayerEntity.MaxEncumbrance, enchantment allowance and all
 import { liveStat } from '../systems/statMods.js';
 import { conditionWord, conditionPercentage, itemNameParts, itemLongName, itemDamageLine, itemArmourLine, itemHandsLine } from '../systems/itemInfo.js';   // RF6: the long name's two parts, ResolveItemLongName's arms once
@@ -1774,6 +1775,63 @@ function take(item) {
   render();
 }
 
+/** The filter the rows are using. With the rarity ladder off there is no menu, and a leftover tier must not hide rows. */
+function shownFilter() {
+  return lootRarityOn() ? storeFilter : { ...storeFilter, rarity: 'all' };
+}
+
+/**
+ * LOOT-BULK: Take all walks the remote rows on screen, top to bottom. Stash all walks the pack page on screen the
+ * same way, into the remote. Each row is the single click's plan. A row with no room left stops the walk. A row the
+ * law refuses for another reason is left, and the walk goes on. One sound, one repaint. The room hears the container
+ * when the window closes.
+ */
+function bulkMove(dir) {
+  notice = null;
+  const taking = dir === 'take';
+  const shown = taking
+    ? filterStore(remote.items, shownFilter(), storeNameOf)
+    : (model.tabs.find((x) => x.tab === tab)?.items ?? []);
+  const from = taking ? remoteTarget(deps, sessionState()) : (deps.items?.() ?? []);
+  const to = taking ? (deps.items?.() ?? []) : remoteTarget(deps, sessionState());
+  const cap = !taking && remote?.kind === 'container' ? CONTAINER_LIST_CAP : null;
+  let sound = null;
+  const { moved, notice: why } = runBulk([...shown], (item) => {
+    if (!from.includes(item)) return { verdict: 'skip' };
+    if (!taking) {
+      if (isPackOnly(item)) return { verdict: 'skip', refusal: { text: packOnlyText(itemLongName(item, { getQuest: deps.getQuest ?? null })) } };
+      if (boundRefusesPut(item, remote.kind)) return { verdict: 'skip', refusal: { text: boundText(itemLongName(item, { getQuest: deps.getQuest ?? null })) } };
+      if (letterRefuses(item)) return { verdict: 'skip', refusal: { text: letterPutText(itemLongName(item, { getQuest: deps.getQuest ?? null })) } };
+      const no = bagRefuses(item);
+      if (no) return { verdict: 'skip', refusal: no };
+      if (remote.kind === 'ground' && lockRefuses(item, 'drop')) return { verdict: 'skip', refusal: { text: lockedText(itemLongName(item, { getQuest: deps.getQuest ?? null })) } };
+      if (listAtCap(to, item, cap)) return { verdict: 'stop', refusal: { text: CONTAINER_FULL } };
+    }
+    const plan = taking
+      ? planTake(item, {
+        bag: to, entity: deps.entity, mode: 'remove',
+        chooseOne: session.chooseOne, usingWagon: session.usingWagon,
+        getQuest: deps.getQuest ?? null,
+      })
+      : planStore(item, {
+        remote: to, usingWagon: session.usingWagon, chooseOne: session.chooseOne,
+        getQuest: deps.getQuest ?? null,
+        groundRefusal: groundRefusalOf(deps, session),
+        capacity: storeCapacityOf(deps, session), bagLoaded: !bagMayLeave(deps.entity), wagonKg: wagonKgFor(deps.entity),
+      });
+    return { verdict: bulkVerdict(item, plan), refusal: plan.refusal, plan };
+  }, (item, d) => {
+    const plan = d.plan;
+    applyTransfer(item, { ...plan, amount: plan.amount }, from, to, { entity: deps.entity, fromLocal: !taking, toPlayer: taking });
+    sound = plan.sound === 'gold' && sound !== 'click' ? 'gold' : 'click';
+  });
+  if (moved) audio.playOneShot(sound === 'gold' ? SOUND.GoldPieces : SOUND.ButtonClick, 1);
+  if (why) notice = why;
+  picked = null;
+  refresh();
+  render();
+}
+
 /** WagonButton_OnMouseClick's ladder (:1234-1243), through U57. */
 function toggleWagon() {
   notice = null;
@@ -2839,6 +2897,12 @@ function remoteCol() {
     b.onclick = toggleBag;
     acts.append(b);
   }
+  // LOOT-BULK: Take all stays on the list it empties. Stash all sits on the pack's own list (below).
+  if (STORE_FILTER_KINDS.has(remote.kind)) {
+    const takeAll = el('button', 'act', 'Take all');
+    takeAll.onclick = () => bulkMove('take');
+    acts.append(takeAll);
+  }
   // MAC-M2 B (2026-09-16, Mac: "Remove the gold and pack buttons from
   // the looting menu"): THE LOOT WINDOW IS FOR TAKING, and its bar
   // carries the wagon and nothing else.
@@ -2909,7 +2973,7 @@ function fillRemoteList(list, filtering = STORE_FILTER_KINDS.has(remote.kind) &&
   dropLists(list);   // VIRT: a refill (the filter's) lets go of the window it replaces
   const kept = list.scrollTop;   // AUDIT VIRT: and keeps its scroll, as the whole list kept it
   list.innerHTML = '';
-  const shown = filtering ? filterStore(remote.items, storeFilter, storeNameOf) : remote.items;
+  const shown = filtering ? filterStore(remote.items, shownFilter(), storeNameOf) : remote.items;
   if (!remote.items.length) {
     list.append(el('p', 'packempty', remote.kind === 'ground'
       ? 'Nothing dropped here yet.'
@@ -2958,6 +3022,20 @@ function storeFilterBar(list) {
   menu.value = storeFilter.cat;
   menu.onchange = () => { storeFilter.cat = menu.value; fillRemoteList(list, true); };
   bar.append(menu);
+  // LOOT-BULK: the tiers this container holds, and how many. Absent while the ladder is off - there is nothing to pick.
+  if (lootRarityOn()) {
+    const rarity = el('select', 'storerarity');
+    rarity.setAttribute('aria-label', `Rarity in the ${String(remote.title).toLowerCase()}`);
+    for (const c of storeRarityOptions(remote.items, storeFilter.rarity)) {
+      const o = el('option', null, `${c.label} (${c.count})`);
+      o.value = c.id;
+      if (c.id === storeFilter.rarity) o.selected = true;
+      rarity.append(o);
+    }
+    rarity.value = storeFilter.rarity;
+    rarity.onchange = () => { storeFilter.rarity = rarity.value; fillRemoteList(list, true); };
+    bar.append(rarity);
+  }
   return bar;
 }
 
@@ -3946,6 +4024,14 @@ function render() {
     const lists = el('div', 'packlists');
     lists.append(listCol());
     dock.append(catsCol(), lists);
+    // LOOT-BULK: Stash all belongs to the list it walks - the pack page - centred on the bottom edge of that list.
+    if (STORE_FILTER_KINDS.has(remote.kind)) {
+      const foot = el('div', 'stashfoot');
+      const stashAll = el('button', 'act', 'Stash all');
+      stashAll.onclick = () => bulkMove('stash');
+      foot.append(stashAll);
+      dock.append(foot);
+    }
     grid.append(main, dock);
     win.append(grid);
     // PX16b: the reference's BOTTOM BAR - carry weight as a meter
