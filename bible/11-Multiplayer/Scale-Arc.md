@@ -77,6 +77,7 @@ Four read-only audits covered the relay (`server/src/index.js`), the account ser
 | HUB-PULL / DO-ASK | The live relay's hub refused by the runtime's subrequest depth (the bus's push charged to the hand-up it served, a hop deeper each round): the bus never calls a shard - each shard keeps a poll at its bus, answered with every delivery it has not acknowledged; the Worker asks a room reset before it ran once more, an overloaded one never, and answers what is left as a 503 | Yes, once | **Built** (2026-10-16, this branch; relay world210) |
 | PRIMARY-TRIPS | The account database's primary, capped by its round trips, overloaded at 00:00 UTC (2026-10-16): the seats' list, a checkpoint and a badge's honours each one batch, a town's yards off a replica, a heartbeat's reads before its beat, a hall bump off its key's rows - some a quarter of the primary's trips at peak | No | **Built** (2026-10-16, this branch; acct139) |
 | DECOR-BATCH | The account database overloaded again through the evening of 2026-10-16: every account deploy since #952 failed its smoke on `/v1/homes/decor` (seven asks of 15 s, no byte back) while `homes/town` answered its one batch in 11 s - a home's room one request where it was three trips in a row, a shunned home's shop one more | No | **Built** (2026-10-16; acct142) |
+| BOOKMARK-SPIRAL | The account database's primary overloaded from 13:50 UTC (2026-10-16) and stayed so - every route 5 to 60 s, every deploy's smoke on `/v1/homes/decor` 000, DECOR-BATCH deployed and nothing moved: the page's D1 bookmark is kept only when no call goes between a read and its answer, so a slow primary took the bookmarks away, and every polled display read then started at the primary. The six polled reads with no bookmark start at any instance; a session lookup that misses there asks the primary | No | **Built** (2026-10-16; acct143) |
 | SCALE6 | Abuse and backups: Turnstile on guest creation, /64 IPv6 rate keys, bans, report and ignore, `ALLOWED_ORIGIN`, R2 snapshots, a hub export | Some | Alongside |
 
 **Relay deploy policy (SCALE):** relay changes are batched into as few deploys as possible, each in a window announced beforehand. A deploy drops every player, and until SCALE2 every reconnect is a D1 write storm.
@@ -2497,6 +2498,55 @@ makes. `homes/town` had been made one batch for the same reason (HOMES-SHED).
   trips back, the shop a trip a trader, the hidden list dropped from the batch), all dead; HOME-VOTE's room-handed-out
   and II A1 licence-kept and `basehide.json`'s list-unread re-aimed onto the batch, all dead.
 - ACCOUNT_VERSION acct142, and every pin and mutant record on acct141 (each pin's PIN MOVED history kept).
+
+## BOOKMARK-SPIRAL - the polled reads start anywhere without a bookmark (2026-10-16, acct143)
+
+The owner, after DECOR-BATCH: "Stop for the love of God avoiding this. Fix this" - the next deploy's smoke on
+`/v1/homes/decor` 000 again (seven asks, 15 s each), and the owner's Cloudflare token handed over to read the live
+service with. What it read:
+
+- **The whole service, not decor.** From 13:50 UTC every route waited: p50 5-16 s, p90 25-66 s, half of all requests
+  past 5 s, each on 1-10 ms of CPU, and the Worker's log `D1_ERROR: D1 DB is overloaded. Requests queued for too long.`
+  on the heartbeat, the pixels, the town, the token's mint and the rest. Its statements were fast (p90 about 1 ms, no
+  statement past 90 ms) and no more of them than the night before, which had been well at 120 requests a second
+  against 100 now. The 16:25-18:25 episode of 2026-10-15 matches Cloudflare's own Durable Objects incident; this one
+  matches none.
+- **Where the requests went changed.** The session lookup (`accounts.js` WHO_SQL, every request's first statement)
+  was the primary's 30 a second and the replica's 31 until 13:00; from 14:00 the primary's 61-68 and the replica's 1.
+  Requests carrying an `x-d1-bookmark`: three in four of the town's reads at 10:00, one in a hundred of all reads
+  at 16:00.
+- **Why: a loop.** The page forgets its bookmark at every call that is not a bookmark read, and keeps a read's answer
+  only if no forget went between the read and its answer (`accountClient.js` `_d1Era`, AUDIT SCALE II A-2). While the
+  primary answered in a fraction of a second that almost always held. Once it answered in seconds, some other call
+  nearly always went between, the bookmark was never kept again, and every display read started at the primary
+  (`first-primary`, the law for a request with none) - which kept the primary slow. An overload's 503 does not do it:
+  a session started from a bookmark answers that bookmark back even when its statement fails (workerd's
+  `D1DatabaseSession.getBookmark`).
+
+- **The six polled display reads, asked with no bookmark, start at any instance** (`service.js` ANY_REPLICA_ROUTES,
+  REPLICA_ANY `first-unconstrained`): the heartbeat, the pixels, the motherlodes, a town's homes, the market's vendors
+  and the arena's board - each asked again on the page's own clock, none of them a read a caller asks back at once
+  after its own write (a beat's and a pick's write go to the primary in their session as before; BEAT-LAST reads the
+  box, the board and the post first). With a bookmark, from it, as before. Every other replica read with none - the
+  account view, the realm, the mint, a room's decor, a home's rooms, the caller's homes, its Marks, its invites, its
+  saves, its lineages and unions - keeps the primary first, so the read after a write still reads it.
+- **A session lookup that misses there asks the primary** (`accounts.js` `resolveSession`, the session's DB_ANY): a
+  guest minted a moment ago is not on a replica yet, and a refused `auth` the client takes as final. A secret nobody
+  holds costs the replica's ask and the primary's.
+- The price: one of the six may answer from a replica a moment older than the caller's last write - the board without
+  the note just posted until the next beat, a node still standing on the pixels a moment after it was cut. The
+  write itself is the primary's and refuses what it must.
+
+### Pins
+
+- `test/bookmark_spiral.test.js` (3): the six named and nothing past them, each a replica route and not the mint;
+  every replica route's session with no bookmark, with one, and with one D1 refuses; a heartbeat and a town read with
+  no bookmark looking the session up on the replica and the primary asked for neither, the account view still the
+  primary's (laggyD1's replica); a guest minted after the replica's last catch-up found, the primary asked once, and a
+  secret nobody holds refused. `tools/mutants/bookmark_spiral.json`: 9, all dead.
+- `test/display_replica.test.js`: its pin on the display reads with no bookmark moved - the polled ones at any instance.
+  `scale4g.json`'s two records and `scale4d.json`'s D8 re-aimed by content, all dead.
+- ACCOUNT_VERSION acct143, and every pin and mutant record on acct142 (each pin's PIN MOVED history kept).
 
 ## THE PLAN PAST 2,000 (2026-10-10)
 
