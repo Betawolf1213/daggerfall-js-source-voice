@@ -304,8 +304,8 @@
   {
     "name": "TECH1-the-swing-weight-unread",
     "file": "src/combat/playerWeapon.js",
-    "old": "      const damage = techOn(foe) ? scaleBlowDamage(rolled, blowMult(tb, foe)) : rolled;",
-    "new": "      const damage = rolled;",
+    "old": "      const blow = techOn(foe) ? scaleBlowDamage(rolled, blowMult(tb, foe)) : rolled;",
+    "new": "      const blow = rolled;",
     "tests": [
       "test/tech1_runner.test.js"
     ]

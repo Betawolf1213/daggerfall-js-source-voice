@@ -205,7 +205,7 @@ export function createWeaponMachine(isBow, isUnarmed = false) {
   // `frames` as the port's own fields. Null in every one of them is
   // "ask the classic formula", which is what a machine that never
   // sets them has always done.
-  return { isBow, isUnarmed, ranged: isBow, frames: null, tick: null, cooldown: null, hitFrame: null, state: 'Idle', frame: 0, ticks: 0, acc: 0, cooldownUntil: 0, now: 0, bowIdleDrawn: false, animIndex: 0, damageDone: false };
+  return { isBow, isUnarmed, ranged: isBow, frames: null, tick: null, cooldown: null, hitFrame: null, state: 'Idle', frame: 0, ticks: 0, acc: 0, cooldownUntil: 0, now: 0, bowIdleDrawn: false, animIndex: 0, damageDone: false, hold: 0 };
 }
 
 export function machineAttack(m, strikeState) {
@@ -216,6 +216,7 @@ export function machineAttack(m, strikeState) {
   if (!m.isBow || strikeState === 'Idle') { m.frame = 0; m.ticks = 0; }
   m.acc = 0;
   m.animIndex = 0; m.damageDone = false;   // leftUnarmedAnimIndex / isDamageFinished
+  m.hold = 0;   // TWO-HANDS (AUDIT 2): ticks held at the swing's end - set by its caller for an off-hand blow, else none
   return true;
 }
 
@@ -260,9 +261,22 @@ export function blowSchedule(m, liveSpeed, animCtx = null, dt = 0) {
   if (m.isUnarmed && m.state === 'StrikeLeft') {
     return { seconds: LEFT_UNARMED_ANIMS.length * step, hitAt: (LEFT_UNARMED_ANIMS.indexOf(HIT_FRAME_MELEE) + 1) * step, step };
   }
-  const frames = (m.frames ?? MELEE_NUM_FRAMES)[m.state] ?? 5;
-  return { seconds: frames * step, hitAt: (m.hitFrame ?? HIT_FRAME_MELEE) * step, step };
+  // TWO-HANDS (AUDIT): timed from the frame the strike stands on - 0 for every strike DFU begins, 1 for a pair's flurry
+  // (handsLaw.js DUAL.FLURRY_FROM_FRAME: the blow thrown from the raised hand) - and (AUDIT 2) to the end of the ticks
+  // held after its last frame (an off-hand blow's burden), the hit before them
+  const at = Math.max(0, m.frame | 0);
+  return { seconds: (strikeTicks(m) + holdOf(m)) * step, hitAt: Math.max(0, (m.hitFrame ?? HIT_FRAME_MELEE) - at) * step, step };
 }
+
+/** TWO-HANDS (AUDIT 2): the ticks a melee strike just begun takes from the frame it stands on to its end - FPSWeapon's
+ *  eight-tick list for the unarmed strike to the left, else its frames past the one it stands on - before any held at
+ *  its end (`m.hold`, machineStep). What an off-hand blow's burden is reckoned on (combat/handsLaw.js offHandHold). */
+export function strikeTicks(m) {
+  if (m.isUnarmed && m.state === 'StrikeLeft') return LEFT_UNARMED_ANIMS.length;
+  const frames = (m.frames ?? MELEE_NUM_FRAMES)[m.state] ?? 5;
+  return Math.max(0, frames - Math.max(0, m.frame | 0));
+}
+const holdOf = (m) => (m.hold > 0 ? m.hold | 0 : 0);
 
 export function machineStep(m, dt, liveSpeed, animCtx = null) {   // AUDIT-RR F1: the rig's { entity, weaponType, usingRightHand } for a registered GetMeleeWeaponAnimTime override
   m.now += dt;
@@ -337,6 +351,9 @@ export function machineStep(m, dt, liveSpeed, animCtx = null) {   // AUDIT-RR F1
       m.ticks++;                                        // held-time keeps counting (GetAnimTime)
       if (m.ticks * tick > MAX_BOW_HELD_DRAWN_SECONDS) { machineCancelBowDraw(m, liveSpeed); events.push('undraw'); break; }
     } else {
+      // TWO-HANDS (AUDIT 2): an off-hand blow's burden (combat/handsLaw.js offHandHold) - whole ticks held on its last
+      // frame, after its hit, one a resume as every tick is; the picture's clones wait out a machine still attacking
+      if (m.hold > 0 && m.frame >= frames - 1) { m.hold -= 1; continue; }
       m.frame++;
       if (m.frame === (m.isBow ? BOW_SOUND_FRAME : -1)) events.push('bowSound');
       // FIELD-GUN7: the lab lands the shot on frame 1 - the muzzle

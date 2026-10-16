@@ -190,11 +190,13 @@ test('AUDIT 39: every host that draws a HUD fills the two hands', () => {
   // display:none in the played game, which is a drawn door with a
   // stylesheet block behind it. Every host had both values one
   // argument over from the weaponSheathed it already passed.
+  // PIN MOVED (TWO-HANDS AUDIT): the plaque reads the rig's RESTING weapon - the lead's in a pair, never the off hand's
+  // item for the length of its blow (playerWeapon.js restingWeapon); one hand's is its weapon, as before
   const hosts = {
-    'src/scenes/world.js': 'weaponRig.playerWeapon.weapon',
-    'src/scenes/exterior.js': 'weaponRig.playerWeapon.weapon',
-    'src/scenes/worldModes.js': 'interiorWeapon.playerWeapon.weapon',
-    'src/scenes/dungeonContext.js': 'playerWeapon.weapon',
+    'src/scenes/world.js': 'weaponRig.playerWeapon.restingWeapon',
+    'src/scenes/exterior.js': 'weaponRig.playerWeapon.restingWeapon',
+    'src/scenes/worldModes.js': 'interiorWeapon.playerWeapon.restingWeapon',
+    'src/scenes/dungeonContext.js': 'playerWeapon.restingWeapon',
   };
   for (const [f, rig] of Object.entries(hosts)) {
     const src = read(f);
@@ -206,7 +208,7 @@ test('AUDIT 39: every host that draws a HUD fills the two hands', () => {
     assert.ok(bag.includes(`weapon: ${rig} ?? null,`), `${f} hands over no held weapon`);
     // and the rig it reads is the SAME one weaponSheathed comes off,
     // which is what stops a host reading two different weapons.
-    assert.ok(bag.includes(`${rig.replace(/\.weapon$/, '')}.sheathed`), `${f} reads two rigs`);
+    assert.ok(bag.includes(`${rig.replace(/\.restingWeapon$/, '')}.sheathed`), `${f} reads two rigs`);
   }
 });
 

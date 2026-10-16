@@ -248,7 +248,7 @@ export function lootBlow(weapon, damage, attacker, target, info) {
 
 // ── the strike: leech ───────────────────────────────────────────────
 /** MY blow, LANDED (formulas.js registerPlayerStrikeListener - the final damage at a foe): the leech's share heals me. */
-export function lootStrike(attacker, target, damage, weapon) {
+export function lootStrike(attacker, target, damage, weapon, info = null) {
   // AUDIT WORLD-REWARDS B3: nor a blow the Warden's ward turns - a melee swing's strike is told before the court turns it
   // (dungeonContext.js swingOnBoss), and lootBlow already refuses a warded foe: nothing landed, so nothing answers it
   if (!mine(attacker) || !(damage > 0) || !target || target.isPlayer || target.warded) return;
@@ -256,19 +256,23 @@ export function lootStrike(attacker, target, damage, weapon) {
   for (const a of linesOf(weapon, 'leech')) pct += a.value;
   pct = Math.min(LEECH_CAP, pct);   // BAL7
   if (pct > 0) healMine(attacker, (damage * pct) / 100);
-  // LOOT5: the powers that answer a blow that landed
+  // LOOT5: the powers that answer a blow that landed. TWO-HANDS (AUDIT 2): a charge a power takes per blow - Conduit's
+  // mana, Flow's stack, the Undertow's stack - only from a blow that counts whole (formulas.js `blow`:
+  // an off-hand blow counts DUAL.OFF_DAMAGE of the time), so a pair charges them as its damage edge allows, not its blow
+  // rate; the shares of the damage (a leech, a chain, an echo) already ride the blow's own damage
   const now = _now();
+  const whole = info?.blow !== false;
   for (const { power: p } of blowPowers(attacker, weapon)) {
     switch (p.kind) {
       case 'chain': if (ranged(weapon)) arc(target, (damage * p.share) / 100, p.metres); break;
       case 'quake': if (weapon && !ranged(weapon)) quake(target, (damage * p.share) / 100, p.metres); break;
       case 'echo': if (_rand() * 100 < p.chance) again(target, damage, p.name); break;
       case 'fists': if (!weapon) again(target, (damage * p.share) / 100, p.name); break;   // BAL7: for half (the record's share)
-      case 'conduit': gainMana(attacker, p.mana); break;
-      case 'flow': _s.flow = Math.min(p.max, flowStacks(now) + 1); _s.flowUntil = now + p.seconds; break;
+      case 'conduit': if (whole) gainMana(attacker, p.mana); break;
+      case 'flow': if (whole) { _s.flow = Math.min(p.max, flowStacks(now) + 1); _s.flowUntil = now + p.seconds; } break;
       case 'toll': if (weapon) { _tolls.set(weapon, ((_tolls.get(weapon) ?? 0) + 1) % p.every); _lastToll = { foe: target, at: now }; } break;   // GILDED1
       case 'dragonfire': if (weapon && foeGroup(target) === p.group) dragonfire(target, (damage * p.share) / 100, p.metres, p.group); break;   // GILDED2
-      case 'undertow': if (weapon) _undertow.set(target, { n: Math.min(p.max, undertowStacks(target, now) + 1), until: now + p.seconds, at: now }); break;   // GILDED2
+      case 'undertow': if (weapon && whole) _undertow.set(target, { n: Math.min(p.max, undertowStacks(target, now) + 1), until: now + p.seconds, at: now }); break;   // GILDED2
       default: break;
     }
   }

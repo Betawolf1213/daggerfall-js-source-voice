@@ -233,7 +233,7 @@
  {
   "name": "WEAPON-GLOW1-no-rings",
   "file": "src/render/renderer.js",
-  "old": "if (glow) this._drawWeaponGlow(mesh, modelMatrix, skin, false);",
+  "old": "if (glow) this._drawWeaponGlows(mesh, modelMatrix, skin, false);",
   "new": "",
   "tests": [
    "test/weaponglow1.test.js"
@@ -242,8 +242,8 @@
  {
   "name": "WEAPON-GLOW1-a-sheathed-weapon-glows",
   "file": "src/render/renderer.js",
-  "old": "if (r.slot !== 'weapon' || r.hidden) continue;",
-  "new": "if (r.slot !== 'weapon') continue;",
+  "old": "if (r.slot !== slot || r.hidden) continue;",
+  "new": "if (r.slot !== slot) continue;",
   "tests": [
    "test/weaponglow1.test.js"
   ]
@@ -269,8 +269,8 @@
  {
   "name": "WEAPON-GLOW1-the-world-pass-glows",
   "file": "src/render/renderer.js",
-  "old": "const glow = !!mesh.weaponGlow && this._spriteDepth > 0 && this._studioDepth",
-  "new": "const glow = !!mesh.weaponGlow && this._studioDepth",
+  "old": "const glow = !!(mesh.weaponGlow || mesh.offWeaponGlow) && this._spriteDepth > 0 && this._studioDepth",
+  "new": "const glow = !!(mesh.weaponGlow || mesh.offWeaponGlow) && this._studioDepth",
   "tests": [
    "test/weaponglow1.test.js"
   ]
@@ -374,7 +374,7 @@
  {
   "name": "WEAPON-GLOW1-the-picture-unpadded",
   "file": "src/render/characterSprite.js",
-  "old": "const pad = Math.max(bodyFxPad(fx), glowLook ? glowPad(glowLook, ph) : 0);",
+  "old": "const pad = Math.max(bodyFxPad(fx), ...(Array.isArray(glowLook) ? glowLook : glowLook ? [glowLook] : []).map((l) => glowPad(l, ph)), 0);",
   "new": "const pad = bodyFxPad(fx);",
   "tests": [
    "test/weaponglow1.test.js"

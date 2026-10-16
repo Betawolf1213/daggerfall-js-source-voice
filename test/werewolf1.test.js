@@ -337,7 +337,11 @@ test('WEREWOLF1 the weapon rig: the werewolf is a transformed lycanthrope whose 
   assert.equal(armsStandFor(transformed(1), { ready: () => true, builtFor: () => want }), true);
   const rig = rd('src/combat/weaponRig.js');
   const at = (t) => { const i = rig.indexOf(t); assert.ok(i > 0, t); return i; };
-  assert.ok(at('fpArm.setWerewolf(wolf, { skin: wolfSkin });') < at('fpArm.setWeapon(playerWeapon.weapon,') && at('fpArm.setWeapon(playerWeapon.weapon,') < at('if (entity) fpArm.setWorn('),
+  // PIN MOVED (TWO-HANDS): the hand handed over is `armItem` - the right hand's item when both hands are up, the weapon in
+  // use otherwise (was: `fpArm.setWeapon(playerWeapon.weapon,`); the ORDER pinned here is untouched
+  // PIN MOVED (TWO-HANDS AUDIT 2): the hand goes through the arm's hands' one door (handArm), called in the frame where
+  // the swap stood - the ORDER is untouched
+  assert.ok(at('fpArm.setWerewolf(wolf, { skin: wolfSkin });') < at('= handArm();') && at('= handArm();') < at('if (entity) fpArm.setWorn('),
     'every frame, ahead of the hand and the worn table (AUDIT D3: their queue waits on the form\'s build)');
 });
 

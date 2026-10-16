@@ -508,8 +508,8 @@
   {
     "name": "CLIMB4-hold-not-a-climb",
     "file": "src/player/motor.js",
-    "old": "climbing: !!(player.climb?.isClimbing || player.mantling || player.onWall),\n    // EOTB-IL",
-    "new": "climbing: !!(player.climb?.isClimbing || player.mantling),\n    // EOTB-IL",
+    "old": "climbing: !!(player.climb?.isClimbing || player.mantling || player.onWall),\n",
+    "new": "climbing: !!(player.climb?.isClimbing || player.mantling),\n",
     "tests": [
       "test/climb4.test.js",
       "test/ww2_idlebob.test.js"

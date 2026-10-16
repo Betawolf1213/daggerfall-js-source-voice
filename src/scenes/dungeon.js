@@ -834,7 +834,7 @@ export async function bootDungeon(canvas, renderer, params, status) {
       const bob = headBobber.update(dt, cam, {
         health: playerEntity.health, paused: ctx.uiOverlayActive, climbing: !!player.climb?.isClimbing, grounded: !!player.grounded,
         swimming: !!player.isPlayerSwimming, running: !!player.isRunning, crouching: !!player.crouching, riding: !!player.riding, levitating: !!player.levitating,   // TR1: the Horse bob style   // XL-1: HeadBobber.cs:101/:215 read playerEnterExit.IsPlayerSwimming (this host writes both members, so the ANSWER is unchanged - the member is)
-        velocity: player.moveSpeed || 0, moving: !!(player.moveForward || player.moveStrafe),
+        velocity: player.moveSpeed || 0, moving: !!(player.moveForward || player.moveStrafe), out: player,   // TWO-HANDS (AUDIT): the bob's timer for the running hands' stride (player/motor.js motionBagOf)
       });
       const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);   // HANDEDNESS (mat4's law): right = (cos, 0, -sin)
       player.bobOffset = [cy * bob[0], bob[1], -sy * bob[0]];

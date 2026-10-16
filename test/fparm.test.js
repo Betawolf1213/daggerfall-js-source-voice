@@ -2898,7 +2898,8 @@ test('MAC-S1: ONE flush, called from every exit out of `busy`', () => {
   // MW-D51: the third arrived - setTorch's slow path binds the light's
   // mesh on both rigs and takes `busy` for the fetch. HT-WAIST: the fourth -
   // setHipLight's slow path, the lantern at the waist on the body.
-  assert.equal(takers, 4, `a door that takes \`busy\` must flush on its way out (${takers} takers)`);
+  // TWO-HANDS: the fifth - setOffWeapon's slow path, the left hand's weapon bound on both rigs. PIN MOVED (was: 4)
+  assert.equal(takers, 5, `a door that takes \`busy\` must flush on its way out (${takers} takers)`);
   assert.equal(flushes, takers, `every taker flushes (${flushes} flushes for ${takers} takers)`);
   // ...and setWeapon's own `finally` still does all three of its duties.
   // The file's own prose is not its wiring, so it is stripped first.
@@ -3162,7 +3163,9 @@ test('PX26 F4: the interior lane sends the jump-state inputs - without them the 
 test('PX26 F1/F2/F3: the menu figure carries the hand, instantly, and a mid-build swap is not dropped', () => {
   const arm = readFileSync('src/combat/fpArm.js', 'utf8');
   // F1: the portrait shows the weapon whether or not it is drawn
-  const fig = arm.slice(arm.indexOf('    figure({ yaw = 0, height = 384 } = {}) {'), arm.indexOf('    figure({ yaw = 0, height = 384 } = {}) {') + 3000);
+  // PIN MOVED (TWO-HANDS AUDIT): the window 3000 -> 3400 - the portrait poses a carried pair with both arms up (its
+  // `mirror:`) and flags the left hand's blade, which moved the flag lines past the old edge
+  const fig = arm.slice(arm.indexOf('    figure({ yaw = 0, height = 384 } = {}) {'), arm.indexOf('    figure({ yaw = 0, height = 384 } = {}) {') + 3400);
   assert.match(fig, /if \(r\.slot === 'weapon'\) r\.hidden = false;/, 'a paperdoll shows what you carry, drawn or not');
   assert.match(fig, /else if \(r\.slot === 'arrow'\) r\.hidden = !arrowShown;/, 'the arrow still follows its shoot keys');
   // F2: the pack hands the rig the hand as well as the worn table

@@ -129,7 +129,7 @@ export function drawRigSpriteBox(renderer, canvas, mesh, rigMat, { center, halfW
   // MWNPC5: the tells' room - `pad` texels a side, the world half-extents grown by the same texels (one texel the
   // picture's 2 halfH / ph), so a texel stays the size it was. AUDIT WEAPON-GLOW MW-3: and a glowing weapon's outline's
   // (render/weaponGlowGlsl.js glowPad) - the larger of the two, as both stand off the same silhouette
-  const pad = Math.max(bodyFxPad(fx), glowLook ? glowPad(glowLook, ph) : 0);
+  const pad = Math.max(bodyFxPad(fx), ...(Array.isArray(glowLook) ? glowLook : glowLook ? [glowLook] : []).map((l) => glowPad(l, ph)), 0);   // TWO-HANDS: a pair's two blades, each its own look
   if (pad) {
     const grow = (2 * pad) / ph;
     halfW += halfH * grow; halfH *= 1 + grow;

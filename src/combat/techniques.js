@@ -102,9 +102,11 @@ const fresh = () => ({
 let _s = fresh();
 
 /** The item a technique is read from: the weapon in the hand that swings (DFU's used hand - PlayerWeapon.weapon, the equip
- *  table's own object), or bare-handed the Gauntlets worn. The beast's claws have none. */
+ *  table's own object), or bare-handed the Gauntlets worn. The beast's claws have none. TWO-HANDS (AUDIT): with both hands
+ *  up, the LEAD's - a technique is always the lead hand's (PlayerWeapon.techniqueStrike), and the off hand's blows must not
+ *  swap the chip or cancel an aim. */
 export function techniqueItem(entity, pw) {
-  const w = pw?.weapon ?? null;
+  const w = pw?.restingWeapon ?? pw?.weapon ?? null;
   if (w?.werecreatureClaws) return null;
   if (w) return w;
   return entity?.equip?.slots?.[EQUIP_SLOTS.Gloves] ?? null;

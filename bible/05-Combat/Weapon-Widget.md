@@ -375,3 +375,17 @@ latches the reverse (`reversed`) and runs it once; the reverse itself is
 the mod's, to frame 0. Pinned in `test/ww1_weaponwidget.test.js`
 (a StrikeUp under Last Frame descends its frames exactly once; under Hide
 as before). Mutants in `tools/mutants/bugs5.json`.
+
+## TWO-HANDS - a clone for each hand (2026-10-16)
+
+Both fists up or a pair of weapons (`Two-Hands.md`): the rig's clone is the RIGHT hand and `combat/twoHands.js` owns a
+second, `offWidget`, for the left. Each is handed its hand's view of the one machine (`twoHands.view`) and the rig's
+swing ctx (`animCtx`: the striking hand), so each plays its own hand's blows and holds its idle through the other's (an
+off-hand blow's burden is ticks the machine holds at its end - TWO-HANDS AUDIT 2 - and the clone holds its last frame
+while the machine still attacks). A hand of a pair (`pairHand`) is never flipped by Handedness or Ambidexterity - it is drawn as a
+right hand, and the one on the left of the screen through `draw`'s `mirror` (its rect mirrored about the screen's
+middle, its UVs swapped). The left clone's coroutines resume at the frame's end with the right's (`endOfFrame`), and a
+pair's left-hand blow recoils the left clone. The left clone's sway (TWO-HANDS AUDIT 2) is the mod's own for a mirrored
+sprite: Bob outward, the mirror of the right's, and Inertia in the screen's direction (`pairRect`, the clone's `swayDx`),
+on the right clone's clock (`lateUpdate`'s `clockOf`); it is born at rest out of sight (`hidden`) and a punch thrown off
+the running arm winds up from below (`fromBelow`). One hand in use is the mod's one clone, unchanged.

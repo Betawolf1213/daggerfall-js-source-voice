@@ -20,8 +20,8 @@
   {
     "name": "ARROW2-widget-fed-the-latched-shown",
     "file": "src/combat/weaponRig.js",
-    "old": "shown: spriteShown(), castPlaying",
-    "new": "shown: shown(), castPlaying",
+    "old": "sheathed: playerWeapon.sheathed, shown: spriteShown(),",
+    "new": "sheathed: playerWeapon.sheathed, shown: shown(),",
     "tests": [
       "test/arrow2_bowhide.test.js"
     ]
