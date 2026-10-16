@@ -34,11 +34,14 @@ test('EG-G2 THE BANDS\' RAMPS (section 25.1): five steps or more each, dark to l
   assert.deepEqual([G.metal[0], G.metal.at(-1)], [[140, 98, 40], [246, 206, 120]], 'gold leaf - the Hour\'s brass');
   assert.ok(G.metal.some((c) => c.join() === SD_RAMP.brass[3].join()), 'the Hour\'s brass, reused');
   assert.deepEqual([G.accent[0], G.accent.at(-1)], [[36, 52, 96], [92, 124, 196]], 'Battlemage blue');
-  assert.deepEqual([C.stone[0], C.stone.at(-1)], [[34, 28, 44], [120, 108, 140]], 'slate violet');
+  // PIN MOVED (EG-LOOK, Elite-Gates.md section 25.1): the three dark bands' stone a step lighter - lit by their realms they read
+  // as dark stone and glass, never as the void (34,28,44-120,108,140; 6,6,10-60,64,80; SD-LOOK's basalt before)
+  assert.deepEqual([C.stone[0], C.stone.at(-1)], [[44, 37, 56], [134, 121, 158]], 'slate violet');
   assert.ok(C.accent.some((c) => c.join() === '120,200,230'), 'soul-light');
-  assert.deepEqual([S.stone[0], S.stone.at(-1)], [[6, 6, 10], [60, 64, 80]], 'the Shade\'s dark');
+  assert.deepEqual([S.stone[0], S.stone.at(-1)], [[18, 18, 28], [86, 90, 112]], 'the Shade\'s dark');
   assert.deepEqual([S.metal[0], S.metal.at(-1)], [[160, 166, 176], [214, 220, 228]], 'moon-silver');
-  assert.equal(W.stone, SD_RAMP.basalt, 'SD-LOOK\'s basalt');
+  assert.deepEqual([W.stone[0], W.stone.at(-1)], [[26, 22, 20], [94, 85, 76]], 'basalt, warmed');
+  assert.ok(W.stone.every((c, i) => egLuma(c) > egLuma(SD_RAMP.basalt[i])), 'a step over SD-LOOK\'s basalt');
   assert.ok(W.liquid.some((c) => c.join() === '255,120,30'), 'molten');
   assert.deepEqual({ ...EG_DRESS }, { floor: SD_REALM_FLOOR_RECORD, brass: SD_REALM_BRASS_RECORD, root: SD_REALM_ROOT_RECORD, arena: SD_REALM_ARENA_RECORD, cobble: SD_REALM_COBBLE_RECORD, edge: SD_REALM_EDGE_RECORD, molten: 33, pillar: SD_REALM_PILLAR_RECORD });
   assert.deepEqual([0, 1, 2, 3].map(egBandArchive), [...EG_BAND_ARCHIVES]);
@@ -87,7 +90,7 @@ test('EG-G2 THE FOUR LOOKS TOLD APART (section 7\'s band table): white marble th
   const arts = [0, 1, 2, 3].map((b) => new Map(egBandArt(b)));
   const floors = arts.map((a) => mean(a.get(EG_DRESS.floor).albedo));
   assert.ok(floors[0] > 0.6, `the marble: ${floors[0].toFixed(2)}`);
-  assert.ok(floors[2] < 0.16, `the black glass: ${floors[2].toFixed(2)}`);
+  assert.ok(floors[2] < 0.22, `the black glass: ${floors[2].toFixed(2)}`);   // PIN MOVED (EG-LOOK, section 25.1): the glass lifted a step, 0.16 before - still the darkest floor (below)
   assert.ok(floors[0] > floors[1] && floors[1] > floors[2] && floors[3] > floors[2], 'marble, slate, glass; basalt over glass');
   for (const rec of [EG_DRESS.floor, EG_DRESS.brass, EG_DRESS.pillar, EG_DRESS.arena]) for (let a = 0; a < 4; a++) for (let b = a + 1; b < 4; b++) assert.notDeepEqual(arts[a].get(rec).albedo.colors, arts[b].get(rec).albedo.colors, `record ${rec}: bands ${a} and ${b} differ`);
   for (let b = 1; b < 4; b++) assert.deepEqual(arts[b].get(EG_DRESS.edge).albedo.colors, arts[0].get(EG_DRESS.edge).albedo.colors, 'one gold');

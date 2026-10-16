@@ -3470,9 +3470,14 @@ arch's block moved past the bands (`EG_BAND_ARCHIVES`, `EG_ARCH_ARCHIVES`):
 
 - the Galleries: marble `[150,146,138]`-`[214,210,200]`, gold leaf `[140,98,40]`-`[246,206,120]` (the Hour's brass,
   reused), Battlemage blue `[36,52,96]`-`[92,124,196]`, the Deadlands' red sky;
-- the Cairn: slate violet `[34,28,44]`-`[120,108,140]`, soul-light `[120,200,230]`;
-- the Shade: `[6,6,10]`-`[60,64,80]`, moon-silver `[160,166,176]`-`[214,220,228]`;
-- the Wellhead: basalt (SD-LOOK's) and iron, molten `[255,120,30]`.
+- the Cairn: slate violet `[44,37,56]`-`[134,121,158]`, soul-light `[120,200,230]`;
+- the Shade: `[18,18,28]`-`[86,90,112]`, moon-silver `[160,166,176]`-`[214,220,228]`;
+- the Wellhead: basalt `[26,22,20]`-`[94,85,76]` (SD-LOOK's a step lighter and warmer) and iron, molten `[255,120,30]`.
+
+EG-LOOK (2026-10-16, `Elite-Gates-Look.md`): the three dark bands' stone was lifted a step (the Cairn's from
+`[34,28,44]`-`[120,108,140]`, the Shade's from `[6,6,10]`-`[60,64,80]`, the Wellhead's from SD-LOOK's basalt): under
+each realm's own light the old ramps read as the void itself, so the halls' architecture vanished; they stay the
+darkest stone of their kind.
 
 ### 25.2 Five lights, five meanings, and no others
 

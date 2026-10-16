@@ -249,8 +249,16 @@ and white hazards keep their fog floor (section 25.6) under every band's fog.
 |---|---|---|---|---|
 | Galleries | 0.0050, `[0.16, 0.05, 0.03]` | the fire-sea's orange, strong | pale cool white from above | gold |
 | Cairn | 0.0075, `[0.10, 0.09, 0.14]` | the mist's violet-grey | cold, dim | soul-light |
-| Shade | 0.0060, `[0.015, 0.018, 0.03]` | almost none | the moon's silver, from its bearing | silver-white |
+| Shade | 0.0060, `[0.022, 0.026, 0.044]` | almost none | the moon's silver, from its bearing | silver-white |
 | Wellhead | 0.0090, `[0.14, 0.05, 0.02]` | molten orange, strongest | dim, smoky | molten |
+
+THE SHADED FACE READS (the lab, 2026-10-16): under the lane the trilight reaches a face at a third of its value
+(`EL_DUNGEON_AMBIENT_SCALE`) and the eye opens at most to the grade's `adaptMax`, so the first air left the Shade's black
+glass and the Wellhead's basalt black wherever the key did not fall - the architecture vanished into the void. Each band's
+ambient is set from its stone's own brightness (the three dark bands' stone lifted a step - `Elite-Gates.md` section
+25.1), its eye let open wider (the Cairn 1.45, the Shade 2.0, the Wellhead 1.6; the Galleries the Hour's 1.15), and the
+law pinned: a face of a band's middle stone turned from its key, lit by the equator alone at the eye's widest, reads over
+0.012 linear (`test/eglook_atmos.test.js`).
 
 ## 8. THE KIT'S RECORDS (`world/egBandArt.js`, `world/egKit.js`)
 

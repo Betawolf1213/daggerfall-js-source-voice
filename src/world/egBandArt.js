@@ -120,7 +120,7 @@ export const EG_BAND_RAMPS = Object.freeze([
     haze: hazeOf(EG_ATMOS[0].fog.color),
   }),
   Object.freeze({   // the Soul Cairn
-    stone: r5([34, 28, 44], [54, 46, 66], [76, 66, 90], [98, 87, 115], [120, 108, 140]),               // slate violet
+    stone: r5([44, 37, 56], [64, 55, 78], [86, 75, 102], [110, 98, 130], [134, 121, 158]),             // slate violet (EG-LOOK: a step lighter - the realm's light reads it)
     vein: r5([14, 11, 18], [22, 18, 28], [30, 25, 38], [40, 34, 50], [50, 42, 62]),
     metal: BONE,                                                                                         // bone
     accent: SOUL,                                                                                        // soul-light
@@ -133,8 +133,8 @@ export const EG_BAND_RAMPS = Object.freeze([
     haze: hazeOf(EG_ATMOS[1].fog.color),
   }),
   Object.freeze({   // the Shade Perilous
-    stone: r5([6, 6, 10], [16, 16, 22], [28, 29, 38], [44, 46, 58], [60, 64, 80]),                     // black glass
-    vein: r5([3, 3, 5], [6, 6, 10], [10, 10, 15], [14, 14, 20], [18, 18, 26]),
+    stone: r5([18, 18, 28], [30, 31, 44], [44, 46, 62], [62, 65, 84], [86, 90, 112]),                  // black glass (EG-LOOK: lifted - its sheen read under the moon, still the darkest band)
+    vein: r5([8, 8, 13], [12, 12, 19], [17, 17, 26], [23, 23, 34], [30, 30, 44]),
     metal: MOON,                                                                                         // moon-silver
     accent: SILVER_GREY,
     liquid: r5([64, 68, 76], [104, 110, 120], [150, 156, 166], [196, 202, 212], [228, 232, 238]),      // quicksilver
@@ -146,8 +146,8 @@ export const EG_BAND_RAMPS = Object.freeze([
     haze: hazeOf(EG_ATMOS[2].fog.color),
   }),
   Object.freeze({   // the Havoc Wellhead
-    stone: SD_RAMP.basalt,                                                                              // SD-LOOK's basalt
-    vein: r5([6, 5, 5], [10, 9, 9], [14, 12, 12], [18, 16, 15], [22, 20, 19]),
+    stone: r5([26, 22, 20], [38, 34, 31], [54, 48, 44], [72, 65, 58], [94, 85, 76]),                  // basalt (EG-LOOK: SD-LOOK's a step lighter and warmer - lit from the magma, it reads)
+    vein: r5([10, 9, 9], [14, 13, 12], [19, 17, 16], [24, 22, 20], [30, 27, 25]),
     metal: IRON,                                                                                         // iron
     accent: FIRE,                                                                                        // molten
     liquid: FIRE,
