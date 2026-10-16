@@ -8,6 +8,7 @@ main's `7e0424e0`.
 | 1 | "I respeced yesterday and have a timer on my 50 lvl smithing, however, when I reached level 100, I can not choose level 100 perk" | the Professions page greyed every card of a track while a paid change waited at either rank; the service already took a first pick (and the merge's free change) before its one-change-at-a-time refusal | fixed (FIRST-PICK) |
 | 2 | "I reloaded my game near the arena ... I've done all 40 fights already for this season, so I hit fight, and it reset my rank, and when I look at the season it doesn't have a number" | on the online lane before the relay's first welcome every arena door ran the offline law: the Herald offered Fight off the save's ladder, the bout and its purse were this screen's, the window drew the save's season ("Season of 3E 406") and roster - the account's forty wins untouched | fixed (ARENA-WAIT) |
 | 3 | "I paid 2 x 600 gold today, and even though it said +5 reputation, my reputation didn't go up at all ... why I still have a penalty" (the "Possible bug: Repeated ..." thread, after FINE-MENDS); "It didn't work for me either" | the +5 was the law's and it held; a charge costs two names - the law's and half of it off the region's People, spread to the kingdom (the Standing page's Kingdoms row) and read by every commoner - and a sentence gives back both, but the watch's fine and a temple's penance mended the law's alone | fixed (FINE-PEOPLE) |
+| 4 | "Shipyard formatting is cooked" - "The text here may need a bit of work, as you can see!" | a shipyard row's acts track was `auto`: grid grew it to every press and the name box on one line before the words' track had a pixel, so a ship's words stood a word a line | fixed (YARD-ROWS) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -123,3 +124,30 @@ fines; the stop reads the law's number alone, never the People's.
 What the reporter is owed: the +5 you paid for was real - your standing with the law rose each time. What did not move
 was your name with the people of the kingdom, which the same crimes cost and only a prison sentence gave back. A fine or
 a penance now mends that too.
+
+## YARD-ROWS: a ship's words stand beside her name, her presses under them (4)
+
+`src/ui/shipyardWindow.js` SHIPYARD_CSS's `.dfyard-row` and `.dfyard-fleetrow`, fleetPage.
+
+THE REPORT. The shipyard's Your fleet page: a ship's words ("Laid up at Aldwall Rock - she is brought round to any port
+you call her at. Worth 3,546 gold - the shipmaster offers 431 gold") a word a line down a sliver of the window.
+
+FOUND. A shipyard row is a grid of three tracks - her name, her words, her presses - and the presses' track was `auto`.
+Grid layout grows an auto track to its content's max-content before the fr tracks are given anything, and a fleet
+row's presses are four buttons and a name box (an input's default 20 characters): in the 760 px window they took every
+free pixel, the name track stood at its 110 px floor and the words' at `minmax(0, ...)`'s zero. Measured in Chromium
+(the window mounted on the reporter's fleet): the words 0-38 px wide, a row 400-700 px tall. The other pages' rows have
+one press and never met it; a Crew Hall recruit's swap picker did, at 600 px. No design record redesigns this window;
+the Holdings card (`ui/fleetPage.js` shipCard) draws the same ship with her presses on a line under her words.
+
+CHANGED: the presses' track is `fit-content(40%)` - never wider than its share - and a fleet row is two tracks with
+her presses a line of their own under her name and words, the Holdings card's shape. The phone's one column stands as
+it was. Measured again on the real window: the words 439 px at 1440 and 800, 321 at 600, the rows 104-172 px; the
+Refits and Crew pages' words 146-385 px; nothing sideways.
+
+THE FOUR HOSTS: none - the shipyard is a window every host opens alike. Pinned by `test/fb1016_yardrows.test.js` (2: the
+CSS's law and the mounted fleet page); `tools/mutants/fb1016_yardrows.json` (4, all dead). PROBE (no suite row - it needs
+a browser): `node tools/shipyardWindowProbe.mjs` measures every row's words on the Fleet, Refits and Crew pages at four
+widths.
+
+What the reporter is owed: the shipyard's fleet page reads as a page again.
