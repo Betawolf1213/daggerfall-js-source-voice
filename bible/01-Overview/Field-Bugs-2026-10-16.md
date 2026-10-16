@@ -12,6 +12,7 @@ main's `7e0424e0`.
 | 5 | "items not repairing at all with 'repairs objects'" ... "my weapon WILL repair but no other worn items are repairing with repair objects" | a tick mended a pool weapon the classic Dagger's share (32) and every other piece DFU's point - a steel cuirass's 6,144 a point a tick, its % still for an hour while the blade's climbed | fixed (MEND-ARMOUR) |
 | 6 | "turning horse care off completely hides my other horses" | the upkeep's model listed horses only under a care tier, and the page drew the other horses and "Ride this one" only under one: Off (and the classic skin) the ridden horse alone | fixed (HORSE-CARE-OFF) |
 | 7 | "I've been using a 3x disintegrate as my main spell lately ... I believe it bypasses the kill/spare on revenants. And it seems it does this to other players' revenants, too" | a Disintegrate is a whole blow, and both damage doors passed every whole blow over a revenant's last stand, will and kneel; a party member's blow reaches the owner as a kill (`z`), so anyone's Disintegrate closed anyone's revenant, record and all, its owner never asked | fixed (RVN-OWNERS-CHOICE) |
+| 8 | "market stalls all shifted into the ground/walls"; "at least the lawn decoration owns" | TEMPLE-STEPS set the stall's box and scale right but kept a guessed shape inside it: a counter 0.75 m high under goods laid for 1.04 m, the awning's edge at 1.84 m, a bench where 20 of 30 stall-keepers stood, the second mesh given a counter over its goods; and its new origins moved every yard's saved stall 2 m back into its wall and grew saved boulders 2-8x | fixed (STALL-SHAPE) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -271,3 +272,58 @@ now stands at 4,160 in exteriorFoes' death arm - the next line there moves it.
 What the reporter is owed: you were right - a Disintegrate deleted any revenant, yours or another player's, and nobody
 was asked. Another player's Disintegrate now beats a revenant the way any killing blow does - it makes its last stand,
 tears away or kneels - and only its owner chooses. Your own Disintegrate still finishes your own.
+
+## STALL-SHAPE: the market stall is the pack's own, and a yard's saved stalls and boulders stand where they were put (8)
+
+`src/world/townStandIns.js` RMBRP_STALL_FRAME, RMBRP_STALL_OPEN_FIRST, RMBRP_STALL_OPEN_SHIFT, stall;
+`server-account/migrations/0120_yard_reseat.sql`; `tools/yardReseat.mjs`; `src/systems/decorPlacer.js` (the header's rule).
+
+THE REPORT. 2026-10-15 9:59 PM: "market stalls all shifted into the ground/walls", "at least the lawn decoration owns".
+Two town screenshots: a stall's awning low over the street with its keeper standing inside it; a red-awning stall against
+a wall, its counter half buried.
+
+FOUND. TEMPLE-STEPS (c2b52fdff1, merged that evening) set the stall's box and scale right (the prefab's 0.75, x mirrored),
+but the shape inside the box was still the port's guess, and the pack's FBX (`ext_city_stall001-026`, read with a scratch
+FBX reader) says otherwise: the pack's counter is 1.04 m high at x -0.80..0.32, the stand-in's 0.75 m at x -0.19..0.26 -
+the author lays its goods at 1.05 m and none rested on a counter; the pack's lintel underside is 2.26 m (its fringe
+2.17), the stand-in's awning edge 1.84; the stand-in had a bench 0.53 m high the pack does not have, and 20 of the 30
+stall-keepers stood inside it (21 of the 28 keepers in the footprint were inside a solid or under a face below their
+heads); prefabs 53113-53124 use a second mesh (`ext_city_stall014-025` - the frame 0.2 m back, 0.206 m up, 0.066 m across,
+no counter) and still got the counter, burying the goods laid on the ground. None of the author's 32 town stalls stands in
+a building under any footprint (checked against the game data), so "into walls" is the yards'. Yard decor is the account
+service's (D1 `home_decor`, `yard` = 1; `placed_at` set at placing, never by a move), and a saved piece records where its
+model's origin stands, worked out against the stand-in of its day (`decorPlacer.js`) - so TEMPLE-STEPS' new origins moved
+every saved stall 2.06 m x its scale toward its back, into the wall its owner had stood it against, a quarter smaller,
+and grew every saved boulder 2-8 times about a different centre.
+
+CHANGED:
+- **The stand-in is the pack's stall**, built from the FBX's measurements (within 2.3 cm of `ext_city_stall001`, 1 cm of
+  `014` for the second mesh): posts 0.375 m square, a beam and a lintel, the awning from the beam's top to the lintel's,
+  the prefab's own valance cloth (`49_9`), headroom 2.17 m at the front, a counter top at 1.041 m, no bench; the second
+  mesh its own frame and no counter. Named in `03-World/Beautiful-Towns.md`: the outer faces stay on TEMPLE-STEPS' box (at
+  most 2.25 cm off the pack's - the box saved yard stalls stand by); every post stands on the origin (the pack's run
+  0.112 m below it, the second mesh's start 0.094 m above); the wood `67_1` for the prefab's climate-swapped `366_x`.
+- **Migration 0120 re-seats every saved yard stall and boulder**: its origin moved so the model's box, turned and scaled
+  as the piece is, keeps its centre and its foot; its scale divided by the model's growth (0.75 a stall, each rock's
+  prefab scale), within the scale limits (0.25-4) and the yard's bounds. Which old box applies is `placed_at` against
+  TEMPLE-STEPS' web deploy (1792111405, 2026-10-16T00:43:25Z): before it WD3's, after it TEMPLE-STEPS' (only the second
+  stall has moved since). Once: the D1 ledger applies it once and each re-seated place carries `"reseat": "STALL-SHAPE"`,
+  which the statement never moves again; a place not JSON is skipped, rooms never touched; cosine and sine as Taylor
+  series in plain arithmetic (no SQLite math extension). The Worker's code is unchanged (ACCOUNT_VERSION stands);
+  `06-Systems/Online-Arc.md` records the re-seat.
+
+THE FOUR HOSTS: none wired - the stand-in is the pipeline's (`customModelFor`) for every host that draws a town block:
+world.js and exterior.js, and worldModes.js's view out of a window; dungeonContext.js draws no town; yards stand in
+world.js alone, and only their data moved. Pinned by `test/fb1016_stallshape.test.js` (4); `tools/mutants/
+fb1016_stallshape.json` (24, all dead). PINS MOVED: `fb1015f_templesteps.test.js`'s stall test and `wd3_standins.test.js`'s
+"every built piece is sound" (the second mesh its own frame); mutant TEMPLESTEPS-9-stall-off-origin re-aimed by content.
+
+FLAGGED: a piece placed before the deploy and moved during TEMPLE-STEPS' day was moved against the new box - no record
+says so, so it is put back as if unmoved and its owner moves it once more; stalls placed in the first hour by clients
+still on the old build stay as TEMPLE-STEPS drew them; a boulder whose old scale over its growth falls under 0.25 (a
+scale-8 rock placed at 1) stands at 0.25, up to twice its old size; every other town-mod piece the decorator offers (beds,
+paintings, DET pieces) stands by its stand-in's box the same way, with no guard if a stand-in's box moves again.
+
+What the reporter is owed: the market stalls stand as the pack draws them - the keeper behind the counter under the
+awning, the goods on the counter, the open stalls' goods on the ground. A stall or boulder you put in your own yard is
+back where you put it, at the size you placed it.
