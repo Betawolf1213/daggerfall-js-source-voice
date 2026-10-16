@@ -56,6 +56,8 @@ import { egBridgeOf, egOnBridge } from './egSpanLaw.js';   // AUDIT EG III: Spir
 import { segDist, egPolyIn } from './egShape.js';   // EG-HERO-LAY: a hero's floors are polygons
 import { egWallFallenZ } from './egLaw.js';   // EG-ZB: a Falling Wall's fallen edge - and the Collapsing Tube's, below
 import { egTubeEdge } from './egFragLaw.js';
+import { egStampFloors } from './egLaw.js';   // THE ASCENT - HEIGHT: the floors a stamp lands on, the relay's own rule
+import { egFeetY, egOneStorey } from './egWalkGraph.js';
 
 // ── THE TIME LAW ─────────────────────────────────────────────────────────────────────────────────────────────
 /** A socket's offset to relay time is the least `arrival - ts` over this many of its last poses. */
@@ -132,6 +134,23 @@ export function egFightFloorAt(spec, x, y, z) {
     if (!best || fy > (best.y ?? 0)) best = f;
   }
   return best;
+}
+/**
+ * THE ASCENT (Elite-Gates-Ascent.md section 2) - DOES BLOW `bl` LAND WHERE FEET AT (x, y, z) STAND (hall `spec`'s frame - its
+ * fight ground, net/egWalkGraph.js egFightView): in a hall that judges by height, a blow that says its height (`y`) lands only
+ * in its own storey (net/egWalkGraph.js egOneStorey - the top of the fight floor the feet stand on, else the feet) and, on a
+ * fight floor, only on one of the floors under its anchor (net/egLaw.js egStampFloors - net/bossRef.js judgeShapes' rule), so
+ * a screen's own verdict judges the floors the relay does; a blow that names its members lands wherever they stand. Anywhere
+ * else - the laws before, a blow of no height - true (the screen's verdict in plan, as it was). Pure.
+ * @param {any} spec @param {any} bl @param {number} x @param {number} y @param {number} z
+ */
+export function egBlowLandsOn(spec, bl, x, y, z) {
+  const by = egFeetY(spec, bl?.y), H = egFeetY(spec, y);
+  if (!Number.isFinite(by) || !Number.isFinite(H) || bl.on) return true;
+  const f = egFightFloorAt(spec, x, H, z);
+  if (!egOneStorey(f ? f.y ?? 0 : H, by)) return false;
+  const ys = f ? egStampFloors(spec, bl.s?.[0], by) : null;
+  return !ys || ys.includes(f.y ?? 0);
 }
 
 // ── RIDDEN POSES (section 10.8) ──────────────────────────────────────────────────────────────────────────────

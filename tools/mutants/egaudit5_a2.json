@@ -115,8 +115,8 @@
   {
     "name": "EGA5A2-door-woken-no-here",
     "file": "src/net/egBrain.js",
-    "old": "const at = inHall.filter((b) => egAtDoor(spec, b.x, b.z) && B.mem[b.sub]?.hereH === B.h);",
-    "new": "const at = inHall.filter((b) => egAtDoor(spec, b.x, b.z));",
+    "old": "const at = inHall.filter((b) => egAtDoor(spec, b.x, b.z, b.y) && B.mem[b.sub]?.hereH === B.h);",
+    "new": "const at = inHall.filter((b) => egAtDoor(spec, b.x, b.z, b.y));",
     "tests": [
       "test/egaudit5_a2.test.js"
     ],

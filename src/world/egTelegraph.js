@@ -22,6 +22,7 @@ import { telegraphBounds, telegraphField, telegraphStrip, TELEGRAPH_KIND, TELEGR
 import { egInShape, segDist, egPieceIn } from '../net/egShape.js';
 import { egHazardParts, EG_HAZARDS } from '../net/egFragLaw.js';
 import { egFightFloorAt } from '../net/egFair.js';
+import { egOneStorey } from '../net/egWalkGraph.js';   // THE ASCENT - HEIGHT: a shape drawn on its own storey's floors, the peril arrow's blow of mine
 import { EG_FL } from '../net/egBodies.js';
 import { EG_VESTIGES } from '../net/egVestige.js';
 import { gateHitFlash } from './gateBoss.js';
@@ -194,13 +195,17 @@ function anchorOn(f, sh) {
  * Does a shape land at fight floor height `y`? At the heights the relay judges it at: those floors whose plan holds its
  * anchor within EG_FLOOR_NEAR_M (its centre; a lane's two ends; each of a discs' points - net/bossRef.js floorsUnder's
  * rule); at any height when no floor's plan holds an anchor of it, and for the whole floor's and the spokes'. Pure; read in
- * place, a floor a shape (AUDIT EG V, L6-4: no Set of heights a shape a frame).
+ * place, a floor a shape (AUDIT EG V, L6-4: no Set of heights a shape a frame). THE ASCENT (Elite-Gates-Ascent.md section
+ * 2): a shape whose blow or zone says the height it lands at (`sh.by` - a hall that judges by height) is drawn on the floors
+ * of that storey alone (net/egWalkGraph.js egOneStorey) - never on a fight floor stacked over or under it in plan.
  * @param {ReturnType<typeof egFightFloors>} floors @param {any} sh @param {number} y
  */
 function landsAt(floors, sh, y) {
+  const by = Number.isFinite(sh.by) ? sh.by : NaN;
+  if (!egOneStorey(y, by)) return false;
   if (!pinsFloors(sh)) return true;
   let any = false;
-  for (let k = 0; k < floors.length; k++) { if (!anchorOn(floors[k], sh)) continue; if (floors[k].y === y) return true; any = true; }
+  for (let k = 0; k < floors.length; k++) { if (!anchorOn(floors[k], sh) || !egOneStorey(floors[k].y, by)) continue; if (floors[k].y === y) return true; any = true; }
   return !any;
 }
 
@@ -305,7 +310,9 @@ const inStamps = (b, x, z) => b.s.some((s) => s[0] !== 'a' && egInShape(s, x, z)
  * stops at a wall or an open edge (the floor's own edge, never crossed), its exit the first point out of the shape, and a
  * bearing that also clears every other pending shape is preferred over a nearer one that does not. Answers `{ name, t, now,
  * check, dir, m }` (`dir` [dx, dz] or null - no way out in reach; `check` a CHECK, its order shown with no way) or null:
- * nothing on me, or I stand on no fight floor (traversal ground: no blow lands there). Pure.
+ * nothing on me, or I stand on no fight floor (traversal ground: no blow lands there). THE ASCENT (Elite-Gates-Ascent.md
+ * section 2): a blow that says its height lands on my feet only from my floor's storey (net/egWalkGraph.js egOneStorey) - one
+ * on the floor over or under mine in plan is never the peril. Pure.
  */
 export function egPerilOf(pending, f, fy, spec, now) {
   if (!f || !spec) return null;
@@ -313,7 +320,7 @@ export function egPerilOf(pending, f, fy, spec, now) {
   if (!fl) return null;
   let best = null;
   for (const b of pending ?? []) {
-    if (!(now < b.at) || now < b.at - b.wu || !inStamps(b, f[0], f[1])) continue;
+    if (!(now < b.at) || now < b.at - b.wu || !inStamps(b, f[0], f[1]) || !egOneStorey(fl.y ?? 0, Number.isFinite(b.y) ? b.y : NaN)) continue;
     if (!best || b.at < best.at) best = b;
   }
   if (!best) return null;

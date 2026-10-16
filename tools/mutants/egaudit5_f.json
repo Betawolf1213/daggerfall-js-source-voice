@@ -266,8 +266,8 @@
   {
     "name": "EGA5F-rim-no-way",
     "file": "src/net/egLaw.js",
-    "old": "return { rings, ways };",
-    "new": "return { rings, ways: [] };",
+    "old": "return byH ? { rings, ways, ys: { rings: ry, ways: wy } } : { rings, ways };",
+    "new": "return byH ? { rings, ways: [], ys: { rings: ry, ways: [] } } : { rings, ways: [] };",
     "tests": [
       "test/egaudit5_f_rim.test.js"
     ],
@@ -336,8 +336,8 @@
   {
     "name": "EGA5F-rim-ways-unzoned",
     "file": "src/net/egBrain.js",
-    "old": "for (const [k, list] of [['void', M.rings], ['haven', M.ways]])",
-    "new": "for (const [k, list] of [['void', M.rings]])",
+    "old": "for (const k of ['void', 'haven'])",
+    "new": "for (const k of ['void'])",
     "tests": [
       "test/egaudit5_f_rim.test.js"
     ],
@@ -369,7 +369,7 @@
   {
     "name": "EGA5F-screen-any-void",
     "file": "src/scenes/egFight.js",
-    "old": "&& egRimCastsBack(F.zones, f[0], f[1], t)) { voidAt = t; castBack(); }",
+    "old": "&& egRimCastsBack(F.zones, f[0], f[1], t, egFeetY(spec, fy))) { voidAt = t; castBack(); }",
     "new": ") { voidAt = t; castBack(); }",
     "tests": [
       "test/egaudit5_f_rim.test.js"

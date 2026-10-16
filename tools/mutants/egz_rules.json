@@ -310,14 +310,14 @@
   {
     "name": "EGZI-brain-the-late-here-unheard",
     "file": "src/net/egBrain.js",
-    "old": "if (m.hereH !== B.h && m.downH !== B.h && egOnArrive(spec, b.x, b.z, 1.5)) { m.hereH = B.h; heard = true; } }",
+    "old": "if (m.hereH !== B.h && m.downH !== B.h && egOnArrive(spec, b.x, b.z, 1.5, b.y)) { m.hereH = B.h; heard = true; } }",
     "new": "void m; }",
     "tests": ["test/egz_rules.test.js"]
   },
   {
     "name": "EGZI-brain-the-late-here-anywhere",
     "file": "src/net/egBrain.js",
-    "old": "if (m.hereH !== B.h && m.downH !== B.h && egOnArrive(spec, b.x, b.z, 1.5)) { m.hereH = B.h; heard = true; } }",
+    "old": "if (m.hereH !== B.h && m.downH !== B.h && egOnArrive(spec, b.x, b.z, 1.5, b.y)) { m.hereH = B.h; heard = true; } }",
     "new": "if (m.hereH !== B.h && m.downH !== B.h) { m.hereH = B.h; heard = true; } }",
     "tests": ["test/egz_rules.test.js"]
   },

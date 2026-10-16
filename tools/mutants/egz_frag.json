@@ -317,7 +317,7 @@
   {
     "name": "EGZ-the-early-arrival-ignored",
     "file": "src/net/egBrain.js",
-    "old": "  if (!B.lw && inHall.some((b) => low(b) && egAtDoor(spec, b.x, b.z))) B.lw = now;",
+    "old": "  if (!B.lw && inHall.some((b) => low(b) && egAtDoor(spec, b.x, b.z, b.y))) B.lw = now;",
     "new": "  if (false) B.lw = now;",
     "tests": [
       "test/egz_frag.test.js"
@@ -335,7 +335,7 @@
   {
     "name": "EGZ-the-late-low-road-left-behind",
     "file": "src/net/egBrain.js",
-    "old": "  const away = inHall.some((b) => low(b) && !egAtDoor(spec, b.x, b.z) && B.mem[b.sub]?.downH !== B.h);",
+    "old": "  const away = inHall.some((b) => low(b) && !egAtDoor(spec, b.x, b.z, b.y) && B.mem[b.sub]?.downH !== B.h);",
     "new": "  const away = false;",
     "tests": [
       "test/egz_frag.test.js"

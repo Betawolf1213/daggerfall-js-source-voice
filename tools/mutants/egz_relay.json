@@ -7,8 +7,8 @@
   { "name": "EGZQ-a-reached-node-unreached", "file": "src/net/egWalkGraph.js", "old": "  if (Math.hypot(wn.x - b.x, wn.z - b.z) <= EG_NODE_REACH_M) { b.fr = wn.rg;", "new": "  if (false) { b.fr = wn.rg;", "tests": ["test/egz_relay.test.js"] },
   { "name": "EGZQ-the-legion-keeps-its-stale-node", "file": "src/net/egLegion.js", "old": "  if (view?.fl?.length) egWayOn(view, a);", "new": "  if (view?.fl?.length) void 0;", "tests": ["test/egz_relay.test.js"] },
   { "name": "EGZQ-the-lords-ask-no-more", "file": "src/net/egLords.js", "old": "  egWayOn(view, L, G);\n  const from = regionOf", "new": "  const from = regionOf", "tests": ["test/egz_relay.test.js", "test/egz_lords.test.js", "test/egz_state.test.js"] },
-  { "name": "EGZQ-the-pin-unread", "file": "src/net/egWalkGraph.js", "old": "const to = b.pinned ? from : egRegionAt(view, G, gx, gz, gy)[0];", "new": "const to = egRegionAt(view, G, gx, gz, gy)[0];", "tests": ["test/egz_relay.test.js"] },
-  { "name": "EGZQ-the-pin-walks-to-its-member", "file": "src/net/egWalkGraph.js", "old": "const to = b.pinned ? from : egRegionAt(view, G, gx, gz, gy)[0];", "new": "const to = b.pinned ? egRegionAt(view, G, gx, gz, gy)[0] : from;", "tests": ["test/egz_relay.test.js"] },
+  { "name": "EGZQ-the-pin-unread", "file": "src/net/egWalkGraph.js", "old": "const to = b.pinned ? from : egRegionAt(", "new": "const to = egRegionAt(", "tests": ["test/egz_relay.test.js"] },
+  { "name": "EGZQ-the-pin-walks-to-its-member", "file": "src/net/egWalkGraph.js", "old": "const to = b.pinned ? from : egRegionAt(", "new": "const to = !b.pinned ? from : egRegionAt(", "tests": ["test/egz_relay.test.js"] },
 
   { "name": "EGZQ-markynaz-ignores-the-borne", "file": "src/net/egLords.js", "old": "if (!(D?.[key] > 0)) return key; }", "new": "return key; }", "tests": ["test/egz_relay.test.js"] },
   { "name": "EGZQ-markynaz-not-by-his-hall", "file": "src/net/egLords.js", "old": "const key = LORD_DECREES[(h + k) % LORD_DECREES.length];", "new": "const key = LORD_DECREES[k % LORD_DECREES.length];", "tests": ["test/egz_relay.test.js"] },

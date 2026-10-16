@@ -338,8 +338,8 @@
   {
     "name": "AUDIT EG V L1-10: the burning bridge a CHECK again",
     "file": "src/net/egLords.js",
-    "old": "nm: 'Burning Bridge', sp: 12_000 }, [], now, out);",
-    "new": "nm: 'Burning Bridge', sp: 12_000, ch: 1 }, [], now, out);",
+    "old": "nm: 'Burning Bridge', sp: 12_000, y: spotY(spec, b) }, [], now, out);",
+    "new": "nm: 'Burning Bridge', sp: 12_000, y: spotY(spec, b), ch: 1 }, [], now, out);",
     "tests": [
       "test/egaudit5_b.test.js"
     ]
@@ -347,8 +347,8 @@
   {
     "name": "AUDIT EG V L1-10: the falling floor a CHECK again",
     "file": "src/net/egLords.js",
-    "old": "nm: 'The Floor Falls' }, [], now, out);",
-    "new": "nm: 'The Floor Falls', ch: 1 }, [], now, out);",
+    "old": "nm: 'The Floor Falls', y: f.y }, [], now, out);",
+    "new": "nm: 'The Floor Falls', y: f.y, ch: 1 }, [], now, out);",
     "tests": [
       "test/egaudit5_b.test.js"
     ]
@@ -385,8 +385,8 @@
   {
     "name": "AUDIT EG V L1-10: a void that falls inside the window ground to flee to",
     "file": "src/net/egFloor.js",
-    "old": "  const gone = (zones ?? []).filter((z) => z.kind === 'void' && z.from <= until && z.until > now);",
-    "new": "  const gone = (zones ?? []).filter((z) => z.kind === 'void' && z.from <= now && z.until > now);",
+    "old": "  const gone = (zones ?? []).filter((z) => z.kind === 'void' && z.from <= until && z.until > now && onZoneFloor(z, y));",
+    "new": "  const gone = (zones ?? []).filter((z) => z.kind === 'void' && z.from <= now && z.until > now && onZoneFloor(z, y));",
     "tests": [
       "test/egaudit5_b.test.js"
     ]
@@ -394,8 +394,8 @@
   {
     "name": "AUDIT EG V L1-12: the true disc's part said",
     "file": "src/net/egLords.js",
-    "old": "obj(F, 'umbra', p[0], p[1], 0, now, out, { r: 2, extra: { real: j === trueAt ? 1 : 0 } })",
-    "new": "obj(F, 'umbra', p[0], p[1], 0, now, out, { r: 2, extra: { real: j === trueAt ? 1 : 0 }, pt: j === trueAt ? 1 : 0 })",
+    "old": "obj(F, 'umbra', p[0], p[1], 0, now, out, { r: 2, extra: { real: j === trueAt ? 1 : 0 }, y: p[2] })",
+    "new": "obj(F, 'umbra', p[0], p[1], 0, now, out, { r: 2, extra: { real: j === trueAt ? 1 : 0 }, pt: j === trueAt ? 1 : 0, y: p[2] })",
     "tests": [
       "test/egaudit5_b.test.js"
     ]
@@ -669,8 +669,8 @@
   {
     "name": "AUDIT EG V L1-25: the touch by the beat's poses",
     "file": "src/net/egLords.js",
-    "old": "    if (pl) { delete F.mem.pools[bl.i]; for (const st of bl.s) zoneOut(F, 'burn', shDisc(st[1], st[2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el }); }",
-    "new": "    if (pl) { delete F.mem.pools[bl.i]; for (const st of bl.s) zoneOut(F, 'burn', shDisc(st[1], st[2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el }); }\n    { const by = egBodyById(F, bl.o); if (by?.role === EG_ROLE.lord) KITS[by.key]?.landed?.(F, by, bl, here.filter((m) => bl.s.some((s) => Math.hypot(m.x - s[1], m.z - s[2]) <= (s[3] ?? 0)))); }",
+    "old": "    if (pl) { delete F.mem.pools[bl.i]; for (const st of bl.s) zoneOut(F, 'burn', shDisc(st[1], st[2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el, y: bl.y }); }",
+    "new": "    if (pl) { delete F.mem.pools[bl.i]; for (const st of bl.s) zoneOut(F, 'burn', shDisc(st[1], st[2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el, y: bl.y }); }\n    { const by = egBodyById(F, bl.o); if (by?.role === EG_ROLE.lord) KITS[by.key]?.landed?.(F, by, bl, here.filter((m) => bl.s.some((s) => Math.hypot(m.x - s[1], m.z - s[2]) <= (s[3] ?? 0)))); }",
     "tests": [
       "test/egaudit5_b.test.js"
     ]
@@ -696,7 +696,7 @@
   {
     "name": "AUDIT EG V L1-26: the route across the magma",
     "file": "src/net/egLords.js",
-    "old": "  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (egOnFight(spec, x0 + i * g, z0 + j * g)) floor[j * W + i] = 1;",
+    "old": "  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (egOnFight(spec, x0 + i * g, z0 + j * g, 0, y)) floor[j * W + i] = 1;",
     "new": "  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) floor[j * W + i] = 1;",
     "tests": [
       "test/egaudit5_b.test.js"

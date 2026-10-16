@@ -34,6 +34,7 @@
 import { egInBlow, egInShape, segDist, EG_ESCAPE_MPS, EG_REACT_S } from './egShape.js';
 import { egVentAt, EG_VENT_FIRE_MS } from './egLaw.js';
 import { egHazardParts, EG_HAZARDS } from './egFragLaw.js';
+import { egByHeight, egBears } from './egWalkGraph.js';   // THE ASCENT - HEIGHT: a zone lies on its own floor
 
 /** A held blow waits a tick and is dropped after this many (section 13.2). */
 export const EG_UNION_HOLD_TICKS = 4;
@@ -103,20 +104,25 @@ function emptied(list, px, pz, now, onFloor, burns = []) {
 }
 
 // ── AUDIT EG V (lane1 #10): THE FIGHT'S ZONES IN THE SET ───────────────────────────────────────────────────────
+/** THE ASCENT (Elite-Gates-Ascent.md section 2): does zone `z` lie on the floor of feet at `y` - a zone that says its floor's
+ *  height (`y`, a hall that judges by height) only where that floor bears them (net/egWalkGraph.js egBears); any, else. */
+const onZoneFloor = (z, y) => !Number.isFinite(z.y) || egBears(z.y, y);
 /**
  * The fight's zones (`F.zones` - net/egLords.js zoneOut's `{ kind, s, from, until }`) that come down in (`now`, `until`]: each
  * burning or fallen ground told and not yet down, a pending landing at its onset (`{ s, at, sp, ch: 0, o: 0, i: 0 }`). Pure.
+ * THE ASCENT (section 2): a zone that says its floor's height lands at it (`y`).
  * @param {any[]|undefined} zones @param {number} now @param {number} until
  */
 export const egZoneLandings = (zones, now, until) => (zones ?? []).filter((z) => (z.kind === 'burn' || z.kind === 'void') && z.from > now && z.from <= until && z.until > z.from)
-  .map((z) => ({ s: [z.s], at: z.from, sp: z.until - z.from, ch: 0, o: 0, i: 0 }));
+  .map((z) => ({ s: [z.s], at: z.from, sp: z.until - z.from, ch: 0, o: 0, i: 0, ...(Number.isFinite(z.y) ? { y: z.y } : {}) }));
 /**
  * The member's fight floor `onFloor` less the floor gone over (`now`, `until`]: every void zone standing in it (a fallen
- * island, a fallen third, the Molten Rim) is no ground to flee to. Pure; answers `onFloor` itself when none stands.
- * @param {(x: number, z: number) => boolean} onFloor @param {any[]|undefined} zones @param {number} now @param {number} until
+ * island, a fallen third, the Molten Rim) is no ground to flee to. Pure; answers `onFloor` itself when none stands. THE ASCENT
+ * (section 2): `y` the member's feet - only the voids of its own floor (onZoneFloor).
+ * @param {(x: number, z: number) => boolean} onFloor @param {any[]|undefined} zones @param {number} now @param {number} until @param {number} [y]
  */
-export function egFloorLess(onFloor, zones, now, until) {
-  const gone = (zones ?? []).filter((z) => z.kind === 'void' && z.from <= until && z.until > now);
+export function egFloorLess(onFloor, zones, now, until, y = NaN) {
+  const gone = (zones ?? []).filter((z) => z.kind === 'void' && z.from <= until && z.until > now && onZoneFloor(z, y));
   return gone.length ? (x, z) => onFloor(x, z) && !gone.some((q) => egInShape(q.s, x, z)) : onFloor;
 }
 
@@ -125,9 +131,10 @@ export function egFloorLess(onFloor, zones, now, until) {
  * s, from, until }`) that stand at some instant of (`now`, `until`] - a pool burning already, a claimed third, Both Courts Burn,
  * a Last Lesson's ring, a flooded channel - each no ground to flee to while it burns: the union floor's set crosses one between
  * landings and never stands in one as a landing comes (egUnionHolds' `burns`). Pure.
- * @param {any[]|undefined} zones @param {number} now @param {number} until
+ * THE ASCENT (section 2): `y` the member's feet - the burns of its own floor alone (onZoneFloor).
+ * @param {any[]|undefined} zones @param {number} now @param {number} until @param {number} [y]
  */
-export const egBurnsIn = (zones, now, until) => (zones ?? []).filter((z) => z.kind === 'burn' && z.from <= until && z.until > now);
+export const egBurnsIn = (zones, now, until, y = NaN) => (zones ?? []).filter((z) => z.kind === 'burn' && z.from <= until && z.until > now && onZoneFloor(z, y));
 
 // ── THE PLACE'S LANDINGS (section 13.2: "Pendulums, vents and the place's hazards are tested in the same set") ──
 /** A Rampart vent's lane as a stamp (its rectangle's capsule - a little wider at its ends: the set's favour). */
@@ -162,7 +169,7 @@ export function egPlaceLandings(spec, wokeAt, now, until) {
       for (const p of egHazardParts(hz, t / 1000)) {
         if (p.st !== 'live' || seen.has(p.key) || p.sh[0] === 'h' || p.sh[0] === 'a') continue;
         seen.add(p.key);
-        out.push({ s: [p.sh], at: t, sp: L.live, ch: 0, o: 0, i: 0 });
+        out.push({ s: [p.sh], at: t, sp: L.live, ch: 0, o: 0, i: 0, ...(egByHeight(spec) ? { y: hz.y ?? 0 } : {}) });   // THE ASCENT: at its own height
       }
     }
   }

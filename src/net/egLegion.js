@@ -37,6 +37,7 @@ import { egFace } from './egBodies.js';   // AUDIT EG V (lane1 #7): an add's tur
 import { shDisc, shLaneAt, shCone, egChainGapMs } from './egShape.js';
 import { egKeepOnFight, egOnFight } from './egLaw.js';
 import { egWalkNext, egAirNext, egAirKeep, egArchCut, egGroundAt, egWalkFeet, egFeetAt, egWayOn, EG_PIECE_TOUCH_M } from './egWalkGraph.js';   // EG-ZB: the walk graph and the air; EG-ZJ: the feet on it; EG-ZQ: the way on kept only while walked
+import { egByHeight, egFeetY, egOneStorey, egStoreyY } from './egWalkGraph.js';   // THE ASCENT - HEIGHT: the legion keeps to its own storey
 import { harrierCountFor } from './gateBrain.js';
 import { ATTACKS, POOLS, HARRIER_S, HOST_RETARGET_MS, HARRIER_BITE_REACH } from './gateBrain.js';   // AUDIT EG IV (lane1 #16; ONE DFU MEMBER, ONE EXPORT): the gate's rows read, never copied - the Daedra Lord's Cleave, the Caster's burning ground, the Harrier's health, mark and bite
 import { wrapAngle } from '../world/mat4.js';   // the one wrap (ONCRASH1 C2) - already in the relay's graph
@@ -127,7 +128,7 @@ export function egAirY(view, m, a) {
  *  (kept out of a passage's rock) `stop` short. EG-ZJ: at its mark's height (egAirY - `m` the mark, its `y` the height). EG-ZK:
  *  a flying lord's too (net/egLords.js). */
 export function walkAir(F, view, a, gx, gz, stop, speed, now, m = null) {
-  const [tx, tz] = egAirKeep(view, gx, gz), [x, z] = egAirNext(view, a.x, a.z, tx, tz);
+  const [tx, tz] = egAirKeep(view, gx, gz, a.y), [x, z] = egAirNext(view, a.x, a.z, tx, tz, a.y);   // THE ASCENT: the rock at its own height
   egWalk(F, a, x, z, x === tx && z === tz ? stop : 0, speed, now, view, 0, true, egAirY(view, m ?? { x: gx, z: gz }, a));
 }
 
@@ -136,6 +137,12 @@ export const egKindLook = (k, band) => { const K = EG_LEGION_KINDS[k] ?? EG_LEGI
 /** An add's health in a fight. */
 export const egKindHp = (F, k, team = 1) => { const K = EG_LEGION_KINDS[k]; return K.team ? egHpTeam(F, K.hpS, team) : egHpMean(F, K.hpS); };
 const elOf = (F, el) => (el === 'band' ? F.el : el ?? null);
+/** THE ASCENT (Elite-Gates-Ascent.md section 2): do body `a` and member (or body) `m` stand in one storey of hall `spec` - their
+ *  fight floors' tops (net/egWalkGraph.js egStoreyY) under EG_STACK_M apart? Always, in a hall that judges in plan alone. A blow
+ *  is thrown only at one of its own storey: it lands there alone. */
+export const egSameStorey = (spec, a, m) => !egByHeight(spec) || !Number.isFinite(a?.y) || !Number.isFinite(m?.y) || egOneStorey(egStoreyY(spec, a.x, a.y, a.z), egStoreyY(spec, m.x, m.y, m.z));
+/** THE ASCENT: a body's place as a spot `[x, z, y]` - its feet with it where the hall judges by height, `[x, z]` before. */
+const spotOf = (spec, b) => (egByHeight(spec) && Number.isFinite(b.y) ? [b.x, b.z, b.y] : [b.x, b.z]);
 const near = (b, here) => { let best = null, bd = Infinity; for (const m of here) { const d = Math.hypot(m.x - b.x, m.z - b.z); if (d < bd) { bd = d; best = m; } } return best ? { m: best, d: bd } : null; };
 const far = (x, z, here) => { let best = null, bd = -1; for (const m of here) { const d = Math.hypot(m.x - x, m.z - z); if (d > bd) { bd = d; best = m; } } return best; };
 
@@ -254,8 +261,8 @@ function addBlow(F, spec, a, tx, tz, now, here, out, { chain = 0, twin = 0, atFe
     egAim(F, spec, { ...base, s: [shLaneAt(tx, tz, yaw, B.len, B.w)], at, wu: at - now, nm: 'Twin Charge' }, here, now, out);
   }
   if (B.run) {
-    const L = Math.min(B.len, Math.hypot(tx - a.x, tz - a.z) + 4), [ex, ez] = egKeepOnFight(spec, a.x + Math.sin(yaw) * L, a.z + Math.cos(yaw) * L, K.r);
-    const cut = egArchCut(spec, a.x, a.z, ex, ez);   // EG-ZB (section 11.7): a charge run into an arch's wall ends at it
+    const L = Math.min(B.len, Math.hypot(tx - a.x, tz - a.z) + 4), [ex, ez] = egKeepOnFight(spec, a.x + Math.sin(yaw) * L, a.z + Math.cos(yaw) * L, K.r, a.y);   // THE ASCENT: its run ends on its own floor
+    const cut = egArchCut(spec, a.x, a.z, ex, ez, a.y);   // EG-ZB (section 11.7): a charge run into an arch's wall ends at it
     a.runTo = cut ? [cut[0], cut[1] - Math.sign(ez - a.z) * (K.r + 0.4), first.at + first.sp] : [ex, ez, first.at + first.sp];
   }
   return first;
@@ -309,7 +316,7 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
         if (!mark) { egStop(F, a, now); break; }
         const hunt = hunted.includes(mark);
         // a shadow over a platform body-blocks and never bites: only a member on the fight ground (an island, a plate)
-        if (Math.hypot(a.x - mark.x, a.z - mark.z) <= EG_BITE_REACH && (hunt || !ctx.span || here.some((m) => m.sub === mark.sub))) {
+        if (Math.hypot(a.x - mark.x, a.z - mark.z) <= EG_BITE_REACH && (hunt || !ctx.span || here.some((m) => m.sub === mark.sub)) && egSameStorey(spec, a, mark)) {
           egStop(F, a, now);
           const bl = addBlow(F, spec, a, a.x, a.z, now, here, out, { chain });
           if (bl && hunt) bl.hn = mark.sub;   // the census judges a hunted member's Bite off the floors (net/bossRef.js)
@@ -318,8 +325,8 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
         if (ctx.span) walkAir(F, spec, a, mark.x, mark.z, 1, K.speed, now, mark);
         else if (hunt) {
           // along the graph to the floor's edge nearest them, then on through the air
-          const [kx, kz] = egKeepOnFight(spec, mark.x, mark.z, 0.5);
-          if (Math.hypot(a.x - kx, a.z - kz) <= EG_HUNT_LEAVE_M || !egGroundAt(spec, a.x, NaN, a.z, 0.5)) walkAir(F, spec, a, mark.x, mark.z, 1, K.speed, now, mark);
+          const [kx, kz] = egKeepOnFight(spec, mark.x, mark.z, 0.5, a.y);   // THE ASCENT: the edge of its own storey's floor
+          if (Math.hypot(a.x - kx, a.z - kz) <= EG_HUNT_LEAVE_M || !egGroundAt(spec, a.x, egFeetY(spec, a.y), a.z, 0.5)) walkAir(F, spec, a, mark.x, mark.z, 1, K.speed, now, mark);
           else walkGraph(F, spec, a, kx, kz, 0, K.speed, now);
         } else walkGraph(F, spec, a, mark.x, mark.z, 1, K.speed, now, mark.y);
         break;
@@ -333,7 +340,7 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
       }
       case EG_KIND.bearer: {
         const n = near(a, seen);
-        if (!n || n.d > 6 || now < (a.next ?? 0)) break;
+        if (!n || n.d > 6 || now < (a.next ?? 0) || !egSameStorey(spec, a, n.m)) break;
         a.next = now + K.blow.every;
         addBlow(F, spec, a, a.x, a.z, now, here, out, { chain });
         break;
@@ -342,11 +349,11 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
         const n = near(a, seen);
         if (!n) { egStop(F, a, now); break; }
         const reach = a.k === EG_KIND.breaker ? 14 : a.k === EG_KIND.dlord ? K.blow.reach : 3.5;   // AUDIT EG IV (lane1 #16): the Daedra Lord's the gate's Cleave's
-        if (n.d <= reach && now >= (a.next ?? 0)) {
+        if (n.d <= reach && now >= (a.next ?? 0) && egSameStorey(spec, a, n.m)) {
           egStop(F, a, now);
           addBlow(F, spec, a, n.m.x, n.m.z, now, here, out, { chain, twin: a.k === EG_KIND.breaker ? twin : 0 });
           a.next = now + (a.k === EG_KIND.breaker ? 4000 : 2600);
-          if (a.k === EG_KIND.kynval && egHas(a, EG_FL.searing) && ctx.pool) ctx.pool(a.x, a.z, 2.5, now + K.blow.wu, 6000, 0.05, 2, F.el);
+          if (a.k === EG_KIND.kynval && egHas(a, EG_FL.searing) && ctx.pool) ctx.pool(a.x, a.z, 2.5, now + K.blow.wu, 6000, 0.05, 2, F.el, 'burn', a.y);
           break;
         }
         walkGraph(F, spec, a, n.m.x, n.m.z, a.k === EG_KIND.breaker ? 10 : 1.5, K.speed, now, n.m.y);
@@ -359,11 +366,12 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
           const want = (EG_CASTER_RANGE[0] + EG_CASTER_RANGE[1]) / 2, ux = (a.x - n.m.x) / (n.d || 1), uz = (a.z - n.m.z) / (n.d || 1);
           walkGraph(F, spec, a, n.m.x + ux * want, n.m.z + uz * want, 0.5, K.speed, now);
         } else egStop(F, a, now);
-        if (now >= (a.next ?? 0)) {
-          const tgt = seen[Math.floor(rng() * seen.length)] ?? n.m;
+        const mine = egByHeight(spec) ? seen.filter((m) => egSameStorey(spec, a, m)) : seen;   // THE ASCENT: a bolt only at its own storey
+        if (now >= (a.next ?? 0) && mine.length) {
+          const tgt = mine[Math.floor(rng() * mine.length)] ?? n.m;
           a.next = now + K.blow.every + Math.floor(rng() * K.blow.jitter);
           const bl = addBlow(F, spec, a, tgt.x, tgt.z, now, here, out, { chain, atFeet: true });
-          if (bl && ctx.pool) ctx.pool(tgt.x, tgt.z, POOLS.hellfire.r, bl.at, POOLS.hellfire.ms, POOLS.hellfire.pct, POOLS.hellfire.base, F.el);   // AUDIT EG IV (lane1 #16): the gate's burning ground (POOLS' hellfire), never a copy
+          if (bl && ctx.pool) ctx.pool(tgt.x, tgt.z, POOLS.hellfire.r, bl.at, POOLS.hellfire.ms, POOLS.hellfire.pct, POOLS.hellfire.base, F.el, 'burn', bl.y);   // AUDIT EG IV (lane1 #16): the gate's burning ground (POOLS' hellfire), never a copy
         }
         break;
       }
@@ -371,7 +379,7 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
         if (ctx.span) { diverOnSpan(F, spec, a, K, now, here, out, ctx, chain, sure ? ctx.shadow ?? here : shadowAll); break; }
         const n = near(a, seen);
         if (!n) { egStop(F, a, now); break; }
-        if (now >= (a.next ?? 0) && egOnFight(spec, n.m.x, n.m.z, -3)) {
+        if (now >= (a.next ?? 0) && egOnFight(spec, n.m.x, n.m.z, -3, n.m.y)) {
           a.next = now + K.blow.every;
           egStop(F, a, now);
           addBlow(F, spec, a, n.m.x, n.m.z, now, here, out, { chain });
@@ -389,7 +397,7 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
         }
         const n = near(a, seen);
         if (!n) { egStop(F, a, now); break; }
-        if (n.d <= 2.5 && now >= (a.next ?? 0)) { egStop(F, a, now); addBlow(F, spec, a, a.x, a.z, now, here, out, { chain }); a.next = now + 2500; break; }
+        if (n.d <= 2.5 && now >= (a.next ?? 0) && egSameStorey(spec, a, n.m)) { egStop(F, a, now); addBlow(F, spec, a, a.x, a.z, now, here, out, { chain }); a.next = now + 2500; break; }
         walkGraph(F, spec, a, n.m.x, n.m.z, 1.5, K.speed, now, n.m.y);
         break;
       }
@@ -400,7 +408,7 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
             const g = a.cast.g;
             a.cast = null; a.raised = 1;
             if (F.pg.raise?.[0] === a.i) F.pg.raise = null;
-            if (egLegionSummon(F, [g.k], [[g.x, g.z]], now, out, { wave: a.wv }).length) out.push({ k: 'esay', w: 'raised' });   // AUDIT EG IV (lane1 #6): within the room under the cap
+            if (egLegionSummon(F, [g.k], [Number.isFinite(g.y) ? [g.x, g.z, g.y] : [g.x, g.z]], now, out, { wave: a.wv }).length) out.push({ k: 'esay', w: 'raised' });   // AUDIT EG IV (lane1 #6): within the room under the cap
           }
           break;
         }
@@ -536,15 +544,15 @@ function diverOnSpan(F, view, a, K, now, here, out, ctx, chain, shadow = ctx.sha
  */
 export function egAddSlain(F, spec, a, sub, now, here, out, ctx = {}) {
   const D = ctx.decrees ?? {};
-  (F.mem.fallen ??= []).push({ k: a.k, x: a.x, z: a.z, wv: a.wv });
+  (F.mem.fallen ??= []).push({ k: a.k, x: a.x, z: a.z, wv: a.wv, ...(egByHeight(spec) && Number.isFinite(a.y) ? { y: a.y } : {}) });   // THE ASCENT: the floor it fell on
   if (F.mem.fallen.length > 24) F.mem.fallen.shift();
-  if (D.pyre) egAim(F, spec, { o: 0, s: [shDisc(a.x, a.z, D.pyre >= 2 ? 3.5 : 2.5)], at: now + (D.pyre >= 2 ? 1200 : 1000), wu: D.pyre >= 2 ? 1200 : 1000, p: (D.pyre >= 2 ? 0.15 : 0.1) * egShareX(F.c), b: 0, el: 'fire', nm: 'Pyre' }, here, now, out);
-  if (D.shades && a.k !== EG_KIND.shade && sub) { const s = egLegionRaise(F, [EG_KIND.shade], [[a.x, a.z]], now, out, {}); if (s[0]) { s[0].tg = sub; s[0].burstAt = now + EG_SHADE_MS; s[0].up = now; } }
+  if (D.pyre) egAim(F, spec, { o: 0, s: [shDisc(a.x, a.z, D.pyre >= 2 ? 3.5 : 2.5)], at: now + (D.pyre >= 2 ? 1200 : 1000), wu: D.pyre >= 2 ? 1200 : 1000, p: (D.pyre >= 2 ? 0.15 : 0.1) * egShareX(F.c), b: 0, el: 'fire', nm: 'Pyre', y: a.y }, here, now, out);   // THE ASCENT: on the floor it fell on
+  if (D.shades && a.k !== EG_KIND.shade && sub) { const s = egLegionRaise(F, [EG_KIND.shade], [spotOf(spec, a)], now, out, {}); if (s[0]) { s[0].tg = sub; s[0].burstAt = now + EG_SHADE_MS; s[0].up = now; } }
   if (D.rally) {
     const x = D.rally >= 2 ? 0.15 : 0.1;
     for (const b of egBodiesOf(F, EG_ROLE.add)) if (b.wv === a.wv && b !== a && (b.rally ?? 0) < 3) { b.rally = (b.rally ?? 0) + 1; const add = Math.round(b.h0 * x); b.max += add; b.hp += add; }
   }
-  if (D.soulpools && ctx.pool) ctx.pool(a.x, a.z, D.soulpools >= 2 ? 3.5 : 2.5, now, 8000, 0, 0, null, 'soul');
+  if (D.soulpools && ctx.pool) ctx.pool(a.x, a.z, D.soulpools >= 2 ? 3.5 : 2.5, now, 8000, 0, 0, null, 'soul', a.y);
 }
 /** A Kynval squad (section 8.7): four elites in place of a wave, each with one affix - AUDIT EG V (h, A2 NEW-1; section 12): a
  *  mechanic's body, as the Honour Horn's Kynval is (egLegionSummon `need`): all four stand whatever the room the legion's cap

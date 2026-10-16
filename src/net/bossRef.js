@@ -39,9 +39,11 @@ import { SD_BLOW_BY_ID, SD_BLOWS, SD_RESET_PCT, SD_END_PCT, SD_ARENA_SLACK, blow
 import { SERPENT_ATTACK_BY_ID, SERPENT_ATTACK_TABLE, GRIP, CRUSH, MAEL_GRIND, MAEL_EYE_R, coilHolds, serpentShipsFighting, serpentOnShip } from './serpentBrain.js';
 import { shapeMeets, fleetShare } from '../systems/serpentStrike.js';
 import { deepIn, BODY_AFTER_MS } from './bossBody.js';
-import { egInBlow, egInShape, segDist, egPieceIn } from './egShape.js';   // EG-H1: the Spire's FULL shape stamps, one judge for them all
+import { egInBlow, egInShape } from './egShape.js';   // EG-H1: the Spire's FULL shape stamps, one judge for them all
 import { egTrailAt, egTrailAfter, egTrailNear, egTrailReady, egFightFloorAt, EG_POSE_WAIT_MS, EG_POSE_NEAR_MS, EG_TS_LAG_MAX_MS } from './egFair.js';   // EG-H1: THE TIME LAW's trails; AUDIT EG V: the edge a trail is whole to
 import { egVentAt, EG_VENT_PCT } from './egLaw.js';
+import { egStampFloors } from './egLaw.js';   // THE ASCENT - HEIGHT: a stamp lands on the floors of its own storey
+import { egFeetY, egOneStorey } from './egWalkGraph.js';
 import { egHazardParts, EG_HAZARDS } from './egFragLaw.js';
 
 const dist = (ax, az, bx, bz) => Math.hypot(ax - bx, az - bz);
@@ -207,15 +209,21 @@ export function judgeSerpent(f, bodies, now) {
 // feeds net/bossBody.js's count (bodyStruck) and the census. WHAT IS COUNTED is the gate's law: a plain blow's share; an
 // element's blow is the struck member's own save, so it is SEEN (the census) and takes nothing (`share` 0). Each blow
 // once per body (`bh`), marked done (`bj`) once its wait is over.
+/** THE ASCENT (Elite-Gates-Ascent.md section 2): does a trail entry `e` (`[t, x, y, z, h]`) stand in the storey of a blow
+ *  landing at height `by` (net/egWalkGraph.js egOneStorey - its fight floor's top, else its feet)? Any when `by` is not
+ *  known (a hall that judges in plan alone, a blow that says no height). */
+const inStorey = (spec, e, by) => !Number.isFinite(by) || egOneStorey(egFightFloorAt(spec, e[1], e[2], e[3])?.y ?? e[2], by);
 /**
  * Is a body on trail `tr` deep in `test` at the landing `at` in hall `h` - before it and after it both, on a fight floor of
- * one of `ys` (the heights the blow lands at; null any)? Pure.
+ * one of `ys` (the heights the blow lands at; null any)? THE ASCENT (section 2): and in the storey of the blow's own height
+ * `by` (a blow on a floor stacked over another never lands on a body on the one under it, nor the other way). Pure.
  */
-function deepShared(test, tr, at, h, spec, ys, free = false) {
+function deepShared(test, tr, at, h, spec, ys, free = false, by = NaN) {
   if (!egTrailNear(tr, at)) return false;
   const p0 = egTrailAt(tr, at), p1 = egTrailAfter(tr, at) ?? p0;
   if (!p0 || p0[4] !== h || p1[4] !== h) return false;
   if (!free) for (const p of [p0, p1]) { const f = egFightFloorAt(spec, p[1], p[2], p[3]); if (!f || (ys && !ys.includes(f.y ?? 0))) return false; }
+  if (!inStorey(spec, p0, by) || !inStorey(spec, p1, by)) return false;
   return deepIn(test, p0[1], p0[3]) && deepIn(test, p1[1], p1[3]);
 }
 /**
@@ -224,21 +232,20 @@ function deepShared(test, tr, at, h, spec, ys, free = false) {
  * WIDTH RULE's margin on a fight floor of one of `ys` (an aimed blow's law); or `point`, at its feet within `band` m of the
  * field's height `y` wherever it stands (a traversal hazard's - the screens' own egHazardBites). Pure.
  */
-function caughtWhile(test, tr, from, until, h, spec, ys, { free = false, point = false, y = null, band = 1.5 } = {}) {
+function caughtWhile(test, tr, from, until, h, spec, ys, { free = false, point = false, y = null, band = 1.5, by = NaN } = {}) {
   for (const e of tr ?? []) {
     if (e[0] <= from || e[0] > until || e[4] !== h) continue;
     if (point) { if ((y == null || Math.abs(e[2] - y) <= band) && test(e[1], e[3])) return true; continue; }
     if (!free) { const f = egFightFloorAt(spec, e[1], e[2], e[3]); if (!f || (ys && !ys.includes(f.y ?? 0))) continue; }
+    if (!inStorey(spec, e, by)) continue;   // THE ASCENT: the blow's own storey
     if (deepIn(test, e[1], e[3])) return true;
   }
   return false;
 }
-/** The fight floors' heights a stamp lands on: those whose plan holds its anchor (a CHECK's, every floor: null). */
-function floorsUnder(spec, s) {
-  if (!s || s[0] === 'a' || s[0] === 'h') return null;
-  const ys = (spec?.fl ?? []).filter((f) => (f.t === 'p' ? egPieceIn(f, s[1], s[2], 1) : f.t === 'd' ? Math.hypot(s[1] - f.x, s[2] - f.z) <= f.r + 1 : segDist(s[1], s[2], f.ax, f.az, f.bx, f.bz) <= f.hw + 1)).map((f) => f.y ?? 0);   // EG-HERO-LAY: a hero's fight floor, its polygon
-  return ys.length ? ys : null;
-}
+/** The fight floors' heights a stamp lands on: those whose plan holds its anchor (a CHECK's, every floor: null). EG-HERO-LAY: a
+ *  hero's fight floor, its polygon. THE ASCENT (Elite-Gates-Ascent.md section 2): in a hall that judges by height, those of the
+ *  storey of the blow's own height `y` alone (net/egLaw.js egStampFloors - the rule's one home). */
+const floorsUnder = (spec, s, y = NaN) => egStampFloors(spec, s, y, 1);
 /**
  * EG-H1 - THE SPIRE'S BLOWS (`F.blows`, net/egBodies.js - each said with its FULL stamp): each landed blow judged on each
  * living member's shared-time trail once its trail is ready (egTrailReady) - `[{sub, share, i, k: 0}]`, `share` the blow's
@@ -261,7 +268,8 @@ export function judgeShapes(F, bodies, now, spec) {
   for (const a of F.blows ?? []) {
     if (a.bj || now < a.at) continue;
     a.bh ??= [];
-    const share = a.el == null ? Math.min(1, Math.max(0, a.p)) : 0, ys = floorsUnder(spec, a.s?.[0]), sp = Math.max(0, a.sp ?? 0), test = (x, z) => egInBlow(a, x, z);
+    // THE ASCENT (section 2): the blow's own height (`y` - its thrower's storey, net/egBodies.js egAim) in a hall that judges by height
+    const by = egFeetY(spec, a.y), share = a.el == null ? Math.min(1, Math.max(0, a.p)) : 0, ys = floorsUnder(spec, a.s?.[0], by), sp = Math.max(0, a.sp ?? 0), test = (x, z) => egInBlow(a, x, z);
     for (const b of bodies) {
       if (a.bh.includes(b.sub)) continue;   // caught, or judged at its landing
       // EG-ZB (section 11.7): a Harrier's Bite on a member it HUNTS (`hn`) is judged off the floors for that member alone
@@ -277,18 +285,18 @@ export function judgeShapes(F, bodies, now, spec) {
         // EG-ZB (section 21): A LINGERING FIELD (a charge's run, a burning bridge) catches at its landing as a blow does, or by
         // any pose sent inside it while it lasts - the screens' own verdict (net/egShape.js egBlowVerdict's span)
         a.bl ??= {}; a.bt ??= {};
-        if (!a.bl[b.sub]) { if (!egTrailReady(b.tr, a.at, now)) continue; a.bl[b.sub] = 1; if (deepShared(test, b.tr, a.at, F.h, spec, ys, free)) { a.bh.push(b.sub); out.push(hit); continue; } }
+        if (!a.bl[b.sub]) { if (!egTrailReady(b.tr, a.at, now)) continue; a.bl[b.sub] = 1; if (deepShared(test, b.tr, a.at, F.h, spec, ys, free, by)) { a.bh.push(b.sub); out.push(hit); continue; } }
         // AUDIT EG V (lane4 L4-1; section 21): read to the edge the trail is whole to - a pose is placed up to
         // EG_TS_LAG_MAX_MS before it arrives, and the room's stand-ins for a silent body stand that far back - so a pose
         // still on its way when the read went past its instant is never skipped
         const from = a.bt[b.sub] ?? a.at, upto = Math.max(from, Math.min(now - EG_TS_LAG_MAX_MS, a.at + sp));
-        if (caughtWhile(test, b.tr, from, upto, F.h, spec, ys, { free })) { a.bh.push(b.sub); out.push(hit); }
+        if (caughtWhile(test, b.tr, from, upto, F.h, spec, ys, { free, by })) { a.bh.push(b.sub); out.push(hit); }
         a.bt[b.sub] = upto;
         continue;
       }
       if (!egTrailReady(b.tr, a.at, now)) continue;
       a.bh.push(b.sub);
-      if (deepShared(test, b.tr, a.at, F.h, spec, ys, free)) out.push(hit);
+      if (deepShared(test, b.tr, a.at, F.h, spec, ys, free, by)) out.push(hit);
     }
     if (now >= a.at + sp + EG_POSE_WAIT_MS) a.bj = 1;
   }

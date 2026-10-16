@@ -251,7 +251,7 @@
   {
     "name": "EGMADE-a-fight-floor-traversed",
     "file": "src/scenes/egClient.js",
-    "old": "      return !egOnFight(spec, egLocalX(spec, at.sx), at.z);",
+    "old": "      return !egOnFight(spec, egLocalX(spec, at.sx), at.z, 0, at.y);",
     "new": "      return true;",
     "tests": [
       "test/egmade_law.test.js"

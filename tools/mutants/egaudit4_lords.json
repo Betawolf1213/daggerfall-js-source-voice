@@ -155,8 +155,8 @@
   {
     "name": "EGA4-lords-wire-drops-on",
     "file": "src/net/wire.js",
-    "old": "sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}), ...(m.ol != null ? { ol: m.ol } : {}) };",
-    "new": "sp: m.sp, ...(m.ol != null ? { ol: m.ol } : {}) };",
+    "old": "sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}), ...(m.ol != null ? { ol: m.ol } : {}), ...(m.y != null ? { y: m.y } : {}) };",
+    "new": "sp: m.sp, ...(m.ol != null ? { ol: m.ol } : {}), ...(m.y != null ? { y: m.y } : {}) };",
     "tests": [
       "test/egaudit4_lords_errands.test.js"
     ]
@@ -173,8 +173,8 @@
   {
     "name": "EGA4-lords-screen-verdict-by-stamps",
     "file": "src/scenes/egFight.js",
-    "old": "egBlowVerdict(bl, f[0], f[1], t, 400, me());",
-    "new": "egBlowVerdict(bl, f[0], f[1], t);",
+    "old": "egBlowVerdict(bl, f[0], f[1], t, 400, me())",
+    "new": "egBlowVerdict(bl, f[0], f[1], t)",
     "tests": [
       "test/egaudit4_lords_errands.test.js"
     ]
@@ -302,8 +302,8 @@
   {
     "name": "EGA4-lords-ring-edge",
     "file": "src/net/egBrain.js",
-    "old": "return { x, z, r: Math.max(EG_CHAMP_RING_MIN_M, edge - 1) };",
-    "new": "return { x, z, r: Math.max(EG_CHAMP_RING_MIN_M, edge) };",
+    "old": "r: Math.max(EG_CHAMP_RING_MIN_M, edge - 1) };",
+    "new": "r: Math.max(EG_CHAMP_RING_MIN_M, edge) };",
     "tests": [
       "test/egaudit4_lords.test.js"
     ]
@@ -509,8 +509,8 @@
   {
     "name": "EGA4-lords-last-charge-20s",
     "file": "src/net/egLords.js",
-    "old": "now + 5000, now + 25_000, out);",
-    "new": "now + 5000, now + 20_000, out);",
+    "old": "now + 5000, now + 25_000, out, { y: f.y });",
+    "new": "now + 5000, now + 20_000, out, { y: f.y });",
     "tests": [
       "test/egaudit4_lords.test.js"
     ]

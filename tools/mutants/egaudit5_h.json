@@ -57,8 +57,8 @@
   {
     "name": "EGA5H-lesson-last-not-whole",
     "file": "src/net/egLords.js",
-    "old": "el: elOf(L, 'fire'), whole: end });",
-    "new": "el: elOf(L, 'fire') });",
+    "old": "el: elOf(L, 'fire'), whole: end, y: f.y });",
+    "new": "el: elOf(L, 'fire'), y: f.y });",
     "tests": [
       "test/egaudit5_h.test.js",
       "test/egaudit5_h_client.test.js"
@@ -101,7 +101,7 @@
   {
     "name": "EGA5H-burns-ignored",
     "file": "src/net/egFloor.js",
-    "old": "export const egBurnsIn = (zones, now, until) => (zones ?? []).filter((z) => z.kind === 'burn' && z.from <= until && z.until > now);",
+    "old": "export const egBurnsIn = (zones, now, until, y = NaN) => (zones ?? []).filter((z) => z.kind === 'burn' && z.from <= until && z.until > now && onZoneFloor(z, y));",
     "new": "export const egBurnsIn = () => [];",
     "tests": [
       "test/egaudit5_h.test.js",

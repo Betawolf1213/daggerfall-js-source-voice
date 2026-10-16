@@ -1084,12 +1084,13 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   const countedOf = (c) => { const id = egRcId(c); return countedKept().some((x) => x.id === id && x.s === c.s); };
 
   // ── the halls ─────────────────────────────────────────────────────────────────────────────────────────
-  /** Where my feet stand in the circle: the hall slot, and the hall frame's x and z (null outside every hall). */
+  /** Where my feet stand in the circle: the hall slot, and the hall frame's x and z (null outside every hall) - THE ASCENT
+   *  (Elite-Gates-Ascent.md section 2): and their height (`y`, the hall frame's - every hall's the same). */
   function standing() {
     const p = player?.pos;
     if (!p) return null;
-    const [sx, , z] = dungeonToRealm(p[0], p[1], p[2]);
-    return { slot: egSlotAt(sx), sx, z };
+    const [sx, y, z] = dungeonToRealm(p[0], p[1], p[2]);
+    return { slot: egSlotAt(sx), sx, y, z };
   }
   /** Stood on hall `h`'s arrival plate, facing down its course - under the veil's flash, unless a closed veil is over the
    *  step already (`flash` false - EG-H3's swap). */
@@ -1222,7 +1223,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (E.sg === 'trial') islandFrame(E, t);   // EG-ZD (section 22): my last island, for a return
     // THE DOOR: the closing's step through it, said while I stand in it
     // AUDIT EG III (section 7): within EG_DOOR_REACH_M, the ring's - the relay's one number; said again each second while I stand in it
-    if (E.sg === 'closing' && at.slot === egSlotOfHall(E.h) && downH !== E.h && egAtDoor(spec, egLocalX(spec, at.sx), at.z) && t - downAt >= EG_DOWN_EVERY_MS) {
+    if (E.sg === 'closing' && at.slot === egSlotOfHall(E.h) && downH !== E.h && egAtDoor(spec, egLocalX(spec, at.sx), at.z, at.y) && t - downAt >= EG_DOWN_EVERY_MS) {
       downAt = t;
       if (o?.sendEg?.('down', { h: E.h })) mid('You wait at the door for your company.');
     }
@@ -2237,7 +2238,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (!inSpire() || witness || !at || !(E.h > 0)) return false;
       if (!at.slot) return true;
       const spec = egHallOf(E.seed, (egCircleOfHall(E.h) - 1) * 5 + at.slot, E.geo ?? 0);
-      return !egOnFight(spec, egLocalX(spec, at.sx), at.z);
+      return !egOnFight(spec, egLocalX(spec, at.sx), at.z, 0, at.y);   // THE ASCENT: the floor under my feet (a hall that judges by height)
     },
     /** The breach as held (tests). */
     state: () => link.state(),
