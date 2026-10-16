@@ -12,7 +12,7 @@ import { accountBoard, SESSION_KEY, REFUSALS } from '../src/net/accountClient.js
 import { createNoticeBook, planNoteAnswer, NOTE_LETTER_START, NOTE_LETTER_LOST, NOTICE_RETRY_MS } from '../src/net/noticeBook.js';
 import { noteReplySubject, NOTE_SUBJECT_MAX } from '../src/net/boardLaw.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
-import { GUILD_FOUND_RENOWN } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_RENOWN } from '../src/net/guild/guildLaw.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const TOWN = 1234567;

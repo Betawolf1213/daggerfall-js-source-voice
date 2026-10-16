@@ -150,7 +150,7 @@ const upgradesBlank = () => ({ hold: 0, rigging: 0, hull: 0, guns: 0 });
 const isUid = (v) => Number.isSafeInteger(v) && v > 0;
 /** AUDIT SHIPYARDS L1-2 (RESTORE's "Keep all, can't sell", a DFU deed's law, for Come Sail Away's ships): THE SHIPS THAT
  *  CAME INTO THE REALM THROUGH CUSTOMS, by number - each stays the player's and sails, and no shipyard buys her
- *  (systems/shipyards.js saleRefusal). Weightless and uncounted at customs (net/realmGoldLaw.js liquidWealthOf counts none
+ *  (systems/shipyards.js saleRefusal). Weightless and uncounted at customs (net/realm/realmGoldLaw.js liquidWealthOf counts none
  *  of the Fleet), a ship sold online was an offline fortune crossed whole. A number is a ship's for life, so a crossed
  *  ship stays crossed - parts, deed, standing or laid up. */
 const _crossed = new Set();

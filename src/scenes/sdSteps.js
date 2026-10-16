@@ -38,7 +38,7 @@
 //   THE GHOSTS, one pass a frame for the whole course (drawPass - the world host's Hour pass draws it).
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { realmToDungeon, SD_REALM_ORIGIN } from '../net/sdBrain.js';
+import { realmToDungeon, SD_REALM_ORIGIN } from '../net/superDungeon/sdBrain.js';
 import { SD_STEPS_COURSE, SD_BEAT_HALF, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_GUST_EVERY, stepAt, beatStands, beatBlinks, crumbleAfter, gustAt, breathSeen, inBreath, inVoid, spanAt, castBackTo } from '../world/superDungeon/sdSteps.js';
 import {
   SD_STEP_KINDS, SD_BREATH, SD_PENDULUM, SD_BEAT_DISSOLVE, SD_GRIT, SD_WAYSTONES, SD_VANE, buildStepModel, stepTris, buildChecksModel, checkFloorTris, buildBreathModel,
@@ -135,7 +135,7 @@ const hide = (d) => { if (d && !d.hidden) { d.object.matrix.fill(0); d.hidden = 
 /**
  * The Unmoored Steps.
  * @param {{ renderer?: any, audio?: any, ending?: string | null, lite?: boolean }} deps - SD-LOOK S9: `ending` the Hollow's Ending
- *   (net/sdMarks.js SD_ENDINGS' id), its sign on the vane's fin; `lite` the phone's tier (ui/touchDevice.js isTouchDevice -
+ *   (net/superDungeon/sdMarks.js SD_ENDINGS' id), its sign on the vane's fin; `lite` the phone's tier (ui/touchDevice.js isTouchDevice -
  *   its own by default): two chunks a Crumble step, not four, and the pendulums' gears without teeth
  */
 export function createSdSteps({ renderer = null, audio = null, ending = null, lite = isTouchDevice() } = {}) {
@@ -360,7 +360,7 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
         if (dx || dy || dz) body.carryBy?.(dx, dy, dz);
       }
       if (!live || !body?.pos) return null;
-      const ry = body.pos[1] - SD_REALM_ORIGIN[1], rz = body.pos[2] - SD_REALM_ORIGIN[2];   // AUDIT SD II (L2 F9): the realm's frame, net/sdBrain.js dungeonToRealm's own sum
+      const ry = body.pos[1] - SD_REALM_ORIGIN[1], rz = body.pos[2] - SD_REALM_ORIGIN[2];   // AUDIT SD II (L2 F9): the realm's frame, net/superDungeon/sdBrain.js dungeonToRealm's own sum
       const span = spanAt(rz);
       if (body.grounded) lastSpan = on ? on.s.span : span;   // AUDIT SD II (L4 F1): the span I last stood in
       // the Warp's breath, and its wind the second before it - SD-LOOK S9: the vane's clack with it

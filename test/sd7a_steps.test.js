@@ -10,7 +10,7 @@ import {
   SD_GUST_EVERY, SD_GUST_FOR, SD_GUST_SPEED, SD_GUST_WARN, stepAt, beatStands, beatBlinks, crumbleAfter, gustAt, inBreath,
   inVoid, castBackTo, spanAt,
 } from '../src/world/superDungeon/sdSteps.js';
-import { SD_ARENA, SD_STEPS } from '../src/net/sdBrain.js';
+import { SD_ARENA, SD_STEPS } from '../src/net/superDungeon/sdBrain.js';
 import { SD_FIRST_STEP } from '../src/world/superDungeon/sdHall.js';
 import { runSpeed, JUMP_SPEED, GRAVITY, JUMP_FWD_BOOST, CAPSULE_RADIUS, FALL_DAMAGE_THRESHOLD } from '../src/player/motor.js';
 import { wallRunHeight, PARKOUR_REACH_MIN } from '../src/player/parkour.js';

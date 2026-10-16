@@ -10,8 +10,8 @@ import { webcrypto } from 'node:crypto';
 import {
   mintWatchReceipt, readWatchReceipt, verifyWatchReceipt, watchReceiptValid, watchDue, watchPixelOk, WATCH_RECEIPT_TTL_S, WATCH_TICK_MS, WATCH_MOVED_MS,
 } from '../src/net/watchReceipt.js';
-import { mintReceipt, verifyReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
-import { verifyRaidReceipt } from '../src/net/raidReceipt.js';
+import { mintReceipt, verifyReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
+import { verifyRaidReceipt } from '../src/net/raid/raidReceipt.js';
 import {
   accountSeatInfluence, guildSeatInfluence, tributeRoom, homeDaysIn, seatWeekLine, seatStandingLine, seatNoStandingsLine,
   seatMineLines, seatTributeLine, seatSpanWords, seatMay, SEAT_POWERS, ACCOUNT_SEAT_WEEK_CAP, GATE_WEEK_CAP, RENOWN_WEEK_CAP,

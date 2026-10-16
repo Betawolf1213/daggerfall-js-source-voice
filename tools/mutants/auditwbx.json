@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDWBX-R1-the-share-left-in-him",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  for (const p of Object.values(f.players)) if (!p.retired && now - (p.seenAt ?? p.joinedAt) > ABSENT_RETIRE_MS) retireShare(f, p);",
     "new": "  void ABSENT_RETIRE_MS;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDWBX-R1-the-return-healing-him",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  f.max += p.share;\n  f.hp += p.share * frac;",
     "new": "  f.max += p.share;\n  f.hp += p.share;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDWBX-R2-a-beat-holding-a-seat",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (present.has(sub) || hasPart(p)) continue;",
     "new": "    if (present.has(sub) || p.dealt > 0 || p.stoodMs > 0) continue;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDWBX-R3-the-cleave-back-at-six",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "arc: 110, pct: 0.45, base: 12, el: null, aim: 'target', phase: 1, range: 7,",
     "new": "arc: 110, pct: 0.45, base: 12, el: null, aim: 'target', phase: 1, range: 6,",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDWBX-R4-the-walls-fight",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  const fight = Math.max(1, Number.isFinite(f.liveMs) ? f.liveMs : f.fell.at - f.startedAt);",
     "new": "  const fight = Math.max(1, f.fell.at - f.startedAt);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDWBX-R5-the-wind-ups-silence",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    else hpFrame(f, now, out);   // AUDIT WBX R5",
     "new": "    else void hpFrame;   // AUDIT WBX R5",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDWBX-R6-a-blow-after-midnight",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (now >= f.wrathAt) return 0;",
     "new": "  if (false) return 0;",
     "tests": [
@@ -140,7 +140,7 @@
   },
   {
     "name": "AUDWBX-S2-the-level-unsigned",
-    "file": "src/net/gateReceipt.js",
+    "file": "src/net/gate/gateReceipt.js",
     "old": "const claimsOf = ({ d, b, s, c, x, l, r, m }, nowS) => ({ d, b, s, c, x, ...(l !== undefined ? { l } : {}), ...(r === 1 ? { r } : {}), ...(m !== undefined ? { m } : {}), i: nowS, e: nowS + RECEIPT_TTL_S });",
     "new": "const claimsOf = ({ d, b, s, c, x, l, r, m }, nowS) => ({ d, b, s, c, x, ...(r === 1 ? { r } : {}), ...(m !== undefined ? { m } : {}), i: nowS, e: nowS + RECEIPT_TTL_S });",
     "tests": [
@@ -168,7 +168,7 @@
   },
   {
     "name": "AUDWBX-F3-the-fall-at-the-words-start",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "      const [x, z] = place(s, g.at);",
     "new": "      const [x, z] = [s.x, s.z];",
     "tests": [
@@ -177,7 +177,7 @@
   },
   {
     "name": "AUDWBX-F4-the-charge-kept-through-the-walk",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "    case 'mv': return { ...s, atk: null, move:",
     "new": "    case 'mv': return { ...s, move:",
     "tests": [
@@ -186,7 +186,7 @@
   },
   {
     "name": "AUDWBX-F3-the-relay-left-behind",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    settleAt(f, now);   // AUDIT WBX F3",
     "new": "    void settleAt;   // AUDIT WBX F3",
     "tests": [
@@ -260,7 +260,7 @@
   },
   {
     "name": "AUDWBX-W4-the-session-every-frame",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "      if (!due && t - meAt < GATE_ME_POLL_MS) return false;",
     "new": "      void meAt;",
     "tests": [

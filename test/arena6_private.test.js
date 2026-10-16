@@ -19,7 +19,7 @@ import {
   ARENA_PRIVATE_HOST_GONE_MS, ARENA_PRIVATE_LIFE_MS, ARENA_PRIVATE_KEEP_MS, ARENA_PRIVATE_HIST_MAX, ARENA_PRIVATE_CODE_ALPHABET,
   ARENA_PRIVATE_CODE_RE, ARENA_NO_TEXT, arenaPrivateRoom, arenaPrivateCode, isArenaPrivateRoom, isArenaRoom, isArenaFloorRoom,
   arenaFloorRoomOf, privateCodeTyped, pvpVitality, validArenaIn, validArenaOut, privateSessionOver, ARENA_JOIN_WAIT_MS,
-} from '../src/net/arenaLaw.js';
+} from '../src/net/arena/arenaLaw.js';
 import { readArenaOut, parseClient } from '../src/net/wire.js';
 import { callMs, COUNT_MS } from '../src/systems/arena/arenaBout.js';
 

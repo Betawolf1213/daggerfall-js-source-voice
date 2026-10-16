@@ -313,6 +313,6 @@ test('MW-D51/52 pins: the rig hands the lit light over per frame and at the buil
   assert.match(arm, /if \(pendingTorch !== null\) \{ const l = pendingTorch; pendingTorch = null; api\.setTorch\(l\); \}/, 'a light that arrived mid-build is not dropped (MAC-S1’s law)');
   const menu = rd('src/ui/enhancedMenu.js');
   assert.doesNotMatch(menu, /\['Torch', armState\.torch/, 'MWA4: the carried light left the card with the per-piece readout - status() still carries it');
-  const peers = rd('src/net/peerBodies.js');
+  const peers = rd('src/net/peer/peerBodies.js');
   assert.doesNotMatch(peers, /torch:/, 'a peer’s look carries no light on the wire yet - recorded, not faked');
 });

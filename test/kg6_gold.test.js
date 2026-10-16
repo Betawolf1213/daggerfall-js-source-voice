@@ -1,10 +1,10 @@
 // KG6 (2026-10-15, bible/11-Multiplayer/Kings-Gambit.md sections 10.7 and 19): GOLD AT THE RED TABLE. The table's law
-// (net/gambitTable.js): a gold table's Ready a stake, the same both seats, a friendly table's none; a stake never dealt
+// (net/gambit/gambitTable.js): a gold table's Ready a stake, the same both seats, a friendly table's none; a stake never dealt
 // home whole (Not ready, a stand, a broken deal), the deal's pot, the end's cash-outs - the whole pot the winner's,
 // nothing the loser's, each stake its own when nobody won; the stored table's stakes checked. The relay itself
 // (server/src/index.js on the fake room): the service's stake order checked (its account, room, table and the game's big
 // blind) and spent once, the Ready's own refusals asked before the spend, the cash-outs signed and kept (CARDS6's),
-// the rated result signed and owed to both accounts (net/gambitReceipt.js g1) until acked. The realm service's escrow
+// the rated result signed and owed to both accounts (net/gambit/gambitReceipt.js g1) until acked. The realm service's escrow
 // (server-account/src/cards.js): The King's Gambit's arm - the mod's online stakes at the gold table alone - and the
 // winner's cash-out of the whole pot, bounded by the table's King's Gambit stakes alone.
 import { test } from 'node:test';
@@ -13,14 +13,14 @@ import { webcrypto } from 'node:crypto';
 import {
   newGambitTable, gambitSit, gambitReady, gambitReadyRefusal, gambitUnready, gambitStand, gambitForfeit, gambitTick,
   gambitVoid, gambitPublicView, gambitTableValid, validGambitIn, validGambitOut, GAMBIT_FIRST_MS,
-} from '../src/net/gambitTable.js';
-import { GAMBIT_ONLINE_STAKES, GAMBIT_STAKE_BB, gambitStakeOk } from '../src/net/gambitStakes.js';
-import { verifyGambitReceipt, readGambitReceipt } from '../src/net/gambitReceipt.js';
+} from '../src/net/gambit/gambitTable.js';
+import { GAMBIT_ONLINE_STAKES, GAMBIT_STAKE_BB, gambitStakeOk } from '../src/net/gambit/gambitStakes.js';
+import { verifyGambitReceipt, readGambitReceipt } from '../src/net/gambit/gambitReceipt.js';
 import { mintStakeOrder, verifyOrder } from '../src/net/identityToken.js';
-import { verifyCardReceipt, readCardReceipt, mintCardReceipt } from '../src/net/cardReceipt.js';
+import { verifyCardReceipt, readCardReceipt, mintCardReceipt } from '../src/net/card/cardReceipt.js';
 import { HOLDEM_BBS, HOLDEM_GOLD_TABLE } from '../src/net/holdemTable.js';
 import { autoFill, KG_POINT_BUDGET } from '../src/net/kingsGambit.js';
-import { payableOf } from '../src/net/realmGoldLaw.js';
+import { payableOf } from '../src/net/realm/realmGoldLaw.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 import { fakeRoom } from './fakeRoom.mjs';
 import { standService, T0 } from './accountDb.mjs';

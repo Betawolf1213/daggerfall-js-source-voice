@@ -118,7 +118,7 @@
   },
   {
     "name": "WB3b-a-word-before-the-state-starts-a-fight",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "  if (s.day === null) return s;   // nothing but a whole state starts a fight",
     "new": "  if (s.day === undefined) return s;   // nothing but a whole state starts a fight",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "WB3b-the-attack-does-not-supersede",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "    case 'atk': return { ...s, atk: { i: g.i,",
     "new": "    case 'atk': return s.atk ? s : { ...s, atk: { i: g.i,",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "WB3b-a-kill-said-twice",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "        if (Number.isSafeInteger(day) && !falls.has(day)) {",
     "new": "        if (Number.isSafeInteger(day)) {",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "WB3b-another-days-kill-taken",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "      if (g.d !== undefined && g.d !== s.day) return s;",
     "new": "      if (false) return s;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "WB3b-the-walk-past-its-goal",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "  const along = Math.min(len, (Math.max(0, now - m.at) / 1000) * m.v);\n  return [",
     "new": "  const along = (Math.max(0, now - m.at) / 1000) * m.v;\n  return [",
     "tests": [

@@ -14,11 +14,11 @@ import { readFileSync } from 'node:fs';
 import {
   newFight, joinFight, retireShare, restoreShare, freeSeat, stepBrain, settleAt, applyHit, standsAt, leapAt, LEAP_AIR_MS,
   ATTACKS, HIT_KINDS, ABSENT_RETIRE_MS, BUCKET_DEPTH_X, dpsRef,
-} from '../src/net/gateBrain.js';
-import { mintReceipt, RECEIPT_TTL_S } from '../src/net/gateReceipt.js';
-import { gateTimes } from '../src/net/gateLaw.js';
+} from '../src/net/gate/gateBrain.js';
+import { mintReceipt, RECEIPT_TTL_S } from '../src/net/gate/gateReceipt.js';
+import { gateTimes } from '../src/net/gate/gateLaw.js';
 import { SOCIAL_ROOM, gateReceiptKey, GATE_HERE_HOLD_MS } from '../src/net/wire.js';
-import { foldGate, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { foldGate, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { bossPlace } from '../src/world/gate/gateBoss.js';
 import { createSpoilsPool, spoilsStore, SPOILS_DAY_KEY, spentKey } from '../src/scenes/spoilsPool.js';
 import { fakeRooms } from './fakeRoom.mjs';
@@ -161,7 +161,7 @@ test('AUDIT WBX2 M5/M8 the leap is ONE law: the beat flies him through the air a
   settleAt(h, mid);
   assert.deepEqual(h.pos, [5, 0]);
   // one copy of the rule: the beat asks the kill's
-  const brain = read('src/net/gateBrain.js');
+  const brain = read('src/net/gate/gateBrain.js');
   assert.match(brain, /if \(f\.atk\) \{\n {4}settleAt\(f, now\);/);
   assert.match(read('src/world/gate/gateBoss.js'), /const leap = atk \? leapAt\(atk, now\) : null;/);
 });
@@ -185,7 +185,7 @@ test('AUDIT WBX2 M6 an older build\'s mark for anyone still refuses the spoils h
 test('AUDIT WBX2 M7 the stone asks for a player sealed in it at every stand - its first, and one where it has moved (the gate of another place) - never while it stands still (mutants: the first stand only)', async () => {
   const { createGatePool } = await import('../src/scenes/gatePool.js');
   const FOOT = 2.3;   // GATE-FBX: in a foot's sole (its inner edge 1.47 m out, its outer 3.03)
-  const { gateYaw } = await import('../src/net/gateLaw.js');
+  const { gateYaw } = await import('../src/net/gate/gateLaw.js');
   const T = gateTimes(2000);
   let now = T.riseAt + 20_001;
   const landed = [];

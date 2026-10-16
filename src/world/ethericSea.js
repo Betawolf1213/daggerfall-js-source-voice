@@ -52,7 +52,7 @@ export const ETHER_SEA_TITLE = `The ${ETHER_WORD} Ocean`;
  *  (render/farRing.js RING_RADIUS and its rebuild's drift - 60 pixels) and every kernel window (two past a pixel, the
  *  cliffs' fade six) inside it. AUDIT CAPTAIN'S SEA G1: four drew the Bay's clamped row 0 on the Veil's horizon. */
 export const ETHER_MARGIN = 64;
-/** A map pixel's side (metres) - MapsFile's 32768 world units at 40 a metre (world/tamriel/tamrielFrame.js KM_PER_PIXEL): net/gateLaw.js
+/** A map pixel's side (metres) - MapsFile's 32768 world units at 40 a metre (world/tamriel/tamrielFrame.js KM_PER_PIXEL): net/gate/gateLaw.js
  *  PIXEL_M's, held here rather than imported so the terrain worker reads no net law (test/ethersea.test.js pins them equal). */
 const PIXEL_M = 819.2;
 /** A league: three miles, the sea's own measure (metres) - the captain's log's too (captainLedger.js reads it here). */

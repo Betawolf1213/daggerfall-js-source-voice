@@ -1,5 +1,5 @@
 // BEAST-PEER (2026-09-26, Mac: "Wereform uses daggerfall paperdoll when others see you transform"): on another
-// player's screen a peer in beast form stands as Eye Of The Beholder's lycanthrope (net/peerRiders.js) or, until that
+// player's screen a peer in beast form stands as Eye Of The Beholder's lycanthrope (net/peer/peerRiders.js) or, until that
 // art is up, the beast's enemy sprite (DISC12) - and until THAT was built, the peer's HUMAN paperdoll. Both load at
 // first sight, which is the moment of the change, so every transformation showed the person first. A beast is never
 // the person now: no doll while its art loads, and the doll it wore as a person goes.

@@ -402,7 +402,7 @@
   },
   {
     "name": "GUILD1c-every-look-hands-an-order",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "if (key !== this._carried && typeof mine.data?.order === 'string')",
     "new": "if (typeof mine.data?.order === 'string')",
     "tests": [
@@ -411,7 +411,7 @@
   },
   {
     "name": "GUILD1c-the-first-look-hands-none",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    this._carried = undefined;",
     "new": "    this._carried = '';",
     "tests": [
@@ -420,7 +420,7 @@
   },
   {
     "name": "GUILD1c-the-acts-out-order-dropped",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "      if (r?.ok && typeof r.data?.outOrder === 'string') this._hand({ outOrder: r.data.outOrder });\n",
     "new": "",
     "tests": [
@@ -429,7 +429,7 @@
   },
   {
     "name": "GUILD1c-the-unpaid-foundings-out-order-dropped",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "        if (gone?.ok && typeof gone.data?.outOrder === 'string') this._hand({ outOrder: gone.data.outOrder });",
     "new": "",
     "tests": [

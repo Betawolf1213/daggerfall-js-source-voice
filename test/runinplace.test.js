@@ -1,7 +1,7 @@
 // RUN-IN-PLACE (2026-10-06, Mac: "I think the newly integrated spell effects are causing issues and theres a lot of player
 // desync online, including players appearing to run in place"): A BODY WALKS WHILE IT IS DRAWN WALKING. Every on-foot
 // renderer - the Morrowind bodies, the class sprites, the Eye Of The Beholder walkers, the beasts - and the peers'
-// footsteps take their stride off the drawn pose's `mv` (net/peerClimb.js peerMoving), and the play-out (OnlineSession
+// footsteps take their stride off the drawn pose's `mv` (net/peer/peerClimb.js peerMoving), and the play-out (OnlineSession
 // tick) stands a peer at the end of its path whenever the next pose is late, with the last pose's `mv` still on it. A
 // sender's hitch, a tab put in the background, a reconnect, a stall on the line: the body ran and stepped in place - for
 // as long as PEER_TIMEOUT_MS (80 s) when the poses stopped for good. AUDIT DISC7 B3 stood a RIDER whose poses stopped
@@ -98,7 +98,7 @@ test('RUN-IN-PLACE: one home - the drawn pose the play-out makes is the one ever
   assert.match(src, /const was = p\.drawn, s = poseAlong\(p\.path, p\.cur\);/, 'the drawn pose is made in tick (AUDIT 637 C1: against the place the law last drew)');
   const world = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
   assert.match(world, /const ONLINE_MOVE_HOLD_MS = SHOWN_MOVE_HOLD_MS;/, 'the sender\'s hold IS the watcher\'s - one literal, net/online.js (AUDIT 637 D7)');
-  const climb = readFileSync(new URL('../src/net/peerClimb.js', import.meta.url), 'utf8');
+  const climb = readFileSync(new URL('../src/net/peer/peerClimb.js', import.meta.url), 'utf8');
   assert.match(climb, /export const peerMoving = \(shown\) => !!shown\?\.mv && !peerClimbing\(shown\) && !shown\?\.st;/, 'a body strides off the drawn pose\'s mv');   // PIN MOVED (AUDIT CARDS C5): and never seated
   assert.ok(PEER_TIMEOUT_MS > SHOWN_MOVE_HOLD_MS * 100);
 });

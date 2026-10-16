@@ -21,9 +21,9 @@ import { openSession, SESSION_IDLE_S } from '../server-account/src/accounts.js';
 import { utcDay } from '../src/net/marksLaw.js';
 import { CARRIED_ROW_DAYS } from '../src/net/bagLaw.js';
 import { MARKET_KEEP_DAYS } from '../src/net/marketLaw.js';
-import { GUILD_INVITE_TTL_S } from '../src/net/guildLaw.js';
+import { GUILD_INVITE_TTL_S } from '../src/net/guild/guildLaw.js';
 import { seatWeekOf } from '../src/net/townSeatLaw.js';
-import { arenaSeasonOf } from '../src/net/arenaLaw.js';
+import { arenaSeasonOf } from '../src/net/arena/arenaLaw.js';
 import { ARENA_CHAMPION_CLOCK_S, ARENA_CHAMPION_STORED_S } from '../server-account/src/arena.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

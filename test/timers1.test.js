@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { eventTimerRows, timerText, localWhenText } from '../src/systems/eventTimers.js';
 import { timersMark, timersWindow, placeBeside } from '../src/ui/enhancedTimers.js';
-import { gateTimes, gameDayAt, gateAt } from '../src/net/gateLaw.js';
+import { gateTimes, gameDayAt, gateAt } from '../src/net/gate/gateLaw.js';
 import { seatWeekOf, seatWeekStartMs, SEAT_RECKONING_MS, BATTLE_LENGTH_MS } from '../src/net/townSeatLaw.js';
 import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
 

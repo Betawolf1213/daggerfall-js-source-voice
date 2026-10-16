@@ -1,10 +1,10 @@
-// GUILD1b (2026-09-25) - THE GUILD TAB: net/guildBook.js (the character's guild as the client holds it, and the gold's
+// GUILD1b (2026-09-25) - THE GUILD TAB: net/guild/guildBook.js (the character's guild as the client holds it, and the gold's
 // order around every act) and ui/socialPanel.js's fourth tab, over a fake door and a fake document.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { GuildBook, GUILD_FRESH_MS, GUILD_DEPOSIT_UNSURE, guildRefused } from '../src/net/guildBook.js';
-import { GUILD_FOUND_GOLD, GUILD_RANK_NAMES } from '../src/net/guildLaw.js';
+import { GuildBook, GUILD_FRESH_MS, GUILD_DEPOSIT_UNSURE, guildRefused } from '../src/net/guild/guildBook.js';
+import { GUILD_FOUND_GOLD, GUILD_RANK_NAMES } from '../src/net/guild/guildLaw.js';
 import {
   createSocialPanel, GUILD_SIGNED_OUT_TEXT, GUILD_LOOKING_TEXT, GUILD_NONE_TEXT, GUILD_FOUND_COST_TEXT, GUILD_GOLD_SHORT_TEXT, guildWordText,
 } from '../src/ui/socialPanel.js';

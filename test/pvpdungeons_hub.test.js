@@ -8,7 +8,7 @@ import {
   SOCIAL_ROOM, PIXEL_UNITS, worldRoom, parseClient, validWdunIn, validWdunOut, wdunHall, wdunRoomKey, isWorldRoom,
   WDUN_LOCK_MS, WDUN_RESET_MS, WDUN_STALE_MS, WDUN_DAY_MS, relaySupportsWdun, RELAY_VERSION, WILD_REMAINS_MS,
 } from '../src/net/wire.js';
-import * as L from '../src/net/wildLaw.js';
+import * as L from '../src/net/wild/wildLaw.js';
 import { mintRemainsOrder, remainsDigest } from '../src/net/identityToken.js';
 import { fakeRooms } from './fakeRoom.mjs';
 

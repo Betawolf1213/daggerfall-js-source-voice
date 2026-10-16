@@ -39,7 +39,7 @@ export const HOME_ENTRY_DEFAULT = 'private';
 // to HOME_PRICE_MIN..HOME_PRICE_MAX.
 // Offline Daggerfall's own price stands (the bank's market and its buy-back). Online the bank buys a deed back at
 // this price too (AUDIT HOME-PRICE C1: a knightly order's free house); customs counts every deed at its own constant
-// (net/realmGoldLaw.js CUSTOMS_HOUSE_PRICE), never either price.
+// (net/realm/realmGoldLaw.js CUSTOMS_HOUSE_PRICE), never either price.
 //
 // THE SERVICE HOLDS THE RANGE (homePriceOk): it bundles no ARENA2, so it cannot measure a building, but no claim names
 // a price outside the range or off its hundreds - a build from before it, which still asks Daggerfall's, is asked to

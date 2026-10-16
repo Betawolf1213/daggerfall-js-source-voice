@@ -127,7 +127,7 @@
   },
   {
     "name": "ONE-BAD-BODY-the-place-taken-as-it-came",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    if (!(Number.isFinite(f?.[0]) && Number.isFinite(f[1]) && Number.isFinite(f[2]))) { this._notFinite('place', peer.shown); return; }\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "ONE-BAD-BODY-the-yaw-taken-as-it-came",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    if (!Number.isFinite(want)) this._notFinite('yaw', peer.shown);   // ONE-BAD-BODY: the yaw it had stands\n    else b.yaw",
     "new": "    b.yaw",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "ONE-BAD-BODY-the-bad-yaw-kept",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "else b.yaw = Number.isFinite(b.yaw) ? b.yaw + wrapAngle(want - b.yaw) * (dt > 0 ? Math.min(1, dt * YAW_EASE) : 1) : want;",
     "new": "else b.yaw = b.yaw + wrapAngle(want - b.yaw) * (dt > 0 ? Math.min(1, dt * YAW_EASE) : 1);",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "ONE-BAD-BODY-said-every-frame",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    if (this._notFiniteSaid) return;\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "ONE-BAD-BODY-NaN-read-as-a-stride",
-    "file": "src/net/peerPace.js",
+    "file": "src/net/peer/peerPace.js",
     "old": "  if (!(d <= JUMP_UNITS) || !Number.isFinite(speed)) return 0;",
     "new": "  if (d > JUMP_UNITS || !Number.isFinite(speed)) return 0;",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "ONE-BAD-BODY-the-bad-pace-kept",
-    "file": "src/net/peerPace.js",
+    "file": "src/net/peer/peerPace.js",
     "old": "  if (!(d <= JUMP_UNITS) || !Number.isFinite(speed)) return 0;",
     "new": "  if (!(d <= JUMP_UNITS)) return 0;",
     "tests": [

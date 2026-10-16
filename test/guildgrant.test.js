@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { standService, d1 } from './accountDb.mjs';
 import { grantSql, lookSql, grantGold, GRANT_BY } from '../tools/grantGuildGold.mjs';
 import { GUILD_LEDGER_WORDS } from '../src/ui/socialPanel.js';
-import { GUILD_TREASURY_MAX, GUILD_RANK_NAMES } from '../src/net/guildLaw.js';
+import { GUILD_TREASURY_MAX, GUILD_RANK_NAMES } from '../src/net/guild/guildLaw.js';
 
 const ROOT = new URL('../', import.meta.url);
 const src = (p) => readFileSync(new URL(p, ROOT), 'utf8');

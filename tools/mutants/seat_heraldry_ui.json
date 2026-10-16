@@ -307,7 +307,7 @@
   },
   {
     "name": "HS-hud-sides-swapped",
-    "file": "src/net/siegeLink.js",
+    "file": "src/net/siege/siegeLink.js",
     "old": "arms: { defend: heraldryOf(battle.defender?.heraldry), attack:",
     "new": "arms: { attack: heraldryOf(battle.defender?.heraldry), defend:",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "HS-hud-revolt-kind",
-    "file": "src/net/siegeLink.js",
+    "file": "src/net/siege/siegeLink.js",
     "old": "attack: battle.kind === 'revolt' || s.revolt ? null :",
     "new": "attack: s.revolt ? null :",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "HS-hud-revolt-field",
-    "file": "src/net/siegeLink.js",
+    "file": "src/net/siege/siegeLink.js",
     "old": "attack: battle.kind === 'revolt' || s.revolt ? null :",
     "new": "attack: battle.kind === 'revolt' ? null :",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "HS-fight-own-overwritten",
-    "file": "src/net/siegeLink.js",
+    "file": "src/net/siege/siegeLink.js",
     "old": "(g && !heraldryOf(g.heraldry) && arms.has(g.tag)",
     "new": "(g && arms.has(g.tag)",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "HS-fight-mutated",
-    "file": "src/net/siegeLink.js",
+    "file": "src/net/siege/siegeLink.js",
     "old": "? { ...g, heraldry: arms.get(g.tag) } : g);",
     "new": "? Object.assign(g, { heraldry: arms.get(g.tag) }) : g);",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "HS-fight-null-dressed",
-    "file": "src/net/siegeLink.js",
+    "file": "src/net/siege/siegeLink.js",
     "old": "  if (!fight) return fight;\n  const arms",
     "new": "  const arms",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "HS-fight-defender-bare",
-    "file": "src/net/siegeLink.js",
+    "file": "src/net/siege/siegeLink.js",
     "old": "defenderGuild: dress(fight.defenderGuild) };",
     "new": "defenderGuild: fight.defenderGuild };",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "HS-session-undressed",
-    "file": "src/net/siegeSession.js",
+    "file": "src/net/siege/siegeSession.js",
     "old": "      s = { seat, battle: fightArmed(battle, seat), field,",
     "new": "      s = { seat, battle, field,",
     "tests": [

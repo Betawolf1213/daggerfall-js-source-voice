@@ -127,7 +127,7 @@
   },
   {
     "name": "SD20D-A2-the-first-a-knell",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "s?.ended > 0 && atk.at > s.ended;",
     "new": "s?.ended > 0 && atk.at >= s.ended;",
     "tests": [

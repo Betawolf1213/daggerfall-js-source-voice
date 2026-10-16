@@ -6,19 +6,19 @@
 // the landing tested against this player's feet, and the blow taken through the host's own door. Design:
 // bible/11-Multiplayer/World-Bosses.md section 5.
 //
-// ONE SOURCE: the court's link (net/gateLink.js - the relay's words, folded). Nothing here is sent: a strike's verdict
-// is this machine's own (co-op's law - "an enemy's strike on a client is applied by that client", net/gateStrike.js),
+// ONE SOURCE: the court's link (net/gate/gateLink.js - the relay's words, folded). Nothing here is sent: a strike's verdict
+// is this machine's own (co-op's law - "an enemy's strike on a client is applied by that client", net/gate/gateStrike.js),
 // and it lands through `strike` - the dungeon context's door (hurt, flash, cry), the same as any foe's blow.
 //
 // THE PARTS, each pure where it can be: the look (world/gate/gateBoss.js bossAct/bossFrame/bossGlow/BOSS_CUES), the ground
-// (render/gateTelegraph.js telegraphShape and its pass), the verdict (net/gateStrike.js strikeVerdict), the bar
+// (render/gateTelegraph.js telegraphShape and its pass), the verdict (net/gate/gateStrike.js strikeVerdict), the bar
 // (ui/gateBossBar.js bossBarModel). This file is their driver: it holds the sprite's texture and batch, the attacks it
 // has already cued, landed and judged, and the host's doors.
 //
 // Not a DFU member. Ledger A (WB).
-import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder } from '../net/gateBrain.js';
-import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance } from '../net/gateStrike.js';
-import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../net/gateLaw.js';   // GATE-FBX: and when the court comes apart
+import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder } from '../net/gate/gateBrain.js';
+import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance } from '../net/gate/gateStrike.js';
+import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../net/gate/gateLaw.js';   // GATE-FBX: and when the court comes apart
 import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../world/gate/gateBoss.js';
 import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, wayInStep, portalFade } from '../world/gate/gateArena.js';
 import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
@@ -37,7 +37,7 @@ import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../ui/gateTitl
 import { marksCardModel, drawGateMarksCard } from '../ui/gateMarksView.js';   // WB9a: the night's marks over the screen as a fighter steps in
 import { groundViewModel, drawGateGround } from '../ui/gateGroundView.js';   // WB9d: his ground and his element, felt
 import { damageChartModel, drawGateDamageChart } from '../ui/gateDamageChart.js';   // GATE-UX: every challenger's damage, ranked, once he has fallen
-import { readReceipt } from '../net/gateReceipt.js';
+import { readReceipt } from '../net/gate/gateReceipt.js';
 import { bodySayer } from '../net/bossBody.js';   // INT15: my body, said to the court's room
 import { createGateHost } from './gateHost.js';   // WB11c: the Legion-Lord's host - its bodies, blows, words and sounds
 import { createPopulationLane } from '../characters/npcBodies.js'; import { creatureLook } from '../characters/creatureBodies.js'; import { rosterActor } from '../characters/rosterBodies.js';   // MWNPC10: the court's creatures in their Morrowind bodies
@@ -56,7 +56,7 @@ export const COURT_STRIKE_TEXT = Object.freeze({
   spilledRite: () => 'Your ember from the broken rite falls to the floor.',
   burning: 'burning ground',
 });
-/** WBX5: THE TURN OF A PHASE, as he leaps into the court's heart - each phase by its name (net/gateBrain.js PHASE_NAMES)
+/** WBX5: THE TURN OF A PHASE, as he leaps into the court's heart - each phase by its name (net/gate/gateBrain.js PHASE_NAMES)
  *  and what it asks. WB13e (2026-10-01, Mac: "AAA grade polish"): a title card (ui/gateTitleCard.js) - its numeral, its
  *  name, and its one order under it until he lands (WB9b/c: the turn crosses to the next court); nothing said beside it. */
 export const PHASE_NUMERALS = Object.freeze(['I', 'II', 'III']);
@@ -150,7 +150,7 @@ const marked = (m, atk) => m.i === atk.i && m.at === atk.at;
 const setMark = (m, atk) => { m.i = atk.i; m.at = atk.at; };
 const NONE = Object.freeze([]);
 
-/** The boss by his id (the relay's word), or the day's (net/gateLaw.js). */
+/** The boss by his id (the relay's word), or the day's (net/gate/gateLaw.js). */
 export const bossOf = (s) => GATE_BOSSES.find((b) => b.id === s?.boss) ?? gateBossOf(s?.day ?? 0);
 
 /** WB13a: the way out of a blow is sought along this many bearings, in steps this long, this far at most (m), and never
@@ -325,7 +325,7 @@ export function createGateCourt({
    *  seen (its light's moment, the embers' bursts, its card) and his body left on the floor (its sprite, once read) */
   let beat = null, wakeHeard = false, roarAt = null, wrathSaid = 0, sputterAt = -Infinity, stung = noMark();
   let fellSeen = false, fallFlashAt = -Infinity, columnN = 0, fallCardSet = false, corpse = null, corpseTex = null, corpseTried = false;
-  /** WBX5: the burning ground the landings this screen saw have left (net/gateStrike.js landingPools), the attack whose
+  /** WBX5: the burning ground the landings this screen saw have left (net/gate/gateStrike.js landingPools), the attack whose
    *  pools were laid last, and when the fire under my feet last bit; WBX4: his mark on the floor, and the pools' shapes */
   let pools = [], pooled = noMark(), burnAt = -Infinity, inFire = false, outAt = -Infinity, mark = null;
   /** @type {ReadonlyArray<any>} */
@@ -367,7 +367,7 @@ export function createGateCourt({
   /** AUDIT WB11 W1: the crystals' stand-ins, one a crystal, each naming its own (world/gate/gateBoss.js crystalStandIn) */
   const crystalIns = [];
   const _targets = [], _crystalDraw = [], _crystalSlots = [], _crystalLights = [], _chest = [0, 0, 0];
-  /** AUDIT WB9 (court F4): how far each walkway is laid this frame (net/gateBrain.js walkFormed) - refilled, never made */
+  /** AUDIT WB9 (court F4): how far each walkway is laid this frame (net/gate/gateBrain.js walkFormed) - refilled, never made */
   const _walked = WALKS.map(() => 0);
   /** WB9d: his ground and his element, felt - the ground I stand in (its name and colour) and the last bite or elemental
    *  blow that landed on me (when, and its colour) */
@@ -599,7 +599,7 @@ export function createGateCourt({
   }
 
   /** WB5: THE BURST - SPEW_AT_MS into his fall, this player's spoils leave his chest toward them, off the seed of the
-   *  receipt the relay signed for them (net/gateReceipt.js `c`); no receipt by RECEIPT_WAIT_MS, and none is coming - said
+   *  receipt the relay signed for them (net/gate/gateReceipt.js `c`); no receipt by RECEIPT_WAIT_MS, and none is coming - said
    *  once. */
   function burst(s, t) {
     if (!spoils || !s.fell || spewed || t < s.fell.at + SPEW_AT_MS) return;
@@ -906,7 +906,7 @@ export function createGateCourt({
       drawGateBossBar(bossBarModel(s, t, bossOf(s), peril?.name ?? null), { hidden: hudHidden() || veiled() });
       // WB9a (Mac: "Allow people to see the modifers/trial as a popup before it starts"): THE MARKS' CARD as I step in -
       // his aspect and his trials, each with its sign, its line and how to meet it, while he stands to be read
-      // (net/gateBrain.js OPENING_MS); gone once he has fallen, and never over the step's fire
+      // (net/gate/gateBrain.js OPENING_MS); gone once he has fallen, and never over the step's fire
       if (marksAt !== null && s.fell) marksAt = null;
       drawGateMarksCard(marksAt !== null ? marksCardModel(s.md, bossOf(s), { mode: 'arrive', since: marksAt, now: t }) : null, { hidden: hudHidden() || veiled() });
       drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() || veiled() });   // WB13e: his wake, a phase's turn, his fall
@@ -933,7 +933,7 @@ export function createGateCourt({
     },
     /**
      * WB4b: HIM AS A BODY MY BLOWS MEET, or null (no fight, or he has fallen): his feet in the dungeon's frame, his
-     * facing, his height and radius (net/gateBrain.js - the relay measures a melee blow from the same body), whether
+     * facing, his height and radius (net/gate/gateBrain.js - the relay measures a melee blow from the same body), whether
      * his ward stands, and his stand-in for the formulas (world/gate/gateBoss.js bossStandIn).
      */
     target() {
@@ -945,7 +945,7 @@ export function createGateCourt({
       return { feet: courtToDungeon(x, 0, z), yaw: s.yaw, height: P.bossH, radius: P.bossR, warded: t < s.shieldUntil, entity: standIn, mobile: bossLookOf(s.boss).mobile };   // WB8b: his profile's body - the relay measures a blow from the same
     },
     /**
-     * WB4b: A BLOW OF MINE MET HIM - `d` the formula's number on this machine, `r` its kind (net/gateBrain.js
+     * WB4b: A BLOW OF MINE MET HIM - `d` the formula's number on this machine, `r` its kind (net/gate/gateBrain.js
      * HIT_KINDS). Out to the relay as the wire's hit (whole points, my blow's sequence - blowQ), and he flinches. The ward
      * turns it (nothing sent - the relay would refuse it); a blow under one point is none. Answers whether it went.
      */
@@ -963,7 +963,7 @@ export function createGateCourt({
     struck() { hurtAt = now(); },
     /**
      * WB9c: THE CRYSTALS OF OBLIVION AS BODIES MY BLOWS MEET - each standing one's number (the wire's `c`), its foot in the
-     * dungeon's frame, its body (net/gateBrain.js CRYSTAL_R, CRYSTAL_H - the relay measures a melee blow to the same) and
+     * dungeon's frame, its body (net/gate/gateBrain.js CRYSTAL_R, CRYSTAL_H - the relay measures a melee blow to the same) and
      * the stand-in a blow on it is computed against (world/gate/gateBoss.js crystalStandIn); none outside a Reckoning, and
      * none still low in the stone. One list, refilled each frame (AUDIT WB D10's law) - read, never written.
      */
@@ -1005,7 +1005,7 @@ export function createGateCourt({
     },
     /**
      * WB11c: HIS HOST AS BODIES MY BLOWS MEET - each one standing: its number (the wire's `i`), its feet in the dungeon's
-     * frame, its body (net/gateBrain.js HOST_KINDS - the relay measures a melee blow to the same), its stand-in and its
+     * frame, its body (net/gate/gateBrain.js HOST_KINDS - the relay measures a melee blow to the same), its stand-in and its
      * name (world/gate/gateBoss.js hostStandIn); none but from the court he fights in (the relay takes no blow from elsewhere).
      * One list, refilled each frame - read, never written.
      */

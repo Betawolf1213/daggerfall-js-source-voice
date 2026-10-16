@@ -1342,7 +1342,7 @@ export class HeldMapWindow {
           ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(env.paperW, fy); ctx.moveTo(fx, 0); ctx.lineTo(fx, env.paperH); ctx.stroke();
           ctx.restore();
         }
-        // WILD1: my remains in the open zone, where they lie and for how long (net/wildRemains.js, the host's word)
+        // WILD1: my remains in the open zone, where they lie and for how long (net/wild/wildRemains.js, the host's word)
         const remains = this.deps.wildRemains?.() ?? [];
         if (remains.length) paintWildRemains(ctx, env.view, remains, { pulse: env.pulse, label: WILD_TEXT.mine });
         // PVPDUNGEONS: crows circling every hall a body lies in (the hub's word - everyone's deaths), over the hall's own mark;

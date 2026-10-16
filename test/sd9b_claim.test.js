@@ -2,7 +2,7 @@
 // account service's claim of an `h1` (server-account/src/sds.js claimSd, migration 0088): one row a (slot, account), a
 // guest's fought and not counted, Hourbreaker and The Turning Hour rolled off the receipt's seed on the first write alone
 // and held for good on the row (`sd_honours`); the route behind a session, the count on the cards; the title held, worn
-// and signed; the client's call and the device's book (net/sdClaims.js); the world host's seams.
+// and signed; the client's call and the device's book (net/superDungeon/sdClaims.js); the world host's seams.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -14,12 +14,12 @@ import { createGuest } from '../server-account/src/accounts.js';
 import { ROUTES, OPEN_ROUTES } from '../server-account/src/service.js';
 import { claimSd, sdRecordOf, sdHonoursRoll, SD_HONOUR_TITLE, SD_HONOUR_AURA, SD_TITLE_CHANCE, SD_AURA_CHANCE, SD_HONOURS_SALT } from '../server-account/src/sds.js';
 import { titlesHeld, equipRefusal } from '../server-account/src/titles.js';
-import { mintSdReceipt, readSdReceipt } from '../src/net/sdReceipt.js';
-import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintSdReceipt, readSdReceipt } from '../src/net/superDungeon/sdReceipt.js';
+import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64, TITLES } from '../src/net/identityToken.js';
 import { seededRng } from '../src/systems/wind/wind.js';
 import { accountSds, REFUSALS, SESSION_KEY } from '../src/net/accountClient.js';
-import { createSdClaims, sdClaimVerdict, sdRecordText, SD_CLAIMS_KEY, SD_CLAIMS_MAX, SD_CLAIM_RETRY_MS, SD_CLAIM_TEXT } from '../src/net/sdClaims.js';
+import { createSdClaims, sdClaimVerdict, sdRecordText, SD_CLAIMS_KEY, SD_CLAIMS_MAX, SD_CLAIM_RETRY_MS, SD_CLAIM_TEXT } from '../src/net/superDungeon/sdClaims.js';
 import { profileSdLine } from '../src/ui/profileWindow.js';
 import { TITLE_TEXT, TITLE_RGBA } from '../src/ui/playerBadge.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';
@@ -295,5 +295,5 @@ test('SD9b the hosts and the service by source: the world host keeps a book onli
   assert.match(src('server-account/migrations/0090_sd_kills.sql'), /PRIMARY KEY \(slot, account\)/);
   assert.match(src('server-account/migrations/0090_sd_kills.sql'), /ALTER TABLE players ADD COLUMN sd_honours INTEGER NOT NULL DEFAULT 0;/);
   const deploy = src('.github/workflows/account-deploy.yml');
-  for (const p of ['src/net/sdReceipt.js', 'src/systems/wind/wind.js']) assert.ok(deploy.includes(`- "${p}"`), `${p} deploys the service`);
+  for (const p of ['src/net/superDungeon/sdReceipt.js', 'src/systems/wind/wind.js']) assert.ok(deploy.includes(`- "${p}"`), `${p} deploys the service`);
 });

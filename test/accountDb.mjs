@@ -12,10 +12,10 @@ import { _resetYardsKept } from '../server-account/src/decor.js';   // YARD-SHED
 import { _resetBusyShed } from '../server-account/src/service.js';   // BUSY-GATE: and nothing shed
 import { forgetChapters } from '../server-account/src/npcHalls.js';   // AUDIT CHAP3 T4: nor any region's chapters - a test's first read is its own database's
 import { renownXpFor } from '../src/net/renown.js';
-import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // MERGE 2: TERMS1 - a request that makes an account carries the versions ticked
 import { r2, seatRealm } from './realmSeat.mjs';   // MERGE 2: a founding is a realm character's (AUDIT REALM2 S2)
-import { GUILD_FOUND_GOLD } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_GOLD } from '../src/net/guild/guildLaw.js';
 import { ROLL_FACTIONS } from '../src/net/npcChapterLaw.js';   // AUDIT CHAP4 E3: a scene's chapters confirmed
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

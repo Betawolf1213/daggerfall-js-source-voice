@@ -20,7 +20,7 @@ import { createNpcBodies, createPopulationLane, createFrameBudget, NPC_BODY_TIER
 import { creatureLook } from '../src/characters/creatureBodies.js';
 import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
-import { PeerBodies } from '../src/net/peerBodies.js';
+import { PeerBodies } from '../src/net/peer/peerBodies.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

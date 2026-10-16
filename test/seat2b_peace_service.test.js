@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S } from '../src/net/townSeatLaw.js';
-import { gameDayAt, gateTimes } from '../src/net/gateLaw.js';
+import { gameDayAt, gateTimes } from '../src/net/gate/gateLaw.js';
 import { xpForRank, STORES_MAX } from '../src/net/professionLaw.js';
 import { recipeById } from '../src/net/recipeLaw.js';
 import { fortsCapturedStatements } from '../server-account/src/seatForts.js';

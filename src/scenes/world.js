@@ -53,7 +53,7 @@ import { exhibitionFor, nextLadderBout, arenaLadderRestore, practiceBout } from 
 import { arenaReplaysRestore } from '../systems/arena/arenaReplay.js';   // ARENA5: your ladder replay
 import { createArenaGate, nearArenaGate } from './arenaGate.js';   // ARENA3; ARENA4b: the Herald's choice and the pause door's banner too
 import { createArenaOnline } from './arenaOnline.js';   // ARENA4: the arena online - the hall, a relay's bout, the boards and the receipts
-import { arenaFloorRoomOf } from '../net/arenaLaw.js';   // ARENA4: a bout's room (ARENA4b: or the hour's exhibition's)
+import { arenaFloorRoomOf } from '../net/arena/arenaLaw.js';   // ARENA4: a bout's room (ARENA4b: or the hour's exhibition's)
 import { accountArena, accountIliac, iliacRefusalText, onHomeOrders, accountGambit } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
 import { fighterIdentity } from '../systems/arena/arenaFighters.js';   // ARENA4: the relay's fighters billed by the bout's seed
 import { bossStandIn } from '../world/gate/gateBoss.js';   // ARENA4: my opponent's stand-in for the formulas
@@ -328,9 +328,9 @@ import { smeltRecipe, stockOf, WEAVERS_STOCK, APOTHECARY_STOCK, professionName }
 import { refinedText, chainStopText } from '../net/chainLaw.js';   // CRAFT1: what a craft's chain refined first, said with it; AUDIT CRAFT1 F4: where it stopped
 import { craftXpText } from '../ui/craftXpWords.js';   // CRAFT-FIRST-SHOWN (FIELD BUGS 2026-10-15f): a craft's XP said with its first - and, for the Weavers' cloth, why its first paid none
 import { createMarketBook } from '../net/marketBook.js';   // PROF5: the market's book
-import { createCardStakes } from '../net/cardStakes.js';   // CARDS6: a realm character's card stakes
-import { createIliacClaims } from '../net/iliacClaims.js';   // CARDS10: the ranked games' results carried to the service
-import { createGambitClaims } from '../net/gambitClaims.js';   // KG6: and The King's Gambit's rated games'
+import { createCardStakes } from '../net/card/cardStakes.js';   // CARDS6: a realm character's card stakes
+import { createIliacClaims } from '../net/iliac/iliacClaims.js';   // CARDS10: the ranked games' results carried to the service
+import { createGambitClaims } from '../net/gambit/gambitClaims.js';   // KG6: and The King's Gambit's rated games'
 import { seasonCounted, seasonKept, seasonGuest, seasonFoeGuest } from '../ui/gambitTableWords.js';   // KG6: what the season's claims say
 import { createWritBook } from '../net/writBook.js';   // PROF6: guild writs, commissions, the guild Stores
 import { wearCondition, wearOf, WEAR_WHOLE } from '../net/marketLaw.js';   // PROF5: a bought piece's wear; PROF6: a commission's piece unworn
@@ -351,7 +351,7 @@ import { createRiteHost, RITE_TEXT } from './riteHost.js';   // WB12d: the faith
 import { createSdHost } from './sdHost.js';   // SD2b: the Hollow in the world - the hub's record in, the Hollow stood at its pixel, the find, the lines
 import { sdOmenSeen, sdNoticeCard, SD_COMPASS_M, sdAirWeight, sdBrassLight, sdBannerText, SD_BANNER_M } from '../systems/superDungeon/sdOmen.js';   // SD2c: the Hollow seen and heard of - its column, its note, its compass's reach
 import { SdOmenPassRenderer } from '../render/sdOmenPass.js';   // SD2c: the Hollow's omen, the gate's beacon in brass
-import { SD_CAST_OUT_LINE, sdRoomKey, isSdRoom, sdPhase } from '../net/sdLaw.js';   // SD2d: a Hollow's end said to whoever it casts out; SD5a: the Hour's room; SD9e: a receipt from my realm's
+import { SD_CAST_OUT_LINE, sdRoomKey, isSdRoom, sdPhase } from '../net/superDungeon/sdLaw.js';   // SD2d: a Hollow's end said to whoever it casts out; SD5a: the Hour's room; SD9e: a receipt from my realm's
 import { isSdRealm, realmArena, SD_REALM_TEXT, SD_REALM_FOG, SD_REALM_FLOORS, SD_ARENA_FLOORS, arenaHolds } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - its edge, its refusals
 import { SdSkyRenderer, SD_SKY_STEPS } from '../render/sdSky.js';   // SD5b: the Hour's sky
 import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/sdArenaGlow.js';   // SD-LOOK S7: the arena's floor reads the clock, and the sky's word for the fight
@@ -364,7 +364,7 @@ import { SD_HALL_FLOORS } from '../world/superDungeon/sdHall.js';   // SD6c: the
 import { SD_HALL_TEXT, SD_HALL_SOUNDS } from './sdHall.js';   // SD6c: the snap's line; SD9d: the hall's clunk and toll, the Brass's powers' sounds
 import { SD_STEPS_FLOORS, SD_CAST_BACK_LOSS } from '../world/superDungeon/sdSteps.js';   // SD7b: the Steps' band and the arena, the Concord's floors too; what the void costs
 import { SD_STEPS_TEXT } from './sdSteps.js';   // SD7b: the cast-back's line
-import { inOrreryHall, dungeonToRealm as sdDungeonToRealm, SD_FRAY_LASH, SD_ARENA, realmToDungeon as sdRealmToDungeon, SD_TURN_WAIT_LINE } from '../net/sdBrain.js';   // SD6c: the snap's lash, on whoever stands in the hall; SD10: the arena, where the way home stands; AUDIT SD II (L7 H2): a turn the stones refused
+import { inOrreryHall, dungeonToRealm as sdDungeonToRealm, SD_FRAY_LASH, SD_ARENA, realmToDungeon as sdRealmToDungeon, SD_TURN_WAIT_LINE } from '../net/superDungeon/sdBrain.js';   // SD6c: the snap's lash, on whoever stands in the hall; SD10: the arena, where the way home stands; AUDIT SD II (L7 H2): a turn the stones refused
 import { SD_REM_SINK_MS } from './sdRemnant.js';   // SD10: the way home rises once the Remnant's body has sunk
 import { SD_HOME_TEXT, SD_HOME_SAY_MS, SD_HOME_RISE_MS, SD_HOME_SCALE } from './sdEnd.js';   // SD10: the way home's words; AUDIT SD II (L6 F16): said as it rises
 import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook, SD_ENTERED_KEY, SD_ENTERED_MAX, SD_FALLEN_KEY, SD_NO_MARK, SD_RETURN_SIZE } from '../world/superDungeon/sdDungeon.js';   // SD4b: a Super dungeon's Rift and Return, off the hub's record
@@ -377,17 +377,17 @@ import { drawGateBanner } from '../ui/gateBanner.js';
 import { drawGateGround } from '../ui/gateGroundView.js';   // WB9d: his ground's rim and warning - hidden with a held frame (the court draws it); SD15: and the Hour's
 import { drawGateDamageChart } from '../ui/gateDamageChart.js';   // GATE-UX: the kill's damage chart (the court draws it - scenes/gateCourt.js); a held frame hides it with the rest
 import { drawGateMarksCard } from '../ui/gateMarksView.js';   // WB9a: tonight's marks over the screen - by the gate before it is entered (and in the court as a fighter steps in: scenes/gateCourt.js)
-import { createGateLink, GATE_NO_TEXT, gateRefusalText } from '../net/gateLink.js'; import { readReceipt } from '../net/gateReceipt.js';   // AUDIT WB A2: a receipt's day, seed and account, for its spoils outside the court   // WB3b: what the client holds of a gate's fight - the relay's words, folded
-import { createGateClaims } from '../net/gateClaims.js';   // WB5b: the kill receipts, carried to the account service until counted
-import { createRaidClaims } from '../net/raidClaims.js';   // RAID4: the raid receipts, carried to the account service until counted and paid
-import { readRaidReceipt } from '../net/raidReceipt.js';   // RAID4b: a raid receipt's raid, seed, party and account, for a town's thanks
+import { createGateLink, GATE_NO_TEXT, gateRefusalText } from '../net/gate/gateLink.js'; import { readReceipt } from '../net/gate/gateReceipt.js';   // AUDIT WB A2: a receipt's day, seed and account, for its spoils outside the court   // WB3b: what the client holds of a gate's fight - the relay's words, folded
+import { createGateClaims } from '../net/gate/gateClaims.js';   // WB5b: the kill receipts, carried to the account service until counted
+import { createRaidClaims } from '../net/raid/raidClaims.js';   // RAID4: the raid receipts, carried to the account service until counted and paid
+import { readRaidReceipt } from '../net/raid/raidReceipt.js';   // RAID4b: a raid receipt's raid, seed, party and account, for a town's thanks
 import { raidSpoilsList, raidSpoilsDay, RAID_SPOILS_KEYS, RAID_SPOILS_TEXT, RAID_SPOILS_RECORDS_MAX } from '../systems/raidSpoils.js';   // RAID4b: a town's thanks
 import { createSerpentOmen, insideSerpentRing, SERPENT_OMEN_SETTLE_MS } from '../systems/serpent/serpentOmen.js';   // SERPENT1 (Mac: "a large scale sea serpent in the ocean"): the sea serpent's sighting - its lines, its ring, its compass mark
 import { findSerpentSite } from '../systems/serpent/serpentSite.js';   // SERPENT1: where it rises - on a packet lane, in open sea
-import { createSerpentLink } from '../net/serpentLink.js'; import { readSerpentReceipt } from '../net/serpentReceipt.js';   // SERPENT1: the cell's words of its fight, folded; a receipt's day, seed and earning
+import { createSerpentLink } from '../net/serpent/serpentLink.js'; import { readSerpentReceipt } from '../net/serpent/serpentReceipt.js';   // SERPENT1: the cell's words of its fight, folded; a receipt's day, seed and earning
 import { createSerpentHost } from './serpentHost.js';   // SERPENT1: the client's half of the fight - the `in`, the volleys, the blows on my ship, the coil and the whirl
 import { SerpentRenderer } from '../render/serpentRender.js';   // SERPENT1: its body over and under the sea, its telegraphs, the maelstrom and the venom
-import { createSdFightLink } from '../net/sdFightLink.js';   // SD8c: the realm's fight as the page holds it
+import { createSdFightLink } from '../net/superDungeon/sdFightLink.js';   // SD8c: the realm's fight as the page holds it
 import { createSdRemnantBlows } from './sdRemnantBlows.js';   // SD8d: its blows on me - seen, heard, judged on my feet
 import { createSdRemnantVoice } from './sdRemnantVoice.js';   // SD14a: its body and its Echoes heard
 import { createSdAir } from './sdAir.js';   // SD14b: the Hour's air - its beds and its far events
@@ -398,7 +398,7 @@ import { sdBeamDraws, sdKeptList } from './sdRemnantRig.js';   // SD17: the Hour
 /** AUDIT SD III (V5): the beams a frame draws, a list kept and filled in place (a frame of a sweep made 3.4 KB). */
 const _sdBeamDraws = sdKeptList(), NO_SD_BEAMS = Object.freeze([]);
 import { sdMarksCardModel, sdEndingStoneLight } from '../ui/sdMarksView.js';   // SD18b: the Hour's marks as a fighter steps in, and its Ending's stone lit
-import { sdMarksOf, sdEndingOf, SD_ENDINGS } from '../net/sdMarks.js';   // SD18b: a Hollow's marks by its slot
+import { sdMarksOf, sdEndingOf, SD_ENDINGS } from '../net/superDungeon/sdMarks.js';   // SD18b: a Hollow's marks by its slot
 import { SdBeamRenderer } from '../render/sdBeam.js';
 import { drawSdTitleCard } from '../ui/sdTitleCard.js';   // SD15: the Hour's own card
 import { titleCardModel } from '../ui/gateTitleCard.js';   // SD15: the card's pure model, the Warden's
@@ -407,13 +407,13 @@ import { createSdVoice, SD_VOICE_RANK } from './sdVoice.js';   // AUDIT SD II (S
 import { serpentBarModel } from '../ui/serpentBar.js'; import { drawGateBossBar } from '../ui/gateBossBar.js';   // SERPENT1: its boss bar, in the sea's colours - the gate's bar, its one node
 import { playSerpentSound, SERPENT_VOICE_ROWS } from '../systems/serpent/serpentSounds.js';   // SERPENT1: its voice - DAGGER.SND's own, pitched for its size
 import { serpentSpoilsList, serpentSpoilsDay, SERPENT_SPOILS_KEYS, SERPENT_SPOILS_TEXT, SERPENT_SPOILS_RECORDS_MAX } from '../systems/serpent/serpentSpoils.js';   // SERPENT1: the Old Coil's hoard
-import { createSerpentClaims } from '../net/serpentClaims.js';   // SERPENT1: its receipts carried to the account service
-import { createSdClaims } from '../net/sdClaims.js';   // SD9b: the Hour's receipts carried to the account service
+import { createSerpentClaims } from '../net/serpent/serpentClaims.js';   // SERPENT1: its receipts carried to the account service
+import { createSdClaims } from '../net/superDungeon/sdClaims.js';   // SD9b: the Hour's receipts carried to the account service
 import { announceHonour } from '../ui/lootBanner.js';   // HONOUR-BANNER: a title or an aura granted, as a loot banner
-import { readSdReceipt } from '../net/sdReceipt.js';   // SD9e: my Hour receipt, read for its spoils
+import { readSdReceipt } from '../net/superDungeon/sdReceipt.js';   // SD9e: my Hour receipt, read for its spoils
 import { SD_SPOILS_KEYS, SD_SPOILS_RECORDS_MAX, SD_SPOILS_TEXT, sdSpoilsDay, sdSpoilsSlot, sdSpoilsList } from '../systems/superDungeon/sdSpoils.js';   // SD9e: the Brass Remnant's spoils
 import { createSdSpoils, clearOfPillars } from './sdSpoils.js';   // SD9e: thrown from where it fell; AUDIT SD: the way home clear of the arena's pillars
-import { slainLine, serpentBossOf, serpentBossById, sameSerpentSite, SERPENT_NATIVE_PER_M } from '../net/serpentLaw.js';   // SERPENT1: the hub's word of its kill, in the chat (AUDIT SERPENT S1: my own site's alone)
+import { slainLine, serpentBossOf, serpentBossById, sameSerpentSite, SERPENT_NATIVE_PER_M } from '../net/serpent/serpentLaw.js';   // SERPENT1: the hub's word of its kill, in the chat (AUDIT SERPENT S1: my own site's alone)
 import { createGateCourt, courtSaySeconds } from './gateCourt.js';   // WB4: the fight on this screen - the boss drawn, heard and read, and his blows on me
 import { DeadlandsRenderer, skyGain, anchoredClock } from '../render/deadlands.js';   // WB6a: the Deadlands' sky and sea round the Burning Court
 import { createDeadlandsAir } from './deadlandsAir.js';   // WB6b: and their air - the wind, the fire, the thunder of the sky's strikes
@@ -425,9 +425,9 @@ import { breachBookFor, BREACH_BOOK_TEXT } from '../systems/breachBook.js';   //
 import { bossPlace } from '../world/gate/gateBoss.js';   // AUDIT WBX F3: where he fell - a charge's head, a leap's flight - frozen by the link's fold   // WB5: a fallen boss's spoils, spewed, glowing and taken
 import { itemIconColor32 } from '../ui/itemIconColor32.js';   // WBX3: a spoil's own picture on the court's floor
 import { setCourtRules } from '../systems/courtRules.js';   // WBX6: the court's laws, switched by the frame
-import { gateRoomKey, isGateRoom, gateBossOf, gateTimes, gateAdmits, gateAt, GATE_COLLAPSE_MS } from '../net/gateLaw.js';   // WB3b: the court's room, and its day's end
-import { createGateCrowd, gateCrowdMax } from '../net/gateCrowd.js';   // GATE-CROWD: a gate's court draws the nearest of a crowd
-import { createPeerRange, peerRangeOf } from '../net/peerRange.js';   // PEER-RANGE: the others drawn out to the distance on the Other players card
+import { gateRoomKey, isGateRoom, gateBossOf, gateTimes, gateAdmits, gateAt, GATE_COLLAPSE_MS } from '../net/gate/gateLaw.js';   // WB3b: the court's room, and its day's end
+import { createGateCrowd, gateCrowdMax } from '../net/gate/gateCrowd.js';   // GATE-CROWD: a gate's court draws the nearest of a crowd
+import { createPeerRange, peerRangeOf } from '../net/peer/peerRange.js';   // PEER-RANGE: the others drawn out to the distance on the Other players card
 import { gateLandingFor, courtRing, courtArena, courtToDungeon, courtBraziers, COURT_TEXT, COURT_FOG, LAVA_Y } from '../world/gate/gateArena.js';   // WB3b: the Burning Court's way home, its ring and its words   // WB2: the gate's countdown over the screen, near it
 import { isMainStoryDungeon } from '../world/dungeon/dungeonTextures.js';   // SPAWNED-DUNGEONS1: the main story's own dungeons are never cloned
 import { nearestSafeLocation, nearestSafeLocationAnywhere, respawnFlavorText, reviveForPlay, undergroundWakeSpot, undergroundWakeText } from '../systems/deathRespawn.js';   // D-ONLINE1: online, a death respawns instead of ending the run   // X-slice; the rest refusal raises the alert and asks the RESTING variant, the townsfolk idle the STRICT one; the catch-up loop's watch arm
@@ -445,7 +445,7 @@ import { seasonValue, MINUTES_PER_DAY, dateFromClassicMinutes, dateTimeString, m
 import { regionPriceAdjustment, worldPriceTiltOf, TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from '../systems/shopStock.js';   // Q4-v: CreateGold's regional term (the shops' own producer); U41: Items.Contains(Transportation, ...)
 import { getNameBankOfRegion, getRandomFullName } from '../characters/nameHelper.js';   // AUDIT 23 (characters-5); AUDIT 58: MacroHelper.GetRandomFullName, one home
 import { createHitEffects, setSplashObserver } from './hitEffects.js';
-import { noteMyBlow, noteMyHurt, isHurtClip, poseFx, createPeerFxPlayer } from '../net/peerFx.js';   // PEERFX1: the others see and hear my blows, and hear me struck
+import { noteMyBlow, noteMyHurt, isHurtClip, poseFx, createPeerFxPlayer } from '../net/peer/peerFx.js';   // PEERFX1: the others see and hear my blows, and hear me struck
 import { hitFlashStrength, setBatchHitFlash, HIT_FLASH_S } from '../systems/hitFlash.js';   // HITFLASH1: a struck body's red - the peers' curve is the foes'
 import { setOneShotObserver } from '../systems/audio.js';   // PEERFX1
 import { createTownScratch, createPersonTextureKeys } from './townScratch.js';   // PERF-TOWN1: the town loop's per-frame seats, and the memoised texture key
@@ -569,7 +569,7 @@ import { StreamingWorldState, TerrainSlots, worldCoordToMapPixel, locationWorldR
 import { horseNameTooltip } from '../ui/horseNameTooltip.js';   // AUDIT HCC U6: the mod's HUD label, both skins
 import { createHorseCartPool, ownedLine } from './horseCartPool.js';
 import { wagonPoolDeps } from '../world/wagonModels.js';   // WAGONS1: the pool's two words, one seam for both hosts
-import { createPeerRiders, createPeerWalkers, createEotbArt } from '../net/peerRiders.js';   // RIDE: another player in the saddle   // HCC: Horse Cart and Cargo's presentation - the wagon's five pieces, the horse's eight views, the peers' teams
+import { createPeerRiders, createPeerWalkers, createEotbArt } from '../net/peer/peerRiders.js';   // RIDE: another player in the saddle   // HCC: Horse Cart and Cargo's presentation - the wagon's five pieces, the horse's eight views, the peers' teams
 import { createHorseCartRuntime } from '../systems/horse/horseCart.js';   // HCC: TrailingWagonRuntime over this host's seams
 import { setForagingHost } from '../systems/foraging/foragingInstall.js';   // FORAGE1: Foraging's reaches into the world, answered by this host
 import { registerContainerLootHandler } from '../systems/containerLoot.js';   // THE MERGE: CSA-H's shelf subscriber, by its mod's name, on PlayerActivate.OnLootSpawned's one home
@@ -768,9 +768,9 @@ import { createSeatLock, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../
 import { readAccount, buyInsignia, equipTitle, equipAura, adoptIdentity as adoptSessionIdentity } from '../net/accountClient.js';   // WB9g: the Broker's insignia - the account's wardrobe, its sale and its wearing, and my own screen's word of it
 import { ownAura, ownNameAsAt } from '../systems/ownGlyphs.js';   // WB9g: the aura at my own feet - the service's last word, kept on the stored session; NAME-AS: and when this device last chose the name its player wears
 import { INSIGNIA, insigniaRefusal } from '../net/insignia.js';   // WB9g
-import { createFirmamentBook, setFirmamentBook } from '../net/firmamentBook.js';   // FIRM1: the Firmament - this device's tree and purses
+import { createFirmamentBook, setFirmamentBook } from '../net/firmament/firmamentBook.js';   // FIRM1: the Firmament - this device's tree and purses
 import { setFirmamentTree, setFirmamentOnline, setFirmamentMentoring } from '../systems/firmamentLive.js';   // FIRM1: the tree in force, online alone
-import { starsFor } from '../net/firmamentLaw.js';   // FIRM1: the Stars a Renown level brings, said with it
+import { starsFor } from '../net/firmament/firmamentLaw.js';   // FIRM1: the Stars a Renown level brings, said with it
 import { withoutFirmament } from '../systems/firmamentPowers.js';   // FIRM1: a strike or a spell at a player - a duel's, a siege's, the Wrothgarian zone's - is rolled with the sky off
 import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, accountLamp, accountFirmament, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
 import { parseModCommand, runModCommand, mutedText, mutedNotices } from '../net/moderation.js';   // MOD1: /mute and /unmute, and the line a muted player reads
@@ -833,7 +833,7 @@ import { RemotePlayers, composeLook, createSightCache } from '../net/remotePlaye
 import { createNameLayer, nameLayerWanted } from '../ui/nameLayer.js';   // NAME1 + BUBBLE1: the names and the chat bubbles, in the enhanced face; AUDIT NAME1 F7: and who gets that face
 import { enhancedHudScale, setHudSetChips, enhancedHudBottom, enhancedHudQuick } from '../ui/enhancedHud.js';   // AUDIT NAME1 F3: the player's own HUD scale, which the names wear like every other enhanced surface; SET5: the set powers' chips
 import { makeHitPend } from '../net/hitPend.js';   // AUDIT FOES FOE2: a blow the wire refused waits and goes
-import { PeerBodies, peerIsWolf, BODY_BUILD_GATE, playerBuildOpts } from '../net/peerBodies.js';   // MWBODY1: the others in the Morrowind body; WEREWOLF1: and in Bloodmoon's wolf; MW-HEADS2: a player's build
+import { PeerBodies, peerIsWolf, BODY_BUILD_GATE, playerBuildOpts } from '../net/peer/peerBodies.js';   // MWBODY1: the others in the Morrowind body; WEREWOLF1: and in Bloodmoon's wolf; MW-HEADS2: a player's build
 import { ChatLog, CHAT_REJOIN_MS } from '../net/chat.js';   // CHAT1: the tabs and their lines
 import { LANG_OLD_RELAY_TEXT, NO_LANG_TEXT, langJoinedText } from '../net/chat.js';   // CHAT-LANG: the Language tab's words
 import { CHAT_LANGS, chatLangRoom } from '../net/wire.js';   // CHAT-LANG: the language channels
@@ -854,7 +854,7 @@ import { caravanEntryOf, setDrivenCaravanEntry, caravanMayEnter, CARAVAN_VISIT_T
 import { HOME_ENTRY_WORDS, homeNextEntry } from '../systems/online/onlineHomes.js';   // WAGONS2-VISIT: a caravan's door is turned as a home's is
 import { homeDecorShown } from '../net/homeVoteLaw.js';   // HOME-VOTE: a shunned home's paint stands for its insiders alone
 import { createCaravanVisitLink } from '../net/caravanVisitLink.js';   // WAGONS2-VISIT: the visited caravan's cell, heard from inside it
-import { RECEIVER_MARKS } from '../net/realmTradeLaw.js';   // WAGONS2-VISIT (AUDIT): the last owner's marks, never carried to the next
+import { RECEIVER_MARKS } from '../net/realm/realmTradeLaw.js';   // WAGONS2-VISIT (AUDIT): the last owner's marks, never carried to the next
 import { GATE_BRAIN_V } from '../net/wire.js';   // AUDIT WBX R7: the brain's law this client knows, said on every `in`
 import { characterIdOf } from '../systems/characterId.js';   // AUDIT HCC-PARK: my parked team is my CHARACTER's (the relay keys it by the account and this)
 import { chooseTable, tableMoveSpeed } from '../player/eotbBillboard.js';   // AUDIT RIDE: the rider's gallop is the table the rider's own sprite shows
@@ -871,9 +871,9 @@ import { makeVideoQueue } from '../systems/quest/videoQueue.js';   // CRUX1: the
 import { createPartyPanel } from '../ui/partyPanel.js';   // SOC4: the party HUD - my party's portraits and their health / stamina / magicka
 import { MailBox, mailNoticeText } from '../net/mail.js';   // MAIL1: the letterbox the Letters tab draws and the frame polls
 import { PostBox, postNoticeText } from '../net/serverPost.js';   // SERVER-POST: the server's post the pause face's mailbox draws
-import { GuildBook } from '../net/guildBook.js';   // GUILD1b: the guild the Guild tab draws
+import { GuildBook } from '../net/guild/guildBook.js';   // GUILD1b: the guild the Guild tab draws
 import { sellProceeds } from '../systems/tradeModes.js';   // GUILD-LETTER: a withdrawal weighed as the trade window weighs a sale
-import { realmLetterOfCredit } from '../net/realmGoldLaw.js';   // GUILD-LETTER: the letter the service writes on a realm record, one maker
+import { realmLetterOfCredit } from '../net/realm/realmGoldLaw.js';   // GUILD-LETTER: the letter the service writes on a realm record, one maker
 import { createSocialPanel, TRY_AGAIN_TEXT, NO_PARTY_TEXT, LETTERS_SIGNED_OUT_TEXT } from '../ui/socialPanel.js';   // SOC3: the friends + party panel the Social button opens; AUDIT SOC B17: and its word for a refused act, so the F-menu's line and the panel's note agree
 import { glyphMarks } from '../ui/playerBadge.js';   // PEER-PLAQUE1: a badge's plain-text marks, for the plaque's title
 import { TITLE_TEXT, AURA_TEXT, setSeatTitlePlaces } from '../ui/playerBadge.js';   // WB9g: the Broker's insignia, named in its rows; SEAT1c: the seat titles' places
@@ -890,7 +890,7 @@ import { createPlayerTradeWindow, playerTradeReady } from '../ui/playerTradeDoor
 import { createPeerMenuReader } from '../systems/peerMenuBind.js';   // PEERMENU1: the player menu opens on a bind (hold E / hold A)
 import { createSocialMenu, socialPlaqueRows, plaqueRowFor } from '../ui/socialMenu.js';   // SOC5: the F-menu over that body - Add friend, Invite to party
 import { createProfileWindow, profileView, profileDuelLine, profileRenown, profileGateLine, profileRaidLine, profileSerpentLine, profileSdLine } from '../ui/profileWindow.js';   // INSPECT1: the profile the F-menu's Inspect opens
-import { createDuelManager, DUEL_RADIUS_M, DUEL_RANGE_M, DUEL_COUNTDOWN_MS, ringCentre, validRingRecord } from '../net/duelSession.js';   // DUEL1: the duel's state machine (pure)
+import { createDuelManager, DUEL_RADIUS_M, DUEL_RANGE_M, DUEL_COUNTDOWN_MS, ringCentre, validRingRecord } from '../net/duel/duelSession.js';   // DUEL1: the duel's state machine (pure)
 // WILD1 (2026-10-07, bible/11-Multiplayer/Wild-Zone.md): THE OPEN ZONE - the Wrothgarian Mountains: its law (a leaf), a
 // death's drop and its one piece, the fights between players, the room's remains as piles, and the HUD's two glyphs
 import { wildHallPicks, wildHallAt, wildHallTemplateOk } from '../systems/wild/wildDungeons.js';   // PVPDUNGEONS: the day's halls, picked alike on every client   // PVPDUNGEONS
@@ -900,10 +900,10 @@ import { GREATER_GIANT_CALL, GREATER_GIANT_CALL_AT } from '../systems/wild/wildZ
 import { wildRing, wildRingAt, wildRingName, wildRingBonus, setWildMask, wildMask, WILD_RINGS, wildJourney, WILD_GIANT, WILD_GIANT_CHANCE, WILD_GIANT_MAX, WILD_STRANGER_M, WILD_STRANGER_SEE_M, WILD_STRANGER_SLOW_M, WILD_STRANGER_RGBA } from '../systems/wild/wildZone.js';   // WILD2: the four rings; WILD3: the journeys
 import { wildTakeTook, wornOffer, wildRecord, wildChunks, wildSpawnSpot } from '../systems/wild/wildDeath.js';
 import { wildCartWord } from '../systems/wild/wildCart.js';   // CART-AWAY (FIELD BUGS 2026-10-15d): my wagon away from my death keeps its cargo
-import { readWildReceipt, WILD_FALL_GRACE_S } from '../net/wildReceipt.js';   // INT9: the relay's fall, carried to the service
-import { WILD_REF, wildKin, sameGuild } from '../net/wildRef.js';   // INT9: the zone referee's numbers (its mend, for the HUD); MAC (2026-10-14): and its kin, one law with the referee's
-import { createWildFight } from '../net/wildFight.js';
-import { createWildRemains, WILD_PILE_ICON, WILD_NO_STORE } from '../net/wildRemains.js';   // WILD-WAYPOINT: my remains' flag on both maps (below)
+import { readWildReceipt, WILD_FALL_GRACE_S } from '../net/wild/wildReceipt.js';   // INT9: the relay's fall, carried to the service
+import { WILD_REF, wildKin, sameGuild } from '../net/wild/wildRef.js';   // INT9: the zone referee's numbers (its mend, for the HUD); MAC (2026-10-14): and its kin, one law with the referee's
+import { createWildFight } from '../net/wild/wildFight.js';
+import { createWildRemains, WILD_PILE_ICON, WILD_NO_STORE } from '../net/wild/wildRemains.js';   // WILD-WAYPOINT: my remains' flag on both maps (below)
 import { markRemains, remainsMarkTick, remainsGone, keepMine, keptMine, forgetMine } from '../systems/wild/wildRemainsWaypoint.js';   // WILD-KEEP: and my remains' record, kept on the device
 import { setLootMarksLive } from './lootLines.js';   // WILD1: my remains' line with the rarity row off
 import { WILD_REMAINS_MS, WDUN_SALT, WDUN_DAY_MS, WDUN_LOCK_MS, WDUN_HERE_MS, spawnedHallMapId } from '../net/wire.js';
@@ -916,7 +916,7 @@ import { createFamilyBodies, familyRoomSprites } from '../world/familyBodies.js'
 import { createPopulationLane, holdNpcBodies } from '../characters/npcBodies.js'; import { folkActor } from '../characters/folkBodies.js'; import { residentWalkerActor } from '../characters/rosterBodies.js';
 import { personLook, personActor, figureLook } from '../characters/peopleBodies.js'; import { staticNpcData } from '../characters/staticNpc.js';   // MWNPC8b: the street's standing people   // MWNPC7: the street's walkers in Morrowind bodies   // LEGACY7 part four: the line drawn in its own body, as an online peer is
 import { houseLine } from '../net/houseLaw.js'; import { houseWord } from '../systems/legacy/houseName.js';   // LEGACY7 part three: the house a proposal comes from, on its prompt; LEGACY-NAME: a seat's house said once
-import { createDuelRecords, duelUncountedText } from '../net/duelRecord.js';   // DUEL1: the Inspect card's duelling record, asked and kept
+import { createDuelRecords, duelUncountedText } from '../net/duel/duelRecord.js';   // DUEL1: the Inspect card's duelling record, asked and kept
 import { createDuelPrompt } from '../ui/duelPrompt.js';   // DUEL1: the challenge, as the challenged player sees it
 import { DuelWallRenderer } from '../render/duelWall.js';   // DUEL1: the ring's holographic wall
 import { BannerRenderer, BANNER_TEX_W, BANNERS_MAX } from '../render/bannerPass.js';   // GUILD1d: a guild's banners, the cloth
@@ -925,7 +925,7 @@ import { createSeatBanners, seatBannerAnchors, palaceKeysOf, townCentreOf } from
 import { createFestivalStage, festivalBannerAnchors, festivalLanternsOf } from './seatFestival.js';   // FESTIVAL-STAGE: a Festival's music, banners and lanterns
 import { drawBanner } from '../ui/heraldryArt.js';   // GUILD1d: ...its heraldry painted on it
 import { heraldryLookup } from '../ui/heraldrySwatch.js';   // HERALDRY-SHOWN: a guild's heraldry by its tag, off what this client holds
-import { AuraRingRenderer, auraWearers, auraLookOf, auraBeastStep, auraMotionStep, auraCapeStep, auraSpriteBones, auraSpritePosed, auraWingLights, CLOAK_BONES, AURA_KINDLE_S, AURA_FORGET_S } from '../render/auraRing.js'; import { peerBodyYaw } from '../net/peerClimb.js';   // WB9g: Dagon's Fire at a wearer's feet; SHADOW-CLOAK: a peer's facing, the cloak's front (on this line, so no cite below it moves)
+import { AuraRingRenderer, auraWearers, auraLookOf, auraBeastStep, auraMotionStep, auraCapeStep, auraSpriteBones, auraSpritePosed, auraWingLights, CLOAK_BONES, AURA_KINDLE_S, AURA_FORGET_S } from '../render/auraRing.js'; import { peerBodyYaw } from '../net/peer/peerClimb.js';   // WB9g: Dagon's Fire at a wearer's feet; SHADOW-CLOAK: a peer's facing, the cloak's front (on this line, so no cite below it moves)
 import { duelAttackerOf, duelWeaponOf, duelSwingOf, resolveDuelStrike, duelWearDamage, duelStandIn, duelSpellOf } from '../combat/duelCombat.js';   // DUEL1: the blow between two duellists - INT8/INT9: the striker's half alone, the relay referees (AUDIT C&C H5: against the neutral stand-in)
 import { createPageWindow, pageView } from '../ui/pageWindow.js';   // JOURNAL1: a page another player holds out, read and kept
 import { PageOffers, pageOfferText, pageShownText, pageTooFarText, keptPageTokens, keptLetterTokens, letterOfPage, PAGE_UNSUPPORTED_TEXT, PAGE_NO_READERS_TEXT, PAGE_GONE_TEXT } from '../net/journalPage.js';   // JOURNAL1: a page of the journal shown, and one shown to me kept
@@ -1095,14 +1095,14 @@ import { stakedSaveRefusal } from '../ui/gambitTableWords.js';   // KG3: the sav
 import { hallStepsFor, harbourPortFor, coastalAt } from '../net/fortLaw.js';   // SEAT2b part two: a seat's crafting halls, its members' Harbour, a coast
 import { isWaterPixel } from '../ui/overworldModel.js';   // SEAT2b part two: a coast is the sea beside the town (the port's one water law)
 import { createSiegeNpcs } from './siegeNpcs.js';   // SEAT2b part two (c): the Barracks' guards and a revolt's rising, drawn
-import { createSiegeSession, isBattleLeaveCommand, BATTLE_NONE_TEXT } from '../net/siegeSession.js';   // SEAT2a part four: a siege as this client fights it   // AUDIT-SEATS C1: the chat's `/leave`
-import { SIEGE_UNITS_PER_M, SIEGE_REACH, SIEGE_WORK_IDS, SIEGE_GATEHOUSE, SIEGE_RAM, SIEGE_HIT as DUEL_REF_KIND } from '../net/siegeRef.js';   // SEAT2b part two (b): a swing at the Gatehouse or the Ram; INT8: a referee's word's kind
-import { createSiegeClaims } from '../net/siegeClaims.js';   // SEAT2a part four: its receipts carried to the service
+import { createSiegeSession, isBattleLeaveCommand, BATTLE_NONE_TEXT } from '../net/siege/siegeSession.js';   // SEAT2a part four: a siege as this client fights it   // AUDIT-SEATS C1: the chat's `/leave`
+import { SIEGE_UNITS_PER_M, SIEGE_REACH, SIEGE_WORK_IDS, SIEGE_GATEHOUSE, SIEGE_RAM, SIEGE_HIT as DUEL_REF_KIND } from '../net/siege/siegeRef.js';   // SEAT2b part two (b): a swing at the Gatehouse or the Ram; INT8: a referee's word's kind
+import { createSiegeClaims } from '../net/siege/siegeClaims.js';   // SEAT2a part four: its receipts carried to the service
 import { createSiegeHud } from '../ui/siegeHud.js';   // SEAT2a part four: the bar, the sides, the result card
 import { siegeFieldOf, siegeFieldWire, buildingKeysOfType, royalRingWire, castleEntranceOf } from '../systems/siegeField.js';   // SEAT2a part four: the battlefield the town's records give   // CROWN1 part two: and a crown's ring
 import { createRoyalSession } from '../net/royalSession.js';   // CROWN1 part two: a Royal Tourney as this client fights it
-import { createRoyalClaims, createDuelClaims } from '../net/siegeClaims.js';   // CROWN1 part two: its bouts' receipts carried to the service; INT8: a duel's
-import { createSiegeHerald } from '../net/siegeHerald.js';   // AUDIT-SEATS G1: the battles announced in the server's voice
+import { createRoyalClaims, createDuelClaims } from '../net/siege/siegeClaims.js';   // CROWN1 part two: its bouts' receipts carried to the service; INT8: a duel's
+import { createSiegeHerald } from '../net/siege/siegeHerald.js';   // AUDIT-SEATS G1: the battles announced in the server's voice
 import { siegeBlowKind, siegeCastClamp, siegeSpellNumbers, siegeSpellBarred, SIEGE_SPELL_BARRED_TEXT, SIEGE_DISMOUNT_TEXT } from '../combat/siegeCombat.js';   // AUDIT-SEATS G5: a battle's shafts, spells and saddle
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { startTutorialTour } from '../ui/tutorialPopup.js';   // TUT1: the welcome tour - and the popups' handler, registered by this host (the four hosts' rule)
@@ -1129,7 +1129,7 @@ let _ohLootOff = null;
  *  line dfuiOpenTravelMapWindow's FIRST test puts on the HUD
  *  (AddHUDText) when the travel map is asked for inside. Verbatim. */
 const CANNOT_TRAVEL_INDOORS_TEXT = 'You cannot travel while indoors.';
-/** WB8b: the saving throw a gate Warden's blow meets, by his aspect's element (net/gateMods.js `el`): the classic element
+/** WB8b: the saving throw a gate Warden's blow meets, by his aspect's element (net/gate/gateMods.js `el`): the classic element
  *  and the effect flag DFU's SavingThrow reads for it (systems/spellcast.js - poison is DiseaseOrPoison's, flagged Poison). */
 const GATE_SAVES = Object.freeze({
   fire: Object.freeze([ELEMENTS.Fire, EFFECT_FLAGS.Fire]),
@@ -1840,14 +1840,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   /** CROWN2: where the seats' red lines are said - set once the chat is (it is made later in the scene). */
   let redChat = null;
-  /** SEAT2a part four: the siege this client is in, made with the online session (net/siegeSession.js) - null offline. */
+  /** SEAT2a part four: the siege this client is in, made with the online session (net/siege/siegeSession.js) - null offline. */
   let siegeSession = null;
   /** SEAT2b part two (c): the relay's own fighters on this screen (scenes/siegeNpcs.js) - null offline. */
   let siegeNpcs = null;
-  /** AUDIT-SEATS C5: the battles' receipt carriers (net/siegeClaims.js) and the one HUD both draw through, kept here so the
+  /** AUDIT-SEATS C5: the battles' receipt carriers (net/siege/siegeClaims.js) and the one HUD both draw through, kept here so the
    *  gate's frame can offer what they hold on their own clock - null offline. */
   let siegeClaims = null, royalClaims = null, siegeHud = null;
-  /** AUDIT-SEATS G1: the battles announced in the server's voice (net/siegeHerald.js) - null offline. */
+  /** AUDIT-SEATS G1: the battles announced in the server's voice (net/siege/siegeHerald.js) - null offline. */
   let siegeHerald = null;
   /** AUDIT-SEATS C6: the battles' clock - the relay's, as every relay-stamped time this scene reads (a pass's window, a
    *  tourney's week, a receipt's life). */
@@ -1949,7 +1949,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       character: () => characterIdOf(playerEntity), now: () => Date.now() + _sharedOffsetMs, carry: carryHands })
     : null;
   // FIRM1 (bible/06-Systems/Firmament.md): THE FIRMAMENT'S BOOK - the character's passive tree and its purses as the account
-  // service keeps them (net/firmamentBook.js); what it hears is the tree in force (systems/firmamentLive.js), and the window
+  // service keeps them (net/firmament/firmamentBook.js); what it hears is the tree in force (systems/firmamentLive.js), and the window
   // (ui/firmamentWindow.js) reads the page's book where any door opens it. Online only: offline there is no sky.
   const firmBook = params.has('online')
     ? createFirmamentBook({ door: accountFirmament({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }), storage: appStorage(),
@@ -1997,7 +1997,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       wallet: realmWallet })
     : null;
   // CARDS6 (bible/11-Multiplayer/Tavern-Cards.md section 23): a realm character's card stakes - the buy-in the service
-  // holds for a relay's gold table, the relay's cash-out receipts kept and claimed back into the record (net/cardStakes.js)
+  // holds for a relay's gold table, the relay's cash-out receipts kept and claimed back into the record (net/card/cardStakes.js)
   // CARDS-KEPT (from play, 2026-10-11): the book reads and writes JSON by `get`/`set` - AUDIT WB A6's one store, reached at
   // stake time (it is made below). A bare Storage has neither: every write threw, every stake read back unkept, and every
   // gold table on every character refused its first buy-in as 'cards-kept-full'
@@ -2007,7 +2007,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       character: () => characterIdOf(playerEntity), region: () => _questRegionIndex(), now: () => Date.now() + _sharedOffsetMs })
     : null;
   // CARDS10 (bible/11-Multiplayer/Tavern-Cards.md section 33): ILIAC HAND'S SEASON BOARD - the service's door, and the
-  // ranked games' signed results this device carries to it (net/iliacClaims.js), offered at once and again while kept
+  // ranked games' signed results this device carries to it (net/iliac/iliacClaims.js), offered at once and again while kept
   const iliacDoor = accountIliac({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
   const iliacClaims = params.has('online')
     ? createIliacClaims({ claim: (r) => iliacDoor.claim(r), store: { get: (k) => _spoilsStore.get(k), set: (k, v) => _spoilsStore.set(k, v) }, me: () => iliacDoor.me(),   // the one store (AUDIT WB A6): its memory every reader's
@@ -2019,7 +2019,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       onGuest: () => townTalk?.say?.('Iliac Hand: register your account to keep your ranked games on the board.') })
     : null;
   // KG6 (bible/11-Multiplayer/Kings-Gambit.md section 19): THE KING'S GAMBIT'S SEASON BOARD - the service's door, and the
-  // rated games' signed results this device carries to it (net/gambitClaims.js), Iliac Hand's carrier on its own store
+  // rated games' signed results this device carries to it (net/gambit/gambitClaims.js), Iliac Hand's carrier on its own store
   const gambitDoor = accountGambit({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
   const gambitClaims = params.has('online')
     ? createGambitClaims({ claim: (r) => gambitDoor.claim(r), store: { get: (k) => _spoilsStore.get(k), set: (k, v) => _spoilsStore.set(k, v) }, me: () => gambitDoor.me(),
@@ -2319,7 +2319,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const key = `${p.x},${p.y}`;
     if (!locationIndex.get(key)?.spawned) return;
     if (locationIndex.get(key).superTier) return;   // SD2b: a Hollow's life is the hub's record - a cleared one is not two days from gone
-    if (locationIndex.get(key).wildHall) return;   // AUDIT SPAWN-REBIRTH F6: nor is a Wild Zone hall's - its day is the hub's (net/wildLaw.js)
+    if (locationIndex.get(key).wildHall) return;   // AUDIT SPAWN-REBIRTH F6: nor is a Wild Zone hall's - its day is the hub's (net/wild/wildLaw.js)
     _spawnLedger.clear(key, _spawnClock());
     owSayRow(key);   // OW6L: and the cell hears the short clock start
   };
@@ -13135,8 +13135,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const _veils = new Map();   // INVIS-LOOK: peer id -> this frame's concealed draw (ECV1's visual), for every layer
   const _hiddenPeers = new Set();   // AUDIT (pre-merge) I-B: the peers the classic lane stands nowhere this frame - their teams with them
   const veilOf = (id) => _veils.get(id) ?? null;
-  const gateCrowd = createGateCrowd();   // GATE-CROWD: a gate's court draws the nearest of a crowd (net/gateCrowd.js) - the places held frame to frame
-  const peerRange = createPeerRange();   // PEER-RANGE: past the Other players card's distance the others stand nowhere on this screen (net/peerRange.js) - held a little past it frame to frame
+  const gateCrowd = createGateCrowd();   // GATE-CROWD: a gate's court draws the nearest of a crowd (net/gate/gateCrowd.js) - the places held frame to frame
+  const peerRange = createPeerRange();   // PEER-RANGE: past the Other players card's distance the others stand nowhere on this screen (net/peer/peerRange.js) - held a little past it frame to frame
   const crowdDrawnHere = (p) => gateCrowd.shows(p.id) && peerRange.shows(p.id);   // GATE-CROWD: a player the court's crowd leaves undrawn is not there to press or aim a gift at; PEER-RANGE: nor one past the distance
   const magic = createPlayerMagic({
     renderer, audio, getTexture, uploadRecord, uploadRecordFrame,
@@ -20892,7 +20892,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // CARDS9 (bible/11-Multiplayer/Tavern-Cards.md section 32; section 6.3: "A guild's quest can pay a card of that guild"):
   // a guild quest done pays one of its guild's cards one time in three - the best its quester's rank in that guild
   // reaches (systems/card/cardSources.js guildCardRoll) - once a quest, however its end is heard again. Offline and online
-  // alike: a card is an item, and the realm bounds what crosses (net/cardWorthLaw.js customs).
+  // alike: a card is an item, and the realm bounds what crosses (net/card/cardWorthLaw.js customs).
   // AUDIT CARDS-6 (the lane's latent): THE ONCE IS A CHARACTER'S. The set lives as long as the host, and an offline load
   // restores another character in place (save.js restorePlayer) with its quests at their own saved uids - so the bare uid
   // a first character was paid for stopped a second's restored quest of the same uid from paying. Keyed by the
@@ -21442,11 +21442,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // host's file dict - never the player's store, which quests move) once the file is read; a modded file desyncs the
   // shared economy (recorded). Offline nothing is installed and the player's own tilted walk runs.
   if (onlineOn) townTalk.ensureFactions?.().then(() => { if (townTalk.factionDict) setWorldPriceTilt(worldPriceTiltOf(townTalk.factionDict)); }).catch(() => {});
-  let peerRiders = null;   // RIDE: another player in the saddle, drawn as Eye Of The Beholder's mounted sprite (net/peerRiders.js)
-  /** COATS3D: a peer on a HORSE rides the 3D horse in their Morrowind body (net/peerBodies.js) where this lane builds
+  let peerRiders = null;   // RIDE: another player in the saddle, drawn as Eye Of The Beholder's mounted sprite (net/peer/peerRiders.js)
+  /** COATS3D: a peer on a HORSE rides the 3D horse in their Morrowind body (net/peer/peerBodies.js) where this lane builds
    *  one, its rig is up and their body is not refused - the rider layer yields them (a beast stays the layer's). */
   const peerRidesIn3d = (d) => !!peerBodies?.enabled() && horseRigFor(renderer).ready() && d.shown?.rd === POSE_RIDE.Horse && !d.shown?.wb && !peerBodies.failureOf(d.look, d.shown, d.glyphs);
-  let peerWalkers = null;   // DISC23-B: another player on foot, drawn as the Eye Of The Beholder set they chose (net/peerRiders.js)
+  let peerWalkers = null;   // DISC23-B: another player on foot, drawn as the Eye Of The Beholder set they chose (net/peer/peerRiders.js)
   let online = null, remotePlayers = null, peerBodies = null, nameLayer = null, nameSight = null, _onlineLast = null, _onlineLastOn = null, _onlineKey = null, _onlineKeySince = 0, _onlineMovingUntil = 0, _onlineLookAt = -Infinity;
   let _hsLatch = false;   // AUDIT DISC7 B2: the motor's half-speed flag off the last frame that MOVED - a stop reads it true (standing), and the move hold must not send that as a slow trot
   // D-ONLINE1 (2026-09-17, a player: "still see you have died then main menu"): `onlineFrame` LEAVES the room the
@@ -21523,14 +21523,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let socialPanel = null;
   let mail = null;   // MAIL1: the letterbox (net/mail.js MailBox), made with the panel that draws it
   let postBox = null;   // SERVER-POST: the server's post (net/serverPost.js PostBox), made beside the letterbox
-  let guildBook = null;   // GUILD1b: the character's guild (net/guildBook.js GuildBook), made with the panel that draws it
+  let guildBook = null;   // GUILD1b: the character's guild (net/guild/guildBook.js GuildBook), made with the panel that draws it
   const socialLink = () => { const tab = chatLog?.tabs.find((t) => t.room === SOCIAL_ROOM); return tab ? (chatLinks?.get(tab.id) ?? null) : null; };
   // QUEST-HOME (Mac, 2026-10-15: "Close both"): every answer of the service's that moved a home (net/accountClient.js
   // onHomeOrders - a door's claim or sale, a deed, a hall, an arena move, a character deleted) carried to the hub, whose
   // fan tells every page online; a page with no hub link says nothing, and the others read it at their next boot
   if (homesApi) onHomeOrders((order) => { socialLink()?.sendHomeOrder?.(order); });
   /** RAID-ROLL: the hub asked for the towns table by its operator's pinned hash - this world's, when it hashes to it
-   *  (net/raidLaw.js; a data-modded world's is its own and is never sent). The travel map's picker may still be loading
+   *  (net/raid/raidLaw.js; a data-modded world's is its own and is never sent). The travel map's picker may still be loading
    *  at the hello, so a table not ready is asked for again a few times, ten seconds apart; once a session. */
   let _raidTownsSent = false;
   const offerRaidTowns = (link, h, tries = 3) => {
@@ -21545,7 +21545,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  gather while my own client refused every rest of theirs: nobody rested, and my own night was theirs to follow. */
   const restsWithParty = () => getPref('restWithParty') !== false || !socialLink()?.restOptOk;
   /** GUILD1c: a room took my guild off (a removal the hub heard, a disbanding, my own leave's echo) - the book looks
-   *  again, and a membership that moved goes to every room I hold (net/guildBook.js onOrders). */
+   *  again, and a membership that moved goes to every room I hold (net/guild/guildBook.js onOrders). */
   const guildGone = () => { guildBook?.refresh(); };
   /** GUILD1c: my guild's tag as the hub knows it - the Guild tab's word on whether I am in one. */
   const myGuildTag = () => socialLink()?.gt ?? null;
@@ -22521,12 +22521,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const p = online.peers.get(id) ?? null;
       profileWin?.update(id, withDuel(id, profileView({ name: peerName(id), peer: p, look: p?.look ?? null, card: d.card, state: 'answered' })));
     };
-    // DUEL1: A DUEL FRAME AT ME - the law decides (net/duelSession.js); `sub` the sender's account as the relay stamped it
+    // DUEL1: A DUEL FRAME AT ME - the law decides (net/duel/duelSession.js); `sub` the sender's account as the relay stamped it
     online.onDuel = (id, d, sub = null) => { duelMgr.onFrame(id, d, sub); };
     online.onDuelRef = (g, room) => { if (g.k === 'bout') _duelRoom = room ?? null; duelMgr.onRef(g); };   // INT8: the referee's word on my bout - AUDIT INT8: and its room, where its frames go
-    online.onWild = (id, d, sub = null) => { wildFight.onFrame(id, d, sub); };   // WILD1: a fallen's offer at me (INT9: the one frame the zone routes) - the zone's law decides (net/wildFight.js)
+    online.onWild = (id, d, sub = null) => { wildFight.onFrame(id, d, sub); };   // WILD1: a fallen's offer at me (INT9: the one frame the zone routes) - the zone's law decides (net/wild/wildFight.js)
     online.onWildRef = (g, room) => wildRefIn(g, room);   // INT9: the zone referee's word - a blow landed, a fall, a fall signed
-    // WILD1: my room's word on its remains (net/wildRemains.js). WILD-SEEN (2026-10-09, the owner: "when i die i dont see my
+    // WILD1: my room's word on its remains (net/wild/wildRemains.js). WILD-SEEN (2026-10-09, the owner: "when i die i dont see my
     // own pile"): the book is told the room FIRST - the frame told it a frame late, and a near relay's hello answered inside
     // that frame, so the room's remains were heard and then cleared as "another room's" by the frame's setRoom
     // HALO-REMAINS: a halo's word too - the cell beside mine says its remains at its hello, and a crossing into it promotes
@@ -23357,7 +23357,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // traps both players in a surrounding transparent holographic wall that keeps them from going outside of the duel
   // space"; asked: weapons, bows and spells all count; "Loser drops to 1HP and both are fully healed on duel end. Add a
   // dueling K/D to the profile menu and player inspect profile"; outdoors only; the record per account) ══════════════
-  // Everything decisive lives in net/duelSession.js (the handshake, the ring, every end), combat/duelCombat.js (the blow,
+  // Everything decisive lives in net/duel/duelSession.js (the handshake, the ring, every end), combat/duelCombat.js (the blow,
   // both halves), render/duelWall.js (the wall) and the account service (the record); this block connects them to this
   // scene's socket, bodies, motor, HUD, chat and account.
   /** DUEL1: a live duel's opponent is AN ENEMY NEARBY to every gate that asks (the travel map, a journey, rest): the
@@ -23507,7 +23507,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     for (const p of wedMgr.peers()) if (!online?.reachesPeer(p)) wedMgr.gone(p);
     if (performance.now() - _unionsAt > UNIONS_READ_MS) legacyUnionsRead();
   };
-  /** INT8: THE DUEL'S HUD - the referee's vitality (net/duelRef.js: the Royal Tourney's, never my save's health), mine
+  /** INT8: THE DUEL'S HUD - the referee's vitality (net/duel/duelRef.js: the Royal Tourney's, never my save's health), mine
    *  over theirs, drawn on the battles' readout (ui/siegeHud.js) for the duel's life; its Leave is my yield. */
   let _duelHud = null;
   const duelHudSay = (d) => {
@@ -23520,7 +23520,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   /** THE ATTACKER: my blow out - INT8: rolled on my own sheet against the neutral stand-in (AUDIT C&C H5: a body of my
    *  own sheet cancelled every attribute I brought and charged me for my own luck; the target's sheet is not mine to
-   *  read), the number sent for the RELAY to referee (net/duelRef.js clips it to the weapon my look holds and the arms
+   *  read), the number sent for the RELAY to referee (net/duel/duelRef.js clips it to the weapon my look holds and the arms
    *  my token signs). A swing that rolled nothing is a miss, said here; the referee's word on one that landed comes
    *  back as `duelHpIn`. */
   const duelStrikeOut = (by, weapon, swing, drawMs = 0, to = null) => {
@@ -23559,7 +23559,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   /** SEAT2a part four: THE MELEE ARM IN A SIEGE - the nearest foe (a fighter of the other side) within a weapon's reach,
    *  in view and in sight (the duel's test); my swing rolled on my own sheet against the neutral stand-in, sent to the
-   *  relay, which clips it to DFU's range for the weapon my look holds (net/siegeRef.js). True when the swing was theirs. */
+   *  relay, which clips it to DFU's range for the weapon my look holds (net/siege/siegeRef.js). True when the swing was theirs. */
   const siegeMeleeHit = (eye, inViewFn) => {
     const battle = royalSession?.active() ? royalSession : siegeSession;   // CROWN1 part two: a Royal Tourney's bout, the same arm
     const foes = battle?.foes() ?? [];
@@ -23583,7 +23583,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** SEAT2b part two (b) (Seats-Arc 6.2): MY SWING AT A WORK - an attacker's at the Gatehouse, a defender's at the Ram
    *  before it (siegeSession.workTarget), where my feet stand within a weapon's reach of its body (the Throne's point and
    *  the work's size - the referee allows its slack beyond); rolled on my own sheet as a blow on a foe is, sent to the
-   *  relay, which takes a tenth of it into a Gatehouse and the whole into a Ram (net/siegeRef.js refereeWorkBlow - a bow's
+   *  relay, which takes a tenth of it into a Gatehouse and the whole into a Ram (net/siege/siegeRef.js refereeWorkBlow - a bow's
    *  shaft batters nothing; the melee arm is a swing's alone). True when the swing was the work's. */
   const siegeWorkHit = () => {
     const to = siegeSession?.workTarget?.() ?? null;
@@ -23604,7 +23604,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** AUDIT-SEATS G5: MY BLOW ON A BATTLE'S FOE `to` - a swing or a shaft (`by` 'melee' or 'arrow': its kind on the wire,
    *  combat/siegeCombat.js siegeBlowKind - the referee takes a shaft from a bow alone, at a shaft's reach), rolled on my
    *  own sheet against the neutral stand-in (a shaft's the release's StrikeDown and its draw's time), sent to the relay,
-   *  which clips it to DFU's range for the weapon my look holds (net/siegeRef.js). True when it was the battle's. */
+   *  which clips it to DFU's range for the weapon my look holds (net/siege/siegeRef.js). True when it was the battle's. */
   const siegeStrikeOut = (to, by, weapon, swing, drawMs = 0) => {
     const battle = royalSession?.active() ? royalSession : siegeSession;
     if (!to || !battle?.active() || !battle.foes().includes(to)) return wildStrikeOut(to, by, weapon, swing, drawMs);   // WILD1: not the battle's - perhaps a fair player of the open zone's
@@ -23726,7 +23726,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (duel.sub) duelRecords.forget(duel.sub);
     repaintDuelProfile();
   };
-  /** INT8: A BOUT'S RECEIPTS, carried to the account service (net/siegeClaims.js createDuelClaims): kept on the device
+  /** INT8: A BOUT'S RECEIPTS, carried to the account service (net/siege/siegeClaims.js createDuelClaims): kept on the device
    *  until the service settles each - either fighter's to carry, counted once. */
   const duelClaims = createDuelClaims({
     claim: (r) => duelAccount.claim(r), me: () => _seatDoor?.me() ?? null, storage: appStorage(), nowMs: () => Date.now(),
@@ -23759,7 +23759,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // ═══ WILD1: THE OPEN ZONE - THE WROTHGARIAN MOUNTAINS (bible/11-Multiplayer/Wild-Zone.md) ═════════════════════════
   // The owner: "Wrothgarian mountains need to be turned into a open pvp zone". The law is in its own modules - the zone
   // and its numbers (systems/wild/wildZone.js), what a death drops and keeps (systems/wild/wildDeath.js), the fights and a body's
-  // one piece (net/wildFight.js), the room's remains as piles (net/wildRemains.js); this block joins them to this
+  // one piece (net/wild/wildFight.js), the room's remains as piles (net/wild/wildRemains.js); this block joins them to this
   // scene's socket, bodies, pack and windows. THE FOUR HOSTS RULE: this host (the street, the fights and the remains in
   // its pool) WIRED; worldModes.js (a building's pool, the remains) and dungeonContext.js (a dungeon's pool, its foes
   // and piles four times and twice) WIRED; exterior.js, the offline fixed city, NOT WIRED on purpose - the zone is
@@ -23777,7 +23777,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** A region mark's place (its px/py and 256ths) as a world-frame point. */
   /** May I fight in the zone now: a relay that carries it, standing in the zone, outdoors (the fights are the open
    *  country's - a building's and a dungeon's foes are the zone's danger there), alive. */
-  // ── PVPDUNGEONS: THE ZONE'S OWN HALLS (systems/wild/wildDungeons.js picks them; the hub keeps them - net/wildLaw.js) ──
+  // ── PVPDUNGEONS: THE ZONE'S OWN HALLS (systems/wild/wildDungeons.js picks them; the hub keeps them - net/wild/wildLaw.js) ──
   // The day is the RELAY's (`st`), so every client stands the same halls; the hour's lock, who is inside, the empty hall's
   // reset and the crows are the hub's word. With no hub to ask (an older relay, a lost socket) the day falls back to this
   // machine's clock and the lock to this session's own memory - the halls still stand, the rules still hold for me.
@@ -24163,7 +24163,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     socialLink()?.sendWdun?.({ k: died ? 'die' : 'out', h });
   };
   const wildCan = () => !!online?.wildOk && online.status === 'open' && wildHere() && (wildOutdoors() || modes?.mode === 'dungeon') && playerEntity.health > 0 && !modes?.deathUp?.();   // PVPDUNGEON: players fight in the zone's dungeons too
-  /** Is this player one I may fight (and be fought by): standing in the zone, and never KIN - net/wildRef.js wildKin, the
+  /** Is this player one I may fight (and be fought by): standing in the zone, and never KIN - net/wild/wildRef.js wildKin, the
    *  referee's own law: my party, or one under its truce; my duel's opponent (a duel's blows are the duel's own); or, MAC'S
    *  DECISION (2026-10-14, "Guildmates are friends"), one of my guild - its tag as the relay stamped it, mine as the hub
    *  says it (a tag is one guild's alone). */
@@ -24202,7 +24202,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   /** MY BLOW ON A FAIR PLAYER `to` - a swing or a shaft. INT9: rolled on my own sheet against the neutral stand-in (a
    *  siege's way: the target's sheet is not mine to read - AUDIT C&C H5), the number sent for the RELAY to referee
-   *  (net/wildRef.js clips it to the weapon my look holds and the arms my token signs); a swing that rolled nothing is a
+   *  (net/wild/wildRef.js clips it to the weapon my look holds and the arms my token signs); a swing that rolled nothing is a
    *  miss, said here, and the referee's word on one that landed comes back as `wildHpIn`. True when the swing was the
    *  zone's. */
   const wildStrikeOut = (to, by, weapon, swing, drawMs = 0) => {
@@ -24248,7 +24248,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const bodies = wildBodiesNow();
     return bodies.length ? bodies.map((b) => ({ ...b, name: peerName(b.id) ?? 'another player' })) : null;
   };
-  // ── INT9: THE REFEREE'S WORD (net/wildRef.js - the relay holds the zone's fights) ──
+  // ── INT9: THE REFEREE'S WORD (net/wild/wildRef.js - the relay holds the zone's fights) ──
   /** THE ZONE'S HUD - the referee's vitality (the Royal Tourney's, never my save's health: that is the foes' alone), mine
    *  and my last foe's, on the battles' readout (ui/siegeHud.js, with nothing to leave) while the fight is fresh - the
    *  referee makes a fighter no player has struck for WILD_REF.mendMs whole again. */
@@ -24311,7 +24311,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     { const p = duelWorldOf(g.id); if (p) { _wildFellAt.set(g.r, p); if (_wildFellAt.size > 16) _wildFellAt.delete(_wildFellAt.keys().next().value); } }   // AUDIT INT9: the seizure lays the remains where the body fell
     if (_wildVit?.foe?.id === g.id) { _wildVit = null; wildHudSay(); }
   };
-  /** A FALL SIGNED (`wref` `rc`, net/wildReceipt.js): mine - my drop taken off my record against it, now; my foe's - theirs
+  /** A FALL SIGNED (`wref` `rc`, net/wild/wildReceipt.js): mine - my drop taken off my record against it, now; my foe's - theirs
    *  to carry first, mine to carry once WILD_FALL_GRACE_S has gone by with no remains of theirs in the room. */
   const wildRcIn = (g, room) => {
     const c = readWildReceipt(g.rc), me = social?.acct ?? null;
@@ -24360,7 +24360,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   /** The choice made: what the window put in my pack goes straight back out, and the pick goes to the relay (INT9) - it
    *  signs the fall with it, the service takes that piece off the fallen's record, and it reaches me from their remains
-   *  (net/wildRemains.js asks for it the moment the room says them). */
+   *  (net/wild/wildRemains.js asks for it the moment the room says them). */
   const wildBodyChosen = (peer, taken) => {
     const b = _wildBodies.get(peer);
     const list = playerEntity.items ?? [];
@@ -24444,7 +24444,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // PVP-ESCROW's two sides (scenes/wildEscrowHost.js - HOST-SPLIT, FIELD BUGS 2026-10-15c)
   const wildEscrow = createWildEscrowHost({ townTalk, session: realmSession, modes: () => modes, wildAccount, checkpoint: () => onlineCheckpoint() });
   /** THE DEPOSIT - the service's records to the room, chunk by chunk on the wild frames' own pace, each chunk carrying its
-   *  order (the room keeps the remains only when the records digest to it: net/wildLaw.js). An order is good a minute. */
+   *  order (the room keeps the remains only when the records digest to it: net/wild/wildLaw.js). An order is good a minute. */
   const _wildDeposits = [];   // { r, chunks, k, o, p, room, mine, at }
   const wildDeposit = (dep) => {
     if (_wildDeposits.some((x) => x.r === dep.r)) return;
@@ -24861,7 +24861,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     repaintDuelProfile();
   };
   /** The Inspect card's duelling record: the account service's count for the account the relay stamped on their card
-   *  (net/duelRecord.js), kept a minute; `_profileSub` is that stamp for the card standing now. */
+   *  (net/duel/duelRecord.js), kept a minute; `_profileSub` is that stamp for the card standing now. */
   let _profileSub = null;
   const duelRecords = createDuelRecords({ read: (id) => duelAccount.record(id), now: () => performance.now(), onRecord: () => repaintDuelProfile() });
   let _profileView = null;   // the last view the card stood on, re-drawn with the duel's word when it moves
@@ -24881,7 +24881,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   // ═══ WB1: THE OBLIVION GATE'S OMEN ═════════════════════════════════════
   // Mac: "at any point in the world, on the timer, a large area would be shown on the map, also in chat". Online only:
-  // the gate is a fact about the SHARED world (net/gateLaw.js - the shared clock's game day), found over the map files
+  // the gate is a fact about the SHARED world (net/gate/gateLaw.js - the shared clock's game day), found over the map files
   // (systems/gate/gateSite.js, scanned once, the first time a gate is marked) and said once a moment (systems/gate/gateOmen.js).
   // The clock is the relay's, through the welcome's offset, as the sky's is.
   let _gateScan = null, _gateScanner = null;
@@ -24909,9 +24909,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const _gateTwo = (n) => String(n).padStart(2, '0');
   /** TIME1: an EVENT clock minute as this machine's local "HH:MM" (the gates' and the raids' words), or null offline. */
   function eventLocalTime(minute) { const ms = sharedWallMs(minute); if (ms == null) return null; const d = new Date(ms); return `${_gateTwo(d.getHours())}:${_gateTwo(d.getMinutes())}`; }
-  /** WB3b: THE COURT'S LINK (net/gateLink.js) - the relay's words about a gate's fight, off the court's room and the hub:
+  /** WB3b: THE COURT'S LINK (net/gate/gateLink.js) - the relay's words about a gate's fight, off the court's room and the hub:
    *  the omen reads its word of a kill (a gate whose boss fell collapses on every screen), the chat says the kill. */
-  /** WB5b: THE RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/gateClaims.js) - each kill the relay signed for
+  /** WB5b: THE RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/gate/gateClaims.js) - each kill the relay signed for
    *  me, kept on the device until the service has counted it (the spoils' own JSON-over-Storage door). */
   /** AUDIT WB A6: ONE STORE FOR THE SPOILS AND THE RECEIPTS (scenes/spoilsPool.js spoilsStore) - its memory stands in
    *  for a storage that refuses writes, so every reader is this one. */
@@ -25028,7 +25028,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _arenaRivalEntity.name = b.vs?.n ?? _arenaRivalEntity.name;
     return { i: r.me === 'p0' ? 'p1' : 'p0', entity: _arenaRivalEntity, feet: peer.feet, height: peer.height ?? CAPSULE_HEIGHT, radius: 0.4, yaw: 0 };
   }
-  /** RAID4: THE RAID RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/raidClaims.js) - each town the relay
+  /** RAID4: THE RAID RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/raid/raidClaims.js) - each town the relay
    *  signed my defence of, kept with the character that fought it until the service has counted it and paid its
    *  Renown; a counted raid's Renown is the page's at once, as a report's is - when that character is the one
    *  standing here (another's track moved, not this one's - RENOWN-CHAR: as before RENOWN-ACCOUNT). */
@@ -25052,7 +25052,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
     },
   }) : null;
-  /** SERPENT1: THE SERPENT RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/serpentClaims.js) - each kill the
+  /** SERPENT1: THE SERPENT RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/serpent/serpentClaims.js) - each kill the
    *  relay signed for me, kept with the character that fought it until the service has counted it and paid its Renown
    *  (the raids' own carrier); the hoard when the service says this claim is its (serpent, account)'s. */
   const _accountSerpents = accountSerpents({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
@@ -25074,7 +25074,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
     },
   }) : null;
-  /** SD9b: THE HOUR'S RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/sdClaims.js) - each Brass Remnant's fall
+  /** SD9b: THE HOUR'S RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/superDungeon/sdClaims.js) - each Brass Remnant's fall
    *  the relay signed for me, kept on the device until the service has counted it (the gate's own carrier, its store). */
   const _accountSds = accountSds({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
   /** LAMP-KEEPER II: I Love Lamp, asked of the account service at a press on a lamp keeper (worldModes.js lampChoice) -
@@ -25223,7 +25223,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       .catch((e) => console.warn('[gate] spoils', e?.message ?? e));
   }
   /** RAID4b: A TOWN'S THANKS, off a receipt the relay signed at the cleanse - AUDIT RAID R4: given when the account
-   *  service says this claim is the (raid, account)'s (net/raidClaims.js onSpoils: a second browser, a phone or a hub's
+   *  service says this claim is the (raid, account)'s (net/raid/raidClaims.js onSpoils: a second browser, a phone or a hub's
    *  hello handing the receipt again is answered no), rolled at the level the character fought at, straight into the
    *  pack when that character stands here - else kept on the device for it, as a crash's record is - once a receipt and
    *  account, one tab at a time. */
@@ -25236,7 +25236,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       .catch((e) => console.warn('[raid] spoils', e?.message ?? e));
   }
   /** SERPENT1: THE OLD COIL'S HOARD, off a receipt the relay signed at the kill - given when the account service says
-   *  this claim is the (serpent, account)'s (net/serpentClaims.js onSpoils), rolled at the level the character fought at
+   *  this claim is the (serpent, account)'s (net/serpent/serpentClaims.js onSpoils), rolled at the level the character fought at
    *  and by how it earned it, straight into the pack when that character stands here - else kept for it. */
   /** SD9e: MY HOUR RECEIPT'S SPOILS - one from my own realm, while I stand in it, is kept for the burst on the arena's
    *  floor (scenes/sdSpoils.js - SD_SPEW_AT_MS into the fall); any other (the hub's at a hello, a realm I have left) is
@@ -25374,7 +25374,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     riteReady: () => !!online?.riteOk,   // AUDIT WB12d (L5): a relay that keeps the rite
   }) : null;
   /** GATE-CLEAR: THE CLEARING World of Daggerfall keeps its rock off (world/gate/gateClearance.js, the streamer's sweep far
-   *  above) - the site of the gate the clock is about (net/gateLaw.js gateAt: from the last gate's collapse to this
+   *  above) - the site of the gate the clock is about (net/gate/gateLaw.js gateAt: from the last gate's collapse to this
    *  one's), the omen's own roll, so every client clears the same ground and the land is clear long before the omen
    *  names it. Nothing until the site's scan is done (it begins once the relay's clock is read); the day then read off
    *  the relay's clock as the omen reads it, the last offset kept through a reconnect. DISCORD-GATES: the site kept
@@ -25392,7 +25392,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   /** DISCORD-GATES: THIS GAME'S WORD OF WHERE THE GATE STANDS, to the hub (net/online.js sendGateSite, once a socket and
    *  day): the clearing's own site - the gate the clock is about, from its scan's end on, ~85 real minutes before its
-   *  omen. The hub names the place in its Discord posts once two accounts agree (net/gateHerald.js). */
+   *  omen. The hub names the place in its Discord posts once two accounts agree (net/gate/gateHerald.js). */
   const reportGateSite = () => {
     const s = _gateClearNow() ? _gateClearOf.site : null;
     if (s) socialLink()?.sendGateSite?.(s.day, s.px, s.py, s.place);
@@ -25454,7 +25454,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   // ═══ SERPENT1 (2026-10-04, Mac: "A new world event that requires players with a ship to meet up and take on a large
   // scale sea serpent in the ocean"; "make this something truly special"): SETHRAKUL, THE OLD COIL ════════════════════
-  // Online only: the serpent is a fact about the SHARED world (net/serpentLaw.js - every other event day, on the relay's
+  // Online only: the serpent is a fact about the SHARED world (net/serpent/serpentLaw.js - every other event day, on the relay's
   // clock), its waters on one of the Bay's packet lanes in open sea (systems/serpent/serpentSite.js, over the lanes the packets
   // sail - laneNet below), said in the chat, ringed on the held map and marked on the compass (systems/serpent/serpentOmen.js);
   // its fight the relay's (server/src/index.js - the cell of its site keeps its brain on the cell's alarm) and this
@@ -25466,8 +25466,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // dungeon's water is no ocean, and no ship sails it) are named and left without it: no serpent in any of them, by
   // design - it is a fight a player's ship sails to. A player who steps into a building mid-fight keeps their ship's hold; the bar and the blows
   // wait for the street.
-  // The site's frame (metres about its native point, x east, z north - net/serpentBody.js) and the scene's: the streaming
-  // world's own conversions, SERPENT_NATIVE_PER_M native units to the metre (net/serpentLaw.js - the scene's own metre).
+  // The site's frame (metres about its native point, x east, z north - net/serpent/serpentBody.js) and the scene's: the streaming
+  // world's own conversions, SERPENT_NATIVE_PER_M native units to the metre (net/serpent/serpentLaw.js - the scene's own metre).
   let _serpentClockAt = null;
   const serpentLink = params.has('online') ? createSerpentLink({
     now: () => Date.now() + _sharedOffsetMs,
@@ -26066,7 +26066,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     }
     sdSay(SD_STEPS_TEXT.cast);
   }
-  /** SD8c (Super-Dungeons.md section 10): THE LAST MOMENT'S FIGHT, as the page holds it (net/sdFightLink.js) - online alone:
+  /** SD8c (Super-Dungeons.md section 10): THE LAST MOMENT'S FIGHT, as the page holds it (net/superDungeon/sdFightLink.js) - online alone:
    *  the realm's words folded (from the realm I stand in, its own slot's), its turns said over the screen, my place in it
    *  kept; the arena's set reads it (dungeonContext.js, through the mode machine) and sends my `in` and my blows by the
    *  doors below. Out of the realm it is forgotten. */
@@ -29946,7 +29946,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // AUDIT-SEATS G5 (Seats-Arc 6.1: "Horses are dismounted on entry"): no rider in a siege's room - set on foot, said
     if (inSiegeRoom() && isRiding(player.transportMode)) { setTransportModeHere(TRANSPORT_MODES.Foot); townTalk.say(SIEGE_DISMOUNT_TEXT); }
     spectatorFrame();   // AUDIT-SEATS G4: a spectator's free camera begun - or, its watching over, set back where it stood
-    // WB3b: THE COURT'S ROOM HEARS MY LEVEL CLAIM once per welcome (net/gateBrain.js - the health I bring into the fight
+    // WB3b: THE COURT'S ROOM HEARS MY LEVEL CLAIM once per welcome (net/gate/gateBrain.js - the health I bring into the fight
     // and the bucket I may deal from); a reconnect's welcome says it again, and the relay keeps my first
     if (gateLink && online.gateOk && isGateRoom(online.room) && online.welcomes !== _gateInFor && online.sendGate({ k: 'in', lv: Math.max(1, playerEntity.level | 0), bv: GATE_BRAIN_V })) _gateInFor = online.welcomes;
     // PERF11 (2026-09-19, Mac: "Online mode needs further performance
@@ -30012,8 +30012,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _peerMapPoses.clear();
     for (const d of drawable) if (d?.shown) _peerMapPoses.set(d.id, d.shown);
     if (hccOn()) hcc.driverGlue(drawable, { toWire: campToWire });   // WAGONS3: a driver on their bench, drawn seated there - after the map's poses, where `peerAnchor` reads the puller their wagon hangs from
-    const ranged = peerRange.cut(cabin ? drawable : drawable.filter((d) => !csaPeers.isBelowDeck(d.id)), { on: !travelView?.active, me: player.pos, at: (d) => onlineToScene(d.shown), range: peerRangeOf(getPref('peerRange')), mate: (id) => !!social?.isPartyPeer(id) || id === duelMgr.opponent });   // PEER-RANGE (2026-10-10, the owner: "the rendering of players far out is contributing to poor performance"): past the distance on the Other players card a player stands nowhere on this screen - GATE-CROWD's cut by distance (net/peerRange.js): my party and the one I duel always, nobody cut under the travel view (OW-PEERS grows them to be seen from overhead); their map marks, above, are kept
-    const visiblePeers = gateCrowd.cut(ranged, { on: modes?.gateArenaDay?.() != null, me: player.pos, at: (d) => onlineToScene(d.shown), max: gateCrowdMax(getPref('gateCrowd')), mate: (id) => !!social?.isPartyPeer(id) });   // GATE-CROWD (2026-10-07, Mac: "some type of filter when there are too many people"): in a gate's court, past the count on the Other players card only the nearest are drawn, my party always (net/gateCrowd.js) - the rest stand nowhere on this screen this frame: no body, sprite, name, light, cast or step (their map marks, above, are kept)
+    const ranged = peerRange.cut(cabin ? drawable : drawable.filter((d) => !csaPeers.isBelowDeck(d.id)), { on: !travelView?.active, me: player.pos, at: (d) => onlineToScene(d.shown), range: peerRangeOf(getPref('peerRange')), mate: (id) => !!social?.isPartyPeer(id) || id === duelMgr.opponent });   // PEER-RANGE (2026-10-10, the owner: "the rendering of players far out is contributing to poor performance"): past the distance on the Other players card a player stands nowhere on this screen - GATE-CROWD's cut by distance (net/peer/peerRange.js): my party and the one I duel always, nobody cut under the travel view (OW-PEERS grows them to be seen from overhead); their map marks, above, are kept
+    const visiblePeers = gateCrowd.cut(ranged, { on: modes?.gateArenaDay?.() != null, me: player.pos, at: (d) => onlineToScene(d.shown), max: gateCrowdMax(getPref('gateCrowd')), mate: (id) => !!social?.isPartyPeer(id) });   // GATE-CROWD (2026-10-07, Mac: "some type of filter when there are too many people"): in a gate's court, past the count on the Other players card only the nearest are drawn, my party always (net/gate/gateCrowd.js) - the rest stand nowhere on this screen this frame: no body, sprite, name, light, cast or step (their map marks, above, are kept)
     peerCastVisuals(visiblePeers);   // SPELLFX1: a peer's new cast, drawn once
     if (modes?.gateArenaDay?.() != null) gateCourt?.stepsIn(drawable, (d) => (d?.shown ? onlineToScene(d.shown) : null));   // AUDIT GATE-FBX C3: a player stepping out of the court's way in opens it - every one in the room, the crowd's cut or not (the fire is the court's, not a body this screen draws)
     _veilT += dt > 0 ? dt : 0;
@@ -30031,7 +30031,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // RIDE (2026-09-23, Mac: "ensure over people see others riding on horses"): a peer in the saddle is drawn as the
     // rider FIRST, so the body and the doll below stand nothing for them and their name rides over the rider
     // PR-WW1 (2026-09-24, player report: "Werewolf morrowind sprite not showing online"): and a peer in BEAST FORM the
-    // same way - Eye Of The Beholder's lycanthrope, the one the transformed player sees on themselves (net/peerRiders.js).
+    // same way - Eye Of The Beholder's lycanthrope, the one the transformed player sees on themselves (net/peer/peerRiders.js).
     // `cam.pos` is the live eye in every mode: worldModes shares this `cam` and sets it each modal frame
     // WEREWOLF1: a werewolf on foot whose Morrowind wolf stands here (Bloodmoon attached) is the body's, not the rider
     // layer's - and it goes to the bodies either way, so its wolf is built (and kept) while the rider layer's lycanthrope
@@ -30039,7 +30039,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // DEFERS the werewolf on foot and settles it after the bodies have synced - whether its wolf stands is THIS frame's
     // answer, so the frame a peer transforms, its wolf first stands or walks out of range draws it once
     // COATS3D: and a peer on a HORSE, on the lane that builds them a Morrowind body, rides the 3D horse in it - the rider
-    // layer yields them (peerRidesIn3d), so they are the bodies' (net/peerBodies.js) as a peer afoot is
+    // layer yields them (peerRidesIn3d), so they are the bodies' (net/peer/peerBodies.js) as a peer afoot is
     peerRiders.sync(seen, onlineToScene, { eye: peerEye, right: peerRight, dt, defer: (d) => peerIsWolf(d.shown), yields: peerRidesIn3d, conceal: veilOf, grow: tvGrow });
     const afoot = seen.filter((d) => (peerRidesIn3d(d) || !peerRiders.isRiding(d.id)) && !d.shown?.wb || (peerIsWolf(d.shown) && !d.shown.rd));   // COATS3D (AUDIT A3): a rider on the 3D horse the bodies' whether or not its sprite stood in for it last frame   // DISC12: a beast wears no Morrowind body; PR-WW1: it stands as EOTB's lycanthrope (peerRiders), or - while that art is not up - as the beast's enemy sprite (remotePlayers); WEREWOLF1: but a werewolf on foot does, Bloodmoon's
     peerBodies.sync(afoot, onlineToScene, dt, player.pos, { priority: (id) => !!social?.isPartyPeer(id), conceal: veilOf });   // the nearest first, the far ones asleep; AUDIT PARTY8: a party mate before a stranger
@@ -30104,7 +30104,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const peerGrow = (f) => { const e = travelView?.active ? travelView.eye : null; return e ? tvOwnGrow(Math.hypot(e[0] - f[0], e[1] - f[1], e[2] - f[2])) : 1; };
   const drawPeerBodies = (proj, view, eye, face = null) => { if (peerBodies) peerBodies.draw(canvas, { proj, view, eye, flashOf: peerFlashOf, grow: face ? peerGrow : null, up: face?.up ?? null }); peerWalkers?.drawLanterns(); (_mode() === 'interior' ? familyRoom : _mode() === 'exterior' ? familyStreet : null)?.draw(canvas, { proj, view, eye }); };   // LEGACY7 part four: and the line's own bodies, in the place they stood   // OW-PEERS: under the Overworld the bodies grown and leaned as the traveller's own   // HT-WAIST-BACK: the walkers' lanterns, each on its own tilted basis, beside the bodies - every mode's pass calls this after the player's own body (the exterior here, the dungeon and the interior through host.drawPeerBodies)
   /** INVIS-LOOK: the concealed peers' Morrowind bodies, translucent - blended with no depth write, so every mode's pass
-   *  calls this AFTER its opaque world (net/peerBodies.js drawVeiled), with the camera its body pass took. */
+   *  calls this AFTER its opaque world (net/peer/peerBodies.js drawVeiled), with the camera its body pass took. */
   const drawVeiledPeerBodies = () => { peerBodies?.drawVeiled(); drawAuras(); nodeGlowPass.draw(travelView?.active ? null : nodeMarksAt(enchantFeet())); };   // WB9g: and the auras, after the opaque world as the veiled are; NODE-MARKS: and the nodes' glow
   /** WB9g (2026-09-30, Mac: "an animated burning ground aura that circles the ground where your character stands"):
    *  DAGON'S FIRE AT THE FEET (render/auraRing.js) - mine, as the service signed it (the session's `au`, adopted at each
@@ -36306,7 +36306,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // AUDIT DISC19: `swing` is the one swing's token - the attack
         // grunt rolls in the first pool that has anyone, not in each.
         const swing = {};
-        // DUEL1: my duel opponent first - a swing that reaches them is theirs (their client resolves it: net/duelSession.js),
+        // DUEL1: my duel opponent first - a swing that reaches them is theirs (their client resolves it: net/duel/duelSession.js),
         // tallied as a connect, and no pool, civilian or door hears it
         if (duelMeleeHit(cam.pos, makeInView(proj, view, multiply))) {
           tallySwingSkills(playerEntity, weaponRig.playerWeapon.weapon);

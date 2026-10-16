@@ -7,12 +7,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { gatherMotion, GATHER_S, GATHER_LIFT, DECK_PLATES, DECK_CARDS, RIFFLE_HALF, RIFFLE_S, riffleAt, CARD_T } from '../src/world/card/cardMotion.js';
-import { DECK_SIZE } from '../src/net/cardLaw.js';
+import { DECK_SIZE } from '../src/net/card/cardLaw.js';
 import { CardScene, tablePlaces } from '../src/world/card/cardScene.js';
 import { cardTableSeats, tableFrame } from '../src/world/card/cardTables.js';
 import { newTable, sit, stand, tick, actAt, publicView, stateDelta, STATE_KEYS, validHoldemIn, validHoldemOut, HOLDEM_FIRST_MS, HOLDEM_CASHOUTS_MAX, HOLDEM_STAKE_MAX } from '../src/net/holdemTable.js';
 import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
-import { createCardStakes, CARD_STAKES_KEY } from '../src/net/cardStakes.js';
+import { createCardStakes, CARD_STAKES_KEY } from '../src/net/card/cardStakes.js';
 import { fakeRoom } from './fakeRoom.mjs';
 
 test('AUDIT CARDS-4 D the gather: a card lifts on its way, turns face down, turns to the deck\'s yaw, and is still once there', () => {

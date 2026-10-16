@@ -9,9 +9,9 @@ import assert from 'node:assert/strict';
 import {
   newRemnantFight, joinRemnant, stepRemnant, applyRemnantHit, applyEchoHit, applyHeartHit, heartsOpen, blowsFor,
   SD_PHASE_AT, SD_OPENING_MS, SD_BREAK_MS, SD_ECHO_SPOTS, SD_ECHO, SD_HEART, SD_BLOWS,
-} from '../src/net/sdRemnant.js';
-import { HIT_KINDS, MELEE_REACH, POSE_SLACK, GATE_HIT_HZ_MAX, ABSENT_RETIRE_MS, REPEAT_MAX } from '../src/net/gateBrain.js';
-import { SD_ARENA } from '../src/net/sdBrain.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { HIT_KINDS, MELEE_REACH, POSE_SLACK, GATE_HIT_HZ_MAX, ABSENT_RETIRE_MS, REPEAT_MAX } from '../src/net/gate/gateBrain.js';
+import { SD_ARENA } from '../src/net/superDungeon/sdBrain.js';
 
 const T0 = 1_800_000_000_000;
 const seeded = (s) => () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };

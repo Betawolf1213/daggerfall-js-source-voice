@@ -25,7 +25,7 @@ import { folkLookOf, spriteSex } from '../src/characters/folkBodies.js';
 import { residentLook } from '../src/characters/rosterBodies.js';
 import { PERSON_TEXTURES, GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
 import { GENDERS } from '../src/characters/nameHelper.js';
-import { peerBuildOpts, peerBodyKey, outfitKeyOf } from '../src/net/peerBodies.js';
+import { peerBuildOpts, peerBodyKey, outfitKeyOf } from '../src/net/peer/peerBodies.js';
 import { bareHeadRows, wornVerdicts, wornEquipKeyOf, buildFpArm } from '../src/combat/fpArm.js';
 import { npcHint } from '../src/characters/wardrobe.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';

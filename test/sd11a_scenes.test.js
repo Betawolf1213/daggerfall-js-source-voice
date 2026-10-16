@@ -16,7 +16,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 import { glslFunctions } from './glsl.mjs';
 import { lookAt, perspective, mirrorProjectionX, multiply, identity, transformPoint } from '../src/world/mat4.js';
-import { SD_REALM_ORIGIN, SD_THRESHOLD, SD_WALK, SD_ORRERY, SD_ARENA, SD_STONE_POS, realmToDungeon, dungeonToRealm, inOrreryHall, SD_FRAY_LASH } from '../src/net/sdBrain.js';
+import { SD_REALM_ORIGIN, SD_THRESHOLD, SD_WALK, SD_ORRERY, SD_ARENA, SD_STONE_POS, realmToDungeon, dungeonToRealm, inOrreryHall, SD_FRAY_LASH } from '../src/net/superDungeon/sdBrain.js';
 import {
   buildRealmModel, realmColliderTris, realmLights, realmLampFeet, realmLampTris, realmLighting, realmLightsNear, realmLightsWith, SD_LIGHTS_CAP, walkNearZ, walkFarZ,
   SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_DIAL_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES, SD_RIM_W, SD_RIM_H,
@@ -32,9 +32,9 @@ import { createSdHall, ensureSdHallArt, sdStoneKey, SD_HALL_TEXT } from '../src/
 import { createSdSteps, ensureSdStepsArt, sdStepKey, SD_CHECKS_KEY } from '../src/scenes/sdSteps.js';
 import { createSdRemnant, ensureSdRemnantArt, SD_GEAR_DRAWS, SD_DECOR_DRAWS } from '../src/scenes/sdRemnant.js';
 import { SD_RIG_PARTS } from '../src/scenes/sdRemnantRig.js';   // SD17 (PIN MOVED): the bodies' parts
-import { SD_HEARTS } from '../src/net/sdRemnant.js';
+import { SD_HEARTS } from '../src/net/superDungeon/sdRemnant.js';
 import { createSdEnd, SD_RIFT_KEY } from '../src/scenes/sdEnd.js';
-import { SD_FIGHT_EMPTY } from '../src/net/sdFightLink.js';
+import { SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
 import { sdAnyInFlight, sdBlowsInFlight } from '../src/scenes/sdRemnantBlows.js';
 import { SD_STEPS_COURSE, SD_CHECKPOINTS, SD_COURSE_END, SD_GUST_EVERY, SD_GUST_WARN, SD_GUST_FOR, gustAt, breathSeen, spanAt } from '../src/world/superDungeon/sdSteps.js';
 import { SD_BREATH, stepTris } from '../src/world/superDungeon/sdStepsModel.js';
@@ -414,8 +414,8 @@ test('AUDIT SD II L2 F9: THE HOUR\'S FRAME MAKES NOTHING - measured in a child w
     const { realmLighting, realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
     const { SD_STEPS_COURSE } = await import(${url('src/world/superDungeon/sdSteps.js')});
     const { sdSkyBasisInto } = await import(${url('src/render/sdSky.js')});
-    const { realmToDungeon } = await import(${url('src/net/sdBrain.js')});
-    const { SD_FIGHT_EMPTY } = await import(${url('src/net/sdFightLink.js')});
+    const { realmToDungeon } = await import(${url('src/net/superDungeon/sdBrain.js')});
+    const { SD_FIGHT_EMPTY } = await import(${url('src/net/superDungeon/sdFightLink.js')});
     const { Collider } = await import(${url('src/player/collider.js')});
     const renderer = { createMesh: () => ({}), destroyMesh() {}, uploadTexture() {}, uploadEmissionTexture() {}, createBillboardBatch: () => ({}), destroyBillboardBatch() {} };
     // the realm's clock as the host hands it: numbers already made (a call's own argument makes none of its own)

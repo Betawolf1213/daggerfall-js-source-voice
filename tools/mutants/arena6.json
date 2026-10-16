@@ -1,7 +1,7 @@
 [
   {
     "name": "ARENA6-ALPHABET-AMBIGUOUS",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_PRIVATE_CODE_RE = /^[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{6}$/;",
     "new": "export const ARENA_PRIVATE_CODE_RE = /^[A-Z0-9]{6}$/;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ARENA6-ROOM-AMBIGUOUS",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_PRIVATE_ROOM_RE = /^arena:p[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{6}$/;",
     "new": "export const ARENA_PRIVATE_ROOM_RE = /^arena:p[A-Z0-9]{6}$/;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ARENA6-NOT-A-FLOOR",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "isArenaBoutRoom(key) || isArenaExhibitionRoom(key) || isArenaPrivateRoom(key);",
     "new": "isArenaBoutRoom(key) || isArenaExhibitionRoom(key);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "ARENA6-CODE-BIASED",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (b < A.length * 8 && out.length < ARENA_PRIVATE_CODE_LEN)",
     "new": "if (b < 256 && out.length < ARENA_PRIVATE_CODE_LEN)",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "ARENA6-LIFE-FOREVER",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "  if (now - S.at >= ARENA_PRIVATE_LIFE_MS) return 'life';\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "ARENA6-HOST-GONE-FOREVER",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "  if (S.hostGoneAt != null && now - S.hostGoneAt >= ARENA_PRIVATE_HOST_GONE_MS) return 'host';\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "ARENA6-HEALTH-BY-LEVEL",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "(st.equal ? ARENA_PRIVATE_VITALITY : pvpVitality(x.lv))",
     "new": "pvpVitality(x.lv)",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "ARENA6-GUEST-FIGHTS",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "  if (x.guest) return 'guest fighter';\n",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "ARENA6-KICKED-REJOINS",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "  if (S.kicked.includes(who.sub)) return { no: 'removed' };\n",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "ARENA6-SAME-FIGHTER",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "  if (red && blue && red === blue) return { no: 'same fighter' };\n",
     "new": "",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "ARENA6-CODE-LENGTH",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_PRIVATE_CODE_LEN = 6;",
     "new": "export const ARENA_PRIVATE_CODE_LEN = 7;",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "ARENA6-FLOOR-ROOM-FOR-A-CODE-MISSING",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": " || isArenaPrivateRoom(`arena:${o}`) ? `arena:${o}`",
     "new": " ? `arena:${o}`",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "ARENA6-ACCOUNT-ID-ON-THE-WIRE",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "m: list.map(([s, x]) => [x.id, x.name,",
     "new": "m: list.map(([s, x]) => [s, x.name,",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "ARENA6-GONE-MEMBER-PICKED",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "if (!x || !here(sub)) return 'not here';",
     "new": "if (!x) return 'not here';",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "ARENA6-GO-WITHOUT-PICKS",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "if (!S.red || !S.blue) return { no: 'no picks' };",
     "new": "",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "ARENA6-ENDED-WHEN-HOST-BLINKED",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "now - S.hostGoneAt >= ARENA_PRIVATE_HOST_GONE_MS",
     "new": "now - S.hostGoneAt >= 0",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "ARENA6-HOST-GONE-CHANGED-14MIN",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_PRIVATE_HOST_GONE_MS = 15 * 60_000;",
     "new": "export const ARENA_PRIVATE_HOST_GONE_MS = 14 * 60_000;",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "ARENA6-HOST-GONE-CHANGED-16MIN",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_PRIVATE_HOST_GONE_MS = 15 * 60_000;",
     "new": "export const ARENA_PRIVATE_HOST_GONE_MS = 16 * 60_000;",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "ARENA6-LIFE-CHANGED-7H",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_PRIVATE_LIFE_MS = 8 * 3600_000;",
     "new": "export const ARENA_PRIVATE_LIFE_MS = 7 * 3600_000;",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "ARENA6-LIFE-CHANGED-9H",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_PRIVATE_LIFE_MS = 8 * 3600_000;",
     "new": "export const ARENA_PRIVATE_LIFE_MS = 9 * 3600_000;",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "ARENA6-CAP-1",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_PRIVATE_MEMBERS_MAX = ARENA_SPECTATORS_MAX + 2;",
     "new": "export const ARENA_PRIVATE_MEMBERS_MAX = ARENA_SPECTATORS_MAX + 3;",
     "tests": [
@@ -460,7 +460,7 @@
   },
   {
     "name": "ARENA6-CAP-UNBOUNDED-BRAIN",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "if (Object.keys(S.members).length >= ARENA_PRIVATE_MEMBERS_MAX) {",
     "new": "if (false) {",
     "tests": [
@@ -469,7 +469,7 @@
   },
   {
     "name": "ARENA6-ONE-HERE-EVICTED",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "sub !== S.host && !here(sub) && !keep.includes(sub)",
     "new": "sub !== S.host && !keep.includes(sub)",
     "tests": [
@@ -487,7 +487,7 @@
   },
   {
     "name": "ARENA6-UNKNOWN-ACT-TAKEN",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (!ARENA_PS_ACTS.includes(m.a)) return null;",
     "new": "",
     "tests": [
@@ -496,7 +496,7 @@
   },
   {
     "name": "ARENA6-ACCOUNT-ID-FOR-A-MEMBER-IN",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "const mid = (v) => typeof v === 'string' && (v === '' || ARENA_MEMBER_ID_RE.test(v));\n      if (m.a === 'pick')",
     "new": "const mid = (v) => typeof v === 'string';\n      if (m.a === 'pick')",
     "tests": [
@@ -505,7 +505,7 @@
   },
   {
     "name": "ARENA6-PSS-BAD-CODE",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (typeof m.c !== 'string' || !ARENA_PRIVATE_CODE_RE.test(m.c) ||",
     "new": "if (typeof m.c !== 'string' ||",
     "tests": [
@@ -514,7 +514,7 @@
   },
   {
     "name": "ARENA6-PSS-BAD-MEMBER",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (typeof id !== 'string' || !ARENA_MEMBER_ID_RE.test(id) ||",
     "new": "if (typeof id !== 'string' ||",
     "tests": [
@@ -523,7 +523,7 @@
   },
   {
     "name": "ARENA6-PSS-TOO-MANY",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (!Array.isArray(m.m) || m.m.length > ARENA_PRIVATE_MEMBERS_MAX) return null;",
     "new": "if (!Array.isArray(m.m)) return null;",
     "tests": [
@@ -532,7 +532,7 @@
   },
   {
     "name": "ARENA6-PSS-BAD-PHASE",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "(m.ph !== '' && !ARENA_ST_PHASES.includes(m.ph))",
     "new": "false",
     "tests": [
@@ -541,7 +541,7 @@
   },
   {
     "name": "ARENA6-PSS-ONE-FIGHTER",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "(m.f.length === 2 && m.f.every(",
     "new": "(m.f.length >= 1 && m.f.every(",
     "tests": [
@@ -550,7 +550,7 @@
   },
   {
     "name": "ARENA6-REFUSAL-UNSAID",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "  'bout on': 'A bout is on - end it first.',\n",
     "new": "",
     "tests": [

@@ -57,7 +57,7 @@ import { OnlineSession } from '../src/net/online.js';
 import { SESSION_KEY, SERVICE_KEY } from '../src/net/accountClient.js';
 import { realmIo, realmCreate, createRealmSession } from '../src/systems/realmSaves.js';
 import { worldRoom, CHAT_WORLD_ROOM, PIXEL_UNITS } from '../src/net/wire.js';
-import { PIXEL_M } from '../src/net/gateLaw.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';
 
 const ROOT = process.env.TREE || fileURLToPath(new URL('..', import.meta.url));

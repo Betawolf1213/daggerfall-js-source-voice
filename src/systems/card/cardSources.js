@@ -21,10 +21,10 @@
 //   WINNING   "A tavern regular who loses to you can pay in a card from his deck" - systems/iliac/iliacPatrons.js forfeitCard,
 //             the table's (scenes/worldModes.js).
 //   TRADING   the trade and the market already take a card as any unbound item (AUDIT CARDS-5 C2); CARDS9 gave it its
-//             worth (net/cardWorthLaw.js) and its customs (systems/realmCustoms.js, the service's first save).
+//             worth (net/card/cardWorthLaw.js) and its customs (systems/realmCustoms.js, the service's first save).
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { ILIAC_CARDS, cardById } from '../../net/iliacCards.js';
+import { ILIAC_CARDS, cardById } from '../../net/iliac/iliacCards.js';
 import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
 import { getDivine, getOrder } from '../guild/guildVariants.js';   // AUDIT CARDS-6 A4: a temple's hall by Temple.GetDivine's own walk
 import { mintIliacCard, mintCardPack, isCardPack, CARD_PACK_TEMPLATE, iliacCardName } from '../iliac/iliacItems.js';

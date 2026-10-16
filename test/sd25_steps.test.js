@@ -8,10 +8,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { glslFunctions } from './glsl.mjs';
-import { realmToDungeon, SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
+import { realmToDungeon, SD_REALM_ORIGIN } from '../src/net/superDungeon/sdBrain.js';
 import { SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import { SD_HALL_ATLAS_RECORD, SD_HALL_ATLAS } from '../src/world/superDungeon/sdHallArt.js';
-import { SD_ENDINGS } from '../src/net/sdMarks.js';
+import { SD_ENDINGS } from '../src/net/superDungeon/sdMarks.js';
 import { SD_RAMP } from '../src/world/superDungeon/sdLook.js';
 import { offPalette, paletteOf } from '../src/world/superDungeon/sdPixelKit.js';
 import {

@@ -31,7 +31,7 @@ import { SESSION_KEY } from '../src/net/accountClient.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';
 import { createTradeManager } from '../src/net/tradeSession.js';
 import { validTradeData } from '../src/net/wire.js';
-import { recordIsOffered } from '../src/net/realmTradeLaw.js';
+import { recordIsOffered } from '../src/net/realm/realmTradeLaw.js';
 import { createTradePack } from '../src/systems/tradePack.js';
 import { checkpointedTradePack } from '../src/systems/online/onlineCheckpoint.js';
 import { realmIo, realmFetch, createRealmSession, realmTradeEscrow } from '../src/systems/realmSaves.js';

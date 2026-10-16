@@ -199,7 +199,7 @@
   },
   {
     "name": "WK-P1-packs-unread",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  for (const c of Array.isArray(party) ? party : []) out.push(...lists(c?.items));\n",
     "new": "",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "WK-P1-vendor-misspelt",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "const NAVAL_VENDOR = 'NavalCombat';",
     "new": "const NAVAL_VENDOR = 'naval-combat';",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "WK-P1-resting-read",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "?.[NAVAL_VENDOR]?.party?.party;",
     "new": "?.[NAVAL_VENDOR]?.party?.resting;",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "WK-P1-malformed-thrown-on",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "for (const c of Array.isArray(party) ? party : [])",
     "new": "for (const c of party ?? [])",
     "tests": [

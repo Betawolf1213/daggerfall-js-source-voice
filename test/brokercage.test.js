@@ -1,6 +1,6 @@
 // BROKER-CAGE (2026-10-02, Mac: "she should be present at the site in a jailed gate, and the gate opens after all the
 // enemies are cleared"; asked, "The rite's faithful", "Stays caged", "Until midnight"): THE SIGIL BROKER CAGED AT THE
-// FAITHFUL'S CIRCLE. The law (net/gateRite.js riteRosterFell, cageStands), the wire (net/wire.js validRiteIn `c`,
+// FAITHFUL'S CIRCLE. The law (net/gate/gateRite.js riteRosterFell, cageStands), the wire (net/wire.js validRiteIn `c`,
 // validRiteOut `cl`), the rite's host (scenes/riteHost.js - its word's `c`, the hub's cleared word, no faithful stood
 // once it is said, isCleared), the omen's cage site (systems/gate/gateOmen.js cageSite - a Warden fallen early never takes her),
 // the relay (server/src/index.js - the cell keeps the cleared rite and tells the hub, the hub says it to everyone and at
@@ -8,8 +8,8 @@
 // the world: test/set7_broker_world.test.js.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { riteFaithfulOf, riteRosterFell, cageStands, riteNativeOf, riteLocalOf, RITE_UNITS_PER_M, RITE_GRACE_MS, RITE_CAREERS } from '../src/net/gateRite.js';
-import { gateTimes, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
+import { riteFaithfulOf, riteRosterFell, cageStands, riteNativeOf, riteLocalOf, RITE_UNITS_PER_M, RITE_GRACE_MS, RITE_CAREERS } from '../src/net/gate/gateRite.js';
+import { gateTimes, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
 import { validRiteIn, validRiteOut, parseClient, RITE_OUT_KINDS, worldRoom, SOCIAL_ROOM, RITE_KEY, GATE_INTERNAL_FELL, relaySupportsCage, CAGE_RELAY_MIN } from '../src/net/wire.js';
 import { createRiteHost } from '../src/scenes/riteHost.js';
 import { riteMemory, riteSeen } from '../src/systems/riteChest.js';

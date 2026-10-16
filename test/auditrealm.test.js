@@ -10,7 +10,7 @@ import { DatabaseSync } from 'node:sqlite';
 import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { SESSION_KEY } from '../src/net/accountClient.js';
-import { tradeableRecord, BOUND_TEMPLATES, boundRecord } from '../src/net/realmTradeLaw.js';
+import { tradeableRecord, BOUND_TEMPLATES, boundRecord } from '../src/net/realm/realmTradeLaw.js';
 import { ILIAC_CARD_ROW, CARD_BINDER_ROW } from '../src/systems/iliac/iliacItems.js';   // CARDS8
 import { isBound } from '../src/systems/item/itemBound.js';
 import { ITEM_TEMPLATES } from '../src/systems/item/itemTemplates.js';
@@ -36,7 +36,7 @@ import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { realmIo, realmCreate, realmFetch, realmPut, realmTradeCall, realmJoin, realmDelete, createRealmSession, realmGoldAct, realmTradeEscrow } from '../src/systems/realmSaves.js';
 import { webcrypto } from 'node:crypto';
 import { accountGuilds, accountHomes, accountDecor } from '../src/net/accountClient.js';
-import { GUILD_FOUND_GOLD, GUILD_FOUND_RENOWN, GUILD_RANK_MEMBER } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_GOLD, GUILD_FOUND_RENOWN, GUILD_RANK_MEMBER } from '../src/net/guild/guildLaw.js';
 import { renownXpFor } from '../src/net/renown.js';
 import { homeSaleRefund, HOME_PRICE_MIN, HOME_PRICE_MAX } from '../src/net/homeLaw.js';
 import { decorRefund } from '../src/net/decorLaw.js';

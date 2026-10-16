@@ -12,7 +12,7 @@ import {
 import { seatWeekStartMs } from '../src/net/townSeatLaw.js';
 import { settleChapterWeek, chapterSeatsOf } from '../server-account/src/npcChapters.js';
 import { readRoll } from '../server-account/src/npcRoll.js';
-import { gameDayAt } from '../src/net/gateLaw.js';
+import { gameDayAt } from '../src/net/gate/gateLaw.js';
 import { standService, T0, confirmChapters } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 

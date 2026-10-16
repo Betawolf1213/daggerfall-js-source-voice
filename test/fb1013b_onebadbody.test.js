@@ -12,8 +12,8 @@ import assert from 'node:assert/strict';
 import { Renderer } from '../src/render/renderer.js';
 import { drawRigSpriteBox } from '../src/render/characterSprite.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
-import { PeerBodies } from '../src/net/peerBodies.js';
-import { stepPeerPace } from '../src/net/peerPace.js';
+import { PeerBodies } from '../src/net/peer/peerBodies.js';
+import { stepPeerPace } from '../src/net/peer/peerPace.js';
 
 /** A GL that records every call (as mwnpc5_bodyfx builds one). */
 function recordingGl() {

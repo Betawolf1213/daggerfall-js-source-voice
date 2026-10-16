@@ -2,7 +2,7 @@
 // do it properly"): THE ARMS AND THE LEVEL SIGNED. Every referee of a blow between players clipped it to the weapon the
 // striker's own word named (the arena) or its own look carried (a siege, a Royal Tourney) - a client's claim either way,
 // so a Daedric Dai-Katana struck as one from a pack that never held it. Now each checkpoint's judge reads the most reach
-// of the pack's LAWFUL weapons and whether a lawful bow is among them (net/siegeRef.js armsOf), the identity mint signs
+// of the pack's LAWFUL weapons and whether a lawful bow is among them (net/siege/siegeRef.js armsOf), the identity mint signs
 // them (`wa`) beside the level the judge trusts (`cl`, realm.js realmLevelOf - realmMintFacts since SCALE4f), and every referee holds a blow to them.
 // Driven through the real account Worker over node:sqlite (test/accountDb.mjs) and the real relay Room
 // (test/fakeRoom.mjs).
@@ -11,10 +11,10 @@ import assert from 'node:assert/strict';
 import {
   armsTop, armsOf, armsOk, ARMS_TOP_MAX, siegeBlowMax, refereeBlow, newFighter, SIEGE_HIT, SIEGE_THUNDERLOCK, SIEGE_WEAPON_MAX,
   SIEGE_BONUS_MAX, SIEGE_CRIT_MAX, siegeRoomKey, SIEGE_UNITS_PER_M,
-} from '../src/net/siegeRef.js';
-import { arenaBlowCap, arenaArmsOk, ARENA_ARMS_TOP_MAX, ARENA_HIT, ARENA_MOD_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arenaLaw.js';
+} from '../src/net/siege/siegeRef.js';
+import { arenaBlowCap, arenaArmsOk, ARENA_ARMS_TOP_MAX, ARENA_HIT, ARENA_MOD_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arena/arenaLaw.js';
 import { TOKEN_ARMS_TOP_MAX, armsIssuable, claimsValid, verifyToken } from '../src/net/identityToken.js';
-import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arenaBrain.js';
+import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arena/arenaBrain.js';
 import { boutLive } from '../src/systems/arena/arenaBout.js';
 import { weaponMaxDamage, weaponMaterialModifier } from '../src/characters/weapons.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';

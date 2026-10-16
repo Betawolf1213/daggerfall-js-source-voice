@@ -10,9 +10,9 @@ import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { join } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { glslFunctions } from './glsl.mjs';
-import { SD_ARENA, SD_REALM_ORIGIN, SD_PILLAR_W, SD_PILLAR_H, SD_PILLAR_R, realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
-import { SD_BLOWS, SD_REM, SD_ECHO, SD_REM_START, SD_BREAK_MS } from '../src/net/sdRemnant.js';
-import { SD_FIGHT_EMPTY, sdBodyAt } from '../src/net/sdFightLink.js';
+import { SD_ARENA, SD_REALM_ORIGIN, SD_PILLAR_W, SD_PILLAR_H, SD_PILLAR_R, realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
+import { SD_BLOWS, SD_REM, SD_ECHO, SD_REM_START, SD_BREAK_MS } from '../src/net/superDungeon/sdRemnant.js';
+import { SD_FIGHT_EMPTY, sdBodyAt } from '../src/net/superDungeon/sdFightLink.js';
 import {
   buildRealmModel, realmPillarTris, realmFloorTris, realmLampTris, realmColliderTris, realmLights, realmLightsWith, arenaLamp,
   SD_REALM_PILLAR_RECORD, SD_REALM_BRASS_RECORD, SD_LAMPS,
@@ -30,7 +30,7 @@ import { SD_BLOW_COLOR } from '../src/scenes/sdRemnantBlows.js';
 import { clearOfPillars } from '../src/scenes/sdSpoils.js';
 import { SD_REMNANT_BODY, remnantScale } from '../src/world/superDungeon/sdRemnantModel.js';
 import { TELEGRAPH_KIND, BOSS_MARK_R, telegraphField } from '../src/render/gateTelegraph.js';
-import { BOSS_R } from '../src/net/gateBrain.js';
+import { BOSS_R } from '../src/net/gate/gateBrain.js';
 import { Collider } from '../src/player/collider.js';
 import { identity } from '../src/world/mat4.js';
 
@@ -59,7 +59,7 @@ const pillarOf = ([P, rec]) => {
   }
   return -1;
 };
-/** A live fight, the page's own shape (net/sdFightLink.js), its clocks about T0. */
+/** A live fight, the page's own shape (net/superDungeon/sdFightLink.js), its clocks about T0. */
 const live = (o = {}) => ({ ...SD_FIGHT_EMPTY, fi: 3, op: T0 - 60_000, ends: T0 + 840_000, ph: 1, rem: { x: 0, z: 8, yw: Math.PI, mv: null, atk: null }, ...o });
 
 // ── the pillars dressed ─────────────────────────────────────────────────
@@ -342,9 +342,9 @@ test('S7 THE ARENA\'S WATCH MAKES NOTHING - L2 F9\'s measure (a child with a 64 
   const script = `
     const W = await import(${url('src/scenes/sdArenaWatch.js')});
     const { realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
-    const { SD_FIGHT_EMPTY } = await import(${url('src/net/sdFightLink.js')});
-    const { SD_BLOWS } = await import(${url('src/net/sdRemnant.js')});
-    const { realmToDungeon } = await import(${url('src/net/sdBrain.js')});
+    const { SD_FIGHT_EMPTY } = await import(${url('src/net/superDungeon/sdFightLink.js')});
+    const { SD_BLOWS } = await import(${url('src/net/superDungeon/sdRemnant.js')});
+    const { realmToDungeon } = await import(${url('src/net/superDungeon/sdBrain.js')});
     const T0 = ${T0};
     const clock = Array.from({ length: 4096 }, (_, k) => T0 + k * 16.7); clock.push('tagged');
     let k = 0;

@@ -191,7 +191,7 @@
   },
   {
     "name": "E-foldseat-no-reeval",
-    "file": "src/net/cardLaw.js",
+    "file": "src/net/card/cardLaw.js",
     "old": "next.toAct = next.toAct >= 0 ? firstToAct(next, next.toAct) : -1;",
     "new": "",
     "tests": [
@@ -856,7 +856,7 @@
   },
   {
     "name": "A2-uncontested-to-nobody",
-    "file": "src/net/cardLaw.js",
+    "file": "src/net/card/cardLaw.js",
     "old": "    let winners = shown ? pot.eligible : st.seats.flatMap((s, i) => (s.folded ? [] : [i]));",
     "new": "    let winners = pot.eligible;",
     "tests": [

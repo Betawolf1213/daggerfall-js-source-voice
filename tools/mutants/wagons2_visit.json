@@ -590,7 +590,7 @@
   },
   {
     "name": "WAGONS2-VISIT-AUDIT-the-door-carried",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "'acquired', 'wagonEntry', 'horseBond', 'horseFed']);",
     "new": "'acquired', 'horseBond', 'horseFed']);",
     "tests": [

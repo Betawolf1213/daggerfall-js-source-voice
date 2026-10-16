@@ -49,7 +49,7 @@ four tabs down to three.
 
 ## RING-HOLD: the hold that stays says whose it is, and a refusal names the piece (5)
 
-`server-account/src/verdict.js` verdictOn's `why`; `src/net/realmTradeLaw.js` TRADE_HELD_NOTICES.review,
+`server-account/src/verdict.js` verdictOn's `why`; `src/net/realm/realmTradeLaw.js` TRADE_HELD_NOTICES.review,
 realmTradeRefusalText `said`; `src/systems/item/itemIds.js` tradeHeldNotice; `src/systems/realmSaves.js` heard,
 tradeHeldWhy, settleRealmTradeHalf `heldSaid`; `src/scenes/world.js` the escrow's `heldSaid`.
 
@@ -67,7 +67,7 @@ RING-WARN (Mac, asked whether taking the same piece up again should be a new str
 a strike a hold, the same piece's included. A piece parked on the ground while its carrier trades and taken up again
 after is exactly what the strikes are for - counting a signature once would let it be parked forever. What trapped the
 player was the notice, which offered "until it is gone" as the way out and never said the holds were counting. Every
-law hold's notice now ends `TRADE_HELD_STRIKES` (`net/realmTradeLaw.js`): "Each time the law holds it counts: the third
+law hold's notice now ends `TRADE_HELD_STRIKES` (`net/realm/realmTradeLaw.js`): "Each time the law holds it counts: the third
 time, trading stays frozen until staff have looked." - the generic one and the one naming the piece; test/ringhold.test.js
 pins it on both and pins the words' "third" to the service's STRIKES_FOR_REVIEW. test/ringhold.test.js. The reporter's hold is staff's: `node tools/realmReview.mjs holds`,
 `findings <id>`, `clear`.

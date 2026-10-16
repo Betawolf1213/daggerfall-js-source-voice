@@ -28,14 +28,14 @@
 
 import { STAGES, FIELDS, FIELD_SPEC, AGREEMENTS, AGREEMENT_SPEC, recoveryCodesText, recoveryCodesFileName } from './accountFlow.js';   // RECOVERY-SET: the codes as the saved file says them
 import { TITLE_TEXT, AURA_TEXT, glyphBadges, glyphArtNode, badgeClass } from './playerBadge.js';   // ACC3c: the SAME table the name over a head reads, so the picker shows what a player will actually wear - the COLOUR is the skin's (this card may not style itself, and a pin holds that)
-import { duelRecordText } from '../net/duelRecord.js';   // DUEL1: the account card's K/D row
+import { duelRecordText } from '../net/duel/duelRecord.js';   // DUEL1: the account card's K/D row
 import { renownText, renownProgressText, renownProgress } from '../net/renown.js';   // RENOWN1: Renown, left of the name and in its rows
-import { gateRecordText } from '../net/gateClaims.js';   // WB5b: and its gates-closed row
+import { gateRecordText } from '../net/gate/gateClaims.js';   // WB5b: and its gates-closed row
 import { marksText } from '../net/marksLaw.js';   // MARKS1: and its Marks row
-import { raidRecordText } from '../net/raidClaims.js';   // RAID4: and its towns-defended row
+import { raidRecordText } from '../net/raid/raidClaims.js';   // RAID4: and its towns-defended row
 import { t, localizedTable, intlLocale } from '../systems/textManager.js';   // L10N4: the card's words in the player's language, read when it is drawn
-import { serpentRecordText } from '../net/serpentClaims.js';   // AUDIT SERPENT D4: and its serpents-slain row
-import { sdRecordText } from '../net/sdClaims.js';   // SD9b: and its Hours-broken row
+import { serpentRecordText } from '../net/serpent/serpentClaims.js';   // AUDIT SERPENT D4: and its serpents-slain row
+import { sdRecordText } from '../net/superDungeon/sdClaims.js';   // SD9b: and its Hours-broken row
 
 /** RENOWN-CHAR (Mac: "Can we make renown per character again"): the card's Renown tracks as the service sends them -
  *  its characters', the most recently played first - or none: none earned yet, or a service from RENOWN-ACCOUNT's day
@@ -617,7 +617,7 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       // section with nothing in it is not drawn (ACC1e: no heading over an empty box).
       const record = section(t('account.card.record', 'Record'), 'acctrecord');
       // DUEL1 (Mac: "Add a dueling K/D to the profile menu"): the account's record, the service's count of the duels
-      // it won and lost (net/duelRecord.js says whose word each result is). A service from before it says nothing.
+      // it won and lost (net/duel/duelRecord.js says whose word each result is). A service from before it says nothing.
       const duels = duelRecordText(flow.account.duels);
       if (duels) row(t('account.card.duels', 'Duels'), duels);
       // PROFILE-MENU: and the wins' share of them, drawn - a K/D is a ratio, and a bar says it at a glance
@@ -625,19 +625,19 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       const lost = Number.isSafeInteger(flow.account.duels?.losses) && flow.account.duels.losses > 0 ? flow.account.duels.losses : 0;
       if (duels && won + lost > 0) bar(won, won + lost, t('account.card.duelsWon', '{percent}% of duels won', { percent: Math.round((100 * won) / (won + lost)) }));
       // WB5b: the Oblivion Gates this account closed - each a kill the relay signed and this service counted once
-      // (net/gateClaims.js carries the receipts). A service from before it says nothing.
+      // (net/gate/gateClaims.js carries the receipts). A service from before it says nothing.
       const gates = gateRecordText(flow.account.gates);
       if (gates) row(t('account.card.gates', 'Breaches closed'), gates);   // WB12a
       // RAID4: the towns this account defended - each a raid's cleanse the relay signed and this service counted once
-      // (net/raidClaims.js carries the receipts). A service from before it says nothing.
+      // (net/raid/raidClaims.js carries the receipts). A service from before it says nothing.
       const raids = raidRecordText(flow.account.raids);
       if (raids) row(t('account.card.raids', 'Towns defended'), raids);
       // AUDIT SERPENT D4 (SERPENT1): the sea serpents this account helped slay - each a kill the relay signed and this
-      // service counted once (net/serpentClaims.js carries the receipts). A service from before it says nothing.
+      // service counted once (net/serpent/serpentClaims.js carries the receipts). A service from before it says nothing.
       const serpents = serpentRecordText(flow.account.serpents);
       if (serpents) row(t('account.card.serpents', 'Serpents slain'), serpents);
       // SD9b: the Hours this account broke - each a Brass Remnant's fall the relay signed and this service counted once
-      // (net/sdClaims.js carries the receipts). A service from before it says nothing.
+      // (net/superDungeon/sdClaims.js carries the receipts). A service from before it says nothing.
       const hours = sdRecordText(flow.account.sds);
       if (hours) row(t('account.card.hours', 'Hours broken'), hours);
       // MARKS1: the account's Marks - the server's currency, struck for acts a server witnessed (PROF0 10.5). Null where

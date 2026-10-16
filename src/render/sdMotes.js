@@ -18,7 +18,7 @@
 import { buildProgram } from './glProgram.js';
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { SD_SKY_PERIOD } from './sdSky.js';
-import { SD_REALM_ORIGIN, SD_ORRERY, SD_ARENA } from '../net/sdBrain.js';
+import { SD_REALM_ORIGIN, SD_ORRERY, SD_ARENA } from '../net/superDungeon/sdBrain.js';
 import { SD_FIRST_STEP } from '../world/superDungeon/sdHall.js';
 import { SD_COURSE_END } from '../world/superDungeon/sdSteps.js';
 
@@ -99,7 +99,7 @@ export const SD_MOTES_VS = `#version 300 es
 precision highp float;
 layout(location = 0) in vec4 aSeed;   // kind, three draws in [0, 1)
 uniform mat4 uVP;
-uniform vec3 uOrigin;      // the realm's origin in the dungeon's frame (net/sdBrain.js SD_REALM_ORIGIN)
+uniform vec3 uOrigin;      // the realm's origin in the dungeon's frame (net/superDungeon/sdBrain.js SD_REALM_ORIGIN)
 uniform float uTime;       // the Hour's clock, wrapped at the period
 uniform float uPxPerM;     // pixels a metre at one metre off
 out float vHeat;

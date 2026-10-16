@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createFrameBudget, createNpcBodies, NPC_FRAME_TIERS, NPC_BODY_TIERS, WATCH_BODY_TIERS, NPC_BUDGET_ROUNDS } from '../src/characters/npcBodies.js';
-import { PeerBodies } from '../src/net/peerBodies.js';
+import { PeerBodies } from '../src/net/peer/peerBodies.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const flush = () => new Promise((r) => setTimeout(r, 0));

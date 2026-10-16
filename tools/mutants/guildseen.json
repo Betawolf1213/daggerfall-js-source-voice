@@ -28,7 +28,7 @@
   },
   {
     "name": "GUILD-SEEN-the-grace-edge-off-by-one",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  return m.you === true || nowMs - m.seenAt * 1000 <= PLAY_GRACE_S * 1000;",
     "new": "  return m.you === true || nowMs - m.seenAt * 1000 < PLAY_GRACE_S * 1000;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "GUILD-SEEN-the-reader-read-off-the-clock",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  return m.you === true || nowMs - m.seenAt * 1000 <= PLAY_GRACE_S * 1000;",
     "new": "  return nowMs - m.seenAt * 1000 <= PLAY_GRACE_S * 1000;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "GUILD-SEEN-seconds-as-milliseconds",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  return m.you === true || nowMs - m.seenAt * 1000 <= PLAY_GRACE_S * 1000;",
     "new": "  return m.you === true || nowMs - m.seenAt <= PLAY_GRACE_S * 1000;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "GUILD-SEEN-no-stamp-read-as-offline",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  if (!Number.isSafeInteger(m?.seenAt)) return null;",
     "new": "  if (!Number.isSafeInteger(m?.seenAt)) return false;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "GUILD-SEEN-the-stamp-compared-with-the-rest",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "{ ...guild, members: guild.members.map((m) => ({ ...m, seenAt: undefined })) }",
     "new": "{ ...guild }",
     "tests": [

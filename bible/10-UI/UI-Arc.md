@@ -19255,9 +19255,9 @@ modes host (a building's pause) and the dungeon's opts all carry the world host'
 
 **What.** `systems/eventTimers.js` `eventTimerRows` lays every shared moment out as rows, each LIVE (counting to its end)
 or COMING (counting to its start), live first. It derives nothing: each row is its own law's answer -
-- the OBLIVION GATE (`net/gateLaw.js` `gateAt`/`gatePhase`/`gateTimes`): coming to its opening, live to its seal, then
+- the OBLIVION GATE (`net/gate/gateLaw.js` `gateAt`/`gatePhase`/`gateTimes`): coming to its opening, live to its seal, then
   live to its collapse; the gate after it once this one is under way; where it stands from the omen's site;
-- the SEA SERPENT (`net/serpentLaw.js` `serpentAt`/`serpentPhase`/`serpentTimes` - SERPENT2, 2026-10-04, the owner:
+- the SEA SERPENT (`net/serpent/serpentLaw.js` `serpentAt`/`serpentPhase`/`serpentTimes` - SERPENT2, 2026-10-04, the owner:
   "So this also shows in the pause menu timer?", then "This needs to happen"): coming to its rising, live to the storm
   that closes its waters, then live to its dive; the next serpent once this one is under way; a kill ends its row; the
   port it lies off from its bells on (the omen's `site.near`). Its own kind, `serpent`, after the gate's, in its ring's

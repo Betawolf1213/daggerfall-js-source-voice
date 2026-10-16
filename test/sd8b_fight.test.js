@@ -1,10 +1,10 @@
 // SD8b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md sections 10 and 14): THE RELAY RUNS
 // THE BRASS REMNANT - the fight's words on the wire (an `in`, a blow on the Remnant, an Echo or a Heart; the fight said
-// back), the Hollow's realm running net/sdRemnant.js on its alarm (the gate's shape - a fight kept in storage, its frames
+// back), the Hollow's realm running net/superDungeon/sdRemnant.js on its alarm (the gate's shape - a fight kept in storage, its frames
 // fanned, a blow believed from the socket's own pose), a lost fight made fresh by the next `in`, the fall said once and
 // told to the hub - whose record falls with it - and the page's half: the words sent down my own socket, the fight heard
 // from my own realm alone.
-import { SD_ENDINGS } from '../src/net/sdMarks.js';   // SD18a (PIN MOVED): Sunfall's seven
+import { SD_ENDINGS } from '../src/net/superDungeon/sdMarks.js';   // SD18a (PIN MOVED): Sunfall's seven
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -13,14 +13,14 @@ import {
   SD_ARENA_BOUND, SD_BODIES, SD_FIGHT_BLOWS, SD_ECHOES, SD_HEARTS_MAX, SD_TARGETS_MAX, SD_NO_WORDS, SD_FIGHT_KEY,
   SD_INTERNAL_FELL, validSdFellTell, SD_KEY, SOCIAL_ROOM, worldRoom, PIXEL_UNITS, GATE_DMG_WIRE_MAX, RELAY_VERSION,
 } from '../src/net/wire.js';
-import { realmToDungeon, SD_ARENA } from '../src/net/sdBrain.js';
+import { realmToDungeon, SD_ARENA } from '../src/net/superDungeon/sdBrain.js';
 import {
   SD_BODY, SD_BLOW_BY_ID, SD_ECHO_SPOTS, SD_HEARTS, SD_BLOWS, SD_OPENING_MS, SD_LOST_MS, SD_PHASE_AT, SD_TTK_S, SD_SHARE_X,
   newRemnantFight, joinRemnant, remnantStateOf, stepRemnant, atkFrameOf,
-} from '../src/net/sdRemnant.js';
-import { sdRoomKey } from '../src/net/sdLaw.js';
-import { PIXEL_M } from '../src/net/gateLaw.js';
-import { dpsRef, POSE_SLACK, HIT_KINDS } from '../src/net/gateBrain.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
+import { dpsRef, POSE_SLACK, HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { OnlineSession } from '../src/net/online.js';
@@ -334,12 +334,12 @@ test('SD8b THE PAGE: an `in` and a blow go down my own socket in the realm at a 
   assert.equal(cell.heard.length, 0, 'nor from a cell');
 });
 
-test('SD8b the relay by source: the fight\'s words routed in a realm alone on their own bucket; the alarm beats the fight; the hub keeps the fall\'s door; net/sdRemnant.js in the bundle', () => {
+test('SD8b the relay by source: the fight\'s words routed in a realm alone on their own bucket; the alarm beats the fight; the hub keeps the fall\'s door; net/superDungeon/sdRemnant.js in the bundle', () => {
   const w = read('server/src/index.js');
   assert.match(w, /if \(m\.k === 'in' \|\| m\.k === 'hit' \|\| m\.k === 'ehit' \|\| m\.k === 'xhit' \|\| m\.k === 'vt'\) \{   \/\/ INT12: `vt` - its body, in its own word\n\s+if \(m\.k === 'vt' \? !this\._spend\(ws, now, bodyWordRelayGate, 'bodyBucket', 'bodyDrops', 'too many body words'\) : !this\._spend\(ws, now, sdFightRelayGate, 'sdFightBucket', 'sdFightDrops', 'too many fight frames'\)\) return;[^\n]*\n\s+if \(!isSdRoom\(a\.key\)\) \{ this\._junk\(ws\); return; \}/);   // PIN MOVED (AUDIT INT15): a body's word on a bucket of its own, the blows' bucket the rest's (test/int_lane3_audit.test.js)
   assert.match(w, /if \(await this\._sdFightTick\(\)\) return;/);
   assert.match(w, /if \(path === SD_INTERNAL_FELL\) return this\._sdFellInternal\(request\);/);
-  assert.match(w, /import \{ newRemnantFight, joinRemnant, applyRemnantHit, applyEchoHit, applyHeartHit, stepRemnant, remnantStateOf, arenaOf, inArena, SD_ARENA_SLACK, SD_LOST_MS, SD_POSE_FRESH_MS \} from '\.\.\/\.\.\/src\/net\/sdRemnant\.js';/);   // AUDIT SD II (SD11e, PIN MOVED): L4 C2 - the arena's own slack   // PIN MOVED (AUDIT SD III F3): and the pose's freshness bound
-  assert.match(read('test/relayversion.test.js'), /'src\/net\/bossRef\.js', 'src\/net\/gateStrike\.js', 'src\/world\/segment\.js', 'src\/net\/sdRemnant\.js', 'src\/net\/sdBrain\.js'[\],]/);   // PIN MOVED (INT12): net/bossRef.js walks first and brings it in, its law before it; SD9a: net/sdReceipt.js after it (PIN MOVED)
+  assert.match(w, /import \{ newRemnantFight, joinRemnant, applyRemnantHit, applyEchoHit, applyHeartHit, stepRemnant, remnantStateOf, arenaOf, inArena, SD_ARENA_SLACK, SD_LOST_MS, SD_POSE_FRESH_MS \} from '\.\.\/\.\.\/src\/net\/superDungeon\/sdRemnant\.js';/);   // AUDIT SD II (SD11e, PIN MOVED): L4 C2 - the arena's own slack   // PIN MOVED (AUDIT SD III F3): and the pose's freshness bound
+  assert.match(read('test/relayversion.test.js'), /'src\/net\/bossRef\.js', 'src\/net\/gate\/gateStrike\.js', 'src\/world\/segment\.js', 'src\/net\/superDungeon\/sdRemnant\.js', 'src\/net\/superDungeon\/sdBrain\.js'[\],]/);   // PIN MOVED (INT12): net/bossRef.js walks first and brings it in, its law before it; SD9a: net/superDungeon/sdReceipt.js after it (PIN MOVED)
   assert.match(read('bible/11-Multiplayer/Super-Dungeons.md'), /### SD8b - shipped 2026-10-07/);
 });

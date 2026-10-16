@@ -37,7 +37,7 @@
 import { judgeSave, judgeProducts, STRIKES_FOR_REVIEW, JUDGE_VERSION, FINDINGS_KEPT, WEALTH_VERSION } from './judge.js';
 import { ledgerStep, chargeSteps, DUPES_FOR_HOLD } from './ledger.js';
 import { budgetConfig, bandOf, stepBudget } from './budget.js';
-import { customsAllowance } from '../../src/net/realmGoldLaw.js';
+import { customsAllowance } from '../../src/net/realm/realmGoldLaw.js';
 
 /** INT2's cutover (Mac: "Items judged, wealth baselined"): a character whose first judged wealth stands past this many
  *  of its level's customs allowance (realmGoldLaw.js customsAllowance) is flagged for staff - flagged, never held. */

@@ -173,5 +173,5 @@ test('UI-CALM II the walk polished (a player: "cheap letters, overlapping, dotte
   const firm = rd('src/ui/firmamentWindow.js');
   assert.match(firm, /const fail = readFailText\(book\.state\);\n    if \(fail\) say\(fail, true, true\);/);
   assert.match(firm, /if \(st\.status === 404\) return t\('firm\.readFail\.missing'/);
-  assert.match(rd('src/net/firmamentBook.js'), /state\.status = Number\.isSafeInteger\(r\?\.status\) \? r\.status : null;/);
+  assert.match(rd('src/net/firmament/firmamentBook.js'), /state\.status = Number\.isSafeInteger\(r\?\.status\) \? r\.status : null;/);
 });

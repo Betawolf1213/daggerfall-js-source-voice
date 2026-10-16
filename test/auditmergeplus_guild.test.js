@@ -21,12 +21,12 @@ import { DatabaseSync } from 'node:sqlite';
 import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { ACCOUNT_MAX } from '../server-account/src/accounts.js';
-import { GUILD_FOUND_RENOWN, GUILD_RANK_NAMES } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_RENOWN, GUILD_RANK_NAMES } from '../src/net/guild/guildLaw.js';
 import { renownXpFor } from '../src/net/renown.js';
 import { mintToken, verifyOrder, mintGuildOrder, mintGuildOutOrder, MAX_TTL_S } from '../src/net/identityToken.js';
 import { SOCIAL_ROOM } from '../src/net/wire.js';
 import { accountGuilds, accountHomes, accountRefusalText, SESSION_KEY } from '../src/net/accountClient.js';
-import { GuildBook, GUILD_FRESH_MS, guildRefused } from '../src/net/guildBook.js';
+import { GuildBook, GUILD_FRESH_MS, guildRefused } from '../src/net/guild/guildBook.js';
 import {
   createOnlineHomes, buyOnlineHome, HOME_BUY_BUSY, HOME_BOUGHT_LINE, homeShortLine, homeSceneName, homeBuyRows, homeOwnerRows,
 } from '../src/systems/online/onlineHomes.js';

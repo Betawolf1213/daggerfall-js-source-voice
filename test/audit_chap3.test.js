@@ -18,7 +18,7 @@ import { listWrits } from '../server-account/src/professions.js';
 import { readRoll } from '../server-account/src/npcRoll.js';
 import { meritWeekOf, strengthAfter, STRENGTH_SHORT, meritOfReceipt } from '../src/net/npcChapterLaw.js';
 import { seatWeekStartMs, seasonEndingAt } from '../src/net/townSeatLaw.js';
-import { gameDayAt } from '../src/net/gateLaw.js';
+import { gameDayAt } from '../src/net/gate/gateLaw.js';
 import { herbPatches, nodeKey } from '../src/net/nodeLaw.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { materialCountLabel } from '../src/systems/professions/profItems.js';

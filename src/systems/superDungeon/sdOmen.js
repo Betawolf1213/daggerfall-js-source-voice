@@ -8,15 +8,15 @@
 // compass inside SD_COMPASS_M of its door, a row in the Timers window (systems/eventTimers.js) and a note under the red
 // seal on every notice board.
 //
-// PURE: the hub's record (net/sdLaw.js) and the Hollow the world host stood (scenes/sdHost.js hollow()) in, the relay's
+// PURE: the hub's record (net/superDungeon/sdLaw.js) and the Hollow the world host stood (scenes/sdHost.js hollow()) in, the relay's
 // clock handed - every client holding the same record says the same thing at the same moment. Nothing is sent or saved.
 //
 // Not a DFU member: Daggerfall has no world events. Ledger A (SUPER-DUNGEONS).
-import { sdPhase, sdStands, sdMarked, sdNameIn, sdWhere, SD_COLLAPSE_MS } from '../../net/sdLaw.js';
+import { sdPhase, sdStands, sdMarked, sdNameIn, sdWhere, SD_COLLAPSE_MS } from '../../net/superDungeon/sdLaw.js';
 import { timerText } from '../eventTimers.js';
 import { pixelOfLoc } from './sdSite.js';
 import { MAX_ANSWERS_TELL_ME_ABOUT_OR_RUMORS } from '../rumorMill.js';
-import { sdMarksOf, sdEndingOf, sdOmensOf } from '../../net/sdMarks.js';   // SD18c: the Ending a Hollow keeps, by its slot
+import { sdMarksOf, sdEndingOf, sdOmensOf } from '../../net/superDungeon/sdMarks.js';   // SD18c: the Ending a Hollow keeps, by its slot
 
 /** How far the column is seen, map pixels (Chebyshev) - section 4's twelve. */
 export const SD_OMEN_PX = 12;
@@ -117,7 +117,7 @@ export const SD_BANNER_M = 60;
  *  card's beside it, and with it a long name ran the banner off both sides of a phone. */
 export const sdBannerText = (name, rec, now) => { const w = sdStateWords(rec, now); return `${name || 'An Abyss Dungeon'}${w ? ` - ${w}` : ''}`; };
 /** Its marks in a line, said with its find: "The Stopped Bell keeps the Ending of Sentinel, its Sunfall, under the
- *  Brazen Hide and the Short Hour." AUDIT SD III (T11): each mark's article small inside the line (net/sdLaw.js sdNameIn)
+ *  Brazen Hide and the Short Hour." AUDIT SD III (T11): each mark's article small inside the line (net/superDungeon/sdLaw.js sdNameIn)
  *  - it read "under The Brazen Hide and The Short Hour". AUDIT SD IV (T9): its signature the Ending's own ("its
  *  Lion's Roar") - it hung between dashes, "Sentinel - Sunfall - under", the aside WB13b's law forbids. */
 export function sdMarksLine({ name, s }) {

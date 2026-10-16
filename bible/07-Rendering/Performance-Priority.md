@@ -427,7 +427,7 @@ cut by the same list and are not in it. The session's own play-out (`online.tick
 measured beside it with PERF-ON's probe - 0.028 ms a frame at 100 peers - and LEFT: the map's marks, the foes' owners and
 the range itself read the pose it plays.
 
-**The fix** (`net/peerRange.js`). GATE-CROWD's cut, by distance in place of a count, run on the online frame's drawn
+**The fix** (`net/peer/peerRange.js`). GATE-CROWD's cut, by distance in place of a count, run on the online frame's drawn
 list just before the court's own (`scenes/world.js` `ranged`): past the distance on the Other players card a player
 stands nowhere on this screen - no body, sprite, name, light, cast, spark or step - and their map marks, taken off the
 whole list above it, stay.

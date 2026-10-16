@@ -1,7 +1,7 @@
 [
   {
     "name": "SD5A-a-stage-moved",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": "export const SD_ORRERY = Object.freeze({ x: 0, z: 42, r: 18 });",
     "new": "export const SD_ORRERY = Object.freeze({ x: 0, z: 40, r: 18 });",
     "tests": [

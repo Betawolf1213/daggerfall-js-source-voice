@@ -3,7 +3,7 @@
 // WB12a, RARITY-WEAR) run over every list a save holds, by one walk (systems/save/save.js savedItemLists) and one runner
 // (repairItemLists). B - Project Legacy runs the same repairs on what leaves the line's record by no load: a bequest as
 // it is paid, a fallen member's remains as they open (scenes/legacyHost.js). C - customs counts a sworn revenant's pack
-// (net/realmGoldLaw.js stashedItemLists). bible/05-Combat/Physical-Combat-Overhaul.md, ITEM-WALK.
+// (net/realm/realmGoldLaw.js stashedItemLists). bible/05-Combat/Physical-Combat-Overhaul.md, ITEM-WALK.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,7 +12,7 @@ import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { WEAPONS, WEAPON_MATERIALS } from '../src/characters/weapons.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { goldStack, letterOfCredit } from '../src/systems/inventory.js';
-import { liquidWealthOf, stashedItemLists, customsAllowance } from '../src/net/realmGoldLaw.js';
+import { liquidWealthOf, stashedItemLists, customsAllowance } from '../src/net/realm/realmGoldLaw.js';
 import { applyCustoms } from '../src/systems/realmCustoms.js';
 import { firstSaveRefusal } from '../server-account/src/realm.js';
 import { modSaveRecords, _resetModSaveData } from '../src/systems/modSaveData.js';

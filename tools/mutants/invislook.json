@@ -83,7 +83,7 @@
   },
   {
     "name": "INVISLOOK-rider-plain",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    layer.veil(r, hConceal(peer.id));   // INVIS-LOOK: a concealed rider (or beast) is drawn translucent",
     "new": "    // INVIS-LOOK: a concealed rider (or beast) is drawn translucent",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "INVISLOOK-walker-plain",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "      layer.veil(r, conceal(peer.id));   // INVIS-LOOK: a concealed walker is drawn translucent",
     "new": "      // INVIS-LOOK: a concealed walker is drawn translucent",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "INVISLOOK-new-sprite-plain",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "        r.batch.conceal = r.veil ?? null;   // INVIS-LOOK: a new sprite keeps the figure's draw",
     "new": "        // INVIS-LOOK: a new sprite keeps the figure's draw",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "INVISLOOK-veil-never-lifted",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    if (r.batch) r.batch.conceal = r.veil;\n",
     "new": "    if (r.batch && r.veil) r.batch.conceal = r.veil;\n",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "INVISLOOK-lantern-on-nobody",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    if (r.veil) return;   // INVIS-LOOK",
     "new": "    if (false) return;   // INVIS-LOOK",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "INVISLOOK-body-in-both-passes",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "      if (!this._standing(b) || !b.veil !== !veiled) continue;",
     "new": "      if (!this._standing(b)) continue;",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "INVISLOOK-body-veil-unread",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "      b.veil = conceal ? (conceal(id) ?? null) : null;",
     "new": "      b.veil = null;",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "INVISLOOK-late-pass-no-camera",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    const c = this._cam ?? (this._cam = { canvas: null, proj: null, view: null, eye: null, flashOf: null, grow: null, up: null, fxOf: null, scaleOf: null, anchoredOf: null });\n",
     "new": "    const c = { canvas: null, proj: null, view: null, eye: null, flashOf: null, grow: null, up: null, fxOf: null, scaleOf: null, anchoredOf: null };\n",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "INVISLOOK-body-drawn-plain",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "hitFlash: flashOf ? flashOf(b.id) : 0, conceal: b.veil ?? null, grow: g",
     "new": "hitFlash: flashOf ? flashOf(b.id) : 0, conceal: null, grow: g",
     "tests": [

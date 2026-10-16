@@ -29,7 +29,7 @@ import {
 } from '../net/kingsGambit.js';
 import { GAMBIT_STAKE_MULTS, GAMBIT_CROWNS, crownIndex, stakeOf } from '../systems/gambit/gambitTableSession.js';
 import { FOE_CARDS } from '../systems/card/cardSources.js';
-import { cardById } from '../net/iliacCards.js';
+import { cardById } from '../net/iliac/iliacCards.js';
 import { ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
 import { paintFace, SUIT_CROWNS, RANK_KING } from '../render/cardFaces.js';
 import { cardCanvasCopy } from './cardBinderPage.js';

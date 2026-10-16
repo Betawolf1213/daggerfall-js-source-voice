@@ -271,7 +271,7 @@
   },
   {
     "name": "SD3-the-near-ring-unasked",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  return sdNearSite(claim, pose);\n}",
     "new": "  return true;\n}",
     "tests": [

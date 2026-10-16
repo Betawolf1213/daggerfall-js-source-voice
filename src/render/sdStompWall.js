@@ -1,13 +1,13 @@
 // @ts-check
 // SD-LOOK (2026-10-08, bible/11-Multiplayer/Super-Dungeons-Look.md section 9): THE STOMP'S RING AS A WALL - the ring a
-// Brass Stomp rolls out (net/sdRemnant.js stompRingAt - the very front the law strikes) stood up as a low wall of brass
+// Brass Stomp rolls out (net/superDungeon/sdRemnant.js stompRingAt - the very front the law strikes) stood up as a low wall of brass
 // light SD_STOMP_WALL.h tall, not a line on the floor: it reads "jump this". A cylinder strip of SD_STOMP_WALL.segs sides
 // about the Stomp's centre at the front's radius, ADDED onto the frame (the beam's law, render/sdBeam.js: fixed geometry
 // placed by uniforms, no depth written, tested against the world's, fogged), its light posterized in bands rising to a
 // bright top lip, fading as the roll ends. The gate telegraph's floor ring stays under it (scenes/sdRemnantBlows.js).
 //
 // THE HOLD (section 9) is the same wall in gold, SD_HOLD_CURTAIN.h tall, at the arena's rim: while a player joined to a
-// living fight stands in it (net/sdBrain.js arenaHolds), "you are held here" is seen, not found by walking into it.
+// living fight stands in it (net/superDungeon/sdBrain.js arenaHolds), "you are held here" is seen, not found by walking into it.
 //
 // THE WAY HOME'S BEACON (section 4) is the same strip as a narrow column of silver light over the Return where the
 // Remnant fell (`beacon` - its light falling off up it): SD_HOME_BEACON.tall for its first seconds, seen from anywhere in
@@ -18,8 +18,8 @@
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { buildProgram } from './glProgram.js';
-import { SD_BLOWS, stompRingAt } from '../net/sdRemnant.js';
-import { SD_ARENA, realmToDungeon } from '../net/sdBrain.js';
+import { SD_BLOWS, stompRingAt } from '../net/superDungeon/sdRemnant.js';
+import { SD_ARENA, realmToDungeon } from '../net/superDungeon/sdBrain.js';
 
 /** The wall: its height (m - under a jump's reach, over a step's), its sides, the most a frame stands (the Remnant's
  *  and the two Echoes'), and its brass. */

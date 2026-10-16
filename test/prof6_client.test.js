@@ -19,10 +19,10 @@ import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { mintPiece, pieceOfRecipe } from '../src/systems/smithItems.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { commissionPieceText, writLeftText } from '../src/ui/workTab.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import { createSocialPanel } from '../src/ui/socialPanel.js';
 import { SocialState } from '../src/net/social.js';
-import { GUILD_RANK_NAMES } from '../src/net/guildLaw.js';
+import { GUILD_RANK_NAMES } from '../src/net/guild/guildLaw.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const noWait = () => Promise.resolve();

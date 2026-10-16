@@ -172,7 +172,7 @@
   },
   {
     "name": "A4-the-workers-words-read-as-may-have-landed",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-database', 'no-player',\n",
     "new": "",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "A4-rate-read-as-may-have-landed",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-database', 'no-player',",
     "new": "  'body', 'too-large', 'method', 'not-found', 'no-database', 'no-player',",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "A4-body-read-as-may-have-landed",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-database', 'no-player',",
     "new": "  'rate', 'too-large', 'method', 'not-found', 'no-database', 'no-player',",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "A4-too-large-read-as-may-have-landed",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-database', 'no-player',",
     "new": "  'rate', 'body', 'method', 'not-found', 'no-database', 'no-player',",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "A4-method-read-as-may-have-landed",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-database', 'no-player',",
     "new": "  'rate', 'body', 'too-large', 'not-found', 'no-database', 'no-player',",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "A4-not-found-read-as-may-have-landed",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-database', 'no-player',",
     "new": "  'rate', 'body', 'too-large', 'method', 'no-database', 'no-player',",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "A4-no-database-read-as-may-have-landed",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-database', 'no-player',",
     "new": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-player',",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "A4-no-player-read-as-may-have-landed",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-database', 'no-player',",
     "new": "  'rate', 'body', 'too-large', 'method', 'not-found', 'no-database',",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "A5-the-acts-look-handed-the-one-in-flight",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "      if (this._looking) await this._looking.catch(() => {});\n",
     "new": "",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "A5-a-failed-look-fails-the-act",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "await this._looking.catch(() => {});",
     "new": "await this._looking;",
     "tests": [

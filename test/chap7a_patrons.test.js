@@ -11,7 +11,7 @@ import {
   CHAPTER_PATRON_MIN, patronBidOk, patronEscrowId, patronWinnerOf, chapterPatronOf, chapterPatronLine, chapterChronicleLine, meritWeekOf,
 } from '../src/net/npcChapterLaw.js';
 import { MARKS_KINDS, MARKS_MAX, utcDay } from '../src/net/marksLaw.js';
-import { GUILD_FOUND_RENOWN } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_RENOWN } from '../src/net/guild/guildLaw.js';
 import { seatWeekStartMs } from '../src/net/townSeatLaw.js';
 import { settleChaptersDue, CHAPTER_TURNING_GRACE_S } from '../server-account/src/npcChapters.js';
 import { standService, T0, confirmChapters } from './accountDb.mjs';

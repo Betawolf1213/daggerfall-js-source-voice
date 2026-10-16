@@ -810,10 +810,10 @@ and which record is a back was checked against the vendored art (Eye-Of-The-Beho
 still hangs: the swing runs on (turning round shows a lantern already swinging), the batch is kept, and your light
 stays at the hip rather than jumping to the yaw frame's default each time the sprite turns. And EVERY sprite: your own,
 in every on-foot set, and every other player drawn online as the set they chose (DISC23-B's walkers,
-`net/peerRiders.js createPeerWalkers`) whose pose says `hl` (HT-WAIST-NET, below) - the same picture through the same loader (the peers' art
+`net/peer/peerRiders.js createPeerWalkers`) whose pose says `hl` (HT-WAIST-NET, below) - the same picture through the same loader (the peers' art
 store, `createEotbArt`, holds its own `createLanternArt`; the renderer caches the texture once under the key), hung by
 the same law, swung off that walker's own motion (its pace off the drawn feet - MWBODY1's law, lifted to
-`net/peerPace.js` so the bodies and the walkers read one -, its yaw's turn, its walk clip's phase), drawn from
+`net/peer/peerPace.js` so the bodies and the walkers read one -, its yaw's turn, its walk clip's phase), drawn from
 straight behind them alone. One home for all of it: `player/eotbLantern.js` (the rule, the art, the hang, the swing's drive, the batch);
 `eotbBody.js` keeps what is the local body's alone (whether it hangs, and the light), a walker keeps its `hl`. A peer's
 lantern is drawn by `drawLanterns`, called from world.js's `drawPeerBodies` - the hook world.js's exterior pass and

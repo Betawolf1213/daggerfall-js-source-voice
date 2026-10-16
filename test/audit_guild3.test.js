@@ -15,10 +15,10 @@ import {
 import { GUILD_HOLDS_SQL, GUILD_HOLD_KEEP_CODES, guildKeepsSql } from '../server-account/src/guilds.js';
 import { accountGuilds } from '../src/net/accountClient.js';
 import { seatRealm } from './realmSeat.mjs';
-import { rankLinesOf } from '../src/net/guildPowers.js';
-import { GUILD_RANK_NAMES } from '../src/net/guildLaw.js';
+import { rankLinesOf } from '../src/net/guild/guildPowers.js';
+import { GUILD_RANK_NAMES } from '../src/net/guild/guildLaw.js';
 import { createSocialPanel } from '../src/ui/socialPanel.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import { SocialState } from '../src/net/social.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 import { MARKS_MAX } from '../src/net/marksLaw.js';

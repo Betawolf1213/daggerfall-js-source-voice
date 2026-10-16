@@ -83,7 +83,7 @@ export async function npcHeadImage(look, { px = 128, ph = px, renderer = portrai
   if (!look || look.creature || !renderer) return null;
   const { npcBodiesOn } = await import('./npcBodies.js');
   if (!npcBodiesOn()) return null;
-  const [{ headPortrait }, { peerBuildOpts }] = await Promise.all([import('../combat/fpArm.js'), import('../net/peerBodies.js')]);
+  const [{ headPortrait }, { peerBuildOpts }] = await Promise.all([import('../combat/fpArm.js'), import('../net/peer/peerBodies.js')]);
   const o = /** @type {any} */ (peerBuildOpts(look));
   if (!o || o.creature || o.werewolf || !o.race) return null;
   return headPortrait({ renderer, race: o.race, female: !!o.female, faceIndex: o.faceIndex | 0, npcFace: o.npcFace ?? null, vampire: !!o.vampire, armor: o.armor ?? null, px, ph });   // its helm and hood too

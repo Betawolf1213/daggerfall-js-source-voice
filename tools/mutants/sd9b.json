@@ -163,7 +163,7 @@
   },
   {
     "name": "SD9B-an-unsigned-one-kept",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "  const live = (r) => { const c = typeof r === 'string' ? readSdReceipt(r) : null; const t = nowS(); return c && c.signed && (t == null || c.e > t) ? c : null; };",
     "new": "  const live = (r) => { const c = typeof r === 'string' ? readSdReceipt(r) : null; const t = nowS(); return c && (t == null || c.e > t) ? c : null; };",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD9B-an-expired-one-kept",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "  const live = (r) => { const c = typeof r === 'string' ? readSdReceipt(r) : null; const t = nowS(); return c && c.signed && (t == null || c.e > t) ? c : null; };",
     "new": "  const live = (r) => { const c = typeof r === 'string' ? readSdReceipt(r) : null; return c && c.signed ? c : null; };",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD9B-anothers-offered",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "        if (!mine || live(r)?.s !== mine) continue;",
     "new": "        if (!mine) continue;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SD9B-the-title-unsaid",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "          if (answer.data.title === true) say(SD_CLAIM_TEXT.title);\n",
     "new": "",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD9B-the-aura-unsaid",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "          if (answer.data.aura === true) say(SD_CLAIM_TEXT.aura);\n",
     "new": "",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "SD9B-the-guest-said-twice",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "} else if (answer?.ok && answer.data?.why === 'guest' && !guestSaid.has(r)) {",
     "new": "} else if (answer?.ok && answer.data?.why === 'guest') {",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "SD9B-a-guest-let-go",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "  if (answer?.ok) return answer.data?.why === 'guest' ? 'keep' : 'done';",
     "new": "  if (answer?.ok) return 'done';",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "SD9B-a-mendable-one-let-go",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "  return answer?.error === 'receipt' && !SD_CLAIM_MENDABLE.includes(answer.why) ? 'done' : 'keep';",
     "new": "  return answer?.error === 'receipt' ? 'done' : 'keep';",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SD9B-unbounded",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "        const drop = theirs.length >= SD_CLAIMS_MAX ? theirs[0] : null;",
     "new": "        const drop = null;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD9B-two-of-one-hollow",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "return k === r || (o?.d === c.d && o?.s === c.s);",
     "new": "return k === r;",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD9B-the-clock-ignored",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "      if (!signedIn && !due) return false;\n",
     "new": "",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "SD9B-a-settled-one-again",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "      if (!c || settled.has(r)) return false;",
     "new": "      if (!c) return false;",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "SD9B-none-yet-unsaid",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "  return rec.broken > 0 ? String(rec.broken) : 'None yet';",
     "new": "  return String(rec.broken);",
     "tests": [

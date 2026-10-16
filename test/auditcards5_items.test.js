@@ -19,7 +19,7 @@ import { validBinderDeck, BINDER_DECK_NAME_MAX } from '../src/systems/item/itemF
 import { quickslotKey } from '../src/systems/quickslots.js';
 import { shopBuysItem } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
+import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
 import { cardRules, cardFlavor } from '../src/systems/iliac/iliacCardWords.js';
 import { packModel, mountEnhancedInventory, useResultAction } from '../src/ui/enhancedInventory.js';
 import { withDom } from './invdrag.mjs';

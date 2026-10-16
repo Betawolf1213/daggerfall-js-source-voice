@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { TIDE_SALT, TIDES, TIDE_LANDS, TIDE_EFFECTS, TIDE_WORDS, tideOf, tideAt, tideLandOf, tideLandName, tideName, tideLine } from '../src/net/tideLaw.js';
-import { gateHash } from '../src/net/gateLaw.js';
+import { gateHash } from '../src/net/gate/gateLaw.js';
 import { accountSeatInfluence, edictCost, edictLine, standingWeek, turningPlan, STANDING_CHANGES, WATCH_INFLUENCE, GATE_INFLUENCE, GATE_WEEK_CAP } from '../src/net/townSeatLaw.js';
 
 test('SEASON1 THE ROLL (9.3): ten Tides weighted out of 100 in the table\'s order; five lands - the kingdoms, the Marches, the Free Lands - in the roll\'s order; a land\'s Tide the gate\'s mix of its salt, the week and the land walked down the weights; Calm for no land, a week not whole, or no Season counted; the weights hold over many weeks (mutants: each weight; the order; the salt; the walk; the lands; the counted gate)', () => {

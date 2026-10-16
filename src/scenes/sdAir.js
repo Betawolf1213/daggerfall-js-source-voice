@@ -31,7 +31,7 @@ import { addVoice, lowpassLoop, level, rms } from '../systems/arena/arenaSound.j
 import { airSourceAt, AIR_BACKLOG_S } from './deadlandsAir.js';
 import { THUNDER_SOURCE_M } from '../systems/distantStorms.js';
 import { SD_SKY_PERIOD } from '../render/sdSky.js';
-import { SD_ARENA, SD_ORRERY, SD_REALM_ORIGIN, realmToDungeon } from '../net/sdBrain.js';
+import { SD_ARENA, SD_ORRERY, SD_REALM_ORIGIN, realmToDungeon } from '../net/superDungeon/sdBrain.js';
 import { spanAt } from '../world/superDungeon/sdSteps.js';
 
 /** DAGGER.SND's own: the Orrery's clunk (Parry6), the gears' grind, the ship's bell. */

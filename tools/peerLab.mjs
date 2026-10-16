@@ -3,7 +3,7 @@
 //
 // tools/onlineFrameProbe.mjs measures the whole online frame and boots the real game first (a quarter of an hour on
 // SwiftShader). This stands only the layers that scale with the players round you - RemotePlayers (the class sprites,
-// the dolls, the steps' and swings' sounds), the walkers in Eye Of The Beholder's sets (net/peerRiders.js), the name
+// the dolls, the steps' and swings' sounds), the walkers in Eye Of The Beholder's sets (net/peer/peerRiders.js), the name
 // layer (ui/nameLayer.js) - over the REAL renderer, the REAL data pipeline over the player's ARENA2 (/play/arena2/, the
 // dev server's door), the REAL audio engine, and drives them with N peers who ARRIVE TOGETHER (a welcome's roster)
 // while the camera turns, then walk about. It reports, a frame at a time:
@@ -63,7 +63,7 @@ const out = await page.evaluate(async ({ PEERS, FRAMES, LOOKS, EOTB, SPRITES, NA
   const { getBytes } = await import('/src/scenes/dataSource.js');
   const { createDataPipeline } = await import('/src/scenes/dataPipeline.js');
   const { RemotePlayers } = await import('/src/net/remotePlayers.js');
-  const { createEotbArt, createPeerWalkers } = await import('/src/net/peerRiders.js');
+  const { createEotbArt, createPeerWalkers } = await import('/src/net/peer/peerRiders.js');
   const { createNameLayer } = await import('/src/ui/nameLayer.js');
   const { audio } = await import('/src/systems/audio.js');
   const { setPref } = await import('/src/systems/uiPrefs.js');

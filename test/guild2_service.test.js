@@ -8,8 +8,8 @@ import assert from 'node:assert/strict';
 
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm, realmAt } from './realmSeat.mjs';
-import { GUILD_RENAME_GOLD, GUILD_RENAME_COOLDOWN_S, guildRenameOpen } from '../src/net/guildLaw.js';
-import { vaultStanding, vaultMayTake, vaultGrantOf, VAULT_RANK_DEFAULTS, guildVaultSlots, GUILD_VAULT_SLOTS } from '../src/net/guildVaultLaw.js';
+import { GUILD_RENAME_GOLD, GUILD_RENAME_COOLDOWN_S, guildRenameOpen } from '../src/net/guild/guildLaw.js';
+import { vaultStanding, vaultMayTake, vaultGrantOf, VAULT_RANK_DEFAULTS, guildVaultSlots, GUILD_VAULT_SLOTS } from '../src/net/guild/guildVaultLaw.js';
 import { seatWeekOf } from '../src/net/townSeatLaw.js';
 import { REFUSALS } from '../src/net/accountClient.js';
 import { verifyOrder } from '../src/net/identityToken.js';

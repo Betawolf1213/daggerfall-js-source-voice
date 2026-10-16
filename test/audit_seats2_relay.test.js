@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { siegeRoomKey, SIEGE_UNITS_PER_M, siegeNpcAt, siegeNpcInReach, siegeNpcProvoked, siegeFieldFrame, SIEGE_NPC, SIEGE_THRONE, newBattle, fieldOf } from '../src/net/siegeRef.js';
+import { siegeRoomKey, SIEGE_UNITS_PER_M, siegeNpcAt, siegeNpcInReach, siegeNpcProvoked, siegeFieldFrame, SIEGE_NPC, SIEGE_THRONE, newBattle, fieldOf } from '../src/net/siege/siegeRef.js';
 import { validSiegeOut } from '../src/net/wire.js';
 import { mintSiegeOrder } from '../src/net/identityToken.js';
 import { fakeRoom } from './fakeRoom.mjs';

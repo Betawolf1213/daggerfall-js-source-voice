@@ -1,7 +1,7 @@
 [
   {
     "name": "GATECROWD-default-twelve",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "export const GATE_CROWD_DEFAULT = 0;",
     "new": "export const GATE_CROWD_DEFAULT = 12;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "GATECROWD-tiers-reordered",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "export const GATE_CROWD_TIERS = Object.freeze([0, 12, 24]);",
     "new": "export const GATE_CROWD_TIERS = Object.freeze([12, 24, 0]);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "GATECROWD-hold-three",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "export const GATE_CROWD_HOLD_M = 4;",
     "new": "export const GATE_CROWD_HOLD_M = 3;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "GATECROWD-stray-kept",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "(GATE_CROWD_TIERS.includes(v) ? v : GATE_CROWD_DEFAULT)",
     "new": "(v ?? GATE_CROWD_DEFAULT)",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "GATECROWD-one-over",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "for (let i = 0; i < rest.length && out.size < max; i++)",
     "new": "for (let i = 0; i < rest.length && out.size <= max; i++)",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "GATECROWD-farthest-drawn",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "rest.sort((a, b) => a.d - b.d ||",
     "new": "rest.sort((a, b) => b.d - a.d ||",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "GATECROWD-height-counted",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "Math.hypot(f[0] - me[0], f[2] - me[2])",
     "new": "Math.hypot(f[0] - me[0], f[1] - me[1], f[2] - me[2])",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "GATECROWD-mate-dropped",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "if (mate(p.id)) { out.add(p.id); continue; }",
     "new": "if (mate(p.id)) { continue; }",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "GATECROWD-mates-uncounted",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "i < rest.length && out.size < max",
     "new": "i < rest.length && i < max",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "GATECROWD-ties-unordered",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "a.d - b.d || (String(a.id) < String(b.id) ? -1 : String(a.id) > String(b.id) ? 1 : 0)",
     "new": "a.d - b.d",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "GATECROWD-no-count-cuts",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "if (!(max > 0) || peers.length <= max) {",
     "new": "if (peers.length <= max) {",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "GATECROWD-no-hold",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "- (was?.has(p.id) ? hold : 0)",
     "new": "- 0",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "GATECROWD-hold-to-newcomer",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "(was?.has(p.id) ? hold : 0)",
     "new": "(was?.has(p.id) ? 0 : hold)",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "GATECROWD-hold-sign",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "- (was?.has(p.id) ? hold : 0)",
     "new": "+ (was?.has(p.id) ? hold : 0)",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "GATECROWD-cut-everywhere",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "if (!on) { held.clear(); return peers; }",
     "new": "if (on === null) { held.clear(); return peers; }",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "GATECROWD-places-never-forgotten",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "if (!on) { held.clear(); return peers; }",
     "new": "if (!on) { return peers; }",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "GATECROWD-held-refilled-under-itself",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "spare = held; held = now;",
     "new": "held = now;",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "GATECROWD-new-list-every-frame",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "      drawn.length = 0;\n      for (const p of peers) if (held.has(p.id)) drawn.push(p);\n      return drawn;",
     "new": "      return peers.filter((p) => held.has(p.id));",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "GATECROWD-order-lost",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "for (const p of peers) if (held.has(p.id)) drawn.push(p);",
     "new": "for (const p of peers) if (held.has(p.id)) drawn.unshift(p);",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "GATECROWD-everyone-shown",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "shows: (id) => !live || held.has(id),",
     "new": "shows: () => true,",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "GATECROWD-nobody-shown-outside",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "shows: (id) => !live || held.has(id),",
     "new": "shows: (id) => held.has(id),",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "GATECROWD-court-never-marked",
-    "file": "src/net/gateCrowd.js",
+    "file": "src/net/gate/gateCrowd.js",
     "old": "      live = !!on;\n",
     "new": "",
     "tests": [

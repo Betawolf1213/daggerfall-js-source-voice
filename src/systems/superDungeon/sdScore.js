@@ -46,7 +46,7 @@
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 
 import { midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS } from '../gate/gateScore.js';
-import { SD_ARENA } from '../../net/sdBrain.js';
+import { SD_ARENA } from '../../net/superDungeon/sdBrain.js';
 import { SD_FIRST_STEP } from '../../world/superDungeon/sdHall.js';
 import { SD_BAR_NEAR_M } from '../../ui/sdRemnantBar.js';
 
@@ -529,7 +529,7 @@ export function sdScoreSongs() {
  *  forth switched the war and the Steps' song every few strides, each switch a fade out and in. */
 export const SD_SCORE_HOLD_M = 4;
 /**
- * WHERE I STAND IN THE HOUR, by the realm's frame (net/sdBrain.js): near the arena as its bar is (ui/sdRemnantBar.js
+ * WHERE I STAND IN THE HOUR, by the realm's frame (net/superDungeon/sdBrain.js): near the arena as its bar is (ui/sdRemnantBar.js
  * SD_BAR_NEAR_M), on the Steps from the first step's near edge on, else the hall (the Threshold, the Orrery, the
  * bridge) - `was` where I stood last, held SD_SCORE_HOLD_M past the edge it began at. Pure.
  * @param {number} x @param {number} z @param {string | null} [was]
@@ -543,7 +543,7 @@ export function sdScorePlace(x, z, was = null) {
 
 /**
  * THE LAW: what plays where I stand (`place` - 'hollow', or sdScorePlace's in the Hour; null for neither) for the
- * fight this page holds (`s`, net/sdFightLink.js - its clock's `now`), and whether the Hollow collapses (`collapsing`,
+ * fight this page holds (`s`, net/superDungeon/sdFightLink.js - its clock's `now`), and whether the Hollow collapses (`collapsing`,
  * the hub's record fell) - an HOUR_SONGS name, SD_SCORE_SILENCE, or null (the director stands).
  */
 export function hourScoreFor(place, s, now, collapsing = false) {

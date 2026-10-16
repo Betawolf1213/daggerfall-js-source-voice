@@ -11,10 +11,10 @@ import { fakeRoom } from './fakeRoom.mjs';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { mintStakeOrder } from '../src/net/identityToken.js';
-import { readCardReceipt, mintCardReceipt } from '../src/net/cardReceipt.js';
+import { readCardReceipt, mintCardReceipt } from '../src/net/card/cardReceipt.js';
 import { HOLDEM_FIRST_MS } from '../src/net/holdemTable.js';
 import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
-import { createCardStakes, CARD_STAKES_KEY, CARD_RECEIPTS_KEY, CARD_STAKE_KEEP_MS, stakeNeverAsked } from '../src/net/cardStakes.js';
+import { createCardStakes, CARD_STAKES_KEY, CARD_RECEIPTS_KEY, CARD_STAKE_KEEP_MS, stakeNeverAsked } from '../src/net/card/cardStakes.js';
 
 const { subtle } = webcrypto;
 const ROOM = 'interior:m100.200';

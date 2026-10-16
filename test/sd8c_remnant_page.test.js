@@ -1,5 +1,5 @@
 // SD8c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT ON THE
-// PAGE - the fight as the page holds it (net/sdFightLink.js: the realm's words folded, my place in the fight), the arena's
+// PAGE - the fight as the page holds it (net/superDungeon/sdFightLink.js: the realm's words folded, my place in the fight), the arena's
 // set (scenes/sdRemnant.js: the bodies where the realm says, my `in`, my blows through the gate's three seams), its bar
 // (ui/sdRemnantBar.js on the gate's own), its bodies made (world/superDungeon/sdRemnantModel.js, world/superDungeon/sdRemnantArt.js), the arena's
 // pillars on the collider, and the realm's `me`.
@@ -11,13 +11,13 @@ import {
   SD_RESET_FIRST_MS, SD_RESET_EVERY_MS, SD_HEARTS, SD_HEARTS_CLOSE_MS, SD_LOST_MS, SD_ENDS_MS, SD_PILLARS, SD_STUN_MS,
   newRemnantFight, joinRemnant, stepRemnant, applyRemnantHit, applyEchoHit, applyHeartHit, heartsOpen, remnantStateOf, behindPillar, windupFor,
   SD_ECHO_PAIR_MS,
-} from '../src/net/sdRemnant.js';
-import { SD_FIGHT_EMPTY, SD_IN_RETRY_MS, SD_FIGHT_HEARD_MS, SD_FIGHT_TEXT, foldSdFight, createSdFightLink, sdBodyAt, sdBlowDone, sdHeartsOf } from '../src/net/sdFightLink.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { SD_FIGHT_EMPTY, SD_IN_RETRY_MS, SD_FIGHT_HEARD_MS, SD_FIGHT_TEXT, foldSdFight, createSdFightLink, sdBodyAt, sdBlowDone, sdHeartsOf } from '../src/net/superDungeon/sdFightLink.js';
 import { validSdOut, SOCIAL_ROOM, SD_KEY, worldRoom, PIXEL_UNITS, SD_BRAIN_V, SD_NO_WORDS } from '../src/net/wire.js';
-import { SD_ARENA, SD_PILLAR_R, SD_PILLAR_W, SD_PILLAR_H, realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
-import { dpsRef, HIT_KINDS, PHASE_AT } from '../src/net/gateBrain.js';
-import { sdRoomKey } from '../src/net/sdLaw.js';
-import { PIXEL_M } from '../src/net/gateLaw.js';
+import { SD_ARENA, SD_PILLAR_R, SD_PILLAR_W, SD_PILLAR_H, realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
+import { dpsRef, HIT_KINDS, PHASE_AT } from '../src/net/gate/gateBrain.js';
+import { sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
 import {
   createSdRemnant, remnantPose, echoPose, heartsOpenAt, remnantOpenAt, arenaToDungeon, SD_KNEEL_M, SD_KNEEL_EASE_MS, SD_REM_SINK_MS, SD_ECHO_SINK_MS,
   SD_REMNANT_MOBILE, SD_REMNANT_NAMES,
@@ -610,7 +610,7 @@ test('SD8c THE BODIES MADE: the Remnant its own height from its feet, its body w
 
 // ── the pillars ───────────────────────────────────────────────────────
 
-test('SD8c THE PILLARS STAND: the arena\'s four pillars on the collider, their sides and tops - the same squares the Hour-Hand\'s shade is judged by (net/sdRemnant.js behindPillar): a ray from the Remnant to a body the law shades meets the stone short of it, and one the law leaves in the open meets nothing; the realm\'s collider the floors and the pillars, one bucket (mutants: the pillars left off; a pillar out of its square)', () => {
+test('SD8c THE PILLARS STAND: the arena\'s four pillars on the collider, their sides and tops - the same squares the Hour-Hand\'s shade is judged by (net/superDungeon/sdRemnant.js behindPillar): a ray from the Remnant to a body the law shades meets the stone short of it, and one the law leaves in the open meets nothing; the realm\'s collider the floors and the pillars, one bucket (mutants: the pillars left off; a pillar out of its square)', () => {
   const p = realmPillarTris();
   assert.equal(p.length, 4 * 5 * 2 * 9, 'four pillars, four sides and a top each, two triangles a face');
   const all = realmColliderTris(), floors = realmFloorTris(), lamps = realmLampTris();

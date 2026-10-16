@@ -799,7 +799,7 @@ function painter(trace) {
 }
 
 /**
- * The emblems the catalog's cards carry (net/iliacCards.js CARD_EMBLEMS), each its painter. Creatures, callings,
+ * The emblems the catalog's cards carry (net/iliac/iliacCards.js CARD_EMBLEMS), each its painter. Creatures, callings,
  * princes and things, the schools of a spell, and the lie of a land.
  */
 export const EMBLEM_PAINTERS = Object.freeze(Object.fromEntries(Object.entries(GLYPHS).map(([k, trace]) => [k, painter(trace)])));
@@ -808,7 +808,7 @@ export const EMBLEM_PAINTERS = Object.freeze(Object.fromEntries(Object.entries(G
  * EMBLEM_PAINTERS' keys in their order: the first set's 34 (its beetle gone - no card is an insect once the scorpion
  * has its own), then AUDIT CARDS-5's 14 (razor, staff, book, claymore, rose, daedric, scorpion, bat, boar, tree,
  * gargoyle, banish, recall, sun), then CARDS9's 3 (gate, serpent, gear - the bosses' own), then KG-SET's 6 (bear, cat,
- * spider, fish, mummy, bow - the nine The King's Gambit brought into the set) - net/iliacCards.js CARD_EMBLEMS, the
+ * spider, fish, mummy, bow - the nine The King's Gambit brought into the set) - net/iliac/iliacCards.js CARD_EMBLEMS, the
  * same list. 'prince', the moon and the star, is
  * Azura's own; 'daedric' is the sigil of a Prince who has no picture of their own.
  */

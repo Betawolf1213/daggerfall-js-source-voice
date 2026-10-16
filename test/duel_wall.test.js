@@ -15,7 +15,7 @@ import {
   DuelWallRenderer, ringVertices, duelClock, DUEL_WALL_VS, DUEL_WALL_FS, DUEL_WALL_SEGMENTS, DUEL_WALL_BELOW_M, DUEL_WALL_HEIGHT_M,
   DUEL_WALL_RINGS_MAX, DUEL_CLOCK_PERIOD, DUEL_WALL_LINES, DUEL_WALL_CLIMB_HZ, DUEL_WALL_SWEEP_HZ, DUEL_WALL_SHIMMER_HZ, DUEL_WALL_COLOR,
 } from '../src/render/duelWall.js';
-import { DUEL_RADIUS_M } from '../src/net/duelSession.js';
+import { DUEL_RADIUS_M } from '../src/net/duel/duelSession.js';
 import { glslFunctions } from './glsl.mjs';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

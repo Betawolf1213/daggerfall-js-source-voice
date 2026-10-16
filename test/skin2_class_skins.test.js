@@ -21,7 +21,7 @@ import { STATE_TABLES, frameCount, ORIENTATIONS, ARCHIVE_FOOT } from '../src/pla
 import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { composeLook } from '../src/net/remotePlayers.js';
 import { validLook, FOOT_SKINS } from '../src/net/wire.js';
-import { createPeerWalkers, createEotbArt } from '../src/net/peerRiders.js';
+import { createPeerWalkers, createEotbArt } from '../src/net/peer/peerRiders.js';
 import { skinCard, skinSets, FOOT_GROUPS } from '../src/ui/skinCard.js';
 import { ENHANCED_CSS } from '../src/ui/enhancedStyle.js';
 

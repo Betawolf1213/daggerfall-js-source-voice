@@ -53,8 +53,8 @@
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
 
-import { verifySerpentReceipt } from '../../src/net/serpentReceipt.js';
-import { SERPENT_EMBERS } from '../../src/net/serpentHoardLaw.js';   // SERPENT-SET: the embers a receipt's hoard pays
+import { verifySerpentReceipt } from '../../src/net/serpent/serpentReceipt.js';
+import { SERPENT_EMBERS } from '../../src/net/serpent/serpentHoardLaw.js';   // SERPENT-SET: the embers a receipt's hoard pays
 import { renownForXp, renownSerpentXp, RENOWN_XP_MAX, RENOWN_XP_HOUR_MAX, RENOWN_TRACKS_MAX } from '../../src/net/renown.js';
 import { renownCharacterOk, renownNameOf, renownTrackOf, renownHeldSql } from './renownTracks.js';
 import { seededRng } from '../../src/systems/wind/wind.js';   // SERPENT5: the honours' own stream

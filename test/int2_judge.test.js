@@ -20,7 +20,7 @@ import { judgeSave, wealthOf, possessedItemLists, groundItemLists, characterFind
 import { itemWorth } from '../src/systems/item/itemLaw.js';
 import { calculateMaxBankLoan, calculateBankLoanRepayment } from '../src/systems/banking.js';
 import { prepareRealmRecord, holdRefusal, dropObjects, JUDGE_COLUMNS } from '../server-account/src/realm.js';
-import { creditSave } from '../src/net/realmGoldLaw.js';
+import { creditSave } from '../src/net/realm/realmGoldLaw.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { applyRarity } from '../src/systems/loot/lootRarity.js';
 import { seeded } from './honestItems.mjs';

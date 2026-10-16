@@ -5,7 +5,7 @@
 // fast back, and keeps one fighter an account. bible/11-Multiplayer/Seats-Arc.md 6.1; `06-Systems/Online-Arc.md` PVP-REF.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { siegeRoomKey, SIEGE_UNITS_PER_M, SIEGE_WAVE_MS, SIEGE_PROTECT_MS, SIEGE_FIGHTERS_MAX, siegeBlowMax } from '../src/net/siegeRef.js';
+import { siegeRoomKey, SIEGE_UNITS_PER_M, SIEGE_WAVE_MS, SIEGE_PROTECT_MS, SIEGE_FIGHTERS_MAX, siegeBlowMax } from '../src/net/siege/siegeRef.js';
 import { CLOSE_REPLACED } from '../src/net/wire.js';
 import worker from '../server/src/index.js';
 import { fakeRoom } from './fakeRoom.mjs';

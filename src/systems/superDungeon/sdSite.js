@@ -3,7 +3,7 @@
 // bible/11-Multiplayer/Super-Dungeons.md sections 3 and 5): WHERE THE HOLLOW STANDS, AND WHAT STANDS THERE - the
 // client's half of the site, over the world's own data, the gate's own way (systems/gate/gateSite.js).
 //
-// The relay chose the REGION (net/sdLaw.js pickSdRegion - the census of its players) and knows nothing more; every
+// The relay chose the REGION (net/superDungeon/sdLaw.js pickSdRegion - the census of its players) and knows nothing more; every
 // client then finds the same pixel from the map files it holds alike:
 //   1. THE CITY. The region's populated places ranked as its hub is chosen (systems/region/regionHubs.js hubClaim: a city
 //      over a town over a village, the one named for its region, then the largest - "where population is at its
@@ -19,13 +19,13 @@
 //      roll picks one, so every Hollow is a different deep place.
 //   4. THE HOLLOW. The template cloned on the site under the SLOT's own id (sdSalt - never WORLD_SALT's, so a later
 //      Hollow on the same pixel is a different dungeon with a different room and a different memory), named
-//      (net/sdLaw.js sdNameOf), Super (`superTier`, systems/dungeon/dungeonTier.js), standing centred in its pixel as every
+//      (net/superDungeon/sdLaw.js sdNameOf), Super (`superTier`, systems/dungeon/dungeonTier.js), standing centred in its pixel as every
 //      spawned dungeon does.
 //
 // Pure: the locations, the scan and the record are arguments. Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { LOCATION_TYPES, REGION_NAMES } from '../../formats/mapsFile.js';
 import { hubClaim, outranks } from '../region/regionHubs.js';
-import { sdRoll, sdNameOf } from '../../net/sdLaw.js';
+import { sdRoll, sdNameOf } from '../../net/superDungeon/sdLaw.js';
 import { synthesizeDungeonLocation, spawnClearance, SPAWN_CLEARANCE_M, SALT_MAX } from '../../world/spawnedDungeons.js';
 
 /** With no region the census could name, the Hollow rises by one of the Bay's first this-many cities by the hubs' own claim

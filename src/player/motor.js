@@ -335,7 +335,7 @@ import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's In
 import { TRANSPORT_MODES, isRiding, rideBaseFor, canRunUnlessRiding, rideWalks } from '../systems/transport.js';   // TR1: the mount's speed, run and climb laws; HORSE-WALK: horse care's walk
 import { timeScale } from '../systems/timeScale.js';   // TO1: Unity's Time.fixedDeltaTime rides Time.timeScale (see update())
 import { CLIMB_MOVE_KINDS, CLIMB_MOVE_RISE_MAX, CLIMB_MOVE_TIME_MAX } from '../net/wire.js';   // CLIMB6: a move on the wire, its kinds and bounds the wire's
-import { clampToRing } from '../net/duelSession.js';   // AUDIT DUEL1 D4: the ring's one clamp
+import { clampToRing } from '../net/duel/duelSession.js';   // AUDIT DUEL1 D4: the ring's one clamp
 import { MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE } from '../world/terrain/terrainSampler.js';   // FALL-KEPT: the world's tallest drop bounds a carried fall
 
 /** PlayerSpeedChanger.GetWalkSpeed, verbatim (audit 2026-08-16e F1):
@@ -546,7 +546,7 @@ export class PlayerMotor {
     this._airVelX = 0;
     this._airVelZ = 0;
     // DUEL1: THE DUEL'S RING - { centre: [x, y, z] in THIS scene's frame, radius } while a duel holds the player in it,
-    // null otherwise. The host sets it every frame from the live duel (net/duelSession.js); the motor keeps the body
+    // null otherwise. The host sets it every frame from the live duel (net/duel/duelSession.js); the motor keeps the body
     // inside it after every step (_keepInArena), shifts it with the world (offsetOrigin) and drops it on any placement
     // (spawn) - a teleport is not a walk, and the duel's own law ends a duel whose duellist was carried off.
     this.arena = null;
@@ -1139,9 +1139,9 @@ export class PlayerMotor {
     // rise taken away; the duel's and the gate's rings name none, and their height is never touched
     if (Number.isFinite(a.ceilAbove) && this.pos[1] > c[1] + a.ceilAbove) { this.pos[1] = c[1] + a.ceilAbove; if (this.velY > 0) this.velY = 0; }
     // WB9b: an arena with a clamp of its own - the gate's three courts and the walkways laid between them
-    // (world/gate/gateArena.js courtArena, net/gateBrain.js clampToFloor - the relay's law of the floor)
+    // (world/gate/gateArena.js courtArena, net/gate/gateBrain.js clampToFloor - the relay's law of the floor)
     if (typeof a.clamp === 'function') { this._putBack(a.clamp(this.pos, CAPSULE_RADIUS)); return; }
-    // AUDIT DUEL1 D4: THE ONE CLAMP (net/duelSession.js clampToRing), the geometry the duel's own pins drive
+    // AUDIT DUEL1 D4: THE ONE CLAMP (net/duel/duelSession.js clampToRing), the geometry the duel's own pins drive
     const to = clampToRing(this.pos, c, a.radius, CAPSULE_RADIUS);
     this._putBack(to);
   }

@@ -27,9 +27,9 @@ import { EQUIP_SLOTS } from '../characters/paperdoll.js';
 import { itemLongName } from '../systems/item/itemInfo.js';
 import { raceDisplayName } from '../systems/talk/talkSession.js';
 import { STAT_KEYS_ORDER } from '../systems/chargen.js';
-import { duelRecordText } from '../net/duelRecord.js';   // DUEL1: the duelling record's words, the account card's own
+import { duelRecordText } from '../net/duel/duelRecord.js';   // DUEL1: the duelling record's words, the account card's own
 import { renownText } from '../net/renown.js';   // RENOWN1: Renown, left of the name
-import { guildTagText } from '../net/guildLaw.js';   // GUILD1c: the guild's tag, right of the name
+import { guildTagText } from '../net/guild/guildLaw.js';   // GUILD1c: the guild's tag, right of the name
 import { localizedStrings } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { houseLine } from '../net/houseLaw.js';   // LEGACY7: the house, under the name
 
@@ -185,7 +185,7 @@ export function profileView({ name = null, peer = null, look = null, card = null
     // DUEL1 (Mac: "When inspecting a player, they should be able to send an invite to duel"; "Add a dueling K/D to the
     // ... player inspect profile"): the Challenge button's state as the host's duel law says it ({ label, enabled, why }
     // - null: no button, offline or on a relay that cannot carry a duel), and their record's line - the account
-    // service's count, read by the account the relay stamped on their card (net/duelRecord.js), never the card's word
+    // service's count, read by the account the relay stamped on their card (net/duel/duelRecord.js), never the card's word
     duel: duel && typeof duel.label === 'string' ? { label: duel.label, enabled: !!duel.enabled, why: duel.enabled ? null : (duel.why ?? null) } : null,
     // LEGACY7 part three: the Propose button's state as the house's law says it - the duel's shape (null: no button)
     wed: wed && typeof wed.label === 'string' ? { label: wed.label, enabled: !!wed.enabled, why: wed.enabled ? null : (wed.why ?? null) } : null,

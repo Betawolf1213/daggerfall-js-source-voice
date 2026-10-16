@@ -120,7 +120,7 @@
   },
   {
     "name": "SFSKIN-peer-skin-off-the-key",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "`wolf|${wolfLookKey(look)}|${werewolfSkinOf(glyphs) ?? ''}`",
     "new": "`wolf|${wolfLookKey(look)}|`",
     "tests": [

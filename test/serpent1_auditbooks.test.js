@@ -8,12 +8,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
-import { mintSerpentReceipt } from '../src/net/serpentReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintSerpentReceipt } from '../src/net/serpent/serpentReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64 } from '../src/net/identityToken.js';
 import { SOCIAL_ROOM, SERPENT_FIGHT_KEY, SERPENT_TELL_RETRY_MS, serpentFightId, cellRoomOfWire, PIXEL_UNITS } from '../src/net/wire.js';
-import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_DIVE_MS, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
-import { SERPENT_TICK_MS, SERPENT_LV_MAX, SERPENT_RECEIPT_SHARE, SERPENT_PART_SHARE, newSerpentFight, joinSerpentFight, serpentEarned, serpentEarnedBy } from '../src/net/serpentBrain.js';
+import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_DIVE_MS, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
+import { SERPENT_TICK_MS, SERPENT_LV_MAX, SERPENT_RECEIPT_SHARE, SERPENT_PART_SHARE, newSerpentFight, joinSerpentFight, serpentEarned, serpentEarnedBy } from '../src/net/serpent/serpentBrain.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { RELAY_INTERNAL_CFG } from '../src/net/relayCfg.js';   // SCALE5b: the beat's ask of the hub, which the failing hub lets through
 import worker from '../server-account/src/index.js';
@@ -21,7 +21,7 @@ import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { createGuest } from '../server-account/src/accounts.js';
 import { claimSerpent } from '../server-account/src/serpents.js';
 import { RENOWN_XP_MAX, RENOWN_XP_HOUR_MAX } from '../src/net/renown.js';
-import { createSerpentClaims, serpentClaimVerdict, SERPENT_CLAIM_RETRY_MS } from '../src/net/serpentClaims.js';
+import { createSerpentClaims, serpentClaimVerdict, SERPENT_CLAIM_RETRY_MS } from '../src/net/serpent/serpentClaims.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';
 
 const subtle = globalThis.crypto.subtle;

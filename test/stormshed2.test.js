@@ -15,8 +15,8 @@ import assert from 'node:assert/strict';
 
 import { d1, standService } from './accountDb.mjs';
 import { arenaRatingOf, arenaHonoursOf, _resetArenaCache, ARENA_CHAMPION_STORED_S } from '../server-account/src/arena.js';
-import { arenaSeasonOf, ARENA_ELO_START, arenaRatingOk, ARENA_CHAMPION_MIN_BOUTS } from '../src/net/arenaLaw.js';
-import { mintArenaReceipt } from '../src/net/arenaReceipt.js';
+import { arenaSeasonOf, ARENA_ELO_START, arenaRatingOk, ARENA_CHAMPION_MIN_BOUTS } from '../src/net/arena/arenaLaw.js';
+import { mintArenaReceipt } from '../src/net/arena/arenaReceipt.js';
 import { homeLayoutsKept } from '../server-account/src/homes.js';
 import { createLegacyHost } from '../src/scenes/legacyHost.js';
 import { loadFamily, storeFamily } from '../src/systems/legacy/store.js';

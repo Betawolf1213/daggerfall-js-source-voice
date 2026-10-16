@@ -4,7 +4,7 @@
 //
 // IT HUNTS THE PACKET LANES. Its waters are always on one of the Bay's packet lanes (systems/naval/seaLanes.js - the
 // lanes between the map's ports, the same list on every client, made from the map files every client holds): a lane
-// rolled by the day (net/serpentLaw.js serpentLaneOf), a place along its way's middle stretch rolled by the day
+// rolled by the day (net/serpent/serpentLaw.js serpentLaneOf), a place along its way's middle stretch rolled by the day
 // (serpentAlongOf), kept only where the sea is OPEN round it - every map pixel within SITE_CLEAR_PX of the site's is open
 // sea (the lanes' own `open` law: the ocean's water, never a lake's) - so its waters are never a strait a carrack cannot
 // turn in, nor a fight against a headland. A lane too short, or no open stretch on it, and the next try; SERPENT_LANE_TRIES
@@ -15,8 +15,8 @@
 //
 // PURE: the lanes, a lane's way and the open law are handed in (scenes/world.js's laneNet, laneWay and laneOpen - the
 // packets' own), so the pins drive it over a made sea. Not a DFU member. Ledger A (SERPENT1).
-import { serpentLaneOf, serpentAlongOf, serpentRing, SERPENT_LANE_TRIES } from '../../net/serpentLaw.js';
-import { PIXEL_M } from '../../net/gateLaw.js';
+import { serpentLaneOf, serpentAlongOf, serpentRing, SERPENT_LANE_TRIES } from '../../net/serpent/serpentLaw.js';
+import { PIXEL_M } from '../../net/gate/gateLaw.js';
 import { PIXEL_UNITS } from '../../net/wire.js';   // native units a map pixel (world/streamingWorld.js NATIVE_PIXEL's)
 import { REGION_NAMES } from '../../formats/mapsFile.js';
 /** Every map pixel within this of the site's (Chebyshev) is open sea - a mile and more of water on every side. */

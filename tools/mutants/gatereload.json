@@ -1,7 +1,7 @@
 [
   {
     "name": "GATE-RELOAD-the-closed-gate-said-as-closed",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "export const gateRefusalText = (word) => (word === 'the gate is closed' ? GATE_OUTDATED_TEXT : GATE_NO_TEXT[word] ?? word);",
     "new": "export const gateRefusalText = (word) => (GATE_NO_TEXT[word] ?? word);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "GATE-RELOAD-the-reload-never-said",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "export const GATE_OUTDATED_TEXT = 'Your game is older than this gate - save, then reload (or update the app) to enter.';",
     "new": "export const GATE_OUTDATED_TEXT = 'The gate is closed.';",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "GATE-RELOAD-the-link-in-the-old-words",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "      if (g.k === 'no') { say(gateRefusalText(g.m)); onRefused(g.m); return; }",
     "new": "      if (g.k === 'no') { say(GATE_NO_TEXT[g.m] ?? g.m); onRefused(g.m); return; }",
     "tests": [

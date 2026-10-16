@@ -13,9 +13,9 @@ import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { mintStakeOrder, ORDER_TTL_S } from '../src/net/identityToken.js';
-import { readCardReceipt, mintCardReceipt, CARD_RECEIPT_TTL_S } from '../src/net/cardReceipt.js';
+import { readCardReceipt, mintCardReceipt, CARD_RECEIPT_TTL_S } from '../src/net/card/cardReceipt.js';
 import { newTable, sit, stand, tick, actAt, HOLDEM_FIRST_MS } from '../src/net/holdemTable.js';
-import { createCardStakes, CARD_STAKES_KEY, CARD_RECEIPTS_KEY, CARD_VOID_AFTER_MS } from '../src/net/cardStakes.js';
+import { createCardStakes, CARD_STAKES_KEY, CARD_RECEIPTS_KEY, CARD_VOID_AFTER_MS } from '../src/net/card/cardStakes.js';
 import { CLOSE_REPLACED } from '../src/net/wire.js';
 
 const { subtle } = webcrypto;

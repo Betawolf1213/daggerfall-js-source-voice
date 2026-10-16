@@ -13,9 +13,9 @@ import { scene } from './csaScene.mjs';
 import {
   pathTo, packTree, unpackTree, treeStats, treeParts, blowPct, castCostPct, xpPct, scaleXp, scaleQty, statDef, isPrice, refundTakes, treeFault, starsFor,
   STAT_DEFS, BLOW_CAP, BLOW_TOTAL_CAP, CAST_COST_CAP, REFUND_FREE_BELOW_RENOWN, REFUND_SILVER_PER_STAR, FIRM_RESPEC_GOLD, FIRM_RENOWN_MAX, refundSilver,
-} from '../src/net/firmamentLaw.js';
-import { FIRM_NODES, FIRM_EDGES } from '../src/net/firmamentTree.js';
-import { createFirmamentBook, FIRM_KEPT_KEY } from '../src/net/firmamentBook.js';
+} from '../src/net/firmament/firmamentLaw.js';
+import { FIRM_NODES, FIRM_EDGES } from '../src/net/firmament/firmamentTree.js';
+import { createFirmamentBook, FIRM_KEPT_KEY } from '../src/net/firmament/firmamentBook.js';
 import { accountFirmament, SESSION_KEY } from '../src/net/accountClient.js';
 import {
   setFirmamentTree, setFirmamentOnline, setFirmamentMentoring, onFirmamentChange, firmActMult, firmStat, _resetFirmamentLiveForTests,

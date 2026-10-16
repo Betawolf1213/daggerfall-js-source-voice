@@ -462,7 +462,7 @@
   },
   {
     "name": "N2-the-beast-walks-on-the-wall",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "stopped: !peerMoving(pose), sheathed: !pose?.wd });",
     "new": "stopped: !pose?.mv, sheathed: !pose?.wd });",
     "tests": [
@@ -471,7 +471,7 @@
   },
   {
     "name": "N2-the-beast-faces-the-camera's-yaw",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    const yaw = peerBodyYaw(pose), view = viewOf(yaw, feet, eye);   // AUDIT CLIMB-ARC N2: a beast on the wall faces it",
     "new": "    const yaw = pose.yaw, view = viewOf(yaw, feet, eye);   // AUDIT CLIMB-ARC N2: a beast on the wall faces it",
     "tests": [
@@ -490,7 +490,7 @@
   },
   {
     "name": "N6-no-cue-floor",
-    "file": "src/net/peerClimb.js",
+    "file": "src/net/peer/peerClimb.js",
     "old": "    const cueOk = t - (s.cueAt ?? -Infinity) >= PEER_CUE_MS;",
     "new": "    const cueOk = true;",
     "tests": [
@@ -499,7 +499,7 @@
   },
   {
     "name": "N6-no-rhythm-floor",
-    "file": "src/net/peerClimb.js",
+    "file": "src/net/peer/peerClimb.js",
     "old": "const rhythmOk = () => { if (t - (s.rhythmAt ?? -Infinity) < PEER_RHYTHM_MS) return false; s.rhythmAt = t; return true; };",
     "new": "const rhythmOk = () => true;",
     "tests": [

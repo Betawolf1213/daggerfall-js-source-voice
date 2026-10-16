@@ -19,9 +19,9 @@ import { createSdFx, SD_FX_KINDS, SD_FX_FLOOR_Y, SD_SHAKE } from '../src/scenes/
 import {
   SD_BLOWS, SD_BODY, SD_ARENA_SLACK, SD_PILLARS, SD_REM, SD_ECHO, SD_REM_START, SD_BREAK_MS,
   handSwept, behindPillar, keepInArena, inArena, blowShape,
-} from '../src/net/sdRemnant.js';
-import { SD_ARENA, SD_PILLAR_W, realmToDungeon } from '../src/net/sdBrain.js';
-import { sdBodyAt } from '../src/net/sdFightLink.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { SD_ARENA, SD_PILLAR_W, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
+import { sdBodyAt } from '../src/net/superDungeon/sdFightLink.js';
 import { handSweepOf, handSweepHas, sdWayOut, sdPerilAt } from '../src/scenes/sdArenaRead.js';
 import { sdGearsAt, gearMatrix, sdBeamDraws, sdBeamsAt, sdKeptList } from '../src/scenes/sdRemnantRig.js';
 import { SdBeamRenderer, SD_BEAM_VS, SD_BEAM_FS, SD_BEAM_W, SD_BEAM_MAX, SD_BEAM_MIN_RAD } from '../src/render/sdBeam.js';
@@ -31,7 +31,7 @@ import { createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
 import { SD_BRASS_GLSL, SD_BRASS_RAMP, sdBrassGrade } from '../src/world/superDungeon/sdBrassSky.js';
 import { sdBrassLight, SD_BRASS_TINT } from '../src/systems/superDungeon/sdOmen.js';
 import { realmLightsWith, SD_LIGHTS_CAP } from '../src/world/superDungeon/sdRealm.js';
-import { wrapYaw } from '../src/net/gateBrain.js';
+import { wrapYaw } from '../src/net/gate/gateBrain.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -391,10 +391,10 @@ test('SD20c A FRAME OF THE FIGHT MAKES NEXT TO NOTHING (V5) - measured in a chil
     const { sdEndingStoneLight } = await import(${url('src/ui/sdMarksView.js')});
     const { sdPerilAt } = await import(${url('src/scenes/sdArenaRead.js')});
     const { realmLightsWith } = await import(${url('src/world/superDungeon/sdRealm.js')});
-    const { sdBodyAt } = await import(${url('src/net/sdFightLink.js')});
-    const { SD_BLOWS, SD_BODY, keepInArena, behindPillar, inArena } = await import(${url('src/net/sdRemnant.js')});
-    const { sdMarksOf } = await import(${url('src/net/sdMarks.js')});
-    const { realmToDungeon } = await import(${url('src/net/sdBrain.js')});
+    const { sdBodyAt } = await import(${url('src/net/superDungeon/sdFightLink.js')});
+    const { SD_BLOWS, SD_BODY, keepInArena, behindPillar, inArena } = await import(${url('src/net/superDungeon/sdRemnant.js')});
+    const { sdMarksOf } = await import(${url('src/net/superDungeon/sdMarks.js')});
+    const { realmToDungeon } = await import(${url('src/net/superDungeon/sdBrain.js')});
     const T0 = ${T0};
     // the fight's clock as the link hands it: numbers already made, over 300 ms (a call's own argument makes none)
     const clock = Array.from({ length: 4096 }, (_, k) => T0 + 100 + (k % 300)); clock.push('tagged');

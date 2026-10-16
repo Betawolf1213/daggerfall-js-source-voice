@@ -1,7 +1,7 @@
 // PEERFX1 (2026-09-26): the others see and hear my weapon blows, and hear me struck.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { noteMyBlow, noteMyHurt, poseFx, isHurtClip, createPeerFxPlayer, _resetPeerFxForTests } from '../src/net/peerFx.js';
+import { noteMyBlow, noteMyHurt, poseFx, isHurtClip, createPeerFxPlayer, _resetPeerFxForTests } from '../src/net/peer/peerFx.js';
 import { validPose, poseChanged } from '../src/net/wire.js';
 
 const P = { x: 0, y: 0, z: 0, yaw: 0, pitch: 0 };

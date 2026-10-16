@@ -26,7 +26,7 @@
 //
 // Pure. Not a DFU member. Ledger A (EVERY PALACE A SEAT's row).
 import { PIXEL_UNITS } from '../net/wire.js';
-import { SIEGE_UNITS_PER_M } from '../net/siegeRef.js';
+import { SIEGE_UNITS_PER_M } from '../net/siege/siegeRef.js';
 import { noticeBoardIndex } from './bounty/bountyBoard.js';
 
 /** The building keys of a laid-out town's records of one type (world/buildingNames.js BUILDING_TYPES) - its blocks' own

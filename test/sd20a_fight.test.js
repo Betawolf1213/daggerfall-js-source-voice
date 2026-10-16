@@ -12,22 +12,22 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeRooms } from './fakeRoom.mjs';
 import { SD_KEY, SOCIAL_ROOM, PIXEL_UNITS, HEARTBEAT_MS, worldRoom, chatRegionRoom } from '../src/net/wire.js';
-import { sdRoomKey } from '../src/net/sdLaw.js';
-import { PIXEL_M } from '../src/net/gateLaw.js';
-import { ABSENT_RETIRE_MS, dpsRef } from '../src/net/gateBrain.js';
+import { sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
+import { ABSENT_RETIRE_MS, dpsRef } from '../src/net/gate/gateBrain.js';
 import {
   SD_PULSE_PCT, SD_PULSE_STEP, SD_PULSE_MAX, SD_PULSE_CLEAR_MS, SD_POSE_FRESH_MS, SD_REM, SD_ECHO, SD_BODY, SD_BLOWS,
   SD_OPENING_MS, SD_HEART, SD_HEARTS_CLOSE_MS, SD_ARENA_SLACK, SD_PILLARS, SD_PILLAR_OVER_Y, pulsePct, pulsePctOf,
   newRemnantFight, joinRemnant, stepRemnant, remnantStateOf, sdFightProfile, heartHpFor, heartCountFor, behindPillar,
-} from '../src/net/sdRemnant.js';
-import { sdMarksOf, SD_OMENS } from '../src/net/sdMarks.js';
-import { sdBlowVerdict, SD_STRIKE_LATE_MS } from '../src/net/sdStrike.js';
-import { SD_ARENA, SD_REALM_ORIGIN, SD_FRAY_LASH, SD_PILLAR_H, realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { sdMarksOf, SD_OMENS } from '../src/net/superDungeon/sdMarks.js';
+import { sdBlowVerdict, SD_STRIKE_LATE_MS } from '../src/net/superDungeon/sdStrike.js';
+import { SD_ARENA, SD_REALM_ORIGIN, SD_FRAY_LASH, SD_PILLAR_H, realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { realmArena, arenaHolds, SD_ARENA_FLOORS, SD_REALM_FLOORS } from '../src/world/superDungeon/sdRealm.js';
 import { SD_HALL_FLOORS } from '../src/world/superDungeon/sdHall.js';
 import { SD_STEPS_FLOORS, SD_CAST_BACK_LOSS } from '../src/world/superDungeon/sdSteps.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
-import { createSdFightLink } from '../src/net/sdFightLink.js';
+import { createSdFightLink } from '../src/net/superDungeon/sdFightLink.js';
 import { validSdOut } from '../src/net/wire.js';
 import { createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
 import { sdPerilAt } from '../src/scenes/sdArenaRead.js';

@@ -1,12 +1,12 @@
 // DUEL1 (2026-09-24, Mac: "When inspecting a player, they should be able to send an invite to duel which then traps both
 // players in a surrounding transparent holographic wall that keeps them from going outside of the duel space."; asked:
 // weapons, bows and spells; "Loser drops to 1HP and both are fully healed on duel end"; outdoors only): THE DUEL'S LAW,
-// DRIVEN. Two managers (net/duelSession.js) over a fake wire that projects every frame through the relay's own law
+// DRIVEN. Two managers (net/duel/duelSession.js) over a fake wire that projects every frame through the relay's own law
 // (net/wire.js validDuelData) and stamps the sender's id and account as the relay does - the three-step handshake, every
 // refusal, the count, the blows, every end and who it names, the hold, the ring's own geometry.
 //
 // INT8 (2026-10-09, bible/06-Systems/Integrity-Arc.md lane 2): AND THE WIRE CARRIES THE REFEREE. The relay holds the
-// bout now (net/duelRef.js) - it sets it on the start it routes, judges every blow (routed to nobody), and ends it - so
+// bout now (net/duel/duelRef.js) - it sets it on the start it routes, judges every blow (routed to nobody), and ends it - so
 // the fake wire runs the referee's own law between the two managers as the relay's duel arm does, and hands its words
 // (`dref`) to each through `onRef`. PIN MOVED, each where it stands: the defender resolves nothing, a fall and a draw
 // are the referee's, a fighter that leaves its bout loses it, and the record is the referee's receipt.
@@ -17,17 +17,17 @@ import {
   createDuelManager, clampToRing, ringCentre, groundDistance, validRingRecord, duelWhyText, duelLostText, duelWonText, worldGroundMetres,
   DUEL_RADIUS_M, DUEL_RANGE_M, DUEL_ASK_TTL_MS, DUEL_START_WAIT_MS, DUEL_COUNTDOWN_MS, DUEL_MAX_MS, DUEL_GONE_MS,
   DUEL_OUT_SLACK_M, DUEL_OUT_MS, DUEL_HEAL_HOLD_MS, NATIVES_PER_M, DUEL_REASK_MS, DUEL_REF_TEXT,
-} from '../src/net/duelSession.js';
+} from '../src/net/duel/duelSession.js';
 import { validDuelData, DUEL_WHY } from '../src/net/wire.js';
-import { newDuelRef, duelNote, duelOpen, duelBlow, duelBoutOf, duelForfeit, duelStep, duelEnd, duelVitals, duelPose, DUEL_REF } from '../src/net/duelRef.js';
-import { ROYAL_RING, SIEGE_HIT, siegeBlowMax, siegeVitality } from '../src/net/siegeRef.js';
+import { newDuelRef, duelNote, duelOpen, duelBlow, duelBoutOf, duelForfeit, duelStep, duelEnd, duelVitals, duelPose, DUEL_REF } from '../src/net/duel/duelRef.js';
+import { ROYAL_RING, SIEGE_HIT, siegeBlowMax, siegeVitality } from '../src/net/siege/siegeRef.js';
 
 const P0 = [100000, 10, 200000];   // a world-frame point: natives on x and z, metres on y
-const RC = 'd1.receipt.sig';   // the referee's receipt, as the relay hands it (net/duelReceipt.js - its own pins)
+const RC = 'd1.receipt.sig';   // the referee's receipt, as the relay hands it (net/duel/duelReceipt.js - its own pins)
 
 /** Two players, A and B, and the wire between them - frames delivered in order on `pump()`, each through the relay's
  *  law and stamped with its sender's id and account, as the relay's duel arm does; INT8: and the referee between them,
- *  the relay's own law (net/duelRef.js), its words handed to each manager's onRef. */
+ *  the relay's own law (net/duel/duelRef.js), its words handed to each manager's onRef. */
 function rig({ nearAB = true } = {}) {
   let t = 1_000_000;
   const now = () => t;
@@ -237,7 +237,7 @@ test('DUEL1 a yes that never gets its start lapses in DUEL_START_WAIT_MS - the a
 test('DUEL1 THE COUNT, THEN THE BLOWS: nothing leaves or lands for DUEL_COUNTDOWN_MS; after it a blow leaves numbered with the number its striker rolled - INT8: and THE REFEREE judges it, clipped to its weapon\'s bucket, both fighters told what landed and what is left; routed to nobody, so the defender resolves nothing (mutants: a blow in the count; a blow routed to the defender; the clip unread)', () => {
   // PIN MOVED (INT8): the defender resolved the blow on its own sheet and answered with a `result` for its number; each
   // number once and DUEL_BLOWS_PER_S a second were the DEFENDER's law. The referee's own pins hold the rate, the reach
-  // and the clip (net/siegeRef.js refereeBlow - test/pvpref_law.test.js); here, that a blow is the referee's alone.
+  // and the clip (net/siege/siegeRef.js refereeBlow - test/pvpref_law.test.js); here, that a blow is the referee's alone.
   const r = rig();
   r.m.a.request('peer-bbbb'); r.pump(); r.m.b.accept('peer-aaaa'); r.pump();
   assert.equal(r.m.a.fighting, false, 'the count');

@@ -6,18 +6,18 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { GUILD_RANK_NAMES, GUILD_POWERS, GUILD_RENAME_GOLD, GUILD_RENAME_COOLDOWN_S, guildRenameAt, guildRenameOpen } from '../src/net/guildLaw.js';
+import { GUILD_RANK_NAMES, GUILD_POWERS, GUILD_RENAME_GOLD, GUILD_RENAME_COOLDOWN_S, guildRenameAt, guildRenameOpen } from '../src/net/guild/guildLaw.js';
 import {
   GUILD_VAULT_SLOTS, guildVaultSlots, VAULT_RANK_DEFAULTS, VAULT_LIMIT_CHOICES, vaultStanding, vaultMayPut, vaultMayTake, vaultGrantOf,
   vaultStandingText,
-} from '../src/net/guildVaultLaw.js';
+} from '../src/net/guild/guildVaultLaw.js';
 import {
   HERALDRY_DEVICES, HERALDRY_DIVISIONS, HERALDRY_DIVISION_NAMES, heraldryOf, heraldrySame, heraldryText, heraldryKey, heraldryInk,
 } from '../src/net/heraldryLaw.js';
 import { DEVICES_DRAWN, divisionPath, divisionComplement, bannerSvg, shieldSvg, drawBanner, drawShield, BANNER_CLOTH, SHIELD_CLOTH } from '../src/ui/heraldryArt.js';
 import { bannerKeyOf } from '../src/scenes/hallBanners.js';
 import { paintSwatch } from '../src/ui/heraldrySwatch.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import {
   createSocialPanel, GUILD_RENAME_COST_TEXT, guildRenameSoonText, GUILD_VAULT_REACH_TEXT, GUILD_VAULT_EMPTY_TEXT, armsWhy, guildWordText, GUILD_LEDGER_WORDS,
 } from '../src/ui/socialPanel.js';

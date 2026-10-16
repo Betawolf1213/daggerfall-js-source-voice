@@ -1,7 +1,7 @@
 [
   {
     "name": "INT9-ZONE-ONE-WORD-ENOUGH",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (!a.zone || !t.zone) return",
     "new": "  if (!t.zone) return",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "INT9-KIN-UNREAD",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (kin) return { ok: false, dealt: 0, fell: false, fall: null, why: 'kin' };",
     "new": "  if (false) return { ok: false, dealt: 0, fell: false, fall: null, why: 'kin' };",
     "tests": [
@@ -19,18 +19,18 @@
   },
   {
     "name": "INT9-THE-FALLEN-STRUCK",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (a.down || t.down) return",
     "new": "  if (a.down) return",
     "tests": [
       "test/int9_wild_ref.test.js"
     ],
     "equivalent": true,
-    "why": "refereeBlow and refereeCast (net/siegeRef.js) refuse a down fighter on either side themselves - `if (by.down || to.down)` - and a fighter down here is down there (wildBlow sets both); the referee's own check is pinned by the siege's tests."
+    "why": "refereeBlow and refereeCast (net/siege/siegeRef.js) refuse a down fighter on either side themselves - `if (by.down || to.down)` - and a fighter down here is down there (wildBlow sets both); the referee's own check is pinned by the siege's tests."
   },
   {
     "name": "INT9-MEND-UNREAD",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "const mend = (x, now) => { if (!x.down && now - x.struckAt >= WILD_REF.mendMs && now - x.zoneAt >= WILD_REF.mendMs) x.f.hp = x.f.max; };",
     "new": "const mend = (x, now) => { if (false) x.f.hp = x.f.max; };",
     "tests": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "INT10-MEND-CLEARS-THE-CASTS",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "const mend = (x, now) => { if (!x.down && now - x.struckAt >= WILD_REF.mendMs && now - x.zoneAt >= WILD_REF.mendMs) x.f.hp = x.f.max; };",
     "new": "const mend = (x, now) => { if (!x.down && now - x.struckAt >= WILD_REF.mendMs && now - x.zoneAt >= WILD_REF.mendMs) { x.f.hp = x.f.max; x.f.casts = []; } };",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "INT9-A-STRANGERS-PICK",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (!fall || fall.killer !== killer || fall.picked ||",
     "new": "  if (!fall || fall.picked ||",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "INT9-A-SECOND-PICK",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (!fall || fall.killer !== killer || fall.picked ||",
     "new": "  if (!fall || fall.killer !== killer ||",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "INT9-THE-PICK-LATE",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "fall.picked || now - fall.at > WILD_REF.pickMs) return null;",
     "new": "fall.picked) return null;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "INT9-THE-STEP-UNREAD",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "if (!fall.picked && now - fall.at > WILD_REF.pickMs) { fall.picked = true; out.push(fall); }",
     "new": "if (false) { fall.picked = true; out.push(fall); }",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "INT9-THE-RISE-UNREAD",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (z && x.down && now - x.downAt >= WILD_REF.riseMs) {",
     "new": "  if (false) {",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "INT9-A-JUMP-STRUCK-FROM-AT-ONCE",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (x.pose && !refereeStep(x.pose, p, now - x.poseAt, x.f)) x.jumpAt = now;",
     "new": "  if (false) x.jumpAt = now;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "INT9-RC-A-SELF-KILL",
-    "file": "src/net/wildReceipt.js",
+    "file": "src/net/wild/wildReceipt.js",
     "old": " || !ID_RE.test(c.k) || c.f === c.k) return false;",
     "new": " || !ID_RE.test(c.k)) return false;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "INT9-RC-A-FOREIGN-FIELD",
-    "file": "src/net/wildReceipt.js",
+    "file": "src/net/wild/wildReceipt.js",
     "old": "  if (WILD_FOREIGN.some((f) => c[f] !== undefined)) return false;\n",
     "new": "",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "INT9-RC-THE-PIECE-UNBOUNDED",
-    "file": "src/net/wildReceipt.js",
+    "file": "src/net/wild/wildReceipt.js",
     "old": " || c.w < -1 || c.w >= WILD_WORN_MAX) return false;",
     "new": " || c.w < -1) return false;",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "INT9-RC-THE-VERSION-UNREAD",
-    "file": "src/net/wildReceipt.js",
+    "file": "src/net/wild/wildReceipt.js",
     "old": "  if (v !== V) return { ok: false, why: 'version' };\n",
     "new": "",
     "tests": [
@@ -139,7 +139,7 @@
   },
   {
     "name": "INT9-A-REMAINS-UNVOUCHED-TAKEN",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "  if (!rec?.ok) return null;",
     "new": "  if (!rec) return null;",
     "tests": [
@@ -148,7 +148,7 @@
   },
   {
     "name": "INT9-THE-KILLERS-PIECE-ANYONES",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "  if (named && sub !== named) return null;",
     "new": "  if (false) return null;",
     "tests": [
@@ -158,7 +158,7 @@
   },
   {
     "name": "INT9-A-REMAINS-UNVOUCHED-SAID",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "  if (!rec?.ok || !remainsLive(rec, now) || remainsEmpty(rec)) return [];",
     "new": "  if (!remainsLive(rec, now) || remainsEmpty(rec)) return [];",
     "tests": [
@@ -311,7 +311,7 @@
   },
   {
     "name": "INT9-CLIENT-THE-KILLERS-PIECE-A-PILE",
-    "file": "src/net/wildRemains.js",
+    "file": "src/net/wild/wildRemains.js",
     "old": "      if (!r || i === rec.wi) continue;",
     "new": "      if (!r) continue;",
     "tests": [
@@ -320,7 +320,7 @@
   },
   {
     "name": "INT9-CLIENT-THE-KILLERS-PIECE-UNASKED",
-    "file": "src/net/wildRemains.js",
+    "file": "src/net/wild/wildRemains.js",
     "old": "    const it = rec.wk && rec.wk === me() ? rec.items[rec.wi] : null;",
     "new": "    const it = null;",
     "tests": [
@@ -329,7 +329,7 @@
   },
   {
     "name": "INT9-CLIENT-ANOTHER-FALLS-OFFER",
-    "file": "src/net/wildFight.js",
+    "file": "src/net/wild/wildFight.js",
     "old": "      if (!b || b.s !== d.s || b.offered ||",
     "new": "      if (!b || b.offered ||",
     "tests": [
@@ -338,7 +338,7 @@
   },
   {
     "name": "INT9-CLIENT-THE-PICK-TO-ANY-ROOM",
-    "file": "src/net/wildFight.js",
+    "file": "src/net/wild/wildFight.js",
     "old": "      if (!once({ k: 'pick', r: b.s, w: i, ...tm }, { room: b.room })) return false;",
     "new": "      if (!once({ k: 'pick', r: b.s, w: i, ...tm })) return false;",
     "tests": [
@@ -347,7 +347,7 @@
   },
   {
     "name": "INT8-THE-OPPONENT-UNREAD",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "  if (them.id !== to) return { ok: false, dealt: 0, fell: false, bout, why: 'not-opponent' };\n",
     "new": "",
     "tests": [
@@ -356,7 +356,7 @@
   },
   {
     "name": "INT8-A-BLOW-IN-THE-COUNT",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "  if (now < bout.startMs || now >= bout.endMs) return",
     "new": "  if (now >= bout.endMs) return",
     "tests": [
@@ -365,7 +365,7 @@
   },
   {
     "name": "INT8-RC-A-SELF-DUEL",
-    "file": "src/net/duelReceipt.js",
+    "file": "src/net/duel/duelReceipt.js",
     "old": " || c.f[0] === c.f[1]) return false;",
     "new": ") return false;",
     "tests": [
@@ -383,7 +383,7 @@
   },
   {
     "name": "INT7-THE-UNLAWFUL-WEAPON-COUNTED",
-    "file": "src/net/siegeRef.js",
+    "file": "src/net/siege/siegeRef.js",
     "old": "    if (r == null || !lawful(it)) continue;",
     "new": "    if (r == null) continue;",
     "tests": [
@@ -392,7 +392,7 @@
   },
   {
     "name": "INT7-THE-BOW-UNSEEN",
-    "file": "src/net/siegeRef.js",
+    "file": "src/net/siege/siegeRef.js",
     "old": "    if (siegeIsBow(it.templateIndex)) bow = 1;",
     "new": "    if (false) bow = 1;",
     "tests": [
@@ -419,7 +419,7 @@
   },
   {
     "name": "INT9-AUDIT-A-WORD-OFF-AND-ON-A-HEAL",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "    if (now - x.outAt >= WILD_REF.riseMs && !x.down) { x.f.hp = x.f.max; x.struckAt = -Infinity; }",
     "new": "    if (!x.down) { x.f.hp = x.f.max; x.struckAt = -Infinity; }",
     "tests": [
@@ -428,7 +428,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-MEND-IN-THE-ZONE-UNREAD",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "&& now - x.zoneAt >= WILD_REF.mendMs) x.f.hp = x.f.max; };",
     "new": ") x.f.hp = x.f.max; };",
     "tests": [
@@ -437,7 +437,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-CARRY-UNREAD",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (!carry || !Number.isFinite(carry.at) || !(now - carry.at < Math.max(WILD_REF.mendMs, carry.down ? WILD_REF.riseMs : 0))) return;",
     "new": "  return;",
     "tests": [
@@ -446,7 +446,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-CARRY-BACK-UNREAD",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  } else if (z && !x.zone && carry && carry.at > x.outAt) takeCarry(x, carry, now);",
     "new": "  }",
     "tests": [
@@ -455,7 +455,7 @@
   },
   {
     "name": "INT9-AUDIT-A-FALLEN-CARRIED-WHOLE",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (carry.down && now - carry.downAt < WILD_REF.riseMs) { x.down = true; x.downAt = carry.downAt; x.f.down = true; x.f.hp = 0; return; }",
     "new": "  if (false) return;",
     "tests": [
@@ -464,7 +464,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-GONE-STILL-FIGHTING",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (x && x.zone) { x.zone = false; x.outAt = now; }",
     "new": "  if (false) { x.zone = false; x.outAt = now; }",
     "tests": [
@@ -473,7 +473,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-JUMPER-STRIKES",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (now - a.jumpAt < WILD_REF.jumpMs) return",
     "new": "  if (false) return",
     "tests": [
@@ -482,7 +482,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-EVICTED-FORGOTTEN",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (st.falls.size >= WILD_REF.fallsMax) { evicted = st.falls.values().next().value; evicted.picked = true; st.falls.delete(evicted.r); }",
     "new": "  if (st.falls.size >= WILD_REF.fallsMax) st.falls.delete(st.falls.keys().next().value);",
     "tests": [
@@ -491,7 +491,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-PICKS-PIECE-UNSIGNED",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  if (Array.isArray(wt) && wt.length === 2 && wt.every((n) => Number.isSafeInteger(n) && n >= 0 && n < 65536)) fall.wt = [wt[0], wt[1]];",
     "new": "",
     "tests": [
@@ -500,7 +500,7 @@
   },
   {
     "name": "INT9-AUDIT-A-TOMBSTONE-LET-GO",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "    if (remainsSpent(rec) && now - rec.at < WILD_TOMB_MIN_MS) continue;",
     "new": "",
     "tests": [
@@ -509,7 +509,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-TAKEOVER-AT-ONCE",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "  if (!rec || rec.ok || rec.oid === oid || now - (rec.lastAt ?? rec.at) < WILD_STALL_MS) return false;",
     "new": "  if (!rec || rec.ok || rec.oid === oid) return false;",
     "tests": [
@@ -518,7 +518,7 @@
   },
   {
     "name": "INT9-AUDIT-THE-GUILD-LOST-ON-A-WAKE",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "return { r: v.r, gi: typeof v.gi === 'string' && v.gi ? v.gi : null, os:",
     "new": "return { r: v.r, gi: null, os:",
     "tests": [
@@ -800,7 +800,7 @@
   },
   {
     "name": "INT9-AUDIT-CLIENT-THE-KILLERS-PIECE-NEVER-ASKED-AGAIN",
-    "file": "src/net/wildRemains.js",
+    "file": "src/net/wild/wildRemains.js",
     "old": "        askMine(rec);   // AUDIT INT9: an ask that never left",
     "new": "        void 0;   // AUDIT INT9: an ask that never left",
     "tests": [
@@ -845,7 +845,7 @@
   },
   {
     "name": "INT9-AUDIT-CLIENT-AN-EMPTIED-REMAINS-FORGOTTEN",
-    "file": "src/net/wildRemains.js",
+    "file": "src/net/wild/wildRemains.js",
     "old": "    has(r) { return recs.has(r) || saidIds.has(r); },",
     "new": "    has(r) { return recs.has(r); },",
     "tests": [
@@ -854,7 +854,7 @@
   },
   {
     "name": "INT7-AUDIT-THE-SIGNED-REACH-UNREAD",
-    "file": "src/net/siegeRef.js",
+    "file": "src/net/siege/siegeRef.js",
     "old": "  return Math.max(0, (armsOk(wa) ? Math.min(reach, wa[0]) : reach) + SIEGE_BONUS_MAX) * SIEGE_CRIT_MAX;",
     "new": "  return Math.max(0, reach + SIEGE_BONUS_MAX) * SIEGE_CRIT_MAX;",
     "tests": [
@@ -864,7 +864,7 @@
   },
   {
     "name": "INT7-AUDIT-A-SHAFT-FROM-AN-UNSIGNED-BOW",
-    "file": "src/net/siegeRef.js",
+    "file": "src/net/siege/siegeRef.js",
     "old": " || (shaft && armsOk(wa) && wa[1] !== 1)) return",
     "new": ") return",
     "tests": [
@@ -873,7 +873,7 @@
   },
   {
     "name": "INT7-AUDIT-AN-UNKNOWN-WEAPON-ANY-REACH",
-    "file": "src/net/siegeRef.js",
+    "file": "src/net/siege/siegeRef.js",
     "old": "  if (reach == null) return 0;",
     "new": "  if (reach == null) return 9999;",
     "tests": [
@@ -882,7 +882,7 @@
   },
   {
     "name": "INT7-AUDIT-ARENA-THE-SIGNED-REACH-UNREAD",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "(arenaArmsOk(wa) ? Math.min(wmax + mat, wa[0]) : wmax + mat)",
     "new": "(wmax + mat)",
     "tests": [
@@ -959,7 +959,7 @@
   },
   {
     "name": "INT8-AUDIT-ANOTHER-DUELS-YES",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "ask.s !== s || yes.s !== s ||",
     "new": "ask.s !== s ||",
     "tests": [
@@ -969,7 +969,7 @@
   },
   {
     "name": "INT8-AUDIT-A-SECOND-BOUT",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "  if (st.of.has(a.sub) || st.of.has(b.sub) || st.bouts.size",
     "new": "  if (st.bouts.size",
     "tests": [
@@ -979,7 +979,7 @@
   },
   {
     "name": "INT8-AUDIT-A-BOUT-SET-OUT-OF-THE-RING",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "  if (fromCentre(a.pose, c) > ROYAL_RING.radiusM || fromCentre(b.pose, c) > ROYAL_RING.radiusM) return { no: 'range' };",
     "new": "",
     "tests": [
@@ -989,7 +989,7 @@
   },
   {
     "name": "INT8-AUDIT-A-CANCEL-IN-THE-COUNT-A-LOSS",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "  if (now < bout.startMs) return duelEnd(st, bout, null, 'cancelled');",
     "new": "",
     "tests": [
@@ -999,7 +999,7 @@
   },
   {
     "name": "INT8-AUDIT-A-FORFEIT-THE-FORFEITERS-WIN",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "  return duelEnd(st, bout, sides[1].sub, why === 'yield' ? 'yield' : 'left');",
     "new": "  return duelEnd(st, bout, sides[0].sub, why === 'yield' ? 'yield' : 'left');",
     "tests": [
@@ -1009,7 +1009,7 @@
   },
   {
     "name": "INT8-AUDIT-THE-CLOCK-UNREAD",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "    if (now >= bout.endMs) { out.push(duelEnd(st, bout, null, 'draw')); continue; }",
     "new": "",
     "tests": [
@@ -1019,7 +1019,7 @@
   },
   {
     "name": "INT8-AUDIT-THE-GONE-UNREAD",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "    for (const x of [bout.a, bout.b]) { if (here(x.sub)) x.goneAt = null; else x.goneAt ??= now; }",
     "new": "",
     "tests": [
@@ -1029,7 +1029,7 @@
   },
   {
     "name": "INT8-AUDIT-THE-RING-LEFT-UNREAD",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "    if (outA || outB) out.push(duelEnd(",
     "new": "    if (false) out.push(duelEnd(",
     "tests": [
@@ -1039,7 +1039,7 @@
   },
   {
     "name": "INT8-AUDIT-A-TELEPORT-BELIEVED",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "  if (refereeStep(me.pose, p, now - me.poseAt, me.f)) { me.pose",
     "new": "  if (true) { me.pose",
     "tests": [
@@ -1049,7 +1049,7 @@
   },
   {
     "name": "INT8-AUDIT-THE-RING-EDGE-UNREAD",
-    "file": "src/net/duelRef.js",
+    "file": "src/net/duel/duelRef.js",
     "old": "  if (fromCentre(p, bout.c) > ROYAL_RING.radiusM + ROYAL_RING.outSlackM) me.outAt ??= now; else me.outAt = null;",
     "new": "  me.outAt = null;",
     "tests": [
@@ -1096,7 +1096,7 @@
   },
   {
     "name": "INT8-AUDIT-CLIENT-THE-CARRIER-ANYONES",
-    "file": "src/net/siegeClaims.js",
+    "file": "src/net/siege/siegeClaims.js",
     "old": "  mine: (c, who) => Array.isArray(c?.f) && c.f.includes(who) });",
     "new": "  mine: () => true });",
     "tests": [

@@ -14,7 +14,7 @@ a number) before reporting it:
 | Lane | Over | How |
 |---|---|---|
 | F | GATHER-FEEL's ear and last blow, BLOW-SHAKE (`systems/gatherSounds.js`, `systems/chopAct.js`, `systems/mineAct.js`, `systems/gatherBlow.js`'s feel, `scenes/gatherHost.js`'s act frame) | the real host over the real kinds (`test/gatherRig.mjs`); sweeps of the frame's length; a second act begun under a last blow; the dungeon left and the switch shut under one; the ear's allocations measured; every clip baked again byte for byte; the type checker over the JSDoc |
-| W | PEER-ACTS end to end (`net/wire.js`, `net/peerGather.js`, the four lanes that draw a peer) | two and three sessions through the real relay Room (`test/fakeRoom.mjs`); the halo's seam, a woken room, a tab reloaded; the body asleep; hostile values at the door; the old relay and the new |
+| W | PEER-ACTS end to end (`net/wire.js`, `net/peer/peerGather.js`, the four lanes that draw a peer) | two and three sessions through the real relay Room (`test/fakeRoom.mjs`); the halo's seam, a woken room, a tab reloaded; the body asleep; hostile values at the door; the old relay and the new |
 | V | VEIN-CRACKS (`systems/veinCrack.js`, both billboard programs, the renderer's uniform, the chunks, the host's batches) | all 38 of the renderer's programs compiled and linked in Chromium's WebGL2; the shader's own code through `test/glsl.mjs`; a hillside's heightmap; mutants of its own over the 58 gathering test files and 234 renderer ones |
 | R | the record, the pins and the mutant lists | every figure traced to the code; both lists run (173 dead); mutants of its own over 107 test files; the counts recounted |
 
@@ -98,8 +98,8 @@ gatherer had taken back, chunks lying off the ground, and laws no pin could fail
   each in `fb1002_herbcursor.json` and `prof4.json`, one each in `audit29.json`, `gatherspeed.json` and
   `profreticle.json` - forty-six in all.
 - Every existing record on the files whose logic the audit moved - `scenes/gatherHost.js`, `systems/gatherSounds.js`,
-  `systems/chopAct.js`, `systems/mineAct.js`, `systems/gatherBlow.js`, `systems/audio.js`, `net/peerGather.js`,
-  `net/peerBodies.js`, `net/remotePlayers.js`, `scenes/mineHost.js`, `scenes/treeHost.js`,
+  `systems/chopAct.js`, `systems/mineAct.js`, `systems/gatherBlow.js`, `systems/audio.js`, `net/peer/peerGather.js`,
+  `net/peer/peerBodies.js`, `net/remotePlayers.js`, `scenes/mineHost.js`, `scenes/treeHost.js`,
   `render/enhancedLighting.js` - was put to a rejudge on the tree merged with MINE-PERKS, with this list whole: 927. At
   the merge (Mac: "hurry up") 529 had been judged - 527 dead, the two recorded equivalents alive, no survivor - this
   list's 81 among them; the other 398, from `gatherfeel2.json`'s last 53 on, were not judged here (section 45's AUDIT

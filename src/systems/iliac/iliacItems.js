@@ -3,7 +3,7 @@
 // CARD BINDER AS ITEMS. Section 6.3, DECIDED: "a card is an item. It sits in the pack, weighs nothing, stacks, and is kept
 // in a Card Binder (an item like the Wallet) that holds the collection and the decks."
 //
-//   THE CARD (template 581): one template for every card of the catalog (net/iliacCards.js), the card it is named by the
+//   THE CARD (template 581): one template for every card of the catalog (net/iliac/iliacCards.js), the card it is named by the
 //     record's `card` (a catalog id) - two Rats stack, a Rat and a Lich do not (inventory.js stacksWith; splitStack keeps
 //     it). Weightless, sold for a coin, tradeable (CARDS9 brings them into the trade and the market). Its name is the
 //     catalog's ("Card: Rat", itemInfo.js resolveItemName), never stored - a split mints a fresh record from the template.
@@ -18,16 +18,16 @@
 import { registerCustomTemplates, setItemFields, mintCondition, registerItemUseHandler } from '../item/itemTemplates.js';
 import { validBinderDeck, BINDER_DECK_NAME_MAX } from '../item/itemFields.js';
 import { addItem } from '../inventory.js';
-import { cardById, STARTER_DECK } from '../../net/iliacCards.js';
+import { cardById, STARTER_DECK } from '../../net/iliac/iliacCards.js';
 import { cardRules, cardFlavor } from './iliacCardWords.js';   // KG-SET: a card's rules and flavor, in the player's language
-import { ILIAC_CARD_TEMPLATE, CARD_PACK_TEMPLATE, cardWorth } from '../../net/cardWorthLaw.js';   // CARDS9: the card's worth, one home with the service; AUDIT CARDS-6 A1: and the pack's number
+import { ILIAC_CARD_TEMPLATE, CARD_PACK_TEMPLATE, cardWorth } from '../../net/card/cardWorthLaw.js';   // CARDS9: the card's worth, one home with the service; AUDIT CARDS-6 A1: and the pack's number
 
 /** The card's and the binder's templates - the port's own, beside the Wallet's 580 and below the professions' 600.
- *  CARDS9: the card's number is the law's (net/cardWorthLaw.js - the account service reads it there). */
+ *  CARDS9: the card's number is the law's (net/card/cardWorthLaw.js - the account service reads it there). */
 export { ILIAC_CARD_TEMPLATE };   // the law's own, handed on (one declaration - audit24's ratchet)
 export const CARD_BINDER_TEMPLATE = 582;
 /** CARDS9 (section 32): the tavern's sealed pack of cards (systems/card/cardSources.js opens it). AUDIT CARDS-6 A1: its number
- *  is the law's too (net/cardWorthLaw.js - the cards' customs counts a pack, and the account service reads it there). */
+ *  is the law's too (net/card/cardWorthLaw.js - the cards' customs counts a pack, and the account service reads it there). */
 export { CARD_PACK_TEMPLATE };   // the law's own, handed on (one declaration - audit24's ratchet)
 const GROUP = 'UselessItems2';
 /** The rows. Rarity 20: no shelf and no loot table rolls either. The card wears DFU's Parchment picture (TEXTURE.209
@@ -95,7 +95,7 @@ export function mintIliacCard(/** @type {string} */ id, count = 1) {
   const it = mintCondition(setItemFields({ group: GROUP, templateIndex: ILIAC_CARD_TEMPLATE }));
   it.card = id;
   it.stackCount = count;
-  it.value = cardWorth(id);   // CARDS9: its tier's worth (net/cardWorthLaw.js CARD_WORTH) - a coin no longer
+  it.value = cardWorth(id);   // CARDS9: its tier's worth (net/card/cardWorthLaw.js CARD_WORTH) - a coin no longer
   return it;
 }
 /** CARDS9: a sealed pack. */
@@ -118,7 +118,7 @@ export function collectionOf(/** @type {any} */ items) {
   return out;
 }
 /** Why a deck cannot be kept in this binder - or null: more copies of a card than the pack holds ('not held'). The
- *  rules' own law (net/iliacHand.js deckValid) is the caller's to ask first. */
+ *  rules' own law (net/iliac/iliacHand.js deckValid) is the caller's to ask first. */
 export function deckHeldRefusal(/** @type {string[]} */ cards, /** @type {any} */ items) {
   const have = collectionOf(items), need = new Map();
   for (const id of cards) need.set(id, (need.get(id) ?? 0) + 1);

@@ -25,7 +25,7 @@ import { activeHorseItem, birthHorses } from '../src/systems/horse/horseCoats.js
 import { stableHorses, yardStock, STABLE_HORSES_OFFERED } from '../src/systems/merchantYards.js';
 import { itemFindings } from '../src/systems/item/itemLaw.js';
 import { validItemField } from '../src/systems/item/itemFields.js';
-import { RECEIVER_MARKS, TRADE_VOLATILE_FIELDS } from '../src/net/realmTradeLaw.js';
+import { RECEIVER_MARKS, TRADE_VOLATILE_FIELDS } from '../src/net/realm/realmTradeLaw.js';
 import { itemStatRows } from '../src/systems/item/itemInfo.js';
 import { itemUseHandler } from '../src/systems/item/itemTemplates.js';
 import { HORSE_MODE, WAGON_MODE, TRANSPORT } from '../src/systems/horse/horseCartLaw.js';

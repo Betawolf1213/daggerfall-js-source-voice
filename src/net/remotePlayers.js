@@ -7,7 +7,7 @@
 // inventory shows, minus its panel background, cropped to the figure and
 // stood on the ground as a billboard at the peer's feet, the name over
 // its head. With the Morrowind layer on, the
-// body instead (MWBODY1, net/peerBodies.js: one rig instance per
+// body instead (MWBODY1, net/peer/peerBodies.js: one rig instance per
 // peer), the doll standing wherever a body does not. Recorded in
 // Online-Arc.md.
 //
@@ -29,7 +29,7 @@ import { titleBadge, glyphMarks, gradientAt } from '../ui/playerBadge.js';   // 
 import { projectToScreen } from '../player/tapRay.js'; import { multiply } from '../world/mat4.js';   // one home (audit24 onehome): the touch layer's own projection
 import { LOOK_ITEM_FIELDS, LOOK_GROUPS } from './wire.js';   // the look's vocabulary: the wire's own
 import { renownText } from './renown.js';   // RENOWN1: Renown's words, left of the name in the bitmap face too
-import { guildTagText } from './guildLaw.js';   // GUILD1c: the guild's tag, right of the name in the bitmap face too
+import { guildTagText } from './guild/guildLaw.js';   // GUILD1c: the guild's tag, right of the name in the bitmap face too
 import { ribbonRgba } from './heraldryLaw.js';   // SEASON1 part two: a Season's banner ribbon, under the name in the bitmap face too
 /** AUDIT-SEATS C12: each ribbon's two tints, parsed once - by its claim's two colour indexes (one number, no string made),
  *  for every ribboned name every frame; anything that is no claim is asked of the law itself (it answers null). */
@@ -41,7 +41,7 @@ export function ribbonTints(rb) {
   if (t === undefined) { t = ribbonRgba(rb); _ribbonTints.set(k, t); }
   return t;
 }
-// 2026-09-17 (per-request, the NON-Morrowind peer only - net/peerBodies.js and its Morrowind body are untouched):
+// 2026-09-17 (per-request, the NON-Morrowind peer only - net/peer/peerBodies.js and its Morrowind body are untouched):
 // the same class-enemy sprite classic dungeon humanoids already use (Warrior, Mage, Knight, ...), driven by simple
 // moving/striking flags off the peer's synced pose instead of AI - the reusable pieces dungeonContext.js already
 // builds a foe's OWN mobile unit from (MobileUnit.update takes the same flags EnemyMotor's AI would set).
@@ -61,8 +61,8 @@ import { swingSoundFor, SOUND } from '../systems/soundClips.js';   // PEER-FS2: 
 import { billboardSize } from '../world/rmbFlats.js';   // PCORPSE1: a corpse stands as the dungeon's own corpses stand
 import { raceGenderPain3Sound, CLASSIC_PLAYER_DEATH_SOUND } from '../systems/playerDeath.js';   // PCORPSE1: the fallen player's own cry
 import { SEAT_HIP_DROP } from '../player/seatPose.js';   // CARDS2c: a seated sprite sinks by the seat's own drop
-import { RACES } from '../systems/races.js'; import { PeerClimbSounds, peerBodyYaw, peerMoving } from './peerClimb.js';   // CLIMB5: a peer on the wall faces it, takes no stride, and is heard climbing
-import { PeerGatherSounds, peerGatherSwing, peerKneeling } from './peerGather.js';   // PEER-ACTS: a peer gathering is seen at it and heard
+import { RACES } from '../systems/races.js'; import { PeerClimbSounds, peerBodyYaw, peerMoving } from './peer/peerClimb.js';   // CLIMB5: a peer on the wall faces it, takes no stride, and is heard climbing
+import { PeerGatherSounds, peerGatherSwing, peerKneeling } from './peer/peerGather.js';   // PEER-ACTS: a peer gathering is seen at it and heard
 
 // ── PCORPSE1: THE FALLEN ──────────────────────────────────────────
 //
@@ -573,7 +573,7 @@ export class RemotePlayers {
   corpseMarks(toScene = (p) => [p.x, p.y, p.z]) {
     return this._corpses.filter((c) => !c.dead && (c.id || c.acct)).map((c) => ({ id: c.id, acct: c.acct, feet: toScene(c.pose), height: 0.9 }));
   }
-  /** WILD1 (net/wildFight.js): a body in the open zone lies the zone's two minutes - its time moved on to at least `ms`
+  /** WILD1 (net/wild/wildFight.js): a body in the open zone lies the zone's two minutes - its time moved on to at least `ms`
    *  from now (the killer's game hears of the death from the body's own offer). */
   holdCorpse(id, ms) { for (const c of this._corpses) if (!c.dead && id && c.id === id) c.until = Math.max(c.until, this._now() + ms); }
   /** PCORPSE3: is a body already lying for this account (or peer)? */
@@ -870,7 +870,7 @@ export class RemotePlayers {
       // INVIS-LOOK (2026-09-27): a CONCEALED peer (the host hands ECV1's visual) is drawn translucent, as a concealed foe
       // is on the enhanced lane - and carries no name: a name over an invisible player is the player, found
       const veil = conceal(peer.id) ?? null;
-      // MWBODY1: a peer standing in a Morrowind body (net/peerBodies.js) draws no doll/mobile; its name still rides this pass, at the body's own head
+      // MWBODY1: a peer standing in a Morrowind body (net/peer/peerBodies.js) draws no doll/mobile; its name still rides this pass, at the body's own head
       const bodyH = bodyHeight(peer.id);
       if (bodyH > 0) { if (!veil) this._shown.push({ peer, height: bodyH }); continue; }
       live.add(peer.id);
@@ -885,7 +885,7 @@ export class RemotePlayers {
       // (LycanthropyTypes 1 werewolf, 2 wereboar); the sprite is the enemy's own (MobileTypes 9 / 14), puppeted off the
       // pose like any class sprite - whatever the 'Other players' card says, since a person drawn there is a lie.
       // PR-WW1 (2026-09-24, player report: "Werewolf morrowind sprite not showing online"): THE FALLBACK now. A beast
-      // is drawn as Eye Of The Beholder's lycanthrope by net/peerRiders.js - the art the transformed player sees on
+      // is drawn as Eye Of The Beholder's lycanthrope by net/peer/peerRiders.js - the art the transformed player sees on
       // themselves - and reaches here only while that art is not up (loading, failed, or a build without it), when
       // `bodyHeight` answers 0: the enemy sprite stands for them then, so a beast is never nothing
       const beast = peer.shown.wb | 0;
@@ -985,7 +985,7 @@ export class RemotePlayers {
     peerSound(this.deps.audio, step.clip, f, step.volume);
   }
 
-  /** CLIMB5: a peer's climb, heard at them (net/peerClimb.js) - its changes and its rhythm, within earshot, behind the
+  /** CLIMB5: a peer's climb, heard at them (net/peer/peerClimb.js) - its changes and its rhythm, within earshot, behind the
    *  peers' own sounds' switch as their stride is. */
   _syncClimbSound(peer, toScene, eye) {
     if (!this.deps?.audio?.play3d) return;
@@ -1027,7 +1027,7 @@ export class RemotePlayers {
     peerSound(this.deps.audio, swingSoundFor(weapon), f, 1.1);
   }
 
-  /** PEER-ACTS (GATHER-FEEL II): a peer's gathering, heard at them (net/peerGather.js PeerGatherSounds) - the act's
+  /** PEER-ACTS (GATHER-FEEL II): a peer's gathering, heard at them (net/peer/peerGather.js PeerGatherSounds) - the act's
    *  beats within earshot, behind the swings' switch ('peerAttackSounds' - a tool's blow is a swing, the rest its hands'
    *  work). Told every change with the switch off, as the climb is (AUDIT CLIMB-ARC N5), so switching it back on replays
    *  nothing. */
@@ -1135,7 +1135,7 @@ export class RemotePlayers {
   }
 
   /** The class-enemy billboard path: `bundle.mobileUnit.update` is fed simple flags off the peer's OWN synced pose
-   *  (`shown`), the same wire fields net/peerBodies.js already reads to drive its own (Morrowind) rig - `mv` for
+   *  (`shown`), the same wire fields net/peer/peerBodies.js already reads to drive its own (Morrowind) rig - `mv` for
    *  moving/running, `an`'s change for the striking edge - rather than anything new added to the wire protocol.
    *  `striking` only fires from the SECOND frame a given peer is seen onward (`entry.lastAn` starts null): a peer's
    *  attack counter is whatever it already was when they were first drawn, and comparing against nothing would

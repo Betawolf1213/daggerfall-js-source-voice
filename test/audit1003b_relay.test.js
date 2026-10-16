@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeRooms } from './fakeRoom.mjs';
-import { ARENA_FLOOR_CENTRE, ARENA_TICK_MS, ARENA_GONE_MS, ARENA_PRIVATE_KEEP_MS, arenaPrivateRoom } from '../src/net/arenaLaw.js';
+import { ARENA_FLOOR_CENTRE, ARENA_TICK_MS, ARENA_GONE_MS, ARENA_PRIVATE_KEEP_MS, arenaPrivateRoom } from '../src/net/arena/arenaLaw.js';
 import { readArenaOut } from '../src/net/wire.js';
 import { callMs, COUNT_MS } from '../src/systems/arena/arenaBout.js';
 

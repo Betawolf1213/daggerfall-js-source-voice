@@ -1,8 +1,8 @@
 // REALM P2.2a (2026-09-28; bible/06-Systems/Realm-Arc.md section 3, Mac: "eliminate duping"): A REALM CHARACTER'S GOLD
 // MOVES ON ITS RECORD WITH THE GUILD'S OWN WRITE. "One D1 transaction debits the character and credits the treasury. A
-// withdrawal is the reverse." The law (src/net/realmGoldLaw.js, pinned equal to the client's wallet), the service
+// withdrawal is the reverse." The law (src/net/realm/realmGoldLaw.js, pinned equal to the client's wallet), the service
 // (server-account/src/realm.js prepareRealmRecord, guilds.js) through the REAL Worker over the REAL migrations, and the
-// client (net/guildBook.js over systems/realmSaves.js realmGoldAct) - founding, deposit and withdrawal, both or neither.
+// client (net/guild/guildBook.js over systems/realmSaves.js realmGoldAct) - founding, deposit and withdrawal, both or neither.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -11,12 +11,12 @@ import { webcrypto } from 'node:crypto';
 import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { SESSION_KEY, accountGuilds } from '../src/net/accountClient.js';
-import { payFromSave, creditSave, payableOf, REALM_LETTER_TEMPLATE } from '../src/net/realmGoldLaw.js';
-import { GUILD_FOUND_GOLD, GUILD_FOUND_RENOWN, GUILD_TREASURY_MAX } from '../src/net/guildLaw.js';
+import { payFromSave, creditSave, payableOf, REALM_LETTER_TEMPLATE } from '../src/net/realm/realmGoldLaw.js';
+import { GUILD_FOUND_GOLD, GUILD_FOUND_RENOWN, GUILD_TREASURY_MAX } from '../src/net/guild/guildLaw.js';
 import { renownXpFor } from '../src/net/renown.js';
 import { deductGold } from '../src/systems/court.js';
 import { LETTER_OF_CREDIT_TEMPLATE as INV_LETTER } from '../src/systems/inventory.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import { realmIo, realmCreate, realmPut, realmFetch, createRealmSession, realmGoldAct } from '../src/systems/realmSaves.js';
 import { freshSave, layRecord } from './realmSeat.mjs';   // AUDIT REALM2 S1: a first save is a new character's
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked

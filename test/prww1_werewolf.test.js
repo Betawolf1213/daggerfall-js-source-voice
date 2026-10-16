@@ -1,7 +1,7 @@
 // PR-WW1 (2026-09-24, player report: "Werewolf morrowind sprite not showing online"): THE BEAST THE OTHERS SEE IS THE
 // BEAST I SEE. A transformed player with no Morrowind body sees themselves as Eye Of The Beholder's lycanthrope
 // (archives 112380 the werewolf, 112381 the wereboar - the Bloodmoon-style render, eotbBody's lycan tables), and every
-// other player drew DISC12's classic enemy sprite (archive 264 / 269, remotePlayers' mobile): net/peerRiders.js, the one
+// other player drew DISC12's classic enemy sprite (archive 264 / 269, remotePlayers' mobile): net/peer/peerRiders.js, the one
 // layer that draws another player in EOTB's art, took a peer only when `rd` said a mount. A transformed RIDER was drawn
 // as a person on a horse (112382) where the player saw their beast (chooseTable: transformed first). And the modal
 // passes (worldModes' dungeon and interior billboard runs) draw only `host.extraBillboards`, which was remotePlayers'
@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validPose } from '../src/net/wire.js';
 import { lerpPose } from '../src/net/online.js';
-import * as PR from '../src/net/peerRiders.js';   // the namespace, so a pin run on the unfixed layer fails assertion by assertion, not at the import
+import * as PR from '../src/net/peer/peerRiders.js';   // the namespace, so a pin run on the unfixed layer fails assertion by assertion, not at the import
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
 import { ARCHIVE_LYCAN, ARCHIVE_HORSE, STATE_TABLES, LYCAN_TICK, frameTime, chooseTable } from '../src/player/eotbBillboard.js';

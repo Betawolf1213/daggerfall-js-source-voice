@@ -34,7 +34,7 @@
     "tests": [
       "test/fb1009b_partytruce.test.js"
     ],
-    "note": "MAC (2026-10-14, re-aimed by content): wildFair asks the truce inside its one kin law, net/wildRef.js wildKin"
+    "note": "MAC (2026-10-14, re-aimed by content): wildFair asks the truce inside its one kin law, net/wild/wildRef.js wildKin"
   },
   {
     "name": "PARTY-TRUCE-the-walk-never-names-the-zone",

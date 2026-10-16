@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-DUEL1-A3-every-stranger-answered",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "          if (busy) { if (!engagedElsewhere(from)) answer(",
     "new": "          if (busy) { if (true) answer(",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-DUEL1-A3-the-limiter-per-frame",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "    if (t - (answered.get(peer) ?? -Infinity) < DUEL_REASK_MS) return false;\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-DUEL1-A5-the-cancel-without-its-quiet",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "incoming.delete(from); quiet.set(from, now()); if (d.why",
     "new": "incoming.delete(from); if (d.why",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDIT-DUEL1-D5-a-gone-peers-ask-kept",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "      for (const p of [...incoming.keys()]) if (!reaches(p)) mgr.peerGone(p);\n",
     "new": "",
     "tests": [

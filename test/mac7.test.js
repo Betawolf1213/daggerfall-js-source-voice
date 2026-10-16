@@ -32,7 +32,7 @@ import * as relay from '../server/src/relay.js';
 import { poseChanged, lerpPose } from '../src/net/online.js';
 import { STATE_INDEX } from '../src/combat/fpsWeapon.js';
 import { TARGET_TYPES } from '../src/systems/spellcast.js';
-import { PeerBodies } from '../src/net/peerBodies.js';
+import { PeerBodies } from '../src/net/peer/peerBodies.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -197,7 +197,7 @@ test('MAC7: the hosts by source - weaponRig counts every strike it starts before
   assert.match(w, /const live = modes\?\.liveArm\?\.\(\) \?\? null;\s*const rig = live\?\.rig \?\? weaponRig;\s*const wm = rig\.playerWeapon\.machine;\s*const arm = \{\s*mv,\s*fk: \(modes\?\.mode \?\? 'exterior'\) === 'exterior' \? _lastFootstepKind : \(modes\?\.footstepKind \?\? 0\),[^\n]*\n\s*wd: rig\.playerWeapon\.sheathed \? 0 : \(wm\?\.isBow && wm\.state === 'StrikeUp' \? 2 : 1\),\s*an: rig\.swing\.n, as: Math\.max\(0, POSE_STRIKES\.indexOf\(rig\.swing\.strike\)\),\s*am: hasDaggerfallArrows\(playerEntity\.items\) \? 1 : 0, sr: \(live \? live\.armed : magic\.spellArmed\(\)\) \? 1 : 0,\s*cn: rig\.cast\.n, cr: rig\.cast\.rangeType \| 0, ce: rig\.cast\.element \?\? 4,[^\n]*\s*ar: rig\.shot\?\.n \?\? 0,[^\n]*\s*(?:\/\/[^\n]*\n\s*)*rd: [^\n]*\n\s*rv: [^\n]*\n\s*rc: [^\n]*\n\s*hs: [^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*lh: rig\.playerWeapon\.usingRightHand \? undefined : 1,\n\s*wb: [^\n]*\n(?:\s*cv: concealBits\(playerEntity\) \|\| undefined,[^\n]*\n)?\s*hl: waistLanternPoseBit\(playerEntity\.lightSource\),[^\n]*\n\s*lc: hasActiveEffect\(playerEntity, 'light'\) \? 1 : undefined,[^\n]*\n\s*lt: torchPoseByte\(playerEntity\),[^\n]*\n\s*\.\.\.\(gatherHost\?\.poseAct\(\) \?\? \{\}\),[^\n]*\n\s*\.\.\.climbPoseOf\(player\),[^\n]*\n\s*\};/, 'the arm\'s seven off the MODE\'s rig (CLIMB5: and the climb, climb5.test.js; and RIDE\'s mount, rd and rv, after them, COATS1\'s horse look, DISC7\'s half-speed bit, DISC12\'s hand in use and beast form - hcc_park.test.js pins their values - and HT-WAIST-NET\'s lantern at the waist, htwaistnet_peers.test.js; then PEERLIGHT2\'s Light spell and PEERLIGHT1\'s torch, peerlight1.test.js; then GATHER-FEEL II\'s gathering act, gf2_peeracts.test.js) (AUDIT WORLD C1: world.js\'s own is never stepped indoors or underground), the entity and the mode\'s spell seam');
   assert.equal((w.match(/\{ \.\.\.pose, \.\.\.arm(?:, \.\.\.poseFx\(\))? \}/g) ?? []).length, 2, 'into the hello and every pose (PEERFX1: the pose after the hello carries my blows and hurts beside it)');
   assert.doesNotMatch(w, /\{ \.\.\.pose, mv \}/);
-  const pb = rd('src/net/peerBodies.js');
+  const pb = rd('src/net/peer/peerBodies.js');
   // PEER-CADENCE: the rig is stepped on two branches inside the same guard - the posing frame and the clocks-only one
   assert.match(pb, /try \{\s*this\._arm\(b, peer\.shown, peer\.look\);\s*(?:\/\/[^\n]*\n\s*)*b\.bank = Math\.min\(EFFECTS_BANK_MAX_S, b\.bank \+ dt\);[\s\S]*?if \(pose\) \{ b\.rig\.update\(dt, \{ pose: true, effectsDt: b\.bank \}\);[^\n]*\n\s*else b\.rig\.update\(dt, \{ pose: false \}\);\s*\} catch \(e\) \{ this\._fail\(b, `update threw: \$\{e\?\.message \?\? e\}`\); \}/, 'the arm inside the update guard (AUDIT MWBODY A1)');
   assert.match(pb, /b\.rig\.setSheathed\?\.\(!drawn\);/);

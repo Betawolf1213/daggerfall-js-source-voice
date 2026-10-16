@@ -1,4 +1,4 @@
-// PVP-REF (2026-10-01, Mac: "Finish the seats"; "Continue"): THE REFEREE'S LAW (net/siegeRef.js) - its copied tables
+// PVP-REF (2026-10-01, Mac: "Finish the seats"; "Continue"): THE REFEREE'S LAW (net/siege/siegeRef.js) - its copied tables
 // pinned EQUAL to DFU's own (characters/weapons.js, combat/formulas.js, combat/playerWeapon.js - the leaf's law: the
 // relay bundles every byte it imports, so the tables are copied, never imported), 6.1's buckets against DFU's damage
 // ranges for every weapon and material, and every refusal of a blow, a cast and a step.
@@ -10,14 +10,14 @@ import {
   SIEGE_CASTS, SIEGE_SPEED, SIEGE_WAVE_MS, SIEGE_PROTECT_MS, SIEGE_FIGHTERS_MAX, SIEGE_WEAPONS, SIEGE_WEAPON_MAX, SIEGE_THUNDERLOCK,
   SIEGE_MATERIAL_MOD, SIEGE_FIST_MAX, SIEGE_BONUS, SIEGE_BONUS_MAX, SIEGE_CRIT_MAX, siegeBlowMax, siegeIsBow, siegeHeld, newFighter,
   refereeBlow, refereeCast, refereeStep, siegeNextWave, siegeRise,
-} from '../src/net/siegeRef.js';
+} from '../src/net/siege/siegeRef.js';
 import { WEAPONS, WEAPON_MATERIALS, weaponMaxDamage, weaponMaterialModifier } from '../src/characters/weapons.js';
 import { THUNDERLOCK_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { damageModifier, handToHandMaxDamage } from '../src/combat/formulas.js';
 import { pcaaoDamageModifier } from '../src/combat/pcaao.js';
 import { rrDamageModifierClassic } from '../src/systems/roleplayRealism/rrRealism.js';
 import { WEAPON_REACH, SWING_MODS } from '../src/combat/playerWeapon.js';
-import { NATIVES_PER_M } from '../src/net/duelSession.js';
+import { NATIVES_PER_M } from '../src/net/duel/duelSession.js';
 import { validSiegeIn, SIEGE_KINDS, SIEGE_OUT_KINDS, SIEGE_DMG_WIRE_MAX, SIEGE_HZ_MAX, relaySupportsSiege, parseClient } from '../src/net/wire.js';
 import { RENOWN_MAX } from '../src/net/identityToken.js';
 import { runSpeed } from '../src/player/motor.js';

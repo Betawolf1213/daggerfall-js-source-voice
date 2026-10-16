@@ -5,7 +5,7 @@
 // instant: the inviter led the party's walk in (the one door into the zone no journey's gate asks - its question never
 // named the zone), dropped the newcomer from the party, and the protection the walk was taken under was gone where it
 // mattered. Now a player who leaves my party, or whose party I leave, is no fight for WILD_PARTY_TRUCE_MS, both ways
-// (each side reads its own party, and the defender's own client refuses an unfair blow - net/wildFight.js onFrame), and
+// (each side reads its own party, and the defender's own client refuses an unfair blow - net/wild/wildFight.js onFrame), and
 // a walk that ends in the zone or at its edge says so in its question (test/tv8_party_walk.test.js runs the host's own
 // walk). `01-Overview/Field-Bugs-2026-10-09b.md`.
 import { test } from 'node:test';
@@ -44,7 +44,7 @@ test('PARTY-TRUCE: the host holds a party left out of the fight - wildFair asks 
   const w = src('src/scenes/world.js');
   const fair = w.slice(w.indexOf('  const wildFair = (peerId) => {'), w.indexOf('  /** PARTY-TRUCE: the row a party\'s walk asks with'));
   // PIN MOVED (Mac, 2026-10-14, "Guildmates are friends" - bible/11-Multiplayer/Wild-Zone.md section 3): wildFair asks the
-  // party and its truce inside the one kin law, net/wildRef.js wildKin, beside the duel and the guild
+  // party and its truce inside the one kin law, net/wild/wildRef.js wildKin, beside the duel and the guild
   assert.match(fair, /if \(wildKin\(\{ party: !!social\?\.isPartyPeer\(peerId\) \|\| _wildTruce\.holds\(peerId, Date\.now\(\)\),/);
   const frame = w.slice(w.indexOf('  const wildFrame = () => {'), w.indexOf('    if (playerEntity.health > 0 && !modes?.deathUp?.()) {', w.indexOf('  const wildFrame = () => {')));
   assert.match(frame, /if \(_wildTruce\.frame\(social\?\.partyPeers\?\.\(\) \?\? new Set\(\), Date\.now\(\)\)\.length && here\) townTalk\.say\(WILD_TEXT\.truce\);/);

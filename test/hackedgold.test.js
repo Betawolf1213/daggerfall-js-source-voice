@@ -32,7 +32,7 @@ import { wearableItem } from '../src/systems/equip.js';
 import { sigilStone } from '../src/systems/gate/gateSpoils.js';
 import { NativeInventoryWindow } from '../src/ui/nativeInventory.js';
 import { itemLongName } from '../src/systems/item/itemInfo.js';
-import { BOAT_TEMPLATES } from '../src/net/realmTradeLaw.js';
+import { BOAT_TEMPLATES } from '../src/net/realm/realmTradeLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const dagger = () => createWeapon(113, 1, seeded(7));

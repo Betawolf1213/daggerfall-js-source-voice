@@ -12,7 +12,7 @@ import { RemoteGambitTable, RemoteGambitSession, overBy, GAMBIT_SENT_MS } from '
 import {
   newGambitTable, gambitSit, gambitReady, gambitTick, gambitCommand, validGambitOut, flipCell,
   GAMBIT_FIRST_MS, GAMBIT_REMOTE_GAP_MS, GAMBIT_TURN_END_MS, GAMBIT_TURN_MS,
-} from '../src/net/gambitTable.js';
+} from '../src/net/gambit/gambitTable.js';
 import { autoFill, KG_POINT_BUDGET, KG_COLS, KG_ROWS, reachable, pieceById } from '../src/net/kingsGambit.js';
 import { GAMBIT_RESULT_MS } from '../src/systems/gambit/gambitTableSession.js';
 import { gambitPlaces } from '../src/world/gambitCloth.js';
@@ -29,7 +29,7 @@ beforeEach(() => resetPrefs());
 const army = (seed) => autoFill([], KG_POINT_BUDGET, xorshift(seed));
 const FRAME = { centre: [0, 0.8, 0], axisYaw: Math.PI / 2, halfLong: CARD_TABLE_W / 2, halfShort: CARD_TABLE_D / 2 };
 const CHAIRS = [[0, 0, -0.9], [0.9, 0, 0], [0, 0, 0.9], [-0.9, 0, 0]];
-/** Two seated and dealt at the relay's table (net/gambitTable.js), the frames the room was told. */
+/** Two seated and dealt at the relay's table (net/gambit/gambitTable.js), the frames the room was told. */
 function dealt(seed = 3) {
   const t = newGambitTable({ chairs: 4 }), rand32 = xorshift(seed);
   const frames = [];

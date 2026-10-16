@@ -1,5 +1,5 @@
 // SD8a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT'S LAW
-// (net/sdRemnant.js) - the numbers; a fighter's share and the gate's belief of a blow; the three phases (the Walking Hour,
+// (net/superDungeon/sdRemnant.js) - the numbers; a fighter's share and the gate's belief of a blow; the three phases (the Walking Hour,
 // the Dragon Break's Echoes and their pair, the Last Moment's Reset and its Hearts); the Hour's own blows (the Pulse, the
 // Hour Ends); a lost fight; the geometry every struck screen judges by; and whole fights, simulated: a party at its
 // reference damage fells it inside the Hour, a party at half does not.
@@ -14,10 +14,10 @@ import {
   SD_BLOW_BY_ID, heartCountFor, heartHpFor, pulsePct, windupFor, blowsFor, arenaOf, inArena, keepInArena, stompRingAt,
   ringPassed, handAngleAt, handSwept, behindPillar, newRemnantFight, joinRemnant, applyRemnantHit, applyEchoHit,
   applyHeartHit, heartsOpen, remnantOpen, stepRemnant, remnantStateOf, atkFrameOf, pairWay,
-} from '../src/net/sdRemnant.js';
-import { SD_ARENA, SD_PILLAR_R, SD_PILLAR_W } from '../src/net/sdBrain.js';
-import { SD_FIGHTERS_MAX } from '../src/net/sdLaw.js';
-import { dpsRef, HIT_KINDS, BUCKET_DEPTH_X, HIT_CAP_X, MELEE_REACH, POSE_SLACK, earned, earnedBy, REPEAT_MAX } from '../src/net/gateBrain.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { SD_ARENA, SD_PILLAR_R, SD_PILLAR_W } from '../src/net/superDungeon/sdBrain.js';
+import { SD_FIGHTERS_MAX } from '../src/net/superDungeon/sdLaw.js';
+import { dpsRef, HIT_KINDS, BUCKET_DEPTH_X, HIT_CAP_X, MELEE_REACH, POSE_SLACK, earned, earnedBy, REPEAT_MAX } from '../src/net/gate/gateBrain.js';
 
 const T0 = 1_800_000_000_000;
 const near = (a, b, e = 1e-9) => Math.abs(a - b) < e;
@@ -469,11 +469,11 @@ test('SD8a THE STATE: the whole of the fight as the wire says it - slot and figh
   assert.deepEqual(atkFrameOf(SD_BODY.hour, { i: 3, a: 3, at: 9, x: 0, z: 0, yw: 0, tg: [], n: 2 }), { k: 'atk', b: 3, i: 3, a: 3, at: 9, x: 0, z: 0, yw: 0, tg: [], n: 2 });
 });
 
-test('SD8a the gate\'s hand and purse are one: net/gateBrain.js exports spendBlow and spendPurse, and the Remnant spends them - no second blow rate, no second bucket', () => {
-  const g = readFileSync(new URL('../src/net/gateBrain.js', import.meta.url), 'utf8');
+test('SD8a the gate\'s hand and purse are one: net/gate/gateBrain.js exports spendBlow and spendPurse, and the Remnant spends them - no second blow rate, no second bucket', () => {
+  const g = readFileSync(new URL('../src/net/gate/gateBrain.js', import.meta.url), 'utf8');
   assert.match(g, /^export function spendBlow\(p, now, seq = null, who = ''\) \{/m);
   assert.match(g, /^export function spendPurse\(p, d, left, now\) \{/m);
-  const r = readFileSync(new URL('../src/net/sdRemnant.js', import.meta.url), 'utf8');
+  const r = readFileSync(new URL('../src/net/superDungeon/sdRemnant.js', import.meta.url), 'utf8');
   assert.equal((r.match(/spendBlow\(p, now, seq, /g) ?? []).length, 3, 'the Remnant, an Echo, a Heart');
   assert.equal((r.match(/spendPurse\(p, /g) ?? []).length, 3);
   assert.doesNotMatch(r, /p\.bucket\s*=/, 'no bucket of its own');

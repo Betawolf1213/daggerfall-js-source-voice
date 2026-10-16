@@ -20,7 +20,7 @@ import * as LG from '../src/systems/arena/arenaLeague.js';
 import { newArenaLadder, ladderAfter, nextLadderBout } from '../src/systems/arena/arenaLadder.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';
-import { arenaLadderOf } from '../src/net/arenaLaw.js';
+import { arenaLadderOf } from '../src/net/arena/arenaLaw.js';
 import { mountArenaWindow } from '../src/ui/arenaWindow.js';
 import * as Door from '../src/ui/arenaDoor.js';
 import { createArenaOnline, HALL_IDLE_MS } from '../src/scenes/arenaOnline.js';

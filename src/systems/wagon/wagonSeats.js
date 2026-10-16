@@ -17,7 +17,7 @@
 //
 // Pure: no DOM, no renderer, no clock. Not a DFU member. Ledger A (WAGONS1).
 
-/** How long an unanswered ask stands (ms) - DUEL1's ask's (net/duelSession.js DUEL_ASK_TTL_MS). */
+/** How long an unanswered ask stands (ms) - DUEL1's ask's (net/duel/duelSession.js DUEL_ASK_TTL_MS). */
 export const RIDE_ASK_TTL_MS = 30_000;
 /** How long a declined rider waits before asking that owner again (ms) - DUEL1's re-ask's. */
 export const RIDE_REASK_MS = 15_000;

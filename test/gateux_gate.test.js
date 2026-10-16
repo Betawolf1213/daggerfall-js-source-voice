@@ -4,7 +4,7 @@
 // everyone's damage"): THE COURT, LESS IN THE WAY AND MORE TO READ. The marks' card to the side (ui/gateMarksView.js);
 // the bar's foot without its phase line (ui/gateBossBar.js); the spoils taken by the press alone (scenes/spoilsPool.js -
 // the walk-over's own pins moved with it: wb5, wb9f, wbx); and THE DAMAGE CHART - counted by the relay's brain
-// (net/gateBrain.js damageChart), carried with the kill (net/wire.js `dm`, relay world136), folded (net/gateLink.js) and
+// (net/gate/gateBrain.js damageChart), carried with the kill (net/wire.js `dm`, relay world136), folded (net/gate/gateLink.js) and
 // drawn to the side once he has fallen (ui/gateDamageChart.js, scenes/gateCourt.js). Design:
 // bible/11-Multiplayer/World-Bosses.md section 16.
 import { test } from 'node:test';
@@ -13,9 +13,9 @@ import { readFileSync } from 'node:fs';
 
 import { MARKS_CARD_CSS } from '../src/ui/gateMarksView.js';
 import { BOSS_BAR_CSS, BOSS_BAR_TOP, bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT } from '../src/ui/gateBossBar.js';
-import { PHASE_NAMES, newFight, joinFight, applyHit, applyCrystalHit, stepBrain, stateOf, damageChart, topDealers, DAMAGE_CHART_MAX, HIT_KINDS, COURTS, GATE_FIGHTERS_MAX, ATTACKS } from '../src/net/gateBrain.js';
+import { PHASE_NAMES, newFight, joinFight, applyHit, applyCrystalHit, stepBrain, stateOf, damageChart, topDealers, DAMAGE_CHART_MAX, HIT_KINDS, COURTS, GATE_FIGHTERS_MAX, ATTACKS } from '../src/net/gate/gateBrain.js';
 import { validGateOut, GATE_CHART_MAX, GATE_TOP_MAX, RELAY_VERSION } from '../src/net/wire.js';
-import { foldGate, createGateLink, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { foldGate, createGateLink, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   damageChartModel, drawGateDamageChart, destroyGateDamageChart, chartNumber, chartShare,
   DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS, DAMAGE_CHART_FADE_MS, DAMAGE_CHART_ROWS, DAMAGE_CHART_TEXT, DAMAGE_CHART_CSS,

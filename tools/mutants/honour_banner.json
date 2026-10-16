@@ -46,7 +46,7 @@
   },
   {
     "name": "HONOUR-BANNER-the-hour-pops-nothing",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "          if (answer.data.titleNew === true) announce('title', SD_HONOUR_KEYS.title);\n",
     "new": "",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "HONOUR-BANNER-the-aura-pops-nothing",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "          if (answer.data.auraNew === true) announce('aura', SD_HONOUR_KEYS.aura);\n",
     "new": "",
     "tests": [

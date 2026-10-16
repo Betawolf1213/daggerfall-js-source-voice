@@ -20,19 +20,19 @@ import * as chapterLaw from '../src/net/npcChapterLaw.js';
 import { chapterSeasonLines } from '../src/net/chapterEvents.js';
 import { CHAPTER_NEWS, CHAPTER_EVENT_NEWS } from '../src/systems/livingWorld/lines.js';
 import { TITLE_TEXT } from '../src/ui/playerBadge.js';
-import { siegeHonourLine } from '../src/net/siegeLink.js';
+import { siegeHonourLine } from '../src/net/siege/siegeLink.js';
 import { chronicleLine } from '../src/net/townSeatLaw.js';
 import { eventTimerRows } from '../src/systems/eventTimers.js';
 import { MARKS_KINDS } from '../src/net/marksLaw.js';
-import { GUILD_POWERS, GUILD_RANK_NAMES } from '../src/net/guildLaw.js';
+import { GUILD_POWERS, GUILD_RANK_NAMES } from '../src/net/guild/guildLaw.js';
 import { HALL_POWERS } from '../src/net/hallLaw.js';
 import { WRIT_POWERS } from '../src/net/writLaw.js';
 import { SEAT_POWERS } from '../src/net/townSeatLaw.js';
-import { GUILD_RANK_ACTS, guildActRanks, guildRankActsOf, guildRankLines, GUILD_RANK_ACTS_NOTE } from '../src/net/guildPowers.js';
+import { GUILD_RANK_ACTS, guildActRanks, guildRankActsOf, guildRankLines, GUILD_RANK_ACTS_NOTE } from '../src/net/guild/guildPowers.js';
 import {
   createSocialPanel, GUILD_SILVER_LINE_WORDS, guildSilverLineText, guildKeepsOf, guildRealmGoldText, GUILD_PRIMER_LINES, GUILD_ELSEWHERE_TEXT, GUILD_KEEPS_HEAD,
 } from '../src/ui/socialPanel.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import { SocialState } from '../src/net/social.js';
 import { REFUSALS, accountRefusalText, accountGuilds } from '../src/net/accountClient.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
@@ -80,7 +80,7 @@ test('GUILD3a silver in every sentence a player reads - a siege\'s Honour, a str
   const daily = eventTimerRows({ now: T0 * 1000 }).find((r) => r.id === 'daily');
   assert.ok(daily, 'the daily reset row');
   assert.match(daily.detail, /rare hides, silver and Court writs/);
-  for (const f of ['src/net/siegeLink.js', 'src/systems/eventTimers.js']) assert.doesNotMatch(src(f), /[`'"][^`'"\n]*\b\d*\s*Marks\b[^`'"\n]*[`'"]/, f);
+  for (const f of ['src/net/siege/siegeLink.js', 'src/systems/eventTimers.js']) assert.doesNotMatch(src(f), /[`'"][^`'"\n]*\b\d*\s*Marks\b[^`'"\n]*[`'"]/, f);
 });
 
 // ─── GUILD3b: THE LEDGER SAYS WHICH WAY ─────────────────────────────

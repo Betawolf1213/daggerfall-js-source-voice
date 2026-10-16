@@ -1,14 +1,14 @@
 // ARENA4b (2026-10-03, the audit's last ARENA4 gap): THE CASUAL BOUT (Arena.md 7: "A casual bout (unranked) may run under
 // DUEL1's defender-resolved law"). Built refereed rather than defender-resolved - the hall's queue word with `u`, paired
-// only with another casual seeker (net/arenaLaw.js pairQueue), its offer, call, listing and `st` saying so, its room
-// owing no receipt (net/arenaBrain.js receiptsOwed) - so a casual bout is PVP-REF's bout all the same and counted nowhere:
+// only with another casual seeker (net/arena/arenaLaw.js pairQueue), its offer, call, listing and `st` saying so, its room
+// owing no receipt (net/arena/arenaBrain.js receiptsOwed) - so a casual bout is PVP-REF's bout all the same and counted nowhere:
 // no rating, no points, no record. Over fake sockets (test/fakeRoom.mjs) and the client's models headless.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeRooms } from './fakeRoom.mjs';
-import { ARENA_HALL, arenaBoutRoom, ARENA_FLOOR_CENTRE, ARENA_TICK_MS, pairQueue, validArenaIn, validArenaOut } from '../src/net/arenaLaw.js';
-import { foldHall, HALL_EMPTY } from '../src/net/arenaLink.js';
+import { ARENA_HALL, arenaBoutRoom, ARENA_FLOOR_CENTRE, ARENA_TICK_MS, pairQueue, validArenaIn, validArenaOut } from '../src/net/arena/arenaLaw.js';
+import { foldHall, HALL_EMPTY } from '../src/net/arena/arenaLink.js';
 import { onlineCards } from '../src/systems/arena/arenaBoard.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { COUNT_MS, callMs } from '../src/systems/arena/arenaBout.js';

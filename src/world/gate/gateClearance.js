@@ -2,7 +2,7 @@
 // GATE-CLEAR (2026-09-28, Mac: "the gate can spawn inside the rock geometry from world of daggerfall"; the field, on
 // Discord: "gate under the rock didnt go away stayed there") - World of Daggerfall's pieces keep off the Oblivion Gate.
 //
-// The gate's site is the clock's and the map files' (net/gateLaw.js rolls it; systems/gate/gateSite.js keeps it off every
+// The gate's site is the clock's and the map files' (net/gate/gateLaw.js rolls it; systems/gate/gateSite.js keeps it off every
 // location's neighbourhood and every spawned dungeon), and World of Daggerfall stands a site on 114,087 of the pixels left
 // - rock fields ~500 m across, mountains ~1.9 km, every model with its own collider (bible 03-World/World-Of-Daggerfall.md).
 // Nothing kept the two apart, so a day's gate could rise inside a boulder: its fire out of reach of the press and the step
@@ -18,7 +18,7 @@
 // (systems/online/onlineLane.js), so every client that sees a gate stands the same rock and refuses the same pieces.
 //
 // AUDIT WB12d (G12): THE FAITHFUL'S CIRCLE TOO. Each breach's rite stands 90-180 m off its gate in the gate's own pixel
-// (net/gateRite.js riteLocalOf - the day's alone), its braziers, tents and fire inside RITE_CLEAR_M: the same law keeps
+// (net/gate/gateRite.js riteLocalOf - the day's alone), its braziers, tents and fire inside RITE_CLEAR_M: the same law keeps
 // the rock off it, the same sweep turns with it.
 //
 // Everything here is in METRES, PIXEL-LOCAL to the pixel the caller names: x east, z north, (0, 0) its south-west corner
@@ -26,8 +26,8 @@
 // ABOVE: py - 1). Pure; a leaf apart from the two constants' homes.
 //
 // Not a DFU member: a port departure from World of Daggerfall 1:1, recorded on its page. Ledger A (WB).
-import { PIXEL_M } from '../../net/gateLaw.js';
-import { riteLocalOf } from '../../net/gateRite.js';
+import { PIXEL_M } from '../../net/gate/gateLaw.js';
+import { riteLocalOf } from '../../net/gate/gateRite.js';
 import { wodPiecewise, WOD_SITE_OBJECT_RADIUS_M } from '../road/roadClearance.js';
 
 /** The clearing about the gate's foot, metres: its stone (world/gate/gateModel.js GATE_HALF_W 7.7 either side, its spines'
@@ -37,7 +37,7 @@ import { wodPiecewise, WOD_SITE_OBJECT_RADIUS_M } from '../road/roadClearance.js
 export const GATE_CLEAR_M = 24;
 /** A flat's base is a point; it stands this much further off (a bush, a lamp - ROADS-CLEAR's 2 m). */
 export const WOD_FLAT_GATE_CLEAR_M = 2;
-/** AUDIT WB12d (G12): THE FAITHFUL'S CIRCLE KEEPS ITS OWN CLEARING (net/gateRite.js riteLocalOf - the day's, in the gate's
+/** AUDIT WB12d (G12): THE FAITHFUL'S CIRCLE KEEPS ITS OWN CLEARING (net/gate/gateRite.js riteLocalOf - the day's, in the gate's
  *  pixel): its braziers (world/riteModel.js RITE_BRAZIER_R 8.5), its tents (RITE_TENT_R 15, a tent's own reach beyond)
  *  and its fire - a boulder stood through the altar, and the faithful sprang inside the rock. BROKER-CAGE: and the Sigil
  *  Broker's cage (scenes/sigilBrokerPool.js CAGE_R 11.5, its own reach ~1.7). */
@@ -141,7 +141,7 @@ export function reachNearGate(reach, clear, px, py) {
 
 /**
  * THE SWEEP (the streamer's, scenes/world.js sweepGateClear - the late WoD sweep's shape): which built pixels are built
- * again when the clearing turns. The gate the clock is about turns at the last one's collapse (net/gateLaw.js gateAt),
+ * again when the clearing turns. The gate the clock is about turns at the last one's collapse (net/gate/gateLaw.js gateAt),
  * and every pixel built against another clearing is asked once: built again if the old clearing cost it a site or a
  * piece (`gateRefused` - the rock comes back), or if anything it stands reaches the new one (the rock goes); else marked
  * current, untouched. A pixel still building at the turn read the clearing at its pick, so it is asked as it publishes

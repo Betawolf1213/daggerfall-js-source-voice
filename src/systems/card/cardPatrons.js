@@ -1,7 +1,7 @@
 // @ts-check
 // CARDS4 (2026-10-07, bible/11-Multiplayer/Tavern-Cards.md section 14; Mac: "Yes, patrons play"): THE TAVERN'S PATRONS
 // AT THE CARD TABLE - pure, DOM-free. How a patron weighs his cards and what he does with them: no Daggerfall member
-// (Daggerfall has no card games), the port's own, played against the cards' law (net/cardLaw.js) exactly as a player is.
+// (Daggerfall has no card games), the port's own, played against the cards' law (net/card/cardLaw.js) exactly as a player is.
 //
 // THE WEIGHING. Before the flop, the Chen formula - the tabletop's own two-card score (high card, a pair doubled, suited,
 // the gap, the small connector), 20 for aces down to below nothing for seven-deuce - over 20. After it, the hand's
@@ -14,7 +14,7 @@
 // often he bets air, and the edge over the pot's odds he wants before he calls.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { rankOf, suitOf, freshDeck, bestHand, compareHands } from '../../net/cardLaw.js';
+import { rankOf, suitOf, freshDeck, bestHand, compareHands } from '../../net/card/cardLaw.js';
 import { drawBelow } from '../../net/dice.js';
 
 /** MEASURE (CARDS4): showdowns dealt per equity - 200 gives a share to about 3 points, at a few milliseconds a weighing. */
@@ -104,7 +104,7 @@ export function equity(hole, board, opponents, rand32, samples = EQUITY_SAMPLES,
 }
 
 /**
- * What a patron does with the action on him: `{type}` or `{type: 'raise', to}`, always one `legal` allows (net/cardLaw.js
+ * What a patron does with the action on him: `{type}` or `{type: 'raise', to}`, always one `legal` allows (net/card/cardLaw.js
  * legalActions). `view` is the hand as his seat sees it (viewFor); `temper` one of PATRON_TEMPERS.
  * @param {{view: any, seat: number, legal: any, temper: {play: number, raise: number, bluff: number, edge: number}, rand32: () => number, samples?: number}} p
  */

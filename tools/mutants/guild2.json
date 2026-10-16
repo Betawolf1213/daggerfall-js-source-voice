@@ -1,7 +1,7 @@
 [
   {
     "name": "GUILD2a-an-officer-renames",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "  rename: Object.freeze([0]),",
     "new": "  rename: Object.freeze([0, 1]),",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "GUILD2a-no-fortnight",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "export const GUILD_RENAME_COOLDOWN_S = 14 * 24 * 3600;",
     "new": "export const GUILD_RENAME_COOLDOWN_S = 0;",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "GUILD2b-the-guildmaster-limited",
-    "file": "src/net/guildVaultLaw.js",
+    "file": "src/net/guild/guildVaultLaw.js",
     "old": "if (rank === GUILD_RANK_MASTER || !grant",
     "new": "if (!grant",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "GUILD2b-the-limit-unread",
-    "file": "src/net/guildVaultLaw.js",
+    "file": "src/net/guild/guildVaultLaw.js",
     "old": "(s.limit === 0 || (takenToday | 0) < s.limit)",
     "new": "true",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "GUILD2b-the-reserve-never-undone",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "        return () => { if (whole) { if (!list.includes(item)) list.splice(Math.min(at, list.length), 0, item); } else item.stackCount += n; this.pack.changed(); };",
     "new": "        return () => {};",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "GUILD2b-the-taken-piece-unminted",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "try { this.pack.add(rec); this.pack.changed(); held = true; }",
     "new": "try { this.pack.changed(); held = true; }",
     "tests": [
@@ -251,7 +251,7 @@
   },
   {
     "name": "AUDIT-GUILD2-M3-a-failed-read-keeps-the-view",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "} else { this.vaultView = null; this.vaultError = r?.error ?? 'server';",
     "new": "} else { this.vaultError = r?.error ?? 'server';",
     "tests": [
@@ -260,7 +260,7 @@
   },
   {
     "name": "AUDIT-GUILD2-M3-taken-from-another-guilds-view",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    const seen = this.vaultNow()?.items",
     "new": "    const seen = this.vaultView?.items",
     "tests": [
@@ -332,7 +332,7 @@
   },
   {
     "name": "AUDIT2-GUILD2-K1-the-take-asked-as-any-act",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "      needsAnswer: true,\n      apply: (/** @type {any} */ a) => {\n        const rec = a?.data?.item;",
     "new": "      apply: (/** @type {any} */ a) => {\n        const rec = a?.data?.item;",
     "tests": [
@@ -341,7 +341,7 @@
   },
   {
     "name": "AUDIT2-GUILD2-K1-no-piece-taken-as-done",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "        if (!held) this.realm.abandon?.('unknown');",
     "new": "        void held;",
     "tests": [
@@ -350,7 +350,7 @@
   },
   {
     "name": "AUDIT2-GUILD2-K14-an-earlier-read-shown",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    if (gen !== this._vaultGen) return r;",
     "new": "    void gen;",
     "tests": [
@@ -359,7 +359,7 @@
   },
   {
     "name": "AUDIT2-GUILD2-K15-a-piece-not-held-said-as-a-count",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    if (pick < 0) return { ok: false, error: 'vault-goods' };",
     "new": "    if (pick < 0) return { ok: false, error: 'bad-vault-count' };",
     "tests": [
@@ -368,7 +368,7 @@
   },
   {
     "name": "AUDIT2-GUILD2-S2-why-dropped-by-the-book",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "error: r?.error ?? 'server', ...(typeof r?.why === 'string' ? { why: r.why } : {}), ...(Number.isSafeInteger(r?.at) ? { at: r.at } : {}),",
     "new": "error: r?.error ?? 'server',",
     "tests": [
@@ -431,7 +431,7 @@
   },
   {
     "name": "AUDIT2-GUILD2-S6-no-limit-for-none-named",
-    "file": "src/net/guildVaultLaw.js",
+    "file": "src/net/guild/guildVaultLaw.js",
     "old": "  const limit = asked == null ? (level === 'withdraw' ? VAULT_GRANT_LIMIT : 0) : asked;",
     "new": "  const limit = asked == null ? 0 : asked;",
     "tests": [

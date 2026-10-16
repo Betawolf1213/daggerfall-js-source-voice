@@ -137,7 +137,7 @@ test('GOTHWAY-BOARDS: Gothway Garden alone; two boards at the NORTH entrance, on
 });
 
 import { wildGiantsAt, WILD_GIANT_COUNT, WILD_GIANT_LEG_MS, wildGiantRing } from '../src/systems/wild/wildGiants.js';
-import { wdunEmpty, wdunGiantDie, wdunGiants, wdunState, wdunPrune, WDUN_GIANT_DOWN_MS } from '../src/net/wildLaw.js';
+import { wdunEmpty, wdunGiantDie, wdunGiants, wdunState, wdunPrune, WDUN_GIANT_DOWN_MS } from '../src/net/wild/wildLaw.js';
 import { validWdunIn, validWdunOut } from '../src/net/wire.js';
 import { wildRingAt } from '../src/systems/wild/wildZone.js';
 

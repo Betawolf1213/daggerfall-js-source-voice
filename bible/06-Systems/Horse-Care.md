@@ -98,7 +98,7 @@ on Hard, held to [1, 100] (`steedStats`).
 
 Grown by feeding: a day's food is three points (DAY_BOND_TENTHS 30), times the food's love. Its word: Wary (0),
 Accepting (15), Familiar (35), Trusting (55), Devoted (75), Kindred (95). A Kindred horse is twenty points better on
-every stat than the one bought. The bond is its OWNER's: `net/realmTradeLaw.js` RECEIVER_MARKS strips it from a
+every stat than the one bought. The bond is its OWNER's: `net/realm/realmTradeLaw.js` RECEIVER_MARKS strips it from a
 traded horse, so it comes to its next owner a stranger. So is its food's clock (`horseFed` is a minute of its owner's
 character's clock, AUDIT STEED1 - a buyer a year behind would have had it fed a year ahead): it comes fed as a horse
 first seen, and a minute's grazing never makes an offered horse's record mismatch its checkpoint.
@@ -237,7 +237,7 @@ What reads the gait:
   walk and my gallop as I do. The wire is unchanged; an older client swaps on the edge alone.
 - **The 3D horse** (`06-Systems/Horse-Coats.md`, The 3D horse): a slow ride never gallops (`world/horseModel.js`
   gaitFor's `gallops`) - the player's off the host's word (`horse.slow`, `player/mwView.js`), a peer's off its pose's
-  `hs` (`net/peerBodies.js`). Daggerfall's walk stands on the gallop's own edge, inside its hold either way, so the gait
+  `hs` (`net/peer/peerBodies.js`). Daggerfall's walk stands on the gallop's own edge, inside its hold either way, so the gait
   was its history's: a trot from a stand, a slow-motion gallop after a gallop. Held under, it trots - the Courser's
   stride that carries 5 m/s (its walk covers 0.67).
 - **Eye Of The Beholder's rider** draws MoveHorse at the walk and GallopHorse at the gallop, by its own speed law.

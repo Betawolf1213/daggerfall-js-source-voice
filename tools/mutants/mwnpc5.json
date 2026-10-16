@@ -145,7 +145,7 @@
  },
  {
   "name": "MWNPC5-lane-drops-fxof",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": ", fx, cast, anchored, horse })",
   "new": ", fx: null, cast, anchored, horse })",
   "tests": [
@@ -154,7 +154,7 @@
  },
  {
   "name": "MWNPC5-lane-fxof-unkept",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    c.fxOf = fxOf;   // MWNPC5",
   "new": "    c.fxOf = null;   // MWNPC5",
   "tests": [

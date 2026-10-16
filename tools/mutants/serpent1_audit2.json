@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-SERPENT-2-F2-kept-twice",
-    "file": "src/net/serpentBody.js",
+    "file": "src/net/serpent/serpentBody.js",
     "old": "  if (last && same(last, entry)) return list.length !== had;",
     "new": "  if (false) return list.length !== had;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "AUDIT-SERPENT-2-F2-relay-keeps-the-duplicate",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  if (!onTimeline(f.modes, d, sameMode)) return;\n",
     "new": "  if (!onTimeline(f.modes, d, () => false)) return;\n",
     "tests": [
@@ -22,7 +22,7 @@
   },
   {
     "name": "AUDIT-SERPENT-2-F2-client-asks-before-the-rule",
-    "file": "src/net/serpentLink.js",
+    "file": "src/net/serpent/serpentLink.js",
     "old": "      if (!onTimeline(modes, { at: w.at, m: w.m }, sameMode)) return s;\n",
     "new": "      if (s.modes.some((d) => d.at === w.at && d.m === w.m)) return s;\n      if (!onTimeline(modes, { at: w.at, m: w.m }, sameMode)) return s;\n",
     "tests": [
@@ -52,7 +52,7 @@
   },
   {
     "name": "AUDIT-SERPENT-2-F5-far-share-brought",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  if (near) { f.max += share; f.hp += share * frac; }",
     "new": "  f.max += share; f.hp += share * frac;",
     "tests": [
@@ -62,7 +62,7 @@
   },
   {
     "name": "AUDIT-SERPENT-2-F5-far-seen-now",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "seenAt: near ? now : now - SERPENT_ABSENT_RETIRE_MS - 1,",
     "new": "seenAt: now,",
     "tests": [
@@ -72,7 +72,7 @@
   },
   {
     "name": "AUDIT-SERPENT-2-F5-far-not-retired",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "retired: !near,",
     "new": "retired: false,",
     "tests": [
@@ -103,7 +103,7 @@
   },
   {
     "name": "AUDIT-SERPENT-2-F7-ram-past-its-reach",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "phase: 1, range: 170, minGap: 60, w: 2 }),",
     "new": "phase: 1, range: 240, minGap: 60, w: 2 }),",
     "tests": [

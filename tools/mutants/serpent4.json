@@ -1,7 +1,7 @@
 [
   {
     "name": "SERPENT4-admission-closed-at-the-storm",
-    "file": "src/net/serpentLaw.js",
+    "file": "src/net/serpent/serpentLaw.js",
     "old": "return isSerpentDay(day) && nowMs >= t.riseAt && nowMs < t.soundAt; };",
     "new": "return isSerpentDay(day) && nowMs >= t.riseAt && nowMs < t.sealAt; };",
     "tests": [
@@ -12,7 +12,7 @@
   },
   {
     "name": "SERPENT4-countdown-to-the-storm",
-    "file": "src/net/serpentLaw.js",
+    "file": "src/net/serpent/serpentLaw.js",
     "old": "if (phase === 'rising' || phase === 'hunt' || phase === 'late') return { to: 'sound', ms: Math.max(0, t.soundAt - nowMs) };",
     "new": "if (phase === 'rising' || phase === 'hunt') return { to: 'seal', ms: Math.max(0, t.sealAt - nowMs) };\n  if (phase === 'late') return { to: 'sound', ms: Math.max(0, t.soundAt - nowMs) };",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "SERPENT4-the-old-health",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "export const SERPENT_TTK_S = 150;",
     "new": "export const SERPENT_TTK_S = 180;",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "SERPENT4-the-old-girth",
-    "file": "src/net/serpentBody.js",
+    "file": "src/net/serpent/serpentBody.js",
     "old": "export const SERPENT_GIRTH = 1.6;",
     "new": "export const SERPENT_GIRTH = 1;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "SERPENT4-a-dealers-bar-for-a-stander",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "return (share > 0 && p.dealt >= SERPENT_PART_SHARE * share) || p.stoodMs >= SERPENT_STOOD_SHARE * fight;",
     "new": "return (share > 0 && p.dealt >= SERPENT_RECEIPT_SHARE * share) || p.stoodMs >= SERPENT_STOOD_SHARE * fight;",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "SERPENT4-the-old-stand",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "export const SERPENT_STOOD_SHARE = 0.25;",
     "new": "export const SERPENT_STOOD_SHARE = 0.5;",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "SERPENT4-the-old-reach-of-the-stand",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "export const SERPENT_STAND_R = 600;",
     "new": "export const SERPENT_STAND_R = 450;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "SERPENT4-the-kin-counting-an-earner",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "(p.stoodMs > 0 || p.dealt > 0) && !serpentEarned(f, sub))",
     "new": "(p.stoodMs > 0 || p.dealt > 0))",
     "tests": [
@@ -228,7 +228,7 @@
   },
   {
     "name": "SERPENT4-a-hands-blow-on-the-ships-purse",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const ref = hand ? SERPENT_HAND_REF : p.ref;",
     "new": "const ref = p.ref;",
     "tests": [
@@ -237,7 +237,7 @@
   },
   {
     "name": "SERPENT4-a-captains-arrows-heard",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  if (hand && serpentOnShip(p)) return out;   // SERPENT4: a captain's purse is her guns\n",
     "new": "",
     "tests": [
@@ -246,7 +246,7 @@
   },
   {
     "name": "SERPENT4-the-hands-reach-a-guns",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const reach = (hand ? SERPENT_HAND_REACH_M : GUN_REACH_M) + SERPENT_POSE_SLACK;",
     "new": "const reach = GUN_REACH_M + SERPENT_POSE_SLACK;",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "SERPENT4-a-hands-part-unmeasured",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const partOf = (p) => (p.share > 0 ? p.share : p.hd > 0 ? SERPENT_HAND_SHARE : 0);",
     "new": "const partOf = (p) => p.share;",
     "tests": [

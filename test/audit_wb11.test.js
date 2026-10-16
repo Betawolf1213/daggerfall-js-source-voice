@@ -9,8 +9,8 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import * as GB from '../src/net/gateBrain.js';
-import * as GL from '../src/net/gateLink.js';
+import * as GB from '../src/net/gate/gateBrain.js';
+import * as GL from '../src/net/gate/gateLink.js';
 import * as GH from '../src/scenes/gateHost.js';
 import * as GBoss from '../src/world/gate/gateBoss.js';
 import * as W from '../src/net/wire.js';
@@ -22,11 +22,11 @@ import { stateAnims, HURT_ANIMS, MOVE_ANIMS, mobileOrientation, FLY_ANIM_SPEED }
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { DAMAGE_CHART_CSS } from '../src/ui/gateDamageChart.js';
 import { MARK_TIPS } from '../src/ui/gateMarksView.js';
-import { GATE_TRIALS } from '../src/net/gateMods.js';   // WB13b
+import { GATE_TRIALS } from '../src/net/gate/gateMods.js';   // WB13b
 import { bossBarModel, destroyGateBossBar } from '../src/ui/gateBossBar.js';
 import { destroyGateMarksCard } from '../src/ui/gateMarksView.js';
 import { destroyGateGround } from '../src/ui/gateGroundView.js';
-import { marksLine, gateModsOf, gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
+import { marksLine, gateModsOf, gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { fakeRooms } from './fakeRoom.mjs';
 
 const { HOST, COURTS, COURT_CENTRE, HIT_KINDS, ATTACKS } = GB;

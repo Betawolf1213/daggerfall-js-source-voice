@@ -4,7 +4,7 @@
 // bible/11-Multiplayer/World-Bosses.md section 7 ("The roll").
 //
 // PER PLAYER, AND THE SEED'S OWN. The receipt the relay signs for an account that earned the kill carries a loot seed
-// (`c`, 32 bits of the relay's CSPRNG - net/gateReceipt.js), and everything here is rolled on `seededRng(c)`
+// (`c`, 32 bits of the relay's CSPRNG - net/gate/gateReceipt.js), and everything here is rolled on `seededRng(c)`
 // (systems/wind/wind.js): every player's spoils are their own. The roll reads the player's world as well as the seed (the
 // Unleveled Loot formula, the registered custom pieces), so what was rolled is what is kept - scenes/spoilsPool.js
 // records the pieces themselves, never the seed alone.
@@ -71,7 +71,7 @@ export const isSigilStone = (item) => item?.templateIndex === SIGIL_STONE_TEMPLA
 /** LOOT9 (the Loot arc, bible/06-Systems/Loot-Arc.md section 11): THE WELKYND SHARD - a sliver of Ayleid
  *  magicka-crystal, what a laddered piece is salvaged into and the Reforge's only coin (systems/reforge.js). Its own row
  *  beside the Stone's, on the Stone's laws: it stacks with its own kind alone, and it is BOUND - never sold, traded,
- *  dropped or listed (systems/item/itemBound.js; net/realmTradeLaw.js BOUND_TEMPLATES names it). The Sapphire's art
+ *  dropped or listed (systems/item/itemBound.js; net/realm/realmTradeLaw.js BOUND_TEMPLATES names it). The Sapphire's art
  *  (TEXTURE.254 record 2): a Welkynd stone's blue. */
 export const WELKYND_SHARD_TEMPLATE = 571;
 export const WELKYND_SHARD = Object.freeze({ name: 'Welkynd Shard', value: 250 });
@@ -95,7 +95,7 @@ export function welkyndShards(n = 1) {
 }
 /** PORTAL1 (systems/portalStone.js): THE PORTAL STONE - what the shards buy at every shop's counter, one portal a stone.
  *  Its own row beside the shard's, on the same laws: it stacks with its own kind alone, and it is BOUND (the shards that
- *  bought it are, so it never carries their worth to another player; net/realmTradeLaw.js BOUND_TEMPLATES names it). Its
+ *  bought it are, so it never carries their worth to another player; net/realm/realmTradeLaw.js BOUND_TEMPLATES names it). Its
  *  price is the shards' (PORTAL_STONE_SHARDS of them at the shard's value). The Diamond's art (TEXTURE.254 record 3) -
  *  but NOT a gem's group: every Gems piece is a crystal a slot takes (equipTable.js getEquipSlot), so a stone in it was
  *  worn from the hotbar and the pack. It is miscellany (UselessItems2), as the rest supplies are (restItems.js). */

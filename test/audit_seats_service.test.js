@@ -18,13 +18,13 @@ import {
 } from '../src/net/townSeatLaw.js';
 import { MARKS_MAX, utcDay } from '../src/net/marksLaw.js';
 import { _b64url } from '../src/net/identityToken.js';
-import { SIEGE_RECEIPT_V, SIEGE_RECEIPT_TTL_S, verifySiegeReceipt } from '../src/net/siegeReceipt.js';
+import { SIEGE_RECEIPT_V, SIEGE_RECEIPT_TTL_S, verifySiegeReceipt } from '../src/net/siege/siegeReceipt.js';
 import { mintWatchReceipt } from '../src/net/watchReceipt.js';
-import { mintReceipt } from '../src/net/gateReceipt.js';
-import { gameDayAt, gateTimes } from '../src/net/gateLaw.js';
+import { mintReceipt } from '../src/net/gate/gateReceipt.js';
+import { gameDayAt, gateTimes } from '../src/net/gate/gateLaw.js';
 import { settleWeek, settleDue, seatBadgeOf, INFLUENCE_KEPT_WEEKS } from '../server-account/src/seatTurning.js';
 import { gatherStandings } from '../server-account/src/seatInfluence.js';
-import { siegeClaimSettles } from '../src/net/siegeClaims.js';
+import { siegeClaimSettles } from '../src/net/siege/siegeClaims.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 
 const { subtle } = globalThis.crypto;
@@ -43,7 +43,7 @@ const START = S(siegeStartMs(W + 1, 0, 20));   // the default window, Wednesday 
 const enc = new TextEncoder();
 
 /** A siege receipt minted as the relay mints one, with the Throne's `th` carried in the signed claims (the mint helper of
- *  net/siegeReceipt.js names only the fields it knew - AUDIT-SEATS T1's `th` is the relay half's to add there). */
+ *  net/siege/siegeReceipt.js names only the fields it knew - AUDIT-SEATS T1's `th` is the relay half's to add there). */
 async function mintSiege(claims, key, nowS) {
   const c = { ...claims, i: nowS, e: nowS + SIEGE_RECEIPT_TTL_S };
   const body = _b64url.encode(enc.encode(JSON.stringify(c)));

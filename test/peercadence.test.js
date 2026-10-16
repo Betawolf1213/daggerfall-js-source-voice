@@ -11,7 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { PeerBodies, POSE_CADENCE, poseCadenceFor, BODY_RANGE } from '../src/net/peerBodies.js';
+import { PeerBodies, POSE_CADENCE, poseCadenceFor, BODY_RANGE } from '../src/net/peer/peerBodies.js';
 import { createFpArm } from '../src/combat/fpArm.js';
 import { fixtureBodyDeps, countingRenderer } from './fixtures/mw/bodyRig.mjs';
 
@@ -259,7 +259,7 @@ test('PEER-CADENCE: by source - the clips advance ABOVE the pose gate, the parti
   assert.match(upd, /if \(pose\) \{\s*posePartClocks\(t\.arm, [^\n]*\n\s*poseAssembly\(t\.arm, \{[\s\S]*?\}\);\s*uploadThirdMesh\(t\);[\s\S]*?stepRigEffects\(t\.arm, \{ dt: effectsDt,[\s\S]*?frames\+\+;[^\n]*\n\s*\}\s*if \(!thirdMesh\) return;[^\n]*\n[\s\S]*?for \(const r of thirdMesh\.ranges\) \{/, 'skin, upload, particles on the banked dt and the frame count inside the gate; the hidden loop outside it, guarded for a mesh that was never minted');
   const fp = upd.slice(upd.indexOf('const fBase = poseSource'), upd.indexOf('frames++', upd.indexOf('const fBase = poseSource')));
   assert.doesNotMatch(fp, /if \(pose\)|if \(!pose\)|\bpose \?|effectsDt/, 'the first-person branch never reads the flag or the bank');
-  const pb = rd('src/net/peerBodies.js');
+  const pb = rd('src/net/peer/peerBodies.js');
   assert.match(pb, /export const POSE_CADENCE = \[\[10, 1\], \[25, 2\], \[Infinity, 3\]\];/);
   assert.match(pb, /const must = !b\.posed \|\| !\(b\.rig\.thirdActive\?\.\(\) \?\? true\);/, 'a body with no skin to keep poses (AUDIT PEER-CADENCE F3)');
   assert.match(pb, /\(this\._frame \+ b\.phase\) % poseCadenceFor\(b\.d2\) === 0 \? 1 : 0;/, 'otherwise the phase-staggered cadence on the MODULE\'s frame at this frame\'s distance (AUDIT PEER-CADENCE F1) - WB9h: ranked for the skin budget, a body out of the view skinning nothing');

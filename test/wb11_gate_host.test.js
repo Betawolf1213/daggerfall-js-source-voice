@@ -1,15 +1,15 @@
 // WB11 (2026-10-01 - Mac, offered adds in three kinds and asked four questions: "1. All three 2. Your choice 3. Your
 // choice 4. Trial rotation"): HIS HOST - the Legion-Lord trial. The ninth trial in the marks' rotation (rebuilt for nine,
-// net/gateLaw.js - its own pins are WB8b's) brings the bodies the relay runs beside him: the HARRIERS of the first phase
+// net/gate/gateLaw.js - its own pins are WB8b's) brings the bodies the relay runs beside him: the HARRIERS of the first phase
 // (Imps at whoever stands farthest from him, Biting), the SAPPERS of the second (Atronachs walking at him - one that
 // reaches him is drunk and heals him), the WARD-BEARERS of each new court (his ward holds while one stands; they Pulse
 // at whoever comes near). Nothing of it runs, rolls or is said without the trial.
 //
-//   the tables      net/gateMods.js `legion`; net/gateBrain.js HOST_KINDS, HOST_BLOWS, the counts and the health
-//   the brain       net/gateBrain.js stepHost (waves, walks, blows, the drinking), the bearers' wait, applyHostHit
+//   the tables      net/gate/gateMods.js `legion`; net/gate/gateBrain.js HOST_KINDS, HOST_BLOWS, the counts and the health
+//   the brain       net/gate/gateBrain.js stepHost (waves, walks, blows, the drinking), the bearers' wait, applyHostHit
 //   the wire        `ahit`; `ad`, `amv`, `aatk`, `ah`, `adie`; the state's `lg`; the chart row's `a`; the brain's law 5
 //   the relay       a blow on one of his host judged as it comes, its fall said to the court at once
-//   the link        net/gateLink.js - the host folded, the gone kept for the court to play out
+//   the link        net/gate/gateLink.js - the host folded, the gone kept for the court to play out
 //   the court       scenes/gateHost.js through scenes/gateCourt.js - bodies, blows judged on me, words, the targets
 //   the look        world/gate/gateBoss.js hostLookOf, hostAct, hostCue, hostStandIn
 //   the bar         ui/gateBossBar.js - the Ward-Bearers standing, his host counted
@@ -27,12 +27,12 @@ import {
   SAP_REACH_SLACK, BEARER_RING_R, BEARER_WARD_MAX_MS, BEARER_PULSE_MS, BEARER_PULSE_NEAR, HARRIER_BITE_REACH,
   harrierCountFor, sapperCountFor, bearerCountFor, harrierHpFor, hostTeamHpFor, hostBlowUnder, hostAt, hostStateOf, dpsRef,
   newFight, joinFight, stepBrain, applyHit, applyHostHit, stateOf, fightProfile, BASE_PROFILE, damageChart,
-} from '../src/net/gateBrain.js';
-import { GATE_TRIALS, gateTrialOf } from '../src/net/gateMods.js';
+} from '../src/net/gate/gateBrain.js';
+import { GATE_TRIALS, gateTrialOf } from '../src/net/gate/gateMods.js';
 import { validGateIn, validGateOut, GATE_HOST_MAX, GATE_HOST_KINDS, GATE_HOST_GONE, GATE_BRAIN_V, GATE_KINDS, GATE_OUT_KINDS } from '../src/net/wire.js';
-import { foldGate, GATE_STATE_EMPTY, HOST_GONE_KEPT } from '../src/net/gateLink.js';
-import { hostVerdict, hostTelegraphAt, STRIKE_LATE_MS } from '../src/net/gateStrike.js';
-import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
+import { foldGate, GATE_STATE_EMPTY, HOST_GONE_KEPT } from '../src/net/gate/gateLink.js';
+import { hostVerdict, hostTelegraphAt, STRIKE_LATE_MS } from '../src/net/gate/gateStrike.js';
+import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { hostLookOf, hostAct, hostFallAct, hostCue, hostStandIn, HOST_LOOKS, HOST_FALL_MS, BOSS_ARMOR, WARD_COLOR } from '../src/world/gate/gateBoss.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';

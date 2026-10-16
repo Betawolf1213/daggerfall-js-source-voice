@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { bodyParts, vampireHeadRecord, playerBodyRows, extractArmRecords, isArmRecords, ARM_RECORDS_VERSION } from '../src/formats/mwFirstPerson.js';
 import { buildFpArm } from '../src/combat/fpArm.js';
-import { peerBuildOpts, peerBodyKey } from '../src/net/peerBodies.js';
+import { peerBuildOpts, peerBodyKey } from '../src/net/peer/peerBodies.js';
 import { foeActor, isPersonFoe, rosterLook, VAMPIRE_MOBILES } from '../src/characters/foeBodies.js';
 import { residentLook } from '../src/characters/rosterBodies.js';
 import { CREATURE_MATCH } from '../src/characters/creatureBodies.js';

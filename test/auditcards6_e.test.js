@@ -38,7 +38,7 @@ import { liveStat } from '../src/systems/statMods.js';
 import { attachTouch } from '../src/ui/touch.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { HOLDEM_FIRST_MS, newTable, sit, tableLook } from '../src/net/holdemTable.js';
-import { STARTER_DECK } from '../src/net/iliacCards.js';
+import { STARTER_DECK } from '../src/net/iliac/iliacCards.js';
 import { relaySupportsHoldem, HOLDEM_RELAY_MIN, RELAY_VERSION } from '../src/net/wire.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { SEAT_HIP_DROP } from '../src/player/seatPose.js';

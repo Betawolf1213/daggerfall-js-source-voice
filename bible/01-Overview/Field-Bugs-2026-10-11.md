@@ -13,7 +13,7 @@ card tables UI needs to be enhanced".
 
 ## CARDS-KEPT: the stakes book kept on the device's own store (1)
 
-`net/cardStakes.js` keeps a realm character's stakes and receipts as JSON through `storage.get`/`storage.set` - the
+`net/card/cardStakes.js` keeps a realm character's stakes and receipts as JSON through `storage.get`/`storage.set` - the
 `{get, set}` store every suite built it over. `scenes/world.js` handed it `appStorage()`, the device's localStorage, which
 has `getItem`/`setItem` and neither of those: `read` threw and answered `[]`, `write` threw into its catch, and `stake`'s
 check that the request was KEPT before it is asked (AUDIT CARDS-4 C6 - a lost answer must have a record to void it by)

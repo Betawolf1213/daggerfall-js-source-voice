@@ -846,7 +846,7 @@ Mac: "Do the not done." The record is `06-Systems/Professions-Arc.md` section 45
 
 - **The same clips, the same beats.** A peer's act rides their pose (RELAY_VERSION world200: the act, its beats, the
   net's throw), and the beats the pose counts are the gatherer's own ear's law (`actBeats`) - so the others hear what
-  the gatherer hears. `net/peerGather.js` PeerGatherSounds says them positional through `play3d`, with the peers' own
+  the gatherer hears. `net/peer/peerGather.js` PeerGatherSounds says them positional through `play3d`, with the peers' own
   falloff (`net/remotePlayers.js` PEER_SOUND_PROFILE - full inside 6 m, silent past 30), at the act's place: a metre
   before the body at the hands' height, the net's sounds where it landed (the throw's metres along the way the body
   faces).

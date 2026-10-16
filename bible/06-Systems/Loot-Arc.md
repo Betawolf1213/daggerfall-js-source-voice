@@ -604,7 +604,7 @@ doors in play (sixty bodies taken, sixty counted; three times the Legendaries at
 
 **The Welkynd Shard** (`systems/gate/gateSpoils.js`, template 571 beside the Sigil Stone's 570): `WELKYND_SHARD_TEMPLATES`,
 a gem's row that stacks with its own kind alone and is BOUND - so itemBound.js's whole law holds it (never sold, traded,
-dropped or listed) and the realm's service refuses it too (`net/realmTradeLaw.js` `BOUND_TEMPLATES` now `[570, 571]`,
+dropped or listed) and the realm's service refuses it too (`net/realm/realmTradeLaw.js` `BOUND_TEMPLATES` now `[570, 571]`,
 AUDIT REALM F1's pin reading the new row). The Sapphire's art (TEXTURE.254 record 2). `welkyndShards(n)` mints a stack.
 
 **`systems/reforge.js`** (new) holds every law the faces call:

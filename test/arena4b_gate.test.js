@@ -12,9 +12,9 @@ import { createArenaGate, recruiterChoiceOnline } from '../src/scenes/arenaGate.
 import { createArenaOnline, CLIMB_WAIT_MS } from '../src/scenes/arenaOnline.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { arenaLadderOf, ARENA_FLOOR_CENTRE } from '../src/net/arenaLaw.js';
-import { mintArenaReceipt } from '../src/net/arenaReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { arenaLadderOf, ARENA_FLOOR_CENTRE } from '../src/net/arena/arenaLaw.js';
+import { mintArenaReceipt } from '../src/net/arena/arenaReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 import * as LG from '../src/systems/arena/arenaLeague.js';
 import { newArenaLadder, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';

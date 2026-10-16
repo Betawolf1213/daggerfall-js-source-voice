@@ -100,7 +100,7 @@
   },
   {
     "name": "SD11b-L3F4-no-grace",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  if (p === 'gone' && rec.ph === 'found' && now < rec.until + SD_FADE_GRACE_MS) return { act: null, at: rec.until + SD_FADE_GRACE_MS };",
     "new": "  void 0;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD11b-L3F4-a-grace-for-the-unfound",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "if (p === 'gone' && rec.ph === 'found' && now < rec.until + SD_FADE_GRACE_MS)",
     "new": "if (p === 'gone' && rec.ph !== 'gone' && rec.s && rec.fellAt == null && now < rec.until + SD_FADE_GRACE_MS)",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD11b-L7M2-seen-anywhere",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "if (p && inArena(b.x, b.z, SD_ARENA_SLACK)) { p.seenAt = now; restoreShare(f, p); }",
     "new": "if (p) { p.seenAt = now; restoreShare(f, p); }",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SD11b-L6F24-every-seat-counted",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "n: Object.values(f.players).filter((p) => !p.retired).length",
     "new": "n: Object.keys(f.players).length",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "SD11b-L7H2-law-held-alone-too",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": "  for (const [k, v] of Object.entries(R.by)) if (k !== who && now - v.at < SD_TURN_COMPANY_MS) return false;\n  return true;",
     "new": "  return false;",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "SD11b-L7H2-law-company-forgotten",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": "if (k !== who && now - v.at < SD_TURN_COMPANY_MS) return false;",
     "new": "if (k !== who) return false;",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "SD11b-L7H2-law-the-menders-lashed",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": ".filter(([, net]) => net >= 0)",
     "new": ".filter(() => true)",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "SD11b-L7H2-law-the-long-way-uncounted",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": "  if (after > road) me.long++;",
     "new": "  void 0;",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "SD11b-L7H2-law-the-thread-unbounded",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": "  if (!me || me.long < SD_TURN_LONG_MAX) return true;",
     "new": "  if (!me || me.long < SD_TURN_LONG_MAX * 4) return true;",
     "tests": [

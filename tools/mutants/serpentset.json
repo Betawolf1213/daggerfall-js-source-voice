@@ -153,7 +153,7 @@
   },
   {
     "name": "SERPENT-SET-two-embers",
-    "file": "src/net/serpentHoardLaw.js",
+    "file": "src/net/serpent/serpentHoardLaw.js",
     "old": "export const SERPENT_EMBERS = 1;",
     "new": "export const SERPENT_EMBERS = 2;",
     "why": "a stack of two",
@@ -375,7 +375,7 @@
   },
   {
     "name": "SERPENT-SET-carrier-lines-unsaid",
-    "file": "src/net/serpentClaims.js",
+    "file": "src/net/serpent/serpentClaims.js",
     "old": "          for (const line of Array.isArray(lines) ? lines : [lines]) if (typeof line === 'string' && line) say(line);\n",
     "new": "",
     "why": "the lines handed back and never said",
@@ -385,7 +385,7 @@
   },
   {
     "name": "SERPENT-SET-carrier-throw",
-    "file": "src/net/serpentClaims.js",
+    "file": "src/net/serpent/serpentClaims.js",
     "old": "try { lines = onMarks(answer.data); } catch (err) { console.warn('[serpent] silver lines', err?.message ?? err); }",
     "new": "lines = onMarks(answer.data);",
     "why": "a host's throw breaks the claim",

@@ -22,28 +22,28 @@
   },
   {
     "name": "RAID1-roll-town-not-struck-off",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "    g.towns.splice(j, 1);\n",
     "new": "",
     "tests": ["test/raid1_raidingParties.test.js", "test/raidroll.test.js"]
   },
   {
     "name": "RAID1-roll-emptied-region-kept",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "    if (g.towns.length === 0) lists.splice(i, 1);\n",
     "new": "",
     "tests": ["test/raid1_raidingParties.test.js", "test/raidroll.test.js"]
   },
   {
     "name": "RAID1-roll-start-span-short",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "    if (g.towns.length === 0) lists.splice(i, 1);\n    const st = day * RAID_DAY_MINUTES + rangeInt(0, RAID_START_LAST + 1, random);",
     "new": "    if (g.towns.length === 0) lists.splice(i, 1);\n    const st = day * RAID_DAY_MINUTES + rangeInt(0, RAID_START_LAST, random);",
     "tests": ["test/raid1_raidingParties.test.js", "test/raidroll.test.js"]
   },
   {
     "name": "RAID1-roll-two-parties",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "    const ty = rangeInt(0, RAID_TYPES, random);\n    const tg = rangeInt(RAID_TARGET_MIN, RAID_TARGET_MAX + 1, random);\n    out.push(",
     "new": "    const ty = rangeInt(0, RAID_TYPES - 1, random);\n    const tg = rangeInt(RAID_TARGET_MIN, RAID_TARGET_MAX + 1, random);\n    out.push(",
     "tests": ["test/raid1_raidingParties.test.js", "test/raidroll.test.js"]
@@ -57,21 +57,21 @@
   },
   {
     "name": "RAID1-roll-target-to-24",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "    const tg = rangeInt(RAID_TARGET_MIN, RAID_TARGET_MAX + 1, random);\n    out.push(",
     "new": "    const tg = rangeInt(RAID_TARGET_MIN, RAID_TARGET_MAX, random);\n    out.push(",
     "tests": ["test/raid1_raidingParties.test.js", "test/raidroll.test.js"]
   },
   {
     "name": "RAID1-pace-three-hours",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "* RAID_GAME_DAY_HOURS) / RAID_REGION_HOURS);",
     "new": "* RAID_GAME_DAY_HOURS) / 3);",
     "tests": ["test/raid1_raidingParties.test.js", "test/raidroll.test.js"]
   },
   {
     "name": "RAID1-fix1-the-prices'-salt",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "export const RAID_DAY_SALT = 5;",
     "new": "export const RAID_DAY_SALT = 1;",
     "tests": ["test/raid1_raidingParties.test.js", "test/raidroll.test.js"]

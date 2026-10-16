@@ -799,7 +799,7 @@ slots"*.
 - **The relay.** It projects `eo` through `validLook`, clamped as every field
   is. RELAY_VERSION goes to world106, which the relay deploy workflow ships on
   merge.
-- **Others draw it** (`net/peerRiders.js createPeerWalkers`, beside the
+- **Others draw it** (`net/peer/peerRiders.js createPeerWalkers`, beside the
   riders and sharing one art store, `createEotbArt`):
   - The set is drawn off the shown pose, with the same eight views and tables
     as the player's own body. The move bit walks it, a drawn weapon or
@@ -972,7 +972,7 @@ this is the only Morrowind-looking werewolf in the port. (WEREWOLF1, 2026-09-26,
 `04-Characters/Werewolf-Body.md`.)
 
 **Cause.** No other player ever saw it. The only layer that draws another
-player in EOTB's art is `net/peerRiders.js`, and it took a peer only when
+player in EOTB's art is `net/peer/peerRiders.js`, and it took a peer only when
 `rd` said a horse or a cart. A peer whose pose said `wb` alone fell through
 to DISC12's branch in `remotePlayers.js` (`:795`, `:800`). That branch draws
 MOBILE_TYPES.Werewolf / Wereboar, the classic enemy sprite (archive 264 /

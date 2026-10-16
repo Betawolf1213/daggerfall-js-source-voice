@@ -1,11 +1,11 @@
 // SERPENT-SET (2026-10-05, Mac: "The serpent boss needs to use the currency from oblivion gate and have its own equipment
 // rewards"): THE SEA SERPENT PAYS THE GATE'S CURRENCY, AND HAS A SET OF ITS OWN - the hoard's Deadlands Ember
-// (systems/serpent/serpentSpoils.js, net/serpentHoardLaw.js), Sethrakul's Coilscale: its law (systems/sigil/sigilSets.js), its nine
+// (systems/serpent/serpentSpoils.js, net/serpent/serpentHoardLaw.js), Sethrakul's Coilscale: its law (systems/sigil/sigilSets.js), its nine
 // Aetheric records and the wire's check of them (systems/aetheric.js), each power driven through the REAL seams SET2
 // opened (systems/sigil/sigilSetPowers.js - the fold, the blow, the strike, the hurt, the kill, the round, the HUD's chips)
 // with a stand-in for the running host's door and a clock of the test's own, the hoard's roll off a receipt's seed, the
 // one heal a power gives (systems/playerHeal.js), the Broker's shelf that never carries it, and the host's wiring by
-// source (scenes/world.js, net/serpentClaims.js). Design: bible/11-Multiplayer/Sigil-Sets.md section 6c;
+// source (scenes/world.js, net/serpent/serpentClaims.js). Design: bible/11-Multiplayer/Sigil-Sets.md section 6c;
 // bible/11-Multiplayer/Sea-Serpent.md section 8. The service's half: test/serpentset_service.test.js.
 import './modsOff.js';
 import { test } from 'node:test';
@@ -25,13 +25,13 @@ import {
   aethericById, aethericMaterial, mintAetheric, rollSerpentSetPiece, validSetMarks, AETHERIC,
 } from '../src/systems/aetheric.js';
 import { rollSerpentSpoils, serpentSpoilsList, serpentEmbers } from '../src/systems/serpent/serpentSpoils.js';
-import { SERPENT_EMBERS } from '../src/net/serpentHoardLaw.js';
+import { SERPENT_EMBERS } from '../src/net/serpent/serpentHoardLaw.js';
 import { SIGIL_STONE_TEMPLATE, isSigilStone } from '../src/systems/gate/gateSpoils.js';
 import { brokerStock } from '../src/systems/sigil/sigilBroker.js';
 import { healMine, _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
-import { createSerpentClaims } from '../src/net/serpentClaims.js';
-import { mintSerpentReceipt } from '../src/net/serpentReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { createSerpentClaims } from '../src/net/serpent/serpentClaims.js';
+import { mintSerpentReceipt } from '../src/net/serpent/serpentReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { entityStatMod, entityModsOf } from '../src/systems/entityMods.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
 import { reportPlayerKill } from '../src/systems/playerKills.js';

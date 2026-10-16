@@ -1,6 +1,6 @@
 // AUDIT CARDS-6 (2026-10-09, bible/01-Overview/Audit-Cards-6.md) lane D: ILIAC HAND'S SEASON BOARD, ITS TITLE AND THE
 // DEVICE'S CARRIER, and two of lane E's about the vouch. Driven on the real Worker over SQLite (server-account/src/
-// iliac.js, arena.js, boardNames.js, index.js), the real carrier (net/iliacClaims.js), the real realm session and act
+// iliac.js, arena.js, boardNames.js, index.js), the real carrier (net/iliac/iliacClaims.js), the real realm session and act
 // (systems/realmSaves.js), and the host's own lines sliced out of scenes/world.js and run over them: a rating change lost
 // when a claim lands after one begun a second later, on both boards (D1); each board badging its rows with its own
 // honours alone (D3); the pair's day read on the claims' clock (D5); the board's season end (D6); a short deck's card
@@ -16,16 +16,16 @@ import * as acorn from 'acorn';
 import worker from '../server-account/src/index.js';
 import { standService, sessionStorageOf } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
-import { mintIliacReceipt } from '../src/net/iliacReceipt.js';
-import { mintArenaReceipt } from '../src/net/arenaReceipt.js';
-import { STARTER_DECK } from '../src/net/iliacCards.js';
-import { ILIAC_CARD_TEMPLATE } from '../src/net/cardWorthLaw.js';
-import { arenaSeasonOf, arenaSeasonEndsS, ARENA_PAIR_DAY_MAX } from '../src/net/arenaLaw.js';
+import { mintIliacReceipt } from '../src/net/iliac/iliacReceipt.js';
+import { mintArenaReceipt } from '../src/net/arena/arenaReceipt.js';
+import { STARTER_DECK } from '../src/net/iliac/iliacCards.js';
+import { ILIAC_CARD_TEMPLATE } from '../src/net/card/cardWorthLaw.js';
+import { arenaSeasonOf, arenaSeasonEndsS, ARENA_PAIR_DAY_MAX } from '../src/net/arena/arenaLaw.js';
 import { _resetIliacCache, iliacRatingOf, iliacChampionClock, ILIAC_CHAMPION_CLOCK_S } from '../server-account/src/iliac.js';
 import { _resetArenaCache, arenaRatingOf } from '../server-account/src/arena.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { accountIliac, accountRefusalText, iliacRefusalText, ILIAC_REFUSALS, REFUSALS, SESSION_KEY } from '../src/net/accountClient.js';
-import { createIliacClaims, iliacClaimVerdict } from '../src/net/iliacClaims.js';
+import { createIliacClaims, iliacClaimVerdict } from '../src/net/iliac/iliacClaims.js';
 import { realmGoldAct, createRealmSession } from '../src/systems/realmSaves.js';
 
 const { subtle } = globalThis.crypto;

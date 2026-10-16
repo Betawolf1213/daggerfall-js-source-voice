@@ -34,7 +34,7 @@ crafting materials in the inventory itself." And: "This is something I really wa
   worn one or an enchanted one is never a material.
 - **Its own list**, `entity.bagItems`, beside `wagonItems` - in the save (`systems/save/save.js`: snapshotted, restored,
   repaired and swept for orphans with the rest), counted by the realm with the pack and the wagon
-  (`net/realmGoldLaw.js` carriedItemLists, `systems/realmCustoms.js`). Its food rots as the pack's does
+  (`net/realm/realmGoldLaw.js` carriedItemLists, `systems/realmCustoms.js`). Its food rots as the pack's does
   (`survival/needs.js`), and a food on its way to putrid is no longer the material the mint makes.
 - **The cart's own rule**: a bag that holds anything never leaves the pack - not dropped, stored, sold or given
   (`itemTransfer.js` planStore, `tradeModes.js` localClickDecision: "Empty your Materials Bag first."). And the bag

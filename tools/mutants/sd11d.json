@@ -263,7 +263,7 @@
   },
   {
     "name": "SD11D-no-heart-line",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "      else if (w.k === 'cxb' && was.fi && was.cx?.i === w.i && (was.cx.c[w.c]?.[2] ?? 0) > 0) say(",
     "new": "      else if (false) say(",
     "tests": [
@@ -272,7 +272,7 @@
   },
   {
     "name": "SD11D-a-broken-heart-said-twice",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": " && was.cx?.i === w.i && (was.cx.c[w.c]?.[2] ?? 0) > 0) say(",
     "new": ") say(",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "SD11D-the-line-off-its-thread",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "state.cx.c.filter((q) => q[2] > 0).length : 0), SD_HEARTS_KEY);",
     "new": "state.cx.c.filter((q) => q[2] > 0).length : 0));",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "SD11D-the-last-heart-a-count",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "(left > 0 ? `${who || 'A fighter'} breaks a Heart. ${left} ${left === 1 ? 'remains' : 'remain'}.` : `${who || 'A fighter'} breaks the last Heart!`)",
     "new": "`${who || 'A fighter'} breaks a Heart. ${left} remain.`",
     "tests": [
@@ -299,7 +299,7 @@
   },
   {
     "name": "SD11D-the-old-dragon-break",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "dragonBreak: (ms) => `The Dragon Break! Fell Gold and Silver within ${Math.round(ms / 1000)} seconds of each other.`,",
     "new": "dragonBreak: () => 'The Dragon Break! The Remnant steps outside time - strike down the GOLD and SILVER Echoes together.',",
     "tests": [
@@ -308,7 +308,7 @@
   },
   {
     "name": "SD11D-the-old-stun",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "stunned: 'The Reset breaks! Strike now!',",
     "new": "stunned: 'The Reset is broken! The Remnant is stunned.',",
     "tests": [
@@ -497,7 +497,7 @@
   },
   {
     "name": "SD11D-the-article-kept",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "export const sdNameIn = (name) => String(name ?? '').replace(/^The /, 'the ');",
     "new": "export const sdNameIn = (name) => String(name ?? '');",
     "tests": [

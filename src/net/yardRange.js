@@ -1,6 +1,6 @@
 // @ts-check
 // YARD-RANGE (2026-10-11): how far other players' yards are drawn - the law the yards' host (scenes/homeYards.js) and the
-// Other players card (ui/enhancedMenu.js) both read, a leaf, as net/peerRange.js is for the players themselves. Not a
+// Other players card (ui/enhancedMenu.js) both read, a leaf, as net/peer/peerRange.js is for the players themselves. Not a
 // DFU member: Daggerfall has no other players' yards. Ledger A (YARD-RANGE).
 
 /** AUDIT: how far from the eye a yard's pieces are drawn, metres (scenes/homeYards.js) - a stranger's at most, one's own

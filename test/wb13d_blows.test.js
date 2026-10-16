@@ -6,8 +6,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ATTACKS, HIT_KINDS, HOST, profileOf } from '../src/net/gateBrain.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { ATTACKS, HIT_KINDS, HOST, profileOf } from '../src/net/gate/gateBrain.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   bossAct, bossGlow, bossCue, BOSS_CUES, GLOW_UP, GLOW_RANGE, CAST_RAISE_FRAME, CAST_LOOSE_FRAME, GATE_FLASH_COURT, GATE_FLASH_SHARE, gateHitFlash,
   LANDING_LIGHT_Y, LAND_SHAKE, landShake, RELEASE_LEAD_MS, ASPECT_CUE_IDS, FIRE_CAST_ID, BODY_FALL, SWING_LOW, emberColor, attackColor,

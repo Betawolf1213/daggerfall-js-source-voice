@@ -60,9 +60,9 @@ import { maintaining } from './service.js';
 import { WRIT_SETTLE_MAX } from '../../src/net/writLaw.js';
 import { seatsSwitchOf, seasonZeroOf } from '../../src/net/townSeatLaw.js';
 import { profSwitchOf } from '../../src/net/professionLaw.js';
-import { GUILD_INVITE_TTL_S } from '../../src/net/guildLaw.js';
+import { GUILD_INVITE_TTL_S } from '../../src/net/guild/guildLaw.js';
 import { utcDay } from '../../src/net/marksLaw.js';
-import { arenaSeasonOf } from '../../src/net/arenaLaw.js';
+import { arenaSeasonOf } from '../../src/net/arena/arenaLaw.js';
 import { REALM_FINDINGS_KEEP_S, REALM_WEALTH_KEEP_S } from './review.js';   // INT2/INT5: the judge's record's keeping
 import { WILD_FALLS_KEEP_S } from './wild.js';   // INT9: a death's drop's keeping
 

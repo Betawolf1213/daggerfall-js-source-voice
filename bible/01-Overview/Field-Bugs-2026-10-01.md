@@ -594,7 +594,7 @@ body before the motor reads it - the walk is the keys' way from the view at ever
 unchanged), at the keys' own speed, straight ahead once turned. The sprite's eight views, the Morrowind body's walk,
 the chevron and the pose sent to the others follow the heading. A journey or the autopilot drives as before.
 
-**OW-PEERS** (`scenes/world.js` `peerGrow`; `net/peerRiders.js`, `net/remotePlayers.js`, `net/peerBodies.js`): every
+**OW-PEERS** (`scenes/world.js` `peerGrow`; `net/peer/peerRiders.js`, `net/remotePlayers.js`, `net/peer/peerBodies.js`): every
 other player is grown by the traveller's own law at their own feet (`tvOwnGrow` of the view's eye to them) - riders,
 beasts and walkers (size, offset, reach), dolls and class sprites, Morrowind bodies (`drawThird`'s `grow` and the
 view's lean, culled by their grown reach); names over the grown heads; no giant's shadow; no walker's lantern.
@@ -614,7 +614,7 @@ skin twice for a sphere only the shadow recorder reads (the sprite target never 
 stand-in entity every frame for the weapon it holds; a weapon drawn tore the body down and built it again; and a body
 whose peer mounted or left the list a moment was thrown away and built again on its return.
 
-**The fix** (`net/peerBodies.js`, `render/renderer.js`, `combat/fpArm.js`): the margin leads the turn
+**The fix** (`net/peer/peerBodies.js`, `render/renderer.js`, `combat/fpArm.js`): the margin leads the turn
 (`turnLeadMargin` - the angle the view turned last frame, three frames of it at the body's distance, capped), so the
 bodies about to come into view are skinned on the budget before; the third-person mesh has no sphere to walk
 (`bounds: false`); the weapon asked of a look is one object; a person's body key is its look less its weapons (the

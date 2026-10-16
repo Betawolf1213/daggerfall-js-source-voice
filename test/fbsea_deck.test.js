@@ -10,7 +10,7 @@ import { Boat } from '../src/systems/comeSailAway/comeSailAwayBoat.js';
 import { raycastColliders } from '../src/world/prefabColliders.js';
 import { quatEuler } from '../src/world/unityAnimator.js';
 import { createComeSailAwayAboard, deckPose, helmWord, localOf, worldOf } from '../src/scenes/comeSailAwayAboard.js';
-import { PeerBodies } from '../src/net/peerBodies.js';
+import { PeerBodies } from '../src/net/peer/peerBodies.js';
 import { readyPool } from './navalSea.mjs';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
@@ -85,7 +85,7 @@ test('FIELD BUGS 2026-09-29 (the sea) #1: A BODY ON A MOVING DECK STANDS - a pee
   assert.ok(Math.abs(b.speed - 1.5) < 0.02, `walking her deck: the deck's stride (${b.speed})`);
   layer._place(b, peer(0, [239 * 1.5 * dt + 0.02, 1, 2], 'cy:1'), toScene, dt, null);
   assert.equal(b.speed, 0, 'another deck: afresh - its place is in another frame, however near the number');
-  const walkers = readFileSync(new URL('../src/net/peerRiders.js', import.meta.url), 'utf8');
+  const walkers = readFileSync(new URL('../src/net/peer/peerRiders.js', import.meta.url), 'utf8');
   assert.match(walkers, /const on = pose\.deckKey \?\? null, at = on \? pose\.deck : feet;\n\s+r\.pace = stepPeerPace\(r\.pace, r\.paceKey === on \? r\.paceFeet : null, at, dt\);/, 'the walkers\' lanterns by the same law');
 });
 

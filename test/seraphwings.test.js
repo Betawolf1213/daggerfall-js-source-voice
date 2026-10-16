@@ -28,7 +28,7 @@ import {
   WING_SPRITE_BACK,
 } from '../src/render/auraRing.js';
 import { createEotbBody } from '../src/player/eotbBody.js';
-import { createPeerWalkers, createPeerRiders, createEotbArt } from '../src/net/peerRiders.js';
+import { createPeerWalkers, createPeerRiders, createEotbArt } from '../src/net/peer/peerRiders.js';
 import { RIDE_EYE_HEIGHT, EYE_HEIGHT } from '../src/player/motor.js';
 import { glslFunctions, GlslDiscard } from './glsl.mjs';
 
@@ -456,7 +456,7 @@ test('SERAPH-WINGS on the back of an Eye of the Beholder sprite: its bones read 
   const mv = src('src/player/mwView.js');
   assert.match(mv, /const drawn = drawEotbBody\([^;]*\); spriteFigure = drawn \? eotbFigure\(\) : null; spriteFacing = drawn \? eotbFacing\(\) : null; return drawn;/);   // SPRITE-FACE (PIN MOVED): and its facing
   assert.match(mv, /export function mwViewSpriteFigure\(\) \{ return eotbLane\(\) \? spriteFigure : null; \}/);
-  const pr = src('src/net/peerRiders.js');
+  const pr = src('src/net/peer/peerRiders.js');
   assert.match(pr, /figureOf: layer\.figureOf,   \/\/ SERAPH-WINGS/);
   assert.match(pr, /figureOf: layer\.figureOf,   \/\/ AUDIT 3 \(SERAPH-WINGS\): a beast's on foot/);
   assert.match(pr, /r\.px > 0 && r\.form !== 'rider' \? \{ base: \(r\.xml\.y \/ r\.xml\.scale\) \* \(r\.g \?\? 1\), mpp: r\.size\.h \/ r\.px, beast: r\.form === 'beast' \} : null/);

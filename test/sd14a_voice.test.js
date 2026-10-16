@@ -17,8 +17,8 @@ import {
   SD_RELEASE_MS, SD_TURN_LATE_MS, SD_SLIP_FRAC, SD_STING_M,
 } from '../src/scenes/sdRemnantVoice.js';
 import { SD_BLOW_CUES } from '../src/scenes/sdRemnantBlows.js';
-import { SD_BLOWS } from '../src/net/sdRemnant.js';
-import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
+import { SD_BLOWS } from '../src/net/superDungeon/sdRemnant.js';
+import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 
 const T0 = 1_800_000_000_000;

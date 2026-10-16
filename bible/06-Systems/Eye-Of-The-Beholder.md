@@ -1018,7 +1018,7 @@ get this change"; then, of the back diagonals it first let in: "It still shows o
 - **Unseen, it still hangs**: the swing runs on (`stepLantern` asks whether it HANGS, not whether it is drawn), the
   batch is kept, and the light stays at the hip - so turning round neither restarts the swing nor moves the light.
 - **Every EOTB sprite**: other players drawn online as the on-foot set they chose (DISC23-B's walkers,
-  `net/peerRiders.js`) hang it too, off their pose's `hl` (HT-WAIST-NET), by the same rule, art, hang and swing law,
+  `net/peer/peerRiders.js`) hang it too, off their pose's `hl` (HT-WAIST-NET), by the same rule, art, hang and swing law,
   swung off their own drawn motion; their riders and beasts hang none, as yours do not. It lights nothing on their
   side (the waist light is the local player's). Handheld-Torches.md HT-WAIST has the peers' wiring.
 - **One home**: `player/eotbLantern.js` holds everything the two share (the rule, `loadLanternArt` and the art store,
@@ -1117,7 +1117,7 @@ three repaints queue it in place of `lastOrientation`; the comparison that decid
 reads `lastOrientation`, as the IL's does. The clips keep the IL's field - they paint at once, so the view they paint
 never undoes a later choice. A DEPARTURE from the assembly, the fifth, recorded in the Ledger row. Nothing else in the
 sprite's turning moved: the wheel, the 0.1 s throttle, the three-frame delay and the facing are the IL's. The peers'
-sprites (`net/peerRiders.js`) paint their view at once and queue nothing, so they never had it.
+sprites (`net/peer/peerRiders.js`) paint their view at once and queue nothing, so they never had it.
 
 **Pins.** `test/eotb_body.test.js` SPRITE-FLICKER: three sweeps - the strafe pressed at 24 phases of the run clock and
 the orientation clock, a start at an angle at 12, the camera turned across the mirror revert at 14 - each held to one
@@ -1144,7 +1144,7 @@ one the second, so a chain of blows still shows the whole string, one stroke a c
 stroke the shorter half, and a clip under two frames is one stroke. The blow is the rig's count (`weaponRig.js`
 `swingN`), and the body keeps its own (`strokeCount`) only for a rig that names none. The stroke runs over the
 weapon's whole animation - `meleeAnimTickTime(animTime, 3)`, five-thirds of the weapon's tick a frame - so a blow
-still lasts as long as the swing it stands beside. A peer's swing (`net/peerRiders.js` `WALK_ONE_SHOTS`) plays the
+still lasts as long as the swing it stands beside. A peer's swing (`net/peer/peerRiders.js` `WALK_ONE_SHOTS`) plays the
 stroke its `an` names, which is the same count, so both screens draw the same half.
 
 **What it retires.** The ping-pong: `usesPingPong`, `pingPongFrames`, `pingPongTickFrames` and the ping-pong count

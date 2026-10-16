@@ -69,7 +69,7 @@ import { countedDb } from './metrics.js';   // AUDIT LW-II P5: a read's reckonin
 import { faucetStatement } from './budget.js';   // LW15: the service's own faucet, measured
 import { ledgerKeyOf } from './judge.js';   // AUDIT LW-II-2 S2: a patron's piece's key in the ledger
 import { escrowSpentSteps } from './ledger.js';   // AUDIT LW-II-2 S2: and the ledger told it is gone
-import { payFromSave, creditSave } from '../../src/net/realmGoldLaw.js';   // GOLD-MARKET: a gold sale moves a realm record's gold
+import { payFromSave, creditSave } from '../../src/net/realm/realmGoldLaw.js';   // GOLD-MARKET: a gold sale moves a realm record's gold
 import { CHAR_ID_RE, readAll } from './service.js';   // MARKET-SPEED: a read's queries in three round trips
 import { MARKS_MAX, MARK_WORTH_GOLD, utcDay } from '../../src/net/marksLaw.js';
 import { STORES_MAX } from '../../src/net/professionLaw.js';
@@ -88,7 +88,7 @@ import {
 } from '../../src/net/marketLaw.js';
 import { MASTERWORK, PROVENANCE_RE } from '../../src/net/recipeLaw.js';
 import { mintVersionOf } from '../../src/net/productRecord.js';   // CRAFT-PROCS: a piece's mint version, its record's
-import { takeTradeGoods, giveTradeGoods } from '../../src/net/realmTradeLaw.js';   // MARKET-ANY: a piece out of one record and into another, as a trade moves it
+import { takeTradeGoods, giveTradeGoods } from '../../src/net/realm/realmTradeLaw.js';   // MARKET-ANY: a piece out of one record and into another, as a trade moves it
 import { vendorOf, VENDOR_STATION, VENDOR_LISTING_S, VENDOR_STOCK_SHOWN, VENDOR_STOCK_MAX, VENDOR_BOARD_SHOWN } from '../../src/net/vendorLaw.js';   // HOME-VENDOR: a home's trader
 
 const DAY_S = 86_400;

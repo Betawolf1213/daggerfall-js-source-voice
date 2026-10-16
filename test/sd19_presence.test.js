@@ -13,12 +13,12 @@ import {
   SD_BANNER_M, sdBannerText, sdMarksLine, SD_HOUR_LEFT_MS, sdHourLine,
 } from '../src/systems/superDungeon/sdOmen.js';
 import { sdMarksCardModel, sdMarksViewOf, SD_MARKS_ARRIVE_MS } from '../src/ui/sdMarksView.js';
-import { sdMarksOf, sdEndingOf, sdOmensOf } from '../src/net/sdMarks.js';
+import { sdMarksOf, sdEndingOf, sdOmensOf } from '../src/net/superDungeon/sdMarks.js';
 import { createSdHost } from '../src/scenes/sdHost.js';
 import { sdCities, findSdSite, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
-import { sdFirst, sdRise, sdFind, sdFell, sdGone, sdNameIn, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
+import { sdFirst, sdRise, sdFind, sdFell, sdGone, sdNameIn, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
 import { eventTimerRows, timerText } from '../src/systems/eventTimers.js';
 import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 

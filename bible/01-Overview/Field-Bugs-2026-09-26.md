@@ -330,7 +330,7 @@ re-aimed.
 
 *"Wereform uses daggerfall paperdoll when others see you transform"*. On
 another player's screen a peer in beast form stands as Eye Of The
-Beholder's lycanthrope (`net/peerRiders.js`, PR-WW1) or, until that art is
+Beholder's lycanthrope (`net/peer/peerRiders.js`, PR-WW1) or, until that art is
 up, the beast's enemy sprite (`net/remotePlayers.js`, DISC12). Both load at
 first sight - which is the moment of the change - and until the sprite was
 built, the branch fell through to the peer's HUMAN paperdoll. So every

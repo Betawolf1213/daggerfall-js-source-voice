@@ -17,7 +17,7 @@
 // a save from before ARENA5 - or a record of any other shape - reads back with none.
 //
 // HOW IT PLAYS. Not a second driver: the relay's bout mirror (scenes/arenaBouts.js startRelay / relayWord over
-// net/arenaLink.js) already stands puppets, the HUD, the crowd, the Herald and the music from a stream of words. A replay
+// net/arena/arenaLink.js) already stands puppets, the HUD, the crowd, the Herald and the music from a stream of words. A replay
 // IS such a stream (`replayFeed`): every fighter a puppet of the relay's own kind (`ai` 1 - the player too, as the class
 // enemy of their own career), its walk the `mv` words between two ticks, its blows `atk`, the health bars `hp`, the law's
 // events `ev`, all on this screen's clock from the moment it starts. Watched from the stands (`me` '' - nothing of it
@@ -238,7 +238,7 @@ export const keepReplay = (list, rec) => (replayOk(rec) ? [rec, ...arenaReplaysR
 export const replayBytes = (rec) => JSON.stringify(rec ?? null).length;
 
 // ── PLAYING IT BACK ──────────────────────────────────────────────────────────────────────────────────────────
-/** The fighter id a record's fighter `i` wears on the mirror: the relay's own AI ids (net/arenaLaw.js `a0`..`a3`), so each
+/** The fighter id a record's fighter `i` wears on the mirror: the relay's own AI ids (net/arena/arenaLaw.js `a0`..`a3`), so each
  *  stands as a puppet of its walk. */
 export const replayId = (i) => `a${i}`;
 /** A 16-hex bout id for a record - the mirror's `o`, the seed its seats are picked by. Pure. */

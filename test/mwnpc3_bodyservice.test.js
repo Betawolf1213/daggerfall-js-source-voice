@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createFpArm, nifBytes, NIF_COPY_CAP, nifParseCount, acquireCharacterTexture, releaseCharacterTexture } from '../src/combat/fpArm.js';
-import { PeerBodies, peerBuildOpts, BODIES_MAX } from '../src/net/peerBodies.js';
+import { PeerBodies, peerBuildOpts, BODIES_MAX } from '../src/net/peer/peerBodies.js';
 import { fixtureBodyDeps, countingRenderer } from './fixtures/mw/bodyRig.mjs';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

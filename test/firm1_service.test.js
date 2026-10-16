@@ -1,5 +1,5 @@
 // FIRM1 (2026-10-13) - THE FIRMAMENT, AS THE SERVICE KEEPS IT (server-account/src/firmament.js; the law
-// src/net/firmamentLaw.js): the switch, the purses read off the Renown and profession tracks, a change judged whole by
+// src/net/firmament/firmamentLaw.js): the switch, the purses read off the Renown and profession tracks, a change judged whole by
 // the law, a request asked twice charged once, a refund free below Renown 10 and silver after it, and the tree's hand
 // on a harvest's XP. Driven through the real Worker over node:sqlite with every migration applied (test/accountDb.mjs).
 // bible/06-Systems/Firmament.md.
@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { standService, T0 } from './accountDb.mjs';
-import { pathTo, packTree, treeStats, xpPct, scaleXp, starsFor, craftPointsFor, REFUND_SILVER_PER_STAR, FIRM_RESPEC_GOLD } from '../src/net/firmamentLaw.js';
+import { pathTo, packTree, treeStats, xpPct, scaleXp, starsFor, craftPointsFor, REFUND_SILVER_PER_STAR, FIRM_RESPEC_GOLD } from '../src/net/firmament/firmamentLaw.js';
 import { seatRealm } from './realmSeat.mjs';
 import { haulKey } from '../src/net/nodeLaw.js';
 import { harvestXp, xpForRank } from '../src/net/professionLaw.js';

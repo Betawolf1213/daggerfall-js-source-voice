@@ -1,5 +1,5 @@
 // KG5 (2026-10-15, bible/11-Multiplayer/Kings-Gambit.md sections 5.8, 10.7 and 18): THE RELAY'S KING'S GAMBIT TABLE
-// (net/gambitTable.js) - the seats and their refusals, the armies at Ready (never told), the relay's deal and dice, the
+// (net/gambit/gambitTable.js) - the seats and their refusals, the armies at Ready (never told), the relay's deal and dice, the
 // law's commands and its refusals, the turn's end on its beat, the clock (a turn run out, three running a stand), a
 // forfeit and a stand, the stored table checked (AUDIT KG A4), both directions of the wire, and the guest's eye (the board
 // turned about its middle).
@@ -10,7 +10,7 @@ import {
   gambitTick, gambitNextAt, gambitLook, gambitPublicView, gambitSeatOf, gambitEmpty, gambitTableValid, validGambitState,
   validGambitIn, validGambitOut, flipGambitState, flipGambitEvent, unflipCommand, flipCell,
   GAMBIT_TURN_MS, GAMBIT_TURN_END_MS, GAMBIT_FIRST_MS, GAMBIT_IDLE_TURNS,
-} from '../src/net/gambitTable.js';
+} from '../src/net/gambit/gambitTable.js';
 import { KG_COLS, KG_ROWS, KG_TILE, KG_POINT_BUDGET, autoFill, reachable, foesInRange, pieceById } from '../src/net/kingsGambit.js';
 import { GAMBIT_TIERS, regularAction } from '../src/systems/gambit/gambitPatrons.js';
 import { xorshift } from '../tools/kgMeasure.mjs';

@@ -1,7 +1,7 @@
 // @ts-check
 // COATS3D (bible/06-Systems/Horse-Coats.md, "The 3D horse"): THE 3D HORSE, ITS GL HALF - one per renderer
 // (`horseRigFor`), shared by every horse the Morrowind lane draws: the player's own under them (player/mwView.js),
-// every other rider's (net/peerBodies.js), and Horse Cart and Cargo's standing, following and pulling horses and the
+// every other rider's (net/peer/peerBodies.js), and Horse Cart and Cargo's standing, following and pulling horses and the
 // road's teams (scenes/horseCartPool.js).
 //
 //  - ONE STREAM. The bake (world/horseModel.js horseSkinStream) is uploaded once; every horse is a view of it with its

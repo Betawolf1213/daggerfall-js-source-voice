@@ -796,7 +796,7 @@ healed on duel end. Add a dueling K/D to the profile menu and player inspect pro
 account, on the main menu's account card.
 
 **Since INT8 (2026-10-09, `06-Systems/Integrity-Arc.md` section 5) the duel is the RELAY's to referee**: the bout,
-every blow and cast, the ring and the end are its (`net/duelRef.js`), at the Royal Tourney's vitality rather than the
+every blow and cast, the ring and the end are its (`net/duel/duelRef.js`), at the Royal Tourney's vitality rather than the
 save's health (so no one drops to 1 HP and nothing is healed at the end), and the record is its signed `d1` receipt
 claimed once (`/v1/duel/claim`) - the loser's own report retired. What follows is DUEL1 as it was built.
 
@@ -997,7 +997,7 @@ the World channel's whole machinery with nothing new in it. The clutter is answe
 (`net/chat.js` `CHAT_TABS`, `trade` and `lfg`) stands on the bar only while the player has joined it (`chatTrade`,
 `chatLfg`, both off), and its link opens no socket until then - so a player who never joins sees the bar as it was,
 World, Region and Local. `/join trade`, `/join lfg` put a tab on the bar and bring it to the front; `/leave trade`,
-`/leave lfg` take it off (a bare `/leave` is still the battle's, `net/siegeSession.js` isBattleLeaveCommand); Settings >
+`/leave lfg` take it off (a bare `/leave` is still the battle's, `net/siege/siegeSession.js` isBattleLeaveCommand); Settings >
 Other players > Chat has the same two switches. `/trade` (or `/tr`) and `/lfg` say a line on the channel - said to one
 not joined, they join it and keep the line in the field, to be said once it opens. Neither tab peeks over the world
 from behind another tab: a market's chatter is not said TO the player, as a party's line is. The host's frame is

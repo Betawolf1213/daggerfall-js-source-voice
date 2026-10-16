@@ -1,7 +1,7 @@
 [
  {
   "name": "KG3-S-beat-turn-end",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "export const GAMBIT_TURN_END_MS = 900;",
   "new": "export const GAMBIT_TURN_END_MS = 1000;",
   "tests": [

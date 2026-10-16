@@ -23,18 +23,18 @@
 // of its own beside the blows' - time runs back inside the Hour). No veil, the words as they were (scenes/world.js
 // sdCastBack). Seen from my own feet: fallen to the void's floor one frame, standing on a checkpoint's landing the next
 // (world/superDungeon/sdSteps.js castBackTo - nothing else moves a body so), so no host is asked.
-import { SD_ARENA, SD_THRESHOLD, SD_REALM_ORIGIN, realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
+import { SD_ARENA, SD_THRESHOLD, SD_REALM_ORIGIN, realmToDungeon, dungeonToRealm } from '../net/superDungeon/sdBrain.js';
 import { SD_WAY_BACK_Z } from '../world/superDungeon/sdRealm.js';
 import { SD_CHECKPOINTS, SD_VOID_Y } from '../world/superDungeon/sdSteps.js';
-import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_ARENA_SLACK, stompFrontAt, handAngleAt, inArena } from '../net/sdRemnant.js';
-import { sdBodyAt } from '../net/sdFightLink.js';
+import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_ARENA_SLACK, stompFrontAt, handAngleAt, inArena } from '../net/superDungeon/sdRemnant.js';
+import { sdBodyAt } from '../net/superDungeon/sdFightLink.js';
 import { GateFxRenderer, FX_BURST_MS, FX_BURSTS_MAX, FX_LIGHT_MS } from '../render/gateFx.js';
 import { SD_REM_SINK_MS } from './sdRemnant.js';
 import { SD_SLIP_FRAC } from './sdRemnantVoice.js';
 import { clearOfPillars } from './sdSpoils.js';
-import { sdEndingOf } from '../net/sdMarks.js';
+import { sdEndingOf } from '../net/superDungeon/sdMarks.js';
 import { adoptLight, relight } from '../render/lightId.js';   // LIGHT-ID: the pool's entries named by their bursts
-/** SD18c: the Hearts' and the stun's light - its Hollow's Ending's (net/sdMarks.js), else the Mantella's. */
+/** SD18c: the Hearts' and the stun's light - its Hollow's Ending's (net/superDungeon/sdMarks.js), else the Mantella's. */
 export const sdHeartColorOf = (s) => sdEndingOf(s?.mk)?.light ?? SD_FX_COLOR.heart;
 
 const kind = (share, power, grit, light = null) => Object.freeze({ share, power, grit, ...(light ? { light: Object.freeze(light) } : {}) });
@@ -106,7 +106,7 @@ const NO_PLACE = Object.freeze([0, 0]);
 export const SD_HAND_FLASH_OUT = 1.2;
 
 /**
- * The Hour's blows seen on this screen. `link` the fight's (net/sdFightLink.js), `feet()` mine in the dungeon's frame
+ * The Hour's blows seen on this screen. `link` the fight's (net/superDungeon/sdFightLink.js), `feet()` mine in the dungeon's frame
  * (null out of the Hour), `shake(k)` the camera's door, `arrived()` (SD-LOOK S6) told as my feet first stand on the
  * Threshold - the way back's ring turns once - and `ready()` whether the arrival can be seen yet (AUDIT SD V S5: the veil
  * opened - the exhale was spent under it).
@@ -207,7 +207,7 @@ export function createSdFx({ link, feet = () => null, shake = () => {}, arrived 
       const s = link?.state?.(), t = link?.now?.();
       for (let i = bursts.length - 1; i >= 0; i--) if (Number.isFinite(t) && t - bursts[i].at0 > FX_BURST_MS + 200) bursts.splice(i, 1);
       // SD-LOOK S9: my feet cast back from the Steps' void - the rewind where they land (the realm's frame by
-      // net/sdBrain.js dungeonToRealm's own sum: a frame makes nothing)
+      // net/superDungeon/sdBrain.js dungeonToRealm's own sum: a frame makes nothing)
       const f = feet();
       if (f) {
         const rx = f[0] - SD_REALM_ORIGIN[0], ry = f[1] - SD_REALM_ORIGIN[1], rz = f[2] - SD_REALM_ORIGIN[2], c = t - wasAt < SD_REWIND_SEEN.gap ? sdCastBackSeen(wasY, rx, ry, rz) : -1;   // the frame before, and only just before

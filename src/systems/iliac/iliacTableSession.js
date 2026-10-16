@@ -2,7 +2,7 @@
 // CARDS10 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 33; section 6.4: "At the same tavern table, seated
 // the same way. Offline against a patron who has a deck of his own"): ILIAC HAND AGAINST A REGULAR - pure, DOM-free,
 // clocked by the `now` it is handed, as the Hold'em evening is (systems/card/cardTableSession.js). The player (seat 0) and one
-// of the tavern's regulars (seat 1) play one game of the rules engine (net/iliacHand.js); the regular plays by his temper
+// of the tavern's regulars (seat 1) play one game of the rules engine (net/iliac/iliacHand.js); the regular plays by his temper
 // and the tavern's grade (systems/iliac/iliacPatrons.js). The host (scenes/worldModes.js) seats it, shows it, and moves the
 // card a game for keeps is won or lost; nothing here touches a pack, a window or the scene.
 //
@@ -20,7 +20,7 @@
 // has paid, he plays for fun.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { newGame, commit, reveal, iliacView, legalPlays, playsRefusal, result as gameResult } from '../../net/iliacHand.js';
+import { newGame, commit, reveal, iliacView, legalPlays, playsRefusal, result as gameResult } from '../../net/iliac/iliacHand.js';
 import { patronPlays, forfeitCard } from './iliacPatrons.js';
 
 /** MEASURE (CARDS10): a regular's thought before he commits a turn, and its spread. */

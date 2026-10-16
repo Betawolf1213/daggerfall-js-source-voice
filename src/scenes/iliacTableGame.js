@@ -19,7 +19,7 @@
 // (a game under way is watched, the spectator's view), and "Sit at the table" sits the chosen deck in this chair - for
 // the season's board when the realm vouches for it (`ranked`: the service's deck order, asked first) - and waits for a
 // second player; the relay deals, runs the clock, and deals again after a game while both still sit. A ranked game's
-// signed result is carried by the host's claims (net/iliacClaims.js). Alone in the room, "Play a regular instead" plays
+// signed result is carried by the host's claims (net/iliac/iliacClaims.js). Alone in the room, "Play a regular instead" plays
 // the offline game, friendly. Standing up stands at the relay too (a game under way conceded there).
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
@@ -32,8 +32,8 @@ import { iliacHudModel, createIliacTableHud, stagedRefusal, ILIAC_REFUSAL_WORDS 
 import { iliacPlaces, iliacPoses, iliacLanded } from '../world/iliacCloth.js';
 import { RemoteIliacTable } from '../systems/iliac/iliacRemoteTable.js';
 import { createIliacTableDraw } from '../render/iliacTableDraw.js';
-import { cardById } from '../net/iliacCards.js';
-import { ILIAC_IDLE_TURNS } from '../net/iliacTable.js';
+import { cardById } from '../net/iliac/iliacCards.js';
+import { ILIAC_IDLE_TURNS } from '../net/iliac/iliacTable.js';
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
 /** A regular's temper at Iliac Hand by his seed - Hold'em's three names (AUDIT CARDS-6 B9: his Hold'em temper is that

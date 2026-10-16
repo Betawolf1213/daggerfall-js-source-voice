@@ -48,7 +48,7 @@
   },
   {
     "name": "AUDIT1003-S2-the-signed-level-uncapped",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "cl <= ARENA_CL_MAX ? cl : arenaLv(lv);\n  return ladderVitalityAt(Math.min(level, ladderLevelCap(tier)));",
     "new": "cl <= ARENA_CL_MAX ? cl : Math.min(arenaLv(lv), ladderLevelCap(tier));\n  return ladderVitalityAt(level);",
     "tests": [
@@ -58,7 +58,7 @@
   },
   {
     "name": "AUDIT1003-S2-the-cap-off-another-tier",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "return ladderVitalityAt(Math.min(level, ladderLevelCap(tier)));",
     "new": "return ladderVitalityAt(Math.min(level, ladderLevelCap(9)));",
     "tests": [

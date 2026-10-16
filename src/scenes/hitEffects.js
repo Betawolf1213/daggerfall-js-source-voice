@@ -88,7 +88,7 @@ export function bloodCentre(feet, height) {
  * `tick(dt)` advances them and destroys the ones that have finished;
  * `batches()` hands the host what to draw, on the flats' axis.
  */
-/** PEERFX1: ONE OBSERVER OF EVERY BLOOD SPLASH, whichever host's pool drew it - the online layer (net/peerFx.js)
+/** PEERFX1: ONE OBSERVER OF EVERY BLOOD SPLASH, whichever host's pool drew it - the online layer (net/peer/peerFx.js)
  *  hears the player's own weapon blows here (a hit marked `fromPlayer`: melee, arrows, never a spell - no spell site
  *  splashes) to tell the players who can see it, and every splash to know one was already drawn. Null offline. */
 let _splashObserver = null;

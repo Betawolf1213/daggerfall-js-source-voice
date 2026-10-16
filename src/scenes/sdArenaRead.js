@@ -16,13 +16,13 @@
 //
 // Pure but for the beats' memory. The arena's frame throughout (x, z from its centre). Not a DFU member. Ledger A
 // (SUPER-DUNGEONS).
-import { SD_ARENA } from '../net/sdBrain.js';
-import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_PILLARS, atkWindup, blowShape, sdProfileOf, stompFrontAt, SD_ECHO_PAIR_MS } from '../net/sdRemnant.js';
-import { SD_PILLAR_W } from '../net/sdBrain.js';
+import { SD_ARENA } from '../net/superDungeon/sdBrain.js';
+import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_PILLARS, atkWindup, blowShape, sdProfileOf, stompFrontAt, SD_ECHO_PAIR_MS } from '../net/superDungeon/sdRemnant.js';
+import { SD_PILLAR_W } from '../net/superDungeon/sdBrain.js';
 import { TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
 import { screenBearing } from './gateCourt.js';
 import { SD_ELEMENT_COLOR, SD_ELEMENT_GROUND, sdTint } from './sdRemnantBlows.js';
-import { sdEndingOf } from '../net/sdMarks.js';
+import { sdEndingOf } from '../net/superDungeon/sdMarks.js';
 import { TITLE_HOLD_MS, TITLE_IN_MS, TITLE_OUT_MS } from '../ui/gateTitleCard.js';
 import { groundViewModel } from '../ui/gateGroundView.js';
 
@@ -71,7 +71,7 @@ export function sdWayOut(inside, fx, fz) {
   return best ? { dir: [best.dx, best.dz], m: best.m } : null;
 }
 
-/** AUDIT SD III (V5): THE HOUR-HAND'S GROUND, made once a frame - net/sdRemnant.js handSwept's own sums over its sweep
+/** AUDIT SD III (V5): THE HOUR-HAND'S GROUND, made once a frame - net/superDungeon/sdRemnant.js handSwept's own sums over its sweep
  *  from `t` on, and the pillars' shade (behindPillar's two slabs), in plain numbers: the way out asks it a thousand times
  *  a frame, and every call into the law boxed its four numbers (8 KB a frame in a Hand's path). Pinned equal to the law
  *  over a grid of places and moments. */
@@ -87,7 +87,7 @@ export function handSweepHas(H, x, z) {
   const dx = x - H.ax, dz = z - H.az, d = Math.sqrt(dx * dx + dz * dz);
   if (d > H.len || !(H.a1 >= H.a0)) return false;
   const half = d > H.w2 ? Math.asin(H.w2 / d) : Math.PI;
-  let r = (Math.atan2(dx, dz) - H.yw + Math.PI) % (2 * Math.PI);   // net/gateBrain.js wrapYaw's
+  let r = (Math.atan2(dx, dz) - H.yw + Math.PI) % (2 * Math.PI);   // net/gate/gateBrain.js wrapYaw's
   if (r < 0) r += 2 * Math.PI;
   const u = H.sw * (r - Math.PI) + H.arc / 2;
   if (!(u + half >= H.a0 && u - half <= H.a1)) return false;

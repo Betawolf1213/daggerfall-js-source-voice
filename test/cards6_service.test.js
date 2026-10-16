@@ -1,7 +1,7 @@
 // CARDS6 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 23): A CARD TABLE'S STAKES, ESCROWED BY THE SERVICE.
 // Driven on the real Worker over SQLite (server-account/src/cards.js): a stake takes the buy-in off the realm character's
 // record and holds it, answering the service's order (net/identityToken.js) - the room's chips; asked again it is one
-// stake; the relay's cash-out receipt (net/cardReceipt.js) pays the record and settles the stake, once; a stake handed
+// stake; the relay's cash-out receipt (net/card/cardReceipt.js) pays the record and settles the stake, once; a stake handed
 // back whole is the stake; another's receipt, another character's, an unsigned one are refused.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,8 +9,8 @@ import { webcrypto } from 'node:crypto';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { verifyOrder } from '../src/net/identityToken.js';
-import { mintCardReceipt } from '../src/net/cardReceipt.js';
-import { payableOf } from '../src/net/realmGoldLaw.js';
+import { mintCardReceipt } from '../src/net/card/cardReceipt.js';
+import { payableOf } from '../src/net/realm/realmGoldLaw.js';
 import { HOLDEM_STAKE_MIN_BB, HOLDEM_STAKE_MAX_BB } from '../src/net/holdemTable.js';
 import { BUY_IN_MIN_BB, BUY_IN_MAX_BB } from '../src/systems/card/cardTableSession.js';
 

@@ -1,7 +1,7 @@
 [
   {
     "name": "DUEL1-accepter-begins-on-its-own-yes",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "      waiting = { peer, s: a.s, at: now(), sub: a.sub };\n",
     "new": "      waiting = { peer, s: a.s, at: now(), sub: a.sub }; begin(peer, a.s, [0, 0, 0], a.sub);\n",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DUEL1-start-never-sent",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "          if (once({ k: 'start', to: from, s, c })) { begin(from, s, c, sub); return; }",
     "new": "          begin(from, s, c, sub); return;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DUEL1-a-yes-to-nothing-unanswered",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "            if (!(duel && duel.peer === from && duel.s === d.s) && !engagedElsewhere(from)) answer(from, { k: 'cancel', to: from, s: d.s, why: duel ? 'busy' : 'timeout' });\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DUEL1-the-wait-unbounded",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "      if (waiting && t - waiting.at > DUEL_START_WAIT_MS) {",
     "new": "      if (waiting && t - waiting.at > DUEL_START_WAIT_MS * 1e9) {",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "DUEL1-an-indoor-player-prompted",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "          if (can()) { answer(from, { k: 'cancel', to: from, s: d.s, why: can() === 'outdoors' ? 'outdoors' : 'busy' }); return; }\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "DUEL1-the-challenged-side-measures-nothing",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "          if (near(from) !== true) { answer(from, { k: 'cancel', to: from, s: d.s, why: 'range' }); return; }\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "DUEL1-a-blow-in-the-count",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "      if (!d || counting(d) || (kind !== 'strike' && kind !== 'spell')) return 0;",
     "new": "      if (!d || (kind !== 'strike' && kind !== 'spell')) return 0;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "DUEL1-the-heal-at-once",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "        if (t - duel.overAt >= DUEL_HEAL_HOLD_MS) {",
     "new": "        if (t - duel.overAt >= 0) {",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "DUEL1-a-carried-off-duellist-s-leave-told-as-a-fall",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "      if (me && worldGroundMetres(me, d.c) > DUEL_RADIUS_M + DUEL_OUT_SLACK_M) { post({ k: 'end', to: d.peer, s: d.s, why: 'left' }); finish('left', { lost: !counting(d) }); return; }",
     "new": "      if (me && worldGroundMetres(me, d.c) > DUEL_RADIUS_M + DUEL_OUT_SLACK_M) { post({ k: 'end', to: d.peer, s: d.s, why: 'fell' }); finish('fell', { lost: true }); return; }",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "DUEL1-the-opponent-s-stray-pose-a-verdict",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "        if (t - d.outSince > DUEL_OUT_MS + DUEL_REF_LATE_MS) {",
     "new": "        if (t - d.outSince >= 0) {",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "DUEL1-clamp-moves-the-height",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "  return [centre[0] + dx * k, centre[2] + dz * k];",
     "new": "  return [centre[0] + dx * k, centre[1], centre[2] + dz * k];",
     "tests": [
@@ -325,7 +325,7 @@
   },
   {
     "name": "DUEL1-kd-inverted",
-    "file": "src/net/duelRecord.js",
+    "file": "src/net/duel/duelRecord.js",
     "old": "  return l ? w / l : w;",
     "new": "  return w ? l / w : l;",
     "tests": [
@@ -334,7 +334,7 @@
   },
   {
     "name": "DUEL1-record-read-every-frame",
-    "file": "src/net/duelRecord.js",
+    "file": "src/net/duel/duelRecord.js",
     "old": "      if (!e || (!e.asking && now() - e.at >= ttlMs)) fetchOne(id);",
     "new": "      if (!e || !e.asking) fetchOne(id);",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "DUEL1-a-declined-challenger-prompts-again-at-once",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "          if (!incoming.has(from) && now() - (quiet.get(from) ?? -Infinity) < DUEL_REASK_MS) { answer(from, { k: 'no', to: from, s: d.s }); return; }",
     "new": "",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "DUEL1-the-winner-recorded-as-the-loser",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "        const won = g.w !== '' && g.w === selfId(), lost = g.w !== '' && g.w !== selfId();",
     "new": "        const lost = g.w !== '' && g.w === selfId(), won = g.w !== '' && g.w !== selfId();",
     "tests": [
@@ -389,7 +389,7 @@
   },
   {
     "name": "DUEL1-a-third-player-s-blow-lands",
-    "file": "src/net/duelSession.js",
+    "file": "src/net/duel/duelSession.js",
     "old": "        if (!duel || duel.s !== g.s) return;",
     "new": "        if (!duel) return;",
     "tests": [

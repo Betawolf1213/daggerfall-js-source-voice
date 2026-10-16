@@ -1,11 +1,11 @@
 // GATHER-FEEL II - PEER-ACTS (2026-10-13, Mac: "Do the not done" - GATHER-FEEL's open "a peer neither sees an act ...
 // nor hears one"; bible/06-Systems/Professions-Arc.md 5.1 "Others see it" and section 45): ANOTHER PLAYER'S GATHERING,
 // SEEN AND HEARD. The wire (net/wire.js validPose's `ga`, `gb`, `gm` - world200) through the door, the relay and the
-// lerp, and end to end between two sessions over the real Room; the sender (net/peerGather.js createGatherPose) off the
+// lerp, and end to end between two sessions over the real Room; the sender (net/peer/peerGather.js createGatherPose) off the
 // real act machines and through the gathering host over the real kinds (scenes/gatherHost.js poseAct - the last blow and
 // the herb pulled ride past their act's end); the receiver's ear (PeerGatherSounds) and every lane that draws a peer -
 // the peers' sync hearing it, the class sprite's strike and kneel (net/remotePlayers.js), the Morrowind body's tool,
-// blow and crouch (net/peerBodies.js), Eye Of The Beholder's walker's stance and strokes (net/peerRiders.js); and the
+// blow and crouch (net/peer/peerBodies.js), Eye Of The Beholder's walker's stance and strokes (net/peer/peerRiders.js); and the
 // stand-ins pinned equal to the hosts' own.
 import './chargenDom.mjs';
 import { test } from 'node:test';
@@ -18,7 +18,7 @@ import { lerpPose, OnlineSession } from '../src/net/online.js';
 import {
   GATHER_POSE_ACTS, GATHER_POSE_BEATS, GATHER_POSE_TOOLS, GATHER_POSE_STRIKES, PEER_BLOW_DELAY_S, PEER_GATHER_CUE_MS,
   gatherActCode, createGatherPose, gatherBeatOf, peerKneeling, peerGatherTool, peerGatherSwing, peerActAt, PeerGatherSounds,
-} from '../src/net/peerGather.js';
+} from '../src/net/peer/peerGather.js';
 import { GATHER_SAY, GATHER_SOUND } from '../src/systems/gatherSounds.js';
 import { PROF_CUES } from '../src/systems/professions/profSounds.js';
 import { createChopAct } from '../src/systems/chopAct.js';
@@ -32,9 +32,9 @@ import { AXE_HAND, axeHandFrame } from '../src/scenes/treeHost.js';
 import { PICK_HAND, pickHandFrame } from '../src/scenes/mineHost.js';
 import { SICKLE_HAND } from '../src/scenes/herbHost.js';
 import { KNIFE_HAND } from '../src/scenes/huntHost.js';
-import { PeerBodies, peerCamera, peerBuildOpts, peerWeaponOf } from '../src/net/peerBodies.js';
+import { PeerBodies, peerCamera, peerBuildOpts, peerWeaponOf } from '../src/net/peer/peerBodies.js';
 import { RemotePlayers, PEER_SOUND_PROFILE } from '../src/net/remotePlayers.js';
-import { createPeerWalkers, createEotbArt, WALK_ONE_SHOTS, WALK_GATHER_STROKES, walkerHands } from '../src/net/peerRiders.js';
+import { createPeerWalkers, createEotbArt, WALK_ONE_SHOTS, WALK_GATHER_STROKES, walkerHands } from '../src/net/peer/peerRiders.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { setForagingHost } from '../src/systems/foraging/foragingInstall.js';
 import { fakeRoom } from './fakeRoom.mjs';

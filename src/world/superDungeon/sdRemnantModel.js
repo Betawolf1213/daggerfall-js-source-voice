@@ -1,7 +1,7 @@
 // @ts-check
 // SD8c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT, MADE -
 // what the Warp kept of the Numidium, and its Echoes, and the Reset's Hearts: meshes in their OWN frames (feet at the
-// origin, facing +z, y up - a facing of 0 is +z, as net/sdRemnant.js's `yw` is), stood on the page by a matrix
+// origin, facing +z, y up - a facing of 0 is +z, as net/superDungeon/sdRemnant.js's `yw` is), stood on the page by a matrix
 // (remnantMatrix) at each body's place, facing and size. Pure: the scene (scenes/sdRemnant.js) uploads and stands them.
 //
 //   THE REMNANT - a brass colossus four times a man's height: two legs, a hip, a chest that is an open CAGE of brass bars
@@ -14,7 +14,7 @@ import { faces } from '../gate/gateModel.js';
 import { packRealmFaces, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD } from './sdRealm.js';
 import { SD_HALL_GLOW_RECORD } from './sdHallArt.js';
 import { SD_REMNANT_GOLD_RECORD, SD_REMNANT_SILVER_RECORD, SD_REMNANT_ENDING_RECORD, SD_REMNANT_ARCHIVE, SD_REMNANT_TELL_RECORD, SD_REMNANT_DIAL_RECORD, SD_REMNANT_HAND_RECORD, SD_REMNANT_LAMP_RECORD, SD_REMNANT_RIM_RECORD, SD_TELL_REGION, SD_TELL_ART_SIZE, SD_LAMP_ART } from './sdRemnantArt.js';
-import { SD_REM, SD_ECHO, SD_HEART } from '../../net/sdRemnant.js';
+import { SD_REM, SD_ECHO, SD_HEART } from '../../net/superDungeon/sdRemnant.js';
 
 /** Its parts, its own frame, at the Remnant's own height (an Echo is scaled to its own - remnantScale). The joints the rig
  *  turns about are read off these (scenes/sdRemnantRig.js SD_RIG_JOINTS): the hips at legH, the waist over the hip's

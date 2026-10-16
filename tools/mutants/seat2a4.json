@@ -127,7 +127,7 @@
  },
  {
   "name": "SEAT2a4-fold-roll-side",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "      for (const [id, hp, max, down, side] of g.f) roll[id] = { hp, max, down: down === 1, side: SIDE[side ?? 0] ?? null };",
   "new": "      for (const [id, hp, max, down] of g.f) roll[id] = { hp, max, down: down === 1, side: null };",
   "tests": [
@@ -136,7 +136,7 @@
  },
  {
   "name": "SEAT2a4-fold-hp-down",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "down: g.h > 0 ? false : (was?.down ?? false)",
   "new": "down: was?.down ?? false",
   "tests": [
@@ -145,7 +145,7 @@
  },
  {
   "name": "SEAT2a4-fold-fell-at",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "fellAt: { ...s.fellAt, [g.id]: now }, heardAt: now };",
   "new": "fellAt: s.fellAt, heardAt: now };",
   "tests": [
@@ -154,7 +154,7 @@
  },
  {
   "name": "SEAT2a4-fold-up",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "      return { ...s, roll: { ...s.roll, [g.id]: { hp: was?.max ?? 0, max: was?.max ?? 0, down: false, side: was?.side ?? null } }, heardAt: now };",
   "new": "      return s;",
   "tests": [
@@ -163,7 +163,7 @@
  },
  {
   "name": "SEAT2a4-fold-receipt",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "    case 'end': return { ...s, end: { r: g.r, a: g.a }, receipt: g.rc ?? s.receipt, heardAt: now };",
   "new": "    case 'end': return { ...s, end: { r: g.r, a: g.a }, receipt: g.rc ?? null, heardAt: now };",
   "tests": [
@@ -172,7 +172,7 @@
  },
  {
   "name": "SEAT2a4-fold-no",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "    case 'no': return { ...s, no: g.m, heardAt: now };",
   "new": "    case 'no': return s;",
   "tests": [
@@ -181,7 +181,7 @@
  },
  {
   "name": "SEAT2a4-clock",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  const t = Math.max(0, Math.ceil(ms / 1000)), ss",
   "new": "  const t = Math.max(0, Math.floor(ms / 1000)), ss",
   "tests": [
@@ -190,7 +190,7 @@
  },
  {
   "name": "SEAT2a4-mark-contest",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  if (by && by !== held && raise > 0) return `~ ${raise}/20`;",
   "new": "  if (by && raise > 0) return `~ ${raise}/20`;",
   "tests": [
@@ -199,7 +199,7 @@
  },
  {
   "name": "SEAT2a4-mark-side",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  return held === 1 ? `^ ${tagOf(att)}` : held === 2 ? `o ${tagOf(def)}` : '-';",
   "new": "  return held === 1 ? `^ ${tagOf(att)}` : `o ${tagOf(def)}`;",
   "tests": [
@@ -208,7 +208,7 @@
  },
  {
   "name": "SEAT2a4-bar-joined",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "now < s.startMs ? `joined in ${siegeClockText(s.startMs - now)}` : siegeClockText(s.endMs - now);",
   "new": "siegeClockText(s.endMs - now);",
   "tests": [
@@ -217,7 +217,7 @@
  },
  {
   "name": "SEAT2a4-bar-open",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "    throne = `THRONE ${held >= rule.banners && !barred ? 'OPEN ' : ''}${pct}% (${rule.banners} of ${s.banners.length}${s.gate ? ' + the Gatehouse' : ''})`;",
   "new": "    throne = `THRONE ${pct}% (${rule.banners} of ${s.banners.length}${s.gate ? ' + the Gatehouse' : ''})`;",
   "tests": [
@@ -226,7 +226,7 @@
  },
  {
   "name": "SEAT2a4-bar-pct",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "    const pct = Math.min(100, Math.floor((100 * s.throne) / rule.holdS));",
   "new": "    const pct = Math.min(100, Math.floor((100 * s.throne) / 180));",
   "tests": [
@@ -235,7 +235,7 @@
  },
  {
   "name": "SEAT2a4-bar-tourney",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  if (battle.kind === 'siege') {\n    const rule",
   "new": "  if (battle.kind !== 'nothing') {\n    const rule",
   "tests": [
@@ -244,7 +244,7 @@
  },
  {
   "name": "SEAT2a4-sides",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  for (const f of Object.values(s.roll)) if (f.side) n[f.side][f.down ? 1 : 0]++;",
   "new": "  for (const f of Object.values(s.roll)) if (f.side) n[f.side][0]++;",
   "tests": [
@@ -253,7 +253,7 @@
  },
  {
   "name": "SEAT2a4-self-watch",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  if (watching) return [`Spectating - ${s.counts[2] ?? 0} of ${SIEGE_SPECTATORS_MAX}`];",
   "new": "  if (watching) return [];",
   "tests": [
@@ -262,7 +262,7 @@
  },
  {
   "name": "SEAT2a4-self-bars",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  const bars = f.max > 0 ? Math.round((10 * f.hp) / f.max) : 0;",
   "new": "  const bars = 10;",
   "tests": [
@@ -271,7 +271,7 @@
  },
  {
   "name": "SEAT2a4-self-wave",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  if (f.down) out.push(",
   "new": "  if (false) out.push(",
   "tests": [
@@ -280,7 +280,7 @@
  },
  {
   "name": "SEAT2a4-self-tier",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "siegeWaveMs({ tier, works: { walls: s.walls } }, f.side)",
   "new": "siegeWaveMs({ tier: 'palace', works: { walls: s.walls } }, f.side)",
   "tests": [
@@ -289,7 +289,7 @@
  },
  {
   "name": "SEAT2a4-title-forfeit",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  if (end.r === 'forfeit') return `${A} NEVER CAME - ${D} HOLDS ${seat}`;",
   "new": "  if (end.r === 'nothing') return `${A} NEVER CAME - ${D} HOLDS ${seat}`;",
   "tests": [
@@ -298,7 +298,7 @@
  },
  {
   "name": "SEAT2a4-title-absent",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  if (end.r === 'absent') return `NEITHER SIDE CAME - ${D} KEEPS ${seat}`;",
   "new": "  if (end.r === 'nothing') return `NEITHER SIDE CAME - ${D} KEEPS ${seat}`;",
   "tests": [
@@ -307,7 +307,7 @@
  },
  {
   "name": "SEAT2a4-title-tourney",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "    if (end.r === 'defend') return `${D} WINS THE TOURNEY FOR ${seat}`;",
   "new": "    if (end.r === 'nothing') return `${D} WINS THE TOURNEY FOR ${seat}`;",
   "tests": [
@@ -316,7 +316,7 @@
  },
  {
   "name": "SEAT2a4-result-line",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  const t = Math.max(0, Math.round(((s.heardAt || s.startMs) - s.startMs) / 1000));",
   "new": "  const t = 0;",
   "tests": [
@@ -325,7 +325,7 @@
  },
  {
   "name": "SEAT2a4-honour-spent",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  if (honours.spent) return",
   "new": "  if (false) return",
   "tests": [
@@ -334,7 +334,7 @@
  },
  {
   "name": "SEAT2a4-honour-none",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "  if (!honours) return 'No Honours this battle:",
   "new": "  if (honours === 7) return 'No Honours this battle:",
   "tests": [
@@ -343,7 +343,7 @@
  },
  {
   "name": "SEAT2a4-model-claim",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "    claim: !watching && honours === undefined && claimable,",
   "new": "    claim: honours === undefined && claimable,",
   "tests": [
@@ -352,7 +352,7 @@
  },
  {
   "name": "SEAT2a4-model-kept",
-  "file": "src/net/siegeLink.js",
+  "file": "src/net/siege/siegeLink.js",
   "old": "honours === undefined ? (claimable ? 'Your receipt is kept - claim it for your Honours.' : '')",
   "new": "honours === undefined ? ''",
   "tests": [
@@ -397,7 +397,7 @@
  },
  {
   "name": "SEAT2a4-claims-unsigned",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "  const live = (r, nowS) => { const c = read(r); return !!c && c.signed && c.e > nowS; };",
   "new": "  const live = (r, nowS) => { const c = read(r); return !!c && c.e > nowS; };",
   "tests": [
@@ -406,7 +406,7 @@
  },
  {
   "name": "SEAT2a4-claims-expired",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "  const live = (r, nowS) => { const c = read(r); return !!c && c.signed && c.e > nowS; };",
   "new": "  const live = (r, nowS) => { const c = read(r); return !!c && c.signed; };",
   "tests": [
@@ -415,7 +415,7 @@
  },
  {
   "name": "SEAT2a4-claims-once",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "      if (!live(r, nowS) || kept.includes(r)) return false;",
   "new": "      if (!live(r, nowS)) return false;",
   "tests": [
@@ -424,7 +424,7 @@
  },
  {
   "name": "SEAT2a4-claims-bound",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "      if (kept.length > max) kept = kept.slice(-max);",
   "new": "      if (false) kept = kept.slice(-max);",
   "tests": [
@@ -433,7 +433,7 @@
  },
  {
   "name": "SEAT2a4-claims-retry",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "      if (busy || (!force && now - offeredAt < SIEGE_CLAIM_RETRY_MS)) return 0;",
   "new": "      if (busy) return 0;",
   "tests": [
@@ -442,7 +442,7 @@
  },
  {
   "name": "SEAT2a4-claims-me",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "          if (!mine(read(r), who)) continue;",
   "new": "          if (false) continue;",
   "tests": [
@@ -451,7 +451,7 @@
  },
  {
   "name": "SEAT2a4-claims-twice",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "  if (r?.error === 'honours-twice' || r?.error === 'battle-none' || r?.error === 'battle-void') return true;",
   "new": "  if (r?.error === 'battle-none' || r?.error === 'battle-void') return true;",
   "tests": [
@@ -460,7 +460,7 @@
  },
  {
   "name": "SEAT2a4-claims-mend",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "|| r?.error === 'battle-void') return true;   // AUDIT-SEATS S3: void at its Turning\n  if (r?.error === 'receipt') return !MENDABLE.includes(r?.why);",
   "new": "|| r?.error === 'battle-void') return true;   // AUDIT-SEATS S3: void at its Turning\n  if (r?.error === 'receipt') return true;",
   "tests": [
@@ -469,7 +469,7 @@
  },
  {
   "name": "SEAT2a4-claims-said",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "          onClaimed?.(a, r);   // AUDIT-SEATS C7",
   "new": "          void a;   // AUDIT-SEATS C7",
   "tests": [
@@ -586,7 +586,7 @@
  },
  {
   "name": "SEAT2a4-ses-old",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      if (!relayOk()) { say(SIEGE_SESSION_TEXT.old); return false; }",
   "new": "      if (false) { say(SIEGE_SESSION_TEXT.old); return false; }",
   "tests": [
@@ -595,7 +595,7 @@
  },
  {
   "name": "SEAT2a4-ses-retry",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "s.retryAt = nowMs() + passRetryMs(s.tries);",
   "new": "s.retryAt = nowMs();",
   "tests": [
@@ -604,7 +604,7 @@
  },
  {
   "name": "SEAT2a4-ses-mint",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "    online.mintSiegePass = s.mint;",
   "new": "    online.mintSiegePass = null;",
   "tests": [
@@ -613,7 +613,7 @@
  },
  {
   "name": "SEAT2a4-ses-in-once",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      else if (!s.sentIn) s.sentIn = online.sendSiege({ k: 'in' });",
   "new": "      else online.sendSiege({ k: 'in' });",
   "tests": [
@@ -622,7 +622,7 @@
  },
  {
   "name": "SEAT2a4-ses-reconnect",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      if (!open) s.sentIn = false;",
   "new": "      if (false) s.sentIn = false;",
   "tests": [
@@ -631,7 +631,7 @@
  },
  {
   "name": "SEAT2a4-ses-window",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      if (s.window && now >= s.window) { api.leave(); return; }",
   "new": "      if (false) { api.leave(); return; }",
   "tests": [
@@ -640,7 +640,7 @@
  },
  {
   "name": "SEAT2a4-ses-room",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      if (!s || room !== s.room) return;",
   "new": "      if (!s) return;",
   "tests": [
@@ -649,7 +649,7 @@
  },
  {
   "name": "SEAT2a4-ses-back",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      if (g.k === 'back') movePlayer(g.p);",
   "new": "      if (false) movePlayer(g.p);",
   "tests": [
@@ -658,7 +658,7 @@
  },
  {
   "name": "SEAT2a4-ses-up-me",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      if (g.k === 'up' && g.id === online.id && g.p) movePlayer(g.p);",
   "new": "      if (g.k === 'up' && g.p) movePlayer(g.p);",
   "tests": [
@@ -667,7 +667,7 @@
  },
  {
   "name": "SEAT2a4-ses-keep",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      if (g.k === 'end' && g.rc && readSiegeReceipt(g.rc) && claims) {",
   "new": "      if (false) {",
   "tests": [
@@ -676,7 +676,7 @@
  },
  {
   "name": "SEAT2a4-ses-foe-side",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      return !!f && !!f.side && f.side !== s.side && !f.down;",
   "new": "      return !!f && !f.down;",
   "tests": [
@@ -685,7 +685,7 @@
  },
  {
   "name": "SEAT2a4-ses-foe-down",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      return !!f && !!f.side && f.side !== s.side && !f.down;",
   "new": "      return !!f && !!f.side && f.side !== s.side;",
   "tests": [
@@ -694,7 +694,7 @@
  },
  {
   "name": "SEAT2a4-ses-watch",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      if (!s || s.side === 'watch') return false;\n      if (isSiegeNpcId(id))",
   "new": "      if (!s) return false;\n      if (isSiegeNpcId(id))",
   "tests": [
@@ -703,7 +703,7 @@
  },
  {
   "name": "SEAT2a4-ses-heal",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      if (!f || (heal ? f.side !== s.side : !api.isFoe(to))) return false;",
   "new": "      if (!f || (heal ? false : !api.isFoe(to))) return false;",
   "tests": [
@@ -712,7 +712,7 @@
  },
  {
   "name": "SEAT2a4-ses-refuse-leave",
-  "file": "src/net/siegeSession.js",
+  "file": "src/net/siege/siegeSession.js",
   "old": "      say(SIEGE_SESSION_TEXT.refused(r?.text ?? 'it is not open'));\n      api.leave({ quiet: true });",
   "new": "      say(SIEGE_SESSION_TEXT.refused(r?.text ?? 'it is not open'));",
   "tests": [

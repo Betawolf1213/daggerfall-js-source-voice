@@ -3,7 +3,7 @@
 // all the eye of the Beholder sprites get this change"): THE LANTERN ON AN EYE OF THE BEHOLDER SPRITE, ONE HOME.
 //
 // HT-WAIST hung Daggerfall's lantern picture from the local sprite's right hip (player/eotbBody.js). DISC23-B draws
-// the other players on foot as the EOTB set they chose (net/peerRiders.js createPeerWalkers), and HT-WAIST-NET put
+// the other players on foot as the EOTB set they chose (net/peer/peerRiders.js createPeerWalkers), and HT-WAIST-NET put
 // the lantern on their pose (`hl`). Two kinds of sprite hang the same lantern, so everything they share is stated
 // here, once, and both call it - a second copy is how the player's own sprite and everyone else's would come to
 // show it differently:

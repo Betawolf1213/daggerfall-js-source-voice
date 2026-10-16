@@ -205,12 +205,12 @@ import { preloadRestArt } from '../ui/restWindow.js';   // D3: REST00I0/01I0/02I
 import { createRestWindow } from '../ui/restDoor.js';   // the enhanced/native fork, same law as ui/tradeDoor.js
 import { AmbientEffects, DUNGEON_AMBIENT_WAITS } from '../systems/ambientEffects.js';
 import { enemyWeightClassicUnits, weaponKnockbackSpeed, weaponKnockbackApplies, reportPlayerAttack } from '../combat/formulas.js';   // C15: + knockback; WB4b: a spell's number on the court's boss pops as a blow's does
-import { HIT_KINDS } from '../net/gateBrain.js';   // WB4b: a blow on the court's boss says its kind
+import { HIT_KINDS } from '../net/gate/gateBrain.js';   // WB4b: a blow on the court's boss says its kind
 import { bossReach, BOSS_SWAY_TEXT, BOSS_SWAY_TELL_MS } from '../world/gate/gateBoss.js';   // WB4b: a swing meets the court's boss at his skin; WB8a: and a sway meets his refusal
 import { playerMeleeCanHit } from '../combat/playerWeapon.js';   // PVPDUNGEON
 import { duelSpellOf } from '../combat/duelCombat.js';   // WB4b: the harmful families alone reach the court's boss, as they alone reach a duel opponent
 import { assignEnemySpells, SPELL_CAST_SOUND } from '../systems/enemySpells.js';
-import { ARENA_PUPPET_OWNER } from '../net/arenaLaw.js';   // ARENA4: the relay's fighters' puppets - a blow on one is the referee's
+import { ARENA_PUPPET_OWNER } from '../net/arena/arenaLaw.js';   // ARENA4: the relay's fighters' puppets - a blow on one is the referee's
 import { calculateCastCost } from '../systems/spellcost.js';
 import { snapshotPlayer, restorePlayer, composeSessionState, restoreSessionState , copyEffectEntry } from '../systems/save/save.js';   // B4: the ONE quest+talk composer
 import { saveSlot, loadSlot, quickLoadSlot, QUICK_SAVE_NAME, requestScreenshot, slotLoaded } from '../systems/save/saveSlots.js';   // SAV4: the quicksave is a SLOT named QuickSave; SS1: the shot arms here, the HOST loop delivers it
@@ -257,10 +257,10 @@ import { createSdHall } from './sdHall.js';   // SD6c: the Orrery's hall in the 
 import { createSdSteps } from './sdSteps.js';   // SD7b: the Unmoored Steps in the Shattered Hour
 import { createSdHang } from './sdHang.js';   // SD-LOOK S11: what hangs under the Hour's islands, the far islands, the Works
 import { createSdRemnant } from './sdRemnant.js';   // SD8c: the Brass Remnant in the Shattered Hour
-import { sdMarksOf } from '../net/sdMarks.js';   // SD18c: its Hollow's Ending - the light it burns with
-import { SD_NO_RIFT } from '../net/sdLaw.js';   // SD4b: the Rift's word when nobody can answer it
+import { sdMarksOf } from '../net/superDungeon/sdMarks.js';   // SD18c: its Hollow's Ending - the light it burns with
+import { SD_NO_RIFT } from '../net/superDungeon/sdLaw.js';   // SD4b: the Rift's word when nobody can answer it
 import { isSdRealm, SD_REALM_TEXT, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_THRESHOLD_RIM } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - a made place, its refusals, its way back
-import { realmToDungeon } from '../net/sdBrain.js';   // SD5a: the realm's frame
+import { realmToDungeon } from '../net/superDungeon/sdBrain.js';   // SD5a: the realm's frame
 import { dungeonTier } from '../systems/dungeon/dungeonTier.js';   // SD4a: the location's tier, the one law (TIER1)
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';
 import { foeTitle } from '../systems/foeTitle.js';   // FOE-TITLE: what a revenant, a champion or an elite is called
@@ -4267,7 +4267,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // (2026-09-25, Mac: "a large boss arena with an oversized enemy"). The outer host's word of him (`opts.gateBoss` -
   // scenes/gateCourt.js target(): where he stands, his height and radius, his ward, his stand-in entity for the
   // formulas) as a foe-shaped record, made each time it is asked; null outside the court. He is NEVER in `foes`: nothing
-  // here moves, ticks, kills or loots him - the relay runs him (net/gateBrain.js) - so every blow of mine that meets him
+  // here moves, ticks, kills or loots him - the relay runs him (net/gate/gateBrain.js) - so every blow of mine that meets him
   // is computed here by the game's own law and its number goes out (`opts.onBossHit`), the relay's caps deciding what
   // lands. Co-op's law turned about: the striker's machine says the number, the room holds the health.
   function gateBossBody() {
@@ -4285,7 +4285,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // each standing crystal's number, where it stands, its body and its stand-in) as foe-shaped records, made each time
   // asked; none outside a Reckoning. As he is, they are NEVER in `foes`: a blow of mine that meets one is computed here by
   // the game's own law against its stand-in (world/gate/gateBoss.js crystalStandIn - unarmoured: a crystal does not dodge)
-  // and its number goes out (`opts.onCrystalHit`), the relay's caps deciding what lands (net/gateBrain.js applyCrystalHit).
+  // and its number goes out (`opts.onCrystalHit`), the relay's caps deciding what lands (net/gate/gateBrain.js applyCrystalHit).
   function gateCrystalBodies() {
     const list = sdRemnant ? sdRemnant.heartTargets() : opts.gateCrystals?.() ?? null;   // SD8c: in the Hour, the Reset's Hearts
     if (!Array.isArray(list) || !list.length) return [];
@@ -4328,7 +4328,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // it stands, its body, its stand-in and its mobile) as foe-shaped records, made each time asked; none but under the
   // trial. As he and his crystals are, they are NEVER in `foes`: a blow of mine that meets one is computed here by the
   // game's own law against its stand-in (world/gate/gateBoss.js hostStandIn) and its number goes out (`opts.onHostHit`), the
-  // relay's caps deciding what lands (net/gateBrain.js applyHostHit). They bleed and sound as their own mobile does - their
+  // relay's caps deciding what lands (net/gate/gateBrain.js applyHostHit). They bleed and sound as their own mobile does - their
   // blood laddered against their own whole (`bloodOf`: AUDIT WB11 W5 - the stand-in's health nothing can empty threw the
   // lowest rung at every blow).
   function gateHostBodies() {
@@ -4384,7 +4384,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!r || !r.entity || !Array.isArray(r.feet) || !(r.height > 0) || !(r.radius > 0) || typeof r.i !== 'string') return null;
     return { rival: r.i, dead: false, entity: r.entity, mobileType: null, ai: { feet: r.feet, yaw: r.yaw ?? 0, height: r.height, radius: r.radius, centreOffset: r.height / 2, isHostile: true } };
   }
-  /** ARENA4b: THE BLOW'S SEQUENCE the referee reads (net/arenaBrain.js refBlow - one blow however many bodies it met): a
+  /** ARENA4b: THE BLOW'S SEQUENCE the referee reads (net/arena/arenaBrain.js refBlow - one blow however many bodies it met): a
    *  swing's every body one number (resolvePlayerHit), each shaft its own, each spell its own. */
   let _arenaQ = 0;
   const nextArenaQ = () => (_arenaQ = (_arenaQ + 1) & 0x7fffffff);
@@ -4505,7 +4505,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
   function resolvePlayerHit(eye, inViewFn, playerFeet, lookDir) {
     // PVPDUNGEON (the owner: "players should be able to attack each other in dungeons too in the pvp zone"): a fair player of
-    // the zone in reach, in view and in sight takes the swing before any foe does - INT9: the relay referees it (net/wildRef.js)
+    // the zone in reach, in view and in sight takes the swing before any foe does - INT9: the relay referees it (net/wild/wildRef.js)
     if (opts.wildBodies && opts.wildStrike) {
       let best = null, bestD = Infinity;
       for (const b of opts.wildBodies() ?? []) {
@@ -6355,7 +6355,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         pos: [...p.pos], archive: p.archive, record: p.record, items: p.items.map((it) => ({ ...it })), ...(p.owner === 'wild' ? { wild: true } : {}),
         ...(p.physical ? { physical: true } : {}),   // AUDIT PI1 H6: a shift-drop stays one - restorePiles lays it back lying
         ...(p.remainsKey ? { remainsKey: p.remainsKey } : {}),   // AUDIT LW-III: the deep's remains found again after a load
-      })).filter((p) => !p.wild),   // WILD1: a body's remains are the ROOM's (net/wildRemains.js) - never a save's, never the room's memory
+      })).filter((p) => !p.wild),   // WILD1: a body's remains are the ROOM's (net/wild/wildRemains.js) - never a save's, never the room's memory
       actions: actions.collectSaveData(),
       // AUDIT 63 F30: PlayerEnterExit.PlayerTeleportedIntoDungeon.
       // SerializablePlayer.cs:188-191 writes it ONLY under
@@ -9881,7 +9881,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
      *  offer it boxes. */
     goLive() { _live = true; },
     dropped: () => droppedLoot._piles,
-    droppedPool: () => droppedLoot,   // WILD1: the pool a body's remains in the open zone stand in (net/wildRemains.js)
+    droppedPool: () => droppedLoot,   // WILD1: the pool a body's remains in the open zone stand in (net/wild/wildRemains.js)
     /** AUDIT 18 F5: the overlay's own clock. DFU runs
      *  DaggerfallRestWindow.Update every frame the window is topmost
      *  (DaggerfallRestWindow.cs:185-229), and TickRest reads

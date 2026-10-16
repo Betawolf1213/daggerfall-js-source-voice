@@ -397,7 +397,7 @@ export function createEotbBody({ count = spriteCount, urlFor = eotbSpriteUrl, de
    *  picked by the curse (lycanArchive: 112381 for the wereboar), and
    *  `cfg` is the mod's settings, which never carry it - so every
    *  spriteFor here asked for the werewolf, and a wereboar saw the wolf
-   *  on themselves while the others (net/peerRiders.js, off the pose's
+   *  on themselves while the others (net/peer/peerRiders.js, off the pose's
    *  `wb`) draw the boar. The look is the settings plus the live form. */
   const lookNow = () => ({ ...cfg, lycanthropyType: last.lycanthropyType, horse: last.horseLook ?? 0 });   // COATS1: and the horse's look, off the rig's record
   /** PR-WW1: the form the lycan tables were last fetched for */

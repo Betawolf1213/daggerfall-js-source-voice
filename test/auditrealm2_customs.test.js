@@ -10,7 +10,7 @@ import { DatabaseSync } from 'node:sqlite';
 import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { SESSION_KEY } from '../src/net/accountClient.js';
-import { tradeableRecord, settleRealmTrade, BOAT_TEMPLATES } from '../src/net/realmTradeLaw.js';
+import { tradeableRecord, settleRealmTrade, BOAT_TEMPLATES } from '../src/net/realm/realmTradeLaw.js';
 import { createTradePack, tradeRefusal } from '../src/systems/tradePack.js';
 import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintBoatItem, boatItemName, boatItemMessage } from '../src/systems/comeSailAway/comeSailAwayItems.js';
 import { COME_SAIL_AWAY_VENDOR } from '../src/systems/comeSailAway/comeSailAway.js';

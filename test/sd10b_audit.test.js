@@ -13,26 +13,26 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 // the page
-import { SD_BLOWS, SD_BODY, SD_PILLARS, SD_ECHO_SPOTS, SD_LOST_MS, SD_OPENING_MS, SD_RESET_PCT, newRemnantFight, joinRemnant, remnantStateOf, stepRemnant } from '../src/net/sdRemnant.js';
-import { createSdFightLink } from '../src/net/sdFightLink.js';
+import { SD_BLOWS, SD_BODY, SD_PILLARS, SD_ECHO_SPOTS, SD_LOST_MS, SD_OPENING_MS, SD_RESET_PCT, newRemnantFight, joinRemnant, remnantStateOf, stepRemnant } from '../src/net/superDungeon/sdRemnant.js';
+import { createSdFightLink } from '../src/net/superDungeon/sdFightLink.js';
 import { validSdOut, SD_NO_WORDS, SD_FIGHT_KEY, SD_KEY, SOCIAL_ROOM, SD_INTERNAL_FELL, worldRoom, PIXEL_UNITS, CLOSE_BUSY } from '../src/net/wire.js';
-import { SD_ARENA, SD_PILLAR_W, SD_REALM_ORIGIN, realmToDungeon } from '../src/net/sdBrain.js';
+import { SD_ARENA, SD_PILLAR_W, SD_REALM_ORIGIN, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { SD_STEPS_COURSE, stepAt } from '../src/world/superDungeon/sdSteps.js';
-import { strikeDamage } from '../src/net/gateStrike.js';
-import { POOL_TICK_MS, HIT_KINDS } from '../src/net/gateBrain.js';
+import { strikeDamage } from '../src/net/gate/gateStrike.js';
+import { POOL_TICK_MS, HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { createSdRemnantBlows, bodysBlow, SD_BLOWS_TEXT } from '../src/scenes/sdRemnantBlows.js';
 import { arenaToDungeon, SD_REM_SINK_MS } from '../src/scenes/sdRemnant.js';
 import { createSdSpoils, clearOfPillars, SD_PILLAR_CLEAR_M, SD_SPEW_AT_MS } from '../src/scenes/sdSpoils.js';
 import { createSdEnd, SD_HOME_TEXT, SD_HOME_SAY_MS } from '../src/scenes/sdEnd.js';
 import { createSdHall } from '../src/scenes/sdHall.js';
 import { handMatrix } from '../src/world/superDungeon/sdHall.js';
-import { mintSdReceipt, readSdReceipt } from '../src/net/sdReceipt.js';
+import { mintSdReceipt, readSdReceipt } from '../src/net/superDungeon/sdReceipt.js';
 import { spoilsLevel } from '../src/scenes/spoilsPool.js';
 import { sdSpoilsDay, sdSpoilsList, SD_SPOILS_TEXT } from '../src/systems/superDungeon/sdSpoils.js';
 import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook } from '../src/world/superDungeon/sdDungeon.js';
-import { sdFell, sdRoomKey, isSdRoom, SD_NO_CLOSED, SD_NO_FULL, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
+import { sdFell, sdRoomKey, isSdRoom, SD_NO_CLOSED, SD_NO_FULL, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
 import { dungeonSizeFor, onlineDungeonSize } from '../src/world/smallerDungeons.js';
-import { orreryOf } from '../src/net/sdBrain.js';
+import { orreryOf } from '../src/net/superDungeon/sdBrain.js';
 import { isSdRealm } from '../src/world/superDungeon/sdRealm.js';
 // the set powers
 import { setStruck, setBossStruck, setPowerStates, setSetPowersVoice, registerPlayerBlowLanded, BLOW_WINDOW_S, _setSetPowersClockForTests, _resetSetPowersForTests } from '../src/systems/sigil/sigilSetPowers.js';
@@ -46,7 +46,7 @@ import { mintCondition } from '../src/systems/item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 // the relay
 import { fakeRooms } from './fakeRoom.mjs';
-import { PIXEL_M } from '../src/net/gateLaw.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

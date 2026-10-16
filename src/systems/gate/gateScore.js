@@ -369,7 +369,7 @@ export function gateScoreSongs() {
 }
 
 /**
- * THE LAW: what the court plays for the fight state `s` (net/gateLink.js) at `now` (the relay's clock, ms) - a
+ * THE LAW: what the court plays for the fight state `s` (net/gate/gateLink.js) at `now` (the relay's clock, ms) - a
  * GATE_SONGS name, SCORE_SILENCE, or null (no fight on this screen: the host's music director stands).
  */
 export function courtScoreFor(s, now) {

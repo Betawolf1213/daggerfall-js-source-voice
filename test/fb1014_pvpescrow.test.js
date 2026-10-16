@@ -1,16 +1,16 @@
 // FIELD BUGS 2026-10-14 - PVP-LOOT's two decisions of Mac's, the same day (bible/01-Overview/Field-Bugs-2026-10-14.md):
 //
 //   "Guildmates are friends" - in the open zone one's guild is kin, as one's party, its truce and one's duel are: the
-//   referee lands no blow between them (net/wildRef.js wildKin, the one law the relay and every client door ask).
+//   referee lands no blow between them (net/wild/wildRef.js wildKin, the one law the relay and every client door ask).
 //
 //   "Yes, build it" - THE TWO-PHASE HANDOFF: the fallen loses the worn piece its killer picked only once the killer has it.
 //   The account service holds the piece in ESCROW from the fall (server-account/src/wild.js); the killer's take in the
-//   room is the room's signed collect (net/wildReceipt.js `g1`), which the killer's tab carries to the service as an act
+//   room is the room's signed collect (net/wild/wildReceipt.js `g1`), which the killer's tab carries to the service as an act
 //   on its own record; nobody collecting by the time the remains could have gone, the fallen's tab takes it back.
 //
 // Every pin here runs THE WHOLE ROAD: the real relay room (its referee, its remains, its signatures - test/fakeRoom.mjs),
-// the real account service over node:sqlite (test/accountDb.mjs), and the clients' own books (net/wildFight.js, the
-// fallen's and the killer's; net/wildRemains.js, the killer's), the wire's own projection between them - over the
+// the real account service over node:sqlite (test/accountDb.mjs), and the clients' own books (net/wild/wildFight.js, the
+// fallen's and the killer's; net/wild/wildRemains.js, the killer's), the wire's own projection between them - over the
 // game's own pieces (the starting kit, a Magic longsword as the ladder rolls one, worn through equipItem, ids stamped as
 // the realm checkpoint stamps them, the record as the save writes it).
 import { test } from 'node:test';
@@ -30,12 +30,12 @@ import { wornOffer, wildRecord, wildTakeTook, wildChunks } from '../src/systems/
 import { validLootList } from '../src/systems/loot/loot.js';
 import '../src/systems/item/itemLaw.js';   // the item law registers itself with the wire, as the game's boot does
 import { addItem, stacksWith } from '../src/systems/inventory.js';
-import { createWildFight } from '../src/net/wildFight.js';
-import { createWildRemains } from '../src/net/wildRemains.js';
-import { wildKin, sameGuild } from '../src/net/wildRef.js';
-import { readWildReceipt, readWildCollect, WILD_COLLECT_TTL_S } from '../src/net/wildReceipt.js';
+import { createWildFight } from '../src/net/wild/wildFight.js';
+import { createWildRemains } from '../src/net/wild/wildRemains.js';
+import { wildKin, sameGuild } from '../src/net/wild/wildRef.js';
+import { readWildReceipt, readWildCollect, WILD_COLLECT_TTL_S } from '../src/net/wild/wildReceipt.js';
 import { validWildData, validWildOut, validWildRefOut, worldRoom, PIXEL_UNITS, WILD_ITEMS_MAX, WILD_DATA_MAX, SOCIAL_ROOM, RELAY_VERSION, relaySupportsWildCollect } from '../src/net/wire.js';
-import { SIEGE_UNITS_PER_M } from '../src/net/siegeRef.js';
+import { SIEGE_UNITS_PER_M } from '../src/net/siege/siegeRef.js';
 import { WILD_ESCROW_HOLD_S, escrowBackAt } from '../server-account/src/wild.js';
 import { WILD_TEXT, wildDeathLines } from '../src/systems/wild/wildZone.js';
 
@@ -147,7 +147,7 @@ async function herDrop(z, rc, { collect = true } = {}) {
   return d;
 }
 
-/** HIS BOOK (net/wildRemains.js), over the game's own mint and pack: the room's words in, its asks out; a collect the room
+/** HIS BOOK (net/wild/wildRemains.js), over the game's own mint and pack: the room's words in, its asks out; a collect the room
  *  signs goes to his tab's act (wildEscrowHost.js wildCollectHeard - the service asked with his record's `at`, the piece added from
  *  its answer, wildCollected). Answers the book and what it saw. */
 function hisBook(z, { carrying = true } = {}) {
@@ -189,7 +189,7 @@ const step = (ms) => { const t = Date.now() + ms; Date.now = () => t; };
 const atS = (s) => { Date.now = () => s * 1000; };
 const nowS = () => Math.floor(Date.now() / 1000);
 
-test('GUILDMATES ARE FRIENDS (Mac, 2026-10-14): in the open zone the referee lands no blow and calls no fall between two of one guild - the guild is kin, as the party, its truce and a duel are (net/wildRef.js wildKin, the one law the relay\'s `_wildBlow` and the client\'s wildFair ask); two of no guild in common fight as before (mutants: the guild unread at the referee; the guild unread by the law)', () => withClock(async () => {
+test('GUILDMATES ARE FRIENDS (Mac, 2026-10-14): in the open zone the referee lands no blow and calls no fall between two of one guild - the guild is kin, as the party, its truce and a duel are (net/wild/wildRef.js wildKin, the one law the relay\'s `_wildBlow` and the client\'s wildFair ask); two of no guild in common fight as before (mutants: the guild unread at the referee; the guild unread by the law)', () => withClock(async () => {
   const z = await stand({ guildmate: true });
   for (const ws of [z.fa, z.kb]) await z.r.raw(ws, JSON.stringify({ t: 'wild', data: { k: 'zone', z: 1 } }));
   for (let k = 0; k < 40; k++) { step(300); await z.r.raw(z.kb, JSON.stringify({ t: 'wild', data: { k: 'strike', to: 'peer-0001', n: 1 + k, by: 'melee', p: W(1), d: 999 } })); }

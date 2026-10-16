@@ -1,6 +1,6 @@
 // GUILD1 (2026-09-25, Mac, of the holdings: "future ownership for online guilds"; asked, founding takes "Gold and
 // Renown", a guild is joined "Per character", its ranks are "Four, renamed by the guildmaster", and the treasury is the
-// "Guildmaster only" to take from): THE GUILDS. The law both ends read (net/guildLaw.js), the account service's guilds
+// "Guildmaster only" to take from): THE GUILDS. The law both ends read (net/guild/guildLaw.js), the account service's guilds
 // driven through the real Worker over node:sqlite with every migration applied (server-account/src/guilds.js), and the
 // client's door (net/accountClient.js accountGuilds). `06-Systems/Online-Arc.md` GUILD1.
 import { test } from 'node:test';
@@ -15,7 +15,7 @@ import {
   GUILD_FOUND_GOLD, GUILD_FOUND_RENOWN, GUILD_MEMBERS_MAX, GUILD_RANK_NAMES, GUILD_POWERS, GUILD_INVITE_TTL_S, GUILD_MOVE_MAX, GUILD_TREASURY_MAX,
   GUILD_ID_RE, GUILD_MEMBER_RE, guildMay, guildMayMove, guildOutranks, guildNameOf, guildNameKey, guildTagOf, guildRankNamesOf,
   guildGoldOk,
-} from '../src/net/guildLaw.js';
+} from '../src/net/guild/guildLaw.js';
 import { renownXpFor } from '../src/net/renown.js';
 import { accountGuilds, REFUSALS, SESSION_KEY } from '../src/net/accountClient.js';
 import { r2, seatRealm } from './realmSeat.mjs';   // AUDIT REALM2 S2: a founding is a realm character's, paid on its record
@@ -461,5 +461,5 @@ test('GUILD1 the wire: every guild route is the service\'s and behind a session;
   }
   assert.match(REFUSALS['guild-renown'], /Renown 10/);
   assert.match(REFUSALS['guild-full'], /50/);
-  assert.match(src('.github/workflows/account-deploy.yml'), /- "src\/net\/guildLaw\.js"/);
+  assert.match(src('.github/workflows/account-deploy.yml'), /- "src\/net\/guild\/guildLaw\.js"/);
 });

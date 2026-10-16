@@ -200,8 +200,8 @@ towns, roads, dungeons or regions - the later use.
 
 The field, within the hour of the deploy: *"game freezes when I go outside."* The ground beyond the Bay is read by the
 terrain WORKER, whose import graph is pure by law (EV7); TAMRIEL2 had taken two helpers from their "one home" in
-net/ - the gate's PIXEL_M (`net/gateLaw.js`, which imports `net/wire.js`) and the strike's segmentDistance
-(`net/gateStrike.js`) - and through them the worker's bundle grew by twenty modules of the relay's law, and the world
+net/ - the gate's PIXEL_M (`net/gate/gateLaw.js`, which imports `net/wire.js`) and the strike's segmentDistance
+(`net/gate/gateStrike.js`) - and through them the worker's bundle grew by twenty modules of the relay's law, and the world
 froze on its first exterior build. The helpers live in pure homes now: `world/segment.js` (the one segment distance,
 which the gate's strike imports too) and the frame's own kilometres a pixel, held to the wire's units by its pin. The
 pin that would have caught it walks the worker's whole graph at any depth and holds every module to world/ and

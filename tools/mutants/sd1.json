@@ -1,7 +1,7 @@
 [
   {
     "name": "SD1-a-day-not-two",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "export const SD_LIFETIME_MS = 48 * 3600 * 1000;",
     "new": "export const SD_LIFETIME_MS = 24 * 3600 * 1000;",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "SD1-it-never-fades",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  return now < rec.until ? rec.ph : 'gone';",
     "new": "  return rec.ph;",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "SD1-the-collapse-never-ends",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  if (rec.fellAt != null) return now < rec.fellAt + SD_COLLAPSE_MS ? 'fell' : 'gone';",
     "new": "  if (rec.fellAt != null) return 'fell';",
     "tests": [
@@ -31,7 +31,7 @@
   },
   {
     "name": "SD1-two-at-once",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  if (prev && (sdPhase(prev, now) !== 'gone' || now < prev.next)) return null;",
     "new": "  if (prev && now < prev.next) return null;",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "SD1-no-rest",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  if (prev && (sdPhase(prev, now) !== 'gone' || now < prev.next)) return null;",
     "new": "  if (prev && sdPhase(prev, now) !== 'gone') return null;",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "SD1-found-twice",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  if (!rec || sdPhase(rec, now) !== 'risen') return null;\n  return /** @type {SdRecord} */ ({ ...rec, ph: 'found'",
     "new": "  if (!rec) return null;\n  return /** @type {SdRecord} */ ({ ...rec, ph: 'found'",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "SD1-an-unfound-fall",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  if (!rec || sdPhase(rec, now) !== 'found') return null;\n  const count",
     "new": "  if (!rec) return null;\n  const count",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "SD1-the-count-unbounded",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "Math.max(0, Math.min(SD_FIGHTERS_MAX, n))",
     "new": "n",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "SD1-gone-unsaid",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  if (p === 'gone' && rec.ph !== 'gone' && rec.s) return { act: 'gone' };\n",
     "new": "",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD1-one-player-a-crowd",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "if (Number(counts?.[r] ?? 0) >= SD_CENSUS_MIN) qual.push(r);",
     "new": "if (Number(counts?.[r] ?? 0) >= 1) qual.push(r);",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "SD1-the-last-region-never-rests",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  const pool = qual.length > 1 ? qual.filter((r) => r !== last) : qual;",
     "new": "  const pool = qual;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "SD1-a-tie-always-the-first",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  return best[sdRoll(s, 1) % best.length];",
     "new": "  return best[0];",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "SD1-a-find-from-anywhere-in-the-pixel",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  return Math.hypot(pose.x - cx, pose.z - cz) <= SD_FOUND_RADIUS_M * UNITS_PER_M;",
     "new": "  return Math.hypot(pose.x - cx, pose.z - cz) <= PIXEL_UNITS;",
     "tests": [
@@ -131,7 +131,7 @@
   },
   {
     "name": "SD1-the-map-unflipped",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "cz = (500 - claim.py - 0.5) * PIXEL_UNITS;",
     "new": "cz = (claim.py + 0.5) * PIXEL_UNITS;",
     "tests": [
@@ -151,7 +151,7 @@
   },
   {
     "name": "SD1-a-padded-room",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "const SD_ROOM = /^sd:[1-9]\\d{0,8}$/;",
     "new": "const SD_ROOM = /^sd:\\d{1,9}$/;",
     "tests": [
@@ -161,7 +161,7 @@
   },
   {
     "name": "SD1-the-city-left-in-the-name",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "  return city ? name.replace('{city}', () => city) : SD_NAMES[0];",
     "new": "  return name.replace('{city}', () => city);",
     "tests": [

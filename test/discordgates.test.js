@@ -1,6 +1,6 @@
 // DISCORD-GATES (2026-09-28, the field's player: "add a discord channel that tells the gates in real time itll create
 // hype and make more join"; Mac: "Discord live gates?", then "Omen (15 min before), Boss slain", "Ping an opt-in role"
-// and, for the place, "What do you need for discord"): THE GATE'S HERALD, DRIVEN. The law (net/gateHerald.js: the
+// and, for the place, "What do you need for discord"): THE GATE'S HERALD, DRIVEN. The law (net/gate/gateHerald.js: the
 // door, the words, when each is owed, where the gate stands as accounts said it), the wire's `site` word (net/wire.js),
 // the hub over the real Room with Discord stubbed (server/src/index.js: the alarm at the omen, the posts, the kill,
 // a refusal posted again, nothing at all without a webhook), and the client's word (net/online.js sendGateSite).
@@ -11,8 +11,8 @@ import { readFileSync } from 'node:fs';
 import {
   heraldWebhook, heraldRole, heraldName, omenPost, fellPost, heraldOmenDue, heraldFellLive, gateSiteDayOk, foldGateSite, agreedGateSite,
   HERALD_RETRY_MS, HERALD_FELL_KEEP_MS, GATE_SITE_AGREE, GATE_SITE_CANDIDATES_MAX, GATE_SITE_VOTES_MAX, GATE_SITE_SKEW_MS,
-} from '../src/net/gateHerald.js';
-import { gateTimes, gateBossOf, gateModsOf, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
+} from '../src/net/gate/gateHerald.js';
+import { gateTimes, gateBossOf, gateModsOf, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
 import {
   validGateIn, parseClient, gatePlaceWire, relaySupportsGateSite, GATE_SITE_RELAY_MIN, GATE_PLACE_MAX, GATE_INTERNAL_FELL, SOCIAL_ROOM, RELAY_VERSION, ACCOUNT_SWEEP_MS, SD_KEY,
 } from '../src/net/wire.js';

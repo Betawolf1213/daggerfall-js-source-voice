@@ -20,12 +20,12 @@
 //   AIMED AT ME - a Volley's mark under my own feet at its word: the parry's ring, high and sharp, at my feet (WB13e).
 //
 // A turn is heard as it happens: what this page first sees already turned (a late join, a reload) is taken as it
-// stands, never sounded late. Pure of the scene but for the engine's play3d; the fight's own clock (net/sdFightLink.js
+// stands, never sounded late. Pure of the scene but for the engine's play3d; the fight's own clock (net/superDungeon/sdFightLink.js
 // `now`). Not a DFU member. Ledger A (SUPER-DUNGEONS).
 
-import { SD_ARENA, realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
-import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY } from '../net/sdRemnant.js';
-import { sdBodyAt, sdEndAgain } from '../net/sdFightLink.js';
+import { SD_ARENA, realmToDungeon, dungeonToRealm } from '../net/superDungeon/sdBrain.js';
+import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY } from '../net/superDungeon/sdRemnant.js';
+import { sdBodyAt, sdEndAgain } from '../net/superDungeon/sdFightLink.js';
 import { BODY_FALL, THUNDER_ROLL, SWING_LOW, CRYSTAL_CLIPS } from '../world/gate/gateBoss.js';
 
 /** The Iron Atronach's voice (characters/enemyBasics.js row 36: moveSound, barkSound, attackSound). */
@@ -60,7 +60,7 @@ export const SD_VOICE_CUES = Object.freeze({
     pulse: cue(THUNDER_ROLL, 0.8, 1.2, 120, 'arena'), reset: cue(CRYSTAL_CLIPS.hit, 0.42, 1.5, 120, 'arena'), end: cue(TOLL, 0.3, 2.0, 200, 'arena'),
   }),
   sting: cue(CRYSTAL_CLIPS.hit, 2.2, 1.3, 20, 'feet'),
-  // AUDIT SD III (A2): the End struck again (net/sdFightLink.js sdEndAgain) - a third of its toll, the clock's knell
+  // AUDIT SD III (A2): the End struck again (net/superDungeon/sdFightLink.js sdEndAgain) - a third of its toll, the clock's knell
   knell: cue(TOLL, 0.3, 0.7, 200, 'arena'),
 });
 /** A stride's length, the Remnant's and an Echo's (m); a jump past this between frames is a body put somewhere, not
@@ -90,7 +90,7 @@ const lcg = (seed) => { let x = (seed * 2654435761) >>> 0 || 1; return () => { x
 const frac = (h, m) => (m > 0 ? Math.max(0, Math.min(1, h / m)) : 1);
 
 /**
- * The Remnant's voice on this screen. `audio` the engine (play3d), `link` the fight's (net/sdFightLink.js), `feet()`
+ * The Remnant's voice on this screen. `audio` the engine (play3d), `link` the fight's (net/superDungeon/sdFightLink.js), `feet()`
  * mine in the dungeon's frame (null out of the Hour).
  * @param {{ audio?: any, link: any, feet?: () => (number[] | null) }} deps
  */

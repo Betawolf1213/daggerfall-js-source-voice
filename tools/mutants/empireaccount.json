@@ -28,7 +28,7 @@
   },
   {
     "name": "EMPIRE-ACCOUNT-service-not-daggerfall",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "export const REALM_EMPIRE_ACCOUNT = 17;",
     "new": "export const REALM_EMPIRE_ACCOUNT = 18;",
     "tests": [
@@ -245,7 +245,7 @@
   },
   {
     "name": "EMPIRE-ACCOUNT-service-pays-the-branch",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    ? save.bankAccounts[REALM_EMPIRE_ACCOUNT] ?? save.bankAccounts[",
     "new": "    ? save.bankAccounts[",
     "tests": [
@@ -254,7 +254,7 @@
   },
   {
     "name": "EMPIRE-ACCOUNT-service-ignores-unfolded-branches",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  return [empire, ...save.bankAccounts.filter((/** @type {any} */ a) => a !== empire && !!a && typeof a === 'object')];",
     "new": "  return [empire];",
     "tests": [
@@ -263,7 +263,7 @@
   },
   {
     "name": "EMPIRE-ACCOUNT-service-overdraws",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    const take = Math.min(owed, Math.max(0, Number(a.accountGold) || 0));",
     "new": "    const take = owed;",
     "tests": [

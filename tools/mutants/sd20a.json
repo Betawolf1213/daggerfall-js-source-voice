@@ -1,7 +1,7 @@
 [
   {
     "name": "SD20A-F1-no-ceiling",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "const pulseStepPct = (step, n) => Math.min(SD_PULSE_MAX, SD_PULSE_PCT + step * Math.max(0, Math.floor(Number(n) || 0)));",
     "new": "const pulseStepPct = (step, n) => SD_PULSE_PCT + step * Math.max(0, Math.floor(Number(n) || 0));",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD20A-F1-the-wire-past-it",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "(atk?.sh?.ps != null ? pulseStepPct(atk.sh.ps, atk.n) :",
     "new": "(atk?.sh?.ps != null ? SD_PULSE_PCT + atk.sh.ps * Math.max(0, Math.floor(Number(atk.n) || 0)) :",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD20A-F1-the-ceiling-whole",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "export const SD_PULSE_MAX = 0.75;",
     "new": "export const SD_PULSE_MAX = 1;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD20A-F1-the-omens-old-words",
-    "file": "src/net/sdMarks.js",
+    "file": "src/net/superDungeon/sdMarks.js",
     "old": "text: 'Each Mantella Pulse climbs twice as fast, to three quarters of your health at most.'",
     "new": "text: 'Each Mantella Pulse strikes harder than the last by twice as much.'",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD20A-F3-the-late-law-over-the-hours-own",
-    "file": "src/net/sdStrike.js",
+    "file": "src/net/superDungeon/sdStrike.js",
     "old": "      if (!out.all) {\n        out.all = true;\n",
     "new": "      if (landing('all')) {\n",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD20A-F3-struck-twice",
-    "file": "src/net/sdStrike.js",
+    "file": "src/net/superDungeon/sdStrike.js",
     "old": "      if (!out.all) {\n        out.all = true;\n",
     "new": "      {\n        out.all = true;\n",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD20A-F3-the-window-a-minute",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "export const SD_POSE_FRESH_MS = 25_000;",
     "new": "export const SD_POSE_FRESH_MS = 60_000;",
     "tests": [
@@ -155,7 +155,7 @@
   },
   {
     "name": "SD20A-F5-hardened-half-again",
-    "file": "src/net/sdMarks.js",
+    "file": "src/net/superDungeon/sdMarks.js",
     "old": "law: Object.freeze({ heartX: 1.25 })",
     "new": "law: Object.freeze({ heartX: 1.5 })",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "SD20A-F6-the-pulse-through-the-reset",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "    if (R && f.pulseAt < R.at + SD_PULSE_CLEAR_MS) f.pulseAt = R.at + SD_PULSE_CLEAR_MS;\n    else {",
     "new": "    {",
     "tests": [
@@ -174,7 +174,7 @@
   },
   {
     "name": "SD20A-F6-the-reset-inside-the-pulse",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": " && !(f.clock && f.clock.a === SD_BLOWS.pulse.id)) {",
     "new": ") {",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "SD20A-F6-no-clearance",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "export const SD_PULSE_CLEAR_MS = 4000;",
     "new": "export const SD_PULSE_CLEAR_MS = 0;",
     "tests": [
@@ -192,7 +192,7 @@
   },
   {
     "name": "SD20A-F7-the-old-keep",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "export const SD_REM = Object.freeze({ r: 2.2, h: 7.2, speed: 2.6, keep: 19 });",
     "new": "export const SD_REM = Object.freeze({ r: 2.2, h: 7.2, speed: 2.6, keep: 18 });",
     "tests": [
@@ -219,7 +219,7 @@
   },
   {
     "name": "SD20A-F8-the-top-shaded",
-    "file": "src/net/sdStrike.js",
+    "file": "src/net/superDungeon/sdStrike.js",
     "old": "(over || !behindPillar(atk.x, atk.z, px, pz))",
     "new": "!behindPillar(atk.x, atk.z, px, pz)",
     "tests": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "SD20A-F8-over-from-the-floor",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "export const SD_PILLAR_OVER_Y = SD_PILLAR_H - 0.5;",
     "new": "export const SD_PILLAR_OVER_Y = 0;",
     "tests": [
@@ -264,7 +264,7 @@
   },
   {
     "name": "SD20A-F9-the-old-floor",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "return Math.max(Math.min(SD_HEART.min, Math.round(team)), ",
     "new": "return Math.max(SD_HEART.min, ",
     "tests": [

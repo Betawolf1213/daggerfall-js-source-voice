@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { validPose, poseChanged } from '../src/net/wire.js';
 import { lerpPose } from '../src/net/online.js';
-import { peerWeaponOf, peerBuildOpts, PeerBodies } from '../src/net/peerBodies.js';
+import { peerWeaponOf, peerBuildOpts, PeerBodies } from '../src/net/peer/peerBodies.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';

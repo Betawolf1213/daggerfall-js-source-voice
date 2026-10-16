@@ -17,7 +17,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { OnlineSession, THREW_SAY_MS, lerpPose } from '../src/net/online.js';
-import { PeerBodies, peerCamera } from '../src/net/peerBodies.js';
+import { PeerBodies, peerCamera } from '../src/net/peer/peerBodies.js';
 import { withinYaw, turnTowards } from '../src/characters/enemyMotor.js';
 import { validPose, validFoeRecord, validSharedFoe, SHARED_EFFECTS_MAX, RELAY_VERSION } from '../src/net/wire.js';
 import { wrapAngle } from '../src/world/mat4.js';
@@ -218,7 +218,7 @@ test('ONCRASH1: EVERY wrap site answers a huge angle, with the wire\'s door BYPA
   // 2. characters/enemyMotor.js - the facing test a puppet's streamed yaw reaches
   assert.equal(withinYaw(big, 0, 1, 45), withinYaw(wrapAngle(big), 0, 1, 45), 'withinYaw answers, and answers the wrapped angle\'s answer');
   assert.equal(typeof turnTowards(big, 0, 1, 10), 'number');
-  // 3. net/peerBodies.js - the rig's eased yaw
+  // 3. net/peer/peerBodies.js - the rig's eased yaw
   const bodies = new PeerBodies({ renderer: null, enabled: () => false });
   assert.equal(typeof bodies.heightOf('nobody'), 'number', 'the body pool stands with no rig');
   const cam = peerCamera({ yaw: big, mv: 0 }, [0, 0, 0], 0);

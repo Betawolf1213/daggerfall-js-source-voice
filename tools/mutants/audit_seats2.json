@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-SEATS2-R1-leash",
-    "file": "src/net/siegeRef.js",
+    "file": "src/net/siege/siegeRef.js",
     "old": "n.post[0], n.post[1]) <= (SIEGE_NPC[n.kind]?.leashM ?? 0) + (SIEGE_NPC[n.kind]?.landM ?? 0)\n",
     "new": "n.post[0], n.post[1]) <= (SIEGE_NPC[n.kind]?.aggroM ?? 0) + (SIEGE_NPC[n.kind]?.landM ?? 0)\n",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-SEATS2-R1-down",
-    "file": "src/net/siegeRef.js",
+    "file": "src/net/siege/siegeRef.js",
     "old": "  if (!n || n.down || !sub) return;\n  n.tg = sub;",
     "new": "  if (!n || !sub) return;\n  n.tg = sub;",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-SEATS2-R3-clamp",
-    "file": "src/net/siegeRef.js",
+    "file": "src/net/siege/siegeRef.js",
     "old": "th: Math.min(Math.floor(b.throne), (SIEGE_THRONE[b.tier] ?? SIEGE_THRONE.palace).holdS),",
     "new": "th: Math.floor(b.throne),",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDIT-SEATS2-C2-fall",
-    "file": "src/net/siegeLink.js",
+    "file": "src/net/siege/siegeLink.js",
     "old": "if (was?.down && down === 1) return { ...was, hp, max };",
     "new": "if (was?.down && down === 2) return { ...was, hp, max };",
     "tests": [

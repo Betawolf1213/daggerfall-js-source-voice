@@ -3,9 +3,9 @@
 The port's own (DFU's guilds are its factions; a player's guild is GUILD1's, `06-Systems/Online-Arc.md` GUILD1 to
 GUILD1e). Four parts: **GUILD2a** a new name for a price, **GUILD2b** the guild's vault and who may use it, **GUILD2c**
 arms worth choosing that every banner draws, and **GUILD2d** the Guild tab in pages. The laws are
-`src/net/guildLaw.js`, `src/net/guildVaultLaw.js` and `src/net/heraldryLaw.js`; the service is
+`src/net/guild/guildLaw.js`, `src/net/guild/guildVaultLaw.js` and `src/net/heraldryLaw.js`; the service is
 `server-account/src/guilds.js` and `server-account/src/guildVault.js` (migration `0077_guild_overhaul.sql`); the client
-`src/net/guildBook.js`, `src/ui/socialPanel.js` and `src/ui/heraldryArt.js`.
+`src/net/guild/guildBook.js`, `src/ui/socialPanel.js` and `src/ui/heraldryArt.js`.
 
 ## Asked
 
@@ -161,7 +161,7 @@ page says it the way a friend's row does (SOC3): a dot, lit while the member is 
   the roster's own statement, the players row found by its key; no write, no migration (acct113).
 - **Online is the service's sitting.** A member is online while no wider gap than PLAY_GRACE_S (ten minutes) has
   passed since their beat - the gap `creditPlay` counts as one sitting - and the reader's own row always: they are
-  playing it (`net/guildBook.js` guildMemberOnline, guildSeenText). The service's seconds are read against this
+  playing it (`net/guild/guildBook.js` guildMemberOnline, guildSeenText). The service's seconds are read against this
   machine's clock, as the letterbox reads its stamps. A row the service said no stamp for (a Worker before acct113)
   says nothing of presence.
 - **Read on the live pass, painted never.** "Last online 5 min ago" moves on the clock alone, and a sitting that

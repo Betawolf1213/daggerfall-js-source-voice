@@ -41,12 +41,12 @@ import { levelUpSkillSumAnchor } from './advancement.js';   // LEVEL-ONLINE-2: .
 import { isGoldPieces } from './inventory.js';
 import { crossFleetData } from './fleet.js';   // AUDIT SHIPYARDS L1-2: Come Sail Away's ships cross as a DFU deed does - kept, never sold
 import { COME_SAIL_AWAY_VENDOR } from './comeSailAway/comeSailAway.js';   // ...her placed boats' record, by its vendor
-// AUDIT REALM2 S1: the allowance and the measure live in the law the service reads too (net/realmGoldLaw.js), which holds
+// AUDIT REALM2 S1: the allowance and the measure live in the law the service reads too (net/realm/realmGoldLaw.js), which holds
 // a customs character's first save to them - re-exported here, their home before it; AUDIT REALM2 T2, T3 and T5's
 // counting with them (every container, a boat's hold, a deed at what the realm's bank pays)
 import { REST_ITEM, restItemsOnline } from './rest/restItems.js';   // AUDIT REST-PARTY B4: the supplies stay offline while their online sources are shut (REST-LOOT: open since 2026-10-05; the switch is the way back)
-import { liquidWorthOf, stashedItemLists, carriedItemLists, liquidWealthOf, deedsOf, customsAllowance, CUSTOMS_WEALTH_BASE, CUSTOMS_WEALTH_PER_LEVEL, CUSTOMS_HOUSE_PRICE } from '../net/realmGoldLaw.js';
-import { cardWorthOf, cardRecordWorth, decorOwnOf, isCardRecord, customsCardAllowance } from '../net/cardWorthLaw.js';   // CARDS9: the cards' customs, one law with the service's first save; AUDIT CARDS-6 A1/A2: a pack's worth, and the decor
+import { liquidWorthOf, stashedItemLists, carriedItemLists, liquidWealthOf, deedsOf, customsAllowance, CUSTOMS_WEALTH_BASE, CUSTOMS_WEALTH_PER_LEVEL, CUSTOMS_HOUSE_PRICE } from '../net/realm/realmGoldLaw.js';
+import { cardWorthOf, cardRecordWorth, decorOwnOf, isCardRecord, customsCardAllowance } from '../net/card/cardWorthLaw.js';   // CARDS9: the cards' customs, one law with the service's first save; AUDIT CARDS-6 A1/A2: a pack's worth, and the decor
 import { binderOf, binderDecks, collectionOf, deckHeldRefusal } from './iliac/iliacItems.js';   // AUDIT CARDS-6 A9: the copies the binder's decks need, kept last
 
 export { stashedItemLists, liquidWealthOf, deedsOf, customsAllowance, CUSTOMS_WEALTH_BASE, CUSTOMS_WEALTH_PER_LEVEL, CUSTOMS_HOUSE_PRICE };
@@ -155,13 +155,13 @@ export function applyCustoms(snap) {
 
 /**
  * CARDS9 (bible/11-Multiplayer/Tavern-Cards.md section 32): THE CARDS' CUSTOMS, in place (the realm's copy, as all of
- * customs is). A character brings cards worth no more than customsCardAllowance(level) (net/cardWorthLaw.js - the
+ * customs is). A character brings cards worth no more than customsCardAllowance(level) (net/card/cardWorthLaw.js - the
  * starter deck's worth and a sum a level); past it the DEAREST card goes first, one card at a time off its stack, until
  * the rest fit - a stash's before the wagon's before the pack's (customs' own order, carriedItemLists). The offline
  * character keeps every card. Answers `{ kept, worth, allowance }`: the cards that stayed behind, the worth carried
  * before, the allowance.
  *
- * AUDIT CARDS-6 A1: A SEALED PACK IS TAKEN AS A CARD, at its worth (net/cardWorthLaw.js CARD_PACK_WORTH, among the cards
+ * AUDIT CARDS-6 A1: A SEALED PACK IS TAKEN AS A CARD, at its worth (net/card/cardWorthLaw.js CARD_PACK_WORTH, among the cards
  * by it - the dearest first, one rule): customs had read template 581 alone, and a pack crossed to open online.
  * AUDIT CARDS-6 A2: AND WHAT STANDS AS THE OWNER'S OWN DECOR (DECOR2a's decorOwn, decorOwnOf) is taken FIRST among its
  * worth - out of the pack's reach, as a stash is - the item stays offline and the piece it stood as goes with it (REST
@@ -277,7 +277,7 @@ const crossPieces = (/** @type {any} */ room) => {
 /**
  * RESTORE: EVERY DEED CROSSES, MARKED - a house's slot `crossed`, the ship's `shipCrossed` - with every piece in its
  * room set to pay nothing back. The realm's bank never buys a crossed deed back (banking.js), so it is no deed the
- * allowance counts (net/realmGoldLaw.js deedsOf). Answers what crossed, in the report's words: 'ship' and 'house' each.
+ * allowance counts (net/realm/realmGoldLaw.js deedsOf). Answers what crossed, in the report's words: 'ship' and 'house' each.
  * @param {any} snap
  */
 export function crossDeeds(snap) {

@@ -1,14 +1,14 @@
 // @ts-check
 // SD18b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD18b;
 // Mac: "The detail needs to exceed that of the oblivion gates"): THE HOUR'S MARKS, SEEN - its Ending and its two omens
-// (net/sdMarks.js) as the gate shows the Warden's (ui/gateMarksView.js, WB9a): a row under the Remnant's bar all fight
+// (net/superDungeon/sdMarks.js) as the gate shows the Warden's (ui/gateMarksView.js, WB9a): a row under the Remnant's bar all fight
 // long, and the marks' card as a fighter steps into the Hour. The gate's own card and row draw them (one node each - the
 // Hour and a court are never stood in at once); the signs are the Hour's own - the six stones' (the lion, the sun, the
 // ship, the tusk, the crown of bone, the dragon) and one for each omen - drawn as paths, nothing loaded.
 //
 // Pure: `sdMarksViewOf` and `sdMarksCardModel` are the pins' door. Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { sdEndingOf, sdOmensOf, validSdMarks, sdMarksOf } from '../net/sdMarks.js';
-import { SD_STONES, realmToDungeon } from '../net/sdBrain.js';
+import { sdEndingOf, sdOmensOf, validSdMarks, sdMarksOf } from '../net/superDungeon/sdMarks.js';
+import { SD_STONES, realmToDungeon } from '../net/superDungeon/sdBrain.js';
 import { stonePoint, SD_DIAL } from '../world/superDungeon/sdHall.js';   // AUDIT SD III (V3): the light before the stone's face
 
 /** THE SIGNS - one path each on a 24-unit box (`fill` a solid sign; the rest stroked). */

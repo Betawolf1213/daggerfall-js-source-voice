@@ -9,8 +9,8 @@ import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S, EDICTS, seatTitleText } from '../src/net/townSeatLaw.js';
 import { verifyOrder, verifyToken } from '../src/net/identityToken.js';
-import { mintRoyalReceipt } from '../src/net/siegeReceipt.js';
-import { SIEGE_UNITS_PER_M } from '../src/net/siegeRef.js';
+import { mintRoyalReceipt } from '../src/net/siege/siegeReceipt.js';
+import { SIEGE_UNITS_PER_M } from '../src/net/siege/siegeRef.js';
 
 const { subtle } = globalThis.crypto;
 const WAYREST = { key: 5023, name: 'Wayrest', region: 23, tier: 'crown', pixel: [590, 166] };

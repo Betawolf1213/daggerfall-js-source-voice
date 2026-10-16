@@ -10,15 +10,15 @@ import {
   GateTelegraphRenderer, TELEGRAPH_FS, TELEGRAPH_KIND, TELEGRAPH_POINTS_MAX, TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE,
   TELEGRAPH_POOL, TELEGRAPH_REACH, TELEGRAPH_MARGIN, TELEGRAPH_THROB_MAX_HZ, TELEGRAPH_LINE_W_MAX,
 } from '../src/render/gateTelegraph.js';
-import { ATTACKS, ATTACK_BY_ID, COURT_R, COURTS, BOSS_REACH_R, HOST, HOST_BLOWS, BASE_PROFILE, fightProfile, windupOf, isDagons } from '../src/net/gateBrain.js';
-import { inAttack } from '../src/net/gateStrike.js';
+import { ATTACKS, ATTACK_BY_ID, COURT_R, COURTS, BOSS_REACH_R, HOST, HOST_BLOWS, BASE_PROFILE, fightProfile, windupOf, isDagons } from '../src/net/gate/gateBrain.js';
+import { inAttack } from '../src/net/gate/gateStrike.js';
 import { attackColor } from '../src/world/gate/gateBoss.js';
 import { hostShapes } from '../src/scenes/gateHost.js';
 import { perilAt, wayOut, screenBearing, PERIL_RIM_M } from '../src/scenes/gateCourt.js';
 import { groundViewModel, GROUND_VIEW_TEXT, PERIL_EDGE, PERIL_EDGE_NOW, PERIL_ARROW_STEP } from '../src/ui/gateGroundView.js';
 
 const W = (key, over = {}) => ({ i: 1, a: ATTACKS[key].id, at: 10000, x: 0, z: 0, yw: 0, tg: [], ...over });
-/** A fighter's run, m/s (net/gateBrain.js's escape law). */
+/** A fighter's run, m/s (net/gate/gateBrain.js's escape law). */
 const RUN = 7.6;
 
 /** The fragment stage at one point of the floor (court 0, top-down), with every derivative `fw` - answers [r, g, b, a]

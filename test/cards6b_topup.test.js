@@ -2,7 +2,7 @@
 // ELSEWHERE. The relay (server/src/index.js _holdemTopUp, net/holdemTable.js topUp) adds a stake of the seat's own
 // account to its stack between hands, never past the table's most, checked before the stake is spent and settled at
 // once in a 'joined' receipt (its chips come home in the seat's own); the service (server-account/src/cards.js) holds a
-// top-up from HOLDEM_TOPUP_MIN_BB and settles its 'joined' receipt for nothing; the device (net/cardStakes.js) keeps
+// top-up from HOLDEM_TOPUP_MIN_BB and settles its 'joined' receipt for nothing; the device (net/card/cardStakes.js) keeps
 // where it staked, and the host says on a visit what other rooms still owe this character; the panel offers the top-up.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,9 +12,9 @@ import { fakeRoom } from './fakeRoom.mjs';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { mintStakeOrder } from '../src/net/identityToken.js';
-import { readCardReceipt, mintCardReceipt } from '../src/net/cardReceipt.js';
+import { readCardReceipt, mintCardReceipt } from '../src/net/card/cardReceipt.js';
 import { HOLDEM_FIRST_MS, HOLDEM_TOPUP_MIN_BB, validHoldemIn } from '../src/net/holdemTable.js';
-import { createCardStakes } from '../src/net/cardStakes.js';
+import { createCardStakes } from '../src/net/card/cardStakes.js';
 import { cardHudModel, eventLine, HOLDEM_REFUSALS } from '../src/ui/cardTableHud.js';
 
 const { subtle } = webcrypto;

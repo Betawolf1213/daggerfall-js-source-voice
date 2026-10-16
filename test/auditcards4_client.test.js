@@ -1,4 +1,4 @@
-// AUDIT CARDS-4 (2026-10-08, bible/01-Overview/Audit-Cards-4.md): THE DEVICE'S STAKES BOOK (net/cardStakes.js) and the
+// AUDIT CARDS-4 (2026-10-08, bible/01-Overview/Audit-Cards-4.md): THE DEVICE'S STAKES BOOK (net/card/cardStakes.js) and the
 // host's words for it. C1 a stake asked again pays the purse when the service takes it then; C2 a request the service
 // never refused is kept; C3 a receipt acked only once kept; C4 (cards6_client) whose a receipt is; C5 a stake's refusal
 // loses the pending chair; C6 the bound drops a sat stake first and never a receipt, and what nothing can bring home
@@ -7,8 +7,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { createCardStakes, CARD_STAKES_KEY, CARD_RECEIPTS_KEY, CARD_KEPT_MAX, CARD_STAKE_KEEP_MS, cardStakeRefused } from '../src/net/cardStakes.js';
-import { mintCardReceipt } from '../src/net/cardReceipt.js';
+import { createCardStakes, CARD_STAKES_KEY, CARD_RECEIPTS_KEY, CARD_KEPT_MAX, CARD_STAKE_KEEP_MS, cardStakeRefused } from '../src/net/card/cardStakes.js';
+import { mintCardReceipt } from '../src/net/card/cardReceipt.js';
 import { RemoteCardTable, SIT_REFUSALS } from '../src/systems/card/cardRemoteTable.js';
 
 const { subtle } = webcrypto;

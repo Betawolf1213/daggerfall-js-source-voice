@@ -20,8 +20,8 @@ const PAGE_NAME = 'sdfx-probe.tmp.html', PAGE_PATH = join(ROOT, 'tools', PAGE_NA
 
 const PAGE = `<!doctype html><html><body style="margin:0;background:#000"><canvas id=c width=${W} height=${H}></canvas><script type=module>
 import { createSdFx, SD_FX_KINDS } from '/src/scenes/sdFx.js';
-import { SD_BLOWS, SD_BODY } from '/src/net/sdRemnant.js';
-import { SD_ARENA, realmToDungeon } from '/src/net/sdBrain.js';
+import { SD_BLOWS, SD_BODY } from '/src/net/superDungeon/sdRemnant.js';
+import { SD_ARENA, realmToDungeon } from '/src/net/superDungeon/sdBrain.js';
 const gl = document.getElementById('c').getContext('webgl2', { alpha: false, preserveDrawingBuffer: true });
 const persp = (f, a, n, fa) => { const t = 1 / Math.tan(f / 2); return new Float32Array([t / a, 0, 0, 0, 0, t, 0, 0, 0, 0, (fa + n) / (n - fa), -1, 0, 0, 2 * fa * n / (n - fa), 0]); };
 const look = (e, c) => {

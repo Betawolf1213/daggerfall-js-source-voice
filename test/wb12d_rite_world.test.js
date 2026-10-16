@@ -12,8 +12,8 @@ import {
   RITE_SAY_REACH_M, RITE_RESAY_MS, RITE_ORPHAN_MS, RITE_RESTAND_MS, RITE_TEND_M, RITE_LIGHT_REACH_M, RITE_GLOW_RANGE, RITE_BARE_R,
   RITE_BUCKET, RITE_GROUND_EVERY, RITE_SIGIL_DRAW_M, RITE_FLAME_SCALE, RITE_FLAME_PHASES,
 } from '../src/scenes/riteHost.js';
-import { riteLocalOf, riteFaithfulOf, RITE_REACH_M, RITE_WORD_MS, RITE_SUMMONER_CAREER, RITE_HELPERS_MAX } from '../src/net/gateRite.js';
-import { gateTimes, gateSpotLocal, gateModsOf, gateBossOf, marksLine, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
+import { riteLocalOf, riteFaithfulOf, RITE_REACH_M, RITE_WORD_MS, RITE_SUMMONER_CAREER, RITE_HELPERS_MAX } from '../src/net/gate/gateRite.js';
+import { gateTimes, gateSpotLocal, gateModsOf, gateBossOf, marksLine, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
 import { worldRoom, validRiteOut, RITE_COUNT_MAX, RITE_BY_MAX } from '../src/net/wire.js';
 import { riteLayout, buildRiteModel, RITE_BRAZIERS, RITE_BRAZIER_R, RITE_BRAZIER_W, RITE_RING_R, RITE_TENT_R, RITE_SIGIL_LIFT, RITE_SIGIL_REACH, RITE_SIGIL_R, RITE_ALTAR } from '../src/world/riteModel.js';
 import { GATE_PLINTH_RECORD, GATE_STONE_RECORD, RITE_SIGIL_RECORD, GATE_ARCHIVE, GATE_SPINE_RECORD, GATE_RIM_RECORD } from '../src/world/gate/gateModel.js';
@@ -26,10 +26,10 @@ import {
 import { riteChestItems, riteChestOpened, markRiteChest, riteMemory, RITE_REAGENTS, RITE_HEART, RITE_BRAND_SET, RITE_CHEST_SAVE_VENDOR, RITE_DAY_SAVE_VENDOR } from '../src/systems/riteChest.js';
 import { restoreModSaveRecords, modSaveRecords } from '../src/systems/modSaveData.js';
 import { spoilsList, createSpoilsPool, SPOILS_TEXT } from '../src/scenes/spoilsPool.js';
-import { gateClaimVerdict, GATE_CLAIM_TEXT, createGateClaims } from '../src/net/gateClaims.js';
-import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
+import { gateClaimVerdict, GATE_CLAIM_TEXT, createGateClaims } from '../src/net/gate/gateClaims.js';
+import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { createGateOmen, riteOmenLine } from '../src/systems/gate/gateOmen.js';
-import { ritePost, omenPost } from '../src/net/gateHerald.js';
+import { ritePost, omenPost } from '../src/net/gate/gateHerald.js';
 import { isSigilStone } from '../src/systems/gate/gateSpoils.js';
 import { COURT_STRIKE_TEXT } from '../src/scenes/gateCourt.js';
 import { properName } from '../src/systems/champions.js';
@@ -1027,7 +1027,7 @@ test('AUDIT WB12d (C14, C5, R1, D4): a day\'s faithful are a site of their own -
   assert.equal(validRiteOut({ ...w, n: RITE_COUNT_MAX + 1 }).n, 2, 'nor more than a rite counts');
   assert.equal(validRiteOut(w).n, 2);
   assert.equal(validRiteOut({ ...w, by: [...Array(12)].map((_, i) => `N${i}`), n: 12 }).by.length, RITE_BY_MAX);
-  // the channel's post, the kill's own sentence (net/gateHerald.js fellPost): the event, the place, the first three and how many more
+  // the channel's post, the kill's own sentence (net/gate/gateHerald.js fellPost): the event, the place, the first three and how many more
   assert.equal(ritePost({ place: 'Copperham', by: ['Ann', 'Bo', 'Cy', 'Di'], n: 9 }).content, '**The faithful\'s rite is broken** near Copperham, by Ann, Bo, Cy and 6 others.');
   assert.equal(ritePost({ by: ['Ann'], n: 2 }).content, '**The faithful\'s rite is broken** in the wilds, by Ann and 1 other.');
   assert.equal(ritePost({ place: 'Copperham', by: [] }).content, '**The faithful\'s rite is broken** near Copperham.');

@@ -22,7 +22,7 @@ import { ridingLook, loadRidingArt } from '../src/systems/riding.js';
 import { TRANSPORT_MODES } from '../src/systems/transport.js';
 import { createHorseCartPool, horseStillRecord, horseWalkRecord, HORSE_ARCHIVE, HORSE_LOOKS_KEPT, HORSE_DYE_PICTURES } from '../src/scenes/horseCartPool.js';
 import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT, HORSE_VIEWS, HORSE_WALK_FRAMES } from '../src/systems/horse/horseCartLaw.js';
-import { createEotbArt, RIDER_LOOKS_KEPT, RIDER_LOOK_IDLE_MS } from '../src/net/peerRiders.js';
+import { createEotbArt, RIDER_LOOKS_KEPT, RIDER_LOOK_IDLE_MS } from '../src/net/peer/peerRiders.js';
 import { stableProviderFor } from '../src/ui/holdingsPages.js';
 
 const horseItem = (extra = {}) => ({ templateIndex: TRANSPORT_HORSE, group: 'Transportation', name: 'Horse', ...extra });
@@ -432,8 +432,8 @@ test('COATS1 the wiring: both exterior hosts bear the horses each frame; the rig
   assert.match(rd('player/eotbBody.js'), /horse: last\.horseLook \?\? 0/);
   assert.match(rd('player/eotbBody.js'), /lookedPixels\(s, img\)/);
   assert.match(rd('player/eotbBody.js'), /renderer\?\.evictTexture\?\.\(k\.replace\(':', '_'\)\)/, 'a look left behind on my own rider is let go');
-  assert.match(rd('net/peerRiders.js'), /horse: pose\.rc \| 0/);
-  assert.match(rd('net/peerRiders.js'), /lookedPixels\(s, raw\)/);
+  assert.match(rd('net/peer/peerRiders.js'), /horse: pose\.rc \| 0/);
+  assert.match(rd('net/peer/peerRiders.js'), /lookedPixels\(s, raw\)/);
   assert.match(rd('scenes/world.js'), /rc: riding \? riddenHorseLook\(playerEntity\.items \?\? \[\]\) \|\| undefined : undefined/);
   assert.match(rd('world/wagonModels.js'), /horseLook: \(\) => riddenHorseLook\(items\(\)\)/, 'THE ONE CONSTRUCTION SEAM: both hosts\' pools');
   assert.match(rd('scenes/world.js'), /horseArt: \(look = 0\) => !!hcc\.presentation\.horseArt\.ensureLook\(look\)/, 'the town watch\'s throw in its look');

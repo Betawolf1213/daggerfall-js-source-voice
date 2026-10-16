@@ -9,8 +9,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { rosterActor } from '../src/characters/rosterBodies.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { HOST, profileOf } from '../src/net/gateBrain.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
+import { HOST, profileOf } from '../src/net/gate/gateBrain.js';
 import { HOST_FALL_MS, BOSS_LOOKS } from '../src/world/gate/gateBoss.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 
@@ -138,6 +138,6 @@ test('MWNPC10a-4 an actor\'s scale reaches its body: drawn that many times its s
   lane.draw({}, { proj: null, view: null, eye: [0, 0, 0] });
   assert.deepEqual([...grows.values()].sort(), [1, 3], 'him three times, the Imp once');
   lane.destroy();
-  const pb = rd('src/net/peerBodies.js');
+  const pb = rd('src/net/peer/peerBodies.js');
   assert.ok(pb.includes('* this._scaleOf(b) : 0; }'), 'and his head (the name\'s height) three times as high');
 });

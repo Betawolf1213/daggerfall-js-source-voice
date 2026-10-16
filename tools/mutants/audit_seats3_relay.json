@@ -19,7 +19,7 @@
  },
  {
   "name": "SEATS3-B1-npc-reach-law-flat",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  && siegeOffGround(ground, from) <= SIEGE_HEIGHT_M;   // AUDIT SEATS-3 B1",
   "new": ";   // AUDIT SEATS-3 B1",
   "tests": [
@@ -37,7 +37,7 @@
  },
  {
   "name": "SEATS3-B1-bout-ground-unrecorded",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  if (b.bout) b.bout.y = (marks[0].y + marks[1].y) / 2;   // AUDIT SEATS-3 B1",
   "new": "",
   "tests": [
@@ -46,7 +46,7 @@
  },
  {
   "name": "SEATS3-B1-no-walking-back",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "return off <= SIEGE_HEIGHT_M || !last || off < siegeOffGround(ground, last);",
   "new": "return off <= SIEGE_HEIGHT_M || !last;",
   "tests": [

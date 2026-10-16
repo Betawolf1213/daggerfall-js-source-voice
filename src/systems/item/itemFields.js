@@ -142,7 +142,7 @@ export const ITEM_FIELDS = Object.freeze({
   kitMetal: int({ min: 0, max: 9 }),
   // REPAIR-EASE: a Field Repair Kit (systems/smithItems.js) - found in loot, mends any metal; true, or absent
   fieldKit: bool(),
-  // CARDS8 (bible/11-Multiplayer/Tavern-Cards.md section 26): a card's catalog id (net/iliacCards.js); a Card Binder's decks
+  // CARDS8 (bible/11-Multiplayer/Tavern-Cards.md section 26): a card's catalog id (net/iliac/iliacCards.js); a Card Binder's decks
   card: str(),
   decks: list(validBinderDeck),
   // AUDIT 31 H3: the recipe a crafted piece was minted of (recipeLaw's id) - an Ebony and a Warforged piece share their
@@ -192,7 +192,7 @@ export const ITEM_FIELDS = Object.freeze({
   horseLegs: int({ min: 1, max: 2 }),
   horseSeed: int({ min: 1, max: 65535 }),
   // STEED1 (bible/06-Systems/Horse-Care.md): a horse's bond with its owner, in tenths (systems/steedCare.js - absent,
-  // none) - the OWNER's mark, never carried to the next (net/realmTradeLaw.js RECEIVER_MARKS); and the minute of its
+  // none) - the OWNER's mark, never carried to the next (net/realm/realmTradeLaw.js RECEIVER_MARKS); and the minute of its
   // owner's clock its food runs out (absent, never seen fed - it comes fed)
   horseBond: int({ min: 1, max: 1000 }),
   horseFed: int({ min: 1 }),

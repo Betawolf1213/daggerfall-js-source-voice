@@ -51,7 +51,7 @@ Each is put to Mac with its options. Nothing here was decided for Mac:
 | A7 | low | A passenger on another player's ship was put off by a much shorter hitch of the wire. A peer's boat snaps past a fixed 20 m step: at 19.4 m/s a 1.75 s gap snapped her, and a snap carries nobody. | A boat snaps past CSA_PEER_SNAP_M or what her word's way runs in CSA_PEER_SNAP_S (2.5 s), whichever is farther (`peerSnapM`). A teleport still snaps. |
 | A8 | low | In a thunderstorm the Carrack and the Large Galley are slower off the wind than under HELM-WAY (above). The record did not say so. | Declared (the SAIL-FREE row, `03-World/Come-Sail-Away.md`); whether a storm may drive her past the sea's bound is Mac's call (above). |
 
-**B, the serpent's brain and the relay** (`src/net/serpentBrain.js`, `src/net/serpentBody.js`, `server/src/index.js`)
+**B, the serpent's brain and the relay** (`src/net/serpent/serpentBrain.js`, `src/net/serpent/serpentBody.js`, `server/src/index.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -64,7 +64,7 @@ Each is put to Mac with its options. Nothing here was decided for Mac:
 | B7 | low | A fight live across the relay's deploy (an older brain's checkpoint read by the new brain) misbehaved once: an old ram's run was never said, an old coil wound 90 m from its head, and an old Maw's pre-said leap was honoured. | The fight is stamped with its law (`bv`). A fight checkpointed by an older law is taken up at once, as one long asleep. |
 | B8 | low | = D5: the closing surge had no margin over the new speeds. | (below) |
 
-**C, the client and the pair's share** (`src/net/serpentBrain.js`, `src/systems/serpent/serpentStrike.js`,
+**C, the client and the pair's share** (`src/net/serpent/serpentBrain.js`, `src/systems/serpent/serpentStrike.js`,
 `src/scenes/serpentHost.js`, `server/src/index.js`)
 
 | ID | Sev | Finding | Fix |

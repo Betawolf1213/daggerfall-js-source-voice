@@ -17,7 +17,7 @@ import * as sess from '../src/systems/card/cardTableSession.js';
 import * as hudm from '../src/ui/cardTableHud.js';
 import { holdCursor, cursorHeld } from '../src/player/pointerLock.js';
 import { nearestFreeSeat, takenSeats } from '../src/world/card/cardTables.js';
-import { HAND_NAMES } from '../src/net/cardLaw.js';
+import { HAND_NAMES } from '../src/net/card/cardLaw.js';
 import { regularsToStand, regularBark, BARK_MS } from '../src/world/card/cardRegulars.js';
 import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
 import { isCardPack } from '../src/systems/iliac/iliacItems.js';

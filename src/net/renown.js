@@ -206,7 +206,7 @@ export const renownKillXp = (foeLevel, renown = null) => renownRate(RENOWN_KILL_
 export const renownQuestXp = (characterLevel, renown = null) => renownRate(RENOWN_QUEST_XP_BASE + RENOWN_QUEST_XP_PER_LEVEL * Math.min(clampInt(characterLevel, 1, RENOWN_QUEST_LEVEL_MAX), renownCeiling(renown)));
 
 /** RAID4 (2026-09-28, Mac on World Events - Raiding Parties online: "3. We can also add renown and it's own atheric +
- *  armor sets"): A TOWN DEFENDED - a raid's cleanse the relay signed for this account (net/raidReceipt.js) - is worth
+ *  armor sets"): A TOWN DEFENDED - a raid's cleanse the relay signed for this account (net/raid/raidReceipt.js) - is worth
  *  RENOWN_RAID_QUESTS quests at the ladder's top quest level, read no higher than the Renown allows (RENOWN3's
  *  ceiling), at the quests' rate (RENOWN-ACCOUNT): Renown 1 takes 585, Renown 10 1,395, Renown 27 and up 2,925 (780,
  *  1,860 and 3,900 at the full rate). The account service credits it once a raid an account, to the Renown of the character that fought it,
@@ -214,7 +214,7 @@ export const renownQuestXp = (characterLevel, renown = null) => renownRate(RENOW
 export const RENOWN_RAID_QUESTS = 3;
 export const renownRaidXp = (renown = null) => RENOWN_RAID_QUESTS * renownQuestXp(RENOWN_QUEST_LEVEL_MAX, renown);
 /** SERPENT1 (2026-10-04, Mac: "a large scale sea serpent in the ocean"): A SERPENT SLAIN - Sethrakul's kill the relay
- *  signed for this account (net/serpentReceipt.js) - is worth RENOWN_SERPENT_QUESTS quests at the ladder's top quest
+ *  signed for this account (net/serpent/serpentReceipt.js) - is worth RENOWN_SERPENT_QUESTS quests at the ladder's top quest
  *  level, read no higher than the Renown allows, at the quests' rate: twice a town defended, for the Bay's rarest fight
  *  (one every four real hours). Credited once a serpent an account, to the character that fought it, charged to the
  *  account's hour (server-account/src/serpents.js). */

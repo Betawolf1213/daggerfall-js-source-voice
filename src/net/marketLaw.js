@@ -25,7 +25,7 @@ import { STORES_MAX, MATERIAL_FAMILIES, MINED_KEYS, FOOD_KEYS, PLANT_GROUP_TEMPL
 import { PROVENANCE_RE, recipeById, takesQuality, MASTERWORK } from './recipeLaw.js';
 import { MARKS_MAX } from './marksLaw.js';
 import { witnessedFact, factConfirmed, material } from './nodeLaw.js';
-import { tradeableRecord, boundRecord, BOAT_TEMPLATES, GOLD_PIECES_TEMPLATE, VALUE_IS_IDENTITY_TEMPLATES } from './realmTradeLaw.js';   // MARKET-ANY: the trade's own law of what may leave a record
+import { tradeableRecord, boundRecord, BOAT_TEMPLATES, GOLD_PIECES_TEMPLATE, VALUE_IS_IDENTITY_TEMPLATES } from './realm/realmTradeLaw.js';   // MARKET-ANY: the trade's own law of what may leave a record
 
 /** A listing stands this long (10.2: 72 hours). */
 export const MARKET_LISTING_S = 72 * 3600;
@@ -277,7 +277,7 @@ export const auctionable = (recipeId, quality) => quality === MASTERWORK && piec
 // nothing else (10.2: "Loot does not list: it has no provenance. TRADE1 stays how loot changes hands") - so to a player
 // nothing they carried from the world could be sold there, and the List form offered only what a crafter had made.
 // A realm character's pack is its record on the service now (REALM P1), and a realm trade already moves a piece out of
-// one record and into another in one write (REALM P2.1, net/realmTradeLaw.js). A piece from the pack lists the same way:
+// one record and into another in one write (REALM P2.1, net/realm/realmTradeLaw.js). A piece from the pack lists the same way:
 // the very record the seller's checkpoint holds, taken out of it in the listing's own batch (server-account/src/
 // market.js), and put into the buyer's record - or back into the seller's, cancelled, expired or removed - by the
 // collect's own batch. Nothing is copied: the piece is in one record, or on the listing, or on the road.

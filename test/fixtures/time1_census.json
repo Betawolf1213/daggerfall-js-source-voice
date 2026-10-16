@@ -2,25 +2,25 @@
  "_": "TIME1 (bible/06-Systems/Online-Time-Arc.md section 8): every line in src/ that reads a shared clock, the clock it means and why. test/time1_census.test.js holds src/ to it both ways.",
  "rows": [
   {
-   "file": "src/net/gateLaw.js",
+   "file": "src/net/gate/gateLaw.js",
    "has": "export const gameDayAt = (nowMs) => Math.floor(sharedClassicMinutes(nowMs) / GATE_DAY_MINUTES);",
    "clock": "event",
    "why": "the gate's day - its number, its room, its marks"
   },
   {
-   "file": "src/net/gateLaw.js",
+   "file": "src/net/gate/gateLaw.js",
    "has": "const at = (minute) => Math.round(wallMsForClassicMinutes(base + minute));",
    "clock": "event",
    "why": "the gate's phases as relay ms"
   },
   {
-   "file": "src/net/serpentLaw.js",
+   "file": "src/net/serpent/serpentLaw.js",
    "has": "export const serpentDayAt = (nowMs) => Math.floor(sharedClassicMinutes(nowMs) / SERPENT_DAY_MINUTES);",
    "clock": "event",
    "why": "the sea serpent's day - the gate's own, which days hold a serpent"
   },
   {
-   "file": "src/net/serpentLaw.js",
+   "file": "src/net/serpent/serpentLaw.js",
    "has": "const at = (minute) => Math.round(wallMsForClassicMinutes(base + minute));",
    "clock": "event",
    "why": "the serpent's sighting, rising, storm and sounding as relay ms"

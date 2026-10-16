@@ -9,8 +9,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { GuildBook } from '../src/net/guildBook.js';
-import { GUILD_RANK_NAMES } from '../src/net/guildLaw.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
+import { GUILD_RANK_NAMES } from '../src/net/guild/guildLaw.js';
 import { createSocialPanel } from '../src/ui/socialPanel.js';
 import { SocialState } from '../src/net/social.js';
 

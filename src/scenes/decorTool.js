@@ -108,7 +108,7 @@ import { lookAt, perspective, mirrorProjectionX, trs, multiply } from '../world/
 import { panelPicture, canvasBoxUnder } from './panelPicture.js';   // MENU-ORDER: a model's own picture, drawn small
 import { remapLawOf } from '../world/texRemap.js';   // AUDIT MENU-ORDER C3: a picture kept by the law its textures were built in
 import { isTextEntryTarget } from '../ui/input.js';
-import { walletReserve } from '../net/realmGoldLaw.js';   // MARKET-AUDIT: a refusal gives back exactly what the payment took
+import { walletReserve } from '../net/realm/realmGoldLaw.js';   // MARKET-AUDIT: a refusal gives back exactly what the payment took
 import { drawnFlat } from '../characters/nudeFlats.js';   // NUDE-DECOR: a nude figure shows its clothed stand-in while Show Nudity is off
 
 /** The free camera's pace, metres a second; Run's pace; and how far it may go from where it began. */

@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createGateOmen, OMEN_SETTLE_MS, omenTimeLine, openTimeLine, riteOmenLine } from '../src/systems/gate/gateOmen.js';   // TIME1: the lines that name a time say local time alone
-import { gateTimes, riseLine, marksLine, gateModsOf, GATE_RISE_MS } from '../src/net/gateLaw.js';
+import { gateTimes, riseLine, marksLine, gateModsOf, GATE_RISE_MS } from '../src/net/gate/gateLaw.js';
 /** WB8c: tonight's marks, said once a day beside the first moment a player hears - never a moment itself. */
 const marks = (day) => marksLine({ boss: 'Valkynaz Ruhn', md: gateModsOf(day) });
 import { gateScanner, scanGatePixels, findGateSite } from '../src/systems/gate/gateSite.js';

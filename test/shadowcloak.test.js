@@ -25,7 +25,7 @@ import {
   titlesHeld, glyphsOf, titleWorn, aurasHeld, auraWorn, auraRefusal, wardrobeOf, TIER_LISTS, TIER_GLYPH, TIER_AURA,
 } from '../server-account/src/titles.js';
 import { RELAY_VERSION } from '../src/net/wire.js';
-import { peerBodyYaw } from '../src/net/peerClimb.js';
+import { peerBodyYaw } from '../src/net/peer/peerClimb.js';
 import { CAPSULE_HEIGHT, EYE_HEIGHT } from '../src/player/motor.js';
 import { standService } from './accountDb.mjs';
 import {
@@ -562,7 +562,7 @@ test('SHADOW-CLOAK the hosts: the one gather every host draws through hands each
   // commented out whole still matched)
   const codeMatch = (src, re, msg) => { const m = re.exec(src); assert.ok(m, msg ?? String(re)); const from = src.lastIndexOf('\n', m.index) + 1; const lines = src.slice(from, m.index + m[0].length).split('\n'); assert.ok(!lines[0].slice(0, m.index - from).includes('//') && lines.slice(1).every((l) => !l.trim().startsWith('//')), `${msg ?? re}: not commented out`); };
   const w = rd('src/scenes/world.js');
-  codeMatch(w, /import \{ AuraRingRenderer, auraWearers, auraLookOf, auraBeastStep, auraMotionStep, auraCapeStep, auraSpriteBones, auraSpritePosed, auraWingLights, CLOAK_BONES, AURA_KINDLE_S, AURA_FORGET_S \} from '\.\.\/render\/auraRing\.js'; import \{ peerBodyYaw \} from '\.\.\/net\/peerClimb\.js';/);
+  codeMatch(w, /import \{ AuraRingRenderer, auraWearers, auraLookOf, auraBeastStep, auraMotionStep, auraCapeStep, auraSpriteBones, auraSpritePosed, auraWingLights, CLOAK_BONES, AURA_KINDLE_S, AURA_FORGET_S \} from '\.\.\/render\/auraRing\.js'; import \{ peerBodyYaw \} from '\.\.\/net\/peer\/peerClimb\.js';/);
   codeMatch(w, /import \{ mwViewFirstPerson, mwViewFrame, mwViewWheel, mwViewDrawBody, mwViewBodyBones, mwViewSpriteFigure, mwViewSpriteFacing,/);   // SPRITE-FACE (PIN MOVED): and the sprite's facing as drawn
   codeMatch(w, /_auraSelf\.aura = mine; _auraSelf\.yaw = mwViewSpriteFacing\(\)\?\.yaw \?\? player\.bodyYawFor\(cam\.yaw\); auraBeastStep\(_auraSelf, !!liveLycanthropy\(playerEntity\)\?\.isTransformed, t\);/, 'mine: the body\'s facing, and turned beast');
   codeMatch(w, /w\.at\[2\] = p\[2\]; w\.yaw = \(peerWalkers\?\.faceOf\?\.\(d\.id\) \?\? peerRiders\?\.faceOf\?\.\(d\.id\)\)\?\.yaw \?\? peerBodyYaw\(d\.shown\) \?\? 0; auraBeastStep\(w, !!d\.shown\.wb, t\);/, 'a peer\'s: their pose\'s - SPRITE-FACE (PIN MOVED): a sprite\'s as its picture is drawn');
@@ -749,7 +749,7 @@ test('SHADOW-CLOAK the swing and the pose from the body: the swing is a damped s
   assert.equal(arm['bip01 tail'], null, 'a bone it lacks');
   assert.equal(armBonesInBody({ skeleton: { byName: ref }, mats: null }, ['bip01 head']), null, 'an arm not posed');
   // a peer's bones off its standing body alone
-  const { PeerBodies } = await import('../src/net/peerBodies.js');
+  const { PeerBodies } = await import('../src/net/peer/peerBodies.js');
   const pb = new PeerBodies({ renderer: {}, createRig: () => ({}) });
   const rig = { thirdActive: () => true, thirdBones: (names) => Object.fromEntries(names.map((n) => [n, bones[n] ?? null])) };
   pb._bodies.set('p1', { state: 'ok', goneAt: null, far: false, feet: [4, 0, 4], yaw: 1.25, rig });
@@ -815,7 +815,7 @@ test('SHADOW-CLOAK AUDIT 2, the limits held: each stage compiles whole on its ow
   const over = fsAt(1, [0.5, 1.0 / CLOAK_H], { t: QUIET, eye: [0, 3.2, -0.3] });
   assert.ok(over !== 'discard' && over[3] > 0.5, 'and the cloth answers that camera, whole');
   // a rig that throws: no bones, and the frame goes on
-  const { PeerBodies } = await import('../src/net/peerBodies.js');
+  const { PeerBodies } = await import('../src/net/peer/peerBodies.js');
   const pb = new PeerBodies({ renderer: {}, createRig: () => ({}) });
   pb._bodies.set('p', { state: 'ok', goneAt: null, far: false, feet: [0, 0, 0], yaw: 0, rig: { thirdActive: () => true, thirdBones: () => { throw new Error('torn rig'); } } });
   const err = console.error; console.error = () => {};

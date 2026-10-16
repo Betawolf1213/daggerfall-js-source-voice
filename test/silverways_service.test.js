@@ -9,8 +9,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { standService, T0 } from './accountDb.mjs';
-import { mintRaidReceipt } from '../src/net/raidReceipt.js';
-import { mintReceipt } from '../src/net/gateReceipt.js';
+import { mintRaidReceipt } from '../src/net/raid/raidReceipt.js';
+import { mintReceipt } from '../src/net/gate/gateReceipt.js';
 import { MARKS_FAUCETS, MARKS_COMBAT, MARKS_KINDS, combatStrike, utcDay } from '../src/net/marksLaw.js';
 import { saleTaxOn } from '../src/net/marketLaw.js';
 import {

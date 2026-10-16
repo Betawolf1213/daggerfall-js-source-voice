@@ -1,7 +1,7 @@
 [
   {
     "name": "MARKET-AUDIT2-reserve-credits-whole",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    if (undo) undo(); else wallet.credit?.(n);",
     "new": "    wallet.credit?.(n);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "MARKET-AUDIT2-reserve-twice",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    if (!paid || done) return;",
     "new": "    if (!paid) return;",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "MARKET-AUDIT2-guild-found-credit",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "          reserve: walletReserve(w, GUILD_FOUND_GOLD).reserve,",
     "new": "          reserve: () => { w.pay(GUILD_FOUND_GOLD); return () => w.credit(GUILD_FOUND_GOLD); },",
     "tests": [

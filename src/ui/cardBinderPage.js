@@ -2,7 +2,7 @@
 // CARDS8 (2026-10-08, Mac: "Tab + CARDS7 + CARDS8"; bible/11-Multiplayer/Tavern-Cards.md section 26): THE CARDS PART of
 // the Collections page (ui/collectionsPage.js) - the Card Binder's collection and its decks:
 //
-//   THE COLLECTION: every card of the catalog (net/iliacCards.js) a deck can hold, in a grid of their painted faces
+//   THE COLLECTION: every card of the catalog (net/iliac/iliacCards.js) a deck can hold, in a grid of their painted faces
 //     (render/iliacCardFaces.js - "Painted in code"): one the pack holds at its count, one it does not shown dim, its
 //     name kept (a collection is a list of what is still to find). A kind's switch narrows it. A card pressed is shown
 //     LARGE beside what it is - its rules and its flavor (AUDIT CARDS-5 B2/B3: a tile's own words are too small to read).
@@ -19,8 +19,8 @@
 // The locations are no deck's (the game draws its three holdings from them) - the collection shows the cards a player
 // holds and builds with. Dressed by the stone-and-brass kit as the other Holdings pages are.
 
-import { ILIAC_CARDS, ILIAC_TIERS, cardById } from '../net/iliacCards.js';
-import { deckValid, ILIAC_DECK_SIZE, ILIAC_COPIES_MAX, ILIAC_LEGENDARY_COPIES_MAX } from '../net/iliacHand.js';
+import { ILIAC_CARDS, ILIAC_TIERS, cardById } from '../net/iliac/iliacCards.js';
+import { deckValid, ILIAC_DECK_SIZE, ILIAC_COPIES_MAX, ILIAC_LEGENDARY_COPIES_MAX } from '../net/iliac/iliacHand.js';
 import { paintIliacCard, paintIliacBack, ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
 import { binderOf, binderDecks, collectionOf, deckHeldRefusal, setBinderDeck, dropBinderDeck, DECK_NAME_MAX, BINDER_DECKS_MAX } from '../systems/iliac/iliacItems.js';
 import { cardRules, cardFlavor } from '../systems/iliac/iliacCardWords.js';
@@ -38,11 +38,11 @@ export const DECK_REFUSAL_WORDS = Object.freeze({
   'unknown card': 'A card this build does not know.', 'not held': 'Your binder does not hold every card this deck names.',
 });
 
-/** The deck cards: the catalog's (its locations are a list of their own - net/iliacCards.js ILIAC_LOCATIONS). */
+/** The deck cards: the catalog's (its locations are a list of their own - net/iliac/iliacCards.js ILIAC_LOCATIONS). */
 export const deckCards = () => ILIAC_CARDS;
 /** Whether the part shows: the character carries a binder. */
 export const cardsPartShown = (/** @type {any} */ player = null) => !!binderOf(player?.items);
-/** How many of a card a deck may hold (the rules' law, net/iliacHand.js deckValid). */
+/** How many of a card a deck may hold (the rules' law, net/iliac/iliacHand.js deckValid). */
 export const copiesAllowed = (/** @type {any} */ card) => (ILIAC_TIERS.indexOf(card?.tier) >= ILIAC_TIERS.indexOf('legendary') ? ILIAC_LEGENDARY_COPIES_MAX : ILIAC_COPIES_MAX);
 
 let _filter = 'all';

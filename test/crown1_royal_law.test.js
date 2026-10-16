@@ -1,6 +1,6 @@
 // CROWN1 part two (2026-10-01, Mac: "Finish the seats"; "Continue"; "Hurry up"): THE ROYAL TOURNEY'S LAW - the room
-// (net/siegeRef.js), the pass (net/identityToken.js's `siege` order with `sn` 'royal'), the wire's royal frames
-// (net/wire.js), the bout's `t1` receipt (net/siegeReceipt.js) and the ladder's own rules, pure.
+// (net/siege/siegeRef.js), the pass (net/identityToken.js's `siege` order with `sn` 'royal'), the wire's royal frames
+// (net/wire.js), the bout's `t1` receipt (net/siege/siegeReceipt.js) and the ladder's own rules, pure.
 // bible/11-Multiplayer/Seats-Arc.md 7.6; `06-Systems/Online-Arc.md` CROWN1 (part two).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,7 +8,7 @@ import {
   ROYAL_ROOM, royalRoomKey, isRoyalRoom, isBattleRoom, battleOfRoom, royalFieldOf, fieldOf, newBattle, royalAsk, royalAccept, royalMarks,
   royalMayStrike, royalStepOk, royalEnd, royalStep, royalLadder, royalNextBeat, ROYAL_RING, ROYAL_PAIR_DAY_MAX, ROYAL_LADDER_SHOWN, SIEGE_UNITS_PER_M,
   SIEGE_TICK_MS,
-} from '../src/net/siegeRef.js';
+} from '../src/net/siege/siegeRef.js';
 import {
   settleRing, royalStandings, ROYAL_PAIR_DAY, ROYAL_LADDER_ROWS, ROYAL_WHY, EDICTS, edictForTier, edictCost, edictLine, chronicleLine, seatTitleText,
 } from '../src/net/townSeatLaw.js';
@@ -17,7 +17,7 @@ import { validSiegeIn, validSiegeOut, ROYAL_RELAY_MIN, relayRunsRoyal, ROYAL_LAD
 import {
   mintRoyalReceipt, readRoyalReceipt, verifyRoyalReceipt, royalReceiptValid, ROYAL_RECEIPT_V, mintSiegeReceipt, verifySiegeReceipt, readSiegeReceipt, SIEGE_RECEIPT_TTL_S,
   siegeReceiptValid,
-} from '../src/net/siegeReceipt.js';
+} from '../src/net/siege/siegeReceipt.js';
 
 const { subtle } = globalThis.crypto;
 const M = SIEGE_UNITS_PER_M;

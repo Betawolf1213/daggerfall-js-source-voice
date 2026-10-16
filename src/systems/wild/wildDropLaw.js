@@ -8,7 +8,7 @@
 // (server-account/src/wild.js), never what the fallen's own game hands over - so the drop, the purse's share and the
 // killer's worn piece are one law at both ends: the fallen's game takes the same out of its own pack as the service takes
 // out of the record, and only the service's list is ever deposited. Every import a leaf the Worker already reads (the
-// trade's refusals over plain data - net/realmTradeLaw.js tradeableRecord, the pack's own refusal's law - never the
+// trade's refusals over plain data - net/realm/realmTradeLaw.js tradeableRecord, the pack's own refusal's law - never the
 // pack's module).
 // ═══════════════════════════════════════════════════════════════════
 import { isPotion, isLightSource, TEMPLATES } from '../item/itemKinds.js';
@@ -20,9 +20,9 @@ import { BANDAGE_TEMPLATE } from '../roleplayRealismItems/rriRealism.js';
 import { isEquipped } from '../equip.js';
 import { DECOR_OWN_KEPT_BACK } from '../../net/decorLaw.js';
 import { WILD_ITEMS_MAX } from '../../net/wire.js';
-import { remainsFit, recordFits } from '../../net/wildLaw.js';   // INT9: one remains' bound, the room's own
-import { RECEIVER_MARKS, tradeableRecord } from '../../net/realmTradeLaw.js';
-import { liquidWorthOf } from '../../net/realmGoldLaw.js';   // INT9 (AUDIT): a letter's worth, the judge's wealth's own
+import { remainsFit, recordFits } from '../../net/wild/wildLaw.js';   // INT9: one remains' bound, the room's own
+import { RECEIVER_MARKS, tradeableRecord } from '../../net/realm/realmTradeLaw.js';
+import { liquidWorthOf } from '../../net/realm/realmGoldLaw.js';   // INT9 (AUDIT): a letter's worth, the judge's wealth's own
 import { goldStack } from '../inventory.js';
 import { isWalletItem, walletHolds } from '../walletItem.js';   // KEEP-WALLET
 import { classicPiece, itemWorth } from '../item/itemLaw.js';   // INT9: a classic save's piece stays its character's
@@ -53,7 +53,7 @@ export function wildCanLose(item) {
   // INT9: a classic save's piece is its character's for good (systems/item/itemLaw.js classicPiece - "Keep all, can't sell"):
   // no route hands it to another player, and a death's remains are taken by anyone
   if (classicPiece(item)) return false;
-  return tradeableRecord({ ...item, equipSlot: undefined });   // the trade's refusals over plain data (net/realmTradeLaw.js)
+  return tradeableRecord({ ...item, equipSlot: undefined });   // the trade's refusals over plain data (net/realm/realmTradeLaw.js)
 }
 
 /**
@@ -103,13 +103,13 @@ export const wornOffer = (items) => (Array.isArray(items) ? items.filter((it) =>
  *  strips them too; never sent is better than stripped). */
 export function wildRecord(item) {
   const copy = JSON.parse(JSON.stringify(item));
-  for (const k of RECEIVER_MARKS) delete copy[k];   // ACQUIRE1's `acquired` among them; MARK-WIRE: one list (net/realmTradeLaw.js)
+  for (const k of RECEIVER_MARKS) delete copy[k];   // ACQUIRE1's `acquired` among them; MARK-WIRE: one list (net/realm/realmTradeLaw.js)
   return copy;
 }
 
 
 /** INT9 (AUDIT): THE KILLER'S PIECE - the worn offer's `w`th (wornOffer), or, where the relay signed what the offer showed
- *  (`wt`, `[templateIndex, material]` - net/wildReceipt.js), the piece worn now that is that: the `w`th when it still is,
+ *  (`wt`, `[templateIndex, material]` - net/wild/wildReceipt.js), the piece worn now that is that: the `w`th when it still is,
  *  else the first that is, else none (AUDIT INT9: the place alone was an index into a list the fallen built). */
 export function wildPickOf(items, w = -1, wt = null) {
   if (!Number.isInteger(w) || w < 0) return null;
@@ -140,7 +140,7 @@ const dropWorth = (/** @type {any} */ it) => { const l = liquidWorthOf(it); retu
  * INT9: A DEATH'S WHOLE TAKE, in place, off `entity` - a live character or a judged record alike (`items`, `wagonItems`,
  * `goldPieces`): the killer's worn piece first (wildPickOf - `w` its place in wornOffer, `wt` what the offer showed;
  * -1 none), then the purse's and the cart's share of their gold, then the bag's and the cart's drop BY WORTH, the most
- * first - every piece `keep` names left where it lies, and one heavier than a remains' record (net/wildLaw.js recordFits)
+ * first - every piece `keep` names left where it lies, and one heavier than a remains' record (net/wild/wildLaw.js recordFits)
  * left too - fitted to one remains (remainsFit), and what does not fit put back where it came from (AUDIT INT9: the
  * purse came last, so a bag of junk ahead of it kept the gold and the valuables; and a coin's share put back went into
  * the purse, the cart's too). The record's lit light (`lightSourceIndex`, an index into `items` - systems/save/save.js)

@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { foldSiege, SIEGE_STATE_EMPTY } from '../src/net/siegeLink.js';
+import { foldSiege, SIEGE_STATE_EMPTY } from '../src/net/siege/siegeLink.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const T = 1_800_000_000_000;

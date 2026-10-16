@@ -23,15 +23,15 @@ import {
 } from '../src/scenes/sdRemnant.js';
 import { dialHandMatrix, dialFallMatrix, heartFallMatrix, gearFlightOf, mul4, sdGatherGearsAt, SD_FALL_DECOR, SD_RIG_PARTS, SD_REM_HAND } from '../src/scenes/sdRemnantRig.js';
 import { SD_BLOW_COLOR } from '../src/scenes/sdRemnantBlows.js';
-import { SD_BLOWS, SD_BODY, SD_HEARTS, SD_STUN_MS, SD_ECHO_PAIR_MS, SD_REM_START, windupFor } from '../src/net/sdRemnant.js';
-import { SD_FIGHT_EMPTY } from '../src/net/sdFightLink.js';
+import { SD_BLOWS, SD_BODY, SD_HEARTS, SD_STUN_MS, SD_ECHO_PAIR_MS, SD_REM_START, windupFor } from '../src/net/superDungeon/sdRemnant.js';
+import { SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
 import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../src/world/superDungeon/sdRealm.js';
 import { realmBrassArt, realmArt } from '../src/world/superDungeon/sdRealmArt.js';
-import { SD_ENDINGS } from '../src/net/sdMarks.js';
+import { SD_ENDINGS } from '../src/net/superDungeon/sdMarks.js';
 import { sdTick } from '../src/world/superDungeon/sdLook.js';
 import { numeralCell, numeralWidth, SD_HOUR_NUMERALS } from '../src/world/superDungeon/sdSkyArt.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
-import { SD_ARENA, SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
+import { SD_ARENA, SD_REALM_ORIGIN } from '../src/net/superDungeon/sdBrain.js';
 
 const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');
 const T0 = 1_800_000_000_000;
@@ -46,7 +46,7 @@ const cornersOf = (m, sm) => Array.from({ length: sm.primitiveCount * 3 }, (_, k
 const subOf = (m, archive, rec) => m.subMeshes.find((s) => s.textureArchive === archive && s.textureRecord === rec) ?? null;
 /** A uv's texel in the tell atlas. */
 const uvTexel = (uv) => [Math.floor(uv[0] * SD_TELL_ART_SIZE), Math.floor(uv[1] * SD_TELL_ART_SIZE)];
-/** The page's fight (net/sdFightLink.js's shape): the Remnant where a fight begins it, facing the way in. */
+/** The page's fight (net/superDungeon/sdFightLink.js's shape): the Remnant where a fight begins it, facing the way in. */
 const fight = (o = {}) => ({ ...SD_FIGHT_EMPTY, fi: 1, op: T0 - 300_000, ou: 0, ends: T0 + 600_000, ph: 1, h: 900, m: 1000, su: 0, rem: { x: SD_REM_START[0], z: SD_REM_START[1], yw: Math.PI, mv: null, atk: null }, ...o });
 const blowAt = (A, at, extra = {}) => ({ a: A.id, at, x: 0, z: 8, yw: Math.PI, i: 6, ...extra });
 const echoes = (o0 = {}, o1 = {}) => [{ x: -9, z: 2, yw: Math.PI, mv: null, atk: null, h: 100, m: 100, up: T0 - 5000, dn: 0, ...o0 }, { x: 9, z: 2, yw: Math.PI, mv: null, atk: null, h: 100, m: 100, up: T0 - 5000, dn: 0, ...o1 }];
@@ -434,8 +434,8 @@ test('SD-LOOK S8 THE FIGHT\'S FRAME MAKES NOTHING (AUDIT SD II L2 F9\'s measure)
     const { createSdRemnant, sdTellsAt, sdDialHandAt, sdRibLampsLit } = await import(${url('src/scenes/sdRemnant.js')});
     const { dialHandMatrix, dialFallMatrix, heartFallMatrix } = await import(${url('src/scenes/sdRemnantRig.js')});
     const { remnantMatrix } = await import(${url('src/world/superDungeon/sdRemnantModel.js')});
-    const { SD_FIGHT_EMPTY } = await import(${url('src/net/sdFightLink.js')});
-    const { SD_BLOWS } = await import(${url('src/net/sdRemnant.js')});
+    const { SD_FIGHT_EMPTY } = await import(${url('src/net/superDungeon/sdFightLink.js')});
+    const { SD_BLOWS } = await import(${url('src/net/superDungeon/sdRemnant.js')});
     const renderer = { createMesh: () => ({}), destroyMesh() {}, uploadTexture() {}, uploadEmissionTexture() {} };
     const T0 = ${T0}, clock = Array.from({ length: 4096 }, (_, k) => T0 + 2000 + k * 0.5); clock.push('tagged');
     let k = 0;

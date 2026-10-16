@@ -21,8 +21,8 @@ D12: this sentence said "in the real game").
 
 `src/net/online.js` (`tick`, `SHOWN_MOVE_HOLD_MS`). The drawn pose (`p.shown`) is made once a frame by the play-out
 (`poseAlong` over the peer's path at its cursor), and every renderer of a body on foot reads it: the Morrowind bodies
-(`net/peerBodies.js`), the class sprites and the dolls (`net/remotePlayers.js`), the Eye Of The Beholder walkers and
-the beasts (`net/peerRiders.js`), and the footsteps - each through `net/peerClimb.js` `peerMoving`, `!!shown.mv` off
+(`net/peer/peerBodies.js`), the class sprites and the dolls (`net/remotePlayers.js`), the Eye Of The Beholder walkers and
+the beasts (`net/peer/peerRiders.js`), and the footsteps - each through `net/peer/peerClimb.js` `peerMoving`, `!!shown.mv` off
 the wall. The cursor walks the path as far as the newest pose and waits there for the next. While it waits the body is
 drawn standing - and `poseAlong` hands it the newest pose's `mv` whole, so a peer whose next pose was late was drawn
 running, stepping and footfalling on one spot. When the poses stopped for good the body ran there until the silence law

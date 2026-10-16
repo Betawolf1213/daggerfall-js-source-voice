@@ -4,17 +4,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { riseLine, wrathLine, marksLine } from '../src/net/gateLaw.js';
-import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gateMods.js';
+import { riseLine, wrathLine, marksLine } from '../src/net/gate/gateLaw.js';
+import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gate/gateMods.js';
 import { MARK_TIPS, MARKS_CARD_TEXT, marksCardModel } from '../src/ui/gateMarksView.js';
 import { COURT_STRIKE_TEXT, COURT_RECKON_TEXT, COURT_MARKS_TEXT, courtPhaseOrder, courtPhaseCard, COURT_WRATH_TEXT } from '../src/scenes/gateCourt.js';
 import { COURT_HOST_TEXT } from '../src/scenes/gateHost.js';
 import { COURT_TEXT } from '../src/world/gate/gateArena.js';
 import { GATE_TEXT } from '../src/scenes/gatePool.js';
-import { GATE_NO_TEXT } from '../src/net/gateLink.js';
-import { GATE_CLAIM_TEXT } from '../src/net/gateClaims.js';
+import { GATE_NO_TEXT } from '../src/net/gate/gateLink.js';
+import { GATE_CLAIM_TEXT } from '../src/net/gate/gateClaims.js';
 import { MARKS_TEXT } from '../src/net/marksBook.js';
-import { omenPost, fellPost, ritePost } from '../src/net/gateHerald.js';
+import { omenPost, fellPost, ritePost } from '../src/net/gate/gateHerald.js';
 import { fellLine, riteOmenLine, omenTimeLine, openTimeLine, sealTimeLine } from '../src/systems/gate/gateOmen.js';   // TIME1, at the merge: the three that name a time
 import { RITE_TEXT } from '../src/scenes/riteHost.js';
 import { SPOILS_TEXT } from '../src/scenes/spoilsPool.js';

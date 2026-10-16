@@ -49,7 +49,7 @@ them one that stood no outdoor body at all and one that let the heir empty anoth
 | C8 | LOW | "Seen across a hall" unpinned: the line was drawn from 1.6 m | FIXED in the pins: from thirty metres |
 | C14 | LOW | `legacyRemainsFeet` wrote `anchorLanding`'s read a second time; the stand's `count` had no caller but the tests (and `clear` none until A2) | FIXED: the remains' height is `anchorLanding`'s read - one home; `count` gone, `clear` the load's |
 | O2 | NIT | The slice's comment over `inFight` stopped mid-sentence | FIXED with B3 |
-| O3 | NIT | Found while verifying B3: the giant notice's `wildFight.inFight?.()` (GIANT-FALL) reads a member `net/wildFight.js` never had - always undefined; lane B's probe gave its fake one | OPEN, not this slice's: no open-zone fight latch exists to read |
+| O3 | NIT | Found while verifying B3: the giant notice's `wildFight.inFight?.()` (GIANT-FALL) reads a member `net/wild/wildFight.js` never had - always undefined; lane B's probe gave its fake one | OPEN, not this slice's: no open-zone fight latch exists to read |
 | B4 | NIT | A death on a ship's deck at sea: the row keeps the deck's height, and the body lies on the seabed under where she fell (no mesh in reach); the list's own sixty metres open from the deck | KEPT, recorded here |
 | R1 | NIT | The record said a load's merge stood the body over the new list (only from the next tick), and that the tick lapsed every claim before a list was made ready (the stand can lapse its own) | FIXED: the record as A1 and A2 made it |
 | O4 | NIT | The PR's description gave the merged tree's anchors as 2,332: the cite tool counts `git ls-files`, which lists an unresolved file once a stage; the clean tree's are 2,216 | FIXED in the description |

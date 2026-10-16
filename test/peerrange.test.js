@@ -1,7 +1,7 @@
 // PEER-RANGE (2026-10-10, the owner: "So for online performance, I believe the rendering of players far out is
 // contributing to poor performance"): THE OTHERS, DRAWN AS FAR AS THEY CAN BE SEEN. A world cell hands the screen every
 // player within the relay's three map pixels (up to 3.3 km along an axis), and every one was drawn. Past the distance on
-// the Other players card a player now stands nowhere on this screen - GATE-CROWD's cut, by distance (net/peerRange.js;
+// the Other players card a player now stands nowhere on this screen - GATE-CROWD's cut, by distance (net/peer/peerRange.js;
 // the online frame's drawn list): the party and the one I duel always, nobody cut under the travel view, a drawn player
 // held a little past the edge. AUDIT PEER-RANGE + HALO-THIN: me off the origin on both axes, the held set forgotten on
 // every way the cut stands down, the room's whole list for a resurrection and a cut peer's sprite. Design:
@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { rangeDrawn, createPeerRange, peerRangeOf, PEER_RANGE_TIERS, PEER_RANGE_DEFAULT, PEER_RANGE_HOLD } from '../src/net/peerRange.js';
+import { rangeDrawn, createPeerRange, peerRangeOf, PEER_RANGE_TIERS, PEER_RANGE_DEFAULT, PEER_RANGE_HOLD } from '../src/net/peer/peerRange.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { MISSILE_SPEED, MISSILE_LIFESPAN_S } from '../src/systems/spellcast.js';
 import { BLOW } from '../src/ai/blowShapes.js';
@@ -208,7 +208,7 @@ test('PEER-RANGE the online frame: the drawn list cut by distance after the map\
 
 test('PEER-RANGE the Other players card: the distance beside the court\'s crowd, its tiers the law\'s, Everyone for 0, the row reading the law\'s own answer - a stored value that is no tier shows the 300 m it stands for (AUDIT A L2, D7; mutants: the row gone; its key another; the tiers written twice; the raw pref read)', () => {
   const menu = read('src/ui/enhancedMenu.js');
-  assert.match(menu, /import \{ PEER_RANGE_TIERS, peerRangeOf \} from '\.\.\/net\/peerRange\.js';/);
+  assert.match(menu, /import \{ PEER_RANGE_TIERS, peerRangeOf \} from '\.\.\/net\/peer\/peerRange\.js';/);
   const card = menu.slice(menu.indexOf('function peerSpritesCard() {'), menu.indexOf('\n}\n', menu.indexOf('function peerSpritesCard() {')));
   assert.match(card, /c\.append\(choiceRow\('peerRange', t\('menu\.peers\.range', 'Draw distance'\),\n\s*t\('menu\.peers\.rangeNote', 'How far away other players are drawn\. Your party and your duel opponent always show\.[^']*'\),\n\s*PEER_RANGE_TIERS\.map\(\(m\) => \[m, m \? t\('menu\.peers\.metres', '\{m\} m', \{ m \}\) : t\('menu\.peers\.everyone', 'Everyone'\)\]\), \{ home: true, read: \(\) => peerRangeOf\(getPref\('peerRange'\)\) \}\)\);/);
   assert.ok(card.indexOf("choiceRow('peerRange'") < card.indexOf("choiceRow('gateCrowd'"), 'the street\'s distance before the court\'s crowd');

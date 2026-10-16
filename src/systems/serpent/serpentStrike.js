@@ -5,12 +5,12 @@
 // rowboat and a carrack feel each blow alike), the throw it gives her, the coil's grip and crush, the maelstrom's pull,
 // and the venom's bite. The relay never learns a ship's hurts. Design: bible/11-Multiplayer/Sea-Serpent.md section 5.
 //
-// THE FRAME is the site's (net/serpentBody.js): metres, x east, z north. A ship is a footprint - her middle, her
+// THE FRAME is the site's (net/serpent/serpentBody.js): metres, x east, z north. A ship is a footprint - her middle, her
 // heading and her half length and beam (`{x, z, yw, hl, hw}`); a shape meets her when it meets her bow, her middle or
 // her stern (a carrack is fifty metres long - a disc that takes her stern takes her).
 //
 // PURE. Not a DFU member. Ledger A (SERPENT1).
-import { SERPENT_ATTACK_TABLE, SERPENT_ATTACK_BY_ID, CRUSH, GRIP, MAEL_R, MAEL_EYE_R, MAEL_PULL, MAEL_SWIRL, MAEL_GRIND, SPIT_FLIGHT_MS, ramLen, RAM_V, serpentWrapYaw } from '../../net/serpentBrain.js';
+import { SERPENT_ATTACK_TABLE, SERPENT_ATTACK_BY_ID, CRUSH, GRIP, MAEL_R, MAEL_EYE_R, MAEL_PULL, MAEL_SWIRL, MAEL_GRIND, SPIT_FLIGHT_MS, ramLen, RAM_V, serpentWrapYaw } from '../../net/serpent/serpentBrain.js';
 
 /** The points of her a shape is tested at: her bow, her middle and her stern. */
 export function shipPoints(boat) {
@@ -19,7 +19,7 @@ export function shipPoints(boat) {
 }
 
 /**
- * Does attack `atk` (its word - net/serpentBrain.js serpentAtkFrame) meet ship `boat` at `t`? The lane is the ram's: its head
+ * Does attack `atk` (its word - net/serpent/serpentBrain.js serpentAtkFrame) meet ship `boat` at `t`? The lane is the ram's: its head
  * has run `RAM_V` m/s down it from its landing, and a ship is met once that run has reached her (her beam's width
  * across it); the ring is the coil's (any of her inside it at the landing); the rest are met at the landing.
  */

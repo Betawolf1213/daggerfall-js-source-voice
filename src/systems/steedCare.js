@@ -11,7 +11,7 @@
 //    no field holds them, so a horse born before STEED1 has had its stats all along.
 //  - THE BOND, 0-100 (`horseBond`, in tenths). Grown by feeding: a day's food a day's bond, more for what it loves.
 //    Every five points of it are a point on every stat (BOND_STEP) - a Kindred horse is twenty points better than the
-//    one bought. A horse traded away comes to its new owner a stranger (net/realmTradeLaw.js RECEIVER_MARKS).
+//    one bought. A horse traded away comes to its new owner a stranger (net/realm/realmTradeLaw.js RECEIVER_MARKS).
 //  - HUNGER (`horseFed`, the minute of the character's clock its food runs out). Fed, then Hungry (its stats ten down,
 //    its breath slower back), then STARVING two days on (twenty-five down, no gallop, and the bond fading two points a
 //    day). It never dies of it. A horse at the stable is fed there; one left waiting in the world grazes enough never to

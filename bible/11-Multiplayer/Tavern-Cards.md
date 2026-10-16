@@ -96,7 +96,7 @@ narrows its Ledger section A row (`01-Overview/Port-Ledger.md`), the way DICE1 a
 
 - No-limit Texas Hold'em, two to six seats, the standard rules: blinds, two hole cards, the flop, the turn, the river,
   four betting rounds, the showdown, side pots for an all-in.
-- **DECIDED: the hand evaluator is one pure module** (`net/cardLaw.js` or its name at CARDS1), read by both ends like
+- **DECIDED: the hand evaluator is one pure module** (`net/card/cardLaw.js` or its name at CARDS1), read by both ends like
   `net/dice.js` is: five-of-seven best hand, every category from high card to the straight flush, the wheel (A-2-3-4-5),
   ties split by kicker, side pots by contribution. Its pins are deepEqual against hand-written tables, mutation-checked.
 - **DECIDED (Mac): stakes are gold.** Offline, the player's own purse. Online, see section 5.
@@ -117,7 +117,7 @@ narrows its Ledger section A row (`01-Overview/Port-Ledger.md`), the way DICE1 a
   a client asks (`bet`, `call`, `check`, `fold`, `raise`) and the relay answers with the new state. A seat that does not
   act in its time (MEASURE: 30 s) is checked if it can be, folded if not. A seat whose player leaves the room folds and
   is stood up at the hand's end.
-- **FACT:** a realm character's gold moves on its save through the service (`net/realmGoldLaw.js`, REALM P2.2, read by
+- **FACT:** a realm character's gold moves on its save through the service (`net/realm/realmGoldLaw.js`, REALM P2.2, read by
   `server-account/src/realm.js`). **DECIDED: online stakes are escrowed there.** Sitting down moves the buy-in from the
   character to the table; standing up moves the stack back. A stake the service does not hold is a stake nobody can
   enforce, so a character the service does not keep plays for no gold (a friendly table). BUILT: CARDS6 (section 23).
@@ -225,7 +225,7 @@ Each ships alone and is verifiable without the next.
 
 Mac, after CARDS0's answers: **"Do it"**.
 
-`src/net/cardLaw.js` - pure, DOM-free, one home for both ends, the way `net/dice.js` is the dice's. Nothing draws, sits
+`src/net/card/cardLaw.js` - pure, DOM-free, one home for both ends, the way `net/dice.js` is the dice's. Nothing draws, sits
 or deals yet; the relay (CARDS5) and the patrons (CARDS4) will read it.
 
 - **The card** is an integer 0..51 - rank `c % 13` (the deuce 0 .. the ace 12), suit `Math.floor(c / 13)` (clubs,
@@ -467,7 +467,7 @@ Mac: **"Do 3 4 and 5"**. Section 5 built for the friendly table: players in one 
 holds every card.
 
 - **The relay's table** (`src/net/holdemTable.js`, pure and plain data - one home for the relay and its pins; with
-  `net/cardLaw.js` it joins the relay's bundle, `world178`, undeployed, re-hashed in place). A building's room keeps its
+  `net/card/cardLaw.js` it joins the relay's bundle, `world178`, undeployed, re-hashed in place). A building's room keeps its
   card tables by the table's index; A TABLE'S SEATS ARE ITS CHAIRS (the chair the client took - every client computes the
   same chairs from the same room, so every eye maps the cloth alike). The relay shuffles from its own CSPRNG
   (`shuffleDeck` over the dice's unbiased draw) and keeps the deck in the table, which no frame carries; each seat is
@@ -634,7 +634,7 @@ player, the service's word one way and the relay's the other, each signed:
   room's is that room's - left unspent, nothing handed back (AUDIT CARDS-4 A2/B1: each room remembers only its own
   spends, so a refund here while the room it names still seated it was the stake paid twice); another account's is
   refused and left unspent. A room that cannot sign a cash-out seats and voids no stake ('stakes closed', B3).
-- **THE CASH-OUT** (`net/cardReceipt.js`, `c1`, the relay's fourth signature under GATE_SIGNING_KEY): a staked seat gone
+- **THE CASH-OUT** (`net/card/cardReceipt.js`, `c1`, the relay's fourth signature under GATE_SIGNING_KEY): a staked seat gone
   from the table - stood up, out of chips, gone from the room - leaves with a receipt for its stack (`stood`, `broke`); a
   refused sit's and a void's are the whole stake (`refused`, `void`). A leaver folded out of a hand that goes on is cashed
   out AT ONCE with his stack behind (he can win nothing more, and he is walking out of the room), never again at the
@@ -651,12 +651,12 @@ player, the service's word one way and the relay's the other, each signed:
   the stake, never more or less; a seat leaves with no more than every seat's deepest stake at its stakes; another
   account's receipt, another character's, an unsigned or rewritten one pay nothing.
 - **A STAKE NEVER SAT** (the sit never sent, its answer lost, the game closed while the service answered): the device
-  keeps its order (`net/cardStakes.js`), and once its minute is past (no room can sit it) hands it to the room it names
+  keeps its order (`net/card/cardStakes.js`), and once its minute is past (no room can sit it) hands it to the room it names
   (`void`) - spent there, the whole of it back in a `void` receipt, for as long as a receipt lives (AUDIT CARDS-4 C6:
   `HOLDEM_STAKE_VOID_S`, not a week). A lost stake answer is asked again by the same request: the same stake, the SAME
   order (A1: minted at the stake's own instant - a repeat is never a fresh minute to sit on), the purse paying it then
   if the service takes it then (C1).
-- **ON THE DEVICE** (`net/cardStakes.js`, world.js `cardStakes`): the stake is the record's own act (realmSaves.js
+- **ON THE DEVICE** (`net/card/cardStakes.js`, world.js `cardStakes`): the stake is the record's own act (realmSaves.js
   `realmGoldAct` - the purse checkpointed, the gold held out while asked); the request kept first, the order till the
   relay sits it; each receipt kept, its stake let go, acked to the room and claimed as the record's act. A cash-out frame
   is heard on any socket - the room just left included (online.js). The panel: a realm character online sits at the
@@ -682,9 +682,9 @@ Mac: **"2 and 3"** - section 23's "Not yet", built after AUDIT CARDS-4 (section 
   buy-in's (the service holds a top-up from `HOLDEM_TOPUP_MIN_BB`, `topup: true`); the relay checks it against the seat
   BEFORE it spends it - a refusal spends nothing, and the device voids it back in its room after its minute - reads the
   table again after the order's await, spends it, adds it to the stack, and settles it AT ONCE in a `joined` receipt
-  (`net/cardReceipt.js`: nothing back by it - its chips come home in the seat's own receipt). The panel offers "Top up
+  (`net/card/cardReceipt.js`: nothing back by it - its chips come home in the seat's own receipt). The panel offers "Top up
   N" between hands (the most from the purse to the table's most); the log says it.
-- **GOLD OWED ELSEWHERE** (`net/cardStakes.js` `elsewhere`, worldModes `cardElsewhereSay`): the device keeps a sat stake
+- **GOLD OWED ELSEWHERE** (`net/card/cardStakes.js` `elsewhere`, worldModes `cardElsewhereSay`): the device keeps a sat stake
   (AUDIT CARDS-4 C4) and the words for where it was staked (the building and its town). Each room keeps its own spends
   and its own cash-outs, so only that room hands a cash-out over or voids a stake back (AUDIT SCALE II R3-3 (c): a room's
   spends are its PLACE's - a void said in any layer is spent there, HOLDEM_INTERNAL_VOID, and its receipt owed in both;
@@ -726,7 +726,7 @@ CARDS8"**.
   power, lore and the day found - then the Aetheric sets), the rows the Reforge's Codex page draws, so the two never
   disagree; the pack's Codex button still opens that window. The CARDS part is the binder's (below). The page shows while
   Loot rarity makes Legendaries or a binder is carried.
-- **CARDS7, THE RULES** (`net/iliacHand.js`, pure - it imports only `cardLaw.js`, `dice.js` and the catalog, so the
+- **CARDS7, THE RULES** (`net/iliac/iliacHand.js`, pure - it imports only `cardLaw.js`, `dice.js` and the catalog, so the
   relay can run it later): section 6.1 as built. Two decks of 30 (two of a card, one of a Legendary or rarer); three
   holdings drawn from the locations; magicka the turn's number to ten (and a card's bonus); a hand of four, a card drawn
   a turn, seven at most; four cards a side of a holding. Both players COMMIT hidden, then the turn is revealed together -
@@ -740,7 +740,7 @@ CARDS8"**.
   Betony and Evermor's gifts, Castle Daggerfall and Privateer's Hold (no spells; the Hold's cards face down till the
   end), the Mages Guild Hall's cheaper spells, the vampire's crypt. Its numbers are MEASURE (section 6): in 3,000 random
   games each seat won over a thousand, about 85% decided on holdings, 1.5% drawn.
-- **CARDS8, THE FIRST SET** (`net/iliacCards.js`): 82 cards - 57 units, 14 spells (six of them the artifacts: Mehrunes'
+- **CARDS8, THE FIRST SET** (`net/iliac/iliacCards.js`): 82 cards - 57 units, 14 spells (six of them the artifacts: Mehrunes'
   Razor, the Wabbajack, Azura's Star, the Oghma Infinium, Chrysamere, the Sanguine Rose), 11 Princes - and 11
   locations, drawn from Daggerfall itself (its creatures, guilds, temples, knightly orders and Princes; King Gothryd).
   Rarity is the loot's tiers (common 26, magic 23, rare 13, legendary 12, aetheric 2 - Mehrunes Dagon and Molag Bal -
@@ -778,11 +778,11 @@ CARDS8"**.
 Mac: **"Alright, one last comprehensive audit to ensure this is perfection"**. Five lanes over a frozen snapshot of
 section 26 and the gold tables' AUDIT CARDS-4 fixes - the record is `01-Overview/Audit-Cards-5.md`. What it changed here:
 
-- **The rules** (`net/iliacHand.js`): a weaken takes from the power the card shows, never below nothing (A1); an unveiled
+- **The rules** (`net/iliac/iliacHand.js`): a weaken takes from the power the card shows, never below nothing (A1); an unveiled
   card's ongoing text is its own once it is face up, never twice (A2); the reveal's tie is the deal's coin, then turn
   about (`state.coin`, drawn after the shuffles); a source that is not a 32-bit draw, or draws without end, is refused at
   the deal (`ILIAC_RAND_DRAWS_MAX`); the words say "round the table", "its owner summons", "one card".
-- **The catalog** (`net/iliacCards.js`): names, tags and flavor as Daggerfall has them (the Ancient Vampire, the Ice
+- **The catalog** (`net/iliac/iliacCards.js`): names, tags and flavor as Daggerfall has them (the Ancient Vampire, the Ice
   Atronach, the guilds' and the Knights of the Wheel's ids); each artifact its own picture (Azura's Star the gem), every
   Prince but Azura the Daedric sigil, the bat, the scorpion, the boar, the spriggan, the gargoyle, Banish, Recall and Turn
   Undead their own - fourteen new emblems, the beetle and the insect tag gone with no card to wear them; the list is the
@@ -1023,7 +1023,7 @@ him up** - folded out of turn, cashed out.
 
 Mac: **"Lets build every inch of this. Dont forget about a card needing to come from the abyss dungeon also"**.
 
-- **A CARD'S WORTH** (`net/cardWorthLaw.js`, one home for the client and the account service): its tier's
+- **A CARD'S WORTH** (`net/card/cardWorthLaw.js`, one home for the client and the account service): its tier's
   (`CARD_WORTH`, MEASURE: a common 5 gold, a magic 20, a rare 75, a legendary 300, an aetheric 1,200, an artifact 2,500,
   a gilded 5,000), the item's `value`, set at the mint, kept by a card split off a stack, and refreshed on a load in
   every saved list (AUDIT CARDS-6 A6). A sealed pack is worth `CARD_PACK_WORTH` (171, its five cards' mean rounded up -
@@ -1094,7 +1094,7 @@ The same ask.
   over the next holding at any pair of chairs (AUDIT CARDS-6 B3) - every card read from the viewer's chair; a card new to
   the board thrown from its owner's own edge (`ILIAC_THROW_S`); one atlas of the painted faces, a plate made the first time its card is
   drawn, all freed with the game.
-- **ONLINE - THE RELAY DEALS** (`net/iliacTable.js`, relay world179): a room keeps its Iliac tables beside its Hold'em
+- **ONLINE - THE RELAY DEALS** (`net/iliac/iliacTable.js`, relay world179): a room keeps its Iliac tables beside its Hold'em
   ones, one game a table index at a time (each refuses the other's sit). Its own shuffle (`rand32`), each seat told its
   own view alone (`mine`: its hand, its plays), the room the spectator's (no hand, no deck ever framed); a commit heard,
   never seen; the turn turned over once both have committed, or by the clock (`ILIAC_TURN_MS`, 45 s - a pass for the
@@ -1110,8 +1110,8 @@ The same ask.
   (`/v1/cards/deck`, `server-account/src/iliac.js` deckOrderOf, the record checkpointed first); the relay checks the
   order's account and digest before it seats the deck ranked, and an order vouches for ONE game: the relay asks a ranked
   pair for fresh orders as it schedules each deal, and a seat with none plays that game friendly (AUDIT CARDS-6 C5/D2). A game between two ranked seats of two accounts is ranked:
-  its end - won, lost, drawn, or conceded - is signed (`net/iliacReceipt.js`, `i1`, the relay's key) and handed to both;
-  either carries it (`net/iliacClaims.js`) to `/v1/iliac/claim`, one row a game (migration `0095_iliac_ladder.sql` - 0093 on its branch, renumbered past main's 0093 and 0094 at the merge).
+  its end - won, lost, drawn, or conceded - is signed (`net/iliac/iliacReceipt.js`, `i1`, the relay's key) and handed to both;
+  either carries it (`net/iliac/iliacClaims.js`) to `/v1/iliac/claim`, one row a game (migration `0095_iliac_ladder.sql` - 0093 on its branch, renumbered past main's 0093 and 0094 at the merge).
 - **THE SEASON BOARD AND ITS TITLE** - the arena's way (`11-Multiplayer/Arena.md`): its seasons, its Elo, its pair's
   day and season caps; the board (`/v1/iliac/board`, shown in the panel online) and the season's #1 over
   `ILIAC_CHAMPION_MIN_GAMES` games against `ILIAC_CHAMPION_MIN_FOES` foes (10 and 5) wears **ILIAC CHAMPION** (the
@@ -1225,7 +1225,7 @@ FIELD BUGS 2026-10-11 (`01-Overview/Field-Bugs-2026-10-11.md`, thread 1, Shortst
 to be settled - visit the tables they were staked at first", at the first gold table, on every character. And the owner:
 "the card tables UI needs to be enhanced".
 
-- **CARDS-KEPT.** `net/cardStakes.js` (section 23) keeps its stakes and receipts as JSON through `storage.get`/`set` -
+- **CARDS-KEPT.** `net/card/cardStakes.js` (section 23) keeps its stakes and receipts as JSON through `storage.get`/`set` -
   the `{get, set}` store every one of its suites built it over - and `scenes/world.js` handed it `appStorage()`, the
   device's Storage (`getItem`/`setItem`). Every write threw into the book's own catch, so AUDIT CARDS-4 C6's check that a
   stake is KEPT before it is asked found nothing and refused every first buy-in as `cards-kept-full`, since CARDS6; the
@@ -1385,7 +1385,7 @@ finding reproduced again on the live tree after the merge of main and fixed or r
   44 px (E5); the fold's line and presses read kept (E6); the copy's corner and a ratio of 2 (E7); the four verdict
   words in French (E8); the record's numbers (E9); every claim a test title makes asserted (E10); the patch notes (E11);
   the narrow mutants and the corners left unpinned (E12).
-- **Recorded:** the client's view check (`net/iliacTable.js` viewOk) still bounds neither turns nor room - the module
+- **Recorded:** the client's view check (`net/iliac/iliacTable.js` viewOk) still bounds neither turns nor room - the module
   rides in the relay's bundle, so bounding it is a RELAY_VERSION of its own (SLAM8), the relay's next change's (A1); a
   watcher of a game's last board reads the current sitters' names, and a watcher's presses follow seat 0's commit (A9,
   before CARDS-PLUS); the folded seats and a disabled box's reason under AA, the concession 4.34:1 under the dress, a
@@ -1412,7 +1412,7 @@ relay's catalog.
   who dropped none); the packs, the regulars' decks and a card's worth read them off the catalog. The relay: world201.
 - **THE WORDS:** a card's rules and flavor are said in the player's language through the text core when they are shown
   (`systems/iliac/iliacCardWords.js` - `cardRules`, `cardFlavor`), never written in the relay's catalog again: the catalog
-  (`net/iliacCards.js`) keeps the rules and the names, the face painter takes the words beside the card, the binder,
+  (`net/iliac/iliacCards.js`) keeps the rules and the names, the face painter takes the words beside the card, the binder,
   a card item's lines and the table panel's titles read them, and the binder's faces are painted again under a new
   language. Every rules line's English is still EXACTLY `fxText`'s (section 26's law, its pin moved). Drafted into the
   thirteen whole languages; a card's name keeps Daggerfall's English until L10N4's cards batch shows it through Daggerfall

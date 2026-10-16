@@ -84,7 +84,7 @@
   },
   {
     "name": "AUDWB-A1-a-present-seat-freed",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (present.has(sub) || hasPart(p)) continue;",
     "new": "    if (hasPart(p)) continue;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "AUDWB-A1-a-strikers-seat-freed",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (present.has(sub) || hasPart(p)) continue;",
     "new": "    if (present.has(sub) || p.stoodMs >= SEAT_KEEP_MS) continue;",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "AUDWB-A1-a-standers-seat-freed",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (present.has(sub) || hasPart(p)) continue;",
     "new": "    if (present.has(sub) || p.dealt >= RECEIPT_SHARE * p.share) continue;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "AUDWB-A1-the-fraction-lost",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  f.hp = f.max * frac;\n  if (!(f.max > 0)) f.idle = frac;",
     "new": "  f.hp = Math.min(f.hp, f.max);\n  if (!(f.max > 0)) f.idle = frac;",
     "tests": [
@@ -120,7 +120,7 @@
   },
   {
     "name": "AUDWB-A1-the-target-kept",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (f.target === sub) f.target = null;",
     "new": "",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "AUDWB-A1-never-freed",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (Object.keys(f.players).length >= GATE_FIGHTERS_MAX && !freeSeat(f, present)) return false;",
     "new": "  if (Object.keys(f.players).length >= GATE_FIGHTERS_MAX) return false;",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "AUDWB-A8-the-late-burst",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    bucket: fresh ? BUCKET_DEPTH_X * dpsRef(level) : 0,",
     "new": "    bucket: BUCKET_DEPTH_X * dpsRef(level),",
     "tests": [
@@ -147,7 +147,7 @@
   },
   {
     "name": "AUDWB-A8-every-bucket-empty",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  const fresh = frac >= 1;",
     "new": "  const fresh = false;",
     "tests": [
@@ -247,7 +247,7 @@
   },
   {
     "name": "AUDWB-C7-the-times-made-every-ask",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "  let t = _gateTimesOf.get(day);",
     "new": "  let t = null;",
     "tests": [

@@ -13,7 +13,7 @@ import { d1, standService, T0 } from './accountDb.mjs';
 import { mintMemberOf, guildBadgeOf } from '../server-account/src/guilds.js';
 import { seatBadgeOf } from '../server-account/src/seatTurning.js';
 import { ribbonOf } from '../server-account/src/seatRibbons.js';
-import { GUILD_RANK_MASTER } from '../src/net/guildLaw.js';
+import { GUILD_RANK_MASTER } from '../src/net/guild/guildLaw.js';
 
 const realNow = Date.now;
 Date.now = () => T0 * 1000;

@@ -54,14 +54,14 @@ const HOMONYMS = new Map([
   // the port's name further from DFU's than the collision costs.
   ['canRest', 'FightersGuild.CanRest (may this member sleep here) vs DaggerfallRestWindow.CanRest (the whole pre-rest gate, which consumes it)'],
   // The arena merge: three pairs ARENA2-ARENA4 brought, each two things. The beasts: the game's SET of beast mobiles
-  // (systems/arena/arenaFighters.js - who never yields) and the relay's beast BODIES keyed by mobile (net/arenaLaw.js -
+  // (systems/arena/arenaFighters.js - who never yields) and the relay's beast BODIES keyed by mobile (net/arena/arenaLaw.js -
   // its fighters' health and blows, in the relay's import graph, where the game's table cannot go); test/arena4_client
   // pins the keys equal. The season: a town seat's numbered season from a week and a zero (net/townSeatLaw.js) and
   // the arena's eight-week season from a day (systems/arena/arenaLeague.js). The state word: a relay bout's, on the wire
-  // (net/arenaBrain.js), and a bounty row's, in its window (ui/bountyWindow.js).
+  // (net/arena/arenaBrain.js), and a bounty row's, in its window (ui/bountyWindow.js).
   ['ARENA_BEASTS', "the game's set of beast mobiles vs the relay's beast bodies by mobile (their keys pinned equal by arena4_client)"],
   ['seasonOf', "a town seat's season from a week and its zero vs the arena's eight-week season from a day"],
-  ['stateWord', "a relay bout's state on the wire (net/arenaBrain.js) vs a bounty row's state in its window's words (ui/bountyWindow.js)"],
+  ['stateWord', "a relay bout's state on the wire (net/arena/arenaBrain.js) vs a bounty row's state in its window's words (ui/bountyWindow.js)"],
   // SHIPS-2: the port's ships each carry their own measures under one name - the galleon's (world/ships/galleonModel.js,
   // galleonRig.js, galleonArt.js), the carrack's (carrackModel.js, carrackRig.js, carrackArt.js) and the large boat's
   // (largeBoatModel.js, largeBoatRig.js, largeBoatArt.js): three ships, three things each, read as `ship.MEASURED`.

@@ -46,7 +46,7 @@
   },
   {
     "name": "OW-PEERS-a-walker-never-grown",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "      const g = grow ? grow(feet) : 1;   // OW-PEERS",
     "new": "      const g = 1;   // OW-PEERS",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "OW-PEERS-the-reach-left",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "        if (r.batch.bounds) r.batch.bounds[3] = quadHalfDiagonal(size);\n        r.batchKey = key;",
     "new": "        r.batchKey = key;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "OW-PEERS-the-giants-shadow",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "      if (r.batch) r.batch.noShadow = g > 1;",
     "new": "      if (r.batch) r.batch.noShadow = false;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "OW-PEERS-a-body-never-grown",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "      const ow = this._cam?.grow ? Math.max(1, this._cam.grow(b.feet)) : 1;   // OW-PEERS",
     "new": "      const ow = 1;   // OW-PEERS",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "OW-PEERS-a-body-unleaned",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "grow: g, up: this._cam?.up ?? null, fx, cast",
     "new": "grow: g, up: null, fx, cast",
     "tests": [

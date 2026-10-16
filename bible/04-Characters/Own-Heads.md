@@ -81,7 +81,7 @@ AUDIT MW-HEADS1 L1-F3: the meshes' rows did not).
 
 **A PLAYER'S ALONE (MW-HEADS2).** `facePools` answers the port's own only when asked (`own`), and the build asks only
 for a player's body: the local player's (`combat/weaponRig.js` armBuildOptsOf `ownHeads`) and every other player's
-(`net/peerBodies.js` playerBuildOpts, the peers' PeerBodies in scenes/world.js). The people's lanes
+(`net/peer/peerBodies.js` playerBuildOpts, the peers' PeerBodies in scenes/world.js). The people's lanes
 (`characters/npcBodies.js`), the quest people, the foes and the card table's regulars build on `peerBuildOpts`, which
 never asks - and an NPC's walked face never reaches them, asked or not (an NPC is no player). The faces Daggerfall paints
 follow their bodies (`04-Characters/Head-Portraits.md`): a player's portrait asks, an NPC's in the talk window, an

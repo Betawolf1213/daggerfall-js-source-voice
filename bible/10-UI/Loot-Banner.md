@@ -50,7 +50,7 @@ Materials Bag tells the listeners as if it were new. So the pack is watched, not
 - **New baselines, not floods.** The first frame of an entity, a load (save.js restorePlayer replaces the lists), and
   every frame of character creation up to and including the frame it ends (its kit and the starter deck) are read and
   marked, and announce nothing.
-- **What announces:** a tier at or over Rare. A card's tier is its catalog's (`net/iliacCards.js` - printed on its face,
+- **What announces:** a tier at or over Rare. A card's tier is its catalog's (`net/iliac/iliacCards.js` - printed on its face,
   whatever loot rarity's switch says); any other piece's is the tier the pack shows (lootRarity.js rarityAttr - nothing
   with loot rarity off, nothing for Common).
 
@@ -86,9 +86,9 @@ Materials Bag tells the listeners as if it were new. So the pack is watched, not
 Mac: *"The title/aura in the abyss dungeon should also have a loot popup"*, and of the lamp keeper's title: *"ensure
 there is a loot popup for obtaining the title"*. A title or an aura is no piece in the pack, so the watcher never sees
 one: its grant's own door pushes it (`lootBanner.js:"export function announceHonour(kind, key, { doc = docOf() } = {}) {"`).
-The Hour's (`net/sdClaims.js` - Hourbreaker and The Turning Hour, when the account service answers a claim with the
+The Hour's (`net/superDungeon/sdClaims.js` - Hourbreaker and The Turning Hour, when the account service answers a claim with the
 grant), the lamp's (`systems/lampKeeper.js`, I Love Lamp) and - SERPENT5 (`11-Multiplayer/Sea-Serpent.md` section 17) -
-the Old Coil's (`net/serpentClaims.js`, Coilbreaker and The Maelstrom, on the Hour's own law) are its three doors.
+the Old Coil's (`net/serpent/serpentClaims.js`, Coilbreaker and The Maelstrom, on the Hour's own law) are its three doors.
 
 - **The entry** (`honourEntry`, pure): the word as `ui/playerBadge.js` names it (`TITLE_TEXT`, `AURA_TEXT`), the kicker
   "New Title" or "New Aura", and under it "Wear it from your account card". It takes the top tier's place (`gilded`):

@@ -1,6 +1,6 @@
 // GUILD1d (2026-09-30, Mac: "Lets do this"): THE GUILD HALL AND HERALDRY, THE CLIENT'S HALF - the law both ends read
 // (net/heraldryLaw.js, net/hallLaw.js, net/homeLaw.js), the drawing (ui/heraldryArt.js), the homes' registry and the
-// door's rows (systems/online/onlineHomes.js), the guild book's acts (net/guildBook.js), the Guild tab's Hall and Heraldry
+// door's rows (systems/online/onlineHomes.js), the guild book's acts (net/guild/guildBook.js), the Guild tab's Hall and Heraldry
 // (ui/socialPanel.js), the banners' anchors and the cloth (scenes/hallBanners.js, render/bannerPass.js), and the hosts'
 // wiring by source. bible/11-Multiplayer/Seats-Arc.md 8; `06-Systems/Online-Arc.md` GUILD1d.
 import { test } from 'node:test';
@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import {
   HERALDRY_COLOURS, HERALDRY_DEVICES, HERALDRY_UNHELD, HERALDRY_CHANGE_DRAKES, heraldryOf, heraldrySame, heraldryText, heraldryColourOf,
 } from '../src/net/heraldryLaw.js';
-import { GUILD_RANK_NAMES, GUILD_POWERS } from '../src/net/guildLaw.js';
+import { GUILD_RANK_NAMES, GUILD_POWERS } from '../src/net/guild/guildLaw.js';
 import {
   HALL_POWERS, GUILD_HALL_ENTRIES, GUILD_HALL_ENTRY_DEFAULT, guildHallPrice, guildHallOwner, guildHallEntryOk, hallMay,
 } from '../src/net/hallLaw.js';
@@ -19,7 +19,7 @@ import {
   createOnlineHomes, homeDoorTitle, homeLockedLine, homeBelongsLine, homeDoorAnswer, homeHallBuyRow, homeHallRows, hallNextEntry, HOME_VERB, HALL_VERB, homeVisitorRows,
   HOME_ENTRY_WORDS, homeNextEntry,
 } from '../src/systems/online/onlineHomes.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import { createSocialPanel, GUILD_HALL_NONE_TEXT, GUILD_HERALDRY_NONE_TEXT, GUILD_LEDGER_WORDS, guildHallWhereText } from '../src/ui/socialPanel.js';
 import { SocialState } from '../src/net/social.js';
 import { REFUSALS, accountGuilds } from '../src/net/accountClient.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "SERPENT1-law-every-day",
-    "file": "src/net/serpentLaw.js",
+    "file": "src/net/serpent/serpentLaw.js",
     "old": "day >= 0 && day % SERPENT_EVERY_DAYS === SERPENT_DAY_PHASE;",
     "new": "day >= 0;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SERPENT1-law-slain-sounds",
-    "file": "src/net/serpentLaw.js",
+    "file": "src/net/serpent/serpentLaw.js",
     "old": "const end = slain ? /** @type {number} */ (fellAt) : t.soundAt;",
     "new": "const end = t.soundAt;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SERPENT1-law-admits-past-dive",
-    "file": "src/net/serpentLaw.js",
+    "file": "src/net/serpent/serpentLaw.js",
     "old": "return isSerpentDay(day) && nowMs >= t.riseAt && nowMs < t.soundAt; };",
     "new": "return isSerpentDay(day) && nowMs >= t.riseAt && nowMs < t.soundAt + SERPENT_DIVE_MS; };",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "SERPENT1-receipt-version-unread",
-    "file": "src/net/serpentReceipt.js",
+    "file": "src/net/serpent/serpentReceipt.js",
     "old": "if (parts.length !== 3 || parts[0] !== SERPENT_RECEIPT_V) return null;",
     "new": "if (parts.length !== 3) return null;",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "SERPENT1-receipt-raid-shape",
-    "file": "src/net/serpentReceipt.js",
+    "file": "src/net/serpent/serpentReceipt.js",
     "old": "|| c.w !== undefined ",
     "new": "",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "SERPENT1-receipt-unsigned-honoured",
-    "file": "src/net/serpentReceipt.js",
+    "file": "src/net/serpent/serpentReceipt.js",
     "old": "if (!sig64) return { ok: false, why: 'unsigned' };",
     "new": "",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "SERPENT1-brain-cap-off",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const got = Math.max(0, Math.min(d, SERPENT_HIT_CAP_X * ref, bucket, left));",
     "new": "const got = Math.max(0, Math.min(d, bucket, left));",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "SERPENT1-brain-head-always",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const x = (z === ZONES.head && headExposed(f, pts, at, stun) ? HEAD_X : 1) * (stun ? STUN_X : 1);",
     "new": "const x = (z === ZONES.head ? HEAD_X : 1) * (stun ? STUN_X : 1);",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "SERPENT1-brain-reach-unbounded",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "if (near && near.d <= reach) { pts = seen; at = now - back; break; }",
     "new": "if (near) { pts = seen; at = now - back; break; }",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "SERPENT1-brain-everyone-earned",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "return (share > 0 && p.dealt >= SERPENT_PART_SHARE * share) || p.stoodMs >= SERPENT_STOOD_SHARE * fight;",
     "new": "return true;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "SERPENT1-brain-late-escape",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "    if (now - c.at > COIL_ESC_MS) return out;\n",
     "new": "",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "SERPENT1-brain-ward-off",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  if (now < f.shieldUntil) return out;\n",
     "new": "",
     "tests": [
@@ -319,7 +319,7 @@
   },
   {
     "name": "SERPENT1-link-state-kill-lost",
-    "file": "src/net/serpentLink.js",
+    "file": "src/net/serpent/serpentLink.js",
     "old": "if (w.k === 'st' && w.fell && Number.isSafeInteger(w.d) && !falls.has(fallKey(w.d, w))) falls.set(",
     "new": "if (false) falls.set(",
     "tests": [
@@ -328,7 +328,7 @@
   },
   {
     "name": "SERPENT1-link-refusal-every-word",
-    "file": "src/net/serpentLink.js",
+    "file": "src/net/serpent/serpentLink.js",
     "old": "if (!refused.has(w.m)) { refused.add(w.m); say(SERPENT_NO_TEXT[w.m] ?? w.m); }",
     "new": "say(SERPENT_NO_TEXT[w.m] ?? w.m);",
     "tests": [

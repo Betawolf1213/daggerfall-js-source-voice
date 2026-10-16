@@ -1,7 +1,7 @@
 [
   {
     "name": "ARENA4-LADDER-SPEC-ROW",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "[[[138, 1]], [[136, 2]], [[143, 3]], [[143, 3]]],",
     "new": "[[[138, 1]], [[137, 2]], [[143, 3]], [[143, 3]]],",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "ARENA4-BEAST-HEALTH",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "2: Object.freeze([3, 12, 26, 1, 8])",
     "new": "2: Object.freeze([3, 12, 27, 1, 8])",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "ARENA4-MATERIAL-MOD",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_MATERIAL_MOD = Object.freeze([-1, 0, 0, 1, 2, 3, 3, 4, 5, 6]);",
     "new": "export const ARENA_MATERIAL_MOD = Object.freeze([-1, 0, 0, 1, 2, 3, 3, 4, 5, 7]);",
     "tests": [
@@ -30,7 +30,7 @@
   },
   {
     "name": "ARENA4-WEAPON-MAX",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "122: 18, 123: 21,",
     "new": "122: 18, 123: 22,",
     "tests": [
@@ -40,7 +40,7 @@
   },
   {
     "name": "ARENA4-TEAM-POINTS-PVP",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_TEAM_POINTS = Object.freeze({ bout: 1, champion: 3, grand: 10, pvp: 2 });",
     "new": "export const ARENA_TEAM_POINTS = Object.freeze({ bout: 1, champion: 3, grand: 10, pvp: 1 });",
     "tests": [
@@ -50,7 +50,7 @@
   },
   {
     "name": "ARENA4-FLOOR-RING",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_RING_R = 14;",
     "new": "export const ARENA_RING_R = 15;",
     "tests": [
@@ -59,7 +59,7 @@
   },
   {
     "name": "ARENA4-ELO-MAX",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_ELO_MAX = 4000;",
     "new": "export const ARENA_ELO_MAX = 4096;",
     "tests": [
@@ -68,7 +68,7 @@
   },
   {
     "name": "ARENA4-SEASON-MONDAY",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_SEASON_EPOCH_S = 1_790_553_600;",
     "new": "export const ARENA_SEASON_EPOCH_S = 1_790_640_000;",
     "tests": [
@@ -77,7 +77,7 @@
   },
   {
     "name": "ARENA4-SEASON-EIGHT-WEEKS",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_SEASON_S = 8 * 7 * 24 * 3600;",
     "new": "export const ARENA_SEASON_S = 4 * 7 * 24 * 3600;",
     "tests": [
@@ -86,7 +86,7 @@
   },
   {
     "name": "ARENA4-SEASON-NONE-EARLIER",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const arenaSeasonOf = (nowS) => Math.max(1,",
     "new": "export const arenaSeasonOf = (nowS) => Math.max(0,",
     "tests": [
@@ -95,7 +95,7 @@
   },
   {
     "name": "ARENA4-SEASON-DAY-ONE-BASED",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "% ARENA_SEASON_S / 86400) + 1;",
     "new": "% ARENA_SEASON_S / 86400);",
     "tests": [
@@ -104,7 +104,7 @@
   },
   {
     "name": "ARENA4-ELO-K",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_ELO_K = 32;",
     "new": "export const ARENA_ELO_K = 16;",
     "tests": [
@@ -113,7 +113,7 @@
   },
   {
     "name": "ARENA4-ELO-SUM-KEPT",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "Math.max(ARENA_ELO_MIN, rb - d)];",
     "new": "Math.max(ARENA_ELO_MIN, rb)];",
     "tests": [
@@ -122,7 +122,7 @@
   },
   {
     "name": "ARENA4-ELO-FLOOR",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "return [Math.max(ARENA_ELO_MIN, ra + d),",
     "new": "return [(ra + d),",
     "tests": [
@@ -131,7 +131,7 @@
   },
   {
     "name": "ARENA4-ELO-EXPECTED-400",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const eloExpected = (ra, rb) => 1 / (1 + 10 ** ((rb - ra) / 400));",
     "new": "export const eloExpected = (ra, rb) => 1 / (1 + 10 ** ((rb - ra) / 200));",
     "tests": [
@@ -140,7 +140,7 @@
   },
   {
     "name": "ARENA4-RATING-SIGNED",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const arenaRatingOk = (r) => (Number.isSafeInteger(r) && r >= ARENA_ELO_MIN && r <= ARENA_ELO_MAX ? r : ARENA_ELO_START);",
     "new": "export const arenaRatingOk = (r) => ARENA_ELO_START;",
     "tests": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "ARENA4-BAND-START",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const MATCH_BAND_START = 100;",
     "new": "export const MATCH_BAND_START = 150;",
     "tests": [
@@ -158,7 +158,7 @@
   },
   {
     "name": "ARENA4-BAND-STEP",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const MATCH_BAND_STEP = 100;",
     "new": "export const MATCH_BAND_STEP = 125;",
     "tests": [
@@ -167,7 +167,7 @@
   },
   {
     "name": "ARENA4-BAND-WIDEN-10S",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const MATCH_WIDEN_MS = 10_000;",
     "new": "export const MATCH_WIDEN_MS = 5_000;",
     "tests": [
@@ -176,7 +176,7 @@
   },
   {
     "name": "ARENA4-ACCEPT-20S",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const MATCH_ACCEPT_MS = 20_000;",
     "new": "export const MATCH_ACCEPT_MS = 30_000;",
     "tests": [
@@ -185,7 +185,7 @@
   },
   {
     "name": "ARENA4-REPAIR-MINUTE",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const MATCH_REPAIR_MS = 60_000;",
     "new": "export const MATCH_REPAIR_MS = 30_000;",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "ARENA4-PAIR-NARROWER-BAND",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (d > Math.min(matchBand(now - a.at), matchBand(now - b.at))) continue;",
     "new": "if (d > Math.max(matchBand(now - a.at), matchBand(now - b.at))) continue;",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "ARENA4-PAIR-NEAREST",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (d < gap || (d === gap && best && b.at < best.at)) { best = b; gap = d; }",
     "new": "if (!best) { best = b; gap = d; }",
     "tests": [
@@ -212,7 +212,7 @@
   },
   {
     "name": "ARENA4-PAIR-OLDEST-FIRST",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "const list = [...queue].sort((x, y) => x.at - y.at ||",
     "new": "const list = [...queue].sort((x, y) => y.at - x.at ||",
     "tests": [
@@ -221,7 +221,7 @@
   },
   {
     "name": "ARENA4-PAIR-NEVER-SELF",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (b === a || b.sub === a.sub || taken.has(b.sub)",
     "new": "if (b === a || taken.has(b.sub)",
     "tests": [
@@ -230,7 +230,7 @@
   },
   {
     "name": "ARENA4-CLASS-HP",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const CLASS_HP_PER_LEVEL = 8;",
     "new": "export const CLASS_HP_PER_LEVEL = 9;",
     "tests": [
@@ -239,7 +239,7 @@
   },
   {
     "name": "ARENA4-LADDER-KEY",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ladderKey = (tier, bout) => tier * (ARENA_TIER_BOUTS + 1) + bout;",
     "new": "export const ladderKey = (tier, bout) => tier * ARENA_TIER_BOUTS + bout;",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "ARENA4-CLIMB-GAP-NO-STEP",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "while (k < ARENA_TIERS * (ARENA_TIER_BOUTS + 1) && have.has(k)) k++;",
     "new": "k = Math.min(have.size, ARENA_TIERS * (ARENA_TIER_BOUTS + 1));",
     "tests": [
@@ -257,7 +257,7 @@
   },
   {
     "name": "ARENA4-CLIMB-CHAMPION-IN-ORDER",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "have.has(ladderKey(i, ARENA_TIER_BOUTS)) && ladderKey(i, ARENA_TIER_BOUTS) < k)",
     "new": "have.has(ladderKey(i, ARENA_TIER_BOUTS)))",
     "tests": [
@@ -266,7 +266,7 @@
   },
   {
     "name": "ARENA4-CLIMB-NOTHING-PAST-GRAND",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "return L.grand ? null : { tier: L.tier, bout: L.won };",
     "new": "return { tier: L.tier, bout: L.won };",
     "tests": [
@@ -275,7 +275,7 @@
   },
   {
     "name": "ARENA4-VITALITY-FLAT",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const pvpVitality = (lv) => 300 + 2 * arenaLv(lv);",
     "new": "export const pvpVitality = (lv) => 300 + 3 * arenaLv(lv);",
     "tests": [
@@ -284,7 +284,7 @@
   },
   {
     "name": "ARENA4-VITALITY-LEVEL-BOUND",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_LV_MAX = 60;",
     "new": "export const ARENA_LV_MAX = 600;",
     "tests": [
@@ -293,7 +293,7 @@
   },
   {
     "name": "ARENA4-RATE-HZ",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_HIT_HZ_MAX = 4;",
     "new": "export const ARENA_HIT_HZ_MAX = 5;",
     "tests": [
@@ -302,7 +302,7 @@
   },
   {
     "name": "ARENA4-BUCKET-RATE",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_BUCKET_RATE = 40;",
     "new": "export const ARENA_BUCKET_RATE = 80;",
     "tests": [
@@ -311,7 +311,7 @@
   },
   {
     "name": "ARENA4-MELEE-REACH",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_MELEE_REACH = 2.5;",
     "new": "export const ARENA_MELEE_REACH = 10;",
     "tests": [
@@ -320,7 +320,7 @@
   },
   {
     "name": "ARENA4-CAP-CRIT-DOUBLE",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "return 2 * (reach + ARENA_MOD_MAX);",
     "new": "return 1 * (reach + ARENA_MOD_MAX);",
     "tests": [
@@ -329,7 +329,7 @@
   },
   {
     "name": "ARENA4-CAP-SPELL",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (r === ARENA_HIT.Spell) return ARENA_SPELL_MAX;",
     "new": "if (false) return ARENA_SPELL_MAX;",
     "tests": [
@@ -338,7 +338,7 @@
   },
   {
     "name": "ARENA4-CAP-HAND",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_HAND_MAX = 41;",
     "new": "export const ARENA_HAND_MAX = 40;",
     "tests": [
@@ -347,7 +347,7 @@
   },
   {
     "name": "ARENA4-CAP-MOD-ROOM",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_MOD_MAX = 20;",
     "new": "export const ARENA_MOD_MAX = 25;",
     "tests": [
@@ -356,7 +356,7 @@
   },
   {
     "name": "ARENA4-SPECTATORS-60",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_SPECTATORS_MAX = 60;",
     "new": "export const ARENA_SPECTATORS_MAX = 61;",
     "tests": [
@@ -365,7 +365,7 @@
   },
   {
     "name": "ARENA4-GONE-15S",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_GONE_MS = 15_000;",
     "new": "export const ARENA_GONE_MS = 5_000;",
     "tests": [
@@ -374,7 +374,7 @@
   },
   {
     "name": "ARENA4-CHEER-ALLOWANCE",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_CHEER_MS = 1500;",
     "new": "export const ARENA_CHEER_MS = 0;",
     "tests": [
@@ -383,7 +383,7 @@
   },
   {
     "name": "ARENA4-CHAMPION-MIN-BOUTS",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_CHAMPION_MIN_BOUTS = 10;",
     "new": "export const ARENA_CHAMPION_MIN_BOUTS = 9;",
     "tests": [
@@ -393,7 +393,7 @@
   },
   {
     "name": "ARENA4-BOUT-ROOM-KEY",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const ARENA_BOUT_ROOM_RE = /^arena:b[0-9a-f]{16}$/;",
     "new": "export const ARENA_BOUT_ROOM_RE = /^arena:b[0-9a-f]{4,16}$/;",
     "tests": [
@@ -402,7 +402,7 @@
   },
   {
     "name": "ARENA4-IN-HIT-KIND",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "const d = num(m.d, 10000), r = int(m.r, 0, 2);",
     "new": "const d = num(m.d, 10000), r = int(m.r, 0, 3);",
     "tests": [
@@ -411,7 +411,7 @@
   },
   {
     "name": "ARENA4-IN-HIT-WHOM",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (typeof m.i !== 'string' || !FID_RE.test(m.i)) return null;",
     "new": "if (typeof m.i !== 'string') return null;",
     "tests": [
@@ -420,7 +420,7 @@
   },
   {
     "name": "ARENA4-IN-NO-ELEVENTH-TIER",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "if (int(m.tier, 0, ARENA_TIERS - 1) == null || int(m.bout, 0, ARENA_TIER_BOUTS) == null) return null;\n",
     "new": "if (int(m.tier, 0, ARENA_TIERS) == null || int(m.bout, 0, ARENA_TIER_BOUTS) == null) return null;\n",
     "tests": [
@@ -447,7 +447,7 @@
   },
   {
     "name": "ARENA4-RC-FOREIGN-FIELDS",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "for (const k of FOREIGN) if (c[k] !== undefined) return false;",
     "new": "for (const k of []) if (c[k] !== undefined) return false;",
     "tests": [
@@ -456,7 +456,7 @@
   },
   {
     "name": "ARENA4-RC-ONE-ACCOUNT-TWICE",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "|| c.f[0] === c.f[1]) return false;",
     "new": ") return false;",
     "tests": [
@@ -465,7 +465,7 @@
   },
   {
     "name": "ARENA4-RC-RESULT-PAST-DRAW",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "if (c.r !== 0 && c.r !== 1 && c.r !== 2) return false;",
     "new": "if (!Number.isInteger(c.r)) return false;",
     "tests": [
@@ -474,7 +474,7 @@
   },
   {
     "name": "ARENA4-RC-TTL-BOUND",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "if (c.e <= c.i || c.e - c.i > ARENA_RECEIPT_TTL_S) return false;",
     "new": "if (c.e <= c.i) return false;",
     "tests": [
@@ -483,7 +483,7 @@
   },
   {
     "name": "ARENA4-RC-READ-VERSION",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "if (parts.length !== 3 || parts[0] !== ARENA_RECEIPT_V) return null;",
     "new": "if (parts.length !== 3) return null;",
     "tests": [
@@ -492,7 +492,7 @@
   },
   {
     "name": "ARENA4-RC-UNSIGNED",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "if (!sig64) return { ok: false, why: 'unsigned' };",
     "new": "if (false) return { ok: false, why: 'unsigned' };",
     "tests": [
@@ -501,7 +501,7 @@
   },
   {
     "name": "ARENA4-RC-SIGNATURE",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "if (!good) return { ok: false, why: 'signature' };",
     "new": "if (false) return { ok: false, why: 'signature' };",
     "tests": [
@@ -510,7 +510,7 @@
   },
   {
     "name": "ARENA4-RC-EXPIRED",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "if (nowS >= claims.e) return { ok: false, why: 'expired' };",
     "new": "if (false) return { ok: false, why: 'expired' };",
     "tests": [
@@ -519,7 +519,7 @@
   },
   {
     "name": "ARENA4-RC-FUTURE",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "if (claims.i > nowS + skewS) return { ok: false, why: 'future' };",
     "new": "if (false) return { ok: false, why: 'future' };",
     "tests": [
@@ -528,7 +528,7 @@
   },
   {
     "name": "ARENA4-RC-MINT-REFUSES",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "if (!arenaReceiptValid(claims)) throw new TypeError('mintArenaReceipt refused a claim set it could not verify');",
     "new": "if (false) throw new TypeError('mintArenaReceipt refused a claim set it could not verify');",
     "tests": [
@@ -537,7 +537,7 @@
   },
   {
     "name": "ARENA4-RC-SIGNED-FLAG",
-    "file": "src/net/arenaReceipt.js",
+    "file": "src/net/arena/arenaReceipt.js",
     "old": "signed: parts[2].length > 0 }",
     "new": "signed: true }",
     "tests": [
@@ -546,7 +546,7 @@
   },
   {
     "name": "ARENA4-REF-REACH",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "if (r === ARENA_HIT.Melee && gap > ARENA_MELEE_REACH + ARENA_POSE_SLACK) {",
     "new": "if (false) {",
     "tests": [
@@ -555,7 +555,7 @@
   },
   {
     "name": "ARENA4-REF-RATE",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "    if (M.hits.length >= ARENA_HIT_HZ_MAX) return out;\n",
     "new": "",
     "tests": [
@@ -564,7 +564,7 @@
   },
   {
     "name": "ARENA4-REF-BUCKET-SPENT",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "  M.bucket -= got;\n",
     "new": "",
     "tests": [
@@ -573,7 +573,7 @@
   },
   {
     "name": "ARENA4-REF-BUCKET-REFILL",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "M.bucket = Math.min(ARENA_BUCKET_DEPTH, M.bucket + (Math.max(0, now - M.bucketAt) / 1000) * ARENA_BUCKET_RATE);",
     "new": "M.bucket = Math.min(ARENA_BUCKET_DEPTH, M.bucket);",
     "tests": [
@@ -582,7 +582,7 @@
   },
   {
     "name": "ARENA4-REF-CAP",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "Math.floor(Math.min(want, arenaBlowCap({ r, w, m, wa }), M.bucket))",
     "new": "Math.floor(Math.min(want, M.bucket))",
     "tests": [
@@ -591,7 +591,7 @@
   },
   {
     "name": "ARENA4-REF-POSE-SPEED",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "if (Math.hypot(x - was[0], z - was[1]) > ARENA_SPEED_MAX * dt + ARENA_SPEED_SLACK + (dt > 2 ? ARENA_SPEED_MAX : 0)) return false;",
     "new": "if (false) return false;",
     "tests": [
@@ -600,7 +600,7 @@
   },
   {
     "name": "ARENA4-REF-FALL-AT-ONE",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "  if (health <= 1) boutFell(st.b, to, now);\n",
     "new": "",
     "tests": [
@@ -609,7 +609,7 @@
   },
   {
     "name": "ARENA4-OWED-PVP-RESULT",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "r: r.side === 0 ? 0 : r.side === 1 ? 1 : 2,",
     "new": "r: r.side === 0 ? 1 : r.side === 1 ? 0 : 2,",
     "tests": [
@@ -618,7 +618,7 @@
   },
   {
     "name": "ARENA4-OWED-PVP-SIDES",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "f: [st.f[0].sub, st.f[1].sub]",
     "new": "f: [st.f[1].sub, st.f[0].sub]",
     "tests": [
@@ -627,7 +627,7 @@
   },
   {
     "name": "ARENA4-OWED-LADDER-STEP",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "q: st.tier, u: st.bout,",
     "new": "q: st.tier, u: st.tier,",
     "tests": [
@@ -636,7 +636,7 @@
   },
   {
     "name": "ARENA4-OWED-LADDER-WON",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "r: r.side === 0 ? 1 : 0, h: r.how, ...(st.f[0].tk",
     "new": "r: r.side === 0 ? 0 : 1, h: r.how, ...(st.f[0].tk",
     "tests": [
@@ -645,7 +645,7 @@
   },
   {
     "name": "ARENA4-FORFEIT",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "if (g != null && now - g >= ARENA_GONE_MS && lf && !lf.out) {",
     "new": "if (false) {",
     "tests": [
@@ -654,7 +654,7 @@
   },
   {
     "name": "ARENA4-FORFEIT-AT-ONCE",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "if (g != null && now - g >= ARENA_GONE_MS && lf && !lf.out) {",
     "new": "if (g != null && lf && !lf.out) {",
     "tests": [
@@ -663,7 +663,7 @@
   },
   {
     "name": "ARENA4-FORFEIT-SAID",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "      if (b.result) b.result.how = 'forfeit';\n",
     "new": "",
     "tests": [
@@ -672,7 +672,7 @@
   },
   {
     "name": "ARENA4-VOID-SAID",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "{ st.phase = 'void'; words.push({ k: 'no', m: 'void' }); }",
     "new": "{ st.phase = 'void'; }",
     "tests": [
@@ -681,7 +681,7 @@
   },
   {
     "name": "ARENA4-NOT-YOURS",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "    if (!me) return { no: 'not yours' };\n",
     "new": "",
     "tests": [
@@ -690,7 +690,7 @@
   },
   {
     "name": "ARENA4-SEATS-BOUNDED",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "  if (st.spectators >= ARENA_SPECTATORS_MAX) return { no: 'seats full' };\n",
     "new": "",
     "tests": [
@@ -699,7 +699,7 @@
   },
   {
     "name": "ARENA4-CHEER-ONCE",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "  if (now - (st.cheer[key] ?? -Infinity) < ARENA_CHEER_MS) return null;\n",
     "new": "",
     "tests": [
@@ -708,7 +708,7 @@
   },
   {
     "name": "ARENA4-AI-WALK",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "if (!a.mv || !said || Math.hypot(said[0] - tx, said[1] - tz) > AI_RESAY_M || now - a.mv.at > AI_RESAY_MS) {",
     "new": "if (false) {",
     "tests": [
@@ -717,7 +717,7 @@
   },
   {
     "name": "ARENA4-AI-BLOW-IN-REACH",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": ": Math.hypot(p[0] - here[0], p[1] - here[1]) <= a.reach + ARENA_POSE_SLACK * 0.5);",
     "new": ": true);",
     "tests": [
@@ -726,7 +726,7 @@
   },
   {
     "name": "ARENA4-AI-BLOW-TOLD",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "if (tg.startsWith('p')) out.push({ k: 'blow', i: a.id, d: dmg, to: tg });",
     "new": "if (false) out.push({ k: 'blow', i: a.id, d: dmg, to: tg });",
     "tests": [
@@ -735,7 +735,7 @@
   },
   {
     "name": "ARENA4-AI-TELEGRAPH",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "      out.push({ k: 'atk', i: a.id, at: a.atk.at, x: foe.p[0], z: foe.p[1], tg: foe.id });\n",
     "new": "",
     "tests": [
@@ -744,7 +744,7 @@
   },
   {
     "name": "ARENA4-MARKS-APART",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "export const MARK_APART = 6;",
     "new": "export const MARK_APART = 7;",
     "tests": [
@@ -753,7 +753,7 @@
   },
   {
     "name": "ARENA4-MARKS-RING",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "const a = (s / sides) * Math.PI * 2 + Math.PI;",
     "new": "const a = (s / sides) * Math.PI * 2;",
     "tests": [
@@ -762,7 +762,7 @@
   },
   {
     "name": "ARENA4-FOLD-OFFER-MY-CLOCK",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "until: w.until - off, casual: w.u === 1 }",
     "new": "until: w.until, casual: w.u === 1 }",
     "tests": [
@@ -771,7 +771,7 @@
   },
   {
     "name": "ARENA4-FOLD-CALL-GOING",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "case 'go': return { ...s, queue: 'going',",
     "new": "case 'go': return { ...s, queue: 'queued',",
     "tests": [
@@ -780,7 +780,7 @@
   },
   {
     "name": "ARENA4-FOLD-REFUSAL-SAID",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "case 'qx': return { ...s, queue: 'idle', offer: null, said: w.m,",
     "new": "case 'qx': return { ...s, queue: 'idle', offer: null, said: null,",
     "tests": [
@@ -789,7 +789,7 @@
   },
   {
     "name": "ARENA4-MIRROR-EVENT-TIME",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "const at = e0.at - clock.off;",
     "new": "const at = e0.at;",
     "tests": [
@@ -798,7 +798,7 @@
   },
   {
     "name": "ARENA4-MIRROR-OFFSET-HIGHEST",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "Math.max(e0.at - now, clock.off - 5)",
     "new": "Math.min(e0.at - now, clock.off - 5)",
     "tests": [
@@ -807,7 +807,7 @@
   },
   {
     "name": "ARENA4-MIRROR-OUT",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "if (OUT_EVENTS.has(e.k)) {",
     "new": "if (false) {",
     "tests": [
@@ -816,7 +816,7 @@
   },
   {
     "name": "ARENA4-MIRROR-MY-HEALTH",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "if (id === M?.me) mine = [hp, max];",
     "new": "if (id !== M?.me) mine = [hp, max];",
     "tests": [
@@ -825,7 +825,7 @@
   },
   {
     "name": "ARENA4-MIRROR-AI-NAMES",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "names(k - st.f.filter((x) => !x[6]).length, mob)",
     "new": "names(k, mob)",
     "tests": [
@@ -834,7 +834,7 @@
   },
   {
     "name": "ARENA4-MIRROR-PHASE",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "if (PHASE_EVENTS.has(e.k) && b.phase !== e.k) { b.phase = e.k; b.phaseAt = at; }",
     "new": "",
     "tests": [
@@ -843,7 +843,7 @@
   },
   {
     "name": "ARENA4-MIRROR-HIT-TALLY",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "if (f) { f.dealt += e.dmg ?? 0; f.hits++; }",
     "new": "if (f) { f.hits++; }",
     "tests": [
@@ -852,7 +852,7 @@
   },
   {
     "name": "ARENA4-MIRROR-WINNERS",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "b.fighters.filter((f) => f.side === side).map((f) => f.id), losers",
     "new": "b.fighters.filter((f) => f.side !== side).map((f) => f.id), losers",
     "tests": [
@@ -861,7 +861,7 @@
   },
   {
     "name": "ARENA4-WALK-RELAY-CLOCK",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "const along = Math.min(len, (Math.max(0, now - (mv.at - off)) / 1000) * mv.v);",
     "new": "const along = Math.min(len, (Math.max(0, now - mv.at) / 1000) * mv.v);",
     "tests": [
@@ -870,7 +870,7 @@
   },
   {
     "name": "ARENA4-WALK-DONE",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "* mv.v >= Math.hypot(mv.tx - mv.x, mv.tz - mv.z);",
     "new": "* mv.v >= 2 * Math.hypot(mv.tx - mv.x, mv.tz - mv.z);",
     "tests": [
@@ -879,7 +879,7 @@
   },
   {
     "name": "ARENA4-CLAIMS-ANOTHERS",
-    "file": "src/net/arenaClaims.js",
+    "file": "src/net/arena/arenaClaims.js",
     "old": "(c.a === 'l' ? c.s === me : Array.isArray(c.f) && c.f.includes(me))",
     "new": "(c.a === 'l' ? true : Array.isArray(c.f) && c.f.includes(me))",
     "tests": [
@@ -888,7 +888,7 @@
   },
   {
     "name": "ARENA4-CLAIMS-GUEST-KEPT",
-    "file": "src/net/arenaClaims.js",
+    "file": "src/net/arena/arenaClaims.js",
     "old": "if (answer?.ok) return answer.data?.why === 'guest' ? 'keep' : 'done';",
     "new": "if (answer?.ok) return 'done';",
     "tests": [
@@ -897,7 +897,7 @@
   },
   {
     "name": "ARENA4-CLAIMS-MENDABLE",
-    "file": "src/net/arenaClaims.js",
+    "file": "src/net/arena/arenaClaims.js",
     "old": "return answer?.error === 'receipt' && !ARENA_CLAIM_MENDABLE.includes(answer.why) ? 'done' : 'keep';",
     "new": "return answer?.error === 'receipt' ? 'done' : 'keep';",
     "tests": [
@@ -906,7 +906,7 @@
   },
   {
     "name": "ARENA4-CLAIMS-ONE-A-BOUT",
-    "file": "src/net/arenaClaims.js",
+    "file": "src/net/arena/arenaClaims.js",
     "old": "if (!list.some((k) => arenaKeptReceipt(k) === r || readArenaReceipt(arenaKeptReceipt(k))?.j === c.j)) keep(",
     "new": "if (true) keep(",
     "tests": [
@@ -915,7 +915,7 @@
   },
   {
     "name": "ARENA4-CLAIMS-SETTLED-LET-GO",
-    "file": "src/net/arenaClaims.js",
+    "file": "src/net/arena/arenaClaims.js",
     "old": "if (arenaClaimVerdict(answer) === 'done') { settled.add(r);",
     "new": "if (false) { settled.add(r);",
     "tests": [
@@ -924,7 +924,7 @@
   },
   {
     "name": "ARENA4-CLAIMS-UNSIGNED-NOT-KEPT",
-    "file": "src/net/arenaClaims.js",
+    "file": "src/net/arena/arenaClaims.js",
     "old": "return c && c.signed && (t == null || c.e > t) ? c : null;",
     "new": "return c && (t == null || c.e > t) ? c : null;",
     "tests": [
@@ -933,7 +933,7 @@
   },
   {
     "name": "ARENA4-CLAIMS-COUNTED-SAID",
-    "file": "src/net/arenaClaims.js",
+    "file": "src/net/arena/arenaClaims.js",
     "old": "if (answer?.ok && answer.data?.recorded === true) { recorded++; onCounted(answer.data); }",
     "new": "if (answer?.ok && answer.data?.recorded === true) { recorded++; }",
     "tests": [

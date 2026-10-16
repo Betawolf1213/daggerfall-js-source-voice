@@ -1,8 +1,8 @@
 # The Firmament - a passive tree for everything you can do online (FIRM1)
 
-> Design page and record (2026-10-13). One pull request, five parts: the sky and the law (`src/net/firmamentTree.js`,
-> `src/net/firmamentLaw.js`), the account service (`server-account/src/firmament.js`, migration 0114), the client's book
-> and powers (`src/net/firmamentBook.js`, `src/systems/firmamentLive.js`, `src/systems/firmamentPowers.js`), the window
+> Design page and record (2026-10-13). One pull request, five parts: the sky and the law (`src/net/firmament/firmamentTree.js`,
+> `src/net/firmament/firmamentLaw.js`), the account service (`server-account/src/firmament.js`, migration 0114), the client's book
+> and powers (`src/net/firmament/firmamentBook.js`, `src/systems/firmamentLive.js`, `src/systems/firmamentPowers.js`), the window
 > (`src/ui/firmamentWindow.js`, `src/ui/firmamentOver.js`) and the lab (`firmament.html`). Where this page and the code
 > disagree, the code's own headers and the pins are what runs.
 
@@ -33,7 +33,7 @@ And the one condition put beside it: **without destroying the balance of PvE.**
   answers only MY entity at a foe, sleeps in a refereed fight (`sigil.js sigilDueling`) and never touches a blow or a
   spell at another player. The sky rides those seams and inherits every one of those guarantees.
 
-## 3. The sky (`src/net/firmamentTree.js`)
+## 3. The sky (`src/net/firmament/firmamentTree.js`)
 
 Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 lines.**
 
@@ -68,7 +68,7 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
   stayed in the row paying their stats, and a later refund billed them). The keys are pinned by hash
   (`test/firm1_law.test.js`), so a layout change that would move one fails the suite.
 
-## 4. The purses and the law (`src/net/firmamentLaw.js`)
+## 4. The purses and the law (`src/net/firmament/firmamentLaw.js`)
 
 - **Stars**: 2 for every Renown level past the first (98 at Renown 50 - the lead dev: "make it 1 point per renown level", then "make it 2 points per level up"). Spent anywhere. With the Craft purse full beside it (125) a character holds at most 223 of the 518 stars: nobody ever fills the sky, and the caps (section 4.1) hold however many are spent.
 - **Craft points**: 1 for every 8 profession ranks, summed over the ten tracks (125 at ten Masters). Spent on the life

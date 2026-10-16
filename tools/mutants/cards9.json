@@ -1,7 +1,7 @@
 [
   {
     "name": "CARDS9-worth-tier",
-    "file": "src/net/cardWorthLaw.js",
+    "file": "src/net/card/cardWorthLaw.js",
     "old": "export const CARD_WORTH = Object.freeze({ common: 5, magic: 20,",
     "new": "export const CARD_WORTH = Object.freeze({ common: 5, magic: 5,",
     "tests": [

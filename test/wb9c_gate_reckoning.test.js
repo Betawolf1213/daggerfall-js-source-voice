@@ -6,10 +6,10 @@
 // stunned, on his knees, and every blow lands half again. Leave one standing and it lands on the whole arena, answered
 // by nothing - Dagon's, as the Wrath is.
 //
-//   the brain       net/gateBrain.js - the Reckoning's arming and its turn, growCrystals, applyCrystalHit, the stun
+//   the brain       net/gate/gateBrain.js - the Reckoning's arming and its turn, growCrystals, applyCrystalHit, the stun
 //   the wire        the client's `xhit`; the room's `cx`, `cxh`, `cxb`, `stun` and the state's `cx`, `su`, `rk`
 //   the relay       a blow on a crystal judged and its breaking fanned at once
-//   the link        net/gateLink.js - the crystals folded, kept broken through the stun, cleared by the next word
+//   the link        net/gate/gateLink.js - the crystals folded, kept broken through the stun, cleared by the next word
 //   the court       scenes/gateCourt.js - the crystals as targets, a blow's number out, the call, the shatter and the
 //                   stun said and heard, the draw list and the lights; world/gate/gateBoss.js crystalStandIn
 //   the bar         ui/gateBossBar.js - what is left to break and how long; the stun; the next Reckoning's coming
@@ -25,11 +25,11 @@ import {
   RECKON_FIRST_MS, RECKON_EVERY_MS, RECKON_CRYSTALS, RECKON_RING, RECKON_TEAM_S, RECKON_CRYSTAL_MIN, CRYSTAL_R, CRYSTAL_H, CRYSTAL_GAP_M,
   STUN_MS, STUN_HIT_X, crystalCountFor, crystalHpFor, dpsRef, isDagons, windupOf,
   newFight, joinFight, applyHit, applyCrystalHit, stepBrain, stateOf, fightProfile,
-} from '../src/net/gateBrain.js';
-import { strikeVerdict, blowOf } from '../src/net/gateStrike.js';
+} from '../src/net/gate/gateBrain.js';
+import { strikeVerdict, blowOf } from '../src/net/gate/gateStrike.js';
 import { validGateIn, validGateOut, GATE_CRYSTALS_MAX, GATE_BRAIN_V, GATE_KINDS, GATE_OUT_KINDS } from '../src/net/wire.js';
-import { foldGate, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
+import { foldGate, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
+import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { crystalStandIn, crystalColor, bossLookOf, BOSS_CUES, CRYSTAL_ARMOR, CRYSTAL_NAME, STUN_COLOR, ATTACK_COLORS, bossAct, bossGlow, bossCue } from '../src/world/gate/gateBoss.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { createGateCourt, COURT_RECKON_TEXT, RECKON_LATE_MS, CRYSTAL_STRIKE_GROWN } from '../src/scenes/gateCourt.js';
@@ -39,7 +39,7 @@ import { destroyGateGround } from '../src/ui/gateGroundView.js';
 import {
   CourtCrystalRenderer, crystalCluster, crystalGrowth, crystalDrawn, CRYSTAL_GROW_MS, CRYSTAL_SHATTER_MS, CRYSTALS_DRAW_MAX, CRYSTAL_VS, CRYSTAL_FS, CRYSTAL_GLOW_VS, CRYSTAL_GLOW_FS,
 } from '../src/render/courtCrystals.js';
-import { COURT_CENTRE } from '../src/net/gateBrain.js';
+import { COURT_CENTRE } from '../src/net/gate/gateBrain.js';
 import { fakeRooms } from './fakeRoom.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

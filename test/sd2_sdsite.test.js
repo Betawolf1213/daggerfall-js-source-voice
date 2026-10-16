@@ -10,7 +10,7 @@ import {
 } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels, GATE_TOWN_MIN_PX, GATE_TOWN_MAX_PX } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
-import { sdRoll, sdNameOf, sdRise, sdFirst } from '../src/net/sdLaw.js';
+import { sdRoll, sdNameOf, sdRise, sdFirst } from '../src/net/superDungeon/sdLaw.js';
 import { spawnedMapId, SALT_MAX, WORLD_SALT } from '../src/world/spawnedDungeons.js';
 import { dungeonTier } from '../src/systems/dungeon/dungeonTier.js';
 import { dungeonTierLabel } from '../src/world/dungeon/dungeonLabel.js';

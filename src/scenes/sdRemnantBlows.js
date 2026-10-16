@@ -1,8 +1,8 @@
 // @ts-check
 // SD8d (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT'S BLOWS
 // ON ME - the arena's half of the fight on this screen, as scenes/gateCourt.js is the court's. ONE SOURCE: the fight as
-// the page holds it (net/sdFightLink.js). Nothing here is sent: a strike's verdict is this machine's own (co-op's law -
-// net/sdStrike.js), and it lands through `strike` - the dungeon context's door (the hurt, the flash, the cry).
+// the page holds it (net/superDungeon/sdFightLink.js). Nothing here is sent: a strike's verdict is this machine's own (co-op's law -
+// net/superDungeon/sdStrike.js), and it lands through `strike` - the dungeon context's door (the hurt, the flash, the cry).
 //
 //   SEEN: every blow in flight - the Remnant's, each Echo's, the Hour's own - on the arena's floor as it winds up and
 //     lands (sdTelegraphShapes - the gate's telegraph pass over the arena, render/gateTelegraph.js): the Stomp's disc and
@@ -11,7 +11,7 @@
 //     it fell. SD-LOOK S7: and under them, always, each standing body's mark - a ring and a chevron where it faces (the
 //     host's `bodyMarks`, scenes/sdArenaWatch.js).
 //   HEARD: each blow's wind-up at its word and its landing (DAGGER.SND's own, pitched for a colossus of brass).
-//   JUDGED HERE, on my own feet (net/sdStrike.js sdBlowVerdict): each part of each blow once, a share of my own health
+//   JUDGED HERE, on my own feet (net/superDungeon/sdStrike.js sdBlowVerdict): each part of each blow once, a share of my own health
 //     and its base; the Stomp's ring on the ground alone; the Hand outrun or shaded by a pillar; the burning brass a bite
 //     each POOL_TICK_MS I stand in it.
 //   SAID: the Reset gathering, the Hour's End; and its FALL - its body's thud, the line, the fight's damage chart
@@ -19,12 +19,12 @@
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { setBossStruck } from '../systems/sigil/sigilSetPowers.js';   // AUDIT SD: a body's blow, marked for Gearward
-import { SD_ARENA, realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
-import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_PILLAR_OVER_Y, atkWindup, blowShape, stompRingAt, handAngleAt, arenaOf } from '../net/sdRemnant.js';
-import { POOL_TICK_MS } from '../net/gateBrain.js';
-import { strikeDamage, savedShare } from '../net/gateStrike.js';
-import { sdBodyAt, sdEndAgain, SD_HEARTS_KEY } from '../net/sdFightLink.js';
-import { sdBlowVerdict, sdVolleyPools, sdPoolUnder } from '../net/sdStrike.js';
+import { SD_ARENA, realmToDungeon, dungeonToRealm } from '../net/superDungeon/sdBrain.js';
+import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_PILLAR_OVER_Y, atkWindup, blowShape, stompRingAt, handAngleAt, arenaOf } from '../net/superDungeon/sdRemnant.js';
+import { POOL_TICK_MS } from '../net/gate/gateBrain.js';
+import { strikeDamage, savedShare } from '../net/gate/gateStrike.js';
+import { sdBodyAt, sdEndAgain, SD_HEARTS_KEY } from '../net/superDungeon/sdFightLink.js';
+import { sdBlowVerdict, sdVolleyPools, sdPoolUnder } from '../net/superDungeon/sdStrike.js';
 import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_STYLE, TELEGRAPH_POOL, TELEGRAPH_FLASH_MS, TELEGRAPH_POINTS_MAX } from '../render/gateTelegraph.js';
 import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../ui/gateDamageChart.js';
 import { BODY_FALL, BURNING, THUNDER_ROLL, SWING_LOW, CRYSTAL_CLIPS, BOSS_CUES } from '../world/gate/gateBoss.js';
@@ -44,7 +44,7 @@ export const SD_BLOW_STYLE = Object.freeze({
 });
 /** The brass burning where the Volley fell. */
 export const SD_POOL_COLOR = Object.freeze([1.0, 0.45, 0.16]);
-/** SD18b: AN ENDING'S ELEMENT ON THE FLOOR (net/sdMarks.js) - its colour (the brass burning, frozen, charged, venomed or
+/** SD18b: AN ENDING'S ELEMENT ON THE FLOOR (net/superDungeon/sdMarks.js) - its colour (the brass burning, frozen, charged, venomed or
  *  soul-lit), its ground's grain (render/gateTelegraph.js TELEGRAPH_STYLE - the gate's own aspects' grains; magic the
  *  light's crackle), its ground's name, and how far its own blows' colours lean to it (they keep their own, to be told
  *  apart). */
@@ -188,7 +188,7 @@ export function sdBlowsInFlight(s) {
 }
 
 /**
- * The arena's blows on this screen. `link` the fight's (net/sdFightLink.js), `feet()` mine in the dungeon's frame (null
+ * The arena's blows on this screen. `link` the fight's (net/superDungeon/sdFightLink.js), `feet()` mine in the dungeon's frame (null
  * when I am not in the Hour), `grounded()` whether I stand on the ground, `player()` my entity, `strike(dmg, how)` the
  * dungeon context's door, `say` a line, `me()` my name on the relay (my row of the chart), `hudHidden()` the HUD's hide.
  * @param {{ gl?: any, audio?: any, link: any, feet?: () => (number[]|null), grounded?: () => boolean, player?: () => any,
@@ -257,7 +257,7 @@ export function createSdRemnantBlows({ gl = null, audio = null, link, feet = () 
     m.done = v.done;
     for (const h of v.hits) land(A.name, h.pct, h.base, bodysBlow(A), h.el ?? null);
   }
-  /** AUDIT SD IV (5): THE WHOLE ARENA'S BLOWS OWED (net/sdFightLink.js `owed` - kept only while the realm counts me in
+  /** AUDIT SD IV (5): THE WHOLE ARENA'S BLOWS OWED (net/superDungeon/sdFightLink.js `owed` - kept only while the realm counts me in
    *  their fight) - each one landed judged once, however late, though the state let it go before a frame of mine saw it
    *  land (a hidden tab draws none), then paid. One still winding up waits: the loop below judges it in flight. */
   function owedBlows(s, t, t0) {

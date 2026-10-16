@@ -152,7 +152,7 @@ game's); the arena crowd stays flats.
 ## 6. MWNPC1 - GPU SKIN (SHIPPED 2026-10-09)
 
 THE COST IT REMOVES. Every third-person Morrowind body - the player's,
-every peer's (net/peerBodies.js), the family's and the card table's (the
+every peer's (net/peer/peerBodies.js), the family's and the card table's (the
 same lane) - paid at every posed frame: poseAssembly blended every vertex
 of every skinned piece and placed every rigid one in JS, packFpArm
 de-indexed the whole stream with a cross product a face, and
@@ -316,7 +316,7 @@ for every frame it stood; before this pass it would have broken only
 itself. The batch's one door (`renderer.queueCharacterSprite`) refuses a
 picture whose size is not a finite count of texels - its own loss, said
 once on the console - and the peer layer that fed it a non-finite pose no
-longer keeps one (`net/peerBodies.js` _place, `net/peerPace.js`). On a real
+longer keeps one (`net/peer/peerBodies.js` _place, `net/peer/peerPace.js`). On a real
 GL (Chromium's, the world frame's batch and composite): three horses, the
 middle one at a place that is not a number - the third drew 0 texels; with
 the door, 4,073.
@@ -430,7 +430,7 @@ the way Morrowind shows them; and the NPCs need a lane of their own.
   Priority_Torch). An action under the death - a sheathe the rig is handed
   dead - runs and never shows, as playDeath's own note says of the reset
   animations.
-- OFF THE POSE (net/peerBodies.js `_react`). Two fields only an NPC's pose
+- OFF THE POSE (net/peer/peerBodies.js `_react`). Two fields only an NPC's pose
   carries: `ht`, a hit count (a new count is a recoil, the count its roll)
   and `dd`, the death (0 standing, else its roll + 1). Latched the first
   time a body meets them, as the swing count is: the count a body is born
@@ -1970,7 +1970,7 @@ still do - below.)
   now - B F2; asked first about its feet - N3; a body that never walks says
   so, for the lo tier's lamps - A3; a lamp whose movers are bodies that did
   not change keeps its faces - A2.)
-- THE LANE ASKS IT OF AN NPC'S BODY (`net/peerBodies.js` `casts`, set by
+- THE LANE ASKS IT OF AN NPC'S BODY (`net/peer/peerBodies.js` `casts`, set by
   `characters/npcBodies.js` for every NPC lane): seen, drawn casting; unseen,
   cast where it stands; veiled, neither; grown by the travel view (OW-BIG),
   neither - but MWNPC10's larger body (the gate's boss) casts at its size.
@@ -2079,7 +2079,7 @@ ten colours over ten faces.
 - WHICH ONE. The look carries `npc` - its seed, its tier and its role's
   rungs `lo`..`hi` (`npcHint`; the rungs since the audit, section 27); a
   player's carries none, so the player and every peer resolve exactly as
-  before. The build reads it (`net/peerBodies.js` peerBuildOpts): each
+  before. The build reads it (`net/peer/peerBodies.js` peerBuildOpts): each
   garment its rung (the person's, one down for a garment in four and up for
   one in eight, never past the role's rungs - `npcGarmentPick`) and its
   PICK, which mwClothingRecord takes among the CLOTH_PICK_NEAREST (3) nearest
@@ -2395,7 +2395,7 @@ was left was reproduced, fixed and pinned.
   dissolve (foeBodies.js foeFx), and drawThird and castThird recorded its
   whole shape. So a foe burnt nine parts away (REVENANT-FATE), or a companion
   not yet through its portal (COMPANION-PORTAL), threw its whole silhouette
-  where its picture cast none. The lane asks the dissolve now (net/peerBodies.js
+  where its picture cast none. The lane asks the dissolve now (net/peer/peerBodies.js
   `cast`), seen or not, under the flat's own threshold: one home,
   `DISSOLVE_SHADOWLESS` and `dissolveShadowless`, which setBatchDissolve
   reads too.
@@ -2447,7 +2447,7 @@ was left was reproduced, fixed and pinned.
   `nearEye`). Its figures are offered only there too: a body never stands
   where its picture would not be drawn. 18d pins it, by source, and a record
   dies on it.
-- THE FOUR HOSTS (rule 17e). The lane's dissolve read is net/peerBodies.js's,
+- THE FOUR HOSTS (rule 17e). The lane's dissolve read is net/peer/peerBodies.js's,
   under every host's NPC lanes. scenes/world.js, scenes/worldModes.js,
   scenes/dungeonContext.js and scenes/exterior.js are WIRED through
   createPopulationLane and createHostNpcBodies.

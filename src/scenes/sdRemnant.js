@@ -1,13 +1,13 @@
 // @ts-check
 // SD8c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT ON THE
 // PAGE - the dungeon host's set for the Last Moment's arena in the Shattered Hour, as scenes/sdHall.js is for its Orrery.
-// The realm runs the fight (SD8b - net/sdRemnant.js its law); this shows what the realm says of it and carries my blows.
+// The realm runs the fight (SD8b - net/superDungeon/sdRemnant.js its law); this shows what the realm says of it and carries my blows.
 //
 //   STOOD once (stand): the Remnant's body, the GOLD and SILVER Echoes' and the Reset's Hearts' (world/superDungeon/sdRemnantModel.js),
 //     each a draw of its own among the dungeon's, hidden until the fight stands it. SD17: each body as its parts - its
 //     pelvis (the body's own draw, stood where it stands) and the six its rig turns (scenes/sdRemnantRig.js), after the
 //     Hearts - and the Volley's gears in flight.
-//   EACH FRAME (frame): the fight as the page holds it (net/sdFightLink.js) read at the relay's clock - each body where its
+//   EACH FRAME (frame): the fight as the page holds it (net/superDungeon/sdFightLink.js) read at the relay's clock - each body where its
 //     walk has taken it, facing its walk or its aim (remnantPose, echoPose - pure); the Remnant kneeling while stunned,
 //     gone outside time in the Dragon Break and risen at the centre for the Last Moment, sinking where it fell; an Echo
 //     rising at its spot and sinking where it fell; a Heart standing while the Reset winds up, turning. With no fight to
@@ -23,15 +23,15 @@
 // Its blows on ME are SD8d's (the telegraphs and each one judged on my own machine): here they are named on the bar alone.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { SD_ARENA, SD_REALM_ORIGIN, realmToDungeon } from '../net/sdBrain.js';
-import { SD_REM, SD_ECHO, SD_HEART, SD_REM_START, SD_BREAK_MS, SD_BLOWS, SD_BLOW_BY_ID, SD_BODY, SD_HEARTS_CLOSE_MS, SD_HEARTS, SD_STUN_MS, SD_PULSE_EVERY_MS, SD_ECHO_PAIR_MS, inArena, atkWindup, blowShape, sdProfileOf } from '../net/sdRemnant.js';
-import { HIT_KINDS, wrapYaw } from '../net/gateBrain.js';
-import { sdBodyAt, sdHeartsOf, sdHourOver, SD_FIGHT_EMPTY } from '../net/sdFightLink.js';
+import { SD_ARENA, SD_REALM_ORIGIN, realmToDungeon } from '../net/superDungeon/sdBrain.js';
+import { SD_REM, SD_ECHO, SD_HEART, SD_REM_START, SD_BREAK_MS, SD_BLOWS, SD_BLOW_BY_ID, SD_BODY, SD_HEARTS_CLOSE_MS, SD_HEARTS, SD_STUN_MS, SD_PULSE_EVERY_MS, SD_ECHO_PAIR_MS, inArena, atkWindup, blowShape, sdProfileOf } from '../net/superDungeon/sdRemnant.js';
+import { HIT_KINDS, wrapYaw } from '../net/gate/gateBrain.js';
+import { sdBodyAt, sdHeartsOf, sdHourOver, SD_FIGHT_EMPTY } from '../net/superDungeon/sdFightLink.js';
 import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../world/superDungeon/sdRealm.js';
 import { remnantArt, remnantLookArt, SD_REMNANT_ARCHIVE, SD_REMNANT_TELL_RECORD, SD_REMNANT_WHITE_RECORD, SD_REMNANT_HUSK_RECORD, SD_REMNANT_HAND_RECORD, SD_REMNANT_LAMP_RECORD, SD_REMNANT_GATHER_RECORD } from '../world/superDungeon/sdRemnantArt.js';
 import { ensureSdHallArt } from './sdHall.js';
 import { buildRemnantParts, buildHeartModel, buildGearModel, buildBackDialModel, buildDialHandModel, buildRibLampsModel, buildTornHeartModel, heartRecordOf, remnantMatrix, remnantScale, SD_REMNANT_BODY } from '../world/superDungeon/sdRemnantModel.js';
-import { SD_ENDINGS } from '../net/sdMarks.js';
+import { SD_ENDINGS } from '../net/superDungeon/sdMarks.js';
 import { sdTick, handToTwelve } from '../world/superDungeon/sdLook.js';
 import { SD_BLOW_COLOR } from './sdRemnantBlows.js';
 import { remnantRig, rigMatrices, restRig, sdGearsAt, sdGatherGearsAt, gearMatrix, gatherGearMatrix, gearFlightOf, sdKeptList, dialHandMatrix, dialFallMatrix, heartFallMatrix, SD_RIG_PARTS, SD_REM_HAND } from './sdRemnantRig.js';
@@ -85,7 +85,7 @@ const NONE = Object.freeze([]);
  *  written (and not frozen: one shape with the frame's own poses, filled in place, so their reads stay one kind). */
 const HIDDEN = { x: 0, z: 0, yw: 0, sink: 0, shown: false };
 const _remPose = { x: 0, z: 0, yw: 0, sink: 0, shown: false };
-/** AUDIT SD III (V5): where a body's walk has it, found in place each frame (net/sdFightLink.js sdBodyAt's `out`). */
+/** AUDIT SD III (V5): where a body's walk has it, found in place each frame (net/superDungeon/sdFightLink.js sdBodyAt's `out`). */
 const _bodyAt = [0, 0];
 /** AUDIT SD III (V5): the gears in flight, a list kept and filled in place (a frame of a Volley's flight made 1.7 KB). */
 const _gears = sdKeptList();
@@ -159,7 +159,7 @@ const TAU = Math.PI * 2;
 /** AUDIT SD II (L2 F9)'s law: the Break's window by its fight's marks, asked once a fight (sdProfileOf keys by a string). */
 let _pairMk = /** @type {any} */ (undefined), _pairMs = SD_ECHO_PAIR_MS;
 const pairMsOf = (s) => { if (s.mk !== _pairMk) { _pairMk = s.mk; _pairMs = sdProfileOf(s).pairMs; } return _pairMs; };
-/** The same law: a blow's sweep as its frame says it (net/sdRemnant.js blowShape - which makes a little each call), asked
+/** The same law: a blow's sweep as its frame says it (net/superDungeon/sdRemnant.js blowShape - which makes a little each call), asked
  *  once a blow. */
 let _spanAtk = /** @type {any} */ (null), _spanMs = 0;
 const activeOf = (a) => { if (a !== _spanAtk) { _spanAtk = a; _spanMs = blowShape(a).active; } return _spanMs; };
@@ -216,7 +216,7 @@ const live = (s) => s.fi > 0 && !s.lost;
  * LOST fight's body sinks where it stood and rises again at its start - it stood there at once; and it kneels and rises
  * over SD_KNEEL_EASE_MS. Pure (AUDIT SD II, L2 F9: into `out` when one is given - the set's frame makes nothing waiting
  * for a fight).
- * @param {any} s the fight (net/sdFightLink.js SdFightState) @param {number} now the relay's clock @param {any} [out]
+ * @param {any} s the fight (net/superDungeon/sdFightLink.js SdFightState) @param {number} now the relay's clock @param {any} [out]
  */
 export function remnantPose(s, now, out = { x: 0, z: 0, yw: 0, sink: 0, shown: false }) {
   if (s.fi > 0 && s.lost > 0 && !s.fell) {
@@ -273,10 +273,10 @@ export function remnantOpenAt(s, now) {
 }
 
 /**
- * The arena's set. `link()` the fight's link (net/sdFightLink.js createSdFightLink - null offline), `sendIn()` my `in`
+ * The arena's set. `link()` the fight's link (net/superDungeon/sdFightLink.js createSdFightLink - null offline), `sendIn()` my `in`
  * down my socket (true when it left), `sendBlow(k, fields)` a blow (the wire's `hit`, `ehit`, `xhit`), `alive()` whether
  * I live.
- * @param {{ renderer?: any, link?: () => any, sendIn?: () => boolean, sendBlow?: (k: string, fields: any) => boolean, alive?: () => boolean, ending?: string|null }} deps - SD18c: `ending` its Hollow's (net/sdMarks.js) - the light its heart, eyes and Hearts burn with
+ * @param {{ renderer?: any, link?: () => any, sendIn?: () => boolean, sendBlow?: (k: string, fields: any) => boolean, alive?: () => boolean, ending?: string|null }} deps - SD18c: `ending` its Hollow's (net/superDungeon/sdMarks.js) - the light its heart, eyes and Hearts burn with
  */
 export function createSdRemnant({ renderer = null, link = () => null, sendIn = () => false, sendBlow = () => false, alive = () => true, ending = null }) {
   /** @type {any[]|null} the dungeon's draws, as stood into */
@@ -434,7 +434,7 @@ export function createSdRemnant({ renderer = null, link = () => null, sendIn = (
       if (blowMet.size) blowMet.clear();   // a frame ends my blow (AUDIT SD II, L2 F9: an empty Set's clear makes it a new table)
       const L = link(), s = L ? L.state() : SD_FIGHT_EMPTY, t = L ? L.now() : 0;   // read()'s own, with no object made (AUDIT SD II, L2 F9)
       if (L && feet && alive()) {
-        // the arena's frame: net/sdBrain.js dungeonToRealm's and net/sdRemnant.js arenaOf's sums, in place
+        // the arena's frame: net/superDungeon/sdBrain.js dungeonToRealm's and net/superDungeon/sdRemnant.js arenaOf's sums, in place
         const ax = feet[0] - SD_REALM_ORIGIN[0] - SD_ARENA.x, az = feet[2] - SD_REALM_ORIGIN[2] - SD_ARENA.z;
         if (inArena(ax, az) && L.inDue(t) && sendIn()) L.sentIn(t);
       }
@@ -465,7 +465,7 @@ export function createSdRemnant({ renderer = null, link = () => null, sendIn = (
     },
     /**
      * THE REMNANT AS A BODY MY BLOWS MEET, or null (no fight that counted me in, fallen, past its Hour, outside time):
-     * its feet in the dungeon's frame, its facing, its height and radius (net/sdRemnant.js SD_REM - the relay measures a
+     * its feet in the dungeon's frame, its facing, its height and radius (net/superDungeon/sdRemnant.js SD_REM - the relay measures a
      * melee blow from the same body), whether it is warded (asleep, or rising at its return), its stand-in and its look.
      */
     target() {
@@ -474,7 +474,7 @@ export function createSdRemnant({ renderer = null, link = () => null, sendIn = (
       const p = remnantPose(s, t);
       return { feet: arenaToDungeon(p.x, p.z), yaw: p.yw, height: SD_REM.h, radius: SD_REM.r, warded: !remnantOpenAt(s, t), entity: standIn, mobile: SD_REMNANT_MOBILE };
     },
-    /** A BLOW OF MINE MET THE REMNANT - `d` the formula's number on this machine, `r` its kind (net/gateBrain.js
+    /** A BLOW OF MINE MET THE REMNANT - `d` the formula's number on this machine, `r` its kind (net/gate/gateBrain.js
      *  HIT_KINDS): out as the wire's `hit` (whole points, my blow's number) while it can be struck. Answers whether it went. */
     hit({ d, r } = /** @type {any} */ ({})) {
       const { L, s, t } = read();

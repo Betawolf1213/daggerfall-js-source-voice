@@ -14,8 +14,8 @@ import {
   BROKER_BOX_HX, BROKER_BOX_HZ, BROKER_BOX_H, BROKER_GROUND_EVERY, BROKER_NOTICE_M, BROKER_TURN_RATE, BROKER_TEXT, BROKER_BUCKET, BROKER_CAGE_BUCKET,
   BROKER_DOOR_BUCKET, BROKER_POST, BROKER_BODY_R, BROKER_BODY_H, BROKER_FREED_SAY_M, BROKER_SHUT_SEEN_MS,
 } from '../src/scenes/sigilBrokerPool.js';
-import { gateTimes, gateSpotLocal } from '../src/net/gateLaw.js';
-import { riteLocalOf, RITE_GRACE_MS } from '../src/net/gateRite.js';
+import { gateTimes, gateSpotLocal } from '../src/net/gate/gateLaw.js';
+import { riteLocalOf, RITE_GRACE_MS } from '../src/net/gate/gateRite.js';
 import { riteLayout, RITE_BRAZIER_R, RITE_BRAZIER_W, RITE_TENT_R } from '../src/world/riteModel.js';
 import { RITE_CLEAR_M } from '../src/world/gate/gateClearance.js';
 import { CAGE_W, CAGE_D, CAGE_H, CAGE_WALL_OUT, CAGE_DOOR_OPEN, CAGE_DOOR_MS, CAGE_FOOT, CAGE_FOOT_UNDER, CAGE_POST, CAGE_SILL, CAGE_SILL_OVER, CAGE_LEAF_W, cageHinge } from '../src/world/cageModel.js';

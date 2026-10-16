@@ -31,7 +31,7 @@
 
 import { MAP_WIDTH, MAP_HEIGHT } from '../../formats/woodsFile.js';
 /** The kilometres a map pixel spans - MapsFile's own 32768 world units at 40 a metre (world/streamingWorld.js
- *  NATIVE_PIXEL; net/wire.js PIXEL_UNITS; net/gateLaw.js PIXEL_M, the metres). Measured, not chosen, and held to the
+ *  NATIVE_PIXEL; net/wire.js PIXEL_UNITS; net/gate/gateLaw.js PIXEL_M, the metres). Measured, not chosen, and held to the
  *  wire's units by test/tamriel.test.js. Not imported from the gate's law: the terrain worker reads this module, and its
  *  import graph is pure by law (TAMRIEL2-WORKER: that import dragged net/wire.js and twenty modules into the worker's
  *  bundle, and the world froze on going outside). */

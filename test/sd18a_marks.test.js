@@ -1,8 +1,8 @@
 // SD18a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10 and section 16's SD18a;
-// Mac: "The detail needs to exceed that of the oblivion gates"): THE HOUR'S MARKS (net/sdMarks.js) - each Hollow keeps one
+// Mac: "The detail needs to exceed that of the oblivion gates"): THE HOUR'S MARKS (net/superDungeon/sdMarks.js) - each Hollow keeps one
 // of six Endings (the Orrery's stones) and two of nine omens, its place in a cycle of 216 by its slot, past the gate's 144:
 // no two Hollows running share an Ending or an omen, every Ending meets every pair once. Its fight's profile
-// (net/sdRemnant.js sdFightProfile) runs by them - the Brazen Hide's health, the Quickened Gears' wind-ups, the Short
+// (net/superDungeon/sdRemnant.js sdFightProfile) runs by them - the Brazen Hide's health, the Quickened Gears' wind-ups, the Short
 // Hour, the Hardened Hearts, the Burning Brass, the Restless Pulse, the Unending Reset, the Twin Hands; each Ending's
 // signature (the Lion's Roar, Sunfall, the Turning Tide, the Tusk, the Hungering Heart, the Dragon's Break) and element.
 // Every blow whose shape they change carries the change on its own frame (`sh`), so every screen judges, draws and reads
@@ -14,17 +14,17 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   SD_ENDINGS, SD_OMENS, SD_ELEMENTS, SD_OMENS_A_HOLLOW, sdMarksCycle, sdMarksOf, sdMarksLaw, validSdMarks, sdEndingOf, sdOmensOf, disjointRing,
-} from '../src/net/sdMarks.js';
+} from '../src/net/superDungeon/sdMarks.js';
 import {
   SD_BLOWS, SD_BODY, SD_SHARE_X, SD_TTK_S, SD_ENDS_MS, SD_PULSE_EVERY_MS, SD_ECHO_PAIR_MS, SD_RESET_EVERY_MS, SD_ECHO_HAND_EVERY_MS, SD_REM, SD_ECHO,
   SD_PULSE_PCT, SD_PHASE_AT, sdFightProfile, sdProfileOf, blowShape, atkWindup, pulsePctOf, shapeStamp, windupFor, newRemnantFight, joinRemnant,
   stepRemnant, remnantStateOf, stompFrontAt, ringPassed, handSwept, handAngleAt, applyRemnantHit, applyEchoHit, heartHpFor, heartCountFor,
-} from '../src/net/sdRemnant.js';
-import { sdBlowVerdict, sdVolleyPools } from '../src/net/sdStrike.js';
-import { SD_STONES, SD_FRAY_MAX, orreryOf, orreryStep, orreryFresh } from '../src/net/sdBrain.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { sdBlowVerdict, sdVolleyPools } from '../src/net/superDungeon/sdStrike.js';
+import { SD_STONES, SD_FRAY_MAX, orreryOf, orreryStep, orreryFresh } from '../src/net/superDungeon/sdBrain.js';
 import { validSdOut, SD_TARGETS_MAX } from '../src/net/wire.js';
-import { foldSdFight, SD_FIGHT_EMPTY } from '../src/net/sdFightLink.js';
-import { dpsRef, HIT_KINDS } from '../src/net/gateBrain.js';
+import { foldSdFight, SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
+import { dpsRef, HIT_KINDS } from '../src/net/gate/gateBrain.js';
 import { sdTelegraphShapes } from '../src/scenes/sdRemnantBlows.js';
 import { remnantBarModel } from '../src/ui/sdRemnantBar.js';
 import { createSdBeats, sdBreakSub, sdPerilAt } from '../src/scenes/sdArenaRead.js';

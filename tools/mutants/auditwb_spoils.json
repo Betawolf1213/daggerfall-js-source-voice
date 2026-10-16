@@ -146,7 +146,7 @@
   },
   {
     "name": "AUDWB-A6-the-queue-with-no-memory",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "    return (Array.isArray(v) ? v : v === undefined ? memory : []).filter((r) => live(r));",
     "new": "    return (Array.isArray(v) ? v : []).filter((r) => live(r));",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "AUDWB-A5-every-refusal-let-go",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "  return answer?.error === 'receipt' && !GATE_CLAIM_MENDABLE.includes(answer.why) ? 'done' : 'keep';",
     "new": "  return answer?.error === 'receipt' ? 'done' : 'keep';",
     "tests": [
@@ -194,7 +194,7 @@
   },
   {
     "name": "AUDWB-A9-anothers-offered",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "        if (!mine || live(r)?.s !== mine) continue;",
     "new": "        if (!mine) continue;",
     "tests": [
@@ -203,7 +203,7 @@
   },
   {
     "name": "AUDWB-A9-anothers-let-go",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "  return answer?.error === 'receipt' && !GATE_CLAIM_MENDABLE.includes(answer.why) ? 'done' : 'keep';",
     "new": "  return (answer?.error === 'receipt' && !GATE_CLAIM_MENDABLE.includes(answer.why)) || answer?.error === 'not-yours' ? 'done' : 'keep';",
     "tests": [
@@ -213,7 +213,7 @@
   },
   {
     "name": "AUDWB-A9-one-a-day-for-everyone",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "return k === r || (o?.d === c.d && o?.s === c.s); })",
     "new": "return k === r || o?.d === c.d; })",
     "tests": [
@@ -222,7 +222,7 @@
   },
   {
     "name": "AUDWB-A9-a-sign-in-waits-for-the-clock",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "      if (!signedIn && !due) return false;",
     "new": "      if (!due) return false;",
     "tests": [

@@ -202,7 +202,7 @@
   },
   {
     "name": "AUDIT-PROF-541-G1-the-ranks-move-untold",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "const moved = ranked !== this._ranked;",
     "new": "const moved = false;",
     "tests": [
@@ -211,7 +211,7 @@
   },
   {
     "name": "AUDIT-PROF-541-G1-no-guild-told-at-the-first-look",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    this._ranked = '';",
     "new": "    this._ranked = undefined;",
     "tests": [

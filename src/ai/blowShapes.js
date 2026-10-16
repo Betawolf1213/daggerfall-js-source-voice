@@ -39,7 +39,7 @@ export const TELL_IRON_EXTRA = 0.2;
 export const TELL_FEINT_FADE = 0.15;
 
 /** AUDIT ARENA-LADDER: THE FAMILIES AND THE VERDICT, MOVED HERE FROM ai/foeBlows.js - the relay runs the arena's ladder
- *  (net/arenaBrain.js) and its fighters telegraph too, and the relay's import graph reaches a leaf and never the brain
+ *  (net/arena/arenaBrain.js) and its fighters telegraph too, and the relay's import graph reaches a leaf and never the brain
  *  (characters/mobileTypes.js, the tactics clock). So the shapes a kind may throw are kept here by the MobileTypes number
  *  (test/arenaladder_audit.test.js pins every number against characters/mobileTypes.js), and ai/foeBlows.js hands both
  *  on: one home, two readers. Not here: no telegraphed blow (the casters, the spectral, the small and the flying). */

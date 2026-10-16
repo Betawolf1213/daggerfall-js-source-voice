@@ -7,7 +7,7 @@
 // renderer - that is LEGACY7's to bring". This brings it. A member of the line standing in the world whose newest save
 // wrote down their LOOK (scenes/legacyHost.js writeCurrent - the hello's own recipe, systems/legacy/family.js
 // memberLook) is drawn as an online peer is drawn on this screen: a Morrowind body where this client stands those
-// (net/peerBodies.js - the enhanced lane with the data attached), else their class's sprite or their paperdoll as the
+// (net/peer/peerBodies.js - the enhanced lane with the data attached), else their class's sprite or their paperdoll as the
 // 'Other players' card says (net/remotePlayers.js). A member never played has no look and wears the town's outfit, as
 // before. Each is drawn by layers of their own - no footstep, no swing heard: a townsperson's steps are the town's.
 //

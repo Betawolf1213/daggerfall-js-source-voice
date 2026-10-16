@@ -1,9 +1,9 @@
 // CARDS10 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 33): THE RELAY DEALS ILIAC HAND. Driven: the relay's
-// Iliac table (net/iliacTable.js) - its two seats of a cloth's chairs, a deck the law refuses refused, the first game
+// Iliac table (net/iliac/iliacTable.js) - its two seats of a cloth's chairs, a deck the law refuses refused, the first game
 // after the second seat; the deal from the relay's own source, each seat's hand in a frame to that seat ALONE, the room a
 // spectator's view (no hand, no deck); a commit hidden (the room hears that, never what); the turn turned over once both
 // have, or by the clock (a pass); six turns and the end; the next game after the pause; a stand mid-game conceding; a
-// ranked game's result queued only between two vouched-for seats of two accounts - and its receipt (net/iliacReceipt.js
+// ranked game's result queued only between two vouched-for seats of two accounts - and its receipt (net/iliac/iliacReceipt.js
 // i1), the deck order (identityToken.js `deck`), the wire both ways, and the relay itself (server/src/index.js on the
 // fake room): two players seated in a tavern's room and a third watching, the alarm's clock, a ranked game's signed
 // result to both, a seat refused at a table Hold'em holds, a table kept across a hibernation.
@@ -13,14 +13,14 @@ import { webcrypto } from 'node:crypto';
 import {
   newIliacTable, iliacSit, iliacStand, iliacCommit, iliacTick, iliacNextAt, iliacLook, iliacEmpty, iliacSeatOf, iliacPublicView,
   validIliacIn, validIliacOut, ILIAC_TURN_MS, ILIAC_FIRST_MS, ILIAC_GAP_MS, ILIAC_ORDER_MAX,
-} from '../src/net/iliacTable.js';
-import { mintIliacReceipt, readIliacReceipt, verifyIliacReceipt, iliacReceiptValid, ILIAC_RECEIPT_V, ILIAC_HOW, ILIAC_GAME_ID_RE } from '../src/net/iliacReceipt.js';
-import { mintArenaReceipt, verifyArenaReceipt } from '../src/net/arenaReceipt.js';
+} from '../src/net/iliac/iliacTable.js';
+import { mintIliacReceipt, readIliacReceipt, verifyIliacReceipt, iliacReceiptValid, ILIAC_RECEIPT_V, ILIAC_HOW, ILIAC_GAME_ID_RE } from '../src/net/iliac/iliacReceipt.js';
+import { mintArenaReceipt, verifyArenaReceipt } from '../src/net/arena/arenaReceipt.js';
 import { mintDeckOrder, verifyOrder, orderValid, deckDigest, deckDigestText, ORDER_KINDS, TITLES } from '../src/net/identityToken.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { parseClient, relaySupportsIliac, ILIAC_RELAY_MIN, RELAY_VERSION, ILIAC_FRAME_MAX } from '../src/net/wire.js';
-import { STARTER_DECK } from '../src/net/iliacCards.js';
-import { ILIAC_TURNS } from '../src/net/iliacHand.js';
+import { STARTER_DECK } from '../src/net/iliac/iliacCards.js';
+import { ILIAC_TURNS } from '../src/net/iliac/iliacHand.js';
 import { fakeRoom } from './fakeRoom.mjs';
 
 const { subtle } = webcrypto;

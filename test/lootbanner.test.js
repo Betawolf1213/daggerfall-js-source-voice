@@ -22,7 +22,7 @@ import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { mintAetheric, AETHERIC_RECORDS } from '../src/systems/aetheric.js';
 import { mintHourlock } from '../src/systems/gilded.js';
 import { mintIliacCard, giveBinderAtChargen } from '../src/systems/iliac/iliacItems.js';
-import { ILIAC_CARDS } from '../src/net/iliacCards.js';
+import { ILIAC_CARDS } from '../src/net/iliac/iliacCards.js';
 import { addItem, splitStack } from '../src/systems/inventory.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { wildRecord } from '../src/systems/wild/wildDeath.js';
@@ -399,5 +399,5 @@ test('HONOUR-BANNER THE FACE: announced on Enhanced Plus it stands - held by the
   // AUDIT WORLD-REWARDS C1: anchored to the Hour's own carrier - SERPENT5's door (the Old Coil's carrier, above it) is the
   // same text, and the bare line matched it with the Hour's gone (HONOUR-BANNER-world-hands-no-door survived)
   assert.match(read('src/scenes/world.js'), /createSdClaims\(\{[\s\S]{0,1200}announce: \(kind, key\) => announceHonour\(kind, key\),   \/\/ HONOUR-BANNER/, 'the Hour\'s door');
-  assert.match(read('src/net/sdClaims.js'), /if \(answer\.data\.titleNew === true\) announce\('title', SD_HONOUR_KEYS\.title\);/, 'announced when the title is newly held (AUDIT FIVE-ASKS E1)');
+  assert.match(read('src/net/superDungeon/sdClaims.js'), /if \(answer\.data\.titleNew === true\) announce\('title', SD_HONOUR_KEYS\.title\);/, 'announced when the title is newly held (AUDIT FIVE-ASKS E1)');
 }));

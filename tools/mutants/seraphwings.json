@@ -792,7 +792,7 @@
   },
   {
     "name": "SERAPHWINGS-a-beasts-form-lost",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "beast: r.form === 'beast' } : null",
     "new": "beast: false } : null",
     "tests": [
@@ -801,7 +801,7 @@
   },
   {
     "name": "SERAPHWINGS-a-riders-figure-read",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "r.px > 0 && r.form !== 'rider' ?",
     "new": "r.px > 0 ?",
     "tests": [
@@ -810,7 +810,7 @@
   },
   {
     "name": "SERAPHWINGS-the-beasts-layer-figureless",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    figureOf: layer.figureOf,   // AUDIT 3 (SERAPH-WINGS): a beast's on foot - none in the saddle\n",
     "new": "",
     "tests": [

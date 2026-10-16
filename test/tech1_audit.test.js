@@ -25,8 +25,8 @@ import { snapshotPlayer, restorePlayer } from '../src/systems/save/save.js';
 import { techniquePierces, shaftSequence } from '../src/combat/arrowFlight.js';
 import { mountReforgeWindow } from '../src/ui/reforgeWindow.js';
 import { withDom } from './invdrag.mjs';
-import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arenaBrain.js';
-import { ARENA_HIT, ARENA_HIT_HZ_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arenaLaw.js';
+import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arena/arenaBrain.js';
+import { ARENA_HIT, ARENA_HIT_HZ_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arena/arenaLaw.js';
 import { boutLive } from '../src/systems/arena/arenaBout.js';
 
 const lcg = (seed) => { let s = (seed >>> 0) || 1; return () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; };

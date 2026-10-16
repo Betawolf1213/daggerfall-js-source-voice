@@ -6,8 +6,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ATTACKS, PHASE_AT } from '../src/net/gateBrain.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { ATTACKS, PHASE_AT } from '../src/net/gate/gateBrain.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, BOSS_BAR_CSS, FELL_HOLD_MS, FELL_FADE_MS, CALLOUT_OUT_MS, INTRO_MS,
   FLASH_MS, WRATH_NEAR_MS,

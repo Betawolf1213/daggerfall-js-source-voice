@@ -14,10 +14,10 @@ import {
   gateClearFor, gatePointIn, ritePointIn, boxNearGate, pointNearGate, wodSiteOffGate, gateSiteTest, reachNearGate, createGateClearSweep,
   GATE_CLEAR_M, WOD_FLAT_GATE_CLEAR_M, GATE_REACH_STRIDE, RITE_CLEAR_M,
 } from '../src/world/gate/gateClearance.js';
-import { riteLocalOf } from '../src/net/gateRite.js';
+import { riteLocalOf } from '../src/net/gate/gateRite.js';
 import { RITE_TENT_R, RITE_BRAZIER_R, RITE_FIRE_R } from '../src/world/riteModel.js';
 import { wodPiecewise, WOD_SITE_OBJECT_RADIUS_M } from '../src/world/road/roadClearance.js';
-import { PIXEL_M, gateSpotLocal, GATE_SPOT_SPREAD_M } from '../src/net/gateLaw.js';
+import { PIXEL_M, gateSpotLocal, GATE_SPOT_SPREAD_M } from '../src/net/gate/gateLaw.js';
 import { GATE_HALF_W } from '../src/world/gate/gateModel.js';
 import { GATE_LANDING_M } from '../src/world/gate/gateArena.js';
 import { CAGE_R, BROKER_BOX_HX, BROKER_BOX_HZ } from '../src/scenes/sigilBrokerPool.js';   // BROKER-CAGE: she stands caged at the faithful's circle
@@ -215,7 +215,7 @@ test('GATE-CLEAR over the shipped lists: a gate\'s spot DOES land in the mod\'s 
     }
     return n;
   };
-  // the gate's own spots, day by day (net/gateLaw.js gateSpotLocal), laid on the pixels the lists name
+  // the gate's own spots, day by day (net/gate/gateLaw.js gateSpotLocal), laid on the pixels the lists name
   let spots = 0, hit = 0, refused = 0, left = 0, leftWhole = 0;
   for (let day = 0; day < 6000; day++) {
     const [x, y] = pixels[(day * 7919) % pixels.length];

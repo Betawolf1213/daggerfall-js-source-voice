@@ -1,7 +1,7 @@
 [
   {
     "name": "SD-HERALD-rise-pings-nobody",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "content: `${ping(role)}**A bell rings",
     "new": "content: `**A bell rings",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "SD-HERALD-every-mention",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "const mentions = (role) => (role ? { roles: [role] } : { parse: [] });",
     "new": "const mentions = (role) => ({ parse: ['everyone', 'roles', 'users'] });",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "SD-HERALD-found-pings-nobody",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "content: `${ping(role)}**${sdFoundLine(",
     "new": "content: `**${sdFoundLine(",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "SD-HERALD-fell-pings",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "collapses. The next may rise ${heraldStamp(rec.next, 'R')}.`,\n    allowed_mentions: { parse: [] },",
     "new": "collapses. The next may rise ${heraldStamp(rec.next, 'R')}.`,\n    allowed_mentions: { parse: ['everyone'] },",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "SD-HERALD-fell-role-passed",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "if (kind === 'fell') return sdFellPost({ rec });",
     "new": "if (kind === 'fell') return { ...sdFellPost({ rec }), allowed_mentions: { roles: [role] } };",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "SD-HERALD-others-miscounted",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "Math.max(0, rec.n - 1)",
     "new": "Math.max(0, rec.n)",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "SD-HERALD-top-taken-raw",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "heraldName(rec.top) || 'Someone'",
     "new": "String(rec.top ?? '') || 'Someone'",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD-HERALD-finder-taken-raw",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "who: heraldName(rec.fb) || 'Someone'",
     "new": "who: String(rec.fb ?? '') || 'Someone'",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "SD-HERALD-city-name-said-bare",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "return named.includes('\\u0000') ? null : named;",
     "new": "return sdNameOf(s, '');",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD-HERALD-found-region-unnamed",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "region: sdRegionName(rec.r) })",
     "new": "region: '' })",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD-HERALD-region-one-off",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "REGION_NAMES[r] ?? ''",
     "new": "REGION_NAMES[r + 1] ?? ''",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "SD-HERALD-rise-fade-stamp-next",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "Unfound, it fades ${heraldStamp(rec.until, 'R')}",
     "new": "Unfound, it fades ${heraldStamp(rec.next, 'R')}",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SD-HERALD-fell-next-stamp-until",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "collapses. The next may rise ${heraldStamp(rec.next, 'R')}",
     "new": "collapses. The next may rise ${heraldStamp(rec.until, 'R')}",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "SD-HERALD-rise-after-find",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "if (phase === 'risen') return { kind: 'rise', st: out };",
     "new": "if (phase !== 'gone') return { kind: 'rise', st: out };",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "SD-HERALD-rise-twice",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "if (s > out.rise) {",
     "new": "if (s >= out.rise) {",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "SD-HERALD-find-after-fall",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "if (phase === 'found') return { kind: 'found', st: out };",
     "new": "if (phase !== 'gone') return { kind: 'found', st: out };",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "SD-HERALD-find-twice",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "if (s > out.found && rec.foundAt != null) {",
     "new": "if (s >= out.found && rec.foundAt != null) {",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "SD-HERALD-find-never-let-go",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "    out.found = s;\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "SD-HERALD-stale-fall-posted",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "if (now < rec.fellAt + SD_COLLAPSE_MS + HERALD_FELL_KEEP_MS) return { kind: 'fell', st: out };",
     "new": "return { kind: 'fell', st: out };",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "SD-HERALD-unfound-fade-posted",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "if (rec.foundAt != null && now < rec.until + SD_FADE_GRACE_MS + HERALD_FELL_KEEP_MS) return { kind: 'fade', st: out };",
     "new": "if (now < rec.until + SD_FADE_GRACE_MS + HERALD_FELL_KEEP_MS) return { kind: 'fade', st: out };",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD-HERALD-fade-before-the-hub",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "} else if (rec.ph === 'gone') {",
     "new": "} else if (phase === 'gone') {",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "SD-HERALD-slot-zero-let-go",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "if (!rec || !Number.isSafeInteger(rec.s) || rec.s < 1) return { kind: null, st: out };",
     "new": "if (!rec) return { kind: null, st: out };",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "SD-HERALD-state-read-raw",
-    "file": "src/net/sdHerald.js",
+    "file": "src/net/superDungeon/sdHerald.js",
     "old": "const slot = (x) => (Number.isSafeInteger(x) && x >= -1 ? x : -1);",
     "new": "const slot = (x) => (x ?? -1);",
     "tests": [

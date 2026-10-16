@@ -6,7 +6,7 @@
 //
 // BROKER-CAGE (2026-10-02, Mac: "she should be present at the site in a jailed gate, and the gate opens after all the
 // enemies are cleared"): SHE IS THE FAITHFUL'S PRISONER, CAGED AT THEIR CIRCLE. Her cage stands at a spot in the circle's
-// own frame (net/gateRite.js riteLocalOf; world/riteModel.js: its heart, `facing` the bearing to the gate) - CAGE_R out,
+// own frame (net/gate/gateRite.js riteLocalOf; world/riteModel.js: its heart, `facing` the bearing to the gate) - CAGE_R out,
 // turned CAGE_TURN from the gate's bearing: outside the braziers, on the gate's side, away from the casket - so every
 // player in the Bay finds her where every other does, and a floating-origin recentre carries her with the land. She
 // stands there, caged or free, from the omen until the Wrath's midnight (cageStands): a Warden fallen early takes the
@@ -35,8 +35,8 @@ import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { RAY_DISTANCE, STATIC_NPC_ACTIVATION_DISTANCE, presentNpcInfoText } from '../player/activate.js';
 import { trs } from '../world/mat4.js';
 import { CAPSULE_RADIUS, CAPSULE_HEIGHT } from '../player/motor.js';
-import { riteLocalOf, riteWindow, cageStands, RITE_GRACE_MS } from '../net/gateRite.js';   // BROKER-CAGE: the faithful's circle, and her hours
-import { gateSpotLocal } from '../net/gateLaw.js';
+import { riteLocalOf, riteWindow, cageStands, RITE_GRACE_MS } from '../net/gate/gateRite.js';   // BROKER-CAGE: the faithful's circle, and her hours
+import { gateSpotLocal } from '../net/gate/gateLaw.js';
 import {
   buildCageModel, buildCageDoor, cageHinge, CAGE_WALLS, CAGE_DOOR_WALL, CAGE_W, CAGE_D, CAGE_H, CAGE_CAP, CAGE_FOOT, CAGE_FOOT_UNDER, CAGE_POST,
   CAGE_SILL, CAGE_SILL_OVER, CAGE_SILL_MAX, CAGE_LEAF_W, CAGE_WALL_OUT, CAGE_DOOR_OPEN, CAGE_DOOR_MS,
@@ -105,7 +105,7 @@ export const BROKER_POST = Object.freeze((() => {
 })());
 
 /** BROKER-CAGE: her cage's spot in the gate pixel's frame ([east, north] metres from its south-west corner - the
- *  circle's, net/gateRite.js riteLocalOf) and the circle's bearing to its gate (scenes/riteHost.js enter's) - the day's
+ *  circle's, net/gate/gateRite.js riteLocalOf) and the circle's bearing to its gate (scenes/riteHost.js enter's) - the day's
  *  alone. Pure. */
 export function cageSpotLocal(day) {
   const [e, n] = riteLocalOf(day), [gx, gz] = gateSpotLocal(day);

@@ -12,8 +12,8 @@ import { readFileSync } from 'node:fs';
 import { fakeRooms } from './fakeRoom.mjs';
 import * as H from '../src/net/hubShards.js';
 import { LAYERS_MAX, LAYER_HEADER, LAYER_FULL_HEADER, SOCKETS_MAX, GATE_BRAIN_V } from '../src/net/wire.js';
-import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
-import { COURT_CENTRE, BRAIN_TICK_MS, OPENING_MS, COURT_R, POSE_SLACK, HIT_KINDS, profileOf } from '../src/net/gateBrain.js';
+import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
+import { COURT_CENTRE, BRAIN_TICK_MS, OPENING_MS, COURT_R, POSE_SLACK, HIT_KINDS, profileOf } from '../src/net/gate/gateBrain.js';
 import worker from '../server/src/index.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

@@ -1,7 +1,7 @@
 [
   {
     "name": "GATE-COLLAPSE-the-sealed-hours-count-nothing",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "  if (phase === 'closed') return { to: 'collapse', ms: Math.max(0, t.wrathAt - nowMs) };\n",
     "new": "",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "GATE-COLLAPSE-counted-to-the-seal-again",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "return { to: 'collapse', ms: Math.max(0, t.wrathAt - nowMs) };",
     "new": "return { to: 'collapse', ms: Math.max(0, t.sealAt - nowMs) };",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "GATE-COLLAPSE-the-collapse-said-as-a-seal",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "cd.to === 'seal' ? 'seals' : 'collapses'",
     "new": "cd.to === 'seal' ? 'seals' : 'seals'",
     "tests": [

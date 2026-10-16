@@ -16,9 +16,9 @@ import {
 } from '../src/scenes/sdRemnantRig.js';
 import { buildRemnantParts, buildRemnantModel, buildGearModel, SD_REMNANT_PARTS, SD_REMNANT_BODY, SD_GEAR, remnantMatrix } from '../src/world/superDungeon/sdRemnantModel.js';
 import { createSdRemnant, SD_GEAR_DRAWS, SD_DECOR_DRAWS } from '../src/scenes/sdRemnant.js';
-import { SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_HEARTS, SD_PILLARS, SD_BREAK_MS, windupFor, behindPillar } from '../src/net/sdRemnant.js';
+import { SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_HEARTS, SD_PILLARS, SD_BREAK_MS, windupFor, behindPillar } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_STRIDE_M, SD_ECHO_STRIDE_M, SD_RELEASE_MS, SD_SLIP_FRAC } from '../src/scenes/sdRemnantVoice.js';
-import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
+import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { SdBeamRenderer, SD_BEAM_VS, SD_BEAM_FS, SD_BEAM_MAX, sdBeamVertices } from '../src/render/sdBeam.js';
 
 const T0 = 1_800_000_000_000;

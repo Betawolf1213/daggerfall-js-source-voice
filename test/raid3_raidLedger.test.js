@@ -1,7 +1,7 @@
 // RAID3 (2026-09-27, Mac, on World Events - Raiding Parties online: "1. Server" - the relay tracks each raid's kill
 // count, kept even if everyone leaves, the cleanse and the participants, and signs the rewards): THE RELAY HOLDS THE
-// RAID. The ledger's law in node (net/raidLaw.js: the window, the first word keeps, the cap, each account's share, the
-// target, who earned it); the raid's receipt (net/raidReceipt.js: the gate's ladder, never mistaken for a gate's
+// RAID. The ledger's law in node (net/raid/raidLaw.js: the window, the first word keeps, the cap, each account's share, the
+// target, who earned it); the raid's receipt (net/raid/raidReceipt.js: the gate's ladder, never mistaken for a gate's
 // receipt or an identity); the `raid` frame both ways (net/wire.js); the relay over the real Room (server/src/index.js:
 // a word's cell, pose and time, the count fanned, the cleanse said once with its receipts, the ledger kept through
 // everyone leaving and a wake, the hub's word to everyone and to a later hello, a hub that did not answer told again,
@@ -18,9 +18,9 @@ import {
   RAID_SLACK_MINUTES, RAID_WORD_KILLS_MAX, RAID_KILL_MS, RAID_KILLS_BURST, RAID_ACCOUNTS_MAX, RAID_PRESENT_MS, RAID_WORD_MS,
   RAID_KEEP_MS, RAID_LEDGERS_MAX, RAID_TOP_MAX, raidDayOfKey, raidWordFits, raidLedgerEndMinute, newRaidLedger, raidCap,
   foldRaidWord, raidCleansed, raidEarned, raidTop, raidLedgerState, raidSig, raidLedgerId, RAID_LEDGER_BUSY_MS, raidDaySlots,
-} from '../src/net/raidLaw.js';
-import { RAID_RECEIPT_V, RAID_RECEIPT_TTL_S, RAID_RECEIPT_MAX, raidReceiptValid, mintRaidReceipt, readRaidReceipt, verifyRaidReceipt } from '../src/net/raidReceipt.js';
-import { mintReceipt, verifyReceipt, readReceipt } from '../src/net/gateReceipt.js';
+} from '../src/net/raid/raidLaw.js';
+import { RAID_RECEIPT_V, RAID_RECEIPT_TTL_S, RAID_RECEIPT_MAX, raidReceiptValid, mintRaidReceipt, readRaidReceipt, verifyRaidReceipt } from '../src/net/raid/raidReceipt.js';
+import { mintReceipt, verifyReceipt, readReceipt } from '../src/net/gate/gateReceipt.js';
 import { verifyToken, mintToken } from '../src/net/identityToken.js';
 import {
   parseClient, validRaidIn, validRaidOut, relaySupportsRaid, raidGate, RAID_RELAY_MIN, RAID_HZ_MAX, RAID_KINDS, RAID_OUT_KINDS,
@@ -49,7 +49,7 @@ const quiet = (fn) => { const info = console.info, warn = console.warn; console.
 // ═══ THE LAW ═════════════════════════════════════════════════════════════════════════════════════
 
 const D = 600;                      // the raid's day
-/** RAID-ROLL: the relay hears only a raid the day drew - these raids are day D's own slots (net/raidLaw.js
+/** RAID-ROLL: the relay hears only a raid the day drew - these raids are day D's own slots (net/raid/raidLaw.js
  *  raidDaySlots): A the raid most tests fight, B and C two more open at its tenth minute, N one opening near its end. */
 const SLOTS = [...raidDaySlots(D)].map((x) => { const [st, tg, ty] = x.split('.').map(Number); return { st, tg, ty }; });
 const slotAt = (m) => { const at = SLOTS.find((x) => x.st === D * RAID_DAY_MINUTES + m); assert.ok(at, `day ${D} draws a raid at minute ${m}`); return at; };

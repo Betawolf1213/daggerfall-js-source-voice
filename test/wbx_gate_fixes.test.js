@@ -10,8 +10,8 @@
 //   WBX1 the one index type          render/renderer.js createMesh; the gate's, the court's and the land's builders
 //   WBX2 the portal home             scenes/gateCourt.js portalFrame, world/gate/gateArena.js portalDoor, worldModes gateWayHome
 //   WBX3 the loot line               render/spoilsGlow.js, scenes/spoilsPool.js (the item's own sprite), ui/itemIconColor32.js
-//   WBX4 his damage and his mark     net/gateBrain.js `base`, net/gateStrike.js strikeDamage; render/gateTelegraph.js mark
-//   WBX5 the phases                  net/gateBrain.js PHASE_TURN, the leap, the meteor, the spokes, the burning ground
+//   WBX4 his damage and his mark     net/gate/gateBrain.js `base`, net/gate/gateStrike.js strikeDamage; render/gateTelegraph.js mark
+//   WBX5 the phases                  net/gate/gateBrain.js PHASE_TURN, the leap, the meteor, the spokes, the burning ground
 //   WBX6 no regeneration, no wear    systems/courtRules.js; combat/formulas.js damageEquipment and the stand-in's spareGear
 //   WBX7 the soul trap               scenes/hostMagic.js, scenes/dungeonContext.js spellOnBoss, the court's roll at his fall
 import { test } from 'node:test';
@@ -30,12 +30,12 @@ import { buildDeadlandsLand, buildShardModel } from '../src/world/deadlandsLand.
 import {
   ATTACKS, ATTACK_BY_ID, POOLS, POOL_TICK_MS, PHASE_NAMES, PHASE_TURN, COURTS, BOSS_R, COURT_R, BOSS_REACH_R, COURT_CENTRE, newFight, joinFight, stepBrain,
   windupOf, wrapYaw, PHASE_AT,
-} from '../src/net/gateBrain.js';
-import { inAttack, spokeLanes, landingPools, poolUnder, strikeDamage, blowOf, strikeVerdict } from '../src/net/gateStrike.js';
+} from '../src/net/gate/gateBrain.js';
+import { inAttack, spokeLanes, landingPools, poolUnder, strikeDamage, blowOf, strikeVerdict } from '../src/net/gate/gateStrike.js';
 import { telegraphShape, telegraphField, markShape, poolShapes, TELEGRAPH_KIND, TELEGRAPH_FS, BOSS_MARK_R, BOSS_MARK_CHEVRON_LEN, BOSS_MARK_CHEVRON_HALF_W } from '../src/render/gateTelegraph.js';
 import { bossPlace, bossHop, bossAct, bossStandIn, bossLookOf, LEAP_AIR_MS, LEAP_HEIGHT, ATTACK_COLORS, POOL_COLOR, WARD_COLOR, BOSS_CUES, QUAKE_ON } from '../src/world/gate/gateBoss.js';
 import { createGateCourt, courtPhaseCard, COURT_STRIKE_TEXT, MARK_COLOR, COURT_ROUND_MS } from '../src/scenes/gateCourt.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { bossBarModel, BOSS_BAR_TEXT } from '../src/ui/gateBossBar.js';
 import { createSpoilsPool, iconSize, SPOILS_ICON_ARCHIVE, SPOILS_ICON_MAX_M, SPOILS_ICON_M_PER_PX } from '../src/scenes/spoilsPool.js';
 import { lineHeight } from '../src/render/spoilsGlow.js';

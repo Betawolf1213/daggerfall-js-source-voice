@@ -63,7 +63,7 @@ import { STREAMING_TERRAIN_SCALE } from '../../world/terrain/terrainSampler.js';
 import { reviveForPlay } from '../deathRespawn.js';   // ONLINE-DEATH-FIX: the SAME half-health an online respawn leaves
 import { setLightSource } from '../lightSource.js';   // DISC7: the light in hand's one door
 import { renownHpOf, renownMpOf, offlineVitals } from '../renownLayer.js';   // RENOWN1: the online layer never reaches a save
-import { stashedItemLists } from '../../net/realmGoldLaw.js';   // AUDIT PRE-MERGE 0929 D3: every list of the character's own things a save carries
+import { stashedItemLists } from '../../net/realm/realmGoldLaw.js';   // AUDIT PRE-MERGE 0929 D3: every list of the character's own things a save carries
 import { DEPOSIT_MAX, depositOrderOk } from '../../net/bagLaw.js';   // AUDIT2 BAG1: a deposit's stamp, kept to a deposit's bounds
 import { resetBlowEffects } from '../blowEffects.js';   // AUDIT TELL L2: a load forgets the last game's landings
 
@@ -658,7 +658,7 @@ const listsOf = (/** @type {any[]} */ ...ls) => ls.filter(Array.isArray);
 const arrayOf = (/** @type {any} */ x) => (Array.isArray(x) ? x : []);
 /**
  * ITEM-WALK A (2026-10-07, Mac: "Do them now within this PR"): EVERY OTHER LIST OF ITEMS A SAVE HOLDS - the lists
- * customs never reads, because no one's wealth lies in them (net/realmGoldLaw.js stashedItemLists reads the rest):
+ * customs never reads, because no one's wealth lies in them (net/realm/realmGoldLaw.js stashedItemLists reads the rest):
  * in each cached scene, the owner's own things set out in a room (DECOR2a `decorOwn`, one item a piece) and a guild's
  * day's Buy shelves (GUILD-SHELF `guildShelves`); a living foe's kit and a guard's, in the world bag and in a
  * building's half of the save (`interior`; a dead foe's is a container customs reads); what a revenant took (the
@@ -822,7 +822,7 @@ export function restorePlayer(entity, snap, spellsByIndex = null) {
   entity.furnishings = (snap.furnishings ?? []).map((it) => setItemFields(it));   // DECOR2b: a save written before holds none
   entity.otherItems = (snap.otherItems ?? []).map((it) => setItemFields(it));   // R1: the in-repair collection (pre-R1 saves restore empty); JAN1: set on the way in
   // AUDIT PRE-MERGE 0929 D3: THE LOAD'S ITEM REPAIRS REACH EVERY LIST THE SAVE CARRIES - the pack, the wagon and the
-  // repairer's, and every list of the character's own things outside them (net/realmGoldLaw.js stashedItemLists, the
+  // repairer's, and every list of the character's own things outside them (net/realm/realmGoldLaw.js stashedItemLists, the
   // one walk customs takes: a cached scene's chests, piles and storage pieces, the world's piles and dead foes' packs,
   // Come Sail Away's boats and cargoes), repaired in the save itself before the scene cache is restored from it and
   // before the world and the mods' data go back to their hosts. A piece kept in a house chest loaded with the name its

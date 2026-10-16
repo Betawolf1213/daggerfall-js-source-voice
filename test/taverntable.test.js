@@ -18,7 +18,7 @@ import {
 } from '../src/world/card/cardTableProp.js';
 import { cardModel } from '../src/render/cardTableDraw.js';
 import { localAabb } from '../src/render/frustum.js';
-import { HOLDEM_SEATS_MAX } from '../src/net/cardLaw.js';
+import { HOLDEM_SEATS_MAX } from '../src/net/card/cardLaw.js';
 import { SEAT_OUT, SEATED_EYE_HEIGHT, SEAT_TOP_DEFAULT, seatTopByte, seatTopOf } from '../src/player/seatPose.js';
 import { STACK_IN } from '../src/world/card/cardScene.js';
 import { CHIP_R } from '../src/world/card/cardMotion.js';

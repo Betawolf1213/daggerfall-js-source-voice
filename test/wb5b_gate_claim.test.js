@@ -2,7 +2,7 @@
 // CLOSED, DRIVEN. The account service over the real migrations (one row a (day, account); the receipt verified with
 // the relay's public half and naming the session's account; a guest's fought and not counted), the worker's route
 // behind a session and the count on /v1/account and on the Inspect card's record; the client's call; the device's
-// queue of receipts (net/gateClaims.js - what settles one and what keeps it, its clock, its bounds); the cards' words;
+// queue of receipts (net/gate/gateClaims.js - what settles one and what keeps it, its clock, its bounds); the cards' words;
 // the key tool; and the world host's seams.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,14 +14,14 @@ import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { createGuest, claimGate, gateRecordOf } from '../server-account/src/accounts.js';
 import { ROUTES, OPEN_ROUTES, ACCOUNT_VERSION } from '../server-account/src/service.js';
-import { mintReceipt, importReceiptKey, verifyReceipt, RECEIPT_TTL_S } from '../src/net/gateReceipt.js';
+import { mintReceipt, importReceiptKey, verifyReceipt, RECEIPT_TTL_S } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64 } from '../src/net/identityToken.js';
 import { accountGates, SESSION_KEY, REFUSALS } from '../src/net/accountClient.js';
 import {
   createGateClaims, gateClaimVerdict, gateRecordText, GATE_CLAIMS_KEY, GATE_CLAIMS_MAX, GATE_CLAIM_RETRY_MS, GATE_CLAIM_TEXT,
-} from '../src/net/gateClaims.js';
-import { createGateLink } from '../src/net/gateLink.js';
-import { createDuelRecords } from '../src/net/duelRecord.js';
+} from '../src/net/gate/gateClaims.js';
+import { createGateLink } from '../src/net/gate/gateLink.js';
+import { createDuelRecords } from '../src/net/duel/duelRecord.js';
 import { profileView, profileGateLine, createProfileWindow } from '../src/ui/profileWindow.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 

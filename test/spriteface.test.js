@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { portrayedYaw, orientationFor, signedAngleY, ORIENTATIONS, ANGLE_PER_ORIENTATION, DELAYED_FRAMES } from '../src/player/eotbBillboard.js';
 import { createEotbBody } from '../src/player/eotbBody.js';
-import { createPeerWalkers, createPeerRiders, createEotbArt } from '../src/net/peerRiders.js';
+import { createPeerWalkers, createPeerRiders, createEotbArt } from '../src/net/peer/peerRiders.js';
 import { auraSpritePosed, auraCapeStep, auraMotionStep, auraSpriteBones, CLOAK_REST_POSE } from '../src/render/auraRing.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -212,6 +212,6 @@ test('SPRITE-FACE the wiring: the view keeps the sprite\'s facing beside its fig
   assert.ok(w.includes('yaw: mwViewSpriteFacing()?.yaw ?? player.bodyYawFor(cam.yaw), turn: mwViewSpriteFacing()?.turn,'), 'the draw: mine, and my turning');
   assert.ok(w.includes('auraSpritePosed(w, peerWalkers?.figureOf(w.id) ?? peerRiders?.figureOf?.(w.id), peerWalkers?.faceOf?.(w.id) ?? peerRiders?.faceOf?.(w.id))'), 'a peer\'s: their picture\'s');
   assert.ok(w.includes('w.yaw = (peerWalkers?.faceOf?.(d.id) ?? peerRiders?.faceOf?.(d.id))?.yaw ?? peerBodyYaw(d.shown) ?? 0;'), 'and gathered so - the wings\' light stands where the wings do');
-  const pr = rd('src/net/peerRiders.js');
+  const pr = rd('src/net/peer/peerRiders.js');
   assert.equal((pr.match(/faceDrawn\(r, view, yaw, feet, eye\);/g) ?? []).length, 2, 'both layers record it as they draw');
 });

@@ -688,7 +688,7 @@ test('SCALE5b the client: a session sends a relay setting only on the hub\'s lin
 // ═══ PART FIVE: THE RELAY'S WORD OF ITS REFEREES, FOR A HALO ═════════════════════════════════════════════════════════
 
 test('SCALE5b the relay\'s referee word: a cell that judges the poses reaching it - a duel, the Wild zone, a serpent\'s fight - says so in its welcome (`rf`), and when that moves says it to the second wire\'s sockets, once (mutants: the welcome\'s word unsaid; the change unsaid; said every pose; said to the first wire)', async () => {
-  const { newWildRef } = await import('../src/net/wildRef.js');
+  const { newWildRef } = await import('../src/net/wild/wildRef.js');
   await cell(async ({ R, w2, w2b, old, said, speak, rnd }) => {
     const rf = (ws) => ws.sent.filter((f) => f.t === 'rf');
     await speak(said[0], drawn(rnd));

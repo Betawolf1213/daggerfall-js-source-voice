@@ -168,7 +168,7 @@
   },
   {
     "name": "AUDIT1003b-S4-LOCK-IGNORED",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "    if (S.locked) return { no: 'locked' };",
     "new": "",
     "tests": [
@@ -178,7 +178,7 @@
   },
   {
     "name": "AUDIT1003b-S9-BOTH-GONE-FORFEIT",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "  if (boutLive(b) && st.kind === 'pvp' && st.f.length === 2 && st.f.every(",
     "new": "  if (false && boutLive(b) && st.kind === 'pvp' && st.f.length === 2 && st.f.every(",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "AUDIT1003b-S4-LOCK-OFF-WIRE",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "      if (m.a === 'lock') return m.l === 0 || m.l === 1 ? { k: 'ps', a: 'lock', l: m.l } : null;   // AUDIT PRE-MERGE 1003b S4\n",
     "new": "",
     "tests": [

@@ -12,9 +12,9 @@ import {
   SERPENT_FIGHT_KEY, SERPENT_FIGHTS_KEY, SERPENT_SITES_MAX, SERPENT_FELLS_KEY, SERPENT_FELLS_MAX, SERPENT_RC_PREFIX, serpentFightId, SOCIAL_ROOM,
   cellRoomOfWire, PIXEL_UNITS,
 } from '../src/net/wire.js';
-import { serpentTimes, serpentSiteKey, sameSerpentSite, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
-import { SERPENT_TICK_MS, SERPENT_OPENING_MS, FAN_R, ADMIT_R, ENGAGE_R, SERPENT_WAKE_SEQ, SERPENT_FIGHTERS_MAX, serpentWoke } from '../src/net/serpentBrain.js';
-import { readSerpentReceipt, SERPENT_RECEIPT_TTL_S } from '../src/net/serpentReceipt.js';
+import { serpentTimes, serpentSiteKey, sameSerpentSite, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
+import { SERPENT_TICK_MS, SERPENT_OPENING_MS, FAN_R, ADMIT_R, ENGAGE_R, SERPENT_WAKE_SEQ, SERPENT_FIGHTERS_MAX, serpentWoke } from '../src/net/serpent/serpentBrain.js';
+import { readSerpentReceipt, SERPENT_RECEIPT_TTL_S } from '../src/net/serpent/serpentReceipt.js';
 import { fakeRooms } from './fakeRoom.mjs';
 
 const subtle = globalThis.crypto.subtle;

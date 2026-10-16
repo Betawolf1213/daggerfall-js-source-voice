@@ -59,7 +59,7 @@ import { itemEnchantmentPower, craftedJewelRecipe, MAX_ENCHANTMENTS } from '../e
 import { isStackable, ARROW_TEMPLATE, GOLD_TEMPLATE, GLASS_BOTTLE_TEMPLATE, LETTER_OF_CREDIT_TEMPLATE } from '../inventory.js';   // HACKED-GOLD: a letter's worth is gold (GOLD-INT)
 import { setItemLaw, LOOT_STACK_MAX, ITEM_GROUP_NAME_BY_CLASS } from '../loot/loot.js';
 import { CREATE_ITEM_ROWS, MENS_PLAIN_ROBES, WOMENS_PLAIN_ROBES } from '../createItemRows.js';
-import { cardById } from '../../net/iliacCards.js';
+import { cardById } from '../../net/iliac/iliacCards.js';
 import { PROVENANCE_RE, REPAIR_KIT_TEMPLATE } from '../../net/recipeLaw.js';
 import { ILIAC_CARD_TEMPLATE, CARD_BINDER_TEMPLATE, BINDER_DECKS_MAX } from '../iliac/iliacItems.js';
 import { POTENT } from '../../net/alchemyLaw.js';

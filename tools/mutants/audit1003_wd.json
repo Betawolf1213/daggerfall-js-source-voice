@@ -101,7 +101,7 @@
   },
   {
     "name": "AUDIT1003-WD1-the-book-drops-it",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "region, price, layout })));",
     "new": "region, price })));",
     "tests": [

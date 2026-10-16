@@ -1,5 +1,5 @@
 // CARDS-KEPT and CARDS-PANEL (2026-10-11, bible/11-Multiplayer/Tavern-Cards.md section 36). A live report: "You have too
-// many stakes waiting to be settled" at the FIRST gold table, on every character. The stakes book (net/cardStakes.js)
+// many stakes waiting to be settled" at the FIRST gold table, on every character. The stakes book (net/card/cardStakes.js)
 // reads and writes JSON by `get`/`set`; the host handed it the device's bare Storage (`getItem`/`setItem`), so every
 // write threw into the book's own catch, the stake read back unkept, and every buy-in was refused as 'cards-kept-full'.
 // Every suite built the book over a `{get, set}` Map - the shape no host minted. Driven here: the HOST'S OWN expression,
@@ -10,7 +10,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createCardStakes, CARD_STAKES_KEY } from '../src/net/cardStakes.js';
+import { createCardStakes, CARD_STAKES_KEY } from '../src/net/card/cardStakes.js';
 import { spoilsStore } from '../src/scenes/spoilsPool.js';
 import { cardHudModel, createCardTableHud, buyInPicks, raisePicks } from '../src/ui/cardTableHud.js';
 import { CardTableSession } from '../src/systems/card/cardTableSession.js';

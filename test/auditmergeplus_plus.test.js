@@ -16,7 +16,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { noteMyBlow, poseFx, createPeerFxPlayer, FX_MIN_GAP_S, _resetPeerFxForTests } from '../src/net/peerFx.js';
+import { noteMyBlow, poseFx, createPeerFxPlayer, FX_MIN_GAP_S, _resetPeerFxForTests } from '../src/net/peer/peerFx.js';
 import { validPose, POSE_HZ_MAX } from '../src/net/wire.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
 import { privateInteriorOf } from '../src/net/privateInterior.js';

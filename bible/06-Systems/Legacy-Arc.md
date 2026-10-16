@@ -513,7 +513,7 @@ than standing still.
   every write of the one played, dropped at a death) - is drawn in the street and in a room as an online peer is drawn
   on this screen: a Morrowind body where this client stands those (the enhanced lane with the data), else their class's
   sprite or their paperdoll as the 'Other players' card says - by layers of the line's own (`net/remotePlayers.js`,
-  `net/peerBodies.js`), with no sound: a townsperson's steps are the town's. The street's walker and the room's seat
+  `net/peer/peerBodies.js`), with no sound: a townsperson's steps are the town's. The street's walker and the room's seat
   stay their talk target; only the picture moves. A member never played has no look and wears the town's outfit - DFU's
   walkers have three tables (Breton, Nord, Redguard), and the member's race picks the nearer (the elves and the Bretons
   the Breton, the beast folk the Redguard), the same one every day. **Departure (recorded):** the look keeps no Eye Of

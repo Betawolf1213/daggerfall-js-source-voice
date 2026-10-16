@@ -119,7 +119,7 @@
   },
   {
     "name": "ARENA4b-MIR-KIND",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "st.kind === 'ex' ? 'exhibition' : 'ladder', fighters, ring:",
     "new": "st.kind === 'ex' ? 'ladder' : 'ladder', fighters, ring:",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "ARENA4b-MIR-VERDICT-EVENT",
-    "file": "src/net/arenaLink.js",
+    "file": "src/net/arena/arenaLink.js",
     "old": "const e = (w.e ?? []).find((x) => x.k === 'end' || x.k === 'verdict');",
     "new": "const e = (w.e ?? []).find((x) => x.k === 'end');",
     "tests": [

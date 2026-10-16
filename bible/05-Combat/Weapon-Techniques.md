@@ -44,8 +44,8 @@ through the doors a swing or a shot already goes through, in every host.
    "Weapon techniques need the loot ladder, which is off." rather than doing nothing silently (Loot-II law 8, no dead
    lines).
 6. **Nothing it moves outruns the referee.** A leap or a dash flies at most `TECHNIQUE_MAX_SPEED` (12 m/s) along the
-   ground, under every referee's step: the arena's 12.5 m/s pose to pose (`net/arenaLaw.js` `ARENA_SPEED_MAX`), the
-   siege's and the open zone's 18 (`net/siegeRef.js`). A Volley's six shafts fall 0.27 s apart, over 1.35 s - never
+   ground, under every referee's step: the arena's 12.5 m/s pose to pose (`net/arena/arenaLaw.js` `ARENA_SPEED_MAX`), the
+   siege's and the open zone's 18 (`net/siege/siegeRef.js`). A Volley's six shafts fall 0.27 s apart, over 1.35 s - never
    five in a second, so an arena's referee (four blows a second, `ARENA_HIT_HZ_MAX`) and the relay's puppets (ten,
    `HIT_HZ_MAX`) land them all. (AUDIT TECH1: it was 16 m/s and 0.85 s, and an arena bout refused a Lunge's poses and
    two of a Volley's six.)

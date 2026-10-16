@@ -25,7 +25,7 @@
 // counts are the room's own sends, observed on the fake, not a Cloudflare isolate's ceiling.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { siegeRoomKey, SIEGE_UNITS_PER_M, SIEGE_BLOWS_HZ, SIEGE_CASTS } from '../src/net/siegeRef.js';
+import { siegeRoomKey, SIEGE_UNITS_PER_M, SIEGE_BLOWS_HZ, SIEGE_CASTS } from '../src/net/siege/siegeRef.js';
 import { FOES_ROOM_BYTES_PER_S, HIT_ROOM_BYTES_PER_S, POSE_FAN_MAX, POSE_FAR_SHARE } from '../src/net/wire.js';
 import { poseHzFor, POSE_HZ_MIN } from '../src/net/online.js';
 import { fakeRoom } from './fakeRoom.mjs';

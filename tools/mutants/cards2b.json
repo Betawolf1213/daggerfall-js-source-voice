@@ -226,7 +226,7 @@
   },
   {
     "name": "SB-peer-unseated",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    b.cam.seat = peer.shown.st ? seatFor(b, f, b.yaw, peer.shown.st) : null;",
     "new": "    b.cam.seat = null;",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "SB-peer-never-rebuilt",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "  if (b.seatKey !== key) { b.seatKey = key;",
     "new": "  if (!b.seatSpec) { b.seatKey = key;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SB-peer-key-no-st",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "${yaw.toFixed(3)},${st}`;",
     "new": "${yaw.toFixed(3)}`;",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SB-peer-key-no-yaw",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "${f[2].toFixed(2)},${yaw.toFixed(3)},${st}`;",
     "new": "${f[2].toFixed(2)},${st}`;",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "SB-peer-top-default",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "top: seatTopOf(st) };",
     "new": "top: undefined };",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "SB-sitter-walks",
-    "file": "src/net/peerClimb.js",
+    "file": "src/net/peer/peerClimb.js",
     "old": "!peerClimbing(shown) && !shown?.st;",
     "new": "!peerClimbing(shown);",
     "tests": [

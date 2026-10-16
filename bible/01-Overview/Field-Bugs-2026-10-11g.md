@@ -166,7 +166,7 @@ So the hold is one of: the PARTNER's (the realm checks only the sides that give,
 their own), staff's or a copy's (staff alone lift those), the law's over something else, or the budget's if enforcing.
 The refusal says which now. The service keeps the held side with its word (`trade-held:a`) and tells each side `held`:
 'mine' or 'theirs' (`why` stays `trade-held`, so a client from before reads what it always read; the column is free text,
-no migration). The client says it (`net/realmTradeLaw.js` realmTradeRefusalText): the other's - "The realm is reviewing
+no migration). The client says it (`net/realm/realmTradeLaw.js` realmTradeRefusalText): the other's - "The realm is reviewing
 the other character in this trade", and "Your own trading is open" when my last checkpoint held nothing - or mine, in
 the words of my own hold's notice (TRADE_HELD_NOTICES, moved into the trade law's leaf, which `systems/item/itemIds.js`
 re-exports: one home for both). 'record-unjudged' says whose the same way.

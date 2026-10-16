@@ -1,7 +1,7 @@
 [
   {
     "name": "MW-CROWD-the-turn-unmeasured",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "      this._turn = l ? Math.acos(Math.max(-1, Math.min(1, fx * l[0] + fy * l[1] + fz * l[2]))) : 0;",
     "new": "      this._turn = 0;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "MW-CROWD-the-lead-dropped",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "this._sees(b, turnLeadMargin(Math.sqrt(b.d2), this._turn))",
     "new": "this._sees(b, CULL_MARGIN_M)",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "MW-CROWD-the-lead-not-capped",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "Math.tan(Math.min(TURN_LEAD_MAX, turn * TURN_LEAD_FRAMES))",
     "new": "Math.tan(turn * TURN_LEAD_FRAMES)",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "MW-CROWD-a-stand-in-every-frame",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "if (look && typeof look === 'object') _stubSlots.set(look, slots); }",
     "new": "}",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "MW-CROWD-weapons-back-in-the-key",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    k = (items.some((it) => it?.group === 'Weapons') ? lookKey({ ...look, items: items.filter((it) => it?.group !== 'Weapons') }) : lookKey(look)) + npcKeyOf(look) + outfitKeyOf(look);",
     "new": "    k = lookKey(look) + npcKeyOf(look) + outfitKeyOf(look);",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "MW-CROWD-the-lingering-body-unloaded",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    this._release(victim.id, true, key);   // MW-CROWD",
     "new": "    this._release(victim.id, victim.goneAt == null, key);   // MW-CROWD",
     "tests": [

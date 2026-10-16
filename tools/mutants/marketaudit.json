@@ -47,7 +47,7 @@
   },
   {
     "name": "MARKET-AUDIT-B1-undo-ignored",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    if (undo) undo(); else wallet.credit?.(n);",
     "new": "    wallet.credit?.(n);",
     "tests": [

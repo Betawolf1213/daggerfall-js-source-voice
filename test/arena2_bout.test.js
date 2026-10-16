@@ -12,7 +12,7 @@ import {
   HEAL_HOLD_MS, YIELD_SHARE, STALL_MS, RING_SLACK_M, RING_OUT_MS, FLEE_MS, KNOCKDOWN_SHARE, COMEBACK_LOW,
   TEMPER_EVERY_MS, TEMPER_ROLL, PURSE_FAVOUR_MAX, PURSE_FAVOUR_MIN,
 } from '../src/systems/arena/arenaBout.js';
-import { DUEL_OUT_SLACK_M, DUEL_OUT_MS, DUEL_HEAL_HOLD_MS, DUEL_COUNTDOWN_MS } from '../src/net/duelSession.js';
+import { DUEL_OUT_SLACK_M, DUEL_OUT_MS, DUEL_HEAL_HOLD_MS, DUEL_COUNTDOWN_MS } from '../src/net/duel/duelSession.js';
 
 const RING = { centre: [0, 0], radius: 14 };
 const two = (o = {}) => [

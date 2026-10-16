@@ -123,7 +123,7 @@ import { SD_HOUR_GRADE } from '../world/superDungeon/sdLook.js';   // SD-LOOK: t
 /** SD-LOOK: the dungeon arm's two draw options for its dynamic draws (render/renderer.js drawMesh), made once - the hot
  *  loop makes nothing. */
 const DRAW_NO_SHADOW = Object.freeze({ noShadow: true }), DRAW_SHADOW = Object.freeze({ noShadow: false });
-import { sdRoomKey } from '../net/sdLaw.js';   // SD5a: its room, the relay's realm
+import { sdRoomKey } from '../net/superDungeon/sdLaw.js';   // SD5a: its room, the relay's realm
 import { isBound } from '../systems/item/itemBound.js';   // AUDIT SS: the keyed shelf sells no bound piece
 import { lockRefuses } from '../systems/item/itemLock.js';   // AUDIT SS: nor a locked one
 import { courtLighting, deadlandsFlash } from '../render/deadlands.js';   // WB6a: the court's own light - the Deadlands' red from above, the fire's from below, the vortex's from behind the boss   // WB6b: and a strike's, flaring over it
@@ -240,11 +240,11 @@ import { openIliacTableGame } from './iliacTableGame.js';   // CARDS10: Iliac Ha
 import { openGambitTableGame, gambitTableOn } from './gambitTableGame.js';   // KG3: The King's Gambit on the seat
 import { gambitBoardKey } from '../ui/gambitTableHud.js';   // KG3: the board's own keys (14.3)
 import { RemoteGambitTable } from '../systems/gambit/gambitRemoteTable.js';   // KG5: a watched King's Gambit table, as the relay tells it
-import { readGambitReceipt } from '../net/gambitReceipt.js';   // KG6: a rated game's result, acked by its id
-import { GAMBIT_STAKE_BB } from '../net/gambitStakes.js';   // KG6: a King's Gambit stake's mark in the escrow
+import { readGambitReceipt } from '../net/gambit/gambitReceipt.js';   // KG6: a rated game's result, acked by its id
+import { GAMBIT_STAKE_BB } from '../net/gambit/gambitStakes.js';   // KG6: a King's Gambit stake's mark in the escrow
 import { gambitPlaces } from '../world/gambitCloth.js';   // KG5: a watched board on its cloth
 import { createGambitTableDraw } from '../render/gambitTableDraw.js';   // KG5: and drawn there
-import { readIliacReceipt } from '../net/iliacReceipt.js';   // AUDIT CARDS-6 C1: a ranked result kept, its game said back to the relay
+import { readIliacReceipt } from '../net/iliac/iliacReceipt.js';   // AUDIT CARDS-6 C1: a ranked result kept, its game said back to the relay
 import { iliacGrade } from '../systems/iliac/iliacPatrons.js';   // CARDS10: the tavern's grade - its regulars' decks and play
 import { cardPackPrice, buyCardPack } from '../systems/card/cardSources.js';   // CARDS9: the house sells packs at its card table
 import { heldMatrices, heldLift, heldFit, blendMatrix, HELD_EASE_S, tablePoint, onStack, onTable, inBetZone, dragBet, PEEK_RATE, DRAG_LIFT, handGesture, squeezeOf, squeezeMatrix } from '../world/card/cardHand.js';   // CARDS3b: the hand held, the chips dragged; CARDS3c: the squeeze, the click, the push
@@ -867,7 +867,7 @@ export function createWorldModes(host) {
     closeIliacGame();   // KG3: one game a cloth - each opens by closing the others
     closeGambitGame();
     const stakes = stakesFor(interiorBuilding?.quality ?? 10);
-    // CARDS6: online, a realm character plays for gold at the relay's table - its stake held by the service (net/cardStakes.js)
+    // CARDS6: online, a realm character plays for gold at the relay's table - its stake held by the service (net/card/cardStakes.js)
     const goldOnline = cardTableGold(cardSeat?.table ?? -1) && !!host.cardOnline?.ok?.() && !!host.cardStakes?.goldOk?.();   // TAVERN-TABLES: at the gold table alone - a realm character plays for chips at the other
     const friendly = !goldOnline && (!!host.realmAct || isOnlinePage());
     const buyIn = buyInRange(goldOnline ? host.cardStakes.purse() ?? 0 : friendly ? FRIENDLY_CHIPS_BB * stakes.bb : goldAmount(playerEntity), stakes);
@@ -900,7 +900,7 @@ export function createWorldModes(host) {
   }
   /** CARDS6: THE GOLD BUY-IN - the stake asked of the service (the record's act: the purse checkpointed, the gold held out
    *  of it while asked), then the relay's table sat with the service's order. A game closed while the service answered
-   *  leaves its stake on the device, voided back when this room is next seen (net/cardStakes.js voidable). */
+   *  leaves its stake on the device, voided back when this room is next seen (net/card/cardStakes.js voidable). */
   async function cardGoldSit(g, amount) {
     if (g.staking) return;
     g.staking = true;
@@ -7731,7 +7731,7 @@ export function createWorldModes(host) {
    *  own arm (`_homeArm`, the door text's signature reads it), under the house's id marked `hall:` - one arm a door. */
   const hallArmId = (bd) => `hall:${homeIdOf(bd)}`;
   const hallArmed = (bd) => !!_homeArm && _homeArm.id === hallArmId(bd) && performance.now() - _homeArm.at <= HOME_BUY_ARM_MS;
-  /** GUILD1d: THE HALL'S ROW PRESSED - armed, then bought from the treasury (net/guildBook.js buyHall; no purse moves). */
+  /** GUILD1d: THE HALL'S ROW PRESSED - armed, then bought from the treasury (net/guild/guildBook.js buyHall; no purse moves). */
   function pressHallBuy(bd, price) {
     if (!hallArmed(bd)) { _homeArm = { id: hallArmId(bd), at: performance.now() }; return; }
     _homeArm = null;
@@ -9766,7 +9766,7 @@ export function createWorldModes(host) {
           sdSay: (t, rank) => host.sdSay?.(t, rank) ?? false,   // AUDIT SD II (SD11d): the Hour's voice - the outer host's
           sdHallWord: () => host.sdHallWord?.() ?? null,   // SD6c: the realm's latest word on the Orrery's hall
           sdClock: () => host.deadlandsSeconds?.() ?? performance.now() / 1000,   // SD7b: the realm's anchored clock, the Unmoored Steps' (the sky's own)
-          sdFight: () => host.sdFight?.() ?? null,   // SD8c: the Last Moment's fight as the page holds it (net/sdFightLink.js) - the outer host's
+          sdFight: () => host.sdFight?.() ?? null,   // SD8c: the Last Moment's fight as the page holds it (net/superDungeon/sdFightLink.js) - the outer host's
           sdFightIn: () => !!host.sdFightIn?.(),   // SD8c: my `in`, down my socket in the realm
           sdBlow: (k, f) => !!host.sdBlow?.(k, f),   // SD8c: a blow of mine on the Remnant, an Echo or a Heart, out to the realm
           sdWayBack: () => host.sdWayBack?.(),   // SD5a: the Shattered Hour's way back through its Rift - the outer host's (scenes/world.js)   // SD4b: the outer host's word on a Super dungeon's Rift and Return - off the hub's record, its realm's door
@@ -14114,7 +14114,7 @@ export function createWorldModes(host) {
     /** AUDIT WORLD B6: is the death screen up in the mode's own slot - the dungeon context's (it borrows the
      *  presenter for the whole visit) or the interior's? world.js's gate read townTalk's slot alone. */
     deathUp() { return mode === 'dungeon' ? !!dungeonCtx?.deathUp?.() : interiorOverlay instanceof DeathScreen; },
-    /** WILD1 (net/wildRemains.js): the ground pool of the mode I stand in - a dungeon's or a building's - where a body's
+    /** WILD1 (net/wild/wildRemains.js): the ground pool of the mode I stand in - a dungeon's or a building's - where a body's
      *  remains in the open zone stand as piles; null outdoors (the street's is the world host's own). */
     droppedPool() { return mode === 'dungeon' ? (dungeonCtx?.droppedPool?.() ?? null) : mode === 'interior' ? interiorDropped : null; },
     /** RESURRECT1: the mode's death screen closed IN PLACE - the fallen player rises where they fell, no exit. */

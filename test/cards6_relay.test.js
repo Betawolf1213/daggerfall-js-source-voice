@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import { fakeRoom } from './fakeRoom.mjs';
 import { mintStakeOrder } from '../src/net/identityToken.js';
-import { readCardReceipt } from '../src/net/cardReceipt.js';
+import { readCardReceipt } from '../src/net/card/cardReceipt.js';
 import { HOLDEM_FIRST_MS, newTable, sit, stand, tick, actAt, publicView } from '../src/net/holdemTable.js';
 import { HOLDEM_REFUSALS } from '../src/ui/cardTableHud.js';
 

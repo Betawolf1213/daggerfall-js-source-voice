@@ -8,7 +8,7 @@ import { applyClimbRig, climbBones, climbRequestToRig, climbRequestToFirstPerson
 import { ClimbPose, climbRigInput } from '../src/player/climbPose.js';
 import { PlayerMotor } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
-import { PeerClimbTrack } from '../src/net/peerClimb.js';
+import { PeerClimbTrack } from '../src/net/peer/peerClimb.js';
 import { MW_UNITS_PER_METER as U } from '../src/formats/mwFirstPerson.js';
 
 const retail = () => buildSkeleton(parseNif(new Uint8Array(readFileSync(new URL(

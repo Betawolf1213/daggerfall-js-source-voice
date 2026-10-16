@@ -85,7 +85,7 @@ test('CHAT-TRADE commands: /trade, /tr and /lfg say a line on their channel; /jo
   const rp = HELP_LINES.findIndex((l) => l.startsWith('/rp '));
   assert.equal(typeof Object.getOwnPropertyDescriptor(HELP_LINES, rp).get, 'function', '/rp\'s row');
   assert.ok(Object.isFrozen(HELP_LINES) && Array.isArray(HELP_LINES));
-  assert.match(rd('src/net/siegeSession.js'), /isBattleLeaveCommand = \(text\) => \/\^\\\/leave\$\/i\.test/, 'a bare /leave is still the battle\'s');
+  assert.match(rd('src/net/siege/siegeSession.js'), /isBattleLeaveCommand = \(text\) => \/\^\\\/leave\$\/i\.test/, 'a bare /leave is still the battle\'s');
 });
 
 test('CHAT-TRADE host: each tab follows its choice - on the bar while joined, joined only past a relay that opens it, left when the choice is taken back; a line said to one not joined joins it and stays in the field', () => {

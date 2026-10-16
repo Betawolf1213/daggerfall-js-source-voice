@@ -409,7 +409,7 @@
   },
   {
     "name": "AG3-W3-an-officer-fills-its-own",
-    "file": "src/net/guildPowers.js",
+    "file": "src/net/guild/guildPowers.js",
     "old": "  Object.freeze({ rule: 'deliver', words: 'fill the guild\\'s own writs for their pay' }),\n",
     "new": "",
     "tests": [
@@ -418,7 +418,7 @@
   },
   {
     "name": "AG3-W3-the-rule-unread",
-    "file": "src/net/guildPowers.js",
+    "file": "src/net/guild/guildPowers.js",
     "old": "return typeof may === 'function' ? RANKS.filter((r) => may(r)) : [];",
     "new": "return typeof may === 'function' ? [...RANKS] : [];",
     "tests": [
@@ -427,7 +427,7 @@
   },
   {
     "name": "AG3-W3-no-except",
-    "file": "src/net/guildPowers.js",
+    "file": "src/net/guild/guildPowers.js",
     "old": "      else if (less.length <= EXCEPT_MAX && more.length) text =",
     "new": "      else if (false) text =",
     "tests": [
@@ -437,7 +437,7 @@
   },
   {
     "name": "AG3-C5-a-lesser-take-holds-a-greater",
-    "file": "src/net/guildPowers.js",
+    "file": "src/net/guild/guildPowers.js",
     "old": "&& (a.key !== 'vault-out' || a.limit === 0 || (b.limit !== 0 && Number(a.limit) >= Number(b.limit)));",
     "new": "&& true;",
     "tests": [
@@ -446,7 +446,7 @@
   },
   {
     "name": "AG3-W4-the-sellswords-unsaid",
-    "file": "src/net/guildPowers.js",
+    "file": "src/net/guild/guildPowers.js",
     "old": "  Object.freeze({ master: true, words: 'hire Sellswords for the guild\\'s battles' }),\n",
     "new": "",
     "tests": [
@@ -455,7 +455,7 @@
   },
   {
     "name": "AG3-W4-any-writ-unsaid",
-    "file": "src/net/guildPowers.js",
+    "file": "src/net/guild/guildPowers.js",
     "old": "  Object.freeze({ master: true, words: 'withdraw any guild writ or contract' }),\n",
     "new": "",
     "tests": [
@@ -464,7 +464,7 @@
   },
   {
     "name": "AG3-C7-an-article-guessed",
-    "file": "src/net/guildPowers.js",
+    "file": "src/net/guild/guildPowers.js",
     "old": "const theRank = (/** @type {string} */ name) => (/^the\\s/i.test(name) ? name : `the ${name}`);",
     "new": "const theRank = (/** @type {string} */ name) => `a ${name}`;",
     "tests": [
@@ -473,7 +473,7 @@
   },
   {
     "name": "AG3-C5-the-vault-unsaid",
-    "file": "src/net/guildPowers.js",
+    "file": "src/net/guild/guildPowers.js",
     "old": "  Object.freeze({ vault: true }),\n",
     "new": "",
     "tests": [

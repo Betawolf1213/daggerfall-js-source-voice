@@ -29,7 +29,7 @@
   },
   {
     "name": "C8-binder-tradeable",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "Object.freeze([570, 571, 572, 580, 582]);",
     "new": "Object.freeze([570, 571, 572, 580]);",
     "tests": [

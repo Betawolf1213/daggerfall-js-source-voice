@@ -10,8 +10,8 @@ import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S, siegeStartMs, chronicleLine } from '../src/net/townSeatLaw.js';
 import { verifyOrder } from '../src/net/identityToken.js';
-import { mintSiegeReceipt } from '../src/net/siegeReceipt.js';
-import { SIEGE_UNITS_PER_M } from '../src/net/siegeRef.js';
+import { mintSiegeReceipt } from '../src/net/siege/siegeReceipt.js';
+import { SIEGE_UNITS_PER_M } from '../src/net/siege/siegeRef.js';
 
 const { subtle } = globalThis.crypto;
 const ANTICLERE = { key: 3021, name: 'Anticlere', region: 21, tier: 'palace', pixel: [402, 151] };

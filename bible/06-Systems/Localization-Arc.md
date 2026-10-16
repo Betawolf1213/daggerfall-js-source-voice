@@ -952,7 +952,7 @@ section 39 its audit).
 ## KG-SET (2026-10-13): the Iliac set's words
 
 The King's Gambit's KG-SET (`11-Multiplayer/Kings-Gambit.md` section 15) brought nine cards into Iliac Hand's set and
-met the ratchet: `net/iliacCards.js` held every card's rules and flavor in English (234 literals), and the nine's
+met the ratchet: `net/iliac/iliacCards.js` held every card's rules and flavor in English (234 literals), and the nine's
 could not be written beside them. No card's words had reached a player in their language.
 
 - **The road:** the relay's catalog keeps a card's rules and its canonical name, and no word; the words are
@@ -969,7 +969,7 @@ could not be written beside them. No card's words had reached a player in their 
   its fit (no rules line cut; a flavor dropped first where the box is full, as the painter's law drops it); the twelve
   drafting languages owe them (their next run). The drafts found the face's wrapper breaking at a no-break space -
   French's before a colon - and it breaks only at white space that may break now (`iliacCardFaces.js` CARD_BREAK).
-- **The ratchet:** `net/iliacCards.js` 234 -> 52 (its two-word names; the nine's four among them); the words module 0.
+- **The ratchet:** `net/iliac/iliacCards.js` 234 -> 52 (its two-word names; the nine's four among them); the words module 0.
 - **Still owed (L10N4's cards batch):** a card's name shown through Daggerfall Unity's own tables where it is one of
   theirs (an enemy's, a spell's, an artifact's, a faction's, a place's), and the Iliac panels' own sentences round it -
   `scenes/iliacTableGame.js`, `ui/cardBinderPage.js`, `systems/iliac/iliacItems.js`'s first line - routed with it, so no

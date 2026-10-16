@@ -27,7 +27,7 @@
 //
 // HONOUR-BANNER (2026-10-14, Mac: "The title/aura in the abyss dungeon should also have a loot popup", and the lamp's
 // "ensure there is a loot popup for obtaining the title"): A TITLE OR AN AURA GRANTED stands as a banner too - pushed by
-// its grant's own door (`announceHonour`: net/sdClaims.js's Hour, systems/lampKeeper.js's lamp), not read off the pack,
+// its grant's own door (`announceHonour`: net/superDungeon/sdClaims.js's Hour, systems/lampKeeper.js's lamp), not read off the pack,
 // since there is no piece to read. Its word in the title's own paint (ui/playerBadge.js titlePaint - an aura in the
 // title's family it wears, AURA_PAINT), its edge and light in the title's colour, a big banner with the fanfare; it is
 // never dropped as "no longer held". A skin with no banner answers false, and its door says its chat line alone.
@@ -42,7 +42,7 @@ import { isEnhanced } from '../systems/uiSkin.js';
 import { createAcquireWatch, setCodexFindPresenter, tierIsBig, tierRank, isAcquired, announces } from '../systems/acquireWatch.js';
 import { tierLabel, RARITIES } from '../systems/loot/lootRarity.js';
 import { isIliacCard } from '../systems/iliac/iliacItems.js';
-import { cardById } from '../net/iliacCards.js';
+import { cardById } from '../net/iliac/iliacCards.js';
 import { itemLongName } from '../systems/item/itemInfo.js';
 import { inventoryItemImage, templateByIndex } from '../systems/item/itemTemplates.js';
 import { paintIliacCard, ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';

@@ -7,13 +7,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService } from './accountDb.mjs';
-import { mintArenaReceipt, readArenaReceipt, verifyArenaReceipt, arenaReceiptValid, ARENA_RECEIPT_TTL_S } from '../src/net/arenaReceipt.js';
-import { mintReceipt, readReceipt } from '../src/net/gateReceipt.js';
+import { mintArenaReceipt, readArenaReceipt, verifyArenaReceipt, arenaReceiptValid, ARENA_RECEIPT_TTL_S } from '../src/net/arena/arenaReceipt.js';
+import { mintReceipt, readReceipt } from '../src/net/gate/gateReceipt.js';
 import { verifyToken } from '../src/net/identityToken.js';
 import {
   arenaSeasonOf, arenaSeasonEndsS, arenaSeasonDay, ARENA_SEASON_EPOCH_S, ARENA_SEASON_S, eloAfter, eloExpected, ARENA_ELO_START, ARENA_ELO_MIN,
   arenaLadderOf, arenaNextOf, ladderKey, ARENA_PAIR_DAY_MAX, ARENA_CHAMPION_MIN_BOUTS, ARENA_CHAMPION_MIN_FOES, ARENA_TEAM_POINTS,
-} from '../src/net/arenaLaw.js';
+} from '../src/net/arena/arenaLaw.js';
 import { _resetArenaCache, laurelWorthy, laurelOfBoard } from '../server-account/src/arena.js';
 import { titlesHeld, glyphsOf, equipRefusal } from '../server-account/src/titles.js';
 import { TEAM_POINTS } from '../src/systems/arena/arenaLeague.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "GUILD1b-the-fee-unchecked",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    if (this.wallet().gold() < GUILD_FOUND_GOLD) return { ok: false, error: 'gold' };\n    if (this.realm) {",
     "new": "    if (this.realm) {",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "GUILD1b-paid-before-the-answer",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "      const r = await this.door.found({ character, name, tag });",
     "new": "      this.wallet().pay(GUILD_FOUND_GOLD);\n      const r = await this.door.found({ character, name, tag });",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "GUILD1b-the-short-founder-keeping-the-guild",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "        const gone = await this.door.disband(character);\n        if (gone?.ok && typeof gone.data?.outOrder === 'string') this._hand({ outOrder: gone.data.outOrder });   // GUILD1c: a room that heard the founding hears it gone\n        return { ok: false, error: 'gold' };",
     "new": "        return { ok: false, error: 'gold' };",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "GUILD1b-a-refund-on-a-lost-answer",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "      if (guildRefused(r?.error)) { paid.back(); return r; }\n      return { ok: false, error: 'guild-unsure' };",
     "new": "      paid.back(); return r;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "GUILD1b-no-refund-on-a-refusal",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "      if (guildRefused(r?.error)) { paid.back(); return r; }",
     "new": "      if (guildRefused(r?.error)) { return r; }",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "GUILD1b-a-deposit-past-the-purse",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    if (w.gold() < gold) return { ok: false, error: 'gold' };\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "GUILD1b-a-withdrawal-credited-first",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "      const r = await this.door.withdraw(character, gold);\n      if (r?.ok) this.wallet().credit(gold, { letter });",
     "new": "      this.wallet().credit(gold, { letter });\n      const r = await this.door.withdraw(character, gold);",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "GUILD1b-a-withdrawal-credited-unanswered",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "      if (r?.ok) this.wallet().credit(gold, { letter });",
     "new": "      this.wallet().credit(gold, { letter });",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "GUILD1b-offline-read-as-a-refusal",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "  'guild-treasury-full', 'auth',\n",
     "new": "  'guild-treasury-full', 'auth', 'offline',\n",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "GUILD1b-no-look-after-an-act",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "      await this.refresh();\n      this._changed();",
     "new": "      this._changed();",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "GUILD1b-the-guest-read-as-an-error",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    if (error === 'guilds-need-account') {",
     "new": "    if (error === 'guilds-need-account-x') {",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "GUILD1b-a-look-always-moving-the-version",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    if (pictureOf(this.state, this.guild, this.invites) !== was) this._changed();",
     "new": "    this._changed();",
     "tests": [
@@ -112,7 +112,7 @@
   },
   {
     "name": "GUILD1b-any-truthy-answer-accepting",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "accept: accept === true",
     "new": "accept: !!accept",
     "tests": [
@@ -121,7 +121,7 @@
   },
   {
     "name": "GUILD1b-the-look-never-stale",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "nowMs - this.at >= GUILD_FRESH_MS",
     "new": "nowMs - this.at >= GUILD_FRESH_MS * 10",
     "tests": [
@@ -130,7 +130,7 @@
   },
   {
     "name": "GUILD1b-asked-as-another-character",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "this.door.mine(character), this.door.invites()",
     "new": "this.door.mine('char-x'), this.door.invites()",
     "tests": [
@@ -139,7 +139,7 @@
   },
   {
     "name": "GUILD1b-busy-never-raised",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    this.busy = true; this._changed();",
     "new": "    this._changed();",
     "tests": [

@@ -25,7 +25,7 @@ import { SPEED_OF_SOUND, THUNDER_SOURCE_M } from '../src/systems/distantStorms.j
 import { courtToDungeon, courtBraziers, LAVA_Y, ARRIVE_Z, RIM_OUT, SPIRES, GATE_BLOCK_SIDE } from '../src/world/gate/gateArena.js';
 import { GATE_ARCHIVE } from '../src/world/gate/gateModel.js';
 import { COURT_ARCHIVE } from '../src/world/gate/gateArena.js';
-import { COURT_R, COURTS, nearestCourt } from '../src/net/gateBrain.js';
+import { COURT_R, COURTS, nearestCourt } from '../src/net/gate/gateBrain.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const C = courtToDungeon(0, 0, 0);

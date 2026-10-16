@@ -24,8 +24,8 @@ import { ACCOUNT_VERSION } from '../server-account/src/service.js';
 import {
   renownRaidXp, renownForXp, renownXpFor, RENOWN_XP_HOUR_MAX, RENOWN_XP_REPORT_MAX, RENOWN_XP_MAX, RENOWN_MAX, RENOWN_TRACKS_MAX,
 } from '../src/net/renown.js';
-import { mintRaidReceipt } from '../src/net/raidReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintRaidReceipt } from '../src/net/raid/raidReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64, verifyToken } from '../src/net/identityToken.js';
 import { accountCard, renownTracksOfCard } from '../src/ui/enhancedAccount.js';
 import { AccountFlow } from '../src/ui/accountFlow.js';

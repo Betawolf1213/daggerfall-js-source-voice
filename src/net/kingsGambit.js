@@ -2,7 +2,7 @@
 // KG1 (2026-10-13, bible/11-Multiplayer/Kings-Gambit.md sections 2, 4 and 11; the owner, handing over
 // thekingsgambit.dfmod: "How can we implement this using the illiac bay card system. A new minigame", then "Make the
 // best and most detailed decisions. We also have permission"): THE KING'S GAMBIT'S LAW - the mod's game, pure,
-// DOM-free and plain data (structuredClone-safe, as net/iliacHand.js's state is), ONE HOME for both ends: the tavern's
+// DOM-free and plain data (structuredClone-safe, as net/iliac/iliacHand.js's state is), ONE HOME for both ends: the tavern's
 // regulars play by it offline (KG2, KG3) and the relay will run it online (KG5), so it imports only the enemy table its
 // units are read from, the dice's unbiased draw and Unity's rounding (systems/mathf.js, its one home). Nothing here draws
 // a picture, plays a sound or waits.
@@ -104,7 +104,7 @@ export const KG_AUTOFILL_ROUNDS = 200;
 export const KG_AUTOFILL_RANGED = 2;
 export const KG_AUTOFILL_LEAN = 0.5;
 /** The most draws one step may take from its source - a board's build takes a few thousand at the most; past this the
- *  source is broken (net/iliacHand.js ILIAC_RAND_DRAWS_MAX's law). */
+ *  source is broken (net/iliac/iliacHand.js ILIAC_RAND_DRAWS_MAX's law). */
 export const KG_RAND_DRAWS_MAX = 100_000;
 
 /** THE LAYOUTS - BuildMap's switch, by Rand(0, 4) - each its key and its two floor tones (floorA, floorB, RGB); and the

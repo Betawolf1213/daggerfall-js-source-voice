@@ -11,13 +11,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { cellRoomOfWire, PIXEL_UNITS, SERPENT_FIGHT_KEY, serpentFightId, validSerpentOut } from '../src/net/wire.js';
-import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
+import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
 import {
   newSerpentFight, joinSerpentFight, stepSerpentBrain, serpentStateOf, serpentAttacksFor, ramReach, refOf,
   SERPENT_ATTACK_TABLE, SERPENT_TICK_MS, SERPENT_TTK_S, FAN_R, ENGAGE_R, ARENA_R, SERPENT_SLEEP_MS,
-} from '../src/net/serpentBrain.js';
-import { LEG, MODE, headAt, onTimeline, sameMode } from '../src/net/serpentBody.js';
-import { createSerpentLink } from '../src/net/serpentLink.js';
+} from '../src/net/serpent/serpentBrain.js';
+import { LEG, MODE, headAt, onTimeline, sameMode } from '../src/net/serpent/serpentBody.js';
+import { createSerpentLink } from '../src/net/serpent/serpentLink.js';
 import { createSerpentHost, LAND_JUDGE_MS, HIT_GATHER_MS } from '../src/scenes/serpentHost.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { fakeRooms } from './fakeRoom.mjs';

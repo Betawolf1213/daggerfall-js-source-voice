@@ -14,12 +14,12 @@
 //     every other ammunition, bandages - and everything that may never change hands (a quest's item, a summoned or
 //     bound piece, a boat's deed or parts, the Materials Bag, a vehicle, a deed, the spellbook, the wallet and the Embers
 //     and Shards it holds - the trade's refusals and the decor's kept-back list, read, not rewritten).
-//   DROPPED: every other thing in the bag and in the cart - into the room's remains (net/wildLaw.js), where anyone may
+//   DROPPED: every other thing in the bag and in the cart - into the room's remains (net/wild/wildLaw.js), where anyone may
 //     take it for ten minutes. A letter of credit too (LETTERS-DROP, 2026-10-09), ahead of the decor's kept-back list.
 //     CART-AWAY (Mac, 2026-10-15: "if its parked outside the zone nothing should be lost"): the cart's only while the
 //     wagon is with them - parked off the zone, stabled or none, it keeps every piece and its coin (systems/wild/wildCart.js).
 //   WORN: kept on a death to a foe. On a death at another player's hand the killer may take ONE worn piece the same
-//     rules let go (`wornOffer`) - the fallen's own game gives it (net/wildFight.js).
+//     rules let go (`wornOffer`) - the fallen's own game gives it (net/wild/wildFight.js).
 // The purse is the death penalty's (systems/deathPenalty.js) and unchanged.
 // ═══════════════════════════════════════════════════════════════════
 import { WILD_ITEMS_MAX } from '../../net/wire.js';

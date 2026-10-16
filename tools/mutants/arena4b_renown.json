@@ -91,7 +91,7 @@
   },
   {
     "name": "ARENA4B-CLAIMS-FIGHTER",
-    "file": "src/net/arenaClaims.js",
+    "file": "src/net/arena/arenaClaims.js",
     "old": "keep([...list, arenaKeptEntry(r, character(), name())]",
     "new": "keep([...list, r]",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "ARENA4B-CLAIMS-RENOWN-UNTOLD",
-    "file": "src/net/arenaClaims.js",
+    "file": "src/net/arena/arenaClaims.js",
     "old": "if (answer?.ok && answer.data?.renown) onRenown(answer.data);",
     "new": "if (answer?.ok && answer.data?.recorded && answer.data?.renown) onRenown(answer.data);",
     "tests": [

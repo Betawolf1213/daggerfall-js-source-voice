@@ -12,8 +12,8 @@ import {
 import { RAID_DURATION_MINUTES } from '../src/systems/raidingParties.js';
 import { createGateOmen, gateTip } from '../src/systems/gate/gateOmen.js';
 import { readGateMark, GATE_RING_CSS } from '../src/ui/gateMapMark.js';
-import { gateTimes, gatePhase, gateCountdown, countdownText, gateModsOf, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
-import { gateModsWords } from '../src/net/gateMods.js';   // WB8c: tonight's marks on the card
+import { gateTimes, gatePhase, gateCountdown, countdownText, gateModsOf, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
+import { gateModsWords } from '../src/net/gate/gateMods.js';   // WB8c: tonight's marks on the card
 import { HeldMapWindow, TAP_TIP_S } from '../src/ui/heldMap.js';
 import { toPaper, paintRaidMark } from '../src/ui/inkMap.js';
 import { CLIMATES, LOCATION_TYPES, getMapPixelID } from '../src/formats/mapsFile.js';

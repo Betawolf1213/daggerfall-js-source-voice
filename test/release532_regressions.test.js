@@ -3,8 +3,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { timersWindow } from '../src/ui/enhancedTimers.js';
 import { createRiteHost, RITE_RESTAND_MS } from '../src/scenes/riteHost.js';
-import { gateTimes } from '../src/net/gateLaw.js';
-import { riteLocalOf, riteFaithfulOf, RITE_SUMMONER_CAREER } from '../src/net/gateRite.js';
+import { gateTimes } from '../src/net/gate/gateLaw.js';
+import { riteLocalOf, riteFaithfulOf, RITE_SUMMONER_CAREER } from '../src/net/gate/gateRite.js';
 import { restoreModSaveRecords } from '../src/systems/modSaveData.js';
 
 function fakeDoc() {

@@ -1,7 +1,7 @@
 // CROWN1 part two, the client (2026-10-01, Mac: "Finish the seats"; "Continue"; "Hurry up"): A ROYAL TOURNEY AS THIS
 // CLIENT FIGHTS IT - the fold and the HUD's words (net/royalLink.js), the session (net/royalSession.js: the pass and its
 // ring, the room, the card's Challenge as a challenge or an accept, the bout's one foe, the ring kept, the receipts),
-// the ring from the town (systems/siegeField.js royalRingWire), the bouts' carrier (net/siegeClaims.js createRoyalClaims),
+// the ring from the town (systems/siegeField.js royalRingWire), the bouts' carrier (net/siege/siegeClaims.js createRoyalClaims),
 // the socket's royal room (net/online.js), the Seat tab's doors (ui/seatTab.js) and the world's wiring.
 // bible/11-Multiplayer/Seats-Arc.md 7.6; `06-Systems/Online-Arc.md` CROWN1 (part two, the client).
 import { test } from 'node:test';
@@ -10,10 +10,10 @@ import { readFileSync } from 'node:fs';
 import { byClass } from './chargenDom.mjs';
 import { foldRoyal, royalHudModel, royalAskStands, ROYAL_STATE_EMPTY, ROYAL_HUD_ROWS, ROYAL_LAST_SHOWN_MS } from '../src/net/royalLink.js';
 import { createRoyalSession, ROYAL_SESSION_TEXT, ROYAL_PASS_RETRY_MS } from '../src/net/royalSession.js';
-import { createRoyalClaims, royalClaimSettles, ROYAL_CLAIMS_KEY, ROYAL_CLAIMS_MAX } from '../src/net/siegeClaims.js';
+import { createRoyalClaims, royalClaimSettles, ROYAL_CLAIMS_KEY, ROYAL_CLAIMS_MAX } from '../src/net/siege/siegeClaims.js';
 import { royalRingWire, siegeWorldPoint, SIEGE_FIELD } from '../src/systems/siegeField.js';
-import { royalRoomKey, ROYAL_RING } from '../src/net/siegeRef.js';
-import { mintRoyalReceipt } from '../src/net/siegeReceipt.js';
+import { royalRoomKey, ROYAL_RING } from '../src/net/siege/siegeRef.js';
+import { mintRoyalReceipt } from '../src/net/siege/siegeReceipt.js';
 import { OnlineSession } from '../src/net/online.js';
 import { royalTourneyLines } from '../src/net/townSeatLaw.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';

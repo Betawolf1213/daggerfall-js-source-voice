@@ -10,10 +10,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createGateLink, gateRefusalText, GATE_NO_TEXT, GATE_OUTDATED_TEXT } from '../src/net/gateLink.js';
+import { createGateLink, gateRefusalText, GATE_NO_TEXT, GATE_OUTDATED_TEXT } from '../src/net/gate/gateLink.js';
 import { GATE_NO_WORDS, GATE_BRAIN_V, validGateOut } from '../src/net/wire.js';
-import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
-import { COURT_CENTRE } from '../src/net/gateBrain.js';
+import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
+import { COURT_CENTRE } from '../src/net/gate/gateBrain.js';
 import { fakeRooms } from './fakeRoom.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -64,9 +64,9 @@ test('GATE-RELOAD the relay: its `no` says the gate is closed for ONE reason - t
 
 test('GATE-RELOAD the host: a refused `in` takes the player out of the court in the words the link said (the terminal arm keeps the hello\'s own) (mutants: the eject in the old words)', () => {
   const world = read('src/scenes/world.js');
-  assert.match(world, /import \{ createGateLink, GATE_NO_TEXT, gateRefusalText \} from '\.\.\/net\/gateLink\.js';/);
+  assert.match(world, /import \{ createGateLink, GATE_NO_TEXT, gateRefusalText \} from '\.\.\/net\/gate\/gateLink\.js';/);
   assert.match(world, /onRefused: \(why\) => \{ if \(modes\?\.gateArenaDay\?\.\(\) != null\) ejectFromCourt\(gateRefusalText\(why\)\); \},/);
   assert.doesNotMatch(world, /ejectFromCourt\(GATE_NO_TEXT\[why\]/, 'no refusal of an `in` said in the old words');
   assert.match(world, /else if \(courtDay != null && online\?\.terminal\) ejectFromCourt\(GATE_NO_TEXT\[online\.error\] \?\? COURT_TEXT\.lost\);/, 'a hello refused at the window\'s end still says the gate is closed');
-  assert.match(read('src/net/gateLink.js'), /if \(g\.k === 'no'\) \{ say\(gateRefusalText\(g\.m\)\); onRefused\(g\.m\); return; \}/);
+  assert.match(read('src/net/gate/gateLink.js'), /if \(g\.k === 'no'\) \{ say\(gateRefusalText\(g\.m\)\); onRefused\(g\.m\); return; \}/);
 });

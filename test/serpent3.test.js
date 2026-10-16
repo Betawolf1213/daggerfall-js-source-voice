@@ -13,12 +13,12 @@ import {
   newSerpentFight, joinSerpentFight, stepSerpentBrain, applySerpentHit, serpentStateOf, serpentResume, closeAim, wayOnto, wayLen, dashFits,
   SERPENT_ATTACK_TABLE, SERPENT_ATTACK_BY_ID, SERPENT_PHASE_AT, SERPENT_TICK_MS, ZONES, ARENA_R, TURN_R, HUNT_TURN_R, MAEL_ORBIT_R, CRUISE_V,
   DRIFT_V, RAM_V, DASH_V, CLOSE_V, SERPENT_CLOSE_MS, SERPENT_SLEEP_MS, SERPENT_DRAWN_MS, SERPENT_SAY_AHEAD_MS, CRUSH, GRIP, MAEL_GRIND, SERPENT_HIT_LOOKBACK_MS, serpentWrapYaw,
-} from '../src/net/serpentBrain.js';
-import { LEG, MODE, COIL_R, headAt, bodyAt, modeAt, anyExposed, legIndexAt, sameLeg } from '../src/net/serpentBody.js';
-import { createSerpentLink } from '../src/net/serpentLink.js';
+} from '../src/net/serpent/serpentBrain.js';
+import { LEG, MODE, COIL_R, headAt, bodyAt, modeAt, anyExposed, legIndexAt, sameLeg } from '../src/net/serpent/serpentBody.js';
+import { createSerpentLink } from '../src/net/serpent/serpentLink.js';
 import { createSerpentHost } from '../src/scenes/serpentHost.js';
 import { fleetShare, shipHurt, crushHurt, gripHurt, grindHurt, SERPENT_PAIR_SHARE, SERPENT_CANVAS_X } from '../src/systems/serpent/serpentStrike.js';
-import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_BRAIN_MIN, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
+import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_BRAIN_MIN, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
 import { validSerpentOut, cellRoomOfWire, serpentFightId, PIXEL_UNITS } from '../src/net/wire.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { fakeRooms } from './fakeRoom.mjs';

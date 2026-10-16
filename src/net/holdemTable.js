@@ -3,7 +3,7 @@
 // pure, DOM-free and plain-data (the relay checkpoints it whole), one home for the relay and its pins. Section 5's
 // decisions, built: THE RELAY SHUFFLES (its own CSPRNG, handed in as `rand32` - shuffleDeck over the dice's unbiased
 // draw) and keeps the deck in this state, which no frame ever carries; THE RELAY RUNS THE TABLE (whose turn, the legal
-// actions, the pots - the cards' law, net/cardLaw.js); each seat is told ITS OWN hole cards in a frame addressed to it
+// actions, the pots - the cards' law, net/card/cardLaw.js); each seat is told ITS OWN hole cards in a frame addressed to it
 // alone, the room the public hand (viewFor's spectator's view: no hand until a showdown shows it, a folded hand never);
 // a seat that does not act in HOLDEM_CLOCK_MS is checked if it can be, folded if not (cardLaw timeoutAction); a seat
 // whose player leaves is folded out of turn (cardLaw foldSeat) and stood up at the hand's end.
@@ -19,7 +19,7 @@
 // room or a player's id for that player alone; the relay stamps each with `t: 'holdem'`, the table's index and its clock.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { newHand, act, foldSeat, legalActions, viewFor, timeoutAction, shuffleDeck, HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from './cardLaw.js';
+import { newHand, act, foldSeat, legalActions, viewFor, timeoutAction, shuffleDeck, HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from './card/cardLaw.js';
 import { STAKE_ID_RE } from './identityToken.js';   // CARDS6: a stake's id, the service's shape
 
 /** MEASURE (CARDS5, section 5's 30 s): a seat's clock - checked if it can be, folded if not, when it runs out. */
@@ -361,7 +361,7 @@ export function validHoldemOut(m) {
   if (!m || typeof m !== 'object' || !Number.isInteger(m.table) || m.table < 0 || m.table >= HOLDEM_TABLES_MAX) return false;
   if (typeof m.error === 'string') return m.error.length <= 40;   // the relay's refusal of a word (a chair taken, not your turn)
   if (m.n !== undefined && !(Number.isSafeInteger(m.n) && m.n >= 0)) return false;   // AUDIT CARDS-4 D1: the table's frame number
-  if (m.cashout !== undefined) return typeof m.cashout === 'string' && m.cashout.length <= HOLDEM_STAKE_MAX;   // CARDS6: a staked seat's receipt (net/cardReceipt.js reads it)
+  if (m.cashout !== undefined) return typeof m.cashout === 'string' && m.cashout.length <= HOLDEM_STAKE_MAX;   // CARDS6: a staked seat's receipt (net/card/cardReceipt.js reads it)
   if (m.hole) return Number.isInteger(m.hole.handNo) && Array.isArray(m.hole.cards) && m.hole.cards.length === 2 && m.hole.cards.every((c) => Number.isInteger(c) && c >= 0 && c < 52);
   if (m.turn) return Number.isInteger(m.turn.handNo) && !!m.turn.legal && typeof m.turn.legal === 'object' && Number.isFinite(m.turn.clockAt);
   if (!Array.isArray(m.events) || m.events.length > 32 || !m.events.every((e) => e && typeof e.t === 'string')) return false;

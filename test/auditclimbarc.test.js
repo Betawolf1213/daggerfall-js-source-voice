@@ -4,7 +4,7 @@
 // before the audit's fixes (d92a75a13) and green after them; the source pins hold the hosts' wiring, which no unit test
 // can reach. The mutants that put each old behaviour back are tools/mutants/auditclimbarc.json.
 //
-// The peer and the body modules (net/peerClimb.js, net/peerRiders.js, net/remotePlayers.js, player/mwView.js,
+// The peer and the body modules (net/peer/peerClimb.js, net/peer/peerRiders.js, net/remotePlayers.js, player/mwView.js,
 // combat/weaponRig.js) are imported inside their own tests: they reach CLIMB6's work in progress (player/climbPose.js,
 // combat/climbRig.js), and a slip there must cost those pins alone, not the file.
 import { test } from 'node:test';
@@ -918,7 +918,7 @@ test('AUDIT CLIMB-ARC N1: the sprite lane\'s body is drawn on the VIEW\'s yaw (i
 });
 
 test('AUDIT CLIMB-ARC N2: a beast on the wall is drawn as every other peer - facing the wall it climbs, and standing, no stride (mutants: the camera\'s yaw, the move bit read raw)', async () => {
-  const { createPeerRiders, beastTable } = await import('../src/net/peerRiders.js');
+  const { createPeerRiders, beastTable } = await import('../src/net/peer/peerRiders.js');
   const { spriteFor } = await import('../src/player/eotbSprite.js');
   const shown = { x: 0, y: 2, z: 0, yaw: Math.PI, pitch: 0, mv: 1, wd: 0, wb: 1, cl: 2, cw: 0 };
   assert.equal(beastTable(shown), beastTable({ ...shown, mv: 0 }), 'on the wall the beast walks no stride');
@@ -980,7 +980,7 @@ test('AUDIT CLIMB-ARC N5: the peers\' sounds\' switch silences, it does not blin
 });
 
 test('AUDIT CLIMB-ARC N6: a floor under one peer\'s climb sounds - a hostile pose stream flipping the hold every frame, or swinging along a lip, sounds at most ~10 one-shots a second (mutants: the cue floor, the rhythm floor)', async () => {
-  const { PeerClimbSounds } = await import('../src/net/peerClimb.js');
+  const { PeerClimbSounds } = await import('../src/net/peer/peerClimb.js');
   for (const [label, poseAt] of [
     ['the hold flipped every frame', (f) => ({ cl: 1 + (f % 2), cw: 0 })],
     ['a metre-less swing along a lip', (f) => ({ cl: 1, cw: 0, dx: (f % 2) * 0.9 })],

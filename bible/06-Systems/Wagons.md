@@ -399,7 +399,7 @@ ones the owner's document lists, as the door is the owner's client's to keep
   told why ("<owner> has shut the caravan's door. You step outside.").
 - Who may enter is never carried to a new owner: `wagonEntry` is one of the
   receiver's marks the wire's clamp leaves behind
-  (`src/net/realmTradeLaw.js` RECEIVER_MARKS), and the vault's receipt drops
+  (`src/net/realm/realmTradeLaw.js` RECEIVER_MARKS), and the vault's receipt drops
   them too. A bought caravan opens to its owner alone.
 - The owner's name is the relay's stamp on the record, never a stale peer
   id's.
@@ -435,7 +435,7 @@ Items and economy, motion and drawing, the caravan's room, and online.
   keyed shop refuse it (`src/systems/tradePack.js` packTradeRefusal; the
   trade and the market say why, the vault and the keyed shop leave it off
   their lists), as the counter's Sell already drops it. Since the final
-  audit the account service refuses it too (`src/net/realmTradeLaw.js`
+  audit the account service refuses it too (`src/net/realm/realmTradeLaw.js`
   takeTradeGoods). A loaded caravan
   traded away had left 2000 kg on a 750 kg cart.
 - **The item law reads a wagon's mark.** `wagonKind` and `wagonLook` are

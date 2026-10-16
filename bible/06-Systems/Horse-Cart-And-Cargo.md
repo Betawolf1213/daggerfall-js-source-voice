@@ -330,7 +330,7 @@ on everyone else's screen.
   (which Eye Of The Beholder mounted sprite set the rider chose). Both are
   omitted on foot, so a pose on foot is the bytes it was. A mount change is
   a pose change.
-- `net/peerRiders.js` draws a riding peer with EOTB's mounted sprites: the
+- `net/peer/peerRiders.js` draws a riding peer with EOTB's mounted sprites: the
   same eight views, idle, walk and gallop tables, size and offsets as the
   player's own third-person billboard. The move bit picks the table (2 is
   the gallop). The rider layer runs first, the Morrowind body and the doll

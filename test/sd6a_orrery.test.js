@@ -1,5 +1,5 @@
 // SD6a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 8): THE ORRERY OF ENDINGS'
-// LAW (net/sdBrain.js) - six Ending-stones, each an hour of twelve; a turn turns one stone one hour and its partners
+// LAW (net/superDungeon/sdBrain.js) - six Ending-stones, each an hour of twelve; a turn turns one stone one hour and its partners
 // with it (the gearing, hidden); the true hours said in riddles on six plaques; the dial lighting how many stand true;
 // the fray snapping the Hour back at 48 turns. Everything drawn from the slot, the same on the relay and every page.
 import { test } from 'node:test';
@@ -9,7 +9,7 @@ import {
   SD_FRAY_MAX, SD_FRAY_LASH, SD_STONE_SETTLE_MS, SD_TURN_HZ, SD_TRUTH_TURNS_MIN, SD_TRUTH_TURNS_MAX, SD_WALK,
   sdHour, sdHourShown, sdTurnsFor, sdRiddleText, sdRiddleHolds, orreryOf, orreryTurn, orreryLit, orreryConcord,
   orrerySolve, orreryShortest, orreryFresh, orreryStep, stoneInReach, inOrreryHall,
-} from '../src/net/sdBrain.js';
+} from '../src/net/superDungeon/sdBrain.js';
 
 const SLOTS = Array.from({ length: 500 }, (_, i) => 1 + i * 7919);
 /** Turn stone i `t` hours the short way round (forward or back), one turn at a time. */

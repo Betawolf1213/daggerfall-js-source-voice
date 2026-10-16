@@ -16,7 +16,7 @@ import { MARKS_MAX, MARKS_KINDS } from '../src/net/marksLaw.js';
 import { STORES_MAX } from '../src/net/professionLaw.js';
 import { material } from '../src/net/nodeLaw.js';
 import { UNYIELDED } from '../src/net/marketLaw.js';
-import { GUILD_POWERS } from '../src/net/guildLaw.js';
+import { GUILD_POWERS } from '../src/net/guild/guildLaw.js';
 import { NOTE_BUTTONS, NOTE_BUTTON_LABEL } from '../src/net/boardLaw.js';
 import { MASTERWORK } from '../src/net/recipeLaw.js';
 

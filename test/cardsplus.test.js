@@ -23,8 +23,8 @@ import { createGambitTableHud, GAMBIT_TABLE_CSS } from '../src/ui/gambitTableHud
 import { cardCanvas, cardCanvasCopy, _clearCardFacesForTests, CARD_BINDER_CSS } from '../src/ui/cardBinderPage.js';
 import { COLLECTION_PAGE_CSS } from '../src/ui/collectionsPage.js';
 import { ILIAC_TILE_MAX_H } from '../src/render/iliacCardFaces.js';
-import { STARTER_DECK, cardById } from '../src/net/iliacCards.js';
-import { newGame, commit, reveal, iliacView, legalPlays, ILIAC_HAND_MAX, ILIAC_MAGICKA_MAX, ILIAC_ROOM, ILIAC_TURNS } from '../src/net/iliacHand.js';
+import { STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
+import { newGame, commit, reveal, iliacView, legalPlays, ILIAC_HAND_MAX, ILIAC_MAGICKA_MAX, ILIAC_ROOM, ILIAC_TURNS } from '../src/net/iliac/iliacHand.js';
 import { IliacTableSession } from '../src/systems/iliac/iliacTableSession.js';
 import { patronDeck, patronPlays, seededUnit } from '../src/systems/iliac/iliacPatrons.js';
 import { CardTableSession } from '../src/systems/card/cardTableSession.js';

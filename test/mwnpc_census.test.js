@@ -35,7 +35,7 @@ const WIRED = Object.freeze([
 ]);
 /** DECLARED: the source draws a living actor's sprite and keeps it - each with its reason. */
 const DECLARED = Object.freeze({
-  'src/net/remotePlayers.js': 'the peers\' own fallback picture (a doll or a class sprite) - a peer stands in net/peerBodies.js, built by world.js',
+  'src/net/remotePlayers.js': 'the peers\' own fallback picture (a doll or a class sprite) - a peer stands in net/peer/peerBodies.js, built by world.js',
   'src/scenes/sigilBrokerPool.js': 'the Daedra Seducer in her MORTAL GUISE - the match would stand the winged twilight she is hiding (section 15a)',
   'src/world/bandSprites.js': 'the Overworld\'s far bands - grown, fading sprites at the map\'s distance; their people stand in bodies on the ground (section 15c)',
   'src/characters/enemyAnchor.js': 'a size for a foe\'s anchor - it draws nothing',

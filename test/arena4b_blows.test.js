@@ -1,5 +1,5 @@
 // ARENA4b (2026-10-03, the audit of ARENA4's PvP blows): THE BLOW'S SEQUENCE AND THE SPELL ON A PLAYER. The relay's
-// referee counts a swing through several bodies as one blow by its `q` (net/arenaBrain.js refBlow), but the client never
+// referee counts a swing through several bodies as one blow by its `q` (net/arena/arenaBrain.js refBlow), but the client never
 // sent it, so a cleave through a Grand Melee spent the rate four bodies at a time; and a spell of mine that met my
 // opponent went nowhere (only a swing and a shaft reached `rival`). Now the dungeon's host numbers every swing, shaft
 // and spell (scenes/dungeonContext.js nextArenaQ) and sends it with the claim, a spell that meets my opponent goes to
@@ -8,8 +8,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arenaBrain.js';
-import { ARENA_HIT, ARENA_HIT_HZ_MAX, ARENA_SPELLS_IN, ARENA_SPELL_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arenaLaw.js';
+import { openBout, joinBout, stepBout, poseOf, refBlow } from '../src/net/arena/arenaBrain.js';
+import { ARENA_HIT, ARENA_HIT_HZ_MAX, ARENA_SPELLS_IN, ARENA_SPELL_MAX, ARENA_TICK_MS, ARENA_FLOOR_CENTRE } from '../src/net/arena/arenaLaw.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
 import { boutLive } from '../src/systems/arena/arenaBout.js';
 

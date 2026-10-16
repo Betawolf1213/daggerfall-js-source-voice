@@ -4,7 +4,7 @@
 // middle); the spell engine's helpers for a body that states its own radius (systems/spellcast.js - the touch swept
 // down its aim, the blast and the missile against his whole body, a foe measured as it always was); the court's doors
 // (scenes/gateCourt.js target and hit - the blow's number out as the wire's frame, the ward turning it, the flinch) and
-// the relay's side of the same frame (net/wire.js validGateIn, net/gateBrain.js applyHit); and the seams in the dungeon
+// the relay's side of the same frame (net/wire.js validGateIn, net/gate/gateBrain.js applyHit); and the seams in the dungeon
 // context, the spell engine, the dungeon arm and the world host, by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,9 +15,9 @@ import { calculateAttackDamage } from '../src/combat/formulas.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { pickTouchTarget, sweepFoes, missileHitsFoe, TOUCH_RANGE, TOUCH_SPHERE_CAST_RADIUS } from '../src/systems/spellcast.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { validGateIn } from '../src/net/wire.js';
-import { newFight, joinFight, applyHit, BOSS_H, BOSS_R, HIT_KINDS, MELEE_REACH } from '../src/net/gateBrain.js';
+import { newFight, joinFight, applyHit, BOSS_H, BOSS_R, HIT_KINDS, MELEE_REACH } from '../src/net/gate/gateBrain.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { WEAPON_REACH } from '../src/combat/playerWeapon.js';
 

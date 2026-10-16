@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { standService } from './accountDb.mjs';
 import { hallShortLine, hallOldGoldLine } from '../src/systems/online/onlineHomes.js';
 import { guildHallGoldText } from '../src/ui/socialPanel.js';
-import { GUILD_MOVE_MAX } from '../src/net/guildLaw.js';
+import { GUILD_MOVE_MAX } from '../src/net/guild/guildLaw.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

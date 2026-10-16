@@ -36,14 +36,14 @@
   },
   {
     "name": "WB12a-the-old-frame-said",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "`The Covenant tears Dagon's Breach near ${near} shut. ${boss} is cast back into the Deadlands.`",
     "new": "`The Oblivion Gate near ${near} collapses. ${boss} returns to the Deadlands.`",
     "tests": ["test/wb12a_breach_words.test.js"]
   },
   {
     "name": "WB12a-the-herald-says-the-old-gate",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "at Dagon's Breach ${place ? `near ${place}` : 'in the wilds'}${by}. The breach collapses.`",
     "new": "at the Oblivion Gate ${place ? `near ${place}` : 'in the wilds'}${by}. The gate collapses.`",
     "tests": ["test/wb12a_breach_words.test.js"]

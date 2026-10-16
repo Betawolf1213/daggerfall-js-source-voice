@@ -190,7 +190,7 @@
   },
   {
     "name": "SD7A-the-arena-where-it-was",
-    "file": "src/net/sdBrain.js",
+    "file": "src/net/superDungeon/sdBrain.js",
     "old": "export const SD_ARENA = Object.freeze({ x: 0, z: 246, r: 26 });",
     "new": "export const SD_ARENA = Object.freeze({ x: 0, z: 220, r: 26 });",
     "tests": [

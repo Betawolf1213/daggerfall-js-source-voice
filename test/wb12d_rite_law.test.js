@@ -1,6 +1,6 @@
 // WB12d (2026-10-01, Mac: "faithful and a Summoner"; then "Btw I want to do all 4. We're going balls deep with this"):
-// THE FAITHFUL'S RITE - its law (net/gateRite.js: where the circle stands, who stands at it, when it holds), the wire's
-// word (net/wire.js), the receipt's rite (net/gateReceipt.js) and the account service's ember (migration 0066) -
+// THE FAITHFUL'S RITE - its law (net/gate/gateRite.js: where the circle stands, who stands at it, when it holds), the wire's
+// word (net/wire.js), the receipt's rite (net/gate/gateReceipt.js) and the account service's ember (migration 0066) -
 // bible/11-Multiplayer/World-Bosses.md section 19 D.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,11 +9,11 @@ import { DatabaseSync } from 'node:sqlite';
 import {
   RITE_MIN_M, RITE_MAX_M, RITE_OFF_APPROACH_DEG, RITE_REACH_M, RITE_UNITS_PER_M, RITE_FAITHFUL_MIN, RITE_FAITHFUL_MAX, RITE_CAREERS,
   RITE_SUMMONER_CAREER, riteOffset, riteLocalOf, riteNativeOf, riteNear, riteWindow, riteHolds, riteStands, riteFaithfulOf,
-} from '../src/net/gateRite.js';
-import { gateSpotLocal, gateYaw, gateTimes, PIXEL_M, isGateDay, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
+} from '../src/net/gate/gateRite.js';
+import { gateSpotLocal, gateYaw, gateTimes, PIXEL_M, isGateDay, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
 import { PIXEL_UNITS, mapPixelOfWire, validRiteIn, validRiteOut, parseClient, relaySupportsRite, RITE_RELAY_MIN, RITE_BY_MAX, sanitizeName } from '../src/net/wire.js';
-import { ritePost } from '../src/net/gateHerald.js';
-import { RECEIPT_EARNED, receiptValid, mintReceipt, readReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
+import { ritePost } from '../src/net/gate/gateHerald.js';
+import { RECEIPT_EARNED, receiptValid, mintReceipt, readReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64 } from '../src/net/identityToken.js';
 import { createGuest, claimGate, gateRecordOf, insigniaPurse, buyInsignia } from '../server-account/src/accounts.js';
 

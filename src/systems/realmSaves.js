@@ -41,7 +41,7 @@
 // moved past it drops it unread. The copy is the save's text; its put
 // packs it as every checkpoint rides (REALM-GZIP, below).
 //
-// REALM-GZIP: IT RIDES PACKED (net/realmSaveCodec.js). A long life's
+// REALM-GZIP: IT RIDES PACKED (net/realm/realmSaveCodec.js). A long life's
 // JSON grew past the request's 4 MiB and every checkpoint was refused
 // for good; a put packs the text when the service said it opens a packed
 // save (`gzip` on the join, create and customs answers), and a read asks
@@ -49,9 +49,9 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { storedSession, serviceBase, forgetSession, accountRefusalText, forgetD1Bookmark } from '../net/accountClient.js';   // AUDIT SCALE II A-2: a write forgets the page's D1 bookmark
-import { realmTradeRefusalText } from '../net/realmTradeLaw.js';   // REALM P2.1: a trade the realm settles
+import { realmTradeRefusalText } from '../net/realm/realmTradeLaw.js';   // REALM P2.1: a trade the realm settles
 import { REALM_DOOR_WORD } from '../net/wire.js';   // REALM-DOOR: the relay's word for a token that names no realm character
-import { gzipText, gunzipText, saveTextOf, canGzip, canGunzip } from '../net/realmSaveCodec.js';   // REALM-GZIP: a save rides packed
+import { gzipText, gunzipText, saveTextOf, canGzip, canGunzip } from '../net/realm/realmSaveCodec.js';   // REALM-GZIP: a save rides packed
 import { houseLine } from '../net/houseLaw.js';   // LEGACY7: the house on the roster's tile
 
 

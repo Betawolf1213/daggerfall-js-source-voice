@@ -1,7 +1,7 @@
 [
   {
     "name": "ARENA4b-BLOW-SEQ-IGNORED",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "const same = q != null && q === M.q && now - M.qAt < 250;",
     "new": "const same = false;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ARENA4b-BLOW-SEQ-UNKEPT",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "M.hits.push(now); M.q = q ?? -1; M.qAt = now;",
     "new": "M.hits.push(now); M.q = -1; M.qAt = now;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ARENA4b-BLOW-FOURTH-CAST",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "      if (M.spells.length >= ARENA_SPELLS_IN) return out;\n",
     "new": "",
     "tests": [

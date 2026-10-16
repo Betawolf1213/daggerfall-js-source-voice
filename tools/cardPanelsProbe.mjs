@@ -48,8 +48,8 @@ const gambitCells = [];
 /** Mount one scene's panel on the page, through the real painter and model. */
 async function mount(page, scene) {
   await page.evaluate(async (scene) => {
-    const { newGame, commit, reveal, iliacView } = await import('/src/net/iliacHand.js');
-    const { STARTER_DECK } = await import('/src/net/iliacCards.js');
+    const { newGame, commit, reveal, iliacView } = await import('/src/net/iliac/iliacHand.js');
+    const { STARTER_DECK } = await import('/src/net/iliac/iliacCards.js');
     const { patronPlays } = await import('/src/systems/iliac/iliacPatrons.js');
     const ih = await import('/src/ui/iliacTableHud.js');
     const ch = await import('/src/ui/cardTableHud.js');

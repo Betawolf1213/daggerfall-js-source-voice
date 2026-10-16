@@ -11,12 +11,12 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { fakeRooms } from './fakeRoom.mjs';
-import { gateTimes, gateRoomKey, gateModsOf, gateMarksCycleLength } from '../src/net/gateLaw.js';
-import { gateModsWords, GATE_FEEDS_MAX } from '../src/net/gateMods.js';
+import { gateTimes, gateRoomKey, gateModsOf, gateMarksCycleLength } from '../src/net/gate/gateLaw.js';
+import { gateModsWords, GATE_FEEDS_MAX } from '../src/net/gate/gateMods.js';
 import {
   newFight, joinFight, stepBrain, fightProfile, profileOf, ATTACK_BY_ID, BRAIN_TICK_MS, COURT_CENTRE, ABSENT_RETIRE_MS, SEAT_KEEP_MS,
-} from '../src/net/gateBrain.js';
-import { inAttack } from '../src/net/gateStrike.js';
+} from '../src/net/gate/gateBrain.js';
+import { inAttack } from '../src/net/gate/gateStrike.js';
 import { GATE_BRAIN_V } from '../src/net/wire.js';
 import { gateTip } from '../src/systems/gate/gateOmen.js';
 import { bossBarModel } from '../src/ui/gateBossBar.js';

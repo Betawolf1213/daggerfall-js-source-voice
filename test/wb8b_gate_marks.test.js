@@ -7,24 +7,24 @@
 // draw is a cycle: every aspect with every pair of trials ONCE each in 144 gates (112 for WB8b's eight), no two gates
 // running sharing a mark, each round of four gates every aspect and eight of the nine trials, the ninth resting (AUDIT
 // PRE-MERGE 0929 W1-4: a round - gates 4k to 4k+3 - not any four running)
-// (net/gateLaw.js gateModsOf). The relay's brain fights under the fight's own marks (net/gateBrain.js fightProfile), says
+// (net/gate/gateLaw.js gateModsOf). The relay's brain fights under the fight's own marks (net/gate/gateBrain.js fightProfile), says
 // them in its state (`md`), and every screen resolves and draws the same law from them.
 //
-// Pinned here: the tables (net/gateMods.js), the cycle, the profile against the constants it replaces, each trial's law
+// Pinned here: the tables (net/gate/gateMods.js), the cycle, the profile against the constants it replaces, each trial's law
 // in the brain, the escape from every attack under every set of marks, the wire and the relay's draw.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
   GATE_ASPECTS, GATE_TRIALS, GATE_TRIALS_A_DAY, gateAspectOf, gateTrialOf, readGateMods, validGateMods, gateModsWords, GATE_FEEDS_MAX,
-} from '../src/net/gateMods.js';
-import { gateModsOf, gateMarksCycleLength, gateTimes, gateRoomKey, gateIndex, GATE_EVERY_DAYS } from '../src/net/gateLaw.js';
+} from '../src/net/gate/gateMods.js';
+import { gateModsOf, gateMarksCycleLength, gateTimes, gateRoomKey, gateIndex, GATE_EVERY_DAYS } from '../src/net/gate/gateLaw.js';
 import {
   newFight, joinFight, applyHit, stepBrain, stateOf, attacksFor, pickTarget, windupOf, fightProfile, profileOf, attackUnder,
   BASE_PROFILE, SCAR_POOLS, FAVOURED_PHASE, ATTACKS, ATTACK_BY_ID, POOLS, BOSS_R, BOSS_H, SHIELD_MS, THREAT_PICK, THREAT_DECAY,
   BOSS_TTK_S, dpsRef, HIT_KINDS, MELEE_REACH, POSE_SLACK, PHASE_AT, COURT_CENTRE, BRAIN_TICK_MS, OPENING_MS, TURN_BREATH_MS,
   SEAT_KEEP_MS, RECEIPT_SHARE, hasPart, COURTS, CROSS_WARD_MAX_MS,
-} from '../src/net/gateBrain.js';
+} from '../src/net/gate/gateBrain.js';
 import { validGateOut, GATE_OUT_KINDS, GATE_BRAIN_V, GATE_BRAIN_MIN, RELAY_VERSION } from '../src/net/wire.js';
 import { fakeRooms } from './fakeRoom.mjs';
 

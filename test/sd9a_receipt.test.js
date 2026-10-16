@@ -1,5 +1,5 @@
 // SD9a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 11): THE HOUR'S RECEIPT - the
-// relay's signature on the Brass Remnant's fall (net/sdReceipt.js, an `h1`), minted in the realm for each fighter who
+// relay's signature on the Brass Remnant's fall (net/superDungeon/sdReceipt.js, an `h1`), minted in the realm for each fighter who
 // earned it (the gate's `earned`) before the fall is said, handed to them there and again at a late `in`, kept by the hub
 // for its life (held from a realm fighter's hellos while its floor spends it; handed at once to every other earner's
 // newest socket; spent at the account's word), swept when it expires - and the page's half: its receipt heard from its
@@ -11,19 +11,19 @@ import { webcrypto } from 'node:crypto';
 import {
   SD_RECEIPT_V, SD_RECEIPT_TTL_S, SD_RECEIPT_MAX, SD_EARNED, SD_RECEIPT_BOSS, SD_RECEIPT_SLOT_MAX, SD_RECEIPT_LV_MAX,
   sdReceiptValid, mintSdReceipt, readSdReceipt, verifySdReceipt,
-} from '../src/net/sdReceipt.js';
-import { mintReceipt, verifyReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
-import { mintSerpentReceipt, verifySerpentReceipt, readSerpentReceipt } from '../src/net/serpentReceipt.js';
-import { readReceipt } from '../src/net/gateReceipt.js';
+} from '../src/net/superDungeon/sdReceipt.js';
+import { mintReceipt, verifyReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
+import { mintSerpentReceipt, verifySerpentReceipt, readSerpentReceipt } from '../src/net/serpent/serpentReceipt.js';
+import { readReceipt } from '../src/net/gate/gateReceipt.js';
 import {
   validSdIn, validSdOut, validSdFellTell, SD_KINDS, SD_OUT_KINDS, SD_SLOT_MAX, SD_RECEIPT_WIRE_MAX, SD_RC_PREFIX, sdReceiptKey,
   SD_HERE_HOLD_MS, SD_FIGHT_KEY, SD_KEY, SD_BRAIN_V, SOCIAL_ROOM, worldRoom, PIXEL_UNITS, RELAY_VERSION,
 } from '../src/net/wire.js';
-import { realmToDungeon, SD_ARENA } from '../src/net/sdBrain.js';
-import { SD_OPENING_MS } from '../src/net/sdRemnant.js';
-import { HIT_KINDS, RECEIPT_SHARE } from '../src/net/gateBrain.js';
-import { sdRoomKey } from '../src/net/sdLaw.js';
-import { PIXEL_M } from '../src/net/gateLaw.js';
+import { realmToDungeon, SD_ARENA } from '../src/net/superDungeon/sdBrain.js';
+import { SD_OPENING_MS } from '../src/net/superDungeon/sdRemnant.js';
+import { HIT_KINDS, RECEIPT_SHARE } from '../src/net/gate/gateBrain.js';
+import { sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { OnlineSession } from '../src/net/online.js';
@@ -292,6 +292,6 @@ test('SD9a the relay by source: the receipts minted before the fall is said, by 
   assert.match(w, /await this\._sdKeepReceipts\(c, Date\.now\(\)\);/);
   assert.match(w, /if \(sub\) \{ try \{ await this\._sdReceiptTo\(ws, sub, now\); \}/);   // PIN MOVED, SCALE5c: among the hub's words (`_hubHelloWords`), by the verified subject
   assert.match(w, /'sweep:sdrc'/);
-  assert.match(w, /import \{ mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S \} from '\.\.\/\.\.\/src\/net\/sdReceipt\.js';/);
-  assert.match(read('test/relayversion.test.js'), /'src\/net\/sdReceipt\.js'\]/, 'net/sdReceipt.js in the bundle');   // PIN MOVED (INT12): last still - net/sdRemnant.js walks earlier now, under net/bossRef.js
+  assert.match(w, /import \{ mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S \} from '\.\.\/\.\.\/src\/net\/superDungeon\/sdReceipt\.js';/);
+  assert.match(read('test/relayversion.test.js'), /'src\/net\/superDungeon\/sdReceipt\.js'\]/, 'net/superDungeon/sdReceipt.js in the bundle');   // PIN MOVED (INT12): last still - net/superDungeon/sdRemnant.js walks earlier now, under net/bossRef.js
 });

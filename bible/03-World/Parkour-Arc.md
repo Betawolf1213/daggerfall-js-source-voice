@@ -711,7 +711,7 @@ and silent.
   and wraps them, `poseChanged` sends a hold, a move and a turn on the wall at once (compared as an angle), `lerpPose`
   carries them whole. RELAY_VERSION world141 (world138 on the branch, renumbered at the merge of main), not yet deployed - a relay before it strips both, and the others draw a
   climber as before.
-- **The others** (`net/peerClimb.js`): the Morrowind body faces the wall and takes the in-air pose the local third
+- **The others** (`net/peer/peerClimb.js`): the Morrowind body faces the wall and takes the in-air pose the local third
   person takes there; no walk on the wall (a shimmy is hands, not strides) for the bodies, the billboards, the riders'
   walkers and the stride; and the climb is HEARD at the climber - the catch, the hands onto a face, the haul over a lip,
   the hold taken, the let-go, a hand per reach up a face and a boot after, a hand per span along a lip - behind the

@@ -13,7 +13,7 @@
 //     wind-up they light one by one in its soul-white, the last two in ember, and when XII lights it lands.
 //   THE HOUR ENDS - every fissure and numeral red.
 //
-// What it reads of the fight is `sdArenaGlowAt` (pure over the page's fight state - net/sdFightLink.js - and the clock):
+// What it reads of the fight is `sdArenaGlowAt` (pure over the page's fight state - net/superDungeon/sdFightLink.js - and the clock):
 // the Pulse's landing (kept: the clock's blow is replaced by the next), the Reset's wind-up, the End. The same word for
 // the Hour's sky (`sdHourClockOf`, render/sdSky.js uClock): the hands sweep to XII with the numerals.
 //
@@ -22,8 +22,8 @@ import { buildProgram } from './glProgram.js';
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
 import { SD_NUMERAL_GLSL, SD_SKY_MODE } from './sdSky.js';
-import { SD_ARENA } from '../net/sdBrain.js';
-import { SD_BLOWS } from '../net/sdRemnant.js';
+import { SD_ARENA } from '../net/superDungeon/sdBrain.js';
+import { SD_BLOWS } from '../net/superDungeon/sdRemnant.js';
 
 /** The fissures: how many, their reach (m from the boss: from, to), the jag of their runs (m), and the field's texels a
  *  side and its reach (m - the field saturates past it). */
@@ -84,7 +84,7 @@ export function sdFissureField(paths = sdFissurePaths()) {
 
 const RESET = SD_BLOWS.reset, PULSE = SD_BLOWS.pulse, END = SD_BLOWS.end;
 /**
- * WHAT THE ARENA'S FLOOR TELLS at `t` of the fight state `s` (net/sdFightLink.js state(); null - none): `memo`, filled and
+ * WHAT THE ARENA'S FLOOR TELLS at `t` of the fight state `s` (net/superDungeon/sdFightLink.js state(); null - none): `memo`, filled and
  * answered - `{ flood: the front's reach (m, < 0 none), floodK: its strength 0..1, reset: numerals lit (-1 none), end:
  * 0|1, pulseAt }`. The Pulse's landing is kept in `memo` (the clock's blow is replaced by the next), so a flood plays out
  * once landed; a stun takes the Reset's count out. Nothing made (the frame's).

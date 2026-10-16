@@ -10,7 +10,7 @@
   },
   {
     "name": "RING-HOLD-the-said-unread",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "    const notice = typeof said === 'string' && said ? said : typeof reason === 'string' ? /** @type {Record<string, string>} */ (TRADE_HELD_NOTICES)[reason] : undefined;",
     "new": "    const notice = typeof reason === 'string' ? /** @type {Record<string, string>} */ (TRADE_HELD_NOTICES)[reason] : undefined;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "RING-WARN-the-strikes-unsaid",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "export const TRADE_HELD_STRIKES = ' Each time the law holds it counts: the third time, trading stays frozen until staff have looked.';",
     "new": "export const TRADE_HELD_STRIKES = '';",
     "tests": [

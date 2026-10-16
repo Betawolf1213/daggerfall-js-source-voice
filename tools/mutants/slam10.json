@@ -76,7 +76,7 @@
   },
   {
     "name": "T6-strangers-take-bodies",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "      if (peer.told === false) continue;",
     "new": "      void peer.told;",
     "tests": [

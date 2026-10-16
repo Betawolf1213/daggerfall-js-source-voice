@@ -20,7 +20,7 @@ import { buildRealmModel, SD_REALM_ROOT_RECORD, SD_REALM_BRASS_RECORD, SD_ISLAND
 import { realmArt } from '../src/world/superDungeon/sdRealmArt.js';
 import { SD_HALL_FLOORS } from '../src/world/superDungeon/sdHall.js';
 import { SD_CHECKPOINTS, SD_STEPS_COURSE, SD_STEP_THICK } from '../src/world/superDungeon/sdSteps.js';
-import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN, dungeonToRealm } from '../src/net/sdBrain.js';
+import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { SD_SKY_PAINT_FS, SD_SKY_PERIOD, SD_FURNACE } from '../src/render/sdSky.js';
 import { SD_RAMP, sdTick } from '../src/world/superDungeon/sdLook.js';
 import { offPalette, paletteOf } from '../src/world/superDungeon/sdPixelKit.js';

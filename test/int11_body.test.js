@@ -13,9 +13,9 @@ import {
   bodyConfig, newBody, bodyStruck, bodySaid, bodyLife, bodyCensus, bodyDown, bodyOut, bodyMeasure, bodyMeasureValid, deepIn, bodySayer,
 } from '../src/net/bossBody.js';
 import { judgeGate, judgeRemnant, judgeSerpent, posAt, posAfter } from '../src/net/bossRef.js';
-import { newFight, joinFight, profileOf, ATTACKS, HOST_BLOWS, hostBlowUnder } from '../src/net/gateBrain.js';
-import { newRemnantFight, joinRemnant, SD_BLOWS, SD_PILLARS, SD_RESET_PCT, SD_END_PCT, pulsePctOf } from '../src/net/sdRemnant.js';
-import { SERPENT_ATTACK_TABLE, GRIP, CRUSH, MAEL_GRIND, MAEL_EYE_R, RAM_V } from '../src/net/serpentBrain.js';
+import { newFight, joinFight, profileOf, ATTACKS, HOST_BLOWS, hostBlowUnder } from '../src/net/gate/gateBrain.js';
+import { newRemnantFight, joinRemnant, SD_BLOWS, SD_PILLARS, SD_RESET_PCT, SD_END_PCT, pulsePctOf } from '../src/net/superDungeon/sdRemnant.js';
+import { SERPENT_ATTACK_TABLE, GRIP, CRUSH, MAEL_GRIND, MAEL_EYE_R, RAM_V } from '../src/net/serpent/serpentBrain.js';
 import { FIELD_REFLOAT, SEA_REPAIR_PER_S, SEA_REPAIR_UNDER_FIRE, FIELD_MEND_PER_S } from '../src/systems/naval/navalYard.js';
 import { BODY_WORD_MAX } from '../src/net/wire.js';
 

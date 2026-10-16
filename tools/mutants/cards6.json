@@ -69,7 +69,7 @@
   },
   {
     "name": "C6-broke-with-chips",
-    "file": "src/net/cardReceipt.js",
+    "file": "src/net/card/cardReceipt.js",
     "old": "  if ((c.w === 'broke' || c.w === 'joined') && c.r !== 0) return false;   // out of chips is nothing back; a top-up's is its seat's\n",
     "new": "",
     "tests": [
@@ -90,7 +90,7 @@
   },
   {
     "name": "C6-why-any",
-    "file": "src/net/cardReceipt.js",
+    "file": "src/net/card/cardReceipt.js",
     "old": "  if (!CARD_RECEIPT_WHY.includes(c.w)) return false;\n",
     "new": "",
     "tests": [
@@ -107,7 +107,7 @@
   },
   {
     "name": "C6-receipt-forever",
-    "file": "src/net/cardReceipt.js",
+    "file": "src/net/card/cardReceipt.js",
     "old": "  if (!anyAge && nowS >= claims.e) return { ok: false, why: 'expired' };\n",
     "new": "",
     "tests": [
@@ -536,7 +536,7 @@
   },
   {
     "name": "C6-book-no-hold",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "...(first ? { reserve: () => wallet(x.reg).pay(x.amount) } : { apply:",
     "new": "...(first ? {} : { apply:",
     "tests": [
@@ -557,7 +557,7 @@
   },
   {
     "name": "C6-book-repeat-pays",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "if (!a?.data?.repeat && Number.isSafeInteger(g) && g > 0)",
     "new": "if (Number.isSafeInteger(g) && g > 0)",
     "tests": [
@@ -574,7 +574,7 @@
   },
   {
     "name": "C6-book-not-kept-first",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "      write(CARD_STAKES_KEY, [...read(CARD_STAKES_KEY), { rid, room, table, bb, amount, c, reg, at: now(), ...(topup ? { topup: true } : {}), ...(place ? { place: String(place).slice(0, 80) } : {}) }]);\n",
     "new": "",
     "tests": [
@@ -595,7 +595,7 @@
   },
   {
     "name": "C6-book-any-character",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "(x.c == null || x.c === character()) && !tried.has(x.j)",
     "new": "!tried.has(x.j)",
     "tests": [
@@ -616,7 +616,7 @@
   },
   {
     "name": "C6-book-void-at-once",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "t - x.at >= CARD_VOID_AFTER_MS",
     "new": "true",
     "tests": [

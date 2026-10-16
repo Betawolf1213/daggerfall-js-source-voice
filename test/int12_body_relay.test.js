@@ -10,21 +10,21 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { BODY_DEFAULT, BODY_AFTER_MS, bodyStruck, bodyMeasure, bodyMeasureValid, HULL_REFLOAT } from '../src/net/bossBody.js';
-import { COURT_CENTRE, ATTACKS, profileOf, BRAIN_TICK_MS, earned, HIT_KINDS } from '../src/net/gateBrain.js';
-import { mintReceipt, readReceipt, verifyReceipt, receiptValid, importReceiptKey } from '../src/net/gateReceipt.js';
-import { mintSdReceipt, readSdReceipt, sdReceiptValid } from '../src/net/sdReceipt.js';
-import { mintSerpentReceipt, readSerpentReceipt, serpentReceiptValid } from '../src/net/serpentReceipt.js';
-import { gateTimes, gateRoomKey, PIXEL_M } from '../src/net/gateLaw.js';
+import { COURT_CENTRE, ATTACKS, profileOf, BRAIN_TICK_MS, earned, HIT_KINDS } from '../src/net/gate/gateBrain.js';
+import { mintReceipt, readReceipt, verifyReceipt, receiptValid, importReceiptKey } from '../src/net/gate/gateReceipt.js';
+import { mintSdReceipt, readSdReceipt, sdReceiptValid } from '../src/net/superDungeon/sdReceipt.js';
+import { mintSerpentReceipt, readSerpentReceipt, serpentReceiptValid } from '../src/net/serpent/serpentReceipt.js';
+import { gateTimes, gateRoomKey, PIXEL_M } from '../src/net/gate/gateLaw.js';
 import {
   GATE_BRAIN_V, GATE_KINDS, GATE_OUT_KINDS, SD_KINDS, SD_OUT_KINDS, SERPENT_KINDS, SERPENT_OUT_KINDS, BODY_WORD_MAX, BOSS_REF_RELAY_MIN,
   relaySupportsBossRef, validGateIn, validGateOut, validSdIn, validSdOut, validSerpentIn, validSerpentOut, RELAY_VERSION, SOCIAL_ROOM, SD_KEY, worldRoom, PIXEL_UNITS,
   SD_BRAIN_V, cellRoomOfWire, serpentFightId,
 } from '../src/net/wire.js';
-import { realmToDungeon, SD_ARENA } from '../src/net/sdBrain.js';
-import { SD_BLOWS, SD_END_PCT } from '../src/net/sdRemnant.js';
-import { sdRoomKey } from '../src/net/sdLaw.js';
-import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
-import { SERPENT_ATTACK_TABLE, SERPENT_TICK_MS } from '../src/net/serpentBrain.js';
+import { realmToDungeon, SD_ARENA } from '../src/net/superDungeon/sdBrain.js';
+import { SD_BLOWS, SD_END_PCT } from '../src/net/superDungeon/sdRemnant.js';
+import { sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
+import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
+import { SERPENT_ATTACK_TABLE, SERPENT_TICK_MS } from '../src/net/serpent/serpentBrain.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { standService } from './accountDb.mjs';
 import { claimGate } from '../server-account/src/accounts.js';

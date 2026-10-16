@@ -11,7 +11,7 @@ import { ShadowPass, DEPTH_FS, DEPTH_BB_FS, SHADOW_TUNING } from '../src/render/
 import { Renderer } from '../src/render/renderer.js';
 import { SKIN_PALETTE_UNIT } from '../src/render/skinPalette.js';
 import { ortho, perspective, lookAt, multiply } from '../src/world/mat4.js';
-import { PeerBodies } from '../src/net/peerBodies.js';
+import { PeerBodies } from '../src/net/peer/peerBodies.js';
 import { createNpcBodies, createPopulationLane } from '../src/characters/npcBodies.js';
 import { createFpArm } from '../src/combat/fpArm.js';
 import { fixtureBodyDeps, countingRenderer } from './fixtures/mw/bodyRig.mjs';

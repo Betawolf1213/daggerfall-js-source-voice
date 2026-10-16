@@ -12,8 +12,8 @@ import worker from '../server-account/src/index.js';
 import { strikeGateMarks } from '../server-account/src/marks.js';
 import { ROUTES, OPEN_ROUTES } from '../server-account/src/service.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
-import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
-import { GUILD_FOUND_RENOWN, GUILD_FOUND_GOLD } from '../src/net/guildLaw.js';
+import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
+import { GUILD_FOUND_RENOWN, GUILD_FOUND_GOLD } from '../src/net/guild/guildLaw.js';
 import { renownXpFor } from '../src/net/renown.js';
 import {
   MARKS_MAX, MARKS_FAUCETS, MARKS_BANK, MARKS_KINDS, MARKS_SWITCH, marksSwitchOf, utcDay, marksAmountOk, exchangeGold,
@@ -21,7 +21,7 @@ import {
 } from '../src/net/marksLaw.js';
 import { accountMarks, REFUSALS, SESSION_KEY } from '../src/net/accountClient.js';
 import { createMarksBook, MARKS_TEXT, MARKS_PENDING_KEY, mintMarksRid } from '../src/net/marksBook.js';
-import { createGateClaims, gateClaimVerdict, GATE_CLAIM_TEXT } from '../src/net/gateClaims.js';
+import { createGateClaims, gateClaimVerdict, GATE_CLAIM_TEXT } from '../src/net/gate/gateClaims.js';
 import { creditMarksSale, marksSaleCredit, createBankAccounts } from '../src/systems/banking.js';
 import { BankWindow, MARKS_ENTRY, MARKS_COUNTING } from '../src/ui/bankWindow.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // MERGE 2: TERMS1 - a request that makes an account carries the versions ticked

@@ -11,14 +11,14 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import * as acorn from 'acorn';
-import { riseLine, wrathLine, gateBossOf } from '../src/net/gateLaw.js';
-import { omenPost, fellPost } from '../src/net/gateHerald.js';
+import { riseLine, wrathLine, gateBossOf } from '../src/net/gate/gateLaw.js';
+import { omenPost, fellPost } from '../src/net/gate/gateHerald.js';
 import { GATE_NO_WORDS } from '../src/net/wire.js';
 import { fellLine, omenTimeLine, openTimeLine, sealTimeLine } from '../src/systems/gate/gateOmen.js';   // TIME1, at the merge: the three that name a time, in local time alone
 import { GATE_TEXT } from '../src/scenes/gatePool.js';
 import { GATE_LEGEND_TEXT } from '../src/ui/gateMapMark.js';
 import { MARKS_CARD_TEXT } from '../src/ui/gateMarksView.js';
-import { GATE_CLAIM_TEXT } from '../src/net/gateClaims.js';
+import { GATE_CLAIM_TEXT } from '../src/net/gate/gateClaims.js';
 import { MARKS_TEXT } from '../src/net/marksBook.js';
 import { profileGateLine } from '../src/ui/profileWindow.js';
 import { accountRefusalText } from '../src/net/accountClient.js';

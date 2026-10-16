@@ -12,7 +12,7 @@ import {
   gateSkyPhaseWeight, gateSkyNear, gateSkyWeight, createGateOmen, gateSceneXZ,
   GATE_SKY_KINDLE, GATE_SKY_KINDLE_MS, GATE_SKY_OMEN, GATE_SKY_RISEN, GATE_SKY_FULL_M, GATE_SKY_EDGE_M, GATE_STORM_RING,
 } from '../src/systems/gate/gateOmen.js';
-import { gateTimes, isGateDay, GATE_COLLAPSE_MS, PIXEL_M } from '../src/net/gateLaw.js';
+import { gateTimes, isGateDay, GATE_COLLAPSE_MS, PIXEL_M } from '../src/net/gate/gateLaw.js';
 import { GATE_TOWN_MAX_PX } from '../src/systems/gate/gateSite.js';
 import { dreadStrikes, createDreadStorm, DREAD_NEAR_M, DREAD_FAR_M, DREAD_BOLT_COLOR, DREAD_SLOT_MS } from '../src/world/dreadSky.js';
 import { thunderOf } from '../src/systems/distantStorms.js';

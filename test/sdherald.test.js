@@ -1,5 +1,5 @@
 // SD-HERALD (2026-10-09, the owner: "We need to add discord integration to abyss dungeons"): THE ABYSS DUNGEON'S
-// HERALD, DRIVEN. The law (net/sdHerald.js: the rise's, the find's, the fall's and the fade's posts, and which the
+// HERALD, DRIVEN. The law (net/superDungeon/sdHerald.js: the rise's, the find's, the fall's and the fade's posts, and which the
 // herald owes off the hub's record), and the hub over the real Room with Discord stubbed (server/src/index.js: the rise
 // posted on the alarm that raised it, a find and a fall the moment the hub hears them, a found Hollow's fade, an unfound
 // one's never, a refusal posted again, each moment once, nothing without a webhook), and the door's role.
@@ -7,9 +7,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { sdRisePost, sdFoundPost, sdFellPost, sdFadePost, sdHeraldPost, sdHeraldDue, sdHeraldName, sdRegionName, readSdHeraldState } from '../src/net/sdHerald.js';
-import { HERALD_RETRY_MS, HERALD_FELL_KEEP_MS } from '../src/net/gateHerald.js';
-import { sdFind, sdFell, sdGone, SD_LIFETIME_MS, SD_COLLAPSE_MS, SD_COOLDOWN_MS, SD_FADE_GRACE_MS } from '../src/net/sdLaw.js';
+import { sdRisePost, sdFoundPost, sdFellPost, sdFadePost, sdHeraldPost, sdHeraldDue, sdHeraldName, sdRegionName, readSdHeraldState } from '../src/net/superDungeon/sdHerald.js';
+import { HERALD_RETRY_MS, HERALD_FELL_KEEP_MS } from '../src/net/gate/gateHerald.js';
+import { sdFind, sdFell, sdGone, SD_LIFETIME_MS, SD_COLLAPSE_MS, SD_COOLDOWN_MS, SD_FADE_GRACE_MS } from '../src/net/superDungeon/sdLaw.js';
 import { SOCIAL_ROOM, SD_KEY, SD_INTERNAL_FOUND, SD_INTERNAL_FELL, PIXEL_UNITS } from '../src/net/wire.js';
 import { fakeRoom } from './fakeRoom.mjs';
 

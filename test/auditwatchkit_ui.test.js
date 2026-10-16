@@ -27,7 +27,7 @@ import * as NH from '../src/ui/navalHud.js';   // a namespace: a new export read
 import { fitIcon } from '../src/ui/iconFit.js';
 import { partyFxAbbrev } from '../src/net/partyBuffs.js';
 import { SocialState } from '../src/net/social.js';
-import { liquidWealthOf, liquidWorthOf, stashedItemLists, customsAllowance } from '../src/net/realmGoldLaw.js';
+import { liquidWealthOf, liquidWorthOf, stashedItemLists, customsAllowance } from '../src/net/realm/realmGoldLaw.js';
 import { applyCustoms } from '../src/systems/realmCustoms.js';
 import { firstSaveRefusal } from '../server-account/src/realm.js';
 import { NAVAL_SAVE_VENDOR } from '../src/scenes/navalHost.js';

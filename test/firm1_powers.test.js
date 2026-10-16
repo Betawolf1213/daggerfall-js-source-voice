@@ -9,8 +9,8 @@ import assert from 'node:assert/strict';
 
 import { setFirmamentTree, setFirmamentOnline, firmamentInForce, firmActMult, _resetFirmamentLiveForTests } from '../src/systems/firmamentLive.js';
 import { firmamentAwake, firmamentDamage, firmamentLayer, firmamentCastCost, firmamentFold, withoutFirmament, _resetFirmamentPowersForTests } from '../src/systems/firmamentPowers.js';
-import { FIRM_NODES } from '../src/net/firmamentTree.js';
-import { pathTo, treeStats, blowPct, pctOf } from '../src/net/firmamentLaw.js';
+import { FIRM_NODES } from '../src/net/firmament/firmamentTree.js';
+import { pathTo, treeStats, blowPct, pctOf } from '../src/net/firmament/firmamentLaw.js';
 import { createCharacter } from '../src/systems/chargen.js';
 import { buildCustomCareer } from '../src/systems/customClass.js';
 import { SKILLS, skillValue, permanentSkillValue } from '../src/systems/skills.js';

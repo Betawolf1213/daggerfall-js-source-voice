@@ -6,9 +6,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createSpoilsPool, spoilsList, spoilsStore, recoverSpoils, spentKey, SPOILS_STORE_KEY, SPOILS_DAY_KEY, SPOILS_TEXT, SPOILS_RECORDS_MAX, SPOILS_SPENT_MAX, SPOILS_RECORD_V } from '../src/scenes/spoilsPool.js';
-import { createGateClaims, gateClaimVerdict, GATE_CLAIM_MENDABLE, GATE_CLAIMS_KEY, GATE_ME_POLL_MS } from '../src/net/gateClaims.js';
+import { createGateClaims, gateClaimVerdict, GATE_CLAIM_MENDABLE, GATE_CLAIMS_KEY, GATE_ME_POLL_MS } from '../src/net/gate/gateClaims.js';
 import { accountGates, call, SESSION_KEY } from '../src/net/accountClient.js';
-import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const subtle = globalThis.crypto.subtle;

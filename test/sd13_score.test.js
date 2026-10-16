@@ -18,10 +18,10 @@ import {
   HOUR_CHIME, HOUR_CHIME_MENDED, SD_SCORE_SILENCE, SD_SCORE_ENDS_WARN_MS, SD_SCORE_STING_MS,
 } from '../src/systems/superDungeon/sdScore.js';
 import { gateScoreSongs, midiNote, SCORE_TPQ, SCORE_STING_LEAD_MS } from '../src/systems/gate/gateScore.js';
-import { SD_ARENA, SD_ORRERY, dungeonToRealm, realmToDungeon } from '../src/net/sdBrain.js';
+import { SD_ARENA, SD_ORRERY, dungeonToRealm, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { SD_FIRST_STEP } from '../src/world/superDungeon/sdHall.js';
 import { SD_BAR_NEAR_M } from '../src/ui/sdRemnantBar.js';
-import { sdPhase } from '../src/net/sdLaw.js';
+import { sdPhase } from '../src/net/superDungeon/sdLaw.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const constOf = (name) => { const at = W.indexOf(`\n  const ${name} = `); assert.ok(at > 0, name); return W.slice(at + 1, W.indexOf('\n  };\n', at) + 5); };

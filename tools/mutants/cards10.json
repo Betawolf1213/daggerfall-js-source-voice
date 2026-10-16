@@ -253,7 +253,7 @@
   },
   {
     "name": "CARDS10-relay-bad-deck",
-    "file": "src/net/iliacTable.js",
+    "file": "src/net/iliac/iliacTable.js",
     "old": "  if (!Array.isArray(deck) || deckValid(deck) !== null) return 'bad deck';\n",
     "new": "",
     "tests": [
@@ -262,7 +262,7 @@
   },
   {
     "name": "CARDS10-relay-own-view",
-    "file": "src/net/iliacTable.js",
+    "file": "src/net/iliac/iliacTable.js",
     "old": "const own = (t, p) => ({ to: t.seats[p].id,",
     "new": "const own = (t, p) => ({ to: null,",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "CARDS10-relay-hidden-commit",
-    "file": "src/net/iliacTable.js",
+    "file": "src/net/iliac/iliacTable.js",
     "old": "  const said = { t: 'commit', seat: p, at: now };",
     "new": "  const said = { t: 'commit', seat: p, plays, at: now };",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "CARDS10-relay-clock",
-    "file": "src/net/iliacTable.js",
+    "file": "src/net/iliac/iliacTable.js",
     "old": "    if (now < t.clockAt) return msgs;",
     "new": "    if (true) return msgs;",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "CARDS10-relay-two-accounts",
-    "file": "src/net/iliacTable.js",
+    "file": "src/net/iliac/iliacTable.js",
     "old": "  const ranked = t.seats.every(vouched) && t.seats[0].sub !== t.seats[1].sub;",
     "new": "  const ranked = t.seats.every(vouched);",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "CARDS10-relay-concede",
-    "file": "src/net/iliacTable.js",
+    "file": "src/net/iliac/iliacTable.js",
     "old": ": finish(t, now, p, idle ? 'idle' : null));",
     "new": ": finish(t, now, 1 - p, idle ? 'idle' : null));",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "CARDS10-receipt-draw",
-    "file": "src/net/iliacReceipt.js",
+    "file": "src/net/iliac/iliacReceipt.js",
     "old": "  if ((c.r === 2) !== (c.h === 'draw')) return false;   // a draw is said one way only\n",
     "new": "",
     "tests": [
@@ -445,7 +445,7 @@
   },
   {
     "name": "CARDS10-claims-mine",
-    "file": "src/net/iliacClaims.js",
+    "file": "src/net/iliac/iliacClaims.js",
     "old": "  const mineOf = (c, id) => !!c && !!id && c.f.includes(id);",
     "new": "  const mineOf = (c, id) => !!c;",
     "tests": [
@@ -454,7 +454,7 @@
   },
   {
     "name": "CARDS10-claims-verdict",
-    "file": "src/net/iliacClaims.js",
+    "file": "src/net/iliac/iliacClaims.js",
     "old": "  return answer?.error === 'receipt' && !ARENA_CLAIM_MENDABLE.includes(answer.why) ? 'done' : 'keep';",
     "new": "  return 'keep';",
     "tests": [

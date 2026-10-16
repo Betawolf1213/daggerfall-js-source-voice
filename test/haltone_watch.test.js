@@ -13,7 +13,7 @@ import { WatchVoice, HALT_GAP_S, EnemySoundSource, ATTRACT_RADIUS, OCCLUDED_VOLU
 import { createCityGuards, GUARD_MOBILE_TYPE } from '../src/scenes/cityGuards.js';
 import { windupFeedback, tellCues } from '../src/scenes/hostCombat.js';
 import { createSiegeNpcs } from '../src/scenes/siegeNpcs.js';
-import { SIEGE_UNITS_PER_M } from '../src/net/siegeRef.js';
+import { SIEGE_UNITS_PER_M } from '../src/net/siege/siegeRef.js';
 import { EnemyAI } from '../src/characters/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';

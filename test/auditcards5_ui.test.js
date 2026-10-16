@@ -15,8 +15,8 @@ import { GILDED_RECORDS, DRAGONFIRE_OATH, mintGilded } from '../src/systems/gild
 import { drawCollectionsPage, collectionsPageShown, collectionParts, resetCollectionsPage, setCollectionsPart, disarmCollectionsPage } from '../src/ui/collectionsPage.js';
 import { drawCardsPart, resetCardsPart, cardCanvas, _clearCardFacesForTests, copiesAllowed, TILE_H } from '../src/ui/cardBinderPage.js';
 import { giveBinder, binderOf, mintIliacCard } from '../src/systems/iliac/iliacItems.js';
-import { ILIAC_CARDS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
-import { ILIAC_DECK_SIZE } from '../src/net/iliacHand.js';
+import { ILIAC_CARDS, STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
+import { ILIAC_DECK_SIZE } from '../src/net/iliac/iliacHand.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const lcg = (seed) => () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed >>> 8) / 0x800000; };

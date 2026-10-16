@@ -2,7 +2,7 @@
 // `in` word's client-claimed `lv` and `mh` win over anything signed, so a modified client could fight the Grand Champion
 // with the health it named. Now the token signs the character's level (`cl`, net/identityToken.js claimsValid - the
 // account service mints it, another stream's), the relay carries it onto the socket (server/src/index.js `_named`),
-// and the vitality is that level's alone (net/arenaLaw.js ladderVitality) - the word's health read by nothing; a token
+// and the vitality is that level's alone (net/arena/arenaLaw.js ladderVitality) - the word's health read by nothing; a token
 // from a service before `cl` falls back to the claimed level held to the tier's own top plus a margin.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,9 +10,9 @@ import { fakeRooms } from './fakeRoom.mjs';
 import { mintToken, verifyToken, claimsValid, CHARACTER_LEVEL_MIN, CHARACTER_LEVEL_MAX, characterLevelIssuable } from '../src/net/identityToken.js';
 import {
   arenaBoutRoom, ladderVitality, ladderVitalityAt, ladderLevelCap, LADDER_LV_MARGIN, ARENA_CL_MIN, ARENA_CL_MAX, ARENA_FLOOR_CENTRE, PVE_HP_MAX, validArenaIn,
-} from '../src/net/arenaLaw.js';
+} from '../src/net/arena/arenaLaw.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { arenaLadderOf } from '../src/net/arenaLaw.js';
+import { arenaLadderOf } from '../src/net/arena/arenaLaw.js';
 
 const { subtle } = globalThis.crypto;
 const C = ARENA_FLOOR_CENTRE;

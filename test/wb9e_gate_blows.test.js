@@ -1,7 +1,7 @@
 // WB9e (2026-09-30, Mac: "Increase boss damage, further improve his telegraphs"): HIS BLOWS HEAVIER, AND READ BEFORE
 // THEY LAND AND SEEN AS THEY DO.
 //
-//   the weight       net/gateBrain.js ATTACKS - every share and base raised by about a third over WBX4's; two heavy
+//   the weight       net/gate/gateBrain.js ATTACKS - every share and base raised by about a third over WBX4's; two heavy
 //                    landings end anyone who has not healed between them; still every one escaped by moving
 //   the telegraph    render/gateTelegraph.js - an edge that reads from anywhere (its width in screen space), a FUSE
 //                    burning down its rim as the wind-up runs, the fill throbbing faster as the landing nears, the last
@@ -14,9 +14,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { ATTACKS, ATTACK_BY_ID, fightProfile, BASE_PROFILE, windupOf, COURTS } from '../src/net/gateBrain.js';
-import { strikeDamage } from '../src/net/gateStrike.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { ATTACKS, ATTACK_BY_ID, fightProfile, BASE_PROFILE, windupOf, COURTS } from '../src/net/gate/gateBrain.js';
+import { strikeDamage } from '../src/net/gate/gateStrike.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   telegraphShape, telegraphStyle, poolShapes, GateTelegraphRenderer, TELEGRAPH_STYLE, TELEGRAPH_FS, TELEGRAPH_WAVE_MPS, TELEGRAPH_WAVE_MS, TELEGRAPH_NOW_MS,
 } from '../src/render/gateTelegraph.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "WB9c-a-count-unbounded",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "Math.max(RECKON_CRYSTALS[0], Math.min(RECKON_CRYSTALS[1], 2 + Math.ceil(Math.max(0, n) / 2)))",
     "new": "Math.max(RECKON_CRYSTALS[0], 2 + Math.ceil(Math.max(0, n) / 2))",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB9c-a-health-off-the-court",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "Math.round((RECKON_TEAM_S * lvs.reduce((s, lv) => s + dpsRef(lv), 0)) / Math.max(1, n))",
     "new": "Math.round((RECKON_TEAM_S * lvs.length * dpsRef(60)) / Math.max(1, n))",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB9c-the-reckoning-never-armed",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (!f.rk && f.court === COURTS.length - 1) f.rk = now + RECKON_FIRST_MS;",
     "new": "    if (!f.rk && f.court === COURTS.length - 1 && f.phase > 3) f.rk = now + RECKON_FIRST_MS;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WB9c-a-crystal-off-the-floor",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "r = Math.sqrt(RECKON_RING[0] ** 2 + rng() * (RECKON_RING[1] ** 2 - RECKON_RING[0] ** 2));",
     "new": "r = RECKON_RING[1] + 8 * rng();",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WB9c-the-dead-counted",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  const live = bodies.filter((b) => !b.dead && f.players[b.sub]);\n  const n = crystalCountFor(live.length)",
     "new": "  const live = bodies.filter((b) => f.players[b.sub]);\n  const n = crystalCountFor(live.length)",
     "tests": [
@@ -48,7 +48,7 @@
   },
   {
     "name": "WB9c-the-rate-unshared",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (!spendBlow(p, now, seq, `x${c}`)) return out;",
     "new": "",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "WB9c-a-swing-from-across-the-court",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (r === HIT_KINDS.Melee && dist(pose.x, pose.z, q.x, q.z) - CRYSTAL_R > MELEE_REACH + POSE_SLACK) return out;",
     "new": "",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "WB9c-the-reckoning-left-standing",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (X.c.every((o) => o.h <= 0)) {",
     "new": "  if (false) {",
     "tests": [
@@ -75,7 +75,7 @@
   },
   {
     "name": "WB9c-an-attack-through-the-stun",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (now < (f.stunUntil ?? 0)) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }",
     "new": "  if (false) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }",
     "tests": [
@@ -84,7 +84,7 @@
   },
   {
     "name": "WB9c-the-blow-unscaled",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  const want = d * P.hitX * (now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);",
     "new": "  const want = d * P.hitX;",
     "tests": [
@@ -93,7 +93,7 @@
   },
   {
     "name": "WB9c-a-saving-throw-answering-it",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "saved: L.el != null && !isDagons(A) };",
     "new": "saved: L.el != null && A !== ATTACKS.wrath };",
     "tests": [
@@ -102,7 +102,7 @@
   },
   {
     "name": "WB9c-a-reckoning-landing-on-one-court",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "    case 'all': return true;",
     "new": "    case 'all': return Math.hypot(px - atk.x, pz - atk.z) <= 24;",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "WB9c-every-beat",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (key === f.cxSent) return;",
     "new": "",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "WB9c-another-reckonings-health-taken",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "    case 'cxh': return s.cx && s.cx.i === g.i ?",
     "new": "    case 'cxh': return s.cx ?",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "WB9c-the-breaker-forgotten-by-the-state",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "broke: same && s.cx?.i === g.cx.i ? s.cx.broke : []",
     "new": "broke: []",
     "tests": [

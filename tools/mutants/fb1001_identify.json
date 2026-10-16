@@ -1,14 +1,14 @@
 [
   {
     "name": "TRADE-KNOWN-knowing-made-volatile",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "export const TRADE_VOLATILE_FIELDS = Object.freeze(['stackCount', 'value', ...RECEIVER_MARKS]);",
     "new": "export const TRADE_VOLATILE_FIELDS = Object.freeze(['stackCount', 'value', ...RECEIVER_MARKS, 'isIdentified']);",
     "tests": ["test/fb1001_identify.test.js"]
   },
   {
     "name": "TRADE-KNOWN-the-realm-strips-it-from-the-moved-record",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "for (const k of RECEIVER_MARKS) delete rec[k];",
     "new": "for (const k of RECEIVER_MARKS) delete rec[k]; delete rec.isIdentified;",
     "tests": ["test/fb1001_identify.test.js"]

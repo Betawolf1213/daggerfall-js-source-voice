@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-REALM-F1-the-row-unread",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "export const boundRecord = (/** @type {any} */ rec) => rec?.bound === true || BOUND_TEMPLATES.includes(rec?.templateIndex);",
     "new": "export const boundRecord = (/** @type {any} */ rec) => rec?.bound === true;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-REALM-F1-the-stone-unlisted",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "export const BOUND_TEMPLATES = Object.freeze([570, 571, 572, 580, 582]);",
     "new": "export const BOUND_TEMPLATES = Object.freeze([571, 572, 580, 582]);",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "AUDIT-REALM-F1-the-mark-alone",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (boundRecord(rec)) return false;",
     "new": "  if (rec.bound === true) return false;",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "AUDIT-REALM-F2-no-stash-counted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "export const carriedItemLists = (/** @type {any} */ snap) => [...stashedItemLists(snap), ...lists(snap?.wagonItems), ...lists(snap?.bagItems), ...lists(snap?.items)];",
     "new": "export const carriedItemLists = (/** @type {any} */ snap) => [...lists(snap?.wagonItems), ...lists(snap?.bagItems), ...lists(snap?.items)];",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "AUDIT-REALM-F2-the-wagon-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "export const carriedItemLists = (/** @type {any} */ snap) => [...stashedItemLists(snap), ...lists(snap?.wagonItems), ...lists(snap?.bagItems), ...lists(snap?.items)];",
     "new": "export const carriedItemLists = (/** @type {any} */ snap) => [...stashedItemLists(snap), ...lists(snap?.bagItems), ...lists(snap?.items)];",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "AUDIT-REALM-F2-a-house-chest-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    for (const c of scene?.lootContainers ?? []) out.push(...lists(c?.items));",
     "new": "    for (const c of scene?.lootContainers ?? []) if (c?.containerType !== 5) out.push(...lists(c?.items));",
     "tests": [
@@ -56,7 +56,7 @@
   },
   {
     "name": "AUDIT-REALM-F2-a-room-pile-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    for (const pile of scene?.droppedPiles ?? []) out.push(...lists(pile?.items));\n",
     "new": "",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "AUDIT-REALM-F2-a-storage-piece-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    for (const held of Object.values(scene?.decorItems ?? {})) out.push(...lists(held));\n",
     "new": "",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "AUDIT-REALM-F2-a-dungeon-s-drop-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  for (const pile of [...(world?.piles ?? []), ...(world?.droppedLoot ?? [])]) out.push(...lists(pile?.items));",
     "new": "  for (const pile of world?.piles ?? []) out.push(...lists(pile?.items));",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "AUDIT-REALM-L1F1-a-letter-any-value",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (VALUE_IS_IDENTITY_TEMPLATES.includes(rec?.templateIndex) && canon(offered.value) !== canon(rec?.value)) return false;\n",
     "new": "",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "AUDIT-REALM-L1F1-the-first-like-record-taken",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "    const offered = side.items[k], at = pick[k], n = recordCount(offered);",
     "new": "    const offered = side.items[k], n = recordCount(offered), at = items.findIndex((rec, i) => left[i] >= n && recordIsOffered(rec, offered));",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "AUDIT-REALM-L1F1-a-pick-twice",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  return new Set(pick).size === n ? pick : null;",
     "new": "  return pick;",
     "tests": [

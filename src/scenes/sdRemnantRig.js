@@ -22,9 +22,9 @@
 //
 // Pure: the scene (scenes/sdRemnant.js) stands the parts by `rigMatrices`, the gears by `gearMatrix`, and the world's
 // pass draws the beams (render/sdBeam.js). Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { SD_ARENA, SD_REALM_ORIGIN } from '../net/sdBrain.js';
-import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_BREAK_MS, atkWindup, blowShape, behindPillar } from '../net/sdRemnant.js';
-import { sdBodyAt } from '../net/sdFightLink.js';
+import { SD_ARENA, SD_REALM_ORIGIN } from '../net/superDungeon/sdBrain.js';
+import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, SD_BREAK_MS, atkWindup, blowShape, behindPillar } from '../net/superDungeon/sdRemnant.js';
+import { sdBodyAt } from '../net/superDungeon/sdFightLink.js';
 import { SD_REMNANT_BODY, SD_REMNANT_DIAL } from '../world/superDungeon/sdRemnantModel.js';
 import { SD_STRIDE_M, SD_ECHO_STRIDE_M, SD_SLIP_FRAC, SD_RELEASE_MS } from './sdRemnantVoice.js';
 
@@ -55,7 +55,7 @@ export const SD_GEAR_FLIGHT_SHARE = 0.45;
 export const SD_GEAR_ARC_M = 7;
 export const SD_GEAR_SPIN = 9;
 /** AUDIT SD III (V2): THE BEAM ON THE FLOOR. The law's Hour-Hand is a band its width across on the ground, from its body
- *  to its reach (net/sdRemnant.js handSwept) - and its beam was drawn from the hand, six metres up, to a metre over the
+ *  to its reach (net/superDungeon/sdRemnant.js handSwept) - and its beam was drawn from the hand, six metres up, to a metre over the
  *  floor at its reach, half a metre to 1.6 across: over the head of every body it struck inside 20 m, a third of the
  *  law's width. Its light now falls from the hand to the floor SD_BEAM_DROP_M past the hand's own reach, and runs out
  *  along the floor to its reach as the law's band - SD_BEAM_FLOOR_Y over it (clear of the floor's depth), from the
@@ -203,7 +203,7 @@ function blowing(out, s, who, Bd, t) {
 /**
  * THE POSE OF A BODY at `t` - `who` -1 the Remnant, 0 or 1 an Echo - into `out` (restRig's shape; fresh by default), its
  * leading state named. Pure.
- * @param {any} s the fight (net/sdFightLink.js) @param {number} who @param {number} t the relay's clock @param {any} [out]
+ * @param {any} s the fight (net/superDungeon/sdFightLink.js) @param {number} who @param {number} t the relay's clock @param {any} [out]
  */
 export function remnantRig(s, who, t, out = restRig()) {
   zero(out);

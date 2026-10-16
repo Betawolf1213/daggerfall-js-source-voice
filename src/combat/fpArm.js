@@ -2449,7 +2449,7 @@ export async function buildFpArm({
   vampire = false,   // MWNPC14: a vampire's face - the race's vampire head
   flies = false,   // AUDIT MW-NPC II K5: a creature body that must fly (its CREA record's Flies flag)
   npcFace = null,   // MWNPC17: an NPC's head and hair, each walked off its seed ({ head, hair } - characters/wardrobe.js npcFaceOf): no portrait to match
-  ownHeads = false,   // MW-HEADS2 (the owner: "only the player Britons should recieve the new heads, not npcs"): a player's body - the local player's (weaponRig.js armBuildOptsOf) and a peer's (net/peerBodies.js playerBuildOpts) - wears the port's own heads; every other the data's
+  ownHeads = false,   // MW-HEADS2 (the owner: "only the player Britons should recieve the new heads, not npcs"): a player's body - the local player's (weaponRig.js armBuildOptsOf) and a peer's (net/peer/peerBodies.js playerBuildOpts) - wears the port's own heads; every other the data's
 } = {}) {
   if (creature) return buildCreatureBody({ creature, flies, deps });   // MWNPC9
   const d = deps || await import('../scenes/dataSource.js');
@@ -3405,7 +3405,7 @@ export function createFpArm() {
   // winner ladder EXACTLY - the "third animation" the two-slot note above foresaw needs no per-bone vector, because
   // neither has a mask of its own: Priority_Death over everything, Priority_Hit between the weapon and the movement
   // (character.hpp's enum - Movement < Hit < Weapon < Block < Knockdown < Torch < Storm < Death). An NPC's body takes
-  // them (net/peerBodies.js `_arm`, the pose's `ht` and `dd`); the player's own never does.
+  // them (net/peer/peerBodies.js `_arm`, the pose's `ht` and `dd`); the player's own never does.
   let hitState = null;
   let hitSource = null;
   let deathState = null;
@@ -4301,7 +4301,7 @@ export function createFpArm() {
     let yawRate = 0;
     if (lastYaw != null && dt > 0) {
       // ONCRASH1: one step, not a loop. A PEER's rig reads this camera
-      // (net/peerBodies.js peerCamera), so `yaw` is the wire's there.
+      // (net/peer/peerBodies.js peerCamera), so `yaw` is the wire's there.
       const d = wrapAngle(yaw - lastYaw);
       yawRate = d / dt;
       if (d !== 0) { turnDir = Math.sign(d); turnHold = 0.05; }
@@ -5638,7 +5638,7 @@ export function createFpArm() {
      *  particle step, which are the frame's cost (PERF-RIG1: ~0.3 ms a
      *  body at 3,000 vertices, per body). A body posed from a 10 Hz
      *  wire and drawn as a 3-px sprite does not need its skin every
-     *  frame; net/peerBodies.js decides which frames, by distance. The
+     *  frame; net/peer/peerBodies.js decides which frames, by distance. The
      *  particle systems are stepped by `effectsDt` on the frame that
      *  poses - the caller banks the skipped frames' dt and hands it
      *  over, so a puff's clock keeps wall time. The first-person arm
@@ -6180,7 +6180,7 @@ export function createFpArm() {
       const halfH = ((maxZ - minZ) * u * rs.height) / 2;
       const halfW = (Math.hypot(maxX - minX, maxY - minY) * u * rs.weight) / 2;
       const center = transformPoint(model, (minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
-      // MWNPC16: the shape it casts, where it is asked (an NPC's lane - net/peerBodies.js `casts`, which never asks it of a
+      // MWNPC16: the shape it casts, where it is asked (an NPC's lane - net/peer/peerBodies.js `casts`, which never asks it of a
       // body the travel view grows: OW-BIG's law, no giant's shadow), at its size (MWNPC10's boss stands larger, and casts
       // so); never a veiled body's - a concealed foe and a ghost cast nothing, as their flats never did
       if (cast && !conceal && renderer.recordShadowBody) castBody(model, center, halfW, halfH, anchored);
@@ -6203,7 +6203,7 @@ export function createFpArm() {
       // MW-D43b: the body is a Morrowind MESH, so it takes the arm's
       // dial, not the sprite standard - the same fix MW-D43 made for
       // the first-person pass and missed here.
-      // INVIS-LOOK: `conceal` a concealed peer's draw (ECV1's visual, net/peerBodies.js drawVeiled) - the quad blends.
+      // INVIS-LOOK: `conceal` a concealed peer's draw (ECV1's visual, net/peer/peerBodies.js drawVeiled) - the quad blends.
       // AUDIT OW4 J6: `up` the travel view's leaned vertical (player/mwView.js, face.up) - the quad leans with the flats and
       // the sprite lane's body, so the picture taken down the pitched ray is not foreshortened a second time
       // COATS3D: ASTRIDE, ONE PICTURE. `horse` ({ mesh, model, box } - world/horseRig.js, stepped this frame) is drawn in

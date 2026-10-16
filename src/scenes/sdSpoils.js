@@ -1,8 +1,8 @@
 // @ts-check
 // SD9e (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 11): THE BRASS REMNANT'S SPOILS
 // ON THE ARENA'S FLOOR - the court's burst (scenes/gateCourt.js burst) for the Last Moment. SD_SPEW_AT_MS into its fall
-// (the fight as the page holds it - net/sdFightLink.js), this fighter's spoils (systems/superDungeon/sdSpoils.js, off the receipt the
-// relay signed for them - net/sdReceipt.js `h1`) leave the cage of its chest toward them and come to rest on the arena's
+// (the fight as the page holds it - net/superDungeon/sdFightLink.js), this fighter's spoils (systems/superDungeon/sdSpoils.js, off the receipt the
+// relay signed for them - net/superDungeon/sdReceipt.js `h1`) leave the cage of its chest toward them and come to rest on the arena's
 // floor, never off its edge into the void (world/gate/gateSpew.js keepLaunch, SD_SPOILS_KEEP); a fighter the realm counted in
 // that has no receipt SD_RECEIPT_WAIT_MS into the fall is told so, once. The pool (scenes/spoilsPool.js, the Hour's own
 // keys) keeps them as rolled until a save holds them, the press takes them, and leaving the Hour gathers whatever is
@@ -11,9 +11,9 @@
 // SEEN BY THIS PLAYER ALONE, as the court's are: every fighter's spoils are their own seed's, on their own screen.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { SD_ARENA, SD_PILLAR_W, realmToDungeon } from '../net/sdBrain.js';
-import { SD_REM, SD_PILLARS } from '../net/sdRemnant.js';
-import { readSdReceipt } from '../net/sdReceipt.js';
+import { SD_ARENA, SD_PILLAR_W, realmToDungeon } from '../net/superDungeon/sdBrain.js';
+import { SD_REM, SD_PILLARS } from '../net/superDungeon/sdRemnant.js';
+import { readSdReceipt } from '../net/superDungeon/sdReceipt.js';
 import { remnantPose } from './sdRemnant.js';
 import { spoilsLevel } from './spoilsPool.js';
 import { sdSpoilsDay, sdSpoilsList, SD_SPOILS_TEXT } from '../systems/superDungeon/sdSpoils.js';
@@ -48,7 +48,7 @@ export function clearOfPillars(x, z, margin = SD_PILLAR_CLEAR_M) {
 export const SD_SPOILS_KEEP = Object.freeze({ centre: Object.freeze(realmToDungeon(SD_ARENA.x, 0, SD_ARENA.z)), r: SD_ARENA.r - SD_SPEW_RIM_M, floorY: realmToDungeon(0, 0, 0)[1] });
 
 /**
- * The burst's driver. `link` the fight's (net/sdFightLink.js - its `state`, `now` and `counted`), `pool` the Hour's spoils
+ * The burst's driver. `link` the fight's (net/superDungeon/sdFightLink.js - its `state`, `now` and `counted`), `pool` the Hour's spoils
  * pool, `slot()` the realm I stand in (null out of it), `receipt(slot)` my receipt for it as the relay handed it (null for
  * none yet), `level()` mine, `feet()` my feet in the dungeon's frame, `say(text)` a line.
  * @param {{ link: any, pool: any, slot: () => (number|null), receipt: (slot: number) => (string|null), level: () => number,

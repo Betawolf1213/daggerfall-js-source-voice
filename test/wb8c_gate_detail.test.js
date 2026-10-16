@@ -10,11 +10,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { ATTACKS, BOSS_R, BOSS_H, POOLS, SCAR_POOLS, COURT_CENTRE, fightProfile, BASE_PROFILE, windupOf } from '../src/net/gateBrain.js';
-import { inAttack, strikeVerdict, landingPools, blowOf, savedShare, chargeStrikes } from '../src/net/gateStrike.js';
-import { gateModsOf, marksLine, gateTimes } from '../src/net/gateLaw.js';
-import { gateAspectOf } from '../src/net/gateMods.js';
-import { foldGate, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { ATTACKS, BOSS_R, BOSS_H, POOLS, SCAR_POOLS, COURT_CENTRE, fightProfile, BASE_PROFILE, windupOf } from '../src/net/gate/gateBrain.js';
+import { inAttack, strikeVerdict, landingPools, blowOf, savedShare, chargeStrikes } from '../src/net/gate/gateStrike.js';
+import { gateModsOf, marksLine, gateTimes } from '../src/net/gate/gateLaw.js';
+import { gateAspectOf } from '../src/net/gate/gateMods.js';
+import { foldGate, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   attackColor, poolColor, emberColor, bossGlow, bossCue, ASPECT_COLORS, ATTACK_COLORS, POOL_COLOR, EMBER_COLOR, BOSS_CUES, ASPECT_CUE_IDS, THUNDER_ROLL,
 } from '../src/world/gate/gateBoss.js';
@@ -24,7 +24,7 @@ import { aspectCss } from '../src/ui/gateMarksView.js';   // WB13c: his epithet'
 import { createGateCourt, COURT_STRIKE_TEXT, COURT_MARKS_TEXT, courtPhaseCard, MARK_COLOR, FED_LATE_MS } from '../src/scenes/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { gateTip } from '../src/systems/gate/gateOmen.js';
-import { omenPost } from '../src/net/gateHerald.js';
+import { omenPost } from '../src/net/gate/gateHerald.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = (key, over = {}) => ({ i: 1, a: ATTACKS[key].id, at: 10000, x: 0, z: 0, yw: 0, tg: [], ...over });

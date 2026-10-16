@@ -1,6 +1,6 @@
 // SD6b (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md sections 8 and 14): THE RELAY JUDGES
 // THE ORRERY - a turn of an Ending-stone (`pz`) goes to the Hollow's realm, which judges it by the Orrery's law
-// (net/sdBrain.js orreryStep) from where the socket's own pose stands, keeps the hall, and says it to every soul there:
+// (net/superDungeon/sdBrain.js orreryStep) from where the socket's own pose stands, keeps the hall, and says it to every soul there:
 // after each turn and to each at its hello. The page's half: a turn sent down my own socket in the realm, the hall heard
 // from my own realm alone.
 import { test } from 'node:test';
@@ -13,9 +13,9 @@ import {
 import {
   SD_STONES, SD_HOURS, SD_FRAY_MAX, SD_TURN_HZ, SD_STONE_POS, SD_STONE_SETTLE_MS, realmToDungeon, orreryOf, orreryTurn,
   orreryLit, orreryStep, orreryFresh, orrerySolve, sdHour, sdTurnsFor,
-} from '../src/net/sdBrain.js';
-import { sdRoomKey, sdFell, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
-import { PIXEL_M } from '../src/net/gateLaw.js';
+} from '../src/net/superDungeon/sdBrain.js';
+import { sdRoomKey, sdFell, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { OnlineSession } from '../src/net/online.js';

@@ -16,7 +16,7 @@ import {
 } from '../src/world/horseModel.js';
 import { createHorseRig, horseRigFor, HORSE3D_LOOKS_KEPT, DYE_ROWS, HORSE_SEAT, HORSE_SEAT_BONE, LOOK_ASK_STALE, outOfView } from '../src/world/horseRig.js';
 import { createRoadTeams } from '../src/world/road/roadTeams.js';
-import { createPeerRiders } from '../src/net/peerRiders.js';
+import { createPeerRiders } from '../src/net/peer/peerRiders.js';
 import { createEotbBody, HORSE_PRELOAD_A_FRAME } from '../src/player/eotbBody.js';
 import { horseLookCode, recolorHorse, recolorHorseTexels, dyeHorseTexelRows, texelPlanes, PLANE_SHARPNESS, LEG_BANDS, WHITE_FLOOR_3D, isCoatPixel } from '../src/systems/horse/horseCoats.js';
 import { skinStreamFloats, SKIN_STATIC_FLOATS } from '../src/formats/mwGpuSkin.js';
@@ -407,7 +407,7 @@ test('COATS3D by source: the view keeps the saddle and lifts RIDE-POV astride; t
   assert.match(r, /this\.drawCharacter\(mesh, modelMatrix\);\n\s*if \(also\) for \(const o of also\) this\.drawCharacter\(o\.mesh, o\.model\);/, 'the lone pass');
   assert.match(r, /this\.drawCharacter\(it\.mesh, it\.model\);\n\s*if \(it\.also\) for \(const o of it\.also\) this\.drawCharacter\(o\.mesh, o\.model\);/, 'and the batch\'s tiles');
   assert.match(rd('src/render/characterSprite.js'), /queueCharacterSprite\(\{ mesh, model: rigMat, also,/);
-  const pb = rd('src/net/peerBodies.js');
+  const pb = rd('src/net/peer/peerBodies.js');
   assert.match(pb, /b\.cam\.saddle = this\._saddle\(b, peer\.shown, f, dt\);/);
   assert.match(pb, /if \(!rig\?\.ready\(\) \|\| shown\.rd !== POSE_RIDE\.Horse \|\| peerIsWolf\(shown\) \|\| shown\.wb\) \{ this\._unhorse\(b\); return null; \}/);
   assert.match(pb, /look: shown\.rc \| 0/, 'in the look the pose names');
@@ -415,7 +415,7 @@ test('COATS3D by source: the view keeps the saddle and lifts RIDE-POV astride; t
   const w = rd('src/scenes/world.js');
   assert.match(w, /yields: peerRidesIn3d, conceal: veilOf/);
   assert.match(w, /const peerRidesIn3d = \(d\) => !!peerBodies\?\.enabled\(\) && horseRigFor\(renderer\)\.ready\(\) && d\.shown\?\.rd === POSE_RIDE\.Horse && !d\.shown\?\.wb && !peerBodies\.failureOf\(d\.look, d\.shown, d\.glyphs\);/);
-  assert.match(rd('src/net/peerRiders.js'), /if \(riding && !beast && yields\(peer\)\) \{ deferred\.push\(peer\); continue; \}/, 'PIN MOVED (AUDIT A3): held for the settle, never dropped');
+  assert.match(rd('src/net/peer/peerRiders.js'), /if \(riding && !beast && yields\(peer\)\) \{ deferred\.push\(peer\); continue; \}/, 'PIN MOVED (AUDIT A3): held for the settle, never dropped');
   assert.match(w, /hcc\.drawVeiled3d\(\);   \/\/ AUDIT COATS3D A5/, 'AUDIT A5: a concealed owner\'s horses after the opaque world');
   assert.match(rd('src/scenes/exterior.js'), /hcc\.drawVeiled3d\(\);   \/\/ AUDIT COATS3D A5/);
   const pool = rd('src/scenes/horseCartPool.js');

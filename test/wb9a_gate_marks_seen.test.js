@@ -17,15 +17,15 @@ import {
   marksViewOf, marksCardModel, drawGateMarksCard, destroyGateMarksCard, markIconSvg, aspectCss,
   MARK_ICONS, MARK_TIPS, ASPECT_ELEMENT, MARKS_CARD_ARRIVE_MS, MARKS_CARD_FADE_MS, MARKS_CARD_TEXT, MARKS_CARD_CSS,
 } from '../src/ui/gateMarksView.js';
-import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gateMods.js';
+import { GATE_ASPECTS, GATE_TRIALS } from '../src/net/gate/gateMods.js';
 import { ASPECT_COLORS, EMBER_COLOR } from '../src/world/gate/gateBoss.js';
 import { bossBarModel, drawGateBossBar, destroyGateBossBar } from '../src/ui/gateBossBar.js';
 import { createGatePool } from '../src/scenes/gatePool.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
-import { gateTimes, gateModsOf, gateBossOf } from '../src/net/gateLaw.js';
-import { GATE_RISE_MS } from '../src/net/gateLaw.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { OPENING_MS } from '../src/net/gateBrain.js';
+import { gateTimes, gateModsOf, gateBossOf } from '../src/net/gate/gateLaw.js';
+import { GATE_RISE_MS } from '../src/net/gate/gateLaw.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
+import { OPENING_MS } from '../src/net/gate/gateBrain.js';
 import { readFileSync } from 'node:fs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

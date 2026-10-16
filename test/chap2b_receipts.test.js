@@ -17,9 +17,9 @@ import {
 import { creditReceipt, receiptAsks } from '../server-account/src/npcReceipts.js';
 import { readRoll } from '../server-account/src/npcRoll.js';
 import { forgetChapters } from '../server-account/src/npcHalls.js';
-import { mintRaidReceipt } from '../src/net/raidReceipt.js';
-import { mintReceipt } from '../src/net/gateReceipt.js';
-import { gameDayAt } from '../src/net/gateLaw.js';   // AUDIT CHAP3 E1: a gate's day is the game's, never the calendar's
+import { mintRaidReceipt } from '../src/net/raid/raidReceipt.js';
+import { mintReceipt } from '../src/net/gate/gateReceipt.js';
+import { gameDayAt } from '../src/net/gate/gateLaw.js';   // AUDIT CHAP3 E1: a gate's day is the game's, never the calendar's
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { materialCountLabel } from '../src/systems/professions/profItems.js';
 import { utcDay } from '../src/net/marksLaw.js';

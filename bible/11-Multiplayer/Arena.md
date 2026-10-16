@@ -228,7 +228,7 @@ names, banners, health; your stamina), the **crowd meter**, the **timer**, the H
   and the **laurel glyph** while they are #1: derived at the token's mint from the board (as Sprout is derived from
   an account's age), so it passes to whoever takes the top and lapses by itself. Not shown offline (no PvP offline).
   AUDIT ARENA-LADDER: the #1 wears it over ten rated bouts against five different accounts at least, and a pair's rated
-  bouts are counted ten a season (`net/arenaLaw.js` ARENA_CHAMPION_MIN_BOUTS, ARENA_CHAMPION_MIN_FOES, ARENA_PAIR_SEASON_MAX).
+  bouts are counted ten a season (`net/arena/arenaLaw.js` ARENA_CHAMPION_MIN_BOUTS, ARENA_CHAMPION_MIN_FOES, ARENA_PAIR_SEASON_MAX).
 
 ## 7. Online (ARENA4)
 
@@ -397,7 +397,7 @@ dungeon drip; an open-sky torchlit ambient and a thin night fog (`worldModes`). 
 
 **Exhibitions** (`exhibitionFor`): one an hour of the gates' hours (08:00-21:00), open for its first 20 game minutes, two
 fighters of one tier's roster (beast against beast in the beast tier) drawn from `arenaHash(hour)` - the same hour the same
-bout on every screen, so ARENA4's relay runs the schedule on the shared clock [BUILT at ARENA4b: `net/arenaExhibition.js`, `arena:x<hour>`]. On the CITY floor (world.js
+bout on every screen, so ARENA4's relay runs the schedule on the shared clock [BUILT at ARENA4b: `net/arena/arenaExhibition.js`, `arena:x<hour>`]. On the CITY floor (world.js
 `arenaCityStage`: the colosseum block's origin in its built pixel plus the RMB colosseum's place less its sand) while the
 player stands within 150 m (dismissed past 260 m, unsaid, and restarted from its call on return inside the window); and
 in the instance when Watch is chosen.
@@ -640,13 +640,13 @@ the merge past main's 0047-0068, 0072 past PROF9's and PROF12's 0069_cooking and
 lost, how, the banner worn; one WIN a step, so a climb cannot hold the same bout twice), `arena_pvp` (one row a bout
 between players whoever claims it, both accounts, the result, both ratings before and after, rated or kept-unrated) and
 `arena_members` (the banner, the season joined, the banner quit and when). `POST /v1/arena/claim` takes a relay-signed
-receipt (`src/net/arenaReceipt.js`, `a1`: a ladder receipt names one account, a players' two different ones; its claims
+receipt (`src/net/arena/arenaReceipt.js`, `a1`: a ladder receipt names one account, a players' two different ones; its claims
 disjoint from the gate's and the raid's; a week to be carried): a ladder WIN is kept only as the account's next bout (in
 the write - the INSERT is ordered, the service is the arbiter), a loss whatever its order, a receipt once whoever carries
 it. `/v1/arena/board` counts every board from the rows - the season's ratings and its #1, the climb (every account's
 highest bout won), the fastest Grand Champions, the banners' points this season and last, each banner's roster, the Hall
 - each a top ten and the caller pinned under it; `/v1/arena/team` joins (free), quits (at once) and refuses the other
-banner until the next season. The season is eight weeks from Monday 2026-09-28 (`src/net/arenaLaw.js arenaSeasonOf`);
+banner until the next season. The season is eight weeks from Monday 2026-09-28 (`src/net/arena/arenaLaw.js arenaSeasonOf`);
 the rating is Elo, 1,000 to start, K 32, held between 100 and 4,000; team points a ladder bout 1, a tier champion 3, the
 Grand Champion 10, a refereed players' win 2. Past five rated bouts in a day between the same two accounts, a bout is
 kept and not rated (the pair's day).
@@ -657,7 +657,7 @@ for good, from the account's own climb - forty refereed wins in order, written o
 from the board as Sprout is from an account's age, so it passes to whoever takes the top and lapses by itself (each
 Worker caches the #1 for 60 s).
 
-**The relay's rooms** (`server/src/index.js`, `src/net/arenaBrain.js`, `src/net/arenaLaw.js`; RELAY_VERSION world155 -
+**The relay's rooms** (`server/src/index.js`, `src/net/arena/arenaBrain.js`, `src/net/arena/arenaLaw.js`; RELAY_VERSION world155 -
 world142 on its branch, renumbered past main's world154 at the merge, `ARENA_RELAY_MIN` 155). THE HALL (`arena:hall`): a
 registered account's queue word with its season rating (the token's `ar`; a guest is refused), paired inside a band of
 100 that widens by 100 every 10 s, offered a bout both must accept within 20 s, a pair that declined not offered again for
@@ -673,8 +673,8 @@ land by the relay's word. THE STANDS: a spectator takes a seat (60 a bout) and s
 screen in the room, the fighters' and the other spectators', as they are on its own (HOTFIX 1003f; ARENA4 drew the
 fighters alone, and every watcher stood in an empty arena).
 
-**The client** (`src/net/arenaLink.js` the hall's fold and the mirror of a relay's bout in the bout law's own shape;
-`src/net/arenaClaims.js` the receipts carried - kept a week, offered for the signed-in account alone, retried every five
+**The client** (`src/net/arena/arenaLink.js` the hall's fold and the mirror of a relay's bout in the bout law's own shape;
+`src/net/arena/arenaClaims.js` the receipts carried - kept a week, offered for the signed-in account alone, retried every five
 minutes; `src/scenes/arenaOnline.js` the host's glue; `src/scenes/arenaBouts.js startRelay`/`relayWord` - the relay's
 bout stood on the floor's instance as puppets, the Herald and the HUD driven from its events, my health the relay's, my
 yield and misses told; `src/systems/arena/arenaBoard.js` the window online - the Bouts page's live bouts with Watch, Find a
@@ -691,7 +691,7 @@ the merge of the streams turned up (the blows' sequence, the banners billed); th
 merged onto the arena branch (the relay, the client, the account service) and the casual bout after them.
 
 **1. The hour's exhibition is the relay's** (section 2: "the relay runs it, every client sees one bout"). The schedule's
-law moved out of `systems/arena/arenaLadder.js` into `src/net/arenaExhibition.js` (`exhibitionFor`, `exhibitionOpening`,
+law moved out of `systems/arena/arenaLadder.js` into `src/net/arena/arenaExhibition.js` (`exhibitionFor`, `exhibitionOpening`,
 `exhibitionAdmits`, `arenaHash`, `hourIndexOf` - re-exported where it stood), so the relay draws the same pair from the
 same hour. Its room is `arena:x<hour>` (the game hours since the epoch, `floor(sharedClassicMinutes / 60)`); the Worker
 admits an hour from 25 back to one ahead. The first watcher inside its window (08:00-21:00, the first 20 game minutes)
@@ -906,7 +906,7 @@ account. Online only (a session is the relay's); nothing of the offline game cha
 AUDIT PRE-MERGE 1003b (`01-Overview/Audit-PreMerge-1003.md`, its second pass) - what that pass changed is written in
 below, each at its place, and listed at the end.
 
-**The room.** `arena:p<code>` (`net/arenaLaw.js` `arenaPrivateRoom`, `ARENA_PRIVATE_ROOM_RE`): six characters of
+**The room.** `arena:p<code>` (`net/arena/arenaLaw.js` `arenaPrivateRoom`, `ARENA_PRIVATE_ROOM_RE`): six characters of
 `ARENA_PRIVATE_CODE_ALPHABET` - letters and the digits 2-9, no I, L, O, 0 or 1, so a code read off a stream is typed
 right (`privateCodeTyped` takes it upper-cased, its spaces and dashes gone). A fresh code is drawn on the host's screen
 from the CSPRNG (`arenaPrivateCode`, a byte at or past 248 thrown back so no letter is likelier). The room is an arena
@@ -922,7 +922,7 @@ here then and shown to each (`_sessionShow`); a member gone, removed or the sess
 alone, anyone else on the stands' bucket - so tokenless hellos never shut it. A socket replaced by its own reconnect
 keeps the seat or the place on the sand it held (1003b R5).
 
-**The session** (`net/arenaBrain.js` `openSession` / `sessionJoin` / `sessionPick` / `sessionGoFighters` / `sessionKick`
+**The session** (`net/arena/arenaBrain.js` `openSession` / `sessionJoin` / `sessionPick` / `sessionGoFighters` / `sessionKick`
 / `sessionWord`; `server/src/index.js` `_sessionWord` and its helpers; kept in the room's storage, `arenasession`):
 - `ps open` - the first registered account's opens it and hosts it (a guest's: `host guest`; another's on an open
   session: `taken`). `ps join` - a member back, or a newcomer while it has room and is not locked; a removed account is
@@ -1042,7 +1042,7 @@ correctness, the online trust), every finding reproduced and fixed here:
 - **Telegraphs between fighters.** On the sand a token holder of TACT4's tier winds up at its BOUT-MATE (a fighter of
   the same live bout on another side, `ai/tactics.js` `targetFeet` - `blowAim` until FEUD's merge of main), the verdict where that fighter stands, the foe-vs-foe
   hit paths asking `blowConnects`/`blowScaled`; drawn for the stands to 100 m. A dodged telegraph is a miss for the
-  judges (`registerBlowDodgedListener`). The relay's ladder fighters throw the same shapes (`net/arenaBrain.js`, the
+  judges (`registerBlowDodgedListener`). The relay's ladder fighters throw the same shapes (`net/arena/arenaBrain.js`, the
   families moved to the leaf `ai/blowShapes.js`), the `atk` word carrying the shape, its facing and its origin.
 - **The climb.** A loss breaks the tier's run (`systems/arena/arenaLadder.js` `ladderAfter`, said); every tier's champion an
   elite (offline and on the relay); the sand's kit law (`systems/arena/arenaKit.js`: no potion, no Invisibility, Levitate,

@@ -174,7 +174,7 @@ Sigil's top stage beside the band's; neither is a guild's (AUDIT GUILD3's words 
   (W1/S1); every read walks the guild's own index, its plan pinned (S2); the silver's room is said before the press (S3);
   a code a past refusal said that nothing re-reads is listed but never holds the buttons (C1/T2); and the page reads the
   guild again as Settings is turned to (C8).
-- **What each rank may do.** `src/net/guildPowers.js` composes the four power tables and the vault's defaults into one
+- **What each rank may do.** `src/net/guild/guildPowers.js` composes the four power tables and the vault's defaults into one
   list in words (`GUILD_RANK_ACTS`, `guildRankActsText`), each line's ranks read off its own table at the call - a
   table moved moves the page. The Members page folds it under "What each rank may do": each rank's acts, the
   guildmaster's grants of the vault named as what can change a member's. A sweep fails the suite on a power any of the

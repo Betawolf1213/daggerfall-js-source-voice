@@ -15,7 +15,7 @@ import { SOCIAL_ROOM, CHAT_HELLO_HZ_MAX, CLOSE_BUSY, BUSY_TOKEN_UNREAD, ACCOUNT_
 import { rosterRows } from '../src/net/roster.js';
 import { OnlineSession } from '../src/net/online.js';
 import { accountTokenMinter, SESSION_KEY } from '../src/net/accountClient.js';
-import { mintSerpentReceipt } from '../src/net/serpentReceipt.js';
+import { mintSerpentReceipt } from '../src/net/serpent/serpentReceipt.js';
 import { fakeSocketClass } from './fakeSocket.mjs';
 
 const { subtle } = globalThis.crypto;

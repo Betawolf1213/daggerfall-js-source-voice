@@ -14,7 +14,7 @@ import * as acorn from 'acorn';
 import {
   CARD_WORTH, cardWorth, cardWorthOf, cardRecordWorth, isCardRecord, isPackRecord, cardPacksOf, decorOwnOf, deckShortOf,
   STARTER_DECK_WORTH, customsCardAllowance, CARD_PACK_WORTH, CARD_PACK_TEMPLATE as LAW_PACK_TEMPLATE,
-} from '../src/net/cardWorthLaw.js';
+} from '../src/net/card/cardWorthLaw.js';
 import {
   CARD_PACK_TEMPLATE, CARD_PACK_LINES, mintIliacCard, mintCardPack, isIliacCard, iliacCardName, giveBinderAtChargen, binderOf,
   binderDecks, setBinderDeck, deckHeldRefusal,
@@ -22,7 +22,7 @@ import {
 import {
   CARD_PACK_SIZE, PACK_POOL, PACK_SLOT_TIERS, PACK_TOP_TIERS, buyCardPack, dropFoeCard, guildNameOfFaction, guildCardRoll,
 } from '../src/systems/card/cardSources.js';
-import { STARTER_DECK, cardById } from '../src/net/iliacCards.js';
+import { STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
 import { applyCustoms, cardCustoms, customsLines } from '../src/systems/realmCustoms.js';
 import { firstSaveRefusal } from '../server-account/src/realm.js';
 import { takeSceneOwn } from '../src/systems/sceneCache.js';

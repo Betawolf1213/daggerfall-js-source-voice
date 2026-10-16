@@ -28,7 +28,7 @@ overdoing it"*. His calls, asked the same day:
   the dungeon's, the street guards', the exterior encounters' and the interior watch's are separate pools, so a guard and
   a bandit stand in each other. The navmesh's `syncNavObstacles` and RVO `avoidHeading` are ported and called nowhere
   (the arc's 4b). Nothing keeps a foe out of a doorway.
-- **Telegraphs exist for the world boss alone** (`net/gateBrain.js`, `net/gateStrike.js`, `render/gateTelegraph.js`):
+- **Telegraphs exist for the world boss alone** (`net/gate/gateBrain.js`, `net/gate/gateStrike.js`, `render/gateTelegraph.js`):
   shaped wind-ups resolved by where the feet stand at the landing. Ordinary foes swing on DFU's clock, with no tell.
 
 ## The design: four slices, each behind the Enhanced AI switch
@@ -205,7 +205,7 @@ Every version of the door grief, fixed without asking further (Mac: "stop asking
   main), its verdict where that fighter stands, judged here (`judgedHere` - a peer's is the peer's own), and the
   foe-vs-foe hit paths asking `blowConnects` and `blowScaled` as the player's do; a dodge is told
   (`registerBlowDodgedListener`), a miss for the judges. The relay's ladder fighters throw the same shapes
-  (`net/arenaBrain.js`, the families in the leaf `ai/blowShapes.js`). A verdict is its mark's (AUDIT ARENA-LADDER 2,
+  (`net/arena/arenaBrain.js`, the families in the leaf `ai/blowShapes.js`). A verdict is its mark's (AUDIT ARENA-LADDER 2,
   `_blowFor`): a holder whose target changed before its damage frame swings the classic swing, unweighed; on the relay
   one fighter winds up at a time. Street infighting and a peer's foe still see none. The record:
   `bible/01-Overview/Audit-Arena-Ladder.md`.

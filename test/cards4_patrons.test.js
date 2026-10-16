@@ -5,7 +5,7 @@
 // its temper says, sizes inside the law, calls by the pot's odds.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseCard, newHand, legalActions, viewFor, act, freshDeck, shuffleDeck } from '../src/net/cardLaw.js';
+import { parseCard, newHand, legalActions, viewFor, act, freshDeck, shuffleDeck } from '../src/net/card/cardLaw.js';
 import { EQUITY_SAMPLES, PATRON_TEMPERS, TEMPER_NAMES, unit, chenScore, equity, patronDecision } from '../src/systems/card/cardPatrons.js';
 
 const C = (s) => s.split(' ').map(parseCard);

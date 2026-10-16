@@ -82,7 +82,7 @@
  },
  {
   "name": "MWNPC3-peers-sweep",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    reachSweep: false,   // MWNPC3",
   "new": "    reachSweep: true,   // MWNPC3",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "MWNPC3-max-ignored",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    this._max = limits?.max ?? BODIES_MAX;",
   "new": "    this._max = BODIES_MAX;",
   "tests": [
@@ -100,7 +100,7 @@
  },
  {
   "name": "MWNPC3-range-ignored",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    this._range = limits?.range ?? BODY_RANGE;",
   "new": "    this._range = BODY_RANGE;",
   "tests": [
@@ -109,7 +109,7 @@
  },
  {
   "name": "MWNPC3-budget-ignored",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    this._skinBudget = limits?.skinBudget ?? SKIN_BUDGET;",
   "new": "    this._skinBudget = SKIN_BUDGET;",
   "tests": [

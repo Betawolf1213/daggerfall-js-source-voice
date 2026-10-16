@@ -14,8 +14,8 @@ import { fakeRooms } from './fakeRoom.mjs';
 import * as H from '../src/net/hubShards.js';
 import { SOCIAL_ROOM, GATE_BRAIN_V } from '../src/net/wire.js';
 import { mintOrder, mintGuildOutOrder } from '../src/net/identityToken.js';
-import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
-import { COURT_CENTRE, BRAIN_TICK_MS } from '../src/net/gateBrain.js';
+import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
+import { COURT_CENTRE, BRAIN_TICK_MS } from '../src/net/gate/gateBrain.js';
 
 const quiet = async (fn) => { const keep = { info: console.info, warn: console.warn, log: console.log }; console.info = console.warn = console.log = () => {}; try { return await fn(); } finally { Object.assign(console, keep); } };
 

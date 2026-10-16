@@ -5,7 +5,7 @@
 // one's. The kill's chart carries each healer's figure, and the round-up shows a Healed column whenever anyone healed
 // another.
 //
-//   the brain     net/gateBrain.js applyHeal, healRef, the bucket; damageChart's `hl`
+//   the brain     net/gate/gateBrain.js applyHeal, healRef, the bucket; damageChart's `hl`
 //   the wire      `heal` ([[by, n], ...] - each caster's peer id); a chart row's `hl`; the relay's door
 //   the relay     a heal credited to the caster by the peer id its socket says - never to the one healed
 //   the session   no `heal` to a relay that would junk it
@@ -21,10 +21,10 @@ import { readFileSync } from 'node:fs';
 import {
   COURTS, COURT_CENTRE, HIT_KINDS, HEAL_REF_BASE, HEAL_REF_LV, HEAL_REFILL_S, HEAL_DEPTH_X, healRef,
   newFight, joinFight, applyHeal, applyHit, damageChart,
-} from '../src/net/gateBrain.js';
+} from '../src/net/gate/gateBrain.js';
 import { validGateIn, validGateOut, GATE_KINDS, GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX, GATE_HEAL_RELAY_MIN, relaySupportsGateHeal, GATE_BRAIN_V, RELAY_VERSION } from '../src/net/wire.js';
-import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { createGateCourt, HEAL_SEND_MS } from '../src/scenes/gateCourt.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_TEXT, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_CSS } from '../src/ui/gateDamageChart.js';

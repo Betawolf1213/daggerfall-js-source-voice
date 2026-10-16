@@ -2,25 +2,25 @@
 // do it properly"): THE OPEN ZONE REFEREED. WILD1 left every blow between two players in the zone to the defender's own
 // machine, a fall to the fallen's own health, and a death's drop and the killer's worn piece to the fallen's own hands -
 // so a client that never took a blow never fell, and one that fell dropped what it chose (any records at all, for its
-// friends to take). Now the relay holds the zone's fights (net/wildRef.js) and signs each fall (net/wildReceipt.js `f1`),
+// friends to take). Now the relay holds the zone's fights (net/wild/wildRef.js) and signs each fall (net/wild/wildReceipt.js `f1`),
 // the account service takes the drop off the fallen's judged record against it (server-account/src/wild.js) and signs
-// what it took (identityToken.js `remains`), and the room keeps a deposit only on that order (net/wildLaw.js). Pinned:
+// what it took (identityToken.js `remains`), and the room keeps a deposit only on that order (net/wild/wildLaw.js). Pinned:
 // each law alone, the relay over the real Room (test/fakeRoom.mjs), the service over the real Worker, and the client's
 // glue - a crafted client's every lie it used to tell.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { mintWildReceipt, readWildReceipt, verifyWildReceipt, wildReceiptValid, WILD_RECEIPT_V, WILD_RECEIPT_TTL_S, WILD_RECEIPT_MAX, WILD_FALL_GRACE_S, WILD_WORN_MAX } from '../src/net/wildReceipt.js';
-import { mintDuelReceipt, verifyDuelReceipt } from '../src/net/duelReceipt.js';
-import { newWildRef, wildZone, wildPose, wildBlow, wildPick, wildSigned, wildStep, wildVitals, wildGone, wildCarry, wildCarryOf, wildSignNow, wildFallOf, WILD_REF } from '../src/net/wildRef.js';
-import { SIEGE_UNITS_PER_M, SIEGE_HIT, siegeVitality, siegeBlowMax, SIEGE_CASTS } from '../src/net/siegeRef.js';
+import { mintWildReceipt, readWildReceipt, verifyWildReceipt, wildReceiptValid, WILD_RECEIPT_V, WILD_RECEIPT_TTL_S, WILD_RECEIPT_MAX, WILD_FALL_GRACE_S, WILD_WORN_MAX } from '../src/net/wild/wildReceipt.js';
+import { mintDuelReceipt, verifyDuelReceipt } from '../src/net/duel/duelReceipt.js';
+import { newWildRef, wildZone, wildPose, wildBlow, wildPick, wildSigned, wildStep, wildVitals, wildGone, wildCarry, wildCarryOf, wildSignNow, wildFallOf, WILD_REF } from '../src/net/wild/wildRef.js';
+import { SIEGE_UNITS_PER_M, SIEGE_HIT, siegeVitality, siegeBlowMax, SIEGE_CASTS } from '../src/net/siege/siegeRef.js';
 import { mintRemainsOrder, verifyOrder, remainsDigest, REMAINS_RECORDS_MAX, mintToken, ORDER_TTL_S } from '../src/net/identityToken.js';
-import { newRemains, foldFall, takeFrom, remainsWords, remainsFit, wildRemainsKey, WILD_REMAINS_BYTES_MAX, WILD_RECORD_BYTES_MAX, remainsSpent, remainsTakeover, remainsEvict, remainsOf, WILD_TOMB_MIN_MS, WILD_STALL_MS } from '../src/net/wildLaw.js';
+import { newRemains, foldFall, takeFrom, remainsWords, remainsFit, wildRemainsKey, WILD_REMAINS_BYTES_MAX, WILD_RECORD_BYTES_MAX, remainsSpent, remainsTakeover, remainsEvict, remainsOf, WILD_TOMB_MIN_MS, WILD_STALL_MS } from '../src/net/wild/wildLaw.js';
 import { takeWildDeath, wornOffer, wildRecord, wildPickOf, wildDropCandidates, wildTookOf, wildTakeTook } from '../src/systems/wild/wildDropLaw.js';
 import { WILD_PARTY_TRUCE_MS } from '../src/systems/wild/wildZone.js';
 import { TEMPLATES } from '../src/systems/item/itemKinds.js';
-import { WILD_BODY_MS } from '../src/net/wildFight.js';
+import { WILD_BODY_MS } from '../src/net/wild/wildFight.js';
 import { validWildData, validWildRefOut, WILD_ITEMS_MAX, WILD_REMAINS_ITEMS_MAX, WILD_REF_RELAY_MIN, relaySupportsWildRef, RELAY_VERSION, WILD_ORDER_MAX, worldRoom, PIXEL_UNITS, WILD_DATA_MAX, SOCIAL_ROOM } from '../src/net/wire.js';
 import { OnlineSession, WILD_ZONE_KEEP_MS } from '../src/net/online.js';
 import { wildChunks } from '../src/systems/wild/wildDeath.js';
@@ -463,7 +463,7 @@ test('INT9 THE RELAY, A FALL UNPICKED AND KIN: a fall whose killer never picks i
   assert.ok(rc, 'signed without a pick');
   const v = await verifyWildReceipt(rc.rc, relayKp.publicKey, { subtle, nowS: T + 200 });
   assert.deepEqual([v.claims.r, v.claims.w, v.claims.c], [f.r, -1, RC], 'no piece; the fallen\'s realm character');
-  // PIN MOVED (MAC, 2026-10-14, "Guildmates are friends"): kin is net/wildRef.js wildKin - a duel's two and one guild read
+  // PIN MOVED (MAC, 2026-10-14, "Guildmates are friends"): kin is net/wild/wildRef.js wildKin - a duel's two and one guild read
   // here, the hub's party and its truce asked only when neither is (test/fb1014_pvploot.test.js holds the guild end to end)
   assert.equal(rd('server/src/index.js').includes("const kin = wildKin({ duel: duelKin, guilds: [a.gi, tb.gi] }) || wildKin({ party: await this._wdunKinOf(a.sub, tb.sub, now) });"), true, 'a duel\'s two, one guild, and the hub\'s party and its truce, are kin');
 }));

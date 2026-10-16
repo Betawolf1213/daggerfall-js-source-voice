@@ -154,7 +154,7 @@
   },
   {
     "name": "WEREWOLF1-form-change-held",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "(!!b.wolf !== peerIsWolf(peer.shown) || now - b.builtAt >= BODY_REBUILD_MS)",
     "new": "(now - b.builtAt >= BODY_REBUILD_MS)",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "WEREWOLF1-peer-wereboar-a-wolf",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "export const peerIsWolf = (shown) => (shown?.wb | 0) === 1;",
     "new": "export const peerIsWolf = (shown) => (shown?.wb | 0) >= 1;",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "WEREWOLF1-peer-wolf-holds-the-sword",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "      const want = b.wolf ? null : tool ?? peerWeaponOf(look, shown);",
     "new": "      const want = tool ?? peerWeaponOf(look, shown);",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "WEREWOLF1-peer-wolf-casts",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    b.rig.readySpell?.(!b.wolf && !!shown.sr);",
     "new": "    b.rig.readySpell?.(!!shown.sr);",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "WEREWOLF1-peer-wolf-lantern",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    b.rig.setHipLight?.(!b.wolf && !!shown.hl);",
     "new": "    b.rig.setHipLight?.(!!shown.hl);",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "WEREWOLF1-riders-skip-dropped",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "      if (beast && !riding && defer(peer)) { deferred.push(peer); continue; }   // WEREWOLF1 (AUDIT E4): settled below\n",
     "new": "\n",
     "tests": [

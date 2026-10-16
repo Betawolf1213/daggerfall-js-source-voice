@@ -20,7 +20,7 @@ import { WEALTH_VERSION } from '../server-account/src/judge.js';
 import { MEASURE_PLAYED_MIN } from '../server-account/src/review.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { seeded } from './honestItems.mjs';
-import { REALM_BIRTH_WEALTH_MAX } from '../src/net/realmGoldLaw.js';
+import { REALM_BIRTH_WEALTH_MAX } from '../src/net/realm/realmGoldLaw.js';
 
 test('INT5: the bucket - the first judgement full, and the save\'s gain on its baseline charged; filled by play at the band\'s rate to its cap, never cut down to it (a win\'s spoils); spent by a gain, never by a fall; while measuring, no debt kept', () => {
   const band = { rate: 3_600, cap: 10_000 };

@@ -26,7 +26,7 @@
 // Not a DFU member. Ledger A (WB).
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { buildProgram } from './glProgram.js';
-import { ATTACK_BY_ID, ATTACKS } from '../net/gateBrain.js';
+import { ATTACK_BY_ID, ATTACKS } from '../net/gate/gateBrain.js';
 
 /** A burst's sparks fly this long (ms); the most sparks one burst throws; the most bursts drawn at once. */
 export const FX_BURST_MS = 1100;
@@ -53,7 +53,7 @@ export const METEOR_TRAIL_M = 32;
  * THE BURST A LANDING THROWS, by its attack - how many sparks (a share of FX_SPARKS), how hard (1 a slam's), and whether
  * it is his weight's (grit: darker, heavier) or his element's - or null for a landing that throws none (a blade's, the
  * charge's run, the spokes' lanes: their telegraph's flash is their landing). Pure.
- * @param {any} A an attack (net/gateBrain.js ATTACKS)
+ * @param {any} A an attack (net/gate/gateBrain.js ATTACKS)
  * @returns {{ share: number, power: number, grit: boolean, light?: ReadonlyArray<number> }|null}
  */
 export function fxBurstOf(A) {

@@ -112,7 +112,7 @@ test('SEAT2b SEAT WRITS ON THE WORK TAB: the guild\'s seats of the region offere
 
 test('SEAT2b THE WORKS ON THE SEAT TAB: read with the standings and drawn under a held seat; the holder\'s Officer begins a work through the book with the town\'s port, and the board is read again; another guild\'s reader sees the works without a lever; an unheld seat draws none (mutants: the read; the holder gate; the lever\'s rank and guild; the port; the reload)', async () => {
   const { createSeatTab } = await import('../src/ui/seatTab.js');
-  const { GUILD_RANK_MASTER } = await import('../src/net/guildLaw.js');
+  const { GUILD_RANK_MASTER } = await import('../src/net/guild/guildLaw.js');
   const SEAT = { key: 3021, name: 'Anticlere', region: 17, tier: 'palace' };
   const SH = { id: 'g1', name: 'The Silver Hand', tag: 'SH', heraldry: null };
   const settle = async (n = 8) => { for (let i = 0; i < n; i++) await Promise.resolve(); };

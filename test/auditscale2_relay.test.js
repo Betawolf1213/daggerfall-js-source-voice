@@ -28,20 +28,20 @@ import {
   SOCIAL_ROOM, parkKeyOf, parkKey, parkRegistryRoom, wdunRoomKey, worldRoom, wallMsForClassicMinutes, raidLedgerKey,
 } from '../src/net/wire.js';
 import { RELAY_CFG_TTL_MS } from '../src/net/relayCfg.js';
-import { newWildRef } from '../src/net/wildRef.js';
-import * as SL from '../src/net/serpentLaw.js';
-import { raidDaySlots, raidLedgerId, RAID_DAY_MINUTES } from '../src/net/raidLaw.js';
+import { newWildRef } from '../src/net/wild/wildRef.js';
+import * as SL from '../src/net/serpent/serpentLaw.js';
+import { raidDaySlots, raidLedgerId, RAID_DAY_MINUTES } from '../src/net/raid/raidLaw.js';
 import * as wire from '../src/net/wire.js';
 import { webcrypto } from 'node:crypto';
 import { mintStakeOrder, mintDeckOrder, deckDigest } from '../src/net/identityToken.js';
-import { readCardReceipt } from '../src/net/cardReceipt.js';
+import { readCardReceipt } from '../src/net/card/cardReceipt.js';
 import { HOLDEM_REFUSALS } from '../src/ui/cardTableHud.js';
 import { SIT_REFUSALS } from '../src/systems/card/cardRemoteTable.js';
 import { ILIAC_ONLINE_REFUSALS } from '../src/scenes/iliacTableGame.js';
-import { STARTER_DECK } from '../src/net/iliacCards.js';
+import { STARTER_DECK } from '../src/net/iliac/iliacCards.js';
 import { BAND_LIFE_MS } from '../src/systems/travel/travelBands.js';
-import { riteNativeOf, RITE_UNITS_PER_M } from '../src/net/gateRite.js';
-import { gateTimes } from '../src/net/gateLaw.js';
+import { riteNativeOf, RITE_UNITS_PER_M } from '../src/net/gate/gateRite.js';
+import { gateTimes } from '../src/net/gate/gateLaw.js';
 
 /** The walk's three new headers by their names (held to wire.js's own in R3-3 (a)), so each pin here reads against the
  *  code as it stood before them. */

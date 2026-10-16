@@ -12,7 +12,7 @@ import {
 } from '../src/systems/party/partyRestLaw.js';
 import { validPartyPose, PARTY_MAX, PARTY_OFFLINE_MS, SOCIAL_ROOM, byteGate, QUEST_ROOM_BYTES_PER_S, QUEST_FRAME_MAX, RELAY_VERSION, NOTE_IN_HZ_MAX } from '../src/net/wire.js';
 import { SocialState } from '../src/net/social.js';
-import { PeerBodies, BODIES_MAX, SWAP_DWELL_MS } from '../src/net/peerBodies.js';
+import { PeerBodies, BODIES_MAX, SWAP_DWELL_MS } from '../src/net/peer/peerBodies.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { MAX_REST_HOURS, loiterLimitHours, cannotLoiterLines, CANNOT_REST_MORE_THAN_99_HOURS_ID } from '../src/systems/rest/restSession.js';
 

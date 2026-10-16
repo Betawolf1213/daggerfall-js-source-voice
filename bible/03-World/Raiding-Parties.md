@@ -138,7 +138,7 @@ participants, and signs the rewards. `RELAY_VERSION` world122 (a relay deploy - 
 - **Where.** A raid's LEDGER lives in the raided town's CELL (`worldRoom(px, py)` - every player standing in the town
   is in that room), in the cell object's storage (`raid:<key>`), for the raid's window and `RAID_KEEP_MS` (10 min)
   past it; the cell's alarm forgets it then. A cell keeps `RAID_LEDGERS_MAX` (4) - a new raid takes the stalest one's
-  place. The law is `net/raidLaw.js`, pure; the relay's half is `server/src/index.js` (`_raidWord`, `_raidClean`,
+  place. The law is `net/raid/raidLaw.js`, pure; the relay's half is `server/src/index.js` (`_raidWord`, `_raidClean`,
   `_raidSweep`).
 - **The word.** A player standing in a raided town while it runs says `{t:'raid', k:'w', key, st, tg, ty, px, py, n,
   s}` to the town's cell - the raid as the day's roll made it (its start, target, party and town pixel), the deaths of
@@ -167,7 +167,7 @@ participants, and signs the rewards. `RELAY_VERSION` world122 (a relay deploy - 
   Any word that finds the count at its target with no cleanse stamped starts it (a ledger written at its target just
   before an eviction), and a word that lands while the receipts are being minted is not heard - an object's input
   gate holds for storage alone, and the mint awaits the key and the signature - so a raid is cleansed once.
-- **The receipt** (`net/raidReceipt.js`): `w1.<base64url({ w, s, c, y, i, e })>.<signature>` - the raid's key, the
+- **The receipt** (`net/raid/raidReceipt.js`): `w1.<base64url({ w, s, c, y, i, e })>.<signature>` - the raid's key, the
   account, a seed from the relay's CSPRNG (RAID4 rolls the spoils off it), the party, issued and expiry (a week).
   Signed by the relay's one key, `GATE_SIGNING_KEY`, which now signs two things - the version is inside the signed
   bytes, so the gate's verifier refuses a `w1` and this one an `r1` before a byte of either body is read, and neither
@@ -196,7 +196,7 @@ Mac's "3. We can also add renown and it's own atheric + armor sets". A town defe
 receipt - one a raid, to each account that struck a raider and stood in the town at the cleanse.
 
 - **RAID4a - the record and the Renown** (account service acct17, no relay change). The device carries each receipt
-  with the character that fought it (`net/raidClaims.js`) to `/v1/raid/claim` (`server-account/src/raids.js`), which
+  with the character that fought it (`net/raid/raidClaims.js`) to `/v1/raid/claim` (`server-account/src/raids.js`), which
   verifies it with the relay's public half, counts it once a (raid, account) and at most `RAID_CLAIMS_DAY_MAX` (6) a
   game day - the relay holds no schedule, so this is the record's bound - and pays that character `renownRaidXp`:
   three quests' worth at the top quest level, under RENOWN3's ceiling (780 at Renown 1, 1,860 at 10, 3,900 from 27),
@@ -278,7 +278,7 @@ Mac: *"Fix it and do another audit"* - AUDIT RAID's "not changed". A raid is fiv
 region, its town, its start, its party, its target - and the last three are the GENERATOR'S ALONE. So the relay (world124)
 reads every raid word against:
 
-- **the day's slots, always** (`net/raidLaw.js raidDaySlots`): a start, target and party the day never drew is no raid,
+- **the day's slots, always** (`net/raid/raidLaw.js raidDaySlots`): a start, target and party the day never drew is no raid,
   dropped before any read and without a strike (a data-modded world rolls its own raids, and they are its own). It
   needs no game data. The generator is ONE copy for relay and client (`raidDayRandom`, pinned equal to
   `systems/worldTick.js dayRng` for the raids' salt), and the client's roll is the law's (`rollRaidTowns` -
@@ -300,7 +300,7 @@ Pinned in `test/raidroll.test.js` (9 tests; `tools/mutants/raidroll.json`, 25 mu
 
 ## AUDIT ONLINE 2 - what AUDIT ONLINE left, fixed (2026-09-28)
 
-- **F2: a receipt's life is the RELAY's clock.** The raid and gate carriers (`net/raidClaims.js`, `net/gateClaims.js`)
+- **F2: a receipt's life is the RELAY's clock.** The raid and gate carriers (`net/raid/raidClaims.js`, `net/gate/gateClaims.js`)
   let a receipt go unasked by the device's clock, so a device a week ahead lost every receipt's Renown. A receipt is
   now expired only by the relay's clock (`world.js relayNowS`, heard at the welcome); unheard, it is kept and the
   account service judges it.

@@ -15,7 +15,7 @@ import {
   raidRelayState, raidPoolCleared, _resetRaidingParties, MAX_RAID_ENEMIES,
 } from '../src/systems/raidingParties.js';
 import { raidMapMarks } from '../src/ui/eventMapMarks.js';
-import { raidSig } from '../src/net/raidLaw.js';
+import { raidSig } from '../src/net/raid/raidLaw.js';
 import { worldRoom } from '../src/net/wire.js';
 import { setSharedClock } from '../src/systems/worldTick.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';

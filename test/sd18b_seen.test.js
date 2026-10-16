@@ -14,12 +14,12 @@ import {
   SD_MARKS_FADE_MS, SD_MARKS_CARD_TEXT, SD_STONE_LIGHT,
 } from '../src/ui/sdMarksView.js';
 import { markIconHtml, markIconSvg, marksViewOf } from '../src/ui/gateMarksView.js';
-import { SD_ENDINGS, SD_OMENS, sdMarksOf, sdEndingOf } from '../src/net/sdMarks.js';
-import { SD_STONES, SD_STONE_POS, realmToDungeon, SD_FRAY_MAX, orreryOf } from '../src/net/sdBrain.js';
-import { SD_BLOWS, newRemnantFight, joinRemnant, remnantStateOf } from '../src/net/sdRemnant.js';
-import { createSdFightLink, SD_FIGHT_EMPTY } from '../src/net/sdFightLink.js';
+import { SD_ENDINGS, SD_OMENS, sdMarksOf, sdEndingOf } from '../src/net/superDungeon/sdMarks.js';
+import { SD_STONES, SD_STONE_POS, realmToDungeon, SD_FRAY_MAX, orreryOf } from '../src/net/superDungeon/sdBrain.js';
+import { SD_BLOWS, newRemnantFight, joinRemnant, remnantStateOf } from '../src/net/superDungeon/sdRemnant.js';
+import { createSdFightLink, SD_FIGHT_EMPTY } from '../src/net/superDungeon/sdFightLink.js';
 import { validSdOut } from '../src/net/wire.js';
-import { strikeDamage, savedShare } from '../src/net/gateStrike.js';
+import { strikeDamage, savedShare } from '../src/net/gate/gateStrike.js';
 import {
   createSdRemnantBlows, sdTint, sdTelegraphShapes, sdPoolShapes, SD_BLOW_COLOR, SD_ELEMENT_COLOR, SD_ELEMENT_STYLE, SD_ELEMENT_GROUND, SD_TINT_LEAN, SD_POOL_COLOR,
 } from '../src/scenes/sdRemnantBlows.js';

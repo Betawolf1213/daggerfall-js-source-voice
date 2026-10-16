@@ -19,17 +19,17 @@
 // brass and gold over a dithered dark; under the Grimoire a star-chart inked on the page - brown ink, red for what is held,
 // gold leaf on a held star's rim - drawn at half resolution and laid pixelated, as every surface of the dress is.
 //
-// The law is net/firmamentLaw.js, the sky net/firmamentTree.js, the purses and the asks net/firmamentBook.js. Nothing
+// The law is net/firmament/firmamentLaw.js, the sky net/firmament/firmamentTree.js, the purses and the asks net/firmament/firmamentBook.js. Nothing
 // here decides what may be allocated - it asks the law, and the service asks it again.
 // ═══════════════════════════════════════════════════════════════════
 
 import { t } from '../systems/textManager.js';   // UI-CALM: the read's failure, said
-import { FIRM_NODES, FIRM_EDGES, SIGNS, SERPENT, FIRM_RADII, signById } from '../net/firmamentTree.js';
+import { FIRM_NODES, FIRM_EDGES, SIGNS, SERPENT, FIRM_RADII, signById } from '../net/firmament/firmamentTree.js';
 import {
   pathTo, refundTakes, firmCostOf, fits, pointsLeft, treeDiff, refundSilver, statWords, statDef, overCap, treeStats, treeParts, FIRM_RESPEC_GOLD,
   buildCode, treeOfCode, treeFault,
-} from '../net/firmamentLaw.js';
-import { firmamentBook } from '../net/firmamentBook.js';
+} from '../net/firmament/firmamentLaw.js';
+import { firmamentBook } from '../net/firmament/firmamentBook.js';
 import { accountRefusalText } from '../net/accountClient.js';   // AUDIT UICALM-FIRM1 L4 L4: a refusal the window has no words for, in the account's
 import { FRAME_TONES } from './enhancedFrame.js';
 import { GRIM_TONES, GRIMOIRE_STACK, px } from './grimoireDress.js';
@@ -239,7 +239,7 @@ const cloneTree = (t) => ({ start: t?.start ?? null, keys: [...(t?.keys ?? [])] 
 function seeded(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
 
 /**
- * Mount the Firmament over `host`. `book` the page's (net/firmamentBook.js) - or `preview` for a sky with no service
+ * Mount the Firmament over `host`. `book` the page's (net/firmament/firmamentBook.js) - or `preview` for a sky with no service
  * (the lab page, an offline look): `{ tree, stars, craft, renown, commit? }`. `onExit` when it closes.
  * @param {HTMLElement} host
  * @param {{ book?: any, preview?: any, onExit?: () => void, doc?: Document }} [o]

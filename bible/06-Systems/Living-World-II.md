@@ -287,7 +287,7 @@ Mac: "actual caravans utilizing horses and wagons".
 - A noble's procession (LW9) draws its baggage wagon.
 - A pedlar's or a carter's own trip leads a pack horse: the horse alone, in its still and walk views. ARENA2 has no pack
   model the tree knows of.
-- Nobody else has a team. Couriers stay on foot: the riding peer's mounted sprites (`net/peerRiders.js`) are a player's
+- Nobody else has a team. Couriers stay on foot: the riding peer's mounted sprites (`net/peer/peerRiders.js`) are a player's
   Eye of the Beholder look, not a resident's (section 11, call 5).
 
 ### 3.2 Where it is (`wagons.js`, pure)

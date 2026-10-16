@@ -20,9 +20,9 @@
 // marks' row, the bar clear of the crosshair.
 //
 // Not a DFU member. Ledger A (WB).
-import { ATTACK_BY_ID, ATTACKS, PHASE_AT, profileOf, HOST, isDagons } from '../net/gateBrain.js';
-import { telegraphAt } from '../net/gateStrike.js';
-import { countdownText } from '../net/gateLaw.js';
+import { ATTACK_BY_ID, ATTACKS, PHASE_AT, profileOf, HOST, isDagons } from '../net/gate/gateBrain.js';
+import { telegraphAt } from '../net/gate/gateStrike.js';
+import { countdownText } from '../net/gate/gateLaw.js';
 import { attackColor, crystalColor, STUN_COLOR, WARD_COLOR } from '../world/gate/gateBoss.js';
 import { GATE_RING_CSS } from './gateMapMark.js';
 import { marksViewOf, markIconHtml } from './gateMarksView.js';   // WB9a: the night's marks under his health, each its sign and name
@@ -173,8 +173,8 @@ export const BOSS_BAR_CSS = `
  * named is the one on my feet: `aimed`, scenes/gateCourt.js perilAt's name); `spent` the phase marks he has passed;
  * `wrathNear` its last minute; `alpha` the bar's fade after his fall; `now` the clock it was read at (the trailing
  * segment's).
- * @param {any} s the court's state (net/gateLink.js GateState) @param {number} now the relay's clock
- * @param {{ name: string, title: string }} boss net/gateLaw.js gateBossOf
+ * @param {any} s the court's state (net/gate/gateLink.js GateState) @param {number} now the relay's clock
+ * @param {{ name: string, title: string }} boss net/gate/gateLaw.js gateBossOf
  * @param {string|null} [aimed] the name of the blow still to land on my feet
  */
 export function bossBarModel(s, now, boss, aimed = null) {

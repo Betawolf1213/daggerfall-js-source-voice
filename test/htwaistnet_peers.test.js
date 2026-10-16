@@ -4,7 +4,7 @@
 // Handling.LanternsAtWaist) and draws it swinging at the hip of the local
 // Morrowind third-person body and the local Eye Of The Beholder sprite. Mac
 // asked for it to be seen on the character - and online, the OTHER players
-// are drawn in the Morrowind body too (MWBODY1: net/peerBodies.js, one
+// are drawn in the Morrowind body too (MWBODY1: net/peer/peerBodies.js, one
 // createFpArm() per peer, posed in third person). HT-WAIST left the wire
 // untouched ("peers show no held light"), so nobody else saw it.
 //
@@ -26,7 +26,7 @@ import { readFileSync } from 'node:fs';
 
 import { validPose, poseChanged, parseClient } from '../src/net/wire.js';
 import { lerpPose, OnlineSession } from '../src/net/online.js';
-import { PeerBodies } from '../src/net/peerBodies.js';
+import { PeerBodies } from '../src/net/peer/peerBodies.js';
 import { createFpArm, HIP_LIGHT_SLOT } from '../src/combat/fpArm.js';
 import * as playerTorch from '../src/systems/playerTorch.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';

@@ -22,7 +22,7 @@ import { LADDER_TIERS, ladderAfter, arenaLadderRestore, BOUTS_PER_TIER, nextLadd
 import { boutPoints } from '../src/systems/arena/arenaLeague.js';
 import { revenantCandidate } from '../src/systems/revenant/revenant.js';
 import { createArenaBouts } from '../src/scenes/arenaBouts.js';
-import { createArenaClaims } from '../src/net/arenaClaims.js';
+import { createArenaClaims } from '../src/net/arena/arenaClaims.js';
 import { newBout, boutTick, boutHit, boutAtMarks, takeBoutEvents, callMs, COUNT_MS, BOUT_LIMIT_MS } from '../src/systems/arena/arenaBout.js';
 import { SAND_BARRED_EFFECTS, SAND_BARRED_KINDS, SAND_CEILING_M, onTheSand, sandPotionRefusal, sandSpellRefusal, stripSandBarred, restoreSandHeld } from '../src/systems/arena/arenaKit.js';
 import { PlayerMotor, JUMP_SPEED } from '../src/player/motor.js';
@@ -35,14 +35,14 @@ import {
   ARENA_BLOW_CHANCE, ARENA_BLOW_COOLDOWN_MIN_MS, ARENA_BLOW_COOLDOWN_MAX_MS, ARENA_BLOW_SHAPES, LADDER_JUDGES_SHARE, ARENA_TICKET_RE,
   validArenaIn, validArenaOut, ARENA_NO_TEXT, ARENA_FLOOR_CENTRE, arenaBoutRoom, ARENA_CHAMPION_MIN_BOUTS, ARENA_CHAMPION_MIN_FOES, ARENA_PAIR_SEASON_MAX,
   ARENA_PAIR_DAY_MAX, ladderKey, ARENA_ATTEMPT_LIFE_S, ARENA_KEEP_MS,
-} from '../src/net/arenaLaw.js';
-import { openBout, joinBout, stepBout } from '../src/net/arenaBrain.js';
-import { mintArenaReceipt, readArenaReceipt, arenaReceiptValid } from '../src/net/arenaReceipt.js';
+} from '../src/net/arena/arenaLaw.js';
+import { openBout, joinBout, stepBout } from '../src/net/arena/arenaBrain.js';
+import { mintArenaReceipt, readArenaReceipt, arenaReceiptValid } from '../src/net/arena/arenaReceipt.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { standService } from './accountDb.mjs';
 import { laurelWorthy, laurelOfBoard, ARENA_ATTEMPTS_KEEP_S } from '../server-account/src/arena.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { arenaLadderOf } from '../src/net/arenaLaw.js';
+import { arenaLadderOf } from '../src/net/arena/arenaLaw.js';
 
 const { subtle } = globalThis.crypto;
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -329,7 +329,7 @@ test('AUDIT ARENA-LADDER L4: THE LADDER\'S JUDGES\' FLOOR - at the time limit a 
   boutHit(y.b, { from: 'p', to: 'a', dmg: 30, now: y.t + 1 });
   boutTick(y.b, y.t + BOUT_LIMIT_MS);
   assert.equal(y.b.result.side, 0);
-  assert.match(rd('src/net/arenaBrain.js'), /judgesFloor: st\.kind === 'pve' \? LADDER_JUDGES_SHARE : 0 \}\);/);
+  assert.match(rd('src/net/arena/arenaBrain.js'), /judgesFloor: st\.kind === 'pve' \? LADDER_JUDGES_SHARE : 0 \}\);/);
 });
 
 test('AUDIT ARENA-LADDER L5: THE SAND\'S KIT LAW - in a bout of one\'s own no potion is drunk (the bottle kept), no Invisibility, Levitate, Chameleon, Shadow, Charm or Teleport is cast, and those already on the fighter come off; outside a bout, all as before (mutants: a barred type dropped; the bottle eaten; the strip unread)', () => {

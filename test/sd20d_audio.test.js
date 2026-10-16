@@ -17,8 +17,8 @@ import { createDeadlandsAir, AIR_WIND, AIR_SEA } from '../src/scenes/deadlandsAi
 import { lowpass, lowpassLoop, rms } from '../src/systems/arena/arenaSound.js';
 import { createSdRemnantVoice, SD_VOICE_CUES, SD_VOICE_AWAY_MS } from '../src/scenes/sdRemnantVoice.js';
 import { createSdRemnantBlows, SD_BLOW_CUES, SD_HEART_LATE_MS } from '../src/scenes/sdRemnantBlows.js';
-import { sdEndAgain } from '../src/net/sdFightLink.js';
-import { SD_BLOWS, SD_BODY, SD_END_EVERY_MS, SD_LOST_MS } from '../src/net/sdRemnant.js';
+import { sdEndAgain } from '../src/net/superDungeon/sdFightLink.js';
+import { SD_BLOWS, SD_BODY, SD_END_EVERY_MS, SD_LOST_MS } from '../src/net/superDungeon/sdRemnant.js';
 import { BOSS_CUES } from '../src/world/gate/gateBoss.js';
 import { createSdEnd, SD_BELL_ASK_MS } from '../src/scenes/sdEnd.js';
 import { RIFT_BELL_KEY, RIFT_BELL_RECORDS } from '../src/systems/superDungeon/sdRiftSound.js';
@@ -27,10 +27,10 @@ import { sdScoreSongs, sdScorePlace, hourScoreFor, createHourScore, HOUR_SONGS, 
 import { SD_STEPS_SOUNDS } from '../src/scenes/sdSteps.js';
 import { SD_HALL_SOUNDS } from '../src/scenes/sdHall.js';
 import { SD_CHECKPOINTS } from '../src/world/superDungeon/sdSteps.js';
-import { SD_ARENA, SD_ORRERY, realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { SD_ARENA, SD_ORRERY, realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { SD_BAR_NEAR_M } from '../src/ui/sdRemnantBar.js';
 import { SD_FIRST_STEP } from '../src/world/superDungeon/sdHall.js';
-import { sdPhase } from '../src/net/sdLaw.js';
+import { sdPhase } from '../src/net/superDungeon/sdLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const W = read('src/scenes/world.js');
@@ -157,7 +157,7 @@ function hearing(s0) {
 }
 const cueIs = (p, c) => p.clip === c.clip && p.pitch === c.pitch;
 
-test('SD20d THE END HEARD WHOLE ONCE, THEN ITS KNELL (A2): after its first landing (the fight\'s `ended`) the law strikes the whole arena every SD_END_EVERY_MS until the fight is lost, half a minute - and each strike sounded whole, its roll, its toll and its fire: forty-five cues. The first is heard whole; each strike after it a knell, a third of its toll (net/sdFightLink.js sdEndAgain) (mutants: every strike whole; the knell silent; the first a knell)', () => {
+test('SD20d THE END HEARD WHOLE ONCE, THEN ITS KNELL (A2): after its first landing (the fight\'s `ended`) the law strikes the whole arena every SD_END_EVERY_MS until the fight is lost, half a minute - and each strike sounded whole, its roll, its toll and its fire: forty-five cues. The first is heard whole; each strike after it a knell, a third of its toll (net/superDungeon/sdFightLink.js sdEndAgain) (mutants: every strike whole; the knell silent; the first a knell)', () => {
   const endAt = T0 + 2500;
   const r = hearing(fight({ ph: 3, h: 500, op: T0 - 600_000 }));
   const endAtk = (i, at) => ({ k: 'atk', b: SD_BODY.hour, i, a: SD_BLOWS.end.id, at, x: 0, z: 0, yw: 0, tg: [] });

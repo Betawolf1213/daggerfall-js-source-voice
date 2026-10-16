@@ -456,7 +456,7 @@ can't keep the numbers as is"), and what is left for another pass:
   cannot be told from a classic piece the player enchanted.
 - **Not this change's, for its own pass:** the load's other repairs (DISC21-A's mint, DISC29-B's names, RARITY-WEAR)
   walk the same lists, so they miss the stores P2 names - a piece is repaired at a later load once it is back in the
-  pack, or never; and customs' walk (`net/realmGoldLaw.js` stashedItemLists) misses a revenant companion's pack. DONE
+  pack, or never; and customs' walk (`net/realm/realmGoldLaw.js` stashedItemLists) misses a revenant companion's pack. DONE
   in the same pull request, on Mac's word: ITEM-WALK, below.
 
 Checked and found sound: every weapon mint runs through mintCondition (the loot factories, shops, enemies and Roleplay
@@ -480,7 +480,7 @@ weapon migration walked, and customs did not count a sworn revenant's pack. Mac 
   the pack's lists and customs' walk, and nowhere else. A piece kept anywhere else was repaired only once it was back
   in the pack and the game loaded again: a weapon by P2's door at its first wear, the others never. Now one walk holds
   every list: the character's own five (the pack, the wagon, the Materials Bag, the furnisher's deliveries and the
-  repairer's shelf), every list customs reads (`net/realmGoldLaw.js` stashedItemLists), and every other one
+  repairer's shelf), every list customs reads (`net/realm/realmGoldLaw.js` stashedItemLists), and every other one
   (heldItemLists):
   - in each cached scene, the owner's own things set out in a room (`decorOwn`; never a weapon or armour) and a guild's
     day's Buy shelves (`guildShelves`);
@@ -503,7 +503,7 @@ weapon migration walked, and customs did not count a sworn revenant's pack. Mac 
   its heir at birth, with no load at all, and the remains open where they lie. The runner now runs on each bequest
   piece as it is paid (`payEstateOf`) and on a remains list as it opens, before the claim's mark is taken, so opening
   a list still claims nothing.
-- **C - customs counts a sworn revenant's pack** (`net/realmGoldLaw.js` stashedItemLists). The player stores into a
+- **C - customs counts a sworn revenant's pack** (`net/realm/realmGoldLaw.js` stashedItemLists). The player stores into a
   sworn revenant's pack as into a crew hand's (`revenantCompanions.js` packOf), and AUDIT WK-P1 counted the crew's alone:
   a million gold in the revenant's pack crossed whole. Each sworn, undefeated record's `companion.items` is now counted
   and taken from as the crew's are, and the account service's first-save gate reads the same walk. A record the load

@@ -30,7 +30,7 @@ import * as relay from '../server/src/relay.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { OnlineSession } from '../src/net/online.js';
-import { PeerBodies, PENDING_FRAMES, BODY_RANGE } from '../src/net/peerBodies.js';
+import { PeerBodies, PENDING_FRAMES, BODY_RANGE } from '../src/net/peer/peerBodies.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -243,7 +243,7 @@ test('AUDIT WORLD: the hosts by source - the dungeon host stamps its memory and 
   // cast now finishes and the stance drops at its end - back to None for a sheathed caster by the Casting case above
   assert.match(fp, /if \(!want && upper === UPPER_BODY\.Casting\) \{ unreadyAfterCast = true; return false; \}/, 'C2 / MW-CAST1: an un-ready mid-cast waits for the cast to end');
   assert.match(fp, /if \(unreadyAfterCast\) \{ unreadyAfterCast = false; spellReady = false; refreshWeaponGroup\(\); resetIdle\(\); resetMovement\(\); \}/, 'and the stance drops there');
-  const pb = rd('src/net/peerBodies.js');
+  const pb = rd('src/net/peer/peerBodies.js');
   assert.doesNotMatch(pb, /a peer's drawn bow shows no arrow/, 'D7: the build doc');
   // PIN MOVED (MWNPC4): the reactions (the hit count, the death) re-latch with the swing
   assert.match(pb, /if \(b\.goneAt == null\) \{ b\.goneAt = now; b\.hit = null; b\.dead = null; b\.swing = null; b\.pending = null; b\.posed = false; \}/, 'C7: the linger re-latches (AUDIT PEER-CADENCE F2: and forgets its skin)');

@@ -10,7 +10,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeRooms } from './fakeRoom.mjs';
-import { ARENA_FLOOR_CENTRE, arenaPrivateRoom, arenaBoutRoom } from '../src/net/arenaLaw.js';
+import { ARENA_FLOOR_CENTRE, arenaPrivateRoom, arenaBoutRoom } from '../src/net/arena/arenaLaw.js';
 import { readArenaOut, CLOSE_POLICY } from '../src/net/wire.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';

@@ -85,14 +85,14 @@
   },
   {
     "name": "AP-stranger-takes-a-mate",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "      if (b.pri && !pri) continue;   // AUDIT PARTY8: a stranger never takes a party mate's slot",
     "new": "      // (a stranger may take a party mate's slot)",
     "tests": ["test/auditparty8.test.js"]
   },
   {
     "name": "AP-mates-not-first",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    want.sort((a, b) => (a.pri === b.pri ? a.d2 - b.d2 : a.pri ? -1 : 1));",
     "new": "    want.sort((a, b) => a.d2 - b.d2);",
     "tests": ["test/auditparty8.test.js"]

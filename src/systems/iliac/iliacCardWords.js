@@ -5,14 +5,14 @@
 // (render/iliacCardFaces.js), the binder's look and its tiles' titles (ui/cardBinderPage.js), a card item's lines
 // (systems/iliac/iliacItems.js) and the table panel's card titles (ui/iliacTableHud.js).
 //
-// WHY HERE, NOT IN THE CATALOG: the catalog (net/iliacCards.js) is relay law - it imports nothing, so the relay's bundle
+// WHY HERE, NOT IN THE CATALOG: the catalog (net/iliac/iliacCards.js) is relay law - it imports nothing, so the relay's bundle
 // carries it - and the relay never shows a word. The words were written there beside the rules, in English only; L10N4's
 // ratchet (test/l10n4_hardcoded.test.js) holds a file's English from growing, so the nine cards KG-SET paints into the
 // set could not be written there, and no card's words had a road to the player's language. Now they are the display's,
 // each read when it is shown - never at module load (tools/l10n/ROUTE-BRIEF.md, "Never at module load").
 //
 // A CARD'S RULES ARE ITS EFFECTS' OWN WORDS: each rules line's English is EXACTLY what `fxText(fx, kind)`
-// (net/iliacHand.js) says of the card's effects - test/cards8_catalog.test.js holds every card to it, as it held the
+// (net/iliac/iliacHand.js) says of the card's effects - test/cards8_catalog.test.js holds every card to it, as it held the
 // catalog's own `text` - so a translation translates the rules the engine plays, whole sentences per card.
 //
 // THE NAMES STAY THE CATALOG'S: a card's name is Daggerfall's own (its creatures, guilds, Princes, artifacts, cities)

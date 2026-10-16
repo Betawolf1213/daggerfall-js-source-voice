@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import worker from '../server-account/src/index.js';
 import { standService } from './accountDb.mjs';
 import { seatRealm, freshSave } from './realmSeat.mjs';
-import { TRADE_HELD_NOTICES } from '../src/net/realmTradeLaw.js';
+import { TRADE_HELD_NOTICES } from '../src/net/realm/realmTradeLaw.js';
 import { tradeHeldNotice, tradeHeldLawNotice } from '../src/systems/item/itemIds.js';
 import { settleRealmTradeHalf } from '../src/systems/realmSaves.js';
 import { STRIKES_FOR_REVIEW } from '../server-account/src/judge.js';

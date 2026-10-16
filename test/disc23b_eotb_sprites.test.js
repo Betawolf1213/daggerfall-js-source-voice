@@ -10,7 +10,7 @@
 // CLASS's enemy sprite - the set they had chosen was on nobody's screen but their own.
 //
 // Driven through the real tile and drawer (enhancedMenu.js featureTile), the real settings store, the real look
-// (remotePlayers.js composeLook, wire.js validLook) and the real walker layer (net/peerRiders.js createPeerWalkers)
+// (remotePlayers.js composeLook, wire.js validLook) and the real walker layer (net/peer/peerRiders.js createPeerWalkers)
 // over the EOTB billboard tables; the host's wiring by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -21,7 +21,7 @@ import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings } from '../s
 import { composeLook } from '../src/net/remotePlayers.js';
 import { validLook, FOOT_SKINS } from '../src/net/wire.js';
 import { EOTB_FOOT_SET_COUNT } from '../src/player/classSkins.js';
-import { createPeerWalkers, createPeerRiders, createEotbArt, WALK_ONE_SHOTS } from '../src/net/peerRiders.js';
+import { createPeerWalkers, createPeerRiders, createEotbArt, WALK_ONE_SHOTS } from '../src/net/peer/peerRiders.js';
 import { ARCHIVE_FOOT, frameCount } from '../src/player/eotbBillboard.js';
 
 const V = 'eye-of-the-beholder';

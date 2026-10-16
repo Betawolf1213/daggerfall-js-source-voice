@@ -5,7 +5,7 @@
 // wind-up runs, bright at the landing").
 //
 // ONE QUAD over the floor's disc, a hair above it, and the shape is the FRAGMENT'S question: its point in the court's
-// frame against the attack the uniforms describe - the same law net/gateStrike.js inAttack answers for a struck
+// frame against the attack the uniforms describe - the same law net/gate/gateStrike.js inAttack answers for a struck
 // player's feet (a cone about his facing that always holds his body, a disc about him or under each target, the lane
 // his charge runs, the ring of the nova, the whole floor), so the ground shows exactly what lands. `telegraphField` is
 // the shader's own reading in JS - the pins hold it to inAttack point for point, and the shader's text to it.
@@ -35,8 +35,8 @@
 // Not a DFU member. Ledger A (WB).
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { buildProgram } from './glProgram.js';
-import { ATTACK_BY_ID, ATTACKS, BOSS_R, COURT_CENTRE, COURT_R, COURTS, BASE_PROFILE, windupOf, nearestCourt, isDagons, WALKS, WALK_HALF_W } from '../net/gateBrain.js';
-import { telegraphAt } from '../net/gateStrike.js';
+import { ATTACK_BY_ID, ATTACKS, BOSS_R, COURT_CENTRE, COURT_R, COURTS, BASE_PROFILE, windupOf, nearestCourt, isDagons, WALKS, WALK_HALF_W } from '../net/gate/gateBrain.js';
+import { telegraphAt } from '../net/gate/gateStrike.js';
 import { attackColor } from '../world/gate/gateBoss.js';
 
 /** The shapes, as the shader's `uKind` says them. WBX5: the Spokes of Dagon's lanes; WBX4: his mark. */
@@ -49,7 +49,7 @@ export const TELEGRAPH_SPOKES_MAX = 8;
 export const BOSS_MARK_R = BOSS_R + 0.35;
 export const BOSS_MARK_CHEVRON_LEN = 1.6;
 export const BOSS_MARK_CHEVRON_HALF_W = 0.85;
-/** The most discs one attack lays (Hellfire's two volleys of five in phase three - net/gateBrain.js). */
+/** The most discs one attack lays (Hellfire's two volleys of five in phase three - net/gate/gateBrain.js). */
 export const TELEGRAPH_POINTS_MAX = 10;
 /** How far over the floor it lies, metres; how far past the floor's rim a whole court's quad reaches, and (WB13a) how far
  *  past its own shape a shape's quad reaches - its glow, its keyline and its shockwave. */
@@ -113,7 +113,7 @@ const DEG = Math.PI / 180;
  * own size, the colour his aspect gives it - so the ground still shows exactly what lands. WB13a: `edge` its line's
  * colour, `runS` the charge's run (its landing follows his head down the lane).
  * @param {{a: number, at: number, x: number, z: number, yw: number, tg: number[][]}|null} atk @param {number} phase @param {number} now
- * @param {ReturnType<typeof import('../net/gateBrain.js').fightProfile>} [P]
+ * @param {ReturnType<typeof import('../net/gate/gateBrain.js').fightProfile>} [P]
  */
 export function telegraphShape(atk, phase, now, P = BASE_PROFILE) {
   /** @type {any} an attack of any shape - the fields its shape does not have read as none */
@@ -132,7 +132,7 @@ export function telegraphShape(atk, phase, now, P = BASE_PROFILE) {
   const at = A.aim === 'point' && marks.length ? marks[0] : [atk.x, atk.z];
   return {
     kind, origin: [atk.x, atk.z], yaw: atk.yw, r: A.shape === 'spokes' ? A.len : P.atk[A.key].r ?? 0, halfArc: ((A.arc ?? 0) / 2) * DEG, body: P.bossR,
-    end: [end[0], end[1]], halfW: A.shape === 'lane' ? Math.max((A.width ?? 0) / 2, P.bossR) : (A.width ?? 0) / 2, r0: A.r0 ?? 0, r1: A.r1 ?? 0,   // AUDIT WBX F7: the charge strikes as wide as his body (net/gateStrike.js chargeStrikes), and shows so
+    end: [end[0], end[1]], halfW: A.shape === 'lane' ? Math.max((A.width ?? 0) / 2, P.bossR) : (A.width ?? 0) / 2, r0: A.r0 ?? 0, r1: A.r1 ?? 0,   // AUDIT WBX F7: the charge strikes as wide as his body (net/gate/gateStrike.js chargeStrikes), and shows so
     points: marks.map((p) => [p[0], p[1]]), n: A.shape === 'spokes' ? Math.min(TELEGRAPH_SPOKES_MAX, A.n) : 0,
     t: tel.t, flash: tel.since >= 0 ? 1 : 0, alpha: Math.max(0, fadeOut), color: attackColor(A, P), edge: telegraphEdge(A),
     runS: A === ATTACKS.charge ? span / 1000 : 0, pool: TELEGRAPH_POOL.blow,
@@ -153,7 +153,7 @@ export function markShape(at, yaw, color, body = BOSS_R) {
   };
 }
 
-/** WBX5: THE BURNING GROUND as the pass draws it - live pools (net/gateStrike.js landingPools) gathered by radius, each
+/** WBX5: THE BURNING GROUND as the pass draws it - live pools (net/gate/gateStrike.js landingPools) gathered by radius, each
  *  group one filled `discs` shape in `color`, coming up at its landing and dying down over its last second. WB13a: a
  *  full group (TELEGRAPH_POINTS_MAX) starts another - the newest pools were dropped, unseen and still biting (two
  *  phase-three Hellfires on five fighters). Pure. */
@@ -587,7 +587,7 @@ export class GateTelegraphRenderer {
    * whole court), the first court's centre standing at `centre` in the scene, `seconds` any clock (the shapes run on
    * their own), `fog` the frame's fog as the renderer set it ({ mode,
    * density, range, color, camPos }; none draws unfogged). AUDIT WB9 (court F4): `walks` - how far each walkway is laid
-   * (0..1, net/gateBrain.js walkFormed; none, none drawn) - and the shape goes on over the laid stretch of each walkway
+   * (0..1, net/gate/gateBrain.js walkFormed; none, none drawn) - and the shape goes on over the laid stretch of each walkway
    * its court joins (the whole arena's, of every one): a blow at the rim reaches the walkway past it, and strikes there.
    */
   draw(shape, proj, view, eye, seconds, fog = null, centre = COURT_CENTRE, walks = null, floor = null) {

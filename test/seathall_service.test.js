@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm, layRecord } from './realmSeat.mjs';
 import { SEAT_HALL_DECOR_CAP } from '../src/net/townSeatLaw.js';
-import { REALM_EMPIRE_ACCOUNT } from '../src/net/realmGoldLaw.js';
+import { REALM_EMPIRE_ACCOUNT } from '../src/net/realm/realmGoldLaw.js';
 
 const PALACE = { key: 3021, region: 21, buildingKey: 512 };
 const piece = (over = {}) => ({ id: 'bench1', model: 41000, flat: null, pos: [2, 0, 2], rot: [0, 0, 0], scale: 1, light: null, storage: false, paid: 120, ...over });

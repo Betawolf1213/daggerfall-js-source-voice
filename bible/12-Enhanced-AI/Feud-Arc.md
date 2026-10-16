@@ -431,7 +431,7 @@ longer beats a lunge.
 - **The charge** answers the archer and the kiter. Begun only out of reach, by a foe holding a melee token, its lane
   free of the collider and of cover (`ai/cover.js`). At the landing the foe crosses the lane in its 0.45 s on a new
   motor drive (`_tacDash`: the collider's walk; a wall ends it in a skid); the verdict is swept between frames, once
-  (`net/gateStrike.js chargeStrikes`'s law). A brain change: TACT4 only ever winds up in reach.
+  (`net/gate/gateStrike.js chargeStrikes`'s law). A brain change: TACT4 only ever winds up in reach.
 - **The leap**: the wind-up a crouch (the held frame), the landing an arc over 0.35 s to the point. Never a flyer.
 - **The aimed shot**: one shot in three from a tier archer at the local player. The line locks at the start, and the
   arrow leaves along it at x1.3 speed and x1.4 damage (a new scale on the foe's missile). No `blowConnects`: stepping
@@ -502,7 +502,7 @@ only ever at the local player".
 
 ### 10.3 Each judges their own feet
 
-The world boss's law (`net/gateStrike.js`): the struck client judges its own feet at the landing. A puppet whose
+The world boss's law (`net/gate/gateStrike.js`): the struck client judges its own feet at the landing. A puppet whose
 wind-up is at me sets its `_blowVerdict` and `_blowMult` from my feet at the landing, and its swing resolves through
 `resolveFoeMeleeVsPlayer` -> `blowConnects` as a local foe's does. The landing's effects (8.2) are applied on the struck
 client.

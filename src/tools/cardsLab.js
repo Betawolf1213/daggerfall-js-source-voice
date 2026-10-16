@@ -36,8 +36,8 @@ import { cardTablePropModel, paintFelt, paintWood, CARD_TABLE_BOX, CARD_TABLE_AR
 import { heldMatrices, squeezeMatrix, heldFit, heldLift } from '../world/card/cardHand.js';   // CARDS3b: the player's two held before the eye, as the host draws them; CARDS3c: squeezed; AUDIT CARDS-6 E21: fitted and lifted
 import { CARD_W, CARD_L } from '../world/card/cardMotion.js';
 import { projectToScreen } from '../player/tapRay.js';
-import { newGame, commit as iliacCommit, reveal as iliacReveal, iliacView, ILIAC_TURNS } from '../net/iliacHand.js';   // CARDS10: an Iliac game's cloth, for the frame's cost
-import { STARTER_DECK } from '../net/iliacCards.js';
+import { newGame, commit as iliacCommit, reveal as iliacReveal, iliacView, ILIAC_TURNS } from '../net/iliac/iliacHand.js';   // CARDS10: an Iliac game's cloth, for the frame's cost
+import { STARTER_DECK } from '../net/iliac/iliacCards.js';
 import { patronPlays } from '../systems/iliac/iliacPatrons.js';
 import { iliacPlaces, iliacPoses } from '../world/iliacCloth.js';
 import { createIliacTableDraw } from '../render/iliacTableDraw.js';

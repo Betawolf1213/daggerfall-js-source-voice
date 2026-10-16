@@ -12,7 +12,7 @@
 // picked lifted in brass; the end a verdict; a fold to see the cloth; the log a line a sentence. Every card is the
 // binder's own painting (ui/cardBinderPage.js cardCanvas), so a little card is the painter's tile face.
 //
-// TWO HALVES, as the Hold'em panel's. `iliacHudModel` is pure: the game's view (net/iliacHand.js iliacView, the offline
+// TWO HALVES, as the Hold'em panel's. `iliacHudModel` is pure: the game's view (net/iliac/iliacHand.js iliacView, the offline
 // session's or the relay's) and the host's staging as the rows, cards and buttons the panel shows - every label and every
 // enabled flag decided here, pinned by test/cards10_table.test.js. `createIliacTableHud` paints that model into the page
 // and hands presses back to the host.
@@ -22,9 +22,9 @@
 // refuse; the rules themselves (the session's commit, the relay's) still decide.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { cardById } from '../net/iliacCards.js';
+import { cardById } from '../net/iliac/iliacCards.js';
 import { cardRules } from '../systems/iliac/iliacCardWords.js';   // KG-SET: a card's rules, in the player's language
-import { ILIAC_HAND_MAX, ILIAC_HOLDINGS, ILIAC_MAGICKA_MAX, ILIAC_ROOM, ILIAC_TURNS } from '../net/iliacHand.js';
+import { ILIAC_HAND_MAX, ILIAC_HOLDINGS, ILIAC_MAGICKA_MAX, ILIAC_ROOM, ILIAC_TURNS } from '../net/iliac/iliacHand.js';
 import { ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
 import { cardCanvasCopy } from './cardBinderPage.js';   // CARDS-PLUS: the binder's own painting of a face, at its CSS size
 import { cardPanelChromeCss, dressCardPanel, foldWords } from './cardPanelKit.js';   // CARDS-PLUS: the kit and the face, both panels' one home
@@ -113,7 +113,7 @@ export function resultLine(view, end) {
 
 /**
  * CARDS-PLUS: who holds holding `h` as the board stands for the viewer - 'mine', 'theirs' or null - by the rules' own law
- * (net/iliacHand.js result: the greater power holds it, a tie nobody), read off the power the view shows (a face-down
+ * (net/iliac/iliacHand.js result: the greater power holds it, a tie nobody), read off the power the view shows (a face-down
  * card of the other's counts nothing to it); once the game is decided, the result's own word.
  * @param {any} view @param {number} h
  */
@@ -471,7 +471,7 @@ export function createIliacTableHud({ onPress, doc = document }) {
   const face = (id, h) => (canPaint ? cardCanvasCopy(doc, id ? cardById(id) ?? null : null, h) : null);
   const card = (c, { h = ILIAC_LANE_CARD_H, cls = '', press = null, value = undefined, power = true } = {}) => {
     // AUDIT CARDS-PLUS (lane A): your own card played face down keeps its face for you under a veil - the other player
-    // sees its back, and its text never runs (net/iliacHand.js: a face-down card is its power alone, unveiled at the end)
+    // sees its back, and its text never runs (net/iliac/iliacHand.js: a face-down card is its power alone, unveiled at the end)
     const n = el('span', `ic${cls ? ` ${cls}` : ''}${c.down && c.id ? ' down' : ''}`);
     const cv = face(c.id, h);
     if (cv) n.append(cv); else n.append(el('span', 'icname', c.name));

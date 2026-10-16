@@ -20,7 +20,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { createDuelManager, DUEL_REASK_MS, DUEL_COUNTDOWN_MS, NATIVES_PER_M, clampToRing } from '../src/net/duelSession.js';
+import { createDuelManager, DUEL_REASK_MS, DUEL_COUNTDOWN_MS, NATIVES_PER_M, clampToRing } from '../src/net/duel/duelSession.js';
 import { duelBlowPlausible, duelWearDamage, DUEL_WEAR_MULT, DUEL_MELEE_POS_SLACK_M, DUEL_TRAIL_MS } from '../src/combat/duelCombat.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { applySpell } from '../src/systems/effects.js';
@@ -89,7 +89,7 @@ test('AUDIT DUEL1 A3 + A5 + B5 + D5 the duel law: a stranger\'s frames at a duel
   assert.deepEqual(r.to('peer-zzzz').at(-1), { k: 'no', to: 'peer-zzzz', s: 'zzzz7001' });
   // B5 - PIN MOVED (INT8, bible/06-Systems/Integrity-Arc.md lane 2): a double knockout was two falls, each its own
   // client's, said a draw when the second landed in the first's hold. The referee takes one blow at a time
-  // (net/duelRef.js) - two cannot both fall - and a peer's own word of a fall names nobody: the duel is off, no winner
+  // (net/duel/duelRef.js) - two cannot both fall - and a peer's own word of a fall names nobody: the duel is off, no winner
   r = solo();
   const s3 = r.fight();
   r.m.onFrame('peer-oppo', { k: 'end', to: 'peer-meee', s: s3, why: 'fell' }, 'acct-oppo');
@@ -167,7 +167,7 @@ test('AUDIT DUEL1 A2 + B6 + D4 the blow: a result wears my weapon by at most wha
   assert.ok(DUEL_TRAIL_MS >= 300 && DUEL_TRAIL_MS <= 1000);
   const w = rd('src/scenes/world.js');
   // PIN MOVED (INT8/INT9, 2026-10-09 - bible/06-Systems/Integrity-Arc.md lane 2): no defender resolves a blow any more - a
-  // duel's and the open zone's are the relay's to referee, its reach from the places it believes (net/siegeRef.js
+  // duel's and the open zone's are the relay's to referee, its reach from the places it believes (net/siege/siegeRef.js
   // refereeStep) - so the host keeps no trail to place a blow against
   assert.equal(w.includes('_duelTrail'), false, 'no trail: the referee places every blow');
   // D4
@@ -184,7 +184,7 @@ test('AUDIT DUEL1 B2 + B4 + C1 + D2 + D5 the hosts by source: a swing bashes no 
   const w = rd('src/scenes/world.js');
   assert.match(w, /if \(online && isCellRoom\(online\.room\) && \(duelMgr\.live\?\.s \?\? null\) !== _duelRingSaid\) _foesFullAt = -Infinity;/, 'C1');
   // D2: PIN MOVED (INT8): THE FULL HEAL - Mac's "both are fully healed on duel end" - stood because a duel's blows
-  // landed on the save's health; the referee's vitality is a duel's now (net/duelRef.js), the save's health is never
+  // landed on the save's health; the referee's vitality is a duel's now (net/duel/duelRef.js), the save's health is never
   // touched, and a heal at the end would be a free one for a duel yielded at once. No heal.
   assert.equal(/const duelHeal = /.test(w), false, 'no heal: a duel never touched the save');
   assert.equal(/onHeal: \(\) => duelHeal\(\)/.test(w), false);

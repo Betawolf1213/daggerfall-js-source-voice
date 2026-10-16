@@ -26,11 +26,11 @@ import { fpAnimSources, tpAnimSources, werewolfHeadRows, bodyParts, clothingReco
 import { correctActorModelPath } from '../src/formats/mwTexture.js';
 import { composeWornArmor, firstPersonPartGroup, werewolfRobeOf, WEREWOLF_ROBE_ID, RESERVES, ARMO_PART, mwClothingRecord, DF_CLOTHING_ROWS, DF_CLOTHING_DYE_RGB } from '../src/formats/mwItemMap.js';
 import { isMwWerewolf, armBuildOptsOf, armIdentityOf, armsStandFor, createWeaponRig } from '../src/combat/weaponRig.js';
-import { PeerBodies, peerBuildOpts, peerBodyKey, peerIsWolf, BODY_REBUILD_MS, BODY_RETRY_MS, BODY_LINGER_MS } from '../src/net/peerBodies.js';
+import { PeerBodies, peerBuildOpts, peerBodyKey, peerIsWolf, BODY_REBUILD_MS, BODY_RETRY_MS, BODY_LINGER_MS } from '../src/net/peer/peerBodies.js';
 import { WERECLAWS_ITEM } from '../src/systems/lycanthropy.js';
 import { lookKey } from '../src/net/remotePlayers.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
-import { createPeerRiders } from '../src/net/peerRiders.js';
+import { createPeerRiders } from '../src/net/peer/peerRiders.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const flush = () => new Promise((r) => setTimeout(r, 0));

@@ -74,7 +74,7 @@
   },
   {
     "name": "WB5b-a-kept-receipt-lost",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "  return answer?.error === 'receipt' && !GATE_CLAIM_MENDABLE.includes(answer.why) ? 'done' : 'keep';",
     "new": "  return 'done';",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "WB5b-a-settled-one-offered-again",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "      if (!c || settled.has(r)) return false;",
     "new": "      if (!c) return false;",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "WB5b-the-guest-line-every-time",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": " && !guestSaid.has(r)",
     "new": "",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "WB5b-the-unsigned-kept",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "c && c.signed && (t == null || c.e > t)",
     "new": "c && (t == null || c.e > t)",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "WB5b-an-offer-every-frame",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "      const t = nowMs(), due = t - lastAt >= GATE_CLAIM_RETRY_MS;",
     "new": "      const t = nowMs(), due = true;",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "WB5b-the-mid-offer-receipt-left",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "    if (again) { again = false; void flush(); }\n",
     "new": "",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "WB5b-two-a-day",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "k === r || (o?.d === c.d && o?.s === c.s)",
     "new": "k === r",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "WB5b-unbounded",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "keep([...list, r].slice(-GATE_CLAIMS_MAX));",
     "new": "keep([...list, r]);",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "WB5b-the-count-unsaid",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "          if (n != null) { onClosed(n); say(answer.data.rite === true ? GATE_CLAIM_TEXT.rite : GATE_CLAIM_TEXT.recorded(n)); }",
     "new": "          if (n != null) { onClosed(n); }",
     "tests": [
@@ -165,7 +165,7 @@
   },
   {
     "name": "WB5b-the-hook-never-called",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "if (c) { receipts.set(c.d, g.r); onReceipt(g.r); }",
     "new": "if (c) { receipts.set(c.d, g.r); }",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "WB5b-the-gates-dropped-off-the-record",
-    "file": "src/net/duelRecord.js",
+    "file": "src/net/duel/duelRecord.js",
     "old": "{ wins: d.wins, losses: d.losses, ...gates, ...more } : null;",
     "new": "{ wins: d.wins, losses: d.losses, ...more } : null;",
     "tests": [

@@ -14,7 +14,7 @@
 //
 // THE PIECE: DFU's Small Sack's picture and price (ItemTemplates 86: TEXTURE.205 record 18, 1 gold - the picture is DFU's
 // own), no weight (`hasNoEncumbrance`, the Small Cart's column), one to a slot. BOUND (systems/item/itemBound.js - never
-// dropped, traded or sold; net/realmTradeLaw.js BOUND_TEMPLATES names it) and PACK-ONLY (`packOnly` - not even the wagon
+// dropped, traded or sold; net/realm/realmTradeLaw.js BOUND_TEMPLATES names it) and PACK-ONLY (`packOnly` - not even the wagon
 // or the player's own storage take it: a wallet that left the pack would leave its pieces back on the pages). EVERY
 // CHARACTER HAS ONE: a new character's starting kit holds it (startingGear.js addSurvivalProvisions, the port's own tail -
 // DFU's kit and a mod's alike), and every character made before it is given one, once - PORTAL-GIFT's shape

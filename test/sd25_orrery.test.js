@@ -3,13 +3,13 @@
 // the paint box (world/superDungeon/sdHallArt.js), the orrery overhead in mode A (world/superDungeon/sdOrreryModel.js), and the set that moves them
 // (scenes/sdHall.js): crown gears that move only with their own hands, bezels that settle gold and burn ember on a refusal,
 // frozen banners, the dial's rise and fall, the fray's tabs, the Concord's sequence and its plated bridge. Every law is the
-// Orrery's own (net/sdBrain.js), run from its own code; the lab's knobs from its own text.
+// Orrery's own (net/superDungeon/sdBrain.js), run from its own code; the lab's knobs from its own text.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   SD_ORRERY, SD_STONES, SD_STONE_POS, SD_STONE_SETTLE_MS, orreryOf, orreryLit, orreryTurn, dungeonToRealm, realmToDungeon,
-} from '../src/net/sdBrain.js';
+} from '../src/net/superDungeon/sdBrain.js';
 import {
   stoneFrame, plaqueFrame, stoneQuads, lecternQuads, stoneSolids, hallSolidTris, buildHallModel, buildHandModel, handMatrix, buildBezelModel,
   buildCrownGearModel, crownGearMatrix, bannerPose, buildBannerModel, buildLitModel, buildFrayModel, buildBandModel, bandMatrix,

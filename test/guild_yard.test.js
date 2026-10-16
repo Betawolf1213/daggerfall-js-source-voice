@@ -18,7 +18,7 @@ import { homeOutsideKept, homeYardWhere, createOnlineHomes, homeHallRows, HOME_V
 import { createHomeYards, YARD_IN_HALL, YARD_HALL_FULL, YARD_IN_HOUSE, YARD_FULL } from '../src/scenes/homeYards.js';
 import { decorWhyNot } from '../src/ui/decorPanel.js';
 import { fakeDoc, fakeWin, fakeBlocks, rmb, TOWN, settle } from './decorFakes.mjs';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const HALL = { mapId: 7, buildingKey: 300, region: 17, price: 20_000, layout: null };   // AUDIT PRE-MERGE 1003 WD1: a hall says its town's layout (none: an old build's, 426)

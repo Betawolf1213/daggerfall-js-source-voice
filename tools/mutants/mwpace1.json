@@ -74,7 +74,7 @@
   },
   {
     "name": "MWPACE1-the-peer-takes-the-last-gap",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "  return pace == null ? g : Math.min(pace, g);",
     "new": "  return g;",
     "tests": [
@@ -83,7 +83,7 @@
   },
   {
     "name": "MWPACE1-a-pause-never-ends-the-burst",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "  if (!(gapS >= 0) || gapS > PEER_BLOW_MAX_S) return null;",
     "new": "  if (!(gapS >= 0)) return null;",
     "tests": [

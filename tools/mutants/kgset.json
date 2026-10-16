@@ -86,7 +86,7 @@
   },
   {
     "name": "KGSET-ranger-beasts",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "pick: 'strongest', tag: 'beast', n: 2 }] }",
     "new": "pick: 'strongest', n: 2 }] }",
     "tests": [

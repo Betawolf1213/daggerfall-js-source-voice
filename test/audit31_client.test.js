@@ -19,10 +19,10 @@ import { REFUSALS } from '../src/net/accountClient.js';
 import { wearOf, WEAR_WHOLE } from '../src/net/marketLaw.js';
 import { mintPiece, pieceOfRecipe } from '../src/systems/smithItems.js';
 import { isDeclaredItemField, validItemField } from '../src/systems/item/itemFields.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import { createSocialPanel } from '../src/ui/socialPanel.js';
 import { SocialState } from '../src/net/social.js';
-import { GUILD_RANK_NAMES } from '../src/net/guildLaw.js';
+import { GUILD_RANK_NAMES } from '../src/net/guild/guildLaw.js';
 import { materialCountLabel } from '../src/systems/professions/profItems.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

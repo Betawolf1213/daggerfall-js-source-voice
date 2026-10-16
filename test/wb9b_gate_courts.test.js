@@ -4,7 +4,7 @@
 // at each phase's turn he BOUNDS across the fire to the next court's heart; the bound's word lays a walkway from the
 // court he leaves, stone by stone out of the fire, and he waits there under his ward for a challenger to cross it.
 //
-//   the floor's law    net/gateBrain.js COURTS, WALKS, walkFormed, onFloor, clampToFloor - the relay's bound on where a
+//   the floor's law    net/gate/gateBrain.js COURTS, WALKS, walkFormed, onFloor, clampToFloor - the relay's bound on where a
 //                      blow may come from and the motor's on where a player may walk, one law at both ends
 //   the brain           PHASE_TURN's bound, the wait (CROSS_WAIT_MAX_MS), his court (`court`), the crossings (`xa`)
 //   the wire and link   the state's `ct` and `xa`; a bound's word lays its walkway on every screen at once (crossLaid)
@@ -21,9 +21,9 @@ import {
   ATTACKS, PHASE_AT, PHASE_TURN, TURN_BREATH_MS, CROSS_AIR_MS, CROSS_WAIT_MAX_MS, CROSS_WARD_MAX_MS, HIT_KINDS,
   courtOfPhase, nearestCourt, inCourt, walkwayOf, walkFormed, onFloor, clampToFloor, keepInCourt, leapAt, airOf, windupOf,
   newFight, joinFight, applyHit, stepBrain, stateOf,
-} from '../src/net/gateBrain.js';
+} from '../src/net/gate/gateBrain.js';
 import { validGateOut, GATE_COURT_BOUND } from '../src/net/wire.js';
-import { foldGate, crossLaid, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { foldGate, crossLaid, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import {
   courtArena, courtToDungeon, walkSlabs, slabRise, slabMatrix, buildWalkSlabModel, courtLights, courtLightsNear, courtOpenings,
   courtSpireAxes, courtBraziers, SLAB_LEN_M, SLAB_RISE_MS, LAVA_Y,
@@ -344,7 +344,7 @@ test('WB9b the seams, by source: the world host refills one arena a frame from t
   assert.ok(moved > 0 && moved < begin, 'the stones moved before the frame\'s draws');
   const gc = read('src/scenes/gateCourt.js');
   assert.match(gc, /_mark\.court = nearestCourt\(mx, mz\); mark = _mark;/);
-  const brain = read('src/net/gateBrain.js');
+  const brain = read('src/net/gate/gateBrain.js');
   assert.match(brain, /if \(!onFloor\(pose\.x, pose\.z, f\.xa, now, POSE_SLACK\)\) return 0;/);
   assert.match(read('src/player/motor.js'), /if \(typeof a\.clamp === 'function'\) \{ this\._putBack\(a\.clamp\(this\.pos, CAPSULE_RADIUS\)\); return; \}/);
   assert.equal(PHASE_TURN[2][0].a, 'cross');

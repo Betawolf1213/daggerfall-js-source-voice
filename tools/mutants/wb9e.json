@@ -1,7 +1,7 @@
 [
   {
     "name": "WB9e-a-weight-left-where-it-was",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "shape: 'disc', r: 7, pct: 0.52, base: 14, el: null, aim: 'self'",
     "new": "shape: 'disc', r: 7, pct: 0.40, base: 10, el: null, aim: 'self'",
     "tests": [

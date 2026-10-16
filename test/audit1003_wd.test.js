@@ -20,7 +20,7 @@ import { realmJoinAt } from './realmSeat.mjs';
 import { guildHallPrice } from '../src/net/hallLaw.js';
 import { HOME_CLAIMS_MAX } from '../src/net/homeLaw.js';
 import { accountGuilds, accountRefusalText } from '../src/net/accountClient.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import { hallBoughtLine, hallShortLine } from '../src/systems/online/onlineHomes.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

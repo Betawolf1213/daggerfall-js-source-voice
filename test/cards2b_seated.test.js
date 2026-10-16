@@ -19,8 +19,8 @@ import { applyClimbRig, climbBones, climbRequestToRig } from '../src/combat/clim
 import { MW_UNITS_PER_METER } from '../src/formats/mwFirstPerson.js';
 import { validPose, poseChanged, POSE_SEAT_TOP_MAX } from '../src/net/wire.js';
 import { lerpPose } from '../src/net/online.js';
-import { peerCamera, seatFor } from '../src/net/peerBodies.js';
-import { peerMoving } from '../src/net/peerClimb.js';
+import { peerCamera, seatFor } from '../src/net/peer/peerBodies.js';
+import { peerMoving } from '../src/net/peer/peerClimb.js';
 import { cardTableSeats } from '../src/world/card/cardTables.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -182,6 +182,6 @@ test('CARDS2b by source: the pose the seat says, the request to the peers\' rigs
   assert.ok(frameAt > 0 && at > frameAt, 'after the frame is known');   // AUDIT CARDS E8: never vacuous on a -1
   const st = w.indexOf('    if (seated) arm.st = seated.st;');
   assert.ok(st > 0 && st > w.indexOf('      ...climbPoseOf(player),   // CLIMB5:') && st < w.indexOf('    else online.sendPose({ ...pose, ...arm, ...poseFx() });'), 'the seat byte on the arm, before it is sent');
-  const pb = read('src/net/peerBodies.js');
+  const pb = read('src/net/peer/peerBodies.js');
   has(pb, '    b.cam.seat = peer.shown.st ? seatFor(b, f, b.yaw, peer.shown.st) : null;', 'the peer\'s body seated at its drawn feet and facing');
 });

@@ -1,9 +1,9 @@
-// WILD1 (2026-10-07, bible/11-Multiplayer/Wild-Zone.md): THE OPEN ZONE'S FIGHTS AND A BODY'S ONE PIECE (net/wildFight.js),
-// and THE ROOM'S REMAINS ON A PLAYER'S SIDE (net/wildRemains.js) - each over a fake wire.
+// WILD1 (2026-10-07, bible/11-Multiplayer/Wild-Zone.md): THE OPEN ZONE'S FIGHTS AND A BODY'S ONE PIECE (net/wild/wildFight.js),
+// and THE ROOM'S REMAINS ON A PLAYER'S SIDE (net/wild/wildRemains.js) - each over a fake wire.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createWildFight, WILD_BODY_MS } from '../src/net/wildFight.js';
-import { createWildRemains, WILD_NO_STORE } from '../src/net/wildRemains.js';
+import { createWildFight, WILD_BODY_MS } from '../src/net/wild/wildFight.js';
+import { createWildRemains, WILD_NO_STORE } from '../src/net/wild/wildRemains.js';
 import { validWildData } from '../src/net/wire.js';
 
 const PA = 'peer-000a', PB = 'peer-000b';
@@ -29,7 +29,7 @@ const blow = { by: 'melee', p: [1000, 2, 1000], d: 7 };
 
 // PIN MOVED (INT9, 2026-10-09 - bible/06-Systems/Integrity-Arc.md lane 2): WILD1's defender resolved every blow on its
 // own machine and answered with a `result`, and the last fair attacker whose blow landed was the killer for ten seconds.
-// Now the relay referees the zone (net/wildRef.js): a blow goes out carrying the striker's rolled number for the referee,
+// Now the relay referees the zone (net/wild/wildRef.js): a blow goes out carrying the striker's rolled number for the referee,
 // nothing at me is resolved, and a fall and its killer are the referee's word (test/int9_wild_ref.test.js).
 test('WILD1 fight: a fair blow goes out numbered with the striker\'s rolled damage, for the referee; nothing at me is resolved or answered (INT9)', () => {
   const w = pair();

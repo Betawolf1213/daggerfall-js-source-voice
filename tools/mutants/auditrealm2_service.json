@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDIT-REALM2-S4-the-offer-compared-one-way",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "for (const k of new Set([...Object.keys(offered), ...(plain(rec) ? Object.keys(rec) : [])])) {",
     "new": "for (const k of new Set([...Object.keys(offered)])) {",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDIT-REALM2-S4-the-record-unbounded",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "    if (JSON.stringify(items[at]).length > REALM_TRADE_RECORD_MAX) return null;",
     "new": "    if (false) return null;",
     "tests": [

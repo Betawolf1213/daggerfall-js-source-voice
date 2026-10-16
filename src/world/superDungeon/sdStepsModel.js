@@ -26,14 +26,14 @@
 //   THE WAYSTONES (A, B, C) and THE VANE (on C, the Hollow's Ending's sign on its fin).
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { realmToDungeon } from '../../net/sdBrain.js';
+import { realmToDungeon } from '../../net/superDungeon/sdBrain.js';
 import { faces } from '../gate/gateModel.js';
 import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_ISLAND_SIDES } from './sdRealm.js';
 import { SD_HALL_GLOW_RECORD, SD_HALL_ATLAS_RECORD, SD_HALL_ATLAS, atlasUv } from './sdHallArt.js';
 import { SD_STEPS_RECORD, SD_STEPS_ATLAS, SD_RISER_ATLAS, SD_PARTS_ATLAS, SD_STEP_BEVEL, SD_STEP_LINE, SD_CRUMBLE_CRACKS } from './sdStepsArt.js';
 import { BAYER4 } from './sdPixelKit.js';
 import { SD_STEP_THICK, SD_DRIFT_SIZE, SD_BEAT_SIZE, SD_CRUMBLE_SIZE, SD_RISER_H, SD_CHECKPOINTS, SD_COURSE_END, SD_GUST_EVERY, SD_GUST_WARN, SD_GUST_FOR, gustAt } from './sdSteps.js';
-import { SD_ENDINGS } from '../../net/sdMarks.js';
+import { SD_ENDINGS } from '../../net/superDungeon/sdMarks.js';
 
 /** The kinds of step, in the order their meshes are made. */
 export const SD_STEP_KINDS = Object.freeze(['drift', 'beat', 'riser', 'crumble']);
@@ -311,7 +311,7 @@ export function vaneYawInto(io) {
 export const vaneYawAt = (t) => { const io = new Float64Array(2); io[0] = t; vaneYawInto(io); return io[1]; };
 
 /** THE VANE, its own frame (its post's foot the origin, the arrow along +z at its top): a brass post, the arrow's shaft and
- *  head, and its fin wearing the Hollow's Ending's sign (world/superDungeon/sdHallArt.js's hall atlas, its emblem cell (S10) - `ending` an id of net/sdMarks.js
+ *  head, and its fin wearing the Hollow's Ending's sign (world/superDungeon/sdHallArt.js's hall atlas, its emblem cell (S10) - `ending` an id of net/superDungeon/sdMarks.js
  *  SD_ENDINGS; none: plain brass) - every flat part both ways. */
 export function buildVaneModel(ending = null) {
   const f = faces(), V = SD_VANE, rec = SD_STEPS_RECORD.parts, P = SD_PARTS_ATLAS, i = SD_ENDINGS.findIndex((E) => E.id === ending);

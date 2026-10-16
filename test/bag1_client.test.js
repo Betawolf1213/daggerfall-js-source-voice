@@ -31,8 +31,8 @@ import {
 import { planStore, REFUSAL } from '../src/systems/item/itemTransfer.js';
 import { localClickDecision } from '../src/systems/tradeModes.js';
 import { tradeRefusal, BAG_TRADE_TEXT } from '../src/systems/tradePack.js';
-import { tradeableRecord } from '../src/net/realmTradeLaw.js';
-import { carriedItemLists } from '../src/net/realmGoldLaw.js';
+import { tradeableRecord } from '../src/net/realm/realmTradeLaw.js';
+import { carriedItemLists } from '../src/net/realm/realmGoldLaw.js';
 import { stockShopShelf } from '../src/systems/shopStock.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { snapshotPlayer, restorePlayer, bagTakesSaved, removeAllOrphanedItems } from '../src/systems/save/save.js';

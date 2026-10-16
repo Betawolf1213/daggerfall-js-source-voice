@@ -7,11 +7,11 @@
 // the helpers asked ahead of it; a deeper bucket than the client's, and a word in the rite's last moment still heard.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { riteNativeOf, RITE_REACH_M, RITE_UNITS_PER_M, RITE_HELPERS_MAX, RITE_GRACE_MS } from '../src/net/gateRite.js';
-import { gateTimes, gateRoomKey, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
-import { BRAIN_TICK_MS, HIT_KINDS, COURT_CENTRE } from '../src/net/gateBrain.js';
-import { readReceipt } from '../src/net/gateReceipt.js';
-import { HERALD_RETRY_MS } from '../src/net/gateHerald.js';
+import { riteNativeOf, RITE_REACH_M, RITE_UNITS_PER_M, RITE_HELPERS_MAX, RITE_GRACE_MS } from '../src/net/gate/gateRite.js';
+import { gateTimes, gateRoomKey, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
+import { BRAIN_TICK_MS, HIT_KINDS, COURT_CENTRE } from '../src/net/gate/gateBrain.js';
+import { readReceipt } from '../src/net/gate/gateReceipt.js';
+import { HERALD_RETRY_MS } from '../src/net/gate/gateHerald.js';
 import { worldRoom, SOCIAL_ROOM, RITE_KEY, GATE_BRAIN_V, gateReceiptKey, RITE_TELL_RETRY_MS, RITE_INTERNAL_BROKEN, RITE_INTERNAL_DAY, RITE_HZ_MAX, RITE_RELAY_BURST, RITE_CIRCLES_MAX, RITE_HUB_CIRCLES_MAX, GATE_INTERNAL_FELL, RITE_BY_MAX } from '../src/net/wire.js';
 import { fakeRooms } from './fakeRoom.mjs';
 

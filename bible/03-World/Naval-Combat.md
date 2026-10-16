@@ -1461,7 +1461,7 @@ followers; all of this is the port's own, over CREW-COMPANIONS.
   fallen from her roster, the host empties it; and the host stows it (`stowPack`): his boat's hold first (the board's
   `giveItems`), what will not go in into my pack - past its weight if it must, said ("more than you can carry") - his
   gold to my purse. Never thrown away. Realm customs and the account service's first save count his pack as the hold
-  (`net/realmGoldLaw.js stashedItemLists`). **COMPANION-WEIGHT (2026-10-01, the field: "make the crew companions
+  (`net/realm/realmGoldLaw.js stashedItemLists`). **COMPANION-WEIGHT (2026-10-01, the field: "make the crew companions
   have a balanced inventory weight")**: it carries what a person of his strength can - DFU's MaxEncumbrance over his
   body's live strength (`systems/naval/crewCompanions.js packCapacityKg`: 1.5 kg a point and any weight allowance -
   67-97 kg by his class's strength, a Bard's 45 67 and a Warrior's 60 90, more under a Fortify of mine). The storage

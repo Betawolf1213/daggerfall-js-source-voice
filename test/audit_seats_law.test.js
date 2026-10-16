@@ -20,7 +20,7 @@ import { isMarch } from '../src/net/kingdomLaw.js';
 import { tideAt } from '../src/net/tideLaw.js';
 import { HERALDRY_COLOURS } from '../src/net/heraldryLaw.js';
 import { MARKS_KINDS, utcDay } from '../src/net/marksLaw.js';
-import { gameDayAt, gateTimes } from '../src/net/gateLaw.js';
+import { gameDayAt, gateTimes } from '../src/net/gate/gateLaw.js';
 import { tideOf } from '../src/net/tideLaw.js';
 import { readdirSync } from 'node:fs';
 

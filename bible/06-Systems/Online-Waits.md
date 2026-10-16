@@ -165,7 +165,7 @@ Each of these is somebody's recorded call; the sweep only measured it again (sec
 - **The full moon** - TIME 6.1 (the change holds while the moon is up) and OPEN 2 there; SKY-SLOW's record lists the
   night's thirty minutes. See OPEN 3.
 - **The gate, the respawn, the serpent** - TIME OPEN 6 and 8, and the serpent's own arc: their laws are in the relay's
-  bundle (`net/gateLaw.js`, `net/wire.js` RESPAWN_MS, `net/serpentLaw.js`), so any change is a relay deploy that drops
+  bundle (`net/gate/gateLaw.js`, `net/wire.js` RESPAWN_MS, `net/serpent/serpentLaw.js`), so any change is a relay deploy that drops
   every connected player. See OPEN 5.
 - **The Broker's prices** (SS2), **the professions' UTC days and respec** and **the Seats' weeks** - their arcs' calls,
   each an economy's pace rather than a wait.

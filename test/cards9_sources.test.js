@@ -1,6 +1,6 @@
 // CARDS9 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 32; Mac: "Lets build every inch of this. Dont forget
 // about a card needing to come from the abyss dungeon also"): WHERE CARDS COME FROM, AND WHAT ONE IS WORTH. A card's
-// worth is its tier's (net/cardWorthLaw.js); the realm's customs bound the cards a character brings, on the client's
+// worth is its tier's (net/card/cardWorthLaw.js); the realm's customs bound the cards a character brings, on the client's
 // copy and at the service's first save; a tavern keeper sells packs of five, the last rare or better; a foe drops its
 // own card at its death through every body door, and the cap keeps it; a guild quest pays one of its guild's cards; and
 // the Gate's Warden, the Sea Serpent and the Abyss Dungeon's Brass Remnant each draw for their own card LAST in their
@@ -8,8 +8,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById, ILIAC_TIERS } from '../src/net/iliacCards.js';
-import { CARD_WORTH, cardWorth, cardWorthOf, isCardRecord, cardRecordWorth, STARTER_DECK_WORTH, customsCardAllowance, CUSTOMS_CARD_WORTH_PER_LEVEL, ILIAC_CARD_TEMPLATE as LAW_TEMPLATE } from '../src/net/cardWorthLaw.js';
+import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById, ILIAC_TIERS } from '../src/net/iliac/iliacCards.js';
+import { CARD_WORTH, cardWorth, cardWorthOf, isCardRecord, cardRecordWorth, STARTER_DECK_WORTH, customsCardAllowance, CUSTOMS_CARD_WORTH_PER_LEVEL, ILIAC_CARD_TEMPLATE as LAW_TEMPLATE } from '../src/net/card/cardWorthLaw.js';
 import { ILIAC_CARD_TEMPLATE, CARD_PACK_TEMPLATE, mintIliacCard, mintCardPack, isCardPack, cleanBinders, giveBinderAtChargen, CARD_PACK_ROW } from '../src/systems/iliac/iliacItems.js';
 import {
   FOE_CARDS, FOE_CARD_PER_MILLE, TITLED_FOE_CARD_MULT, foeCardRoll, dropFoeCard, CARD_DROP_HANDLER,
@@ -33,7 +33,7 @@ import { cardCustoms, applyCustoms, customsLines } from '../src/systems/realmCus
 import { firstSaveRefusal } from '../server-account/src/realm.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { goodRefusal } from '../src/net/marketLaw.js';
-import { tradeableRecord } from '../src/net/realmTradeLaw.js';
+import { tradeableRecord } from '../src/net/realm/realmTradeLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 /** A source that answers `vals` in turn, then `rest`, and counts its draws. */

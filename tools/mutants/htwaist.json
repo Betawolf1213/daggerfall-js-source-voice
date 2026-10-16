@@ -506,7 +506,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-walker-never-hangs-it",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "      else hangLantern(r, pose, feet, view, eye, right, step, ft);\n",
     "new": "",
     "tests": [
@@ -515,7 +515,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-walker-never-asks-the-rule",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    if (!isRearView(view)) return;   // not seen from straight behind: it hangs, it swings, it is not drawn\n",
     "new": "",
     "tests": [
@@ -524,7 +524,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-walker-ignores-the-bit",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    if (!pose.hl) {\n",
     "new": "    if (false) {\n",
     "tests": [
@@ -533,7 +533,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-walker-pace-unmeasured",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    r.pace = stepPeerPace(r.pace, r.paceKey === on ? r.paceFeet : null, at, dt);\n",
     "new": "",
     "tests": [
@@ -542,7 +542,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-walker-swing-not-stepped",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    stepSpriteLantern(l, dt, fx, fz, r.pace, stride);\n",
     "new": "",
     "tests": [
@@ -551,7 +551,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-walker-lantern-leaks-with-the-walker",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    if (r?.lantern) dropSpriteLantern(r.lantern, renderer);   // HT-WAIST-BACK: a walker's lantern goes with the walker\n",
     "new": "",
     "tests": [
@@ -560,7 +560,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-walker-lantern-left-minted-when-put-out",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "      if (r.lantern) { dropSpriteLantern(r.lantern, store.renderer); r.lantern = null; }",
     "new": "      if (r.lantern) { r.lantern = null; }",
     "tests": [
@@ -569,7 +569,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-recentre-leaves-it-behind",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "for (const o of [r.batch?.origin, r.lantern?.batch?.origin, r.paceFeet])",
     "new": "for (const o of [r.batch?.origin, r.paceFeet])",
     "tests": [
@@ -578,7 +578,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-draw-list-built-per-frame",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    for (let i = 0; i < lit.length; i++) rr.drawBillboards(lit[i].list, lit[i].right, lit[i].up);",
     "new": "    for (let i = 0; i < lit.length; i++) rr.drawBillboards([lit[i].batch], lit[i].right, lit[i].up);",
     "tests": [
@@ -587,7 +587,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-walker-lantern-untilted",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    for (let i = 0; i < lit.length; i++) rr.drawBillboards(lit[i].list, lit[i].right, lit[i].up);",
     "new": "    for (let i = 0; i < lit.length; i++) rr.drawBillboards(lit[i].list, lit[i].right, [0, 1, 0]);",
     "tests": [
@@ -616,7 +616,7 @@
   },
   {
     "name": "HT-WAIST-BACK-the-pace-jump-read-as-a-sprint",
-    "file": "src/net/peerPace.js",
+    "file": "src/net/peer/peerPace.js",
     "old": "  if (!(d <= JUMP_UNITS) || !Number.isFinite(speed)) return 0;\n",
     "new": "  if (!Number.isFinite(speed)) return 0;\n",
     "tests": [

@@ -1,19 +1,19 @@
 // KG6 (2026-10-15, bible/11-Multiplayer/Kings-Gambit.md sections 10.7 and 19): THE KING'S GAMBIT'S SEASON AND ITS
-// GRANDMASTER. The rated game's receipt (net/gambitReceipt.js g1): a winner, never a draw; two accounts; the version
+// GRANDMASTER. The rated game's receipt (net/gambit/gambitReceipt.js g1): a winner, never a draw; two accounts; the version
 // signed, so no other receipt passes for it. The season board on the real Worker over SQLite (server-account/src/
 // gambit.js): one row a game whichever seat carries it, the arena's Elo, another's receipt refused, the pair's day
 // capped; the season's #1 over ten games against five foes wears GRANDMASTER at the mint, the minute clock counts it,
-// and it lapses when another takes the top. The client: the carrier keeps a result and offers it (net/gambitClaims.js);
+// and it lapses when another takes the top. The client: the carrier keeps a result and offers it (net/gambit/gambitClaims.js);
 // the panel (scenes/gambitTableGame.js online): the gold table's stake picks - the purse's to cover, the other's to
 // match - a staked Ready (the service first, then the relay with its order), the stake book told once the relay sat
 // it; the season board read and shown.
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { mintGambitReceipt, readGambitReceipt, verifyGambitReceipt, gambitReceiptValid, GAMBIT_HOW, GAMBIT_RECEIPT_V } from '../src/net/gambitReceipt.js';
-import { mintIliacReceipt, verifyIliacReceipt } from '../src/net/iliacReceipt.js';
-import { createGambitClaims, GAMBIT_CLAIMS_KEY } from '../src/net/gambitClaims.js';
+import { mintGambitReceipt, readGambitReceipt, verifyGambitReceipt, gambitReceiptValid, GAMBIT_HOW, GAMBIT_RECEIPT_V } from '../src/net/gambit/gambitReceipt.js';
+import { mintIliacReceipt, verifyIliacReceipt } from '../src/net/iliac/iliacReceipt.js';
+import { createGambitClaims, GAMBIT_CLAIMS_KEY } from '../src/net/gambit/gambitClaims.js';
 import { verifyToken, TITLES } from '../src/net/identityToken.js';
-import { ARENA_PAIR_DAY_MAX, ARENA_ELO_START } from '../src/net/arenaLaw.js';
+import { ARENA_PAIR_DAY_MAX, ARENA_ELO_START } from '../src/net/arena/arenaLaw.js';
 import { _resetGambitCache, gambitTitleWorthy, gambitChampionOfBoard, GAMBIT_CHAMPION_MIN_GAMES, GAMBIT_CHAMPION_MIN_FOES } from '../server-account/src/gambit.js';
 import { titlesHeld } from '../server-account/src/titles.js';
 import { runCron, CRON_MINUTE, _resetCronForTests } from '../server-account/src/cron.js';

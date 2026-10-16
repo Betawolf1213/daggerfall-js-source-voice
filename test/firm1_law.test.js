@@ -1,4 +1,4 @@
-// FIRM1 (2026-10-13) - THE FIRMAMENT'S SKY AND LAW (src/net/firmamentTree.js, src/net/firmamentLaw.js): the sky's shape
+// FIRM1 (2026-10-13) - THE FIRMAMENT'S SKY AND LAW (src/net/firmament/firmamentTree.js, src/net/firmament/firmamentLaw.js): the sky's shape
 // PoE's (seven starts, every star reachable, none crowding another, its keys persisted data), the two purses, the life
 // ring paid by Craft and never a fight, the law's whole-tree judgement, the path preview and the refund's cascade, and
 // THE BUDGET - however the whole sky is spent, no channel past its cap. bible/06-Systems/Firmament.md.
@@ -6,14 +6,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 
-import { FIRM_NODES, FIRM_EDGES, FIRM_ADJ, START_KEYS, SIGNS, firmNode } from '../src/net/firmamentTree.js';
+import { FIRM_NODES, FIRM_EDGES, FIRM_ADJ, START_KEYS, SIGNS, firmNode } from '../src/net/firmament/firmamentTree.js';
 import {
   starsFor, craftPointsFor, FIRM_RENOWN_MAX, CRAFT_RANK_MAX, GATHERING, CRAFTING, ATTRIBUTES, COMBAT_SKILLS, LIFE_SKILLS,
   statDef, statWords, firmCostOf, fits, pointsLeft, treeFault, pathTo, refundTakes, treeDiff, refundSilver, totals, capped,
   treeStats, blowPct, castCostPct, BLOW_CAP, BLOW_TOTAL_CAP, CAST_COST_CAP, packTree, unpackTree, cleanKeys, scaleQty,
   scaleXp, REFUND_FREE_BELOW_RENOWN, REFUND_SILVER_PER_STAR, overCap, allocatable,
   buildCode, treeOfCode, SKY_TAG, BUILD_CODE_RE,
-} from '../src/net/firmamentLaw.js';
+} from '../src/net/firmament/firmamentLaw.js';
 import { RENOWN_MAX } from '../src/net/identityToken.js';
 import { PROFESSIONS, PROF_RANK_MAX } from '../src/net/professionLaw.js';
 import { STAT_KEYS_ORDER } from '../src/systems/statMods.js';

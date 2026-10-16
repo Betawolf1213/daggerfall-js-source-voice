@@ -70,7 +70,7 @@ WIRE'S" built the floor; this is its other half: a peer's price is at most the l
 (its base four times over, its lines', a tier's, a margin - the wealth measure's ceiling). Swept against the honest
 producers (`test/honestItems.mjs`, four seeds): of 46,919 pieces, the 30 over the ceiling were Come Sail Away's boat
 deeds alone (their hull's price, 100,000 to 200,000+). So a record whose `value` is no price - a letter (its worth IS
-it) and a boat's parts or deed (`net/realmTradeLaw.js` VALUE_IS_IDENTITY_TEMPLATES, BOAT_TEMPLATES) - is left as it
+it) and a boat's parts or deed (`net/realm/realmTradeLaw.js` VALUE_IS_IDENTITY_TEMPLATES, BOAT_TEMPLATES) - is left as it
 came, and the floor still stands under it. Lawful loot handed on by a peer is still the budget's (Integrity-Arc 2, "the
 limit, said plainly"); a dagger priced at millions is not.
 

@@ -28,7 +28,7 @@
   },
   {
     "name": "WB13e-the-opening-unsaid",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    ...(Number.isSafeInteger(f.startedAt) ? { op: f.startedAt + OPENING_MS } : {}),   // WB13e: the opening's end - his wake, on every screen\n",
     "new": "",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "WB13e-the-opening-unfolded",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "openUntil: g.op ?? 0,",
     "new": "openUntil: 0,",
     "tests": [

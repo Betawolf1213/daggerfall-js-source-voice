@@ -13,7 +13,7 @@
 //     fray rebuilt to the word's counts, and with the Concord its chime, its line and the bridge laid. The first word the
 //     hall hears is where the stones ARE: the hands are put there, not turned there.
 //   PRESSED (targets/hoverName/press): a stone's right handle turns it forward, its left back - from within reach of it
-//     (net/sdBrain.js stoneInReach, the realm's own law, else "Stand closer") and before its face (AUDIT SD II), never
+//     (net/superDungeon/sdBrain.js stoneInReach, the realm's own law, else "Stand closer") and before its face (AUDIT SD II), never
 //     inside its gear's settling, never after the Concord; the plaque names the stone, its sign, its hour and the way the
 //     handle turns it - after the Concord, that it holds (AUDIT SD IV, T8: it offered the turn the press refused). A Ledger plaque's riddle shows on its plaque as the ray finds it, and is said when it is pressed.
 //
@@ -35,7 +35,7 @@
 //     function of when the Concord was heard; one that held before I came stands whole (the first word's rule).
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { orreryOf, SD_ORRERY, SD_STONES, SD_STONE_SETTLE_MS, SD_FRAY_MAX, stoneInReach, dungeonToRealm, realmToDungeon, sdHour, sdHourWord } from '../net/sdBrain.js';
+import { orreryOf, SD_ORRERY, SD_STONES, SD_STONE_SETTLE_MS, SD_FRAY_MAX, stoneInReach, dungeonToRealm, realmToDungeon, sdHour, sdHourWord } from '../net/superDungeon/sdBrain.js';
 import { SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD } from '../world/superDungeon/sdRealm.js';
 import { hallArt, gemGlow, SD_HALL_GLOW_RECORD, SD_HALL_GOLD_DIM_RECORD, SD_HALL_EMBER_DIM_RECORD, SD_HALL_GEM_RECORD, SD_HALL_FLASH_RECORD, SD_FLASH_COLOR } from '../world/superDungeon/sdHallArt.js';
 import {
@@ -77,7 +77,7 @@ export const sdPlaqueKey = (k) => `sdplaque:${k}`;
 export const SD_HAND_RATE = 3;
 export const SD_SNAP_RATE = 9;
 /** AUDIT SD II (L2 F16): how long the fray stands FULL at the snap before it empties (ms) - the realm's word that snaps
- *  says the fray is nothing (net/sdBrain.js orreryStep), so it went from 47 steps to none, never round. SD-LOOK S10:
+ *  says the fray is nothing (net/superDungeon/sdBrain.js orreryStep), so it went from 47 steps to none, never round. SD-LOOK S10:
  *  every tab up, blazing white, then dropped. */
 export const SD_FRAY_FULL_MS = 1500;
 /** SD-LOOK S10: a bezel's gold for the first share of its gear's settling, then its dim to the end of it; the ember a

@@ -22,7 +22,7 @@ import { mergeLines } from '../src/systems/legacy/realmLine.js';
 import { readFamily } from '../src/systems/legacy/family.js';
 import { mergeFamily } from '../src/scenes/legacyHost.js';
 import { query, playerQuery, findFallen, planRevive, summaryOf, recordEdit, REV_MARGIN, BEFORE_DEATH_S, STATEMENT_MAX_BYTES } from '../tools/reviveRealmCharacter.mjs';
-import { GUILD_RANK_MASTER } from '../src/net/guildLaw.js';
+import { GUILD_RANK_MASTER } from '../src/net/guild/guildLaw.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const P = 'p0123456789abcdef0123456789abcde', Q = 'q0123456789abcdef0123456789abcde';

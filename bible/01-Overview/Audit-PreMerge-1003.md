@@ -25,7 +25,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 
 ## Fixed
 
-**The relay and the account service** (`server/src/index.js`, `src/net/arenaBrain.js`, `src/net/arenaLaw.js`,
+**The relay and the account service** (`server/src/index.js`, `src/net/arena/arenaBrain.js`, `src/net/arena/arenaLaw.js`,
 `server-account/src/arena.js`, `letters.js`, `board.js`; the pins in `test/audit1003_server.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -51,7 +51,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | B5 | med | THE SPARE LAPSED AT THE YIELD. The spare that holds the player at 1 was given only in the fight: from a yield or a fall to the healers (and the rest of a Grand Melee after a fall) an arrow in flight, a spell or a poison round killed the player on the sand. | Held from the word to `done`; `boutFell` itself refuses a bout that is over or a fighter already out. |
 | B6, W3 | low | A bout dismissed while its crowd's pictures loaded left the batches already made undestroyed (up to ~100 VAOs and 200 buffers a time). | They are destroyed where the loop returns. |
 
-**The online half** (`src/scenes/arenaOnline.js`, `src/net/arenaBrain.js`, `src/scenes/arenaGate.js`,
+**The online half** (`src/scenes/arenaOnline.js`, `src/net/arena/arenaBrain.js`, `src/scenes/arenaGate.js`,
 `src/scenes/arenaBouts.js`, `src/scenes/world.js`, `src/systems/online/onlineHomes.js`; the pins in
 `test/audit1003_online.test.js`)
 
@@ -82,7 +82,7 @@ for the finding's reason (`test/audit1003_server.test.js` 11, `_bouts` 9, `_onli
 | W8 | low | Two comments said a walk back restarts the city's exhibition; it runs once an hour (`_arenaHourRun`, pinned "once an hour"). | Said as it is. |
 
 **WD3** (`server-account/src/halls.js`, `server-account/src/townLayout.js`, `server-account/src/homes.js`,
-`server-account/src/index.js`, `src/net/accountClient.js`, `src/net/guildBook.js`, `src/systems/online/onlineHomes.js`,
+`server-account/src/index.js`, `src/net/accountClient.js`, `src/net/guild/guildBook.js`, `src/systems/online/onlineHomes.js`,
 `src/scenes/worldModes.js`, `src/systems/quest/place.js`; the pins in `test/audit1003_wd.test.js`)
 
 | ID | Sev | Finding | Fix |
@@ -232,7 +232,7 @@ strengthened), and mutation-proven (`tools/mutants/audit1003b.json` 50, all dead
 the mutants its titles named that no record held, D1; `tact2.json` 26). Each fix carries an `AUDIT PRE-MERGE 1003b <ID>`
 comment.
 
-**The relay** (`server/src/index.js`, `src/net/arenaBrain.js`, `src/net/arenaLaw.js`)
+**The relay** (`server/src/index.js`, `src/net/arena/arenaBrain.js`, `src/net/arena/arenaLaw.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

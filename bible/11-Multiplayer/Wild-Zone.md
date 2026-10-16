@@ -103,7 +103,7 @@ Two players standing in the zone may strike each other - never KIN: a member of 
 duel's opponent, or - MAC'S DECISION (2026-10-14, "Guildmates are friends") - a member of my guild - in the
 open country and, since PVPDUNGEON (2026-10-08, the owner: "players should be able to attack each other in dungeons
 too in the pvp zone"), in its dungeons (`wildCan`, `world.js:"const wildCan = ()"`). THE RELAY REFEREES EVERY BLOW
-(INT9, 2026-10-09, `06-Systems/Integrity-Arc.md` section 5; `src/net/wildRef.js`): my own cell's socket says I stand in
+(INT9, 2026-10-09, `06-Systems/Integrity-Arc.md` section 5; `src/net/wild/wildRef.js`): my own cell's socket says I stand in
 the zone (`zone` - its audit: never a halo's, again at each crossing and every `WILD_ZONE_KEEP_MS`) and a blow lands only
 where both fighters said so in the same cell, at the Royal Tourney's vitality (never the save's health; the bar kept at
 the hub as I cross, whole again only unstruck and in the zone `WILD_REF.mendMs`, or away `WILD_REF.riseMs`), every strike and spell a number the striker's own sheet rolled, judged on the weapon its look holds and the
@@ -218,12 +218,12 @@ Either death, at the first dead frame, while the room is still the player's (`wi
 
 ## 5. The remains
 
-The room's object keeps them (`src/net/wildLaw.js`, server `_wild*`): each remains its records and its owner, for
+The room's object keeps them (`src/net/wild/wildLaw.js`, server `_wild*`): each remains its records and its owner, for
 `WILD_REMAINS_MS` (`wire.js:"export const WILD_REMAINS_MS"` - twelve minutes since PVPDUNGEONS: the owner's ten to get
 back to them AFTER the two minutes' wait, since the despawn does not wait for the rise), at most
 `WILD_REMAINS_ITEMS_MAX` records and `WILD_ROOM_REMAINS_MAX` remains a room. The first `take` of a record wins it; the
 record goes to its taker alone (`got`) and the room hears what left (`rm`). On a player's side
-(`src/net/wildRemains.js`) each remains is an ordinary ground pile in the pool of the host they stand in - the
+(`src/net/wild/wildRemains.js`) each remains is an ordinary ground pile in the pool of the host they stand in - the
 street's, a building's, a dungeon's - so it is drawn, aimed at and opened with the very loot window every pile opens
 with. A take the window makes is lifted back out of the pack at once and asked of the room; the room's record arrives
 with `got` (a take of coin, WILD GOLD's, out of the purse it went to). Nothing can be put on remains (`noStore`, the
@@ -335,7 +335,7 @@ renumbered past main's SUPER-DUNGEONS (world176) - its parts written on their br
 - And one field on the foe stream: `gg` (`wire.js:"if (r.gg !== undefined)"`), the Greater Giant a foe record is
   (0-7) - section 15.
 
-`src/net/wildLaw.js` joins the relay's bundle (the remains' law and the halls' record, `wdun*`). Deploy the relay
+`src/net/wild/wildLaw.js` joins the relay's bundle (the remains' law and the halls' record, `wdun*`). Deploy the relay
 first, then the site. A client on an older relay plays the mountains as they were - the zone is not raised there at
 all (`wildFrame` reads `online.wildOk`), and no `wdun` word is sent to a hub that would close the socket on it
 (`online.wdunOk`, `online.wdunGiantsOk`).
@@ -464,7 +464,7 @@ Then "as centered as possible not on the border to the other tier... dont overri
 What no client may decide the social hub keeps (`server/src/index.js` `_wdun*`, `_wdunWord` at
 `server/src/index.js:"async _wdunWord(ws, acct, m, now)"`), in one small record (`WDUN_KEY`,
 `wildLaw.js:"export const WDUN_KEY"` - `{ locks, piles, inside, empty, crows, eps, giants }`), read once a wake and
-pruned as it is read (`wdunPrune`, `wildLaw.js:"export function wdunPrune"`). The law is pure (`src/net/wildLaw.js`
+pruned as it is read (`wdunPrune`, `wildLaw.js:"export function wdunPrune"`). The law is pure (`src/net/wild/wildLaw.js`
 wdun*); the hub reads, calls it and writes.
 
 - THE LOCK: an account that leaves a hall - walks out, is unstuck, falls - may not go in again for `WDUN_LOCK_MS` (an

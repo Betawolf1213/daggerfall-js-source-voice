@@ -14,7 +14,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { RemotePlayers, DOLL_RETRY_MS } from '../src/net/remotePlayers.js';
-import { PeerBodies, BODY_RETRY_MS } from '../src/net/peerBodies.js';
+import { PeerBodies, BODY_RETRY_MS } from '../src/net/peer/peerBodies.js';
 
 // PINS (AUDIT SLAM): the stripper only strips a `//` that BEGINS a comment - the naive `\/\/[^\n]*` ate everything after
 // the `//` inside `wss://`, so a whole line of online.js was invisible to every pin that read the stripped source

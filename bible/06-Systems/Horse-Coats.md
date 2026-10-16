@@ -170,7 +170,7 @@ digests). `07-Rendering/Performance-Priority.md` PERF-HIDE has the measure.
   off the weapon rig's record (`combat/weaponRig.js` eotbState `horseLook`,
   shared by all four hosts), fetches its mounted tables whole when it
   changes, as a set chosen is, and lets the last look's pictures go. Another
-  player's rider is dyed by their pose's `rc` (`net/peerRiders.js`); past
+  player's rider is dyed by their pose's `rc` (`net/peer/peerRiders.js`); past
   `RIDER_LOOKS_KEPT` (12) riders' looks, the one longest undrawn is let go.
 - **The town watch's throw** (`scenes/wagonWardenShow.js`): the carried team
   in its owner's look, off the pool's `teamSnapshot`.
@@ -318,9 +318,9 @@ the player's horse is let go, so a remount never gallops in place on the gait it
   `player/mwView.js` mwViewHides hides the first-person horse whenever the Morrowind body is in third person (its horse
   is in the world); before, mwViewDrawSaddle's false out of first person let the sprite paint over the 3D rider.
   Pinned: `test/horsepov.test.js`; mutants `tools/mutants/horsepov.json`.
-- **Other riders** (`net/peerBodies.js`): a peer on a horse whose Morrowind body stands here sits a 3D horse of its
+- **Other riders** (`net/peer/peerBodies.js`): a peer on a horse whose Morrowind body stands here sits a 3D horse of its
   own, in the look their pose names (`rc`), stepped at the body's pace; the rider layer yields them
-  (`net/peerRiders.js` sync's `yields`, `scenes/world.js` peerRidesIn3d) - a beast stays the layer's. A yielded rider
+  (`net/peer/peerRiders.js` sync's `yields`, `scenes/world.js` peerRidesIn3d) - a beast stays the layer's. A yielded rider
   is held for the layer's `settle`, after the bodies have stood: one whose body did not stand this frame (past the
   bodies' 120 m, the eight bodies full, a stranger, a body still building) is drawn as Eye Of The Beholder's mounted
   sprite after all, and the bodies are handed the rider either way, so its body can build.

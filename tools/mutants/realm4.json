@@ -1,7 +1,7 @@
 [
   {
     "name": "REALM4-worn-leaves",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (rec.equipSlot != null) return false;                       // worn (equip.js isEquipped)\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "REALM4-bound-leaves",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (boundRecord(rec)) return false;                            // bound (itemBound.js isBound): its mark or its row's - AUDIT REALM F1\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "REALM4-no-template-matches",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (!Number.isSafeInteger(offered?.templateIndex)) return false;\n",
     "new": "",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "REALM4-price-is-identity",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "    if (TRADE_VOLATILE_FIELDS.includes(k)) continue;",
     "new": "    if (k === 'stackCount') continue;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "REALM4-stack-overdrawn",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "    left[at] -= n;\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "REALM4-thin-purse",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (side.gold > purse) return null;\n",
     "new": "",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "REALM4-marks-ride",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "    for (const k of RECEIVER_MARKS) delete rec[k];\n",
     "new": "",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "REALM4-halves-unchecked",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (!halvesAgree(halfA, halfB)) return { why: 'mismatch' };\n",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "REALM4-swap-crossed",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  giveTradeGoods(a, fromB, halfB.give.gold);",
     "new": "  giveTradeGoods(a, fromA, halfA.give.gold);",
     "tests": [

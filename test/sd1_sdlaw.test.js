@@ -1,6 +1,6 @@
 // SD1 (2026-10-05, Mac: "Super dungeons are random finds on the world map, and spawn where population is at its most.
 // Only one can be active at a time." ... "The Super dungeon collapses when the feat is done."): THE SUPER DUNGEON'S
-// LAW (net/sdLaw.js) - its slot, its record's life, where it rises, its name, its room. bible/11-Multiplayer/
+// LAW (net/superDungeon/sdLaw.js) - its slot, its record's life, where it rises, its name, its room. bible/11-Multiplayer/
 // Super-Dungeons.md sections 2-4. Pure, and the relay's: the hub stores one record (`sdev`) and moves it on with one
 // function per move, each refusing a move its phase does not allow; every phase is derived from the record's own
 // instants, so the hub and every client read the same life from the same record.
@@ -12,9 +12,9 @@ import {
   SD_PHASES, SD_FOUND_RADIUS_M, SD_FIGHTERS_MAX, validSdRecord, sdPhase, sdStands, sdMarked, sdAdmits, sdHolds, sdFirst,
   sdRise, sdFind, sdFell, sdGone, sdDue, sdRoll, pickSdRegion, sdFindBelieved, SD_NAMES, sdNameOf, sdRoomKey, isSdRoom,
   sdSlotOfRoom, sdFoundLine, sdFellLine, sdFadeLine, SD_CAST_OUT_LINE,
-} from '../src/net/sdLaw.js';
+} from '../src/net/superDungeon/sdLaw.js';
 import { REGION_NAMES, worldCoordToMapPixel } from '../src/formats/mapsFile.js';
-import { gateHash, PIXEL_M } from '../src/net/gateLaw.js';
+import { gateHash, PIXEL_M } from '../src/net/gate/gateLaw.js';
 import { PIXEL_UNITS, sanitizeName } from '../src/net/wire.js';
 import { graph } from './importGraph.mjs';
 
@@ -205,9 +205,9 @@ test('SD1: the name, the room and the words', () => {
 });
 
 test('SD1: pure, and the relay\'s - it reaches nothing past wire.js and the gate\'s law, both already the relay bundle\'s', () => {
-  const src = readFileSync(new URL('../src/net/sdLaw.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../src/net/superDungeon/sdLaw.js', import.meta.url), 'utf8');
   assert.deepEqual([...src.matchAll(/^import [^\n]* from '([^']+)';/gm)].map((m) => m[1]), ['./wire.js', './gateLaw.js']);
   const relay = graph('server/src/index.js');
-  const g = graph('src/net/sdLaw.js').slice(1);
+  const g = graph('src/net/superDungeon/sdLaw.js').slice(1);
   assert.deepEqual(g.filter((f) => !relay.includes(f)), [], 'every module the law reaches is one the relay already bundles');
 });

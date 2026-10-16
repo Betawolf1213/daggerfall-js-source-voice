@@ -1,12 +1,12 @@
 // CARDS6 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 23): THE TWO SIGNED WORDS - the service's stake order
-// (net/identityToken.js, kind `stake`) and the relay's cash-out receipt (net/cardReceipt.js, `c1`): each its own fields
+// (net/identityToken.js, kind `stake`) and the relay's cash-out receipt (net/card/cardReceipt.js, `c1`): each its own fields
 // and no other kind's, each checked before a byte is trusted, a void's order read at its own age, a receipt's sum the
 // shape its why allows.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import { orderValid, mintStakeOrder, verifyOrder, verifyStakeOrderAnyAge, mintSiegeOrder, ORDER_TTL_S } from '../src/net/identityToken.js';
-import { cardReceiptValid, mintCardReceipt, verifyCardReceipt, readCardReceipt, CARD_RECEIPT_TTL_S } from '../src/net/cardReceipt.js';
+import { cardReceiptValid, mintCardReceipt, verifyCardReceipt, readCardReceipt, CARD_RECEIPT_TTL_S } from '../src/net/card/cardReceipt.js';
 
 const { subtle } = webcrypto;
 const keys = () => subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);

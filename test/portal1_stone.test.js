@@ -20,7 +20,7 @@ import { readFileSync } from 'node:fs';
 import * as PS from '../src/systems/portalStone.js';
 import { inEther, veilhaven } from '../src/world/ethericSea.js';   // AUDIT CAPTAIN'S SEA P6: the Veil's refusal, the world's own
 import { PORTAL_STONE_TEMPLATE, PORTAL_STONE_TEMPLATES, PORTAL_STONE, PORTAL_STONE_SHARDS, portalStones, isPortalStone, welkyndShards, WELKYND_SHARD, WELKYND_SHARD_TEMPLATE, isWelkyndShard } from '../src/systems/gate/gateSpoils.js';
-import { BOUND_TEMPLATES } from '../src/net/realmTradeLaw.js';
+import { BOUND_TEMPLATES } from '../src/net/realm/realmTradeLaw.js';
 import { isBound } from '../src/systems/item/itemBound.js';
 import { setLocked } from '../src/systems/item/itemLock.js';
 import { addItem } from '../src/systems/inventory.js';

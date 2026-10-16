@@ -32,7 +32,7 @@ import { eliteCorpseSize, isEliteCorpse, markEliteCorpseBatch } from '../src/sys
 import { effectiveLevel } from '../src/systems/mentorMode.js';   // SOFTCAP2: the mentor's level the spawn sites read (a free name there, the module's own import)
 import { blowClassOf } from '../src/ai/puppetBlows.js';   // AUDIT FEUD: the hit door builds a blow's class whenever its weakness rides (the real one - no wind-up here, no weakness: none)
 import { feudWeakBlow } from '../src/systems/feudLedger.js';   // AUDIT FEUD: ...asked of the real test (none registered here: no weakness)
-import { ARENA_PUPPET_OWNER } from '../src/net/arenaLaw.js';   // ARENA4: the kill door's puppet test, the real owner word (no puppet here)
+import { ARENA_PUPPET_OWNER } from '../src/net/arena/arenaLaw.js';   // ARENA4: the kill door's puppet test, the real owner word (no puppet here)
 import { markOutCold } from '../src/systems/survival/needs.js';   // AUDIT C&C N2: the dungeon's collapse marks its hour
 import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 

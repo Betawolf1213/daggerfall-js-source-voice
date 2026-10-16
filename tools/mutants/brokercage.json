@@ -1,7 +1,7 @@
 [
   {
     "name": "BROKER-CAGE-a-faithful-short-counted-all",
-    "file": "src/net/gateRite.js",
+    "file": "src/net/gate/gateRite.js",
     "old": "if (!(Number.isSafeInteger(slain[career]) && slain[career] >= n)) return false;",
     "new": "if (!(Number.isSafeInteger(slain[career]) && slain[career] >= n - 1)) return false;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "BROKER-CAGE-the-summoner-not-asked",
-    "file": "src/net/gateRite.js",
+    "file": "src/net/gate/gateRite.js",
     "old": "  if (!fell || !slain || typeof slain !== 'object') return false;\n  if (_rosterDay",
     "new": "  if (!slain || typeof slain !== 'object') return false;\n  if (_rosterDay",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "BROKER-CAGE-a-career-missed",
-    "file": "src/net/gateRite.js",
+    "file": "src/net/gate/gateRite.js",
     "old": "for (const m of riteFaithfulOf(day)) if (!m.summoner) want.set(",
     "new": "for (const m of riteFaithfulOf(day).slice(0, 2)) if (!m.summoner) want.set(",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "BROKER-CAGE-the-roster-of-the-first-day-asked",
-    "file": "src/net/gateRite.js",
+    "file": "src/net/gate/gateRite.js",
     "old": "  if (_rosterDay !== day) {",
     "new": "  if (_rosterDay === null) {",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "BROKER-CAGE-midnight-kept",
-    "file": "src/net/gateRite.js",
+    "file": "src/net/gate/gateRite.js",
     "old": "now >= t.omenAt && now < t.wrathAt; };",
     "new": "now >= t.omenAt && now < t.wrathAt + GATE_COLLAPSE_MS; };",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "BROKER-CAGE-the-omen-not-waited-for",
-    "file": "src/net/gateRite.js",
+    "file": "src/net/gate/gateRite.js",
     "old": "isGateDay(day) && now >= t.omenAt && now < t.wrathAt; };",
     "new": "isGateDay(day) && now < t.wrathAt; };",
     "tests": [

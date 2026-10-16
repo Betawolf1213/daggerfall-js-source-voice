@@ -158,7 +158,7 @@ import { claimCursorKey } from '../player/pointerLock.js';   // KB1: while the p
 import { isTouchDevice } from './touch.js';
 import { CHAT_MAX } from '../net/wire.js';
 import { tagOf, findQuery, findLines, playerFound, CHAT_FIND_MAX } from '../net/chat.js';   // CHAT-FIND: the search's own law
-import { guildTagText } from '../net/guildLaw.js';   // GUILD1c: the guild's tag beside a name, as over a head
+import { guildTagText } from '../net/guild/guildLaw.js';   // GUILD1c: the guild's tag beside a name, as over a head
 import { glyphBadges, glyphSvgNode, cssRgba, TITLE_RGBA } from './playerBadge.js';   // ACC3c: the same table the name over a head reads - a name wears its glyphs everywhere it is drawn (TITLE-C: its title over the head alone, never in the chat); cssRgba comes from HERE and not ui/nameLayer.js, which would pull the whole remote-player pass into this panel
 import { rosterRows, rosterTitle } from '../net/roster.js';   // CHAT-R1: who is online, in order (the cap is the model's own - AUDIT-CHATR F4: this file imported it and never used it, and lint could not see that: no-unused-vars is on for server/src and not for src)
 import { PARTY_GREEN_CSS } from '../net/social.js';   // CHAT-CHAN: the Party tab's mark wears the party's one green

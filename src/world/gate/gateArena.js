@@ -25,13 +25,13 @@
 //     closing as the court comes apart (`portalFade`). Between the two there is no way out but death and the Wrath.
 //
 // THE FRAME. Metres, the dungeon's own: the one block at the grid's origin (RDB_SIDE 51.2 across), the court's centre at
-// its middle (net/gateBrain.js COURT_CENTRE - the relay reads poses in the same place), the floor's top at y 0, the
+// its middle (net/gate/gateBrain.js COURT_CENTRE - the relay reads poses in the same place), the floor's top at y 0, the
 // players arriving at +z (the bridge) and facing -z, at the boss.
 //
 // Not a DFU member. Ledger A (WB).
-import { COURT_CENTRE, COURT_R, BOSS_REACH_R, COURTS, WALKS, WALK_HALF_W, WALK_LEAD_MS, WALK_FORM_MS, clampToFloor } from '../../net/gateBrain.js';
+import { COURT_CENTRE, COURT_R, BOSS_REACH_R, COURTS, WALKS, WALK_HALF_W, WALK_LEAD_MS, WALK_FORM_MS, clampToFloor } from '../../net/gate/gateBrain.js';
 import { faces, spike, GATE_ARCHIVE, GATE_STONE_RECORD, ARCH_Y0 } from './gateModel.js';
-import { gateYaw } from '../../net/gateLaw.js';
+import { gateYaw } from '../../net/gate/gateLaw.js';
 import { lightList, packLight, copyLights } from '../../render/lightId.js';   // LIGHT-ID: the court's lights into the frame's list through the one seam
 
 /** The court's own textures (world/gate/gateArt.js courtArt) - the gate's pseudo-archive's neighbour. */
@@ -390,7 +390,7 @@ export function courtDoorAabb(door) {
 export const courtRing = () => ({ centre: [...COURT_CENTRE], radius: COURT_R });
 /**
  * WB9b: THE FLOOR THE MOTOR KEEPS A PLAYER ON in the court (player/motor.js `arena`): courtRing's shape, and a `clamp` that
- * answers the nearest point of the floor as far as it is laid at `now` (net/gateBrain.js clampToFloor - the fight's
+ * answers the nearest point of the floor as far as it is laid at `now` (net/gate/gateBrain.js clampToFloor - the fight's
  * crossings `xa`, the relay's own law of it) to a body at `pos` (the dungeon's frame), or null where it already stands on it.
  * @param {ReadonlyArray<number>} xa @param {number} now
  */
@@ -431,7 +431,7 @@ export function walkSlabs() {
 let _slabs = null;
 /**
  * WHERE A SLAB STANDS at `now` - how far it has risen (0 under the fire, 1 laid): walkway k's front reaches the slab's near
- * edge WALK_LEAD_MS + (j / n) of WALK_FORM_MS after the bound's word (net/gateBrain.js walkFormed - the floor as far as it
+ * edge WALK_LEAD_MS + (j / n) of WALK_FORM_MS after the bound's word (net/gate/gateBrain.js walkFormed - the floor as far as it
  * is laid), and the slab is whole by then, having risen over SLAB_RISE_MS (less for the first, which may not rise before
  * the word). Pure.
  */
@@ -504,7 +504,7 @@ export const PORTAL_RISE_MS = 1500;
 export const PORTAL_CLOSE_MS = 1500;
 /**
  * GATE-FBX: HOW FAR THE WAY HOME STANDS at `t` (0 none .. 1 whole) - risen over PORTAL_RISE_MS from PORTAL_AFTER_MS into
- * his fall (`fellAt`), and closed by `endAt`, the moment the court comes apart (net/gateLaw.js gateTimes' wrathAt and
+ * his fall (`fellAt`), and closed by `endAt`, the moment the court comes apart (net/gate/gateLaw.js gateTimes' wrathAt and
  * GATE_COLLAPSE_MS - the host's own collapse, scenes/world.js), over the PORTAL_CLOSE_MS before it. Pure.
  */
 export function portalFade(t, fellAt, endAt) {

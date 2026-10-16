@@ -20,7 +20,7 @@ import { applySpell, tickActiveEffects } from '../src/systems/effects.js';
 import { SKILLS } from '../src/systems/skills.js';
 import { WEAPON_REACH, SWING_MODS } from '../src/combat/playerWeapon.js';
 import { validDuelData, DUEL_LEVEL_MAX, DUEL_STAT_MAX, DUEL_SWINGS } from '../src/net/wire.js';
-import { DUEL_RADIUS_M, NATIVES_PER_M } from '../src/net/duelSession.js';
+import { DUEL_RADIUS_M, NATIVES_PER_M } from '../src/net/duel/duelSession.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const lcg = (seed) => { let s = seed >>> 0; return () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; };

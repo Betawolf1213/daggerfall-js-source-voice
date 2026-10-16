@@ -38,7 +38,7 @@ were read off the world, where the deck's own way is a stride.
 rest in her root's frame (the chain composed in doubles, her bob left out), the feet half a height under the pinned
 transform, one word whatever her bob. `deckPose`: the root composed with the bob about the MeshObject's place, so a
 place said at rest is stood where the rocked hull holds it (the wire unchanged - the bob is the glue's). The glue hands
-`deck` and `deckKey`; `net/peerBodies.js` and `net/peerRiders.js` read a body's pace off its place on the deck, afresh
+`deck` and `deckKey`; `net/peer/peerBodies.js` and `net/peer/peerRiders.js` read a body's pace off its place on the deck, afresh
 on a new deck; the host's moving bit is measured on what carries the player (a deck aboard, the boat sailed).
 
 ## #2 AQUATIC CREATURES

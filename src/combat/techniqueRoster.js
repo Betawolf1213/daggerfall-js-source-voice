@@ -88,14 +88,14 @@ export const techniqueMult = (base, value) => base * (1 + Math.max(0, value | 0)
 // A leap or a dash launches from the ground alone, but for one marked `airborne` (KICK-AIR, Mac 2026-10-15: the Flying
 // Kick), which goes from the air too - a jump, a fall, a step off a ledge (combat/techniques.js refusal).
 // Speeds never pass TECHNIQUE_MAX_SPEED: a technique moves no body faster than any room's referee believes - the
-// arena's 12.5 m/s on the level, measured pose to pose with half a metre of slack (net/arenaLaw.js ARENA_SPEED_MAX; AUDIT
+// arena's 12.5 m/s on the level, measured pose to pose with half a metre of slack (net/arena/arenaLaw.js ARENA_SPEED_MAX; AUDIT
 // TECH1: it was 16, and a Lunge or a Shadowstep in an arena bout was refused a pose and its landing measured from the
-// stale one), the siege's and the open zone's 18 (net/siegeRef.js).
+// stale one), the siege's and the open zone's 18 (net/siege/siegeRef.js).
 export const TECHNIQUE_MAX_SPEED = 12;
 const DEG = Math.PI / 180;
 export const TECHNIQUES = Object.freeze({
   volley: Object.freeze({ name: 'Volley', families: Object.freeze(['archery']), mech: 'rain', aim: 'ground', base: 0.5, fatigue: 6, cooldown: 16,
-    arrows: 6, radius: 3.5, range: Object.freeze([6, 28]), height: 16, delay: 0.55, spread: 1.35 }),   // AUDIT TECH1: 0.27 s a shaft - never five in a second (an arena's referee lands four: net/arenaLaw.js ARENA_HIT_HZ_MAX)
+    arrows: 6, radius: 3.5, range: Object.freeze([6, 28]), height: 16, delay: 0.55, spread: 1.35 }),   // AUDIT TECH1: 0.27 s a shaft - never five in a second (an arena's referee lands four: net/arena/arenaLaw.js ARENA_HIT_HZ_MAX)
   pierce: Object.freeze({ name: 'Piercing Shot', families: Object.freeze(['archery', 'thunderlock']), mech: 'pierce', aim: 'lane', base: 1.2, fatigue: 4, cooldown: 10,
     through: 5, length: 30, speed: 1.6 }),
   leap: Object.freeze({ name: 'Leap Strike', families: Object.freeze(['longBlade']), mech: 'leap', aim: 'target', base: 1.4, fatigue: 5, cooldown: 12,

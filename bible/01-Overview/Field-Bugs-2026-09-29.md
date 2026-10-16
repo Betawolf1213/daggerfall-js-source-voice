@@ -178,7 +178,7 @@ opened"), and nobody had any way to let it in.
 **Ruled out first, so a pass is not a band-aid over a bug.** Every table that holds a character id is already counted
 (0022), with its time in seconds and a cloud backup's `created_at` kept across re-uploads; a cloud restore and an import
 keep a character's id (only a legacy save, chargen, a classic import and Copy to offline mint one, each on purpose); and
-the client's customs cap and the service's first-save check are one measure (`net/realmGoldLaw.js`), so a character is
+the client's customs cap and the service's first-save check are one measure (`net/realm/realmGoldLaw.js`), so a character is
 never left in a "Never saved" loop. What is left is a character the service never saw on this account - played online
 with no kill, home, guild place, raid or backup, or with its traces under another account.
 

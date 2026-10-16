@@ -23,7 +23,7 @@
 
 import { ITEM_UID_RE, lawTemplate } from './itemLaw.js';
 import { LETTER_OF_CREDIT_TEMPLATE } from '../inventory.js';
-import { TRADE_HELD_NOTICES, TRADE_HELD_STRIKES } from '../../net/realmTradeLaw.js';   // FIELD BUGS 2026-10-11g HELD-SIDE: the hold's words, one home
+import { TRADE_HELD_NOTICES, TRADE_HELD_STRIKES } from '../../net/realm/realmTradeLaw.js';   // FIELD BUGS 2026-10-11g HELD-SIDE: the hold's words, one home
 /** The tiers a piece wears that make it valuable (rarityTier.js ROLLED_TIERS, and the two minted whole). */
 const VALUABLE_TIERS = Object.freeze(['magic', 'rare', 'legendary', 'aetheric', 'gilded']);
 
@@ -62,7 +62,7 @@ export function stampItemIds(entity, rand) {
 
 // ── INT3: what the player is told ────────────────────────────────────
 
-/** The hold, as its player hears it (server-account/src/verdict.js holdOf's reasons) - kept in net/realmTradeLaw.js, the
+/** The hold, as its player hears it (server-account/src/verdict.js holdOf's reasons) - kept in net/realm/realmTradeLaw.js, the
  *  leaf a trade's refusal reads it from too (FIELD BUGS 2026-10-11g HELD-SIDE). */
 export { TRADE_HELD_NOTICES };
 export const TRADE_OPEN_NOTICE = 'This character\'s trading is open again.';

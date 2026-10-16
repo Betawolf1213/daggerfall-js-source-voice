@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 
 import { T0 } from './accountDb.mjs';
 import { mintWatchReceipt } from '../src/net/watchReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { createMotherlodeBook, MOTHERLODE_TEXT, MOTHERLODE_READ_MS, MOTHERLODE_RETRY_MS, MOTHERLODE_WATCH_KEPT, MOTHERLODE_ACT_S } from '../src/net/motherlodeBook.js';
 import { motherlodeKey, MOTHERLODE_RANK, MOTHERLODE_WATCH_S } from '../src/net/motherlodeLaw.js';
 import {

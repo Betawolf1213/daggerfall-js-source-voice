@@ -6,7 +6,7 @@
 // `market-not-yours` as "the save's piece is a copy". It was their only one, gone. The same for a commission's Fill
 // (net/writBook.js shares the list). Driven through the real Worker over node:sqlite (test/accountDb.mjs), the piece
 // made at the real anvil (net/profBook.js craft, systems/smithItems.js mintPieces) and handed on by the realm trade's
-// own law (net/realmTradeLaw.js settleRealmTrade - the service settles with it).
+// own law (net/realm/realmTradeLaw.js settleRealmTrade - the service settles with it).
 import './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -19,7 +19,7 @@ import { createWritBook } from '../src/net/writBook.js';
 import { xpForRank } from '../src/net/professionLaw.js';
 import { wearOf } from '../src/net/marketLaw.js';
 import { mintPieces } from '../src/systems/smithItems.js';
-import { settleRealmTrade } from '../src/net/realmTradeLaw.js';
+import { settleRealmTrade } from '../src/net/realm/realmTradeLaw.js';
 
 const noWait = () => Promise.resolve();
 const memStorage = () => { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; };

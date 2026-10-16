@@ -3,7 +3,7 @@
 // damage"): THE DAMAGE CHART - once the Warden has fallen, every challenger who had a part in the fight, ranked by what
 // they dealt: their name and level, a bar of their damage against the most anyone dealt, the number, their share of the
 // court's whole, the blows they landed on him and the heaviest of them, what went into the crystals of Oblivion, and how
-// many times they fell. The relay makes it at the kill (net/gateBrain.js damageChart - every number is its own count,
+// many times they fell. The relay makes it at the kill (net/gate/gateBrain.js damageChart - every number is its own count,
 // never a screen's) and says it with the fall (`fell.dm`); a relay that says none shows none.
 //
 // A READOUT, NOT A WINDOW (the bar's and the marks' card's law, ui/gateBossBar.js, ui/gateMarksView.js): no click, no
@@ -17,7 +17,7 @@
 //
 // GATE-HEAL (2026-10-01, Mac: "Can we add a line on the damage round up showing the amount healed?" - each challenger's;
 // "Like for healers" - allies only): a Healed column, last, whenever anyone in the court healed another - what each
-// challenger healed in others (net/gateBrain.js applyHeal: each one healed says it, the caster is credited); on a narrow
+// challenger healed in others (net/gate/gateBrain.js applyHeal: each one healed says it, the caster is credited); on a narrow
 // screen it takes the share's place. The ranking is the damage's still.
 //
 // Not a DFU member. Ledger A (WB).
@@ -59,7 +59,7 @@ export const chartShare = (part, whole) => {
 const sameName = (a, b) => typeof a === 'string' && typeof b === 'string' && a.trim().toLowerCase() === b.trim().toLowerCase() && a.trim() !== '';
 
 /**
- * What the chart shows now, or null (nothing to show). `fell` the court's fall (net/gateLink.js - its `dm` the relay's
+ * What the chart shows now, or null (nothing to show). `fell` the court's fall (net/gate/gateLink.js - its `dm` the relay's
  * chart, its `n` the fighters the fight held), `boss` his name, `me` my name on the relay (net/online.js `name`), `since`
  * when this screen first saw the fall and `now`, on one clock. Each row: its rank, name, level, damage (and the bar's
  * share of the most anyone dealt), share of the whole, blows, best, crystals, falls, and whether it is mine. WB11c: under

@@ -9,9 +9,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeRooms } from './fakeRoom.mjs';
 import { SD_KEY, SD_REALM_KEY, SOCIAL_ROOM, PIXEL_UNITS, worldRoom, chatRegionRoom } from '../src/net/wire.js';
-import { sdRoomKey, sdFirst, sdRise, sdFind, sdFell, SD_NO_FALLEN, SD_NO_CLOSED, SD_NO_RIFT, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
-import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
-import { PIXEL_M } from '../src/net/gateLaw.js';
+import { sdRoomKey, sdFirst, sdRise, sdFind, sdFell, SD_NO_FALLEN, SD_NO_CLOSED, SD_NO_RIFT, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
+import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
 import { sdRiftWord, SD_FALLEN_KEY, SD_ENTERED_KEY, SD_ENTERED_MAX } from '../src/world/superDungeon/sdDungeon.js';
 import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
 

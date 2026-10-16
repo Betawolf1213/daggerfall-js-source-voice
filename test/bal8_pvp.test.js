@@ -2,7 +2,7 @@
 //   - INT10 bounded a caster at 3 casts of 60 in 5 s (180, 36 a second); a blade or a bare hand was bounded at nothing
 //     past 4 blows a second and one blow's bucket, which no measured blow came near: a kitted monk felled a fighter in
 //     8.3 s where the mage's ceiling takes 10.6. Every harm a fighter deals in a duel, a siege or the Wild Zone - blows
-//     and casts together - is held to the casts' own ceiling (net/siegeRef.js SIEGE_HARM).
+//     and casts together - is held to the casts' own ceiling (net/siege/siegeRef.js SIEGE_HARM).
 //   - The arena's stand-in for a rival player faced `yaw: 0` (scenes/world.js arenaRivalBody), so every blow or shaft
 //     from its -z side was a backstab, x3, whatever way the rival faced. No referee of a fight between players rolls a
 //     backstab (the duel's, the siege's and the zone's pass none - combat/duelCombat.js); the arena's now passes none.
@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   SIEGE_HARM, SIEGE_CASTS, SIEGE_HIT, SIEGE_UNITS_PER_M, newFighter, refereeBlow, refereeCast, harmRoom,
-} from '../src/net/siegeRef.js';
+} from '../src/net/siege/siegeRef.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const at = (m) => ({ x: m * SIEGE_UNITS_PER_M, y: 0, z: 0 });
@@ -55,7 +55,7 @@ test('BAL8: every harm a fighter deals - blows and casts together - at most the 
 });
 
 test('BAL8: one referee - the duel\'s, the Wild Zone\'s and the siege\'s rooms all judge a blow through refereeBlow, so the ceiling is every lane\'s', () => {
-  for (const f of ['src/net/duelRef.js', 'src/net/wildRef.js']) assert.match(rd(f), /refereeBlow\(/, `${f} judges through refereeBlow`);
+  for (const f of ['src/net/duel/duelRef.js', 'src/net/wild/wildRef.js']) assert.match(rd(f), /refereeBlow\(/, `${f} judges through refereeBlow`);
   assert.match(rd('server/src/index.js'), /: refereeBlow\(by, to, \{ from: by\.pose, at: to\.pose, held: siegeHeld\(look, m\.w, m\.m\)/, 'and the siege\'s room');
 });
 

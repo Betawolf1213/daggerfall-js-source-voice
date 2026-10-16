@@ -11,14 +11,14 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   newFight, joinFight, applyHit, stepBrain, attacksFor, settleAt, ATTACKS, ATTACK_BY_ID, BOSS_R, COURT_R, BOSS_REACH_R, COURT_CENTRE, ABSENT_RETIRE_MS, BRAIN_TICK_MS, HIT_KINDS,
-} from '../src/net/gateBrain.js';
-import { mintReceipt, readReceipt, receiptValid, RECEIPT_TTL_S } from '../src/net/gateReceipt.js';
-import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
+} from '../src/net/gate/gateBrain.js';
+import { mintReceipt, readReceipt, receiptValid, RECEIPT_TTL_S } from '../src/net/gate/gateReceipt.js';
+import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import { SOCIAL_ROOM, GATE_BRAIN_V, gateReceiptKey, relaySupportsGateSpent, GATE_SPENT_RELAY_MIN, validGateIn } from '../src/net/wire.js';
-import { foldGate, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { foldGate, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { bossPlace } from '../src/world/gate/gateBoss.js';
 import { telegraphShape, telegraphField } from '../src/render/gateTelegraph.js';
-import { inAttack, chargeStrikes } from '../src/net/gateStrike.js';
+import { inAttack, chargeStrikes } from '../src/net/gate/gateStrike.js';
 import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_STORE_KEY, SPOILS_DAY_KEY, SPOILS_RECORD_V, spentKey } from '../src/scenes/spoilsPool.js';
 import { SPECIAL_ARTIFACT_HANDLERS, ARTIFACTS } from '../src/systems/artifactEffects.js';
 import { createGateCourt } from '../src/scenes/gateCourt.js';
@@ -286,7 +286,7 @@ test('AUDIT WBX F5 a Soul Trap reaches him at range and bursting, not by touch a
 
 test('AUDIT WBX W1/W6 a player standing in the stone the moment it comes up whole is set down before the gate, not sealed in it - GATE-FBX: in a foot, under its overhang, high in a pillar or in the lintel; the threshold, its free edge, the ground before a foot and about the gate, and the opening over a head are left alone; the fire\'s box is made when the gate\'s place moves, not every frame the hover asks (mutants: the roots\' check removed; the box made every frame; the box left where the gate stood)', async () => {
   const { createGatePool, inGateRoot } = await import('../src/scenes/gatePool.js');
-  const { gateTimes: times } = await import('../src/net/gateLaw.js');
+  const { gateTimes: times } = await import('../src/net/gate/gateLaw.js');
   const place = { origin: [100, 5, 200], yaw: 0.7 };
   const at = (lx, ly, lz) => { const c = Math.cos(place.yaw), s = Math.sin(place.yaw); return [place.origin[0] + c * lx + s * lz, place.origin[1] + ly, place.origin[2] - s * lx + c * lz]; };
   const FOOT = 2.3;   // GATE-FBX: in a foot's sole at the ground (its inner edge 1.47 m out, its outer 3.03)
@@ -302,7 +302,7 @@ test('AUDIT WBX W1/W6 a player standing in the stone the moment it comes up whol
   let shift = [0, 0, 0];
   const pool = createGatePool({ collider: () => col, standing: () => ({ ...g, phase: now >= T.riseAt + 20_000 ? 'sealed' : 'rising' }), pixelTranslation: () => shift, heightAt: () => 0, now: () => now, feet: () => feetAt, landBefore: (gg) => { landed.push(gg.day); return true; } });
   pool.frame(0.016);
-  const yaw = (await import('../src/net/gateLaw.js')).gateYaw(2000);
+  const yaw = (await import('../src/net/gate/gateLaw.js')).gateYaw(2000);
   const c = Math.cos(yaw), s = Math.sin(yaw);
   feetAt = [c * FOOT, 0.5, -s * FOOT];
   now = T.riseAt + 20_001;

@@ -9,7 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createFpArm } from '../src/combat/fpArm.js';
-import { PeerBodies, BODY_BUILD_GATE } from '../src/net/peerBodies.js';
+import { PeerBodies, BODY_BUILD_GATE } from '../src/net/peer/peerBodies.js';
 import { createNpcBodies, npcShown, npcPeerId, NPC_BODY_TIERS, NPC_BODIES_DEFAULT } from '../src/characters/npcBodies.js';
 import { parseNif } from '../src/formats/mwNifFile.js';
 import { writeNif } from '../tools/nifWrite.mjs';

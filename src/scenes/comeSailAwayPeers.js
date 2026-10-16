@@ -16,7 +16,7 @@
 // player's frames on SpawnBoat. A boat the word moved to another place in its list (a place, a pack) is the same boat -
 // matched by its hull, nearest first - and builds nothing. A place in the list not built yet stands nothing.
 // AUDIT PRE-MERGE 0928 O1: a throw building or re-dressing a peer's boat costs that owner's word and boats, said once -
-// never the frame (AUDIT MWBODY A1's law, net/peerBodies.js).
+// never the frame (AUDIT MWBODY A1's law, net/peer/peerBodies.js).
 // AUDIT PRE-MERGE 0928 O4: the owner's look is their boat's (AUDIT 0927 I-B's law, the cart pool's): the boat under a
 // hidden owner at its helm (the classic lane) stands nowhere; under a concealed one (the enhanced lane) its crew and
 // lanterns wear the owner's look while the hull draws whole; a moored boat is a boat in the world either way.

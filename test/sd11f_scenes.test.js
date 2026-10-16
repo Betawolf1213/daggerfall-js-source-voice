@@ -14,8 +14,8 @@ import { join } from 'node:path';
 import { createSdEnd, SD_HOME_TEXT, SD_HOME_RISE_MS, SD_HOME_SAY_MS, SD_HOME_ASSEMBLY, SD_RETURN_KEY, SD_RIFT_KEY } from '../src/scenes/sdEnd.js';
 import { tollRiftBell, SD_HOME_TOLL, RIFT_BELL_KEY, RIFT_BELL_RECORDS } from '../src/systems/superDungeon/sdRiftSound.js';
 import { sdRiftCount, SD_RETURN_SIZE, SD_END_TEXT } from '../src/world/superDungeon/sdDungeon.js';   // AUDIT SD III (T6, PIN MOVED): no long count of its own - the Timers' words
-import { sdRise, sdFirst, sdFind, sdFell, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
-import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
+import { sdRise, sdFirst, sdFind, sdFell, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
+import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { SD_REM_SINK_MS } from '../src/scenes/sdRemnant.js';
 import { clearOfPillars } from '../src/scenes/sdSpoils.js';
 import { sdTemplates } from '../src/systems/superDungeon/sdSite.js';

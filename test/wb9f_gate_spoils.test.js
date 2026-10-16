@@ -20,9 +20,9 @@ import { ITEMISED_KEYS, keyItemises, resolveHover } from '../src/systems/worldHo
 import { createGateCourt, spoilsKeep, SPEW_RIM_M, SPOILS_BURST_COLOR, SPEW_AT_MS } from '../src/scenes/gateCourt.js';
 import { FX_KINDS, sparkAt, FX_SPARK_VS } from '../src/render/gateFx.js';
 import { tierColour } from '../src/render/spoilsGlow.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { mintReceipt } from '../src/net/gateReceipt.js';
-import { COURTS, COURT_R } from '../src/net/gateBrain.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
+import { mintReceipt } from '../src/net/gate/gateReceipt.js';
+import { COURTS, COURT_R } from '../src/net/gate/gateBrain.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

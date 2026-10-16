@@ -7,7 +7,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { realmToDungeon, SD_ARENA } from '../src/net/sdBrain.js';
+import { realmToDungeon, SD_ARENA } from '../src/net/superDungeon/sdBrain.js';
 import { SD_REALM_FLOORS, realmClamp, SD_REALM_ARCHIVE, SD_ISLAND_SIDES } from '../src/world/superDungeon/sdRealm.js';
 import { SD_HALL_FLOORS } from '../src/world/superDungeon/sdHall.js';
 import { SD_HALL_GLOW_RECORD } from '../src/world/superDungeon/sdHallArt.js';

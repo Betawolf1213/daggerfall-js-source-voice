@@ -2,13 +2,13 @@
 // sockets - a room filled with silence (A1), a court held by one account's many sockets (A1), a fight full of seats left
 // idle (A1), a write a frame from `in` said again (A3), a kill said before it was kept and a hub told once or never
 // (A10), a receipt only a hub hello at the right moment ever saw (A4), a late joiner's burst (A8), and a day's gate times
-// made again every frame (C7, net/gateLaw.js - the relay's bundle). Design: bible/11-Multiplayer/World-Bosses.md
+// made again every frame (C7, net/gate/gateLaw.js - the relay's bundle). Design: bible/11-Multiplayer/World-Bosses.md
 // section 11.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { newFight, joinFight, freeSeat, applyHit, BUCKET_DEPTH_X, dpsRef, GATE_FIGHTERS_MAX, COURT_CENTRE, BRAIN_TICK_MS, HIT_KINDS, RECEIPT_SHARE, SEAT_KEEP_MS } from '../src/net/gateBrain.js';
-import { readReceipt } from '../src/net/gateReceipt.js';
-import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
+import { newFight, joinFight, freeSeat, applyHit, BUCKET_DEPTH_X, dpsRef, GATE_FIGHTERS_MAX, COURT_CENTRE, BRAIN_TICK_MS, HIT_KINDS, RECEIPT_SHARE, SEAT_KEEP_MS } from '../src/net/gate/gateBrain.js';
+import { readReceipt } from '../src/net/gate/gateReceipt.js';
+import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import {
   SOCKETS_MAX, HELLO_WAIT_MS, CLOSE_BUSY, CLOSE_REPLACED, GATE_TELL_RETRY_MS, gateReceiptKey, SOCIAL_ROOM, GATE_BRAIN_V, GATE_HERE_HOLD_MS,
 } from '../src/net/wire.js';

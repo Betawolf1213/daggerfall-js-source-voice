@@ -6,9 +6,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ATTACKS } from '../src/net/gateBrain.js';
+import { ATTACKS } from '../src/net/gate/gateBrain.js';
 import { createGateCourt, FALL_CRY_LATE_MS } from '../src/scenes/gateCourt.js';
-import { createGateLink, GATE_STATE_EMPTY, GATE_NO_TEXT } from '../src/net/gateLink.js';
+import { createGateLink, GATE_STATE_EMPTY, GATE_NO_TEXT } from '../src/net/gate/gateLink.js';
 import { courtToDungeon, COURT_TEXT } from '../src/world/gate/gateArena.js';
 import { BOSS_CUES, THUD_AT_MS } from '../src/world/gate/gateBoss.js';
 import { destroyGateBossBar } from '../src/ui/gateBossBar.js';
@@ -102,7 +102,7 @@ test('AUDIT WB B5 the link tells its host the relay\'s refusal of my `in`, with 
 
 test('AUDIT WB B5 the seams: the door asked again once the fire has closed; a refused `in` and a socket closed for good take the player out before the gate', () => {
   const world = read('src/scenes/world.js');
-  assert.match(world, /onRefused: \(why\) => \{ if \(modes\?\.gateArenaDay\?\.\(\) != null\) ejectFromCourt\(gateRefusalText\(why\)\); \},/);   // GATE-RELOAD: in what the word means (net/gateLink.js gateRefusalText)
+  assert.match(world, /onRefused: \(why\) => \{ if \(modes\?\.gateArenaDay\?\.\(\) != null\) ejectFromCourt\(gateRefusalText\(why\)\); \},/);   // GATE-RELOAD: in what the word means (net/gate/gateLink.js gateRefusalText)
   assert.match(world, /else if \(courtDay != null && online\?\.terminal\) ejectFromCourt\(GATE_NO_TEXT\[online\.error\] \?\? COURT_TEXT\.lost\);/);
   const refusal = world.slice(world.indexOf('gateRefusal: (g) =>'), world.indexOf('gateRefusal: (g) =>') + 400);
   assert.match(refusal, /!online\?\.gateOk \|\| online\?\.terminal \? GATE_TEXT\.notYet/, 'no relay to hold it');

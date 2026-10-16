@@ -2,7 +2,7 @@
 // SD2b (2026-10-05, Mac: "Super dungeons are random finds on the world map, and spawn where population is at its most.
 // Only one can be active at a time. On discovery, Super dungeons have a a beginning and an end."; bible/11-Multiplayer/
 // Super-Dungeons.md sections 2-4): THE HOLLOW IN THE WORLD - the world host's half of the Super dungeon. The hub's record
-// (net/sdLaw.js, said by net/online.js onSd) comes in; the Hollow it names is found over this client's own map files
+// (net/superDungeon/sdLaw.js, said by net/online.js onSd) comes in; the Hollow it names is found over this client's own map files
 // (systems/superDungeon/sdSite.js - the city, the site by the gate's own scan, the template, the clone), the same on every client;
 // it stands in the location index at its pixel while the record's phase says it stands, and the host builds it there as
 // it builds any spawned dungeon; the first player at its door says so (`found`, to the cell its pixel is in, again every
@@ -15,8 +15,8 @@
 // next frame finds them outside and takes it down.
 //
 // Pure but for its seams, which the world host hands in (scenes/world.js). Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { sdPhase, sdStands, sdFoundLine, sdFellLine, sdFadeLine, SD_FOUND_NEAR_M, SD_FOUND_RESEND_MS, SD_COLLAPSE_MS } from '../net/sdLaw.js';
-import { countdownText } from '../net/gateLaw.js';   // SD10: the collapse's countdown, the gate's own words
+import { sdPhase, sdStands, sdFoundLine, sdFellLine, sdFadeLine, SD_FOUND_NEAR_M, SD_FOUND_RESEND_MS, SD_COLLAPSE_MS } from '../net/superDungeon/sdLaw.js';
+import { countdownText } from '../net/gate/gateLaw.js';   // SD10: the collapse's countdown, the gate's own words
 import { findSdSite, pickSdTemplate, sdHollowLocation } from '../systems/superDungeon/sdSite.js';
 import { worldRoom } from '../net/wire.js';
 import { sdMapMark, sdOmenLight, sdRumor, sdMarksLine, sdHourLine, SD_HOUR_LEFT_MS } from '../systems/superDungeon/sdOmen.js';   // SD2c: the Hollow seen and heard of; SD19: its marks and its last hour said

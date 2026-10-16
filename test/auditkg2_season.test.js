@@ -4,8 +4,8 @@
 // racing another write retried on the ratings now), and a third player passing the kept #1 counted at once.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mintGambitReceipt } from '../src/net/gambitReceipt.js';
-import { ARENA_PAIR_SEASON_MAX, ARENA_PAIR_DAY_MAX, arenaSeasonOf } from '../src/net/arenaLaw.js';
+import { mintGambitReceipt } from '../src/net/gambit/gambitReceipt.js';
+import { ARENA_PAIR_SEASON_MAX, ARENA_PAIR_DAY_MAX, arenaSeasonOf } from '../src/net/arena/arenaLaw.js';
 import { _resetGambitCache } from '../server-account/src/gambit.js';
 import { standService } from './accountDb.mjs';
 

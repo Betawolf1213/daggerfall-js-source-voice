@@ -1,7 +1,7 @@
 // @ts-check
 // WB1 (2026-09-25): WHERE THE GATE STANDS - the client's half of the site, over the world's own data.
 //
-// net/gateLaw.js rolls a day's region and pixel over LISTS; this module makes the lists, once a session, from the map
+// net/gate/gateLaw.js rolls a day's region and pixel over LISTS; this module makes the lists, once a session, from the map
 // files every client holds alike (MAPS.BSA's locations, the climate and politic pages) - so every client finds the
 // same spot with no word from the relay (spawned dungeons' law). A pixel is SUITABLE when:
 //
@@ -26,7 +26,7 @@
 import { CLIMATES, LOCATION_TYPES, REGION_NAMES } from '../../formats/mapsFile.js';
 import { BASE_HEIGHT_SCALE, SCALED_OCEAN_ELEVATION } from '../../world/terrain/terrainSampler.js';
 import { spawnsDungeon, WORLD_SALT } from '../../world/spawnedDungeons.js';
-import { pickGateRegion, pickGatePixel, gateSpotLocal, omenRing } from '../../net/gateLaw.js';
+import { pickGateRegion, pickGatePixel, gateSpotLocal, omenRing } from '../../net/gate/gateLaw.js';
 import { WILD_REGION } from '../wild/wildZone.js';   // PVPDUNGEONS: no world event in the open zone
 
 const W = 1000, H = 500;

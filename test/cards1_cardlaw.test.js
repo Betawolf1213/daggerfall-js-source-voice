@@ -11,7 +11,7 @@ import {
   RANKS, SUITS, DECK_SIZE, cardText, parseCard, freshDeck, shuffleDeck, rankFive, compareHands, bestHand, pokerHandName,
   HAND_HIGH_CARD, HAND_PAIR, HAND_TWO_PAIR, HAND_TRIPS, HAND_STRAIGHT, HAND_FLUSH, HAND_FULL_HOUSE, HAND_QUADS,
   HAND_STRAIGHT_FLUSH, sidePots, newHand, legalActions, act, timeoutAction, viewFor,
-} from '../src/net/cardLaw.js';
+} from '../src/net/card/cardLaw.js';
 
 const C = (s) => s.split(' ').map(parseCard);
 const script = (xs) => { let i = 0; return () => { if (i >= xs.length) throw new Error('script ran dry'); return xs[i++]; }; };
@@ -66,7 +66,7 @@ test('CARDS1 the shuffle: Fisher-Yates from the top, each partner drawn 0..i, th
   for (let k = 0; k < 6000; k++) { const o = shuffleDeck(xorshift, [0, 1, 2]).join(''); seen.set(o, (seen.get(o) ?? 0) + 1); }
   assert.deepEqual([...seen.keys()].sort(), ['012', '021', '102', '120', '201', '210']);
   for (const v of seen.values()) assert.ok(v > 850 && v < 1150, `order seen ${v} of 6000`);
-  assert.doesNotMatch(readFileSync(new URL('../src/net/cardLaw.js', import.meta.url), 'utf8'), /2 \*\* 32/,
+  assert.doesNotMatch(readFileSync(new URL('../src/net/card/cardLaw.js', import.meta.url), 'utf8'), /2 \*\* 32/,
     'the unbiased draw has one home, net/dice.js drawBelow');
 });
 

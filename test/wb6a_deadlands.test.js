@@ -15,7 +15,7 @@ import {
   BEAM_CLIMB_TURNS, SPINE_TURNS, SEA_PULSE_TURNS, FALL_TURNS, FLASH_SLOT_S, FLASH_S, COURT_TRILIGHT, COURT_KEY_LIGHT, RIDGES,
 } from '../src/render/deadlands.js';
 import { LAVA_Y, COURT_FOG } from '../src/world/gate/gateArena.js';
-import { COURT_R } from '../src/net/gateBrain.js';
+import { COURT_R } from '../src/net/gate/gateBrain.js';
 import { perspective, lookAt } from '../src/world/mat4.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

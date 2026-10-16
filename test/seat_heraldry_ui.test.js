@@ -2,7 +2,7 @@
 // drawn on banners (3.4), the map ring, the frame of the guild tag, the siege HUD, the board and the Chronicle"): the one
 // swatch (ui/heraldrySwatch.js over ui/heraldryArt.js shieldSvg), the index by tag the client builds from what it holds
 // (net/heraldryIndex.js heraldryByTag), the name tag's frame (ui/nameLayer.js), the siege HUD's two shields
-// (net/siegeLink.js siegeHudModel's `arms`, fightArmed; ui/siegeHud.js), the Seat tab's Chronicle and the Hall of
+// (net/siege/siegeLink.js siegeHudModel's `arms`, fightArmed; ui/siegeHud.js), the Seat tab's Chronicle and the Hall of
 // Records' Roll of Arms (ui/seatTab.js, ui/hallOfRecords.js), and the host's wiring. `06-Systems/Online-Arc.md`
 // HERALDRY-SHOWN.
 import './chargenDom.mjs';
@@ -17,7 +17,7 @@ import { chronicleLine } from '../src/net/townSeatLaw.js';   // AUDIT HERALDRY H
 import * as tvHud from '../src/ui/travelViewHud.js';   // AUDIT HERALDRY H4: the Overworld's name face
 import { heraldrySwatchSrc, heraldrySwatch, paintSwatch, heraldryLookup, chronicleGuildOf, HERALDRY_SWATCH_CLASS, HERALDRY_SWATCH_PX } from '../src/ui/heraldrySwatch.js';
 import { createNameLayer, NAME_CSS } from '../src/ui/nameLayer.js';
-import { foldSiege, siegeHudModel, fightArmed, SIEGE_STATE_EMPTY } from '../src/net/siegeLink.js';
+import { foldSiege, siegeHudModel, fightArmed, SIEGE_STATE_EMPTY } from '../src/net/siege/siegeLink.js';
 import { createSiegeHud, SIEGE_HUD_CSS } from '../src/ui/siegeHud.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { hallOfRecordsTokens, hallOfRecordsRoll, HALL_OF_RECORDS_ROLL } from '../src/ui/hallOfRecords.js';
@@ -205,8 +205,8 @@ test('HERALDRY-SHOWN THE SIEGE HUD: each side\'s shield on the bar - the defende
   assert.match(SIEGE_HUD_CSS, /\.sg-bar \{ position: relative;[^\n]*padding: 3px 34px; \}\n\.sg-arm \{ position: absolute; top: 4px; width: 22px; height: auto;[^\n]*\}\n\.sg-arm-defend \{ left: 6px; \}\n\.sg-arm-attack \{ right: 6px; \}/);
   hud.destroy();
   // the session dresses the fight it enters, once
-  assert.match(rd('src/net/siegeSession.js'), /      s = \{ seat, battle: fightArmed\(battle, seat\), field, room: '',/);
-  assert.match(rd('src/net/siegeSession.js'), /attacker: s\.battle\?\.attackerGuild, defender: s\.battle\?\.defenderGuild \}/);
+  assert.match(rd('src/net/siege/siegeSession.js'), /      s = \{ seat, battle: fightArmed\(battle, seat\), field, room: '',/);
+  assert.match(rd('src/net/siege/siegeSession.js'), /attacker: s\.battle\?\.attackerGuild, defender: s\.battle\?\.defenderGuild \}/);
 });
 
 test('HERALDRY-SHOWN THE SEAT TAB\'S CHRONICLE: each line under the shield of the guild it is about - known from the standings\' answer or the seats\' list - and a line about a guild unknown, or no guild, under none; the words unchanged (mutants: the swatch; the row\'s guild; the sources)', async () => {

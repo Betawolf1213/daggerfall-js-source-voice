@@ -12,7 +12,7 @@
 // hour) is not built: it waits on Mac's word.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { SD_ORRERY, SD_STONES, realmToDungeon } from '../../net/sdBrain.js';
+import { SD_ORRERY, SD_STONES, realmToDungeon } from '../../net/superDungeon/sdBrain.js';
 import { faces } from '../gate/gateModel.js';
 import { packRealmFaces, SD_REALM_BRASS_RECORD } from './sdRealm.js';
 import { SD_HALL_ATLAS, SD_HALL_ATLAS_RECORD, SD_HALL_GEM_RECORD, atlasUv } from './sdHallArt.js';

@@ -159,7 +159,7 @@
   },
   {
     "name": "AUDITGF-W2-the-stop-unheard",
-    "file": "src/net/peerGather.js",
+    "file": "src/net/peer/peerGather.js",
     "old": "    if (fresh && gatherBeatOf(gb) === 'stop' && s.held.length) { const was = (((gb >> 4) + 253) % 255) + 1; s.held = s.held.filter((h) => h.n !== was); }\n",
     "new": "",
     "tests": [
@@ -169,7 +169,7 @@
   },
   {
     "name": "AUDITGF-W2-the-wrong-blow-dropped",
-    "file": "src/net/peerGather.js",
+    "file": "src/net/peer/peerGather.js",
     "old": "const was = (((gb >> 4) + 253) % 255) + 1;",
     "new": "const was = gb >> 4;",
     "tests": [
@@ -179,7 +179,7 @@
   },
   {
     "name": "AUDITGF-W2-the-stop-a-cue",
-    "file": "src/net/peerGather.js",
+    "file": "src/net/peer/peerGather.js",
     "old": "    if (fresh && gatherBeatOf(gb) === 'stop' && s.held.length) {",
     "new": "    if (fresh && gatherBeatOf(gb) === 'stop' && s.held.length && t - s.cueAt >= PEER_GATHER_CUE_MS) {",
     "tests": [
@@ -259,7 +259,7 @@
   },
   {
     "name": "AUDITGF-W1-the-net-a-cue-alone",
-    "file": "src/net/peerGather.js",
+    "file": "src/net/peer/peerGather.js",
     "old": "    else if (!s.net) s.net = peerNetAt(shown, feet, yaw);",
     "new": "    else if (!s.net) s.net = null;",
     "tests": [
@@ -269,7 +269,7 @@
   },
   {
     "name": "AUDITGF-W1-the-net-dropped-at-the-recentre",
-    "file": "src/net/peerGather.js",
+    "file": "src/net/peer/peerGather.js",
     "old": "    for (const s of this.peers.values()) for (const p of [s.net, ...s.held.map((h) => h.at)]) if (p) { p[0] += offset[0]; p[1] += offset[1]; p[2] += offset[2]; }",
     "new": "    for (const s of this.peers.values()) { s.net = null; s.held.length = 0; }",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "AUDITGF-W3-the-gather-record-left-behind",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "        if (b.gather) peerGatherSwing(b.gather, peer.shown);   // AUDIT GATHER-FEEL W3: and the act's beats (PEER-ACTS) - C7's law: a tool's blow out of sight is no strike on waking\n",
     "new": "",
     "tests": [
@@ -290,7 +290,7 @@
   },
   {
     "name": "AUDITGF-W4-the-early-out-reads-an-absent-beat",
-    "file": "src/net/peerGather.js",
+    "file": "src/net/peer/peerGather.js",
     "old": "    if (!ga && !s.ga && !fresh && !s.held.length) return;",
     "new": "    if (!ga && !s.ga && gb === s.gb && !s.held.length) return;",
     "tests": [
@@ -501,7 +501,7 @@
   },
   {
     "name": "AUDITGF-R7-the-climb-floor",
-    "file": "src/net/peerGather.js",
+    "file": "src/net/peer/peerGather.js",
     "old": "export const PEER_GATHER_CUE_MS = 100;",
     "new": "export const PEER_GATHER_CUE_MS = 150;",
     "tests": [

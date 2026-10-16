@@ -32,7 +32,7 @@
 //
 // Not a DFU member (Daggerfall has no arena). Ledger A (ARENA).
 
-import { DUEL_OUT_SLACK_M, DUEL_OUT_MS, DUEL_HEAL_HOLD_MS, DUEL_COUNTDOWN_MS } from '../../net/duelSession.js';
+import { DUEL_OUT_SLACK_M, DUEL_OUT_MS, DUEL_HEAL_HOLD_MS, DUEL_COUNTDOWN_MS } from '../../net/duel/duelSession.js';
 
 /** The phases, in order. */
 export const BOUT_PHASES = Object.freeze(['call', 'walk', 'count', 'fight', 'end', 'verdict', 'heal', 'done']);
@@ -86,7 +86,7 @@ const share = (f) => (f.maxHealth > 0 ? clamp01(f.health / f.maxHealth) : 0);
  * `kind` the bout's ('exhibition', 'ladder', 'champion', 'grand', 'melee'); `limitMs` the fight's limit.
  * AUDIT ARENA-LADDER: `judgesFloor` - a share of the opponents' whole health a side holding a player (a fighter not
  * `ai`) must have taken to win on the judges' card; short of it the card goes to the best side without one (0, the
- * default: the judges as they always were - the relay's ladder alone passes net/arenaLaw.js LADDER_JUDGES_SHARE).
+ * default: the judges as they always were - the relay's ladder alone passes net/arena/arenaLaw.js LADDER_JUDGES_SHARE).
  * @param {{ id: string, kind?: string, fighters: any[], ring: { centre: number[], radius: number }, now: number, limitMs?: number, tier?: number, label?: string, judgesFloor?: number }} o
  */
 export function newBout({ id, kind = 'exhibition', fighters, ring, now, limitMs = BOUT_LIMIT_MS, tier = 0, label = '', judgesFloor = 0 }) {

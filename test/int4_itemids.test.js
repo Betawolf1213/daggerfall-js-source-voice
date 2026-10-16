@@ -20,7 +20,7 @@ import { seatRealm, freshSave } from './realmSeat.mjs';
 import { valuablePiece, mintItemId, stampItemIds, tradeHeldNotice, tradeHeldLawNotice, TRADE_HELD_NOTICES, TRADE_OPEN_NOTICE } from '../src/systems/item/itemIds.js';
 import { DUPES_FOR_HOLD, DUPE_GRACE_S, LEDGER_NEW_MAX, UPSERT_ROWS, UID_CHUNK, ledgerStep, releaseSteps } from '../server-account/src/ledger.js';
 import { prepareRealmRecord } from '../server-account/src/realm.js';
-import { takeTradeGoods, giveTradeGoods } from '../src/net/realmTradeLaw.js';
+import { takeTradeGoods, giveTradeGoods } from '../src/net/realm/realmTradeLaw.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { applyRarity } from '../src/systems/loot/lootRarity.js';
 import { letterOfCredit } from '../src/systems/inventory.js';

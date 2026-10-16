@@ -12,7 +12,7 @@
 // pixel of its own tier within WILD_GIANT_ROAM_PX of the day's home. Between two waypoints it walks a straight line. A
 // day on, it has a new home.
 //
-// DEAD: a giant killed is the hub's word (net/wildLaw.js wdunGiantDie - kept with the halls), down for
+// DEAD: a giant killed is the hub's word (net/wild/wildLaw.js wdunGiantDie - kept with the halls), down for
 // WILD_GIANT_RESPAWN_MS for everyone, then it walks again from wherever its path has got to.
 // Pure: the mask, a pixel test and a time in; the giants out.
 // ═══════════════════════════════════════════════════════════════════

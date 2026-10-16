@@ -15,13 +15,13 @@ import { templateByIndex } from '../src/systems/item/itemTemplates.js';
 import { addItem, splitStack } from '../src/systems/inventory.js';
 import { resolveItemName, survivalInfoTokens } from '../src/systems/item/itemInfo.js';
 import { isBound, isPackOnly } from '../src/systems/item/itemBound.js';
-import { BOUND_TEMPLATES } from '../src/net/realmTradeLaw.js';
+import { BOUND_TEMPLATES } from '../src/net/realm/realmTradeLaw.js';
 import { ITEM_FIELDS, validBinderDeck } from '../src/systems/item/itemFields.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { pageOf } from '../src/ui/packPages.js';
-import { ILIAC_CARDS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
+import { ILIAC_CARDS, STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
 import { cardRules } from '../src/systems/iliac/iliacCardWords.js';
-import { deckValid } from '../src/net/iliacHand.js';
+import { deckValid } from '../src/net/iliac/iliacHand.js';
 import { drawCardsPart, cardsPartShown, resetCardsPart, deckCards, deckRefusal, DECK_REFUSAL_WORDS } from '../src/ui/cardBinderPage.js';
 import { collectionsPageShown, collectionParts } from '../src/ui/collectionsPage.js';
 

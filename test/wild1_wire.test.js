@@ -7,7 +7,7 @@ import {
   RELAY_VERSION, worldRoom, PIXEL_UNITS,
 } from '../src/net/wire.js';
 import { WILD_REMAINS_MS } from '../src/net/wire.js';
-import { newRemains, foldFall, takeFrom, remainsWords, remainsEvict, remainsEmpty, remainsOf, wildRemainsKey } from '../src/net/wildLaw.js';
+import { newRemains, foldFall, takeFrom, remainsWords, remainsEvict, remainsEmpty, remainsOf, wildRemainsKey } from '../src/net/wild/wildLaw.js';
 import { mintRemainsOrder, remainsDigest } from '../src/net/identityToken.js';
 import { fakeRooms } from './fakeRoom.mjs';
 

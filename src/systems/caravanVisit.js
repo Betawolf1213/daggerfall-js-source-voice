@@ -27,7 +27,7 @@
 //
 // Pure: no DOM, no renderer, no clock. Not a DFU member. Ledger A (WAGONS2).
 import { HOME_ENTRIES, HOME_ENTRY_DEFAULT, homeEntryOk, homeMayEnter } from '../net/homeLaw.js';
-import { GUILD_TAG_RE } from '../net/guildLaw.js';
+import { GUILD_TAG_RE } from '../net/guild/guildLaw.js';
 import { decorPieceOf, DECOR_CAP, DECOR_BASE_KEY_RE, DECOR_HIDDEN_CAP } from '../net/decorLaw.js';
 import { MAX_FRAME_BYTES } from '../net/wire.js';
 import { activeWagonItem, wagonKindOf, isWagonItem } from './wagon/wagonKinds.js';

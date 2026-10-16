@@ -79,7 +79,7 @@ held where the last section left it, 0 once the group is no longer the weapon's.
 (`posePartClocks`, `formats/mwFirstPerson.js`) re-pose the weapon's moving pieces and put the arrow where the ArrowBone
 is at that time. A bow whose mesh moves nothing is posed exactly as before. Other parts' controllers run on the lower
 body's clock in the reference and stay unported. THE FOUR HOSTS: the arm and body are every host's one rig (no host
-seam); `net/peerBodies.js`' peers run the same update.
+seam); `net/peer/peerBodies.js`' peers run the same update.
 
 NOT SEEN ON RETAIL DATA: pinned on a fixture bow that carries both controllers (`test/fixtures/mw/bowClip.mjs`, written
 with `tools/nifWrite.mjs`, which now writes NiGeomMorpherController and NiMorphData), not on a Morrowind bow. The

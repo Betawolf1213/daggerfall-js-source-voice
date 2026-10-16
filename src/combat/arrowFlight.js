@@ -153,7 +153,7 @@ export function techniquePierces(m, ref) {
   (t.struck ??= []).push(ref);
   return t.struck.length < t.pierce;
 }
-/** AUDIT TECH1: A PIERCING SHAFT IS ONE SHAFT to a referee that counts blows by their sequence (net/arenaBrain.js refBlow -
+/** AUDIT TECH1: A PIERCING SHAFT IS ONE SHAFT to a referee that counts blows by their sequence (net/arena/arenaBrain.js refBlow -
  *  ARENA4b: "each shaft its own blow", a swing through three bodies one). `q` the sequence the lane has just taken for
  *  this body (one past the last); answers the one it is struck under - the sequence its first body took, while that is
  *  still the newest (this body's own taking undone), else `q`: any blow between, and the body is a blow of its own. A

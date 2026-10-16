@@ -16,9 +16,9 @@ The report is right on its main charge. Three read-only audits of this tree (202
 
 | Charge | Where it stood | Evidence |
 |---|---|---|
-| No damage, free magicka, no fatigue | TRUE in solo, co-op, duels, the wild zone and every boss fight: no server ever holds a player's health, magicka or fatigue. FALSE in the arena, a siege and the Royal Tourney (PVP-REF holds both fighters). | duels and the wild zone resolved on the defender's own machine (`net/wire.js`'s duel frame said "THE DEFENDER RESOLVES IT" until lane 2 retired it, `net/wildFight.js`); a boss "never learns who was struck" (`net/gateStrike.js`, `net/serpentBrain.js`, `net/sdRemnant.js`) |
-| Infinite damage in PvE | EFFECTIVELY: a co-op blow is taken up to 10,000 (a kill). A boss's blows are clipped by a cap and a bucket (`net/gateBrain.js`). A raid's kills are the client's word, one a second. | `scenes/dungeonContext.js` HIT_DMG_MAX; `net/raidLaw.js` |
-| Max damage in PvP | PARTLY: the arena's cap reads the weapon the CLIENT names; a duel's or the zone's blow is never refereed at all, and a spell there has no cap. | `net/arenaBrain.js` arenaBlowCap; `net/siegeRef.js` siegeHeld |
+| No damage, free magicka, no fatigue | TRUE in solo, co-op, duels, the wild zone and every boss fight: no server ever holds a player's health, magicka or fatigue. FALSE in the arena, a siege and the Royal Tourney (PVP-REF holds both fighters). | duels and the wild zone resolved on the defender's own machine (`net/wire.js`'s duel frame said "THE DEFENDER RESOLVES IT" until lane 2 retired it, `net/wild/wildFight.js`); a boss "never learns who was struck" (`net/gate/gateStrike.js`, `net/serpent/serpentBrain.js`, `net/superDungeon/sdRemnant.js`) |
+| Infinite damage in PvE | EFFECTIVELY: a co-op blow is taken up to 10,000 (a kill). A boss's blows are clipped by a cap and a bucket (`net/gate/gateBrain.js`). A raid's kills are the client's word, one a second. | `scenes/dungeonContext.js` HIT_DMG_MAX; `net/raid/raidLaw.js` |
+| Max damage in PvP | PARTLY: the arena's cap reads the weapon the CLIENT names; a duel's or the zone's blow is never refereed at all, and a spell there has no cap. | `net/arena/arenaBrain.js` arenaBlowCap; `net/siege/siegeRef.js` siegeHeld |
 | Any item, any gold | TRUE, AND IT REACHED OTHER PLAYERS: a realm character's checkpoint was read at its first save alone (customs' wealth) and stored unopened after; the market, a realm trade, a guild's vault and treasury, a rent and a card table's stake took goods and gold from that record as the truth; the market's listing check never asked whether the piece was one the game mints. | `server-account/src/realm.js` firstSaveRefusal; `06-Systems/Economy-Arc.md`: "Assume infinite wealth" was literally true |
 
 The bible had said so of itself: `11-Multiplayer/Multiplayer.md` "There is no anti-cheat in v1 and no plan for one", and
@@ -231,7 +231,7 @@ play pays it back. The first numbers (`BUDGET_DEFAULT`) are a guess the measure 
 refusal named "a character in this trade" to both sides, and a player whose partner was held read it as their own. The
 service keeps the held side with the word (`realm_trades.why` `trade-held:a`) and tells each side `held` ('mine' or
 'theirs', the word itself unchanged for an older client); the client says whose, and mine in the words of my own hold's
-notice (`TRADE_HELD_NOTICES`, now in `net/realmTradeLaw.js`, re-exported by `systems/item/itemIds.js`). No road from
+notice (`TRADE_HELD_NOTICES`, now in `net/realm/realmTradeLaw.js`, re-exported by `systems/item/itemIds.js`). No road from
 shoplifting to a hold was found - the budget is the one measure that sees theft, and it holds only under `enforce`.
 The record and staff's check: `01-Overview/Field-Bugs-2026-10-11g.md` HELD-SIDE.
 
@@ -329,14 +329,14 @@ route's ids. Mutant records `tools/mutants/int_audit.json`; the arc's own record
 ## 5. Lane 2 - PvP refereed everywhere (INT7-INT10)
 
 **Built 2026-10-09** (Mac: "I want to do everything and do it properly"). One law under every fight between players,
-PVP-REF's (`net/siegeRef.js`, the sieges' since 2026-10-01): the relay holds both fighters' VITALITY - the Royal
+PVP-REF's (`net/siege/siegeRef.js`, the sieges' since 2026-10-01): the relay holds both fighters' VITALITY - the Royal
 Tourney's, 300 + 2 x the Renown the token signs, never the save's health, which stays the foes' alone - and judges every
 blow from the weapon the striker's look holds, clipped to the arms its token signs, every cast to one cast's most and a
 rate, every reach from the places it believes at a run it allows. What a fight decides - a duel's winner, a fall in the
 open zone and the drop it costs - is a receipt the relay signs and the account service settles. The defender's machine
 resolves nothing any more, anywhere.
 
-### INT7 - the arms and the level signed (`net/siegeRef.js` armsOf, `server-account/src/judge.js`, `identityToken.js` `wa`)
+### INT7 - the arms and the level signed (`net/siege/siegeRef.js` armsOf, `server-account/src/judge.js`, `identityToken.js` `wa`)
 
 Each checkpoint's verdict reads, off the judged pack, the most REACH any lawful weapon there has (`armsTop`: a weapon's
 top damage and its material's modifier, at most `ARMS_TOP_MAX` 32, a Daedric Thunderlock's) and whether a lawful bow is
@@ -347,7 +347,7 @@ The relay stamps `wa` on the socket at the hello, and every referee - a siege's,
 signed bow; a fist is every fighter's own. A token with no `wa` (a character not judged since INT7) is clipped to the
 look's weapon alone, the law before it.
 
-### INT8 - the duel refereed (`net/duelRef.js`, `net/duelReceipt.js`)
+### INT8 - the duel refereed (`net/duel/duelRef.js`, `net/duel/duelReceipt.js`)
 
 A duel is the Royal Tourney's ring without its title. The relay that routes it notes the ask and the yes as they pass
 and sets a bout only on a start it saw asked and answered, both fighters whole; every strike and spell is judged
@@ -363,7 +363,7 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
 (`world.js:"if ((modes?.mode ?? 'exterior') !== 'exterior') return 'outdoors';"`), every door refuses a duellist;
 `scenes/exterior.js`, the offline fixed city, NOT WIRED on purpose: no relay, no other player.
 
-### INT9 - the open zone refereed, a death's drop taken off the record (`net/wildRef.js`, `net/wildReceipt.js`, `server-account/src/wild.js`)
+### INT9 - the open zone refereed, a death's drop taken off the record (`net/wild/wildRef.js`, `net/wild/wildReceipt.js`, `server-account/src/wild.js`)
 
 - **Who fights.** The relay cannot see the map (the zone is the POLITIC map's region 16, cut by
   `systems/wild/wildZone.js` from the files every client holds), so a socket's zone is its own word: `zone` 1 where it stands
@@ -567,8 +567,8 @@ world stays the client's (section 2): the blow on this screen, the potion drunk,
 
 ### What lane 3 found
 
-Each fight's blows were judged on the struck player's machine alone - `net/gateStrike.js` ("The relay never learns who
-was struck; it did not need to"), `net/sdStrike.js`, `systems/serpent/serpentStrike.js` ("The relay never learns a ship's
+Each fight's blows were judged on the struck player's machine alone - `net/gate/gateStrike.js` ("The relay never learns who
+was struck; it did not need to"), `net/superDungeon/sdStrike.js`, `systems/serpent/serpentStrike.js` ("The relay never learns a ship's
 hurts") - and the relay's one word of a death was the pose's `dd`, the client's own. So the spoils' "stood alive half the
 fight" was the client's word, a client that took no blow stood every fight out, and one that took none could carry a
 fight alone (the serpent: "one ship alone still can't" held only for ships that took its blows).
@@ -785,7 +785,7 @@ the clock, and the legacy record held to its own law.
 - **INT11-INT15 (2026-10-10): lane 3, boss fights - built, measuring first (section 6).** Migration `0105_body` (each
   boss kill's row keeps the relay's measure); `ACCOUNT_VERSION` acct105 and `RELAY_VERSION` world188 (world186 on its branch, renumbered past SD-HERALD's world186
   and WAGONS1's world187 at the merge of main; `net/bossBody.js`,
-  `net/bossRef.js`, `net/gateStrike.js` with `world/segment.js`, and `systems/serpent/serpentStrike.js` join the relay's bundle;
+  `net/bossRef.js`, `net/gate/gateStrike.js` with `world/segment.js`, and `systems/serpent/serpentStrike.js` join the relay's bundle;
   `net/bossBody.js` the account Worker's, through the receipts). Pins: `test/int11_body.test.js` (the law and the three
   judges), `test/int12_body_relay.test.js` (the relay over the real Room, measured and enforced; the receipts; the
   service and the review; the client's glue). Mutants `tools/mutants/int_lane3.json`: 92, all dead - the run's five

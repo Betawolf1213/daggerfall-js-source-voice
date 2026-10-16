@@ -237,7 +237,7 @@
  },
  {
   "name": "AUDITMWNPC2-K5-opts-drop-flies",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": ", ...(look.flies ? { flies: true } : {}) };",
   "new": " };",
   "tests": [
@@ -246,7 +246,7 @@
  },
  {
   "name": "AUDITMWNPC2-K5-key-one-body",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "`crea|${look.creature}${look.flies ? '|flies' : ''}`",
   "new": "`crea|${look.creature}`",
   "tests": [
@@ -363,7 +363,7 @@
  },
  {
   "name": "AUDITMWNPC2-L1-one-line",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    (low ? gate.low : gate.high).push(",
   "new": "    gate.low.push(",
   "tests": [
@@ -372,7 +372,7 @@
  },
  {
   "name": "AUDITMWNPC2-L1-low-first",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "  const next = gate.high.shift() ?? gate.low.shift();",
   "new": "  const next = gate.low.shift() ?? gate.high.shift();",
   "tests": [
@@ -381,7 +381,7 @@
  },
  {
   "name": "AUDITMWNPC2-L1-wedged-holds-all",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "  const stall = setTimeout(release, BODY_GATE_STALL_MS);",
   "new": "  const stall = setTimeout(() => {}, BODY_GATE_STALL_MS);",
   "tests": [
@@ -390,7 +390,7 @@
  },
  {
   "name": "AUDITMWNPC2-L1-npc-builds-high",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "gateBuild(this._gate, build, this._buildInRange);",
   "new": "gateBuild(this._gate, build, false);",
   "tests": [
@@ -399,7 +399,7 @@
  },
  {
   "name": "AUDITMWNPC2-L2-frozen-forgets",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "        if (b.far || dt > 0 || !this._buildInRange) { b.posed = false;",
   "new": "        if (true) { b.posed = false;",
   "tests": [
@@ -408,7 +408,7 @@
  },
  {
   "name": "AUDITMWNPC2-L3-corpse-before-far",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    if (pri && stranger && !unseen) {",
   "new": "    if (pri && stranger && victim.goneAt == null) {",
   "tests": [

@@ -11,7 +11,7 @@ import {
   RAM_KIT_KEY, campSpent, REVOLT, revoltDue, WALLS_WAVE_MIN_MS,
 } from '../src/net/fortLaw.js';
 import { minedMaterial, fortificationStone } from '../src/net/professionLaw.js';
-import { SIEGE_WAVE_MS } from '../src/net/siegeRef.js';
+import { SIEGE_WAVE_MS } from '../src/net/siege/siegeRef.js';
 
 test('SEAT2b THE WORKS: the 7.5 table whole - ten works, their tiers\' Marks and materials in the order written, every material one the Stores know (mutants: a cost; a material; a tier\'s count)', () => {
   const table = FORT_WORKS.map((w) => [w.id, w.name, w.where, w.tiers.map((t) => [t.marks, t.needs.map(([k, n]) => `${n} ${k}`).join(', ')])]);

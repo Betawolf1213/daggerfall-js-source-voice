@@ -11,12 +11,12 @@ import { fakeRooms } from './fakeRoom.mjs';
 import {
   ARENA_HALL, arenaExhibitionRoom, arenaExhibitionHourOf, isArenaExhibitionRoom, isArenaRoom, isArenaFloorRoom, arenaFloorRoomOf, ARENA_TICK_MS,
   ARENA_EX_KEEP_MS, validArenaOut, ARENA_FLOOR_CENTRE, arenaFoeStats,
-} from '../src/net/arenaLaw.js';
+} from '../src/net/arena/arenaLaw.js';
 import {
   exhibitionFor, exhibitionOpening, exhibitionAdmits, exhibitionBoutId, hourIndexOf, arenaHash, EXHIBITION_START_MINUTES, EXHIBITION_KEPT_HOURS,
-} from '../src/net/arenaExhibition.js';
+} from '../src/net/arena/arenaExhibition.js';
 import * as LADDER from '../src/systems/arena/arenaLadder.js';
-import { arenaBoutSeed, openBout, stepBout, stateWord, liveEntry, boutFinished, arenaMarks } from '../src/net/arenaBrain.js';
+import { arenaBoutSeed, openBout, stepBout, stateWord, liveEntry, boutFinished, arenaMarks } from '../src/net/arena/arenaBrain.js';
 import { wallMsForClassicMinutes, sharedClassicMinutes } from '../src/net/wire.js';
 
 const arena = (ws) => ws.sent.filter((m) => m.t === 'arena');

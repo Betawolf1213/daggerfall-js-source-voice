@@ -102,7 +102,7 @@ export function installClimbSounds(audio, { fetchBytes = null } = {}) {
 export function _resetClimbSounds() { _install = null; }
 
 /** One of `sound`'s clips - never `prev` while it has another - and `pitch` moved by up to the jitter either way:
- *  { key, pitch }, or null for a sound with no clips. The local climb's and the peers' one choice (net/peerClimb.js). */
+ *  { key, pitch }, or null for a sound with no clips. The local climb's and the peers' one choice (net/peer/peerClimb.js). */
 export function climbClip(sound, prev, rand, pitch = 1) {
   const keys = CLIMB_SFX[/** @type {keyof typeof CLIMB_SFX} */ (sound)];
   if (!keys) return null;

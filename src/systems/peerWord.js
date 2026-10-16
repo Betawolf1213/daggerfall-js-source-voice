@@ -15,7 +15,7 @@
 // A LETTER OF CREDIT NEVER RIDES A PEER'S WORD. No roll mints one (DFU's loot tables never do), so no honest container,
 // body or worn offer holds one but by a player putting it there - and online a room's container and a body are
 // everyone's (SS3's reasoning, systems/item/itemBound.js). A letter passes between players by the realm's own trade, which
-// settles from the giver's record (net/realmTradeLaw.js). So:
+// settles from the giver's record (net/realm/realmTradeLaw.js). So:
 //   - online a letter is put nowhere but the player's own places - the pack, the wagon, the player's own storage, the
 //     player's own pile on the ground (a drop is the dropper's, AUDIT WORLD B3) - and the window says why
 //     (`letterRefusesPut`, both skins);
@@ -24,7 +24,7 @@
 // Not a DFU member: Daggerfall has no other player to hand a piece to. Ledger A.
 import { isBound } from './item/itemBound.js';
 import { isOnlinePage } from './online/onlineLane.js';
-import { REALM_LETTER_TEMPLATE } from '../net/realmGoldLaw.js';   // the letter's template (systems/inventory.js LETTER_OF_CREDIT_TEMPLATE, pinned equal) - a leaf
+import { REALM_LETTER_TEMPLATE } from '../net/realm/realmGoldLaw.js';   // the letter's template (systems/inventory.js LETTER_OF_CREDIT_TEMPLATE, pinned equal) - a leaf
 
 /** A letter of credit - DFU's MiscItems Letter_of_credit, its worth its `value`. */
 export const isLetterOfCredit = (/** @type {any} */ item) => item?.templateIndex === REALM_LETTER_TEMPLATE;

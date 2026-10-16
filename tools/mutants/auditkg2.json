@@ -146,7 +146,7 @@
  },
  {
   "name": "AKG2-A1-late",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "const late = !!t.game && Number.isInteger(gameNo) && gameNo < t.gameNo && now - t.dealtAt <= GAMBIT_LATE_MS && !t.seats[p].spoke;",
   "new": "const late = false;",
   "tests": [
@@ -155,7 +155,7 @@
  },
  {
   "name": "AKG2-A1-window",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "gameNo < t.gameNo && now - t.dealtAt <= GAMBIT_LATE_MS && !t.seats[p].spoke;",
   "new": "gameNo < t.gameNo && !t.seats[p].spoke;",
   "tests": [
@@ -164,7 +164,7 @@
  },
  {
   "name": "AKG2-A1-spoke",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "  t.seats[p].spoke = true;",
   "new": "",
   "tests": [
@@ -263,7 +263,7 @@
  },
  {
   "name": "AKG2-A8-to",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "&& Array.isArray(x.to) && x.to.length === 2 && x.to.every(seatId))) return false;",
   "new": ")) return false;",
   "tests": [
@@ -272,7 +272,7 @@
  },
  {
   "name": "AKG2-A8-twice",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "&& x.f[0] !== x.f[1]",
   "new": "",
   "tests": [
@@ -281,7 +281,7 @@
  },
  {
   "name": "AKG2-A8-stakeid",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "STAKE_ID_RE.test(x.j) && typeof x.s === 'string' && ID_RE.test(x.s)",
   "new": "typeof x.s === 'string'",
   "tests": [
@@ -290,7 +290,7 @@
  },
  {
   "name": "AKG2-E1-blow",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "    return [room(t, [finish(t, now, -1, 'void')])];   // the relay's source broke: no contest",
   "new": "    return [room(t, [finish(t, now, 1 - p, 'forfeit')])];   // the relay's source broke: no contest",
   "tests": [
@@ -300,7 +300,7 @@
  },
  {
   "name": "AKG2-E1-turn",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "if ('refused' in out) return out.refused === 'rand' ? [room(t, [finish(t, now, -1, 'void')])] : [];",
   "new": "if ('refused' in out) return out.refused === 'rand' ? [room(t, [finish(t, now, t.game.turn, 'forfeit')])] : [];",
   "tests": [
@@ -309,7 +309,7 @@
  },
  {
   "name": "AKG2-E1-deal",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "for (const s of t.seats) if (s) { s.ready = false; s.army = null; stakeBack(t, s, 'void'); }",
   "new": "for (const s of t.seats) if (s) { s.ready = false; s.army = null; }",
   "tests": [
@@ -608,7 +608,7 @@
  },
  {
   "name": "AKG2-D10-foe",
-  "file": "src/net/iliacClaims.js",
+  "file": "src/net/iliac/iliacClaims.js",
   "old": "      else if (answer?.ok && answer.data?.why === 'foe-unregistered') onFoeGuest();",
   "new": "",
   "tests": [

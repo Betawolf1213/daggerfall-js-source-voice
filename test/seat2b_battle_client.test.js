@@ -2,16 +2,16 @@
 // the field's frame folded with its Gatehouse, Ram and Walls; the HUD's works line and the Throne's rule; a defender's
 // wave the Walls' quicker; the session's work to strike (an attacker the Gatehouse, a defender the Ram), its point and
 // its blow; the breach and a Ram's end said once; the host's swing at a work (bible/11-Multiplayer/Seats-Arc.md 6.2,
-// 19; src/net/siegeLink.js, src/net/siegeSession.js, src/ui/siegeHud.js, src/scenes/world.js). `06-Systems/
+// 19; src/net/siege/siegeLink.js, src/net/siege/siegeSession.js, src/ui/siegeHud.js, src/scenes/world.js). `06-Systems/
 // Online-Arc.md` SEAT2b part two (b).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { byClass } from './chargenDom.mjs';
-import { foldSiege, siegeWorksLine, siegeBarLines, siegeSelfLines, siegeHudModel, SIEGE_STATE_EMPTY } from '../src/net/siegeLink.js';
-import { createSiegeSession, SIEGE_SESSION_TEXT } from '../src/net/siegeSession.js';
+import { foldSiege, siegeWorksLine, siegeBarLines, siegeSelfLines, siegeHudModel, SIEGE_STATE_EMPTY } from '../src/net/siege/siegeLink.js';
+import { createSiegeSession, SIEGE_SESSION_TEXT } from '../src/net/siege/siegeSession.js';
 import { createSiegeHud } from '../src/ui/siegeHud.js';
-import { siegeRoomKey, siegeNextWave, SIEGE_UNITS_PER_M } from '../src/net/siegeRef.js';
+import { siegeRoomKey, siegeNextWave, SIEGE_UNITS_PER_M } from '../src/net/siege/siegeRef.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 const T = 1_800_000_000_000;

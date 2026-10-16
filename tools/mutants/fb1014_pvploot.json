@@ -16,7 +16,7 @@
     "tests": [
       "test/fb1014_pvploot.test.js"
     ],
-    "note": "MAC (2026-10-14, re-aimed by content): the guild half reads net/wildRef.js sameGuild"
+    "note": "MAC (2026-10-14, re-aimed by content): the guild half reads net/wild/wildRef.js sameGuild"
   },
   {
     "name": "PVP-LOOT-its-party-half-alone",
@@ -26,7 +26,7 @@
     "tests": [
       "test/fb1014_pvploot.test.js"
     ],
-    "note": "MAC (2026-10-14, re-aimed by content): the guild half reads net/wildRef.js sameGuild"
+    "note": "MAC (2026-10-14, re-aimed by content): the guild half reads net/wild/wildRef.js sameGuild"
   },
   {
     "name": "PVP-LOOT-the-friend-law-dropped",
@@ -39,7 +39,7 @@
   },
   {
     "name": "PVP-LOOT-the-named-piece-anyones",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "  if (named && sub !== named) return null;",
     "new": "  if (named && false) return null;",
     "tests": [

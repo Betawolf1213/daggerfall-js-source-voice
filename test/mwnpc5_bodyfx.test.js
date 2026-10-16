@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { Renderer } from '../src/render/renderer.js';
 import { drawRigSpriteBox, bodyFxPad } from '../src/render/characterSprite.js';
 import { createFpArm } from '../src/combat/fpArm.js';
-import { PeerBodies } from '../src/net/peerBodies.js';
+import { PeerBodies } from '../src/net/peer/peerBodies.js';
 import { lookAt, perspective } from '../src/world/mat4.js';
 import { fixtureBodyDeps, countingRenderer } from './fixtures/mw/bodyRig.mjs';
 

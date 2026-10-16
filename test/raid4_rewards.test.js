@@ -1,9 +1,9 @@
 // RAID4 (2026-09-28, Mac on World Events - Raiding Parties online: "3. We can also add renown and it's own atheric +
-// armor sets"): THE TOWNS DEFENDED - the first of the rewards. A raid's receipt the relay signed (net/raidReceipt.js) is
+// armor sets"): THE TOWNS DEFENDED - the first of the rewards. A raid's receipt the relay signed (net/raid/raidReceipt.js) is
 // honoured by the account service over the real migrations (one row a (raid, account), the day's bound, a guest's not
 // counted, another's refused; the character that fought it paid its Renown in the same transaction, once, whoever
 // claims it twice at once - the ACCOUNT's for a day under RENOWN-ACCOUNT, the character's again since RENOWN-CHAR); the worker's route behind a session, the order a rise earns, the count on /v1/account and
-// on the Inspect card's record; the client's call; the device's queue of receipts (net/raidClaims.js - what settles one
+// on the Inspect card's record; the client's call; the device's queue of receipts (net/raid/raidClaims.js - what settles one
 // and what keeps it, its clock, its bounds); the cards' words; and the world host's seams.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -16,13 +16,13 @@ import { createGuest } from '../server-account/src/accounts.js';
 import { claimRaid, raidRecordOf, RAID_CLAIMS_DAY_MAX } from '../server-account/src/raids.js';
 import { ROUTES, OPEN_ROUTES } from '../server-account/src/service.js';
 import { renownRaidXp, renownQuestXp, renownXpFor, renownForXp, RENOWN_RAID_QUESTS, RENOWN_QUEST_LEVEL_MAX, RENOWN_XP_MAX, RENOWN_TRACKS_MAX } from '../src/net/renown.js';
-import { mintRaidReceipt, RAID_RECEIPT_TTL_S } from '../src/net/raidReceipt.js';
-import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintRaidReceipt, RAID_RECEIPT_TTL_S } from '../src/net/raid/raidReceipt.js';
+import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64, verifyOrder } from '../src/net/identityToken.js';
 import { accountRaids, SESSION_KEY } from '../src/net/accountClient.js';
 import {
   createRaidClaims, raidClaimVerdict, raidRecordText, RAID_CLAIMS_KEY, RAID_CLAIMS_MAX, RAID_CLAIM_RETRY_MS, RAID_CLAIM_TEXT,
-} from '../src/net/raidClaims.js';
+} from '../src/net/raid/raidClaims.js';
 import { profileView, profileRaidLine, createProfileWindow } from '../src/ui/profileWindow.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 

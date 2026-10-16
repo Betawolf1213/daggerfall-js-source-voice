@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { planRestore, planReport, loadDump, lit, handlesOf, THEN_TABLES, NOW_TABLES } from '../tools/realmRestore.mjs';
-import { GUILD_MEMBERS_MAX, GUILD_RANK_MASTER } from '../src/net/guildLaw.js';
+import { GUILD_MEMBERS_MAX, GUILD_RANK_MASTER } from '../src/net/guild/guildLaw.js';
 import worker from '../server-account/src/index.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1 (at the merge with main): a request that makes an account carries the versions ticked

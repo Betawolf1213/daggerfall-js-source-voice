@@ -9,13 +9,13 @@ import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import {
   newGambitTable, gambitSit, gambitReady, gambitStand, gambitTick, gambitCommand, gambitTableValid, validGambitIn, GAMBIT_FIRST_MS, GAMBIT_LATE_MS,
-} from '../src/net/gambitTable.js';
+} from '../src/net/gambit/gambitTable.js';
 import { GAMBIT_FRAME_MAX, CLOSE_REPLACED } from '../src/net/wire.js';
 import { HOLDEM_STAKE_MAX } from '../src/net/holdemTable.js';
-import { GAMBIT_STAKE_BB } from '../src/net/gambitStakes.js';
+import { GAMBIT_STAKE_BB } from '../src/net/gambit/gambitStakes.js';
 import { mintStakeOrder, verifyOrder } from '../src/net/identityToken.js';
-import { readCardReceipt, mintCardReceipt } from '../src/net/cardReceipt.js';
-import { payableOf } from '../src/net/realmGoldLaw.js';
+import { readCardReceipt, mintCardReceipt } from '../src/net/card/cardReceipt.js';
+import { payableOf } from '../src/net/realm/realmGoldLaw.js';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { autoFill, reachable, KG_POINT_BUDGET, KG_TILE } from '../src/net/kingsGambit.js';

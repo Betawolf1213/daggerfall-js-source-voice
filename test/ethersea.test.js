@@ -18,7 +18,7 @@ import { CLIMATES } from '../src/formats/mapsTables.js';
 import { WoodsFile } from '../src/formats/woodsFile.js';
 import { isWaterPixel } from '../src/ui/overworldModel.js';
 import { POSE_BOUND, WORLD_PIXEL_BOUND, PIXEL_UNITS } from '../src/net/wire.js';
-import { PIXEL_M as GATE_PIXEL_M } from '../src/net/gateLaw.js';
+import { PIXEL_M as GATE_PIXEL_M } from '../src/net/gate/gateLaw.js';
 import { setTamrielFit, tamrielFrameInBay } from '../src/world/tamriel/tamrielFrame.js';
 import { StreamingWorldState } from '../src/world/streamingWorld.js';
 import { spawnPlateauFloor, SPAWN_DRY_ELEVATION } from '../src/world/spawnedDungeons.js';

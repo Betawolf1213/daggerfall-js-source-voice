@@ -909,7 +909,7 @@ them) - is a marker over their head as the region's travellers are, held
 at the edge off the picture; the names over the heads STAND DOWN while the view is up
 (`drawPeerNames`: one name a player, never two - and with them the chat bubbles over the heads:
 under the view a line said nearby reads in the chat log alone); and every player's marker is their name as it
-reads in play (`badgeSprite`, off `ui/playerBadge.js`, `net/renown.js`, `net/guildLaw.js` - the
+reads in play (`badgeSprite`, off `ui/playerBadge.js`, `net/renown.js`, `net/guild/guildLaw.js` - the
 same law both name faces read): the title its own line ABOVE in its own colour (a gradient title
 across its letters; never the party's green - ACC3), then one row centred - the Renown in its amber
 box, the name (my party's in `PARTY_GREEN_CSS`, a stranger's the bone), the guild's tag in steel,
@@ -986,8 +986,8 @@ redrawn); `tools/mutants/tv3.json` and `tv5.json` (the OVERWORLD-NAMES records).
 - **OW-PEERS** (FIELD BUGS 2026-10-01 #11, "you cannot see other player's sprites"): OW-BIG grew the traveller
   alone, so every other player stood at their own size - a speck at 330 m under the name that stood over them. Each
   is grown by the same law at their own feet (world.js `peerGrow`, `tvOwnGrow` of the view's eye to them): the
-  riders, the beasts and the walkers (`net/peerRiders.js`, its size, offset and reach), the dolls and the class
-  sprites (`net/remotePlayers.js`), the Morrowind bodies (`net/peerBodies.js`, `drawThird`'s `grow` and the view's
+  riders, the beasts and the walkers (`net/peer/peerRiders.js`, its size, offset and reach), the dolls and the class
+  sprites (`net/remotePlayers.js`), the Morrowind bodies (`net/peer/peerBodies.js`, `drawThird`'s `grow` and the view's
   lean, culled by their grown reach); their names over the grown heads; none casts a giant's shadow, no walker hangs
   a lantern. `test/fb1001_overworld.test.js`.
 - **OW-WAGON** (WAGON-HITCH, 2026-10-04, Mac: "the wagon when attached to the horse should show in the overworld if

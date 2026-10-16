@@ -5,7 +5,7 @@
 // bible/11-Multiplayer/World-Bosses.md section 5 ("On him: the sprite holds its attack frame's first half through the
 // wind-up, glows the attack's colour, and his voice gives the wind-up's cue; at the landing the attack frames play out").
 //
-// PURE. The court's state (net/gateLink.js, the relay's words folded) and a clock in; a pose, a light, a cue out. The
+// PURE. The court's state (net/gate/gateLink.js, the relay's words folded) and a clock in; a pose, a light, a cue out. The
 // court's driver (scenes/gateCourt.js) turns them into a billboard, a light in the court's channel and sounds.
 //
 // HIS BODY is the mobile the look names (a Daedra Lord for Valkynaz Ruhn - archive 286, the frames every client
@@ -15,9 +15,9 @@
 // The charge is run on the walk's frames at a run's pace, his body carried down the lane as the brain carries it.
 //
 // Not a DFU member. Ledger A (WB).
-import { ATTACK_BY_ID, ATTACKS, BOSS_H, LEAP_AIR_MS, CROSS_AIR_MS, airOf, leapAt, profileOf, isDagons, HOST, HOST_KINDS, HOST_RISE_MS, hostAt } from '../../net/gateBrain.js';
-import { bossAt } from '../../net/gateLink.js';
-import { telegraphAt, chargeHead, hostTelegraphAt } from '../../net/gateStrike.js';
+import { ATTACK_BY_ID, ATTACKS, BOSS_H, LEAP_AIR_MS, CROSS_AIR_MS, airOf, leapAt, profileOf, isDagons, HOST, HOST_KINDS, HOST_RISE_MS, hostAt } from '../../net/gate/gateBrain.js';
+import { bossAt } from '../../net/gate/gateLink.js';
+import { telegraphAt, chargeHead, hostTelegraphAt } from '../../net/gate/gateStrike.js';
 import {
   MOVE_ANIMS, PRIMARY_ATTACK_ANIMS, HURT_ANIMS, IDLE_ANIMS, mobileOrientation,
   MOVE_ANIM_SPEED, IDLE_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED,
@@ -30,7 +30,7 @@ import { courtToDungeon } from './gateArena.js';
 import { hitFlashStrength } from '../../systems/hitFlash.js';   // WB13d: his body struck flashes on the game's own curve
 import { fxBurstOf } from '../../render/gateFx.js';   // WB13d: a landing whose burst carries its own light lights there, not him
 
-/** Each boss's look, by its id (net/gateLaw.js GATE_BOSSES): the mobile whose sprite he wears, and how many times its
+/** Each boss's look, by its id (net/gate/gateLaw.js GATE_BOSSES): the mobile whose sprite he wears, and how many times its
  *  size he stands (BOSS_H is the body the blows are measured against - three Daedra Lords tall). */
 export const BOSS_LOOKS = Object.freeze({ ruhn: Object.freeze({ mobile: 31, scale: 3 }) });
 export const bossLookOf = (id) => BOSS_LOOKS[id] ?? BOSS_LOOKS.ruhn;
@@ -38,7 +38,7 @@ export const bossLookOf = (id) => BOSS_LOOKS[id] ?? BOSS_LOOKS.ruhn;
 /**
  * WB4b: THE ENTITY A BLOW ON HIM IS COMPUTED AGAINST - on the striker's machine, by the port's own formulas (a swing's
  * and a shaft's calculateAttackDamage, a spell's applySpell), the number sent and the relay's caps deciding what lands
- * (net/gateBrain.js applyHit). His look's own mobile's entity (characters/enemyEntity.js makeEnemyEntity) with three
+ * (net/gate/gateBrain.js applyHit). His look's own mobile's entity (characters/enemyEntity.js makeEnemyEntity) with three
  * things set for the fight: EVERY METAL BITES (a Daedra Lord's own needs Mithril - no level-1 player could touch him),
  * his armour a knight's in plate rather than a Daedra Lord's (BOSS_ARMOR: against his own dodging, a level-1 iron
  * longsword lands more than half its swings and a level-20 blade nearly all - bible section 5's numbers, measured in the
@@ -116,7 +116,7 @@ export const FALL_MS = 2400;
  *  wind-up, CAST_LOOSE_FRAME as it is loosed. His blade and his weight keep the swing (frames 0, 1, then 2-4). */
 export const CAST_RAISE_FRAME = 1;
 export const CAST_LOOSE_FRAME = 3;
-/** WB13f: SPENT - his heaviest blows (net/gateBrain.js ATTACKS: their recovery the longer for it) leave him in their last
+/** WB13f: SPENT - his heaviest blows (net/gate/gateBrain.js ATTACKS: their recovery the longer for it) leave him in their last
  *  frame until his recovery ends, a window to punish: his blade's last swing frame, his fire's loosing one. */
 export const SPENT_ON = Object.freeze(['slam', 'leap', 'nova']);
 export const SPENT_FRAME = 4;
@@ -167,7 +167,7 @@ export const EMBER_COLOR = Object.freeze([0.9, 0.32, 0.1]);
 export const POOL_COLOR = Object.freeze([1.0, 0.36, 0.05]);
 /**
  * WB8b: HIS ASPECT, SEEN - the colours his elemental blows, his ground and his ember take under each aspect but his
- * burning one (net/gateMods.js GATE_ASPECTS - the court's own fire above is the Burning Warden's): the rime's ice, the
+ * burning one (net/gate/gateMods.js GATE_ASPECTS - the court's own fire above is the Burning Warden's): the rime's ice, the
  * storm's violet and its bolt's white, the venom's green. His blade, his slam, his charge and his leap keep the
  * colours of his weight; Dagon's Wrath is Dagon's red whatever he wears. Display-encoded, as the rest.
  */
@@ -177,7 +177,7 @@ export const ASPECT_COLORS = Object.freeze({
   storm: tint({ hellfire: [0.66, 0.52, 1.0], nova: [0.84, 0.8, 1.0], meteor: [0.96, 0.92, 0.5], spokes: [0.74, 0.46, 1.0], pool: [0.56, 0.4, 1.0], ember: [0.6, 0.42, 0.95] }),
   venom: tint({ hellfire: [0.5, 1.0, 0.26], nova: [0.68, 1.0, 0.38], meteor: [0.38, 0.92, 0.16], spokes: [0.28, 1.0, 0.52], pool: [0.3, 0.86, 0.12], ember: [0.36, 0.8, 0.16] }),
 });
-/** An attack's colour under a profile (net/gateBrain.js fightProfile): his aspect's where it names one - his elemental
+/** An attack's colour under a profile (net/gate/gateBrain.js fightProfile): his aspect's where it names one - his elemental
  *  blows alone, never Dagon's Wrath - else the attack's own. */
 export const attackColor = (A, P) => ASPECT_COLORS[P?.aspect?.id]?.[A.key] ?? ATTACK_COLORS[A.key];
 /** His ground's colour, and his ember's, under a profile. */
@@ -187,7 +187,7 @@ export const emberColor = (P) => ASPECT_COLORS[P?.aspect?.id]?.ember ?? EMBER_CO
  *  otherwise (the rime's ice, the storm's violet, the venom's green): the Reckoning is Dagon's, the crystals his. */
 export const crystalColor = (P) => ASPECT_COLORS[P?.aspect?.id]?.spokes ?? CRYSTAL_COLOR;
 
-/** WBX5: THE LEAP'S FLIGHT - he is in the air LEAP_AIR_MS before it lands (the brain's law, net/gateBrain.js leapAt),
+/** WBX5: THE LEAP'S FLIGHT - he is in the air LEAP_AIR_MS before it lands (the brain's law, net/gate/gateBrain.js leapAt),
  *  and this high at the top of his arc (metres). */
 export { LEAP_AIR_MS, CROSS_AIR_MS };
 export const LEAP_HEIGHT = 3.2;
@@ -196,7 +196,7 @@ export const LEAP_HEIGHT = 3.2;
 export const CROSS_HEIGHT = 22;
 
 /** Where he stands at `now`, in the court's frame: down the lane while the charge runs and at its end after (the brain
- *  carries him so, net/gateBrain.js stepBrain - the next word finds him there); WBX5: through the air to where a leap
+ *  carries him so, net/gate/gateBrain.js stepBrain - the next word finds him there); WBX5: through the air to where a leap
  *  lands over its last LEAP_AIR_MS, and there after; else his walk from the last word. */
 export function bossPlace(s, now) {
   const atk = s?.atk;
@@ -223,7 +223,7 @@ export function bossHop(s, now) {
  * WHAT HE IS DOING at `now`: `act` one of gone, fall, stunned, windup, strike, spent, run, walk, flinch, idle; `anims`
  * the orientation table that shows it; `frame` the frame index within the record (held frames are indices, a loop's a
  * count to wrap); `loop` whether it wraps; `atk` the attack's key while one is shown; `t` its wind-up's share.
- * @param {any} s the court's state (net/gateLink.js GateState) @param {number} now the relay's clock
+ * @param {any} s the court's state (net/gate/gateLink.js GateState) @param {number} now the relay's clock
  * @param {number} [hurtAt] when a blow of mine last landed on him
  */
 export function bossAct(s, now, hurtAt = -Infinity) {
@@ -426,7 +426,7 @@ export const ASPECT_LAND = Object.freeze({
   storm: Object.freeze({ clip: THUNDER_ROLL, pitch: 0.9 }),
   venom: Object.freeze({ id: 350, pitch: 0.5 }),
 });
-/** The cue of `kind` ('windup', WB13d 'release', or 'land') for an attack under a profile (net/gateBrain.js fightProfile). */
+/** The cue of `kind` ('windup', WB13d 'release', or 'land') for an attack under a profile (net/gate/gateBrain.js fightProfile). */
 export function bossCue(kind, A, P) {
   const cue = BOSS_CUES[kind]?.[A.key] ?? null;
   const aspect = P?.aspect?.id;
@@ -462,10 +462,10 @@ export const THUD_AT_MS = 1500;
 // ═══ WB11c: HIS HOST, SEEN AND HEARD ═══════════════════════════════════════════════════════════════════════════
 //
 // (2026-10-01, Mac: "1. All three ... 4. Trial rotation" - the Legion-Lord's host; bible World-Bosses.md section 17.)
-// The relay knows bodies (net/gateBrain.js HOST_KINDS); WHO each one is, by his aspect, is the screen's: Daggerfall's
+// The relay knows bodies (net/gate/gateBrain.js HOST_KINDS); WHO each one is, by his aspect, is the screen's: Daggerfall's
 // own sprites at their own size, on their own tables - an Imp for every Harrier; the Atronach of his element for a
 // Sapper; for a Ward-Bearer the Daedra nearest it (the Seducer in her winged form for the storm - her change is not
-// played). PURE: a host body (net/gateLink.js GateHost's) and a clock in; a look, an act, a frame and a cue out.
+// played). PURE: a host body (net/gate/gateLink.js GateHost's) and a clock in; a look, an act, a frame and a cue out.
 
 /** Who each kind is under each aspect: its mobile (its sprite, its sounds - enemyBasics.js), its name and its plural for
  *  the words; an Imp HOVERS this high over the floor (its behaviour is Flying); the Seducer is drawn WINGED. */
@@ -507,7 +507,7 @@ export const HOST_FLINCH_MS = 350;
  * WHAT ONE OF HIS HOST IS DOING at `now`: `act` one of rise, windup, strike, walk, flinch, idle; `anims` the table that
  * shows it (the Seducer's winged ones where its look says); `frame` and `loop` as bossAct's; `sink` metres under the floor
  * it still stands (rising - every screen sees it come up out of the stone). Pure.
- * @param {any} a a host body (net/gateLink.js GateHost's `ads`) @param {number} now @param {{mobile?: number, winged?: boolean, hover?: number}} look
+ * @param {any} a a host body (net/gate/gateLink.js GateHost's `ads`) @param {number} now @param {{mobile?: number, winged?: boolean, hover?: number}} look
  * @param {number} [hurtAt] when a blow of mine last met it
  */
 export function hostAct(a, now, look, hurtAt = -Infinity) {

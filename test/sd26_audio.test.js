@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createSdRemnantVoice, SD_VOICE_CUES, SD_HURT_GAP_MS, SD_VOICE_AWAY_MS } from '../src/scenes/sdRemnantVoice.js';
 import { createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
-import { SD_BLOWS, SD_BODY } from '../src/net/sdRemnant.js';
+import { SD_BLOWS, SD_BODY } from '../src/net/superDungeon/sdRemnant.js';
 import { BOSS_CUES } from '../src/world/gate/gateBoss.js';
 import { AudioEngine } from '../src/systems/audio.js';
 import { SOUND } from '../src/systems/soundClips.js';
@@ -33,7 +33,7 @@ function voiceRig(over = {}) {
 const is = (h, c) => h.clip === c.clip && h.pitch === c.pitch;
 const count = (heard, c) => heard.filter((h) => is(h, c)).length;
 
-test('SD26 NO GRUNT FROM OUTSIDE TIME (A1): in the Dragon Break every blow on an Echo comes off the whole too (net/sdRemnant.js applyEchoHit), and the voice read each fall of the whole as the Remnant hurt - its bark at the empty place it left, every SD_HURT_GAP_MS, over each Echo\'s own grunt. Outside time (the Break, and its return\'s window) it grunts at nothing; the count follows the whole, so no grunt is banked for its return, and a blow after it is heard (mutants: a grunt outside time; the count banked)', () => {
+test('SD26 NO GRUNT FROM OUTSIDE TIME (A1): in the Dragon Break every blow on an Echo comes off the whole too (net/superDungeon/sdRemnant.js applyEchoHit), and the voice read each fall of the whole as the Remnant hurt - its bark at the empty place it left, every SD_HURT_GAP_MS, over each Echo\'s own grunt. Outside time (the Break, and its return\'s window) it grunts at nothing; the count follows the whole, so no grunt is banked for its return, and a blow after it is heard (mutants: a grunt outside time; the count banked)', () => {
   const echo = (x) => ({ h: 100, m: 100, x, z: 0, mv: null, atk: null });
   const r = voiceRig({ ph: 2, h: 600, ec: [echo(-6), echo(6)] });
   r.v.frame();

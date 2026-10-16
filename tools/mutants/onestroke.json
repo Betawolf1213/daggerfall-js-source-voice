@@ -48,7 +48,7 @@
   },
   {
     "name": "ONE-STROKE-a-peer-draws-the-first-stroke-whatever-the-count",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "frames: (n) => meleeStrokeFrames(frameCount('AttackMelee'), n),",
     "new": "frames: (n) => meleeStrokeFrames(frameCount('AttackMelee'), 0),",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "ONE-STROKE-a-peer-plays-both-strokes",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "frames: (n) => meleeStrokeFrames(frameCount('AttackMelee'), n),",
     "new": "frames: () => forwardFrames(frameCount('AttackMelee')),",
     "tests": [

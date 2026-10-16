@@ -16,7 +16,7 @@ import {
 } from '../src/render/sdMotes.js';
 import { lifeVertices } from '../src/render/deadlands.js';
 import { SD_SKY_PERIOD } from '../src/render/sdSky.js';
-import { SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
+import { SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN } from '../src/net/superDungeon/sdBrain.js';
 import { SD_FIRST_STEP } from '../src/world/superDungeon/sdHall.js';
 import { mirrorProjectionX, perspective, lookAt, multiply } from '../src/world/mat4.js';
 import { SD_COURSE_END } from '../src/world/superDungeon/sdSteps.js';

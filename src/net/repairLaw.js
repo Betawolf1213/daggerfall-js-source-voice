@@ -9,13 +9,13 @@
 // by hand. A repair names a faction and one of FactionFile's flag bits to clear on it, the gold to give back, and the
 // operator's ticket - its name for this one act, so the same repair asked twice mends once.
 //
-// THE GOLD COMES BACK AS THE GAME'S OWN LETTER OF CREDIT (net/realmGoldLaw.js creditSave's `letter`, GUILD-LETTER's way):
+// THE GOLD COMES BACK AS THE GAME'S OWN LETTER OF CREDIT (net/realm/realmGoldLaw.js creditSave's `letter`, GUILD-LETTER's way):
 // a summoning's price is paid as deductGold pays it - in letters when the coins do not cover it - and 100,000 gold in
 // coin is 250 kg in the pack. A letter weighs nothing and spends as gold.
 
 import { FACTION_FLAGS } from '../formats/factionFile.js';
 import { POST_BATCH_RE } from './postLaw.js';
-import { creditSave } from './realmGoldLaw.js';
+import { creditSave } from './realm/realmGoldLaw.js';
 
 /** The bits a repair may clear: FactionFile.Flags, every one, and nothing else. @type {readonly number[]} */
 export const REPAIR_FLAGS = Object.freeze(Object.values(FACTION_FLAGS));

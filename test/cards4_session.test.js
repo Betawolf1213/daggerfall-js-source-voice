@@ -5,7 +5,7 @@
 // player standing up mid-hand (his pot chips stay, the rest comes home) or between hands (all of it).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { newHand, act, foldSeat, freshDeck, legalActions } from '../src/net/cardLaw.js';
+import { newHand, act, foldSeat, freshDeck, legalActions } from '../src/net/card/cardLaw.js';
 import {
   THINK_MS, THINK_SPREAD_MS, HAND_GAP_MS, TABLE_STAKES, BUY_IN_MIN_BB, BUY_IN_MAX_BB, PURSE_MIN_BB, PURSE_MAX_BB,
   stakesFor, buyInRange, seatPatrons, CardTableSession,

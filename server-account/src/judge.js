@@ -41,8 +41,8 @@
 
 import { itemFindings, itemWorth, lawTemplate, classicPiece, PROVENANCE_RE, ITEM_UID_RE, ITEM_LAW_VERSION, GOLD_INT_MAX } from '../../src/systems/item/itemLaw.js';
 import { valuablePiece } from '../../src/systems/item/itemIds.js';
-import { armsOf } from '../../src/net/siegeRef.js';   // INT7: the arms the token signs
-import { liquidWorthOf, deedsOf } from '../../src/net/realmGoldLaw.js';
+import { armsOf } from '../../src/net/siege/siegeRef.js';   // INT7: the arms the token signs
+import { liquidWorthOf, deedsOf } from '../../src/net/realm/realmGoldLaw.js';
 import { MAX_STAT_VALUE } from '../../src/systems/statMods.js';
 import { SKILL_HARD_CAP } from '../../src/systems/skillSoftcap.js';
 import { STAT_KEYS_ORDER } from '../../src/systems/statMods.js';
@@ -192,7 +192,7 @@ const findingsOf = (/** @type {any} */ it) => { try { return itemFindings(it); }
  * count, wealth, items, provenances, pieces, arms }` - `findings` the first FINDINGS_KEPT of them (`{ code, list, at, t }`
  * an item's), `items` the count judged, `provenances` every crafted piece's provenance, template, material and quality
  * (judgeProducts reads them), `pieces` INT4's: every valuable piece it holds, by its ledger key (ledgerPieces); `arms`
- * INT7's `[reach, bow]` (net/siegeRef.js armsOf - the pack's lawful weapons alone).
+ * INT7's `[reach, bow]` (net/siege/siegeRef.js armsOf - the pack's lawful weapons alone).
  * @param {any} save @param {{ level?: unknown } | null} [summary] @param {{ level?: number }} [o] the level its wealth's debt is read at
  */
 export function judgeSave(save, summary = null, o = {}) {
@@ -213,7 +213,7 @@ export function judgeSave(save, summary = null, o = {}) {
     });
   });
   // INT7: THE ARMS - the most reach of the weapons in the pack the law takes, and whether a lawful bow is among them
-  // (net/siegeRef.js armsOf); the identity mint signs them (`wa`), and every referee clips a blow between players to them
+  // (net/siege/siegeRef.js armsOf); the identity mint signs them (`wa`), and every referee clips a blow between players to them
   const arms = armsOf(save.items, (it) => findingsOf(it).length === 0);
   return { findings, count, wealth: wealthOf(save, o), items, provenances, pieces: ledgerPieces(save), arms };
 }

@@ -23,7 +23,7 @@ import { withPlayerLights } from '../src/scenes/magicCandle.js';
 import { withCourtLights, courtLights } from '../src/world/gate/gateArena.js';
 import { realmLightsWith, realmLightsNear } from '../src/world/superDungeon/sdRealm.js';
 import { bossGlow } from '../src/world/gate/gateBoss.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { courtShadowCounts, meanOf, worstOf, CASE_FRAMES } from '../tools/courtShadowProbe.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;

@@ -13,7 +13,7 @@ import { ownGlyphs, ownWerewolfSkin } from '../src/systems/ownGlyphs.js';
 import { adoptIdentity, storedSession, SESSION_KEY } from '../src/net/accountClient.js';
 import { createFpArm, _skinPainted } from '../src/combat/fpArm.js';
 import { werewolfBodyDeps, WOLF_HEAD_EYES } from './fixtures/mw/bodyRig.mjs';
-import { PeerBodies, peerBuildOpts, peerBodyKey } from '../src/net/peerBodies.js';
+import { PeerBodies, peerBuildOpts, peerBodyKey } from '../src/net/peer/peerBodies.js';
 import { armBuildOptsOf } from '../src/combat/weaponRig.js';
 import { GLYPHS } from '../src/net/identityToken.js';
 import { GLYPH_DETAIL, cssRgba } from '../src/ui/playerBadge.js';

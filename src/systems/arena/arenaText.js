@@ -503,7 +503,7 @@ export const ARENA_TEXT = F({
     ]),
   }),
 
-  // ── THE ARENA ONLINE (ARENA4; net/arenaLaw.js, systems/arena/arenaBoard.js, scenes/arenaOnline.js) ────────────────────
+  // ── THE ARENA ONLINE (ARENA4; net/arena/arenaLaw.js, systems/arena/arenaBoard.js, scenes/arenaOnline.js) ────────────────────
   online: F({
     seasonLine: (n, day) => `Season ${n}, day ${day} of 56`,
     seasonShort: (n) => `Season ${n}`,

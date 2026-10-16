@@ -1,6 +1,6 @@
 // @ts-check
 // ═══════════════════════════════════════════════════════════════════
-// FIRM1 (2026-10-13; bible/06-Systems/Firmament.md) - WHAT THE FIRMAMENT DOES. The law (net/firmamentLaw.js) sums and
+// FIRM1 (2026-10-13; bible/06-Systems/Firmament.md) - WHAT THE FIRMAMENT DOES. The law (net/firmament/firmamentLaw.js) sums and
 // caps every channel the stars allocated carry; the tree in force is firmamentLive.js's; this file lays those channels
 // onto the seams the Sigil Sets, the loot and the Arcane paths opened - registered here at import, each a no-op for
 // anyone but MY entity, the tree in force:
@@ -32,7 +32,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { SKILLS, SKILL_KEYS, permanentSkillValue } from './skills.js';
-import { ATTRIBUTES, COMBAT_SKILLS, LIFE_SKILLS, FIRM_ELEMENTS, blowPct, castCostPct, statDef, pctOf } from '../net/firmamentLaw.js';
+import { ATTRIBUTES, COMBAT_SKILLS, LIFE_SKILLS, FIRM_ELEMENTS, blowPct, castCostPct, statDef, pctOf } from '../net/firmament/firmamentLaw.js';
 import { firmamentStats, onFirmamentChange, firmamentInForce } from './firmamentLive.js';
 import { sigilDueling } from './sigil/sigil.js';
 import { registerEntityFold, registerWeaponBlowMod, newMods, EMPTY_MODS, NUMBER_BODY_PARTS, STANDING_CHANNELS, computeEntityMods } from './entityMods.js';

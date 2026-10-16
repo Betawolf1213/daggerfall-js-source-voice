@@ -7,8 +7,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { STARTER_DECK, cardById, ILIAC_CARDS, ILIAC_LOCATIONS } from '../src/net/iliacCards.js';
-import { newGame, commit, reveal, deckValid, playsRefusal, legalPlays, iliacView, ILIAC_TURNS } from '../src/net/iliacHand.js';
+import { STARTER_DECK, cardById, ILIAC_CARDS, ILIAC_LOCATIONS } from '../src/net/iliac/iliacCards.js';
+import { newGame, commit, reveal, deckValid, playsRefusal, legalPlays, iliacView, ILIAC_TURNS } from '../src/net/iliac/iliacHand.js';
 import {
   iliacGrade, ILIAC_GRADE_BANDS, GRADE_TIERS, GRADE_SLIP, ILIAC_TEMPERS, ILIAC_TEMPER_NAMES, TEMPERS_AGREE, GRADE_SWAPS, TEMPER_UPGRADES,
   patronDeck, patronDeckSound, patronPlays, boardScore, forfeitCard, seededUnit, ILIAC_THINK_TRIALS,

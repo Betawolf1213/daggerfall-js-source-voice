@@ -743,7 +743,7 @@ export function createHorseCartPool({
     return n;
   }
   /** AUDIT COATS3D A5: the concealed owners' 3D horses, translucent, in the host's veiled pass (after its opaque world,
-   *  beside the concealed peers' bodies - net/peerBodies.js drawVeiled) with the body pass's camera. */
+   *  beside the concealed peers' bodies - net/peer/peerBodies.js drawVeiled) with the body pass's camera. */
   function drawVeiled3d() {
     const rig = horses3d?.(), c = _cam3d;
     if (!rig || !c) return 0;
@@ -999,7 +999,7 @@ export function createHorseCartPool({
    *  wagon's word seats (mine - my own riders' book - or another owner's `ps`) stands on that seat as the wagon is
    *  drawn here (seatDrawn: on its ease, grown with it under the Overworld - their own client pins them to its
    *  ungrown seat, which the Overworld draws a speck short of the grown bed), its place in the bed its `deck` so its
-   *  pace reads as sitting still (net/peerPace.js). `toWire` the scene's point in the pose's frame; `grows` the last
+   *  pace reads as sitting still (net/peer/peerPace.js). `toWire` the scene's point in the pose's frame; `grows` the last
    *  draw's (the frame's online pass runs before its draw - the grow a frame old, its pace the camera's). WAGONS2
    *  (AUDIT): only a player who stands within SEAT_GLUE_REACH of that seat as it truly stands - their own client pins
    *  them there - so an owner's word cannot draw anyone else where they are not. */

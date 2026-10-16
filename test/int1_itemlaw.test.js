@@ -12,7 +12,7 @@ import {
   REGULAR_MAGIC_TYPES, ARTIFACT_RECORDS,
 } from '../src/systems/item/itemLaw.js';
 import { validLootItem, validLootList, createArtifact, ITEM_GROUP_NAME_BY_CLASS, setItemLaw } from '../src/systems/loot/loot.js';   // HACKED-GOLD: setItemLaw, to project the sweep without the price ceiling
-import { BOAT_TEMPLATES } from '../src/net/realmTradeLaw.js';   // HACKED-GOLD: a boat's records, whose value is no price
+import { BOAT_TEMPLATES } from '../src/net/realm/realmTradeLaw.js';   // HACKED-GOLD: a boat's records, whose value is no price
 import { AFFIX_RANGES, legendaryById, isCursed } from '../src/systems/loot/lootRarity.js';
 import { liftCurse } from '../src/systems/loot/lootCurse.js';
 import { ENCHANTMENT_TYPES as T, readMagicDef } from '../src/formats/magicDef.js';

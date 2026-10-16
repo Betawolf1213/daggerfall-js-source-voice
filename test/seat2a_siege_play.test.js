@@ -1,20 +1,20 @@
 // SEAT2a part four (2026-10-01, Mac: "Finish the seats"; "Or we could go ahead and do sieges"; "Continue"): THE CLIENT'S
-// SIEGE - the room's words projected (net/wire.js validSiegeOut) and folded (net/siegeLink.js), the HUD's words and its
-// readout (ui/siegeHud.js), the receipts carried (net/siegeClaims.js), the field the town's records give
+// SIEGE - the room's words projected (net/wire.js validSiegeOut) and folded (net/siege/siegeLink.js), the HUD's words and its
+// readout (ui/siegeHud.js), the receipts carried (net/siege/siegeClaims.js), the field the town's records give
 // (systems/siegeField.js), the socket's pass on every hello (net/online.js), and the session that ties them
-// (net/siegeSession.js). bible/11-Multiplayer/Seats-Arc.md 6.2, 6.8, 19; `06-Systems/Online-Arc.md` SEAT2a (part four).
+// (net/siege/siegeSession.js). bible/11-Multiplayer/Seats-Arc.md 6.2, 6.8, 19; `06-Systems/Online-Arc.md` SEAT2a (part four).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import './chargenDom.mjs';
 import { validSiegeOut, SIEGE_END_RESULTS, SIEGE_ROLL_MAX, PIXEL_UNITS } from '../src/net/wire.js';
-import { SIEGE_RESULTS, mintSiegeReceipt } from '../src/net/siegeReceipt.js';
-import { foldSiege, SIEGE_STATE_EMPTY, siegeBarLines, siegeSidesLine, siegeSelfLines, siegeResultTitle, siegeResultLine, siegeHonourLine, siegeClockText, bannerMark, siegeHudModel } from '../src/net/siegeLink.js';
+import { SIEGE_RESULTS, mintSiegeReceipt } from '../src/net/siege/siegeReceipt.js';
+import { foldSiege, SIEGE_STATE_EMPTY, siegeBarLines, siegeSidesLine, siegeSelfLines, siegeResultTitle, siegeResultLine, siegeHonourLine, siegeClockText, bannerMark, siegeHudModel } from '../src/net/siege/siegeLink.js';
 import { createSiegeHud, SIEGE_HUD_STYLE_ID } from '../src/ui/siegeHud.js';
-import { createSiegeClaims, siegeClaimSettles, SIEGE_CLAIMS_KEY, SIEGE_CLAIM_RETRY_MS, SIEGE_CLAIMS_MAX } from '../src/net/siegeClaims.js';
+import { createSiegeClaims, siegeClaimSettles, SIEGE_CLAIMS_KEY, SIEGE_CLAIM_RETRY_MS, SIEGE_CLAIMS_MAX } from '../src/net/siege/siegeClaims.js';
 import { siegeFieldOf, siegeFieldWire, siegeWorldPoint, doorFace, buildingKeysOfType, SIEGE_FIELD } from '../src/systems/siegeField.js';
-import { createSiegeSession, SIEGE_SESSION_TEXT, SIEGE_PASS_RETRY_MS } from '../src/net/siegeSession.js';
+import { createSiegeSession, SIEGE_SESSION_TEXT, SIEGE_PASS_RETRY_MS } from '../src/net/siege/siegeSession.js';
 import { siegeFieldValid } from '../src/net/identityToken.js';
-import { SIEGE_UNITS_PER_M, siegeRoomKey } from '../src/net/siegeRef.js';
+import { SIEGE_UNITS_PER_M, siegeRoomKey } from '../src/net/siege/siegeRef.js';
 import { OnlineSession } from '../src/net/online.js';
 
 const { subtle } = globalThis.crypto;

@@ -11,10 +11,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { SIEGE_CASTS, SIEGE_HIT, SIEGE_UNITS_PER_M, ROYAL_RING, royalRoomKey, newFighter, refereeCast } from '../src/net/siegeRef.js';
-import { newDuelRef, duelNote, duelOpen, duelBlow } from '../src/net/duelRef.js';
-import { newWildRef, wildZone, wildBlow, WILD_REF } from '../src/net/wildRef.js';
-import { ARENA_SPELLS_IN, ARENA_SPELL_WINDOW_MS, ARENA_SPELL_MAX } from '../src/net/arenaLaw.js';
+import { SIEGE_CASTS, SIEGE_HIT, SIEGE_UNITS_PER_M, ROYAL_RING, royalRoomKey, newFighter, refereeCast } from '../src/net/siege/siegeRef.js';
+import { newDuelRef, duelNote, duelOpen, duelBlow } from '../src/net/duel/duelRef.js';
+import { newWildRef, wildZone, wildBlow, WILD_REF } from '../src/net/wild/wildRef.js';
+import { ARENA_SPELLS_IN, ARENA_SPELL_WINDOW_MS, ARENA_SPELL_MAX } from '../src/net/arena/arenaLaw.js';
 import { mintSiegeOrder } from '../src/net/identityToken.js';
 import { fakeRoom } from './fakeRoom.mjs';
 
@@ -48,8 +48,8 @@ test('INT10 ONE CAP: a cast between players is clipped to one cast\'s most and b
   const w = [0, 1, 2, 3].map((k) => wildBlow(z, 'acct-a', 'acct-b', { d: 9999, r: SIEGE_HIT.Spell, rid: `00000000000${k}` }, t0 + k * 100));
   assert.deepEqual(w.map((x) => x.dealt), [SIEGE_CASTS.damageMax, SIEGE_CASTS.damageMax, SIEGE_CASTS.damageMax, 0]);
   // a heal is no blow between two who fight: the duel's and the zone's referees take none
-  assert.match(rd('src/net/duelRef.js'), /\? refereeCast\(me\.f, them\.f, \{ from: me\.pose, at: them\.pose, d \}, now\)/);
-  assert.match(rd('src/net/wildRef.js'), /\? refereeCast\(a\.f, t\.f, \{ from: a\.pose, at: t\.pose, d \}, now\)/);
+  assert.match(rd('src/net/duel/duelRef.js'), /\? refereeCast\(me\.f, them\.f, \{ from: me\.pose, at: them\.pose, d \}, now\)/);
+  assert.match(rd('src/net/wild/wildRef.js'), /\? refereeCast\(a\.f, t\.f, \{ from: a\.pose, at: t\.pose, d \}, now\)/);
 });
 
 test('INT10 EVERY PATH A REFEREE\'S: the caster sends a number counted on its own machine - a duel\'s, the open zone\'s (a dungeon of it too), a siege\'s - and no target\'s machine applies a peer\'s harm: a peer\'s cast at me is a gift\'s families alone (mutants: a spell sent whole for its target to apply; the receiver\'s gift filter gone)', () => {

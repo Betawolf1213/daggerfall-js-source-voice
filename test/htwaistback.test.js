@@ -10,7 +10,7 @@
 // Unseen, it still HANGS: it swings on, and the local player's light stays at the hip.
 //
 // EVERY SPRITE: the local body in every on-foot set (player/eotbBody.js) and every other player drawn as the set
-// they chose (DISC23-B's walkers, net/peerRiders.js) off their pose's `hl` (HT-WAIST-NET). One home for what the two
+// they chose (DISC23-B's walkers, net/peer/peerRiders.js) off their pose's `hl` (HT-WAIST-NET). One home for what the two
 // share: player/eotbLantern.js - the rule, the art, the hang, the swing's drive, the batch. The rider and the beast
 // hang none (the local sprite's own rule; a walker is never either). A peer's lantern lights nothing.
 //
@@ -23,7 +23,7 @@ import { readFileSync } from 'node:fs';
 
 import { createEotbBody } from '../src/player/eotbBody.js';
 import { RECORD_OFFSETS, ORIENTATIONS, orientationFor, stateFor } from '../src/player/eotbBillboard.js';
-import { createPeerWalkers, createEotbArt } from '../src/net/peerRiders.js';
+import { createPeerWalkers, createEotbArt } from '../src/net/peer/peerRiders.js';
 import { playerWaistLightOverride, setPlayerWaistLightOverride } from '../src/systems/playerTorch.js';
 
 const L = await import('../src/player/eotbLantern.js').catch(() => ({}));
@@ -211,7 +211,7 @@ test('HT-WAIST-BACK (the others): a walker whose pose says `hl` hangs THE SAME l
   } finally { setPlayerWaistLightOverride(null); }
 });
 
-test('HT-WAIST-BACK (the others): the lantern swings off the WALKER\'s own motion - its pace off the drawn feet (MWBODY1\'s law, net/peerPace.js), its yaw\'s turn, its walk clip: walking off it lags back as the local body\'s does, a jump is not a sprint, standing it hangs plumb, and a swing across the view is drawn as a tilt on its own basis (mutants: the pace not measured; the swing not stepped; drawn untilted)', async () => {
+test('HT-WAIST-BACK (the others): the lantern swings off the WALKER\'s own motion - its pace off the drawn feet (MWBODY1\'s law, net/peer/peerPace.js), its yaw\'s turn, its walk clip: walking off it lags back as the local body\'s does, a jump is not a sprint, standing it hangs plumb, and a swing across the view is drawn as a tilt on its own basis (mutants: the pace not measured; the swing not stepped; drawn untilted)', async () => {
   const { art } = peerRig();
   const w = createPeerWalkers({ art });
   const p = walker({ hl: 1 });
@@ -233,7 +233,7 @@ test('HT-WAIST-BACK (the others): the lantern swings off the WALKER\'s own motio
   p.shown.z += 50;
   frame(w, [p], 4);
   assert.equal(r.pace, 0, 'a jump: the pace resets');
-  assert.equal(typeof (await import('../src/net/peerPace.js').catch(() => ({}))).stepPeerPace, 'function', 'the pace law is net/peerPace.js\'s');
+  assert.equal(typeof (await import('../src/net/peer/peerPace.js').catch(() => ({}))).stepPeerPace, 'function', 'the pace law is net/peer/peerPace.js\'s');
   // turning on the spot swings it outward
   p.shown.mv = 0;
   for (let i = 0; i < 400; i++) frame(w, [p], 4);
@@ -294,10 +294,10 @@ test('HT-WAIST-BACK (the others): EVERY ALLOCATION HAS AN OWNER - the lantern\'s
   assert.equal(minted(), freed(), 'every batch minted was freed');
 });
 
-test('HT-WAIST-BACK: ONE HOME - your sprite and the walkers hang it through player/eotbLantern.js and neither keeps its own rule, hang, swing drive or art door; the host draws the walkers\' lanterns in the hook every mode\'s pass calls after your body; the pace is net/peerPace.js\'s (mutants: a second copy; the host never draws them)', () => {
+test('HT-WAIST-BACK: ONE HOME - your sprite and the walkers hang it through player/eotbLantern.js and neither keeps its own rule, hang, swing drive or art door; the host draws the walkers\' lanterns in the hook every mode\'s pass calls after your body; the pace is net/peer/peerPace.js\'s (mutants: a second copy; the host never draws them)', () => {
   const lantern = rd('src/player/eotbLantern.js');
   const body = rd('src/player/eotbBody.js');
-  const riders = rd('src/net/peerRiders.js');
+  const riders = rd('src/net/peer/peerRiders.js');
   for (const [name, src] of [['eotbBody.js', body], ['peerRiders.js', riders]]) {
     assert.match(src, /from '(?:\.|\.\.\/player)\/eotbLantern\.js';/, `${name} takes the lantern from its one home`);
     for (const fn of ['isRearView', 'createLanternArt', 'createSpriteLantern', 'stepSpriteLantern', 'spriteStride', 'hangSpriteLantern', 'mintSpriteLantern', 'dropSpriteLantern']) {
@@ -316,10 +316,10 @@ test('HT-WAIST-BACK: ONE HOME - your sprite and the walkers hang it through play
   assert.match(world, /mwViewDrawBody\([^\n]*\n\s*drawPeerBodies\(proj, view, mwv\.eye, tvf \? tvFace : null\);/, 'the exterior pass: right after the player\'s own body');
   assert.equal(rd('src/scenes/worldModes.js').match(/mwViewDrawBody\([^\n]*\n\s*host\.drawPeerBodies\?\.\(\{ proj, view, eye: mwv\.eye \}\);/g)?.length, 2, 'the dungeon and the interior passes: the same hook');
   // the pace: one law, two readers
-  const pace = rd('src/net/peerPace.js');
+  const pace = rd('src/net/peer/peerPace.js');
   assert.match(pace, /export const JUMP_UNITS = 5;/);
-  for (const [name, src] of [['peerBodies.js', rd('src/net/peerBodies.js')], ['peerRiders.js', riders]]) {
-    assert.match(src, /stepPeerPace\(/, `${name} reads the pace through net/peerPace.js`);
+  for (const [name, src] of [['peerBodies.js', rd('src/net/peer/peerBodies.js')], ['peerRiders.js', riders]]) {
+    assert.match(src, /stepPeerPace\(/, `${name} reads the pace through net/peer/peerPace.js`);
     assert.doesNotMatch(src, /\* 0\.8 \+ \(d \/ dt\) \* 0\.2/, `${name} keeps no copy of it`);
   }
 });

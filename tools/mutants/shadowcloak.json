@@ -728,7 +728,7 @@
   },
   {
     "name": "SHADOWCLOAK-a-peer-with-no-body",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    if (!this._standing(b)) return null;\n    let bones = null; try { bones = b.rig.thirdBones",
     "new": "    if (!b) return null;\n    let bones = null; try { bones = b.rig.thirdBones",
     "tests": [
@@ -1324,7 +1324,7 @@
   },
   {
     "name": "SHADOWCLOAK-a-throwing-rig-ends-the-frame",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "let bones = null; try { bones = b.rig.thirdBones?.(names) ?? null; } catch (e) { console.error('[peerBodies] bonesOf', e); }",
     "new": "let bones = b.rig.thirdBones?.(names) ?? null;",
     "tests": [

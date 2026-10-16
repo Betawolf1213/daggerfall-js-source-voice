@@ -28,7 +28,7 @@ const S = 'abc123def0';
 test('DUEL1 wire: every kind carries exactly its own fields - ask/yes/no the id alone, start the ring\'s centre, cancel an optional reason and end a required one; INT8: a strike and a spell the striker\'s own number for the referee (never a sheet for the defender), no result; anything outside refuses the whole frame (mutants: a strike\'s number unbounded; an end with no reason; a bound off by one; a result admitted)', () => {
   // PIN MOVED (INT8, bible/06-Systems/Integrity-Arc.md lane 2): a strike carried the striker's sheet (`a`) and never a
   // damage, a spell the spell record and a level, and the defender answered with a `result` - THE DEFENDER RESOLVED
-  // EVERY BLOW. The relay referees them now (net/duelRef.js): a strike and a spell carry the number the striker's own
+  // EVERY BLOW. The relay referees them now (net/duel/duelRef.js): a strike and a spell carry the number the striker's own
   // game rolled (`d`), which the referee clips; a sheet rides nowhere, and the result is gone.
   const ok = (d) => { const v = validDuelData({ to: 'peer-0002', s: S, ...d }); assert.ok(v, JSON.stringify(d)); return v; };
   const no = (d) => assert.equal(validDuelData({ to: 'peer-0002', s: S, ...d }), null, JSON.stringify(d));

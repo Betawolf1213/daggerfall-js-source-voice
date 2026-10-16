@@ -68,7 +68,7 @@ Emission and point-light colours are linear RGB, as the renderer takes them. **E
 | **RED** | `SD_FX_COLOR.end [1.0,0.32,0.26]` | Refused, or the End | Refused for good, the End's fissures, the face cracking |
 | *white-gold* (the moment) | `SD_BEAM_CORE [1.0,0.92,0.62]` | A beat lands | The Concord, the fall's flash, the Reset's white heart |
 
-**Never by hue alone.** SD18c lends the Ending's light (`net/sdMarks.js` `SD_ENDINGS[].light`) to the soul family on the heart, the Hearts (`sdHeartColorOf`) and the eyes, and to nothing else. Daggerfall's Ending light `[0.75,0.82,1.0]` is nearly MOON, and Orsinium's `[0.62,1.0,0.3]` is nearly MANTELLA. So every meaning is also carried by **shape, place and motion**:
+**Never by hue alone.** SD18c lends the Ending's light (`net/superDungeon/sdMarks.js` `SD_ENDINGS[].light`) to the soul family on the heart, the Hearts (`sdHeartColorOf`) and the eyes, and to nothing else. Daggerfall's Ending light `[0.75,0.82,1.0]` is nearly MOON, and Orsinium's `[0.62,1.0,0.3]` is nearly MANTELLA. So every meaning is also carried by **shape, place and motion**:
 
 - The ways out are pointed arches or rings with a sky or hall in them, and they stand still or run forward.
 - Soul light lives in crystal.
@@ -605,7 +605,7 @@ A painted sky you could believe was made in Deluxe Paint in 1996, but alive.
   - The hour and minute hands, at today's rates (`hourTurns` 1, `minuteTurns` 12 over `SD_SKY_PERIOD`), stepped on `sdTick`.
   - The second hand, on **the same `floor()` of the anchored clock that `scenes/sdAir.js`'s tick reads**, with a 0.08 s after-glow.
   - All hand inputs are snapped to the map's texel grid, so they are exactly as chunky as the painted stars.
-- **Phase overlays** through `uClock = (mode, a0, a1, lit)`, set by the host from the fight state the page holds (`net/sdFightLink.js`: `s.ends`; the Reset's wind-up start; `s.fell.at` plus the collapse), and `uGrade` for the End's red.
+- **Phase overlays** through `uClock = (mode, a0, a1, lit)`, set by the host from the fight state the page holds (`net/superDungeon/sdFightLink.js`: `s.ends`; the Reset's wind-up start; `s.fell.at` plus the collapse), and `uGrade` for the End's red.
 - **Lowering the face:** `SD_CLOCK_FACE` goes to `{ az: 0, elev: 0.20, r: 0.34 }`, so `SD_CLOCK_TOP` is about 0.55 and `SD_SHARD_TOP` is recomputed. **AUDIT SD II's law that no shard crosses the face still holds**: far skylines by height, near shards by placement.
 - **The key light stays where it is** (high from +z). Lowering the face is composition, not lighting.
 

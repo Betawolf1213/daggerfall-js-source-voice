@@ -15,7 +15,7 @@ import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { createMerchantYards } from '../src/scenes/merchantYardsHost.js';
 import { PERSON_TEXTURES, GUARD_TEXTURE } from '../src/characters/mobilePerson.js';
 import { createNpcBodies, createFrameBudget, holdNpcBodies, npcBodiesHeld, NPC_HOLD_MS, NPC_FRAME_TIERS } from '../src/characters/npcBodies.js';
-import { PeerBodies, createBuildGate, gateBuild, BODY_GATE_STALL_MS, peerBodyKey, peerBuildOpts } from '../src/net/peerBodies.js';
+import { PeerBodies, createBuildGate, gateBuild, BODY_GATE_STALL_MS, peerBodyKey, peerBuildOpts } from '../src/net/peer/peerBodies.js';
 import { buildFpArm, esmLoadOrder } from '../src/combat/fpArm.js';
 import { creatureDeps, creaRec } from './fixtures/mw/creatureRig.mjs';
 import { creatureLook } from '../src/characters/creatureBodies.js';
@@ -315,7 +315,7 @@ test('AUDIT MW-NPC II L1: the page\'s build gate builds one body at a time, a pl
   open();
   for (let i = 0; i < 6; i++) await settle();
   assert.deepEqual(order, ['npcA+', 'npcA-', 'peer', 'npcB', 'npcC'], 'the peer next, ahead of the street\'s queue');
-  assert.match(rd('src/net/peerBodies.js'), /if \(this\._gate\) this\._queue = gateBuild\(this\._gate, build, this\._buildInRange\);/, 'an NPC lane\'s builds wait low');
+  assert.match(rd('src/net/peer/peerBodies.js'), /if \(this\._gate\) this\._queue = gateBuild\(this\._gate, build, this\._buildInRange\);/, 'an NPC lane\'s builds wait low');
   t.mock.timers.enable({ apis: ['setTimeout'] });
   const g2 = createBuildGate(), o2 = [];
   gateBuild(g2, () => new Promise(() => { o2.push('wedged'); }), true);

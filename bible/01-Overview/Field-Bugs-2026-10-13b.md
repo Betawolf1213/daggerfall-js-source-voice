@@ -68,7 +68,7 @@ enhanced skin. Asked to try the court again after the update.
 
 ## ONE-BAD-BODY: one body's bad measure blanks no other (2)
 
-`src/render/renderer.js` queueCharacterSprite; `src/net/peerBodies.js` _place, _notFinite; `src/net/peerPace.js`
+`src/render/renderer.js` queueCharacterSprite; `src/net/peer/peerBodies.js` _place, _notFinite; `src/net/peer/peerPace.js`
 stepPeerPace.
 
 THE REPORT. The thread follows 12g's (report 8 there, BATCH-SHUT: "models are disappearing including myself ... when i
@@ -134,7 +134,7 @@ born on a bad yaw takes the first good one (the real PeerBodies over a stub rig)
   the keyed menu asks whichever holds its window. The court itself is the street hosts' (world.js, exterior.js).
 - ONE-BAD-BODY: the door is the renderer's (every host's body passes queue through it - world.js and worldModes.js
   open the batch for the player's body and the peers', every host's NPC lanes and dungeonContext.js's foes for theirs;
-  exterior.js keeps the lone pass, where a bad picture only ever broke itself). The peer layer is net/peerBodies.js,
+  exterior.js keeps the lone pass, where a bad picture only ever broke itself). The peer layer is net/peer/peerBodies.js,
   which the street, the building and the dungeon draw the peers through, and every NPC lane builds on.
 
 ## Pins

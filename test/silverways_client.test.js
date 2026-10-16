@@ -1,6 +1,6 @@
 // SILVER-WAYS (2026-10-03, Mac: "Do it"): SILVER OUTSIDE THE CRAFTS, AS THE GAME SAYS IT - a counted claim's silver lines
 // in the book's own words (net/marksBook.js claimLines: a raid's or a gate's strike, the day's cap named, a guild deed,
-// a contract's pay); the raid's and the gate's carriers saying every line (net/raidClaims.js, net/gateClaims.js); the
+// a contract's pay); the raid's and the gate's carriers saying every line (net/raid/raidClaims.js, net/gate/gateClaims.js); the
 // Work tab's guild contracts (ui/workTab.js: a card under its guild, what it pays, the posters told they are not paid,
 // Withdraw where the rank may, the post form with its every bound said); the doors to the service (net/accountClient.js
 // accountWrits, net/writBook.js); the Guild tab's ledger words; and the world host's seams by source.
@@ -12,15 +12,15 @@ import { readFileSync } from 'node:fs';
 import { byClass } from './chargenDom.mjs';
 import { T0 } from './accountDb.mjs';
 import { createMarksBook, MARKS_TEXT } from '../src/net/marksBook.js';
-import { createRaidClaims } from '../src/net/raidClaims.js';
-import { createGateClaims } from '../src/net/gateClaims.js';
+import { createRaidClaims } from '../src/net/raid/raidClaims.js';
+import { createGateClaims } from '../src/net/gate/gateClaims.js';
 import { accountWrits, REFUSALS, SESSION_KEY } from '../src/net/accountClient.js';
 import { createWritBook } from '../src/net/writBook.js';
 import { mountNoticeBoard } from '../src/ui/noticeWindow.js';
 import { GUILD_MARKS_LEDGER_WORDS } from '../src/ui/socialPanel.js';
 import { materialCountLabel } from '../src/systems/professions/profItems.js';
-import { mintRaidReceipt } from '../src/net/raidReceipt.js';
-import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintRaidReceipt } from '../src/net/raid/raidReceipt.js';
+import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { marksText } from '../src/net/marksLaw.js';
 import { saleTax } from '../src/net/marketLaw.js';
 

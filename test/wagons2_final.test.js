@@ -20,7 +20,7 @@ import { createDuelPrompt, DUEL_PROMPT_CSS } from '../src/ui/duelPrompt.js';
 import { sellGuardOf, localClickDecision } from '../src/systems/tradeModes.js';
 import { wagonLoadedHeld, packTradeRefusal, WAGON_LOADED_TRADE_TEXT } from '../src/systems/tradePack.js';
 import { planStore } from '../src/systems/item/itemTransfer.js';
-import { takeTradeGoods } from '../src/net/realmTradeLaw.js';
+import { takeTradeGoods } from '../src/net/realm/realmTradeLaw.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { clockFogColor, realWindowsGlsl, RW_SEED_GLSL } from '../src/render/realWindows.js';

@@ -24,7 +24,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { poseFan, hashKey, POSE_FAN_MAX, POSE_FAR_SHARE } from '../src/net/wire.js';
 import { OnlineSession, GAP_MAX_MS } from '../src/net/online.js';
-import { PeerBodies, BODIES_MAX } from '../src/net/peerBodies.js';
+import { PeerBodies, BODIES_MAX } from '../src/net/peer/peerBodies.js';
 import * as relay from '../server/src/relay.js';
 import { fakeRoom } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';

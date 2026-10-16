@@ -17,7 +17,7 @@
 // that keeps fewer than HOLDEM_SEATS_MIN is no card table.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from '../../net/cardLaw.js';
+import { HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from '../../net/card/cardLaw.js';
 import { SEATED_EYE_HEIGHT, SEAT_OUT } from '../../player/seatPose.js';   // CARDS2b: the seated eye is the seated body's head, and the sitter's distance from the edge the body's own
 import { transformPoint } from '../mat4.js';
 

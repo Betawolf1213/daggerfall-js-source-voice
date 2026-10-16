@@ -7,12 +7,12 @@
 //
 //   THE HALL      a socket of its own (`arena:hall`, a presence-less session the host makes), opened while the Arena
 //                 window is up or a match is sought: the queue, the offer (Accept / Decline), the bout it sends me to,
-//                 the bouts on the sand to watch (net/arenaLink.js foldHall).
+//                 the bouts on the sand to watch (net/arena/arenaLink.js foldHall).
 //   THE BOUT      the floor's instance as the relay's room `arena:b<id>` (the presence session's own room there): my
 //                 `in` once I stand on the sand or in the stands, its words handed to the bout driver
 //                 (scenes/arenaBouts.js startRelay / relayWord), my blows' claims out, my yield out.
 //   THE RECORDS   the board (`/v1/arena/board`, kept a while and asked again after a bout), the receipts carried to the
-//                 service (net/arenaClaims.js), the banners joined or quit at the recruiters.
+//                 service (net/arena/arenaClaims.js), the banners joined or quit at the recruiters.
 //   THE EXHIBITION (ARENA4b - Arena.md 2: "the relay runs it, every client sees one bout") the hour's bout is the relay's
 //                 room `arena:x<hour>`: on the city's sand a spectator socket of its own (the hall's kind - `watchCity`),
 //                 its words standing the relay's bout as the city's exhibition; from the Herald's Watch or the window's
@@ -31,16 +31,16 @@
 // hall billed it; a cheer or a boo from the stands goes down the bout's room (`send.cheer` - the relay fans it as `cr`).
 //
 // Not a DFU member. Ledger A (ARENA).
-import { foldHall, HALL_EMPTY, verdictOfWord } from '../net/arenaLink.js';
+import { foldHall, HALL_EMPTY, verdictOfWord } from '../net/arena/arenaLink.js';
 import { arenaBoutRoom, ARENA_HALL, ARENA_NO_TEXT, ARENA_HIT, arenaLadderOf, arenaExhibitionRoom, bannerClaim, ARENA_EX_BANNERS,
-  arenaPrivateRoom, arenaPrivateCode, arenaPrivateCodeOf, privateCodeTyped, ARENA_PRIVATE_CODE_RE } from '../net/arenaLaw.js';   // ARENA6: a private session
-import { exhibitionFor, exhibitionBoutId, EXHIBITION_KEPT_HOURS } from '../net/arenaExhibition.js';   // ARENA4b: the hour's exhibition, the relay's
-import { arenaBoutSeed } from '../net/arenaBrain.js';
-import { createArenaClaims, arenaClaimVerdict } from '../net/arenaClaims.js';
+  arenaPrivateRoom, arenaPrivateCode, arenaPrivateCodeOf, privateCodeTyped, ARENA_PRIVATE_CODE_RE } from '../net/arena/arenaLaw.js';   // ARENA6: a private session
+import { exhibitionFor, exhibitionBoutId, EXHIBITION_KEPT_HOURS } from '../net/arena/arenaExhibition.js';   // ARENA4b: the hour's exhibition, the relay's
+import { arenaBoutSeed } from '../net/arena/arenaBrain.js';
+import { createArenaClaims, arenaClaimVerdict } from '../net/arena/arenaClaims.js';
 import { ARENA_TEXT } from '../systems/arena/arenaText.js';
 import { nextLadderBout } from '../systems/arena/arenaLadder.js';
 import { accountRefusalText } from '../net/accountClient.js';
-import { readArenaReceipt } from '../net/arenaReceipt.js';   // ARENA4b: whose bout a claim's answer was, for its held purse
+import { readArenaReceipt } from '../net/arena/arenaReceipt.js';   // ARENA4b: whose bout a claim's answer was, for its held purse
 import { BOUT_PHASES } from '../systems/arena/arenaBout.js';   // AUDIT PRE-MERGE 1003 O3: an exhibition heard fought
 
 /** The board is asked again when the window is up and it is this old, ms. */
@@ -191,7 +191,7 @@ export function createArenaOnline(deps) {
     if (!live()) return Promise.resolve(null);
     return askBoard(true) ?? Promise.resolve(board);
   }
-  /** ARENA4b: A CLAIM ANSWERED (net/arenaClaims.js carries it - this sees each answer): a ladder receipt's held purse paid
+  /** ARENA4b: A CLAIM ANSWERED (net/arena/arenaClaims.js carries it - this sees each answer): a ladder receipt's held purse paid
    *  when the service kept the win, let go when it refused it or the account cannot keep one (a guest), held while the
    *  answer may still change (offline, a key the service will mend); the climb the service answers with is the board's.
    *  A receipt the service says it kept already (`claimed` - the first answer lost on the way, the claim carried again)
@@ -350,7 +350,7 @@ export function createArenaOnline(deps) {
     return { ...e, a: bill(0, e.a), b: bill(1, e.b) };
   }
   /** ARENA4b: MY BANNER as my queue and ladder words claim it - the account's (the board's `me`), none before the board
-   *  is heard: a pennant on my bill for my rival and the stands, cosmetic (net/arenaLaw.js bannerClaim). */
+   *  is heard: a pennant on my bill for my rival and the stands, cosmetic (net/arena/arenaLaw.js bannerClaim). */
   const myBanner = () => { const b = bannerClaim(board?.me?.banner); return b ? { b } : {}; };
   /** What an exhibition's word says of its end, kept for the book: the relay's verdict, or that its room had no bout.
    *  AUDIT PRE-MERGE 1003 O3: and that its fight has begun - an `st` past the count, an `ev` from the fight on. */
@@ -416,7 +416,7 @@ export function createArenaOnline(deps) {
   /**
    * THE RELAY'S VERDICT on the exhibition of `hour`, for the book (scenes/arenaGate.js settle): `{ side }` the relay's
    * (0 / 1, null a draw); `{ house: true }` - its room had no bout (nobody watched it while it might begin) or has let it
-   * go (EXHIBITION_KEPT_HOURS after - net/arenaLaw.js ARENA_EX_KEEP_MS), the house's own record then; or null - not
+   * go (EXHIBITION_KEPT_HOURS after - net/arena/arenaLaw.js ARENA_EX_KEEP_MS), the house's own record then; or null - not
    * known yet, and asked of its room (a spectator's `in`, which a finished exhibition answers with its whole bout).
    */
   function exhibitionVerdict(hour, gameMinutes) {
@@ -468,11 +468,11 @@ export function createArenaOnline(deps) {
   // ── ARENA6: A PRIVATE SESSION ──
   // The owner: "a way to simply host private matches ... a session where people can join, watch, participate, and allow
   // the host of the session to choose who is fighting and who is in the crowd". The session is a room of the relay's
-  // (`arena:p<code>`, net/arenaLaw.js) that this screen stands in as the floor's instance, from the stands: its host's
+  // (`arena:p<code>`, net/arena/arenaLaw.js) that this screen stands in as the floor's instance, from the stands: its host's
   // word picks the Red and the Blue and calls their bout (the casual players' bout, every fighter equally whole), and each
   // bout is mirrored here as any relay's bout is - mine to fight when I am one of its two, else watched.
   /** The session this screen is in or going to: `{ code, room, host (this screen asked to open it), sent, seen, at,
-   *  leftAt, state }` - `state` the relay's last `pss` (net/arenaLaw.js validArenaOut) - or null. */
+   *  leftAt, state }` - `state` the relay's last `pss` (net/arena/arenaLaw.js validArenaOut) - or null. */
   let sess = null;
   /** The session words that end it here: its room's answer that there is none, or that I may not stay (AUDIT PRE-MERGE
    *  1003b C6/S5: a full session's, and a locked one's - a newcomer refused stood on in the floor, holding a session it
@@ -650,7 +650,7 @@ export function createArenaOnline(deps) {
       if (!here) bout.sent = false;
       else if (!bout.sent && (bout.kind !== 'pve' || bout.ticket)) {   // AUDIT ARENA-LADDER: a ladder bout's `in` waits for its ticket
         // ARENA4b: a ladder bout's `in` names my level (believed only from a token before the signed one, held to the
-        // tier's cap) and no health - the relay's vitality is the signed character level's (net/arenaLaw.js ladderVitality)
+        // tier's cap) and no health - the relay's vitality is the signed character level's (net/arena/arenaLaw.js ladderVitality)
         const inWord = bout.kind === 'watch' ? { k: 'in', r: 's' }
           : bout.kind === 'pve' ? { k: 'in', r: 'f', tier: bout.tier, bout: bout.bout, lv: Math.max(1, Math.floor(deps.level?.() ?? 1)), ...myBanner(), ...(bout.ticket ? { z: bout.ticket } : {}) }   // AUDIT ARENA-LADDER: the attempt's ticket
             : { k: 'in', r: 'f' };
@@ -697,7 +697,7 @@ export function createArenaOnline(deps) {
       if (sess) return { ok: false, text: O.privIn };   // ARENA6: one place at a time - the session's room is this screen's
       if (deps.guest?.()) return { ok: false, text: O.whyGuest };
       if (bout || deps.inBout?.()) return { ok: false, text: O.whyBusy };
-      // ARENA4b: Casual bout - the same queue word with `u`, paired only with another casual seeker (net/arenaLaw.js pairQueue)
+      // ARENA4b: Casual bout - the same queue word with `u`, paired only with another casual seeker (net/arena/arenaLaw.js pairQueue)
       const casual = kind === 'casual';
       const q = { k: 'q', lv: Math.max(1, Math.floor(deps.level?.() ?? 1)), ...myBanner(), ...(casual ? { u: 1 } : {}) };
       // AUDIT PRE-MERGE 1003 O4: online with the hall's socket still opening, the press waits for it - said so, never
@@ -745,7 +745,7 @@ export function createArenaOnline(deps) {
   }
   /**
    * AUDIT ARENA-LADDER: THE ATTEMPT'S TICKET - the relay opens a ladder bout only for one (the account service's,
-   * net/arenaLaw.js ARENA_TICKET_RE, signed into its receipt), so my `in` waits for it (`tick`). Asking forfeits every
+   * net/arena/arenaLaw.js ARENA_TICKET_RE, signed into its receipt), so my `in` waits for it (`tick`). Asking forfeits every
    * attempt still open, so every receipt this device carries is offered first: a win fought and not yet kept is counted,
    * never forfeit. No ticket (the service down, a device behind the climb - its ladder taken) and the bout is let go, said.
    */

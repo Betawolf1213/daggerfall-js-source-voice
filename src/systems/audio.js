@@ -67,7 +67,7 @@ export const PANNING_MODEL = 'HRTF';
 export const VOICE_FADE_S = 0.08;
 
 /** PEERFX1: one observer of every one-shot (index, volume) - the online layer hears "a blow landed on me" here
- *  (net/peerFx.js isHurtClip). Null offline. */
+ *  (net/peer/peerFx.js isHurtClip). Null offline. */
 let _oneShotObserver = null;
 export function setOneShotObserver(fn) { _oneShotObserver = typeof fn === 'function' ? fn : null; }
 

@@ -49,9 +49,9 @@ So, as decided here (each decision is argued in its section):
   Dragon Break of 3E 417, when the Numidium walked and the Bay broke into every ending at once (section 7).
 - **The Breach's architecture, copied, not edited.** The realm is a made level like the Burning Court
   (`world/gate/gateArena.js`); its puzzle, its fight and its feat are a pure brain the relay runs (Option B, as
-  `net/gateBrain.js`); the feat is a signed receipt the account service claims (as `net/gateReceipt.js`). The gate's
+  `net/gate/gateBrain.js`); the feat is a signed receipt the account service claims (as `net/gate/gateReceipt.js`). The gate's
   own modules are reused, not rewritten (SERPENT1's rule, `Sea-Serpent.md`): where the arc needed one to do more it
-  widened a seam whose default is the gate's own bytes - `net/gateBrain.js` exports its hand and purse (`spendBlow`,
+  widened a seam whose default is the gate's own bytes - `net/gate/gateBrain.js` exports its hand and purse (`spendBlow`,
   `spendPurse` - SD8a), the boss bar cuts its marks where a model says (`ui/gateBossBar.js` - SD8c), the telegraph pass
   draws over another floor (`render/gateTelegraph.js` - SD8d), the spoils pool takes a `roll` and its own `gathered`
   words (`scenes/spoilsPool.js` - SD9e) - and the gate's records those seams moved were re-aimed by content (`wb4.json`,
@@ -112,7 +112,7 @@ Beyond the finder and the top fighter, the record names no one. Every fighter's 
 (section 11); the operator reads them by slot with SD-CLEARS (`06-Systems/Accounts-And-Cloud-Saves-Arc.md`).
 
 The director runs on the hub's one alarm (multiplexed after `_sweepHub`, re-armed through the hub's own arm), and on
-the internal doors below. Its law is pure (`net/sdLaw.js`, section 14) - the hub only stores and fans.
+the internal doors below. Its law is pure (`net/superDungeon/sdLaw.js`, section 14) - the hub only stores and fans.
 
 Numbers: `SD_LIFETIME_MS` 48 h, `SD_COLLAPSE_MS` 3 min, `SD_COOLDOWN_MS` 2 h, `SD_FIRST_RISE_MS` 10 min after a hub
 with no record first beats (so a fresh deploy does not raise one the instant it wakes).
@@ -321,7 +321,7 @@ Six Ending-stones stand on a ring in the hall, each carved with one of the Bay's
 - **New every time.** The gearing, the starting hours, the true hours and the riddles are drawn from the slot's seed,
   so no Hollow's answer is another's.
 
-The law (`net/sdBrain.js` `orrery*`): the gearing is a matrix `M` over Z/12 - ONE unit-triangular matrix in a hidden
+The law (`net/superDungeon/sdBrain.js` `orrery*`): the gearing is a matrix `M` over Z/12 - ONE unit-triangular matrix in a hidden
 order (`M = P U P^T`), so its determinant is 1 and EVERY target is reachable, each stone turns itself exactly one hour,
 and a hall can learn it by turning each stone once (SD6a: the design first named the product of a lower and an upper
 unit-triangular matrix, whose diagonal is not one - a stone would turn itself two hours or none). The riddles come
@@ -363,7 +363,7 @@ player who reaches the arena simply arrives, and the fight judges where they sta
 ## 10. The Last Moment - the Brass Remnant
 
 What the Warp kept of the Numidium: a brass colossus four times a man's height, its chest an open cage around a heart
-of shattered soul-gem light - the Mantella's echo. The relay runs it (`net/sdRemnant.js`, beside `net/sdBrain.js` - SD8a), as
+of shattered soul-gem light - the Mantella's echo. The relay runs it (`net/superDungeon/sdRemnant.js`, beside `net/superDungeon/sdBrain.js` - SD8a), as
 it runs the Warden.
 
 **Health.** Each fighter who enters brings `SD_TTK_S` (420 s) x `dpsRef(lv)` x 1.25 to its health - more than twice the
@@ -425,7 +425,7 @@ health makes it safe; the pulses and the Reset are unresisted magic, so no resis
 paralysed, slowed, charmed, reflected or soul-trapped; nothing regenerates in the Hour; the Reset is a damage race and
 the Dragon Break a coordination race; the Hour Ends is a clock. It is meant to be lost, many times, before it is won.
 
-**Its marks** (SD18a, `net/sdMarks.js`). Each Hollow's Hour keeps one of six ENDINGS - the Orrery's own stones - and two
+**Its marks** (SD18a, `net/superDungeon/sdMarks.js`). Each Hollow's Hour keeps one of six ENDINGS - the Orrery's own stones - and two
 of nine OMENS, its place in a cycle of 216 by its slot (6 Endings x 36 pairs of omens, past the gate's 144; no two
 Hollows running share an Ending or an omen, and every Ending meets every pair once). The Ending sets the element of the
 Remnant's and its Echoes' own blows (the Stomp, the Hour-Hand, the Volley and the brass it leaves; the Pulse, the Reset
@@ -438,7 +438,7 @@ seconds; SD20e T9: it was the Dragon's Break, one apostrophe from the phase it s
 the time), *the Short Hour* (it Ends at twelve minutes), *the Hardened Hearts* (a quarter again as much - half again
 until SD20a, a race no party ran), *the Burning Brass* (twice as long, a third wider), *the Fraying* (the Orrery snaps at
 36 turns), *the Restless Pulse* (each four points harder than the last, to the same three quarters), *the Unending Reset* (every 40 s) and *the Twin Hands* (the pair's Hand every 10 s). The relay
-runs the fight by its profile (`net/sdRemnant.js` `sdFightProfile`) and stamps each blow whose shape they change with
+runs the fight by its profile (`net/superDungeon/sdRemnant.js` `sdFightProfile`) and stamps each blow whose shape they change with
 the change (`sh` - its radius, ring, sweep, pool, wind-up, Pulse step and element), so every screen judges, draws and
 reads the blow the relay threw; the state carries the marks (`mk`) for the rest. They are seen (SD18b,
 `ui/sdMarksView.js`): the gate's own marks card as a fighter steps into the Hour (its Ending's signature, element and
@@ -508,7 +508,7 @@ which the page holds, let a guest read its roll before it registered): the title
 four, the aura **The Turning Hour** - a slow wheel of brass gears and gold light about the wearer - one time in eight.
 Once held, held for good. The profile counts *Hours broken*. HONOUR-BANNER (2026-10-14, Mac: "The title/aura in the
 abyss dungeon should also have a loot popup"): each grant the service answers stands as a loot banner too
-(`net/sdClaims.js` `SD_HONOUR_KEYS` through `ui/lootBanner.js` announceHonour - `10-UI/Loot-Banner.md` section 3b),
+(`net/superDungeon/sdClaims.js` `SD_HONOUR_KEYS` through `ui/lootBanner.js` announceHonour - `10-UI/Loot-Banner.md` section 3b),
 beside its chat line. (SD9b: the roll is its own stream, salted - never the
 spoils' draws, which are the receipt's seed's alone; the grants are laid on the account's row, `players.sd_honours`, by the kill's
 row alone, and read off it as the Broker's sale is - so every badge the service mints carries them with no other read.)
@@ -560,7 +560,7 @@ RULE).
 ABYSS-NAME (2026-10-07, Mac: *"Btw lets rename Super Dungeons to Abyss Dungeons (Keep the code in tact, this is for
 player facing putposes)"*): THE PLAYER READS **ABYSS DUNGEON** wherever the game said Super Dungeon - the tier's words
 (the entrance plaque, the overworld plates, the line on entering), the sight line (*an Abyss Dungeon*),
-the find's line to everyone online (`net/sdLaw.js` `sdFoundLine`), the held map's legend, the ring's card, the notice
+the find's line to everyone online (`net/superDungeon/sdLaw.js` `sdFoundLine`), the held map's legend, the ring's card, the notice
 board's note, the Timers row and its label, and a Hollow's line said before its place is known (*an Abyss Dungeon*).
 The code keeps its names - the tier `super`, `superTier`, `sd*`, the SUPER-DUNGEONS arc and its slices - and so does
 this page: where it says Super, the player reads Abyss.
@@ -638,12 +638,12 @@ SD6b shipped `pz` each way - the realm's out frame is the hall,
 back - AUDIT SD II: with `ls`, the peers its lash falls on; and `w` 1, to a turner alone, when the stones refused its
 turn). SD8b shipped the fight: `in`, `hit`, `ehit {e,...}`, `xhit {c,...}` in, under the fight's own bucket (`sdFightGate`,
 the gate's 16 a second) and its brain's number (`SD_BRAIN_V` 1 - `no` below `SD_BRAIN_MIN`); out, the whole fight (`st` -
-`net/sdRemnant.js remnantStateOf`, numbered `fi`; SD8c: `me` 1 in the realm's answer to an `in` it counted, alone),
+`net/superDungeon/sdRemnant.js remnantStateOf`, numbered `fi`; SD8c: `me` 1 in the realm's answer to an `in` it counted, alone),
 each body's `mv` and `atk` (its `b`: 0 the Remnant, 1 GOLD, 2 SILVER, 3 the Hour), `hp`, `ph {n,at,up}`, `ec
 {e,at,d?,n?,r?}`, the Hearts' `cx`, `cxh` (their health - the gate's `cxh`, which the table above left out) and `cxb`,
 `stun`, `fell`, `lost {at}` (a fight lost - the table above had none: the next `in` makes a fresh one) and `no {m}`; and
 the realm's door to the hub, `/internal/sd/fell`.
-SD9a shipped the receipts: `rcpt {r}` out - an `h1` (`net/sdReceipt.js`, bounded by `SD_RECEIPT_WIRE_MAX`, signed or
+SD9a shipped the receipts: `rcpt {r}` out - an `h1` (`net/superDungeon/sdReceipt.js`, bounded by `SD_RECEIPT_WIRE_MAX`, signed or
 not, nothing else's) from the realm to each earner at the fall and again at a late `in`, and from the hub at a hello while
 it is good and to an earner's seat at the fall; `spent {s}` in, to the hub alone (junk anywhere else), on the find's
 bucket; the realm's tell to the hub carries its receipts (`rc`, [account, receipt] each) and who stood in the realm
@@ -675,7 +675,7 @@ gate's, a battle's, an arena's) write their own socket and never run in `sd:<s>`
 |---|---|
 | SD-ONLINE | section 13 |
 | TIER1 | section 12 |
-| SD1 | `net/sdLaw.js`: slots, the record's law, the census pick, the find's check (`sdFindBelieved`), the room key |
+| SD1 | `net/superDungeon/sdLaw.js`: slots, the record's law, the census pick, the find's check (`sdFindBelieved`), the room key |
 | SD2 | `systems/superDungeon/sdSite.js` and the Hollow at its pixel: the city, the site, the clone, the omen, the sighting, the plaque |
 | SD3 | the relay: the director, the census, the found word, the realm room, the wire, `RELAY_VERSION` |
 | SD4 | the Super dungeon: its difficulty, its end, the Rift and the Return |
@@ -761,7 +761,7 @@ re-aimed by content (`hub1`, `worldhover`, `survtiers3`).
 
 ### SD1 - shipped 2026-10-05
 
-`net/sdLaw.js`, the pure law sections 2-4 name, the relay's and every client's: the numbers; `validSdRecord` (the
+`net/superDungeon/sdLaw.js`, the pure law sections 2-4 name, the relay's and every client's: the numbers; `validSdRecord` (the
 record at both ends, projected); `sdPhase` and what each phase means (`sdStands`, `sdMarked`, `sdAdmits`, `sdHolds`),
 all derived from the record's own instants; one function per move (`sdFirst`, `sdRise`, `sdFind`, `sdFell`, `sdGone`),
 each refusing what its phase does not allow, and the director's step (`sdDue`); `pickSdRegion` (the census);
@@ -809,7 +809,7 @@ Sections 2-4 and 14 on the relay - `world172` (`world171` on the branch; main's 
 
 - **The frame** (`net/wire.js`): `sd`, one kind each way so far - `found {s, px, py}` to a cell (`validSdIn`, behind
   `relaySupportsSd`: a relay before `world172` - `world176` now - closes the socket on it) and `ev` from the hub (`validSdOut`: the record,
-  a Hollow that rose). The record's projection, `validSdRecord`, moved here from `net/sdLaw.js` beside the frame that
+  a Hollow that rose). The record's projection, `validSdRecord`, moved here from `net/superDungeon/sdLaw.js` beside the frame that
   carries it (wire.js imports no law; the law imports it) - `sdLaw.js` re-exports it unchanged. Its own buckets
   (`sdGate`, the relay's deeper `sdRelayGate`), its doors and its storage keys (`sdev`, `sdfound`, `sdrealm` - outside
   every swept prefix).
@@ -1059,7 +1059,7 @@ SD5 is next: the Shattered Hour - the made level, its sky, the way in and out.
 Section 7, on the Burning Court's law (`world/gate/gateArena.js`, World-Bosses.md section 4): the realm is a DUNGEON - the
 dungeon host with a level made in code - never a fifth host.
 
-- **The frame** (`net/sdBrain.js`, pure, for the relay's judgements to come): the Threshold at the made block's middle
+- **The frame** (`net/superDungeon/sdBrain.js`, pure, for the relay's judgements to come): the Threshold at the made block's middle
   (`SD_REALM_ORIGIN`, the court's centre's place), every floor at y 0, the stages along +z - the Threshold (z 0, r 8),
   the walk (z 7-25, 4 m wide), the Orrery's hall (z 42, r 18 - z 24-60), the Steps' span (z 60-190) and the Last
   Moment's arena (z 220, r 26, its four brass pillars on the diagonals).
@@ -1164,7 +1164,7 @@ SD6 next: the Orrery of Endings (section 8) - the stones, the riddle, the relay'
 
 ### SD6a - shipped 2026-10-07 (the Orrery's law)
 
-Section 8's law, pure (`net/sdBrain.js`, beside the Hour's frame; no imports - the relay takes it whole), drawn from the
+Section 8's law, pure (`net/superDungeon/sdBrain.js`, beside the Hour's frame; no imports - the relay takes it whole), drawn from the
 slot alike on the relay and every page:
 
 - **The stones** (`SD_STONES`): Daggerfall (the lion), Sentinel (the sun), Wayrest (the ship), Orsinium (the tusk), the
@@ -1211,7 +1211,7 @@ Sections 8 and 14 on the relay - still `world175`, the arc's one version while i
   the six hours, the fray, the dial's count, the Concord, the turn that made it so with its turner's id and number, and
   `x` when the Hour snapped back - from the realm (`validSdOut`). Its bounds are the Orrery's own numbers kept on the
   wire (`SD_PZ_STONES`, `SD_PZ_HOURS`, `SD_PZ_FRAY_MAX`, `SD_PZ_HZ` - the wire imports no law; pinned equal to
-  `net/sdBrain.js`'s). Its own bucket: three turns a second from a page (`sdPzGate`), a turn deeper at the relay
+  `net/superDungeon/sdBrain.js`'s). Its own bucket: three turns a second from a page (`sdPzGate`), a turn deeper at the relay
   (`sdPzRelayGate`).
 - **The judgement** (`server/src/index.js _sdTurn`): in a realm alone (a turn anywhere else is junk), on the hall's own
   bucket, routed before the find's; from a verified account alive in the realm, its OWN pose within reach of the stone
@@ -1235,7 +1235,7 @@ Pins: `test/sd6b_hall.test.js` (6 - the wire; a turn judged end to end over the 
 turn from reach kept and said to all, out of reach, the settling, a number said twice, the dead, a turn in a cell; the
 fray's snap and the Concord, kept past an eviction and heard by a newcomer; the Hour closed; the session; the relay by
 source); `tools/mutants/sd6b.json` (25, all dead). PINS MOVED: `test/sd3_relay.test.js` reads two kinds each way;
-`test/relayversion.test.js` - `net/sdBrain.js` joins the relay's bundle, and `world175` is re-hashed in place (undeployed).
+`test/relayversion.test.js` - `net/superDungeon/sdBrain.js` joins the relay's bundle, and `world175` is re-hashed in place (undeployed).
 
 SD6c next: the hall on the page - the stones and their hands, the plaques, the dial, the lash, and the bridge the
 Concord lays.
@@ -1322,7 +1322,7 @@ realm's frame. The page stands, moves and judges it (SD7b); the relay never does
   stood in (the page keeps it, SD7b; `spanAt` reads a span from its checkpoint's near edge) - A for the Drift, B for the
   Beat, C for the Crumble - 15% of its health lost (`SD_CAST_BACK_LOSS`). The edge lets go from just inside the first
   step's far edge to just inside the arena's near edge (`SD_STEPS_FREE`, for SD7b's clamp).
-- **The frame moved** (`net/sdBrain.js`): the Steps run z 60-220 and the arena stands at z 246 (z 60-190 and 220 before)
+- **The frame moved** (`net/superDungeon/sdBrain.js`): the Steps run z 60-220 and the arena stands at z 246 (z 60-190 and 220 before)
   - the course the engine can jump is 145 m. Section 9 is amended to the engine (the gaps, the risers); the stage table
   of section 7 moves with it.
 
@@ -1331,7 +1331,7 @@ THE FOUR HOSTS: none yet - FLAGGED all four; the law is read by SD7b's page.
 Pins: `test/sd7a_steps.test.js` (7 - the course; fair to the engine; the Drift; the Beat; the Crumble; the Warp's
 breath; the void and the spans); `tools/mutants/sd7a.json` (22, all dead). PINS MOVED: `test/sd5a_realm.test.js` (the
 Steps' span and the arena, the arena's floor probes and its nearest lamps at its new place); `test/relayversion.test.js`
-- `world176` re-hashed in place (`net/sdBrain.js` is in the relay's bundle; undeployed).
+- `world176` re-hashed in place (`net/superDungeon/sdBrain.js` is in the relay's bundle; undeployed).
 
 SD7b next: the Steps on the page - the slabs and their colliders, moving on the realm's clock and carrying a body that
 stands on one, the Beat's blink and the Crumble's fall, the breath's push, the cast-back, and the edge let go.
@@ -1398,7 +1398,7 @@ SD8 next: the Last Moment - the Brass Remnant (section 10), the relay's brain fo
 
 ### SD8a - shipped 2026-10-07 (the Brass Remnant's law)
 
-Section 10's law, pure (`net/sdRemnant.js`), as the Warden's is (`net/gateBrain.js`): the moment and a [0,1) source
+Section 10's law, pure (`net/superDungeon/sdRemnant.js`), as the Warden's is (`net/gate/gateBrain.js`): the moment and a [0,1) source
 handed in, no I/O - the relay's to run (SD8b) and every screen's to read. Its frame is the arena's (its centre the
 origin - `arenaOf`).
 
@@ -1407,7 +1407,7 @@ origin - `arenaOf`).
   numbers (`joinRemnant`: `SD_TTK_S` 420 x `dpsRef` x `SD_SHARE_X` 1.25, at the fraction it stands at, an empty bucket for
   one who comes to it bled, the first claim kept, 256 seats, an idle one freed); a fighter away 30 s takes its share out
   (the gate's `retireShare`). LOST after 30 s with no living fighter in the arena (`SD_LOST_MS`).
-- **Belief** (`applyRemnantHit`, `applyEchoHit`, `applyHeartHit`): the gate's own hand and purse - `net/gateBrain.js`
+- **Belief** (`applyRemnantHit`, `applyEchoHit`, `applyHeartHit`): the gate's own hand and purse - `net/gate/gateBrain.js`
   exports `spendBlow` and `spendPurse` now, and the Remnant keeps no blow rate or bucket of its own: one hand and one purse
   for every body in the fight. A pose in the arena, a melee blow within reach of the body it meets; asleep, outside time or
   past the Hour, nothing lands; a phase holds its floor; a stunned Remnant takes half again; the Last Moment's last blow
@@ -1446,7 +1446,7 @@ its pair's Hand, close in and from afar; the Last Moment and the Reset; the Hour
 fights simulated; the state; the gate's hand and purse shared); `tools/mutants/sd8a.json` (42, all dead - the pair's Hand
 was each Echo's own at first, with the other joining when free, and two seeds never paired it: the Hand is the pair's
 clock now, and a hold that only a close fight needs is pinned by one). PINS MOVED: `test/relayversion.test.js` -
-`world176` re-hashed in place (`net/gateBrain.js` exports its hand and purse; undeployed).
+`world176` re-hashed in place (`net/gate/gateBrain.js` exports its hand and purse; undeployed).
 
 SD8b next: the relay runs it - the realm's fight on its alarm, the wire's kinds, the `in` and the blows believed, the fall
 told to the hub.
@@ -1471,7 +1471,7 @@ Sections 10 and 14 on the relay - `world176` still, re-hashed in place while it 
   at its hello, as the hall is.
 - **The fall, said once** (the gate's AUDIT WB A10 law - kept before it is said): the fight checkpointed with its `said`,
   `fell` to everyone in the realm with its damage chart, then the hub told until it answers (`/internal/sd/fell`): the hub
-  moves its record to `fell` (net/sdLaw.js `sdFell` - the collapse and the rest from then) and says it to everyone online
+  moves its record to `fell` (net/superDungeon/sdLaw.js `sdFell` - the collapse and the rest from then) and says it to everyone online
   (SD2b's chat line). The realm refuses a newcomer from its own kill on, before the hub's word comes round.
 - **The page** (`net/online.js`): `sendSdIn(lv)` (my game's brain said) and `sendSdBlow(k, fields)` down my own socket in the
   realm at a relay that keeps it, on the fight's bucket; `onSdFight` hears the fight from my own realm alone.
@@ -1483,7 +1483,7 @@ Pins: `test/sd8b_fight.test.js` (7 - the wire; the realm runs the fight - its `i
 refused ones, the fight at the hello; refused `in`s; lost and fresh, through an eviction and past a sleep; the fall - said,
 kept, told, the hub's record and its fan, the newcomer refused, the beat stopped; the page; the relay by source);
 `tools/mutants/sd8b.json` (27, all dead). PINS MOVED: `test/sd3_relay.test.js` and `test/sd6b_hall.test.js` (the fight's kinds after
-theirs); `test/relayversion.test.js` - `net/sdRemnant.js` joins the relay's bundle, `world176` re-hashed in place;
+theirs); `test/relayversion.test.js` - `net/superDungeon/sdRemnant.js` joins the relay's bundle, `world176` re-hashed in place;
 `test/scale2b.test.js` - thirteen calls between rooms, the tell of the fall on the find's own retry (still nine on
 ROOM_CALL_MS); `tools/mutants/sd6b.json`'s `pz` unknown re-aimed by content (the kinds' list grew).
 
@@ -1495,7 +1495,7 @@ through the three seams and the Remnant's own judged on the struck player's mach
 Section 10 on the page: the fight seen and struck. Its blows on the player are SD8d's (the telegraphs, and each judged on the
 struck player's own machine) - here they are named on the bar alone.
 
-- **The fight as the page holds it** (`net/sdFightLink.js`, the gate's link's shape): the realm's words folded, pure
+- **The fight as the page holds it** (`net/superDungeon/sdFightLink.js`, the gate's link's shape): the realm's words folded, pure
   (`foldSdFight`) - each body where its walk takes it (`sdBodyAt`, the law's own walk), facing its way or its aim, its blow
   in flight until it is done (`sdBlowDone` - the law says no word for a blow's end); the Dragon Break stops the Remnant
   where it stood; the Last Moment stands it at the centre, its first Reset 50 s on; an Echo falls where it stood and rises
@@ -1565,7 +1565,7 @@ does now, beside it - the realm judges the Remnant's blows no save answers and t
 keeps its own count of each fighter's body (`net/bossRef.js` judgeRemnant), measured first; once staff enforce it, the
 count's fall takes the one life.
 
-- **Judged on my feet** (`net/sdStrike.js` `sdBlowVerdict`, pure, over the geometry the law shares - `stompRingAt`,
+- **Judged on my feet** (`net/superDungeon/sdStrike.js` `sdBlowVerdict`, pure, over the geometry the law shares - `stompRingAt`,
   `ringPassed`, `handSwept`, `behindPillar`): each part of each blow once, a share of my own maximum health and its base
   (the gate's `strikeDamage`). THE STOMP - its disc as it lands on a body within 7 m; its ring rolling out to 22 m strikes a
   body ON THE GROUND as its front passes (the motor's `grounded` - a body in the air lets it pass under, and is never struck
@@ -1611,7 +1611,7 @@ me. SD9 next: the feat - the receipts, the spoils, the set, the title, the aura.
 
 Section 11's kill, on the relay - `world176` still, re-hashed in place while it is undeployed.
 
-- **The receipt** (`net/sdReceipt.js`, pure, all three ends import it): `h1.<claims>.<signature>` - the slot, the boss
+- **The receipt** (`net/superDungeon/sdReceipt.js`, pure, all three ends import it): `h1.<claims>.<signature>` - the slot, the boss
   (the Remnant alone), the account, the relay's own 32-bit seed, how it was earned (`dealt` | `stood`), the level the
   fight admitted it at, issued and expires a week on - signed by the relay's one key (`GATE_SIGNING_KEY`, the gate's,
   the raid's and the serpent's). The version is inside the signed bytes, so an `h1` is refused by every other verifier
@@ -1640,7 +1640,7 @@ page; the relay by source); `tools/mutants/sd9a.json` (55, all dead - at first t
 left the first mint in place (re-aimed, and pinned by the record as the fall was fanned), another account's receipt
 kept (its pin had changed the slot as well) and the newest-socket loop, which was the gate's own copy of the rule:
 the hub now hands by `_siegeSockets` (AUDIT SEATS-3 B4's one pass), the serpent's way, and the pin is ONE-SEAT's -
-a new tab takes the seat, and the receipt goes to it, never the tab it closed). PINS MOVED: `test/relayversion.test.js` - `net/sdReceipt.js`
+a new tab takes the seat, and the receipt goes to it, never the tab it closed). PINS MOVED: `test/relayversion.test.js` - `net/superDungeon/sdReceipt.js`
 joins the relay's bundle, `world176` re-hashed in place; `test/sd3_relay.test.js` and `test/sd8b_fight.test.js` (the
 kinds' lists - `spent` in, `rcpt` out; a late `in` reads the fall under its receipt; the tell's projection carries
 `rc` and `here`); `test/auditwbx2.test.js` - the hub's sweep reads six cursors in its one read now, the Hour's
@@ -1676,7 +1676,7 @@ token's titles).
 - **The count**: *Hours broken* on the account card (`sdRecordText`) and the Inspect card (`profileSdLine`, said once
   there is one), from `/v1/account` and the record the Inspect card reads (SD11c: the page's read of that record kept
   the duels and the gates alone - until AUDIT SD II the card said none of the Hours, nor the towns or the serpents).
-- **The device's book** (`net/sdClaims.js`, the gate's `gateClaims.js` without its rite or embers): every receipt the
+- **The device's book** (`net/superDungeon/sdClaims.js`, the gate's `gateClaims.js` without its rite or embers): every receipt the
   relay hands (`onSdReceipt`) kept on the device (one a Hollow and account; ninety-six an account, 256 in all - SD11c:
   it was eight for the whole device) and offered at once, again
   every ten minutes and at once when another account signs in; counted or claimed before, let go with its lines - the
@@ -1694,7 +1694,7 @@ PINS MOVED: `ACCOUNT_VERSION` acct91 (acct92 since the merge past CAP-OFF, acct9
 `test/duel_record.test.js` (the Inspect card's record carries the Hours); the vocabulary's newest (`test/acc3titles`,
 `test/aegis`, `test/primarch`, `test/crystalfist` - Hourbreaker after the Crystal Fist); `test/relayversion.test.js`
 (`world176` re-hashed: the token's titles); `.github/workflows/account-deploy.yml` (the service now bundles
-`net/sdReceipt.js` and `systems/wind/wind.js` - `test/accountdeploy.test.js` walks the graph); three records from earlier
+`net/superDungeon/sdReceipt.js` and `systems/wind/wind.js` - `test/accountdeploy.test.js` walks the graph); three records from earlier
 slices re-aimed by content (`fb1004d_knight_house.json`'s version and `gatekeys.json`'s empty var - acct91 -, and
 `raid4.json`'s Inspect record, which carries the Hours now). Found by the whole suite: `test/accountworker.test.js`
 (the schema - `sd_kills` among the tables, `sd_honours` among the row's columns) and
@@ -1796,7 +1796,7 @@ already keeps a receipt until a slot's spoils are said spent (`spent {s}`).
   my feet, kept on the arena's floor (`SD_SPOILS_KEEP`, two metres inside its rim: never off its edge into the void,
   over the realm's real collider with its pillars); once a fight; never off another slot's receipt; rolled at the
   level the fight admitted or mine, the lower. A fighter the realm counted in with no receipt `SD_RECEIPT_WAIT_MS` into
-  the fall is told so, once; a watcher is told nothing (`net/sdFightLink.js` `counted` - the realm counted me in this
+  the fall is told so, once; a watcher is told nothing (`net/superDungeon/sdFightLink.js` `counted` - the realm counted me in this
   fight, fallen or not). Leaving the Hour gathers whatever is still on the floor.
 - **The pool** (`scenes/spoilsPool.js`): the burst takes a `roll` as the grant does, and a pool says its own words
   gathering (`gathered` - the Hour's said in the chat, SD11c). The Hour's pool keeps its own keys (`SD_SPOILS_KEYS`),
@@ -1887,7 +1887,7 @@ and pinned; what was not is said so below. The relay stays `world176`, re-hashed
 
 | | what was wrong | now |
 |---|---|---|
-| R1 | AN ENDED HOUR WAS NEVER LOST while any fighter's last pose stood alive in the arena (a frozen tab; a page that never applies the End's blows): the realm beat on, every newcomer was told the fight is over, and no fresh one could begin until that socket closed - perhaps for the Hollow's whole life | lost `SD_LOST_MS` after its End (`net/sdRemnant.js` `stepRemnant`) |
+| R1 | AN ENDED HOUR WAS NEVER LOST while any fighter's last pose stood alive in the arena (a frozen tab; a page that never applies the End's blows): the realm beat on, every newcomer was told the fight is over, and no fresh one could begin until that socket closed - perhaps for the Hollow's whole life | lost `SD_LOST_MS` after its End (`net/superDungeon/sdRemnant.js` `stepRemnant`) |
 | R2 | THE REALM'S 256 SEATS WERE FOR LIFE. Every hello - a guest's, a watcher's - took a seat on the realm's list and nothing gave it back: a few hundred guest tokens made *"The Hour is full."* for every real player until the Hollow faded | a full realm frees the seat of an account with no socket in it and no seat in its fight (the gate's AUDIT WB A1 law) |
 | R3 | THE HUB'S SILENCE CLOSED THE HOUR. The realm's ask of the hub answered `null` for no answer - read as "no record", *"The Hour has closed."*, a policy close the page takes as final - and kept it 10 s: a deploy's hello storm could cast every fighter reconnecting in that window out of the fight | no answer is a busy close the page retries (`CLOSE_BUSY`), an `in` unanswered, a blow not stopped, and never kept |
 | R4 | THE DIRECTOR SLEPT THROUGH THE COLLAPSE. A kill never re-armed the hub's alarm, armed for the Hour's own end or the sweep's six hours: the collapse's end and the next rise waited on it - the two hours' rest up to six | armed from the fall (`_sdFellInternal`) |
@@ -2001,17 +2001,17 @@ lights through `realmLightsWith`), and the dungeon arm's draw loop in `test/perf
 | L3 F1 | TWO `in`s, TWO FIGHTS. Two fighters' `in`s that awaited the hub together each read the fight before the await and each made a fresh one, numbered alike; the last replaced the first's fighter, whose page fought on believing itself in - its blows junk until its socket was closed for them | the fight read again after the last await and decided with none between (`_sdFightFrame`); a blow whose fight was replaced while it awaited is dropped, never junk |
 | L3 F2, L7 M5 | THE HUB ASKED EVERY FRAME. Each frame, hello and turn asked the hub on its own while the realm's answer was stale - a full realm's 4,096 asks a second into the one object every tab holds, the worst when it struggled - and a miss threw a good record away: a fighter was refused busy for a record held a moment before | one ask in flight, every frame meanwhile waiting on it; a miss not asked again for 2 s (`SD_LIVE_MISS_MS`); the last answer standing through misses five minutes (`SD_LIVE_KEEP_MS` - its phases are its own instants); busy only for a realm that never had one |
 | L3 F3, L7 M3 | THE SEATS WERE STILL FOR LIFE. A lost or stale fight's fighters kept their seats; and a socket idling in the realm holds its seat for as long as it stays - 256 guest sockets kept the Hour full for an hour | only a LIVING fight's fighters hold seats; guests hold at most `SD_GUEST_SEATS` (64) of the 256 (`_sdAdmit`; the realm's list keeps its guests, `gu`) |
-| L3 F4 | A KILL IN THE LAST SECONDS WAS "UNBROKEN". The hub said a found Hollow's fade at its `until`, before a kill landed in the Hour's last seconds was told (the realm retries every 5 s); and a fall heard after the fade was refused | the fade said `SD_FADE_GRACE_MS` (15 s) past `until` (`net/sdLaw.js` `sdDue` - a found Hollow's alone; an unfound one has no realm), and a fall told after it, landed before `until`, taken over it at its own instant |
+| L3 F4 | A KILL IN THE LAST SECONDS WAS "UNBROKEN". The hub said a found Hollow's fade at its `until`, before a kill landed in the Hour's last seconds was told (the realm retries every 5 s); and a fall heard after the fade was refused | the fade said `SD_FADE_GRACE_MS` (15 s) past `until` (`net/superDungeon/sdLaw.js` `sdDue` - a found Hollow's alone; an unfound one has no realm), and a fall told after it, landed before `until`, taken over it at its own instant |
 | L3 F5, F8 | A HELLO WOKE NOTHING. A realm that had emptied slept, its living fight frozen until someone's `in` or blow; a stale fight was told to a newcomer as if it lived; an earner whose page reloaded inside the hub's hold heard its fallen fight's receipt nowhere | a hello arms a living fight's beat, finds a stale one lost (the next `in` the fresh one), and hands a fallen one's earner its receipt (`_sdHelloFight`) |
 | L3 F6 | THE FALL TOLD TWICE. The fall's own tell and the beat's retry raced, and the hub was told twice (its receipts handed twice) | one tell in flight (`_sdTellFellOnce`) |
 | L3 F7, L5 F2 | A SLOT COULD BE USED TWICE. A record that would not read back (a law's bound moved; a region past the count) started the director from slot 0 again, and every realm, receipt, spent mark and claim the old numbers held answered the new Hollows - the old fall, *claimed*, no spoils | the hub keeps the highest slot it ever raised with its record, in one write (`sdslot`, wire.js `SD_SLOT_KEY`), and a first beat starts from it |
 | L5 F3 | A HELD RECEIPT WAITED FOR A LATER HELLO. An earner who stood in the realm at the kill is held from the hub's hand two minutes (the floor spends it) - and nothing handed it on: a page that crashed at the kill and came back inside the hold heard of its spoils hours later | the hub keeps the held (`sdheld`, `SD_HELD_KEY`), arms its alarm for their hold's end, and hands each still unspent to its account's newest socket (`_sdHeldBeat`) |
 | L7 M1 | A STRANGER SHUT THE REALM'S DOOR. The realm spent its hello gate before the token was read: forty junk tokens a second kept a fighter whose socket blinked out of her own fight (0 of 60 tries admitted), and every newcomer with her | the gate after the token, by account (`_battleHelloGate` - a battle's and a floor's law): an account the realm admitted before waits on itself alone |
-| L7 M2 | A CLAIMED LEVEL, A PARKED SHARE. The `in`'s level was the page's claim though the realm's token signs the character's (`cl`): a claim of 60 from level 5 brought a 34,125 share, a claim of 1 from level 60 bought the feat's whole roll for 63 points dealt; and a fighter counted present anywhere in the realm kept its share in the Remnant from the Threshold - six such made the Hour unwinnable for eight | the level the token's (`cl`, attached at a realm's hello as at a cell's; a claim stands only from a service that signs none); a fighter seen while its pose stands in the arena (`net/sdRemnant.js` `stepRemnant`), its share out 30 s after it leaves |
+| L7 M2 | A CLAIMED LEVEL, A PARKED SHARE. The `in`'s level was the page's claim though the realm's token signs the character's (`cl`): a claim of 60 from level 5 brought a 34,125 share, a claim of 1 from level 60 bought the feat's whole roll for 63 points dealt; and a fighter counted present anywhere in the realm kept its share in the Remnant from the Threshold - six such made the Hour unwinnable for eight | the level the token's (`cl`, attached at a realm's hello as at a cell's; a claim stands only from a service that signs none); a fighter seen while its pose stands in the arena (`net/superDungeon/sdRemnant.js` `stepRemnant`), its share out 30 s after it leaves |
 | L7 M4 | A FIND TOLD EVERY FRAME. The cell told the hub again for a slot it had told and the hub had answered: one account in forty cells made forty hub requests a second | a slot told once, and a find for any slot but the one the hub's last answer named not told while that answer is fresh (`SD_FIND_KNOWN_MS`, ten minutes - the rite's AUDIT WB12d R4 law: a word that moves nothing tells nothing) |
 | L7 L1 | A BLOW JUDGED AT ITS ARRIVAL. A blow waited on the hub, then spent the purse at the instant it arrived: an earlier blow's answer coming after a later one's moved the purse's clock backwards and refilled the same seconds twice (1,755 dealt over 5.25 s where the law allows 1,024) | a blow, an `in` and a turn judged at the instant they are judged |
 | L7 L2 | `spent` FOR ANY SLOT. A `spent` naming a slot the hub had not raised was a storage write - one a frame for a rising slot | nothing past the hub's own slot |
-| L7 H2 | ONE HAND HELD THE ORRERY. The fray is the hall's one thread, and any account could spend it: a guest turning whichever stone had settled the long way held the Concord off in every one of 200 slots against a perfect team of six, and its snaps lashed the hall to death about every thirty seconds | THE STONES' RIGHTS (section 8; `net/sdBrain.js` `orreryMayTurn`): every turn moves the road by exactly one, and a turner that has lengthened it `SD_TURN_LONG_MAX` (6) times since the last snap turns no more while another has turned in the last minute - a lone learner never held, a solver who knows the way never; every guest ONE turner; the refused told so (`w`, at most every 4 s); the snap lashes only those it names (`ls` - who turned and brought it no nearer: a mender stands) |
+| L7 H2 | ONE HAND HELD THE ORRERY. The fray is the hall's one thread, and any account could spend it: a guest turning whichever stone had settled the long way held the Concord off in every one of 200 slots against a perfect team of six, and its snaps lashed the hall to death about every thirty seconds | THE STONES' RIGHTS (section 8; `net/superDungeon/sdBrain.js` `orreryMayTurn`): every turn moves the road by exactly one, and a turner that has lengthened it `SD_TURN_LONG_MAX` (6) times since the last snap turns no more while another has turned in the last minute - a lone learner never held, a solver who knows the way never; every guest ONE turner; the refused told so (`w`, at most every 4 s); the snap lashes only those it names (`ls` - who turned and brought it no nearer: a mender stands) |
 
 **The relay's untested arms** (the probe mutants that lived): the Echoes' and the Hearts' blows through the realm (G1),
 the fall's tell retried until the hub hears it (G4), the dead in the arena (G8), the director's retry and its re-read
@@ -2053,7 +2053,7 @@ miss's back-off), `test/relayversion.test.js` (`world176` re-hashed in place).
 | L1 F9, L6 F4 | OUT OF THE HOUR WITH NO VEIL; A DUNGEON'S WAKING. Every way out of the Hour is taken under its veil but the end's cast-out; and a death in the Hour woke with a plain dungeon's words | the cast-out flashes the veil out of the Hour; a death there wakes under it with the Hour's own, *"The Shattered Hour casts you out. You wake before the Hollow's door."* (`SD_REALM_TEXT.died`, a respawn kind of its own - `systems/deathRespawn.js` `hour`; the respawn reads the Hour before it leaves it) |
 | L1 F5, L6 F12 | "SAVE" WHERE NO SAVE IS. An older game refused at the arena was told to save - in the one place that refuses a save | *"Your game is older than this Hour. Leave it, then reload or update the app to fight."* |
 | L1 | A HOLLOW KNOWN WITHOUT ITS SITE. The step through read the Hollow's site unguarded - a memo of another slot carries none (latent: no path builds one today) | no site, no step |
-| L5 F1 | THE INSPECT CARD SAID NO HOURS. The account service's one answer carries the duels, the gates closed, the towns defended, the serpents slain and the Hours broken - the page's read of it kept the first two, and no host laid the other three: SD9b's *"Hours broken"* on the Inspect card was never said | each count kept (a malformed one dropped - `net/duelRecord.js`), and the world host lays all three off the same record |
+| L5 F1 | THE INSPECT CARD SAID NO HOURS. The account service's one answer carries the duels, the gates closed, the towns defended, the serpents slain and the Hours broken - the page's read of it kept the first two, and no host laid the other three: SD9b's *"Hours broken"* on the Inspect card was never said | each count kept (a malformed one dropped - `net/duel/duelRecord.js`), and the world host lays all three off the same record |
 | L5 F4 | A SPENT WORD SAID ONCE. A receipt's spoils taken are said to the hub, which then hands no other device that receipt - and a word that could not go (the hub's link between sockets, its bucket spent) was said again only if the hub handed this same device the receipt: past the hold another device or browser of the account was handed it, and its empty store granted the same spoils | the word owed: kept on the device under the pool's own key with its account and said again every `SPOILS_SPENT_RESEND_MS` (5 s) while the hub's link is open, until it goes - on its own account's socket alone (AUDIT WBX2 M6's law: said on another's, the hub forgets a receipt that account still holds); the gate's pool and the Hour's both (`scenes/spoilsPool.js` `resendSpent`) |
 | L5 F5 | THE HOUR'S SPOILS ON THE DEVICE ALONE. The Hour refuses every save, so what its floor gave stood on the device alone until the next checkpoint, minutes on | a checkpoint asked the frame I leave the Hour (`saveSoon`) |
 | L5 F6 | EIGHT RECEIPTS FOR A WHOLE DEVICE. The claims book held eight - "a week holds a few": a guest that broke nine Hours inside its week lost the first before it registered, and one account's pushed another's out on a shared device | `SD_CLAIMS_MAX` (96) an account - a week of Hollows at the fastest - its own oldest out first, never another's; `SD_CLAIMS_ALL_MAX` (256) for the device |
@@ -2106,7 +2106,7 @@ window, its slot popped first - still inside the function).
 | L6 F10 | "STRIKE THE ECHOES" WITH NONE THERE. For the Last Moment's 2.5 s return the bar said "Outside time" | *"It returns - 3s"* |
 | L6 F11 | "CRYSTALS" IN DAGON'S RED. The Remnant's damage chart named its Hearts' column "Crystals", in the court's fire | "Hearts", in the Hour's brass (`damageChartModel`'s `crystals` and `theme`) |
 | L6 F15 | THE FIGHT HEARD ON THE STEPS. The fight's lines reached everyone in the Hour - the Dragon Break and the End to a body mid-jump on the Crumble | to whoever stands where the bar stands (`sdNearArena`); its fall to the whole Hour |
-| L6 F20 | "IN THE BRASS HOLLOW" CAPITAL. Every Hollow's name begins "The", and kept its capital mid-sentence and on its plaque | small inside a line (`net/sdLaw.js` `sdNameIn`; the plaque's *"To the Brass Hollow"*) |
+| L6 F20 | "IN THE BRASS HOLLOW" CAPITAL. Every Hollow's name begins "The", and kept its capital mid-sentence and on its plaque | small inside a line (`net/superDungeon/sdLaw.js` `sdNameIn`; the plaque's *"To the Brass Hollow"*) |
 | L6 F21 | WB13b'S WORDS BROKEN. Dash asides, comment and shouting: *"The Remnant steps outside time - strike down the GOLD and SILVER Echoes together."*, *"The Reset gathers - break its Hearts!"*, *"The Hour is breaking - it collapses in 3:00. The way home stands where the Remnant fell."* (said four seconds before it rose) | the event, then what to do: *"The Dragon Break! Strike down the Gold and Silver Echoes together."*, *"The Reset! Break all 5 Hearts!"*, *"The Hour collapses in 3:00. The way home opens where the Remnant fell."*, *"The Concord! A bridge of light opens."* - a law over every line the arc says (AUDIT SD IV, SD26 T9: its pin read no line added after it - the marks line with every find hung its signature between dashes, three of the card's tips broke it; now said plainly and read. Its scope is what is said - a chat or voice line, a plaque's row, a tip; a label and its value keep their dash, the bar's chips, the card's wake line, the ground's warning and the Timers' rows, as the gate's do) |
 | L6 F23 | THE END ON THE RESET'S PITCH. Their wind-ups on one clip stood 3.2 semitones apart (WB13d asks four) | the End at 0.236 |
 | L6 | AN UNFOUND HOLLOW'S FADE SAID. Its rise is said to nobody, and its fade was said to everyone | a found Hollow's fade alone |
@@ -2127,24 +2127,24 @@ voice), `test/sd5a_realm.test.js` (the Hour's lines and veil), `test/sd6c_hall.t
 the arena), `test/sd8d_remnant_blows.test.js` (the call's count, the fall to all), `test/sd10_collapse.test.js` (the
 readouts' words), `test/sd10b_audit.test.js`, `test/sd11b_relay.test.js`, `test/sd11c_page.test.js` (the voice in their
 rigs), `test/tier1_dungeontiers.test.js` (the plaque's article), `test/wb6c_gate_veil.test.js` (the step's look),
-`test/relayversion.test.js` (`world176` re-hashed in place - `net/sdLaw.js` is in the bundle).
+`test/relayversion.test.js` (`world176` re-hashed in place - `net/superDungeon/sdLaw.js` is in the bundle).
 
 #### SD11e - the laws
 
 | | what was wrong | now |
 |---|---|---|
-| L4 F2 | THE PAIRED HAND A PINCER. Each Echo aims at its own chosen - threat first, so often both at one fighter, and always at a solo - and gold always turned one way and silver the other: for a fighter standing beyond both (the arena's south end, where the Steps deliver everyone) the two beams closed on it from either side, and staying ahead of one ran into the other. The real law's first pair Hand at a solo there left no run and no pillar to escape at any build; an escape search over 309 geometries (six Echo pairs, the real one among them, by a 6 m grid of fighters; runs of one and two waypoints after a 0.25 s reaction, both beams judged every 1/60 s, each caster's shade its own) found none in 5 at the default build, 9 at a modest one (Speed 40, Running 20) and 30 at the weakest (Speed 10, Running 0) | BOTH AT ONE FIGHTER, THE TWO BEAMS CROSS IT THE SAME WAY: silver turns gold's way when the fighter stands beyond the two (the angle at it under square), the other way when it stands between (`net/sdRemnant.js` `pairWay`, `pairHand`) - no run now in 0, 1 and 3 of the 309. Both turned one way, the report's fix as written, is the same pincer for a fighter between them (0, 1 and 8); silver 2 s late scores 0, 0 and 1, but it splits the pair's one moment (the wind-up the page draws, the bar's callout, each Echo holding for the other) - the Hand stays from both at once |
-| L4 F3 | THE END'S WIND-UP REFUSED. The End's word, 2 s before it lands, set `ended`, and every blow asked `ended`: a finishing blow 1.5 s before the End landed nothing - a race to the wire lost its last two seconds | the bodies stop at the word; a blow is refused by the clock, `now >= endsAt` (`over` - the gate's AUDIT WBX R5), and nobody new comes in from the word (`closed`); the page believes the same (`net/sdFightLink.js` `sdHourOver`: counted in, a blow goes out through the wind-up - `joined`, `scenes/sdRemnant.js` `remnantOpenAt`, `target`), and its bar counts the End down to its moment (`ui/sdRemnantBar.js` - it said *"The Hour has ended"* at the word) |
+| L4 F2 | THE PAIRED HAND A PINCER. Each Echo aims at its own chosen - threat first, so often both at one fighter, and always at a solo - and gold always turned one way and silver the other: for a fighter standing beyond both (the arena's south end, where the Steps deliver everyone) the two beams closed on it from either side, and staying ahead of one ran into the other. The real law's first pair Hand at a solo there left no run and no pillar to escape at any build; an escape search over 309 geometries (six Echo pairs, the real one among them, by a 6 m grid of fighters; runs of one and two waypoints after a 0.25 s reaction, both beams judged every 1/60 s, each caster's shade its own) found none in 5 at the default build, 9 at a modest one (Speed 40, Running 20) and 30 at the weakest (Speed 10, Running 0) | BOTH AT ONE FIGHTER, THE TWO BEAMS CROSS IT THE SAME WAY: silver turns gold's way when the fighter stands beyond the two (the angle at it under square), the other way when it stands between (`net/superDungeon/sdRemnant.js` `pairWay`, `pairHand`) - no run now in 0, 1 and 3 of the 309. Both turned one way, the report's fix as written, is the same pincer for a fighter between them (0, 1 and 8); silver 2 s late scores 0, 0 and 1, but it splits the pair's one moment (the wind-up the page draws, the bar's callout, each Echo holding for the other) - the Hand stays from both at once |
+| L4 F3 | THE END'S WIND-UP REFUSED. The End's word, 2 s before it lands, set `ended`, and every blow asked `ended`: a finishing blow 1.5 s before the End landed nothing - a race to the wire lost its last two seconds | the bodies stop at the word; a blow is refused by the clock, `now >= endsAt` (`over` - the gate's AUDIT WBX R5), and nobody new comes in from the word (`closed`); the page believes the same (`net/superDungeon/sdFightLink.js` `sdHourOver`: counted in, a blow goes out through the wind-up - `joined`, `scenes/sdRemnant.js` `remnantOpenAt`, `target`), and its bar counts the End down to its moment (`ui/sdRemnantBar.js` - it said *"The Hour has ended"* at the word) |
 | L4 F4 | A BLOW PAST THE END. The three refusals knew the End only by the beat's word, and the relay applies a blow with no beat before it: a beat stalled 2.1 s short of the End and a blow 3 s past it felled the Remnant after its Hour, its receipts minted | the time guard in all three - the Remnant's, an Echo's, a Heart's (`over`, the gate's AUDIT WBX R6) |
 | L4 F5 | THE DISC AND THE RING BOTH. The ring's band began 0.6 m inside the disc: a grounded body 6.4-7 m out at the landing took both (80% and 22) - the near-miss at the rim the heaviest hit of all | the ring rolls out from the disc's rim; what the disc strikes it does not (`ringPassed`) |
-| L4 F6 | A STALE SPAN JUDGED. Only a landing was refused late; the ring and the beam took whatever span the page judged from its last frame drawn - a tab hidden across a Stomp's landing and shown 2.5 s on was struck by its ring, one 4.9 s into a Hand by its beam | a rolling part over a span that ends SD_STRIKE_LATE_MS past it is done, with no hit (`net/sdStrike.js` `sdBlowVerdict`'s `stale` - the gate's rolling charge's law) |
+| L4 F6 | A STALE SPAN JUDGED. Only a landing was refused late; the ring and the beam took whatever span the page judged from its last frame drawn - a tab hidden across a Stomp's landing and shown 2.5 s on was struck by its ring, one 4.9 s into a Hand by its beam | a rolling part over a span that ends SD_STRIKE_LATE_MS past it is done, with no hit (`net/superDungeon/sdStrike.js` `sdBlowVerdict`'s `stale` - the gate's rolling charge's law) |
 | L4 F7 | THE RING UNJUMPABLE RUNNING OUT WITH IT. Its 1.2 m band was judged whole, on any grounded frame inside it: a body running out with it stayed under it longer than a jump stays aloft (0.43 s) - from 7.5 m out no jump cleared it at 7.1-10.2 m/s, the default build (7.59) to Speed 80, Running 60 | judged ONCE, the frame its front's centre crosses me, on that frame's ground - where I stood the frame before kept (`ro`), so one running in through it is never past its centre unjudged (`stompFrontAt`, `ringPassed`): a jump clears it at every speed, at 60 frames a second and 30 |
 | L4 F8 | A HEART IN ITS BODY. The Hearts kept from each other and the pillars, never from the Remnant: one rose inside its 2.2 m body in 4.1% of Resets, overlapping it in 8% | none within `SD_REM.r + SD_HEART.r + 1` of it (none in 1,600 Resets of eight); a floor too crowded for the dice lays its ring at the ring's middle, turned so the Remnant stands between two (`raiseHearts`) |
 | L4 F9 | THE RESET A TRAVEL RACE (a design call: section 10 called it a damage race). The Hearts rose 8-22 m out however few: hearts.mjs's method (2,000 real Resets a cell, the Remnant anywhere in the 24 m square about the centre, each fighter beside it, the shortest order at reference damage) - one fighter in melee could not break its three in the 7.5 s they stand in 72% of Resets at the default build, 82% at a modest one; two in 27% and 41%; on a second draw at the weakest build, 93%, 76% and (three) 58%. Each lost is 70% of everyone's health and 8% healed | THE RING AS WIDE AS THEIR COUNT: 6 m out, 2 m more for each Heart past the first (`heartRingFor`; `SD_HEART.ring` 6-20, `per` 2 - 6-10 m for three, 6-20 m for eight): one fighter 0% at the default build and 0.7% at a modest one, two 0% and 0%; at the weakest, 19%, 3% and 9%. A ranged party never lost one |
 | L4 F10 | THE HAND'S WAY UNSAID. Its wind-up drew a symmetric half-circle, and the Remnant's way is a coin's (`sw` on the wire all along): a straight run the wrong way met it in 74 of 651 geometries at the weakest build; known from the word, one straight run escaped every one | the beam stands at the edge its sweep begins from as it gathers - a `lane` beside the half-circle (`scenes/sdRemnantBlows.js` `sdTelegraphShapes`); the gate's telegraph pass (`render/gateTelegraph.js`) unchanged |
 | L4 C1 | THE HAND CHOSEN PAST ITS BEAM. Its range 40 m past its body, its beam 34 m from its chest: a chosen 34-42 m off was swept by a beam that never reached it | its range the beam's length less its body (`SD_HAND_LEN`) |
 | L4 C2 | THE STEPS IN THE ARENA. The gate's POSE_SLACK (3 m) reached the last Crumble step's last 0.6 m (28.4-29 m from the centre): the Pulse, the Reset and the End struck there, the realm counted the body present, and its `in` was taken - SD8d says nobody on the Steps | the arena's own slack (`SD_ARENA_SLACK`, 1.5 m - a pose's age at a run; the arena's edge is the motor's clamp, so no body on it stands past its rim): every point of every Crumble step, and a body hanging its capsule off the last, is off the arena - for the law, the page's blows and the relay's `in` |
-| L4 C4, C5, C6 | `sdSalt`'s comment kept a slot's salt its own "until the 2048th Hollow after it" (the period is 2047); the mirror riddle, *"Read the Blades from twelve backwards and you read Daggerfall."*, reads 13 - h as well as the law's 12 - h; `sdNameOf` would expand a `$&` in a city's name | the comment says 2047th; *"The Blades stands as far before twelve as Daggerfall stands past it."* (`net/sdBrain.js` `sdRiddleText`); a replacer |
+| L4 C4, C5, C6 | `sdSalt`'s comment kept a slot's salt its own "until the 2048th Hollow after it" (the period is 2047); the mirror riddle, *"Read the Blades from twelve backwards and you read Daggerfall."*, reads 13 - h as well as the law's 12 - h; `sdNameOf` would expand a `$&` in a city's name | the comment says 2047th; *"The Blades stands as far before twelve as Daggerfall stands past it."* (`net/superDungeon/sdBrain.js` `sdRiddleText`); a replacer |
 | docs | `sdFell`'s comment said `n` is "how many earned it"; `SD_GREAT_CITIES` the Bay's "largest" cities | `n` is every seat its fight took - the realm's `fell.n`, the gone and the cast-out with the rest (section 2's table says so already); the Bay's first eight cities by the hubs' own claim (`systems/region/regionHubs.js` `hubClaim` - one named for its region outranks a larger) |
 
 L4 F1 and F1b were SD11a's, and so was C3 (`spanAt`'s comment says near edges). L4 C7 - `orreryStep` on a state with no
@@ -2165,7 +2165,7 @@ lose, and its mutant puts the band back); and every other record on the files th
 still dead. PINS MOVED: `test/sd6a_orrery.test.js` (the mirror riddle's words), `test/sd8a_remnant.test.js` (the pair's
 ways by `pairWay`; the ring's front's centre stops at 22 m), `test/sd8b_fight.test.js` (the relay's import of the arena's
 slack), `test/sd8d_remnant_blows.test.js` (the End at the rim, within the arena's slack), `test/relayversion.test.js`
-(`world176` re-hashed in place - `net/sdRemnant.js`, `net/sdLaw.js`, `net/sdBrain.js` and the relay's `in` are in the
+(`world176` re-hashed in place - `net/superDungeon/sdRemnant.js`, `net/superDungeon/sdLaw.js`, `net/superDungeon/sdBrain.js` and the relay's `in` are in the
 bundle).
 
 #### SD11f - the way home, the Rift's count, the wheel and the docs
@@ -2207,7 +2207,7 @@ good. You wake before the Abyss Dungeon's door."*) and is final for that Hollow 
   dead there (`server/src/index.js` `_sdMarkFallen`, kept with the realm under `SD_REALM_KEY` beside `in` and `gu`, once
   each, read back by a fresh instance - and past that list's 256, under its account's own key, `sddead:<account>`:
   SD20b). Its door (`_sdAdmit`) refuses that account's every hello after, before it asks
-  whether they were in: *"The Hour will not take you back."* (`net/sdLaw.js` `SD_NO_FALLEN`) - a refusal the page takes
+  whether they were in: *"The Hour will not take you back."* (`net/superDungeon/sdLaw.js` `SD_NO_FALLEN`) - a refusal the page takes
   as final, so it casts out with those words. A world cell's death marks nothing.
 - **The page keeps the slot.** The frame I die in the Hour keeps its slot on the device (`SD_FALLEN_KEY`, the last
   SD_ENTERED_MAX, one memory with the slots gone through - `scenes/world.js` `sdSlotsKept`); the Rift asks with it
@@ -2223,7 +2223,7 @@ Pins: `test/sd12_onelife.test.js` (3 - the realm remembers a death; the Rift's w
 `tools/mutants/sd12_onelife.json` (11). RE-AIMED BY CONTENT: `sd4b.json` (2), `sd10b.json`, `sd11c.json` (2). PINS MOVED: `test/sd3_relay.test.js` (the realm's record keeps `dead`),
 `test/sd4b_rift.test.js` (the Rift asked with the fallen), `test/sd5a_realm.test.js` and `test/sd11c_page.test.js` (the
 death's words; the device's memory is `sdSlotsKept`), `test/sd10b_audit.test.js` (the Rift's rig),
-`test/relayversion.test.js` (`world176` re-hashed in place - `net/sdLaw.js` is in the bundle).
+`test/relayversion.test.js` (`world176` re-hashed in place - `net/superDungeon/sdLaw.js` is in the bundle).
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): `scenes/world.js` WIRED (the slot of the Hour I die in
 kept - `_sdFallen`, the death block's first statement - and the Rift asked with it, `sdRiftOf`; no Resurrect raising me
@@ -2514,26 +2514,26 @@ FLAGGED - the body is the dungeon host's, the beam the world host's; `scenes/ext
 The gate's Warden wears one of four aspects and two of nine trials, a cycle of 144 (WB8b); every Hour was the same Hour.
 Now each Hollow keeps one of six Endings and two of nine omens (section 10's *Its marks*):
 
-- **The marks** (`net/sdMarks.js`, a leaf the relay bundles): `SD_ENDINGS` (the Orrery's stones, in its order - each an
+- **The marks** (`net/superDungeon/sdMarks.js`, a leaf the relay bundles): `SD_ENDINGS` (the Orrery's stones, in its order - each an
 element, a light for SD18b, a signature and its law), `SD_OMENS` (9), `sdMarksCycle` (216: Hollow `k` keeps pair `k mod
 36` of a ring of the omens' pairs in which neighbours share no omen - `disjointRing`, a depth-first walk - and Ending
 `(k + floor(k / 36)) mod 6`, the Endings' order and the omens' seats the salt's shuffles), `sdMarksOf(slot)`,
 `validSdMarks`, `sdMarksLaw` (multipliers multiplied: Sunfall's and the Burning Brass's brass burns three times as
 long).
-- **The profile** (`net/sdRemnant.js` `sdFightProfile`, `sdProfileOf` - `profileOf` until AUDIT SD III, whose name the gate's brain already held): the numbers the relay runs the fight by - health,
+- **The profile** (`net/superDungeon/sdRemnant.js` `sdFightProfile`, `sdProfileOf` - `profileOf` until AUDIT SD III, whose name the gate's brain already held): the numbers the relay runs the fight by - health,
 wind-ups, the End, the Pulse's beat and step, the Reset's, the pair's window and Hand, the walks, Sunfall's seven, the
 fray, the Stomp's disc and ring, the Hand's sweep, the pool - the table's own with no marks. The fight is born with its
 marks (`newRemnantFight(s, fi, now, mk)`) and keeps them; its state says them (`mk`).
 - **The stamped shape** (`shapeStamp`, `blowShape`, `atkWindup`, `pulsePctOf`): each blow whose shape the marks change
 carries only the change on its own frame - `r`, `r1`, `wave`, `arc`, `active`, `pr`, `pm`, `w`, `ps`, `el` - and the
 geometry both ends read (`stompRingAt`, `stompFrontAt`, `ringPassed`, `handAngleAt`, `handSwept`), the strike law
-(`net/sdStrike.js` - every hit and every pool its element), the floor's telegraph, the arena read, the bar, the rig and
+(`net/superDungeon/sdStrike.js` - every hit and every pool its element), the floor's telegraph, the arena read, the bar, the rig and
 the beam read it. A fight with no marks frames as it always did - no `sh` anywhere.
 - **The wire** (`net/wire.js`): a shape's keys each their own bound and an element the known ones' (`sdShape` - anything
 else refuses the frame), a state's `mk` projected when it is a set of marks, `SD_TARGETS_MAX` 7 (Sunfall's). The link
 keeps both, and reads its Reset's clock after a stun or the Last Moment's return by the profile.
 - **The relay** births every fight with its slot's marks (`sdMarksOf(s)`); the Orrery frays by them
-(`orreryOf(s).fray`). Relay world176 re-hashed in place (undeployed): `net/sdMarks.js` joined the bundle.
+(`orreryOf(s).fray`). Relay world176 re-hashed in place (undeployed): `net/superDungeon/sdMarks.js` joined the bundle.
 
 Pins: `test/sd18a_marks.test.js` (5 - the marks and the cycle; the profile and the stamps; the law under its marks; the
 blow its frame says; the wire, the page, the Orrery and the relay); `tools/mutants/sd18a.json` (42, one equivalent as
@@ -2543,7 +2543,7 @@ hash). Records re-aimed by content (22): `sd15.json` (3), `sd17.json` (2), `sd6a
 `sd8b.json`, `sd8c.json` (3), `sd8d.json` (5) - each run again, every one dead.
 
 THE FOUR HOSTS (AUDIT SD III, SD20f H3: this record had none): none wired - the law, the relay and the link
-(`net/sdMarks.js`, `net/sdBrain.js`, `net/sdFightLink.js`); `scenes/world.js`, `scenes/worldModes.js`,
+(`net/superDungeon/sdMarks.js`, `net/superDungeon/sdBrain.js`, `net/superDungeon/sdFightLink.js`); `scenes/world.js`, `scenes/worldModes.js`,
 `scenes/dungeonContext.js` and `scenes/exterior.js` FLAGGED - each reads a Hollow's marks through the fight's link or its
 slot (SD18b, SD18c), never the law's tables.
 
@@ -2668,14 +2668,14 @@ conflicted with main since SD13. The relay stays `world176`, re-hashed in place 
 
 | | what was wrong | now |
 |---|---|---|
-| F1 | THE PULSE HAD NO CEILING. The table's own climb stays under the whole (its thirtieth Pulse 70%), but a Hollow's marks quicken and steepen it: the Underking's 22 s clock under the Restless Pulse's four points a step passed 100% of everyone's health eight minutes in - eight Hollows of every 216 (slots 2, 20, 43, 90, 96, 148, 160, 166) a wall a group at reference damage, needing nine minutes, could not pass | three quarters at most (`net/sdRemnant.js` `SD_PULSE_MAX`), the table's step and a Restless one on the wire (`pulsePctOf`) alike; the omen says so - *"Each Mantella Pulse climbs twice as fast, to three quarters of your health at most."* (SD20e T13's words) |
-| F2 | A STEP OFF THE ARENA DODGED THE HOUR. The Concord's band lets go of the arena's near edge as of the Steps' far one, and a step back over it was a fall the Steps cast back to the Crumble's checkpoint - out of the arena, and so out of every blow of the whole arena, for the void's 15%: a 70% Mantella Pulse, the Reset or the End walked off a moment before it landed | THE ARENA HOLDS WHAT IT HAS TAKEN (`world/superDungeon/sdRealm.js` `arenaHolds`, `SD_ARENA_FLOORS`): joined to a living fight (`net/sdFightLink.js` `joined`) and standing inside the rim, the motor's edge is the disc alone - the near edge a rim. A fighter leaves the fight by its end, by death or by the way home (the unstuck word, SD10's `sdWayHome`) - never by the rim; anyone else walks the Concord's floors as before |
-| F3 | A HIDDEN TAB, A FROZEN PAGE. A landing first seen late is not judged (the gate's law) - so a tab hidden across a Pulse's landing and shown again was never struck: Ctrl+Tab and back through 70% of everyone's health. And the relay's census read a fighter's LAST pose however old: a page frozen in the arena (a hidden tab draws and poses nothing) stood there for good - its share counted standing, and half a fight of it earned the receipt by `stood` | the whole arena's blows judged however late (`net/sdStrike.js`: a blow of the whole arena has no place a late frame could misjudge - a hidden page does not move - so where I stand when I first see it is where I stood when it landed, and it lands then, once; never on the Steps); the realm stamps an Hour's pose as it takes it (`pAt`), and the fight's census counts a body only while its pose is fresh (`SD_POSE_FRESH_MS`, 25 s - the pose heartbeat's 20 and five of grace; a closed socket's law past it: absent, its share out at `ABSENT_RETIRE_MS`) |
+| F1 | THE PULSE HAD NO CEILING. The table's own climb stays under the whole (its thirtieth Pulse 70%), but a Hollow's marks quicken and steepen it: the Underking's 22 s clock under the Restless Pulse's four points a step passed 100% of everyone's health eight minutes in - eight Hollows of every 216 (slots 2, 20, 43, 90, 96, 148, 160, 166) a wall a group at reference damage, needing nine minutes, could not pass | three quarters at most (`net/superDungeon/sdRemnant.js` `SD_PULSE_MAX`), the table's step and a Restless one on the wire (`pulsePctOf`) alike; the omen says so - *"Each Mantella Pulse climbs twice as fast, to three quarters of your health at most."* (SD20e T13's words) |
+| F2 | A STEP OFF THE ARENA DODGED THE HOUR. The Concord's band lets go of the arena's near edge as of the Steps' far one, and a step back over it was a fall the Steps cast back to the Crumble's checkpoint - out of the arena, and so out of every blow of the whole arena, for the void's 15%: a 70% Mantella Pulse, the Reset or the End walked off a moment before it landed | THE ARENA HOLDS WHAT IT HAS TAKEN (`world/superDungeon/sdRealm.js` `arenaHolds`, `SD_ARENA_FLOORS`): joined to a living fight (`net/superDungeon/sdFightLink.js` `joined`) and standing inside the rim, the motor's edge is the disc alone - the near edge a rim. A fighter leaves the fight by its end, by death or by the way home (the unstuck word, SD10's `sdWayHome`) - never by the rim; anyone else walks the Concord's floors as before |
+| F3 | A HIDDEN TAB, A FROZEN PAGE. A landing first seen late is not judged (the gate's law) - so a tab hidden across a Pulse's landing and shown again was never struck: Ctrl+Tab and back through 70% of everyone's health. And the relay's census read a fighter's LAST pose however old: a page frozen in the arena (a hidden tab draws and poses nothing) stood there for good - its share counted standing, and half a fight of it earned the receipt by `stood` | the whole arena's blows judged however late (`net/superDungeon/sdStrike.js`: a blow of the whole arena has no place a late frame could misjudge - a hidden page does not move - so where I stand when I first see it is where I stood when it landed, and it lands then, once; never on the Steps); the realm stamps an Hour's pose as it takes it (`pAt`), and the fight's census counts a body only while its pose is fresh (`SD_POSE_FRESH_MS`, 25 s - the pose heartbeat's 20 and five of grace; a closed socket's law past it: absent, its share out at `ABSENT_RETIRE_MS`) |
 | F4 | THE END KILLED THE REFUSED. The Hour's End throws 99% every two seconds for half a minute, and a page that walked into the arena in that tail - its `in` refused, the fight closed to it - was struck dead by a fight it could never join: with one life a Hollow, its slot gone for good | a blow strikes a FIGHTER (`scenes/sdRemnantBlows.js`): a page the realm has not counted in its fight (`link.counted()`) is shown every blow and judged by none, nor by the brass |
-| F5 | THE HARDENED HEARTS WERE A RACE NO PARTY RAN. Half again as much made the Hearts four and a half seconds of a party's reference damage of the seven and a half they stand - the run between them in the three left lost at every build the lens tried | a quarter again (`net/sdMarks.js` the Hardened Hearts, `heartX` 1.25): the Hearts at most half the time they stand open, the other half the run between them |
+| F5 | THE HARDENED HEARTS WERE A RACE NO PARTY RAN. Half again as much made the Hearts four and a half seconds of a party's reference damage of the seven and a half they stand - the run between them in the three left lost at every build the lens tried | a quarter again (`net/superDungeon/sdMarks.js` the Hardened Hearts, `heartX` 1.25): the Hearts at most half the time they stand open, the other half the run between them |
 | F6 | A PULSE IN THE RESET'S RACE. The Pulse's clock ran through the Reset: one wound up inside the Hearts' eight-second race (a party running from Heart to Heart at 70% of its health) or landed on the heels of the Reset's own, and a Reset called inside a Pulse's wind-up lost its first seconds to it | two of the fight's no-save blows never one atop the other: a Pulse due inside a Reset waits until `SD_PULSE_CLEAR_MS` (4 s) past its landing, and its clock counts on from there; a Reset due inside a Pulse's wind-up waits for it to land |
 | F7 | THE RIM WAS STOMP-PROOF. A body kept 18 m from the arena's centre, and a fighter hugging the rim (the arena's 26 m less its body's 0.35) stood 5.45 m past the Remnant's body and 5.95 past an Echo's - beyond the Stomp's 5: melee's punisher never chose the one place it could not reach | `SD_REM.keep` 19: the gaps are 4.45 and 4.95 - a lone fighter at the rim is stomped |
-| F8 | A PILLAR'S TOP, HAND-PROOF. Fourteen metres up, a Levitate's reach, the top of a pillar was the one place the Hour-Hand never struck: the beam's shade is the pillar's square, and a body on its top stood inside it | a pillar shades only what stands below its top (`SD_PILLAR_OVER_Y`, half a metre under it): the verdict's `over` (`net/sdStrike.js`), the rig's feet (`scenes/sdRemnantBlows.js` `over()`) and the read's (`scenes/sdArenaRead.js` `sdPerilAt`, the world host passing the rig's) |
+| F8 | A PILLAR'S TOP, HAND-PROOF. Fourteen metres up, a Levitate's reach, the top of a pillar was the one place the Hour-Hand never struck: the beam's shade is the pillar's square, and a body on its top stood inside it | a pillar shades only what stands below its top (`SD_PILLAR_OVER_Y`, half a metre under it): the verdict's `over` (`net/superDungeon/sdStrike.js`), the rig's feet (`scenes/sdRemnantBlows.js` `over()`) and the read's (`scenes/sdArenaRead.js` `sdPerilAt`, the world host passing the rig's) |
 | F9 | THE HEARTS' FLOOR WALLED THE WEAKEST. Each Heart held at least 20: a lone fighter at level one or two (6-7 a second at reference) met three Hearts of 20 - ten seconds of its damage in the 7.5 they stand - and every Reset landed and healed: the Last Moment could not be won | the floor never more than one second of the living's damage (`heartHpFor`): a lone fighter's three are three seconds; a strong fighter's floor is 20 as ever |
 | F10 | THE HOUR'S COSTS KILLED. The void's cast-back (15%) and the Orrery's lash took their share through `bypassShield` alone - the SetHealth(0) door, which no death save answers: with one life a Hollow, a setback was the end of it | both leave a body at one (`characters/playerEntity.js` `hurtPlayer`'s `spare`, the duel's floor): a setback, never the death that ends a Hollow |
 
@@ -2791,7 +2791,7 @@ weight the controller sets (none there: there is no Hollow offline).
 | | what was wrong | now |
 |---|---|---|
 | A1 | THE STREET'S SONG IN THE RIFT. A Rift's step forces the world outside while it walks to the Hollow's pixel and builds the realm (`sdEnterRealm`, `stepThroughFire`), and the Hour let the music go there: the director's song came up between the Hollow's and the hall's, cut both ways | the Hour holds the music while a step through the fire or a door's build moves the world under its veil (`scenes/worldModes.js` `stepping`, `transitioning`); then the hall's song takes the Hollow's as one song takes another |
-| A2 | THE END SOUNDED WHOLE EVERY TWO SECONDS. After its first landing the law strikes the whole arena every `SD_END_EVERY_MS` until the fight is lost, half a minute, and each strike sounded whole - its roll, its toll and its fire: forty-five cues, the Remnant growling through them | heard whole once; each strike after it a knell - a third of its toll (`net/sdFightLink.js` `sdEndAgain`; `scenes/sdRemnantVoice.js` `knell`), no roll and no fire; no growl once the Hour has ended |
+| A2 | THE END SOUNDED WHOLE EVERY TWO SECONDS. After its first landing the law strikes the whole arena every `SD_END_EVERY_MS` until the fight is lost, half a minute, and each strike sounded whole - its roll, its toll and its fire: forty-five cues, the Remnant growling through them | heard whole once; each strike after it a knell - a third of its toll (`net/superDungeon/sdFightLink.js` `sdEndAgain`; `scenes/sdRemnantVoice.js` `knell`), no roll and no fire; no growl once the Hour has ended |
 | A3 | THE BEDS STUTTERED. The Hour's four beds rode `setLoop`'s re-armed one-shot - a gap of the main thread's dispatch at every seam - and the void was one moan looped, the same swell in the same place every 5.8 s | named beds the engine loops (`systems/audio.js` `setBed`, `setBed3d` - the Audio record); all four MADE - the void the deep moan laid over itself at a spread of low pitches round 23 s (`buildVoidWind`), the gears the grind round 13 s (`buildArenaGears`) - each darkened as a loop (`lowpassLoop`), as the works, the hum and the Rift's bell now are; the Deadlands' beds on the same doors |
 | A4 | EVERY SCORE CUT. The Hour's, the court's and the arena's scores let the music go with `music.stop()` - a song cut at its level | each fades it (`music.fadeOut`), and the director's song comes up as the fade ends |
 | A5 | THE WAR OVER THE DEAD. One life a Hollow, and as a player lay dead in its arena the war song played on and the Remnant growled, stepped and barked at the body | the score fades to nothing while I am dead; the Remnant's voice is framed for the living alone |
@@ -2841,20 +2841,20 @@ court and no arena bout, and its music is the director's alone.
 | T6 | TWO COUNTS OF TIME. The Rift's plaque counted *"Fades in 46h 12m"* beside the banner's, the card's and the Timers row's *"fades in 1d 22h"* | the plaque in the Timers' own words (`world/superDungeon/sdDungeon.js` `sdRiftCount`, `timerText`) - its own count (`sdLongCount`) gone |
 | T7 | THE RING'S CARD UNREACHABLE. A found Hollow stands two to four pixels out from its city; at a far zoom the city's mark (16 px of reach) took the whole of its ring, and its card answered nowhere; and a ring at a far zoom answered only its map radius, not all the paper draws of it | a ring's centre nearer the pointer than the nearest mark answers as the ring (`ui/heldMap.js` `_ringCoreAt`), and a ring answers all it is drawn over (`ui/inkMap.js` `GATE_RING_MIN_PX`, 10 px) |
 | T8 | THE PAGE PROMISED *ELITE DUNGEON* ON THE HELD MAP. Section 12 listed the held map among the tier's surfaces with *(Elite Dungeon, Small)*, and ABYSS-NAME among the Abyss tier's - but its marks are the Bay's own places: an Elite spawn has none, and a Hollow is its ring | section 12 says so - the held map's phrase is a Regular Dungeon's, a Hollow's word its ring's card |
-| T9 | THE DRAGON'S TWO NAMES. The Blades' signature, *the Dragon's Break*, stood one apostrophe from the phase it shapes, *the Dragon Break* | *the Dragon's Haste* (`net/sdMarks.js`) |
+| T9 | THE DRAGON'S TWO NAMES. The Blades' signature, *the Dragon's Break*, stood one apostrophe from the phase it shapes, *the Dragon Break* | *the Dragon's Haste* (`net/superDungeon/sdMarks.js`) |
 | T10 | THE GATE'S WORD FOR THE HOUR'S FALL. The Remnant fallen, the bar said the Warden's *Felled* | *Undone* - the Hour's word (`SD_BAR_TEXT.undone`, the bar's `fallenText`); the gate's bar keeps *Felled* |
-| T11 | CAPITALS INSIDE THE LINE. *"... keeps the Ending of the Blades - The Dragon's Break - under The Quickened Gears and The Hardened Hearts."* | each mark's article small inside it (`sdMarksLine`, `net/sdLaw.js` `sdNameIn`) |
+| T11 | CAPITALS INSIDE THE LINE. *"... keeps the Ending of the Blades - The Dragon's Break - under The Quickened Gears and The Hardened Hearts."* | each mark's article small inside it (`sdMarksLine`, `net/superDungeon/sdLaw.js` `sdNameIn`) |
 | T12 | A RUMOUR TURNED TOWARD NOTHING. The Underking's: *the dead in their barrows turn their heads toward it* - toward what? | *toward the walls* |
 | T13 | THE RESTLESS OMEN GARBLED. *"Each Mantella Pulse climbs twice as steeply - to three quarters of your health."* | *"Each Mantella Pulse climbs twice as fast, to three quarters of your health at most."* |
 | T14 | THE WINDOW SAID FOUR WAYS. The beat's sub, the Blades' tip and omen, and the turn's line (*"Strike down the Gold and Silver Echoes together"* - "together" said no window) | one form, by the fight's own window: *"Fell Gold and Silver within N seconds of each other"* - the beat (`sdBreakSub`), the tip, the omen, and the turn's line (`SD_FIGHT_TEXT.dragonBreak(pairMs)`, the Blades' ten) |
-| T15 | THE CODE'S WORD TO THE PLAYER. The readouts, the way home, the way back, the death and the cast-out said *the Hollow* - the code's word - to a player who reads *Abyss Dungeon* (ABYSS-NAME); and the readout said an unbeaten end *closes* where its banner, ring, notice and Timers say it *fades* | the Abyss Dungeon throughout (`scenes/sdHost.js`, `scenes/sdEnd.js`, `world/superDungeon/sdRealm.js`, `net/sdLaw.js` `SD_CAST_OUT_LINE`); *"The Abyss Dungeon fades in 0:30."* - in the Hour, *"The Hour closes in 0:30."* |
+| T15 | THE CODE'S WORD TO THE PLAYER. The readouts, the way home, the way back, the death and the cast-out said *the Hollow* - the code's word - to a player who reads *Abyss Dungeon* (ABYSS-NAME); and the readout said an unbeaten end *closes* where its banner, ring, notice and Timers say it *fades* | the Abyss Dungeon throughout (`scenes/sdHost.js`, `scenes/sdEnd.js`, `world/superDungeon/sdRealm.js`, `net/superDungeon/sdLaw.js` `SD_CAST_OUT_LINE`); *"The Abyss Dungeon fades in 0:30."* - in the Hour, *"The Hour closes in 0:30."* |
 | T16 | THE FEATURES ROWS READ AS SLIPS. *"Smaller dungeons wins when both are on, this over medium"*; the world-sizes row left out that a quest keeps its size; *"switching to Info mode"* (asking again works); *"its World Tooltips label says which way a lever works"* | said plainly (`systems/features.js`): *"If Smaller dungeons is on too, it wins; this row wins over Medium dungeons. A quest keeps the size it was set up at."*, *"selecting Info mode"*, *"a lever's World Tooltips label says which way it works"*. The title *Dungeon sizes as online* stays - "Online dungeon sizes" would read as a switch for online play |
 | T17 | AN OMENS' LINE NEVER DRAWN. The bar's model handed it `trials`, and this page said "under the bar, the row and the omens' line" - the bar draws the row alone | the row alone, the page and the model (`sdOmensLine` gone) |
 | T18 | THE HOUR'S READOUTS UNDER THE VEIL. Stepping into the Hour, the bar and the marks card drew under the veil (the court's hide there), and the card's nine seconds ran out beneath it - met half gone | hidden under it as the court's are, and the card's nine seconds from the veil's opening (`scenes/world.js`) |
-| T19 | A REGION AFTER "NEAR". With no city known, the find and the last hour said *"near Alik'r Desert"* - the region's bare name | *"in the Alik'r Desert region"* (`net/sdLaw.js` `sdWhere`, the find's and the last hour's one door) |
+| T19 | A REGION AFTER "NEAR". With no city known, the find and the last hour said *"near Alik'r Desert"* - the region's bare name | *"in the Alik'r Desert region"* (`net/superDungeon/sdLaw.js` `sdWhere`, the find's and the last hour's one door) |
 | T20 | *Abyss* is also in Ocean Holes' names (`world/oceanHoles.js`) - REPORTED to Mac, unchanged: the name is the player's word, and his to give | - |
 
-The relay stays `world176`, re-hashed in place (undeployed): its bundle carries `net/sdLaw.js`'s and `net/sdMarks.js`'s
+The relay stays `world176`, re-hashed in place (undeployed): its bundle carries `net/superDungeon/sdLaw.js`'s and `net/superDungeon/sdMarks.js`'s
 words and never sends them.
 
 Pins: `test/sd20e_text.test.js` (12 - the banner's words, wrap and brass, by its own draw and the world's ask; the card's
@@ -3156,7 +3156,7 @@ alone or the finding is OPEN below. Ids as the code tags them (`AUDIT SD IV (<id
 | 3 (F3) | the Rift's walk-in was never taken under four frames a second, nor across one long frame | a step is forgotten across a host held for seconds (`SD_STEP_GAP_MS` 2000), never a slow frame |
 | 4 (F4) | the records said a death in the Hour wakes "before the Hollow's door" by the mode machine's landing | it wakes by the death's own door (SD2d); the records and the comments say so |
 | 5 | hiding the tab across a Pulse's, a Reset's or the End's landing skipped it (SD20a F3 open again) | the link owes every whole-arena blow heard while counted and the page judges each once, however late; a stun, the End called off or the fall drops it |
-| 6 | a Reset called with no living fighter counted raised Hearts of nought health | OPEN (relay): the Hearts are sized in `net/sdRemnant.js`, the relay's |
+| 6 | a Reset called with no living fighter counted raised Hearts of nought health | OPEN (relay): the Hearts are sized in `net/superDungeon/sdRemnant.js`, the relay's |
 | 7 | section 11's spoils left out the Hourlock and called the Brass the last roll | the Hourlock's row (1 in 50, after the Brass, last of all) |
 | 8 | a reconnect into a lost fight heard nothing: counted in a dead fight, the Last Moment soft-locked | the page half: a fight unheard for `SD_FIGHT_HEARD_MS` releases a counted page - its `in` due again; the relay's half (the lost fight told at the hello) OPEN |
 | 9 | world176 was live but the code called it undeployed | marked deployed in its row's note and section 14 |
@@ -3247,7 +3247,7 @@ the sky's look kept); `scenes/worldModes.js` WIRED (unchanged: it reads `dungeon
 The owner, 2026-10-09: *"We need to add discord integration to abyss dungeons"*. The Oblivion Gate has had a Discord
 herald since DISCORD-GATES (`World-Bosses.md`, the herald) and the sea serpent since SERPENT2 (`Sea-Serpent.md` section
 14). The Abyss Dungeon now has its own, on the same channel through the same webhook (`GATE_DISCORD_WEBHOOK`, a Worker
-secret): `net/sdHerald.js`, posted by the hub off its one alarm.
+secret): `net/superDungeon/sdHerald.js`, posted by the hub off its one alarm.
 
 **Four posts**, one for each of a Hollow's moments, read off the director's own record (section 2) - the herald keeps
 nothing of its own but what it has posted:
@@ -3285,7 +3285,7 @@ The times are Discord's stamps (`<t:...:R>`), drawn in each reader's own clock.
   (`serpentHeraldRole`). That role is the only mention Discord may make; a finder's and a fighter's names are held to
   letters, digits, spaces and a little punctuation (`heraldName`). No webhook, no herald: nothing posted, nothing kept.
 
-**The relay: `world186`** (`world185` on its branch, renumbered past main's INT7-INT10 `world185` at the merge; NOT YET DEPLOYED - a deploy drops every player once). `net/sdHerald.js` and
+**The relay: `world186`** (`world185` on its branch, renumbered past main's INT7-INT10 `world185` at the merge; NOT YET DEPLOYED - a deploy drops every player once). `net/superDungeon/sdHerald.js` and
 `formats/mapsTables.js` join the bundle (the herald after `sdLaw.js`; the table a verbatim leaf that imports nothing).
 No frame changes shape, no client changes, and nothing else in the order moves.
 

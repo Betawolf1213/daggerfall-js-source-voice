@@ -1,8 +1,8 @@
 // @ts-check
 // SD-LOOK S7 (2026-10-09, bible/11-Multiplayer/Super-Dungeons-Look.md section 9): THE ARENA'S PILLARS, DRESSED - square
-// clock-tower columns of dark basalt banded in brass, the arena's four (net/sdBrain.js SD_PILLAR_R on the diagonals),
+// clock-tower columns of dark basalt banded in brass, the arena's four (net/superDungeon/sdBrain.js SD_PILLAR_R on the diagonals),
 // every face of them INSIDE THE LAW'S SQUARE (world/superDungeon/sdRealm.js pillarQuads - the collider and the Hour-Hand's shade,
-// net/sdRemnant.js behindPillar; "no visual larger than the law"): a plinth flush with it, a chamfered shaft in from it
+// net/superDungeon/sdRemnant.js behindPillar; "no visual larger than the law"): a plinth flush with it, a chamfered shaft in from it
 // with three brass bands and a conduit in each chamfer, a brass collar and a stepped capital, the CLOCK STAGE - a small
 // clock on each face, its hand watching the Remnant (render/sdPillarPass.js draws the dials and the hands) - a brass
 // cornice, the LANTERN - a brass cage open on every side, turned a quarter of a right angle so no bar stands between its
@@ -15,7 +15,7 @@
 //
 // Pure: `pillarVisual` lays one pillar into a faces() build (world/gate/gateModel.js) in the dungeon's frame; `sdPillarDials`
 // and `sdLanterns` say where the pass draws. Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { SD_ARENA, SD_PILLAR_R, SD_PILLAR_W, SD_PILLAR_H, realmToDungeon } from '../../net/sdBrain.js';
+import { SD_ARENA, SD_PILLAR_R, SD_PILLAR_W, SD_PILLAR_H, realmToDungeon } from '../../net/superDungeon/sdBrain.js';
 
 /** THE PILLAR'S PROFILE (metres; `w` a half-width from its centre, every one within SD_PILLAR_W / 2): the plinth flush
  *  with the square, the shaft in from it with its chamfers, the brass bands, the collar, the capital's step, the clock
@@ -42,7 +42,7 @@ export const SD_PILLAR_DIAL = Object.freeze({ y: 11.3, r: 0.66, lift: 0.01 });
  *  centre (the pass's). */
 export const SD_LANTERN = Object.freeze({ w: 0.3, y0: 12.43, y1: 13.3, bar: 0.025, plate: 0.08, flameY: 12.86 });
 
-/** Pillar `k`'s centre in the realm's frame (pillarQuads' and net/sdRemnant.js SD_PILLARS'). */
+/** Pillar `k`'s centre in the realm's frame (pillarQuads' and net/superDungeon/sdRemnant.js SD_PILLARS'). */
 export function pillarCentre(k) {
   const a = Math.PI / 4 + (k * Math.PI) / 2;
   return [SD_ARENA.x + Math.cos(a) * SD_PILLAR_R, SD_ARENA.z + Math.sin(a) * SD_PILLAR_R];

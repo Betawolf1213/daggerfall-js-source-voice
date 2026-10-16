@@ -6,9 +6,9 @@
 // `06-Systems/Online-Arc.md` SEAT2a (part two).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { siegeRoomKey, SIEGE_UNITS_PER_M, SIEGE_WAVE_MS, SIEGE_OPENS_MS, SIEGE_FORFEIT_MS, SIEGE_LENGTH_MS, SIEGE_SPECTATORS_MAX } from '../src/net/siegeRef.js';
+import { siegeRoomKey, SIEGE_UNITS_PER_M, SIEGE_WAVE_MS, SIEGE_OPENS_MS, SIEGE_FORFEIT_MS, SIEGE_LENGTH_MS, SIEGE_SPECTATORS_MAX } from '../src/net/siege/siegeRef.js';
 import { mintSiegeOrder } from '../src/net/identityToken.js';
-import { readSiegeReceipt, verifySiegeReceipt, SIEGE_RECEIPT_TTL_S } from '../src/net/siegeReceipt.js';
+import { readSiegeReceipt, verifySiegeReceipt, SIEGE_RECEIPT_TTL_S } from '../src/net/siege/siegeReceipt.js';
 import { fakeRoom } from './fakeRoom.mjs';
 
 const { subtle } = globalThis.crypto;

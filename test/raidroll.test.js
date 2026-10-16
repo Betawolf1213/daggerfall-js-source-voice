@@ -2,7 +2,7 @@
 // modified client could name a raid the day never rolled, stand on its own pixel and be paid for it, and a many-socket
 // griefer could fill a cell's eight places with raids it kept "fought"). THE DAY'S ROLL IS THE RELAY'S TOO:
 //   - a raid's start, party and target are the day's generator's alone - the relay reads every word against the day's
-//     slots with no game data (net/raidLaw.js raidDaySlots), one generator for relay and client (raidDayRandom);
+//     slots with no game data (net/raid/raidLaw.js raidDaySlots), one generator for relay and client (raidDayRandom);
 //   - its region and town are the towns table's (the player's game files): a client hands the hub the table it asks
 //     for by the operator's pinned hash (RAID_TOWNS_SHA256), the hub keeps only a table that hashes to it, and every
 //     cell then reads a word against the day's whole roll (raidDayIds) - its key and pixel too, or nothing.
@@ -18,7 +18,7 @@ import {
   raidDayRandom, raidsPerDay, rollRaidTowns, raidDaySlots, raidOnSlot, raidTownsCanon, readRaidTowns, raidTownsHash,
   raidDayIds, raidLedgerId, RAID_DAY_SALT, RAID_SLOTS_MAX, RAID_REGIONS_MAX, RAID_TOWNS_BYTES_MAX, RAID_TOWNS_CHUNK,
   RAID_TOWNS_CHUNKS_MAX, RAID_TOWNS_SHA_RE, RAID_DAY_MINUTES,
-} from '../src/net/raidLaw.js';
+} from '../src/net/raid/raidLaw.js';
 import {
   validRaidTownsIn, validRaidOut, parseClient, raidTownsGate, RAID_TOWNS_HZ_MAX, RAID_OUT_KINDS, RAID_INTERNAL_DAY,
   RAID_DAY_ASK_MS, worldRoom, wallMsForClassicMinutes, SOCIAL_ROOM, PIXEL_UNITS, raidLedgerKey, RELAY_VERSION,

@@ -34,7 +34,7 @@ import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { titleBadge, glyphBadges, cssRgba, GLYPH_STROKE, GLYPH_EDGE_W } from './playerBadge.js';   // OVERWORLD NAMES: a player's name as it reads over their head in play
 import { PIXEL_STACK } from './pixelifyFive.js';   // AUDIT NAMES N1-4: the in-play name face
 import { renownText } from '../net/renown.js';
-import { guildTagText } from '../net/guildLaw.js';
+import { guildTagText } from '../net/guild/guildLaw.js';
 import { ribbonColours, heraldryOf, heraldryColourOf, heraldryKey } from '../net/heraldryLaw.js';   // AUDIT-SEATS: a Season's banner ribbon, under the name here too; AUDIT HERALDRY H4: the tag's frame
 import { drawShield } from './heraldryArt.js';   // AUDIT HERALDRY H4: the guild's shield, in its tag's frame, on the canvas
 import { TV_FILTER_GROUPS, TV_FILTER_TEXT, travelViewFilters, toggleTravelViewFilter, onTravelViewFilters, markShown, countGroups } from '../systems/travel/travelViewFilters.js';   // OW-FILTER

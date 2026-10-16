@@ -31,7 +31,7 @@ export const GAMBIT_CARD_LIFT = 0.0015;
  * centre on the mat, `cellAt(p)` the cell under a point of the table (or null off the board), `corners` the board's four
  * corners on the mat (the host's left foot first, round to the head).
  * KG5 (section 18): `flip` lays the board for the GUEST of an online game, who reads the relay's board turned about its
- * middle (net/gambitTable.js flipGambitState) - its rows and columns run the other way, so every turned cell lands on
+ * middle (net/gambit/gambitTable.js flipGambitState) - its rows and columns run the other way, so every turned cell lands on
  * the felt where the host's own lies: one board on the cloth, each player's king's row at its own foot.
  * @param {{centre: number[], axisYaw: number}} frame  world/card/cardTables.js tableFrame
  * @param {number[]} hostFeet  the host's feet in their chair

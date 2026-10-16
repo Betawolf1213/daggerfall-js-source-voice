@@ -1,5 +1,5 @@
 // REALM P2.1 (2026-09-28; bible/06-Systems/Realm-Arc.md section 3, Mac: "eliminate duping"): A TRADE IS THE REALM'S.
-// The law both ends read (src/net/realmTradeLaw.js), the service that settles it (server-account/src/realmTrade.js,
+// The law both ends read (src/net/realm/realmTradeLaw.js), the service that settles it (server-account/src/realmTrade.js,
 // migration 0019 - 0017 on its branch) driven through the REAL Worker over the REAL migrations, and the client that hands its commit to it
 // (net/tradeSession.js's escrow, systems/realmSaves.js transact and realmTradeEscrow) - two realm tabs trading end to
 // end. Every write of a realm character is a new object now, so a write that loses its race never touches the save.
@@ -14,7 +14,7 @@ import { SESSION_KEY } from '../src/net/accountClient.js';
 import {
   realmTradeHalfOf, halvesAgree, tradeableRecord, recordIsOffered, takeTradeGoods, settleRealmTrade, realmTradeRefusalText,
   REALM_TRADE_SID_RE, REALM_TRADE_TTL_S, GOLD_PIECES_TEMPLATE, TRADE_VOLATILE_FIELDS,
-} from '../src/net/realmTradeLaw.js';
+} from '../src/net/realm/realmTradeLaw.js';
 import { createTradeManager, REALM_TRADE_REV_BASE, OLDER_BUILD_TRADE_TEXT } from '../src/net/tradeSession.js';
 import { validTradeData, TRADE_REV_MAX, TRADE_ITEMS_MAX } from '../src/net/wire.js';
 import { createTradePack, tradeRefusal } from '../src/systems/tradePack.js';

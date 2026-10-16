@@ -26,7 +26,7 @@ import {
 } from '../net/homeLaw.js';
 import { ARENA_TEXT } from './arena/arenaText.js';   // ARENA4b: a room the arena's move carried, named
 import { goldSum, EMPIRE_ACCOUNT_WORDS } from './homeWords.js';   // AUDIT HOME-PRICE E4: the door's sums and account, as the home's own lines say them
-import { walletReserve } from '../net/realmGoldLaw.js';   // MARKET-AUDIT: a refusal gives back exactly what the payment took
+import { walletReserve } from '../net/realm/realmGoldLaw.js';   // MARKET-AUDIT: a refusal gives back exactly what the payment took
 
 /** The door's verb for a home with a room free to rent (onlineHomes.js HOME_VERB's own row). */
 export const RENT_VERB = 'home-rent';

@@ -15,7 +15,7 @@ enhanced pack shows them: in the wallet's sheet, not on its pages. A second list
 `entity.bagItems`) would have blinded every door that reads a currency where it has always been - the bank's letters
 and the court's fines (`systems/banking.js`, `systems/court.js` deductGold), the Broker's embers (`sigilBroker.js`), the
 Reforge's and the Portal Stone's shards (`reforge.js`), the save, the realm's customs and its gold law
-(`net/realmGoldLaw.js`) - and the BAG1 audit is the record of what that costs. Kept in `items`, every one of them reads
+(`net/realm/realmGoldLaw.js`) - and the BAG1 audit is the record of what that costs. Kept in `items`, every one of them reads
 the wallet's pieces unchanged, and no spender, save or service changed for it.
 
 ## What shipped
@@ -25,7 +25,7 @@ the wallet's pieces unchanged, and no spender, save or service changed for it.
 | `src/systems/walletItem.js` | the piece: template 580, its row (DFU's Small Sack's picture and price - TEXTURE.205 record 18, 1 gold - no weight, one to a slot, `bound`, `packOnly`), `mintWallet`, `isWalletItem`; WHAT IT HOLDS (`WALLET_HOLDS`: templates 275, 570, 571; `walletHolds`); `walletContents` (the gold, the silver, the letters and the gold they are worth, the embers, the shards, the pieces in the pack's order, worn ones aside) and `walletLines` (the words both skins say); the silver's door (`setWalletSilver`, `walletSilver`, `refreshWalletSilver`); the gift (`giveWallet`, `WALLET_GIFT`, `giveWalletGift`); the card's lines; the Use's registered arm (`wallet`) |
 | `src/systems/item/itemBound.js` | `isPackOnly` (the row's `packOnly`) and `packOnlyText`: a pack-only piece is refused by every place, the player's own wagon and storage too |
 | `src/systems/decor/decorItems.js`, `src/systems/revenant/revenant.js` | AUDIT 625 W1/W2: the two doors out of the pack that are no place - a home's decoration (`decorStandOf`) and a revenant's theft (`revenantMayTake`) - refuse a pack-only piece too |
-| `src/net/realmTradeLaw.js` | `BOUND_TEMPLATES` names 580 - the realm's trade service refuses it as the client does (acct84) |
+| `src/net/realm/realmTradeLaw.js` | `BOUND_TEMPLATES` names 580 - the realm's trade service refuses it as the client does (acct84) |
 | `src/ui/packPages.js` | the wallet's page is Valuables; and the letter of credit's (below) |
 | `src/ui/enhancedInventory.js` | `packModel`: what the wallet holds leaves the pages (`paged`) and rides `model.wallet`; the wallet's SHEET in its card's body (`walletSheet`); a held piece's way back (`walletBack`); the Use's arm (`pickWallet`); the pack-only refusal |
 | `src/ui/nativeInventory.js` | the Use's arm: DFU's own click-anywhere box, the wallet's lines; the pack-only refusal |

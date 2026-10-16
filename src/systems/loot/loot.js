@@ -44,7 +44,7 @@ import { getLocalizedSpellName } from '../textManager.js';   // L10N3e: a stock 
 import { isOnlinePage } from '../online/onlineLane.js';   // REALM P0.4: online, a pile's gold is not the level's
 import { rriLootMatrix, rriEnemyLootTableKey, conditionBasedPricesOn, randomConditionLootItems } from '../roleplayRealismItems/rriRealism.js';   // RRI2: LootRealismTables over DefaultLootTables, MobLootKeys over the basics' key, the condition roll on tabled loot
 import { RRI_VENDOR } from '../roleplayRealismItems/rriItems.js';   // FORAGE3: the pile event's first subscriber, named by its mod
-import { RECEIVER_MARKS, VALUE_IS_IDENTITY_TEMPLATES, BOAT_TEMPLATES } from '../../net/realmTradeLaw.js';   // MARK-WIRE: the receiver's marks, one list with the realm's trade law; HACKED-GOLD: the records whose `value` is no price
+import { RECEIVER_MARKS, VALUE_IS_IDENTITY_TEMPLATES, BOAT_TEMPLATES } from '../../net/realm/realmTradeLaw.js';   // MARK-WIRE: the receiver's marks, one list with the realm's trade law; HACKED-GOLD: the records whose `value` is no price
 
 // LootChanceMatrix rows, verbatim (22 keys, '-' included).
 export const LOOT_MATRICES = Object.freeze({
@@ -625,7 +625,7 @@ const lawRefuses = (/** @type {any} */ it) => !!_itemLaw && _itemLaw(it, { recei
  *  worthCeiling, the wealth measure's - its base four times over, its lines', a tier's, a margin): of the 46,919 pieces
  *  every honest producer mints (test/honestItems.mjs) none passes it but Come Sail Away's deeds, whose worth is their
  *  hull's. A record whose `value` is no price - a letter of credit (its value IS it) and a boat's parts or deed
- *  (net/realmTradeLaw.js) - is left as it came: a letter never rides a peer's word at all (systems/peerWord.js), and a
+ *  (net/realm/realmTradeLaw.js) - is left as it came: a letter never rides a peer's word at all (systems/peerWord.js), and a
  *  boat's records never leave their holder in a trade. Never under the floor the projection set. */
 const lawPriced = (/** @type {any} */ it) => {
   if (_priceCeiling && !VALUE_IS_IDENTITY_TEMPLATES.includes(it.templateIndex) && !BOAT_TEMPLATES.includes(it.templateIndex)) {
@@ -665,7 +665,7 @@ function wireLootItem(v) {
   // AUDIT WORLD6b-iii(c) A6/B4: the marks that mean "worn by me" and "bound to my quest" are the RECEIVER's, never a
   // container's word - a wire-borne equipSlot re-linked into the pack's slots on the next load and pushed my own out
   // ACQUIRE1: and "it is mine already" (systems/acquireWatch.js) - a piece another player hands over is new to its taker
-  // MARK-WIRE: the one list the realm's trade law reads too (net/realmTradeLaw.js RECEIVER_MARKS)
+  // MARK-WIRE: the one list the realm's trade law reads too (net/realm/realmTradeLaw.js RECEIVER_MARKS)
   for (const k of RECEIVER_MARKS) delete out[k];
   return out;
 }

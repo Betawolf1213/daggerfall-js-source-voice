@@ -18,20 +18,20 @@ import {
   SD_INTERNAL_FOUND, SD_INTERNAL_LIVE, SD_NO_WORDS, SD_FIGHTERS_MAX, SOCIAL_ROOM, CLOSE_BUSY, PIXEL_UNITS, worldRoom,
   chatRegionRoom, sdReceiptKey, validSdOut, CHAT_SOCKETS_MAX,
 } from '../src/net/wire.js';
-import { sdRoomKey, sdFell, SD_NO_FULL, SD_FADE_GRACE_MS, SD_FIRST_RISE_MS } from '../src/net/sdLaw.js';
+import { sdRoomKey, sdFell, SD_NO_FULL, SD_FADE_GRACE_MS, SD_FIRST_RISE_MS } from '../src/net/superDungeon/sdLaw.js';
 import {
   SD_ARENA, realmToDungeon, orreryOf, orreryFresh, orreryStep, orreryTurn, orreryShortest, orrerySolve, orreryRightsFresh,
   orreryTurnerOf, orreryMayTurn, orreryTurned, orreryLashed, SD_TURN_LONG_MAX, SD_TURN_COMPANY_MS, SD_TURN_WAIT_LINE,
   SD_STONE_POS, SD_STONE_SETTLE_MS, SD_FRAY_MAX, SD_STONES, sdHour, sdTurnsFor,
-} from '../src/net/sdBrain.js';
+} from '../src/net/superDungeon/sdBrain.js';
 import {
   newRemnantFight, joinRemnant, stepRemnant, remnantStateOf, SD_OPENING_MS, SD_LOST_MS, SD_ECHO_SPOTS, SD_TTK_S,
   SD_SHARE_X,
-} from '../src/net/sdRemnant.js';
-import { HIT_KINDS, dpsRef, ABSENT_RETIRE_MS } from '../src/net/gateBrain.js';
-import { mintSdReceipt } from '../src/net/sdReceipt.js';
-import { PIXEL_M } from '../src/net/gateLaw.js';
-import { SD_FRAY_LASH, inOrreryHall, dungeonToRealm, SD_ORRERY } from '../src/net/sdBrain.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { HIT_KINDS, dpsRef, ABSENT_RETIRE_MS } from '../src/net/gate/gateBrain.js';
+import { mintSdReceipt } from '../src/net/superDungeon/sdReceipt.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
+import { SD_FRAY_LASH, inOrreryHall, dungeonToRealm, SD_ORRERY } from '../src/net/superDungeon/sdBrain.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

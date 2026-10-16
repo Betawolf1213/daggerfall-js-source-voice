@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as AB from '../src/systems/arena/arenaBoard.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { arenaLadderOf, arenaSeasonOf, arenaSeasonDay, ARENA_SEASON_EPOCH_S, ARENA_SEASON_S } from '../src/net/arenaLaw.js';
+import { arenaLadderOf, arenaSeasonOf, arenaSeasonDay, ARENA_SEASON_EPOCH_S, ARENA_SEASON_S } from '../src/net/arena/arenaLaw.js';
 import { newArenaLadder, ladderAfter, LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
 import * as LG from '../src/systems/arena/arenaLeague.js';
 import * as BK from '../src/systems/arena/arenaBook.js';

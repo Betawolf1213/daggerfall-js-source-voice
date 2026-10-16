@@ -1,22 +1,22 @@
 // CARDS10 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 33): ILIAC HAND ONLINE, THE CLIENT'S HALF. Driven:
 // the relay's table as this client sees it (systems/iliac/iliacRemoteTable.js) - my own view while I play, the spectator's
 // while I watch, the last board kept after the end until the next deal, the relay's clock through its skew; the ranked
-// results' carrier (net/iliacClaims.js) - kept, offered, let go on an answer that settles it, kept on one that does not,
+// results' carrier (net/iliac/iliacClaims.js) - kept, offered, let go on an answer that settles it, kept on one that does not,
 // only mine; and the host's half online (scenes/iliacTableGame.js) on two fake pages over the relay's own pure table: a
 // look on opening, a sit with the chosen deck, the wait, the deal, a turn staged and committed through the panel, a
 // third watching, a stand conceding at the relay, ranked with the realm's order asked first, and the regulars instead.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { newIliacTable, iliacSit, iliacStand, iliacCommit, iliacTick, iliacLook, validIliacIn, ILIAC_FIRST_MS, ILIAC_TURN_MS } from '../src/net/iliacTable.js';
-import { mintIliacReceipt } from '../src/net/iliacReceipt.js';
+import { newIliacTable, iliacSit, iliacStand, iliacCommit, iliacTick, iliacLook, validIliacIn, ILIAC_FIRST_MS, ILIAC_TURN_MS } from '../src/net/iliac/iliacTable.js';
+import { mintIliacReceipt } from '../src/net/iliac/iliacReceipt.js';
 import { RemoteIliacTable } from '../src/systems/iliac/iliacRemoteTable.js';
-import { createIliacClaims, iliacClaimVerdict, ILIAC_CLAIMS_KEY, ILIAC_CLAIM_RETRY_MS } from '../src/net/iliacClaims.js';
+import { createIliacClaims, iliacClaimVerdict, ILIAC_CLAIMS_KEY, ILIAC_CLAIM_RETRY_MS } from '../src/net/iliac/iliacClaims.js';
 import { openIliacTableGame, iliacOnlineLine, lastLineOf, ILIAC_ONLINE_REFUSALS } from '../src/scenes/iliacTableGame.js';
 import { iliacHudModel, boardLines } from '../src/ui/iliacTableHud.js';
 import { giveBinderAtChargen } from '../src/systems/iliac/iliacItems.js';
-import { STARTER_DECK, cardById } from '../src/net/iliacCards.js';
-import { ILIAC_TURNS } from '../src/net/iliacHand.js';
+import { STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
+import { ILIAC_TURNS } from '../src/net/iliac/iliacHand.js';
 import { fakeDoc, text } from './decorFakes.mjs';
 
 const { subtle } = globalThis.crypto;

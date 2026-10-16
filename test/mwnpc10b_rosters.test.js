@@ -13,7 +13,7 @@ import { MOBILE_TYPES as M } from '../src/characters/mobileTypes.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
 import { createSiegeNpcs } from '../src/scenes/siegeNpcs.js';
-import { SIEGE_UNITS_PER_M as REF_M } from '../src/net/siegeRef.js';
+import { SIEGE_UNITS_PER_M as REF_M } from '../src/net/siege/siegeRef.js';
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const settle = () => new Promise((r) => setTimeout(r, 0));

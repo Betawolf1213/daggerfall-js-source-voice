@@ -1,6 +1,6 @@
 // AUDIT CARDS-6 (2026-10-09, bible/01-Overview/Audit-Cards-6.md) lanes C and E: THE RELAY'S ILIAC TABLE AND ILIAC HAND
 // ONLINE ON THE CLIENT. Driven: the relay itself (server/src/index.js on the fake room) and its pure table
-// (net/iliacTable.js) - a ranked result kept owed to both accounts and told again on a hello and a look until the device
+// (net/iliac/iliacTable.js) - a ranked result kept owed to both accounts and told again on a hello and a look until the device
 // says it holds it, off the table's queue only once kept (C1); a sit's refusals asked before the room's sit budget is
 // spent, Iliac's and Hold'em's (C2); a commit that names its game and turn, a stale one refused (C3); no ranked game where
 // the room cannot sign (C4); a deck order that vouches for one game, asked again between games (C5); a seat the clock
@@ -21,16 +21,16 @@ import { fakeDoc, text, all } from './decorFakes.mjs';
 import {
   newIliacTable, iliacSit, iliacSitRefusal, iliacStand, iliacCommit, iliacTick, iliacNextAt, iliacVouch, iliacGone, iliacBack, iliacVoid,
   validIliacIn, validIliacOut, ILIAC_FIRST_MS, ILIAC_TURN_MS, ILIAC_GAP_MS, ILIAC_IDLE_TURNS, ILIAC_GONE_MS, ILIAC_LATE_MS,
-} from '../src/net/iliacTable.js';
+} from '../src/net/iliac/iliacTable.js';
 import { newTable as newHoldemTable, sit as holdemSit, sitRefusal as holdemSitRefusal, stand as holdemStand } from '../src/net/holdemTable.js';
 import { RemoteIliacTable } from '../src/systems/iliac/iliacRemoteTable.js';
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';
 import { iliacHudModel } from '../src/ui/iliacTableHud.js';
 import { giveBinderAtChargen } from '../src/systems/iliac/iliacItems.js';
-import { STARTER_DECK } from '../src/net/iliacCards.js';
-import { ILIAC_TURNS, playsRefusal } from '../src/net/iliacHand.js';
+import { STARTER_DECK } from '../src/net/iliac/iliacCards.js';
+import { ILIAC_TURNS, playsRefusal } from '../src/net/iliac/iliacHand.js';
 import { mintDeckOrder, deckDigest } from '../src/net/identityToken.js';
-import { readIliacReceipt, verifyIliacReceipt } from '../src/net/iliacReceipt.js';
+import { readIliacReceipt, verifyIliacReceipt } from '../src/net/iliac/iliacReceipt.js';
 
 const { subtle } = webcrypto;
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

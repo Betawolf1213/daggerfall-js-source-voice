@@ -20,7 +20,7 @@
 //
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import { gambitAct, finishTurn } from '../../net/kingsGambit.js';
-import { GAMBIT_TURN_END_MS } from '../../net/gambitTable.js';
+import { GAMBIT_TURN_END_MS } from '../../net/gambit/gambitTable.js';
 import { dealRegular, regularStep } from './gambitPatrons.js';
 import { SUIT_CROWNS } from '../../render/cardFaces.js';   // the Bay deck's four crowns - pure, its painters take a canvas
 

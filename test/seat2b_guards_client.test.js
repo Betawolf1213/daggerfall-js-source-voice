@@ -3,14 +3,14 @@
 // (the guards standing, a revolt's Captain and rebels, its result and its Honours), the session's foes (a guard an
 // attacker's, a rebel and the Captain a defender's; no heal reaches one; the Captain's fall and a fighter cut down said),
 // and the screen's driver - its looks, its acts, its bodies and batches (bible/11-Multiplayer/Seats-Arc.md 7.5, 7.7, 19;
-// src/net/siegeLink.js, src/net/siegeSession.js, src/scenes/siegeNpcs.js, src/scenes/world.js). `06-Systems/Online-Arc.md`
+// src/net/siege/siegeLink.js, src/net/siege/siegeSession.js, src/scenes/siegeNpcs.js, src/scenes/world.js). `06-Systems/Online-Arc.md`
 // SEAT2b part two (c).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { foldSiege, siegeNpcShown, siegeBarLines, siegeWorksLine, siegeSidesLine, siegeResultTitle, siegeHudModel, SIEGE_STATE_EMPTY, SIEGE_REVOLT_HONOUR } from '../src/net/siegeLink.js';
-import { createSiegeSession, SIEGE_SESSION_TEXT } from '../src/net/siegeSession.js';
-import { siegeRoomKey, SIEGE_UNITS_PER_M } from '../src/net/siegeRef.js';
+import { foldSiege, siegeNpcShown, siegeBarLines, siegeWorksLine, siegeSidesLine, siegeResultTitle, siegeHudModel, SIEGE_STATE_EMPTY, SIEGE_REVOLT_HONOUR } from '../src/net/siege/siegeLink.js';
+import { createSiegeSession, SIEGE_SESSION_TEXT } from '../src/net/siege/siegeSession.js';
+import { siegeRoomKey, SIEGE_UNITS_PER_M } from '../src/net/siege/siegeRef.js';
 import { siegeNpcLook, siegeNpcAct, createSiegeNpcs, SIEGE_NPC_LOOKS, SIEGE_NPC_FALL_MS } from '../src/scenes/siegeNpcs.js';
 import { enemyDisplayName } from '../src/characters/enemyBasics.js';
 

@@ -22,11 +22,11 @@ import { rollNumidiumPiece, NUMIDIUM_SET_CHANCE, AETHERIC } from '../src/systems
 import { rollHourlock, GILDED_CHANCE, GILDED } from '../src/systems/gilded.js';
 import { seededRng } from '../src/systems/wind/wind.js';
 import { RANDOM_TREASURE_ICONS, validLootItem } from '../src/systems/loot/loot.js';
-import { mintSdReceipt } from '../src/net/sdReceipt.js';
-import { createSdFightLink } from '../src/net/sdFightLink.js';
+import { mintSdReceipt } from '../src/net/superDungeon/sdReceipt.js';
+import { createSdFightLink } from '../src/net/superDungeon/sdFightLink.js';
 import { validSdOut } from '../src/net/wire.js';
-import { newRemnantFight, joinRemnant, remnantStateOf, SD_REM } from '../src/net/sdRemnant.js';
-import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
+import { newRemnantFight, joinRemnant, remnantStateOf, SD_REM } from '../src/net/superDungeon/sdRemnant.js';
+import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { remnantPose } from '../src/scenes/sdRemnant.js';
 import { realmColliderTris } from '../src/world/superDungeon/sdRealm.js';
 import { Collider } from '../src/player/collider.js';

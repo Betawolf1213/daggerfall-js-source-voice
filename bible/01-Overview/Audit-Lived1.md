@@ -57,7 +57,7 @@ test that fails on the unfixed tree for the finding's reason, and mutation-prove
 - **P3 - an enchanted item's leech and reroll stamps cross a trade on the giver's clock** (`timeHealthLeechLastUsed`,
   `timeEffectsLastRerolled`: declared wire fields, moved whole by the realm's settle). A receiver days ahead takes the
   weekly leech at once; one days behind is leech-free for the gap. The fix makes the two fields volatile on the wire
-  and at the realm's settle (`net/realmTradeLaw.js TRADE_VOLATILE_FIELDS`, which the realm service runs too) and reads
+  and at the realm's settle (`net/realm/realmTradeLaw.js TRADE_VOLATILE_FIELDS`, which the realm service runs too) and reads
   a missing stamp as now - a change to the realm service, for its own pass. Low: it needs a Health Leech item.
 - **P7 - food's `rotDay` rides a trade on the carrier's rot counter** (older than LIVED1): a stripped stamp would read
   as fresh food, so this wants its own design.

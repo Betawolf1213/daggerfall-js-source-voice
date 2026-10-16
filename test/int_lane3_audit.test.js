@@ -12,18 +12,18 @@ import { readFileSync } from 'node:fs';
 
 import { BODY_DEFAULT, BODY_AFTER_MS, BODY_SAY_MS, BODY_TELL_MS, BODY_TRAIL_MS, HULL_REFLOAT, bodyStruck, bodySaid, bodyHealed, bodyTellOwed, newBody } from '../src/net/bossBody.js';
 import { judgeGate, posAt, posAfter } from '../src/net/bossRef.js';
-import { COURT_CENTRE, ATTACKS, profileOf, BRAIN_TICK_MS, HIT_KINDS, GATE_FIGHTERS_MAX, healRef } from '../src/net/gateBrain.js';
-import { gateTimes, gateRoomKey } from '../src/net/gateLaw.js';
+import { COURT_CENTRE, ATTACKS, profileOf, BRAIN_TICK_MS, HIT_KINDS, GATE_FIGHTERS_MAX, healRef } from '../src/net/gate/gateBrain.js';
+import { gateTimes, gateRoomKey } from '../src/net/gate/gateLaw.js';
 import {
   GATE_BRAIN_V, GATE_HZ_MAX, SERPENT_HZ_MAX, SD_FIGHT_HZ, BODY_WORD_HZ_MAX, bodyWordGate, bodyWordRelayGate, RELAY_VERSION, BOSS_REF_RELAY_MIN,
   PIXEL_UNITS, cellRoomOfWire, serpentFightId, worldRoom, CLOSE_REPLACED,
 } from '../src/net/wire.js';
-import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
-import { SERPENT_ATTACK_TABLE, SERPENT_TICK_MS, SERPENT_ABSENT_RETIRE_MS } from '../src/net/serpentBrain.js';
-import { sdRoomKey } from '../src/net/sdLaw.js';
+import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
+import { SERPENT_ATTACK_TABLE, SERPENT_TICK_MS, SERPENT_ABSENT_RETIRE_MS } from '../src/net/serpent/serpentBrain.js';
+import { sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { standService } from './accountDb.mjs';
-import { mintReceipt } from '../src/net/gateReceipt.js';
+import { mintReceipt } from '../src/net/gate/gateReceipt.js';
 import { bodiesMeasure, measure } from '../server-account/src/review.js';
 import { OnlineSession } from '../src/net/online.js';
 import { fakeSocketClass } from './fakeSocket.mjs';

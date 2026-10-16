@@ -36,7 +36,7 @@ cores. A real-game frame probe boots in a quarter of an hour at the default land
 instruments over the REAL modules instead, each a minute or less, and kept the real game for one before/after:
 
 - `tools/peerLab.mjs` - THE PEER LAB. The layers that draw other players - RemotePlayers (class sprites, dolls, the
-  steps', swings' and hooves' sounds), the walkers in Eye Of The Beholder's sets and the class skins (net/peerRiders.js),
+  steps', swings' and hooves' sounds), the walkers in Eye Of The Beholder's sets and the class skins (net/peer/peerRiders.js),
   the name layer - over the real renderer, the real data pipeline over the ARENA2, the real audio engine. N peers
   arrive together (a welcome's roster) while the camera turns, then walk. Per frame: each layer's JavaScript, the time
   between frames that is not idling (the asks' async tails), the long tasks; `PROFILE=`/`HEAP=`/`TRACE=` for a CPU
@@ -112,7 +112,7 @@ sets: 1,191 uploads -> 306, the run's script 1,210 -> 777 ms, the steady frame's
 
 ## PERF-PEERS5 — a decoded sprite turned in its own bytes
 
-The sprite door (net/peerRiders.js decodeUrl, the walkers' and riders'; player/eotbBody.js decodeSprite, the local
+The sprite door (net/peer/peerRiders.js decodeUrl, the walkers' and riders'; player/eotbBody.js decodeSprite, the local
 body's) decoded a PNG and handed it to the row converter, which copied it into a second raster to turn it bottom-up.
 The decode is that door's alone, so it is turned in place (`toColor32OrderInPlace`, formats/color32Order.js;
 `worldOrderColors(image, { owned: true })`): toColor32Order's answer byte for byte, without a raster a sprite. The peer

@@ -57,7 +57,7 @@
   },
   {
     "name": "AUDWB-B5-the-refusal-kept-from-the-host",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "      if (g.k === 'no') { say(gateRefusalText(g.m)); onRefused(g.m); return; }",
     "new": "      if (g.k === 'no') { say(gateRefusalText(g.m)); return; }",
     "tests": ["test/auditwb_court.test.js"]

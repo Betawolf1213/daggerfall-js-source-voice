@@ -5,7 +5,7 @@
 // (render/gatePass.js), its collider, its light, the eye's box and its names, the countdown over the screen, and
 // the door into the arena. Design: bible/11-Multiplayer/World-Bosses.md section 3.
 //
-// NOTHING HERE IS SAVED OR SENT. Where and when a gate stands is the clock's (net/gateLaw.js) over the map files
+// NOTHING HERE IS SAVED OR SENT. Where and when a gate stands is the clock's (net/gate/gateLaw.js) over the map files
 // (systems/gate/gateSite.js) - the omen hands it over (systems/gate/gateOmen.js standing()), and this pool stands the stone
 // where that says, every frame, in THIS scene's frame: the pixel's translation plus the spot (the streaming host's
 // own sum), so a floating-origin recentre moves the gate with the world and the collider is stood again when its
@@ -30,7 +30,7 @@ import { buildGateModel, gateArchProfile, insideGateStone, GATE_ARCHIVE, GATE_HE
 import { gateArt } from '../world/gate/gateArt.js';
 import { GatePassRenderer, gateSpinRate } from '../render/gatePass.js';
 import { gateSceneXZ } from '../systems/gate/gateOmen.js';
-import { gateYaw, gatePhase, gateCountdown, countdownText, countdownWords, gateModsOf, gateBossOf, GATE_RISE_MS, GATE_COLLAPSE_MS } from '../net/gateLaw.js';
+import { gateYaw, gatePhase, gateCountdown, countdownText, countdownWords, gateModsOf, gateBossOf, GATE_RISE_MS, GATE_COLLAPSE_MS } from '../net/gate/gateLaw.js';
 import { marksCardModel } from '../ui/gateMarksView.js';   // WB9a: tonight's marks, over the screen before the gate is entered
 import { trs } from '../world/mat4.js';
 import { RAY_DISTANCE } from '../player/activate.js';
@@ -257,7 +257,7 @@ export function createGatePool({
         const cd = gateCountdown(g.t, now(), place.phase);
         banner(cd ? `${GATE_TEXT.name} - ${cd.to === 'collapse' ? 'sealed, ' : ''}${countdownWords(cd)}` : null);   // GATE-COLLAPSE: the sealed hours count down to the collapse
         // WB9a (Mac: "Allow people to see the modifers/trial as a popup before it starts"): TONIGHT'S MARKS beside the
-        // countdown, while it stands - the day's draw (net/gateLaw.js gateModsOf), which is what the relay's fight is
+        // countdown, while it stands - the day's draw (net/gate/gateLaw.js gateModsOf), which is what the relay's fight is
         // born under; a gate collapsing (its master fallen, or the Wrath) has none to show
         marks(cd && place.phase !== 'collapsing' ? marksCardModel(gateModsOf(g.day), gateBossOf(g.day), { mode: 'gate' }) : null);
       } else { banner(null); marks(null); }

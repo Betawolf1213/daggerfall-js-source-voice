@@ -516,10 +516,10 @@ RECORDED, NOT CHANGED:
 - **The referees' fist bounds** (BAL6-GAUNTLETS, read again by AUDIT CLAWS). Both clip a claim, never refuse it. The
   duel, the siege, the Royal Tourney, a siege work and the wild zone roll through the striker's sheet of
   `combat/duelCombat.js` (duelAttackerOf - against the neutral stand-in since AUDIT C&C H5), which holds every stat and
-  skill at 100 at most: there the siege's bound (`net/siegeRef.js` siegeBlowMax: the bare
+  skill at 100 at most: there the siege's bound (`net/siege/siegeRef.js` siegeBlowMax: the bare
   hand's 21 at skill 100 and the bonuses at their caps, x2) holds a beast in Daedric gauntlets with every bonus at its
   cap - 55 of its 56 before the critical and 110 of 112 after under the overhaul, 52 in DFU's core. The arena strikes
-  through the real entity, and its cap (`net/arenaLaw.js`: a bare hand's 41 at the softcap's 200, ARENA_MOD_MAX's 20,
+  through the real entity, and its cap (`net/arena/arenaLaw.js`: a bare hand's 41 at the softcap's 200, ARENA_MOD_MAX's 20,
   x2) already clips a level-30 beast's top critical, the beast's +30 Critical Strike taking the overhaul's multiplier
   past x2 (x2.3 at 130): a Khajiit hand-to-hand expert's bare critical 127 (5 clipped), in Daedric 140 (18). Both are
   the relay's, and neither moved here.
@@ -689,15 +689,15 @@ BAL2's law for the foes - one rule for every striker - had not reached the refer
    backstab at all (`combat/duelCombat.js`), and AUDIT WB11 W2 found and fixed the same yaw-0 back on the crystals.
 
 THE LAWS. Every harm a fighter deals - blows and casts together, so a blade and a spell are never two ceilings - is at
-most `SIEGE_HARM` (`net/siegeRef.js`: the casts' own 180 in any 5 s), in `refereeBlow` and `refereeCast`, the one
-referee of the duel (`net/duelRef.js`), the Wild Zone (`net/wildRef.js`) and the siege's room (`server/src/index.js`).
+most `SIEGE_HARM` (`net/siege/siegeRef.js`: the casts' own 180 in any 5 s), in `refereeBlow` and `refereeCast`, the one
+referee of the duel (`net/duel/duelRef.js`), the Wild Zone (`net/wild/wildRef.js`) and the siege's room (`server/src/index.js`).
 A claim past it is judged and lands nothing (the striker's `clipped` counts it); a heal is no harm; a room's fighter
 from before BAL8 has dealt none. The arena's swing and shaft doors hand the rival no facing (`scenes/dungeonContext.js`:
 `_backFacing = false`, `playerFeet: null`) - no backstab at a player in any lane. The relay is `world197`.
 
 WHAT MOVES. Only a striker past 36 a second sustained: the kitted monk 45.8 -> 36; every measured sword, bow and gun
 stands (18.2, 26.5, 13). A spellsword's blows and casts share the one 180. The arena's bouts lose the free x3 from the
-rival's -z side. Not moved: the arena's own bucket (`net/arenaLaw.js` ARENA_BUCKET_RATE 40, depth 120), its own lane's.
+rival's -z side. Not moved: the arena's own bucket (`net/arena/arenaLaw.js` ARENA_BUCKET_RATE 40, depth 120), its own lane's.
 
 RECORDED, NOT CHANGED:
 

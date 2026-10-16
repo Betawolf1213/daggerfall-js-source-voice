@@ -24,7 +24,7 @@
 // Pure: no clock of its own, no DOM, no network. Both ends read it.
 // ═══════════════════════════════════════════════════════════════════
 
-import { gateHash } from './gateLaw.js';   // the one mix every clock-law in the world rolls with
+import { gateHash } from './gate/gateLaw.js';   // the one mix every clock-law in the world rolls with
 import { skyClassicMinutes } from './skyLaw.js';   // TIME1: a UTC day's season and month are the SKY's (bible/06-Systems/Online-Time-Arc.md section 4)
 import { CLIMATES, REGION_NAMES } from '../formats/mapsTables.js';
 import { SEASONS, seasonValue, dateFromClassicMinutes } from '../systems/gameDate.js';

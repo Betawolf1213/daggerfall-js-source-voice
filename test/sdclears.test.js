@@ -12,8 +12,8 @@ import { fileURLToPath } from 'node:url';
 import { d1 } from './accountDb.mjs';
 import { createGuest } from '../server-account/src/accounts.js';
 import { claimSd, sdHonoursRoll } from '../server-account/src/sds.js';
-import { mintSdReceipt } from '../src/net/sdReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintSdReceipt } from '../src/net/superDungeon/sdReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64 } from '../src/net/identityToken.js';
 import { listSql, namesSql, sdSlot } from '../tools/sdClears.mjs';
 

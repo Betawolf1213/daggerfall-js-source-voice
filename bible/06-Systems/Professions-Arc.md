@@ -59,7 +59,7 @@ src/net/nodeLaw.js (the nodes). Appendix B lists them in one place.
    heard (`seen`), so a lost answer never cuts units the pack is about to get; and the count is a ceiling, not a census -
    a client that says it holds more than it does keeps its count uncut, bounded by what the service handed out.
 4. **THE NODES ARE THE CLOCK'S.** Which nodes exist today is a pure function of the UTC day and the map pixel, as the
-   Oblivion Gate's site is (`src/net/gateLaw.js`); **yields are rolled by the service**, never the client.
+   Oblivion Gate's site is (`src/net/gate/gateLaw.js`); **yields are rolled by the service**, never the client.
 5. **THE HANDS DO THE WORK** - DECIDED (Mac: "Active player involvement"). Every harvest is an act the player plays
    (section 5), and an act played well gives more - within a bound a modified client cannot break (5.1).
 6. **NO NEW COMMITTED ART IN THE FIRST SLICES** - DECIDED. Tools in the hand are DFU's own weapon sprites (and the
@@ -1145,7 +1145,7 @@ and reproduced each finding before it was fixed (`test/marketaudit.test.js`, `to
   failed read keeps the view's filters and the counters. U6: an act's word stays with its view. U7: another character's
   delivery says it waits for that one, and is not asked after.
 - **The rest, fixed (2026-10-05, Mac: "Fix everything").** Every realm act that pays out of the purse reserves through
-  one law, `net/realmGoldLaw.js` walletReserve: the payment's own undo (`systems/court.js` payUndoable - the purse and
+  one law, `net/realm/realmGoldLaw.js` walletReserve: the payment's own undo (`systems/court.js` payUndoable - the purse and
   its letters, then the account, each given back where it was, once) on a refusal or a `repeat`, and a wallet's whole-cost
   `credit` only where its `pay` answers none - the guild's founding and deposits, a room's rent, a home's claim, a decor
   piece and its change, as the market's gold buy; every online wallet's `pay` answers it (`world.js`, `worldModes.js`
@@ -1785,7 +1785,7 @@ instruction), and what was found (FACT):
   region signatures (4.7), the gems (4.6), smelting at a forge, the ores and ingots (610-630) and the stone (673-674)
   as items, the Prospector's compass, and the Court writs asking for metal and stone. **Not here, named**: the
   **Motherlodes** (section 6 - a relay room's socket check and the hub's warning; PROF2b) and **gate-touched ground**
-  (4.7 - the gate's pixel is the client's to find, `src/net/gateLaw.js`, and a receipt carries no pixel today, so
+  (4.7 - the gate's pixel is the client's to find, `src/net/gate/gateLaw.js`, and a receipt carries no pixel today, so
   three fighters cannot yet agree where it stood; PROF2b); Daedric smelting (its Daedra's Heart and Sigil Stone cannot
   enter the Stores until Hunting and the gate's gift put them there - law 3); the held map's marks; a vein's cracks.
 - **The kingdoms are one home.** FACT: nothing in the tree maps a region to a kingdom but SEAT0 4.3's table.
@@ -1990,7 +1990,7 @@ Mac: **"Lets keep moving"** (PROF3 after the merge of main). What the design abo
 - **The product record** (9.1): `p1.<claims>.<signature>` - the provenance id (16 hex digits, the service's CSPRNG,
   unique across the server), the account, the character, the recipe, the quality, the maker and the seed, and `a: 1`
   where the piece bears its maker's mark (a Masterwork, or a Master Joiner's furniture - AUDIT 30, so the name is the
-  service's word too) - signed with the account service's identity key (a raid receipt's shape, `net/raidReceipt.js`:
+  service's word too) - signed with the account service's identity key (a raid receipt's shape, `net/raid/raidReceipt.js`:
   the version inside the signed bytes, claim fields disjoint from every other signed shape's). The maker's name is
   `recipeLaw.js` makerName's (controls and lone surrogates dropped, 32 characters, no pair split), and a record longer
   than its reader's 512 is never minted (AUDIT 30). The service keeps it in `products` (section 14: provenance,
@@ -2572,7 +2572,7 @@ Mac's instruction - "make the decisions ... This is your baby"), and what was fo
   commission move Marks, so they are open where the professions and the Marks both are; the note's button where the
   board also is. No switch of its own.
 - **Guild writs - who posts.** The **Guildmaster**, or an **Officer** within the guild's **writ budget** for the week
-  (11) - GUILD1's ranks, FACT integers (0 Guildmaster, 1 Officer, `src/net/guildLaw.js`); a Member or Recruit never
+  (11) - GUILD1's ranks, FACT integers (0 Guildmaster, 1 Officer, `src/net/guild/guildLaw.js`); a Member or Recruit never
   (`guild-rank`). The budget is the Guildmaster's to set on the Guild tab, 0 to 10,000,000 Marks (the Marks cap),
   **0 until set** (so an Officer posts nothing a Guildmaster did not allow); it is one budget for the guild's Officers
   together, spent by the escrow of what they post in the week (a withdrawn writ's escrow stays spent - the budget
@@ -4512,7 +4512,7 @@ Mac: "Do the not done" - section 44's three open items: a blow shook no camera; 
 
 **PEER-ACTS - another player's gathering, seen and heard.** RELAY_VERSION **world200**, its LAW row (world199 on its branch, renumbered past main's AUDIT ETHER-OW world199 at the merge).
 
-- **The wire** (`net/wire.js` validPose, `gatherOf`): `ga` the act - `net/peerGather.js` GATHER_POSE_ACTS' index + 1:
+- **The wire** (`net/wire.js` validPose, `gatherOf`): `ga` the act - `net/peer/peerGather.js` GATHER_POSE_ACTS' index + 1:
   the axe at a trunk, the pick at a stone, a kneel by hand, with the sickle, with the Basket, with the knife, the net
   wound, flying, waiting, tugged, hauled - for as long as the hand is on it (the act playing, and a finished act's last
   swing - GATHER-FEEL's `follow`, the tool the gatherer's own hand holds); `gm` the net's throw in whole metres while
@@ -4532,7 +4532,7 @@ Mac: "Do the not done" - section 44's three open items: a blow shook no camera; 
 - **Every lane reads the same fields** and keeps its own record of what it last saw (`peerGatherSwing`: a first sight
   begins nothing - an act met mid-way is not replayed; the Morrowind body asleep follows it as it follows the swings,
   AUDIT GATHER-FEEL W3):
-  - the Morrowind body (`net/peerBodies.js` `_arm`) holds the act's tool - the classic arm's own stand-ins
+  - the Morrowind body (`net/peer/peerBodies.js` `_arm`) holds the act's tool - the classic arm's own stand-ins
     (GATHER_POSE_TOOLS: the War Axe for the Wood-Axe, the Warhammer for the Pick-Axe, the Tanto for the Sickle, the
     Dagger for the knife; pinned equal to the hosts' AXE_HAND, PICK_HAND, SICKLE_HAND, KNIFE_HAND), drawn through
     setWeapon as Morrowind's own iron of each - and swings it on each blow with the strike the gatherer's hand draws it
@@ -4540,7 +4540,7 @@ Mac: "Do the not done" - section 44's three open items: a blow shook no camera; 
     the net puts the weapon away. While an act kneels, its camera sneaks: Morrowind's crouched idle (it has no kneel);
   - the class sprite (`net/remotePlayers.js` `_syncMobilePeer`) strikes on each blow and on the throw, and kneels as a
     yielding foe kneels (REVENANT-FATE's held hurt frame), a one-shot or a walk played through;
-  - Eye Of The Beholder's walker (`net/peerRiders.js` `walkerHands`) stands ready while a tool is out and sheathed while
+  - Eye Of The Beholder's walker (`net/peer/peerRiders.js` `walkerHands`) stands ready while a tool is out and sheathed while
     the hands hold none - never a bow drawn or a spell readied at an act - and plays its melee clip's second stroke on
     each blow (a chop on an axe or a hammer, an overhead one on a sword), its first - a sweep of the arm - on the throw
     (WALK_GATHER_STROKES).
@@ -4598,7 +4598,7 @@ is heard at the net; the chunks lie on the ground they fall on; a refused tree's
 `test/audit_gatherfeel.test.js` (22); `tools/mutants/auditgatherfeel.json` (81, all dead); forty-six records re-aimed
 by content, each dead. Every existing record on the files whose logic the audit moved - `scenes/gatherHost.js`,
 `systems/gatherSounds.js`, `systems/chopAct.js`, `systems/mineAct.js`, `systems/gatherBlow.js`, `systems/audio.js`,
-`net/peerGather.js`, `net/peerBodies.js`, `net/remotePlayers.js`, `scenes/mineHost.js`, `scenes/treeHost.js`,
+`net/peer/peerGather.js`, `net/peer/peerBodies.js`, `net/remotePlayers.js`, `scenes/mineHost.js`, `scenes/treeHost.js`,
 `render/enhancedLighting.js` - was put to a rejudge on the tree merged with MINE-PERKS, with the audit's own list
 whole: 927, in the lists' name order. At the merge (Mac: "hurry up") 529 had been judged - 527 dead, the two recorded
 equivalents alive, no survivor - the audit's own 81 among them; the other 398, from `gatherfeel2.json`'s last 53 to
@@ -4624,7 +4624,7 @@ AUDIT29-C5, `auditdrops.json` AD-E4, `cards2b.json` SB-wire-no-news, `disc12.jso
 VEIN-WASH-e, `mwnpc4.json` MWNPC4-peer-dead-arms and -counts-not-followed, `perfextb.json` PERF-EXT10-2,
 `werewolf1.json` WEREWOLF1-peer-wolf-holds-the-sword and `soc1.json` S38-version-not-bumped - each dead.
 Every existing record on a file whose logic the slice moved - `scenes/gatherHost.js`, `scenes/mineHost.js`,
-`net/remotePlayers.js`, `net/peerBodies.js`, `net/peerRiders.js`, `combat/techniqueFx.js`, `render/renderer.js`,
+`net/remotePlayers.js`, `net/peer/peerBodies.js`, `net/peer/peerRiders.js`, `combat/techniqueFx.js`, `render/renderer.js`,
 `render/enhancedLighting.js` and the slice's own three - was judged again: 1,381 (AUDIT GATHER-FEEL R14: 1,276 of other
 slices' lists and 105 of its own - its other two judged in its list's own run), of which 1,372 dead (67 of them after
 the three pins above were moved - `test/mac7.test.js`, `test/peerstride.test.js`, `test/blood1_decals.test.js` read the

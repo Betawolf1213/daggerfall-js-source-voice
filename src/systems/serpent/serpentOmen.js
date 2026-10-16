@@ -21,7 +21,7 @@
 import {
   serpentAt, serpentPhase, serpentCountdown, serpentCountdownWords, serpentClock, serpentMarked, serpentSwims, serpentBossOf,
   sightingLine, risingLine, sealLine, soundLine, SERPENT_RISE_MINUTE, SERPENT_SOUND_MINUTE, SERPENT_DAY_MINUTES,
-} from '../../net/serpentLaw.js';
+} from '../../net/serpent/serpentLaw.js';
 
 /** The phases that say a line on arrival, and the line each says. */
 const SAYS = Object.freeze({ omen: 'omen', rising: 'rise', hunt: 'rise', late: 'seal', sounding: 'sound' });
@@ -85,7 +85,7 @@ export function createSerpentOmen({ now, site, say, localTime = () => null, fell
     },
     current: () => current,
     /** SERPENT2: the serpent the clock is about and its site, found AHEAD of its bells (from its quiet on, once the omen is
-     *  ready) - what this game says to the hub, so the Discord herald's bells can name the place (net/serpentHerald.js).
+     *  ready) - what this game says to the hub, so the Discord herald's bells can name the place (net/serpent/serpentHerald.js).
      *  Null until then, or while no site is found. */
     ahead() {
       if (!settled) return null;

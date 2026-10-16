@@ -1,6 +1,6 @@
 // @ts-check
 // CARDS10 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 33): THE RELAY'S ILIAC TABLE AS THIS CLIENT SEES IT -
-// pure, the Hold'em client's twin (systems/card/cardRemoteTable.js). The relay deals and runs the game (net/iliacTable.js);
+// pure, the Hold'em client's twin (systems/card/cardRemoteTable.js). The relay deals and runs the game (net/iliac/iliacTable.js);
 // this keeps what it said - the room's table (`state`: the seats, the game as a spectator sees it, the clock), this
 // player's own view of the game when he sits in it (`mine`: his hand, his plays) - and answers the view the panel and
 // the cloth read: his own while he plays, the spectator's while he watches. Nothing here deals, judges or keeps a card.
@@ -37,7 +37,7 @@ export class RemoteIliacTable {
     if (typeof f.receipt === 'string') { this.receipts.push(f.receipt); return []; }
     if (f.mine) { this.mine = f.mine; this.error = null; return []; }
     if (!f.state && Array.isArray(f.events)) {
-      // AUDIT CARDS-6 C8: a seat's commit said alone (net/iliacTable.js iliacCommit) - the table I was told, that seat committed
+      // AUDIT CARDS-6 C8: a seat's commit said alone (net/iliac/iliacTable.js iliacCommit) - the table I was told, that seat committed
       for (const e of f.events) { const pl = e.t === 'commit' ? this.state?.game?.players?.[e.seat] : null; if (pl) pl.committed = true; }
       return f.events;
     }

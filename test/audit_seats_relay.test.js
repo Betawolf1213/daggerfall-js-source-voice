@@ -1,6 +1,6 @@
 // AUDIT-SEATS (2026-10-01, Mac: "We need to do a comprehensive audit on everything and finish the not done"): THE SEATS
 // ARC'S RELAY, AUDITED - every finding reproduced here before its fix and pinned after it, over the real Room on its fake
-// sockets (test/fakeRoom.mjs), the real referee (net/siegeRef.js), the real receipts (net/siegeReceipt.js) and, for the
+// sockets (test/fakeRoom.mjs), the real referee (net/siege/siegeRef.js), the real receipts (net/siege/siegeReceipt.js) and, for the
 // late pass, the real account Worker (test/accountDb.mjs). bible/11-Multiplayer/Seats-Arc.md 6.1-6.8, 7.3, 7.6, 9.2, 16;
 // `06-Systems/Online-Arc.md` PVP-REF, SEAT2a, CROWN1.
 //
@@ -13,13 +13,13 @@
 //   T3  a disconnected fighter's place: kept five minutes, then a substitute's; back at camp with the next wave
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as ref from '../src/net/siegeRef.js';
+import * as ref from '../src/net/siege/siegeRef.js';
 import {
   siegeRoomKey, royalRoomKey, SIEGE_UNITS_PER_M, SIEGE_LENGTH_MS, SIEGE_FIGHTERS_MAX, SIEGE_SPEED,
   refereeStep, battleStep, newBattle, fieldOf, siegeHeld, royalAsk, royalAccept, royalEnd, royalLadder,
-} from '../src/net/siegeRef.js';
+} from '../src/net/siege/siegeRef.js';
 import { mintSiegeOrder, verifyOrder, _b64url } from '../src/net/identityToken.js';
-import { mintSiegeReceipt, mintRoyalReceipt, readSiegeReceipt, verifySiegeReceipt, siegeReceiptValid, royalReceiptValid, SIEGE_RECEIPT_TTL_S } from '../src/net/siegeReceipt.js';
+import { mintSiegeReceipt, mintRoyalReceipt, readSiegeReceipt, verifySiegeReceipt, siegeReceiptValid, royalReceiptValid, SIEGE_RECEIPT_TTL_S } from '../src/net/siege/siegeReceipt.js';
 import { royalStandings, SIEGE_SIDE_MAX, seatWeekOf, seatWeekStartMs } from '../src/net/townSeatLaw.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
 import { cellRoomOfWire, PIXEL_UNITS, WORLD_CELL, POSE_HZ_MAX, HELLO_HZ_MAX, CLOSE_REPLACED } from '../src/net/wire.js';

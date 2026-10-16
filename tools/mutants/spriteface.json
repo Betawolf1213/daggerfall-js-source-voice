@@ -71,7 +71,7 @@
   },
   {
     "name": "SPRITEFACE-the-poses-facing-hung",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "  f.yaw = eye ? portrayedYaw(view, [eye[0] - feet[0], 0, eye[2] - feet[2]]) : null;",
     "new": "  f.yaw = eye ? yaw : null;",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "SPRITEFACE-a-peers-line-reversed",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "  f.yaw = eye ? portrayedYaw(view, [eye[0] - feet[0], 0, eye[2] - feet[2]]) : null;",
     "new": "  f.yaw = eye ? portrayedYaw(view, [feet[0] - eye[0], 0, feet[2] - eye[2]]) : null;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SPRITEFACE-faced-undrawn",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    faceOf: (id) => { const r = figs.get(id); return r?.batch && r.face && r.face.yaw !== null ? r.face : null; },",
     "new": "    faceOf: (id) => { const r = figs.get(id); return r?.face ?? null; },",
     "tests": [

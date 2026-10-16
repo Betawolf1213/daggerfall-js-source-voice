@@ -87,7 +87,7 @@ for (const [W, H, width] of [[1440, 900, 'desktop'], [800, 600, 'narrow'], [390,
       await page.evaluate(async () => {
         const AB = await import('/src/systems/arena/arenaBoard.js');
         const { mountArenaWindow } = await import('/src/ui/arenaWindow.js');
-        const L = await import('/src/net/arenaLaw.js');
+        const L = await import('/src/net/arena/arenaLaw.js');
         window.__arenaView.unmount();
         const atS = (n, d) => L.ARENA_SEASON_EPOCH_S + (n - 1) * L.ARENA_SEASON_S + (d - 1) * 86400 + 3600;
         const climb = (n) => L.arenaLadderOf(Array.from({ length: n }, (_, k) => ({ tier: Math.floor(k / 4), bout: k % 4 })), { wins: n, losses: 3, best: 5 });

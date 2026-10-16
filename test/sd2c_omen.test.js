@@ -3,14 +3,14 @@
 // over its pixel seen from SD_OMEN_PX round and a word in the taverns of its city; once found, its ring on the held map,
 // its mark on the compass inside SD_COMPASS_M, its row in the Timers window and its note under the red seal, until it
 // is gone.
-import { sdMarksOf, sdEndingOf } from '../src/net/sdMarks.js';   // SD18c (PIN MOVED): a Hollow's Ending in its words
+import { sdMarksOf, sdEndingOf } from '../src/net/superDungeon/sdMarks.js';   // SD18c (PIN MOVED): a Hollow's Ending in its words
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { sdOmenLight, sdOmenSeen, sdMapMark, sdNoticeCard, sdRumor, sdRumorLine, sdStateWords, SD_OMEN_PX, SD_OMEN_KINDLE_MS, SD_OMEN_FADE_MS, SD_RING_R, SD_COMPASS_M, SD_RUMOR_CHANCE } from '../src/systems/superDungeon/sdOmen.js';
 import { SdOmenPassRenderer, SD_OMEN_COLOR } from '../src/render/sdOmenPass.js';
 import { BEACON_VS, BEACON_FS, BEACON_RADIUS_M, BEACON_COLOR, beaconVertices } from '../src/render/gatePass.js';
-import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
+import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
 import { readGateMark, gateMarkKey } from '../src/ui/gateMapMark.js';
 import { eventTimerRows } from '../src/systems/eventTimers.js';
 import { TIMER_KINDS } from '../src/ui/enhancedTimers.js';

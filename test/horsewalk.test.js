@@ -4,7 +4,7 @@
 // IsMovingLessThanHalfSpeed, the gallop on the ride base as ever; systems/transport.js setRideWalk; systems/upkeep/upkeepRuntime.js
 // rideWalks), and everything that reads the gait: the riding sprite and its clop (systems/riding.js, player/mountRig.js),
 // the peers' clop (the pose's `hs`, motor.js slowRide), the 3D horse under its rider (world/horseModel.js gaitFor's
-// `gallops`, world/horseRig.js, player/mwView.js, net/peerBodies.js), the saddle panel (ui/enhancedSaddle.js,
+// `gallops`, world/horseRig.js, player/mwView.js, net/peer/peerBodies.js), the saddle panel (ui/enhancedSaddle.js,
 // scenes/saddleHost.js), a town under Roleplay & Realism (TOWN-GALLOP: Galloping In Towns on, as the port ships it), the
 // Features row, the Horses tutorial and the four hosts.
 import { test } from 'node:test';
@@ -285,7 +285,7 @@ test('HORSE-WALK THE 3D HORSE UNDER ITS RIDER: a slow ride (gallops false - the 
   rig.release(h);
   // the player's horse holds to the host's slow ride, a peer's to its pose's hs
   assert.match(rd('src/player/mwView.js'), /look: horse\.look \| 0, gallops: !horse\.slow \}\);/);
-  assert.match(rd('src/net/peerBodies.js'), /look: shown\.rc \| 0, gallops: !shown\.hs \}\);/);
+  assert.match(rd('src/net/peer/peerBodies.js'), /look: shown\.rc \| 0, gallops: !shown\.hs \}\);/);
 });
 
 test('HORSE-WALK THE SADDLE PANEL SAYS IT: Walking where horse care walks the horse, Galloping on the run, Trotting at DFU\'s ride (care off, or on the road), Rolling on a bench, Standing still; the host reads the very walk the motor took (its rideWalking, handed by the host\'s frame - HORSE-TIERS, PIN MOVED: the motor alone knows a gallop asked and refused), and the panel draws it (mutants: HORSEWALK-saddle-trots, -saddle-cart-walks, -saddle-host-unread, -saddle-panel-unread)', () => {

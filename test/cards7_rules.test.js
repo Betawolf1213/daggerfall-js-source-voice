@@ -11,8 +11,8 @@ import {
   newGame, legalPlays, commit, playsRefusal, reveal, result, deckValid, iliacView, powers, revealOrder, costOf, holdingRoomOf,
   fxText, fxRefusal, ILIAC_DECK_SIZE, ILIAC_COPIES_MAX, ILIAC_LEGENDARY_COPIES_MAX, ILIAC_TURNS, ILIAC_MAGICKA_MAX,
   ILIAC_HAND_START, ILIAC_HAND_MAX, ILIAC_HOLDINGS, ILIAC_ROOM, ILIAC_TRIGGERS, ILIAC_VERBS, ILIAC_TARGETS, ILIAC_PICKS,
-} from '../src/net/iliacHand.js';
-import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
+} from '../src/net/iliac/iliacHand.js';
+import { ILIAC_CARDS, ILIAC_LOCATIONS, STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
 
 // ── the fixtures: real games from newGame, their hands and boards set from the players' own decks ──
 

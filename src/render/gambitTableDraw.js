@@ -29,7 +29,7 @@ import { KG_COLS, KG_ROWS, KG_ROSTER, KG_TILE, KG_LAYOUTS, KG_OPEN_FIELD } from 
 import { plateModel } from './cardTableDraw.js';
 import { paintIliacCard, paintIliacBack } from './iliacCardFaces.js';
 import { paintFace, RANK_KING } from './cardFaces.js';
-import { cardById } from '../net/iliacCards.js';
+import { cardById } from '../net/iliac/iliacCards.js';
 import { FOE_CARDS } from '../systems/card/cardSources.js';
 import { CARD_W, CARD_L, CARD_T, ARC_HEIGHT } from '../world/card/cardMotion.js';
 import { toColor32 } from '../formats/color32Order.js';

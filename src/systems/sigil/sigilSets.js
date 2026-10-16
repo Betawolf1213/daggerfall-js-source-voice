@@ -235,7 +235,7 @@ export const SIGIL_SETS = Object.freeze({
   // SERPENT-SET (2026-10-05, Mac: "The serpent boss needs to use the currency from oblivion gate and have its own
   // equipment rewards"): THE OLD COIL'S OWN - an Aetheric set no world drop, shelf or Broker rolls; a ship that dealt
   // Sethrakul its share may find a piece in its hoard (systems/serpent/serpentSpoils.js). Its patron is no Daedra: Satakal, the
-  // World-Skin the Redguards say sheds the world as a snake sheds its skin (net/serpentLaw.js SERPENT_BOSSES).
+  // World-Skin the Redguards say sheds the world as a snake sheds its skin (net/serpent/serpentLaw.js SERPENT_BOSSES).
   coilscale: Object.freeze({
     id: 'coilscale', name: "Sethrakul's Coilscale", prince: 'Satakal', colour: '#3a9ad9', aetheric: true,
     role: 'The Old Coil, shed and worn',

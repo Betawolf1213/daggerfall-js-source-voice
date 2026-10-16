@@ -6,13 +6,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../server/src/index.js';
 import { fakeRooms } from './fakeRoom.mjs';
-import { readArenaReceipt, verifyArenaReceipt } from '../src/net/arenaReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { readArenaReceipt, verifyArenaReceipt } from '../src/net/arena/arenaReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import {
   ARENA_HALL, arenaBoutRoom, ARENA_FLOOR_CENTRE, MATCH_ACCEPT_MS, MATCH_WIDEN_MS, ARENA_JOIN_WAIT_MS, ARENA_GONE_MS, ARENA_TICK_MS,
   pvpVitality, ARENA_SPECTATORS_MAX, validArenaIn, validArenaOut, arenaBlowCap, ARENA_HIT, ARENA_BUCKET_DEPTH, MATCH_REPAIR_MS,
   pairQueue, ARENA_BUCKET_RATE,
-} from '../src/net/arenaLaw.js';
+} from '../src/net/arena/arenaLaw.js';
 import { parseClient, relaySupportsArena, RELAY_VERSION } from '../src/net/wire.js';
 import { COUNT_MS, callMs, WALK_MAX_MS, END_HOLD_MS, VERDICT_MS, HEAL_HOLD_MS } from '../src/systems/arena/arenaBout.js';
 

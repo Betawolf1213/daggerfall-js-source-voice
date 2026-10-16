@@ -370,7 +370,7 @@
  },
  {
   "name": "CROWN1C-claims-key",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "export const ROYAL_CLAIMS_KEY = 'crown1.royalClaims';",
   "new": "export const ROYAL_CLAIMS_KEY = 'seat2a.siegeClaims';",
   "tests": [
@@ -379,7 +379,7 @@
  },
  {
   "name": "CROWN1C-claims-read",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "storeKey: ROYAL_CLAIMS_KEY, read: readRoyalReceipt,",
   "new": "storeKey: ROYAL_CLAIMS_KEY, read: readSiegeReceipt,",
   "tests": [
@@ -388,7 +388,7 @@
  },
  {
   "name": "CROWN1C-claims-settles",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "settles: royalClaimSettles, max: ROYAL_CLAIMS_MAX });",
   "new": "max: ROYAL_CLAIMS_MAX });",
   "tests": [
@@ -397,7 +397,7 @@
  },
  {
   "name": "CROWN1C-claims-over",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "  if (r?.error === 'royal-none' || r?.error === 'royal-over') return true;",
   "new": "  if (r?.error === 'royal-none') return true;",
   "tests": [
@@ -406,7 +406,7 @@
  },
  {
   "name": "CROWN1C-claims-mend",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "  if (r?.error === 'royal-none' || r?.error === 'royal-over') return true;\n  if (r?.error === 'receipt') return !MENDABLE.includes(r?.why);",
   "new": "  if (r?.error === 'royal-none' || r?.error === 'royal-over') return true;\n  if (r?.error === 'receipt') return true;",
   "tests": [
@@ -415,7 +415,7 @@
  },
  {
   "name": "CROWN1C-claims-max",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": "export const ROYAL_CLAIMS_MAX = 40;",
   "new": "export const ROYAL_CLAIMS_MAX = 16;",
   "tests": [

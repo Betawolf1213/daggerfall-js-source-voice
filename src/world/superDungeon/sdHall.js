@@ -1,9 +1,9 @@
 // @ts-check
 // SD6c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 8): THE ORRERY'S HALL, MADE -
-// where its parts stand and the meshes they are, in the realm's frame (net/sdBrain.js) and drawn in the dungeon's.
+// where its parts stand and the meshes they are, in the realm's frame (net/superDungeon/sdBrain.js) and drawn in the dungeon's.
 // Pure: the scene (scenes/sdHall.js) uploads, stands and moves them.
 //
-//   THE STONES - six on the hall's ring (net/sdBrain.js SD_STONE_POS), each facing the hall's centre: its dial at chest
+//   THE STONES - six on the hall's ring (net/superDungeon/sdBrain.js SD_STONE_POS), each facing the hall's centre: its dial at chest
 //     height with a brass notch over its twelfth hour, its sign above, a brass cap, and TWO HANDLES - the right (as you
 //     face it) turns it forward, the left back. Each stone's HAND is its own mesh, turned on its dial by a matrix of its
 //     own (handMatrix): clockwise as you face it, the twelfth hour straight up. The law's slabs, caps and handles, and
@@ -29,7 +29,7 @@
 // The orrery overhead is world/superDungeon/sdOrreryModel.js.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { SD_ORRERY, SD_STONES, SD_STONE_POS, SD_STONE_BEARINGS, SD_REALM_ORIGIN, realmToDungeon } from '../../net/sdBrain.js';
+import { SD_ORRERY, SD_STONES, SD_STONE_POS, SD_STONE_BEARINGS, SD_REALM_ORIGIN, realmToDungeon } from '../../net/superDungeon/sdBrain.js';
 import { faces } from '../gate/gateModel.js';
 import { realmIsland, packRealmFaces, SD_REALM_ARCHIVE, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_ISLAND_SIDES } from './sdRealm.js';
 import { SD_HALL_ATLAS, SD_HALL_ATLAS_RECORD, SD_HALL_GLOW_RECORD, SD_HALL_BAND_RECORD, SD_HALL_BRIDGE_RECORD, SD_HALL_EMBER_DIM_RECORD, SD_HALL_FLASH_RECORD, SD_HALL_GEM_RECORD, atlasUv } from './sdHallArt.js';

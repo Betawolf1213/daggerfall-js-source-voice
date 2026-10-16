@@ -13,7 +13,7 @@ import {
   SEAT_WEEK_ZERO_S, WRIT_POWERS, commissionable, commissionUnyielded, writMay, guildTakeMay, writDeliverMay,
 } from '../src/net/writLaw.js';
 import { ONLINE_EPOCH_MS } from '../src/net/wire.js';
-import { GUILD_POWERS } from '../src/net/guildLaw.js';
+import { GUILD_POWERS } from '../src/net/guild/guildLaw.js';
 
 test('AUDIT 31 S3, L9: a won auction waits seven days past its end for its seller\'s cap; no kit is a Masterwork, so none is auctioned', () => {
   assert.equal(AUCTION_GRACE_S, 7 * 86_400);

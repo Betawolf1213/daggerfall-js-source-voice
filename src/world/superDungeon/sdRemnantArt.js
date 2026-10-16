@@ -7,7 +7,7 @@
 //
 //   gold   - beaten gold plate, riveted, a low gleam of its own (an Echo stands outside time: it glows)
 //   silver - the same in silver
-//   SD18c: the ENDINGS' LIGHTS (records 25-30, one an Ending - net/sdMarks.js SD_ENDINGS' `light`): the light its heart,
+//   SD18c: the ENDINGS' LIGHTS (records 25-30, one an Ending - net/superDungeon/sdMarks.js SD_ENDINGS' `light`): the light its heart,
 //          its eyes and the Reset's Hearts burn with in a Hollow that keeps that Ending - its colour, and as much again
 //          its own light (the hall's glows' way, world/superDungeon/sdHallArt.js hallGlowArt)
 //
@@ -21,7 +21,7 @@
 //          the Echo window, white for the Reset), and the RIB LAMPS' strip lit 0-8 from the bottom in Mantella.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { SD_ENDINGS } from '../../net/sdMarks.js';
+import { SD_ENDINGS } from '../../net/superDungeon/sdMarks.js';
 import { SD_RAMP, SD_LIGHT } from './sdLook.js';
 import { image as kitImage, putTexel, texelAt, ramp, step, bayer, blendRgb, scale as kitScale, paletteOf, quantize } from './sdPixelKit.js';
 import { realmBrassArt } from './sdRealmArt.js';

@@ -8,11 +8,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeRoom } from './fakeRoom.mjs';
-import { validGambitOut, gambitTableValid, GAMBIT_FIRST_MS, GAMBIT_TURN_MS, GAMBIT_TURN_END_MS } from '../src/net/gambitTable.js';
+import { validGambitOut, gambitTableValid, GAMBIT_FIRST_MS, GAMBIT_TURN_MS, GAMBIT_TURN_END_MS } from '../src/net/gambit/gambitTable.js';
 import { autoFill, KG_POINT_BUDGET, reachable, KG_TILE, KG_COLS } from '../src/net/kingsGambit.js';
 import { parseClient, relaySupportsGambit, GAMBIT_RELAY_MIN, GAMBIT_FRAME_MAX } from '../src/net/wire.js';
 import { relayVersionAtLeast } from './relayVersion.mjs';
-import { STARTER_DECK } from '../src/net/iliacCards.js';
+import { STARTER_DECK } from '../src/net/iliac/iliacCards.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 
 const ROOM = 'interior:m100.200';

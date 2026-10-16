@@ -1,7 +1,7 @@
 [
   {
     "name": "REALM5-letters-before-coins",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  if (amount <= purse) { save.goldPieces = purse - amount; return true; }\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "REALM5-pays-past-its-reach",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  if (payableOf(save, region) < amount) return false;\n",
     "new": "",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "REALM5-bank-never-pays",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    a.accountGold -= take;\n",
     "new": "",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "REALM5-credit-to-purse-only",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  const a = bank == null ? null : accountOfSave(save, bank);",
     "new": "  const a = null;",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "REALM5-letters-never-count",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  const letters = (Array.isArray(save?.items) ? save.items : []).filter((it) => it?.templateIndex === REALM_LETTER_TEMPLATE).reduce((s, it) => s + whole(it.value), 0);",
     "new": "  const letters = 0;",
     "tests": [
@@ -129,7 +129,7 @@
   },
   {
     "name": "REALM5-book-never-reserves",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "        reserve: walletReserve(w, gold).reserve,   // MARKET-AUDIT: a refusal gives back exactly what it took\n        call: (/** @type {any} */ at) => this.door.deposit(",
     "new": "        call: (/** @type {any} */ at) => this.door.deposit(",
     "tests": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "REALM5-book-withdraw-uncredited",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "        apply: () => this.wallet().credit(gold, { letter }),\n",
     "new": "",
     "tests": [
@@ -148,7 +148,7 @@
   },
   {
     "name": "REALM5-book-deposit-no-region",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "this.door.deposit(character, gold, at, w.region?.() ?? null),",
     "new": "this.door.deposit(character, gold, at, null),",
     "tests": [

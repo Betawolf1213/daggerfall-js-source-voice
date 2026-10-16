@@ -1,7 +1,7 @@
 [
   {
     "name": "AC5-A-order-counts-down",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "sidePower(state, pw, h, p, (inst) => !inst.down), 0));",
     "new": "sidePower(state, pw, h, p), 0));",
     "tests": [
@@ -14,7 +14,7 @@
   },
   {
     "name": "AC5-A-powers-no-floor",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "for (const k of Object.keys(pw)) pw[k] = Math.max(0, pw[k]);",
     "new": "",
     "tests": [
@@ -27,7 +27,7 @@
   },
   {
     "name": "AC5-A-cost-no-floor",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "return Math.max(0, card.cost - off);",
     "new": "return card.cost - off;",
     "tests": [
@@ -40,7 +40,7 @@
   },
   {
     "name": "AC5-A-cost-down-discounts",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "    if (inst.down) continue;\n    for (const fx of cardOf(inst).fx) if (fx.on === 'ongoing' && fx.do === 'discount'",
     "new": "    for (const fx of cardOf(inst).fx) if (fx.on === 'ongoing' && fx.do === 'discount'",
     "tests": [
@@ -53,7 +53,7 @@
   },
   {
     "name": "AC5-A-cost-holding-any-kind",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "for (const fx of holdingCard(state, h).fx) if (fx.on === 'ongoing' && fx.do === 'discount' && fx.kind === card.kind) off += fx.n;",
     "new": "for (const fx of holdingCard(state, h).fx) if (fx.on === 'ongoing' && fx.do === 'discount') off += fx.n;",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "AC5-A-cost-other-players-discount",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "for (const inst of state.holdings[hh].sides[p]) {",
     "new": "for (const inst of [...state.holdings[hh].sides[0], ...state.holdings[hh].sides[1]]) {",
     "tests": [
@@ -79,7 +79,7 @@
   },
   {
     "name": "AC5-A-select-down-target",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "    if (inst.down) return false;\n",
     "new": "",
     "tests": [
@@ -92,7 +92,7 @@
   },
   {
     "name": "AC5-A-pick-weakest-last",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "fx.pick === 'weakest' ? pw[r.inst.uid] < pw[best.inst.uid]",
     "new": "fx.pick === 'weakest' ? pw[r.inst.uid] <= pw[best.inst.uid]",
     "tests": [
@@ -105,7 +105,7 @@
   },
   {
     "name": "AC5-A-pick-strongest-last",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": ": pw[r.inst.uid] > pw[best.inst.uid]) best = r;",
     "new": ": pw[r.inst.uid] >= pw[best.inst.uid]) best = r;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AC5-A-here-all-theirs-first",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "'here.all': () => [[...sideRefs(state, h, p), ...sideRefs(state, h, 1 - p)]],",
     "new": "'here.all': () => [[...sideRefs(state, h, 1 - p), ...sideRefs(state, h, p)]],",
     "tests": [
@@ -131,7 +131,7 @@
   },
   {
     "name": "AC5-A-here-one-pick",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "here: () => [sideRefs(state, h, 0), sideRefs(state, h, 1)],",
     "new": "here: () => [[...sideRefs(state, h, 0), ...sideRefs(state, h, 1)]],",
     "tests": [
@@ -144,7 +144,7 @@
   },
   {
     "name": "AC5-A-hand-max-8",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "while (k < n && pl.deck.length && pl.hand.length < ILIAC_HAND_MAX)",
     "new": "while (k < n && pl.deck.length && pl.hand.length <= ILIAC_HAND_MAX)",
     "tests": [
@@ -157,7 +157,7 @@
   },
   {
     "name": "AC5-A-token-uid-collide",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "turn: 1, over: false, nextUid: 2 * ILIAC_DECK_SIZE,",
     "new": "turn: 1, over: false, nextUid: ILIAC_DECK_SIZE,",
     "tests": [
@@ -170,7 +170,7 @@
   },
   {
     "name": "AC5-A-uid-tells-card",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": ".map((i, k) => ({ uid: p * ILIAC_DECK_SIZE + k, id: d[i] }))",
     "new": ".map((i, k) => ({ uid: p * ILIAC_DECK_SIZE + i, id: d[i] }))",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "AC5-A-locations-dupes",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "new Set(locations).size !== ILIAC_HOLDINGS || ",
     "new": "",
     "tests": [
@@ -196,7 +196,7 @@
   },
   {
     "name": "AC5-A-shape-len-room",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "plays.length > ILIAC_HAND_MAX) return 'shape';",
     "new": "plays.length > ILIAC_ROOM) return 'shape';",
     "tests": [
@@ -209,7 +209,7 @@
   },
   {
     "name": "AC5-A-room-off-by-one",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (units[h] > freeRoom(state, null, player, h)) return 'room';",
     "new": "if (units[h] >= freeRoom(state, null, player, h) && units[h]) return 'room';",
     "tests": [
@@ -222,7 +222,7 @@
   },
   {
     "name": "AC5-A-magicka-off-by-one",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (spend > pl.magicka) return 'magicka';",
     "new": "if (spend >= pl.magicka && spend) return 'magicka';",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "AC5-A-hand-dupe-ok",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "|| seen.has(x.card)) return 'hand';",
     "new": ") return 'hand';",
     "tests": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "AC5-A-spell-takes-room",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (card.kind === 'spell') { if (noSpells(state, x.holding)) return 'spell'; } else units[x.holding]++;",
     "new": "if (card.kind === 'spell') { if (noSpells(state, x.holding)) return 'spell'; } units[x.holding]++;",
     "tests": [
@@ -261,7 +261,7 @@
   },
   {
     "name": "AC5-A-commit-aliases",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "state.players[player].plays = plays.map((x) => ({ card: x.card, holding: x.holding }));",
     "new": "state.players[player].plays = plays;",
     "tests": [
@@ -274,7 +274,7 @@
   },
   {
     "name": "AC5-A-token-to-discard",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (!r.inst.token) state.players[r.p].discard.push",
     "new": "state.players[r.p].discard.push",
     "tests": [
@@ -287,7 +287,7 @@
   },
   {
     "name": "AC5-A-discard-as-form",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "discard.push({ uid: r.inst.uid, id: r.inst.id });",
     "new": "discard.push({ uid: r.inst.uid, id: r.inst.form ?? r.inst.id });",
     "tests": [
@@ -300,7 +300,7 @@
   },
   {
     "name": "AC5-A-move-no-wrap",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "for (let k = 1; k < ILIAC_HOLDINGS && to < 0; k++)",
     "new": "for (let k = 1; k < ILIAC_HOLDINGS - 1 && to < 0; k++)",
     "tests": [
@@ -313,7 +313,7 @@
   },
   {
     "name": "AC5-A-move-ignores-reserve",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (freeRoom(state, T, r.p, (r.h + k) % ILIAC_HOLDINGS) > 0)",
     "new": "if (freeRoom(state, null, r.p, (r.h + k) % ILIAC_HOLDINGS) > 0)",
     "tests": [
@@ -326,7 +326,7 @@
   },
   {
     "name": "AC5-A-summon-ignores-reserve",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "k < n && freeRoom(state, T, ctx.p, ctx.h) > 0",
     "new": "k < n && freeRoom(state, null, ctx.p, ctx.h) > 0",
     "tests": [
@@ -339,7 +339,7 @@
   },
   {
     "name": "AC5-A-transform-keeps-mod",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "        r.inst.mod = 0;\n",
     "new": "",
     "tests": [
@@ -352,7 +352,7 @@
   },
   {
     "name": "AC5-A-magicka-overwrites",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "state.players[ctx.p].bonus += n;",
     "new": "state.players[ctx.p].bonus = n;",
     "tests": [
@@ -365,7 +365,7 @@
   },
   {
     "name": "AC5-A-spell-no-holding-reveal",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "    holdingReveal(state, T, p, h);\n    state.players[p].discard.push(inst);",
     "new": "    state.players[p].discard.push(inst);",
     "tests": [
@@ -378,7 +378,7 @@
   },
   {
     "name": "AC5-A-down-event-names",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "ev.push({ t: 'play', p, uid: b.uid, holding: h, down: true }); return; }",
     "new": "ev.push({ t: 'play', p, uid: b.uid, id: b.id, holding: h, down: true }); return; }",
     "tests": [
@@ -391,7 +391,7 @@
   },
   {
     "name": "AC5-A-down-reveals",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "ev.push({ t: 'play', p, uid: b.uid, holding: h, down: true }); return; }",
     "new": "ev.push({ t: 'play', p, uid: b.uid, holding: h, down: true }); }",
     "tests": [
@@ -404,7 +404,7 @@
   },
   {
     "name": "AC5-A-end-order-seat",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "for (const p of order) for (const inst of state.holdings[h].sides[p]) uids.push(inst.uid);",
     "new": "for (const p of [0, 1]) for (const inst of state.holdings[h].sides[p]) uids.push(inst.uid);",
     "tests": [
@@ -417,7 +417,7 @@
   },
   {
     "name": "AC5-A-magicka-uncapped",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "pl.magicka = Math.min(ILIAC_MAGICKA_MAX, state.turn + pl.bonus);",
     "new": "pl.magicka = state.turn + pl.bonus;",
     "tests": [
@@ -430,7 +430,7 @@
   },
   {
     "name": "AC5-A-bonus-kept",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "pl.bonus = 0; }",
     "new": "}",
     "tests": [
@@ -443,7 +443,7 @@
   },
   {
     "name": "AC5-A-draw-order-seat",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "for (const p of order) T.events.push({ t: 'drew'",
     "new": "for (const p of [0, 1]) T.events.push({ t: 'drew'",
     "tests": [
@@ -456,7 +456,7 @@
   },
   {
     "name": "AC5-A-result-one-holding",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (count[0] >= 2) { winner = 0;",
     "new": "if (count[0] >= 1 && count[1] === 0) { winner = 0;",
     "tests": [
@@ -469,7 +469,7 @@
   },
   {
     "name": "AC5-A-result-no-power-tiebreak",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "} else if (total[0] !== total[1]) {",
     "new": "} else if (false) {",
     "tests": [
@@ -482,7 +482,7 @@
   },
   {
     "name": "AC5-A-view-shows-down",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "const seen = (p) => (inst) => !inst.down || p === viewer;",
     "new": "const seen = (p) => (inst) => true || p === viewer;",
     "tests": [
@@ -495,7 +495,7 @@
   },
   {
     "name": "AC5-A-view-power-leak",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "power: [0, 1].map((p) => sidePower(state, pw, h, p, seen(p))),",
     "new": "power: [0, 1].map((p) => sidePower(state, pw, h, p)),",
     "tests": [
@@ -508,7 +508,7 @@
   },
   {
     "name": "AC5-A-view-spectator-hands",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "...(p === viewer ? { hand:",
     "new": "...(p === viewer || viewer === -1 ? { hand:",
     "tests": [
@@ -521,7 +521,7 @@
   },
   {
     "name": "AC5-A-view-bonus-hidden",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "magicka: pl.magicka, bonus: pl.bonus, committed: !!pl.plays,",
     "new": "magicka: pl.magicka, committed: !!pl.plays,",
     "tests": [
@@ -534,7 +534,7 @@
   },
   {
     "name": "AC5-A-deck-legendary-rank",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": ">= LEGENDARY_RANK && k > ILIAC_LEGENDARY_COPIES_MAX",
     "new": "> LEGENDARY_RANK && k > ILIAC_LEGENDARY_COPIES_MAX",
     "tests": [
@@ -547,7 +547,7 @@
   },
   {
     "name": "AC5-A-fx-move-any",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (fx.do === 'move' && !OWN_TARGETS.includes(fx.to)) return 'target';",
     "new": "",
     "tests": [
@@ -560,7 +560,7 @@
   },
   {
     "name": "AC5-A-fx-loc-end-draw",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (loc && fx.on === 'end' && (fx.do === 'draw' || fx.do === 'magicka')) return 'verb';",
     "new": "",
     "tests": [
@@ -573,7 +573,7 @@
   },
   {
     "name": "AC5-A-fx-n-zero",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "fx.n >= 1 && fx.n <= ILIAC_MAGICKA_MAX",
     "new": "fx.n >= 0 && fx.n <= ILIAC_MAGICKA_MAX",
     "tests": [
@@ -586,7 +586,7 @@
   },
   {
     "name": "AC5-A-legal-no-early",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "  if (playsRefusal(state, player, []) !== null) return [];\n",
     "new": "",
     "tests": [
@@ -599,7 +599,7 @@
   },
   {
     "name": "AC5-A-reveal-one-commit",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (!state || state.over || !state.players[0].plays || !state.players[1].plays) return [];",
     "new": "if (!state || state.over || !state.players[0].plays) return [];",
     "tests": [
@@ -612,7 +612,7 @@
   },
   {
     "name": "AC5-A-unveil-silent",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (cards.length) T.events.push({ t: 'unveil', cards });",
     "new": "",
     "tests": [
@@ -625,7 +625,7 @@
   },
   {
     "name": "AC5-A-res-not-released",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "  T.res[p][h]--;\n",
     "new": "",
     "tests": [
@@ -638,7 +638,7 @@
   },
   {
     "name": "AC5-A-cat-giant-9",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "kind: 'unit', cost: 6, power: 10, tier: 'rare', tags: ['giant']",
     "new": "kind: 'unit', cost: 6, power: 9, tier: 'rare', tags: ['giant']",
     "tests": [
@@ -651,7 +651,7 @@
   },
   {
     "name": "AC5-A-cat-rat-cost-2",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "{ id: 'rat', name: 'Rat', kind: 'unit', cost: 1, power: 1,",
     "new": "{ id: 'rat', name: 'Rat', kind: 'unit', cost: 2, power: 1,",
     "tests": [
@@ -664,7 +664,7 @@
   },
   {
     "name": "AC5-A-cat-rose-no-knight",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "kind: 'unit', cost: 3, power: 4, tier: 'magic', tags: ['human', 'knight'], emblem: 'knight',\n    fx: [{ on: 'reveal', do: 'draw', n: 1 }]",
     "new": "kind: 'unit', cost: 3, power: 4, tier: 'magic', tags: ['human'], emblem: 'knight',\n    fx: [{ on: 'reveal', do: 'draw', n: 1 }]",
     "tests": [
@@ -677,7 +677,7 @@
   },
   {
     "name": "AC5-A-cat-lich-not-undead",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "tier: 'rare', tags: ['undead', 'mage'], emblem: 'lich',",
     "new": "tier: 'rare', tags: ['mage'], emblem: 'lich',",
     "tests": [
@@ -690,7 +690,7 @@
   },
   {
     "name": "AC5-A-cat-wayrest-2",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "fx: [{ on: 'ongoing', do: 'room', n: 3 }] }",
     "new": "fx: [{ on: 'ongoing', do: 'room', n: 2 }] }",
     "tests": [
@@ -704,7 +704,7 @@
   },
   {
     "name": "AC5-A-cat-rose-daedra-lord",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "fx: [{ on: 'reveal', do: 'summon', card: 'daedroth' }] }",
     "new": "fx: [{ on: 'reveal', do: 'summon', card: 'daedra-lord' }] }",
     "tests": [
@@ -718,7 +718,7 @@
   },
   {
     "name": "AC5-A-cat-clavicus-2",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "emblem: 'daedric',\n    fx: [{ on: 'ongoing', do: 'discount', kind: 'spell', n: 1 }] },\n",
     "new": "emblem: 'daedric',\n    fx: [{ on: 'ongoing', do: 'discount', kind: 'spell', n: 2 }] },\n",
     "tests": [
@@ -732,7 +732,7 @@
   },
   {
     "name": "AC5-A-cat-frostbite-1",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "tags: [], emblem: 'frost',\n    fx: [{ on: 'reveal', do: 'weaken', to: 'here.theirs', pick: 'weakest', n: 2 }] },\n",
     "new": "tags: [], emblem: 'frost',\n    fx: [{ on: 'reveal', do: 'weaken', to: 'here.theirs', pick: 'weakest', n: 1 }] },\n",
     "tests": [
@@ -746,7 +746,7 @@
   },
   {
     "name": "AC5-A-cat-sentinel-1-3",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "fx: [{ on: 'ongoing', do: 'buff', to: 'here', cost: [1, 2], n: 1 }] }",
     "new": "fx: [{ on: 'ongoing', do: 'buff', to: 'here', cost: [1, 3], n: 1 }] }",
     "tests": [
@@ -760,7 +760,7 @@
   },
   {
     "name": "AC5-A-cat-dagon-power-7",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "kind: 'prince', cost: 6, power: 6, tier: 'aetheric'",
     "new": "kind: 'prince', cost: 6, power: 7, tier: 'aetheric'",
     "tests": [
@@ -773,7 +773,7 @@
   },
   {
     "name": "AC5-A-cat-imp-cost-0",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "{ id: 'imp', name: 'Imp', kind: 'unit', cost: 1, power: 1,",
     "new": "{ id: 'imp', name: 'Imp', kind: 'unit', cost: 0, power: 1,",
     "tests": [
@@ -786,7 +786,7 @@
   },
   {
     "name": "AC5-A-cat-starter-swap",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "'host-of-the-horn', 'host-of-the-horn', 'lamia', 'priest-of-akatosh',\n]);",
     "new": "'host-of-the-horn', 'host-of-the-horn', 'lamia', 'priest-of-mara',\n]);",
     "tests": [
@@ -799,7 +799,7 @@
   },
   {
     "name": "AC5-A-cat-byid-undefined",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "export const cardById = (id) => BY_ID.get(id) ?? null;",
     "new": "export const cardById = (id) => BY_ID.get(id);",
     "tests": [
@@ -812,7 +812,7 @@
   },
   {
     "name": "AC5-A-cat-tags-unfrozen",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "const deepFreeze = (c) => Object.freeze({ ...c, tags: Object.freeze(c.tags.slice()),",
     "new": "const deepFreeze = (c) => Object.freeze({ ...c, tags: c.tags.slice(),",
     "tests": [
@@ -825,7 +825,7 @@
   },
   {
     "name": "AC5-A-cat-ancient-lich-all",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "{ on: 'ongoing', do: 'buff', to: 'all.mine', tag: 'undead', n: 1 }] }",
     "new": "{ on: 'ongoing', do: 'buff', to: 'here.mine', tag: 'undead', n: 1 }] }",
     "tests": [
@@ -839,7 +839,7 @@
   },
   {
     "name": "AC5-A-cat-hold-spells-ok",
-    "file": "src/net/iliacCards.js",
+    "file": "src/net/iliac/iliacCards.js",
     "old": "fx: [{ on: 'ongoing', do: 'veil' }, { on: 'ongoing', do: 'nospell' }] }",
     "new": "fx: [{ on: 'ongoing', do: 'veil' }] }",
     "tests": [
@@ -1754,7 +1754,7 @@
   },
   {
     "name": "AC5-E-S-C1-repeat-pays",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "apply: (/** @type {any} */ a) => { if (!a?.data?.repeat) wallet(x.reg).pay(x.amount); }",
     "new": "apply: (/** @type {any} */ a) => { wallet(x.reg).pay(x.amount); }",
     "tests": [
@@ -1777,7 +1777,7 @@
   },
   {
     "name": "AC5-E-S-C1-no-apply",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "...(first ? { reserve: () => wallet(x.reg).pay(x.amount) } : { apply: (/** @type {any} */ a) => { if (!a?.data?.repeat) wallet(x.reg).pay(x.amount); } }),",
     "new": "...(first ? { reserve: () => wallet(x.reg).pay(x.amount) } : {}),",
     "tests": [
@@ -1800,7 +1800,7 @@
   },
   {
     "name": "AC5-E-S-C2-any-word",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "if (r && !r.ok && cardStakeRefused(r.error))",
     "new": "if (r && !r.ok && !r.unknown)",
     "tests": [
@@ -1823,7 +1823,7 @@
   },
   {
     "name": "AC5-E-S-C2-offline-refusal",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "|| e === 'realm-gold');",
     "new": "|| e === 'realm-gold' || e === 'lease');",
     "tests": [
@@ -1846,7 +1846,7 @@
   },
   {
     "name": "AC5-E-S-C3-ack-unkept",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "      if (!read(CARD_RECEIPTS_KEY).some((x) => x.j === c.j)) return null;\n",
     "new": "",
     "tests": [
@@ -1869,7 +1869,7 @@
   },
   {
     "name": "AC5-E-S-C4-file-to-player",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "c: stake?.c ?? null,",
     "new": "c: stake?.c ?? character(),",
     "tests": [
@@ -1892,7 +1892,7 @@
   },
   {
     "name": "AC5-E-S-E2-latch",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "claiming ??= (async () => {",
     "new": "claiming = (async () => {",
     "tests": [
@@ -1915,7 +1915,7 @@
   },
   {
     "name": "AC5-E-S-C8-one-round",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "&& !tried.has(x.j))).length;)",
     "new": "&& !tried.size)).length;)",
     "tests": [
@@ -1938,7 +1938,7 @@
   },
   {
     "name": "AC5-E-S-A4-signature-dead",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "'shape', 'version', 'unsigned',",
     "new": "'shape', 'version', 'unsigned', 'signature',",
     "tests": [
@@ -1961,7 +1961,7 @@
   },
   {
     "name": "AC5-E-S-A4-any-receipt-refusal",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "(r?.error === 'cards-receipt' && CARD_RECEIPT_DEAD.includes(r?.why))",
     "new": "(r?.error === 'cards-receipt')",
     "tests": [
@@ -1984,7 +1984,7 @@
   },
   {
     "name": "AC5-E-S-claim-bank-repeat",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "if (!a?.data?.repeat && Number.isSafeInteger(g) && g > 0) wallet(k.reg).bank(g);",
     "new": "if (Number.isSafeInteger(g) && g > 0) wallet(k.reg).bank(g);",
     "tests": [
@@ -2007,7 +2007,7 @@
   },
   {
     "name": "AC5-E-S-C6-fit-oldest",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "const i = out.findIndex((x) => x.sat);",
     "new": "const i = -1;",
     "tests": [
@@ -2030,7 +2030,7 @@
   },
   {
     "name": "AC5-E-S-C6-kept-full-off",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "if (read(CARD_STAKES_KEY).filter((x) => !x.sat).length >= CARD_KEPT_MAX) return { ok: false, error: 'cards-kept-full' };",
     "new": "",
     "tests": [
@@ -2053,7 +2053,7 @@
   },
   {
     "name": "AC5-E-S-void-at-once",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "t - x.at >= CARD_VOID_AFTER_MS",
     "new": "t - x.at >= 0",
     "tests": [
@@ -2076,7 +2076,7 @@
   },
   {
     "name": "AC5-E-S-void-sat",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "x.room === room && x.order && !x.sat &&",
     "new": "x.room === room && x.order &&",
     "tests": [
@@ -2099,7 +2099,7 @@
   },
   {
     "name": "AC5-E-S-prune-early",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "!(t - x.at > CARD_STAKE_KEEP_MS)",
     "new": "!(t - x.at > CARD_VOID_AFTER_MS)",
     "tests": [
@@ -2122,7 +2122,7 @@
   },
   {
     "name": "AC5-E-S-elsewhere-here",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "filter((x) => x.room !== room && x.c === character()",
     "new": "filter((x) => x.c === character()",
     "tests": [
@@ -2145,7 +2145,7 @@
   },
   {
     "name": "AC5-E-S-recover-other-char",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "filter((y) => !y.order && y.c === character())",
     "new": "filter((y) => !y.order)",
     "tests": [
@@ -2168,7 +2168,7 @@
   },
   {
     "name": "AC5-E-S-topup-flag-lost",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "...(x.topup ? { topup: true } : {}) }),",
     "new": "}),",
     "tests": [
@@ -2191,7 +2191,7 @@
   },
   {
     "name": "AC5-E-S-voiding-noop",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "seated(id) { write(CARD_STAKES_KEY, read(CARD_STAKES_KEY).map((x) => (x.id === id ? { ...x, sat: true } : x))); },",
     "new": "seated(id) { void id; },",
     "tests": [
@@ -3983,7 +3983,7 @@
   },
   {
     "name": "AC5-A-order-tie-p1",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "return total[1] > total[0] ? [1, 0] : [0, 1];",
     "new": "return total[1] >= total[0] ? [1, 0] : [0, 1];",
     "tests": [
@@ -3998,7 +3998,7 @@
   },
   {
     "name": "AC5-A-select-self-down",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "return r && !r.inst.down ? [r] : [];",
     "new": "return r ? [r] : [];",
     "tests": [
@@ -4013,7 +4013,7 @@
   },
   {
     "name": "AC5-A-down-end-text",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (!at || at.inst.down) continue;",
     "new": "if (!at) continue;",
     "tests": [
@@ -4026,7 +4026,7 @@
   },
   {
     "name": "AC5-A-end-pick-ctx-stale",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "      const r = find(state, uid);\n      if (!r) break;\n      act(state, T, { p: r.p, h: r.h, uid }, fx, { uid });",
     "new": "      act(state, T, { p: at.p, h: at.h, uid }, fx, { uid });",
     "tests": [
@@ -4041,7 +4041,7 @@
   },
   {
     "name": "AC5-A-holding-reveal-for-down",
-    "file": "src/net/iliacHand.js",
+    "file": "src/net/iliac/iliacHand.js",
     "old": "if (down) { ev.push({ t: 'play', p, uid: b.uid, holding: h, down: true }); return; }",
     "new": "if (down) { ev.push({ t: 'play', p, uid: b.uid, holding: h, down: true }); holdingReveal(state, T, p, h); return; }",
     "tests": [
@@ -4056,7 +4056,7 @@
   },
   {
     "name": "AC5-E-S-C4-region-now",
-    "file": "src/net/cardStakes.js",
+    "file": "src/net/card/cardStakes.js",
     "old": "reg: stake?.reg ?? region() }",
     "new": "reg: region() }",
     "tests": [

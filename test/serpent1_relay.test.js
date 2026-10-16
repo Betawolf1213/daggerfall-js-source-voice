@@ -1,12 +1,12 @@
 // SERPENT1 (2026-10-04, Mac: "A new world event that requires players with a ship to meet up and take on a large scale
-// sea serpent in the ocean"): THE SERPENT ON THE RELAY AND IN THE BOOKS. The kill's receipt (net/serpentReceipt.js - the
+// sea serpent in the ocean"): THE SERPENT ON THE RELAY AND IN THE BOOKS. The kill's receipt (net/serpent/serpentReceipt.js - the
 // gate's ladder, never mistaken for a gate's, a raid's or an identity); the `serpent` frame both ways (net/wire.js); the
 // relay over the real Room in a real cell (server/src/index.js - the fight stood where its site is, the join and its
 // refusals, the beat on the cell's alarm beside the cell's own duties, the fan to the waters and not past them, a blow
 // from the socket's own pose, the kill said once with its receipts, the hub's word to everyone online, the receipt again
 // at a later `in`, the fight forgotten after its keeping); and the account service (server-account/src/serpents.js -
 // one row a serpent an account, the fighting character's Renown, a guest not counted, the device's hoard once; the
-// worker's route behind a session), and the device's carrier (net/serpentClaims.js).
+// worker's route behind a session), and the device's carrier (net/serpent/serpentClaims.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -14,20 +14,20 @@ import { DatabaseSync } from 'node:sqlite';
 
 import {
   SERPENT_RECEIPT_V, SERPENT_RECEIPT_TTL_S, SERPENT_RECEIPT_MAX, serpentReceiptValid, mintSerpentReceipt, readSerpentReceipt, verifySerpentReceipt,
-} from '../src/net/serpentReceipt.js';
-import { mintReceipt, verifyReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
-import { mintRaidReceipt, verifyRaidReceipt } from '../src/net/raidReceipt.js';
+} from '../src/net/serpent/serpentReceipt.js';
+import { mintReceipt, verifyReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
+import { mintRaidReceipt, verifyRaidReceipt } from '../src/net/raid/raidReceipt.js';
 import { importPublicKeyB64 } from '../src/net/identityToken.js';
 import {
   parseClient, validSerpentIn, validSerpentOut, relaySupportsSerpent, serpentGate, SERPENT_RELAY_MIN, SERPENT_HZ_MAX, SERPENT_KINDS,
   SERPENT_OUT_KINDS, SERPENT_NO_WORDS, SERPENT_LEGS_MAX, SERPENT_MODES_MAX, SERPENT_ATTACKS, SERPENT_MODES, SERPENT_CHART_MAX,
   SERPENT_RECEIPT_WIRE_MAX, SERPENT_DMG_WIRE_MAX, SERPENT_FIGHT_KEY, serpentFightId, SOCIAL_ROOM, RELAY_VERSION, cellRoomOfWire, PIXEL_UNITS,
 } from '../src/net/wire.js';
-import { serpentTimes, serpentBossOf, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_DIVE_MS, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
+import { serpentTimes, serpentBossOf, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_DIVE_MS, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
 import {
   SERPENT_ATTACK_BY_ID, SERPENT_TICK_MS, SERPENT_OPENING_MS, SERPENT_CLOSE_MS, FAN_R, ADMIT_R, SHIP_REF, SERPENT_TTK_S, SERPENT_DAMAGE_CHART_MAX, serpentStateOf, ZONES,
-} from '../src/net/serpentBrain.js';
-import { LEGS_KEPT, MODES_KEPT, MODE_NAMES } from '../src/net/serpentBody.js';
+} from '../src/net/serpent/serpentBrain.js';
+import { LEGS_KEPT, MODES_KEPT, MODE_NAMES } from '../src/net/serpent/serpentBody.js';
 import { relayVersionAtLeast } from './relayVersion.mjs';
 import { fakeRooms } from './fakeRoom.mjs';
 import worker from '../server-account/src/index.js';
@@ -37,7 +37,7 @@ import { claimSerpent, serpentRecordOf, SERPENT_STOOD_RENOWN } from '../server-a
 import { ROUTES, OPEN_ROUTES } from '../server-account/src/service.js';
 import { renownSerpentXp, renownRaidXp, RENOWN_SERPENT_QUESTS } from '../src/net/renown.js';
 import { accountSerpents } from '../src/net/accountClient.js';
-import { createSerpentClaims, serpentClaimVerdict, serpentRecordText, SERPENT_CLAIMS_KEY, SERPENT_CLAIM_RETRY_MS } from '../src/net/serpentClaims.js';
+import { createSerpentClaims, serpentClaimVerdict, serpentRecordText, SERPENT_CLAIMS_KEY, SERPENT_CLAIM_RETRY_MS } from '../src/net/serpent/serpentClaims.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';
 
 const subtle = globalThis.crypto.subtle;

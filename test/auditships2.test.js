@@ -9,14 +9,14 @@ import {
   coilWord, coilHolds, serpentWrapYaw, serpentSaysTrack, serpentShareWanted,
   SERPENT_ATTACK_TABLE, SERPENT_TICK_MS, SERPENT_SAY_AHEAD_MS, SERPENT_HP_SEND_MS, SERPENT_WAY_STALE_MS, SERPENT_CLOCK_SPAN_MS, SERPENT_TRACK_WORDS,
   ZONES, CRUISE_V, DASH_V, HUNT_TURN_R, SERPENT_TTK_S, SHIP_REF,
-} from '../src/net/serpentBrain.js';
-import { LEG, MODE, COIL_R, COIL_BLEND_MS, COIL_HEAD_IN, DRIFT_V, bodyAt, headAt, coilAngleAt, coilPoint } from '../src/net/serpentBody.js';
-import { createSerpentLink } from '../src/net/serpentLink.js';
+} from '../src/net/serpent/serpentBrain.js';
+import { LEG, MODE, COIL_R, COIL_BLEND_MS, COIL_HEAD_IN, DRIFT_V, bodyAt, headAt, coilAngleAt, coilPoint } from '../src/net/serpent/serpentBody.js';
+import { createSerpentLink } from '../src/net/serpent/serpentLink.js';
 import { createSerpentHost, WAKE_MS } from '../src/scenes/serpentHost.js';
 import { venomBite, venomHurt, fleetShare } from '../src/systems/serpent/serpentStrike.js';
 import { SERPENT_BAR_TEXT } from '../src/ui/serpentBar.js';
 import { validSerpentOut, cellRoomOfWire, serpentFightId, PIXEL_UNITS } from '../src/net/wire.js';
-import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
+import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { fakeRooms } from './fakeRoom.mjs';
 

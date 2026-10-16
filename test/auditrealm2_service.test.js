@@ -11,17 +11,17 @@ import { webcrypto } from 'node:crypto';
 import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { r2, layRecord, freshSave, realmAt } from './realmSeat.mjs';
-import { REALM_BIRTH_LEVEL, REALM_BIRTH_WEALTH_MAX, customsAllowance, liquidWealthOf, stashedItemLists, deedsOf, CUSTOMS_HOUSE_PRICE } from '../src/net/realmGoldLaw.js';
+import { REALM_BIRTH_LEVEL, REALM_BIRTH_WEALTH_MAX, customsAllowance, liquidWealthOf, stashedItemLists, deedsOf, CUSTOMS_HOUSE_PRICE } from '../src/net/realm/realmGoldLaw.js';
 import * as customs from '../src/systems/realmCustoms.js';
 import { STARTING_GOLD } from '../src/systems/startingGear.js';
 import { LETTER_OF_CREDIT_TEMPLATE, goldStack, isGoldPieces } from '../src/systems/inventory.js';
 import { LOOT_CONTAINER_TYPES, interiorSceneName } from '../src/systems/sceneCache.js';
 import { DEED_SELL_MULT, SHIP_TYPES, SHIP_INTERIOR_MAP_IDS, shipSellPrice } from '../src/systems/banking.js';
 import { BUILDING_KEY_0 } from '../src/systems/talk/talkTopics.js';
-import { recordIsOffered, takeTradeGoods, REALM_TRADE_RECORD_MAX, TRADE_VOLATILE_FIELDS } from '../src/net/realmTradeLaw.js';
+import { recordIsOffered, takeTradeGoods, REALM_TRADE_RECORD_MAX, TRADE_VOLATILE_FIELDS } from '../src/net/realm/realmTradeLaw.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
-import { GUILD_FOUND_GOLD, GUILD_FOUND_RENOWN } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_GOLD, GUILD_FOUND_RENOWN } from '../src/net/guild/guildLaw.js';
 import { renownXpFor } from '../src/net/renown.js';
 import { homeSaleRefund, HOME_PRICE_MIN } from '../src/net/homeLaw.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
@@ -171,7 +171,7 @@ test('AUDIT REALM2 S1: a customs character\'s first save carries no more than th
   assert.equal((await s.put(d.id, JSON.stringify({ level: 9, goldPieces: customsAllowance(1) + 1 }), P.secret, { lease: d.lease, seq: 1 })).body.error, 'customs-allowance');
 });
 
-test('AUDIT REALM2 S1: the service measures a save as customs does - ONE law (net/realmGoldLaw.js, re-exported by systems/realmCustoms.js): the purse, the banks, gold and letters in the pack, the wagon and every container (AUDIT REALM2 T5), and each deed at what the realm\'s bank pays (T3); its constants are the game\'s', () => {
+test('AUDIT REALM2 S1: the service measures a save as customs does - ONE law (net/realm/realmGoldLaw.js, re-exported by systems/realmCustoms.js): the purse, the banks, gold and letters in the pack, the wagon and every container (AUDIT REALM2 T5), and each deed at what the realm\'s bank pays (T3); its constants are the game\'s', () => {
   assert.equal(customs.liquidWealthOf, liquidWealthOf, 'the client caps with the very function the service reads with');
   assert.equal(customs.stashedItemLists, stashedItemLists);
   assert.equal(customs.customsAllowance, customsAllowance);

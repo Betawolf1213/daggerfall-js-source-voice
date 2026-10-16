@@ -11,7 +11,7 @@ import { createMarksBook, MARKS_TEXT, MARKS_PENDING_KEY, MARKS_FINAL } from '../
 import { MARKS_RID_RE, utcDay } from '../src/net/marksLaw.js';
 import { gateStrikeRid, gateStrikeStatement } from '../server-account/src/marks.js';
 import { createBankAccounts, marksSaleCredit } from '../src/systems/banking.js';
-import { GUILD_FOUND_RENOWN } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_RENOWN } from '../src/net/guild/guildLaw.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const DAY = 86400;

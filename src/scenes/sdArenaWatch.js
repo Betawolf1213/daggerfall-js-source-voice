@@ -1,6 +1,6 @@
 // @ts-check
 // SD-LOOK S7 (2026-10-09, bible/11-Multiplayer/Super-Dungeons-Look.md section 9): THE ARENA WATCHES THE REMNANT - what the
-// arena shows of where the Remnant stands, pure over the page's fight state (net/sdFightLink.js) and the relay's clock,
+// arena shows of where the Remnant stands, pure over the page's fight state (net/superDungeon/sdFightLink.js) and the relay's clock,
 // so every page draws the same:
 //
 //   THE WATCHING HANDS (`sdPillarHandsAt`) - each clock on each capital (world/superDungeon/sdPillarModel.js sdPillarDials) turns its
@@ -18,8 +18,8 @@
 //
 // Kept records, Float64Array scratch: a frame makes nothing (AUDIT SD II, L2 F9). Not a DFU member. Ledger A
 // (SUPER-DUNGEONS).
-import { SD_ARENA, SD_REALM_ORIGIN } from '../net/sdBrain.js';
-import { SD_BLOWS, SD_REM, SD_ECHO } from '../net/sdRemnant.js';
+import { SD_ARENA, SD_REALM_ORIGIN } from '../net/superDungeon/sdBrain.js';
+import { SD_BLOWS, SD_REM, SD_ECHO } from '../net/superDungeon/sdRemnant.js';
 import { markShape } from '../render/gateTelegraph.js';
 import { sdPillarDials, pillarCentre } from '../world/superDungeon/sdPillarModel.js';
 import { SD_REMNANT_BODY, remnantScale } from '../world/superDungeon/sdRemnantModel.js';

@@ -7,10 +7,10 @@
 // bible/11-Multiplayer/Seats-Arc.md 7.6; `06-Systems/Online-Arc.md` CROWN1 (part two).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { royalRoomKey, siegeRoomKey, SIEGE_UNITS_PER_M, ROYAL_RING, ROYAL_PAIR_DAY_MAX, ROYAL_LADDER_SHOWN, ROYAL_RC_KEEP } from '../src/net/siegeRef.js';
+import { royalRoomKey, siegeRoomKey, SIEGE_UNITS_PER_M, ROYAL_RING, ROYAL_PAIR_DAY_MAX, ROYAL_LADDER_SHOWN, ROYAL_RC_KEEP } from '../src/net/siege/siegeRef.js';
 import { mintSiegeOrder } from '../src/net/identityToken.js';
-import { verifyRoyalReceipt, readRoyalReceipt, SIEGE_RECEIPT_TTL_S } from '../src/net/siegeReceipt.js';
-import { DUEL_RADIUS_M, DUEL_COUNTDOWN_MS, DUEL_MAX_MS, DUEL_ASK_TTL_MS, DUEL_GONE_MS, DUEL_OUT_SLACK_M } from '../src/net/duelSession.js';
+import { verifyRoyalReceipt, readRoyalReceipt, SIEGE_RECEIPT_TTL_S } from '../src/net/siege/siegeReceipt.js';
+import { DUEL_RADIUS_M, DUEL_COUNTDOWN_MS, DUEL_MAX_MS, DUEL_ASK_TTL_MS, DUEL_GONE_MS, DUEL_OUT_SLACK_M } from '../src/net/duel/duelSession.js';
 import worker from '../server/src/index.js';
 import { fakeRoom } from './fakeRoom.mjs';
 

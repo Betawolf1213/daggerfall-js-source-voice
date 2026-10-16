@@ -22,7 +22,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { PeerBodies, peerBuildOpts, peerCamera, BODIES_MAX, BODY_RETRY_MS, BODY_LINGER_MS, BODY_RANGE, JUMP_UNITS, SWAP_MARGIN, BODY_REBUILD_MS, YAW_EASE, SWAP_DWELL_MS } from '../src/net/peerBodies.js';
+import { PeerBodies, peerBuildOpts, peerCamera, BODIES_MAX, BODY_RETRY_MS, BODY_LINGER_MS, BODY_RANGE, JUMP_UNITS, SWAP_MARGIN, BODY_REBUILD_MS, YAW_EASE, SWAP_DWELL_MS } from '../src/net/peer/peerBodies.js';
 import { RemotePlayers, PEER_HEIGHT } from '../src/net/remotePlayers.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
@@ -238,7 +238,7 @@ test('MWBODY1: the host - the gate is the enhanced skin (read once) and Morrowin
   assert.match(w, /'pagehide', \(\) => \{\s*try \{ worldPublish\(performance\.now\(\), true\); \}\s*catch \(e\) \{[^\n]*\}\s*cabinLink\.close\(\);\s*online\?\.leave\(\);\s*for \(const link of chatLinks\?\.values\(\) \?\? \[\]\) link\.leave\(\);\s*peerBodies\?\.destroy\(\);\s*remotePlayers\?\.destroy\(\);\s*peerRiders\?\.destroy\(\);[^\n]*\s*peerWalkers\?\.destroy\(\);[^\n]*\s*\}/, 'the page\'s hide releases the rigs (RIDE: and the riders\' sprites; DISC23-B: and the walkers\') (and, CHAT1, leaves every channel in the same goodbye - the panel stays for a restore, AUDIT CHAT B4)');
   const m = rd('src/scenes/worldModes.js');
   assert.equal((m.match(/mwViewDrawBody\(canvas, \{ proj, view, eye: mwv\.eye, feet: player\.bodyFeetAt\(\), yaw: player\.bodyYawFor\(cam\.yaw\), viewYaw: cam\.yaw \}\);   \/\/ MW-D24[^\n]*\n\s*host\.drawPeerBodies\?\.\(\{ proj, view, eye: mwv\.eye \}\);/g) || []).length, 2, 'the dungeon\'s and the interior\'s passes');
-  const pbSrc = rd('src/net/peerBodies.js');
+  const pbSrc = rd('src/net/peer/peerBodies.js');
   assert.match(pbSrc, /import \{ createFpArm \} from '\.\.\/combat\/fpArm\.js';/, 'the factory, never the exported instance');
   assert.doesNotMatch(pbSrc, /\bfpArm\.(?!js)|import \{[^}]*\bfpArm\b/, 'the singleton is not touched (the module path is not a use)');
   assert.match(rd('src/scenes/dataSource.js'), /if \(_mwArchivesInflight && _mwArchivesInflight\.gen === _mwGeneration\) return _mwArchivesInflight\.promise;/, 'AUDIT MWBODY B10: two builds at once open the archives once');

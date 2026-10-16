@@ -46,12 +46,12 @@ import { ARENA_TEXT } from '../arena/arenaText.js';   // ARENA4b: the bank's let
 import { RENT_VERB, rentRowLabel, rentTenantLabel } from '../homeRent.js';   // HOME-RENT: the door's rows for a room to rent
 import { BUILDING_TYPES, isResidence } from '../../world/buildingNames.js';
 import { DEED_SELL_MULT, CROSSED_DEED_LINES, deedStands } from '../banking.js';   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: a deed names its building only where it stands
-import { guildTagText, GUILD_MOVE_MAX } from '../../net/guildLaw.js';   // GUILD1d: a hall's tag, as a name wears it; HALL-GOLD: a deposit's cap, said
+import { guildTagText, GUILD_MOVE_MAX } from '../../net/guild/guildLaw.js';   // GUILD1d: a hall's tag, as a name wears it; HALL-GOLD: a deposit's cap, said
 import { GUILD_HALL_ENTRIES, GUILD_HALL_ENTRY_WORDS, guildHallPrice } from '../../net/hallLaw.js';   // GUILD1d: a guild's hall
 import { heraldryOf } from '../../net/heraldryLaw.js';   // GUILD1d: a hall's heraldry, off the town's answer
 import { layoutStampOfMapId, CLASSIC_LAYOUT } from '../layoutPins.js';   // WD3: a home is bought in its town's layout
 import { goldSum as gold, EMPIRE_ACCOUNT_WORDS } from '../homeWords.js';   // HOME-PRICE: every sum with its thousands; online, the Empire's account (EMPIRE-ACCOUNT)
-import { walletReserve } from '../../net/realmGoldLaw.js';   // MARKET-AUDIT: a refusal gives back exactly what the payment took
+import { walletReserve } from '../../net/realm/realmGoldLaw.js';   // MARKET-AUDIT: a refusal gives back exactly what the payment took
 import {
   HOME_VOTE_UP, HOME_VOTE_DOWN, homeScoreOf, homeMyVoteOf, homeShunned, homeShunnedInsiderLine, homeVotesLine, HOME_SHUNNED_LINE,
 } from '../../net/homeVoteLaw.js';   // HOME-VOTE: a town's word on a player's house
@@ -299,7 +299,7 @@ export function homeVoteLines(home) {
  * GUILD1d (Seats-Arc 8.2): THE HALL'S ROWS. A guildmaster whose guild holds no hall reads, under a house anyone may buy,
  * "Buy it for <guild>: N gold from the treasury" - the home's price and half again (hallLaw.js guildHallPrice), armed by
  * its first press as a home's buy is. A hall's door lists "Go in" to its members, and to its keepers who may walk in.
- * `guild` is the playing character's (net/guildBook.js's look): `{ name, rank, hall, treasury }`, or null.
+ * `guild` is the playing character's (net/guild/guildBook.js's look): `{ name, rank, hall, treasury }`, or null.
  */
 export function homeHallBuyRow(price, guild, armed = false) {
   if (!guild || guild.rank !== 0 || guild.hall) return null;

@@ -8,8 +8,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ILIAC_CARDS, ILIAC_LOCATIONS, CARD_EMBLEMS, cardById } from '../src/net/iliacCards.js';
-import { fxText, fxRefusal, deckValid } from '../src/net/iliacHand.js';
+import { ILIAC_CARDS, ILIAC_LOCATIONS, CARD_EMBLEMS, cardById } from '../src/net/iliac/iliacCards.js';
+import { fxText, fxRefusal, deckValid } from '../src/net/iliac/iliacHand.js';
 import { cardRules, cardFlavor, cardWords, CARD_WORD_IDS } from '../src/systems/iliac/iliacCardWords.js';
 import { paintIliacCard, EMBLEM_KEYS, wrapCardText } from '../src/render/iliacCardFaces.js';
 import { cardCanvas, _clearCardFacesForTests, drawCardsPart, resetCardsPart } from '../src/ui/cardBinderPage.js';
@@ -105,8 +105,8 @@ test('KG-SET the relay\'s catalog keeps no word; the words cover the set exactly
   assert.deepEqual([...CARD_WORD_IDS], ALL.map((c) => c.id), 'every card and holding has its words, and nothing else has any');
   assert.ok(Object.isFrozen(CARD_WORD_IDS));
   for (const nobody of [null, undefined, {}, { id: 'no-such-card' }, { id: 'toString' }, { id: '__proto__' }]) assert.deepEqual(cardWords(nobody), { rules: '', flavor: '' });
-  assert.doesNotMatch(read('src/net/iliacCards.js'), /\btext: '|\bflavor: '/, 'no card writes its words into the relay\'s catalog');
-  assert.doesNotMatch(read('src/net/iliacCards.js'), /^import /m, 'and the catalog still imports nothing - the relay carries it whole');
+  assert.doesNotMatch(read('src/net/iliac/iliacCards.js'), /\btext: '|\bflavor: '/, 'no card writes its words into the relay\'s catalog');
+  assert.doesNotMatch(read('src/net/iliac/iliacCards.js'), /^import /m, 'and the catalog still imports nothing - the relay carries it whole');
 });
 
 test('KG-SET a card\'s words are read when they are shown - French chosen, French said on the face, the binder, the item and the table; English again, byte for byte', () => {

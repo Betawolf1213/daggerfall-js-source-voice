@@ -30,15 +30,15 @@
 //
 // PURE - no storage, no socket, no clock of its own: the relay (server/src/index.js) and the session (net/online.js)
 // hand the moment in. It imports the wire (the cell's arithmetic, the shared clock's law, the frame's shapes),
-// net/gateLaw.js (the relay's copy of the spawn hash) and net/raidLaw.js (two clocks' skew) - all three the relay's
+// net/gate/gateLaw.js (the relay's copy of the spawn hash) and net/raid/raidLaw.js (two clocks' skew) - all three the relay's
 // already, so the worker's graph grows by this file alone. The band's, the raider's and the spawn's own numbers are
 // PINNED EQUAL here, never imported (gateLaw.js's law for this very hash): their modules reach the map files, and every
 // byte this file reaches is the relay's deploy - test/ow6_ledger.test.js holds each copy to its home.
 //
 // Not a DFU member: Daggerfall has no other players, and no Overworld.
 import { WORLD_CELL, sharedClassicMinutes, cellOfRoom, OW_BAND_ID_RE, OW_RAIDER_ID_RE, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX, owWireRow } from './wire.js';
-import { gateHash, GATE_DAY_MINUTES } from './gateLaw.js';   // the spawned dungeons' hash (world/spawnedDungeons.js hash32) - the relay's one copy; a game day's minutes
-import { RAID_SLACK_MINUTES } from './raidLaw.js';   // ten real seconds of two clocks' skew (WORLD5)
+import { gateHash, GATE_DAY_MINUTES } from './gate/gateLaw.js';   // the spawned dungeons' hash (world/spawnedDungeons.js hash32) - the relay's one copy; a game day's minutes
+import { RAID_SLACK_MINUTES } from './raid/raidLaw.js';   // ten real seconds of two clocks' skew (WORLD5)
 
 export { OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX };
 

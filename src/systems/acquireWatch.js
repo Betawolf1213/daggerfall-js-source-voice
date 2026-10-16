@@ -27,7 +27,7 @@
 // restorePlayer), and every frame before and at the end of character creation (its kit and the starter deck) are read
 // and marked, and announce nothing.
 //
-// WHAT ANNOUNCES is a tier at or over `BANNER_MIN_TIER` (Rare): a card its catalog's tier (net/iliacCards.js - printed on
+// WHAT ANNOUNCES is a tier at or over `BANNER_MIN_TIER` (Rare): a card its catalog's tier (net/iliac/iliacCards.js - printed on
 // its face, whatever loot rarity's switch says), any other piece the tier the pack shows it in (lootRarity.js
 // rarityAttr - none with loot rarity off, none for Common).
 //
@@ -36,7 +36,7 @@
 
 import { rarityAttr, RARITIES } from './loot/lootRarity.js';
 import { isIliacCard } from './iliac/iliacItems.js';
-import { cardById } from '../net/iliacCards.js';
+import { cardById } from '../net/iliac/iliacCards.js';
 import { isAmmunition } from './item/itemTemplates.js';
 
 /** The item field the watcher writes: true, or absent (itemFields.js declares it). */

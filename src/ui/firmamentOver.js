@@ -6,10 +6,10 @@
 // (two capture handlers would answer Escape twice), and the page put back when the sky closes. Through the ONE
 // lazy-chunk door (ui/enhancedChunk.js), so a chunk that will not load says so and the page stays up behind the notice.
 //
-// The button is drawn only ONLINE - where the page has a book (net/firmamentBook.js): offline there is no sky to spend.
+// The button is drawn only ONLINE - where the page has a book (net/firmament/firmamentBook.js): offline there is no sky to spend.
 
 import { mountEnhancedChunk } from './enhancedChunk.js';
-import { firmamentBook } from '../net/firmamentBook.js';
+import { firmamentBook } from '../net/firmament/firmamentBook.js';
 
 /**
  * A door's Firmament: `alive()` whether the door is still up; `below()` takes the page down (its keyboard first);

@@ -21,7 +21,7 @@ import { createEquipTable } from '../src/characters/equipTable.js';
 import { SOCIAL_GROUPS, GUILD_GROUPS, FACTION_TYPES } from '../src/formats/factionFile.js';
 import { mwClothingRecord, clothingTierOf, CLOTH_PICK_NEAREST, CLOTH_PICK_BAND, CLOTHING_NAME, MW_CLOTHING_TYPE, dfWornEquipment, composeWornArmor, ARMO_PART } from '../src/formats/mwItemMap.js';
 import { playerBodyRows } from '../src/formats/mwFirstPerson.js';
-import { peerBuildOpts, peerBodyKey } from '../src/net/peerBodies.js';
+import { peerBuildOpts, peerBodyKey } from '../src/net/peer/peerBodies.js';
 import { peerStubEntity } from '../src/net/remotePlayers.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { ARMOR_ENUM } from '../src/combat/enemyEquipment.js';
@@ -190,7 +190,7 @@ test('MWNPC17d the build reads the hint: each garment its rung and pick, the hea
   assert.equal(npcKeyOf(player), '');
   for (const bad of [{ seed: -1, tier: 0, lo: 0, hi: 3 }, { seed: 1.5, tier: 0, lo: 0, hi: 3 }, { seed: 1, tier: 4, lo: 0, hi: 3 }, { seed: 2 ** 32, tier: 0, lo: 0, hi: 3 }, { seed: 1, tier: 0 }, { seed: 1, tier: 1, lo: 2, hi: 3 }, { seed: 1, tier: 2, lo: 0, hi: 1 }, { seed: 1, tier: 1, lo: -1, hi: 3 }, 'x', null]) assert.equal(npcHintOf({ npc: bad }), null, `a hint read as data: ${JSON.stringify(bad)}`);
   // PIN MOVED (MW-FOLK1): the memo's key carries a townsperson's outfit after the hint, both inside it
-  assert.match(rd('src/net/peerBodies.js'), /: lookKey\(look\)\) \+ npcKeyOf\(look\) \+ outfitKeyOf\(look\);\n {4}_bodyLookKeys\.set\(look, k\);/, 'the hint in the memo: one key a look, never a string a frame');
+  assert.match(rd('src/net/peer/peerBodies.js'), /: lookKey\(look\)\) \+ npcKeyOf\(look\) \+ outfitKeyOf\(look\);\n {4}_bodyLookKeys\.set\(look, k\);/, 'the hint in the memo: one key a look, never a string a frame');
   // a beast: Morrowind dresses no Khajiit or Argonian in shoes, boots or a helm
   const kit = dressPerson({ role: 'knight', gender: 'male', seed: 4 });
   const helmed = { ...kit, items: [...kit.items.filter((it) => it.equipSlot !== EQUIP_SLOTS.Head), { templateIndex: ARMOR_ENUM.Helm, group: 'Armor', equipSlot: EQUIP_SLOTS.Head, material: ARMOR_MATERIAL.Steel }] };

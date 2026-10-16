@@ -272,7 +272,7 @@
  },
  {
   "name": "AUDIT-SEATS-S3-claims-let-go",
-  "file": "src/net/siegeClaims.js",
+  "file": "src/net/siege/siegeClaims.js",
   "old": " || r?.error === 'battle-void') return true;   // AUDIT-SEATS S3: void at its Turning",
   "new": ") return true;   // AUDIT-SEATS S3: void at its Turning",
   "tests": [

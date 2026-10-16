@@ -13,7 +13,7 @@
 //   THE RED LINE - the zone's edge (systems/wild/wildZone.js wildEdgeChains), a dark halo under a red stroke, and over it a
 //   brighter dashed line once the sheet is zoomed past its far band - the map's own pen, a warning's colour.
 //
-// And one mark the overlay breathes: MY REMAINS (net/wildRemains.js) - a ring and its name where my things lie, while
+// And one mark the overlay breathes: MY REMAINS (net/wild/wildRemains.js) - a ring and its name where my things lie, while
 // they lie, pulsing as the gate's ring does.
 //
 // Pure canvas 2D over the view's own transform (ui/inkMap.js toPaper); no game import beyond the zone's leaf.

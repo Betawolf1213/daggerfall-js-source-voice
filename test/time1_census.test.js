@@ -98,7 +98,7 @@ test('TIME1 census: the readers the design names are where it says - the frame\'
     ['src/net/nodeLaw.js', /dayDate = /], ['src/scenes/worldModes.js', /holidayId: getHolidayId/],
   ]) assert.equal(clockOfLine(file, re), 'sky', `${file} ${re}`);
   for (const [file, re] of [
-    ['src/net/gateLaw.js', /gameDayAt = /], ['src/scenes/world.js', /raidMapMarks\(/],
+    ['src/net/gate/gateLaw.js', /gameDayAt = /], ['src/scenes/world.js', /raidMapMarks\(/],
     ['src/scenes/worldModes.js', /const guildShelf = /], ['src/scenes/world.js', /tickWeather\(/],
     ['src/scenes/dungeonContext.js', /_wallNow = /], ['src/systems/save/save.js', /const own = /],
   ]) assert.equal(clockOfLine(file, re), 'event', `${file} ${re}`);

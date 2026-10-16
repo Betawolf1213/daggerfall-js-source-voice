@@ -13,7 +13,7 @@ import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
-import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_CAST_OUT_LINE, SD_NO_RIFT } from '../src/net/sdLaw.js';
+import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_CAST_OUT_LINE, SD_NO_RIFT } from '../src/net/superDungeon/sdLaw.js';
 import { SD_ENTERED_KEY, SD_ENTERED_MAX, SD_FALLEN_KEY } from '../src/world/superDungeon/sdDungeon.js';
 import { createSdVoice, SD_VOICE_RANK } from '../src/scenes/sdVoice.js';
 import { createSdEnd, SD_RIFT_KEY } from '../src/scenes/sdEnd.js';

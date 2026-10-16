@@ -29,7 +29,7 @@ import { packRealmFaces, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_F
 import { SD_CHECKPOINTS } from './sdSteps.js';
 import { layGear, SD_WORKS_TOOTH, SD_HANG_NOW } from './sdWorksModel.js';
 import { rng } from './sdPixelKit.js';
-import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN, realmToDungeon } from '../../net/sdBrain.js';
+import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_REALM_ORIGIN, realmToDungeon } from '../../net/superDungeon/sdBrain.js';
 
 /** SD-LOOK S11: the chains' record (the realm's archive, world/superDungeon/sdHangArt.js): dark brass links, verdigris in their bends. */
 export const SD_CHAIN_RECORD = 81;

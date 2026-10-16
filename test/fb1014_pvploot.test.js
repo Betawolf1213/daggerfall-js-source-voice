@@ -5,10 +5,10 @@
 // The killer's pick off the body goes to the relay, the relay signs the fall with it, the account service takes that worn
 // piece off the fallen's record (server-account/src/wild.js) and signs the room an order naming it the killer's (`wk`,
 // `wi`), the fallen's game takes it out of its pack and lays the remains, and the killer's own game asks the room for it
-// (net/wildRemains.js askMine). The room judged that take by the PVPDUNGEONS friend law too ("Party/guildmembers cant
+// (net/wild/wildRemains.js askMine). The room judged that take by the PVPDUNGEONS friend law too ("Party/guildmembers cant
 // pick it up" - the DROP's law), so a killer the fallen's guild counted a friend, or one sharing a party with them by the
 // take, was refused: the fallen had lost the piece, and it lay in the remains for nobody until they went. The friend law
-// is the drop's alone now (net/wildLaw.js remainsNamedFor). `01-Overview/Field-Bugs-2026-10-14.md`.
+// is the drop's alone now (net/wild/wildLaw.js remainsNamedFor). `01-Overview/Field-Bugs-2026-10-14.md`.
 //
 // Mac's decisions of 2026-10-14 since: a guildmate is kin at the referee, so it never fights the fallen, and a piece in
 // escrow is a collect the friend law never reads (test/fb1014_pvpescrow.test.js). Here is the room's old take - a tab
@@ -35,11 +35,11 @@ import { wornOffer, wildRecord, wildTakeTook, wildChunks } from '../src/systems/
 import { validLootList } from '../src/systems/loot/loot.js';
 import '../src/systems/item/itemLaw.js';   // the item law registers itself with the wire, as the game's boot does
 import { addItem, stacksWith } from '../src/systems/inventory.js';
-import { createWildRemains } from '../src/net/wildRemains.js';
-import { remainsNamedFor } from '../src/net/wildLaw.js';
-import { mintWildReceipt } from '../src/net/wildReceipt.js';
+import { createWildRemains } from '../src/net/wild/wildRemains.js';
+import { remainsNamedFor } from '../src/net/wild/wildLaw.js';
+import { mintWildReceipt } from '../src/net/wild/wildReceipt.js';
 import { validWildData, validWildOut, worldRoom, PIXEL_UNITS, WILD_ITEMS_MAX, WILD_DATA_MAX, SOCIAL_ROOM } from '../src/net/wire.js';
-import { SIEGE_UNITS_PER_M } from '../src/net/siegeRef.js';
+import { SIEGE_UNITS_PER_M } from '../src/net/siege/siegeRef.js';
 
 const { subtle } = globalThis.crypto;
 const PX = 400, PY = 120, CELL = worldRoom(PX, PY);
@@ -105,7 +105,7 @@ async function fall({ guildmate = false, party = false, strangerFirst = false } 
   assert.equal(r.store.get(`wild:${d.r}`)?.ok, true, 'the remains vouched for');
 
   if (strangerFirst) await r.raw(cs, JSON.stringify({ t: 'wild', data: { k: 'take', r: d.r, i: d.wi, n: 1 } }));
-  // his own book (net/wildRemains.js), the game's mint and pack: the room's words in, its asks out
+  // his own book (net/wild/wildRemains.js), the game's mint and pack: the room's words in, its asks out
   const pack = [], said = [], asks = [];
   const book = createWildRemains({
     send: (x) => { const v = validWildData(x); if (v) asks.push(v); return !!v; }, pool: () => null, toScene: (p) => p, mine: () => false,

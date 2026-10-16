@@ -130,8 +130,8 @@ import { uiSkin, SKIN_NAMES, isEnhanced } from '../systems/uiSkin.js';   // FD1:
 import { getPref, setPref, isOpen, setOpen, PREF_DEFAULTS } from '../systems/uiPrefs.js';
 import { TOUCH_BUTTON_SLOTS, touchButtonSlots, nextTouchButton, touchButtonChoices } from './touchButtons.js';   // TOUCH-BUTTONS: the corner's three slots
 import { DEFAULT_SERVER } from '../net/online.js';   // ONLINE1: the relay this port hosts, the field's placeholder   // R7: the port's own switches; SO1: the folded tiers' memory
-import { GATE_CROWD_TIERS } from '../net/gateCrowd.js';   // GATE-CROWD: how many other players a gate's court draws
-import { PEER_RANGE_TIERS, peerRangeOf } from '../net/peerRange.js';
+import { GATE_CROWD_TIERS } from '../net/gate/gateCrowd.js';   // GATE-CROWD: how many other players a gate's court draws
+import { PEER_RANGE_TIERS, peerRangeOf } from '../net/peer/peerRange.js';
 import { YARD_RANGE_TIERS, yardRangeOf } from '../net/yardRange.js';   // YARD-RANGE: how far other players' yards are drawn   // PEER-RANGE: how far out other players are drawn, and the distance a stored value stands for
 import { replacementCount } from '../systems/musicReplacement.js';   // M-EXT: the packs card reports what the pick covers
 import { midiOutSupported, midiOutDenied, midiOutName, midiOutputs, setMidiOut, nextMidiOut, MIDI_OUT_PREF } from '../systems/midiOut.js';   // MIDI-OUT1: the Audio tab's device row

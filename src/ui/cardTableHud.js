@@ -11,7 +11,7 @@
 // test/cards4_hud.test.js. `createCardTableHud` paints that model into the page and hands presses back to the host.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { rankOf, suitOf, isCard } from '../net/cardLaw.js';
+import { rankOf, suitOf, isCard } from '../net/card/cardLaw.js';
 import { SUIT_CROWNS, rankLabel, cardTitle, paintFace, paintBack } from '../render/cardFaces.js';   // CARDS-BAY: the suits' one home
 import { BUY_IN_MIN_BB, BUY_IN_START_BB } from '../systems/card/cardTableSession.js';   // the buy-in's one home (AUDIT CARDS-2 L10)
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page

@@ -1,6 +1,6 @@
 // SEAT2b part two (b) (2026-10-01, Mac: "Finish the seats"; "Let's pick up 482"): THE WORKS IN BATTLE, THEIR LAW - the
 // Walls' quicker wave, the Gatehouse that bars the Throne, the Rams that batter it and the blows that break them
-// (bible/11-Multiplayer/Seats-Arc.md 6.2, 7.5; net/siegeRef.js, its numbers pinned equal to net/fortLaw.js's); the
+// (bible/11-Multiplayer/Seats-Arc.md 6.2, 7.5; net/siege/siegeRef.js, its numbers pinned equal to net/fortLaw.js's); the
 // pass's works (net/identityToken.js `sx`) and the wire's words for them (net/wire.js). `06-Systems/Online-Arc.md`
 // SEAT2b part two (b).
 import { test } from 'node:test';
@@ -9,7 +9,7 @@ import {
   SIEGE_GATEHOUSE, SIEGE_RAM, SIEGE_WALLS, SIEGE_WORK_IDS, SIEGE_UNITS_PER_M, SIEGE_TICK_MS, SIEGE_WAVE_MS, SIEGE_RAMS_MAX,
   worksOf, siegeGateVitality, siegeRamVitality, siegeWaveMs, siegeThroneBarred, refereeWorkBlow, siegeRamDown, siegeBreach,
   fieldOf, newBattle, newFighter, battleStep, siegeFieldFrame, siegeNextWave, siegeReturn, SIEGE_HIT,
-} from '../src/net/siegeRef.js';
+} from '../src/net/siege/siegeRef.js';
 import { GATEHOUSE, RAM, WALLS_WAVE_STEP_MS, WALLS_WAVE_MIN_MS, gatehouseVitality, ramVitality, defendersWaveMs } from '../src/net/fortLaw.js';
 import { mintSiegeOrder, verifyOrder, siegePassValid } from '../src/net/identityToken.js';
 import { validSiegeIn, validSiegeOut } from '../src/net/wire.js';

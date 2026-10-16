@@ -1,7 +1,7 @@
 // CLIMB5 (the Enhanced Climbing arc - bible/03-World/Parkour-Arc.md; Mac: "I really want you to go all in on this"):
 // THE CLIMB, SEEN AND HEARD BY THE OTHERS - and by the player in third person. The motor's facing on the wall and the
 // body's eased yaw (player/motor.js climbFacing, bodyYawFor), the pose's two fields (climbPoseOf -> net/wire.js
-// validPose `cl`/`cw`, poseChanged, online.js lerpPose), the peers' readings of them (net/peerClimb.js: the facing, the
+// validPose `cl`/`cw`, poseChanged, online.js lerpPose), the peers' readings of them (net/peer/peerClimb.js: the facing, the
 // pose off the ground, no walk on the wall, the climb's sounds at the peer) and every host and renderer wired to them.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,8 +10,8 @@ import { PlayerMotor, climbPoseOf, BODY_TURN_TAU } from '../src/player/motor.js'
 import { Collider } from '../src/player/collider.js';
 import { validPose, poseChanged } from '../src/net/wire.js';
 import { lerpPose } from '../src/net/online.js';
-import { peerCamera } from '../src/net/peerBodies.js';
-import { PeerClimbSounds, peerClimbCues, peerBodyYaw, peerMoving, peerClimbing, PEER_CLIMB } from '../src/net/peerClimb.js';
+import { peerCamera } from '../src/net/peer/peerBodies.js';
+import { PeerClimbSounds, peerClimbCues, peerBodyYaw, peerMoving, peerClimbing, PEER_CLIMB } from '../src/net/peer/peerClimb.js';
 import { CLIMB_SFX, CLIMB_SOUND } from '../src/player/climbSounds.js';
 import { FEEL } from '../src/player/climbFeel.js';
 import { PEER_SOUND_PROFILE } from '../src/net/remotePlayers.js';
@@ -149,11 +149,11 @@ test('CLIMB5 C4: the others draw a climber facing the wall, off the ground, neve
   assert.match(rp, /const moving = peerMoving\(shown\);/, 'the billboard\'s move bit');
   assert.match(rp, /const face = peerBodyYaw\(shown\);[^\n]*\n\s*const yaw = Number\.isFinite\(face\) \? face : 0;/, 'the billboard\'s facing');
   assert.match(rp, /standingStill: !peerMoving\(shown\)/, 'no stride on the wall');
-  const pb = rd('src/net/peerBodies.js');
+  const pb = rd('src/net/peer/peerBodies.js');
   // PIN MOVED (FIELD BUGS 2026-10-13b ONE-BAD-BODY): the eased yaw is read once as `want` and taken only when finite
   assert.match(pb, /const want = peerBodyYaw\(peer\.shown\);[^\n]*\n[^\n]*\n\s*else b\.yaw = Number\.isFinite\(b\.yaw\) \? b\.yaw \+ wrapAngle\(want - b\.yaw\)/, 'the body eases to the wall');
   assert.match(pb, /yaw: peerBodyYaw\(shown\), speed: 0,/, 'and stands at it');
-  const pr = rd('src/net/peerRiders.js');
+  const pr = rd('src/net/peer/peerRiders.js');
   assert.match(pr, /const standing = \(pose\) => chooseTable\(\{ stopped: !peerMoving\(pose\)/, 'the walkers stand on the wall (not only the beast: AUDIT CLIMB-ARC N2 says the same words there)');
   assert.match(pr, /const yaw = peerBodyYaw\(pose\), view = viewOf\(yaw, feet, eye\);   \/\/ CLIMB5: facing the wall it climbs/);   // SPRITE-FACE (PIN MOVED): the walker's facing named once, its view and its aura's facing off it
   assert.match(pr, /spriteStride\(peerMoving\(pose\) && !r\.shot,/);

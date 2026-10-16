@@ -17,7 +17,7 @@ import {
 } from '../src/render/gatePass.js';
 import { createGatePool, gatePlacement, gateLocal, openingHalfWidth, fireBox, GATE_BUCKET, GATE_TEXT, GATE_SAY_MS, GATE_BANNER_M } from '../src/scenes/gatePool.js';
 import { raceActivation, raceWinner } from '../src/player/activationRace.js';
-import { gateTimes, gateYaw, countdownText, GATE_RISE_MS, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
+import { gateTimes, gateYaw, countdownText, GATE_RISE_MS, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
 import { trs } from '../src/world/mat4.js';
 import { drawGateBanner, destroyGateBanner } from '../src/ui/gateBanner.js';
 import { composeNamer } from '../src/systems/worldHover.js';

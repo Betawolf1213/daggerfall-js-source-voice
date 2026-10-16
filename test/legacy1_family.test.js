@@ -23,7 +23,7 @@ import { createLegacyHost } from '../src/scenes/legacyHost.js';
 import { zoomAbout, centreOn, personChips } from '../src/ui/familyPages.js';
 import { legacyModelOptions } from '../src/ui/legacyModelChoice.js';
 import { CLASS_CAREERS } from '../src/systems/chargen.js';
-import { REALM_BIRTH_WEALTH_MAX } from '../src/net/realmGoldLaw.js';
+import { REALM_BIRTH_WEALTH_MAX } from '../src/net/realm/realmGoldLaw.js';
 import { MOD_SETTINGS } from '../src/systems/modSettings.js';
 import { DEFAULT_BINDINGS, MOD_ACTIONS } from '../src/systems/inputActions.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "GATE-HEAL-credited-to-the-receiver",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  q.healed = (q.healed ?? 0) + got;",
     "new": "  p.healed = (p.healed ?? 0) + got;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "GATE-HEAL-ones-own-heal-credited",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "if (!p || !q || sub === by || f.fell",
     "new": "if (!p || !q || f.fell",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "GATE-HEAL-the-bucket-uncapped",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  const got = Math.max(0, Math.min(n, p.hb));\n  p.hb -= got;\n  q.healed",
     "new": "  const got = Math.max(0, n);\n  p.hb -= got;\n  q.healed",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "GATE-HEAL-never-refilled",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "+ (Math.max(0, now - (Number.isFinite(p.hbAt) ? p.hbAt : now)) / 1000) * (ref / HEAL_REFILL_S));",
     "new": "+ 0);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "GATE-HEAL-the-floor-unchecked",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "!onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK)) return 0;\n  const ref = healRef(p.lv)",
     "new": "!Number.isFinite(pose.z)) return 0;\n  const ref = healRef(p.lv)",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "GATE-HEAL-after-the-fall",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "sub === by || f.fell || f.wrath || now >= f.wrathAt",
     "new": "sub === by || f.wrath || now >= f.wrathAt",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "GATE-HEAL-a-stranger-credited",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  const p = f.players[sub], q = f.players[by];",
     "new": "  const p = f.players[sub], q = f.players[by] ?? f.players[sub];",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "GATE-HEAL-hl-on-every-row",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "...(q.healed >= 1 ? { hl: Math.round(q.healed) } : {})",
     "new": "...{ hl: Math.round(q.healed ?? 0) }",
     "tests": [

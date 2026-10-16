@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseCard } from '../src/net/cardLaw.js';
+import { parseCard } from '../src/net/card/cardLaw.js';
 import { cardFace, cardHudModel, eventLine, createCardTableHud } from '../src/ui/cardTableHud.js';
 import { CardTableSession } from '../src/systems/card/cardTableSession.js';
 import { fakeDoc, all, text } from './decorFakes.mjs';

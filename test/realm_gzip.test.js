@@ -3,7 +3,7 @@
 // past the request's 4 MiB (REALM_MAX_BYTES), and every checkpoint after it was refused for good.
 //
 // Pinned here, through the REAL Worker over the REAL migrations and the client's own calls:
-//   - the law (src/net/realmSaveCodec.js): packed and opened byte for byte, told apart by its first bytes, and every
+//   - the law (src/net/realm/realmSaveCodec.js): packed and opened byte for byte, told apart by its first bytes, and every
 //     opening bounded;
 //   - the service: a packed checkpoint past 4 MiB of text lands; a first save is measured packed as plain (AUDIT
 //     REALM2 S1 holds); the text's own bound is kept on the request (the trailer) and at every opening (a trailer that
@@ -19,7 +19,7 @@ import { prepareRealmRecord, REALM_MAX_BYTES } from '../server-account/src/realm
 import { SESSION_KEY } from '../src/net/accountClient.js';
 import {
   REALM_TEXT_MAX_BYTES, isGzip, gzipSizeOf, gzipText, gunzipText, saveTextOf,
-} from '../src/net/realmSaveCodec.js';
+} from '../src/net/realm/realmSaveCodec.js';
 import {
   realmIo, realmCreate, realmPut, realmJoin, realmFetch, realmTradeCall, openRealmBoot, createRealmSession,
 } from '../src/systems/realmSaves.js';
@@ -278,5 +278,5 @@ test('REALM-GZIP by source: every host that sends a realm save hands on the serv
   const menu = src('src/ui/enhancedMenu.js');
   assert.match(menu, /realmPut\(io, made\.data\.id, \{ lease: made\.data\.lease, seq: 1, summary: realmSummaryOf\(copy\) \}, JSON\.stringify\(copy\), \{ gzip: made\.data\.gzip === true \}\)/);
   // and the Worker bundles the law: the deploy fires on it
-  assert.match(src('.github/workflows/account-deploy.yml'), /- "src\/net\/realmSaveCodec\.js"/);
+  assert.match(src('.github/workflows/account-deploy.yml'), /- "src\/net\/realm\/realmSaveCodec\.js"/);
 });

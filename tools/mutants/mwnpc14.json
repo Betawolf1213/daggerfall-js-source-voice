@@ -100,7 +100,7 @@
  },
  {
   "name": "MWNPC14-peer-key-shared",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "  if (look?.vampire && !peerIsWolf(shown)) return `vamp|${bodyLookKey(look)}`;",
   "new": "  void 0;",
   "tests": [
@@ -109,7 +109,7 @@
  },
  {
   "name": "MWNPC14-peer-opts-dropped",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    ...(look?.vampire && !wolf ? { vampire: true } : {}),",
   "new": "    ...({}),",
   "tests": [
@@ -118,7 +118,7 @@
  },
  {
   "name": "MWNPC14-peer-wolf-vampire",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    ...(look?.vampire && !wolf ? { vampire: true } : {}),",
   "new": "    ...(look?.vampire ? { vampire: true } : {}),",
   "tests": [

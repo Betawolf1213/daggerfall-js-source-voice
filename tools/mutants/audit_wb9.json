@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-WB9-a-blow-on-him-from-anywhere-on-the-floor",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return 0;\n",
     "new": "",
     "tests": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "AUDIT-WB9-a-crystal-struck-from-anywhere-on-the-floor",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return out;   // AUDIT WB9 (brain F1): from his court, as a blow on him\n",
     "new": "",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "AUDIT-WB9-a-crystal-struck-after-the-landing",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (!reckonOpen(f, now)) return out;   // AUDIT WB9 (brain F2): only while the Reckoning still winds up, and not in its last breath\n",
     "new": "",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "AUDIT-WB9-a-crystal-struck-in-the-last-breath",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "now < f.atk.at - RECKON_CLOSE_MS;",
     "new": "now < f.atk.at;",
     "tests": [
@@ -164,7 +164,7 @@
   },
   {
     "name": "AUDIT-WB9-the-stun-kept-through-the-wrath",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "...(g.a === ATTACKS.wrath.id ? { stunUntil: 0 } : {}), ",
     "new": "",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "AUDIT-WB9-the-crystals-outliving-the-kill",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    f.cx = null;   // AUDIT WB9 (brain F4): a kill mid-Reckoning spends its crystals - no beat after the fall clears them\n",
     "new": "",
     "tests": [
@@ -182,7 +182,7 @@
   },
   {
     "name": "AUDIT-WB9-the-last-walkway-alone",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "for (let j = 0; j <= k; j++) if (!Number.isFinite(xa[j])) xa[j] = g.at - ATTACKS.cross.windup;",
     "new": "xa[k] = g.at - ATTACKS.cross.windup;",
     "tests": [
@@ -281,7 +281,7 @@
   },
   {
     "name": "AUDIT-WB9-the-bank-unbounded",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "      b.bank = Math.min(EFFECTS_BANK_MAX_S, b.bank + dt);   // AUDIT WB9 (bodies F1)",
     "new": "      b.bank += dt;",
     "tests": [
@@ -291,7 +291,7 @@
   },
   {
     "name": "AUDIT-WB9-the-hand-overs-spare-pushed-out",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "      const i = this._spares.findIndex((x) => x.key !== keep);",
     "new": "      const i = 0;",
     "tests": [
@@ -300,7 +300,7 @@
   },
   {
     "name": "AUDIT-WB9-the-build-reading-the-look-late",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "this._build(b, look, shown, glyphs)",
     "new": "this._build(b, peer.look, peer.shown, peer.glyphs)",
     "tests": [
@@ -309,7 +309,7 @@
   },
   {
     "name": "AUDIT-WB9-the-spares-first-frame-drawn-open",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "veil: conceal ? (conceal(peer.id) ?? null) : null };",
     "new": "veil: null };",
     "tests": [

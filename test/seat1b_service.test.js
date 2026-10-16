@@ -8,8 +8,8 @@ import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import { standService, T0 } from './accountDb.mjs';
 import { mintWatchReceipt } from '../src/net/watchReceipt.js';
-import { mintReceipt } from '../src/net/gateReceipt.js';
-import { gameDayAt, gateTimes } from '../src/net/gateLaw.js';
+import { mintReceipt } from '../src/net/gate/gateReceipt.js';
+import { gameDayAt, gateTimes } from '../src/net/gate/gateLaw.js';
 import { RENOWN_XP_HOUR_MAX } from '../src/net/renown.js';
 import {
   seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S, WATCH_DAY_CAP, SEAT_WATCH_CLAIM_MAX, SEAT_PLEDGE_REGIONS_MAX, ACCOUNT_SEAT_WEEK_CAP,

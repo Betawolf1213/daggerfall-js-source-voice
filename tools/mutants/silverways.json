@@ -251,7 +251,7 @@
   },
   {
     "name": "SILVER-WAYS-cli-raid-lines-unsaid",
-    "file": "src/net/raidClaims.js",
+    "file": "src/net/raid/raidClaims.js",
     "old": "          for (const line of Array.isArray(lines) ? lines : [lines]) if (typeof line === 'string' && line) say(line);\n",
     "new": "",
     "tests": [
@@ -260,7 +260,7 @@
   },
   {
     "name": "SILVER-WAYS-cli-gate-lines-one",
-    "file": "src/net/gateClaims.js",
+    "file": "src/net/gate/gateClaims.js",
     "old": "for (const line of Array.isArray(marksLine) ? marksLine : [marksLine]) if (typeof line === 'string' && line) say(line);",
     "new": "if (typeof marksLine === 'string' && marksLine) say(marksLine);",
     "tests": [

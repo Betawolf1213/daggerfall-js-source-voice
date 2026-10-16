@@ -4,7 +4,7 @@
 //
 // Mac: "Super dungeons are random finds on the world map ... The Super dungeon collapses when the feat is done." The
 // relay runs the Brass Remnant's fight in the Hollow's realm and, at its fall, signs a receipt for each account that
-// earned it (src/net/sdReceipt.js - `h1`, under the relay's GATE_SIGNING_KEY). This file is where that receipt is
+// earned it (src/net/superDungeon/sdReceipt.js - `h1`, under the relay's GATE_SIGNING_KEY). This file is where that receipt is
 // honoured: the gate's claim (accounts.js claimGate) rung for rung - and the Hour's two grants rolled on its first write.
 // Design: bible/11-Multiplayer/Super-Dungeons.md section 11.
 //
@@ -27,7 +27,7 @@
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
 
-import { verifySdReceipt } from '../../src/net/sdReceipt.js';
+import { verifySdReceipt } from '../../src/net/superDungeon/sdReceipt.js';
 import { seededRng } from '../../src/systems/wind/wind.js';
 
 /** The account's grants on its row (`players.sd_honours`, migration 0088), bit by bit. */

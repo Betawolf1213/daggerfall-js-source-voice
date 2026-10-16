@@ -11,7 +11,7 @@ import {
   purchaseShip, sellShip, purchaseHouse, sellHouse, creditMarksSale, accountTotal, SHIP_TYPES, shipPrice, shipSellPrice,
   housePrice, createHouses, drawEmpireAccounts, bankedGold, empireDrawLines,
 } from '../src/systems/banking.js';
-import { REALM_EMPIRE_ACCOUNT, payFromSave, payableOf, creditSave, accountOfSave } from '../src/net/realmGoldLaw.js';
+import { REALM_EMPIRE_ACCOUNT, payFromSave, payableOf, creditSave, accountOfSave } from '../src/net/realm/realmGoldLaw.js';
 import { REGION_NAMES } from '../src/formats/mapsFile.js';
 import { deductGold, goldAmount } from '../src/systems/court.js';
 import { letterOfCredit, LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';

@@ -1,7 +1,7 @@
 [
   {
     "name": "DISCORD-GATES-any-https-a-webhook",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "const WEBHOOK_RE = /^https:\\/\\/(?:(?:ptb|canary)\\.)?discord(?:app)?\\.com\\/api(?:\\/v\\d{1,2})?\\/webhooks\\/\\d{1,20}\\/[A-Za-z0-9_-]{1,128}$/;",
     "new": "const WEBHOOK_RE = /^https:\\/\\/\\S+$/;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "DISCORD-GATES-the-role-taken-unread",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "return ROLE_RE.test(s) ? s : null;",
     "new": "return s || null;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "DISCORD-GATES-the-omen-pings-nobody",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "const ping = role ? `<@&${role}> ` : '';",
     "new": "const ping = '';",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "DISCORD-GATES-every-mention-allowed",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "allowed_mentions: role ? { roles: [role] } : { parse: [] },",
     "new": "allowed_mentions: { parse: ['everyone', 'roles', 'users'] },",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "DISCORD-GATES-the-open-said-as-the-seal",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "open a breach ${heraldStamp(t.openAt, 'R')} ",
     "new": "open a breach ${heraldStamp(t.sealAt, 'R')} ",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "DISCORD-GATES-the-kill-pings",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "The breach collapses.`,\n    allowed_mentions: { parse: [] },",
     "new": "The breach collapses.`,\n    allowed_mentions: { parse: ['everyone', 'roles', 'users'] },",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "DISCORD-GATES-the-others-miscounted",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "Math.max(0, n - names.length) : 0;\n  const by = names.length",
     "new": "Math.max(0, n) : 0;\n  const by = names.length",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "DISCORD-GATES-a-name-posted-raw",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "String(n ?? '').replace(/[^A-Za-z0-9 '-]/g, '')",
     "new": "String(n ?? '')",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "DISCORD-GATES-posted-after-the-open",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "if (t.openAt <= nowMs) continue;",
     "new": "if (t.wrathAt <= nowMs) continue;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "DISCORD-GATES-the-omen-posted-again",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "if (!isGateDay(d) || d <= posted) continue;",
     "new": "if (!isGateDay(d)) continue;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "DISCORD-GATES-the-omen-instant-ignored",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "return { day: d, at: Math.max(nowMs, t.omenAt) };",
     "new": "return { day: d, at: nowMs };",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "DISCORD-GATES-a-day-not-come-trusted",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "const posted = Number.isSafeInteger(postedDay) && postedDay <= today ? postedDay : -1;",
     "new": "const posted = postedDay;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "DISCORD-GATES-a-kill-news-for-ever",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "nowMs < gateTimes(day).wrathAt + GATE_COLLAPSE_MS + HERALD_FELL_KEEP_MS",
     "new": "nowMs < Infinity",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "DISCORD-GATES-a-site-for-any-day",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "(day === gateAt(nowMs).day || day === gateAt(nowMs + GATE_SITE_SKEW_MS).day)",
     "new": "day >= 0",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "DISCORD-GATES-one-account-names-the-place",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "if (e[3].length >= GATE_SITE_AGREE &&",
     "new": "if (e[3].length >= 1 &&",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "DISCORD-GATES-a-second-word-counted",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "  if (c.some((e) => e[3].includes(sub))) return rec;\n",
     "new": "",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "DISCORD-GATES-the-last-said-wins-a-tie",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "(!best || e[3].length > best[3].length)",
     "new": "(!best || e[3].length >= best[3].length)",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "DISCORD-GATES-places-unbounded",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "    if (c.length >= GATE_SITE_CANDIDATES_MAX) return rec;\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "DISCORD-GATES-votes-unbounded",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "    if (c[i][3].length >= GATE_SITE_VOTES_MAX) return rec;\n",
     "new": "",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "DISCORD-GATES-an-older-day-restarts",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "  if (cur && cur.d > day) return rec;\n",
     "new": "",
     "tests": [

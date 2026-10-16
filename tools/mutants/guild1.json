@@ -1,7 +1,7 @@
 [
   {
     "name": "GUILD1-founding-cheaper",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "export const GUILD_FOUND_GOLD = 10_000;",
     "new": "export const GUILD_FOUND_GOLD = 1_000;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "GUILD1-founding-lower-renown",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "export const GUILD_FOUND_RENOWN = 10;",
     "new": "export const GUILD_FOUND_RENOWN = 5;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "GUILD1-a-bigger-guild",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "export const GUILD_MEMBERS_MAX = 50;",
     "new": "export const GUILD_MEMBERS_MAX = 60;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "GUILD1-an-officer-withdrawing",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "withdraw: Object.freeze([0]),",
     "new": "withdraw: Object.freeze([0, 1]),",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "GUILD1-a-member-inviting",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "invite: Object.freeze([0, 1]),",
     "new": "invite: Object.freeze([0, 1, 2]),",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "GUILD1-a-rename-by-an-officer",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "renameRanks: Object.freeze([0]),",
     "new": "renameRanks: Object.freeze([0, 1]),",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "GUILD1-an-equal-outranked",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "guildRankOk(target) && actor < target;",
     "new": "guildRankOk(target) && actor <= target;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "GUILD1-a-rank-moved-to-its-movers",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "return guildOutranks(actor, from) && guildOutranks(actor, to);",
     "new": "return guildOutranks(actor, from);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "GUILD1-a-move-to-nothing",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "!guildRankOk(to) || from === to) return false;",
     "new": "!guildRankOk(to)) return false;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "GUILD1-the-name-key-keeping-case",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "String(name ?? '').toLowerCase().replace(/[^a-z0-9]/g, '')",
     "new": "String(name ?? '').replace(/[^A-Za-z0-9]/g, '')",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "GUILD1-the-name-untidied",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "const s = raw.replace(/\\s+/g, ' ').trim();",
     "new": "const s = raw.trim();",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "GUILD1-a-name-ending-in-a-mark",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "/^[A-Za-z0-9][A-Za-z0-9 '\\-]*[A-Za-z0-9]$/.test(s)",
     "new": "/^[A-Za-z0-9 '\\-]+$/.test(s)",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "GUILD1-a-longer-name",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "s.length > GUILD_NAME_MAX)",
     "new": "s.length > GUILD_NAME_MAX + 8)",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "GUILD1-the-tag-not-capitalised",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "const t = raw.trim().toUpperCase();",
     "new": "const t = raw.trim();",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "GUILD1-two-ranks-one-name",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "return ok && new Set(out.map((n) => n.toLowerCase())).size === out.length ? out : null;",
     "new": "return ok ? out : null;",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "GUILD1-a-longer-rank-name",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "n.length <= GUILD_RANK_NAME_MAX &&",
     "new": "n.length <= GUILD_RANK_NAME_MAX + 5 &&",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "GUILD1-a-fraction-of-gold",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "Number.isSafeInteger(n) && n >= 1 && n <= GUILD_MOVE_MAX",
     "new": "Number.isFinite(n) && n >= 1 && n <= GUILD_MOVE_MAX",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "GUILD1-no-gold-moved",
-    "file": "src/net/guildLaw.js",
+    "file": "src/net/guild/guildLaw.js",
     "old": "Number.isSafeInteger(n) && n >= 1 && n <= GUILD_MOVE_MAX",
     "new": "Number.isSafeInteger(n) && n >= 0 && n <= GUILD_MOVE_MAX",
     "tests": [
@@ -742,7 +742,7 @@
   {
     "name": "GUILD1-the-law-not-bundled",
     "file": ".github/workflows/account-deploy.yml",
-    "old": "      - \"src/net/guildLaw.js\"\n",
+    "old": "      - \"src/net/guild/guildLaw.js\"\n",
     "new": "",
     "tests": [
       "test/guild1.test.js",

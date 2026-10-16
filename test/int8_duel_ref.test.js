@@ -1,22 +1,22 @@
 // INT8 (2026-10-09, the INTEGRITY arc's lane 2 - bible/06-Systems/Integrity-Arc.md; Mac: "I want to do everything and
 // do it properly"): THE DUEL REFEREED. DUEL1 left every blow to the defender's own machine and every result to the
 // loser's own word - a client that never took damage never fell (the player's report: "no damage"), and one that never
-// said it lost never did. Now the relay that routes a duel holds it (net/duelRef.js): it sets the bout on the start it
+// said it lost never did. Now the relay that routes a duel holds it (net/duel/duelRef.js): it sets the bout on the start it
 // watched being asked and answered, judges every blow and cast (routed to nobody), holds the ring, ends the bout, and
-// hands both fighters a signed receipt naming the winner (net/duelReceipt.js `d1`), which the account service counts
+// hands both fighters a signed receipt naming the winner (net/duel/duelReceipt.js `d1`), which the account service counts
 // once (test/duel_record.test.js). Pinned: the receipt's law, the referee's law, and the relay over the real Room
 // (test/fakeRoom.mjs) - a crafted client's every lie it used to tell.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 
-import { mintDuelReceipt, readDuelReceipt, verifyDuelReceipt, duelReceiptValid, DUEL_RECEIPT_V, DUEL_RECEIPT_TTL_S, DUEL_RECEIPT_MAX } from '../src/net/duelReceipt.js';
-import { newDuelRef, duelNote, duelOpen, duelBlow, duelPose, duelForfeit, duelStep, duelBoutOf, duelVitals, DUEL_REF } from '../src/net/duelRef.js';
-import { ROYAL_RING, SIEGE_UNITS_PER_M, SIEGE_HIT, siegeVitality, siegeBlowMax, SIEGE_CASTS } from '../src/net/siegeRef.js';
-import { mintRoyalReceipt, verifyRoyalReceipt } from '../src/net/siegeReceipt.js';
+import { mintDuelReceipt, readDuelReceipt, verifyDuelReceipt, duelReceiptValid, DUEL_RECEIPT_V, DUEL_RECEIPT_TTL_S, DUEL_RECEIPT_MAX } from '../src/net/duel/duelReceipt.js';
+import { newDuelRef, duelNote, duelOpen, duelBlow, duelPose, duelForfeit, duelStep, duelBoutOf, duelVitals, DUEL_REF } from '../src/net/duel/duelRef.js';
+import { ROYAL_RING, SIEGE_UNITS_PER_M, SIEGE_HIT, siegeVitality, siegeBlowMax, SIEGE_CASTS } from '../src/net/siege/siegeRef.js';
+import { mintRoyalReceipt, verifyRoyalReceipt } from '../src/net/siege/siegeReceipt.js';
 import { validDuelRefOut, DUEL_REF_RECEIPT_MAX, parseClient } from '../src/net/wire.js';
-import { DUEL_START_WAIT_MS, DUEL_OUT_MS, DUEL_GONE_MS } from '../src/net/duelSession.js';
-import { createDuelClaims, duelClaimSettles } from '../src/net/siegeClaims.js';
+import { DUEL_START_WAIT_MS, DUEL_OUT_MS, DUEL_GONE_MS } from '../src/net/duel/duelSession.js';
+import { createDuelClaims, duelClaimSettles } from '../src/net/siege/siegeClaims.js';
 import { fakeRoom } from './fakeRoom.mjs';
 
 const { subtle } = globalThis.crypto;

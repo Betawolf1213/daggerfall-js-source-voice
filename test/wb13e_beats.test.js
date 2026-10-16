@@ -7,8 +7,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ATTACKS, OPENING_MS, PHASE_NAMES, newFight, stateOf, windupOf } from '../src/net/gateBrain.js';
-import { GATE_STATE_EMPTY, foldGate } from '../src/net/gateLink.js';
+import { ATTACKS, OPENING_MS, PHASE_NAMES, newFight, stateOf, windupOf } from '../src/net/gate/gateBrain.js';
+import { GATE_STATE_EMPTY, foldGate } from '../src/net/gate/gateLink.js';
 import { validGateOut } from '../src/net/wire.js';
 import {
   bossAct, bossGlow, BOSS_CUES, GLOW_RANGE, FALL_MS, THUD_AT_MS, FALL_SINK_M, CORPSE_SCALE, WAKE_LEAD_MS, WAKE_FLARE_MS, LOW_HEALTH, sputter, emberColor,
@@ -23,7 +23,7 @@ import { bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, BOSS_
 import { destroyGateMarksCard } from '../src/ui/gateMarksView.js';
 import { destroyGateGround } from '../src/ui/gateGroundView.js';
 import { FX_KINDS } from '../src/render/gateFx.js';
-import { profileOf } from '../src/net/gateBrain.js';
+import { profileOf } from '../src/net/gate/gateBrain.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const BOSS = { name: 'Valkynaz Ruhn', title: 'Warden of the Burning Gate' };

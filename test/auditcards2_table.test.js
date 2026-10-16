@@ -8,7 +8,7 @@
 // reached (E8).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { newHand, act, foldSeat, freshDeck, parseCard, legalActions, viewFor } from '../src/net/cardLaw.js';
+import { newHand, act, foldSeat, freshDeck, parseCard, legalActions, viewFor } from '../src/net/card/cardLaw.js';
 import {
   CardTableSession, seatPatrons, settleMs, STREET_OF, PURSE_MIN_BB, PURSE_MAX_BB, THINK_MS, THINK_SPREAD_MS,
   regularsFor, regularsAfter, regularsBookRestore, REGULARS_BOOK_MAX,

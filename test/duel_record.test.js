@@ -13,14 +13,14 @@ import worker from '../server-account/src/index.js';
 import { standService } from './accountDb.mjs';   // INT8: the Worker with the relay's key pair
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { createGuest, claimDuel, duelRecordOf, DUEL_PAIR_DAY_MAX, DUEL_WINNER_DAY_MAX } from '../server-account/src/accounts.js';
-import { mintDuelReceipt, DUEL_RECEIPT_TTL_S } from '../src/net/duelReceipt.js';   // INT8: the relay's receipt
+import { mintDuelReceipt, DUEL_RECEIPT_TTL_S } from '../src/net/duel/duelReceipt.js';   // INT8: the relay's receipt
 import { ROUTES, OPEN_ROUTES, ACCOUNT_VERSION } from '../server-account/src/service.js';
 import { accountDuels, SESSION_KEY, REFUSALS } from '../src/net/accountClient.js';
-import { duelKd, duelRecordText, createDuelRecords, DUEL_RECORD_TTL_MS } from '../src/net/duelRecord.js';
+import { duelKd, duelRecordText, createDuelRecords, DUEL_RECORD_TTL_MS } from '../src/net/duel/duelRecord.js';
 import { profileView, profileDuelLine, createProfileWindow, DUEL_RECORD_ASKING } from '../src/ui/profileWindow.js';
 import { createDuelPrompt, duelPromptSub } from '../src/ui/duelPrompt.js';
 import { socialMenuRows, socialPlaqueRows } from '../src/ui/socialMenu.js';
-import { DUEL_ASK_TTL_MS } from '../src/net/duelSession.js';
+import { DUEL_ASK_TTL_MS } from '../src/net/duel/duelSession.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -59,8 +59,8 @@ const member = async (db) => {
 
 // PIN MOVED (INT8, bible/06-Systems/Integrity-Arc.md lane 2): THE RECORD WAS THE LOSER'S OWN REPORT - one row a loss
 // a client posted naming the winner, the gap and the pair bound inside its INSERT, a double knockout two reports
-// racing. The relay referees the bout now (net/duelRef.js) and hands BOTH fighters its signed receipt naming the winner
-// (net/duelReceipt.js `d1`); either carries it, and it is one row counted once by its bout's id. The gap and the draw
+// racing. The relay referees the bout now (net/duel/duelRef.js) and hands BOTH fighters its signed receipt naming the winner
+// (net/duel/duelReceipt.js `d1`); either carries it, and it is one row counted once by its bout's id. The gap and the draw
 // retired with the report; the pair, the winner's day and the registered accounts stand, inside the one INSERT.
 const keys = () => subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
 let _bout = 0;
@@ -131,7 +131,7 @@ async function stand() {
 
 test('DUEL1 the worker - INT8: /v1/duel/claim and /v1/duel/record behind a session, neither open; the claimer is the session, one of the receipt\'s two fighters (403 for any other), never the body; the loser\'s report retired (410); any account\'s record by id, in the body; /v1/account carries the caller\'s own (mutants: a route open to strangers; a third account\'s claim counted; the report still counted; the account view without the record)', async (t) => {
   // PIN MOVED (INT8): this drove /v1/duel/loss - the caller the loser, the winner the body's. The relay's receipt is the
-  // record now (net/duelReceipt.js), and the report is answered `retired`.
+  // record now (net/duel/duelReceipt.js), and the report is answered `retired`.
   t.mock.method(Date, 'now', () => T0 * 1000);
   const S = await standService();
   const me = await S.registered('DuelMe'), them = await S.registered('DuelThem'), other = await S.registered('DuelOther');
@@ -298,7 +298,7 @@ test('DUEL1 the F-menu\'s rows: a waiting challenge reads Accept duel with Decli
   assert.match(w, /onDuel: \(peerId\) => duelChallenge\(peerId\),/, 'the Inspect card\'s button');
   assert.match(w, /_profileSub = sub;   \/\/ DUEL1: the account the relay stamped on their answer/, 'the record is read by the relay\'s stamp');
   // PIN MOVED (INT8): only a loss was reported, by the loser, naming the stamp - the record is the referee's receipt now,
-  // kept and carried by either fighter (net/siegeClaims.js createDuelClaims), and nothing of a duel's end is reported
+  // kept and carried by either fighter (net/siege/siegeClaims.js createDuelClaims), and nothing of a duel's end is reported
   assert.match(w, /onReceipt: \(rc\) => \{ if \(duelClaims\.keep\(rc\)\) duelClaims\.offer\(\{ force: true \}\); \},/, 'the referee\'s receipt, carried');
   assert.equal(/duelAccount\.lost\(/.test(w), false, 'no loss reported');
   const card = src('src/ui/enhancedAccount.js');

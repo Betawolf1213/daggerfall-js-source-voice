@@ -3221,7 +3221,7 @@ Mac: "Add a dueling K/D to the profile menu and player inspect profile", kept pe
   `06-Systems/Integrity-Arc.md` 5) and `POST /v1/duel/record { id }` (any account's two counts, the id in the body), both behind a session; `GET /v1/account`
   carries the caller's own as `account.duels`. The service is `acct8`.
 - **The client** (`src/net/accountClient.js accountDuels`): the loss and the ask go only with a stored session, the
-  bearer in the header. `src/net/duelRecord.js` says a record ("3 won, 1 lost (K/D 3.00)"; no losses reads the wins)
+  bearer in the header. `src/net/duel/duelRecord.js` says a record ("3 won, 1 lost (K/D 3.00)"; no losses reads the wins)
   and keeps the Inspect card's reads a minute. The main menu's account card has a Duels row.
 
 ## DEV2 — two more developers (2026-09-24)
@@ -3250,7 +3250,7 @@ five guests gave one account fifty wins in a quarter of an hour, with no duel.
   removes that row and counts nothing (`why: 'draw'`). The DELETE is keyed on the caller as the WINNER, so a report can
   only ever remove a win of its own.
 - A refused report says which bound: `why` is 'guest', 'draw', 'gap', 'pair' or 'winner', and the client's line says
-  it (`net/duelRecord.js duelUncountedText`; a draw says nothing more, the duel said it).
+  it (`net/duel/duelRecord.js duelUncountedText`; a draw says nothing more, the duel said it).
 - Pinned in `test/duel_record.test.js` over the real migrations; `tools/mutants/auditduel1.json` A1 (B5 retired with the
   report itself at INT8: a duel's result is the relay's receipt, `06-Systems/Integrity-Arc.md` section 5).
 
@@ -3392,7 +3392,7 @@ object is the authority over the boss and signs a receipt for each account that 
 - **Whose word it is.** The RELAY's - the one party that saw the kill. The relay signs with its own key
   (`GATE_SIGNING_KEY`, a relay secret); this service holds only the public half (`GATE_PUBLIC_KEY`, a var in
   `server-account/wrangler.toml`, because a public key verifies and cannot sign) and verifies every receipt with it -
-  the version, the signature, the claims, the week (`src/net/gateReceipt.js verifyReceipt`). The identity pair runs the
+  the version, the signature, the claims, the week (`src/net/gate/gateReceipt.js verifyReceipt`). The identity pair runs the
   other way (this service signs, the relay verifies), and neither can pass for the other.
 - **One statement is the write.** Migration 0014 (0009 on its branch - RENOWN1 took 0009 first) adds `gate_kills` (day, account, boss, earned, at), primary key
   (day, account), cascading with the account, no counter column. `claimGate` is one `INSERT OR IGNORE`: a second
@@ -3402,7 +3402,7 @@ object is the authority over the boss and signs a receipt for each account that 
   under the same id.
 - **The routes.** `POST /v1/gate/claim { receipt }` behind a session; `GET /v1/account` carries `account.gates` and
   `POST /v1/duel/record` answers `gates` beside the duels. The service is `acct11` (`acct10` on its branch - RENOWN1, HOME1, DECOR1 and GUILD1 took `acct10` first).
-- **The client** (`src/net/accountClient.js accountGates`, `src/net/gateClaims.js`): no session, no knock; the device
+- **The client** (`src/net/accountClient.js accountGates`, `src/net/gate/gateClaims.js`): no session, no knock; the device
   keeps each receipt until an answer settles it. The account card has a *Gates closed* row; the Inspect card a line.
 - **The keys.** `node tools/mintGateKeys.mjs` mints the pair in one run and writes nothing to disk. GATE-KEYS
   (2026-09-26): the account deploy runs it, once - `.github/workflows/account-deploy.yml`, "Mint the gate receipt pair":
@@ -3733,7 +3733,7 @@ the box on one side, the wider readout on the other. The first cut drew the numb
 
 Mac: "Do guild1c" - the guild tag beside names, and the guild's chat (`06-Systems/Online-Arc.md` GUILD1c). The token grows
 three OPTIONAL claims, all three or none (`net/identityToken.js` guildClaimsValid): `gi` the guild's id, `gt` its tag,
-`gm` the character's member row - each a string of the guild law's own shape (`net/guildLaw.js`, which joins the relay's
+`gm` the character's member row - each a string of the guild law's own shape (`net/guild/guildLaw.js`, which joins the relay's
 bundle; it imports nothing). The mint reads them off the roster for the character the client named, as it reads the
 Renown level, and answers the tag beside the level - for a mint that asks (`guild: true`; AUDIT MERGE-PLUS A6: a build
 from before GUILD1c names its character too, and knows no guild channel); a character in none, and a mint naming none,
@@ -4023,7 +4023,7 @@ unique different version of the aura, a title named Hour's First, and each the g
 ## RAID4 — the towns defended (2026-09-28, acct17)
 
 Mac, on World Events - Raiding Parties online: "3. We can also add renown and it's own atheric + armor sets". The relay
-keeps a town raid's ledger and signs a receipt (`w1`, `src/net/raidReceipt.js`, under the gate's GATE_SIGNING_KEY) for
+keeps a town raid's ledger and signs a receipt (`w1`, `src/net/raid/raidReceipt.js`, under the gate's GATE_SIGNING_KEY) for
 each account that struck a raider and stood in the town at its cleanse (RAID3, `03-World/Raiding-Parties.md`). This
 service honours it:
 
@@ -4041,11 +4041,11 @@ service honours it:
   signed renown order, as a report's does. A new character past RENOWN_TRACKS_MAX is counted and paid nothing.
 - **The record.** `/v1/account` and the Inspect record carry `raids: { defended }`: the account card says *Towns
   defended: 3*, the Inspect card *Towns defended: 3* once there is one.
-- **The device** (`src/net/raidClaims.js`, the gate's carrier's twin) keeps each receipt with the character that fought
+- **The device** (`src/net/raid/raidClaims.js`, the gate's carrier's twin) keeps each receipt with the character that fought
   it until the service settles it, offering the signed-in account's alone; a counted raid's Renown is the page's at once
   when that character is the one playing.
-- `ACCOUNT_VERSION` acct17; the account deploy's path filter carries `src/net/raidReceipt.js` (and RAID3's
-  `src/net/raidLaw.js`). No relay change. Pins: `test/raid4_rewards.test.js`; `tools/mutants/raid4.json`.
+- `ACCOUNT_VERSION` acct17; the account deploy's path filter carries `src/net/raid/raidReceipt.js` (and RAID3's
+  `src/net/raid/raidLaw.js`). No relay change. Pins: `test/raid4_rewards.test.js`; `tools/mutants/raid4.json`.
 
 ## AUDIT RAID — a town's thanks once, a raid's Renown the hour's (2026-09-28, acct18)
 
@@ -4108,13 +4108,13 @@ handing its commit to the realm (`net/tradeSession.js` `escrow`, `systems/realmS
   `realm_tx_guard` never holds a row: a settling batch ends with an insert that happens only when a record it moved
   did not move, and the table's CHECK refuses it, so D1 rolls the batch back whole.
 - **The settle.** Each record is read as its own last checkpoint left it. The goods move by the shared law
-  (`src/net/realmTradeLaw.js`): what the giver's record holds, never what a client says. Both records land one
+  (`src/net/realm/realmTradeLaw.js`): what the giver's record holds, never what a client says. Both records land one
   sequence on as new objects, and one guarded batch moves both rows to them and seals the trade.
 - **Every write of a realm character is a new object.** `realm_characters` gains `obj` and `prev`: a checkpoint or a
   settle writes a key of its own (`realm.js` `mintObjectKey`) and the row then names it. A write that loses its race
   drops its own object and never touches the current save; the save two back goes. The P1 alternation could put a
   losing write on the current object.
-- **The Worker bundles the law.** `src/net/realmTradeLaw.js` and `src/net/canon.js` (TRADE1's comparison, lifted out
+- **The Worker bundles the law.** `src/net/realm/realmTradeLaw.js` and `src/net/canon.js` (TRADE1's comparison, lifted out
   of `net/tradeSession.js` into a leaf so the Worker does not bundle the client's trade machine) join the deploy's
   path filter (`.github/workflows/account-deploy.yml`, held to the import graph by `test/accountdeploy.test.js`).
 - `acct17` still (it has not shipped). Pins: `test/realm4.test.js` (14) and `test/realm1.test.js`;
@@ -4123,7 +4123,7 @@ handing its commit to the realm (`net/tradeSession.js` `escrow`, `systems/realmS
 ## REALM P2.2a — 2026-09-28: a guild's gold moves on the realm character's record
 
 - **`prepareRealmRecord`** (`realm.js`): the record read where the tab says it stands (`{ id, lease, seq }` - the tab
-  checkpoints just before and holds), changed by the act (`src/net/realmGoldLaw.js`: the wallet's own order - coins,
+  checkpoints just before and holds), changed by the act (`src/net/realm/realmGoldLaw.js`: the wallet's own order - coins,
   letters of credit, then the region's account - or a credit), and written one sequence on as a new object. The row's
   move and its guard go into the act's OWN batch, so the gold and the act land together or not at all.
 - **`mustChange`**: the batch step's guard. An insert into `realm_tx_guard` right after an UPDATE that must change a row,
@@ -4132,7 +4132,7 @@ handing its commit to the realm (`net/tradeSession.js` `escrow`, `systems/realmS
   pays). A realm character (its id the service's shape) must name its record, or `realm-needed`; no other character
   may. New refusals: `realm-needed`, `realm-gold` (the record cannot pay), and the checkpoint's own `lease` and `seq`
   (with the service's sequence). The guild routes now get the bucket.
-- The Worker bundles `src/net/realmGoldLaw.js`, listed in the deploy's path filter. Pins: `test/realm5.test.js` (7);
+- The Worker bundles `src/net/realm/realmGoldLaw.js`, listed in the deploy's path filter. Pins: `test/realm5.test.js` (7);
   `tools/mutants/realm5.json`.
 
 ## REALM P2.2b — 2026-09-28: a home's and its decor's gold moves on the realm character's record
@@ -4192,7 +4192,7 @@ The service lane of `06-Systems/Realm-Arc.md` AUDIT REALM2 (S1-S8):
 - **A first save is read** (`realm.js` `firstSaveRefusal`, before a byte lands):
   - one born online is level 1 within `REALM_BIRTH_WEALTH_MAX`, or it is refused `realm-birth` (403);
   - a customs character is within its level's allowance, or it is refused `customs-allowance` (403);
-  - both are measured by the one measure customs caps with (`src/net/realmGoldLaw.js`), its constants pinned to the game's.
+  - both are measured by the one measure customs caps with (`src/net/realm/realmGoldLaw.js`), its constants pinned to the game's.
 - **A house, a piece and a founding are a realm character's alone** (`realm-only`, 400). The two-write lane any id had
   is gone.
 - **A batch that landed keeps its save** (`dropIfUnnamed` in every catch).
@@ -4796,7 +4796,7 @@ left in it.) SirMcMobdon already holds SHADOW-FANG's title and glyph (black #0d0
     head, sitting 3.5 cm behind the body's middle with its peak fallen 5 cm further back; its peak 1.88 m, 8 cm over
     the 1.8 m crown ("not as tall"); narrower across than deep; its face open from 1.53 to 1.80 m, a brow over it.
   - IT FACES ITS WEARER'S WAY: the wearers carry `yaw` (`scenes/world.js auraFrame` - one's own body's facing,
-    `player.bodyYawFor`, as the third person draws it; a peer's from `net/peerClimb.js peerBodyYaw`); `uYaw` turns the
+    `player.bodyYawFor`, as the third person draws it; a peer's from `net/peer/peerClimb.js peerBodyYaw`); `uYaw` turns the
     mesh, and the mesh's seam (u 0 = 1) lies inside the opening or under the clasp.
   - IT SHADES: the only look drawn premultiplied (`shade`, ONE / ONE_MINUS_SRC_ALPHA) where the others add, so the
     cloth darkens what is behind it. ITS TWO SIDES ARE TWO DRAWS (`uSide`): its lining first (the faces turned from
@@ -4847,7 +4847,7 @@ left in it.) SirMcMobdon already holds SHADOW-FANG's title and glyph (black #0d0
     - THE POSE, off the body's own skeleton: `drawAuras` (after every body is posed and drawn this frame) reads the
       third-person Morrowind body's bones - mine through `player/mwView.js mwViewBodyBones` (`combat/fpArm.js
       thirdBones` / `armBonesInBody`: a bone's posed origin through `rigPointToBody`, the very frame drawThird places
-      by its feet and yaw, the race's weight across and height up), a peer's through `net/peerBodies.js bonesOf` (its
+      by its feet and yaw, the race's weight across and height up), a peer's through `net/peer/peerBodies.js bonesOf` (its
       standing body, at the feet and EASED yaw it is drawn at). `auraCapePose` (CLOAK_BONES: both shoulder joints, the
       neck, the head, both knees) gives the shoulders' middle and breadth (CLOAK_SHOULDER_HALF 0.2 m at rest, bounded
       CLOAK_ACROSS 0.8-1.25), the head's middle (CLOAK_HEAD_ABOVE 9 cm past its joint along the neck) and the knees.
@@ -5053,7 +5053,7 @@ painting is used.
   - AN EYE OF THE BEHOLDER SPRITE has no bones: what stands for them is read off the frame drawn (`auraSpriteBones`,
     EOTB_FIGURE) - its base over the feet, its metres a pixel, its form and its facing (player/eotbBody.js `figure()`,
     handed to player/mwView.js through the sprite's door and kept as `mwViewSpriteFigure()`; a peer's walker's or, on
-    foot, a beast's `figureOf`, net/peerRiders.js). AUDIT 3: BY THE PIXEL - the shoulder line 86 px over the frame's
+    foot, a beast's `figureOf`, net/peer/peerRiders.js). AUDIT 3: BY THE PIXEL - the shoulder line 86 px over the frame's
     foot (the sets' own measure 78 - 88 px whatever the frame holds: Idle 88, IdleMelee 80, IdleSpell 84, IdleRanged
     87 - about 1.63 m at 0.019 m a pixel), the neck 91, the head's joint 96 and the upper spine 75; a beast's frames
     at 0.68 of that (1.70 m at 0.029 m a pixel, measured 1.65 - 1.74); as broad as its metres a pixel are to 0.019 m
@@ -5352,7 +5352,7 @@ make the aura misallign".
   is gone and the record aimed at the one fallback left). In the saddle too (the horse's picture faces as the rider's does - no figure, no shoulders,
   but a facing); none in first person (the billboard on the camera faces no bearing) or undrawn. The figure keeps its
   shoulders and no longer carries a facing. `player/mwView.js` keeps it beside the figure (`mwViewSpriteFacing`).
-- **A peer's** (`net/peerRiders.js` `faceOf`, the walkers' and the riders' layers alike): the view each figure is drawn
+- **A peer's** (`net/peer/peerRiders.js` `faceOf`, the walkers' and the riders' layers alike): the view each figure is drawn
   in about my eye, recorded as it is drawn (`faceDrawn`), with the pose's facing as `turn`; a rider's and a beast's too;
   none undrawn or with no eye.
 - **The aura** (`render/auraRing.js`): `auraSpritePosed(w, fig, face)` poses a sprite wearer on its picture's facing -

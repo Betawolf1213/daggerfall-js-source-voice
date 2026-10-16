@@ -65,7 +65,7 @@
   {"name": "HORSEWALK-own-horse-ungated", "file": "src/player/mwView.js",
     "old": "look: horse.look | 0, gallops: !horse.slow });", "new": "look: horse.look | 0, gallops: true });",
     "tests": ["test/horsewalk.test.js"]},
-  {"name": "HORSEWALK-peer-horse-ungated", "file": "src/net/peerBodies.js",
+  {"name": "HORSEWALK-peer-horse-ungated", "file": "src/net/peer/peerBodies.js",
     "old": "look: shown.rc | 0, gallops: !shown.hs });", "new": "look: shown.rc | 0, gallops: true });",
     "tests": ["test/horsewalk.test.js"]},
   {"name": "HORSEWALK-saddle-trots", "file": "src/ui/enhancedSaddle.js",

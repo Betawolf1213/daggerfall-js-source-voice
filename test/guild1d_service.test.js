@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { seatRealm, realmAt } from './realmSeat.mjs';
-import { GUILD_FOUND_GOLD } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_GOLD } from '../src/net/guild/guildLaw.js';
 import { guildHallPrice, guildHallOwner } from '../src/net/hallLaw.js';
 import { homeSaleRefund, homeMayEnter, HOME_PRICE_MAX } from '../src/net/homeLaw.js';
 import { HERALDRY_CHANGE_DRAKES } from '../src/net/heraldryLaw.js';

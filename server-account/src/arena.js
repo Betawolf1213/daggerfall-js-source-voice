@@ -13,7 +13,7 @@
 // ═══ A ROW IS A RECEIPT ════════════════════════════════════════════
 //
 // Every result here was refereed by the relay and SIGNED by it
-// (src/net/arenaReceipt.js). The claim verifies the signature with the
+// (src/net/arena/arenaReceipt.js). The claim verifies the signature with the
 // relay's public half (the gate's own key, GATE_PUBLIC_KEY) and writes
 // ONE row keyed by the bout's id - so a receipt counts once whoever
 // carries it, and a bout between two players is one row whichever of
@@ -23,7 +23,7 @@
 //
 // A ladder WIN is written only where it is the account's next bout:
 // the won rows are only ever written in order, so their count IS the
-// next bout's key (src/net/arenaLaw.js ladderKey), and the INSERT asks
+// next bout's key (src/net/arena/arenaLaw.js ladderKey), and the INSERT asks
 // exactly that in its own WHERE. Two claims at once cannot both step,
 // and no receipt for the Grand Champion lands on an account that has not
 // won the thirty-nine bouts under it. A loss is kept whatever its order
@@ -39,12 +39,12 @@
 // the laurel while the account is the season's #1 - so the laurel passes
 // to whoever takes the top and lapses by itself, with no cron.
 // ═══════════════════════════════════════════════════════════════════
-import { verifyArenaReceipt } from '../../src/net/arenaReceipt.js';
+import { verifyArenaReceipt } from '../../src/net/arena/arenaReceipt.js';
 import {
   arenaSeasonOf, arenaSeasonEndsS, arenaSeasonDay, eloAfter, ARENA_ELO_START, arenaLadderOf, ladderKey, ARENA_BANNERS, ARENA_TEAM_POINTS,
   ARENA_TIERS, ARENA_TIER_BOUTS, ARENA_PAIR_DAY_MAX, ARENA_CHAMPION_MIN_BOUTS, arenaRatingOk, ARENA_ELO_MIN, ARENA_ELO_MAX,
   ARENA_CHAMPION_MIN_FOES, ARENA_PAIR_SEASON_MAX, ARENA_TICKET_RE, arenaNextOf, ARENA_BOUT_ID_RE, ARENA_ATTEMPT_LIFE_S,   // AUDIT ARENA-LADDER
-} from '../../src/net/arenaLaw.js';
+} from '../../src/net/arena/arenaLaw.js';
 import { boardNamesOf } from './boardNames.js';   // AUDIT CARDS-6 D3: a board's names wear every honour, Iliac Hand's too
 import { renownQuestXp } from '../../src/net/renown.js';   // ARENA4b: a bout's Renown, sized as quests are
 import { reportRenownXp, renownTrackOf, renownCharacterOk } from './renownTracks.js';   // ARENA4b: credited through the renown law's own door
@@ -133,7 +133,7 @@ export async function arenaPveOf({ db }, playerId) {
   const n = (v) => Number(v ?? 0) || 0;
   return { won, record: { wins: n(r?.wins), losses: n(r?.losses), yields: n(r?.yields), falls: n(r?.falls), ringouts: n(r?.ringouts) } };
 }
-/** The account's ladder, in the save ladder's own shape (src/net/arenaLaw.js arenaLadderOf). */
+/** The account's ladder, in the save ladder's own shape (src/net/arena/arenaLaw.js arenaLadderOf). */
 export async function arenaLadderOfAccount(ctx, playerId) {
   const { won, record } = await arenaPveOf(ctx, playerId);
   const L = arenaLadderOf(won, record);
@@ -318,7 +318,7 @@ async function claimLadder(ctx, player, c, season, banner) {
   const won = c.r === 1;
   const repeat = won && await wonBefore(db, player.id, c.q, c.u);
   if (repeat) banner = null;
-  // AUDIT ARENA-LADDER: A TICKETED ATTEMPT (`z`, net/arenaReceipt.js) - its row keyed by the ticket, the account's own
+  // AUDIT ARENA-LADDER: A TICKETED ATTEMPT (`z`, net/arena/arenaReceipt.js) - its row keyed by the ticket, the account's own
   // and this tier and bout's; a loss breaks the tier's run in the same write, and the attempt is done
   if (c.z !== undefined) {
     const att = await db.prepare('SELECT player, tier, step, room, at, done FROM arena_attempts WHERE id = ?1').bind(c.z).first();
@@ -407,7 +407,7 @@ async function claimPlayers(ctx, player, c, season) {
     }
     if (row) return { recorded: false, why: 'claimed', ...(await pvpAnswer(ctx, player.id, row)) };
   }
-  return { error: 'busy' };   // the receipt is kept and carried again (net/arenaClaims.js - every error but a receipt's)
+  return { error: 'busy' };   // the receipt is kept and carried again (net/arena/arenaClaims.js - every error but a receipt's)
 }
 /** AUDIT ARENA-LADDER 2: how long a done attempt is kept (a week - a receipt's own life), then let go. */
 export const ARENA_ATTEMPTS_KEEP_S = 7 * 86400;

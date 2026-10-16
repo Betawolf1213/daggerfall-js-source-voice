@@ -12,10 +12,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { mintRaidReceipt } from '../src/net/raidReceipt.js';
-import { mintReceipt } from '../src/net/gateReceipt.js';
-import { createRaidClaims, RAID_CLAIMS_KEY } from '../src/net/raidClaims.js';
-import { createGateClaims } from '../src/net/gateClaims.js';
+import { mintRaidReceipt } from '../src/net/raid/raidReceipt.js';
+import { mintReceipt } from '../src/net/gate/gateReceipt.js';
+import { createRaidClaims, RAID_CLAIMS_KEY } from '../src/net/raid/raidClaims.js';
+import { createGateClaims } from '../src/net/gate/gateClaims.js';
 import { createSpoilsPool, recoverSpoils } from '../src/scenes/spoilsPool.js';
 import { RAID_SPOILS_KEYS, RAID_SPOILS_RECORDS_MAX } from '../src/systems/raidSpoils.js';
 import { onSlotLoaded, slotLoaded } from '../src/systems/save/saveSlots.js';

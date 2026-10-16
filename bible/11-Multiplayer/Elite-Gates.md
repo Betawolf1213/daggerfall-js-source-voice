@@ -5,7 +5,7 @@
 > `01-Overview/Audit-EG0.md`), widened by EG0b (the fragments), and polished by AUDIT EG II (six cold lanes on
 > 14b3b172f, 282 findings: `01-Overview/Audit-EG-II.md`). The code's comments will cite this page by section number;
 > where the page and a pin disagree, the pin is what runs. Each slice adds its record under section 31. A path that
-> exists today is written from the repository root (`src/net/gateBrain.js`); a path this arc will create is written
+> exists today is written from the repository root (`src/net/gate/gateBrain.js`); a path this arc will create is written
 > without `src/` (`net/egLaw.js`).
 
 ## What Mac asked for
@@ -339,7 +339,7 @@ row beside `PORTAL_STONE_TEMPLATES` in `src/systems/gate/gateSpoils.js`:
 - its art: a key of black iron and gold, painted in code into the Spire's first pseudo-archive (section 25), which
   EG1's registry holds. EG2 ships it with that art, never a borrowed record, because Port-Doctrine allows no
   placeholder shipped silently;
-- named in `BOUND_TEMPLATES` (`src/net/realmTradeLaw.js`), so the realm's trade refuses it as the client does;
+- named in `BOUND_TEMPLATES` (`src/net/realm/realmTradeLaw.js`), so the realm's trade refuses it as the client does;
 - its line: *One of the Spire's portal keys, surrendered to the Kyn in 3E 398. It opens the Weir Gate's road from
   this side.*
 
@@ -753,7 +753,7 @@ A walkway 90-160 m long over the void: 3-4.5 m wide for a company of up to four,
 
 ### 8.4 The Athenaeum (`athenaeum`) - the lock
 
-The Battlemages' library, its heart an **Orrery** drawn by `orreryOf` (`src/net/sdBrain.js`).
+The Battlemages' library, its heart an **Orrery** drawn by `orreryOf` (`src/net/superDungeon/sdBrain.js`).
 
 - **Today**, `orreryOf(s)` takes a Hollow's slot. It reads its fray from that slot's own Hour marks
   (`sdMarksLaw(sdMarksOf(s)).fray`) and its turns range from the module constants `SD_TRUTH_TURNS_MIN`/`_MAX`, with a
@@ -872,7 +872,7 @@ sum) would give the relay and a phone different halls. So:
   `{k:'spec'}` and builds from the relay's bytes, and the mismatch rides the next receipt's measures.
 
 **Seeds.** The breach's `seed` is drawn by the relay's CSPRNG when the room accepts the open order, and said in its
-state. A hall's own seed is `egSeed(seed, hall)`, the `sdSeed` mix. EG5 exports `sdSeed` from `src/net/sdBrain.js`
+state. A hall's own seed is `egSeed(seed, hall)`, the `sdSeed` mix. EG5 exports `sdSeed` from `src/net/superDungeon/sdBrain.js`
 (today it is private), and the Spire imports it rather than copying it (ONE DFU MEMBER, ONE EXPORT). The receipts'
 seeds are not the breach's (section 22).
 
@@ -1389,7 +1389,7 @@ audit39. Everything else is painted in code into the band's archives (section 25
 
 ## 12. The legion - relentless adds
 
-**One wave runner, widened from the gate's.** In `src/net/gateBrain.js`, the private `stepHost` runs the
+**One wave runner, widened from the gate's.** In `src/net/gate/gateBrain.js`, the private `stepHost` runs the
 Legion-Lord's three kinds, tied to the gate's phase, court and trial.
 
 - **EG8 lifts their law** into `net/egHost.js`: a runner driven by a hall's geometry (a court's rim, a rift's place, a
@@ -2223,7 +2223,7 @@ company gets is how well it plays.
 
 **What a Redoubt pays**, to each earner, at the claim of their `e1` receipt. **A Redoubt's number pays once per
 account per arena week**: `arenaWeekOf(nowS) = floor((nowS - ARENA_SEASON_EPOCH_S) / 604800)`, a new helper beside
-`arenaSeasonOf` (`src/net/arenaLaw.js`, whose seasons are eight weeks). Taken again in the same week it pays gold alone
+`arenaSeasonOf` (`src/net/arena/arenaLaw.js`, whose seasons are eight weeks). Taken again in the same week it pays gold alone
 and seals no Reliquary. This is also the weekly reason to come back. Without it, a company with keys could farm one
 Redoubt daily (AUDIT EG0 G6).
 
@@ -2369,7 +2369,7 @@ row pinned at the foot (`topWithMe`), the company's names, the flame, and *Your 
 skin builds it from DFU windows, as the start window uses DaggerfallListPickerWindow (`src/ui/listPicker.js`);
 `src/ui/iliacTableHud.js`, one DOM panel outside the window stack, is the precedent for the enhanced skin only.
 
-**The herald** (`net/egHerald.js`: pure builders, as `src/net/gateHerald.js` is). Like the Hour's and the serpent's
+**The herald** (`net/egHerald.js`: pure builders, as `src/net/gate/gateHerald.js` is). Like the Hour's and the serpent's
 heralds, it posts to the gate's webhook and falls back to the gate's role, pinging no one:
 
 - a company taking Redoubt 10, 20, 30...: *<opener>'s company took Redoubt 10 of the Battlespire (Hall 50) in
@@ -2999,7 +2999,7 @@ rules. Every player-facing line is a constant in `EG_TEXT`, worded once and pinn
   - the Timers row, the sight line, the company's map mark;
   - the hub's open and the room link; the swap's caller;
   - the HUD and its layouts, the count's chip, the arrival card, the rest window, the recap; the claim queue
-    (`createEgClaims`, as `createGateClaims` in `src/net/gateClaims.js` is); *Return to the Spire*;
+    (`createEgClaims`, as `createGateClaims` in `src/net/gate/gateClaims.js` is); *Return to the Spire*;
   - the score, THE SPIRE MIX and the reverb's hold; the flight bans (OR'd into the one ward registration) and the
     technique refusal; the jump buffer; THE POTION LAW's counter; no Resurrect; the AvoidDeath hook answering false;
     a death as a fall;
@@ -3136,10 +3136,10 @@ it opened or moved, and where it departs from this page.
 
 The design, whole, before any code. Grounded in the shipped tree at `d9a3ced2`:
 
-- the gate's clock (`src/net/gateLaw.js`);
+- the gate's clock (`src/net/gate/gateLaw.js`);
 - the made levels (`src/world/gate/gateArena.js`, `src/world/superDungeon/sdRealm.js`);
-- the brains and their shared hand (`src/net/gateBrain.js`, `src/net/sdRemnant.js`);
-- the marks (`src/net/gateMods.js`, `src/net/sdMarks.js`);
+- the brains and their shared hand (`src/net/gate/gateBrain.js`, `src/net/superDungeon/sdRemnant.js`);
+- the marks (`src/net/gate/gateMods.js`, `src/net/superDungeon/sdMarks.js`);
 - the Steps (`src/world/superDungeon/sdSteps.js`) and the engine's envelope (`src/player/motor.js`, `src/player/parkour.js`);
 - the party (`PARTY_MAX` 8) and the hub's rosters;
 - the receipts and their claims, the boards (`server-account/src/arena.js`) and the Portal Stone.

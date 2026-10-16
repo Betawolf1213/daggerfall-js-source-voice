@@ -61,8 +61,8 @@ import { SdPillarPassRenderer } from '../render/sdPillarPass.js';   // SD-LOOK S
 import { sdPillarLookAt, sdPillarLook, sdArenaMarksAt, sdLampDimInto } from '../scenes/sdArenaWatch.js';
 import { GateTelegraphRenderer } from '../render/gateTelegraph.js';
 import { SD_ARENA_CENTRE, SD_TELEGRAPH_FLOOR } from '../scenes/sdRemnantBlows.js';
-import { SD_BLOWS, SD_REM_START, SD_ECHO_SPOTS } from '../net/sdRemnant.js';
-import { SD_FIGHT_EMPTY } from '../net/sdFightLink.js';
+import { SD_BLOWS, SD_REM_START, SD_ECHO_SPOTS } from '../net/superDungeon/sdRemnant.js';
+import { SD_FIGHT_EMPTY } from '../net/superDungeon/sdFightLink.js';
 import { veilAt, VEIL_OPEN_S } from '../render/gateVeil.js';
 import { buildRealmModel, realmLighting, realmLightsWith, realmColliderTris, packRealmFaces, SD_REALM_ARCHIVE, SD_REALM_BRASS_RECORD, SD_REALM_FOG, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_ARRIVE_Z, SD_THRESHOLD_RIM } from '../world/superDungeon/sdRealm.js';
 import { realmArt } from '../world/superDungeon/sdRealmArt.js';
@@ -78,8 +78,8 @@ import { createSdHang } from '../scenes/sdHang.js';
 import { sdRiftFace, SD_RIFT_OPEN_LOOK, SD_RIFT_NOT_YET, SD_RIFT_CLOSED, SD_RIFT_REFUSED } from '../world/superDungeon/sdDungeon.js';
 import { SdRiftRenderer } from '../render/sdRiftPass.js';
 import { SdHaloRenderer, SD_HALO_GAIN } from '../render/sdHalo.js';
-import { realmToDungeon, SD_ORRERY, SD_ARENA, SD_STONE_POS, orreryOf, orreryLit, orreryTurn } from '../net/sdBrain.js';
-import { sdMarksOf, SD_ENDINGS } from '../net/sdMarks.js';
+import { realmToDungeon, SD_ORRERY, SD_ARENA, SD_STONE_POS, orreryOf, orreryLit, orreryTurn } from '../net/superDungeon/sdBrain.js';
+import { sdMarksOf, SD_ENDINGS } from '../net/superDungeon/sdMarks.js';
 import { DUNGEON_AMBIENT } from '../world/dungeon/dungeonLights.js';
 import { INTERIOR_LIGHT_DIR } from '../world/interior/interiorLights.js';
 import { perspective, lookAt, identity, mirrorProjectionX } from '../world/mat4.js';
@@ -316,7 +316,7 @@ const skyLook = (lane) => { const i = SD_ENDINGS.findIndex((E) => E.id === sdMar
 /** SD-LOOK: the sky's word for the fight, from the query - ?fight=reset&rt=<s of 8> | break | end | live&ft=<share>
  *  [&last] | ?collapse=<s of 180> - as the host hands it from the fight's own clocks. */
 const _labClock = new Float32Array(4);
-/** SD-LOOK S7: a made fight state for ?fight= - the page's own shape (net/sdFightLink.js state()), its clocks in ms. */
+/** SD-LOOK S7: a made fight state for ?fight= - the page's own shape (net/superDungeon/sdFightLink.js state()), its clocks in ms. */
 function labFight() {
   const f = params.get('fight'), t = clock * 1000, op = t - 300_000, ends = op + 900_000;
   if (!f) return null;

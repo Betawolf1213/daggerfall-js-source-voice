@@ -47,7 +47,7 @@ Daggerfall has no other players and no sea serpent, so none of this is a DFU mem
 ## 1. The schedule - a function of the clock
 
 The serpent runs on the gate's event clock (WORLD5's shared clock at TimeScale 12, a game day every two real hours;
-`net/serpentLaw.js`). A serpent rises every `SERPENT_EVERY_DAYS` (2) game days, on the odd days (`SERPENT_DAY_PHASE`
+`net/serpent/serpentLaw.js`). A serpent rises every `SERPENT_EVERY_DAYS` (2) game days, on the odd days (`SERPENT_DAY_PHASE`
 1). That is once every four real hours, at the same six UTC times each day, so every timezone's evening holds one.
 It takes the dawn watch, the gate's quiet half of the day, so the two never stand at once.
 
@@ -119,7 +119,7 @@ and a client folds its own site's alone (AUDIT SERPENT S1, AUDIT SERPENT 2 F1). 
 
 ## 4. The body - a path, not a physics
 
-`net/serpentBody.js`, shared by the relay and every client, so both draw the same serpent from the same words.
+`net/serpent/serpentBody.js`, shared by the relay and every client, so both draw the same serpent from the same words.
 
 - **The head runs LEGS**: lines and arcs at a constant speed (`legAt`, `headAt`). An arc's centre lies `r` to its
   side (`sd` is +1 for a right turn, -1 for a left). A jump leg (`j`) starts a fresh track: its rising's alone - since
@@ -243,11 +243,11 @@ the place of one sounded, or of one nobody has a part in and nobody keeps about 
 word finds it slain, never a new one at full health (AUDIT SERPENT 2 F6). A socket whose `in` named a site hears that
 site's fight alone (a ship refused a seat still watches it); a fighter hears its own; any other socket hears every
 fight within `FAN_R`. AUDIT SERPENT 2 F1: **every word a fight fans names its site** (`sx`/`sz`), and a client folds
-its own site's alone (`net/serpentLink.js`) - so a socket of a client's in another cell (a halo), hearing a forged
+its own site's alone (`net/serpent/serpentLink.js`) - so a socket of a client's in another cell (a halo), hearing a forged
 site's fight by its pose there, never folds it into the client's own; S1's "no other fight about the pose", which could
 not see another cell, is gone.
 
-**The brain** (`net/serpentBrain.js`) is pure law: no clock of its own, an `rng` handed in, no I/O. The relay
+**The brain** (`net/serpent/serpentBrain.js`) is pure law: no clock of its own, an `rng` handed in, no I/O. The relay
 (`server/src/index.js`) owns the sockets, the alarm, the storage and the receipts:
 
 - **The beat** steps it every `SERPENT_TICK_MS` (250 ms) on the cell's alarm. The cell's own duties (the raids, the
@@ -378,7 +378,7 @@ where nothing of it reaches, stood. A dealer's PARTY shares the kill: the cell s
 earned nothing) with the kill, and the hub gives each whose party holds a dealer's receipt a stander's (section 16). The
 kill is stamped once, with its three best dealers and the damage chart.
 
-**The receipt** (`net/serpentReceipt.js`, version `l1`). Ed25519, signed by the relay's one key (`GATE_SIGNING_KEY`),
+**The receipt** (`net/serpent/serpentReceipt.js`, version `l1`). Ed25519, signed by the relay's one key (`GATE_SIGNING_KEY`),
 the version inside the signed bytes. It is refused by the gate's (`r1`) and the raid's (`w1`) verifiers, and theirs by
 this one. Its claims are:
 
@@ -408,7 +408,7 @@ route `/v1/serpent/claim`):
 - The account card and the inspect answer say `serpents: { slain }`, and the game says it: the account card's
   *Serpents slain* row, and the inspect card's line (D4).
 - **SERPENT-SET (2026-10-05, acct84).** The row says the embers its hoard paid (`stones`, migration
-  `0083_serpent_embers.sql` - `SERPENT_EMBERS`, `net/serpentHoardLaw.js`; 0 for every row before it, whose hoard paid
+  `0083_serpent_embers.sql` - `SERPENT_EMBERS`, `net/serpent/serpentHoardLaw.js`; 0 for every row before it, whose hoard paid
   none), and the insignia's purse and its sale read ONE sum of a breach's and a serpent's (`accounts.js`
   `EMBERS_EARNED_SQL`), so an ember won at sea buys at the Broker's insignia counter as a breach's does. And the kill
   strikes its SILVER - a combat faucet now (`server-account/src/marks.js` `serpentStrikeStatement`, in the row's own
@@ -416,7 +416,7 @@ route `/v1/serpent/claim`):
   under the day's one combat cap of 150 with the gates and the raids (`src/net/marksLaw.js` MARKS_COMBAT), its line
   `serpent:<day>`; the route answers it as `marks` where it recorded, and the game says it as a raid's is (the claim's
   `onMarks`, the haul card's "Serpent slain"). The hoard's law is a file of its own because the relay bundles
-  `net/serpentLaw.js` and hashes its graph: a constant written there would have been a relay deploy. AUDIT 625 P4: the
+  `net/serpent/serpentLaw.js` and hashes its graph: a constant written there would have been a relay deploy. AUDIT 625 P4: the
   row's embers are what the CLAIM says its build's hoard mints (`stones` - every row had counted SERPENT_EMBERS, so a
   build from before the embers, whose pack was given none, put one in the purse), and the answer says the row's, a
   repeat's too, as a gate's does (section 11).
@@ -438,7 +438,7 @@ Every piece is known, and the ladder's last pass is applied (LOOT2). It is rolle
 receipt's `l`), never past the standing character's own (D2). It is given when the service says this claim's device
 holds the (day, account)'s hoard row (`serpent_spoils`, the raids' AUDIT RAID R4 law), so a second browser or a phone
 is answered no. It goes straight into the pack through a spoils pool under its own keys, and rides the crash's records
-until a save holds it (a slot loaded lets them go - D5). The device carries the receipt (`net/serpentClaims.js`) with
+until a save holds it (a slot loaded lets them go - D5). The device carries the receipt (`net/serpent/serpentClaims.js`) with
 the character that fought it - at most `SERPENT_CLAIMS_MAX` (24), fewer than the pool remembers spent (D3) - until the
 service settles it, and settles it only once its hoard's grant has resolved (D6).
 
@@ -502,18 +502,18 @@ After the kill the bar holds a moment and fades.
   (`SERPENT_BRAIN_MIN`), so a game before it is told to reload. No frame changes shape, and nothing else in the order
   moves: deploy the relay with the client.
 - **SERPENT2's relay: `world166`** (section 14). The `serpent` frame's `site` word, said to the hub alone, and
-  `net/serpentHerald.js` in the bundle. A relay before it closes the socket on the kind, so a client says it only to a
+  `net/serpent/serpentHerald.js` in the bundle. A relay before it closes the socket on the kind, so a client says it only to a
   relay that welcomed it with 166 or later (`serpentSiteOk`). Nothing else in the order moves: the service is untouched.
 - **The relay: `world165`** (world162 on its branch, renumbered past main's PRIMARCH (world162) and SUNBABY1 (world163), then past PARTY-LEAD (world164), at the merges). The `serpent` frame (`net/wire.js` `validSerpentIn`, `validSerpentOut`,
   `SERPENT_RELAY_MIN`). `serpentLaw.js`, `serpentBrain.js`, `serpentBody.js` and `serpentReceipt.js` join the bundle.
   A relay before it closes the socket on the frame, so a client sends one only to a relay that welcomed it with 165
   or later (`serpentOk`).
 - **The account service: `acct78`** (acct75, acct76 then acct77 on its branch, renumbered past main's HOME-PRICE (acct75), PRIMARCH and FOUNDER4 (acct76) and KNIGHT-HOUSE (acct77) at the merges). Apply migration `0081_serpent_kills.sql` (0078 then 0079 on its branch, past main's FOUNDER4 `0078_founder_links.sql`, KNIGHT-HOUSE `0079_home_deed.sql` and HOME-VENDOR `0080_home_vendors.sql`), then deploy (the deploy's path filter
-  carries `src/net/serpentReceipt.js`). Before acct78 the route answers nothing and a receipt waits on the device for
+  carries `src/net/serpent/serpentReceipt.js`). Before acct78 the route answers nothing and a receipt waits on the device for
   its week.
 - **SERPENT-SET's account service: `acct84`** (with SILVER-FINDS; `acct83` on its branch, renumbered past CRYSTAL-FIST's acct83 at its merge of main). Apply migration `0083_serpent_embers.sql` (a
   serpent's row's `stones`, the embers its hoard paid, which the insignia's purse counts with a breach's), then deploy -
-  the deploy's path filter carries `src/net/serpentHoardLaw.js` (SERPENT_EMBERS) as it carries the receipt. The relay
+  the deploy's path filter carries `src/net/serpent/serpentHoardLaw.js` (SERPENT_EMBERS) as it carries the receipt. The relay
   is untouched: it never reads the hoard's law, and its version stands (`world166`). AUDIT 625 P4: the row counts the
   embers the CLAIM says its build's hoard mints (`stones`, at most SERPENT_EMBERS - `net/accountClient.js`
   claimSerpentReceipt), so a build from before them, saying none, is counted none; the answer says the row's embers,
@@ -584,7 +584,7 @@ before it the hunt counted to the storm and *Sethrakul's waters are closed* coun
 Once it is under way, *Next sea serpent rises* stands beside it. A kill ends its row early (the host hands the kill
 of this machine's own site). The port is named from the bells on, as the chat names it (the omen's `site.near`).
 
-**The herald** (`net/serpentHerald.js`, the hub's `_serpentHeraldBeat` in `server/src/index.js`). DISCORD-GATES' law
+**The herald** (`net/serpent/serpentHerald.js`, the hub's `_serpentHeraldBeat` in `server/src/index.js`). DISCORD-GATES' law
 at sea (`World-Bosses.md`, the herald), posted to the gate's channel through the gate's webhook
 (`GATE_DISCORD_WEBHOOK`, a Worker secret). Two posts:
 
@@ -637,7 +637,7 @@ that harness had found one win in the 144, three galleons at 38% (AUDIT SERPENT 
 predates F7's shorter ram - section 5). Its jumps wasted volleys in flight too, and the relay judged a blow by the body
 at its word's arrival - a gathering and a wire after the ball struck.
 
-**The law** (`net/serpentBrain.js` - DECLARED; `net/serpentBody.js`'s legs unchanged):
+**The law** (`net/serpent/serpentBrain.js` - DECLARED; `net/serpent/serpentBody.js`'s legs unchanged):
 - **No leap.** Every leg is swum from where the last left its head (`legFrom`); the rising's first leg is its only `j`.
 - **The dash.** A Rising Maw dashes for its mark under the sea and a coil for the round it closes about her - a turn of
   `HUNT_TURN_R` (30 m) and a straight (`wayOnto`, Dubins's), at `DASH_V` (the ram's run, 34 m/s) at most: the Maw's last
@@ -721,7 +721,7 @@ at its word's arrival - a gathering and a wire after the ball struck.
   dashes under the sea (`dashWake`: sounded, faster than it cruises - the ram's run down its lane among them, running on
   past a ship it struck), a splash at most every `WAKE_MS` (150 ms) of the fight's clock (AUDIT SHIPS C4: one a frame
   held the particle budget full, and the guns' spray was evicted first).
-- **Its law's version 2** (`net/serpentLaw.js` `SERPENT_BRAIN_V`, `SERPENT_BRAIN_MIN`): a game before it - one that draws
+- **Its law's version 2** (`net/serpent/serpentLaw.js` `SERPENT_BRAIN_V`, `SERPENT_BRAIN_MIN`): a game before it - one that draws
   the whirl at the heart and takes a pair's blows whole - is told to reload, and is not heard, nor gone at, until it has
   (AUDIT SHIPS C2: told, it fought on).
 
@@ -877,7 +877,7 @@ for rung, in `server-account/src/serpents.js`:
 - **Answered** (`ACCOUNT_VERSION` acct137 - acct135 on its branch, renumbered past main's acct135 and acct136 at the merge): a counted claim's answer carries `title`, `aura` (what THIS kill granted)
   and `titleNew`, `auraNew` (whether the account did not hold it before - the session's row, read before the write).
 
-**Said and popped** (`net/serpentClaims.js`): a counted kill that granted one says "The Bay names you Coilbreaker." /
+**Said and popped** (`net/serpent/serpentClaims.js`): a counted kill that granted one says "The Bay names you Coilbreaker." /
 "The Maelstrom turns about you." in the chat - in the player's language (AUDIT WORLD-REWARDS C2: routed through the text
 core, `serpent.honour.title` / `.aura`, drafted in-session in the thirteen whole languages, as the lamp's lines are) - and - when it is new - hands the loot banner's honour door
 (`ui/lootBanner.js` `announceHonour`, HONOUR-BANNER) `SERPENT_HONOUR_KEYS`, wired by the world host beside the Hour's.

@@ -7,7 +7,7 @@ import {
   SUIT_CROWNS, courtOf, cardTitle, rankLabel, PIP_LAYOUT, paintFace, paintBack, paintCharge, RANK_JACK, RANK_KING, RANK_ACE,
 } from '../src/render/cardFaces.js';
 import { CROWN_LORE } from '../src/systems/naval/navalShips.js';
-import { parseCard, SUITS } from '../src/net/cardLaw.js';
+import { parseCard, SUITS } from '../src/net/card/cardLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 

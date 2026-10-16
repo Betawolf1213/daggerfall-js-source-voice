@@ -299,7 +299,7 @@ import { HOST_COMMANDS } from '../src/net/chatCommands.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // MERGE 2: TERMS1 - a request that makes an account carries the versions ticked
 import { r2, seatRealm } from './realmSeat.mjs';   // MERGE 2: a founding is a realm character's (AUDIT REALM2 S2)
-import { GUILD_FOUND_GOLD } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_GOLD } from '../src/net/guild/guildLaw.js';
 
 function memoryStorage() {
   const m = new Map();

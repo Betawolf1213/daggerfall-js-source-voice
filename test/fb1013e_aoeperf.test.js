@@ -21,7 +21,7 @@ import {
   GateTelegraphRenderer, TELEGRAPH_FS, TELEGRAPH_VS, TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_POINTS_MAX, TELEGRAPH_REACH, TELEGRAPH_EDGE, TELEGRAPH_LIFT,
   TELEGRAPH_WALK_QUAD, TELEGRAPH_MARK_RING, telegraphShape, markShape, poolShapes, telegraphBounds, telegraphQuadOver, telegraphStrip, telegraphMarkReach,
 } from '../src/render/gateTelegraph.js';
-import { ATTACKS, COURTS, COURT_R, COURT_CENTRE, BASE_PROFILE, POOLS, HOST, BOSS_R, windupOf, fightProfile } from '../src/net/gateBrain.js';
+import { ATTACKS, COURTS, COURT_R, COURT_CENTRE, BASE_PROFILE, POOLS, HOST, BOSS_R, windupOf, fightProfile } from '../src/net/gate/gateBrain.js';
 import { hostShapes } from '../src/scenes/gateHost.js';
 import { lookAt, perspective, mirrorProjectionX, multiply } from '../src/world/mat4.js';
 

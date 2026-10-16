@@ -274,7 +274,7 @@ export function createComeSailAwayAboard({ peers, geometry, selfId = () => null 
       if (!pose) return d;
       const w = toWire(worldOf(pose, r.shown));
       // #1: and where on that deck - its frame's own place and whose deck - so a pace is read off the stride on the
-      // deck (net/peerPace.js), never off the deck's own way: a body standing on a moving deck stands
+      // deck (net/peer/peerPace.js), never off the deck's own way: a body standing on a moving deck stands
       return { ...d, shown: { ...d.shown, x: w[0], y: w[1], z: w[2], deck: [r.shown[0], r.shown[1], r.shown[2]], deckKey: `${r.owner}:${r.slot}` } };
     });
   }

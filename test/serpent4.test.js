@@ -15,15 +15,15 @@ import {
   newSerpentFight, joinSerpentFight, applySerpentHit, serpentEarned, serpentEarnedBy, serpentKinOf, serpentStateOf, SHIP_REF,
   SERPENT_TTK_S, SERPENT_RECEIPT_SHARE, SERPENT_PART_SHARE, SERPENT_STOOD_SHARE, SERPENT_STAND_R, SERPENT_HAND_REF, SERPENT_HAND_REACH_M,
   SERPENT_HAND_SHARE, SERPENT_BUCKET_RATE_X, SERPENT_ATTACK_TABLE, ZONES, GUN_REACH_M, SERPENT_POSE_SLACK, CRUSH,
-} from '../src/net/serpentBrain.js';
-import { LEG, MODE, RADII, SERPENT_GIRTH, radiusAt, bodyAt, segmentBox, nearestExposed } from '../src/net/serpentBody.js';
-import { serpentTimes, serpentAdmits, serpentCountdown, serpentPhase, SERPENT_BRAIN_V } from '../src/net/serpentLaw.js';
+} from '../src/net/serpent/serpentBrain.js';
+import { LEG, MODE, RADII, SERPENT_GIRTH, radiusAt, bodyAt, segmentBox, nearestExposed } from '../src/net/serpent/serpentBody.js';
+import { serpentTimes, serpentAdmits, serpentCountdown, serpentPhase, SERPENT_BRAIN_V } from '../src/net/serpent/serpentLaw.js';
 import { shoveOf, shipHurt, crushHurt, SERPENT_THROW_X, SERPENT_CANVAS_X } from '../src/systems/serpent/serpentStrike.js';
-import { createSerpentLink } from '../src/net/serpentLink.js';
+import { createSerpentLink } from '../src/net/serpent/serpentLink.js';
 import { createSerpentHost, SERPENT_GALE, SERPENT_NEAR_M, GALE_LINE } from '../src/scenes/serpentHost.js';
 import { bumperDrift, flatHull, BUMPER_M, BUMPER_GAIN, BUMPER_V_MAX } from '../src/scenes/navalHost.js';
 import { ArrowFlight } from '../src/combat/arrowFlight.js';
-import { mintSerpentReceipt, readSerpentReceipt } from '../src/net/serpentReceipt.js';
+import { mintSerpentReceipt, readSerpentReceipt } from '../src/net/serpent/serpentReceipt.js';
 import { validSerpentIn, validSerpentOut, SOCIAL_ROOM, SERPENT_RC_PREFIX } from '../src/net/wire.js';
 import { HULL, hullBuild } from '../src/systems/naval/navalShips.js';
 import { WIND_RATED } from '../src/systems/helmWay.js';

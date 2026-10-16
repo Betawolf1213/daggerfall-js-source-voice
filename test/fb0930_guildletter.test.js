@@ -1,7 +1,7 @@
 // GUILD-LETTER (2026-09-30, FIELD BUGS 2026-09-30 - a player's list: "cant withdraw gold from guild over wieght limit
 // (good place to see if anyone stored cheated gold, was able to store gold befor the empires customs) should be able to
 // take note of credit"). A guild treasury's withdrawal was paid in coin whatever it weighed: the Guild book credited the
-// purse (scenes/world.js's guild wallet, court.js addGold) and the service the record's purse (net/realmGoldLaw.js
+// purse (scenes/world.js's guild wallet, court.js addGold) and the service the record's purse (net/realm/realmGoldLaw.js
 // creditSave) - and a move is up to 1,000,000 gold, 2,500 kg, with Roleplay & Realism's encumbrance on online. The bank
 // refuses what cannot be carried, and the trade window pays it as a letter of credit (tradeModes.js sellProceeds). The
 // treasury pays as the trade window does: what the pack cannot carry comes as the game's own letter, worth the whole
@@ -13,9 +13,9 @@ import { readFileSync } from 'node:fs';
 import { standService, sessionStorageOf } from './accountDb.mjs';
 import { layRecord } from './realmSeat.mjs';
 import { SESSION_KEY, accountGuilds, accountRefusalText } from '../src/net/accountClient.js';
-import { GUILD_FOUND_RENOWN, GUILD_RANK_MASTER } from '../src/net/guildLaw.js';
-import { realmLetterOfCredit, payableOf, liquidWorthOf } from '../src/net/realmGoldLaw.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GUILD_FOUND_RENOWN, GUILD_RANK_MASTER } from '../src/net/guild/guildLaw.js';
+import { realmLetterOfCredit, payableOf, liquidWorthOf } from '../src/net/realm/realmGoldLaw.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import { realmIo, createRealmSession, realmGoldAct } from '../src/systems/realmSaves.js';
 import { letterOfCredit, carriedWeight } from '../src/systems/inventory.js';
 import { entityMaxEncumbrance } from '../src/combat/formulas.js';

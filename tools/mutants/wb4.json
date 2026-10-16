@@ -1,7 +1,7 @@
 [
   {
     "name": "WB4-the-body-out-of-the-cone",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "(d <= P.bossR || Math.abs(wrap(Math.atan2(dx, dz) - atk.yw))",
     "new": "(false || Math.abs(wrap(Math.atan2(dx, dz) - atk.yw))",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB4-the-arc-doubled",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "<= (A.arc / 2) * DEG);",
     "new": "<= A.arc * DEG);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB4-the-targets-discs-about-him",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "case 'disc': return A.aim === 'self' ? d <= r :",
     "new": "case 'disc': return true ? d <= r :",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WB4-the-rings-inner-edge-dropped",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "case 'ring': return d >= A.r0 && d <= A.r1;",
     "new": "case 'ring': return d <= A.r1;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WB4-judged-before-the-landing",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "  if (now < atk.at) return 'wait';",
     "new": "  if (now < atk.at - 100) return 'wait';",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WB4-a-late-frame-struck",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "  if (now > atk.at + Math.max(A.active, 1) + STRIKE_LATE_MS) return 'miss';",
     "new": "  if (false) return 'miss';",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WB4-the-charge-a-ray-from-where-he-stood",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "const a = chargeHead(atk, Math.max(prev, atk.at))",
     "new": "const a = chargeHead(atk, atk.at)",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WB4-the-wrath-saved",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "saved: L.el != null && !isDagons(A)",
     "new": "saved: L.el != null",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WB4-the-damage-off-a-fixed-health",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "Math.round(pct * Math.max(1, maxHealth) + Math.max(0, base))",
     "new": "Math.round(pct * 100 + Math.max(0, base))",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "WB4-phase-three-the-full-windup",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "  const w = windupOf(A, phase), span = Math.max(A.active, 1);",
     "new": "  const w = A.windup, span = Math.max(A.active, 1);",
     "tests": [

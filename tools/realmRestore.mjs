@@ -26,7 +26,7 @@
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
-import { GUILD_MEMBERS_MAX, GUILD_RANK_MASTER } from '../src/net/guildLaw.js';
+import { GUILD_MEMBERS_MAX, GUILD_RANK_MASTER } from '../src/net/guild/guildLaw.js';
 import { isMain } from './lib/isMain.mjs';   // AUDIT 68: the one "am I the program" test
 
 /** The realm's own ids (server-account/src/realm.js REALM_ID_RE): a home under one is a realm character's, never lost here. */

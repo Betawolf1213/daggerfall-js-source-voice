@@ -17,7 +17,7 @@ import { standService } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
 import { SESSION_KEY } from '../src/net/accountClient.js';
 import { realmIo, createRealmSession, openRealmBoot } from '../src/systems/realmSaves.js';
-import { realmLetterOfCredit } from '../src/net/realmGoldLaw.js';
+import { realmLetterOfCredit } from '../src/net/realm/realmGoldLaw.js';
 import { FACTION_FLAGS } from '../src/formats/factionFile.js';
 import { REPAIR_GOLD_MAX } from '../src/net/repairLaw.js';
 import { reviewRequest } from '../tools/realmReview.mjs';

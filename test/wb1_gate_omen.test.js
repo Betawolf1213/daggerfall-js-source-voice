@@ -9,7 +9,7 @@ import {
   gateRoomKey, isGateRoom, gateDayOfRoom, gateAdmits, gateHolds, gateHash, gateRoll, pickGateRegion, pickGatePixel,
   gateSpotLocal, omenRing, gateBossOf, GATE_BOSSES, PIXEL_M, GATE_DAY_MINUTES, GATE_SPOT_SPREAD_M, OMEN_RING_PIXELS,
   GATE_RISE_MS, GATE_COLLAPSE_MS, GATE_EVERY_DAYS, riseLine, wrathLine, marksLine, gateModsOf,
-} from '../src/net/gateLaw.js';
+} from '../src/net/gate/gateLaw.js';
 import { scanGatePixels, findGateSite, gateRegions, politicClaimed, gateSeaPixel, GATE_TOWN_MIN_PX, GATE_TOWN_MAX_PX, GATE_TOWN_TYPES } from '../src/systems/gate/gateSite.js';
 import { isWaterPixel } from '../src/ui/overworldModel.js';
 import { createGateOmen, insideGateRing, gateSceneXZ, omenTimeLine, openTimeLine, sealTimeLine, riteOmenLine } from '../src/systems/gate/gateOmen.js';   // TIME1: the lines that name a time say local time alone
@@ -375,6 +375,6 @@ test('WB1 the seams: online alone, the omen before the dead return, both maps ha
   assert.match(page, /gateRingTexels\(gate, originX, originY, width, height\)\) plot\(x, y, gatePx\)/);
   assert.match(page, /gateRingKey\(readGateMark\(this\.deps\.gate,/, 'the page rebuilds when the ring comes, goes or moves');
   // the law is the relay's to import later (WB3): it reaches for wire.js and (WB8b) the marks' leaf alone
-  const law = read('src/net/gateLaw.js');
+  const law = read('src/net/gate/gateLaw.js');
   assert.deepEqual([...law.matchAll(/^import .* from '([^']+)'/gm)].map((m) => m[1]), ['./wire.js', './gateMods.js'], 'WB8b: and the marks\' leaf, which imports nothing');
 });

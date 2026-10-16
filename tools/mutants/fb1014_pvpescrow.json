@@ -10,7 +10,7 @@
   },
   {
     "name": "GUILD-KIN-the-guild-unread-by-the-law",
-    "file": "src/net/wildRef.js",
+    "file": "src/net/wild/wildRef.js",
     "old": "  return !!party || !!duel || (Array.isArray(guilds) && sameGuild(guilds[0], guilds[1]));",
     "new": "  return !!party || !!duel || (Array.isArray(guilds) && false && sameGuild(guilds[0], guilds[1]));",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "ESCROW-a-second-collect-signed",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "  if (typeof rec.wc === 'string' && rec.wc) return 'again';",
     "new": "  if (false) return 'again';",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "ESCROW-the-escrows-word-lost-in-a-wake",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "    we: v.we === true, wc: typeof v.wc === 'string' && v.wc ? v.wc : null };",
     "new": "    we: false, wc: typeof v.wc === 'string' && v.wc ? v.wc : null };",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "ESCROW-the-collect-lost-in-a-wake",
-    "file": "src/net/wildLaw.js",
+    "file": "src/net/wild/wildLaw.js",
     "old": "    we: v.we === true, wc: typeof v.wc === 'string' && v.wc ? v.wc : null };",
     "new": "    we: v.we === true, wc: null };",
     "tests": [

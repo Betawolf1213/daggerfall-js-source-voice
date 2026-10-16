@@ -8,8 +8,8 @@
 // player reads are still EXACTLY what the card's records do.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ILIAC_CARDS, ILIAC_LOCATIONS, ILIAC_TIERS, ILIAC_TAGS, CARD_EMBLEMS, STARTER_DECK, cardById } from '../src/net/iliacCards.js';
-import { deckValid, fxText, fxRefusal, ILIAC_VERBS, ILIAC_TRIGGERS, ILIAC_TARGETS, ILIAC_PICKS, ILIAC_TURNS } from '../src/net/iliacHand.js';
+import { ILIAC_CARDS, ILIAC_LOCATIONS, ILIAC_TIERS, ILIAC_TAGS, CARD_EMBLEMS, STARTER_DECK, cardById } from '../src/net/iliac/iliacCards.js';
+import { deckValid, fxText, fxRefusal, ILIAC_VERBS, ILIAC_TRIGGERS, ILIAC_TARGETS, ILIAC_PICKS, ILIAC_TURNS } from '../src/net/iliac/iliacHand.js';
 import { RARITY_ORDER } from '../src/systems/loot/lootRarity.js';
 import { EMBLEM_KEYS } from '../src/render/iliacCardFaces.js';
 import { cardRules, cardFlavor } from '../src/systems/iliac/iliacCardWords.js';

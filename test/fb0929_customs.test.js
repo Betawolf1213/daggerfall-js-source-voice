@@ -18,7 +18,7 @@ import { r2, freshSave, realmAt } from './realmSeat.mjs';
 import { applyCustoms, customsLines, CUSTOMS_PROMISE } from '../src/systems/realmCustoms.js';
 import { createBankAccounts } from '../src/systems/banking.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
-import { GUILD_RANK_MASTER } from '../src/net/guildLaw.js';
+import { GUILD_RANK_MASTER } from '../src/net/guild/guildLaw.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1 (at the merge with PR 418): a request that makes an account carries the versions ticked
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

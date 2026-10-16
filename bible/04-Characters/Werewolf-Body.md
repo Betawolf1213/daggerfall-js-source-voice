@@ -51,13 +51,13 @@ of OpenMW/openmw at 3ee798e, 0.52.0-dev), and the skin that dresses one player's
   wereboar has no Morrowind form and keeps the person's body. It rides `armBuildOptsOf` (a save loaded mid-change
   builds the wolf at the door) and `armIdentityOf`, and every frame the form is handed to `setWerewolf` AHEAD of the
   `ready()` gate and of the hand, the worn table and the spell; the skin is read when the form changes, not per frame.
-- **Peers.** `net/peerBodies.js`: the pose's `wb` 1 is the wolf (`peerIsWolf`); `peerBodyKey` keys the wolf by what its
+- **Peers.** `net/peer/peerBodies.js`: the pose's `wb` 1 is the wolf (`peerIsWolf`); `peerBodyKey` keys the wolf by what its
   build reads - race, sex, skin - apart from the person, so a transformation rebuilds at once rather than after
   `BODY_REBUILD_MS`, and a refused wolf is waited out as a wolf. The wolf's body is built holding nothing, readying no
   spell and hanging no lantern. A wolf refused at its skeleton is the data's answer: until the data changes no werewolf
   is the bodies' (one refusal, one warning, the person's body lingering for a turn back). A form flipped back within
   `BODY_REBUILD_MS` of a form's body waits the rest out. In `scenes/world.js` a werewolf on foot goes to the bodies
-  either way (its wolf builds while Eye Of The Beholder's lycanthrope stands for it); `net/peerRiders.js` DEFERS a
+  either way (its wolf builds while Eye Of The Beholder's lycanthrope stands for it); `net/peer/peerRiders.js` DEFERS a
   werewolf on foot and `settle`s it after the bodies have synced - drawn by the riders unless its wolf stands this
   frame (`wolfStands`). A mounted beast and the wereboar stay the rider layer's.
 - **Not a garment.** `mwClothingRecord` never resolves a Daggerfall robe to `werewolfrobe` (OpenMW hides it from the

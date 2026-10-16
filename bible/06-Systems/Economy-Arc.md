@@ -241,7 +241,7 @@ house may well sit at the cap (unmeasured here), and past it price no longer
 follows size (AUDIT HOME-PRICE E3). A guild's hall is still the home's price and half again
 (`guildHallPrice`), so at most 375,000. Offline nothing changes: the bank's
 market and its buy-back read Daggerfall's own price; customs counts every deed
-at its own constant (`net/realmGoldLaw.js` `CUSTOMS_HOUSE_PRICE`, 100,000),
+at its own constant (`net/realm/realmGoldLaw.js` `CUSTOMS_HOUSE_PRICE`, 100,000),
 never either price (D10).
 
 **The bank's deed, online** (AUDIT HOME-PRICE C1, chosen: "Online price"). The

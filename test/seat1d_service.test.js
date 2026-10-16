@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { utcDay, MARKS_MAX } from '../src/net/marksLaw.js';
 import { sharedClassicMinutes } from '../src/net/wire.js';
-import { gameDayAt, gateTimes } from '../src/net/gateLaw.js';
+import { gameDayAt, gateTimes } from '../src/net/gate/gateLaw.js';
 import { boulders, nodeKey } from '../src/net/nodeLaw.js';
 import { saleTax, courierFee, roadPixels, AUCTION_S } from '../src/net/marketLaw.js';
 import {

@@ -1,7 +1,7 @@
 // CARDS10 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 33): ILIAC HAND'S SEASON BOARD AND THE DECK A RANKED
 // SEAT PLAYS, driven on the real Worker over SQLite (server-account/src/iliac.js). The deck order: a realm character's
 // own thirty cards vouched for (the service's order on its digest, the room's to check), a card it lacks refused, an
-// offline character or a guest never ranked. The claim: the relay's signed result (net/iliacReceipt.js) one row a game
+// offline character or a guest never ranked. The claim: the relay's signed result (net/iliac/iliacReceipt.js) one row a game
 // whichever seat carries it, the Elo the arena's, another's receipt refused, a guest's pair kept as nothing, a pair's
 // day capped. The board and its title: the season's #1 over ten games against five foes wears `iliacchampion` at the
 // mint, and loses it to whoever takes the top.
@@ -9,11 +9,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService } from './accountDb.mjs';
 import { seatRealm } from './realmSeat.mjs';
-import { mintIliacReceipt } from '../src/net/iliacReceipt.js';
+import { mintIliacReceipt } from '../src/net/iliac/iliacReceipt.js';
 import { verifyOrder, verifyToken, deckDigest } from '../src/net/identityToken.js';
-import { STARTER_DECK } from '../src/net/iliacCards.js';
-import { ILIAC_CARD_TEMPLATE, deckShortOf, cardCountsOf } from '../src/net/cardWorthLaw.js';
-import { ARENA_PAIR_DAY_MAX, ARENA_ELO_START } from '../src/net/arenaLaw.js';
+import { STARTER_DECK } from '../src/net/iliac/iliacCards.js';
+import { ILIAC_CARD_TEMPLATE, deckShortOf, cardCountsOf } from '../src/net/card/cardWorthLaw.js';
+import { ARENA_PAIR_DAY_MAX, ARENA_ELO_START } from '../src/net/arena/arenaLaw.js';
 import { _resetIliacCache, iliacTitleWorthy, iliacChampionOfBoard, ILIAC_CHAMPION_MIN_GAMES, ILIAC_CHAMPION_MIN_FOES } from '../server-account/src/iliac.js';
 import { titlesHeld, equipRefusal } from '../server-account/src/titles.js';
 import { runCron, CRON_MINUTE, _resetCronForTests } from '../server-account/src/cron.js';

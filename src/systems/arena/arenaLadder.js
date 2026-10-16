@@ -15,14 +15,14 @@
 //
 // THE EXHIBITIONS. One bout on the hour of the game's clock, its fighters drawn from the hour (`exhibitionFor`): the
 // same hour is the same bout on every screen, so ARENA4's relay can run the schedule on the shared clock (ARENA4b: it
-// does - the law lives in net/arenaExhibition.js, in the relay's import graph, and is handed on from here).
+// does - the law lives in net/arena/arenaExhibition.js, in the relay's import graph, and is handed on from here).
 //
 // Pure. Not a DFU member. Ledger A (ARENA).
 
 import { MOBILE_TYPES as M } from '../../characters/mobileTypes.js';
 import { ARENA_TEXT } from './arenaText.js';
 import { seededRng } from '../wind/wind.js';   // the port's one seeded die (mulberry32) - one home
-import { EXHIBITION_START_MINUTES, EXHIBITION_HOURS, ARENA_SEED, arenaHash, hourIndexOf, exhibitionFor } from '../../net/arenaExhibition.js';   // ARENA4b: the exhibitions' law, the relay's too
+import { EXHIBITION_START_MINUTES, EXHIBITION_HOURS, ARENA_SEED, arenaHash, hourIndexOf, exhibitionFor } from '../../net/arena/arenaExhibition.js';   // ARENA4b: the exhibitions' law, the relay's too
 
 /** The ladder's save shape's version. */
 export const ARENA_LADDER_VERSION = 1;
@@ -192,7 +192,7 @@ export function hallOfChampions(L, name, champions = []) {
 }
 
 // ── THE EXHIBITIONS ────────────────────────────────────────────────────────────────────────────────────────
-// ARENA4b: the schedule, the hour's draw and the arena's hash moved to net/arenaExhibition.js - the relay runs the same
+// ARENA4b: the schedule, the hour's draw and the arena's hash moved to net/arena/arenaExhibition.js - the relay runs the same
 // hour's bout from there (the relay's import graph cannot reach this file's mobile and text tables) - and are handed on
 // from here, so every reader of the ladder reads them where it always did (one home, no copy).
 export { EXHIBITION_START_MINUTES, EXHIBITION_HOURS, ARENA_SEED, arenaHash, hourIndexOf, exhibitionFor };

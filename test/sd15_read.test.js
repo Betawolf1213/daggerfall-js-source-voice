@@ -14,10 +14,10 @@ import {
 } from '../src/scenes/sdArenaRead.js';
 import { drawSdTitleCard, destroySdTitleCard, SD_TITLE_CSS, SD_TITLE_BRASS } from '../src/ui/sdTitleCard.js';
 import { titleCardModel, TITLE_CARD_CSS, TITLE_IN_MS, TITLE_HOLD_MS, TITLE_OUT_MS } from '../src/ui/gateTitleCard.js';
-import { SD_BLOWS, SD_PILLARS, windupFor, SD_BODY, stompFrontAt } from '../src/net/sdRemnant.js';
-import { SD_ARENA } from '../src/net/sdBrain.js';
+import { SD_BLOWS, SD_PILLARS, windupFor, SD_BODY, stompFrontAt } from '../src/net/superDungeon/sdRemnant.js';
+import { SD_ARENA } from '../src/net/superDungeon/sdBrain.js';
 import { SD_BLOW_COLOR, createSdRemnantBlows } from '../src/scenes/sdRemnantBlows.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { GROUND_VIEW_TEXT } from '../src/ui/gateGroundView.js';
 import { TELEGRAPH_NOW_MS } from '../src/render/gateTelegraph.js';
 

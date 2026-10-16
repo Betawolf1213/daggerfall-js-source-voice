@@ -53,14 +53,14 @@ import {
   GUILD_FOUND_GOLD, GUILD_FOUND_RENOWN, GUILD_MEMBERS_MAX, GUILD_NAME_MAX, GUILD_RANK_NAME_MAX, GUILD_RANK_NAMES,
   guildMay, guildMayMove, guildOutranks, guildNameOf, guildTagOf, guildRankNamesOf, GUILD_MOVE_MAX,
   GUILD_RANK_MASTER, GUILD_RANK_OFFICER, GUILD_RANK_RECRUIT, GUILD_RENAME_GOLD,   // GUILD2a: a new name, for a price
-} from '../net/guildLaw.js';   // GUILD1b: the Guild tab's rules are the service's
-import { VAULT_RANK_DEFAULTS, VAULT_LIMIT_CHOICES, GUILD_VAULT_SLOTS, vaultStandingText, vaultMayTake, vaultMayPut } from '../net/guildVaultLaw.js';   // GUILD2b: the vault
+} from '../net/guild/guildLaw.js';   // GUILD1b: the Guild tab's rules are the service's
+import { VAULT_RANK_DEFAULTS, VAULT_LIMIT_CHOICES, GUILD_VAULT_SLOTS, vaultStandingText, vaultMayTake, vaultMayPut } from '../net/guild/guildVaultLaw.js';   // GUILD2b: the vault
 import { tradeRefusal } from '../systems/tradePack.js';   // GUILD2b: what may leave a pack, for the vault as for a trade
 import { isLocked } from '../systems/item/itemLock.js';   // AUDIT2 GUILD2 U4: a locked piece stays in the pack
-import { GUILD_DEPOSIT_UNSURE, guildMemberOnline, guildSeenText } from '../net/guildBook.js';   // GUILD-SEEN: a member's "last online"
+import { GUILD_DEPOSIT_UNSURE, guildMemberOnline, guildSeenText } from '../net/guild/guildBook.js';   // GUILD-SEEN: a member's "last online"
 import { LETTER_OF_CREDIT_TEXT } from '../systems/tradeModes.js';   // GUILD-LETTER: the trade window's own line for a letter of credit
 import { writMay, guildMoveOk, writBudgetOk, GUILD_STORES_MAX, WRIT_BUDGET_MAX } from '../net/writLaw.js';   // PROF6: the guild Stores' and the writ budget's ranks and bounds
-import { guildRankLines, GUILD_RANK_ACTS_NOTE } from '../net/guildPowers.js';   // GUILD3c: what each rank may do, in words
+import { guildRankLines, GUILD_RANK_ACTS_NOTE } from '../net/guild/guildPowers.js';   // GUILD3c: what each rank may do, in words
 import { STORES_MAX } from '../net/professionLaw.js';   // AUDIT 31 U8: a character's Stores' most of a material
 import { marksText, MARKS_FAUCETS, MARKS_MAX } from '../net/marksLaw.js';   // MARKS1: the Marks treasury's words   // MAIL1: the form's caps are the service's
 import { glyphBadges, glyphSvgNode, titleBadge } from './playerBadge.js';   // MAIL1: a sender's glyphs, in the one drawing every DOM face uses
@@ -511,7 +511,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
   const tabBtns = new Map();
   tabs.setAttribute('role', 'tablist');
   // MAIL1: the third tab, where the host has a letterbox to hand (net/mail.js) - a panel without one is the two it was
-  // GUILD1b: and the fourth, where the host has a guild book (net/guildBook.js)
+  // GUILD1b: and the fourth, where the host has a guild book (net/guild/guildBook.js)
   for (const [id, label] of [['friends', 'Friends'], ['party', 'Party'], ...(mail ? [['letters', 'Letters']] : []), ...(guild ? [['guild', 'Guild']] : [])]) {
     const b = el('button', 'dfsocial-tab', label);
     b.type = 'button'; b.dataset.tab = id;
@@ -992,7 +992,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
   const lettersBody = () => (letters.mode === 'write' ? writeBody() : letters.mode === 'read' ? readBody() : listBody());
 
   // ═══ GUILD1b: THE GUILD TAB ═══════════════════════════════════════
-  // Every rule it shows is net/guildLaw.js's and every answer the service's (net/guildBook.js): a button the character's
+  // Every rule it shows is net/guild/guildLaw.js's and every answer the service's (net/guild/guildBook.js): a button the character's
   // rank cannot press is DISABLED AND SAYS WHY, as every button here does; one it may press goes to the book, and what
   // comes back is written under the header in the service's own sentence.
   const guildField = (form, label, value, max, onInput) => {
@@ -1345,7 +1345,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
         out.push(form);
       }
     }
-    // GUILD3c (Guilds-Made-Plain.md): WHAT EACH RANK MAY DO - the four power tables in words (net/guildPowers.js), each
+    // GUILD3c (Guilds-Made-Plain.md): WHAT EACH RANK MAY DO - the four power tables in words (net/guild/guildPowers.js), each
     // rank by the guild's own name for it, folded under its line
     const ranks = /** @type {any} */ (el('details', 'dfsocial-ranks'));
     ranks.open = guildUi.ranksOpen === true;

@@ -1,13 +1,13 @@
 // CARDS6 (2026-10-08, bible/11-Multiplayer/Tavern-Cards.md section 23): A REALM CHARACTER'S STAKES ON THE DEVICE
-// (net/cardStakes.js) - the stake asked as the record's act with the purse's gold held out while it is, its request kept
+// (net/card/cardStakes.js) - the stake asked as the record's act with the purse's gold held out while it is, its request kept
 // first and its order kept till the relay sits it; a lost answer asked again by the same request; a cash-out kept, its
 // stake let go, and claimed into the record's account at the region it was staked in, once; a receipt the service will
 // never pay let go, another character's kept for it; a stake never sat voided back in its own room after its minute.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
-import { createCardStakes, CARD_STAKES_KEY, CARD_RECEIPTS_KEY, CARD_VOID_AFTER_MS, mintCardRid } from '../src/net/cardStakes.js';
-import { mintCardReceipt } from '../src/net/cardReceipt.js';
+import { createCardStakes, CARD_STAKES_KEY, CARD_RECEIPTS_KEY, CARD_VOID_AFTER_MS, mintCardRid } from '../src/net/card/cardStakes.js';
+import { mintCardReceipt } from '../src/net/card/cardReceipt.js';
 import { readFileSync } from 'node:fs';
 
 const { subtle } = webcrypto;

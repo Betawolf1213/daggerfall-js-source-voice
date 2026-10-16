@@ -25,7 +25,7 @@ What each became:
 
 ## THE READING: what "never left" was
 
-The gate's times are the clock's alone (`net/gateLaw.js`; the bible's own section 1 table), so the report can be read
+The gate's times are the clock's alone (`net/gate/gateLaw.js`; the bible's own section 1 table), so the report can be read
 against them. The report came at 10:46 on Mac's clock - EDT, the clock this bible's field pages keep (Field-Bugs
 2026-09-24) - which is 14:46 UTC: game day 538, whose gate had its omen at 14:17:30, rose at 14:27:30, opened at 14:32:30,
 **sealed at 14:42:30**, and met its wrath at 14:52:30, gone ten seconds later. At the report the gate was in its SEALED
@@ -84,7 +84,7 @@ Mac's call: *"Count down to collapse"* - the schedule stays, and the sealed hour
 - The chat's seal line says when it goes: *The Oblivion Gate near Copperham has sealed. It collapses at 00:00 (14:52
   your time).*
 
-`net/gateLaw.js` is in the relay's bundle (SLAM13: the law is the whole import graph), so the words are a new relay law:
+`net/gate/gateLaw.js` is in the relay's bundle (SLAM13: the law is the whole import graph), so the words are a new relay law:
 **world125** (no wire change), its row in `test/relayversion.test.js`, the fourteen pins of the current version moved
 with it, disc7's list and soc1's S38 record. It rides the raids' own undeployed world124 deploy. Pinned in
 `test/wb1_gate_omen.test.js` and `test/wb2_gate.test.js`; mutants `tools/mutants/gatecollapse.json` (9, all dead); SET7's
@@ -146,7 +146,7 @@ card.
 ## DISCORD-GATES: the gates on Discord, live (2)
 
 *"add a discord channel that tells the gates in real time itll create hype and make more join"* - Mac: *"Discord live
-gates?"*. The relay's hub posts to a Discord channel's webhook (`net/gateHerald.js`; the design and its words:
+gates?"*. The relay's hub posts to a Discord channel's webhook (`net/gate/gateHerald.js`; the design and its words:
 `11-Multiplayer/World-Bosses.md` "THE HERALD"):
 
 - **the omen** at its own instant - fifteen real minutes before the gate opens - pinging the opt-in role (Mac: *"Ping

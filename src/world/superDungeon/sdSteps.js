@@ -1,6 +1,6 @@
 // @ts-check
 // SD7a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 9): THE UNMOORED STEPS' LAW -
-// the course from the Orrery's first step to the Last Moment's arena, in the realm's frame (net/sdBrain.js): where each
+// the course from the Orrery's first step to the Last Moment's arena, in the realm's frame (net/superDungeon/sdBrain.js): where each
 // step stands, how it moves on the realm's anchored clock, and what the void does with a body that falls. Pure: the
 // page (SD7b) stands, moves and judges them; the relay never does - a player who reaches the arena simply arrives.
 //
@@ -23,7 +23,7 @@
 // stops at every edge); and the course needs 145 m, so the arena moves out to z 246.
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
-import { SD_ARENA } from '../../net/sdBrain.js';
+import { SD_ARENA } from '../../net/superDungeon/sdBrain.js';
 import { SD_FIRST_STEP } from './sdHall.js';
 
 /** Below this (the realm's y) the Hour casts a body back; and how much of its health it costs. */
@@ -98,7 +98,7 @@ const COURSE = layCourse();
 export const SD_STEPS_COURSE = Object.freeze(COURSE.steps.map((s) => Object.freeze(s)));
 /** The checkpoints - A (the first step), B (before the Beat), C (before the Crumble). */
 export const SD_CHECKPOINTS = Object.freeze(COURSE.checkpoints.map((c) => Object.freeze(c)));
-/** Where the course ends - the arena's near edge (net/sdBrain.js SD_ARENA is laid there). */
+/** Where the course ends - the arena's near edge (net/superDungeon/sdBrain.js SD_ARENA is laid there). */
 export const SD_COURSE_END = COURSE.end;
 /** The band the edge lets go of (world/superDungeon/sdRealm.js realmClamp): from just inside the first step's far edge to just inside
  *  the arena's near edge - the void below is the Hour's own, and the cast-back its edge. */

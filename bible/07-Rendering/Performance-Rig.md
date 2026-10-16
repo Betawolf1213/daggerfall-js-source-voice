@@ -31,7 +31,7 @@ per frame:
 
 That runs for the first-person arm every frame, for the third-person
 body when you are in it, and for **every peer's body in view**
-(net/peerBodies.js draws each through the same `drawThird`). So the
+(net/peer/peerBodies.js draws each through the same `drawThird`). So the
 zone scales with the number of players standing near you, which is
 exactly the shape of a swing nobody could pin to one place.
 
@@ -215,7 +215,7 @@ third-person frame stops short of the skin, the upload and the particle
 step. Nothing else about the rig moved; a caller that never heard of
 the flag poses every frame as before, and the first-person arm never
 takes it (its held sheet reads the posed camera node every frame).
-`net/peerBodies.js` decides which frames, by distance - `POSE_CADENCE`
+`net/peer/peerBodies.js` decides which frames, by distance - `POSE_CADENCE`
 `[[10, 1], [25, 2], [Infinity, 3]]`: every frame within 10 m, where a
 swing's arc is read; every second frame to 25 m; every third beyond,
 which at 60 fps is still twice the wire's rate and under the block. The
@@ -350,7 +350,7 @@ that made it thrown away. That churn is the stutter: the skin and the
 sprite pass are paid every frame, but a build is a long task in the
 middle of one.
 
-**Four laws now** (`net/peerBodies.js`):
+**Four laws now** (`net/peer/peerBodies.js`):
 
 - **THE VIEW.** The last body pass's frustum is kept (`viewPlanes`: the
   left, right, bottom, top and near sides off `proj x view`, normalised -

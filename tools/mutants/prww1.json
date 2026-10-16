@@ -1,7 +1,7 @@
 [
   {
     "name": "PRWW1-beast-not-taken",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "      if (!beast && !riding) continue;\n",
     "new": "      if (!riding) continue;\n",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "PRWW1-form-not-handed-to-spriteFor",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "{ onHorse: pose.rv | 0, lycanthropyType: beast, horse: pose.rc | 0 }",
     "new": "{ onHorse: pose.rv | 0, horse: pose.rc | 0 }",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "PRWW1-rider-table-wins-for-a-mounted-beast",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "const table = r.claw ? CLAW_TABLE : beast ? beastTable(pose) : rideTable(pose.mv | 0);",
     "new": "const table = r.claw ? CLAW_TABLE : beast && !riding ? beastTable(pose) : rideTable(pose.mv | 0);",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "PRWW1-beast-table-not-chooseTable",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "export const beastTable = (pose) => chooseTable({ transformed: true, riding: !!pose?.rd, stopped: !peerMoving(pose), sheathed: !pose?.wd });",
     "new": "export const beastTable = (pose) => (pose?.mv ? 'MoveLycan' : 'IdleLycan');",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "PRWW1-no-claw",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    else if (r.an != null && an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };\n",
     "new": "    else if (false) r.claw = { i: 0, t: 0 };\n",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "PRWW1-claw-on-first-sight",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    else if (r.an != null && an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };\n",
     "new": "    else if (an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };\n",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "PRWW1-claw-off-the-lycan-tick",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "while (r.claw && r.claw.t >= LYCAN_TICK) { r.claw.t -= LYCAN_TICK;",
     "new": "while (r.claw && r.claw.t >= LYCAN_TICK * 2) { r.claw.t -= LYCAN_TICK * 2;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "PRWW1-run-clock-unchanged",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "(beast && !riding ? speedMod({ running: pose.mv === 2 && peerMoving(pose) }) : 1)",
     "new": "1",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "PRWW1-mounted-beast-on-the-foot-clock",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "const ft = frameTime(riding) *",
     "new": "const ft = frameTime(!beast && riding) *",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "PRWW1-fallback-lost-while-the-art-loads",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    isDrawn: (id) => !!figs.get(id)?.batch,\n",
     "new": "    isDrawn: (id) => figs.has(id),\n",
     "tests": [
@@ -119,7 +119,7 @@
   },
   {
     "name": "PRWW1-the-saddle-claws",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    else if (r.an != null && an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };",
     "new": "    else if (r.an != null && an !== r.an && !r.claw) r.claw = { i: 0, t: 0 };",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "PRWW1-a-new-swing-restarts-the-claw",
-    "file": "src/net/peerRiders.js",
+    "file": "src/net/peer/peerRiders.js",
     "old": "    else if (r.an != null && an !== r.an && !riding && !r.claw) r.claw = { i: 0, t: 0 };",
     "new": "    else if (r.an != null && an !== r.an && !riding) r.claw = { i: 0, t: 0 };",
     "tests": [

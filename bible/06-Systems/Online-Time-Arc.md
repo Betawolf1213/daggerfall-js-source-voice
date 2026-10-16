@@ -224,8 +224,8 @@ Nothing in this table changes. It is listed so the census has its other half.
 
 | What | Where |
 |---|---|
-| Gates: the day, the phases, the arena's window, the court's | `net/gateLaw.js`, `server/src/index.js`, `scenes/gateCourt.js` |
-| Raids: the day, the window, the map's marks | `net/raidLaw.js`, `server/src/index.js`, `world.js` |
+| Gates: the day, the phases, the arena's window, the court's | `net/gate/gateLaw.js`, `server/src/index.js`, `scenes/gateCourt.js` |
+| Raids: the day, the window, the map's marks | `net/raid/raidLaw.js`, `server/src/index.js`, `world.js` |
 | The overworld's rows and how long they are kept | `net/overworldLaw.js`, `server/src/index.js` |
 | Prices: the day's index and its flags | `worldTick.js` (`setWorldPriceSource`, `runDayChange`'s world half) |
 | Faction powers and regional conditions | `worldTick.js runCalendarArms`, the world half |
@@ -241,7 +241,7 @@ Nothing in this table changes. It is listed so the census has its other half.
 | Bounty boards: the day's postings, a taken bounty's lapse | `systems/bounty/bountyBoard.js`, `scenes/bountyHost.js` |
 | Rumours' lifetimes | `systems/rumorMill.js`, swept from `regionPower.js` |
 | Spawned dungeons' lifetimes, the shared interiors' loot day | `world/spawnedDungeons.js`, `world/interior/interiorShared.js` |
-| The gates' income: receipts, spoils, the Sigil Broker's prices, the account service's `gate_kills` | `net/gateLink.js`, `net/gateClaims.js`, `scenes/spoilsPool.js`, `systems/sigil/sigilBroker.js`, `server-account` |
+| The gates' income: receipts, spoils, the Sigil Broker's prices, the account service's `gate_kills` | `net/gate/gateLink.js`, `net/gate/gateClaims.js`, `scenes/spoilsPool.js`, `systems/sigil/sigilBroker.js`, `server-account` |
 | The day's generators, and the music's daily playlist seed | `worldTick.js` (`DAY_SALT`), the hosts' `gameDaysNow` |
 | The naval day: notoriety's decay, the port's grog, today's departures, the traffic seed | `world.js` (the naval `where`), `scenes/navalHost.js`, `systems/naval/` |
 | The captain's day: a port's board and exchange, the Eltheric strands' regrowth, the legends' rise (CAPT-BOARD, ETHER-SEA, 2026-10-11) | `world.js` (the harbour office's and the Eltheric host's `day`), `scenes/harbourOffice.js`, `scenes/etherHost.js` |

@@ -274,7 +274,7 @@
   },
   {
     "name": "GUILD1d-hall-town-untold",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    if (r?.ok && Number.isSafeInteger(mapId)) { try { this.onHall?.(mapId);",
     "new": "    if (false) { try { this.onHall?.(mapId);",
     "tests": [
@@ -283,7 +283,7 @@
   },
   {
     "name": "GUILD1d-rid-minted-each-ask",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "    if (this._heraldryAsk?.key !== key) this._heraldryAsk = { key, rid: mintMarksRid() };",
     "new": "    this._heraldryAsk = { key, rid: mintMarksRid() };",
     "tests": [

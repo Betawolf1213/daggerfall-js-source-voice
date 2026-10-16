@@ -131,7 +131,7 @@ test('DISC29-B: across a load - a save\'s pack and wagon come back with the word
   };
   const snap = JSON.parse(JSON.stringify(snapshotPlayer(entity, { position: [0, 0, 0], classicMinutes: 0, locationKey: 'world' })));
   // AUDIT PRE-MERGE 0929 D3: and the pieces kept outside the pack - a house chest, a pile dropped in a room, a dead
-  // foe's pack, a boat's hold (net/realmGoldLaw.js stashedItemLists) - loaded with the name their make had lost
+  // foe's pack, a boat's hold (net/realm/realmGoldLaw.js stashedItemLists) - loaded with the name their make had lost
   snap.sceneCache = { scenes: [{ sceneName: 'DaggerfallInterior [MapID=1, BuildingKey=2]', lootContainers: [{ items: [{ ...piece, name: old, UID: 3 }] }], droppedPiles: [{ pos: [1, 0, 1], items: [{ ...piece, name: old, UID: 4 }] }] }] };
   snap.world = { piles: [], droppedLoot: [], foes: [{ dead: true, items: [{ ...piece, name: old, UID: 5 }] }] };
   snap.modData = { 'come-sail-away': { placedBoats: [{ Items: [{ ...piece, name: old, UID: 6 }] }], packedCargoes: {} } };

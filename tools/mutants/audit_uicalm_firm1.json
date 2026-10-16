@@ -28,7 +28,7 @@
   },
   {
     "name": "AUF-L1M2-price-in-the-cap",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "    const v = Math.max(d.min, Math.min(d.max, g + (prices[k] ?? 0)));",
     "new": "    const v = Math.max(d.min, Math.min(d.max, (gains[k] ?? 0) + (prices[k] ?? 0)));",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUF-L1M2-blow-price-in-the-group",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "  let pct = Math.max(BLOW_FLOOR, Math.min(BLOW_CAP, gain) + price);",
     "new": "  let pct = Math.max(BLOW_FLOOR, Math.min(BLOW_CAP, gain + price));",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUF-L1M2-blow-total-uncapped",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "  return Math.min(BLOW_TOTAL_CAP, pct);",
     "new": "  return pct;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUF-L1M2-castcost-uncapped",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "  return Math.min(CAST_COST_CAP, gain) + price;   // the gains capped, then the price paid (AUDIT UICALM-FIRM1 L1 M2)",
     "new": "  return gain + price;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUF-L1L4-orphans-kept",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "  return { start, keys: keys.filter((k) => reached.has(k)) };",
     "new": "  return { start, keys };",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUF-L2M1-commit-during-respec",
-    "file": "src/net/firmamentBook.js",
+    "file": "src/net/firmament/firmamentBook.js",
     "old": "      if (respecking) return { ok: false, error: 'firm-busy' };\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUF-L2M2-book-kept-id-any-tree",
-    "file": "src/net/firmamentBook.js",
+    "file": "src/net/firmament/firmamentBook.js",
     "old": "    const id = left?.rid && left.tree === packTree(tree) ? left.rid : rid();",
     "new": "    const id = left?.rid ?? rid();",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUF-L2M3-rate-dropped",
-    "file": "src/net/firmamentBook.js",
+    "file": "src/net/firmament/firmamentBook.js",
     "old": "const UNHEARD = new Set(['offline', 'server', 'no-session', 'firm-rate', 'rate', 'maintenance']);",
     "new": "const UNHEARD = new Set(['offline', 'server', 'no-session', 'firm-rate']);",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUF-L2M4-shut-tree-kept",
-    "file": "src/net/firmamentBook.js",
+    "file": "src/net/firmament/firmamentBook.js",
     "old": "      if (state.error === 'firm-closed') state.tree = { start: null, keys: [] };",
     "new": "",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "AUF-L2L1-book-no-realm",
-    "file": "src/net/firmamentBook.js",
+    "file": "src/net/firmament/firmamentBook.js",
     "old": "      if (!realm) return { ok: false, error: 'realm-needed' };   // AUDIT UICALM-FIRM1 L2 L1: the gold is a realm record's, paid on the service\n",
     "new": "",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "AUF-L2L4-kept-refusal-silent",
-    "file": "src/net/firmamentBook.js",
+    "file": "src/net/firmament/firmamentBook.js",
     "old": "      if (r?.ok) { apply(r.data); if (refused) state.error = refused; tell(); return true; }",
     "new": "      if (r?.ok) { apply(r.data); tell(); return true; }",
     "tests": [
@@ -361,7 +361,7 @@
   },
   {
     "name": "AUF-L5H4-scaleqty-floor-dropped",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "  return Math.max(1, whole + (roll < exact - whole ? 1 : 0));",
     "new": "  return whole + (roll < exact - whole ? 1 : 0);",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "AUF-L5M3-refund-free-through-10",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "export const REFUND_FREE_BELOW_RENOWN = 10;",
     "new": "export const REFUND_FREE_BELOW_RENOWN = 11;",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "AUF-L5M3-stars-cap-51",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "export const FIRM_RENOWN_MAX = 50;",
     "new": "export const FIRM_RENOWN_MAX = 51;",
     "tests": [
@@ -388,7 +388,7 @@
   },
   {
     "name": "AUF-L5M3-hp-cap-150",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "  hp: def('combat', 75, (v) => `${signed(v)} maximum Health`, 0),",
     "new": "  hp: def('combat', 150, (v) => `${signed(v)} maximum Health`, 0),",
     "tests": [
@@ -397,7 +397,7 @@
   },
   {
     "name": "AUF-L5M3-evade-cap-50",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "  evade: def('combat', 10, (v) => `${v}% chance to avoid a blow entirely`, 0),",
     "new": "  evade: def('combat', 50, (v) => `${v}% chance to avoid a blow entirely`, 0),",
     "tests": [
@@ -406,7 +406,7 @@
   },
   {
     "name": "AUF-L5M3-spellpower-cap-60",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "  spellPower: def('combat', 30, (v) => `${signed(v)}% damage from your spells`, -20),",
     "new": "  spellPower: def('combat', 60, (v) => `${signed(v)}% damage from your spells`, -20),",
     "tests": [
@@ -415,7 +415,7 @@
   },
   {
     "name": "AUF-L5M3-respec-gold-1000",
-    "file": "src/net/firmamentLaw.js",
+    "file": "src/net/firmament/firmamentLaw.js",
     "old": "export const FIRM_RESPEC_GOLD = 10_000;",
     "new": "export const FIRM_RESPEC_GOLD = 1_000;",
     "tests": [
@@ -424,7 +424,7 @@
   },
   {
     "name": "AUF-L5M3-pact-price-30",
-    "file": "src/net/firmamentTree.js",
+    "file": "src/net/firmament/firmamentTree.js",
     "old": "{ spellPower: 12, castCost: 8, blowTaken: 7 }",
     "new": "{ spellPower: 12, castCost: 8, blowTaken: 30 }",
     "tests": [
@@ -433,7 +433,7 @@
   },
   {
     "name": "AUF-L5M3-charge-spell-price-30",
-    "file": "src/net/firmamentTree.js",
+    "file": "src/net/firmament/firmamentTree.js",
     "old": "{ meleeDmg: 9, speed: 3, blowTaken: 5 }",
     "new": "{ meleeDmg: 9, speed: 3, spellTaken: 30 }",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "AUF-L5M4-lines-cross-stars",
-    "file": "src/net/firmamentTree.js",
+    "file": "src/net/firmament/firmamentTree.js",
     "old": "    const first = anchorFor(s, from, centre, false, flip);\n    if (!first.cluster) return first;",
     "new": "    const first = anchorFor(s, from, centre, false, flip);\n    return first;",
     "tests": [

@@ -8,7 +8,7 @@
 //     own colour first, then his two trials) - read at a glance, all fight long (ui/gateBossBar.js draws the row from
 //     `marksViewOf`).
 //   - THE MARKS' CARD, a popup over the screen: near the gate before it is entered (while it stands, from the omen's
-//     ground - scenes/gatePool.js), and as a fighter steps into the court, before he moves (net/gateBrain.js OPENING_MS
+//     ground - scenes/gatePool.js), and as a fighter steps into the court, before he moves (net/gate/gateBrain.js OPENING_MS
 //     is the time to read it). Each mark with its sign, its line, and how to meet it. GATE-UX: never over the middle of
 //     the screen - to the side in both places (MARKS_CARD_CSS).
 //
@@ -20,7 +20,7 @@
 // the aspects; a sign for each trial. Pure where it can be - `marksViewOf` and `marksCardModel` are the pins' door.
 //
 // Not a DFU member. Ledger A (WB).
-import { readGateMods } from '../net/gateMods.js';
+import { readGateMods } from '../net/gate/gateMods.js';
 import { ASPECT_COLORS, EMBER_COLOR } from '../world/gate/gateBoss.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';   // WB13c: the classic face, loaded by the gate's own screens
 
@@ -29,7 +29,7 @@ export const ASPECT_ELEMENT = Object.freeze({ burning: 'Fire', rime: 'Frost', st
 /**
  * HOW TO MEET EACH MARK - one line a mark, the card's advice (the tables' own `text` says what it does; this says what to
  * do about it). An aspect's is the saving throw WB8b made real: a resistance to its element softens every elemental blow
- * and all his ground (net/gateStrike.js blowOf, scenes/world.js GATE_SAVES).
+ * and all his ground (net/gate/gateStrike.js blowOf, scenes/world.js GATE_SAVES).
  */
 export const MARK_TIPS = Object.freeze({
   burning: 'Resist fire to blunt his flames and burning ground.',
@@ -88,7 +88,7 @@ export function markIconHtml(m, size = 14) {
 
 /**
  * THE NIGHT'S MARKS AS THEY ARE SHOWN, from a fight's marks (`md` - the relay's word inside the court, the day's draw
- * outside: net/gateLaw.js gateModsOf) - or null for the Warden unmarked (an older relay's fight shows no row). The
+ * outside: net/gate/gateLaw.js gateModsOf) - or null for the Warden unmarked (an older relay's fight shows no row). The
  * aspect first, in its colour, then each trial in the tables' order as the word gave them. Made once a marks array and
  * kept (the bar asks every frame - AUDIT PRE-MERGE 0929 W2-2's law).
  * @param {unknown} md

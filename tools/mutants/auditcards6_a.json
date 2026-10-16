@@ -1,7 +1,7 @@
 [
   {
     "name": "AC6-A1-pack-uncounted",
-    "file": "src/net/cardWorthLaw.js",
+    "file": "src/net/card/cardWorthLaw.js",
     "old": ": isPackRecord(rec) ? CARD_PACK_WORTH * stackOf(rec) : 0);",
     "new": ": 0);",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AC6-A1-pack-worth",
-    "file": "src/net/cardWorthLaw.js",
+    "file": "src/net/card/cardWorthLaw.js",
     "old": "export const CARD_PACK_WORTH = 171;",
     "new": "export const CARD_PACK_WORTH = 170;",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AC6-A2-decor-uncounted",
-    "file": "src/net/cardWorthLaw.js",
+    "file": "src/net/card/cardWorthLaw.js",
     "old": "  for (const { rec } of decorOwnOf(snap)) n += cardRecordWorth(rec);\n",
     "new": "",
     "tests": [

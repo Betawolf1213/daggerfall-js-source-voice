@@ -652,7 +652,7 @@
   },
   {
     "name": "INT14-GATE-RECEIPT-DROPS-M",
-    "file": "src/net/gateReceipt.js",
+    "file": "src/net/gate/gateReceipt.js",
     "old": "...(m !== undefined ? { m } : {}), i: nowS, e: nowS + RECEIPT_TTL_S",
     "new": "i: nowS, e: nowS + RECEIPT_TTL_S",
     "tests": [
@@ -661,7 +661,7 @@
   },
   {
     "name": "INT14-SD-RECEIPT-DROPS-M",
-    "file": "src/net/sdReceipt.js",
+    "file": "src/net/superDungeon/sdReceipt.js",
     "old": "...(m !== undefined ? { m } : {}), i: nowS",
     "new": "i: nowS",
     "tests": [
@@ -670,7 +670,7 @@
   },
   {
     "name": "INT14-SERPENT-RECEIPT-DROPS-M",
-    "file": "src/net/serpentReceipt.js",
+    "file": "src/net/serpent/serpentReceipt.js",
     "old": "...(m !== undefined ? { m } : {}), i: nowS",
     "new": "i: nowS",
     "tests": [
@@ -679,7 +679,7 @@
   },
   {
     "name": "INT14-GATE-RECEIPT-BAD-M",
-    "file": "src/net/gateReceipt.js",
+    "file": "src/net/gate/gateReceipt.js",
     "old": "  if (c.m !== undefined && !bodyMeasureValid(c.m)) return false;",
     "new": "",
     "tests": [
@@ -688,7 +688,7 @@
   },
   {
     "name": "INT14-SD-RECEIPT-BAD-M",
-    "file": "src/net/sdReceipt.js",
+    "file": "src/net/superDungeon/sdReceipt.js",
     "old": "  if (c.m !== undefined && !bodyMeasureValid(c.m)) return false;",
     "new": "",
     "tests": [
@@ -697,7 +697,7 @@
   },
   {
     "name": "INT14-SERPENT-RECEIPT-BAD-M",
-    "file": "src/net/serpentReceipt.js",
+    "file": "src/net/serpent/serpentReceipt.js",
     "old": "  if (c.m !== undefined && !bodyMeasureValid(c.m)) return false;",
     "new": "",
     "tests": [

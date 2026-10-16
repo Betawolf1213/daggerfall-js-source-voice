@@ -190,7 +190,7 @@
   },
   {
     "name": "SD20E-T9-the-old-signature",
-    "file": "src/net/sdMarks.js",
+    "file": "src/net/superDungeon/sdMarks.js",
     "old": "sig: 'The Dragon\\'s Haste',",
     "new": "sig: 'The Dragon\\'s Break',",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "SD20E-T14-a-fixed-fifteen",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "SD_FIGHT_TEXT.dragonBreak(sdProfileOf(state).pairMs)",
     "new": "SD_FIGHT_TEXT.dragonBreak(15_000)",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SD20E-T13-garbled-again",
-    "file": "src/net/sdMarks.js",
+    "file": "src/net/superDungeon/sdMarks.js",
     "old": "text: 'Each Mantella Pulse climbs twice as fast, to three quarters of your health at most.'",
     "new": "text: 'Each Mantella Pulse climbs twice as steeply - to three quarters of your health.'",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "SD20E-T15-the-cast-out-the-hollows",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "'The Hour closes, and the Abyss Dungeon folds in on itself behind you.'",
     "new": "'The Hour closes, and the Hollow folds in on itself behind you.'",
     "tests": [
@@ -343,7 +343,7 @@
   },
   {
     "name": "SD20E-T19-the-region-after-near",
-    "file": "src/net/sdLaw.js",
+    "file": "src/net/superDungeon/sdLaw.js",
     "old": "region ? `in the ${region} region` : 'near the Iliac Bay'",
     "new": "region ? `near ${region}` : 'near the Iliac Bay'",
     "tests": [

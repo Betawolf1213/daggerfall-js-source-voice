@@ -4,13 +4,13 @@
 // lifts the crew's hands and the sworn as the player steps in and stands them again outside), the party panel draws no
 // card for them there, and the court says so once as a fighter steps in with any at their side. THE CROWD - in a
 // court, past the count on the Other players card only the nearest other players are drawn, the party always, the
-// places held against a newcomer only a little nearer (net/gateCrowd.js; the online frame's drawn list). Design:
+// places held against a newcomer only a little nearer (net/gate/gateCrowd.js; the online frame's drawn list). Design:
 // bible/11-Multiplayer/World-Bosses.md section 21.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { crowdDrawn, createGateCrowd, gateCrowdMax, GATE_CROWD_TIERS, GATE_CROWD_DEFAULT, GATE_CROWD_HOLD_M } from '../src/net/gateCrowd.js';
+import { crowdDrawn, createGateCrowd, gateCrowdMax, GATE_CROWD_TIERS, GATE_CROWD_DEFAULT, GATE_CROWD_HOLD_M } from '../src/net/gate/gateCrowd.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { COURT_TEXT } from '../src/world/gate/gateArena.js';
 import { courtSaySeconds } from '../src/scenes/gateCourt.js';
@@ -175,9 +175,9 @@ test('GATE-CROWD the Other players card: the crowd\'s choice beside the sprite a
   const menu = read('src/ui/enhancedMenu.js');
   const card = menu.slice(menu.indexOf('function peerSpritesCard() {'), menu.indexOf('\n}\n', menu.indexOf('function peerSpritesCard() {')));
   assert.match(card, /c\.append\(choiceRow\('gateCrowd', t\('menu\.peers\.crowd', 'Crowd in the Burning Court'\),\n\s*t\('menu\.peers\.crowdNote', '[^\n]*'\),\n\s*GATE_CROWD_TIERS\.map\(\(n\) => \[n, n \? t\('menu\.peers\.nearest', 'Nearest \{n\}', \{ n \}\) : t\('menu\.peers\.everyone', 'Everyone'\)\]\), \{ home: true \}\)\);/);
-  assert.match(menu, /import \{ GATE_CROWD_TIERS \} from '\.\.\/net\/gateCrowd\.js';/);
+  assert.match(menu, /import \{ GATE_CROWD_TIERS \} from '\.\.\/net\/gate\/gateCrowd\.js';/);
   assert.match(read('src/systems/uiPrefs.js'), /\n {2}gateCrowd: 0,\n/, 'the shelf\'s literal - pinned equal to the law\'s default in the first test, never imported (BOOT2)');
-  assert.doesNotMatch(read('src/systems/uiPrefs.js'), /from '\.\.\/net\/gateCrowd\.js'/, 'the shelf is on the boot path: it imports nothing of the court');
+  assert.doesNotMatch(read('src/systems/uiPrefs.js'), /from '\.\.\/net\/gate\/gateCrowd\.js'/, 'the shelf is on the boot path: it imports nothing of the court');
 });
 
 // ── GATE-ALONE: no companion in the court ───────────────────────────────────────────────────────────────────────────

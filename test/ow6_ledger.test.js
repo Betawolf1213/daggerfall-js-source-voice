@@ -26,7 +26,7 @@ import {
 import { BAND_LIFE_MS, BAND_CELL_PX, BAND_ID_RE, bandsNear, bandPixelOf, wanderAt, BAND_WANDER_MPS } from '../src/systems/travel/travelBands.js';
 import { RAIDER_LIFE_MS, RAIDER_CELL_PX, RAIDER_SAIL_MPS, raidersNear, pixelOfNative } from '../src/systems/seaRaiders.js';
 import { WORLD_SALT, ANY_SPAWN_CHANCE, spawnsDungeon, createSpawnLedger, GENERAL_TTL_MINUTES, CLEARED_TTL_MINUTES, REBIRTH_TTL_MINUTES, spawnDeath } from '../src/world/spawnedDungeons.js';
-import { RAID_SLACK_MINUTES } from '../src/net/raidLaw.js';
+import { RAID_SLACK_MINUTES } from '../src/net/raid/raidLaw.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { OnlineSession } from '../src/net/online.js';
 import { fakeSocketClass } from './fakeSocket.mjs';

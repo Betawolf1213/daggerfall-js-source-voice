@@ -1,7 +1,7 @@
 [
  {
   "name": "KG5-T-army-told",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "const seatView = (/** @type {any} */ s) => (s ? { id: s.id, name: s.name, chair: s.chair, crown: s.crown, ...(s.ready",
   "new": "const seatView = (/** @type {any} */ s) => (s ? { id: s.id, name: s.name, chair: s.chair, crown: s.crown, army: s.army, ...(s.ready",
   "tests": [
@@ -11,7 +11,7 @@
  },
  {
   "name": "KG5-T-deal-wait",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "if (t.seats.every((/** @type {any} */ x) => x?.ready)) t.nextDealAt = now + GAMBIT_FIRST_MS;",
   "new": "if (t.seats.every((/** @type {any} */ x) => x?.ready)) t.nextDealAt = now;",
   "tests": [
@@ -20,7 +20,7 @@
  },
  {
   "name": "KG5-T-army-check",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "  if (!Array.isArray(army) || armyRefusal(army) !== null) return 'bad army';",
   "new": "  if (!Array.isArray(army)) return 'bad army';",
   "tests": [
@@ -29,7 +29,7 @@
  },
  {
   "name": "KG5-T-stale",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "  if (gameNo !== undefined && gameNo !== t.gameNo) return 'stale';\n  const out = gambitAct(t.game, p, cmd, rand32);",
   "new": "  const out = gambitAct(t.game, p, cmd, rand32);",
   "tests": [
@@ -38,7 +38,7 @@
  },
  {
   "name": "KG5-T-beat",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "  else if (t.game.ending) t.endAt = now + GAMBIT_TURN_END_MS;",
   "new": "  else if (t.game.ending) t.endAt = now;",
   "tests": [
@@ -48,7 +48,7 @@
  },
  {
   "name": "KG5-T-clock",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "      if (t.game) t.clockAt = now + GAMBIT_TURN_MS;   // the next side's turn, its own clock",
   "new": "      // the next side's turn, its own clock",
   "tests": [
@@ -57,7 +57,7 @@
  },
  {
   "name": "KG5-T-timeout-count",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "    if (s) s.idle = (s.idle ?? 0) + 1;",
   "new": "    if (s) s.idle = 0;",
   "tests": [
@@ -66,7 +66,7 @@
  },
  {
   "name": "KG5-T-idle-reset",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "  t.seats[p].idle = 0;   // at the table",
   "new": "  // at the table",
   "tests": [
@@ -75,7 +75,7 @@
  },
  {
   "name": "KG5-T-winner",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "const winner = how === 'void' ? null : left >= 0 ? 1 - left : t.game.over?.winner ?? null;",
   "new": "const winner = how === 'void' ? null : left >= 0 ? left : t.game.over?.winner ?? null;",
   "tests": [
@@ -86,7 +86,7 @@
  },
  {
   "name": "KG5-T-valid-floor",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "    if (!intIn(p.col, 0, KG_COLS - 1) || !intIn(p.row, 0, KG_ROWS - 1) || st.tiles[p.row * KG_COLS + p.col] !== KG_TILE.floor) return false;",
   "new": "    if (!intIn(p.col, 0, KG_COLS - 1) || !intIn(p.row, 0, KG_ROWS - 1)) return false;",
   "tests": [
@@ -96,7 +96,7 @@
  },
  {
   "name": "KG5-T-valid-cell",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "    if (cells.has(cell)) return false;",
   "new": "    if (false) return false;",
   "tests": [
@@ -105,7 +105,7 @@
  },
  {
   "name": "KG5-T-valid-hp",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "!intIn(p.hp, 1, p.maxHp)",
   "new": "!intIn(p.hp, 1, 10_000)",
   "tests": [
@@ -114,7 +114,7 @@
  },
  {
   "name": "KG5-T-valid-seats",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "  if (t.game !== null && !(validGambitState(t.game) && t.seats.every(Boolean))) return false;",
   "new": "  if (t.game !== null && !validGambitState(t.game)) return false;",
   "tests": [
@@ -123,7 +123,7 @@
  },
  {
   "name": "KG5-T-wire-cell",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "  if (c.type === 'move') return intIn(c.col, 0, KG_COLS - 1) && intIn(c.row, 0, KG_ROWS - 1) ? { type: 'move', piece: c.piece, col: c.col, row: c.row } : null;",
   "new": "  if (c.type === 'move') return { type: 'move', piece: c.piece, col: c.col, row: c.row };",
   "tests": [
@@ -132,7 +132,7 @@
  },
  {
   "name": "KG5-T-wire-state",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "  return s.game === null || (validGambitState(s.game) && s.seats.every(Boolean));",
   "new": "  return true;",
   "tests": [
@@ -142,7 +142,7 @@
  },
  {
   "name": "KG5-T-flip-sides",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "return { ...p, col, row, side: 1 - p.side }; }),",
   "new": "return { ...p, col, row, side: p.side }; }),",
   "tests": [
@@ -152,7 +152,7 @@
  },
  {
   "name": "KG5-T-unflip",
-  "file": "src/net/gambitTable.js",
+  "file": "src/net/gambit/gambitTable.js",
   "old": "  if (cmd?.type !== 'move') return cmd;",
   "new": "  return cmd;",
   "tests": [

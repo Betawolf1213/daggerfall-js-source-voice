@@ -1,20 +1,20 @@
 // ARENA4b (2026-10-03, the coordinator's note on the client stream's pennants: a rival's and a watched fighter's banner
 // are read off the relay's bills - `go.vs.b`, the hall's live list `a.b` / `b.b` - and the relay never sent one): THE
-// RELAY BILLS EACH FIGHTER'S BANNER. The token signs no banner, so the fighter's own word claims it (net/arenaLaw.js
+// RELAY BILLS EACH FIGHTER'S BANNER. The token signs no banner, so the fighter's own word claims it (net/arena/arenaLaw.js
 // bannerClaim - 'red', 'blue' or none; anything else dropped, never a refusal): the queue's `q` and a ladder bout's
 // `in`. It is cosmetic only - a banner's points are the account service's, counted off its own arena_members row. The
 // hall bills it to the rival and on the list to watch (server/src/index.js `_bill`), the bout's room carries it on its
-// fighters to its own list entry (net/arenaBrain.js liveEntry), and the hour's exhibition bills its sides Red and Blue.
+// fighters to its own list entry (net/arena/arenaBrain.js liveEntry), and the hour's exhibition bills its sides Red and Blue.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeRooms } from './fakeRoom.mjs';
 import {
   ARENA_HALL, arenaBoutRoom, bannerClaim, ARENA_BANNERS, ARENA_EX_BANNERS, validArenaIn, validArenaOut, ARENA_FLOOR_CENTRE,
-} from '../src/net/arenaLaw.js';
-import { openBout, liveEntry } from '../src/net/arenaBrain.js';
-import { exhibitionFor, exhibitionBoutId } from '../src/net/arenaExhibition.js';
+} from '../src/net/arena/arenaLaw.js';
+import { openBout, liveEntry } from '../src/net/arena/arenaBrain.js';
+import { exhibitionFor, exhibitionBoutId } from '../src/net/arena/arenaExhibition.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { arenaLadderOf } from '../src/net/arenaLaw.js';
+import { arenaLadderOf } from '../src/net/arena/arenaLaw.js';
 import { fighterIdentity } from '../src/systems/arena/arenaFighters.js';
 
 const C = ARENA_FLOOR_CENTRE;

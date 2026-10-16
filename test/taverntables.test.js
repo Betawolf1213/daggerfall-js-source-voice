@@ -14,10 +14,10 @@ import { placedTableSpot, TAVERN_CARD_TABLES, PLACE_RING_M } from '../src/world/
 import { cardTableSeats, seatFloorOk, SEAT_FLOOR_PROBE, nearestFreeSeat, takenSeats } from '../src/world/card/cardTables.js';
 import { paintFelt, CARD_TABLE_ARCHIVE, FELT_RECORD, GOLD_FELT_RECORD, GOLD_FELT_RGB, FELT_RGB, CARD_TABLE_BOX } from '../src/world/card/cardTableProp.js';
 import { HOLDEM_GOLD_TABLE, holdemGoldTable, HOLDEM_TABLES_MAX } from '../src/net/holdemTable.js';
-import { HOLDEM_SEATS_MAX } from '../src/net/cardLaw.js';
+import { HOLDEM_SEATS_MAX } from '../src/net/card/cardLaw.js';
 import { buildInteriorContext } from '../src/scenes/interiorContext.js';
 import { mintStakeOrder } from '../src/net/identityToken.js';
-import { readCardReceipt } from '../src/net/cardReceipt.js';
+import { readCardReceipt } from '../src/net/card/cardReceipt.js';
 import { RemoteCardTable } from '../src/systems/card/cardRemoteTable.js';
 import * as court from '../src/systems/court.js';
 import * as sess from '../src/systems/card/cardTableSession.js';

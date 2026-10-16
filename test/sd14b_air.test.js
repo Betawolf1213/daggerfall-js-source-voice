@@ -16,7 +16,7 @@ import {
 } from '../src/scenes/sdAir.js';
 import { airSourceAt, AIR_BACKLOG_S } from '../src/scenes/deadlandsAir.js';
 import { SD_SKY_PERIOD } from '../src/render/sdSky.js';
-import { SD_ARENA, SD_ORRERY, dungeonToRealm } from '../src/net/sdBrain.js';
+import { SD_ARENA, SD_ORRERY, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { SOUND } from '../src/systems/soundClips.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');

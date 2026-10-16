@@ -1,7 +1,7 @@
 [
   {
     "name": "ITEM-WALK-C-revenant-pack-unread",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  for (const r of Array.isArray(feud) ? feud : []) if (r?.sworn && !r.defeated) out.push(...lists(r.companion?.items));\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "ITEM-WALK-C-oath-unasked",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "if (r?.sworn && !r.defeated) out.push(",
     "new": "if (r && !r.defeated) out.push(",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "ITEM-WALK-C-defeat-unasked",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "if (r?.sworn && !r.defeated) out.push(",
     "new": "if (r?.sworn) out.push(",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "ITEM-WALK-C-key-misnamed",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "const REVENANT_VENDOR = 'Revenant';",
     "new": "const REVENANT_VENDOR = 'Revenants';",
     "tests": [

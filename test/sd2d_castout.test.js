@@ -13,7 +13,7 @@ import { sdCities, sdTemplates, findSdSite, pickSdTemplate, sdHollowLocation } f
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES, longitudeLatitudeToMapPixel } from '../src/formats/mapsFile.js';
 import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
-import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_CAST_OUT_LINE } from '../src/net/sdLaw.js';
+import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_CAST_OUT_LINE } from '../src/net/superDungeon/sdLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const M = 60_000, H = 3_600_000, T0 = 1_800_000_000_000;

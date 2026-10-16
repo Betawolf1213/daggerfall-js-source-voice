@@ -12,7 +12,7 @@
 //     mark from `wl` (part-filled by the shape's nominal length), its held arm, a feint's dashed cut, a broken one's
 //     cancel; its stagger and its overreach (the puppet's pose; its entity's `staggerUntil`/`overreachUntil`, so my roll
 //     against it takes the same x1.25 and x1.3 - systems/blowTaken.js).
-//   EACH JUDGES THEIR OWN FEET (10.3, net/gateStrike.js's law) - a puppet's wind-up AT ME lands on my feet at the
+//   EACH JUDGES THEIR OWN FEET (10.3, net/gate/gateStrike.js's law) - a puppet's wind-up AT ME lands on my feet at the
 //     landing: the verdict, the weight and the effect on the puppet's `ai` as a local landing leaves them, so its swing
 //     resolves through the host's own door (resolveFoeMeleeVsPlayer -> blowConnects, blowScaled, landBlowEffect); the
 //     late sample makes a perfect dodge mine too. The owner's view of my feet opens its foe's window (6.3) - never my

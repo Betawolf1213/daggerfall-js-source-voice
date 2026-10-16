@@ -1,7 +1,7 @@
 [
   {
     "name": "WB11-host-without-the-trial",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (!P.legion || f.fell || f.wrath) return;",
     "new": "  if (f.fell || f.wrath) return;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB11-legion-on-every-profile",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    legion: !!T('legion')?.legion,",
     "new": "    legion: true,",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB11-harriers-at-the-nearest",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "if (!mark || dist(b.x, b.z, f.pos[0], f.pos[1]) > dist(mark.x, mark.z, f.pos[0], f.pos[1])) mark = b;",
     "new": "if (!mark || dist(b.x, b.z, f.pos[0], f.pos[1]) < dist(mark.x, mark.z, f.pos[0], f.pos[1])) mark = b;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WB11-the-rise-skipped",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (now < (a.up ?? 0)) continue;   // still rising out of the fire",
     "new": "    if (false) continue;   // still rising out of the fire",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WB11-a-wave-on-a-challenger",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "if (live.some((b) => dist(b.x, b.z, x, z) < HOST_SPAWN_CLEAR) || ",
     "new": "if (",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WB11-sappers-anywhere",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "rimSpots(C, n, here, rng, away, SAP_SPREAD, clear)",
     "new": "rimSpots(C, n, here, rng)",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WB11-drunk-past-the-feedings",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (H.fed < SAP_FEEDS_MAX && f.max > 0) {",
     "new": "    if (f.max > 0) {",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WB11-the-heal-unsaid",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "      out.push({ k: 'adie', is: [a.i], w: HOST_GONE.fed, h, m, at: now });",
     "new": "      out.push({ k: 'adie', is: [a.i], w: HOST_GONE.fed, at: now });",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WB11-the-ward-never-waits-on-them",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (bearersStand(f) && now < f.waitUntil) return heldBeat(f, now, out);",
     "new": "    if (false) return heldBeat(f, now, out);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "WB11-their-cap-ignored",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (bearersStand(f) && now < f.waitUntil) return heldBeat(f, now, out);",
     "new": "    if (bearersStand(f)) return heldBeat(f, now, out);",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "WB11-a-pulse-at-nobody",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (now < a.next || !here.some((b) => dist(b.x, b.z, a.x, a.z) <= BEARER_PULSE_NEAR)) return;",
     "new": "  if (now < a.next) return;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "WB11-bearers-twice-a-court",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (H.wardCt === f.court) return;\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "WB11-host-outlives-its-phase",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    hostGone(f, now, out, HOST_GONE.crumbled);   // WB11b: his host crumbles at every turn - each kind is its phase's or its court's\n",
     "new": "",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "WB11-host-through-the-wrath",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    // crumbling first read it as the Ward-Bearers' cap and said his ward broke - it stands through the wind-up)\n    hostGone(f, now, out, HOST_GONE.crumbled);\n",
     "new": "    // crumbling first read it as the Ward-Bearers' cap and said his ward broke - it stands through the wind-up)\n",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "WB11-host-outlives-the-kill",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    if (f.lg) f.lg.ads = [];   // WB11b: and his host goes with him (the fall's word says so - no word of its own)\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "WB11-a-blow-from-another-court",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return out;\n  const [ax, az] = hostAt(a, now);",
     "new": "  const [ax, az] = hostAt(a, now);",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "WB11-a-swing-from-across-the-court",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  if (r === HIT_KINDS.Melee && dist(pose.x, pose.z, ax, az) - HOST_KINDS[a.k].r > MELEE_REACH + POSE_SLACK) return out;\n",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "WB11-the-share-uncounted",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  p.hd = (p.hd ?? 0) + got;\n",
     "new": "",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "WB11-his-threat",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  p.hd = (p.hd ?? 0) + got;\n",
     "new": "  p.hd = (p.hd ?? 0) + got;\n  f.threat[sub] = (f.threat[sub] ?? 0) + got;\n",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "WB11-the-state-drops-the-host",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    ...(f.lg ? { lg: hostStateOf(f.lg) } : {}),",
     "new": "    ...{},",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "WB11-the-gone-forgotten",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "      const gone = [...H.gone, ...out].slice(-HOST_GONE_KEPT);",
     "new": "      const gone = H.gone;",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "WB11-a-walk-dropped",
-    "file": "src/net/gateLink.js",
+    "file": "src/net/gate/gateLink.js",
     "old": "    case 'ad': case 'amv': case 'aatk': case 'ah': case 'adie': return foldHost(s, g, now);",
     "new": "    case 'ad': case 'aatk': case 'ah': case 'adie': return foldHost(s, g, now);",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "WB11-judged-before-its-landing",
-    "file": "src/net/gateStrike.js",
+    "file": "src/net/gate/gateStrike.js",
     "old": "  if (!(now >= atk.at)) return 'wait';   // (spelled apart from strikeVerdict's - a mutant record aims at that one alone)\n  if (now > atk.at + Math.max(B.active, 1) + STRIKE_LATE_MS) return 'miss';",
     "new": "  if (now > atk.at + Math.max(B.active, 1) + STRIKE_LATE_MS) return 'miss';",
     "tests": [
@@ -316,7 +316,7 @@
   },
   {
     "name": "WB11-the-bye-a-gate",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "return pairs.filter((q) => q[0] < nT && q[1] < nT).map(",
     "new": "return pairs.filter((q) => q[0] < nT - 1 && q[1] < nT - 1).map(",
     "tests": [

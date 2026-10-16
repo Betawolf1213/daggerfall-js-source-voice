@@ -2,8 +2,8 @@
 // past the 100 ceiling by what the sky adds.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { FIRM_NODES, SIGNS } from '../src/net/firmamentTree.js';
-import { statDef } from '../src/net/firmamentLaw.js';
+import { FIRM_NODES, SIGNS } from '../src/net/firmament/firmamentTree.js';
+import { statDef } from '../src/net/firmament/firmamentLaw.js';
 import { liveStat } from '../src/systems/statMods.js';
 
 test('FIRM2: over one sign\'s whole sky no channel sums past its cap', () => {

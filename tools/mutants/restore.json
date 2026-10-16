@@ -133,7 +133,7 @@
   },
   {
     "name": "RESTORE-A-a-crossed-house-counted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "slot?.buildingKey > 0 && !slot.crossed)",
     "new": "slot?.buildingKey > 0)",
     "tests": [
@@ -143,7 +143,7 @@
   },
   {
     "name": "RESTORE-A-a-crossed-ship-counted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "if (ownsShip(snap) && !snap.shipCrossed) {",
     "new": "if (ownsShip(snap)) {",
     "tests": [

@@ -23,8 +23,8 @@
 // and never slip.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { ILIAC_CARDS, cardById, ILIAC_TIERS, STARTER_DECK } from '../../net/iliacCards.js';
-import { ILIAC_DECK_SIZE, ILIAC_COPIES_MAX, ILIAC_LEGENDARY_COPIES_MAX, ILIAC_TURNS, ILIAC_HOLDINGS, deckValid, commit, reveal, iliacView, legalPlays, playsRefusal } from '../../net/iliacHand.js';
+import { ILIAC_CARDS, cardById, ILIAC_TIERS, STARTER_DECK } from '../../net/iliac/iliacCards.js';
+import { ILIAC_DECK_SIZE, ILIAC_COPIES_MAX, ILIAC_LEGENDARY_COPIES_MAX, ILIAC_TURNS, ILIAC_HOLDINGS, deckValid, commit, reveal, iliacView, legalPlays, playsRefusal } from '../../net/iliac/iliacHand.js';
 import { TEMPER_NAMES } from '../card/cardPatrons.js';
 import { BOSS_CARD_IDS } from '../bossCards.js';   // CARDS9: a boss's own card is found, never dealt
 const BOSS_IDS = new Set(BOSS_CARD_IDS);

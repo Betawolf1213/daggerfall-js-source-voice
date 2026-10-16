@@ -140,7 +140,7 @@ const inRoundRect = ([x, y], rx, ry, rw, rh, r, m = 0) => {
 /** A text's role by its font: a digit on a gem or shield, the name, the flavor, or the rules. */
 const role = (t) => (/^bold /.test(t.font) ? (/^\d+$/.test(t.t) ? 'digit' : 'name') : /^italic /.test(t.font) ? 'flavor' : 'rules');
 
-/** KG-SET: a fabricated card is the producer's shape (net/iliacCards.js - no words on it); the words a test sets on
+/** KG-SET: a fabricated card is the producer's shape (net/iliac/iliacCards.js - no words on it); the words a test sets on
  *  its face go to the painter beside it, as a catalog card's own (systems/iliac/iliacCardWords.js) do. */
 const SAMPLED = new WeakMap();
 const sample = (kind, tier, { rules = 'When played, add one power to every other unit you hold here.', flavor = 'The bones remember.', ...extra } = {}) => {
@@ -155,8 +155,8 @@ const sample = (kind, tier, { rules = 'When played, add one power to every other
 const wordsOf = (card) => SAMPLED.get(card) ?? cardWords(card);
 const paint = (card, w, h, opts) => { const r = recorder(opts); paintIliacCard(r.ctx, card, w, h, SAMPLED.get(card)); return { ...r, L: iliacLayout(KIND_ART[card.kind] ? card.kind : 'unit', RARITIES[card.tier] ? card.tier : 'common', w, h) }; };
 const catalog = async () => {
-  if (!existsSync(new URL('../src/net/iliacCards.js', import.meta.url))) return [];
-  const cat = await import('../src/net/iliacCards.js');
+  if (!existsSync(new URL('../src/net/iliac/iliacCards.js', import.meta.url))) return [];
+  const cat = await import('../src/net/iliac/iliacCards.js');
   return [...(cat.ILIAC_CARDS ?? []), ...(cat.ILIAC_LOCATIONS ?? [])];
 };
 
@@ -198,8 +198,8 @@ test('CARDS8 every emblem the catalog carries has its own glyph, traced from pat
 });
 
 test('CARDS8 the catalog\'s emblems all have a painter (when the catalog is in the tree)', async () => {
-  if (!existsSync(new URL('../src/net/iliacCards.js', import.meta.url))) return;
-  const cat = await import('../src/net/iliacCards.js');
+  if (!existsSync(new URL('../src/net/iliac/iliacCards.js', import.meta.url))) return;
+  const cat = await import('../src/net/iliac/iliacCards.js');
   for (const e of cat.CARD_EMBLEMS ?? []) assert.ok(EMBLEM_PAINTERS[e], `the catalog's ${e} has a painter`);
   for (const c of await catalog()) assert.ok(EMBLEM_PAINTERS[c.emblem], `${c.id}'s ${c.emblem} has a painter`);
 });

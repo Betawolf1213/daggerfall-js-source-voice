@@ -18,7 +18,7 @@ import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
 import * as LR from '../src/systems/loot/lootRarity.js';
 import * as RF from '../src/systems/reforge.js';
 import { WELKYND_SHARD_TEMPLATE, WELKYND_SHARD_TEMPLATES, welkyndShards, isWelkyndShard, SIGIL_STONE_TEMPLATE } from '../src/systems/gate/gateSpoils.js';
-import { BOUND_TEMPLATES } from '../src/net/realmTradeLaw.js';
+import { BOUND_TEMPLATES } from '../src/net/realm/realmTradeLaw.js';
 import { isBound } from '../src/systems/item/itemBound.js';
 import { setLocked } from '../src/systems/item/itemLock.js';
 import { addItem, LETTER_OF_CREDIT_TEMPLATE } from '../src/systems/inventory.js';

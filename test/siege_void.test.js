@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { standService, T0 } from './accountDb.mjs';
 import { seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S, siegeStartMs, STANDING_START, CLAIM_FEE, SIEGE_HONOURS, chronicleLine, SIEGE_WHY } from '../src/net/townSeatLaw.js';
-import { mintSiegeReceipt } from '../src/net/siegeReceipt.js';
+import { mintSiegeReceipt } from '../src/net/siege/siegeReceipt.js';
 import { parseSiegeCommand, SIEGE_USAGE, createTownSeatBook } from '../src/net/townSeatBook.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
 

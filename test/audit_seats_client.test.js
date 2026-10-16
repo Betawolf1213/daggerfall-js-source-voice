@@ -14,23 +14,23 @@ import { byClass } from './chargenDom.mjs';
 import {
   createSiegeSession, SIEGE_SESSION_TEXT, SIEGE_PASS_RETRY_MS, PASS_RETRY_MAX_MS, passRetryMs, BATTLE_AWAY_MS,
   isBattleLeaveCommand, BATTLE_NONE_TEXT,
-} from '../src/net/siegeSession.js';
+} from '../src/net/siege/siegeSession.js';
 import { createRoyalSession, ROYAL_SESSION_TEXT, ROYAL_PASS_RETRY_MS } from '../src/net/royalSession.js';
-import { createSiegeClaims, createRoyalClaims, SIEGE_CLAIM_RETRY_MS } from '../src/net/siegeClaims.js';
-import { siegeHudModel, siegeHonourLine, siegeClaimRefusal, SIEGE_CLAIM_REFUSED, foldSiege, SIEGE_STATE_EMPTY } from '../src/net/siegeLink.js';
+import { createSiegeClaims, createRoyalClaims, SIEGE_CLAIM_RETRY_MS } from '../src/net/siege/siegeClaims.js';
+import { siegeHudModel, siegeHonourLine, siegeClaimRefusal, SIEGE_CLAIM_REFUSED, foldSiege, SIEGE_STATE_EMPTY } from '../src/net/siege/siegeLink.js';
 import { createSiegeHud, SIEGE_HUD_WORDS } from '../src/ui/siegeHud.js';
 import { createTownSeatBook } from '../src/net/townSeatBook.js';
 import { createSeatTab, SEAT_RELINQUISH_ARM_MS } from '../src/ui/seatTab.js';
 import { SEAT_RELINQUISH_WORDS, SEAT_WATCH_CLAIM_MAX, seatWeekStartMs, seatWeekOf, battleAnnouncement, battleWhenText } from '../src/net/townSeatLaw.js';
-import { GUILD_RANK_MASTER } from '../src/net/guildLaw.js';
-import { mintSiegeReceipt, mintRoyalReceipt } from '../src/net/siegeReceipt.js';
+import { GUILD_RANK_MASTER } from '../src/net/guild/guildLaw.js';
+import { mintSiegeReceipt, mintRoyalReceipt } from '../src/net/siege/siegeReceipt.js';
 import { mintWatchReceipt } from '../src/net/watchReceipt.js';
 import { ribbonTints } from '../src/net/remotePlayers.js';
 import { ribbonRgba } from '../src/net/heraldryLaw.js';
 import { createSeatBanners } from '../src/scenes/seatBanners.js';
-import { createSiegeHerald, heraldMarks, heraldDue, fightAnnouncement, SIEGE_HERALD_BEFORE_MS, SIEGE_HERALD_TICK_MS } from '../src/net/siegeHerald.js';
+import { createSiegeHerald, heraldMarks, heraldDue, fightAnnouncement, SIEGE_HERALD_BEFORE_MS, SIEGE_HERALD_TICK_MS } from '../src/net/siege/siegeHerald.js';
 import { siegeBlowKind, siegeCastClamp, siegeSpellNumbers, siegeSpellBarred, SIEGE_SPELL_BARRED_TEXT, SIEGE_BARRED_EFFECTS } from '../src/combat/siegeCombat.js';
-import { SIEGE_HIT, SIEGE_CASTS, siegeRoomKey, royalRoomKey } from '../src/net/siegeRef.js';
+import { SIEGE_HIT, SIEGE_CASTS, siegeRoomKey, royalRoomKey } from '../src/net/siege/siegeRef.js';
 import { applySpell } from '../src/systems/effects.js';
 import { duelStandIn } from '../src/combat/duelCombat.js';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';

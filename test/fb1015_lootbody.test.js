@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { drawBodiesUnderWindow } from '../src/characters/foeBodies.js';
 import { createNpcBodies } from '../src/characters/npcBodies.js';
-import { BODY_LINGER_MS } from '../src/net/peerBodies.js';
+import { BODY_LINGER_MS } from '../src/net/peer/peerBodies.js';
 import { drawRigSpriteBox, pictureDepth, PICTURE_NEAR } from '../src/render/characterSprite.js';
 import { multiply, perspective, lookAt } from '../src/world/mat4.js';
 import { setPref } from '../src/systems/uiPrefs.js';

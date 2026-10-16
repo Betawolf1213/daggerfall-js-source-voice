@@ -416,7 +416,7 @@ export function wildJourney({ from, to, mask, now = Date.now(), lastAt = null, g
 // leave ends the party in the instant, so the protection the walk in was taken under was dropped where it mattered.
 // A player who leaves my party, or whose party I leave, is held out of the fight both ways for WILD_PARTY_TRUCE_MS - a
 // walk out of the zone - before they are a stranger like any other. Each side reads its own party (the defender's own
-// client refuses an unfair blow, net/wildFight.js onFrame), so a doctored attacker gains nothing. Held in memory: a
+// client refuses an unfair blow, net/wild/wildFight.js onFrame), so a doctored attacker gains nothing. Held in memory: a
 // reload forgets it (Wild-Zone.md's known limits).
 export const WILD_PARTY_TRUCE_MS = 10 * 60_000;
 /** The truce's clock. `frame(peers, now)` each frame with my party's peer ids as they stand (social.partyPeers - a Set)

@@ -18,7 +18,7 @@ import {
 import { REALM_ID_RE } from '../server-account/src/realm.js';
 import { renownHeldSql } from '../server-account/src/renownTracks.js';
 import { RENOWN_TRACKS_MAX } from '../src/net/renown.js';
-import { GUILD_FOUND_RENOWN, GUILD_RANK_MASTER } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_RENOWN, GUILD_RANK_MASTER } from '../src/net/guild/guildLaw.js';
 import {
   mintToken, verifyToken, claimsValid, REALM_CHARACTER_RE, TOKEN_MAX_CHARS, TOKEN_BODY_MAX, tokenBodyOf, GLYPHS, SEAT_TITLES, AURAS,
   RENOWN_MAX, ARENA_RATING_MAX, CHARACTER_LEVEL_MAX, TOKEN_ARMS_TOP_MAX,

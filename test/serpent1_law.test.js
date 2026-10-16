@@ -1,8 +1,8 @@
 // SERPENT1 (2026-10-04, Mac: "A new world event that requires players with a ship to meet up and take on a large scale
 // sea serpent in the ocean"; "You make the decisions and online only ... make this something truly special"): SETHRAKUL'S
-// LAW, BODY AND BRAIN. The schedule and its words (net/serpentLaw.js - the dawn watch every other game day, never beside
-// the gate); the body as law (net/serpentBody.js - the head's legs, the track the body lies along, how it rides the sea,
-// the coil, what a ball may strike); the relay's brain over a seeded rng and a fake clock (net/serpentBrain.js - the
+// LAW, BODY AND BRAIN. The schedule and its words (net/serpent/serpentLaw.js - the dawn watch every other game day, never beside
+// the gate); the body as law (net/serpent/serpentBody.js - the head's legs, the track the body lies along, how it rides the sea,
+// the coil, what a ball may strike); the relay's brain over a seeded rng and a fake clock (net/serpent/serpentBrain.js - the
 // numbers a ship's claim sets, the join, every refusal a blow can meet, the weak place, the phases and their turns, the
 // coil slipped, held, broken and crushed, the sounding, who serpentEarned it, the checkpoint).
 import { test } from 'node:test';
@@ -13,13 +13,13 @@ import {
   serpentCountdown, serpentCountdownWords, serpentClock, serpentRing, serpentRoll, serpentLaneOf, serpentAlongOf, SERPENT_ALONG,
   serpentBossOf, serpentBossById, SERPENT_BOSSES, sightingLine, risingLine, sealLine, soundLine, slainLine, SERPENT_DAY_MINUTES,
   SERPENT_EVERY_DAYS, SERPENT_SURFACE_MS, SERPENT_DIVE_MS, SERPENT_RING_PIXELS, SERPENT_NATIVE_PER_M,
-} from '../src/net/serpentLaw.js';
-import { gateTimes, GATE_COLLAPSE_MS, gameDayAt, PIXEL_M as GATE_PIXEL_M } from '../src/net/gateLaw.js';
+} from '../src/net/serpent/serpentLaw.js';
+import { gateTimes, GATE_COLLAPSE_MS, gameDayAt, PIXEL_M as GATE_PIXEL_M } from '../src/net/gate/gateLaw.js';
 import {
   LEG, MODE, legAt, legFrom, headAt, spinePoint, bodyAt, depthAt, depthOf, modeAt, coilPoint, coilWeight, anyExposed, coilAngleAt, DRIFT_V,
   headExposed, nearestExposed, segmentBox, segExposed, radiusAt, SEG_N, SEG_LEN, BODY_LEN, DEEP_Y, MODE_BLEND_MS, COIL_BLEND_MS,
   COIL_R, BREACH_Y, REAR_Y,
-} from '../src/net/serpentBody.js';
+} from '../src/net/serpent/serpentBody.js';
 import {
   newSerpentFight, joinSerpentFight, applySerpentHit, stepSerpentBrain, serpentStateOf, serpentEarned, serpentEarnedBy, serpentTopDealers, serpentDamageChart, pickSerpentTarget, serpentAttacksFor,
   chooseSerpentAttack, coilWord, coilHolds, pruneLegs, refOf, clampHull, SHIP_REF, SERPENT_TTK_S, SERPENT_BUCKET_RATE_X, SERPENT_BUCKET_DEPTH_X,
@@ -27,7 +27,7 @@ import {
   ENGAGE_R, GUN_REACH_M, SERPENT_POSE_SLACK, COIL_MS, COIL_ESC_MS, SERPENT_STUN_MS, COIL_TEAM_S, COIL_HP_MIN, SERPENT_PART_SHARE, SERPENT_STOOD_SHARE,
   SERPENT_FIGHTERS_MAX, SERPENT_ABSENT_RETIRE_MS, ARENA_R, MAEL_ORBIT_R, RAM_V, ramLen, BREACH_LEAD_MS, SERPENT_COIL_PASS, SERPENT_STAND_R, SERPENT_IDLE_RETIRE_MS, SERPENT_TARGET_R, serpentWreck, serpentShareWanted, COIL_WORD_EARLY_MS, serpentAtkFrame,
   SERPENT_SAY_AHEAD_MS,   // AUDIT SHIPS B5: an end's swim said ahead
-} from '../src/net/serpentBrain.js';
+} from '../src/net/serpent/serpentBrain.js';
 import { HULL, HULL_BUILDS, GUNS, playerBatteryWeight } from '../src/systems/naval/navalShips.js';
 import { orientedBox, segmentBoxEntry } from '../src/systems/naval/navalBallistics.js';
 import { MINUTES_PER_DAY } from '../src/systems/gameDate.js';

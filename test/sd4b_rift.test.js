@@ -18,7 +18,7 @@ import { riftCentreY } from '../src/world/superDungeon/sdRiftModel.js';
 import { SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import { buildRiftBell, startRiftBell, RIFT_BELL_KEY, RIFT_BELL_RATE, RIFT_BELL_SECONDS, RIFT_BELL_RMS, RIFT_BELL_RECORDS, RIFT_BELL_LOWPASS_HZ, RIFT_BELL_RANGE } from '../src/systems/superDungeon/sdRiftSound.js';
 import { rms } from '../src/systems/arena/arenaSound.js';
-import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_NO_RIFT, SD_NO_CLOSED } from '../src/net/sdLaw.js';
+import { sdFirst, sdRise, sdFind, sdFell, sdGone, SD_COLLAPSE_MS, SD_NO_RIFT, SD_NO_CLOSED } from '../src/net/superDungeon/sdLaw.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../src/player/activate.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

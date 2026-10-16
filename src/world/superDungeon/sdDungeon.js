@@ -23,7 +23,7 @@
 //
 // Online only, as the Hollow is. Not a DFU member. Ledger A (SUPER-DUNGEONS).
 
-import { sdPhase, SD_NO_RIFT, SD_NO_CLOSED, SD_NO_FALLEN, SD_COLLAPSE_MS } from '../../net/sdLaw.js';
+import { sdPhase, SD_NO_RIFT, SD_NO_CLOSED, SD_NO_FALLEN, SD_COLLAPSE_MS } from '../../net/superDungeon/sdLaw.js';
 import { timerText } from '../../systems/eventTimers.js';
 import { RDB_SIDE } from '../rdbLayout.js';   // SD-REACH: a dungeon block's side - which block's square holds a marker
 import { riftCentreY } from './sdRiftModel.js';   // AUDIT SD IV (F36): the ring's centre as it stands - it hovers
@@ -290,7 +290,7 @@ const FOUND_LOOKS = Object.freeze(Array.from({ length: 25 }, (_, n) => Object.fr
 const COLLAPSE_LOOK = { state: 'collapse', aperture: 0, tickHz: 2, studs: 0, ember: 0, tone: 'ember', light: 0.3 };
 
 /**
- * @param {import('../../net/sdLaw.js').SdRecord | null | undefined} rec
+ * @param {import('../../net/superDungeon/sdLaw.js').SdRecord | null | undefined} rec
  * @param {number} s the Hollow's slot
  * @param {number} now
  */
@@ -371,7 +371,7 @@ export const SD_FALLEN_KEY = 'sd12.fallen';
  * newcomer after its boss fell: "The Hour has closed." `entered`: this player went through before (the realm's room
  * keeps them until it is gone). `fallen`: this player died in its Hour - one life a Hollow (SD-ONELIFE): "The Hour will not
  * take you back."
- * @param {import('../../net/sdLaw.js').SdRecord | null | undefined} rec
+ * @param {import('../../net/superDungeon/sdLaw.js').SdRecord | null | undefined} rec
  * @param {number} s the Hollow's slot
  * @param {number} now
  */
@@ -395,7 +395,7 @@ export const SD_COUNT_TEXT = Object.freeze({
  * closed on everyone in it with no count anywhere inside. AUDIT SD III (T6): in the one clock the game counts its events
  * in (systems/eventTimers.js timerText - its ring, its banner, its note and the Timers window say *"fades in 1d 22h"*;
  * this plaque alone said *"46h 12m"*). Null with no record, another slot's, or one gone.
- * @param {import('../../net/sdLaw.js').SdRecord | null | undefined} rec
+ * @param {import('../../net/superDungeon/sdLaw.js').SdRecord | null | undefined} rec
  * @param {number} s the Hollow's slot
  * @param {number} now
  */

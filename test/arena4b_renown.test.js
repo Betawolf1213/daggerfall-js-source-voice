@@ -1,20 +1,20 @@
 // ARENA4b (2026-10-03, Arena.md 2: "Purses in gold ... Online, renown too, within the renown law's own hourly cap"): A
 // WON BOUT'S RENOWN - the account service over node:sqlite with every migration (test/accountDb.mjs), the relay's
-// receipts signed with the relay's own key; the claim's carrier on the client (net/arenaClaims.js) and the host's
+// receipts signed with the relay's own key; the claim's carrier on the client (net/arena/arenaClaims.js) and the host's
 // wiring by source. server-account/src/arena.js arenaRenownXp / arenaRenownFor.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { standService, T0 } from './accountDb.mjs';
-import { mintArenaReceipt } from '../src/net/arenaReceipt.js';
+import { mintArenaReceipt } from '../src/net/arena/arenaReceipt.js';
 import { verifyOrder } from '../src/net/identityToken.js';
 import { renownXpFor, RENOWN_XP_HOUR_MAX, renownRaidXp, renownQuestXp } from '../src/net/renown.js';
 import { arenaRenownXp, ARENA_RENOWN_TIER_LEVEL, ARENA_RENOWN_QUESTS, ARENA_RENOWN_REGION } from '../server-account/src/arena.js';
 import { ARENA_REGION } from '../src/world/arena/arenaCity.js';
-import { createArenaClaims, ARENA_CLAIMS_KEY, arenaKeptReceipt } from '../src/net/arenaClaims.js';
+import { createArenaClaims, ARENA_CLAIMS_KEY, arenaKeptReceipt } from '../src/net/arena/arenaClaims.js';
 import { accountArena, SESSION_KEY } from '../src/net/accountClient.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
-import { ARENA_PAIR_DAY_MAX } from '../src/net/arenaLaw.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
+import { ARENA_PAIR_DAY_MAX } from '../src/net/arena/arenaLaw.js';
 
 const { subtle } = globalThis.crypto;
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

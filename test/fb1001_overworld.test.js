@@ -9,16 +9,16 @@
 //     keys point; the keys' vector is turned onto it, so the walk is the keys' way as before.
 //   OW-PEERS (#11): the traveller is drawn grown with the eye's distance (OW-BIG) and every other player at their own
 //     size - a speck at 330 m under their name. Each is grown by the same law at their own feet: the riders and the
-//     walkers (net/peerRiders.js), the dolls and the class sprites (net/remotePlayers.js), the Morrowind bodies
-//     (net/peerBodies.js, drawThird's OW-BIG).
+//     walkers (net/peer/peerRiders.js), the dolls and the class sprites (net/remotePlayers.js), the Morrowind bodies
+//     (net/peer/peerBodies.js, drawThird's OW-BIG).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { keysHeading, axesToward, tvOwnGrow, forwardOf, TV_TURN_RATE } from '../src/player/travelCamera.js';
 import { createTravelView, TV_MOVE_ACTIONS } from '../src/scenes/travelView.js';
-import { createPeerWalkers, createEotbArt } from '../src/net/peerRiders.js';
+import { createPeerWalkers, createEotbArt } from '../src/net/peer/peerRiders.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
-import { PeerBodies } from '../src/net/peerBodies.js';
+import { PeerBodies } from '../src/net/peer/peerBodies.js';
 import { quadHalfDiagonal } from '../src/render/bounds.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { PAPERDOLL_W, PAPERDOLL_H } from '../src/ui/paperDoll.js';
@@ -189,5 +189,5 @@ test('OW-PEERS: a doll and a Morrowind body grown too - the doll\'s size, reach 
   assert.match(w, /const tvGrow = travelView\?\.active \? peerGrow : null;/);
   for (const re of [/peerRiders\.sync\(seen, [^\n]*, grow: tvGrow \}\);/, /peerWalkers\.sync\(seen, [^\n]*, grow: tvGrow \}\);/, /remotePlayers\.sync\(visiblePeers, [^\n]*, grow: tvGrow(?:, room: drawable)? \}\);/]) assert.match(w, re);   // PIN MOVED (AUDIT PEER-RANGE + HALO-THIN A L1/L6): the room's whole list handed after the grow
   assert.match(w, /drawPeerBodies\(proj, view, mwv\.eye, tvf \? tvFace : null\);/, 'the bodies take the view\'s face (its lean)');
-  assert.match(rd('src/net/peerBodies.js'), /if \(this\._planesOk\) \{\n {8}if \(!this\._sees\(b, 0, g\)\) \{[\s\S]{0,800}?\n {10}continue;\n {8}\}/, 'and are culled by their grown reach');   // PIN MOVED (AUDIT MWNPC16-18 B F2, Morrowind-NPCs.md section 27): the unseen branch casts only a body posed for its actor, and says why   // PIN MOVED (MWNPC16): an NPC lane's body out of the view casts before it is passed over
+  assert.match(rd('src/net/peer/peerBodies.js'), /if \(this\._planesOk\) \{\n {8}if \(!this\._sees\(b, 0, g\)\) \{[\s\S]{0,800}?\n {10}continue;\n {8}\}/, 'and are culled by their grown reach');   // PIN MOVED (AUDIT MWNPC16-18 B F2, Morrowind-NPCs.md section 27): the unseen branch casts only a body posed for its actor, and says why   // PIN MOVED (MWNPC16): an NPC lane's body out of the view casts before it is passed over
 });

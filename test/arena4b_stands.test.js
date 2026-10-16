@@ -12,7 +12,7 @@ import { newCrowd, SHOUT_PUSH } from '../src/systems/arena/arenaCrowd.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
 import { createArenaBouts, CHEER_GAP_MS } from '../src/scenes/arenaBouts.js';
 import { createArenaOnline } from '../src/scenes/arenaOnline.js';
-import { ARENA_HALL, arenaBoutRoom, ARENA_FLOOR_CENTRE, ARENA_CHEER_MS, arenaLadderOf } from '../src/net/arenaLaw.js';
+import { ARENA_HALL, arenaBoutRoom, ARENA_FLOOR_CENTRE, ARENA_CHEER_MS, arenaLadderOf } from '../src/net/arena/arenaLaw.js';
 import { LAUREL_FAVOUR } from '../src/systems/arena/arenaLeague.js';
 import { exhibitionFor } from '../src/systems/arena/arenaLadder.js';
 import { FRAME_ROLES } from '../src/ui/enhancedFrame.js';

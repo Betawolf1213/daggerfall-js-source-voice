@@ -33,7 +33,7 @@ import { toolRig, fakeDoc, fakeWin, all, one } from './decorFakes.mjs';
 import { createWagonRiders, RIDE_LOST_GRACE_MS, GET_DOWN_REACH } from '../src/scenes/wagonRiders.js';
 import { RIDE_TEXT } from '../src/systems/wagon/wagonSeats.js';
 import { packTradeRefusal, createTradePack, createMarketGoods, WAGON_LOADED_TRADE_TEXT, WAGON_LOADED_MARKET_WORDS } from '../src/systems/tradePack.js';
-import { GuildBook } from '../src/net/guildBook.js';
+import { GuildBook } from '../src/net/guild/guildBook.js';
 import { createCaravanAccess, parkedCaravanAt, CARAVAN_STANDS_NATIVES } from '../src/scenes/caravanRoom.js';
 import { WAGON_MODE } from '../src/systems/horse/horseCartLaw.js';
 import { createSceneCache, cacheScene, layoutSceneName, addPermanentScene, containsPermanentScene, foldLayoutCopies } from '../src/systems/sceneCache.js';

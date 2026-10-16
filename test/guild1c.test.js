@@ -11,7 +11,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
-import { GUILD_FOUND_RENOWN } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_RENOWN } from '../src/net/guild/guildLaw.js';
 import { renownXpFor } from '../src/net/renown.js';
 import {
   claimsValid, mintToken, verifyToken, orderValid, verifyOrder, guildClaimsValid, mintGuildOrder, mintGuildOutOrder,
@@ -25,11 +25,11 @@ import { fakeRoom } from './fakeRoom.mjs';
 import { withClock } from './placeWidest.mjs';   // the relay's gates on a clock the test turns - a second is a tick, not a wait
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { OnlineSession, GUILD_SEND_MS, GUILD_RESEND_MS } from '../src/net/online.js';
-import { GuildBook, guildBadgeKey } from '../src/net/guildBook.js';
+import { GuildBook, guildBadgeKey } from '../src/net/guild/guildBook.js';
 import { CHAT_TABS, NO_GUILD_TEXT, GUILD_OLD_RELAY_TEXT } from '../src/net/chat.js';
 import { CHANNEL_COMMANDS, parseChatLine } from '../src/net/chatCommands.js';
 import { guildRosterSource, rosterRows } from '../src/net/roster.js';
-import { guildTagText } from '../src/net/guildLaw.js';
+import { guildTagText } from '../src/net/guild/guildLaw.js';
 import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { measureText } from '../src/ui/text.js';
 import { createNameLayer } from '../src/ui/nameLayer.js';

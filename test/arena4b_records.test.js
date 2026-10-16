@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
-import { arenaSeasonOf, ARENA_TEAM_POINTS } from '../src/net/arenaLaw.js';
+import { arenaSeasonOf, ARENA_TEAM_POINTS } from '../src/net/arena/arenaLaw.js';
 import { ARENA_RECENT_MAX } from '../server-account/src/arena.js';
 
 const PVE_KEYS = ['at', 'kind', 'tier', 'step', 'won', 'how', 'points'];

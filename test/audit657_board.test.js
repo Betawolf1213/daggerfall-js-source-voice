@@ -134,7 +134,7 @@ test('AUDIT 657 B5 MARKET-AUDIT U4\'s arm where B5 does not reach: a market know
 test('AUDIT 657 B6 a guild\'s raid contract says what earns it - a raider struck in the town and the town stood in until it is cleansed (raidLaw.js\'s receipt); "Fight off a raid" dropped the second (mutant: the condition cut again)', () => {
   const w = src('src/ui/workTab.js');
   assert.match(w, /t\('prof\.work\.contract\.how', 'Strike a raider in a town here and stay until it is cleansed: paid when the raid is counted, less \{tax\} tax\.', \{ tax: marksText\(saleTax\(x\.pay\)\) \}\)/);
-  assert.match(src('src/net/raidLaw.js'), /struck a raider \(said\) and stood in the town at the cleanse/, 'the law the words say');
+  assert.match(src('src/net/raid/raidLaw.js'), /struck a raider \(said\) and stood in the town at the cleanse/, 'the law the words say');
 });
 
 test('AUDIT 657 B7 the siege field\'s Market banner stands at the town\'s Notice Board by ONE-BOARD\'s own choice - on an exact tie too, where the field walked the boards in their order and the Notice Board by their position (mutant: the field\'s own walk back)', () => {

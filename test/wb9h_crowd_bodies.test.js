@@ -1,5 +1,5 @@
 // WB9h (2026-09-30, Mac: "Further improve the morrowind model performance as it's unplayable with so many players
-// around"): THE MORROWIND BODIES IN A CROWD (net/peerBodies.js). tools/peerCrowdProbe.mjs stood forty players milling
+// around"): THE MORROWIND BODIES IN A CROWD (net/peer/peerBodies.js). tools/peerCrowdProbe.mjs stood forty players milling
 // round the eye: 81 bodies built in thirty seconds (up to 24 in five), 68 torn down while their player stood within
 // 25 m, every body skinned and drawn whether the eye saw it or not. Four laws, each pinned here by driving PeerBodies:
 // THE VIEW (a body out of it neither drawn nor skinned, posed as it is seen), THE BUDGET (SKIN_BUDGET skins a frame,
@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import {
   PeerBodies, BODIES_MAX, BODY_LINGER_MS, SKIN_BUDGET, poseCadenceFor, SWAP_DWELL_MS, SWAP_EVERY_MS, SPARE_MS, SPARE_MAX, BODY_SPHERE_SHARE, CULL_MARGIN_M, EFFECTS_BANK_MAX_S,
   viewPlanes, sphereInView, peerCamera,
-} from '../src/net/peerBodies.js';
+} from '../src/net/peer/peerBodies.js';
 import { CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
 
@@ -321,7 +321,7 @@ test('WB9h the crowd, driven: thirty players milling 3..40 m about the eye for t
 });
 
 test('WB9h by source: no copy of the pose and no spread of the bodies a frame (AUDIT WB D10); the frame\'s lists kept on the module and refilled; the draw keeps its camera in one object (mutants: a pose copied again)', () => {
-  const src = rd('src/net/peerBodies.js');
+  const src = rd('src/net/peer/peerBodies.js');
   assert.doesNotMatch(src, /\{ \.\.\.peer\.shown/, 'no copy of the pose to hand the camera its yaw');
   assert.doesNotMatch(src, /for \(const [^)]*of \[\.\.\.this\._bodies/, 'no spread of the bodies to walk them');
   const cam = peerCamera({ yaw: 0.3, mv: 1 }, [1, 2, 3], 2, null, 1.2);

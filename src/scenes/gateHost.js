@@ -7,18 +7,18 @@
 // learns who it struck) and landed through the court's own door; the words and the sounds of it. Design:
 // bible/11-Multiplayer/World-Bosses.md section 17.
 //
-// ONE SOURCE: the court's state (net/gateLink.js - the relay's words folded, its `lg`). Nothing here is sent but a blow
+// ONE SOURCE: the court's state (net/gate/gateLink.js - the relay's words folded, its `lg`). Nothing here is sent but a blow
 // of mine on one of them (`hit` - the wire's `ahit`, the relay's caps deciding what lands). The court's driver
 // (scenes/gateCourt.js) runs this each frame and hands its bodies, lights and shapes on with its own.
 //
 // THE PARTS, pure where they can be: who each one is and what it is doing (world/gate/gateBoss.js hostLookOf, hostAct,
-// hostFallAct, hostCue), where it stands (net/gateBrain.js hostAt), its blow's verdict and clock (net/gateStrike.js
+// hostFallAct, hostCue), where it stands (net/gate/gateBrain.js hostAt), its blow's verdict and clock (net/gate/gateStrike.js
 // hostVerdict, hostTelegraphAt), the shapes (`hostShapes`). This file holds the sprites' textures and batches and what it
 // has already cued, judged and said.
 //
 // Not a DFU member. Ledger A (WB11).
-import { HOST, HOST_KINDS, HOST_BLOWS, COURT_CENTRE, ATTACKS, hostAt, hostBlowUnder, nearestCourt } from '../net/gateBrain.js';
-import { hostVerdict, hostTelegraphAt } from '../net/gateStrike.js';
+import { HOST, HOST_KINDS, HOST_BLOWS, COURT_CENTRE, ATTACKS, hostAt, hostBlowUnder, nearestCourt } from '../net/gate/gateBrain.js';
+import { hostVerdict, hostTelegraphAt } from '../net/gate/gateStrike.js';
 import { hostLookOf, hostAct, hostFallAct, hostStandIn, hostCue, bossFrame, bossPlace, HOST_BITE_COLOR, hostPulseColor, emberColor, WARD_COLOR, BOSS_CUES, gateHitFlash } from '../world/gate/gateBoss.js';
 import { setBatchHitFlash } from '../systems/hitFlash.js';   // WB13d: a body of his host struck flashes, as he does
 import { courtToDungeon } from '../world/gate/gateArena.js';
@@ -67,7 +67,7 @@ const SHAPE_SLOTS = new WeakMap();
  * landing - WB13a: in the same danger edge as his); while his ward holds, each Ward-Bearer's tether to him in the ward's
  * gold; each Sapper's path to him in his ember - WB13a: dashes flowing to him (they were drawn as burning ground). Blows
  * first, at most HOST_SHAPES_MAX. Pure.
- * @param {any} s the court's state (net/gateLink.js) @param {number} now @param {any} P the fight's profile
+ * @param {any} s the court's state (net/gate/gateLink.js) @param {number} now @param {any} P the fight's profile
  * @param {any[]} [out] refilled
  */
 export function hostShapes(s, now, P, out = []) {

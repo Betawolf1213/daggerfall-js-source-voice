@@ -3,7 +3,7 @@
 // what one fighter's share of the Last Moment pays, rolled from the relay's receipt. The gate's spoils' and the serpent's
 // hoard's twin (systems/gate/gateSpoils.js, systems/serpent/serpentSpoils.js).
 //
-// PER FIGHTER, AND THE SEED'S OWN. The receipt the relay signs at the fall (net/sdReceipt.js `h1`) carries a seed (`c`,
+// PER FIGHTER, AND THE SEED'S OWN. The receipt the relay signs at the fall (net/superDungeon/sdReceipt.js `h1`) carries a seed (`c`,
 // 32 bits of the relay's CSPRNG) and the level the fight admitted its account at (`l`), and everything here is rolled on
 // `seededRng(c)` (systems/wind/wind.js): every fighter's spoils are their own. The roll reads the player's world as well as the
 // seed (the level, the registered custom pieces), so what was rolled is what is kept - scenes/spoilsPool.js records the

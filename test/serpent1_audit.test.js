@@ -13,9 +13,9 @@ import {
   ENGAGE_R, SERPENT_STAND_R, SERPENT_TARGET_R, SERPENT_IDLE_RETIRE_MS, SERPENT_ABSENT_RETIRE_MS, SERPENT_RECEIPT_SHARE, SERPENT_PART_SHARE, SERPENT_STOOD_SHARE,
   SERPENT_PHASE_AT, SERPENT_TICK_MS, ORBIT_R, CRUISE_V, SERPENT_SLEEP_MS, COIL_ESC_MS, SERPENT_COIL_PASS,
   SERPENT_SAY_AHEAD_MS, DEEP_V,   // AUDIT SHIPS B5: an end's swim said ahead
-} from '../src/net/serpentBrain.js';
-import { LEG, MODE, bodyAt, headAt, modeAt, supersede } from '../src/net/serpentBody.js';
-import { createSerpentLink, foldSerpent, SERPENT_STATE_EMPTY } from '../src/net/serpentLink.js';
+} from '../src/net/serpent/serpentBrain.js';
+import { LEG, MODE, bodyAt, headAt, modeAt, supersede } from '../src/net/serpent/serpentBody.js';
+import { createSerpentLink, foldSerpent, SERPENT_STATE_EMPTY } from '../src/net/serpent/serpentLink.js';
 import { validSerpentOut } from '../src/net/wire.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 

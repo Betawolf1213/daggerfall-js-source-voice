@@ -4,7 +4,7 @@
 // layoutDungeon and layoutRdbBlock); the court's geometry (a clear floor facing up, the rune ring the boss keeps
 // inside, the lava under it all, the braziers clear of the bridge and after the player's own lights - GATE-FBX: and no
 // door of its own, the bridge's membrane gone - the ring the motor keeps a player in); the way home's landing before the gate; the court's art; the client's link to the fight
-// (net/gateLink.js - the relay's words folded into one state); and the seams in the dungeon host, the context and the
+// (net/gate/gateLink.js - the relay's words folded into one state); and the seams in the dungeon host, the context and the
 // world host, by source.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -19,14 +19,14 @@ import {
 import { GATE_ARCHIVE } from '../src/world/gate/gateModel.js';
 import { withPlayerLights } from '../src/scenes/magicCandle.js';
 import { courtArt, courtFloorArt, courtLavaArt, courtRuneArt, GATE_ART_SIZE } from '../src/world/gate/gateArt.js';
-import { COURT_CENTRE, COURT_R, BOSS_REACH_R, COURTS, WALKS, WALK_HALF_W, nearestCourt } from '../src/net/gateBrain.js';
+import { COURT_CENTRE, COURT_R, BOSS_REACH_R, COURTS, WALKS, WALK_HALF_W, nearestCourt } from '../src/net/gate/gateBrain.js';
 import { layoutDungeon } from '../src/world/dungeon/dungeonLayout.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';
 import { roomKeyFor } from '../src/net/online.js';
 import { isWorldRoom, validGateOut } from '../src/net/wire.js';
-import { gateYaw, gateRoomKey } from '../src/net/gateLaw.js';
-import { createGateLink, foldGate, bossAt, GATE_STATE_EMPTY, GATE_NO_TEXT } from '../src/net/gateLink.js';
-import { mintReceipt } from '../src/net/gateReceipt.js';
+import { gateYaw, gateRoomKey } from '../src/net/gate/gateLaw.js';
+import { createGateLink, foldGate, bossAt, GATE_STATE_EMPTY, GATE_NO_TEXT } from '../src/net/gate/gateLink.js';
+import { mintReceipt } from '../src/net/gate/gateReceipt.js';
 import { fellLine } from '../src/systems/gate/gateOmen.js';
 
 const read = (p) => readFileSync(p, 'utf8');

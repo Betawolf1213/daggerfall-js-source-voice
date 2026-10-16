@@ -17,7 +17,7 @@ import { seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S, SEAT_E
 import { marketHallListings } from '../src/net/fortLaw.js';
 import { MARKET_LISTINGS_MAX } from '../src/net/marketLaw.js';
 import { _b64url } from '../src/net/identityToken.js';
-import { SIEGE_RECEIPT_V, SIEGE_RECEIPT_TTL_S } from '../src/net/siegeReceipt.js';
+import { SIEGE_RECEIPT_V, SIEGE_RECEIPT_TTL_S } from '../src/net/siege/siegeReceipt.js';
 import { fortsSeasonStatements } from '../server-account/src/seatForts.js';
 import { titheAt, holdingOf } from '../server-account/src/seatHolding.js';
 import { redOf, SEAT_RED_MAX } from '../server-account/src/seatPolitics.js';

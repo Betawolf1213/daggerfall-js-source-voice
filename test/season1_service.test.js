@@ -10,7 +10,7 @@ import { standService, T0 } from './accountDb.mjs';
 import { seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S, seasonStanding, SIEGE_HONOURS, STANDING_CHANGES } from '../src/net/townSeatLaw.js';
 import { tideOf } from '../src/net/tideLaw.js';
 import { verifyToken } from '../src/net/identityToken.js';
-import { mintSiegeReceipt } from '../src/net/siegeReceipt.js';
+import { mintSiegeReceipt } from '../src/net/siege/siegeReceipt.js';
 import { SEASON_ZERO_WIPED } from '../server-account/src/seatTurning.js';
 
 const subtle = globalThis.crypto.subtle;

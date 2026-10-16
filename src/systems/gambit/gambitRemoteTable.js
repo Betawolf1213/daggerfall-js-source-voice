@@ -1,7 +1,7 @@
 // @ts-check
 // KG5 (2026-10-15, bible/11-Multiplayer/Kings-Gambit.md sections 5.8, 10.7 and 18): THE RELAY'S KING'S GAMBIT TABLE AS
 // THIS CLIENT SEES IT - pure, Iliac Hand's mirror's twin (systems/iliac/iliacRemoteTable.js). The relay builds the board, rolls
-// every die and runs the clock (net/gambitTable.js); this keeps what it said and plays nothing.
+// every die and runs the clock (net/gambit/gambitTable.js); this keeps what it said and plays nothing.
 //
 // TWO PARTS. `RemoteGambitTable` is the room's table: the seats, whether each is ready, the game, the clock (the relay's
 // `now` against this client's at a frame's arrival - the skew - turns its `clockAt` into seconds left here).
@@ -25,7 +25,7 @@
 //
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import { gambitRefusal } from '../../net/kingsGambit.js';
-import { flipGambitState, flipGambitEvent, unflipCommand, GAMBIT_REMOTE_GAP_MS } from '../../net/gambitTable.js';
+import { flipGambitState, flipGambitEvent, unflipCommand, GAMBIT_REMOTE_GAP_MS } from '../../net/gambit/gambitTable.js';
 import { GAMBIT_RESULT_MS } from './gambitTableSession.js';
 
 /** The law's own events: the side that gave them (side 0 the host's, as the relay tells them). */

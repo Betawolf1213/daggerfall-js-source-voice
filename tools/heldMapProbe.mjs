@@ -144,7 +144,7 @@ async function mount(page, { armed = false, gotoPlace = null, mod = false, party
     // and card) and raidMapMarks over a raid record in rollRaids' own shape, on Lowmarsh
     let events = {};
     if (events2) {
-      const [{ raidMapMarks }, omenMod, lawMod] = await Promise.all([import('/src/ui/eventMapMarks.js'), import('/src/systems/gate/gateOmen.js'), import('/src/net/gateLaw.js')]);
+      const [{ raidMapMarks }, omenMod, lawMod] = await Promise.all([import('/src/ui/eventMapMarks.js'), import('/src/systems/gate/gateOmen.js'), import('/src/net/gate/gateLaw.js')]);
       const t = lawMod.gateTimes(9);
       const clock = { now: t.openAt + 1000 };
       const omen = omenMod.createGateOmen({ now: () => clock.now, say: () => {},

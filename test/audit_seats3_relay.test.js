@@ -6,7 +6,7 @@
 // sockets (test/fakeRoom.mjs). `06-Systems/Online-Arc.md` AUDIT SEATS-3.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { siegeRoomKey, SIEGE_UNITS_PER_M, SIEGE_HEIGHT_M, SIEGE_NPC, SIEGE_FIGHTERS_MAX, siegeNpcAt, siegeNpcInReach, siegeOffGround, siegeStepLevel, siegeGroundOf, royalLevel, royalMarks, siegeCampPose } from '../src/net/siegeRef.js';
+import { siegeRoomKey, SIEGE_UNITS_PER_M, SIEGE_HEIGHT_M, SIEGE_NPC, SIEGE_FIGHTERS_MAX, siegeNpcAt, siegeNpcInReach, siegeOffGround, siegeStepLevel, siegeGroundOf, royalLevel, royalMarks, siegeCampPose } from '../src/net/siege/siegeRef.js';
 import { validSiegeOut, SIEGE_IN_MS } from '../src/net/wire.js';
 import { mintSiegeOrder } from '../src/net/identityToken.js';
 import { fakeRoom } from './fakeRoom.mjs';

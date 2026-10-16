@@ -17,7 +17,7 @@
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { faces } from '../gate/gateModel.js';
 import { packRealmFaces } from './sdRealm.js';
-import { SD_REALM_ORIGIN } from '../../net/sdBrain.js';
+import { SD_REALM_ORIGIN } from '../../net/superDungeon/sdBrain.js';
 
 /** SD-LOOK S11: the Works' record (the realm's archive, world/superDungeon/sdHangArt.js): dark brass, its tip band alight. */
 export const SD_WORKS_RECORD = 80;

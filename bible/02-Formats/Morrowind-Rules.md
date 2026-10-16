@@ -7116,7 +7116,7 @@ record's pace stands where there is no deadline to fit: a shot (its hit
 waits for the arm's own "shoot release", MW-D42), a held wind-up, and any
 blow with no schedule. A peer's body has no Speed on the wire, but its
 swing count arrives a blow at a time: the burst's shortest gap paces its
-blows (`net/peerBodies.js` peerBlowPace - a pause only lengthens a gap; a
+blows (`net/peer/peerBodies.js` peerBlowPace - a pause only lengthens a gap; a
 gap past 2.2 s ends the burst, whose first blow keeps the record's pace),
 its hit two fifths in. `test/mwpace1.test.js`, `tools/mutants/mwpace1.json`
 (10, all dead). Ledger A (MW-PACE1).

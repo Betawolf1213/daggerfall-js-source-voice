@@ -20,7 +20,7 @@ import { sigilStone, welkyndShards, portalStones, SIGIL_STONE_TEMPLATE, WELKYND_
 import { isBound, boundRefusesPut, BOUND_KEEPS, packOnlyText } from '../src/systems/item/itemBound.js';
 import { SMALL_CART_TEMPLATE } from '../src/systems/inventorySession.js';
 import { destroyEnhancedNotice } from '../src/ui/enhancedNotice.js';
-import { BOUND_TEMPLATES } from '../src/net/realmTradeLaw.js';
+import { BOUND_TEMPLATES } from '../src/net/realm/realmTradeLaw.js';
 import { useItem } from '../src/systems/useItem.js';
 import { pageOf } from '../src/ui/packPages.js';
 import { packModel, useResultAction, mountEnhancedInventory, inventoryQuickAct } from '../src/ui/enhancedInventory.js';
@@ -106,7 +106,7 @@ test('WALLET1 it never leaves the pack: bound - never dropped, traded or sold - 
   const w = mintWallet();
   for (const kind of ['wagon', 'storage', 'ground', 'corpse', 'container', 'bag', 'reward']) assert.equal(boundRefusesPut(w, kind), true, kind);
   for (const kind of BOUND_KEEPS) assert.equal(boundRefusesPut(sigilStone(), kind), false, `an ember to the ${kind}`);
-  assert.ok(BOUND_TEMPLATES.includes(WALLET_TEMPLATE), 'net/realmTradeLaw.js: a realm trade refuses it');
+  assert.ok(BOUND_TEMPLATES.includes(WALLET_TEMPLATE), 'net/realm/realmTradeLaw.js: a realm trade refuses it');
   assert.equal(packOnlyText('Wallet'), 'Wallet stays in your pack.');
   // the enhanced pack: the player's own storage and the ground refuse it, in its own words, and it stays
   const textOf = (n) => `${n.textContent ?? ''}${(n.children ?? []).map(textOf).join('')}`;

@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT2-XB1-closing-steered",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  closeOn(f, now, target, out);\n}",
     "new": "  steer(f, now, closeAim(f, now, target), closeV(f, target), out);\n}",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "AUDIT2-XB1-laid-every-beat",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  if (s && Math.abs(serpentWrapYaw(Math.atan2(ax - s.x, az - s.z) - s.yw)) <= STEER_STRAIGHT) return;\n",
     "new": "",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "AUDIT2-XB1-closing-at-the-beat",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const go = now + SERPENT_SAY_AHEAD_MS, v = closeV(f, target), [ax, az] = closeAim(f, now, target);",
     "new": "const go = now, v = closeV(f, target), [ax, az] = closeAim(f, now, target);",
     "tests": [
@@ -32,7 +32,7 @@
   },
   {
     "name": "AUDIT2-XB2-held-from-the-blow",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  pushMode(f, go, MODE.dying, out);\n  pushLeg(f, legFrom(f.legs, go, LEG.line, DRIFT_V), out);",
     "new": "  { const L = f.legs.findLast((l) => l.at <= now); if (L) pushLeg(f, legFrom(f.legs, now, L.k, L.v, L.r ?? 0, L.sd ?? 1), out); }\n  pushMode(f, go, MODE.dying, out);\n  pushLeg(f, legFrom(f.legs, go, LEG.line, DRIFT_V), out);",
     "tests": [
@@ -44,7 +44,7 @@
   },
   {
     "name": "AUDIT2-XB2-sounding-held",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  pushMode(f, go, MODE.deep, out);\n  pushLeg(f, legFrom(f.legs, go, LEG.line, DEEP_V), out);",
     "new": "  { const L = f.legs.findLast((l) => l.at <= now); if (L) pushLeg(f, legFrom(f.legs, now, L.k, L.v, L.r ?? 0, L.sd ?? 1), out); }\n  pushMode(f, go, MODE.deep, out);\n  pushLeg(f, legFrom(f.legs, go, LEG.line, DEEP_V), out);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT2-XB2-letting-go-held",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  f.coil.off = go;\n  pushLeg(f, legFrom(f.legs, go, LEG.line, v), out);",
     "new": "  f.coil.off = go;\n  { const L = f.legs.findLast((l) => l.at <= now); if (L) pushLeg(f, legFrom(f.legs, now, L.k, L.v, L.r ?? 0, L.sd ?? 1), out); }\n  pushLeg(f, legFrom(f.legs, go, LEG.line, v), out);",
     "tests": [
@@ -66,7 +66,7 @@
   },
   {
     "name": "AUDIT2-XC3-round-kept",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  if (moved) coilRound(f, c, now, out);   // AUDIT 2 XC3: one centre\n",
     "new": "",
     "tests": [
@@ -76,7 +76,7 @@
   },
   {
     "name": "AUDIT2-XC3-laid-at-the-word",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const t0 = Math.max(now + SERPENT_SAY_AHEAD_MS, (c.w > c.at ? c.w : c.at) + COIL_BLEND_MS), h = headAt(f.legs, t0);",
     "new": "const t0 = Math.max(now, (c.w > c.at ? c.w : c.at) + COIL_BLEND_MS), h = headAt(f.legs, t0);",
     "tests": [
@@ -86,7 +86,7 @@
   },
   {
     "name": "AUDIT2-XC3-laid-before-drawn",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const t0 = Math.max(now + SERPENT_SAY_AHEAD_MS, (c.w > c.at ? c.w : c.at) + COIL_BLEND_MS), h = headAt(f.legs, t0);",
     "new": "const t0 = now + SERPENT_SAY_AHEAD_MS, h = headAt(f.legs, t0);",
     "tests": [
@@ -96,7 +96,7 @@
   },
   {
     "name": "AUDIT2-XC3-onto-first-bearing",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const onRing = (t) => { const a = coilAngleAt(c, t);",
     "new": "const onRing = (t) => { const a = c.th + 0 * t;",
     "tests": [
@@ -106,7 +106,7 @@
   },
   {
     "name": "AUDIT2-XC3-past-its-dash",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const need = t0 + Math.max(1, Math.ceil((dist(h.x, h.z, p.x, p.z) * 1000) / DASH_V));",
     "new": "const need = t0 + Math.max(1, Math.ceil((dist(h.x, h.z, p.x, p.z) * 1000) / (DASH_V * 4)));",
     "tests": [
@@ -116,7 +116,7 @@
   },
   {
     "name": "AUDIT2-XB5-old-round-kept",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  if (coilHolds(f, now)) { if (law) coilRound(f, f.coil, now, out); return out; }",
     "new": "  if (coilHolds(f, now)) return out;",
     "tests": [
@@ -126,7 +126,7 @@
   },
   {
     "name": "AUDIT2-XB4-stale-wanted",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "!p.wreck && !p.stale && p.aboard !== false",
     "new": "!p.wreck && p.aboard !== false",
     "tests": [
@@ -146,7 +146,7 @@
   },
   {
     "name": "AUDIT2-XB6-swim-no-track-word",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "new Set(['sw', 'dv', 'atk',",
     "new": "new Set(['dv', 'atk',",
     "tests": [
@@ -156,7 +156,7 @@
   },
   {
     "name": "AUDIT2-XB8-clock-unheld",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "if (p.skew || dt > SERPENT_WAY_STALE_MS || Math.hypot(vx, vz) > SERPENT_WAY_MAX_V) rest();",
     "new": "if (dt > SERPENT_WAY_STALE_MS || Math.hypot(vx, vz) > SERPENT_WAY_MAX_V) rest();",
     "tests": [
@@ -166,7 +166,7 @@
   },
   {
     "name": "AUDIT2-XB9-smaller-no-ship",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "if (ref > known.ref || (ref > 0 && ref < known.ref)) {",
     "new": "if (ref > known.ref) {",
     "tests": [
@@ -177,7 +177,7 @@
   },
   {
     "name": "AUDIT2-XB10-closing-ship-unasked",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "const t = here.find((b) => b.sub === c.s && !f.players[b.sub]?.wreck && (A !== SERPENT_ATTACK_TABLE.coil || serpentOnShip(f.players[b.sub]))) ?? null;",
     "new": "const t = here.find((b) => b.sub === c.s && !f.players[b.sub]?.wreck) ?? null;",
     "tests": [
@@ -187,7 +187,7 @@
   },
   {
     "name": "AUDIT2-XB11-way-kept",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  if (!(dt > 0)) { if (now - p.wAt > SERPENT_WAY_STALE_MS) rest(); return; }",
     "new": "  if (!(dt > 0)) return;",
     "tests": [
@@ -197,7 +197,7 @@
   },
   {
     "name": "AUDIT2-XC1-wreck-uncounted",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "  } else { p.hitAt = now; if (serpentShareWanted(p, now)) restoreSerpentShare(f, p); }\n  recount(f);   // AUDIT 2 XC1",
     "new": "  } else { p.hitAt = now; if (serpentShareWanted(p, now)) restoreSerpentShare(f, p); }",
     "tests": [
@@ -207,7 +207,7 @@
   },
   {
     "name": "AUDIT2-XC1-join-uncounted",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "hits: 0, best: 0, cd: 0,\n  };\n  recount(f);   // AUDIT 2 XC1",
     "new": "hits: 0, best: 0, cd: 0,\n  };",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "AUDIT2-XC1-n-unsaid",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "out.push({ k: 'hp', h, m: Math.round(f.max), n });",
     "new": "out.push({ k: 'hp', h, m: Math.round(f.max) });",
     "tests": [
@@ -227,7 +227,7 @@
   },
   {
     "name": "AUDIT2-XC1-n-unfolded",
-    "file": "src/net/serpentLink.js",
+    "file": "src/net/serpent/serpentLink.js",
     "old": "case 'hp': return { ...s, hp: w.h, max: w.m, ...(w.n !== undefined ? { n: w.n } : {}), heardAt: now };",
     "new": "case 'hp': return { ...s, hp: w.h, max: w.m, heardAt: now };",
     "tests": [
@@ -247,7 +247,7 @@
   },
   {
     "name": "AUDIT2-XC5-coil-kept-on-wreck",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "    if (c && c.s === sub && coilHolds(f, now)) { c.why = 'wreck'; releaseCoil(f, now, out); out.push({ k: 'cx', i: c.i, at: c.off }); }\n",
     "new": "",
     "tests": [
@@ -317,7 +317,7 @@
   },
   {
     "name": "AUDIT2-XD6-gain-six",
-    "file": "src/net/serpentBrain.js",
+    "file": "src/net/serpent/serpentBrain.js",
     "old": "export const CLOSE_GAIN_V = 8;",
     "new": "export const CLOSE_GAIN_V = 6;",
     "tests": [

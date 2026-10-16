@@ -4,7 +4,7 @@
 // Design: bible/03-World/Raiding-Parties.md, "The rewards (RAID4)".
 //
 // PER PLAYER, AND THE SEED'S OWN. The receipt the relay signs at a town's cleanse for each account that struck a raider
-// and stood in the town (net/raidReceipt.js `w1`) carries a seed (`c`, 32 bits of the relay's CSPRNG) and the raiding
+// and stood in the town (net/raid/raidReceipt.js `w1`) carries a seed (`c`, 32 bits of the relay's CSPRNG) and the raiding
 // party (`y`: 0 knights, 1 bandits, 2 orcs), and everything here is rolled on `seededRng(c)` (systems/wind/wind.js) - the
 // gate's spoils' own law (systems/gate/gateSpoils.js): every defender's thanks are their own. The roll reads the player's
 // world as well as the seed (the level, the registered custom pieces), so what was rolled is what is kept -

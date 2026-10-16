@@ -13,8 +13,8 @@ import {
   strengthAfter, strengthTarget, strengthSeasonEnd, rivalryEnd, MERIT_WRIT,
 } from '../src/net/npcChapterLaw.js';
 import { chapterSeasonLines } from '../src/net/chapterEvents.js';
-import { gateHash } from '../src/net/gateLaw.js';
-import { GUILD_FOUND_RENOWN } from '../src/net/guildLaw.js';
+import { gateHash } from '../src/net/gate/gateLaw.js';
+import { GUILD_FOUND_RENOWN } from '../src/net/guild/guildLaw.js';
 import { utcDay } from '../src/net/marksLaw.js';
 import { seatWeekStartMs } from '../src/net/townSeatLaw.js';
 import { herbPatches, nodeKey } from '../src/net/nodeLaw.js';

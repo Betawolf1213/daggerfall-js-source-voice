@@ -2,7 +2,7 @@
 // chance of a title/aura drop") - THE OLD COIL'S HONOURS: the title COILBREAKER one dealing ship's serpent kill in twenty
 // and the aura THE MAELSTROM one in fifty, rolled by the account service on the kill's first write off its own draw (the
 // Hour's law, server-account/src/sds.js), laid on the row (`serpent_honours`, migration 0119) and held for good; said and
-// popped by the claim's carrier (net/serpentClaims.js); worn as every aura is, and drawn by the aura pass's ninth look
+// popped by the claim's carrier (net/serpent/serpentClaims.js); worn as every aura is, and drawn by the aura pass's ninth look
 // (render/auraRing.js): a whirlpool of tide and foam at the feet, its arms drawn IN, a lip of breaking foam, a curl at the
 // lip and spray thrown off it.
 import { test } from 'node:test';
@@ -17,12 +17,12 @@ import {
 } from '../server-account/src/serpents.js';
 import { SD_HONOURS_SALT } from '../server-account/src/sds.js';
 import { titlesHeld, aurasHeld, auraRefusal, equipRefusal } from '../server-account/src/titles.js';
-import { mintSerpentReceipt } from '../src/net/serpentReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintSerpentReceipt } from '../src/net/serpent/serpentReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64, TITLES, AURAS, mintToken, verifyToken } from '../src/net/identityToken.js';
 import { readAura } from '../src/net/wire.js';
 import { seededRng } from '../src/systems/wind/wind.js';
-import { createSerpentClaims, SERPENT_CLAIM_TEXT, SERPENT_HONOUR_KEYS } from '../src/net/serpentClaims.js';
+import { createSerpentClaims, SERPENT_CLAIM_TEXT, SERPENT_HONOUR_KEYS } from '../src/net/serpent/serpentClaims.js';
 import { TITLE_TEXT, AURA_TEXT, AURA_PAINT, TITLE_RGBA, TITLE_GRADIENT, TITLE_EDGE, COIL_SEA, COIL_TIDE, COIL_FOAM } from '../src/ui/playerBadge.js';
 import {
   AURA_LOOK, AURA_GROUND_R, AURA_CLOCK_PERIOD, AURA_FS, MAELSTROM_R, MAELSTROM_EYE_R, MAELSTROM_ARMS, MAELSTROM_H,

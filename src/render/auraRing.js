@@ -1743,7 +1743,7 @@ export function auraSpriteBones(fig) {
 }
 /** A peer's sprite figure as the pose `auraCapeStep` takes - at the wearer's own feet - or null. SPRITE-FACE (2026-10-05,
  *  Mac: "The sprite rotation on character input is a little finicky and make the aura misallign"): FACING AS ITS PICTURE
- *  DOES - `face` the sprite layer's { yaw, turn } (net/peerRiders.js faceOf): hung on the picture's facing, its eight-way
+ *  DOES - `face` the sprite layer's { yaw, turn } (net/peer/peerRiders.js faceOf): hung on the picture's facing, its eight-way
  *  view, where the pose's own facing runs up to half a view off it; swung by the pose's (`turn`). A sprite with a face and
  *  no figure (a rider's, the horse's picture) is faced and hung from the rest pose; neither, null. Pure. */
 export const auraSpritePosed = (w, fig, face = null) => (fig || face

@@ -1,20 +1,20 @@
 // ARENA4 (2026-10-02): THE ARENA ONLINE ON THE CLIENT, DRIVEN - the hall's fold, the mirror of a relay's bout
-// (net/arenaLink.js), the receipts carried (net/arenaClaims.js), the window's online model (systems/arena/arenaBoard.js), the
+// (net/arena/arenaLink.js), the receipts carried (net/arena/arenaClaims.js), the window's online model (systems/arena/arenaBoard.js), the
 // bout driver standing a relay's bout over a fake stage (scenes/arenaBouts.js startRelay / relayWord - its puppets, its
 // HUD, the verdict, my health the relay's, my yield and my misses told) and the host's glue (scenes/arenaOnline.js - the
 // queue, the call to the sand, my `in`, my blows' claims).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { foldHall, HALL_EMPTY, mirrorOf, mirrorEvents, mirrorHealth, walkAt, walkDone } from '../src/net/arenaLink.js';
-import { createArenaClaims, arenaClaimVerdict, arenaReceiptIsMine, ARENA_CLAIMS_KEY } from '../src/net/arenaClaims.js';
-import { mintArenaReceipt } from '../src/net/arenaReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { foldHall, HALL_EMPTY, mirrorOf, mirrorEvents, mirrorHealth, walkAt, walkDone } from '../src/net/arena/arenaLink.js';
+import { createArenaClaims, arenaClaimVerdict, arenaReceiptIsMine, ARENA_CLAIMS_KEY } from '../src/net/arena/arenaClaims.js';
+import { mintArenaReceipt } from '../src/net/arena/arenaReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { createArenaBouts, ARENA_PUPPET_OWNER } from '../src/scenes/arenaBouts.js';
 import { createArenaOnline, hitKindOf, newBoutId } from '../src/scenes/arenaOnline.js';
 import { arenaBoard, onlineCards, ladderTitleOfReached, boardsPageOnline, teamPageOnline } from '../src/systems/arena/arenaBoard.js';
 import { ARENA_TEXT } from '../src/systems/arena/arenaText.js';
-import { arenaLadderOf, ARENA_HIT, ARENA_FLOOR_CENTRE, ARENA_LADDER_SPEC, ARENA_BEASTS, ARENA_WEAPON_MAX, ARENA_MATERIAL_MOD, ARENA_TEAM_POINTS } from '../src/net/arenaLaw.js';
-import { arenaMarks } from '../src/net/arenaBrain.js';
+import { arenaLadderOf, ARENA_HIT, ARENA_FLOOR_CENTRE, ARENA_LADDER_SPEC, ARENA_BEASTS, ARENA_WEAPON_MAX, ARENA_MATERIAL_MOD, ARENA_TEAM_POINTS } from '../src/net/arena/arenaLaw.js';
+import { arenaMarks } from '../src/net/arena/arenaBrain.js';
 import { LADDER_TIERS } from '../src/systems/arena/arenaLadder.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { weaponMaxDamage, WEAPONS } from '../src/characters/weapons.js';
@@ -23,7 +23,7 @@ import { boutMarks } from '../src/systems/arena/arenaFighters.js';
 import { floorCentre, RING_R, ARRIVE } from '../src/world/arena/arenaFloor.js';
 import { TEAM_POINTS } from '../src/systems/arena/arenaLeague.js';
 import { ARENA_RATING_MIN, ARENA_RATING_MAX } from '../src/net/identityToken.js';
-import { ARENA_ELO_MIN, ARENA_ELO_MAX, ARENA_RING_R } from '../src/net/arenaLaw.js';
+import { ARENA_ELO_MIN, ARENA_ELO_MAX, ARENA_RING_R } from '../src/net/arena/arenaLaw.js';
 
 const { subtle } = globalThis.crypto;
 const O = '0123456789abcdef';

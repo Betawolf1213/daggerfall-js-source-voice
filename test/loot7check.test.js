@@ -29,7 +29,7 @@ import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ENEMY_BASICS, enemyDisplayName } from '../src/characters/enemyBasics.js';
 import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
 import { calculateAttackDamage } from '../src/combat/formulas.js';
-import { ARENA_PUPPET_OWNER } from '../src/net/arenaLaw.js';   // ARENA4: the kill door's puppet test, the real owner word (no puppet here)
+import { ARENA_PUPPET_OWNER } from '../src/net/arena/arenaLaw.js';   // ARENA4: the kill door's puppet test, the real owner word (no puppet here)
 import { playerEntity } from '../src/characters/playerEntity.js';
 import { registerPresenter, _resetNotifyForTests } from '../src/systems/notify.js';
 import { mobileEntityName, liveEntityName } from '../src/systems/worldTooltips.js';

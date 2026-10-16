@@ -1,7 +1,7 @@
 [
   {
     "name": "WB13b-the-marks-explained-in-chat",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "  const names = trials.map((t) => t.name);",
     "new": "  const names = trials.map((t) => `${t.name}: ${t.text}`);",
     "tests": [
@@ -57,7 +57,7 @@
   },
   {
     "name": "WB13b-the-herald-holds-it",
-    "file": "src/net/gateHerald.js",
+    "file": "src/net/gate/gateHerald.js",
     "old": "  const marks = ` ${boss.name} comes **${aspect.epithet}** tonight${trials.length ? `, ${heraldList(trials.map((x) => x.name))}` : ''}.`;",
     "new": "  const marks = ` ${boss.name}, ${boss.title}, holds it. Tonight he comes **${aspect.epithet}**${trials.length ? `, ${heraldList(trials.map((x) => x.name))}` : ''}.`;",
     "tests": [
@@ -96,7 +96,7 @@
   },
   {
     "name": "WB13b-a-number-in-words",
-    "file": "src/net/gateMods.js",
+    "file": "src/net/gate/gateMods.js",
     "old": "text: 'His blows and his ground deal 25% more',",
     "new": "text: 'His blows and his ground take a quarter more',",
     "tests": [

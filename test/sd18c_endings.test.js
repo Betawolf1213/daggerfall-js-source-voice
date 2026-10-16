@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { SD_REMNANT_ENDING_RECORD, endingLightArt, remnantArt, SD_ENDING_ART_SIZE, SD_REMNANT_GOLD_RECORD } from '../src/world/superDungeon/sdRemnantArt.js';
 import { buildRemnantParts, buildRemnantModel, buildHeartModel, heartRecordOf, eyeRecordOf, SD_REMNANT_HEART_RECORD, SD_REMNANT_EYE_RECORD } from '../src/world/superDungeon/sdRemnantModel.js';
-import { SD_ENDINGS, sdMarksOf, sdEndingOf } from '../src/net/sdMarks.js';
+import { SD_ENDINGS, sdMarksOf, sdEndingOf } from '../src/net/superDungeon/sdMarks.js';
 import { createSdRemnant } from '../src/scenes/sdRemnant.js';
 import { createSdFx, sdHeartColorOf, SD_FX_COLOR, SD_FX_KINDS } from '../src/scenes/sdFx.js';
 import { sdRumorLine, SD_ENDING_RUMOR } from '../src/systems/superDungeon/sdOmen.js';

@@ -20,7 +20,7 @@ Not a DFU member - the port's own (Ledger A, PORTAL1).
 | File | What it is |
 |---|---|
 | `src/systems/gate/gateSpoils.js` | the stone's row: template 572 beside the shard's 571 - bound, stacking with its own kind, the Diamond's art (TEXTURE.254 record 3), miscellany (`UselessItems2`) and never a gem: every Gems piece is a crystal a slot takes, so a gem stone was WORN from the hotbar. `PORTAL_STONE_SHARDS` (5) and the price off it; `portalStones(n)` mints a stack; the gift (`givePortalGift`) |
-| `src/net/realmTradeLaw.js` | `BOUND_TEMPLATES` names 572 - the realm's trade service refuses it as the client does |
+| `src/net/realm/realmTradeLaw.js` | `BOUND_TEMPLATES` names 572 - the realm's trade service refuses it as the client does |
 | `src/systems/portalStone.js` | the laws: the sale (`buyPortalStone`, `portalStoneRefusal`, `shardsKept`), the Use's registered arm (`openPortal`), one stone spent, THE HOLDS (`portalHold`), where a portal opens (`portalPlace`), the step in (`portalStepIn`), the wire (`portalWire`, `validPortalRecord`), the words (`PORTAL_TEXT`, `PORTAL_HOLD_TEXT`), the card's lines, every number below |
 | `src/systems/reforge.js` | the purse spends a shard unlocked AND unworn (AUDIT PORTAL1 I1) |
 | `src/scenes/portalGates.js` | the host's pool: the portals in the WORLD frame, COMPANION-PORTAL's vortex held for each one's time, the step and its forgetting, mine on the wire and a peer's landed |

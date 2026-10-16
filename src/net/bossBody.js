@@ -4,7 +4,7 @@
 // the relay's own count of each fighter's body in a boss fight (a gate's, an Abyss Dungeon's) and of each ship's hull
 // in a serpent's, kept beside the client's.
 //
-// A boss's blow was judged on the struck player's machine alone (co-op's law - net/gateStrike.js, net/sdStrike.js,
+// A boss's blow was judged on the struck player's machine alone (co-op's law - net/gate/gateStrike.js, net/superDungeon/sdStrike.js,
 // systems/serpent/serpentStrike.js), so a client that took none stood every fight out, earned the spoils' "stood" share, and
 // could carry a fight alone. Now the relay runs the same tests on the poses it holds (net/bossRef.js) and takes each
 // blow no saving throw answers off its OWN count (`v`, a share of the whole). The client's admissions never lower it -

@@ -21,8 +21,8 @@ import {
   RAID_KEY_RE, RAID_DAY_MINUTES, RAID_START_LAST, RAID_TARGET_MIN, RAID_LEDGERS_MAX, RAID_LEDGER_BUSY_MS,
   RAID_LEDGERS_BY_MAX, RAID_KILLS_BURST, RAID_KILL_MS, RAID_SIG_RE, raidSig, raidLedgerId, raidWordSane, raidEvictPick,
   raidLedgerLast, newRaidLedger, raidDayOfKey, raidDaySlots,
-} from '../src/net/raidLaw.js';
-import { mintRaidReceipt, readRaidReceipt } from '../src/net/raidReceipt.js';
+} from '../src/net/raid/raidLaw.js';
+import { mintRaidReceipt, readRaidReceipt } from '../src/net/raid/raidReceipt.js';
 import {
   raidLedgerKey, raidReceiptKeyOf, RAID_RC_KEEP, RAID_RC_KEEP_MS, RAID_RELAY_MIN, relaySupportsRaid, worldRoom,
   wallMsForClassicMinutes, SOCIAL_ROOM, PIXEL_UNITS, RELAY_VERSION,
@@ -33,10 +33,10 @@ import { fakeSocketClass } from './fakeSocket.mjs';
 import { createGuest } from '../server-account/src/accounts.js';
 import { claimRaid, RAID_CID_RE } from '../server-account/src/raids.js';
 import { reportRenownXp } from '../server-account/src/renownTracks.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { importPublicKeyB64 } from '../src/net/identityToken.js';
 import { renownRaidXp, renownForXp, RENOWN_XP_HOUR_MAX } from '../src/net/renown.js';
-import { createRaidClaims, RAID_CLAIMS_KEY, RAID_SETTLED_KEY, RAID_CID_RE as CLIENT_CID_RE } from '../src/net/raidClaims.js';
+import { createRaidClaims, RAID_CLAIMS_KEY, RAID_SETTLED_KEY, RAID_CID_RE as CLIENT_CID_RE } from '../src/net/raid/raidClaims.js';
 import { createSpoilsPool, recoverSpoils, SPOILS_RECORDS_MAX } from '../src/scenes/spoilsPool.js';
 import { RAID_SPOILS_KEYS, RAID_SPOILS_RECORDS_MAX, RAID_SPOILS_TEXT } from '../src/systems/raidSpoils.js';
 

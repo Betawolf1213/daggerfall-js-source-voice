@@ -30,7 +30,7 @@ import { wildCartAway, wildCartWord } from '../src/systems/wild/wildCart.js';
 import { WAGON_MODE, HCC_VENDOR, TRANSPORT } from '../src/systems/horse/horseCartLaw.js';
 import { WILD_REGION, wildMaskOf, wildInside, wildNear } from '../src/systems/wild/wildZone.js';
 import { worldCoordToMapPixel } from '../src/world/streamingWorld.js';
-import { mintWildReceipt, WILD_FALL_GRACE_S } from '../src/net/wildReceipt.js';
+import { mintWildReceipt, WILD_FALL_GRACE_S } from '../src/net/wild/wildReceipt.js';
 import { worldRoom } from '../src/net/wire.js';
 
 const { subtle } = globalThis.crypto;

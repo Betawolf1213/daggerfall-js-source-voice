@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import {
   PeerBodies, peerBodyKey, peerWeaponOf, turnLeadMargin, CULL_MARGIN_M, TURN_LEAD_FRAMES, TURN_LEAD_MAX, BODY_REBUILD_MS, SPARE_MAX, BODIES_MAX,
   SWAP_DWELL_MS, SWAP_EVERY_MS,
-} from '../src/net/peerBodies.js';
+} from '../src/net/peer/peerBodies.js';
 import { lookKey } from '../src/net/remotePlayers.js';
 import { Renderer } from '../src/render/renderer.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';

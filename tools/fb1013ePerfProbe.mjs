@@ -21,7 +21,7 @@
 //   3. THE CROWD - 0 / 8 / 12 / 24 / 40 players standing near: the Morrowind lane's bodies through the one sprite batch
 //      (renderer.js beginCharacterSpriteBatch; the committed 3D horse stands in for a body - the same skinned pass, the
 //      same picture and quad - since a Morrowind person needs the player's own Data Files), at most BODIES_MAX of them as
-//      net/peerBodies.js stands them, every peer past the cap as their Eye Of The Beholder walker (net/peerRiders.js
+//      net/peer/peerBodies.js stands them, every peer past the cap as their Eye Of The Beholder walker (net/peer/peerRiders.js
 //      createPeerWalkers - the vendored art: the classic sprite lane a peer's walker takes, one billboard a peer, as the
 //      class sprite and the paperdoll are); and that sprite lane alone, every peer a walker.
 // THE CLOCK: the GL is synced (a 1x1 readPixels of the bound frame - gl.finish does not wait on SwiftShader in this
@@ -57,8 +57,8 @@ try {
   const out = await page.evaluate(async ({ W, H, FRAMES, LANE, ONLY, BEFORE }) => {
     const [{ Renderer, WORLD_FRAME }, m, el, ga, gart, gt, gb, gh, hr, pr, dl, old] = await Promise.all([
       import('/src/render/renderer.js'), import('/src/world/mat4.js'), import('/src/render/enhancedLighting.js'), import('/src/world/gate/gateArena.js'),
-      import('/src/world/gate/gateArt.js'), import('/src/render/gateTelegraph.js'), import('/src/net/gateBrain.js'), import('/src/scenes/gateHost.js'),
-      import('/src/world/horseRig.js'), import('/src/net/peerRiders.js'), import('/src/render/deadlands.js'), BEFORE ? import(`/${BEFORE}`) : null,
+      import('/src/world/gate/gateArt.js'), import('/src/render/gateTelegraph.js'), import('/src/net/gate/gateBrain.js'), import('/src/scenes/gateHost.js'),
+      import('/src/world/horseRig.js'), import('/src/net/peer/peerRiders.js'), import('/src/render/deadlands.js'), BEFORE ? import(`/${BEFORE}`) : null,
     ]);
     const cv = document.createElement('canvas');
     cv.style.width = `${W}px`; cv.style.height = `${H}px`; cv.width = W; cv.height = H;

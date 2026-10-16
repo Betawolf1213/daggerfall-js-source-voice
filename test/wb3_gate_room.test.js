@@ -1,8 +1,8 @@
 // WB3 (2026-09-25, Mac: "a gate of oblivion which takes place in a large boss arena with an oversized enemy with
 // telegraphed attacks (like wind ups, etc)", and Option B: the relay's Durable Object is the authority over the boss):
-// THE GATE'S BOSS ROOM, DRIVEN. The brain as pure law over a seeded rng and a fake clock (net/gateBrain.js: the
+// THE GATE'S BOSS ROOM, DRIVEN. The brain as pure law over a seeded rng and a fake clock (net/gate/gateBrain.js: the
 // numbers a claim sets, the join, every refusal a blow can meet, the walk, the attacks and their shapes, the phases,
-// the wrath, who earned it, the checkpoint); the kill's receipt (net/gateReceipt.js: the relay's first signature, the
+// the wrath, who earned it, the checkpoint); the kill's receipt (net/gate/gateReceipt.js: the relay's first signature, the
 // identity token's ladder rung for rung, never mistaken for one); the `gate` frame both ways (net/wire.js); and the
 // relay over the real Room (server/src/index.js: the window at the Worker and at the hello, the join, the beat, the
 // blows, the kill said once, the receipts, the hub's line, a wake, the day's end).
@@ -15,13 +15,13 @@ import {
   STATE_SEND_MS, HP_SEND_MS, SHIELD_MS, PHASE_AT, PHASE3_WINDUP, BOSS_TTK_S, BUCKET_RATE_X, BUCKET_DEPTH_X, HIT_CAP_X,
   GATE_HIT_HZ_MAX, MELEE_REACH, POSE_SLACK, HIT_KINDS, ATTACKS, ATTACK_BY_ID, THREAT_PICK, RECEIPT_SHARE, STOOD_SHARE,
   GATE_FIGHTERS_MAX, LV_MAX, TARGET_HOLD_MS, TURN_BREATH_MS, wrapYaw, profileOf, COURTS, CROSS_WARD_MAX_MS,
-} from '../src/net/gateBrain.js';
-import { mintReceipt, verifyReceipt, readReceipt, receiptValid, importReceiptKey, RECEIPT_V, RECEIPT_MAX, RECEIPT_TTL_S } from '../src/net/gateReceipt.js';
+} from '../src/net/gate/gateBrain.js';
+import { mintReceipt, verifyReceipt, readReceipt, receiptValid, importReceiptKey, RECEIPT_V, RECEIPT_MAX, RECEIPT_TTL_S } from '../src/net/gate/gateReceipt.js';
 import { mintToken, verifyToken, _b64url } from '../src/net/identityToken.js';
 import {
   parseClient, validGateIn, validGateOut, relaySupportsGate, gateGate, GATE_RELAY_MIN, GATE_HZ_MAX, GATE_KINDS, GATE_OUT_KINDS, GATE_NO_WORDS, GATE_RECEIPT_MAX, GATE_DMG_WIRE_MAX, GATE_LV_WIRE_MAX, RELAY_VERSION, DROP_STRIKES_MAX, SOCIAL_ROOM, GATE_BRAIN_V,
 } from '../src/net/wire.js';
-import { gateTimes, gateRoomKey, gateBossOf, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
+import { gateTimes, gateRoomKey, gateBossOf, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
 import { relayVersionAtLeast } from './relayVersion.mjs';
 import worker from '../server/src/index.js';
 import { fakeRoom, fakeRooms } from './fakeRoom.mjs';

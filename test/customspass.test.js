@@ -18,7 +18,7 @@ import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { r2, freshSave } from './realmSeat.mjs';
 import { ACCEPTED } from '../src/net/legalLaw.js';
 import { accountRefusalText } from '../src/net/accountClient.js';
-import { customsAllowance } from '../src/net/realmGoldLaw.js';
+import { customsAllowance } from '../src/net/realm/realmGoldLaw.js';
 import { passRequest } from '../tools/customsPass.mjs';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');

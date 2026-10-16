@@ -301,7 +301,7 @@ the instance's closure, and what the module keeps at its level (the
 ESM walk, the textures, the face matches, the garment colours, the clip
 reports, the icons)
 is keyed by content and shared by design. So a peer is one more
-`createFpArm()` - `src/net/peerBodies.js`, `PeerBodies`:
+`createFpArm()` - `src/net/peer/peerBodies.js`, `PeerBodies`:
 
 - **Built from the look** through the same door the player's own arms
   take (`buildFpArm`): `peerBuildOpts` maps the look onto the inputs
@@ -668,7 +668,7 @@ swung. Now:
   - a classic-skin player swings too, and the peers in Morrowind bodies
   must see it. The host (`src/scenes/world.js`) reads it and the
   sheath into every pose it sends, the hello's included.
-- **the body** (`src/net/peerBodies.js`): inside the update guard
+- **the body** (`src/net/peer/peerBodies.js`): inside the update guard
   (AUDIT MWBODY A1), the rig's weapon is drawn while the sender's is,
   a swing plays once per count with the wire's kind - never the count
   the body was born with (a late joiner does not replay an old blow),
@@ -5112,7 +5112,7 @@ while (d < -Math.PI) d += 2 * Math.PI;
 ```
 
 Four copies of that, in `net/online.js` (easing a peer's yaw),
-`net/peerBodies.js` (turning a peer's rig), `characters/enemyMotor.js`
+`net/peer/peerBodies.js` (turning a peer's rig), `characters/enemyMotor.js`
 (a puppet's facing) and `combat/fpArm.js` (the turn clip's rate) - all
 four of them **beside a correct, one-step `wrapAngle` in
 `player/lockOn.js` that none of them knew about.**
@@ -8629,7 +8629,7 @@ The full record is `06-Systems/Horse-Cart-And-Cargo.md`, section HCC-PARK, HCC-T
 - **The owned line (HCC-TIP).** A peer's horse or wagon hovers as the mod's own word for it with "Owned by <name>"
   under it, the owner's session name or the relay's stamp when they are away.
 - **The mount on the pose (RIDE).** `rd` (1 horse, 2 cart) and `rv` (the rider's Eye Of The Beholder mounted
-  sprite set) ride the pose, omitted on foot; a mount change is a pose change. `net/peerRiders.js` draws a riding
+  sprite set) ride the pose, omitted on foot; a mount change is a pose change. `net/peer/peerRiders.js` draws a riding
   peer with EOTB's mounted sprites, before the Morrowind bodies and the dolls, which stand nothing for a rider.
 - **The deploy.** RELAY_VERSION world99 with its law row (world98 was FRIENDLY-SPELLS', merged first). An older
   relay closes the socket on an unknown frame, so the client sends `park` only to world99 or later (`relaySupportsPark`, set on the primary welcome). The relay
@@ -8834,11 +8834,11 @@ Re-aimed: `peerplaque`'s tie-order pin and `worldhover`'s press-against-plaque d
 
 ## WB3a (2026-09-25, Mac: "a gate of oblivion which takes place in a large boss arena with an oversized enemy with telegraphed attacks") - the gate's boss room on the relay; see 11-Multiplayer/World-Bosses.md
 
-Option B, built: the relay's object is the authority over the boss. `net/gateBrain.js` is the whole fight as pure law
+Option B, built: the relay's object is the authority over the boss. `net/gate/gateBrain.js` is the whole fight as pure law
 (a point, a facing, a health bar, a clock and the players' feet - the arena is a flat disc so the boss needs no game),
 stepped by the object's alarm every 250 ms while someone stands in the court and checkpointed every two seconds; a
 blow is the client's own formula, believed as far as its level claim's bucket and the socket's own pose allow; the kill
-is stamped once, each earning account gets a receipt (`net/gateReceipt.js`, the relay's first signature - unsigned
+is stamped once, each earning account gets a receipt (`net/gate/gateReceipt.js`, the relay's first signature - unsigned
 until `GATE_SIGNING_KEY` is set) and the hub says it to everyone online through an internal door. The `gate:<day>` key
 is admitted only inside its day's window, at the Worker (no object minted) and at the hello (a newcomer while open, a
 fighter until the wrath's end). RELAY_VERSION world110 on its branch - world113 at the merge, past main's EVENT1 (world110), RENOWN1 (world111) and PARTY-TRAVEL (world112), with GATE_RELAY_MIN 113 - the bump drops every connected player once, and three files
@@ -8849,7 +8849,7 @@ join the bundle. The client half so far is the session's (`gateOk`, `sendGate`, 
 The gate's door opens now: at a relay that runs a gate's boss room (world113; world110 on its branch), walking through the fire enters the
 Burning Court - the dungeon host's own arm with a level made in code (`world/gate/gateArena.js`), not a fifth host. Its
 room is the gate's `gate:<day>`; the level claim goes out once per welcome; the court's words land in
-`net/gateLink.js`, which the world's gate reads for its collapse and the chat for the kill line. A death there is cast
+`net/gate/gateLink.js`, which the world's gate reads for its collapse and the chat for the kill line. A death there is cast
 out before the gate, the day's end or going offline ends the court the same way, and the map, the rest, the save and
 the Recall mark are refused inside it. The boss is not drawn yet (WB4) - the relay runs him, and the court is where
 he will stand.
@@ -8859,7 +8859,7 @@ he will stand.
 Nothing new on the wire: the court's link already holds the relay's words, and this slice draws them. The boss stands
 where the relay says (his walk carried between its words, the charge down its lane), three times a Daedra Lord's size;
 the attack he winds up is drawn on the floor where it will land and said on his bar; and at its landing each client
-tests ITS OWN FEET against its shape - co-op's law, the struck player's machine (`net/gateStrike.js`) - and takes the
+tests ITS OWN FEET against its shape - co-op's law, the struck player's machine (`net/gate/gateStrike.js`) - and takes the
 blow through the dungeon context's own door. The relay never learns who was struck. The player's blows on him are
 WB4b.
 
@@ -8885,7 +8885,7 @@ keeps the day spent, so a reconnect that re-sends the receipt spews nothing twic
 The receipt is carried to the account service by the account it names and counted there once
 (`server-account/src/accounts.js claimGate`, `POST /v1/gate/claim`, acct10): verified with the relay's public half
 (`GATE_PUBLIC_KEY`) and naming the session's own account, one row a (day, account). The device keeps each receipt the
-relay hands the socket until an answer settles it (`net/gateClaims.js`), offered at once and again on the gate frame no
+relay hands the socket until an answer settles it (`net/gate/gateClaims.js`), offered at once and again on the gate frame no
 sooner than ten minutes after. The account card's *Gates closed* row and the Inspect card's line read the count.
 `tools/mintGateKeys.mjs` mints the pair; the relay's half is `GATE_SIGNING_KEY`. Nothing new on the wire.
 
@@ -10839,7 +10839,7 @@ guild's chat (through the token and the relay), **GUILD1d** the guild hall, a gu
 
 **GUILD1a - the guild, as the service keeps it.**
 
-- **The law** (`src/net/guildLaw.js`, which the service and the client both read). The bounds: 10,000 gold and
+- **The law** (`src/net/guild/guildLaw.js`, which the service and the client both read). The bounds: 10,000 gold and
   Renown 10 to found, 50 members, a name of 3 to 32 letters, digits, spaces, apostrophes and hyphens (tidied, and one
   guild a name whatever its case or spaces - `guildNameKey`), a tag of 2 to 4 capitals or digits (upper-cased). FOUR
   RANKS, highest first - Guildmaster (0), Officer (1), Member (2), Recruit (3) - whose POWERS are fixed: an officer
@@ -10907,7 +10907,7 @@ Pinned: `test/guild1.test.js` (9), `test/accountworker.test.js` (the tables). `t
 - **Where**: the Social panel's fourth tab, "Guild", beside Friends, Party and Letters (`ui/socialPanel.js`), present
   wherever the host hands the panel a guild book - online, as the Letters tab is where it has a letterbox. It opens on a
   fresh look when the last is older than GUILD_FRESH_MS (30 s), and draws the book, never the relay's picture.
-- **The book** (`net/guildBook.js` GuildBook, made in `scenes/world.js` beside the letterbox): the character's guild as
+- **The book** (`net/guild/guildBook.js` GuildBook, made in `scenes/world.js` beside the letterbox): the character's guild as
   the service last answered it and the account's invitations, one look at a time; no session reads as signed out and a
   guest as a guest, each its own sentence; every act goes through GUILD1a's door as the character playing, holds the
   tab `busy`, and ends in a fresh look, so the tab draws the service's word and never a guess.
@@ -10944,10 +10944,10 @@ Pinned: `test/guild1b.test.js` (10). `tools/mutants/guild1b.json` (31).
 - **Where it shows**: `<HND>` right of the name, before the glyphs - over a head in both faces (`ui/nameLayer.js`; the
   bitmap run of `net/remotePlayers.js` drawNamePoints centred on the whole of it), on a chat line and in the roster
   (`ui/chatPanel.js`, `net/roster.js` - my own row too), and on the Inspect card (`ui/profileWindow.js`); one spelling,
-  `net/guildLaw.js` guildTagText. A peer in no guild wears the label it wore before.
+  `net/guild/guildLaw.js` guildTagText. A peer in no guild wears the label it wore before.
 - **A membership that moves is said at once.** A token is read once, at a hello. So every guild act that moves a
   membership answers a SIGNED ORDER (`guildOrdersOf`): founding, a join, a leave, a disbanding and the guild tab's look
-  say the actor's character's guild NOW (`{o:'guild'}`); the guild book (`net/guildBook.js` onOrders) hands a look's
+  say the actor's character's guild NOW (`{o:'guild'}`); the guild book (`net/guild/guildBook.js` onOrders) hands a look's
   order on when the membership it reads differs from the last one handed on - the first look always, since the page
   cannot know what its rooms were told - and the host carries it down every socket it holds (`net/online.js`
   sendGuildOrder: after each socket's own welcome names world115, one guild frame a socket every GUILD_SEND_MS, 1.5 s -
@@ -10983,7 +10983,7 @@ channel lists). `tools/mutants/guild1c.json` (64, all dead).
 **GUILD1d - the guild hall, the `guild` entry and heraldry** (2026-09-30, Mac: "Lets do this" - the guilds before the rest
 of the professions; `11-Multiplayer/Seats-Arc.md` 8, whose decisions it builds: SEAT0 left "decisions ... binding for the
 build slices"). One deploy of the account service (`acct43` - `acct42` on its branch, renumbered past main's REALM-GZIP at the merge, and `acct44` past main's SCALE1 at the next; migration 0046 now - 0045 until main's PATREON-LINK took it, 0044 until main's MARKET-ANY took it with `acct44` (the seats' `acct48` carries it), 0043 until SCALE1 took it); no relay change - the hall's law is its
-own module (`src/net/hallLaw.js`), never net/guildLaw.js, which is in the relay's bundle (SLAM8).
+own module (`src/net/hallLaw.js`), never net/guild/guildLaw.js, which is in the relay's bundle (SLAM8).
 
 - **The law** (`src/net/hallLaw.js`, both ends): a guild owns ONE home as its hall, bought from its gold treasury at
   the home's own price and half again (`guildHallPrice`, rounded up); its entries `guild` (its members, the default)
@@ -11306,8 +11306,8 @@ scaled by it: a forged level would be paid more for every honest receipt.
   the board's contracts ride `/v1/writs/list` (`contracts`, `yoursContracts`, `contractPost`). The Work tab's cards,
   "Yours" rows and post form (`ui/workTab.js`), every bound said before the press.
 - **What the player reads.** A counted raid says its town's line, then "30 silver struck to your account", a guild
-  deed it completed and each contract that paid it (net/marksBook.js claimLines, said by net/raidClaims.js and
-  net/gateClaims.js); a capped claim names the day's 150 for breaches closed and towns defended.
+  deed it completed and each contract that paid it (net/marksBook.js claimLines, said by net/raid/raidClaims.js and
+  net/gate/gateClaims.js); a capped claim names the day's 150 for breaches closed and towns defended.
 - **The economy.** The ceiling an account strikes from combat a day rose by 50 (100 to 150); a combat-only regular's
   week from about 75 to about 375 (half a gatherer's); deeds at most 700 a guild a week (a palace's upkeep is 2,500).
   The model's own 1.00 left out more sinks (forts, Festivals, heraldry, Tribute, respecs) than faucets (Honours,
@@ -11683,7 +11683,7 @@ re-aimed by content (PIN MOVED), all dead.
 `world146` (`world140` until main's HERALD, LOOT7, WB11 and CLIMB5 took 138-141, `world138` until main's GATE-UX and KEPT-KILL took 136 and 137) - no account change. The room admits the developers alone (a verified token carrying the `dev` glyph) until
 SEAT2a schedules its battles and signs its sides. Seats-Arc 6.1.
 
-- **The law** (`src/net/siegeRef.js`, a LEAF - the relay bundles every byte it imports, so DFU's tables are COPIED and
+- **The law** (`src/net/siege/siegeRef.js`, a LEAF - the relay bundles every byte it imports, so DFU's tables are COPIED and
   pinned equal by test, the gate's way): `siege:<seat key>:<seat week>` rooms; **vitality** 300 + 2 x the Renown level
   the token carries, the level held to the token's own 1-50 (302-400); a **blow** `{ to, w, m, d, r }` accepted while
   both stand, the striker's bucket spent first (four a second, one second deep - the gate's), the target untouched for
@@ -11736,7 +11736,7 @@ side-mate's alone, a blow never a side-mate's); the wave by the seat's tier; the
 Tourney stands on is CROWN1's.
 
 Pinned: `test/pvpref_law.test.js` (5), `test/pvpref_relay.test.js` (4), `test/pvpref_measure.test.js` (1); the relay
-version pins and `test/relayversion.test.js`'s world146 LAW row (its graph adds `src/net/siegeRef.js`). The suite's two
+version pins and `test/relayversion.test.js`'s world146 LAW row (its graph adds `src/net/siege/siegeRef.js`). The suite's two
 catches: the account Worker bundles `wire.js`, so `siegeRef.js` joins `.github/workflows/account-deploy.yml`'s paths
 (`test/accountdeploy.test.js` walks the graph); and `test/chat1.test.js`'s AUDIT CHAT A3 pin, which read the pose arm
 straight from `still` to the meter, names the siege step between them (PIN MOVED - a channel is never a siege's room).
@@ -11814,7 +11814,7 @@ relay `world147` - no account change; the service mints the pass and reads the r
 - **The sides** (6.2): a fighter enters at its side's camp (the relay says so, as a pull-back); never a blow or a harmful
   cast on a side-mate, a heal on a side-mate alone; nothing lands before the battle is joined or after it ends; the
   fallen rise at their camp on the tier's wave (20 s at a palace, 30 at a crown); a felling is the feller's, for Honours.
-- **The battlefield** (`net/siegeRef.js` battleStep, each second on the room's alarm from the first pass to the end,
+- **The battlefield** (`net/siege/siegeRef.js` battleStep, each second on the room's alarm from the first pass to the end,
   landing exactly on the start, a siege's forfeit mark and the end): a banner raised by a side standing alone within 8 m
   for 20 s, frozen while both stand there, its half-raise falling back a second a second when left and begun again by
   the other side; a fallen fighter, or one whose socket is gone, holds nothing. The Throne opens to the attackers at 2 of
@@ -11824,7 +11824,7 @@ relay `world147` - no account change; the service mints the pass and reads the r
   minutes is a forfeit, nobody at all `absent` (DECIDED: 6.5's no-shows are a siege's - a Tourney's absent contender
   simply holds no banners at its end). A beat counts five seconds at most. The field is fanned each second (`f`: each
   banner held, raised and by whom, the Throne's seconds, the clock, who is in).
-- **The receipt** (`net/siegeReceipt.js`, `s1`, the relay's fourth signature with the gate's key - `{s, sk, sw, sd, r, a,
+- **The receipt** (`net/siege/siegeReceipt.js`, `s1`, the relay's fourth signature with the gate's key - `{s, sk, sw, sd, r, a,
   h, i, e}`): at the end every sided fighter's is minted - the result, whether the attackers raised a banner (6.8: a
   siege nobody fought is not a victory), and its own Honours (stood half the battle in the room, or felled a foe) - and
   handed to it; the result said to everyone. DECIDED: one receipt a fighter, each carrying the result - the battle's
@@ -11889,7 +11889,7 @@ Spoils roll between the other two.
 
 Pinned: `test/seat2a_siege_service.test.js` (4, through the real Worker), `test/seat2a_siege_client.test.js` (4); the
 account version pins (`acct50`), the schema (`test/accountworker.test.js`, PIN MOVED), the account deploy's paths
-(`src/net/siegeReceipt.js`). `tools/mutants/seat2a3.json` (70: 68 dead, 2 recorded EQUIVALENT) - nine survived the first
+(`src/net/siege/siegeReceipt.js`). `tools/mutants/seat2a3.json` (70: 68 dead, 2 recorded EQUIVALENT) - nine survived the first
 run: seven were killed by sharper pins (the Turning reading the week's bonus and bars - a challenger past the holder's
 plain defence and short of its x1.2, its pledge for the week - a void battle's pass, a dead heat at equal influence, the
 forfeit's Chronicle row, an unsettled field's 409); two are EQUIVALENT - the settled field's `IS NULL` guard (only two
@@ -11913,20 +11913,20 @@ unchanged, never shipped under an earlier hash). Seats-Arc 6.2, 6.8, 19. With it
   fresh for it (`mintSiegePass`, bounded as the token is - an order lives a minute, so a reconnect asks again); its words
   read from that socket alone (`validSiegeOut`), the client's words sent only at a relay that fights battles
   (`siegeOk`), under the relay's own bucket.
-- **The session** (`net/siegeSession.js`, entered from the Seat tab's "Enter the battle" - "Watch the battle" for anyone
+- **The session** (`net/siege/siegeSession.js`, entered from the Seat tab's "Enter the battle" - "Watch the battle" for anyone
   unsigned - while the door is open): the pass asked with this game's field (an unsettled field asked again every 5 s,
   said in words); the world's room while it lasts (scenes/world.js keeps the battle's room over the town's cell); `in`
   said on every open socket; a pull-back and this fighter's own rise move it to the camp (the ground's height the
   motor's to settle); foes are the other side's standing fighters - a melee swing's arm reaches the nearest within reach
   and sight (the duel's test), rolled on the player's own sheet against a body of the same sheet and sent to the referee,
   which clips it; at the window's close it leaves and the town's cell is joined again.
-- **The HUD and the card** (`net/siegeLink.js` the fold and the words; `ui/siegeHud.js` the readout, updated not
+- **The HUD and the card** (`net/siege/siegeLink.js` the fold and the words; `ui/siegeHud.js` the readout, updated not
   rebuilt): 19's bar - the seat, the holder against the challenger, the clock to the start and to the end, each banner
   `^` the attackers', `o` the defenders', `~` a raise under way (DECIDED: the field's frame says who raises, not who
   contests), the Throne's share and rule; each side's fighters up and down; the vitality bar and the next wave; a
   spectator's count; the result card's title in 19's capitals, the time and banners, the Honours once answered, a Claim
   while a receipt waits.
-- **The receipts carried** (`net/siegeClaims.js`, the gate's claims' twin): a signed, unexpired receipt kept on the
+- **The receipts carried** (`net/siege/siegeClaims.js`, the gate's claims' twin): a signed, unexpired receipt kept on the
   device for its account and offered at once (and every ten minutes); let go when the service settles it - claimed,
   claimed before, a void battle, not the relay's - and kept for a refusal the service can mend (its key, a clock).
 
@@ -11976,7 +11976,7 @@ Edicts' list and Standing's rows (`test/seat1d_client.test.js`).
 week in the crown's city, at the castle's entrance square: DUEL1's ring, but every blow refereed by PVP-REF in a
 siege:-shaped room - a defender-resolved duel cannot award a title - the relay keeping the ladder".
 
-- **The room** (`net/siegeRef.js` `ROYAL_ROOM`, `isBattleRoom`, `battleOfRoom`; the Worker's 404 for any other `royal:`
+- **The room** (`net/siege/siegeRef.js` `ROYAL_ROOM`, `isBattleRoom`, `battleOfRoom`; the Worker's 404 for any other `royal:`
   key): `royal:<crown seat key>:<seat week>` - DECIDED: not `siege:` itself, which holds one battle a seat a week, so a
   crown's siege and its Royal Tourney may share a week. It runs on the siege room's own machinery (`_siegeAdmit`,
   `_siegeFrame`, `_siegeStep`, `_siegeTick`), the battle's kind read off the pass and checked against the key's.
@@ -11994,7 +11994,7 @@ siege:-shaped room - a defender-resolved duel cannot award a title - the relay k
 - **The ladder**: a win and a loss for every decided bout - DECIDED: the same two counted at most three times a UTC day
   (`ROYAL_PAIR_DAY_MAX`; DUEL1's record counts ten, but a title is at stake). Said as `lad` (the top ten, most wins then
   fewest losses), with `bout` and `bend` (`c` whether it counted).
-- **The receipt** (`net/siegeReceipt.js` `t1`): the winner handed `{ s, l, sk, sw, n }` signed with the gate's key - the
+- **The receipt** (`net/siege/siegeReceipt.js` `t1`): the winner handed `{ s, l, sk, sw, n }` signed with the gate's key - the
   relay's fifth use of it, the version inside the signed bytes and the shapes disjoint (`s1` now refuses a loser) - and
   kept the room's week for a reconnect (`ROYAL_RC_KEEP`). The service counts the receipts it is given by the ladder's
   own rule and names the champion (part two, the service).
@@ -12066,7 +12066,7 @@ New: `src/net/royalLink.js`, `src/net/royalSession.js`.
 - **The HUD** (`net/royalLink.js` `foldRoyal`, `royalHudModel`, drawn by the siege's own readout): the tourney, its
   prize and its end; the ring - empty, a bout's countdown or its clock; the ladder's first five; this player's vitality
   in a bout, its record, a challenge at it, its last bout's end (and whether the ladder counted it).
-- **The receipts** (`net/siegeClaims.js` `createRoyalClaims` - the siege's carrier, given its store, reader, settling
+- **The receipts** (`net/siege/siegeClaims.js` `createRoyalClaims` - the siege's carrier, given its store, reader, settling
   answers and size): a bout's `t1` kept and carried at once and every ten minutes until the service counts it, finds the
   tourney gone or over, or refuses a receipt that is not the relay's.
 - **The title**: "Champion of <Kingdom>, Season N" on the player's badge (`seatTitleText`, part two the service).
@@ -12418,7 +12418,7 @@ unsettled field said once and asked again on a backing-off wait; C4 the arrival 
 receipts offered again from the gate's frame; C6 both sessions on the relay's clock; C7 every claim answer reaches the
 card; C8 "You are signed for the first contender."; C9 a reload asked mid-read queued, the book's cache a generation
 on every clear; C10 the Watch's receipts kept through `auth`; C11 the Hall of Records read once at a time; C12 no
-per-frame Promise for the Watch's claim; C13 the relinquish button disarms itself. G1 `net/siegeHerald.js`: each battle
+per-frame Promise for the Watch's claim; C13 the relinquish button disarms itself. G1 `net/siege/siegeHerald.js`: each battle
 announced in red at the Turning, 24 h, 1 h and 5 min before; G5 arrows and harmful spells on a battle's foe go to the
 referee, Teleport, Recall and Levitate refused in a siege's room; G4 a spectator's free camera; G21 a crown's Throne,
 camp and Palace square placed before its castle's entrance where the town stands one (`siegeField.js` `castle` - the
@@ -12557,10 +12557,10 @@ Pinned: `test/seat2b_peace_law.test.js` (5), `test/seat2b_peace_service.test.js`
 ### SEAT2b part two (b) - the works in battle: the Walls' wave, the Gatehouse, the Rams
 
 2026-10-01, Mac: "Finish the seats"; "Let's pick up 482". Seats-Arc 6.2, 7.5; Professions-Arc 3.3. Law
-(`src/net/siegeRef.js` - its numbers net/fortLaw.js's, copied into the relay's leaf and pinned equal), the pass
+(`src/net/siege/siegeRef.js` - its numbers net/fortLaw.js's, copied into the relay's leaf and pinned equal), the pass
 (`src/net/identityToken.js` `sx`), the relay (`server/src/index.js` `_siegeWorkBlow`, the room's beat), the service
 (`server-account/src/seatSiege.js` siegePass; migration `0063_seat_works_battle.sql`) and the client
-(`src/net/siegeLink.js`, `siegeSession.js`, `ui/siegeHud.js`, the host's melee arm). `world150`; `acct61` (the account
+(`src/net/siege/siegeLink.js`, `siegeSession.js`, `ui/siegeHud.js`, the host's melee arm). `world150`; `acct61` (the account
 service's own unbumped - one deploy with part (a)).
 
 - **The works frozen at the door** (`town_seat_battles.works`): at the battle's first pass the service reads each work's
@@ -12605,12 +12605,12 @@ world150. Mutants: `tools/mutants/seat2b_battle.json` (64, all dead); fourteen o
 
 ### SEAT2b part two (c) - the relay's own fighters: the Barracks' guards and the revolt
 
-2026-10-01, Mac: "Finish the seats"; "Let's pick up 482". Seats-Arc 6.1, 6.3, 7.5, 7.7, 9.2. Law (`src/net/siegeRef.js` -
+2026-10-01, Mac: "Finish the seats"; "Let's pick up 482". Seats-Arc 6.1, 6.3, 7.5, 7.7, 9.2. Law (`src/net/siege/siegeRef.js` -
 the Barracks' and the revolt's numbers net/fortLaw.js's, copied into the relay's leaf and pinned equal; the schedule's
 `src/net/townSeatLaw.js`), the pass (`src/net/identityToken.js` - `sn` 'revolt'), the relay (`server/src/index.js`
 `_siegeNpcBlow`, the room's beat), the wire (`src/net/wire.js` validSiegeIn, validSiegeOut), the service
 (`server-account/src/seatTurning.js`, `seatSiege.js`, `seatInfluence.js`; migration `0064_seat_revolts.sql`) and the client
-(`src/net/siegeLink.js`, `siegeSession.js`, the new `src/scenes/siegeNpcs.js`, the host's arms). `world150` re-hashed in
+(`src/net/siege/siegeLink.js`, `siegeSession.js`, the new `src/scenes/siegeNpcs.js`, the host's arms). `world150` re-hashed in
 place (undeployed); `acct61` (one deploy with parts (a) and (b)). With it SEAT2b is whole.
 
 - **"The gate's brain with adds"** (7.5; World-Bosses.md 17): bodies the relay owns - each a fighter's vitality of its
@@ -12825,7 +12825,7 @@ siege HUD ... and the Chronicle".
 - **The tag's frame** (`ui/nameLayer.js`): a peer's `<TAG>` whose heraldry is known sits on a dark plate edged in its
   border colour, its shield at the plate's left - written when it changes. Unknown: the plain tag.
 - **The siege HUD** (`ui/siegeHud.js`): the defender's shield at the bar's left, the challenger's at its right
-  (`net/siegeLink.js` siegeHudModel's `arms`; the session dresses the Seat tab's fight in the dressed seat's heraldry
+  (`net/siege/siegeLink.js` siegeHudModel's `arms`; the session dresses the Seat tab's fight in the dressed seat's heraldry
   once, at its entering - fightArmed). A revolt's rising town and a Royal Tourney show none.
 - **The Chronicle**: each Seat tab line under the shield of the guild it is about (`chronicleGuildOf`, the one its line
   names first), known from the standings' answer or the seats' list; the Hall of Records' book - the reader draws text
@@ -13114,9 +13114,9 @@ a concealed foe's look takes) a concealed peer is drawn in the look ECV1 gives a
 translucent shimmer and ripple, a shade's dark silhouette - and, the one departure (asked), an INVISIBLE player takes
 the shimmer where a foe's invisibility is still not drawn (`systems/combatVisuals.js peerDraw`; its phase off the
 peer's id, `peerPhase`). The host reads it once a frame off the shown pose and hands it to every figure that can stand
-for the peer: the rider and the walker (`net/peerRiders.js`, the figure's `veil`, kept for a sprite made later), the
+for the peer: the rider and the walker (`net/peer/peerRiders.js`, the figure's `veil`, kept for a sprite made later), the
 class sprite and the doll (`net/remotePlayers.js`) - their billboard batches' `conceal`, the renderer's blended phase -
-and the Morrowind body (`net/peerBodies.js`): it keeps standing (no second figure under it) but leaves the body pass
+and the Morrowind body (`net/peer/peerBodies.js`): it keeps standing (no second figure under it) but leaves the body pass
 for `drawVeiled`, which draws it through the sprite box's quad with the billboard shader's own look
 (`render/renderer.js drawCharacterSpriteQuad`'s `conceal`: blended, no depth write, the ripple measured in the
 picture's span of the RT) AFTER each mode's opaque world - the exterior after the grass, the dungeon after the foes'
@@ -13520,9 +13520,9 @@ and its copy stayed open. Clients take a build on their next reload (EVENT1's no
 
 A relay change, world122. The `raid` frame: a player standing in a raided town says its word (the raid as the day's roll
 made it, its own raiders' deaths, its strike) to the town's CELL, and the cell object keeps the raid's LEDGER in its
-storage (`raid:<key>`, `net/raidLaw.js`) - the count, credited per verified account as the most it has said and no
+storage (`raid:<key>`, `net/raid/raidLaw.js`) - the count, credited per verified account as the most it has said and no
 faster than raiders stand, kept when every socket leaves and across the object's sleep; the cleanse stamped once, with
-a receipt (`net/raidReceipt.js`, `w1`) minted under the gate's key for each account that struck and stood there, the
+a receipt (`net/raid/raidReceipt.js`, `w1`) minted under the gate's key for each account that struck and stood there, the
 ledger written with them before a word is said; `cl` fanned to the cell and told to the hub, which says it to everyone
 online and keeps the day's for a hello (`cls`). Cells had kept nothing but parked teams (HCC-PARK); a cell now arms an
 alarm for its ledgers' ends and a hub it must tell again. The design, the checks and the limits:
@@ -13532,7 +13532,7 @@ alarm for its ledgers' ends and a hub it must tell again. The design, the checks
 ## AUDIT RAID + AUDIT SETS (2026-09-28, Mac: "1. Audit this properly 2. Ensure online functionality is perfect") - world123
 
 A relay change, world123 (world122 never deployed; its raid frames carried no signature, so RAID_RELAY_MIN is 123). A
-town raid is its whole TUPLE - its key and its signature (`net/raidLaw.js raidSig`) - and its ledger is made only by a
+town raid is its whole TUPLE - its key and its signature (`net/raid/raidLaw.js raidSig`) - and its ledger is made only by a
 word from its town's own pixel; a cell's place is never taken from a cleansed raid or one being fought, one speaker
 holds two; a word is judged by its own law and time before any read; `st`, `cl` and `cls` carry the signature and the
 client hears only its own raid's; the receipts ride the cleanse to the hub, which keeps them a day under their account
@@ -13545,7 +13545,7 @@ owed - the largest elite layout's worst case has no room for it on every record)
 ## RAID-ROLL + AUDIT ONLINE 2 (2026-09-28, Mac: "Fix it and do another audit") - world124
 
 A relay change, world124. The relay reads every raid word against the DAY'S OWN ROLL: its start, target and party
-against the day's draws with no game data (`net/raidLaw.js raidDaySlots` - one generator for relay and client,
+against the day's draws with no game data (`net/raid/raidLaw.js raidDaySlots` - one generator for relay and client,
 `raidDayRandom`, and one roll, `rollRaidTowns`), and, once the hub holds the towns table, its whole tuple against the
 day's roll (`raidDayIds`). The table is the player's game data, so the relay is given only its hash
 (`RAID_TOWNS_SHA256`, a [vars] entry - `tools/raidTowns.mjs` says it): the hub asks each hello for the table by it
@@ -13559,7 +13559,7 @@ Raiding-Parties.md` "RAID-ROLL" and "AUDIT ONLINE 2"; `test/raidroll.test.js`, `
 
 ## GATE-COLLAPSE (2026-09-28, Mac: "Count down to collapse") - world125
 
-A relay change by the law alone: `net/gateLaw.js` - the relay's since WB3 - counts the gate's sealed hours down to the
+A relay change by the law alone: `net/gate/gateLaw.js` - the relay's since WB3 - counts the gate's sealed hours down to the
 collapse (`gateCountdown`'s `closed` arm, `countdownWords`) and its seal line says when the gate goes. Nothing the relay
 reads, keeps or sends changed and no wire shape moved, but the law is the whole bundle (SLAM13), so world125 is a new
 row in `test/relayversion.test.js` and the pins of the current version moved with it. It ships with the raids' own
@@ -13570,7 +13570,7 @@ undeployed world124 (#414, folded into the same branch): one deploy, one drop of
 
 The hub speaks outside the game for the first time: it posts each Oblivion Gate's omen (fifteen real minutes before
 the gate opens, pinging the opt-in role Mac named) and its kill to a Discord channel's webhook, off its own alarm
-(`net/gateHerald.js` joins the bundle). One new client word, to the hub alone: `gate` `site` - where this game found
+(`net/gate/gateHerald.js` joins the bundle). One new client word, to the hub alone: `gate` `site` - where this game found
 the gate the clock is about (`GATE_SITE_RELAY_MIN` 126; an older relay closes the socket on it, so a client says none
 there); the hub names the place two accounts agree on. The webhook is a Worker SECRET (`GATE_DISCORD_WEBHOOK`) and
 the role a var (`GATE_DISCORD_ROLE`); without the webhook the relay posts nothing and keeps nothing. Putting the secret
@@ -13638,8 +13638,8 @@ forward side button), and the side-button plumbing it rides, which came with VOI
 The gate's Warden comes MARKED - an aspect and two trials every gate (`11-Multiplayer/World-Bosses.md` section 13) -
 and the relay is the one that fights under them, so the relay moved:
 
-- **`net/gateMods.js` JOINS THE BUNDLE** (a leaf - the marks' tables): `net/gateLaw.js` draws each gate's marks from
-  its 112-gate cycle (`gateModsOf`, from the day alone), `net/gateBrain.js` fights under them (`fightProfile` - the
+- **`net/gate/gateMods.js` JOINS THE BUNDLE** (a leaf - the marks' tables): `net/gate/gateLaw.js` draws each gate's marks from
+  its 112-gate cycle (`gateModsOf`, from the day alone), `net/gate/gateBrain.js` fights under them (`fightProfile` - the
   unmarked profile is the constants exactly), and `net/wire.js` validates them.
 - **The fight is born marked**: the gate's room calls `newFight(..., gateModsOf(day))` and keeps the marks on the
   checkpointed fight (`md`); a fight woken from a checkpoint made before this deploy stays unmarked.
@@ -13649,7 +13649,7 @@ and the relay is the one that fights under them, so the relay moved:
   two words with one moment, and the court said the first name alone), his health after, the relay's moment.
 - **The brain's law is 3** (GATE_BRAIN_V, GATE_BRAIN_MIN): an `in` saying 2 is refused with GATE-RELOAD's words - a game
   that does not know the marks would judge a colossus's slam at the old reach and his frost as fire.
-- **The hub's omen post names tonight's marks** (`net/gateHerald.js omenPost`), in the tables' words alone.
+- **The hub's omen post names tonight's marks** (`net/gate/gateHerald.js omenPost`), in the tables' words alone.
 
 Relay world128 - world126 on its branch, never deployed, and one relay past main's OW6L (world127, the cell's overworld ledger) at the merge with #428-#432, the two in one relay (its row in `test/relayversion.test.js` - world125 is VOICE1's, deployed with PR #427 and reverted with #416 forty minutes later; the version pins of the suites that name it moved,
 each with its history). Pinned in `test/wb8b_gate_marks.test.js` (the wire and the relay's draw on the real Room).
@@ -13775,14 +13775,14 @@ call: two faucets bounded by the UTC day instead - a gathering's find and a loot
 - **A guild's Marks treasury** (`/v1/marks/guild/deposit`, `/withdraw`): any member puts Marks in from the account's
   balance; the guildmaster alone takes them out, into their account. The guild's view (`/v1/guilds/mine`) carries
   `marks` and its latest lines where Marks are the viewer's (AUDIT 28 M5); the Guild tab shows the treasury beside the
-  gold one (`ui/socialPanel.js`, `net/guildBook.js` moveMarks). A guild that goes - a disband, or its last member's
+  gold one (`ui/socialPanel.js`, `net/guild/guildBook.js` moveMarks). A guild that goes - a disband, or its last member's
   leave - gives what its Marks treasury holds to its guildmaster, one `guild-withdraw` line in the same batch as the
   delete, and is refused only when that would pass the guildmaster's cap (AUDIT 28 M3: the leave's delete never looked
   at the Marks and the cascade took them with no line; M5: behind a switch the guildmaster could not pass, a guild
   holding Marks could never go). The tab says where they go.
 - **The account**: `/v1/marks/balance` (the balance, today's gate strikes and Bank sales against their caps), and the
   account card's **Marks** row (`/v1/account`'s `marks`, `ui/enhancedAccount.js`). A counted gate says its Marks in the
-  chat (`net/gateClaims.js` onMarks).
+  chat (`net/gate/gateClaims.js` onMarks).
 - **The weekly report** (`/v1/marks/report`, a developer's alone): the last seven UTC days' Marks struck by faucet, burnt
   by sink, moved; what is in circulation; the day-by-day line; the accounts at a cap, each once, with the account-days
   beside them (AUDIT 28 M10) - what PROF0 16 steers by.
@@ -15027,7 +15027,7 @@ record; in short:
   Empire's account - whatever its sign, so the total never changes - and every loan and default stays where it stands.
   Said once the world stands: "The Bank of the Empire keeps one account now, open at every branch. N gold came in from
   other regions." Once: a folded table moves nothing again.
-- **The service** (`net/realmGoldLaw.js` `REALM_EMPIRE_ACCOUNT`, pinned equal - the Worker does not bundle banking.js):
+- **The service** (`net/realm/realmGoldLaw.js` `REALM_EMPIRE_ACCOUNT`, pinned equal - the Worker does not bundle banking.js):
   a realm record pays from the Empire's account whatever region the wallet names, then from any branch a record not yet
   folded still keeps (one written before its character's first boot since this); a credit (a home sold, rent
   collected, a Mark's gold, the market's gold) lands in the Empire's account. A folded record and the client's wallet
@@ -15405,7 +15405,7 @@ both foe streams (the exterior's cells and the dungeon's rooms) carry a foe's te
 flags, `wy` its yaw, `wl` ms to its landing (relative: each client's foes run on their own clock), `wo` its origin,
 `wp` a leap's or a shot's point - and `ws` its stagger or overreach (`net/wire.js validFoeRecord`). Every puppet draws
 the mark, the glint, the held arm and the cues from them (`ai/puppetBlows.js`), and a wind-up AT a player is judged
-on that player's own machine at its landing - the world boss's law (`net/gateStrike.js`). An owner's foe now winds up
+on that player's own machine at its landing - the world boss's law (`net/gate/gateStrike.js`). An owner's foe now winds up
 at a peer it hunts as at its owner; the owner's own view of the peer's feet decides only its foe's punish window. A
 peer's blow on a foe winding up carries its class (`wc`, `hitClassOf`) so the owner's poise meter weighs it as its own.
 
@@ -15647,7 +15647,7 @@ says so: "You cannot go back into Privateer's Hold." (`systems/startDungeon.js` 
 ## CARDS5 (2026-10-08, Mac: "Do 3 4 and 5") - the relay deals
 
 The relay's newest authority, beside the gate's boss and the arena's bout: a building's room keeps its card tables
-(`net/holdemTable.js`, with `net/cardLaw.js` in the bundle - `world178` at the merge, world176 on its branch). The `holdem`
+(`net/holdemTable.js`, with `net/card/cardLaw.js` in the bundle - `world178` at the merge, world176 on its branch). The `holdem`
 frame asks (sit, stand, act, look - `validHoldemIn`, `holdemGate`, `HOLDEM_RELAY_MIN`); the relay shuffles from its own
 CSPRNG, keeps the deck, tells each seat its own cards alone and the room the public hand, runs the seat clock on the alarm
 and folds a leaver out of turn; the tables checkpointed to storage. Friendly - no gold moves. The whole record is
@@ -15664,7 +15664,7 @@ last said per table, `_holdemSaid`) - a wake, a table's first frame and a look s
 a delta asks for it (`look`). AUDIT CARDS-4 D1: the room frames are numbered per table (`n`), and a delta is laid only on
 the frame just before it - a socket that missed one asks for the table whole.
 
-CARDS6 (2026-10-08; the same row, re-hashed in place): GOLD TABLES. A sit may carry the service's stake order (`net/identityToken.js` kind `stake`), which the room checks with the key it holds and spends once; a staked seat's leaving is signed back as a cash-out receipt (`net/cardReceipt.js`, `c1`, GATE_SIGNING_KEY), owed to its account in the room till its `ack`; a stake never sat is `void`ed back. The service holds the stakes (`server-account/src/cards.js`). The whole record is `11-Multiplayer/Tavern-Cards.md` section 23.
+CARDS6 (2026-10-08; the same row, re-hashed in place): GOLD TABLES. A sit may carry the service's stake order (`net/identityToken.js` kind `stake`), which the room checks with the key it holds and spends once; a staked seat's leaving is signed back as a cash-out receipt (`net/card/cardReceipt.js`, `c1`, GATE_SIGNING_KEY), owed to its account in the room till its `ack`; a stake never sat is `void`ed back. The service holds the stakes (`server-account/src/cards.js`). The whole record is `11-Multiplayer/Tavern-Cards.md` section 23.
 
 AUDIT CARDS-4 and CARDS6b (2026-10-08, `01-Overview/Audit-Cards-4.md`, Tavern-Cards section 24; the same row, re-hashed
 in place): another room's stake order is left unspent with nothing handed back; the table is read again after an

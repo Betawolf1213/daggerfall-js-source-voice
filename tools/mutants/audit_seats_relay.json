@@ -1,7 +1,7 @@
 [
  {
   "name": "AUDIT-SEATS-R8-left-hand-dropped",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "export const SIEGE_HAND_SLOTS = Object.freeze([19, 21]);",
   "new": "export const SIEGE_HAND_SLOTS = Object.freeze([19]);",
   "tests": [
@@ -12,7 +12,7 @@
  },
  {
   "name": "AUDIT-SEATS-R8-any-slot-held",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "i?.group === 'Weapons' && SIEGE_HAND_SLOTS.includes(i.equipSlot) && i.templateIndex === w",
   "new": "i?.group === 'Weapons' && i.templateIndex === w",
   "tests": [
@@ -25,7 +25,7 @@
  },
  {
   "name": "AUDIT-SEATS-R2-window-two-seconds",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "export const SIEGE_STEP_WINDOW_MS = 1000;",
   "new": "export const SIEGE_STEP_WINDOW_MS = 2000;",
   "tests": [
@@ -36,7 +36,7 @@
  },
  {
   "name": "AUDIT-SEATS-R2-full-without-slack",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  const full = SIEGE_SPEED.mps * SIEGE_STEP_WINDOW_MS / 1000 + SIEGE_SPEED.slackM;",
   "new": "  const full = SIEGE_SPEED.mps * SIEGE_STEP_WINDOW_MS / 1000;",
   "tests": [
@@ -47,7 +47,7 @@
  },
  {
   "name": "AUDIT-SEATS-R2-first-pose-sets-nothing",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  if (!last) { if (f) f.stepM = full; return true; }",
   "new": "  if (!last) return true;",
   "tests": [
@@ -58,7 +58,7 @@
  },
  {
   "name": "AUDIT-SEATS-R2-earned-unwindowed",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  const earned = SIEGE_SPEED.mps * Math.min(SIEGE_STEP_WINDOW_MS, Math.max(0, dtMs)) / 1000;",
   "new": "  const earned = SIEGE_SPEED.mps * Math.max(0, dtMs) / 1000;",
   "tests": [
@@ -69,7 +69,7 @@
  },
  {
   "name": "AUDIT-SEATS-R2-carry-ignored",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "(Number.isFinite(f.stepM) ? f.stepM : full) + earned)",
   "new": "full + earned)",
   "tests": [
@@ -80,7 +80,7 @@
  },
  {
   "name": "AUDIT-SEATS-R2-carry-uncapped",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  const allowed = f ? Math.min(full, (Number.isFinite(f.stepM) ? f.stepM : full) + earned)",
   "new": "  const allowed = f ? ((Number.isFinite(f.stepM) ? f.stepM : full) + earned)",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "AUDIT-SEATS-R2-per-pose-slack",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "(Number.isFinite(f.stepM) ? f.stepM : full) + earned) : earned",
   "new": "(Number.isFinite(f.stepM) ? f.stepM : full) + earned + SIEGE_SPEED.slackM) : earned",
   "tests": [
@@ -102,7 +102,7 @@
  },
  {
   "name": "AUDIT-SEATS-R2-never-spent",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  if (f) f.stepM = allowed - len;",
   "new": "  if (f) f.stepM = allowed;",
   "tests": [
@@ -113,7 +113,7 @@
  },
  {
   "name": "AUDIT-SEATS-R2-refusal-spends",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  if (len > allowed) return false;",
   "new": "  if (len > allowed) { if (f) f.stepM = 0; return false; }",
   "tests": [
@@ -124,7 +124,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-rise-unjudged",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  const rise = Math.max(0, (next.y - last.y) || 0);",
   "new": "  const rise = 0;",
   "tests": [
@@ -137,7 +137,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-no-height-nan",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  const rise = Math.max(0, (next.y - last.y) || 0);",
   "new": "  const rise = Math.max(0, next.y - last.y);",
   "tests": [
@@ -148,7 +148,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-height-bound",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "export const SIEGE_HEIGHT_M = 8;",
   "new": "export const SIEGE_HEIGHT_M = 10;",
   "tests": [
@@ -159,7 +159,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-presence-flat",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "    if (ground != null && Math.abs(f.pose.y - ground) / SIEGE_UNITS_PER_M > SIEGE_HEIGHT_M) continue;   // AUDIT-SEATS R1: above or below the field\n",
   "new": "",
   "tests": [
@@ -171,7 +171,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-ground-upper-middle",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  return ys.length % 2 ? ys[h] : (ys[h - 1] + ys[h]) / 2;",
   "new": "  return ys[h];",
   "tests": [
@@ -182,7 +182,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-ground-the-fallen",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  for (const f of fighters) if (!f.down && f.pose && f.here && (f.side",
   "new": "  for (const f of fighters) if (f.pose && f.here && (f.side",
   "tests": [
@@ -193,7 +193,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-ground-the-gone",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "if (!f.down && f.pose && f.here && (f.side",
   "new": "if (!f.down && f.pose && (f.side",
   "tests": [
@@ -204,7 +204,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-ground-the-unsided",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "&& f.here && (f.side === 'attack' || f.side === 'defend') && Number.isFinite(f.pose.y)) ys.push(f.pose.y);",
   "new": "&& f.here && Number.isFinite(f.pose.y)) ys.push(f.pose.y);",
   "tests": [
@@ -215,7 +215,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-banners-flat",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "    const p = presentAt(bodies, b.field.banners[i], ground);",
   "new": "    const p = presentAt(bodies, b.field.banners[i]);",
   "tests": [
@@ -226,7 +226,7 @@
  },
  {
   "name": "AUDIT-SEATS-R1-throne-flat",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "    const p = presentAt(bodies, b.field.throne, ground);",
   "new": "    const p = presentAt(bodies, b.field.throne);",
   "tests": [
@@ -237,7 +237,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-never-marked",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "    if (b.throne > 0) b.reached = true;",
   "new": "",
   "tests": [
@@ -249,7 +249,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-a-whole-second",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "    if (b.throne > 0) b.reached = true;",
   "new": "    if (b.throne > 1) b.reached = true;",
   "tests": [
@@ -260,7 +260,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-born-reached",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "    reached: false,   // AUDIT-SEATS T1",
   "new": "    reached: true,   // AUDIT-SEATS T1",
   "tests": [
@@ -293,7 +293,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-rc-th-any",
-  "file": "src/net/siegeReceipt.js",
+  "file": "src/net/siege/siegeReceipt.js",
   "old": "  if (c.th !== undefined && c.th !== 0 && c.th !== 1) return false;",
   "new": "",
   "tests": [
@@ -304,7 +304,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-rc-read-raw",
-  "file": "src/net/siegeReceipt.js",
+  "file": "src/net/siege/siegeReceipt.js",
   "old": "  return siegeReceiptValid(c) ? { ...withThrone(c), signed: parts[2].length > 0 } : null;",
   "new": "  return siegeReceiptValid(c) ? { ...c, signed: parts[2].length > 0 } : null;",
   "tests": [
@@ -315,7 +315,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-rc-verify-raw",
-  "file": "src/net/siegeReceipt.js",
+  "file": "src/net/siege/siegeReceipt.js",
   "old": "  return { ok: true, claims: withThrone(claims) };",
   "new": "  return { ok: true, claims };",
   "tests": [
@@ -326,7 +326,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-rc-older-reads-one",
-  "file": "src/net/siegeReceipt.js",
+  "file": "src/net/siege/siegeReceipt.js",
   "old": "const withThrone = (c) => ({ ...c, th: c.th === 1 ? 1 : 0 });",
   "new": "const withThrone = (c) => ({ ...c, th: c.th === 0 ? 0 : 1 });",
   "tests": [
@@ -337,7 +337,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-rc-no-default",
-  "file": "src/net/siegeReceipt.js",
+  "file": "src/net/siege/siegeReceipt.js",
   "old": "export async function mintSiegeReceipt({ s, sk, sw, sd, r, a, h, th = 0 }",
   "new": "export async function mintSiegeReceipt({ s, sk, sw, sd, r, a, h, th }",
   "tests": [
@@ -348,7 +348,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-rc-not-minted",
-  "file": "src/net/siegeReceipt.js",
+  "file": "src/net/siege/siegeReceipt.js",
   "old": "  const claims = { s, sk, sw, sd, r, a, h, th, i: nowS, e: nowS + SIEGE_RECEIPT_TTL_S };",
   "new": "  const claims = { s, sk, sw, sd, r, a, h, i: nowS, e: nowS + SIEGE_RECEIPT_TTL_S };",
   "tests": [
@@ -360,7 +360,7 @@
  },
  {
   "name": "AUDIT-SEATS-T1-royal-takes-th",
-  "file": "src/net/siegeReceipt.js",
+  "file": "src/net/siege/siegeReceipt.js",
   "old": "const ROYAL_FOREIGN = ['sd', 'r', 'a', 'h', 'th',",
   "new": "const ROYAL_FOREIGN = ['sd', 'r', 'a', 'h',",
   "tests": [
@@ -371,7 +371,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-palace-places",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "export const SIEGE_PLACES = Object.freeze({ palace: 10, crown: 20 });",
   "new": "export const SIEGE_PLACES = Object.freeze({ palace: 11, crown: 20 });",
   "tests": [
@@ -382,7 +382,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-crown-places",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "export const SIEGE_PLACES = Object.freeze({ palace: 10, crown: 20 });",
   "new": "export const SIEGE_PLACES = Object.freeze({ palace: 10, crown: 24 });",
   "tests": [
@@ -393,7 +393,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-kept-six-minutes",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "export const SIEGE_PLACE_KEPT_MS = 5 * 60_000;",
   "new": "export const SIEGE_PLACE_KEPT_MS = 6 * 60_000;",
   "tests": [
@@ -404,7 +404,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-kept-through-the-fifth",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "now - f.goneAt < SIEGE_PLACE_KEPT_MS;",
   "new": "now - f.goneAt <= SIEGE_PLACE_KEPT_MS;",
   "tests": [
@@ -415,7 +415,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-unstamped-lapsed",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "here || !Number.isFinite(f?.goneAt) || now",
   "new": "here || now",
   "tests": [
@@ -426,7 +426,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-count-own",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "if (sub !== except && f?.side === side &&",
   "new": "if (f?.side === side &&",
   "tests": [
@@ -437,7 +437,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-count-both-sides",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "if (sub !== except && f?.side === side &&",
   "new": "if (sub !== except &&",
   "tests": [
@@ -448,7 +448,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-return-not-down",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  f.down = true;\n  f.upAt = siegeNextWave(",
   "new": "  f.upAt = siegeNextWave(",
   "tests": [
@@ -459,7 +459,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-return-wave-before-start",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  if (now < b.startMs || f.down) return false;",
   "new": "  if (f.down) return false;",
   "tests": [
@@ -470,7 +470,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-return-no-camp",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  f.pose = siegeCampPose(b, f.side, f.pose); f.poseAt = now;\n  if (now < b.startMs",
   "new": "  f.poseAt = now;\n  if (now < b.startMs",
   "tests": [
@@ -481,7 +481,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-return-wave-flat",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  f.upAt = siegeNextWave(now, siegeWaveMs(b, f.side));   // SEAT2b part two (b): a defender's wave the Walls' quicker\n  return true;",
   "new": "  f.upAt = now + SIEGE_WAVE_MS.palace;\n  return true;",
   "tests": [
@@ -492,7 +492,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-return-any-side",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  if (!b || b.result || (f.side !== 'attack' && f.side !== 'defend')) return false;",
   "new": "  if (!b || b.result) return false;",
   "tests": [
@@ -504,7 +504,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-return-after-end",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  if (!b || b.result || (f.side !== 'attack' && f.side !== 'defend')) return false;",
   "new": "  if (!b || (f.side !== 'attack' && f.side !== 'defend')) return false;",
   "tests": [
@@ -515,7 +515,7 @@
  },
  {
   "name": "AUDIT-SEATS-T3-return-keeps-stamp",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "  delete f.goneAt;\n  if (!b ||",
   "new": "  if (!b ||",
   "tests": [
@@ -792,7 +792,7 @@
  },
  {
   "name": "AUDIT-SEATS-R5-prune-the-present",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "    if (here(sub) || b?.ladder?.[sub] ||",
   "new": "    if (b?.ladder?.[sub] ||",
   "tests": [
@@ -803,7 +803,7 @@
  },
  {
   "name": "AUDIT-SEATS-R5-prune-the-ladder",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "    if (here(sub) || b?.ladder?.[sub] ||",
   "new": "    if (here(sub) ||",
   "tests": [
@@ -814,7 +814,7 @@
  },
  {
   "name": "AUDIT-SEATS-R5-prune-the-bout",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": " || b?.bout?.a === sub || b?.bout?.b === sub ||",
   "new": " ||",
   "tests": [
@@ -825,7 +825,7 @@
  },
  {
   "name": "AUDIT-SEATS-R5-prune-the-asker",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": " || b?.asks?.[sub] || asked.has(sub)) continue;",
   "new": " || asked.has(sub)) continue;",
   "tests": [
@@ -836,7 +836,7 @@
  },
  {
   "name": "AUDIT-SEATS-R5-prune-the-asked",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": " || b?.asks?.[sub] || asked.has(sub)) continue;",
   "new": " || b?.asks?.[sub]) continue;",
   "tests": [
@@ -1008,7 +1008,7 @@
  },
  {
   "name": "AUDIT-SEATS-R10-no-stamp",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "      (b.wonAt ??= {})[winner] = now;   // AUDIT-SEATS R10",
   "new": "      // AUDIT-SEATS R10",
   "tests": [
@@ -1019,7 +1019,7 @@
  },
  {
   "name": "AUDIT-SEATS-R10-later-first",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "(b.wonAt?.[x] ?? 0) - (b.wonAt?.[y] ?? 0)",
   "new": "(b.wonAt?.[y] ?? 0) - (b.wonAt?.[x] ?? 0)",
   "tests": [
@@ -1030,7 +1030,7 @@
  },
  {
   "name": "AUDIT-SEATS-R10-stamp-uncounted",
-  "file": "src/net/siegeRef.js",
+  "file": "src/net/siege/siegeRef.js",
   "old": "      (b.ladder[loser] ??= { w: 0, l: 0 }).l++;\n      (b.wonAt ??= {})[winner] = now;   // AUDIT-SEATS R10: its last counted win, on the room's clock (royalLadder's tie)\n    }",
   "new": "      (b.ladder[loser] ??= { w: 0, l: 0 }).l++;\n    }\n    if (loser) (b.wonAt ??= {})[winner] = now;",
   "tests": [

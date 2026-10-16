@@ -1,5 +1,5 @@
 // SD5a (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 7): THE SHATTERED HOUR - the
-// made level beyond a Hollow's Rift (world/superDungeon/sdRealm.js, world/superDungeon/sdRealmArt.js; its frame net/sdBrain.js) and its ways in and
+// made level beyond a Hollow's Rift (world/superDungeon/sdRealm.js, world/superDungeon/sdRealmArt.js; its frame net/superDungeon/sdBrain.js) and its ways in and
 // out. The Burning Court's law: the dungeon host with a level made in code - a made location, an empty block, the Hour's
 // own mesh, floors, edge, lamps, light and air - its room the relay's realm `sd:<s>`; the Court's refusals beside the
 // Court's own (rest, save, map, Mark, Recall, regeneration). In by the Rift (out of the Hollow, to its pixel, into the
@@ -8,7 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { SD_REALM_ORIGIN, SD_THRESHOLD, SD_WALK, SD_ORRERY, SD_STEPS, SD_ARENA, SD_PILLAR_R, SD_PILLAR_H, realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { SD_REALM_ORIGIN, SD_THRESHOLD, SD_WALK, SD_ORRERY, SD_STEPS, SD_ARENA, SD_PILLAR_R, SD_PILLAR_H, realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import {
   sdRealmLocation, isSdRealm, sdRealmBlock, sdRealmBlocks, buildRealmModel, realmFloorTris, realmClamp, realmArena, realmLights, realmLightsNear,
   realmLighting, SD_REALM_ARCHIVE, SD_REALM_BLOCK, SD_REALM_BLOCK_INDEX, SD_REALM_LOCATION_ID, SD_ARRIVE_Z, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE,
@@ -21,7 +21,7 @@ import { buildHangModel } from '../src/world/superDungeon/sdIslandModel.js';
 import { realmArt, SD_ART_SIZE, SD_DIAL_SIZE, SD_ROOT_ART_H } from '../src/world/superDungeon/sdRealmArt.js';
 import { gateArenaLocation, isGateArena, GATE_ARENA_LOCATION_ID, GATE_ARENA_BLOCK_INDEX } from '../src/world/gate/gateArena.js';
 import { madeDungeon, dungeonTierLabel } from '../src/world/dungeon/dungeonLabel.js';
-import { sdRoomKey, SD_NO_CLOSED } from '../src/net/sdLaw.js';
+import { sdRoomKey, SD_NO_CLOSED } from '../src/net/superDungeon/sdLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const close = (a, b, eps = 1e-6) => Math.abs(a - b) <= eps;

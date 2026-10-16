@@ -157,7 +157,7 @@ the summary board looks cut off ... massively polish all this and do the same fo
 - **The Settings screen reads as one list** (`SETTINGS_CSS`): a Features row and a plain row are the same line; the tags
   under a name are words ("Enhanced · DFU Classic"), not boxed capitals; the card beside the list stands clear of the
   screen's top.
-- **The Firmament says why a read failed** (`ui/firmamentWindow.js` `readFailText`, `net/firmamentBook.js`
+- **The Firmament says why a read failed** (`ui/firmamentWindow.js` `readFailText`, `net/firmament/firmamentBook.js`
   `state.status`): a refused `/v1/firmament/state` had left the purses at their empty defaults - "0 of 0", Renown 1 - as
   if that were the answer (a test server whose account service had not been deployed with the Firmament, or whose
   migration 0114 (written as 0113) was not applied, showed a Renown 5 character no stars). It names a 404 (no Firmament on that service),

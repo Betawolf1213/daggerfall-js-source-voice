@@ -16,12 +16,12 @@ import {
   SERPENT_ATTACK_TABLE, SERPENT_PHASE_AT, SERPENT_TICK_MS, ZONES, ARENA_R, MAEL_ORBIT_R, CRUISE_V, DASH_V, CLOSE_V, DRIFT_V,
   SERPENT_SLEEP_MS, SERPENT_DRAWN_MS, SERPENT_SAY_AHEAD_MS, SERPENT_LEAD_MAX_MS, SERPENT_WAY_EASE_MS, SERPENT_WAY_STALE_MS, SERPENT_WAY_MAX_V,
   STUN_X, HEAD_X, GUN_REACH_M, SERPENT_POSE_SLACK, ORBIT_R, RAM_V, ramLen, serpentWrapYaw,
-} from '../src/net/serpentBrain.js';
-import { LEG, MODE, COIL_R, SWIM_MIN_V, headAt, bodyAt, modeAt, coilAngleAt, coilWeight } from '../src/net/serpentBody.js';
-import { createSerpentLink } from '../src/net/serpentLink.js';
+} from '../src/net/serpent/serpentBrain.js';
+import { LEG, MODE, COIL_R, SWIM_MIN_V, headAt, bodyAt, modeAt, coilAngleAt, coilWeight } from '../src/net/serpent/serpentBody.js';
+import { createSerpentLink } from '../src/net/serpent/serpentLink.js';
 import { createSerpentHost, WAKE_MS, IN_CHANGE_MS } from '../src/scenes/serpentHost.js';
 import { fleetShare, shipHurt, crushHurt, shapeMeets, ramHead, SERPENT_PAIR_SHARE, SERPENT_CANVAS_X } from '../src/systems/serpent/serpentStrike.js';
-import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpentLaw.js';
+import { serpentTimes, serpentSiteKey, SERPENT_BRAIN_V, SERPENT_NATIVE_PER_M } from '../src/net/serpent/serpentLaw.js';
 import { validSerpentOut, cellRoomOfWire, serpentFightId, PIXEL_UNITS } from '../src/net/wire.js';
 import { HULL } from '../src/systems/naval/navalShips.js';
 import { lawsOf, fleetFights, fightLine } from '../tools/serpentFleetSim.mjs';

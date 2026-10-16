@@ -40,8 +40,8 @@ import { arenaScoreFor } from '../systems/arena/arenaScore.js';
 import { crowdSeats, pickSeats, RING_R } from '../world/arena/arenaFloor.js';
 import { arenaHudModel } from '../ui/arenaHud.js';
 import { rollLeague, leagueAfterBout, laurelWorn, laurelBanner, LAUREL_FAVOUR } from '../systems/arena/arenaLeague.js';   // ARENA3: the banners, the laurel, the Records page
-import { mirrorOf, mirrorEvents, mirrorHealth, walkAt, walkDone } from '../net/arenaLink.js';
-import { ARENA_PUPPET_OWNER, ARENA_CHEER_MS, ARENA_FLOOR_CENTRE } from '../net/arenaLaw.js';   // ARENA4: a bout the relay runs, mirrored here; ARENA4b: the stands' allowance, the relay's frame (the instance's)
+import { mirrorOf, mirrorEvents, mirrorHealth, walkAt, walkDone } from '../net/arena/arenaLink.js';
+import { ARENA_PUPPET_OWNER, ARENA_CHEER_MS, ARENA_FLOOR_CENTRE } from '../net/arena/arenaLaw.js';   // ARENA4: a bout the relay runs, mirrored here; ARENA4b: the stands' allowance, the relay's frame (the instance's)
 import { crowdShout } from '../systems/arena/arenaCrowd.js';   // ARENA4: the stands' own cheers and boos, heard on every screen
 import { crowdHalves, crowdHalfOf, crowdWash } from '../systems/arena/arenaCrowd.js';   // ARENA5: the crowd's half in a banner's colours
 import { drawnFlat } from '../characters/nudeFlats.js';   // NUDE-HOSTS: Show Nudity off seats a nude figure's clothed stand-in
@@ -75,11 +75,11 @@ export const BARK_SHOWN_MS = 2400;
 export const THROW_MS = 900;
 /** ARENA4b: a relay's fighter on the city's sand this far behind the relay's walk is stood where the relay has it. */
 export const CITY_SNAP_M = 3;
-/** ARENA4: the owner every relay-run fighter's puppet is stood under (net/arenaLaw.js - scenes/dungeonContext.js's own
+/** ARENA4: the owner every relay-run fighter's puppet is stood under (net/arena/arenaLaw.js - scenes/dungeonContext.js's own
  *  lane hands a blow on it to the relay's referee, never to a peer). */
 export { ARENA_PUPPET_OWNER };
-/** ARENA4b: A SPECTATOR'S CHEER OR BOO goes at most one each this long, ms: the relay's own allowance (net/arenaLaw.js
- *  ARENA_CHEER_MS - net/arenaBrain.js cheerOf drops a second inside it, unsaid) and a beat of the wire's slack, so a
+/** ARENA4b: A SPECTATOR'S CHEER OR BOO goes at most one each this long, ms: the relay's own allowance (net/arena/arenaLaw.js
+ *  ARENA_CHEER_MS - net/arena/arenaBrain.js cheerOf drops a second inside it, unsaid) and a beat of the wire's slack, so a
  *  press this screen lets through is never one the relay drops after my own crowd has heard it. */
 export const CHEER_SLACK_MS = 250;
 export const CHEER_GAP_MS = ARENA_CHEER_MS + CHEER_SLACK_MS;
@@ -866,7 +866,7 @@ export function createArenaBouts(deps) {
    * STAND A RELAY'S BOUT on this screen's floor: a bout between players (`kind` 'pvp' - my opponent another player's body,
    * drawn by the room's poses), a ladder bout against the relay's own fighters ('pve' - each a puppet of its walk and its
    * blows), or a bout watched from the stands (`me` ''). Nothing here decides anything: the relay's words (`relayWord`)
-   * move a mirror of its bout (net/arenaLink.js), which the crowd, the Herald, the HUD and the music read as they read a
+   * move a mirror of its bout (net/arena/arenaLink.js), which the crowd, the Herald, the HUD and the music read as they read a
    * bout run here. `send` the doors back to the relay: `hit(word)`, `yield()`. ARENA4b: and `cheer(dir)` from the stands;
    * `banners` each fighter's banner as the hall billed it (by fighter id); `owe(gold, pay)` a ladder win's purse held for
    * the account service's word (`pay` pays it) - without it the purse is paid at the verdict.
@@ -953,7 +953,7 @@ export function createArenaBouts(deps) {
           const [hp, max] = mine;
           const h = Math.max(1, Math.round((hp / Math.max(1, max)) * Math.max(1, P.maxHealth ?? 1)));
           // AUDIT PRE-MERGE 1003 O1: once the healers have come no word brings my health DOWN again - the relay's `hp`
-          // rode with the heal carrying the bout's END health (its law heals nobody; net/arenaBrain.js now heals at the
+          // rode with the heal carrying the bout's END health (its law heals nobody; net/arena/arenaBrain.js now heals at the
           // word, and this holds against any word after it): the loser was healed, struck for the difference and set
           // back to 1. A word that lifts me stands (a fighter back on the sand mid-heal hears the healed `hp`, its heal
           // event missed); the blow that ends the fight is still felt - its `hp` comes on the end's own beat
@@ -972,7 +972,7 @@ export function createArenaBouts(deps) {
         // AUDIT ARENA-LADDER 2: a telegraphed blow swings at its LANDING (relayFrame, `_swingAt`), as the brain's own does -
         // a swing at the word played the blow out before the ground's mark had filled
         if (foe?._pup) { if (!w.s) foe._pup.strike = 'melee'; foe._pup.yaw = Math.atan2(w.x - (foe.ai?.feet?.[0] ?? w.x), w.z - (foe.ai?.feet?.[2] ?? w.z)); }
-        // AUDIT ARENA-LADDER: A TELEGRAPHED BLOW OF THE RELAY'S (net/arenaBrain.js) - its shape drawn on this screen's
+        // AUDIT ARENA-LADDER: A TELEGRAPHED BLOW OF THE RELAY'S (net/arena/arenaBrain.js) - its shape drawn on this screen's
         // ground where it was wound up, as the brain's own are (ai/foeBlows.js, the ground's pass): the relay decides it -
         // AUDIT ARENA-LADDER 2: at its own moment (`w.at`, the relay's clock), so the mark flashes when the relay judges it
         if (w.s && foe?.ai?.feet) {
@@ -1119,7 +1119,7 @@ export function createArenaBouts(deps) {
   /**
    * THE RELAY'S EXHIBITION STOOD HERE (Arena.md 2: "the relay runs it, every client sees one bout"): a relay's bout
    * watched from the stands (startRelay, `me` '') on the city's sand or the floor's instance, carrying the hour's
-   * exhibition (`ex` - net/arenaExhibition.js exhibitionFor) so the window, the Herald, the book and the music read it as
+   * exhibition (`ex` - net/arena/arenaExhibition.js exhibitionFor) so the window, the Herald, the book and the music read it as
    * the hour's: its Red against its Blue on the versus bar, the exhibition's call, the purse's bark and - at its verdict -
    * the bookmaker told what the relay decided (`exhibitionVerdict`, the local bout's own door). AUDIT PRE-MERGE 1003 O7:
    * `send.cheer` the stands' shout, the host's door.
@@ -1167,7 +1167,7 @@ export function createArenaBouts(deps) {
     }
     return ok;
   }
-  /** A place in the relay's frame (the floor's instance's - net/arenaLaw.js ARENA_FLOOR_CENTRE) on this bout's stage: the
+  /** A place in the relay's frame (the floor's instance's - net/arena/arenaLaw.js ARENA_FLOOR_CENTRE) on this bout's stage: the
    *  instance's as it is, the city's the same offset from its own sand's centre (the driver lays both floors' marks so). */
   function relayToStage(C, x, z) {
     if (C.stage?.kind !== 'city') return [x, z];

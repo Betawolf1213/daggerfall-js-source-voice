@@ -31,7 +31,7 @@ import { createCaravanVisitLink, caravanStands, CARAVAN_STANDS_NATIVES } from '.
 import { readCaravanRoom, isCaravanRoom, turnCaravanScene, CARAVAN_TEXT } from '../src/systems/caravanRoom.js';
 import { worldCoordToMapPixel } from '../src/world/streamingWorld.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
-import { RECEIVER_MARKS } from '../src/net/realmTradeLaw.js';
+import { RECEIVER_MARKS } from '../src/net/realm/realmTradeLaw.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const bakeOf = (kind) => JSON.parse(read(`src/assets/wagons/${kind}.json`));

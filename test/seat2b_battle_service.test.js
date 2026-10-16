@@ -10,8 +10,8 @@ import assert from 'node:assert/strict';
 import { standService, T0 } from './accountDb.mjs';
 import { seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S, siegeStartMs } from '../src/net/townSeatLaw.js';
 import { verifyOrder } from '../src/net/identityToken.js';
-import { mintSiegeReceipt } from '../src/net/siegeReceipt.js';
-import { SIEGE_UNITS_PER_M } from '../src/net/siegeRef.js';
+import { mintSiegeReceipt } from '../src/net/siege/siegeReceipt.js';
+import { SIEGE_UNITS_PER_M } from '../src/net/siege/siegeRef.js';
 import { xpForRank } from '../src/net/professionLaw.js';
 
 const { subtle } = globalThis.crypto;

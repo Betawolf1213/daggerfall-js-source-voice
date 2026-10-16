@@ -4094,7 +4094,7 @@ export class Renderer {
   /** Composite the sprite into the world: camera-facing quad at the
    *  character's position, alpha-cut, fogged, depth-tested. */
   /** INVIS-LOOK (2026-09-27): `conceal`, optional - ECV1's visual ({ mode, alpha, t, phase }, systems/combatVisuals.js)
-   *  for a CONCEALED peer's Morrowind body (net/peerBodies.js drawVeiled): the billboard shader's own look on this
+   *  for a CONCEALED peer's Morrowind body (net/peer/peerBodies.js drawVeiled): the billboard shader's own look on this
    *  quad (the blend's ripple and opacity, the shade's dark), BLENDED with no depth write, as the billboards' concealed
    *  phase draws a concealed foe. None, and the quad is the opaque cut-out it always was. */
   /** AUDIT OW4 J6: `up`, optional - the quad's vertical when it leans (the travel view's leaned up, characterSprite.js

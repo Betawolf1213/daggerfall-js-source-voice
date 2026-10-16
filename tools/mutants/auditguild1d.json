@@ -392,7 +392,7 @@
   },
   {
     "name": "AUDIT-GUILD1d-R14-older-answer-clears",
-    "file": "src/net/guildBook.js",
+    "file": "src/net/guild/guildBook.js",
     "old": "&& this._heraldryAsk?.rid === rid) this._heraldryAsk = null;",
     "new": ") this._heraldryAsk = null;",
     "tests": [

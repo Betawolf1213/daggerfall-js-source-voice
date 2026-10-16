@@ -1,7 +1,7 @@
 // @ts-check
 // CARDS4 (2026-10-07, bible/11-Multiplayer/Tavern-Cards.md section 14; Mac: "Hold'em first", "Real gold", "Yes, patrons
 // play"): THE TAVERN TABLE'S EVENING - pure, DOM-free, clocked by the `now` it is handed. The player and the tavern's
-// patrons at one card table, hand after hand of the cards' law (net/cardLaw.js), the patrons playing by their tempers
+// patrons at one card table, hand after hand of the cards' law (net/card/cardLaw.js), the patrons playing by their tempers
 // (systems/card/cardPatrons.js). The host (scenes/worldModes.js) seats it, moves the gold in and out, and shows it; nothing
 // here touches a purse, a window or the scene.
 //
@@ -17,7 +17,7 @@
 // slide the chips on it.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { newHand, act, foldSeat, legalActions, viewFor, shuffleDeck, HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from '../../net/cardLaw.js';
+import { newHand, act, foldSeat, legalActions, viewFor, shuffleDeck, HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from '../../net/card/cardLaw.js';
 import { patronDecision, unit, PATRON_TEMPERS } from './cardPatrons.js';
 import { DEAL_STAGGER, THROW_LAND_S, FLIP_S, RIFFLE_S, GATHER_S } from '../../world/card/cardMotion.js';
 

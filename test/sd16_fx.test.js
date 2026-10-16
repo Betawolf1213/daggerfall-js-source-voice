@@ -13,8 +13,8 @@ import { readFileSync } from 'node:fs';
 import {
   createSdFx, SD_FX_KINDS, SD_FX_COLOR, SD_SHAKE, sdShake, SD_FX_LATE_MS, SD_FX_LAND_LATE_MS, SD_FX_COLUMN, SD_FX_FLASH_MS, SD_RING_DUST, SD_HAND_FLASH_OUT, SD_FX_FLOOR_Y,
 } from '../src/scenes/sdFx.js';
-import { SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, stompFrontAt, handAngleAt } from '../src/net/sdRemnant.js';
-import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
+import { SD_BLOWS, SD_BODY, SD_REM, SD_ECHO, stompFrontAt, handAngleAt } from '../src/net/superDungeon/sdRemnant.js';
+import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { FX_KINDS, FX_BURST_MS, FX_BURSTS_MAX, FX_LIGHT_MS } from '../src/render/gateFx.js';
 import { LAND_SHAKE } from '../src/world/gate/gateBoss.js';
 import { SD_REM_SINK_MS } from '../src/scenes/sdRemnant.js';

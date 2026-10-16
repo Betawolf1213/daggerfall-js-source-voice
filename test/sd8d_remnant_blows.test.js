@@ -1,5 +1,5 @@
 // SD8d (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT'S BLOWS
-// ON ME - each judged on my own machine (net/sdStrike.js: the Stomp's disc and its ring, jumped; the Hour-Hand outrun or
+// ON ME - each judged on my own machine (net/superDungeon/sdStrike.js: the Stomp's disc and its ring, jumped; the Hour-Hand outrun or
 // shaded by a pillar; the Gear Volley's discs and its burning brass; the Hour's own), shown on the arena's floor (the gate's
 // telegraph pass over another floor), heard, and its fall (scenes/sdRemnantBlows.js), wired into the hosts.
 import { test } from 'node:test';
@@ -7,13 +7,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   SD_BLOWS, SD_BODY, SD_PILLARS, pulsePct, SD_RESET_PCT, SD_END_PCT, newRemnantFight, joinRemnant, remnantStateOf, behindPillar, SD_ARENA_SLACK,
-} from '../src/net/sdRemnant.js';
-import { sdBlowVerdict, sdVolleyPools, sdPoolUnder, SD_STRIKE_LATE_MS } from '../src/net/sdStrike.js';
-import { createSdFightLink } from '../src/net/sdFightLink.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { sdBlowVerdict, sdVolleyPools, sdPoolUnder, SD_STRIKE_LATE_MS } from '../src/net/superDungeon/sdStrike.js';
+import { createSdFightLink } from '../src/net/superDungeon/sdFightLink.js';
 import { validSdOut } from '../src/net/wire.js';
-import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
-import { POOL_TICK_MS, COURT_R } from '../src/net/gateBrain.js';
-import { strikeDamage, STRIKE_LATE_MS } from '../src/net/gateStrike.js';
+import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
+import { POOL_TICK_MS, COURT_R } from '../src/net/gate/gateBrain.js';
+import { strikeDamage, STRIKE_LATE_MS } from '../src/net/gate/gateStrike.js';
 import {
   createSdRemnantBlows, sdTelegraphShapes, sdPoolShapes, sdBlowsInFlight, SD_BLOW_COLOR, SD_BLOWS_TEXT, SD_BLOW_CUES, SD_TELEGRAPH_FLOOR, SD_ARENA_CENTRE,
 } from '../src/scenes/sdRemnantBlows.js';

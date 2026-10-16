@@ -25,7 +25,7 @@ import {
 import { exhibitionCard, bookLines } from './arenaBook.js';
 import { enemyDisplayName, ENEMY_BASICS } from '../../characters/enemyBasics.js';
 import { dateFromClassicMinutes, monthNames, MINUTES_PER_DAY } from '../gameDate.js';   // L10N3e: the month in the player's language
-import { arenaSeasonOf, arenaSeasonDay } from '../../net/arenaLaw.js';   // ARENA4b: the realm's season a row was taken in
+import { arenaSeasonOf, arenaSeasonDay } from '../../net/arena/arenaLaw.js';   // ARENA4b: the realm's season a row was taken in
 import { arenaReplaysRestore } from './arenaReplay.js';   // ARENA5: the Records page's Watch the replay
 
 /** The window's pages, in their order on the tab bar. */
@@ -280,7 +280,7 @@ const O = () => ARENA_TEXT.online;
 const billed = (b) => (b ? { name: b.n ?? b.name ?? '', rating: b.r ?? b.rating ?? null, banner: b.b ?? b.banner ?? null, title: b.t ?? b.title ?? null } : null);
 /** THE BOUTS PAGE'S ONLINE CARDS: the bouts on the sand to watch (the hall's list - each with its fighters and how many
  *  watch, and Watch), and the challenge (the queue's state, the offer and its clock, the presses it allows). `hall`
- *  net/arenaLink.js's hall state; `me` the service's own of this account. */
+ *  net/arena/arenaLink.js's hall state; `me` the service's own of this account. */
 export function onlineCards({ hall, me, guest = false, busy = false, inSession = false, now = 0 }) {
   const busyWhy = inSession ? O().privIn : O().whyBusy;   // AUDIT PRE-MERGE 1003b U7: in a session, said as one
   const live = (hall?.live ?? []).map((b) => ({
@@ -418,7 +418,7 @@ export function ladderTitleOfReached(n) {
   return tiers > 0 ? ARENA_TEXT.titles[Math.min(LADDER_TIERS.length, tiers) - 1] : null;
 }
 
-/** ARENA4b: the realm's season a row of the board was taken in (its `at`, unix seconds - net/arenaLaw.js arenaSeasonOf),
+/** ARENA4b: the realm's season a row of the board was taken in (its `at`, unix seconds - net/arena/arenaLaw.js arenaSeasonOf),
  *  or this season for a row that carries none (an older service). */
 const seasonOfRow = (r, board) => (Number.isFinite(r?.at) && r.at > 0 ? arenaSeasonOf(r.at) : board.season);
 

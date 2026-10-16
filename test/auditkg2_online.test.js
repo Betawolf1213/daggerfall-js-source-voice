@@ -12,8 +12,8 @@ import { openGambitTableGame } from '../src/scenes/gambitTableGame.js';
 import {
   newGambitTable, gambitSit, gambitReady, gambitTick, gambitStand, gambitForfeit, gambitCommand, gambitPublicView,
   validGambitOut, GAMBIT_FIRST_MS, GAMBIT_TURN_END_MS, GAMBIT_TURN_MS, GAMBIT_REMOTE_GAP_MS,
-} from '../src/net/gambitTable.js';
-import { createCardStakes, CARD_VOID_AFTER_MS } from '../src/net/cardStakes.js';
+} from '../src/net/gambit/gambitTable.js';
+import { createCardStakes, CARD_VOID_AFTER_MS } from '../src/net/card/cardStakes.js';
 import { RemoteGambitSession, RemoteGambitTable, GAMBIT_HELD_MAX } from '../src/systems/gambit/gambitRemoteTable.js';
 import { createGambitMotion } from '../src/world/gambitMotion.js';
 import { autoFill, reachable, KG_POINT_BUDGET } from '../src/net/kingsGambit.js';
@@ -335,7 +335,7 @@ test('AUDIT KG II B11 MOVE, THEN END TURN AT ONCE: the End reaches the relay onc
 test('AUDIT KG II E11 + E14 A RATED RESULT FROM THE ROOM JUST LEFT IS HEARD (its table\'s other frames are not); A SEATED PLAYER\'S GOLD RESULT SAYS THE POT (mutants: the halo\'s receipt; the pot\'s words)', async () => {
   const { OnlineSession } = await import('../src/net/online.js');
   const { fakeSocketClass } = await import('./fakeSocket.mjs');
-  const { mintGambitReceipt } = await import('../src/net/gambitReceipt.js');
+  const { mintGambitReceipt } = await import('../src/net/gambit/gambitReceipt.js');
   const { RELAY_VERSION } = await import('../src/net/wire.js');
   const quiet = (fn) => { const info = console.info, warn = console.warn; console.info = () => {}; console.warn = () => {}; try { return fn(); } finally { console.info = info; console.warn = warn; } };
   const { FakeWS, sockets } = fakeSocketClass();

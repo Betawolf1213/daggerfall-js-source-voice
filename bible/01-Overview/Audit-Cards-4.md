@@ -11,9 +11,9 @@ THE VERIFIER IS READING), each told to reproduce every finding with a script bef
 
 | Lane | Over | How |
 |---|---|---|
-| A | the service's escrow and the signed words (`server-account/src/cards.js`, `net/identityToken.js` stake orders, `net/cardReceipt.js`) | the real Worker over SQLite with the real relay Room sharing its keys; every kind and signature crossed with every other |
+| A | the service's escrow and the signed words (`server-account/src/cards.js`, `net/identityToken.js` stake orders, `net/card/cardReceipt.js`) | the real Worker over SQLite with the real relay Room sharing its keys; every kind and signature crossed with every other |
 | B | the relay and the pure table | 8.3M random operations on the pure table (9 seeds, about 290k hands, 240k receipts) checking that stakes in = receipts + stacks + pot after every one; 400k end to end on the fake room with real orders (hellos, drops, ghosts, wakes, voids, acks, looks); then two words at once |
-| C | the device (`net/cardStakes.js`, the worldModes card block, online.js) | the real account Worker, a real realm session and `realmGoldAct`, the real `accountCards` door with faults injected; the host's card block sliced and run against the real relay |
+| C | the device (`net/card/cardStakes.js`, the worldModes card block, online.js) | the real account Worker, a real realm session and `realmGoldAct`, the real `accountCards` door with faults injected; the host's card block sliced and run against the real relay |
 | D | CARDS-TIDY and the record | 97k frames of offline cloths and 931k of relay-fed ones tracked card by card; 12,000 random state pairs through the delta law; reconnects and far tables against a fake relay that sends deltas by `_holdemSend`'s law; the doc against the code; 68 candidate mutants |
 | E | all three parties at once | about 14,000 gold evenings (24 runs x 600) with lost answers, lost frames, drops and same-id reconnects, tabs closed, rooms left for good, wakes, clocks past every TTL, two tabs, character switches - counting gold CREATED and STRANDED. The lane was cut off by an API error before its report; its repros on disk were read and each run again |
 

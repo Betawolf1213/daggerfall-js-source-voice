@@ -12,16 +12,16 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { drawGateBanner, destroyGateBanner, GATE_BANNER_CSS, SD_BANNER_BRASS } from '../src/ui/gateBanner.js';
 import { sdBannerText, sdMarksLine, sdHourLine, SD_ENDING_RUMOR } from '../src/systems/superDungeon/sdOmen.js';
-import { sdFirst, sdRise, sdFind, sdFell, sdWhere, sdFoundLine, SD_CAST_OUT_LINE, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
+import { sdFirst, sdRise, sdFind, sdFell, sdWhere, sdFoundLine, SD_CAST_OUT_LINE, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
 import { SD_TITLE_CSS } from '../src/ui/sdTitleCard.js';
 import { GROUND_VIEW_CSS, PERIL_ARROW_R, PERIL_ARROW_R_LOW } from '../src/ui/gateGroundView.js';
 import { drawGateMarksCard, destroyGateMarksCard } from '../src/ui/gateMarksView.js';
 import { sdMarksCardModel, SD_MARK_TIPS, SD_MARKS_ARRIVE_MS } from '../src/ui/sdMarksView.js';
 import { remnantBarModel, SD_BAR_TEXT } from '../src/ui/sdRemnantBar.js';
 import { drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT } from '../src/ui/gateBossBar.js';
-import { SD_PHASE_NAMES, SD_ECHO_PAIR_MS } from '../src/net/sdRemnant.js';
-import { SD_ENDINGS, SD_OMENS, sdMarksOf } from '../src/net/sdMarks.js';
-import { SD_FIGHT_TEXT } from '../src/net/sdFightLink.js';
+import { SD_PHASE_NAMES, SD_ECHO_PAIR_MS } from '../src/net/superDungeon/sdRemnant.js';
+import { SD_ENDINGS, SD_OMENS, sdMarksOf } from '../src/net/superDungeon/sdMarks.js';
+import { SD_FIGHT_TEXT } from '../src/net/superDungeon/sdFightLink.js';
 import { sdBreakSub } from '../src/scenes/sdArenaRead.js';
 import { sdRiftCount, SD_COUNT_TEXT } from '../src/world/superDungeon/sdDungeon.js';
 import { timerText } from '../src/systems/eventTimers.js';
@@ -198,7 +198,7 @@ test('SD20e THE DRAGON\'S TWO NAMES AND ITS WINDOW\'S ONE FORM (T9, T14): no End
   assert.equal(SD_FIGHT_TEXT.dragonBreak(SD_ECHO_PAIR_MS), 'The Dragon Break! Fell Gold and Silver within 15 seconds of each other.');
   assert.match(SD_MARK_TIPS.blades, form);
   assert.match(SD_ENDINGS.find((E) => E.id === 'blades').text, /within ten seconds of each other/);
-  assert.match(read('src/net/sdFightLink.js'), /SD_FIGHT_TEXT\.dragonBreak\(sdProfileOf\(state\)\.pairMs\)/, 'the turn\'s line by the fight\'s own window');
+  assert.match(read('src/net/superDungeon/sdFightLink.js'), /SD_FIGHT_TEXT\.dragonBreak\(sdProfileOf\(state\)\.pairMs\)/, 'the turn\'s line by the fight\'s own window');
 });
 
 // ── T11, T12, T13: the lines said plainly ─────────────────────────────

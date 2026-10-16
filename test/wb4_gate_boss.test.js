@@ -1,5 +1,5 @@
 // WB4a (2026-09-25, Mac: "a large boss arena with an oversized enemy with telegraphed attacks (like wind ups, etc)"):
-// THE BOSS FIGHTS YOU, DRIVEN. The strike's law on the struck player's own machine (net/gateStrike.js - each shape
+// THE BOSS FIGHTS YOU, DRIVEN. The strike's law on the struck player's own machine (net/gate/gateStrike.js - each shape
 // against a point, the charge swept between frames, the verdict decided at the landing and never late, the share of
 // one's own health, fire through the saving throw and the Wrath through nothing); his look (world/gate/gateBoss.js - the
 // wind-up's held frames, the landing's played ones, the run, the walk, the flinch, the fall; the frame an eye sees; the
@@ -11,10 +11,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { ATTACKS, ATTACK_BY_ID, BOSS_R, COURT_CENTRE, COURT_R, PHASE_AT, PHASE3_WINDUP } from '../src/net/gateBrain.js';
+import { ATTACKS, ATTACK_BY_ID, BOSS_R, COURT_CENTRE, COURT_R, PHASE_AT, PHASE3_WINDUP } from '../src/net/gate/gateBrain.js';
 import {
   inAttack, chargeHead, chargeStrikes, strikeVerdict, blowOf, strikeDamage, savedShare, telegraphAt, segmentDistance, STRIKE_LATE_MS,
-} from '../src/net/gateStrike.js';
+} from '../src/net/gate/gateStrike.js';
 import {
   bossAct, bossFrame, bossGlow, bossPlace, bossLookOf, BOSS_LOOKS, BOSS_CUES, ATTACK_COLORS, WARD_COLOR, EMBER_COLOR, FALL_MS, FLINCH_MS,
   GLOW_UP, GLOW_RANGE, RUN_ANIM_SPEED, FIRE_CAST_ID, BURNING,
@@ -25,9 +25,9 @@ import {
 } from '../src/render/gateTelegraph.js';
 import { bossBarModel, drawGateBossBar, destroyGateBossBar, BOSS_BAR_TEXT, WRATH_WARN_MS } from '../src/ui/gateBossBar.js';
 import { createGateCourt, bossOf, COURT_STRIKE_TEXT, ROAR_AFTER_MS } from '../src/scenes/gateCourt.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { courtToDungeon } from '../src/world/gate/gateArena.js';
-import { gateBossOf } from '../src/net/gateLaw.js';
+import { gateBossOf } from '../src/net/gate/gateLaw.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import { PRIMARY_ATTACK_ANIMS, MOVE_ANIMS, HURT_ANIMS, IDLE_ANIMS, mobileOrientation } from '../src/characters/mobileUnit.js';
 import { mobileBillboardSize } from '../src/world/rmbFlats.js';

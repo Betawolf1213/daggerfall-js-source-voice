@@ -6,13 +6,13 @@
 // were in the cell when it fell heard it at the fall. The laws pinned here:
 //   - net/online.js delivers a halo's room word with its room; a take goes to the socket of the room that keeps the pile
 //     (INT9's sendWild `{ room }`); heldRooms() names my room and the halo's.
-//   - net/wildRemains.js keeps a record per room; a room still held keeps its piles across the crossing; a room let go
+//   - net/wild/wildRemains.js keeps a record per room; a room still held keeps its piles across the crossing; a room let go
 //     takes its own alone.
 //   - scenes/world.js hands the book every room it holds, and the take's room to sendWild.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createWildRemains } from '../src/net/wildRemains.js';
+import { createWildRemains } from '../src/net/wild/wildRemains.js';
 import { OnlineSession } from '../src/net/online.js';
 
 const pool = () => {

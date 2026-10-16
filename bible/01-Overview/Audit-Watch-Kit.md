@@ -59,7 +59,7 @@ service bundles: see The deploy.
 | M6 | Nit | A companion knocked out still stands one frame: a release or a bolt then healed a man being carried aboard, magicka spent. | Never one knocked out. |
 | M9 | Nit | With a party mate under the crosshair and a companion near, the ready said "Aim at your companion..." - and the click gave it to the mate. | Both crosshair targets first (the mate's, then mine), then the near ones, the mate's line first. |
 
-## The packs (`world.js`, `navalHost.js`, `worldModes.js`, `player/mobileEnemyActivate.js`, `net/realmGoldLaw.js`)
+## The packs (`world.js`, `navalHost.js`, `worldModes.js`, `player/mobileEnemyActivate.js`, `net/realm/realmGoldLaw.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|
@@ -165,7 +165,7 @@ its own line with its law intact. Re-aimed by content and killed again: `shipwat
 
 ## The deploy
 
-The account service bundles `src/net/realmGoldLaw.js` (the account deploy's path filter carries it): from its next
+The account service bundles `src/net/realm/realmGoldLaw.js` (the account deploy's path filter carries it): from its next
 deploy the first-save gate counts a companion's pack as customs does (P1). No migration, no relay change; the account
 version is unchanged, as at EMPIRE-ACCOUNT. The site and the service may land in either order - until the service
 deploys, its gate counts what it counted before. Server-account's own suites: 858 of 858.

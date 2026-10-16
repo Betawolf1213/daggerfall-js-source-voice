@@ -12,7 +12,7 @@ import { standService, T0 } from './accountDb.mjs';
 import { seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S, siegeStartMs, TITHE_CAP } from '../src/net/townSeatLaw.js';
 import { marketHallTitheCap, fortMaxTier } from '../src/net/fortLaw.js';
 import { _b64url } from '../src/net/identityToken.js';
-import { SIEGE_RECEIPT_V, SIEGE_RECEIPT_TTL_S } from '../src/net/siegeReceipt.js';
+import { SIEGE_RECEIPT_V, SIEGE_RECEIPT_TTL_S } from '../src/net/siege/siegeReceipt.js';
 import { fortsSeasonStatements, campsWorn } from '../server-account/src/seatForts.js';
 
 const { subtle } = globalThis.crypto;

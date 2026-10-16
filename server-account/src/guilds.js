@@ -6,7 +6,7 @@
 // founding takes "Gold and Renown", a guild is joined "Per character",
 // its ranks are "Four, renamed by the guildmaster", and the treasury is
 // the "Guildmaster only" to take from. What a guild is - its shapes,
-// its bounds, what each rank may do - is src/net/guildLaw.js, which the
+// its bounds, what each rank may do - is src/net/guild/guildLaw.js, which the
 // client reads too; this is the one roster every client sees.
 //
 // ═══ REGISTERED ONLY ═══════════════════════════════════════════════
@@ -31,7 +31,7 @@
 // character's save is the service's (realm.js), so its founding fee, its
 // deposit and its withdrawal move the record's gold in the SAME batch as
 // the guild's own write, guarded - both or neither (realm.js
-// prepareRealmRecord, net/realmGoldLaw.js). The two-write order above
+// prepareRealmRecord, net/realm/realmGoldLaw.js). The two-write order above
 // stays for any other character; a realm character must name where its
 // record stands, or it is refused (`realm-needed`).
 //
@@ -70,7 +70,7 @@
 import { accountKind, displayName, overRate } from './accounts.js';
 import { CHAR_ID_RE } from './service.js';
 import { prepareRealmRecord, realmActFirst, recordMovedOf, mustChange, dropObjects, dropIfUnnamed, REALM_ID_RE } from './realm.js';   // REALM P2.2; AUDIT REALM L1-F2: the record asked first; AUDIT REALM2 S2/S3
-import { payFromSave, creditSave } from '../../src/net/realmGoldLaw.js';   // REALM P2.2: the wallet's own order, over the record
+import { payFromSave, creditSave } from '../../src/net/realm/realmGoldLaw.js';   // REALM P2.2: the wallet's own order, over the record
 import { renownTrackOf } from './renownTracks.js';
 import { HANDLE_RE } from '../../src/net/handleShape.js';
 import { MARKS_LEDGER_SHOWN, MARKS_MAX } from '../../src/net/marksLaw.js';   // MARKS1: the guild's Marks lines shown; AUDIT GUILD3 S3: the room its going needs
@@ -81,8 +81,8 @@ import {
   GUILD_TREASURY_MAX, GUILD_LEDGER_SHOWN, GUILD_OPS_MAX, GUILD_OPS_WINDOW_S, GUILD_INVITE_TTL_S, GUILD_ID_RE, GUILD_MEMBER_RE,
   guildMay, guildMayMove, guildOutranks, guildNameOf, guildNameKey, guildTagOf, guildRankNamesOf, guildGoldOk,
   GUILD_RENAME_GOLD, GUILD_RENAME_COOLDOWN_S, guildRenameAt, guildRenameOpen,   // GUILD2a: a new name, for a price
-} from '../../src/net/guildLaw.js';
-import { vaultStanding, guildVaultSlots } from '../../src/net/guildVaultLaw.js';   // GUILD2b: the vault, in the guild's view
+} from '../../src/net/guild/guildLaw.js';
+import { vaultStanding, guildVaultSlots } from '../../src/net/guild/guildVaultLaw.js';   // GUILD2b: the vault, in the guild's view
 import { checkName, normaliseName, standsAlone, IMPERSONATION, textCaught } from '../../src/net/nameFilter.js';   // GUILD2a: a guild's name and tag pass the name filter (Seats-Arc 18 said they did)
 import { seatWeekOf } from '../../src/net/townSeatLaw.js';   // GUILD2a: no new name in a week the guild fights for a seat
 
@@ -697,8 +697,8 @@ export async function depositToGuild(ctx, player, { character, gold, realm = nul
 /** TAKE GOLD OUT - the guildmaster's alone (Mac: "Guildmaster only"), never more than the treasury holds. A realm
  *  character's record takes it here, with the treasury (REALM P2.2).
  *  GUILD-LETTER (FIELD BUGS 2026-09-30): `letter` true, the record takes it as a letter of credit, not as coin - the
- *  client weighed the coin against what its pack can carry (net/guildBook.js withdraw) and writes the same letter
- *  (net/realmGoldLaw.js creditSave, which reads nothing but `true`). A million gold weighs 2,500 kg. */
+ *  client weighed the coin against what its pack can carry (net/guild/guildBook.js withdraw) and writes the same letter
+ *  (net/realm/realmGoldLaw.js creditSave, which reads nothing but `true`). A million gold weighs 2,500 kg. */
 export async function withdrawFromGuild(ctx, player, { character, gold, realm = null, letter = false } = {}) {
   const { db, nowS } = ctx;
   const side = await realmActFirst(db, player.id, character, realm);   // AUDIT REALM L1-F2: where the record stands, before any other word

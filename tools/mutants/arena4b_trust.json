@@ -37,7 +37,7 @@
   },
   {
     "name": "ARENA4b-TRUST-CLAIM-BELIEVED",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "cl <= ARENA_CL_MAX ? cl : arenaLv(lv);",
     "new": "cl <= ARENA_CL_MAX ? Math.max(cl, arenaLv(lv)) : arenaLv(lv);",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "ARENA4b-TRUST-UNCAPPED",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "return ladderVitalityAt(Math.min(level, ladderLevelCap(tier)));",
     "new": "return ladderVitalityAt(Number.isSafeInteger(cl) && cl >= ARENA_CL_MIN && cl <= ARENA_CL_MAX ? Math.min(level, ladderLevelCap(tier)) : level);",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "ARENA4b-TRUST-CAP-TIER",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "for (const b of ARENA_LADDER_SPEC[tier] ?? []) for (const [m, l] of b)",
     "new": "for (const b of ARENA_LADDER_SPEC[0] ?? []) for (const [m, l] of b)",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "ARENA4b-TRUST-MARGIN",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "export const LADDER_LV_MARGIN = 5;",
     "new": "export const LADDER_LV_MARGIN = 0;",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "ARENA4b-TRUST-CAP-BEAST",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "top = Math.max(top, l ?? ARENA_BEASTS[m]?.[0] ?? 1);",
     "new": "top = Math.max(top, l ?? 1);",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "ARENA4b-TRUST-VITALITY-SLOPE",
-    "file": "src/net/arenaLaw.js",
+    "file": "src/net/arena/arenaLaw.js",
     "old": "Math.min(PVE_HP_MAX, 25 + 30 * Math.max(1,",
     "new": "Math.min(PVE_HP_MAX, 25 + 25 * Math.max(1,",
     "tests": [
@@ -128,7 +128,7 @@
   },
   {
     "name": "ARENA4b-TRUST-VITALITY-LEVEL",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "maxHealth: st.kind === 'pvp' ? (st.equal ? ARENA_PRIVATE_VITALITY : pvpVitality(x.lv)) : ladderVitality(x.cl, x.lv, st.tier),",
     "new": "maxHealth: st.kind === 'pvp' ? (st.equal ? ARENA_PRIVATE_VITALITY : pvpVitality(x.lv)) : ladderVitality(null, x.lv, st.tier),",
     "tests": [
@@ -137,7 +137,7 @@
   },
   {
     "name": "ARENA4b-TRUST-BRAIN-CL-LOST",
-    "file": "src/net/arenaBrain.js",
+    "file": "src/net/arena/arenaBrain.js",
     "old": "lv: x.lv ?? 1, cl: x.cl ?? null,",
     "new": "lv: x.lv ?? 1, cl: null,",
     "tests": [

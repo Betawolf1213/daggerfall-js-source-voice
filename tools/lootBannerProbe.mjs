@@ -42,7 +42,7 @@ import { createWeapon } from '/src/combat/enemyEquipment.js';
 import { mintAetheric, AETHERIC_RECORDS } from '/src/systems/aetheric.js';
 import { mintHourlock } from '/src/systems/gilded.js';
 import { mintIliacCard } from '/src/systems/iliac/iliacItems.js';
-import { ILIAC_CARDS } from '/src/net/iliacCards.js';
+import { ILIAC_CARDS } from '/src/net/iliac/iliacCards.js';
 import { addItem } from '/src/systems/inventory.js';
 
 setPref('lootRarity', true);

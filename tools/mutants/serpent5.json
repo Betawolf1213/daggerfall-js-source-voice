@@ -100,7 +100,7 @@
   },
   {
     "name": "SERPENT5-popped-when-held",
-    "file": "src/net/serpentClaims.js",
+    "file": "src/net/serpent/serpentClaims.js",
     "old": "if (answer.data.titleNew === true) hear(announce,",
     "new": "if (answer.data.title === true) hear(announce,",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "SERPENT5-the-keys",
-    "file": "src/net/serpentClaims.js",
+    "file": "src/net/serpent/serpentClaims.js",
     "old": "Object.freeze({ title: 'coilbreaker', aura: 'maelstrom' });",
     "new": "Object.freeze({ title: 'coilbreaker', aura: 'turninghour' });",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "SERPENT5-AUDIT-aura-popped-when-held",
-    "file": "src/net/serpentClaims.js",
+    "file": "src/net/serpent/serpentClaims.js",
     "old": "if (answer.data.auraNew === true) hear(announce,",
     "new": "if (answer.data.aura === true) hear(announce,",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "SERPENT5-AUDIT-an-older-service-says-the-maelstrom",
-    "file": "src/net/serpentClaims.js",
+    "file": "src/net/serpent/serpentClaims.js",
     "old": "if (answer.data.aura === true) say(SERPENT_CLAIM_TEXT.aura());",
     "new": "if (answer.data.aura !== false) say(SERPENT_CLAIM_TEXT.aura());",
     "tests": [

@@ -18,13 +18,13 @@ import assert from 'node:assert/strict';
 
 import { fakeRooms } from './fakeRoom.mjs';
 import { standService, T0 } from './accountDb.mjs';
-import { readArenaReceipt, mintArenaReceipt } from '../src/net/arenaReceipt.js';
-import { importReceiptKey } from '../src/net/gateReceipt.js';
+import { readArenaReceipt, mintArenaReceipt } from '../src/net/arena/arenaReceipt.js';
+import { importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import {
   ARENA_HALL, arenaBoutRoom, arenaExhibitionRoom, ARENA_FLOOR_CENTRE, ARENA_SPECTATORS_MAX, ARENA_TICK_MS, ARENA_KEEP_MS, ARENA_GONE_MS,
   pvpVitality, ladderVitality, ladderVitalityAt, ladderLevelCap, arenaLadderOf, eloAfter, ARENA_ELO_START,
-} from '../src/net/arenaLaw.js';
-import { exhibitionFor } from '../src/net/arenaExhibition.js';
+} from '../src/net/arena/arenaLaw.js';
+import { exhibitionFor } from '../src/net/arena/arenaExhibition.js';
 import { wallMsForClassicMinutes, sharedClassicMinutes } from '../src/net/wire.js';
 import { COUNT_MS, callMs } from '../src/systems/arena/arenaBout.js';
 import { _resetArenaCache } from '../server-account/src/arena.js';

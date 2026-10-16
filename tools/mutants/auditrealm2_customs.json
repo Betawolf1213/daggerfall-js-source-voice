@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDIT-REALM2-T1-the-law-lets-a-boat-leave",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (BOAT_TEMPLATES.includes(rec.templateIndex)) return false;  // a boat's parts or deed: what it stands for stays in the giver's save - AUDIT REALM2 T1\n",
     "new": "",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDIT-REALM2-T1-the-deed-unlisted",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "export const BOAT_TEMPLATES = Object.freeze([1320, 1321]);",
     "new": "export const BOAT_TEMPLATES = Object.freeze([1320]);",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDIT-REALM2-T1-the-parts-unlisted",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "export const BOAT_TEMPLATES = Object.freeze([1320, 1321]);",
     "new": "export const BOAT_TEMPLATES = Object.freeze([1321]);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDIT-REALM2-T7-the-index-left-where-it-stood",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (Number.isSafeInteger(save.lightSourceIndex)) save.lightSourceIndex = save.items.indexOf(lit);\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDIT-REALM2-T7-an-index-written-where-none-was",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "  if (Number.isSafeInteger(save.lightSourceIndex)) save.lightSourceIndex = save.items.indexOf(lit);\n",
     "new": "  save.lightSourceIndex = save.items.indexOf(lit);\n",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDIT-REALM2-T7-a-record-gone-still-lit",
-    "file": "src/net/realmTradeLaw.js",
+    "file": "src/net/realm/realmTradeLaw.js",
     "old": "save.lightSourceIndex = save.items.indexOf(lit);",
     "new": "save.lightSourceIndex = save.items.includes(lit) ? save.items.indexOf(lit) : save.lightSourceIndex;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDIT-REALM2-T2-a-placed-boat-s-hold-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  for (const boat of csa?.placedBoats ?? []) out.push(...lists(boat?.Items));\n",
     "new": "",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDIT-REALM2-T2-a-packed-cargo-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  out.push(...lists(...Object.values(csa?.packedCargoes ?? {})));\n",
     "new": "",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDIT-REALM2-T2-the-mod-s-record-misnamed",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "const CSA_VENDOR = 'come-sail-away';",
     "new": "const CSA_VENDOR = 'comeSailAway';",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDIT-REALM2-T5-a-treasure-pile-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    for (const c of scene?.lootContainers ?? []) out.push(...lists(c?.items));",
     "new": "    for (const c of scene?.lootContainers ?? []) if (c?.containerType !== 1) out.push(...lists(c?.items));",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDIT-REALM2-T5-a-body-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    for (const c of scene?.lootContainers ?? []) out.push(...lists(c?.items));",
     "new": "    for (const c of scene?.lootContainers ?? []) if (c?.containerType !== 2) out.push(...lists(c?.items));",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDIT-REALM2-T5-a-shop-shelf-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "    for (const c of scene?.lootContainers ?? []) out.push(...lists(c?.items));",
     "new": "    for (const c of scene?.lootContainers ?? []) if (c?.containerType !== 4) out.push(...lists(c?.items));",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDIT-REALM2-T5-a-dungeon-s-treasure-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  for (const pile of [...(world?.piles ?? []), ...(world?.droppedLoot ?? [])]) out.push(...lists(pile?.items));",
     "new": "  for (const pile of (snap?.dungeon ? world?.droppedLoot : world?.piles) ?? []) out.push(...lists(pile?.items));",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDIT-REALM2-T5-the-fallen-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  for (const foe of world?.foes ?? []) if (foe?.dead) out.push(...lists(foe.items));\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDIT-REALM2-T5-a-living-foe-s-purse-counted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "if (foe?.dead) out.push(...lists(foe.items));",
     "new": "out.push(...lists(foe.items));",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDIT-REALM2-T3-the-ship-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "value: shipSellPrice(ship) });",
     "new": "value: 0 });",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDIT-REALM2-T3-a-house-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "value: Math.trunc(CUSTOMS_HOUSE_PRICE * DEED_SELL_MULT) });",
     "new": "value: 0 });",
     "tests": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "AUDIT-REALM2-T3-a-house-at-its-full-price",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "value: Math.trunc(CUSTOMS_HOUSE_PRICE * DEED_SELL_MULT) });",
     "new": "value: CUSTOMS_HOUSE_PRICE });",
     "tests": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "AUDIT-REALM2-T3-the-house-price-moved",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "export const CUSTOMS_HOUSE_PRICE = 100_000;",
     "new": "export const CUSTOMS_HOUSE_PRICE = 50_000;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "AUDIT-REALM2-T3-a-sold-slot-counted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "if (slot?.buildingKey > 0 && !slot.crossed) deeds.push(",
     "new": "if (slot && !slot.crossed) deeds.push(",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "AUDIT-REALM2-T3-the-ship-s-room-misnamed",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "roomOf(interiorSceneName(SHIP_INTERIOR_MAP_IDS[ship], BUILDING_KEY_0))",
     "new": "roomOf(interiorSceneName(SHIP_INTERIOR_MAP_IDS[ship], 0))",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "AUDIT-REALM2-T3-a-house-s-room-misnamed",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "roomOf(interiorSceneName(slot.mapId, slot.buildingKey))",
     "new": "roomOf(interiorSceneName(slot.buildingKey, slot.mapId))",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "AUDIT-REALM2-T3-the-pieces-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  for (const d of deeds) d.value += decorSaleBack(d.room?.decor);\n",
     "new": "",
     "tests": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "AUDIT-REALM2-T3-deeds-uncounted",
-    "file": "src/net/realmGoldLaw.js",
+    "file": "src/net/realm/realmGoldLaw.js",
     "old": "  const deeds = deedsOf(snap).reduce((s, d) => s + d.value, 0);",
     "new": "  const deeds = 0;",
     "tests": [

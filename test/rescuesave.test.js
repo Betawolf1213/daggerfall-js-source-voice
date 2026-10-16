@@ -28,7 +28,7 @@ import {
   REALM_UNSENT_PREFIX, REALM_UNSENT_GRACE_MS, REALM_HELD_FIELD, REALM_RESTORED_TEXT,
 } from '../src/systems/realmSaves.js';
 import { offlineCopyOf } from '../src/systems/offlineCopy.js';
-import { REALM_TEXT_MAX_BYTES } from '../src/net/realmSaveCodec.js';
+import { REALM_TEXT_MAX_BYTES } from '../src/net/realm/realmSaveCodec.js';
 import { createSpoilsPool, spoilsStore, recoverSpoils, SPOILS_STORE_KEY, SPOILS_TEXT } from '../src/scenes/spoilsPool.js';
 import { raidSpoilsList, raidSpoilsDay, RAID_SPOILS_KEYS, RAID_SPOILS_TEXT, RAID_SPOILS_RECORDS_MAX } from '../src/systems/raidSpoils.js';
 import { r2, freshSave, layRecord } from './realmSeat.mjs';

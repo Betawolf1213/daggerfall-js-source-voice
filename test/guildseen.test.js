@@ -2,7 +2,7 @@
 // does"): THE ROSTER SAYS WHEN EACH MEMBER WAS LAST ONLINE. The service's view carries each member's `seenAt` - the
 // account's last play beat (ACC4's `played_at`), or its last authenticated call where it never beat - driven through
 // the real Worker over node:sqlite with every migration applied (server-account/src/guilds.js viewOf); the book's law
-// over it (net/guildBook.js guildMemberOnline, guildSeenText) and a look that moves a stamp alone repainting nothing;
+// over it (net/guild/guildBook.js guildMemberOnline, guildSeenText) and a look that moves a stamp alone repainting nothing;
 // and the Members page's dot and line, read again on the live pass (ui/socialPanel.js). bible/11-Multiplayer/
 // Guild-Overhaul.md GUILD-SEEN.
 import { test } from 'node:test';
@@ -11,8 +11,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
-import { GUILD_RANK_NAMES, guildNameOf, guildNameKey } from '../src/net/guildLaw.js';
-import { GuildBook, guildMemberOnline, guildSeenText } from '../src/net/guildBook.js';
+import { GUILD_RANK_NAMES, guildNameOf, guildNameKey } from '../src/net/guild/guildLaw.js';
+import { GuildBook, guildMemberOnline, guildSeenText } from '../src/net/guild/guildBook.js';
 import { PLAY_BEAT_S, PLAY_GRACE_S } from '../src/net/playClock.js';
 import { createSocialPanel } from '../src/ui/socialPanel.js';
 import { SocialState } from '../src/net/social.js';

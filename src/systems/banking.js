@@ -456,7 +456,7 @@ const mustValidate = (accounts, regionIndex) => {
  *  became the bank of the Empire). Gold paid in at any branch is drawn at any branch, and every deed, sale and wallet
  *  pays from it and into it. A LOAN STILL STANDS WHERE IT WAS TAKEN - its due date, its default and the reputation a
  *  default costs are that region's - but the gold it lends and the gold that repays it are the Empire account's.
- *  Offline, Daggerfall's sixty-two accounts stand. The service pays a realm record the same way (net/realmGoldLaw.js
+ *  Offline, Daggerfall's sixty-two accounts stand. The service pays a realm record the same way (net/realm/realmGoldLaw.js
  *  REALM_EMPIRE_ACCOUNT, pinned equal). */
 export const EMPIRE_ACCOUNT_REGION = 17;
 /** The index whose `accountGold` region `regionIndex`'s gold moves in: the Empire's online, the region's own offline (or

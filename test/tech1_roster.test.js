@@ -19,8 +19,8 @@ import { seedTestLoot, TECHNIQUE_TEST_BASES } from '../src/systems/testRoom.js';
 import { THUNDERLOCK_TEMPLATE, PELLET_TEMPLATE } from '../src/characters/thunderlockIds.js';
 import { validLootItem } from '../src/systems/loot/loot.js';
 import { ACCOUNT_VERSION } from '../server-account/src/service.js';
-import { ARENA_SPEED_MAX, ARENA_HIT_HZ_MAX } from '../src/net/arenaLaw.js';
-import { SIEGE_SPEED } from '../src/net/siegeRef.js';
+import { ARENA_SPEED_MAX, ARENA_HIT_HZ_MAX } from '../src/net/arena/arenaLaw.js';
+import { SIEGE_SPEED } from '../src/net/siege/siegeRef.js';
 
 const lcg = (seed) => { let s = (seed >>> 0) || 1; return () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; };
 const on = () => { _resetForTests(); setPref('lootRarity', true); LR._setTechniqueForTests(null); };

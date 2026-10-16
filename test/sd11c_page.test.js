@@ -20,22 +20,22 @@ import { sdCities, sdTemplates } from '../src/systems/superDungeon/sdSite.js';
 import { scanGatePixels } from '../src/systems/gate/gateSite.js';
 import { LOCATION_TYPES, CLIMATES } from '../src/formats/mapsFile.js';
 import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
-import { sdFirst, sdRise, sdFind, sdFell, sdGone, sdFoundLine, SD_COLLAPSE_MS, SD_CAST_OUT_LINE, SD_NO_CLOSED, isSdRoom, sdRoomKey } from '../src/net/sdLaw.js';
+import { sdFirst, sdRise, sdFind, sdFell, sdGone, sdFoundLine, SD_COLLAPSE_MS, SD_CAST_OUT_LINE, SD_NO_CLOSED, isSdRoom, sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
 import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook, sdRiftPlace, sdReturnPlace, sdLandingPlace, inSdPortal, SD_LANDING_PAST_M, SD_RETURN_REACH_M, SD_ENTERED_KEY, SD_ENTERED_MAX } from '../src/world/superDungeon/sdDungeon.js';
 import { SD_REALM_TEXT } from '../src/world/superDungeon/sdRealm.js';
 import { createSpoilsPool, spoilsStore, spoilsLevel, SPOILS_SPENT_RESEND_MS, SPOILS_SPENT_MAX, SPOILS_KEYS } from '../src/scenes/spoilsPool.js';
-import { createSdClaims, SD_CLAIMS_MAX, SD_CLAIMS_ALL_MAX } from '../src/net/sdClaims.js';
-import { createDuelRecords } from '../src/net/duelRecord.js';
+import { createSdClaims, SD_CLAIMS_MAX, SD_CLAIMS_ALL_MAX } from '../src/net/superDungeon/sdClaims.js';
+import { createDuelRecords } from '../src/net/duel/duelRecord.js';
 import { profileView, profileRenown, profileDuelLine, profileGateLine, profileRaidLine, profileSerpentLine, profileSdLine } from '../src/ui/profileWindow.js';
-import { mintSdReceipt, readSdReceipt } from '../src/net/sdReceipt.js';
+import { mintSdReceipt, readSdReceipt } from '../src/net/superDungeon/sdReceipt.js';
 import { sdSpoilsDay, sdSpoilsList, SD_SPOILS_TEXT } from '../src/systems/superDungeon/sdSpoils.js';
 import { SOCIAL_ROOM, validSdOut } from '../src/net/wire.js';
 import {
   newRemnantFight, joinRemnant, stepRemnant, applyRemnantHit, applyEchoHit, applyHeartHit, heartsOpen, remnantStateOf,
   SD_PHASE_AT, SD_OPENING_MS, SD_BREAK_MS, SD_BLOWS, SD_BODY,
-} from '../src/net/sdRemnant.js';
-import { HIT_KINDS, dpsRef } from '../src/net/gateBrain.js';
-import { SD_FIGHT_EMPTY, SD_FIGHT_TEXT, foldSdFight, createSdFightLink, sdBodyAt, sdBlowDone, sdHeartsOf } from '../src/net/sdFightLink.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { HIT_KINDS, dpsRef } from '../src/net/gate/gateBrain.js';
+import { SD_FIGHT_EMPTY, SD_FIGHT_TEXT, foldSdFight, createSdFightLink, sdBodyAt, sdBlowDone, sdHeartsOf } from '../src/net/superDungeon/sdFightLink.js';
 import { sdBlowsInFlight } from '../src/scenes/sdRemnantBlows.js';
 import { SD_BAR_TEXT } from '../src/ui/sdRemnantBar.js';
 import { setPref, _resetForTests } from '../src/systems/uiPrefs.js';
@@ -51,7 +51,7 @@ import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { dungeonStartDoorFor } from '../src/systems/save/save.js';
 import { respawnFlavorText } from '../src/systems/deathRespawn.js';
-import { SD_FIGHT_TEXT as FIGHT_WORDS } from '../src/net/sdFightLink.js';
+import { SD_FIGHT_TEXT as FIGHT_WORDS } from '../src/net/superDungeon/sdFightLink.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');

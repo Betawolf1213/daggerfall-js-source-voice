@@ -1,6 +1,6 @@
 // SEAT2a (2026-10-01, Mac: "Finish the seats"; "Or we could go ahead and do sieges"; "Continue"): THE BATTLE'S LAW -
-// net/siegeRef.js's battlefield (the banners, the Throne, the clock, the no-shows, Honours), the service's pass
-// (net/identityToken.js's `siege` order) and the relay's receipt (net/siegeReceipt.js). bible/11-Multiplayer/Seats-Arc.md
+// net/siege/siegeRef.js's battlefield (the banners, the Throne, the clock, the no-shows, Honours), the service's pass
+// (net/identityToken.js's `siege` order) and the relay's receipt (net/siege/siegeReceipt.js). bible/11-Multiplayer/Seats-Arc.md
 // 6.2-6.8; `06-Systems/Online-Arc.md` SEAT2a (part two).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,12 +8,12 @@ import {
   SIEGE_BANNER, SIEGE_THRONE, SIEGE_LENGTH_MS, SIEGE_FORFEIT_MS, SIEGE_SPECTATORS_MAX, SIEGE_TICK_MS, SIEGE_UNITS_PER_M, SIEGE_OPENS_MS,
   fieldOf, newBattle, battleStep, honoured, siegeNextBeat, siegeCampPose, siegeFieldFrame, siegeBannerCount,
   siegeBreach,   // SEAT2b part two (b): a crown's Gatehouse breached
-} from '../src/net/siegeRef.js';
+} from '../src/net/siege/siegeRef.js';
 import { BATTLE_LENGTH_MS, SIGN_CLOSES_MS } from '../src/net/townSeatLaw.js';
 import { mintSiegeOrder, verifyOrder, orderValid, siegePassValid, SIEGE_PASS_SPAN_S } from '../src/net/identityToken.js';
-import { mintSiegeReceipt, readSiegeReceipt, verifySiegeReceipt, siegeReceiptValid, SIEGE_RECEIPT_TTL_S, SIEGE_RESULTS } from '../src/net/siegeReceipt.js';
+import { mintSiegeReceipt, readSiegeReceipt, verifySiegeReceipt, siegeReceiptValid, SIEGE_RECEIPT_TTL_S, SIEGE_RESULTS } from '../src/net/siege/siegeReceipt.js';
 import { mintWatchReceipt, verifyWatchReceipt } from '../src/net/watchReceipt.js';
-import { verifyReceipt } from '../src/net/gateReceipt.js';
+import { verifyReceipt } from '../src/net/gate/gateReceipt.js';
 import { parseClient, relayFightsBattles, SIEGE_BATTLE_RELAY_MIN } from '../src/net/wire.js';
 
 const { subtle } = globalThis.crypto;

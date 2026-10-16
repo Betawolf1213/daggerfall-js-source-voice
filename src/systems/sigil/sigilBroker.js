@@ -38,7 +38,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { seededRng } from '../wind/wind.js';
-import { gateHash } from '../../net/gateLaw.js';
+import { gateHash } from '../../net/gate/gateLaw.js';
 import { setItemFields, mintCondition } from '../item/itemTemplates.js';
 import { ARMOR_MATERIAL } from '../armorMaterials.js';
 import { WEAPON_MATERIALS } from '../../characters/weapons.js';

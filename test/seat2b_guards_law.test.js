@@ -1,5 +1,5 @@
 // SEAT2b part two (c) (2026-10-01, Mac: "Finish the seats"; "Let's pick up 482"): THE RELAY'S OWN FIGHTERS' LAW -
-// net/siegeRef.js's Barracks guards and a revolt's rising (their posts, their beat, their blows, their falls and rises,
+// net/siege/siegeRef.js's Barracks guards and a revolt's rising (their posts, their beat, their blows, their falls and rises,
 // a guard counted at a point, the revolt's end and its Honours), the field's frame and the wire that carries them
 // (net/wire.js), the revolt's pass (net/identityToken.js) and the schedule's law for a revolt (net/townSeatLaw.js).
 // bible/11-Multiplayer/Seats-Arc.md 6.1, 7.5, 7.7; `06-Systems/Online-Arc.md` SEAT2b part two (c).
@@ -9,7 +9,7 @@ import {
   SIEGE_NPC, SIEGE_NPC_KINDS, SIEGE_BARRACKS_GUARDS, SIEGE_REVOLT, SIEGE_NPC_MAX, SIEGE_LENGTH_MS, SIEGE_UNITS_PER_M, SIEGE_TICK_MS, SIEGE_PROTECT_MS,
   isSiegeNpcId, siegeGuards, revoltRising, siegeNpcAt, siegeNpcPose, siegeNpcFell, siegeNpcFoe, siegeRevoltDown, siegeVitality,
   fieldOf, newBattle, battleStep, honoured, siegeFieldFrame, newFighter, worksOf, siegeNextWave, siegeWaveMs, refereeBlow, siegeCampPose,
-} from '../src/net/siegeRef.js';
+} from '../src/net/siege/siegeRef.js';
 import { barracksGuards, REVOLT } from '../src/net/fortLaw.js';
 import {
   BATTLE_LENGTH_MS, battleLengthMs, battleSpanMs, placeBattles, siegeStartMs, CROWN_SIEGE_SLOT, settleField, turningPlan, chronicleLine, seatBattleLine,

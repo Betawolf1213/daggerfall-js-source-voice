@@ -202,8 +202,8 @@ node tools/realmReview.mjs repair <the id it names> fb1014-summon-offer 8 0x40 1
 
 ## PVP-LOOT: the killer's worn piece is the order's, never the friend law's (11)
 
-`src/net/wildLaw.js` remainsNamedFor, takeFrom; `server/src/index.js` `_wildWord` (relay world205, world201 on its branch and world203 on the integration); then Mac's two
-decisions: `src/net/wildRef.js` wildKin, the escrow (`server-account/src/wild.js`, acct136, acct133 on its branch and acct134 on the integration). Read on main's `7c291d36`.
+`src/net/wild/wildLaw.js` remainsNamedFor, takeFrom; `server/src/index.js` `_wildWord` (relay world205, world201 on its branch and world203 on the integration); then Mac's two
+decisions: `src/net/wild/wildRef.js` wildKin, the escrow (`server-account/src/wild.js`, acct136, acct133 on its branch and acct134 on the integration). Read on main's `7c291d36`.
 
 THE REPORT. A player killed another in the open zone (`11-Multiplayer/Wild-Zone.md`), searched the body and chose one of
 its worn pieces: it left the fallen and never came to the killer.

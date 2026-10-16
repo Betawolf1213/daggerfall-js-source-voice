@@ -36,7 +36,7 @@ import { regionChapters } from './npcHalls.js';
 import { REALM_ID_RE } from './realm.js';
 import { regionOk } from '../../src/net/nodeLaw.js';
 import { utcDay } from '../../src/net/marksLaw.js';
-import { gateTimes } from '../../src/net/gateLaw.js';   // AUDIT CHAP3 E1: the week a gate rose in
+import { gateTimes } from '../../src/net/gate/gateLaw.js';   // AUDIT CHAP3 E1: the week a gate rose in
 import { MAX_REPUTATION } from '../../src/systems/guild/guildFactions.js';
 import {
   RECEIPT_KINDS, receiptCreditsOf, receiptRef, receiptWritRef, hallReceiptKindsOf, hallHidden, meritOfReceipt, meritWeekOf,

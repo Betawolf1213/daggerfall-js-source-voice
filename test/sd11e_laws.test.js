@@ -14,15 +14,15 @@ import {
   handSwept, behindPillar, windupFor, blowsFor, pairWay, heartCountFor, heartRingFor, inArena, arenaOf, ringPassed,
   SD_BLOWS, SD_BODY, SD_ECHO, SD_REM, SD_HEART, SD_HEARTS, SD_HEARTS_CLOSE_MS, SD_PILLARS, SD_PHASE_AT, SD_OPENING_MS,
   SD_ARENA_SLACK,
-} from '../src/net/sdRemnant.js';
-import { sdBlowVerdict, SD_STRIKE_LATE_MS } from '../src/net/sdStrike.js';
-import { createSdFightLink, sdHourOver } from '../src/net/sdFightLink.js';
+} from '../src/net/superDungeon/sdRemnant.js';
+import { sdBlowVerdict, SD_STRIKE_LATE_MS } from '../src/net/superDungeon/sdStrike.js';
+import { createSdFightLink, sdHourOver } from '../src/net/superDungeon/sdFightLink.js';
 import { validSdOut } from '../src/net/wire.js';
-import { SD_PILLAR_W } from '../src/net/sdBrain.js';
-import { sdRiddleText, sdRiddleHolds, sdHour } from '../src/net/sdBrain.js';
-import { sdNameOf, sdRoll, SD_NAMES } from '../src/net/sdLaw.js';
+import { SD_PILLAR_W } from '../src/net/superDungeon/sdBrain.js';
+import { sdRiddleText, sdRiddleHolds, sdHour } from '../src/net/superDungeon/sdBrain.js';
+import { sdNameOf, sdRoll, SD_NAMES } from '../src/net/superDungeon/sdLaw.js';
 import { sdSalt } from '../src/systems/superDungeon/sdSite.js';
-import { HIT_KINDS, dpsRef, MELEE_REACH } from '../src/net/gateBrain.js';
+import { HIT_KINDS, dpsRef, MELEE_REACH } from '../src/net/gate/gateBrain.js';
 import { runSpeed, JUMP_SPEED, GRAVITY, CAPSULE_RADIUS } from '../src/player/motor.js';
 import { createSdRemnant, remnantOpenAt } from '../src/scenes/sdRemnant.js';
 import { sdTelegraphShapes } from '../src/scenes/sdRemnantBlows.js';
@@ -321,7 +321,7 @@ test('SD11e NOBODY ON THE STEPS (L4 C2): the arena\'s own slack keeps every poin
   assert.equal(f.players.a.seenAt, T0, 'not seen from the Steps');
   const R = read('server/src/index.js');
   assert.match(R, /if \(!inArena\(at\.x, at\.z, SD_ARENA_SLACK\)\) return;\s+\/\/ from the arena alone/);
-  assert.match(read('src/net/sdStrike.js'), /if \(inArena\(px, pz, SD_ARENA_SLACK\)\) hits\.push\(\{ part: 'all', pct, base: A\.base \}\);/);   // PIN MOVED (AUDIT SD III F3): the whole arena's blow judged however late - still on the arena's own slack
+  assert.match(read('src/net/superDungeon/sdStrike.js'), /if \(inArena\(px, pz, SD_ARENA_SLACK\)\) hits\.push\(\{ part: 'all', pct, base: A\.base \}\);/);   // PIN MOVED (AUDIT SD III F3): the whole arena's blow judged however late - still on the arena's own slack
 });
 
 // ── the words and the comments (L4 C4, C5, C6; the docs lens) ──────────
@@ -339,7 +339,7 @@ test('SD11e THE WORDS AND THE COMMENTS (L4 C4, C5, C6; the docs lens): the mirro
   assert.equal(sdNameOf(s, "Bel$'ar").includes("Bel$'ar"), true);
   assert.equal(sdSalt(1), sdSalt(2048), 'slot 1 and slot 2048 share a salt');
   assert.equal(new Set(Array.from({ length: 2047 }, (_, k) => sdSalt(k + 1))).size, 2047, 'and every slot between has its own');
-  const site = read('src/systems/superDungeon/sdSite.js'), law = read('src/net/sdLaw.js');
+  const site = read('src/systems/superDungeon/sdSite.js'), law = read('src/net/superDungeon/sdLaw.js');
   assert.match(site, /a slot's own until the 2047th Hollow after it/);
   assert.equal(/2048th Hollow/.test(site) || /largest cities/.test(site), false, 'no comment says what the code does not');
   assert.match(site, /SD_GREAT_CITIES cities by that same claim/);

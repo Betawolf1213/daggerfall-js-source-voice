@@ -53,7 +53,7 @@ import {
   SD_REALM_ARENA_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES, SD_RIM_H, SD_TOOTH_TOP, SD_TOOTH_OUT, SD_TOOTH_PITCH, SD_ARENA_BANDS,
   SD_COMPASS, SD_ARRIVE_Z, SD_INLAY_H, realmClamp,
 } from '../src/world/superDungeon/sdRealm.js';
-import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_WALK, dungeonToRealm, realmToDungeon } from '../src/net/sdBrain.js';
+import { SD_THRESHOLD, SD_ORRERY, SD_ARENA, SD_WALK, dungeonToRealm, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
 import { SD_FX_COLOR } from '../src/scenes/sdFx.js';
 import { SD_GLOW_COLORS } from '../src/world/superDungeon/sdHallArt.js';
 import { SD_BEAM_CORE } from '../src/render/sdBeam.js';
@@ -250,7 +250,7 @@ import { sdRiftFace, riftLook, SD_RIFT_OPEN_LOOK, SD_RIFT_NOT_YET, SD_RIFT_CLOSE
 import { irisPositions, SD_RIFT_PARTS, riftCentreY } from '../src/world/superDungeon/sdRiftModel.js';
 import { createSdEnd } from '../src/scenes/sdEnd.js';
 import { SD_WINDOW_FS, SD_FLOOR_FS } from '../src/render/sdRiftPass.js';
-import { sdRise, sdFind, sdFell, SD_COLLAPSE_MS } from '../src/net/sdLaw.js';
+import { sdRise, sdFind, sdFell, SD_COLLAPSE_MS } from '../src/net/superDungeon/sdLaw.js';
 
 /** A box hall the collider answers: x0..x1, z0..z1, floor 0, ceiling h; `pillar` { x, z, half } a square column. */
 function boxHall({ x0 = -5, x1 = 5, z0 = -15, z1 = 15, h = 8, pillar = null } = {}) {
@@ -538,8 +538,8 @@ test('SD-LOOK THE VEIL CLOSES ON THE RIFT (S5): the world host hands the veil wh
 // S7 - THE ARENA'S READS: the floor tells the clock's blows.
 // ---------------------------------------------------------------------------------------------------------------------
 import { SD_FISSURES, SD_FLOOD, SD_ARENA_NUMERALS, SD_ARENA_CELL_M, SD_RESET_EMBER, SD_ARENA_GLOW_FS, sdFissurePaths, sdFissureField, sdArenaGlowAt, sdHourClockOf } from '../src/render/sdArenaGlow.js';
-import { SD_ARENA as SD_ARENA_AT } from '../src/net/sdBrain.js';
-import { SD_BLOWS } from '../src/net/sdRemnant.js';
+import { SD_ARENA as SD_ARENA_AT } from '../src/net/superDungeon/sdBrain.js';
+import { SD_BLOWS } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_SKY_MODE as SKY_MODE } from '../src/render/sdSky.js';
 
 const glowMemo = () => ({ flood: -1, floodK: 0, reset: -1, end: 0, pulseAt: -Infinity });
@@ -629,7 +629,7 @@ test('SD-LOOK THE RIM\'S NUMERALS COUNT THE RESET (S7, the shader): I lights fir
 });
 
 import { SD_STOMP_WALL, SD_STOMP_WALL_FS, sdStompWalls, sdStompWallRecords, sdStompWallVertices } from '../src/render/sdStompWall.js';
-import { stompRingAt } from '../src/net/sdRemnant.js';
+import { stompRingAt } from '../src/net/superDungeon/sdRemnant.js';
 
 test('SD-LOOK THE STOMP\'S RING STANDS AS A WALL (S7): while a Stomp rolls - the Remnant\'s and each living Echo\'s - a wall stands at the very front the law strikes (stompRingAt), fading over its roll\'s last fifth; none before it lands or after; a fallen Echo stands none; banded light rising to a bright lip; the strip closed all round (mutants: a fallen Echo\'s wall; never fading; the lip dropped)', () => {
   const t = 3_000_000, S = SD_BLOWS.stomp, out = sdStompWallRecords();
@@ -672,10 +672,10 @@ test('SD-LOOK THE HOLD IS SEEN (S7): the hold\'s curtain the same wall in gold, 
 // S8 - THE BRASS REMNANT: its body in plates, its heart a light.
 // ---------------------------------------------------------------------------------------------------------------------
 import { buildRemnantParts as remParts, buildRemnantModel as remModel, SD_REMNANT_KIT, SD_REMNANT_BODY as REM_B, SD_REMNANT_PARTS as REM_PARTS } from '../src/world/superDungeon/sdRemnantModel.js';
-import { SD_REM as REM_LAW } from '../src/net/sdRemnant.js';
+import { SD_REM as REM_LAW } from '../src/net/superDungeon/sdRemnant.js';
 import { SD_REM_HAND } from '../src/scenes/sdRemnantRig.js';
 import { createSdRemnant, sdHeartBeat, SD_HEART_LIGHT } from '../src/scenes/sdRemnant.js';
-import { SD_ENDINGS as ENDINGS } from '../src/net/sdMarks.js';
+import { SD_ENDINGS as ENDINGS } from '../src/net/superDungeon/sdMarks.js';
 
 const vertsOf = (m) => Array.from({ length: m.positions.length / 3 }, (_, i) => [m.positions[i * 3], m.positions[i * 3 + 1], m.positions[i * 3 + 2]]);
 
@@ -846,7 +846,7 @@ test('SD-LOOK THE HAND-PLATE (S6): a silver plate on the Return\'s sill, the han
 
 import { createSdFx, SD_FX_EXHALE, SD_EXHALE_AT } from '../src/scenes/sdFx.js';
 import { SD_EXHALE_MS } from '../src/scenes/sdEnd.js';
-import { realmToDungeon as r2d, SD_ARENA as ARENA } from '../src/net/sdBrain.js';
+import { realmToDungeon as r2d, SD_ARENA as ARENA } from '../src/net/superDungeon/sdBrain.js';
 import { SD_WAY_BACK_Z as WB_Z } from '../src/world/superDungeon/sdRealm.js';
 test('SD-LOOK THE ARRIVAL EXHALE (S6): my first frame in the Hour on the Threshold breathes brass sparks from the way back\'s face (resting on the Threshold, falling past its rim) and turns its ring once, forward, eased over SD_EXHALE_MS - once an arrival, never while I stay, again after I leave and come back, never for feet first seen elsewhere; the hosts carry it; never under the veil, and after any frame out of the Hour (AUDIT SD V S5, L5) (mutants: never exhaling; every frame; the ring never turning; the hosts unwired; under the veil; the latch kept)', () => {
   let t = 10_000, f = null, told = 0;

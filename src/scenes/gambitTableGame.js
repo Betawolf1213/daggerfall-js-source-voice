@@ -70,7 +70,7 @@ import {
   dealLine, barkInvite, barkEnd, onlineRefusal,
 } from '../ui/gambitTableWords.js';
 import { RemoteGambitTable, RemoteGambitSession } from '../systems/gambit/gambitRemoteTable.js';
-import { GAMBIT_ONLINE_STAKES } from '../net/gambitStakes.js';
+import { GAMBIT_ONLINE_STAKES } from '../net/gambit/gambitStakes.js';
 import { stakeShort, stakeDiffers, stakeChoose, stakeRefusal } from '../ui/gambitTableWords.js';
 import { gambitPlaces, gambitPressCell, gambitLean, gambitCardHeight, GAMBIT_CARD_FOOT } from '../world/gambitCloth.js';
 import { createGambitMotion } from '../world/gambitMotion.js';
@@ -537,7 +537,7 @@ export function openGambitTableGame(d) {
   }
   /** KG6: READY AT THE GOLD TABLE - the stake asked of the realm service (the record's own act: the purse checkpointed,
    *  the gold held out of it while asked), then the relay's Ready with the service's order on it. A stake the relay
-   *  never spends (a refusal, a lost word, a panel closed) is the stake book's to void back (net/cardStakes.js voidable). */
+   *  never spends (a refusal, a lost word, a panel closed) is the stake book's to void back (net/card/cardStakes.js voidable). */
   async function readyStaked() {
     const amount = g.stakePick;
     if (amount === null || !d.online?.stake) { g.why = onlineRefusal('stake needed'); return; }

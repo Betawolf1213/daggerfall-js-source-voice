@@ -17,13 +17,13 @@
 // silent rather than naming nowhere.
 //
 // Not a DFU member. Ledger A (WB).
-import { gateAt, gatePhase, gateCountdown, countdownText, countdownWords, gateMarked, gateStands, gateBossOf, gateModsOf, riseLine, wrathLine, marksLine, GATE_OPEN_MINUTE, GATE_SEAL_MINUTE, GATE_WRATH_MINUTE, GATE_DAY_MINUTES, GATE_COLLAPSE_MS, PIXEL_M } from '../../net/gateLaw.js';
-import { gateModsWords } from '../../net/gateMods.js';   // WB8c: tonight's marks on the card
+import { gateAt, gatePhase, gateCountdown, countdownText, countdownWords, gateMarked, gateStands, gateBossOf, gateModsOf, riseLine, wrathLine, marksLine, GATE_OPEN_MINUTE, GATE_SEAL_MINUTE, GATE_WRATH_MINUTE, GATE_DAY_MINUTES, GATE_COLLAPSE_MS, PIXEL_M } from '../../net/gate/gateLaw.js';
+import { gateModsWords } from '../../net/gate/gateMods.js';   // WB8c: tonight's marks on the card
 import { GATE_TOWN_MAX_PX } from './gateSite.js';
-import { RITE_OMEN_LINE, cageStands } from '../../net/gateRite.js';   // BROKER-CAGE: the Broker's cage, omen to midnight
+import { RITE_OMEN_LINE, cageStands } from '../../net/gate/gateRite.js';   // BROKER-CAGE: the Broker's cage, omen to midnight
 
 // TIME1 (bible/06-Systems/Online-Time-Arc.md section 7): THE GATE SAYS REAL TIMES ALONE. Its schedule is the EVENT
-// clock's (net/gateLaw.js, unchanged: a gate every two real hours, its phases the same real minutes), and the sky the
+// clock's (net/gate/gateLaw.js, unchanged: a gate every two real hours, its phases the same real minutes), and the sky the
 // player sees turns at its own rate, so the event clock's game time ("opens there at 20:00") would contradict the
 // clock in front of them. The three lines that named a time say this machine's local time alone, in WB12's words
 // (WB13b). gateLaw.js's own three, in the relay's bundle, retired with WB12's relay deploy (world151), the one that
@@ -42,7 +42,7 @@ export const insideGateRing = (mark, px, py, slack = 1) => !!mark && Math.hypot(
  *  south-west corner) plus the spot, [east, north] metres - spawned dungeons' own sum (scenes/world.js, the sight line). */
 export const gateSceneXZ = (standing, t) => [t[0] + standing.spot[0], t[2] + standing.spot[1]];
 /** WB12d: the faithful's rite, said right after the omen's line while it holds (scenes/riteHost.js stands its circle) -
- *  AUDIT WB12d (D3): the Discord post's own sentences (net/gateRite.js RITE_OMEN_LINE). */
+ *  AUDIT WB12d (D3): the Discord post's own sentences (net/gate/gateRite.js RITE_OMEN_LINE). */
 export const riteOmenLine = () => RITE_OMEN_LINE;
 
 // ═══ WBX8: THE SKY BURNS ═════════════════════════════════════════════════════════════════════════════════════════
@@ -106,7 +106,7 @@ export const fellLine = ({ near, boss, top }) => `${boss} has fallen at Dagon's 
 /**
  * EVENT-TIP (2026-09-28, Mac: "I also want to add a tooltip to the map for these type of events"): THE GATE'S CARD on
  * the held map (ui/eventMapMarks.js) - what it is, where, when it next moves (opens, seals, collapses: the countdown's
- * own words), and who holds it, or that he fell. WB8c: and while he stands, the marks he comes under tonight (net/gateLaw.js
+ * own words), and who holds it, or that he fell. WB8c: and while he stands, the marks he comes under tonight (net/gate/gateLaw.js
  * gateModsOf - "The Rime-Wrought - Colossal, Echoing"). Pure.
  * @param {{site: {place: string}, phase: string, t: {day: number}}} c the omen's current gate
  * @param {{to: string, ms: number}|null} cd its countdown now (gateCountdown)
@@ -222,7 +222,7 @@ export function createGateOmen({ now, site, say, localTime = () => null, fellAt 
       return weight > 0 ? { weight, x, z } : null;
     },
     /** BROKER-CAGE: THE BROKER'S SITE - the breach the clock is about, `{day, px, py}`, from its omen to the Wrath's
-     *  midnight (net/gateRite.js cageStands): a Warden fallen early takes the gate (its phase `gone`, no site in
+     *  midnight (net/gate/gateRite.js cageStands): a Warden fallen early takes the gate (its phase `gone`, no site in
      *  `current`), never her - so the site is read off the day. Null outside it, or before the first frame. */
     cageSite() {
       const c = current;

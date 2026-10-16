@@ -352,7 +352,7 @@
   },
   {
     "name": "SD20C-V5-a-slab-of-a-pillar",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "      const a = (pz - w - oz) / dz, b = (pz + w - oz) / dz;",
     "new": "      const a = (pz - w - oz) / dz, b = (pz + 2 * w - oz) / dz;",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "SD20C-V5-the-arena-unsquared",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "x * x + z * z <= (SD_ARENA.r + pad) * (SD_ARENA.r + pad);",
     "new": "x * x + z * z <= SD_ARENA.r + pad;",
     "tests": [
@@ -379,7 +379,7 @@
   },
   {
     "name": "SD20C-V5-the-keep-made",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  const d = Math.sqrt(x * x + z * z), o = out ?? [0, 0];",
     "new": "  const d = Math.sqrt(x * x + z * z), o = [0, 0];",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "SD20C-V5-a-body-made",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "  const o = out ?? [0, 0];\n  if (!B) {",
     "new": "  const o = [0, 0];\n  if (!B) {",
     "tests": [

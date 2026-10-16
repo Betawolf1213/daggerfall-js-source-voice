@@ -69,7 +69,7 @@ plate. Both read `rriNativeMaterialValue` now. `06-Systems/Roleplay-Realism-Item
 **AUDIT PRE-MERGE 0929 D3.** The load's repair (and DISC21-A's beside it) walked the pack, the wagon and the
 repairer's alone; a piece kept in a house chest, a dropped pile, a dead foe's pack or a boat's hold kept the name its
 make had lost, and kept it once carried out. Both repairs walk every list of the character's own things the save
-carries now (`net/realmGoldLaw.js stashedItemLists`, customs' own walk), in the save before the scene cache, the world
+carries now (`net/realm/realmGoldLaw.js stashedItemLists`, customs' own walk), in the save before the scene cache, the world
 and the mods' data are restored from it.
 
 ## DISC29-C: fatigue at 1% is Roleplay & Realism's own round (lumin) - Mac's call

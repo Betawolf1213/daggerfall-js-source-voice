@@ -1,7 +1,7 @@
 [
   {
     "name": "WB9d-the-old-bite",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "  hellfire: Object.freeze({ r: 3, ms: 6000, pct: 0.08, base: 3 }),",
     "new": "  hellfire: Object.freeze({ r: 3, ms: 6000, pct: 0.05, base: 2 }),",
     "tests": [

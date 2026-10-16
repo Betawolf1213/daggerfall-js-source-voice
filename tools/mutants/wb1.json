@@ -1,7 +1,7 @@
 [
   {
     "name": "WB1-the-omen-an-hour-early",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "export const GATE_OMEN_MINUTE = 17 * 60;",
     "new": "export const GATE_OMEN_MINUTE = 16 * 60;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "WB1-the-gate-a-day-late",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "  const base = day * GATE_DAY_MINUTES;\n",
     "new": "  const base = (day + 1) * GATE_DAY_MINUTES;\n",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "WB1-yesterday-forgotten-while-it-sinks",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "if (isGateDay(day - 1) && nowMs < gateTimes(day - 1).wrathAt + GATE_COLLAPSE_MS)",
     "new": "if (isGateDay(day - 1) && nowMs < gateTimes(day - 1).wrathAt)",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "WB1-the-seal-a-tick-late",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "  if (nowMs >= t.riseAt + GATE_RISE_MS) return 'sealed';",
     "new": "  if (nowMs > t.riseAt + GATE_RISE_MS) return 'sealed';",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "WB1-a-fall-before-the-opening-counts",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "(fellAt) >= t.openAt ? Math.min",
     "new": "(fellAt) >= 0 ? Math.min",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "WB1-the-countdown-rounded-down",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "const s = Math.max(0, Math.ceil((Number.isFinite(ms) ? ms : 0) / 1000));",
     "new": "const s = Math.max(0, Math.floor((Number.isFinite(ms) ? ms : 0) / 1000));",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "WB1-a-padded-room-admitted",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "const GATE_ROOM = /^gate:(?:0|[1-9]\\d{0,8})$/;",
     "new": "const GATE_ROOM = /^gate:\\d{1,9}$/;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "WB1-admitted-at-the-seal",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "return isGateDay(day) && nowMs >= t.openAt && nowMs < t.sealAt; };",
     "new": "return isGateDay(day) && nowMs >= t.openAt && nowMs <= t.sealAt; };",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "WB1-held-only-to-the-seal",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "nowMs < t.wrathAt + GATE_COLLAPSE_MS; };",
     "new": "nowMs < t.sealAt; };",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "WB1-the-bag-seam-unchecked",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "  if (bag[0] === bagRound(round - 1, n)[n - 1]) {",
     "new": "  if (false) {",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "WB1-two-provinces-never-alternate",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "  if (n <= 2) return regions[((g % n) + n) % n];",
     "new": "  if (n <= 2) return regions[0];",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "WB1-the-spot-past-its-spread",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "r = Math.sqrt(unit(day, 4)) * GATE_SPOT_SPREAD_M;",
     "new": "r = Math.sqrt(unit(day, 4)) * GATE_SPOT_SPREAD_M * 2;",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "WB1-north-down-the-map",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "const gx = px + spot[0] / PIXEL_M, gy = py + 1 - spot[1] / PIXEL_M;",
     "new": "const gx = px + spot[0] / PIXEL_M, gy = py + spot[1] / PIXEL_M;",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "WB1-the-ring-shifted-off-its-gate",
-    "file": "src/net/gateLaw.js",
+    "file": "src/net/gate/gateLaw.js",
     "old": "r = Math.sqrt(unit(day, 7)) * OMEN_RING_SHIFT_PIXELS;",
     "new": "r = Math.sqrt(unit(day, 7)) * OMEN_RING_PIXELS * 1.5;",
     "tests": [

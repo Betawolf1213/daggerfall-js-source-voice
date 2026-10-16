@@ -144,7 +144,7 @@ test('AUDIT 625 P3 (Mac: "A coil per foe"): every foe holds its own Constrict co
 
 test('AUDIT 625 P4 (the client\'s half): the serpent\'s claim says the embers this build\'s hoard mints - SERPENT_EMBERS, the very stack serpentEmbers mints - so the row counts what the pack was given (the service\'s half: test/serpentset_service.test.js AUDIT 625 P4) (mutants: the claim silent)', async () => {
   const { claimSerpentReceipt } = await import('../src/net/accountClient.js');
-  const { SERPENT_EMBERS } = await import('../src/net/serpentHoardLaw.js');
+  const { SERPENT_EMBERS } = await import('../src/net/serpent/serpentHoardLaw.js');
   const { serpentEmbers } = await import('../src/systems/serpent/serpentSpoils.js');
   const sent = [];
   const io = { fetch: async (url, init) => { sent.push([url, JSON.parse(init.body)]); return new Response('{"recorded":true}', { status: 200, headers: { 'content-type': 'application/json' } }); }, base: 'https://acct.invalid', secret: 's' };
@@ -179,7 +179,7 @@ test('AUDIT 625 D2: a serpent\'s silver is carded under its own source - "Serpen
   const { claimHauls, CLAIM_SOURCE } = await import('../src/ui/haulCards.js');
   const { serpentSpoilsList } = await import('../src/systems/serpent/serpentSpoils.js');
   const { SIGIL_TIER } = await import('../src/scenes/spoilsPool.js');
-  const { SERPENT_EMBERS } = await import('../src/net/serpentHoardLaw.js');
+  const { SERPENT_EMBERS } = await import('../src/net/serpent/serpentHoardLaw.js');
   assert.equal(CLAIM_SOURCE.serpent, 'Serpent slain');
   const [card] = claimHauls({ marks: { struck: 40, balance: 40, combat: { earned: 40, max: 150 } } }, 'serpent');
   assert.deepEqual([card.source, card.count, card.earned], ['Serpent slain', 40, 40]);

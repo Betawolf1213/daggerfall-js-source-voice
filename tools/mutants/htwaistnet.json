@@ -55,7 +55,7 @@
   },
   {
     "name": "HTWN-peer-body-never-asks",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "    b.rig.setHipLight?.(!b.wolf && !!shown.hl);   // WEREWOLF1: and hangs nothing at the hip\n",
     "new": "",
     "tests": [
@@ -65,7 +65,7 @@
   },
   {
     "name": "HTWN-peer-bit-inverted",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "b.rig.setHipLight?.(!b.wolf && !!shown.hl);",
     "new": "b.rig.setHipLight?.(!b.wolf && !shown.hl);",
     "tests": [
@@ -74,7 +74,7 @@
   },
   {
     "name": "HTWN-peer-camera-fed-no-walk",
-    "file": "src/net/peerBodies.js",
+    "file": "src/net/peer/peerBodies.js",
     "old": "  c.move.forward = moving ? 1 : 0;",
     "new": "  c.move.forward = 0;",
     "tests": [

@@ -1,6 +1,6 @@
 // SERPENT2 (2026-10-04, the owner, on the sea serpent: "So this also shows in the pause menu timer?", then "This needs to
 // happen, the discord integration needs to happen"): THE SERPENT'S HERALD AND ITS TIMERS, DRIVEN. The law
-// (net/serpentHerald.js: the bells' post and the kill's, when each is owed, the site the accounts agree on and the kill
+// (net/serpent/serpentHerald.js: the bells' post and the kill's, when each is owed, the site the accounts agree on and the kill
 // AT it), the wire's `site` word (net/wire.js), the hub over the real Room with Discord stubbed (server/src/index.js: the
 // alarm at the bells, the posts, a forged site's kill never posted, a refusal posted again, nothing without a webhook),
 // the client's word (net/online.js sendSerpentSite, systems/serpent/serpentOmen.js ahead, scenes/world.js), and the Timers
@@ -11,9 +11,9 @@ import { readFileSync } from 'node:fs';
 
 import {
   serpentHeraldRole, serpentOmenPost, serpentFellPost, serpentHeraldOmenDue, serpentHeraldFellLive, serpentSiteDayOk, agreedSerpentSite, serpentHeraldKill,
-} from '../src/net/serpentHerald.js';
-import { foldGateSite, HERALD_RETRY_MS, HERALD_FELL_KEEP_MS, GATE_SITE_SKEW_MS } from '../src/net/gateHerald.js';
-import { serpentTimes, serpentAt, serpentPhase, SERPENT_DIVE_MS, SERPENT_EVERY_DAYS, SERPENT_SURFACE_MS } from '../src/net/serpentLaw.js';
+} from '../src/net/serpent/serpentHerald.js';
+import { foldGateSite, HERALD_RETRY_MS, HERALD_FELL_KEEP_MS, GATE_SITE_SKEW_MS } from '../src/net/gate/gateHerald.js';
+import { serpentTimes, serpentAt, serpentPhase, SERPENT_DIVE_MS, SERPENT_EVERY_DAYS, SERPENT_SURFACE_MS } from '../src/net/serpent/serpentLaw.js';
 import {
   validSerpentIn, parseClient, relaySupportsSerpentSite, SERPENT_SITE_RELAY_MIN, SERPENT_KINDS, SERPENT_INTERNAL_FELL, SOCIAL_ROOM, RELAY_VERSION, POSE_BOUND, ACCOUNT_SWEEP_MS, SD_KEY,
 } from '../src/net/wire.js';

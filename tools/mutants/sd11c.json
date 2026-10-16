@@ -198,7 +198,7 @@
   },
   {
     "name": "SD11c-L1F5-save-said",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "'an older Hour': 'Your game is older than this Hour. Leave it, then reload or update the app to fight.',",
     "new": "'an older Hour': 'Your game is older than this Hour - save, then reload (or update the app) to fight.',",
     "tests": [
@@ -207,7 +207,7 @@
   },
   {
     "name": "SD11c-L5F1-the-towns-dropped",
-    "file": "src/net/duelRecord.js",
+    "file": "src/net/duel/duelRecord.js",
     "old": "        ...(Number.isSafeInteger(d?.raids?.defended) ? { raids: { defended: d.raids.defended } } : {}),\n",
     "new": "",
     "tests": [
@@ -216,7 +216,7 @@
   },
   {
     "name": "SD11c-L5F1-the-serpents-dropped",
-    "file": "src/net/duelRecord.js",
+    "file": "src/net/duel/duelRecord.js",
     "old": "        ...(Number.isSafeInteger(d?.serpents?.slain) ? { serpents: { slain: d.serpents.slain } } : {}),\n",
     "new": "",
     "tests": [
@@ -225,7 +225,7 @@
   },
   {
     "name": "SD11c-L5F1-the-Hours-dropped",
-    "file": "src/net/duelRecord.js",
+    "file": "src/net/duel/duelRecord.js",
     "old": "        ...(Number.isSafeInteger(d?.sds?.broken) ? { sds: { broken: d.sds.broken } } : {}),\n",
     "new": "",
     "tests": [
@@ -234,7 +234,7 @@
   },
   {
     "name": "SD11c-L5F1-a-malformed-count-kept",
-    "file": "src/net/duelRecord.js",
+    "file": "src/net/duel/duelRecord.js",
     "old": "...(Number.isSafeInteger(d?.raids?.defended) ?",
     "new": "...(d?.raids ?",
     "tests": [
@@ -364,7 +364,7 @@
   },
   {
     "name": "SD11c-L5F6-one-bound-for-the-device",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "        keep([...list.filter((k) => k !== drop), r].slice(-SD_CLAIMS_ALL_MAX));",
     "new": "        keep([...list, r].slice(-SD_CLAIMS_MAX));",
     "tests": [
@@ -373,7 +373,7 @@
   },
   {
     "name": "SD11c-L5F6-anothers-pushed-out",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "        const theirs = list.filter((k) => readSdReceipt(k)?.s === c.s);",
     "new": "        const theirs = list;",
     "tests": [
@@ -382,7 +382,7 @@
   },
   {
     "name": "SD11c-L5F6-the-device-unbounded",
-    "file": "src/net/sdClaims.js",
+    "file": "src/net/superDungeon/sdClaims.js",
     "old": "keep([...list.filter((k) => k !== drop), r].slice(-SD_CLAIMS_ALL_MAX));",
     "new": "keep([...list.filter((k) => k !== drop), r]);",
     "tests": [
@@ -482,7 +482,7 @@
   },
   {
     "name": "SD11c-G2-the-Hearts-unfolded",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "      cx: w.cx ? { i: w.cx.i, m: w.cx.m, c: w.cx.c.map((q) => [q[0], q[1], q[2]]) } : null,",
     "new": "      cx: null,",
     "tests": [
@@ -491,7 +491,7 @@
   },
   {
     "name": "SD11c-G2-the-stuns-moment-moved",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "stunAt: same && s.su === w.su ? s.stunAt : w.su ? now : 0,",
     "new": "stunAt: w.su ? now : 0,",
     "tests": [
@@ -500,7 +500,7 @@
   },
   {
     "name": "SD11c-G10-the-law-leaves-the-Echoes",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "      for (const B of [f.rem, ...(f.ec ?? []).map((x) => x.body)]) { stepWalk(B, now); B.mv = null; B.atk = null; }",
     "new": "      for (const B of [f.rem]) { stepWalk(B, now); B.mv = null; B.atk = null; }",
     "tests": [
@@ -509,7 +509,7 @@
   },
   {
     "name": "SD11c-G10-the-page-leaves-the-Echoes",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "ec: s.ec ? s.ec.map((E) => ({ ...E, ...stopped(E, at) })) : null, cx: null, su: 0, heardAt: now };",
     "new": "ec: s.ec, cx: null, su: 0, heardAt: now };",
     "tests": [
@@ -527,7 +527,7 @@
   },
   {
     "name": "SD11c-G13-Silver-named-Gold",
-    "file": "src/net/sdFightLink.js",
+    "file": "src/net/superDungeon/sdFightLink.js",
     "old": "echoFell: (name, e) => `${name} fells the ${e === 0 ? 'Gold' : 'Silver'} Echo.`,",
     "new": "echoFell: (name, e) => `${name} fells the ${e === 0 ? 'Gold' : 'Gold'} Echo.`,",
     "tests": [
@@ -599,7 +599,7 @@
   },
   {
     "name": "SD11c-G5-the-Echoes-reach-unread",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  if (r === HIT_KINDS.Melee && dist(pose.x, pose.z, E.body.x, E.body.z) - SD_ECHO.r > MELEE_REACH + POSE_SLACK) return out;",
     "new": "  void 0;",
     "tests": [
@@ -608,7 +608,7 @@
   },
   {
     "name": "SD11c-G5-the-Echoes-pose-unread",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  if (!spendBlow(p, now, seq, `e${e}`)) return out;\n  if (!poseIn(pose)) return out;",
     "new": "  if (!spendBlow(p, now, seq, `e${e}`)) return out;",
     "tests": [
@@ -617,7 +617,7 @@
   },
   {
     "name": "SD11c-G5-the-Hearts-reach-unread",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  if (r === HIT_KINDS.Melee && dist(pose.x, pose.z, q.x, q.z) - SD_HEART.r > MELEE_REACH + POSE_SLACK) return out;",
     "new": "  void 0;",
     "tests": [
@@ -626,7 +626,7 @@
   },
   {
     "name": "SD11c-G5-the-Hearts-pose-unread",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  if (!spendBlow(p, now, seq, `x${c}`)) return out;\n  if (!poseIn(pose)) return out;",
     "new": "  if (!spendBlow(p, now, seq, `x${c}`)) return out;",
     "tests": [
@@ -635,7 +635,7 @@
   },
   {
     "name": "SD11c-G6-the-Remnants-hand-unread",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  if (!spendBlow(p, now, seq, 'b')) return 0;",
     "new": "  spendBlow(p, now, seq, 'b');",
     "tests": [
@@ -644,7 +644,7 @@
   },
   {
     "name": "SD11c-G6-the-Echoes-hand-unread",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  if (!spendBlow(p, now, seq, `e${e}`)) return out;",
     "new": "  spendBlow(p, now, seq, `e${e}`);",
     "tests": [
@@ -653,7 +653,7 @@
   },
   {
     "name": "SD11c-G6-the-Hearts-hand-unread",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  if (!spendBlow(p, now, seq, `x${c}`)) return out;",
     "new": "  spendBlow(p, now, seq, `x${c}`);",
     "tests": [
@@ -662,7 +662,7 @@
   },
   {
     "name": "SD11c-G6-each-body-charged",
-    "file": "src/net/gateBrain.js",
+    "file": "src/net/gate/gateBrain.js",
     "old": "    p.bqWho.push(who);\n    return true;\n  }\n  p.rate = Math.min(GATE_HIT_HZ_MAX,",
     "new": "    void who;\n  }\n  p.rate = Math.min(GATE_HIT_HZ_MAX,",
     "tests": [
@@ -671,7 +671,7 @@
   },
   {
     "name": "SD11c-G7-never-retired",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  for (const p of Object.values(f.players)) if (!p.retired && now - (p.seenAt ?? p.joinedAt) > ABSENT_RETIRE_MS) retireShare(f, p);",
     "new": "  void 0;",
     "tests": [
@@ -680,7 +680,7 @@
   },
   {
     "name": "SD11c-G7-never-restored",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "if (p && inArena(b.x, b.z, SD_ARENA_SLACK)) { p.seenAt = now; restoreShare(f, p); }",
     "new": "if (p && inArena(b.x, b.z, SD_ARENA_SLACK)) { p.seenAt = now; }",
     "tests": [
@@ -689,7 +689,7 @@
   },
   {
     "name": "SD11c-G7-the-Echoes-unrescaled",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "retireShare(f, p);\n  rescaleEchoes(f);\n",
     "new": "retireShare(f, p);\n",
     "tests": [
@@ -698,7 +698,7 @@
   },
   {
     "name": "SD11c-G12-the-run-unread",
-    "file": "src/net/sdRemnant.js",
+    "file": "src/net/superDungeon/sdRemnant.js",
     "old": "  return fresh.length ? fresh : run >= REPEAT_MAX ? [] : out;",
     "new": "  return fresh.length ? fresh : out;",
     "tests": [

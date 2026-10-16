@@ -10,7 +10,7 @@
 //     would leave equip.slots pointing at it, AUDIT 17e F4), quest items (the quest owns them), summoned items (they
 //     vanish on a clock), gold-piece items (gold is offered as gold), and bound pieces (SS1, systems/item/itemBound.js: a
 //     Sigil Stone is never handed to another player - and a peer's lot carrying one is refused whole, below), and a
-//     Come Sail Away boat's deed or parts (AUDIT REALM2 T1: the realm's own law, net/realmTradeLaw.js BOAT_TEMPLATES);
+//     Come Sail Away boat's deed or parts (AUDIT REALM2 T1: the realm's own law, net/realm/realmTradeLaw.js BOAT_TEMPLATES);
 //   - weight is systems/inventory.js's own arithmetic against combat/formulas.js entityMaxEncumbrance.
 import { isBagItem } from '../net/bagLaw.js';   // BAG1
 import { activeWagonItem } from './wagon/wagonKinds.js';   // WAGONS2 (AUDIT)
@@ -22,7 +22,7 @@ import { isEquipped } from './equip.js';
 import { clearLightSourceOnLeave } from './item/itemTransfer.js';
 import { entityMaxEncumbrance } from '../combat/formulas.js';
 import { isBound, BOUND_TRADE_TEXT } from './item/itemBound.js';   // SS1: a bound piece never leaves for another player
-import { BOAT_TEMPLATES } from '../net/realmTradeLaw.js';   // AUDIT REALM2 T1: nor a boat's deed or parts - what they stand for stays in the giver's save
+import { BOAT_TEMPLATES } from '../net/realm/realmTradeLaw.js';   // AUDIT REALM2 T1: nor a boat's deed or parts - what they stand for stays in the giver's save
 
 /** BAG1: the Materials Bag stays with its owner - a list of its own rides with it (systems/materialsBag.js), which no
  *  trade moves; every General Store sells another. */
@@ -99,7 +99,7 @@ export function createTradePack(entity, { stampIds = null } = {}) {
 
     /** AUDIT REALM L1-F1: where each offered item stands in the pack - its index in the list a save writes as `items`
      *  (systems/save/save.js snapshotPlayer keeps the order) - read BEFORE the goods are reserved, so a realm trade's half
-     *  names the very records its checkpoint holds (net/realmTradeLaw.js realmTradePickOf); -1 for one not here. */
+     *  names the very records its checkpoint holds (net/realm/realmTradeLaw.js realmTradePickOf); -1 for one not here. */
     picks(entries) { const items = list(); return entries.map(({ item }) => items.indexOf(item)); },
 
     /** Take the goods OUT of the pack (reserve). All-or-nothing: a lot that is not entirely here comes back null. */

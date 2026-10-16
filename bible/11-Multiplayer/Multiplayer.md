@@ -164,7 +164,7 @@ oversight.
 PVP-REF (2026-10-01, `06-Systems/Online-Arc.md` PVP-REF): the one room
 where that stops being true is a SIEGE's (`siege:<seat>:<week>`), where a
 town's Charter changes hands - there the relay holds every fighter's
-vitality and judges every blow, cast and step (`src/net/siegeRef.js`,
+vitality and judges every blow, cast and step (`src/net/siege/siegeRef.js`,
 `11-Multiplayer/Seats-Arc.md` 6.1). Everywhere else this section stands.
 
 INT1-INT6 (2026-10-09, `06-Systems/Integrity-Arc.md`, Mac: "I want to do

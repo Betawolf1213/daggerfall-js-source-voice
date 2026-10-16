@@ -1,7 +1,7 @@
 [
  {
   "name": "AUDITMWNPC-A1-veiled-unbatched",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    if (own) r.beginCharacterSpriteBatch();\n",
   "new": "",
   "tests": [
@@ -10,7 +10,7 @@
  },
  {
   "name": "AUDITMWNPC-A1-host-batch-reopened",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "own = !!r?.beginCharacterSpriteBatch && !r.characterSpriteBatchOpen;",
   "new": "own = !!r?.beginCharacterSpriteBatch;",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "AUDITMWNPC-B3-far-keeps-slot",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "      if (b.goneAt != null || (this._buildInRange && b.far)) { victim = b; break; }",
   "new": "      if (b.goneAt != null) { victim = b; break; }",
   "tests": [
@@ -100,7 +100,7 @@
  },
  {
   "name": "AUDITMWNPC-B3-far-needs-margin",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    const unseen = victim.goneAt != null || (this._buildInRange && victim.far);",
   "new": "    const unseen = victim.goneAt != null;",
   "tests": [
@@ -109,7 +109,7 @@
  },
  {
   "name": "AUDITMWNPC-B3-far-waits-dwell",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "for (const b of this._bodies.values()) if (b.goneAt != null || (this._buildInRange && b.far)) return true;",
   "new": "for (const b of this._bodies.values()) if (b.goneAt != null) return true;",
   "tests": [
@@ -118,7 +118,7 @@
  },
  {
   "name": "AUDITMWNPC-B4-far-built",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "    if (this._buildInRange && b.far) { this._release(b.id); return; }\n",
   "new": "",
   "tests": [

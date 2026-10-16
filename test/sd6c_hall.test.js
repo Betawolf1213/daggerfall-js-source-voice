@@ -8,8 +8,8 @@ import { readFileSync } from 'node:fs';
 import {
   SD_ORRERY, SD_STONES, SD_STONE_POS, SD_STONE_REACH, SD_STONE_SETTLE_MS, SD_FRAY_LASH, SD_WALK, orreryOf, realmToDungeon,
   dungeonToRealm, inOrreryHall, sdHourWord,
-} from '../src/net/sdBrain.js';
-import { SD_REALM_ORIGIN } from '../src/net/sdBrain.js';
+} from '../src/net/superDungeon/sdBrain.js';
+import { SD_REALM_ORIGIN } from '../src/net/superDungeon/sdBrain.js';
 import { SD_REALM_FLOORS, realmClamp, SD_REALM_ARCHIVE } from '../src/world/superDungeon/sdRealm.js';
 import {
   stoneFrame, stonePoint, plaqueFrame, handleFoot, handleBox, plaqueBox, handMatrix, dialCentre, buildHallModel, buildHandModel,

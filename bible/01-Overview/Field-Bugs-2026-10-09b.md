@@ -72,7 +72,7 @@ a nameless Place names nothing; a save that carries the blank heals on the next 
 
 `10-UI/Loot-Banner.md`. ACQUIRE1 marks every weapon, piece of armour or clothing, jewellery, artifact and card in the
 pack `acquired`, and the mark rides the save into the realm's record; the wire's clamp strips it from the List form's
-offer. The realm's trade law (`net/realmTradeLaw.js` recordIsOffered) compares every field but its volatile list, which
+offer. The realm's trade law (`net/realm/realmTradeLaw.js` recordIsOffered) compares every field but its volatile list, which
 named `equipSlot` and `questItem` and not the new mark - so every marked piece was "not the record's piece", at the
 market, a home vendor's stall and a realm trade alike. The three receiver's marks are `RECEIVER_MARKS` now, read by the
 clamp (`systems/loot/loot.js`), a wild death's record (`systems/wild/wildDeath.js`) and the law. THE WORKER: the law is the

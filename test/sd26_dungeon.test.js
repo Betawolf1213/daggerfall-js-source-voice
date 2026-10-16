@@ -23,7 +23,7 @@ import { createSdHost } from '../src/scenes/sdHost.js';
 import { isMainStoryDungeon } from '../src/world/dungeon/dungeonTextures.js';
 import { LOCATION_TYPES } from '../src/formats/mapsFile.js';
 import { createSpawnGround, WORLD_SALT } from '../src/world/spawnedDungeons.js';
-import { sdRoll, sdRise, sdFirst } from '../src/net/sdLaw.js';
+import { sdRoll, sdRise, sdFirst } from '../src/net/superDungeon/sdLaw.js';
 import { collectDungeonEnemies } from '../src/characters/dungeonEnemies.js';
 import { dungeonEndOf } from '../src/world/dungeon/dungeonEnd.js';
 import { RDB_SIDE } from '../src/world/rdbLayout.js';

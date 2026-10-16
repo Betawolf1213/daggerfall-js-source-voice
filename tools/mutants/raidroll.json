@@ -1,63 +1,63 @@
 [
   {
     "name": "RR-seed-off",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "let a = ((day * 7919) ^ RAID_DAY_SEED ^ Math.imul(RAID_DAY_SALT, 0x9E3779B1)) >>> 0;",
     "new": "let a = ((day * 7919) ^ Math.imul(RAID_DAY_SALT, 0x9E3779B1)) >>> 0;",
     "tests": ["test/raidroll.test.js"]
   },
   {
     "name": "RR-slot-draws-misread",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "    random(); random();   // its region and its town - the towns table's",
     "new": "    random();   // its region and its town - the towns table's",
     "tests": ["test/raidroll.test.js"]
   },
   {
     "name": "RR-slots-too-few",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "  for (let l = 0; l < RAID_SLOTS_MAX; l++) {",
     "new": "  for (let l = 0; l < 4; l++) {",
     "tests": ["test/raidroll.test.js"]
   },
   {
     "name": "RR-canon-reordered",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "g.towns.map((t) => [t.index, t.px, t.py])",
     "new": "g.towns.map((t) => [t.px, t.index, t.py])",
     "tests": ["test/raidroll.test.js"]
   },
   {
     "name": "RR-read-order-unchecked",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "!Number.isInteger(g[0]) || g[0] <= last ||",
     "new": "!Number.isInteger(g[0]) ||",
     "tests": ["test/raidroll.test.js"]
   },
   {
     "name": "RR-read-pixel-unbounded",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "t[1] < 0 || t[1] >= 1000 ||",
     "new": "t[1] < 0 ||",
     "tests": ["test/raidroll.test.js"]
   },
   {
     "name": "RR-read-row-unbounded",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "t[0] < 0 || t[0] > 0xffff ||",
     "new": "t[0] < 0 ||",
     "tests": ["test/raidroll.test.js"]
   },
   {
     "name": "RR-dayids-missing-town",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "key: `${r.region}:${r.town.index}:${day}`, st: r.st",
     "new": "key: `${r.region}:0:${day}`, st: r.st",
     "tests": ["test/raidroll.test.js"]
   },
   {
     "name": "RR-hash-other-spelling",
-    "file": "src/net/raidLaw.js",
+    "file": "src/net/raid/raidLaw.js",
     "old": "new TextEncoder().encode(s)",
     "new": "new TextEncoder().encode(`${s} `)",
     "tests": ["test/raidroll.test.js"]

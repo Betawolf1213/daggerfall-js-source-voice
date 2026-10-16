@@ -50,7 +50,7 @@ gate keeps it - a gate every two real hours, the same real phases, the relay unc
 at its own rate (a day every real hour since SKY-SLOW), so the game-time column below is the event clock's and no
 longer a time the player can read off their sky: it RETIRES from the words. The gate's lines say real local times
 alone (`systems/gate/gateOmen.js` `omenTimeLine`, `openTimeLine`, `sealTimeLine`), and the panel always did.
-`net/gateLaw.js`'s own word functions stay in the relay's bundle until a relay deploy that happens anyway retires
+`net/gate/gateLaw.js`'s own word functions stay in the relay's bundle until a relay deploy that happens anyway retires
 them. WB12's merge with main (world151) retired them.]
 
 | game time | real time | what |
@@ -64,7 +64,7 @@ them. WB12's merge with main (world151) retired them.]
 With the clock's epoch (2026-09-14T00:00Z is game 13:30), T falls at **HH:32:30 UTC for every even hour HH**. The
 event's number is the GAME DAY `D = floor(sharedClassicMinutes / 1440)`, the gate opens at classic minute
 `D*1440 + 1200`, and `wallMsForClassicMinutes` (OL3) turns every row above into relay-clock milliseconds. Pure law,
-one home, both ends: `net/gateLaw.js`, imported by the client and by the relay (which checks a boss room's
+one home, both ends: `net/gate/gateLaw.js`, imported by the client and by the relay (which checks a boss room's
 window with it). Constants (AUDIT WBX R9: the names as the code has them): `GATE_OMEN_MINUTE` (1020), `GATE_RISE_MINUTE`
 (1140), `GATE_OPEN_MINUTE` (1200), `GATE_SEAL_MINUTE` (1320), `GATE_WRATH_MINUTE` (1440), `GATE_EVERY_DAYS` (1 - one a
 game day; Mac tunes it).
@@ -296,7 +296,7 @@ The co-op law says the host's browser is the server because a Durable Object run
 second copy of the game (`Multiplayer.md`). The boss is the exception that proves it: the ARENA is built so that a
 boss needs no game to run. It stands on a flat disc with nothing to path around, so its whole world is a point, a
 facing, a health bar and a clock. The relay can run that - a brain of a few hundred lines of pure law
-(`net/gateBrain.js`, pinned in node with fake time), stepped by the object's alarm every `BRAIN_TICK_MS` (250)
+(`net/gate/gateBrain.js`, pinned in node with fake time), stepped by the object's alarm every `BRAIN_TICK_MS` (250)
 while the fight lives, and never otherwise. Its costs are the frames it sends and the seconds it is awake; the
 players' poses keep it awake anyway (RELAY-H1: a Durable Object bills its awake seconds).
 
@@ -357,7 +357,7 @@ recovery:
 | **Dagon's Wrath** | the whole arena | 6 s | 999% | the wrath |
 
 (AUDIT WBX F12: WB4's table, as it first shipped - section 12's WBX4 raised every share and set a base beside it, and
-WBX5 added the Crushing Leap, the Meteor of Oblivion and the Spokes of Dagon; the numbers live in `net/gateBrain.js`
+WBX5 added the Crushing Leap, the Meteor of Oblivion and the Spokes of Dagon; the numbers live in `net/gate/gateBrain.js`
 ATTACKS.) *Hits for* is a share of the struck player's OWN maximum health, resolved by the struck player's own machine against
 its own feet at the landing moment - co-op's law ("an enemy's strike on a client is applied by that client"),
 scaled so a level-1 and a level-30 read the same fight. Fire honours the player's fire resistance through the
@@ -427,7 +427,7 @@ r1.<base64url({ d, b, s, c, x, i, e })>.<base64url(Ed25519 signature)>
     i issued   e expires (i + 7 days)
 ```
 
-`net/gateReceipt.js` holds the law beside `identityToken.js`'s and mirrors its ladder (the version is the
+`net/gate/gateReceipt.js` holds the law beside `identityToken.js`'s and mirrors its ladder (the version is the
 algorithm and is read first; signature first, content second; refuse, never repair). **A receipt can never pass as
 an identity or an order, nor they as it**: its prefix is `r1`, which the identity verifier refuses before a byte is
 parsed, and it is signed by a different key. The relay's key is a Worker secret (`GATE_SIGNING_KEY`, PKCS8, sign
@@ -572,7 +572,7 @@ The relay's half (RELAY_VERSION world113 - world111 on its branch, renumbered at
 | A4 | the hub handed a receipt only to a fighter connected at the moment of the kill; one away heard of it only by walking back into the court while it held | the hub keeps each account's receipt for its life and hands it to that account's next hello |
 | A8 | a newcomer to a fight already bled came with a full damage bucket - a string of late joiners could each spend one at once | an empty bucket after the first blow |
 | A10 | the kill was fanned before it was written: an eviction between them told the court of a kill storage never kept (the wake resumed a living Warden) and re-minted every receipt on new seeds; the hub was told once, and a failed tell was never retried | minted, written, then said; the hub told until it answers (`told`, a beat every `GATE_TELL_RETRY_MS`) |
-| C7 | (the client's) a day's gate times made again every frame | made once and frozen (`net/gateLaw.js` is in the relay's bundle, so it rides this version) |
+| C7 | (the client's) a day's gate times made again every frame | made once and frozen (`net/gate/gateLaw.js` is in the relay's bundle, so it rides this version) |
 
 The spoils and the claims:
 
@@ -704,7 +704,7 @@ in the code before anything was changed. Eight were real; two were not.
 | M2 | **a Warden every fighter had left stood up whole**: with every share retired (all away past `ABSENT_RETIRE_MS` while some socket kept the beat) his health was 0 of 0, and the first back - or a newcomer, with a full bucket - brought him back at 100% | the fraction he stood at as the last share left is kept (`idle`, `standsAt`); a return or a newcomer finds him there, and a newcomer to a bled fight brings an empty bucket |
 | M3 | **a `spent` that came before the kill's own word was lost** (a tell the hub missed is told again `GATE_TELL_RETRY_MS` later): the copy stored after it went to the account's every other device | the word is kept in the copy's place for a receipt's life - a hello is handed nothing, and the kill's word (or a tell said twice) stores no copy over it and hands none |
 | M4 | **the kept copy went to a court fighter's other tab or device** before their own floor spent it - S4 covered the hub's word at the kill, not the next hello | a court fighter's copy is held from their hellos `GATE_HERE_HOLD_MS` (2 min): their floor spends it and says so within a second or two; past it, it is handed as any other (a court tab that died before its burst has them back) |
-| M5 | **a kill in the air stood him in two places**: every screen flew him over the leap's last `LEAP_AIR_MS`, the relay held him at its start until it landed - the body, the spoils and the portal home stood up to half a leap apart for a late joiner, and a blow on him in the air was judged from where he had left | one law, `leapAt` (net/gateBrain.js): the beat, the kill's `settleAt` and every screen's `bossPlace` fly him alike |
+| M5 | **a kill in the air stood him in two places**: every screen flew him over the leap's last `LEAP_AIR_MS`, the relay held him at its start until it landed - the body, the spoils and the portal home stood up to half a leap apart for a late joiner, and a blow on him in the air was judged from where he had left | one law, `leapAt` (net/gate/gateBrain.js): the beat, the kill's `settleAt` and every screen's `bossPlace` fly him alike |
 | M6 | an older build's spent mark for any account, met by another account's receipt, was said spent to the hub - which forgot that account's copy everywhere | only this account's own spend is said again (`spentBy`); the old mark still refuses the spoils here. No player's store holds such a mark (WB5a and AUDIT WB A9 reached main in one merge) - closed all the same |
 | M7 | the horn-root check's `first` was read after the collider was cleared - always true | the check runs at every stand, as it did, and says so: its first, and one where the gate has moved |
 | M8 | the beat carried its own copy of the kill's rule for the charge and the leap - the two had already parted (a guard on the charge's end in one) | the beat asks `settleAt` |
@@ -731,7 +731,7 @@ and on 519's. The gate itself was never broken - R7 said the right thing in the 
 
 The relay says `the gate is closed` in a `no` for R7 alone (a window that has ended is refused at the hello, as an
 `error` that closes the socket; the join's refusals name the other three words), so the client reads the word as what it
-means: `net/gateLink.js gateRefusalText` says `GATE_OUTDATED_TEXT` - *"Your game is older than this gate - save, then
+means: `net/gate/gateLink.js gateRefusalText` says `GATE_OUTDATED_TEXT` - *"Your game is older than this gate - save, then
 reload (or update the app) to enter."* - and the host ejects in the same words (`scenes/world.js` `onRefused`). Every
 other refusal keeps its own words, and the hello's refusal of an ended window still says the gate is closed. No relay
 change and no RELAY_VERSION: a build from this one on says the reason at the next brain bump; the builds already out
@@ -760,7 +760,7 @@ inside the rock geometry from world of daggerfall"*. The record is `01-Overview/
 
 The field's player: *"add a discord channel that tells the gates in real time itll create hype and make more join"*;
 Mac: *"Discord live gates?"*, then the moments - *"Omen (15 min before), Boss slain"* - and *"Ping an opt-in role"*
-(on the omen alone). The relay's hub posts to a Discord channel's webhook (`net/gateHerald.js`, the hub's own alarm):
+(on the omen alone). The relay's hub posts to a Discord channel's webhook (`net/gate/gateHerald.js`, the hub's own alarm):
 
 | When | The post | Pings |
 |---|---|---|
@@ -789,14 +789,14 @@ Mac: *"Discord live gates?"*, then the moments - *"Omen (15 min before), Boss sl
 Relay world123 (world126 on its branch, renumbered at the merge with main). Pinned in `test/discordgates.test.js` (11); mutants `tools/mutants/discordgates.json` (45, all dead).
 
 **At sea (SERPENT2, 2026-10-04).** The sea serpent has its own herald on the same door and channel
-(`net/serpentHerald.js`; `Sea-Serpent.md` section 14). It posts its bells fifteen minutes before it rises, pinging
+(`net/serpent/serpentHerald.js`; `Sea-Serpent.md` section 14). It posts its bells fifteen minutes before it rises, pinging
 `SERPENT_DISCORD_ROLE` or else this role, and its kill. It keeps its own vote of where the serpent lies (a `serpent`
 `site` word, folded by this law) and posts the kill AT the agreed site alone, since a cell keeps a forged site's fight
 too. Its beat runs on the hub's alarm after this one. `test/discordgates.test.js` stubs it, so the pins above are the
 gate's alone.
 
 **In the Abyss (SD-HERALD, 2026-10-09).** The Abyss Dungeon has its own herald on the same door and channel
-(`net/sdHerald.js`; `Super-Dungeons.md` SD-HERALD). It posts a Hollow's rise and its find, pinging `SD_DISCORD_ROLE` or
+(`net/superDungeon/sdHerald.js`; `Super-Dungeons.md` SD-HERALD). It posts a Hollow's rise and its find, pinging `SD_DISCORD_ROLE` or
 else this role, and its fall and a found one's fade, pinging nobody - each read off the director's record, so it needs
 no vote: the find names the record's region, never the city. Its beat runs on the hub's alarm after the director's.
 `test/discordgates.test.js` seeds the director with a rise ten years off, so it owes nothing there.
@@ -821,7 +821,7 @@ missile is spent on him; the rest of a mixed spell lands as it would.
 
 ### The marks (WB8b)
 
-Every gate - a game day, two real hours online - the Warden comes under ONE ASPECT and TWO TRIALS (`net/gateMods.js`,
+Every gate - a game day, two real hours online - the Warden comes under ONE ASPECT and TWO TRIALS (`net/gate/gateMods.js`,
 a leaf the relay bundles):
 
 | Aspect | Element | His elemental blows | His ground |
@@ -832,11 +832,11 @@ a leaf the relay bundles):
 | the Venom-Blooded | poison | Venomfall, Venom Nova, Plague Star of Oblivion, Spokes of Venom | Venom |
 
 His blade, his slam, his charge and his leap stay plain; Dagon's Wrath is Dagon's fire whatever he wears. An aspect
-is more than a colour: a struck player's SAVING THROW is the aspect's element's (`net/gateStrike.js blowOf` - any
+is more than a colour: a struck player's SAVING THROW is the aspect's element's (`net/gate/gateStrike.js blowOf` - any
 element saved now, not fire alone; `scenes/world.js GATE_SAVES`, poison DFU's DiseaseOrPoison with the Poison flag), so
 a frost-resistant character stands the Rime-Wrought better and a Breton's magic resistance meets none of them.
 
-| Trial | Its law (net/gateBrain.js fightProfile) |
+| Trial | Its law (net/gate/gateBrain.js fightProfile) |
 |---|---|
 | Colossal | his body a quarter larger (radius 2.25 m, height 7 m - the relay's melee reach, the cone, the lane and the walk all measure from it; the Cleave's cone reaches as far past his body as it ever did, 9.45 m from his centre), each share a quarter more (the kill a quarter longer at the same bucket), his Ground Slam 8.5 m |
 | Unyielding | his ward at a phase's turn holds 6 s, and every blow on him lands 15% lighter (before the caps; what it takes off is his, never counted as clipped) |
@@ -847,7 +847,7 @@ a frost-resistant character stands the Rime-Wrought better and a Breton's magic 
 | Dagon's Favoured | Hellfire and the meteor from the first phase, the Spokes from the second |
 | Echoing | every meteor falls again a breath after the first - on the fighter it fell for, where they stand now, or where the first fell if they have fallen; an echo has no echo, and a phase's turn clears it |
 
-THE DRAW IS A CYCLE (`net/gateLaw.js gateModsOf`): every aspect with every pair of trials ONCE each - 4 x 28 = 112
+THE DRAW IS A CYCLE (`net/gate/gateLaw.js gateModsOf`): every aspect with every pair of trials ONCE each - 4 x 28 = 112
 gates, nine and a third real days - in an order where no two gates running share an aspect or a trial (the cycle's own
 wrap too), each round of four gates (gates 4k to 4k+3) brings all four aspects and all eight trials, and a pair of trials rests 25 gates at least,
 coming back under another aspect. Built from the round-robin's seven perfect matchings of the eight trials (relabelled
@@ -861,14 +861,14 @@ keeps them (`md`, checkpointed with it); every `st` says them, and the client fi
 the day's draw would say. A fight checkpointed before WB8, or an older relay's, is the Warden unmarked - the profile of
 no marks is the constants exactly (BASE_PROFILE), so nothing about an unmarked fight moved. The brain's law was 3
 (GATE_BRAIN_V, GATE_BRAIN_MIN - 4 at WB9, 5 at WB11): a game that does not know the marks would judge a colossus's slam at the old reach and
-his frost as fire, so it is told to reload (GATE-RELOAD's words). Relay world128 (world126 on its branch, one relay past main's OW6L - world127 - at the merge): `net/gateMods.js` joins the bundle
+his frost as fire, so it is told to reload (GATE-RELOAD's words). Relay world128 (world126 on its branch, one relay past main's OW6L - world127 - at the merge): `net/gate/gateMods.js` joins the bundle
 (wire.js validates `md` - known words, one aspect at most - and projects `fed` field by field, the name as every name).
 
 ### The detail (WB8c)
 
 - **Before the gate**: tonight's marks beside the first line of a gate still to be fought (the omen, else the rise,
   else the opening) - "Valkynaz Ruhn comes the Rime-Wrought tonight. His fire burns cold - frost, not flame. Colossal:
-  larger and harder to fell; his Ground Slam reaches further. ..." (`net/gateLaw.js marksLine`, once a day); the map's
+  larger and harder to fell; his Ground Slam reaches further. ..." (`net/gate/gateLaw.js marksLine`, once a day); the map's
   card (EVENT-TIP) carries them while he stands ("The Rime-Wrought - Colossal, Unyielding"); and the Discord omen names
   them in the tables' words alone ("Tonight he comes **the Rime-Wrought**, Colossal and Unyielding.").
 - **Stepping through**: his aspect's own line and his trials - "The air rimes as you step through: the Warden's fire
@@ -937,7 +937,7 @@ MARKS_CARD_ARRIVE_MS, 9 s, fading over MARKS_CARD_FADE_MS) - each mark's sign, n
 
 ### Three courts and the walkways (WB9b)
 
-The court is three: the first where the players arrive, the second west of it, the third north of that (`net/gateBrain.js
+The court is three: the first where the players arrive, the second west of it, the third north of that (`net/gate/gateBrain.js
 COURTS` - [0, 0], [-68, -22], [-74, -94] in the court frame; clear of the great tower's window). Each is the first's
 size (COURT_R 24), its own rune ring, spires and five braziers, each rim some 20 m of fire from the next. Each phase is
 fought in its own: at a phase's turn (PHASE_TURN) he **bounds across the fire** (`cross`: a 2.4 s wind-up, 2 s in the
@@ -957,7 +957,7 @@ player on it (`world/gate/gateArena.js courtArena` - one arena a frame, its cros
 collider carries every disc and every deck; the motor is what says how much is laid.
 
 On the wire (relay world135 - main's SOFTCAP1 took world133 and its PARTY-MAP world134 first - the brain's law 4): the state says his court (`ct`) and the crossings (`xa`, the relay
-moments of the bound's words), and a bound's own word lays its walkway on every screen at once (`net/gateLink.js
+moments of the bound's words), and a bound's own word lays its walkway on every screen at once (`net/gate/gateLink.js
 crossLaid`). GATE_COURT_BOUND is the three courts' (160 m). A fight checkpointed before WB9 crosses from the first court
 over every walkway up to the court it bounds to. The telegraph is drawn over the court it lands in (the Wrath's and the
 Reckoning's over all three - `render/gateTelegraph.js`, one quad per court); his mark over the court he stands in; the
@@ -1117,7 +1117,7 @@ dungeon's late draw, the building), a foreign pass. `tools/auraProbe.mjs` draws 
 
 ### The bodies in a crowd (WB9h)
 
-A gate is a crowd, and the other players' Morrowind bodies were its cost (`net/peerBodies.js`; the whole account is
+A gate is a crowd, and the other players' Morrowind bodies were its cost (`net/peer/peerBodies.js`; the whole account is
 `07-Rendering/Performance-Rig.md` section WB9h): forty players milling round the eye built 81 bodies in thirty
 seconds as the nearest eight reshuffled - up to 24 in five, each a multi-second mesh parse - and skinned and drew
 every body whether it was seen or not. Now a body out of the view is neither drawn nor skinned (posed the moment it is
@@ -1265,7 +1265,7 @@ and the press's reach is a loot pile's (TREASURE_ACTIVATION_DISTANCE). Leaving t
 **The damage chart.** The relay already counted what each fighter dealt (`dealt` - the receipts' bar and the herald's
 three names, `topDealers`), and said only the three names at the kill. Now:
 
-- THE COUNTS (`net/gateBrain.js`): each fighter's record keeps `hits` (blows that landed on him), `best` (the heaviest
+- THE COUNTS (`net/gate/gateBrain.js`): each fighter's record keeps `hits` (blows that landed on him), `best` (the heaviest
   of them), `cxd` (what of `dealt` went into the crystals of Oblivion - `applyCrystalHit`) and `falls` (a fall counted
   the beat its body is first seen dead in the court, again only after it has stood up alive - `down`). A fight
   checkpointed before them reads each as none.
@@ -1280,7 +1280,7 @@ three names, `topDealers`), and said only the three names at the kill. Now:
   the heaviest no more than the whole, the rows ranked, the names cleaned as every name is - and anything else is NO
   CHART, never a refused kill: the fall's word stands without it. A relay before world136 says no chart, and none is
   drawn.
-- THE FOLD (`net/gateLink.js`): the chart is kept with the fall; when the hub's chartless echo of the kill came first,
+- THE FOLD (`net/gate/gateLink.js`): the chart is kept with the fall; when the hub's chartless echo of the kill came first,
   the court's word brings it after.
 - THE READOUT (`ui/gateDamageChart.js`): from DAMAGE_CHART_DELAY_MS (1.5 s) after this screen first saw the fall - his
   body's fall and the spoils' burst first - for DAMAGE_CHART_MS (a minute), in over a quarter second and out over its
@@ -1320,7 +1320,7 @@ his profile's own ward while the turn's signature is cast - WB9b's order kept, t
 
 ### The trial, and the rotation for nine (WB11a)
 
-`net/gateMods.js` GATE_TRIALS gains its ninth: **Legion-Lord** (`legion`) - *"His Imps harry whoever stands far off, his
+`net/gate/gateMods.js` GATE_TRIALS gains its ninth: **Legion-Lord** (`legion`) - *"His Imps harry whoever stands far off, his
 Atronachs march to heal him, his Ward-Bearers hold his ward"* (AUDIT WB11 M1/D6: this page quoted a line the code never
 carried, and the code's began "Imps", which the chat's line lowers). Its sign is three figures; its tip (MARK_TIPS) says
 what to do - *"Guard the far ones from his Imps, stop each Atronach, break his Ward-Bearers."* (AUDIT WB11 U1: 138
@@ -1328,7 +1328,7 @@ characters made the tallest marks card of all, off a landscape phone's foot). Th
 Warden unmarked and every set without it carry none, and NOTHING of the host runs, rolls or is said in such a fight - an
 unmarked fight's beats, frames and dice are what they were.
 
-THE ROTATION (`net/gateLaw.js marksCycle`) was built on the round-robin's perfect matchings of EIGHT trials. Nine is odd,
+THE ROTATION (`net/gate/gateLaw.js marksCycle`) was built on the round-robin's perfect matchings of EIGHT trials. Nine is odd,
 so the circle method sits one out: the nine trials and a BYE make ten seats, the ten make nine matchings, and each
 matching is four real pairs and one trial resting. A round is still one matching under one turn of the aspects (four
 gates, every aspect once, no trial twice); the nine matchings run under each of the four turns - **4 x 36 = 144 gates,
@@ -1347,7 +1347,7 @@ goes to 5 (below), and a game that does not know it is told to reload, as at eve
 
 ### The host (WB11b - the brain)
 
-`net/gateBrain.js` HOST_KINDS, by wire id:
+`net/gate/gateBrain.js` HOST_KINDS, by wire id:
 
 | id | kind | who, by his aspect | when | body | moves | health |
 |---|---|---|---|---|---|---|
@@ -1414,7 +1414,7 @@ reload (GATE-RELOAD's words). The bump redeploys the relay and drops every conne
 
 ### The host seen, heard and fought (WB11c - the client)
 
-- **The fold** (`net/gateLink.js`): the host as the court holds it - each one's spot, walk, health and blow in flight,
+- **The fold** (`net/gate/gateLink.js`): the host as the court holds it - each one's spot, walk, health and blow in flight,
   and the last few gone (how, and by whom) for the court to play out; cleared at his fall and the Wrath.
 - **The bodies** (`world/gate/gateBoss.js HOST_LOOKS`, `hostAct`, `hostStandIn`): Daggerfall's own sprites at their own size
   (an Imp hovers), on their own walk, attack, hurt and idle tables (the Seducer on her winged form's), each a body my
@@ -1547,7 +1547,7 @@ GATE_HEAL_ROWS_MAX rows, `by` the caster's peer id in the room (each caster once
 (1..GATE_HEAL_WIRE_MAX), the fractions kept for the next - at most every HEAL_SEND_MS while a mate's spell has healed
 me, and only to a relay that hears it (GATE_HEAL_RELAY_MIN - an older one junks an unknown gate word).
 
-**The relay** (`net/gateBrain.js applyHeal`). The receiver must be a fighter of this fight on the laid floor (its own
+**The relay** (`net/gate/gateBrain.js applyHeal`). The receiver must be a fighter of this fight on the laid floor (its own
 pose - fallen or standing: a heal before a fall may be said just after it) while the fight lives; each row's healer is
 the socket in this room its peer id names - ANOTHER fighter of this fight, else nobody is credited (never the receiver
 itself). What a receiver says it was healed is BELIEVED within its own heal bucket: HEAL_REF_BASE + HEAL_REF_LV a level
@@ -1770,7 +1770,7 @@ and name until it is emptied, and wears *Opened* after.
 | Discord | the omen post, after its times; the rite broken | *The faithful work their rite nearby. Kill their Summoner before the breach opens.*; ***The faithful's rite is broken** near N, by A, B and 3 others.* |
 
 **As built (WB12d; AUDIT WB12d below):**
-- `net/gateRite.js` is the law: the site, the faithful (the Summoner a **Sorcerer**, a caster none of the faithful is,
+- `net/gate/gateRite.js` is the law: the site, the faithful (the Summoner a **Sorcerer**, a caster none of the faithful is,
   so every screen knows him by his kind), the window (`riteHolds` from the omen to the opening; `riteStands` to the
   collapse, an early kill's too; `riteHeard` 2 s past the opening), the word's reach (60 m) and beat (5 s), and at most
   64 helpers a circle.
@@ -1808,7 +1808,7 @@ free, "Until midnight".
 cage stands **11.5 m from the circle's heart, turned 60 degrees from its bearing to the gate** - outside the braziers,
 on the gate's side, away from the casket, inside the 20 m the rock keeps off (`scenes/sigilBrokerPool.js
 cageSpotLocal`, the day's alone, so every client stands her in one place). She stands there **from the omen until the
-Wrath's midnight** (`net/gateRite.js cageStands`), caged or free; a Warden fallen early takes the breach and its
+Wrath's midnight** (`net/gate/gateRite.js cageStands`), caged or free; a Warden fallen early takes the breach and its
 circle, never her (the omen's `cageSite` reads the site off the day, not off the gate's standing). On a pixel not yet
 built she is not stood (GATE-SEEN's law), and nothing is shut.
 
@@ -2098,7 +2098,7 @@ the play"*), and what a player must do is shown before it is said.
 The hit law does not move except T2's ring: what lands is what the ground shows.
 
 **As built** (`render/gateTelegraph.js`, `scenes/gateCourt.js` perilAt, `ui/gateGroundView.js`, `scenes/gateHost.js`,
-`net/gateBrain.js` ATTACKS.nova):
+`net/gate/gateBrain.js` ATTACKS.nova):
 - The shader was rewritten from the lane's prototype, rendered beside the shipped one in Chromium.
 - The cone's edge is one continuous distance, so its line can be read off its own derivative (AUDIT WB9 F1's jump is
   gone).
@@ -2379,12 +2379,12 @@ telegraphs. Now:
   window, and owed again in the next court.
 - The Shattered Hour keeps the same law since SD-ALONE (`Super-Dungeons.md` section 16): no companion through its Rift.
 
-**The crowd thinned (GATE-CROWD).** A court holds as many challengers as come (`net/gateBrain.js` GATE_FIGHTERS_MAX),
+**The crowd thinned (GATE-CROWD).** A court holds as many challengers as come (`net/gate/gateBrain.js` GATE_FIGHTERS_MAX),
 and forty round one boss were forty bodies, names, lights, spells and footsteps over his telegraphs. WB9h made the
 crowd's Morrowind bodies affordable; it did not make the fight readable. Now, in a gate's court, past the count chosen
 on the Other players card - **Crowd in the Burning Court** (the court by its own name: WB12a's guard holds every shipped
 string to the breach's words): everyone by default, or the nearest 12 or 24 - only that many other players are drawn:
-every party mate, then the nearest across the floor (`net/gateCrowd.js crowdDrawn`). The rest stand nowhere on this
+every party mate, then the nearest across the floor (`net/gate/gateCrowd.js crowdDrawn`). The rest stand nowhere on this
 screen - no body, sprite, name, light, aura, spell's flight or step - until they are among the nearest again.
 
 **Everyone by default** (Mac, after the first push: *"The default other setting should be everyone"*): the court is drawn
@@ -2406,7 +2406,7 @@ so a stored value that is none of them shows as Everyone on the card and reads a
   change's own re-read, before it was pushed: the first cut left the plaque naming players it had not drawn, a heal
   aimed past them landing on them, and their cries heard. The party panel, the Nearby list and the chat still name them.
 - THE SHELF'S DEFAULT is a literal (`systems/uiPrefs.js` `gateCrowd: 0`), pinned equal to the law's: the shelf is on
-  the boot path, and importing the law made `net/gateCrowd.js` the entry's 69th file, past BOOT2's ceiling of 68.
+  the boot path, and importing the law made `net/gate/gateCrowd.js` the entry's 69th file, past BOOT2's ceiling of 68.
 - THE COURT ALONE. The street, a building and a dungeon hold duels, arena bouts and battles, where the player cut from
   the screen could be the one fighting me. In a court nobody fights anybody but him, so the count is applied nowhere
   else. (PEER-RANGE, 2026-10-10, `07-Rendering/Performance-Priority.md`: a player past the Other players card's draw
@@ -2514,7 +2514,7 @@ at the lintel's two ends asked too, so on a slope across the arch its downhill e
   crowd's cut or not); the first look after my arrival only learns who is here. A fighter walking back in opens it as a
   newcomer does. Never a door: it takes nobody back.
 - THE WAY HOME where he fell (WBX2, SS3) rises as it did, and closes over the PORTAL_CLOSE_MS before the court comes
-  apart (`portalFade`: net/gateLaw.js gateTimes' wrathAt and GATE_COLLAPSE_MS, the host's own collapse). Both fires go
+  apart (`portalFade`: net/gate/gateLaw.js gateTimes' wrathAt and GATE_COLLAPSE_MS, the host's own collapse). Both fires go
   in the one pass, the way home's with its beacon.
 - A COURT GONE SILENT casts its fighters out: with no door until he falls, a court whose fight has said nothing on this
   screen's frames for COURT_SILENT_MS (20 s) - no state at all (a room that never answered, a socket retrying), or one
@@ -2566,7 +2566,7 @@ records).
 | C3 | the way in opened on a rise in the relay's count of fighters - a count that heard a newcomer up to STATE_SEND_MS late and never rose for a fighter walking back in or a seat changing hands | opened for a player this screen sees step out of it (`stepsIn`) |
 | C4 | a fight's first word arriving after my arrival popped the way in open whole behind a player already walking off | held from my arrival; a word after the hold finds it shut |
 | C5 | the court's one door after the fall was laid at the end of the court's frame - a throw in any step before it (the host swallows them) left no door | laid at the top of the frame |
-| C6, G7, E6, P10 | comments still naming the membrane, the horns, the plinth, the rim spires and the beacon's foot | rewritten - but `net/gateRite.js`'s, which rides the relay bundle and waits for the next relay slice's RELAY_VERSION |
+| C6, G7, E6, P10 | comments still naming the membrane, the horns, the plinth, the rim spires and the beacon's foot | rewritten - but `net/gate/gateRite.js`'s, which rides the relay bundle and waits for the next relay slice's RELAY_VERSION |
 | G1 / P2 | the rim's rule took the flanks of each pillar's outer flange - faces looking out of the gate's front and back, 30% of the rim's area - and its pin restated the rule clause for clause, so it could not see them | the rule bounded by the opening's widest reach and turned across the threshold; pinned against the faces by hand |
 | G2 / E4 | the fire took the least clear over two bands at each height and stood up to 1.15 m short of the stone (a see-through strip 0.49 m wide up the feet) | the stone's own clear at each height, both heights lowered only where the line between them runs into a corner of it |
 | G3 / P6 | four of Mac's quads stand out of their plane; a triangle of each laid along its quad's axis stood its texels 4.5 times wide; the tops' and the x-faces' UVs had no pin | each triangle's own normal; every face's stretch the least its normal allows, pinned |
@@ -2591,7 +2591,7 @@ pin for the next relay slice.
 
 ## Shipped
 
-**WB1 (2026-09-25) - the omen.** `net/gateLaw.js` (the schedule, the room's key and window, the rolls, the boss table,
+**WB1 (2026-09-25) - the omen.** `net/gate/gateLaw.js` (the schedule, the room's key and window, the rolls, the boss table,
 the chat's words), `systems/gate/gateSite.js` (the site over the map files), `systems/gate/gateOmen.js` (each moment's line once,
 the map's mark, the compass's), `ui/gateMapMark.js` with the ring on both maps (`ui/inkMap.js paintGateRing`, the held
 map's poll and legend, the classic page's texels on the open province), the compass's diamond (`ui/enhancedHud.js
@@ -2616,9 +2616,9 @@ The door answers *The gate will not open to you yet.* until WB3's relay. Pins `t
 checks). Seen in a headless browser with its own stand-in lighting (the stone, its art, the fire and the beacon); not
 yet in the game with ARENA2, where the renderer's own lighting, fog and the terrain under it are the next look.
 
-**WB3a (2026-09-25) - the boss room on the relay.** `net/gateBrain.js` (the fight as pure law, stepped by the relay's
+**WB3a (2026-09-25) - the boss room on the relay.** `net/gate/gateBrain.js` (the fight as pure law, stepped by the relay's
 alarm every 250 ms - the numbers a claim sets, the join, every refusal a blow meets, the walk, the six attacks, the
-phases, the wrath, who earned a receipt), `net/gateReceipt.js` (the relay's first signature; unsigned without its
+phases, the wrath, who earned a receipt), `net/gate/gateReceipt.js` (the relay's first signature; unsigned without its
 key), the `gate` frame both ways in `net/wire.js`, the Room's gate arm in `server/src/index.js` (the Worker's and the
 hello's window, the meter, the beat, the checkpoint, the kill said once, the receipts, the hub's line), and the
 session's `gateOk`/`sendGate`/`onGate`. RELAY_VERSION world110 on its branch (world113 at the merge with main, whose EVENT1, RENOWN1 and PARTY-TRAVEL took world110-112 first; GATE_RELAY_MIN 113). What moved from the page above, each a pin's find or
@@ -2641,7 +2641,7 @@ braziers round the edge, the broken bridge the players came by and the way home'
 level's one exit door, so the exit's own ray, ladder and wagon word take it; the plaque says *The way back to Tamriel*) - with its own art (`world/gate/gateArt.js`), its floor on the collider, the
 Deadlands' red fog over a far shell of sky (the dungeon host's clear colour left alone) and the braziers' own light
 (after the player's own lights, the torch's mask kept). The room is `gate:<day>`; the level claim goes out
-once per welcome; the relay's words land in `net/gateLink.js`, which the world's gate reads for its collapse and the
+once per welcome; the relay's words land in `net/gate/gateLink.js`, which the world's gate reads for its collapse and the
 chat for the kill line (*Valkynaz Ruhn has fallen at the Oblivion Gate near ... - struck down by ...*). The motor keeps
 the player on the floor; a death is cast out before the gate; the day's end or going offline ends the court the same
 way; the map, the rest, the save and the Recall mark are refused inside it. What moved from the page above: the way
@@ -2664,7 +2664,7 @@ for a phase crossed. On the floor (`render/gateTelegraph.js`, the duel wall's la
 fragment's question - dim at the word, filling toward the edge as the wind-up runs, bright at the landing, gone after
 - the same law a struck player's feet are tested by, held to it point for point. His bar (`ui/gateBossBar.js`) says
 his name and title over his health with the two phase marks, the ward's gold, the attack coming in its colour, and
-the Wrath's countdown in the last five minutes. AND THE BLOW LANDS ON THE STRUCK PLAYER'S MACHINE (`net/gateStrike.js`,
+the Wrath's countdown in the last five minutes. AND THE BLOW LANDS ON THE STRUCK PLAYER'S MACHINE (`net/gate/gateStrike.js`,
 `scenes/gateCourt.js`): at the first frame on the landing - never judged late - its feet against the shape; the
 charge strikes the ground he runs over between two frames, so the lane ahead of him is safe until he gets there; a
 hit takes its share of the player's own maximum health through the dungeon context's own door (`strikePlayer` - the
@@ -2725,8 +2725,8 @@ row a (day, account) in migration 0014's `gate_kills`, so a second claim - anoth
 lands nothing and is answered `claimed`. A guest fights and loots and is answered `guest`; it keeps its id when it
 registers, so its receipt counts then, inside the week. No public half and every claim is declined `no-gate-key` (503),
 the service's gap and not the player's. `POST /v1/gate/claim` is behind a session; the count rides `/v1/account` and
-`/v1/duel/record` beside the duels, so the Inspect card asks once. On the device (`net/gateClaims.js`) each receipt the
-relay hands the socket (`net/gateLink.js onReceipt` - again after a reconnect, and from the hub) is kept, one a day, and
+`/v1/duel/record` beside the duels, so the Inspect card asks once. On the device (`net/gate/gateClaims.js`) each receipt the
+relay hands the socket (`net/gate/gateLink.js onReceipt` - again after a reconnect, and from the hub) is kept, one a day, and
 offered at once; an answer that settles it lets it go (counted - said in chat with the count; counted before; not a
 receipt the gate signed; another's), anything else keeps it (no session, no key, the network, a guest - told once) and
 it is offered again on the gate frame no sooner than ten minutes after; an unsigned or expired receipt is never kept.
@@ -2788,7 +2788,7 @@ on the plaque's line), four of WB1's mutant records (the scan's new shape; the s
 own, its law reversed); mutants `tools/mutants/auditwb_world.json` (20 dead, 1 equivalent).
 
 **AUDIT WB - the court's half (2026-09-25).** B1-B7 above: `scenes/gateCourt.js` (an attack's number and moment, no
-body after the Wrath, the late cry), `net/gateLink.js` (`onRefused`), `scenes/worldModes.js` (the door asked again after
+body after the Wrath, the late cry), `net/gate/gateLink.js` (`onRefused`), `scenes/worldModes.js` (the door asked again after
 the fire, no step, way home or pending exit for the dead), `scenes/world.js` (the dead cast out alive, a refused `in`
 and a closed socket taking the player out, the door's refusal), `world/gate/gateArena.js` (`COURT_TEXT.lost`). Pins
 `test/auditwb_court.test.js` (7); re-aimed: WB3b's door window, WB6c's door, way-home and flash pins, AUDIT 28 W2c's and
@@ -2798,14 +2798,14 @@ mutants `tools/mutants/auditwb_court.json` (18 dead).
 **AUDIT WB - the relay's half (2026-09-25).** A1, A3, A4, A8, A10 and C7's times above: `server/src/index.js` (the
 socket's stamp and the silent unseated, one seat an account in a court, the court's present accounts, a newcomer's `in`
 alone written, the kill kept before it is said and the hub told until it answers, the hub's kept receipts and
-`_gateReceiptTo`), `net/gateBrain.js` (`freeSeat`, the empty bucket), `net/gateLaw.js` (a day's times made once),
+`_gateReceiptTo`), `net/gate/gateBrain.js` (`freeSeat`, the empty bucket), `net/gate/gateLaw.js` (a day's times made once),
 `net/wire.js` (`HELLO_WAIT_MS`, `GATE_TELL_RETRY_MS`, `gateReceiptKey`). RELAY_VERSION world111 on its branch, world113 at the merge - no file joins the
 bundle; the bump drops every connected player once. Pins `test/auditwb_relay.test.js` (9); re-aimed: the exact-version
 pins and soc1's version record, two WB3 mutant records (the join's `present`, the hub's answer); mutants
 `tools/mutants/auditwb_relay.json` (29 dead).
 
 **AUDIT WB - the spoils and the claims (2026-09-25).** A2, A5, A6, A7 and A9 above: `scenes/spoilsPool.js` (`grant`,
-spent by `spentKey` day and account, the records a list, `spoilsStore`'s memory), `net/gateClaims.js` (the mendable
+spent by `spentKey` day and account, the records a list, `spoilsStore`'s memory), `net/gate/gateClaims.js` (the mendable
 rungs, `me`, one a day and account, the memory), `net/accountClient.js` (the rung carried, `me`),
 `server-account/src/index.js` (the route says the rung - a redeploy of the account service carries it; until then the
 device keeps the old verdict), `scenes/gateCourt.js` (the burst's account), `scenes/world.js` (one store,
@@ -2832,8 +2832,8 @@ spoils' and claims', 9 of the look and the sound - each pinned and mutated.
 `scenes/gateCourt.js` (the portal, the mark, the burning ground and its bite, the turn said, the soul trap kept and
 rolled), `scenes/spoilsPool.js` and `ui/itemIconColor32.js` (each piece its own picture, the take after rest),
 `render/spoilsGlow.js` (the line), `render/gateTelegraph.js` (the spokes, the mark, the pools), `world/gate/gateBoss.js` (the
-leap's flight and hop, the new cues and colours, the stand-in's `spareGear` and mobile), `net/gateBrain.js` (`base`,
-`POOLS`, the three attacks, `PHASE_NAMES`, `PHASE_TURN`), `net/gateStrike.js` (`spokeLanes`, `landingPools`,
+leap's flight and hop, the new cues and colours, the stand-in's `spareGear` and mobile), `net/gate/gateBrain.js` (`base`,
+`POOLS`, the three attacks, `PHASE_NAMES`, `PHASE_TURN`), `net/gate/gateStrike.js` (`spokeLanes`, `landingPools`,
 `poolUnder`, `strikeDamage`'s base), `ui/gateBossBar.js` (the phase's name), `systems/courtRules.js` with
 `systems/effects.js`, `systems/enchantments.js` and `systems/passiveSpecials.js` (no regeneration), `combat/formulas.js`
 (no wear on him), `scenes/hostMagic.js` and `scenes/dungeonContext.js` (a Soul Trap meets him), `scenes/worldModes.js`
@@ -2854,17 +2854,17 @@ untouched), `systems/gate/gateOmen.js` (`gateSkyPhaseWeight`, `gateSkyNear`, `GA
 `scenes/world.js` (the greater of the event's weight and the gate's through the sky, its fog and the land's light; the
 gate's storm about its site). WBX9: `systems/song/songPlayer.js` (`songLevel`, the level between the channels and the
 fader) and `systems/gate/gateScore.js` (the new mix, `SCORE_LEVEL`, the four songs rewritten on their old key, tempos and
-themes), measured by `tools/gateScoreProbe.mjs` (15 checks). AUDIT WBX: `net/gateBrain.js` (`retireShare`,
+themes), measured by `tools/gateScoreProbe.mjs` (15 checks). AUDIT WBX: `net/gate/gateBrain.js` (`retireShare`,
 `restoreShare`, the seat's keep, `liveMs`, `settleAt`, the cleave's 7, the wind-up's health), `net/wire.js` (`spent`,
 `bv`, `GATE_BRAIN_V`/`GATE_BRAIN_MIN`, `relaySupportsGateSpent`), `server/src/index.js` (the brain's door, the beat
 armed by a blow, `_gateSpent`, one socket an account, the court's `here`, the receipt's `l`, the sweep),
-`net/gateReceipt.js` (`l`), `net/online.js sendGateSpent`, `scenes/spoilsPool.js` (the record first, `adopt`, `saved`,
-`spoilsLevel`, `SPOILS_RECORD_V`), `systems/save/saveSlots.js onSlotSaved`, `net/gateLink.js` (the fall's place, a walk ends
+`net/gate/gateReceipt.js` (`l`), `net/online.js sendGateSpent`, `scenes/spoilsPool.js` (the record first, `adopt`, `saved`,
+`spoilsLevel`, `SPOILS_RECORD_V`), `systems/save/saveSlots.js onSlotSaved`, `net/gate/gateLink.js` (the fall's place, a walk ends
 the attack), `scenes/gateCourt.js` (the trap's day and incumbent, no step in the air, the fire's count),
 `systems/artifactEffects.js` and `systems/enchantments.js` with `scenes/hostEnchant.js` (the Razor, Strikes),
-`scenes/hostMagic.js` (the trap's missile), `render/gateTelegraph.js` and `net/gateStrike.js` (the charge's width),
+`scenes/hostMagic.js` (the trap's missile), `render/gateTelegraph.js` and `net/gate/gateStrike.js` (the charge's width),
 `scenes/gatePool.js` (the horn's root, the fire's box), `systems/music.js` (a made song without MIDI.BSA),
-`net/gateClaims.js` (the session read once a second) and `scenes/world.js` (the seams). RELAY_VERSION world116 still
+`net/gate/gateClaims.js` (the session read once a second) and `scenes/world.js` (the seams). RELAY_VERSION world116 still
 (never deployed; its law now holds these) - **the relay must be deployed with the client**: a world113 tab is refused
 the court in words it knows (R7), and the hub is told a receipt is spent only by a relay that reads the word (S1). Pins
 `test/wbx8_gate_sky.test.js` (5), `test/wbx9_gate_score.test.js` (4), `test/auditwbx.test.js` (14); re-aimed: DISC20's
@@ -2874,7 +2874,7 @@ all dead, and 29 older records in 13 lists re-aimed (EVENT1's storm, WB4's frame
 the gate's red strikes) and heard through the real player (the probe's loudness and peaks).
 
 **AUDIT WBX2 (2026-09-26) - before the merge.** Section 12's last table: `scenes/world.js` (the spoils pool made online or
-not, M1), `net/gateBrain.js` (`standsAt` and the kept `idle` fraction, M2; `leapAt` and `LEAP_AIR_MS`, the beat asking
+not, M1), `net/gate/gateBrain.js` (`standsAt` and the kept `idle` fraction, M2; `leapAt` and `LEAP_AIR_MS`, the beat asking
 `settleAt`, M5/M8), `world/gate/gateBoss.js` (`bossPlace` on `leapAt`), `server/src/index.js` (the spent word kept in the
 copy's place, M3; a court fighter's copy held from their hellos, M4; one read for the sweep's cursors, M9),
 `net/wire.js` (`GATE_HERE_HOLD_MS`), `scenes/spoilsPool.js` (`spentBy`, M6) and `scenes/gatePool.js` (M7). RELAY_VERSION
@@ -2883,7 +2883,7 @@ world116 still - re-hashed in place, never deployed. Pins `test/auditwbx2.test.j
 mutants `tools/mutants/auditwbx2.json` (16 dead), eleven older records re-aimed by content, and every gate record on the
 files this touched run again.
 
-**GATE-RELOAD (2026-09-26) - an outdated game told to reload.** Section 12's last part: `net/gateLink.js`
+**GATE-RELOAD (2026-09-26) - an outdated game told to reload.** Section 12's last part: `net/gate/gateLink.js`
 (`GATE_OUTDATED_TEXT`, `gateRefusalText`, the `no` said through it) and `scenes/world.js` (the refused `in`'s eject in
 the same words). No relay change. Pins `test/gatereload.test.js` (3); re-aimed: AUDIT WB B5's seam pin and its two
 mutant records; mutants `tools/mutants/gatereload.json` (6 dead), `auditwb_court.json` run again (18 dead). Seen in a
@@ -2922,10 +2922,10 @@ offline ejection now leaves the court too (`world.js`). Pinned: `test/wbx_gate_f
 **WB8 (2026-09-28) - never swayed, and marked.** Section 13 above, whole: `world/gate/gateBoss.js` (his `pacifyImmune`, his
 refusal's words, his aspect's colours and voice), `systems/effects.js`, `scenes/hostCombat.js`, `scenes/hostMagic.js`,
 `scenes/dungeonContext.js` (the doors that sway anything refuse him; his door refuses in words; his elements land
-unflashed in their casts), `net/gateMods.js` (the marks' tables), `net/gateLaw.js` (the cycle, the marks' line),
-`net/gateBrain.js` (the fight's profile and each trial's law), `net/wire.js` (`md`, `fed`, the brain's law 3,
-world128 - world126 on its branch), `server/src/index.js`, `net/gateStrike.js`, `net/gateLink.js`, `scenes/gateCourt.js`,
-`render/gateTelegraph.js`, `ui/gateBossBar.js`, `systems/gate/gateOmen.js`, `net/gateHerald.js`, `scenes/world.js`.
+unflashed in their casts), `net/gate/gateMods.js` (the marks' tables), `net/gate/gateLaw.js` (the cycle, the marks' line),
+`net/gate/gateBrain.js` (the fight's profile and each trial's law), `net/wire.js` (`md`, `fed`, the brain's law 3,
+world128 - world126 on its branch), `server/src/index.js`, `net/gate/gateStrike.js`, `net/gate/gateLink.js`, `scenes/gateCourt.js`,
+`render/gateTelegraph.js`, `ui/gateBossBar.js`, `systems/gate/gateOmen.js`, `net/gate/gateHerald.js`, `scenes/world.js`.
 Not seen in a browser or on the deployed relay: the colours and the cues are the tables' until a court under each
 aspect has been looked at and heard.
 
@@ -2937,20 +2937,20 @@ through the real player by `tools/gateScoreProbe.mjs`; not heard by a person bef
 
 **GATE-UX (2026-10-01) - the court less in the way, and the damage chart.** Section 16 above: `ui/gateMarksView.js` (the
 arrive card to the side), `ui/gateBossBar.js` (no phase line), `scenes/spoilsPool.js` and `scenes/world.js` (the press
-the only take; no feet), `net/gateBrain.js` (the counts, `damageChart`, the chart on the fall and the state),
+the only take; no feet), `net/gate/gateBrain.js` (the counts, `damageChart`, the chart on the fall and the state),
 `net/wire.js` (GATE_CHART_MAX, the chart's projection, RELAY_VERSION world136), `server/src/index.js` (the court's
-`fell` carries it), `net/gateLink.js` (the fold), `ui/gateDamageChart.js` (the readout), `scenes/gateCourt.js` (drawn
+`fell` carries it), `net/gate/gateLink.js` (the fold), `ui/gateDamageChart.js` (the readout), `scenes/gateCourt.js` (drawn
 from the fall, put away on leaving), `ui/enhancedPlusStyle.js` (its dress). Not seen over a real fight or on the
 deployed relay: the readout was looked at in headless Chromium over a mock court.
 
 **WB11 (2026-10-01) - his host, the Legion-Lord.** Section 17 above, whole, in three slices on one branch:
-**WB11a** - `net/gateMods.js` (the ninth trial), `net/gateLaw.js` (the rotation for nine: the bye seat, 144 gates); the
+**WB11a** - `net/gate/gateMods.js` (the ninth trial), `net/gate/gateLaw.js` (the rotation for nine: the bye seat, 144 gates); the
 rotation's own pins moved in `test/wb8b_gate_marks.test.js`, and every pin that named a day's marks re-read against
 it (`wb3_gate_room`, `wb8c_gate_detail` - its Rime-Wrought Colossal and Unyielding night is day 112 now -
-`discordgates`, `eventtip`). **WB11b** - `net/gateBrain.js` (HOST_KINDS and HOST_BLOWS, the waves, the walks, the
+`discordgates`, `eventtip`). **WB11b** - `net/gate/gateBrain.js` (HOST_KINDS and HOST_BLOWS, the waves, the walks, the
 blows, the drinking, the bearers' wait, the crumbling, `applyHostHit`, the state's `lg`, the chart's `a`; the profile's
 `legion`), `net/wire.js` (the six words, GATE_HOST_MAX, the brain's law 5, RELAY_VERSION world138 - world140 at the merge), `server/src/index.js`.
-**WB11c** - `net/gateLink.js` (the fold), `net/gateStrike.js` (`hostVerdict`, `hostTelegraphAt`), `world/gate/gateBoss.js` (the
+**WB11c** - `net/gate/gateLink.js` (the fold), `net/gate/gateStrike.js` (`hostVerdict`, `hostTelegraphAt`), `world/gate/gateBoss.js` (the
 looks, the acts, the fall, the cues, the stand-in), `scenes/gateHost.js` (new: the court's host), `scenes/gateCourt.js`,
 `scenes/dungeonContext.js`, `scenes/hostMagic.js`, `scenes/worldModes.js`, `scenes/world.js`, `ui/gateBossBar.js`,
 `ui/gateMarksView.js`, `ui/gateDamageChart.js` (the host's column - the chart's DOM pins in `gateux_gate` took its empty
@@ -2966,7 +2966,7 @@ sprites, the tethers and the sounds are the tables' until a Legion-Lord court ha
 `scenes/gateCourt.js` (`healedBy` - what another's spell healed in me, owed to the caster; the word out at most every
 HEAL_SEND_MS, fractions and a refused word kept, what is owed sent as the court is left), `scenes/world.js` (the ally-cast
 door tells the court; the court's `sendHeal`), `net/online.js` (`gateHealOk` from the welcome), `net/wire.js` (`heal`,
-GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX, GATE_HEAL_RELAY_MIN, the chart row's `hl`), `net/gateBrain.js` (`applyHeal` -
+GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX, GATE_HEAL_RELAY_MIN, the chart row's `hl`), `net/gate/gateBrain.js` (`applyHeal` -
 never the receiver itself - the heal bucket, the record's `healed`, the row's `hl`), `server/src/index.js` (the gate arm's
 `heal`: the caster by peer id, the receiver's own pose), `ui/gateDamageChart.js` (the Healed column - after the host's on a
 Legion-Lord night, in the share's place on a narrow screen). The first cut also counted a fighter's own potions and
@@ -2997,7 +2997,7 @@ Mehrunes Dagon's day (WB12b) was dropped before it shipped (Mac: *"Let's forgoe 
 
 **WB13a (2026-10-01) - the telegraphs, honed.** Section 20 above, T1-T14:
 - `render/gateTelegraph.js`: the shader rewritten, every pool drawn, a quad per shape.
-- `net/gateBrain.js`: the Flame Nova's ring to 16 m.
+- `net/gate/gateBrain.js`: the Flame Nova's ring to 16 m.
 - `scenes/gateCourt.js` perilAt and `ui/gateGroundView.js`: a blow to come on your feet, said with the way out.
 - `scenes/gateHost.js`: paths and tethers as flowing dashes.
 - world141 re-hashed in place; the brain's law stays 5.

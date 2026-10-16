@@ -172,7 +172,7 @@
  },
  {
   "name": "MWNPC11-pb-limits-ignored",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "  setLimits(o) { if (o.range >= 0) this._range = o.range; if (o.skinBudget >= 0) this._skinBudget = o.skinBudget; }",
   "new": "  setLimits(o) { void o; }",
   "tests": [
@@ -181,7 +181,7 @@
  },
  {
   "name": "MWNPC11-pb-builds-far",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "      if (this._buildInRange && d2 > this._range * this._range) continue;",
   "new": "      void 0;",
   "tests": [
@@ -190,7 +190,7 @@
  },
  {
   "name": "MWNPC11-pb-no-hysteresis",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "(b.far ? 1 : this._hyst * this._hyst);",
   "new": "1;",
   "tests": [
@@ -199,7 +199,7 @@
  },
  {
   "name": "MWNPC11-pb-hysteresis-both-ways",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "(b.far ? 1 : this._hyst * this._hyst);",
   "new": "this._hyst * this._hyst;",
   "tests": [
@@ -208,7 +208,7 @@
  },
  {
   "name": "MWNPC11-pb-holds-far",
-  "file": "src/net/peerBodies.js",
+  "file": "src/net/peer/peerBodies.js",
   "old": "  holds(id) { const b = this._bodies.get(id); return !!b && b.goneAt == null && !b.far; }",
   "new": "  holds(id) { const b = this._bodies.get(id); return !!b && b.goneAt == null; }",
   "tests": [

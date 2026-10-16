@@ -1,7 +1,7 @@
 // @ts-check
 // SD8c (2026-10-07, the Super Dungeons arc; bible/11-Multiplayer/Super-Dungeons.md section 10): THE BRASS REMNANT'S BAR -
 // the gate's boss bar (ui/gateBossBar.js drawGateBossBar: one readout, one node, updated never rebuilt) in the Hour's
-// brass, its model made here from the fight as the page holds it (net/sdFightLink.js). Its name over the phase it fights
+// brass, its model made here from the fight as the page holds it (net/superDungeon/sdFightLink.js). Its name over the phase it fights
 // in, its health with the two turns cut in it (70% and 35% - the marks follow the model), the ward while it cannot be
 // struck (asleep, outside time in the Dragon Break, between the break and its return), the blow being wound up named in
 // its colour with a line filling to its landing - the Hour's own first (the Pulse, the End), the stun, the Reset with its
@@ -10,11 +10,11 @@
 //
 // `remnantBarModel` is pure - the fight's state and the relay's clock in, the gate bar's model out. Not a DFU member.
 // Ledger A (SUPER-DUNGEONS).
-import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_PHASE_AT, SD_PHASE_NAMES, atkWindup, sdProfileOf } from '../net/sdRemnant.js';
+import { SD_BLOW_BY_ID, SD_BLOWS, SD_BODY, SD_PHASE_AT, SD_PHASE_NAMES, atkWindup, sdProfileOf } from '../net/superDungeon/sdRemnant.js';
 import { sdMarksViewOf } from './sdMarksView.js';   // SD18b
-import { SD_ARENA } from '../net/sdBrain.js';
-import { sdBlowDone, sdHourOver } from '../net/sdFightLink.js';
-import { countdownText } from '../net/gateLaw.js';
+import { SD_ARENA } from '../net/superDungeon/sdBrain.js';
+import { sdBlowDone, sdHourOver } from '../net/superDungeon/sdFightLink.js';
+import { countdownText } from '../net/gate/gateLaw.js';
 import { FELL_HOLD_MS, FELL_FADE_MS } from './gateBossBar.js';
 import { LOW_HEALTH } from '../world/gate/gateBoss.js';
 
@@ -60,7 +60,7 @@ function callOf(atk, phase, body, now, text = null) {
 }
 
 /**
- * The gate bar's model for the fight `s` (net/sdFightLink.js SdFightState) at `now` (the relay's clock), or null - no
+ * The gate bar's model for the fight `s` (net/superDungeon/sdFightLink.js SdFightState) at `now` (the relay's clock), or null - no
  * fight heard, or one lost.
  * @param {any} s @param {number} now
  */

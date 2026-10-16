@@ -5,7 +5,7 @@
 // (ui/enhancedPost.js), looked at on the letterbox's clock (riding the heartbeat, net/heartbeat.js), a new piece said on
 // the world tab, and a piece's item CLAIMED into the online character being played.
 //
-// THE CLAIM IS THE GUILD VAULT'S TAKE (net/guildBook.js vaultTake): the service writes the item into the realm record
+// THE CLAIM IS THE GUILD VAULT'S TAKE (net/guild/guildBook.js vaultTake): the service writes the item into the realm record
 // (server-account/src/post.js claimPost) and answers it; the pack takes it on the answer, through realmGoldAct with
 // `needsAnswer` - a claim that landed with its answer lost cannot put the item in the pack, and the checkpoint after it
 // would write the record without it. So a lost answer ends the session (`abandon`), and a join reads the record, which

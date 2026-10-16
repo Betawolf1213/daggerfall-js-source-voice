@@ -29,9 +29,9 @@ import { createGateCourt } from '../src/scenes/gateCourt.js';
 import { GatePassRenderer, membraneVertices, MEMBRANE_FS, FIRE_FOOT_Y } from '../src/render/gatePass.js';
 import { gateArt, GATE_ARCHIVE } from '../src/world/gate/gateArt.js';
 import { CAPSULE_RADIUS } from '../src/player/motor.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
-import { gateTimes, GATE_COLLAPSE_MS } from '../src/net/gateLaw.js';
-import { COURT_R } from '../src/net/gateBrain.js';
+import { GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
+import { gateTimes, GATE_COLLAPSE_MS } from '../src/net/gate/gateLaw.js';
+import { COURT_R } from '../src/net/gate/gateBrain.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const bytes = readFileSync(new URL(`../${SOURCE_FBX}`, import.meta.url));
@@ -295,7 +295,7 @@ test('AUDIT GATE-FBX C5 the court\'s one door first: a step of the fight\'s own 
   assert.equal(h.c.portal().rise, 1, 'and risen');
 });
 
-test('GATE-FBX the way home closes: the portal where he fell stands whole until the PORTAL_CLOSE_MS before the court comes apart (net/gateLaw.js gateTimes\' wrathAt and GATE_COLLAPSE_MS, the host\'s own collapse) and is shut when it does; its door laid once all the while (mutants: the way home never closing)', () => {
+test('GATE-FBX the way home closes: the portal where he fell stands whole until the PORTAL_CLOSE_MS before the court comes apart (net/gate/gateLaw.js gateTimes\' wrathAt and GATE_COLLAPSE_MS, the host\'s own collapse) and is shut when it does; its door laid once all the while (mutants: the way home never closing)', () => {
   const h = court();
   h.veil.on = false;
   const end = gateTimes(DAY).wrathAt + GATE_COLLAPSE_MS;

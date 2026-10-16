@@ -62,7 +62,7 @@
   { "name": "STEED1-the-skip-keeps-the-breath", "file": "src/systems/upkeep/upkeepRuntime.js",
     "old": "      if (skipped) breaths.clear();", "new": "      if (false) breaths.clear();",
     "tests": ["test/steed1_horsecare.test.js"] },
-  { "name": "STEED1-the-bond-carried-to-the-next", "file": "src/net/realmTradeLaw.js",
+  { "name": "STEED1-the-bond-carried-to-the-next", "file": "src/net/realm/realmTradeLaw.js",
     "old": "'wagonEntry', 'horseBond', 'horseFed']);", "new": "'wagonEntry', 'horseFed']);",
     "tests": ["test/steed1_horsecare.test.js"] },
   { "name": "STEED1-the-fields-on-any-item", "file": "src/systems/item/itemLaw.js",
@@ -94,7 +94,7 @@
   { "name": "AUDIT-STEED1-load-no-reset", "file": "src/scenes/world.js",
     "old": "      upkeep.reset();   // AUDIT STEED1: the old character's", "new": "      void 0;   // AUDIT STEED1: the old character's",
     "tests": ["test/steed1_horsecare.test.js"] },
-  { "name": "AUDIT-STEED1-fed-traded", "file": "src/net/realmTradeLaw.js",
+  { "name": "AUDIT-STEED1-fed-traded", "file": "src/net/realm/realmTradeLaw.js",
     "old": "'horseBond', 'horseFed']", "new": "'horseBond']",
     "tests": ["test/steed1_horsecare.test.js"] }
 ]

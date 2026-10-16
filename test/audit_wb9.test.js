@@ -9,8 +9,8 @@ import { readFileSync } from 'node:fs';
 import {
   ATTACKS, COURTS, COURT_R, WALKS, POSE_SLACK, HIT_KINDS, HIT_CAP_X, RECKON_CLOSE_MS, STUN_MS,
   newFight, joinFight, stepBrain, applyHit, applyCrystalHit, stateOf, dpsRef, reckonOpen, inCourt, BASE_PROFILE,
-} from '../src/net/gateBrain.js';
-import { foldGate, crossLaid, GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+} from '../src/net/gate/gateBrain.js';
+import { foldGate, crossLaid, GATE_STATE_EMPTY } from '../src/net/gate/gateLink.js';
 import { validGateOut } from '../src/net/wire.js';
 import { createGateCourt, COURT_RECKON_TEXT, spoilsKeep, bossOf } from '../src/scenes/gateCourt.js';
 import { courtToDungeon, courtFloorTris } from '../src/world/gate/gateArena.js';
@@ -21,7 +21,7 @@ import { createSpoilsPool } from '../src/scenes/spoilsPool.js';
 import { quickLootArm, quickLootSpend, foldQuickLoot, quickLootSelection, quickLootTake } from '../src/systems/quickLoot.js';
 import { resolveHover } from '../src/systems/worldHover.js';
 import { setPref } from '../src/systems/uiPrefs.js';
-import { PeerBodies, BODIES_MAX, SWAP_DWELL_MS, SWAP_EVERY_MS, BODY_REBUILD_MS, EFFECTS_BANK_MAX_S } from '../src/net/peerBodies.js';
+import { PeerBodies, BODIES_MAX, SWAP_DWELL_MS, SWAP_EVERY_MS, BODY_REBUILD_MS, EFFECTS_BANK_MAX_S } from '../src/net/peer/peerBodies.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
 
 /** The relay's own roll, seeded (the fights below are the same every run). */

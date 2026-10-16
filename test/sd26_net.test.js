@@ -10,12 +10,12 @@ import { OnlineSession } from '../src/net/online.js';
 import { RELAY_VERSION, WHO_RETRY_MS, parseClient, validSdOut, SD_KEY, SOCIAL_ROOM, PIXEL_UNITS, worldRoom, chatRegionRoom } from '../src/net/wire.js';
 import { fakeSocketClass } from './fakeSocket.mjs';
 import { fakeRooms } from './fakeRoom.mjs';
-import { SD_BLOWS, SD_BODY, SD_STUN_MS, SD_LOST_MS, SD_POSE_FRESH_MS, newRemnantFight, joinRemnant, stepRemnant, remnantStateOf, applyHeartHit, applyRemnantHit, heartsOpen } from '../src/net/sdRemnant.js';
-import { HIT_KINDS, STATE_SEND_MS } from '../src/net/gateBrain.js';
-import { PIXEL_M } from '../src/net/gateLaw.js';
-import { sdRoomKey } from '../src/net/sdLaw.js';
-import { SD_ARENA, realmToDungeon } from '../src/net/sdBrain.js';
-import { createSdFightLink, SD_OWED_MAX, SD_FIGHT_HEARD_MS, SD_IN_RETRY_MS } from '../src/net/sdFightLink.js';
+import { SD_BLOWS, SD_BODY, SD_STUN_MS, SD_LOST_MS, SD_POSE_FRESH_MS, newRemnantFight, joinRemnant, stepRemnant, remnantStateOf, applyHeartHit, applyRemnantHit, heartsOpen } from '../src/net/superDungeon/sdRemnant.js';
+import { HIT_KINDS, STATE_SEND_MS } from '../src/net/gate/gateBrain.js';
+import { PIXEL_M } from '../src/net/gate/gateLaw.js';
+import { sdRoomKey } from '../src/net/superDungeon/sdLaw.js';
+import { SD_ARENA, realmToDungeon } from '../src/net/superDungeon/sdBrain.js';
+import { createSdFightLink, SD_OWED_MAX, SD_FIGHT_HEARD_MS, SD_IN_RETRY_MS } from '../src/net/superDungeon/sdFightLink.js';
 import { createSdRemnantBlows, sdBlowsInFlight } from '../src/scenes/sdRemnantBlows.js';
 
 const T0 = 1_800_000_000_000;
