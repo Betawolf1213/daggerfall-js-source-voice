@@ -276,8 +276,8 @@ horse of yours", its look in words) and **Ride this one**, and the choice is the
 is the care: no hunger chip, no bond, breath or stats, no Feed oats or Give an apple. The upkeep's `model()` lists every
 horse on every tier (its place, whether it is ridden, its name, its look), and the care's fields beside them only
 where horse care rules. Before, the model built its list only under a tier, so Off the page drew the ridden horse alone
-and no other could be chosen (`01-Overview/Field-Bugs-2026-10-16.md` HORSE-CARE-OFF). Pinned:
-`test/fb1016_horsecareoff.test.js`; mutants `tools/mutants/fb1016_horsecareoff.json`.
+and no other could be chosen (`01-Overview/Field-Bugs-2026-10-16b.md` HORSE-CARE-OFF). Pinned:
+`test/fb1016b_horsecareoff.test.js`; mutants `tools/mutants/fb1016b_horsecareoff.json`.
 
 The HUD: the ridden horse's breath in the climb's grip bar's place (a rider holds no wall) - the classic HUD's bar
 (`ui/hud.js` drawGripBar), the enhanced HUD's under the word Horse (`ui/enhancedHud.js`); short when winded, under a

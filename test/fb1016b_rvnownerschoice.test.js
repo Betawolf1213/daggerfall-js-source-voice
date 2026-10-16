@@ -1,4 +1,4 @@
-// RVN-OWNERS-CHOICE (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16.md; the Discord's "I erased a
+// RVN-OWNERS-CHOICE (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16b.md; the Discord's "I erased a
 // Revenant fro[m]..." thread: "I've been using a 3x disintegrate as my main spell lately ... I believe it bypasses the
 // kill/spare on revenants. And it seems it does this to other players' revenants, too ... It probably shouldn't be doable
 // to other peoples revs"; the screenshot "Sekrath the Undying (dead)", "Isn't he supposed to give you a choice?").

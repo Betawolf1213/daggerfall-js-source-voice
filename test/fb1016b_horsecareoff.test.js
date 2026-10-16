@@ -6,7 +6,7 @@
 // on every tier; only the care drops. Driven over the real accessor (systems/upkeepSwitch.js horseCareRules, the
 // player's own `horseCare` pref and the page's skin), the real upkeep (createUpkeep, as world.js and exterior.js build
 // it), the hosts' provider seam (stableProviderFor) and the real page (drawStablePage). bible/06-Systems/Horse-Care.md,
-// The Stable page; bible/01-Overview/Field-Bugs-2026-10-16.md HORSE-CARE-OFF.
+// The Stable page; bible/01-Overview/Field-Bugs-2026-10-16b.md HORSE-CARE-OFF.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { horseCareRules, HORSE_CARE_PREF } from '../src/systems/upkeepSwitch.js';

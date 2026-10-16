@@ -5,7 +5,7 @@
     "old": "      const waits = !!chosen && !!tr.respec && !free;",
     "new": "      const waits = !!tr.respec;",
     "tests": [
-      "test/fb1016_firstpick.test.js"
+      "test/fb1016b_firstpick.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "      const waits = !!chosen && !!tr.respec && !free;",
     "new": "      const waits = !!chosen && !!tr.respec;",
     "tests": [
-      "test/fb1016_firstpick.test.js"
+      "test/fb1016b_firstpick.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "      const waits = !!chosen && !!tr.respec && !free;",
     "new": "      const waits = false;",
     "tests": [
-      "test/fb1016_firstpick.test.js"
+      "test/fb1016b_firstpick.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      if (!locked && chosen && chosen !== s.id && !waits) {",
     "new": "      if (!locked && chosen && chosen !== s.id) {",
     "tests": [
-      "test/fb1016_firstpick.test.js"
+      "test/fb1016b_firstpick.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      if (!locked && chosen && chosen !== s.id && !waits) {",
     "new": "      if (!locked && chosen && chosen !== s.id && !tr.respec) {",
     "tests": [
-      "test/fb1016_firstpick.test.js"
+      "test/fb1016b_firstpick.test.js"
     ]
   }
 ]

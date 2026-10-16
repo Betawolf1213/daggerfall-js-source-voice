@@ -5,7 +5,7 @@
     "old": "      markStolen(this.basket);   // STOLEN-GOODS: the lot is stolen - marked before TransferAll merges it into the pack's stacks\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    markStolen(items);   // STOLEN-GOODS: the basket, or the one piece picked - marked before it merges into the pack's stacks\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  if (isStolen(item)) return false;\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "if (it && typeof it === 'object' && !Array.isArray(it)) it[STOLEN_MARK] = true;",
     "new": "if (it && typeof it === 'object' && !Array.isArray(it)) it[STOLEN_MARK] = 1;",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "it.stackCount > 0 ? it.stackCount : 1), 0);",
     "new": "it.stackCount > 0 ? it.stackCount : 0), 0);",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "(moved) => { if (stolen) markStolen([moved]); else if (putBack) clearStolen(moved); }",
     "new": "(moved) => { if (false) markStolen([moved]); else if (putBack) clearStolen(moved); }",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  const landed = _applyTransfer(item, plan, from, to, rolls, (moved) => { if (stolen) markStolen([moved]); else if (putBack) clearStolen(moved); });",
     "new": "  const landed = _applyTransfer(item, plan, from, to, rolls); if (landed && stolen) markStolen([landed]); else if (landed && putBack) clearStolen(landed);",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "else if (putBack) clearStolen(moved); }",
     "new": "else if (false) clearStolen(moved); }",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "  return remoteTargetType(deps, state) === REMOTE_TARGET_TYPES.Loot && deps.loot?.stolen === true;",
     "new": "  return remoteTargetType(deps, state) === REMOTE_TARGET_TYPES.Loot;",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "  return remoteTargetType(deps, state) === REMOTE_TARGET_TYPES.Loot && deps.loot?.stolen === true;",
     "new": "  return deps.loot?.stolen === true;",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "          stolen: theftTarget(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) });",
     "new": "          stolen: false });",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "          putBack: theftTarget(this.hooks, { usingWagon: this.usingWagon, chooseOne: this.chooseOne }) });",
     "new": "          putBack: false });",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "toPlayer: true, stolen: theftTarget(deps, sessionState()) });",
     "new": "toPlayer: true, stolen: false });",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "fromLocal: true, putBack: theftTarget(deps, sessionState()) });",
     "new": "fromLocal: true, putBack: false });",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "  if (isStolen(picked)) into.append(el('p', 'boundline', stolenLine()));   // STOLEN-GOODS: what a counter and a court do with it\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "    isStolen(a) === isStolen(b);",
     "new": "    true;",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "  if (isStolen(stack)) markStolen([picked]);   // STOLEN-GOODS: and the theft's (systems/stolenGoods.js) - nor is a split\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "  stolen: bool(),\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'acquired', 'wagonEntry', 'horseBond', 'horseFed']);",
     "new": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'acquired', 'wagonEntry', 'horseBond', 'horseFed', 'stolen']);",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "      if (isEquipped(it)) unequipItem(player, it);\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "      if (player.lightSource === it) setLightSource(player, null);\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "  for (const list of [player?.items, player?.bagItems]) {",
     "new": "  for (const list of [player?.items]) {",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "    if (trial) trial.taken = confiscateStolen(playerEntity);\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "    if (trial) trial.released = true;   // PLEA-LOOP: the court's last act - no step of this trial acts after it\n",
     "new": "    if (trial) trial.released = true;   // PLEA-LOOP: the court's last act - no step of this trial acts after it\n    if (trial && !trial.taken) trial.taken = confiscateStolen(playerEntity);\n",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "    if (trial?.taken?.length) say(confiscatedText(piecesOf(trial.taken)));   // STOLEN-GOODS: what the verdict took (finish)\n",
     "new": "",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "say(confiscatedText(piecesOf(trial.taken)));",
     "new": "say(confiscatedText(trial.taken.length));",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "    if (trial) trial.taken = confiscateStolen(playerEntity);\n",
     "new": "    if (trial) { trial.taken = confiscateStolen(playerEntity); if (trial.taken.length) say(confiscatedText(piecesOf(trial.taken))); trial.taken = []; }\n",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "        landSold(shelf.items, it);   // sold goods land on the open shelf - STOLEN-GOODS: an honest piece; a stolen one is gone",
     "new": "        shelf.items.push(it);   // sold goods land on the open shelf - STOLEN-GOODS: an honest piece; a stolen one is gone",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "    landSold(shelf.items, it);   // sold goods land on the open shelf (DFU's remoteItems) - STOLEN-GOODS: an honest piece; a stolen one is gone",
     "new": "    shelf.items.push(it);   // sold goods land on the open shelf (DFU's remoteItems) - STOLEN-GOODS: an honest piece; a stolen one is gone",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "loot: { items: () => shelf.items, stolen: true },",
     "new": "loot: { items: () => shelf.items },",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "storage: !privateProperty, stolen: privateProperty },",
     "new": "storage: !privateProperty },",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "storage: !privateProperty, stolen: privateProperty },",
     "new": "storage: !privateProperty, stolen: true },",
     "tests": [
-      "test/fb1016_stolengoods.test.js"
+      "test/fb1016b_stolengoods.test.js"
     ]
   }
 ]

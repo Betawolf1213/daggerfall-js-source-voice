@@ -565,7 +565,7 @@ The law now (`systems/enchantments.js` `repairsObjectsTarget`, `repairsObjectsMe
   dagger's was. MEND-WORN gave the share to a weapon on the pool alone, on the pool (32: Daedric 0.25% a tick), and
   left everything else DFU's point (`RepairsObjects.cs:26`, conditionAmount): beside a blade that climbed, a steel
   cuirass (6,144) went 1% every 61 ticks and a Daedric one (32,768) every 328, and a player read it as "no other worn
-  items are repairing" (`01-Overview/Field-Bugs-2026-10-16.md` MEND-ARMOUR). The owner, 2026-10-16: "Stop trying to
+  items are repairing" (`01-Overview/Field-Bugs-2026-10-16b.md` MEND-ARMOUR). The owner, 2026-10-16: "Stop trying to
   match DFU." A blade in steel plate battered to 50%, the plate to 70%, is whole in 164 ticks, about 55 real minutes -
   it was 8,408 ticks at the point, 47 real hours. The departure from DFU's point is Port-Ledger A's MEND-WORN row.
 - **Unchanged from DFU:** the cadence (every fourth round), the player alone, one piece a tick, and no synthetic-time
@@ -589,7 +589,7 @@ enchantmentMagicRound) that every host's ticker feeds: exterior.js, world.js and
 service's bundle reaches these files. `test/mend_worn.test.js` (8); `tools/mutants/mend_worn.json` (15 of 15 dead, the
 old walk restored among them). Re-aimed by content, because the kit's comparator moved into `mendOrder`:
 `tools/mutants/mend_aim.json` MEND-AIM-loot-before-worn and `tools/mutants/prof3.json` PROF3-kit-least-worn (both dead).
-MEND-ARMOUR (FIELD BUGS 2026-10-16): `test/fb1016_mendarmour.test.js` (2); `tools/mutants/fb1016_mendarmour.json` (6, all
+MEND-ARMOUR (FIELD BUGS 2026-10-16): `test/fb1016b_mendarmour.test.js` (2); `tools/mutants/fb1016b_mendarmour.json` (6, all
 dead). Its pins moved where they said a point: `test/mend_worn.test.js` (the rate, uses, the setting, the pump),
 `test/fb1014_mendstarve.test.js` and `test/fb1015_mendtiers.test.js` (a self-wearing piece is mended past its wear now,
 not held), `test/enchantments.test.js` (E1's one item); `tools/mutants/mend_worn.json`'s six records on the old law

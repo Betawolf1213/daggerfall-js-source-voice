@@ -428,7 +428,7 @@ The Discord: "If you just sit near the wall between the shelves, when you
 fail to steal something, the guard will come running, but they simply
 can't reach you because they run into the wall instead of going through
 the door. And you can sit like that for as long as you like"
-(`01-Overview/Field-Bugs-2026-10-16.md`, INDOOR-WATCH).
+(`01-Overview/Field-Bugs-2026-10-16b.md`, INDOOR-WATCH).
 
 The watch called into a building (`cityGuards.js`'s indoor arm,
 PlayerEntity.SpawnCityGuards) and the building's own foes (`worldModes.js`
@@ -481,7 +481,7 @@ locked door holds is a door that held; the watch is the law's answer. The
 classic lane (the switch off) bakes nothing and stands nobody.
 
 Measured on the reporter's shop (a real Collider, the real pool, the real
-NavClient; `test/fb1016_indoorwatch.test.js`): the classic watch - five
+NavClient; `test/fb1016b_indoorwatch.test.js`): the classic watch - five
 watchmen at the street door - spent thirty seconds against the partition,
 nearest 1.41 m through it, never a sight of the player, never a swing; with
 the mesh the room baked 0.53 s after the crime, the first watchman stood in
@@ -494,7 +494,7 @@ building of both `world.js` and `exterior.js`, which mount the mode
 machine); `dungeonContext.js` - its own bake since 3b, unchanged; `world.js`
 and `exterior.js` - their street pools hand no mesh and walk the classic
 motor: the streamed world's half of AI 5, still ahead. Pins:
-`test/fb1016_indoorwatch.test.js` (8); `tools/mutants/fb1016_indoorwatch.json`
+`test/fb1016b_indoorwatch.test.js` (8); `tools/mutants/fb1016b_indoorwatch.json`
 (70, all dead). AUDIT 55's reach pin (`test/enhancedAI4.test.js`) now
 counts the module and the two pools among the switch's readers, each pool
 reading it once and only behind a handed mesh, and still holds the street

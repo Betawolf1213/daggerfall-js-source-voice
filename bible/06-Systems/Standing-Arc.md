@@ -49,7 +49,7 @@ gold, or come with me."* (or *"You are banished from ..."*).
 - **P - pay**: the court's own Criminal Conspiracy penalty at that standing, every unit in coin and no days (520 at -11,
   720 at -50, 1,000 at -100; double for a banished face). The fine mends the name a penance's five points, never past
   the -10 line (FINE-MENDS, `01-Overview/Field-Bugs-2026-10-14.md`) - and the region's People half of them, never past 0
-  (FINE-PEOPLE, `01-Overview/Field-Bugs-2026-10-16.md`: the charge's People half, which the kingdom and the commoners
+  (FINE-PEOPLE, `01-Overview/Field-Bugs-2026-10-16b.md`: the charge's People half, which the kingdom and the commoners
   read, was left whole by a fine) - and a day's grace follows. Offered only to a purse that can pay.
 - **S - come quietly**: a Criminal Conspiracy, charged once, and the court - whose sentence gives the charge back.
 - **R - refuse**: the Conspiracy held and the watch called as a seen crime calls it; the chase is DFU's from there.
@@ -138,7 +138,7 @@ that -2 was what players read as standing decaying. A success still pays +5; off
 
 ## STOLEN-GOODS - a stolen piece is marked, a fence's last stop, and the court takes it
 
-FIELD BUGS 2026-10-16 (`01-Overview/Field-Bugs-2026-10-16.md`, STOLEN-GOODS; the Discord: "you steal something from the
+FIELD BUGS 2026-10-16 (`01-Overview/Field-Bugs-2026-10-16b.md`, STOLEN-GOODS; the Discord: "you steal something from the
 shelf and can sell it back to an NPC, and he'll put the item back on the shelf again, and it just goes in a circle ...
 Also, when you're sent to prison, all the stolen items stay with you"). Three rules, the port's own - DFU's items carry
 no theft, its Sell discards every sold piece (ConfirmTrade's `remoteItems.Clear()`, DaggerfallTradeWindow.cs:1051) and
@@ -163,8 +163,8 @@ its court (DaggerfallCourtWindow) takes nothing:
   acquittal and a guild's rescue take nothing - no crime found, and the guild got you out. The wagon and a home's
   storage are not searched, and the watch's fine on the spot is a fine, not a search.
 
-Pinned by `test/fb1016_stolengoods.test.js` (7) over the real shelves, both skins' Steal and inventory, the Sell window
-and the arrest flow; `tools/mutants/fb1016_stolengoods.json` (32, all dead).
+Pinned by `test/fb1016b_stolengoods.test.js` (7) over the real shelves, both skins' Steal and inventory, the Sell window
+and the arrest flow; `tools/mutants/fb1016b_stolengoods.json` (32, all dead).
 
 ## What stays punishing
 

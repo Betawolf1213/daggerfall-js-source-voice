@@ -339,7 +339,7 @@ test('AUDIT PRE-MERGE 1003 O4 online is a fact of the session, not of its socket
   assert.deepEqual(asked, [], 'no local exhibition stood online');
   assert.notEqual(D.kind(), 'exhibition');
   assert.equal(links2.length, 1, 'the hour\'s room watched from a socket of its own');
-  // PIN MOVED (FIELD BUGS 2026-10-16 ARENA-WAIT, test/fb1016_arenawait.test.js): the branch takes the online lane's wait too
+  // PIN MOVED (FIELD BUGS 2026-10-16 ARENA-WAIT, test/fb1016b_arenawait.test.js): the branch takes the online lane's wait too
   assert.match(rd('src/scenes/world.js'), /if \(arenaOnline\?\.exhibitions\?\.\(\) \|\| arenaOnline\?\.waiting\?\.\(\)\) arenaOnline\.watchCity\(ex\);[^\n]*\n\s+else if \(ex\?\.open && ex\.hour !== _arenaHourRun\)/, 'world.js arenaFrame is that branch');
   // offline: a seat lost (net/online.js supersede - its status 'error', its relay's word kept), a relay without the arena
   S2.status = 'open';

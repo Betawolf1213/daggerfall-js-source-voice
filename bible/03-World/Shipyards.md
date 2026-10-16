@@ -472,4 +472,4 @@ port near the player's pixel and its neighbours' (`navalHarbourNear`) - as it wa
 
 FIELD BUGS 2026-10-16 YARD-ROWS: the fleet page's rows stood a ship's words a word a line - the presses' track was `auto`;
 it is `fit-content(40%)` now, and a fleet row carries her presses on a line of their own under her words, as the
-Holdings card does. The record: `01-Overview/Field-Bugs-2026-10-16.md`.
+Holdings card does. The record: `01-Overview/Field-Bugs-2026-10-16b.md`.

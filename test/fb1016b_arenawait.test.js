@@ -1,4 +1,4 @@
-// ARENA-WAIT (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16.md; the Discord: "I reloaded my game near the
+// ARENA-WAIT (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16b.md; the Discord: "I reloaded my game near the
 // arena, and I saw that there was the option to fight from the Arena master guy (I've done all 40 fights already for this
 // season), so I hit fight, and it reset my rank, and when I look at the season it doesn't have a number"). On the online
 // lane, before the relay has said whether its arena is open - no session yet, or one no welcome has answered - every

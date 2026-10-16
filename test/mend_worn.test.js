@@ -8,7 +8,7 @@
 // Every piece is minted by its real producer, and the rounds are the pump's.
 // PIN MOVED (FIELD BUGS 2026-10-16 MEND-ARMOUR): the share is every piece's now - a fiftieth of its own condition
 // (repairsObjectsMend), armour, clothing and uses alike - where MEND-WORN gave it to a pool weapon alone and left the
-// rest DFU's point. test/fb1016_mendarmour.test.js holds the report.
+// rest DFU's point. test/fb1016b_mendarmour.test.js holds the report.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 

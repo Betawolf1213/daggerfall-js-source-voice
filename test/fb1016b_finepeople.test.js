@@ -1,4 +1,4 @@
-// FINE-PEOPLE (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16.md; the Discord's "Possible bug: Repeated
+// FINE-PEOPLE (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16b.md; the Discord's "Possible bug: Repeated
 // ..." thread again, after FINE-MENDS: "I paid 2 x 600 gold today, and even though it said +5 reputation, my reputation
 // didn't go up at all ... why I still have a penalty"; another: "It didn't work for me either"). A charge costs two names
 // (court.js lowerRepForCrime, PlayerEntity.cs:2294-2298): the law's, and half of it off the region's People - spread up to

@@ -31,7 +31,7 @@
 // Arithmetic alone: the turn's cosine and sine are their Taylor series to the 18th and 19th powers (|turn| <= 180
 // degrees - within 1e-8), so no statement leans on SQLite's math extension, which a D1 database is not promised to carry.
 // The WAS boxes are the stand-ins' own, evaluated from their builders at f3ed9e2097 (WD3, unchanged to c2b52fdff1^) and
-// at c2b52fdff1; the NOW boxes are the builders' at this change - test/fb1016_stallshape.test.js holds them to the live
+// at c2b52fdff1; the NOW boxes are the builders' at this change - test/fb1016b_stallshape.test.js holds them to the live
 // builders, so a stand-in whose box moves again fails there until its saved pieces are re-seated.
 import { writeFileSync, readFileSync } from 'node:fs';
 import { isMain } from './lib/isMain.mjs';
@@ -141,7 +141,7 @@ export function reseatSql() {
 --
 -- Applied exactly once through the \`d1_migrations\` ledger, which the deploy runs (ACC1-CI).
 --
--- WRITTEN BY tools/yardReseat.mjs (node tools/yardReseat.mjs --write) - its header says why; test/fb1016_stallshape.test.js
+-- WRITTEN BY tools/yardReseat.mjs (node tools/yardReseat.mjs --write) - its header says why; test/fb1016b_stallshape.test.js
 -- holds this file to it, and runs it over the real service's own rows.
 --
 -- A yard's piece records where its model's origin stands, worked out against the model as it stood the day it was placed.

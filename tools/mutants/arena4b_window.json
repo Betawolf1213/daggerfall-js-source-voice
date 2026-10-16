@@ -141,7 +141,7 @@
     "new": "",
     "tests": [
       "test/arena4b_window.test.js",
-      "test/fb1016_arenawait.test.js"
+      "test/fb1016b_arenawait.test.js"
     ]
   },
   {

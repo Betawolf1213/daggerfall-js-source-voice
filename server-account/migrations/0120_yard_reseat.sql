@@ -4,7 +4,7 @@
 --
 -- Applied exactly once through the `d1_migrations` ledger, which the deploy runs (ACC1-CI).
 --
--- WRITTEN BY tools/yardReseat.mjs (node tools/yardReseat.mjs --write) - its header says why; test/fb1016_stallshape.test.js
+-- WRITTEN BY tools/yardReseat.mjs (node tools/yardReseat.mjs --write) - its header says why; test/fb1016b_stallshape.test.js
 -- holds this file to it, and runs it over the real service's own rows.
 --
 -- A yard's piece records where its model's origin stands, worked out against the model as it stood the day it was placed.

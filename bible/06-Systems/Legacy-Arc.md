@@ -698,7 +698,7 @@ world, locked to its own family.
 | FB1013d | REMAINS-STAND (the remains seen where they lie: a body over the record's own list), LIVE-FIGHT (the remains' fight is the place the heir stands in); ESTATE-WIDER planned - the wagon and the bank's balance, the owner's call (section 7; `01-Overview/Field-Bugs-2026-10-13d.md`) | built |
 | AUDIT FB1013d | the three-lane audit of REMAINS-STAND and LIVE-FIGHT (`01-Overview/Audit-FB1013d.md`) - the fallen's dungeon by its row, its pixel, its own key and the size it was built at; the height the death's to ask; a duel and a hostile ship a fight; a claim lapsed at the stand lays its bones at once; a load lets the bodies go and the tick waits out a world moved; the bones put back lie again | built |
 | REVIVE | a death taken back by the operator, and it holds: the `revived` stamp every copy and the realm's write honour; the "Realm revive" run (Time Travel read, guarded writes) - for TheHalfinStream, Mac: "Full revive" (section REVIVE) | built |
-| REZ-BLOODLINE | a friend's Resurrect saves a Bloodline character: online the door reads a death and holds it while a Resurrect can raise it, written at the reset, the window's end, a load or the page going; once decided the body stays down and the caster is told (section REZ-BLOODLINE; `01-Overview/Field-Bugs-2026-10-16.md`) | built |
+| REZ-BLOODLINE | a friend's Resurrect saves a Bloodline character: online the door reads a death and holds it while a Resurrect can raise it, written at the reset, the window's end, a load or the page going; once decided the body stays down and the caster is told (section REZ-BLOODLINE; `01-Overview/Field-Bugs-2026-10-16b.md`) | built |
 
 ## WED-GATE - a character who may wed, weds (FIELD BUGS 2026-10-08)
 
@@ -840,6 +840,6 @@ the rise, the party pose carries `fg`, the caster's pick reads it, the tombstone
 asks Project Legacy first. `scenes/worldModes.js` and `scenes/dungeonContext.js` hold their death screens in the mode's
 slot - the same world.js frame hears the Resurrect under them (`modes?.deathUp?.()`) and their resets ask
 `legacyDeathReset` through `onlineRespawn`: wired through world.js. `scenes/exterior.js`, the fixed city, has no Project
-Legacy (section 3's FLAG) - unchanged. Pinned by `test/fb1016_rezbloodline.test.js` (4, over the real death door, host,
+Legacy (section 3's FLAG) - unchanged. Pinned by `test/fb1016b_rezbloodline.test.js` (4, over the real death door, host,
 realm session on the real account Worker, party wire, caster's cast and world.js's own statements);
-`tools/mutants/fb1016_rezbloodline.json` (35, all dead).
+`tools/mutants/fb1016b_rezbloodline.json` (35, all dead).

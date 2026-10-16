@@ -1077,4 +1077,4 @@ its purse this screen's, the window the save's "Season of 3E 406" header and see
 (`lane`, a realm character) before the relay has said (`OnlineSession.arenaHeard`) the arena WAITS
 (`scenes/arenaOnline.js` waiting; `scenes/arenaGate.js` takes its online arm): no Fight, the window the realm's season by
 the clock and its boards on their way, no wager settled by the house, the hour's bout the relay's. The account's climb
-was never touched. The record: `01-Overview/Field-Bugs-2026-10-16.md`.
+was never touched. The record: `01-Overview/Field-Bugs-2026-10-16b.md`.

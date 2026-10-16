@@ -346,7 +346,7 @@ unbroken it tears away, else it kneels - and the kill-or-spare is mine; no `slai
 is a foe's whole blow, a companion's, and a stat drained to zero, whose tick names nobody (AUDIT 68's provenance): the
 choice is offered, not taken. My own Disintegrate and my own Razor still kill outright, as sections 19 and 20 say.
 DEPARTURE from sections 11, 19 and 20 as written ("a Disintegrate kills it outright" - whosever it was): the rule they
-recorded is the owner's alone now. Pinned by `test/fb1016_rvnownerschoice.test.js`.
+recorded is the owner's alone now. Pinned by `test/fb1016b_rvnownerschoice.test.js`.
 
 ## 16. The audit (2026-10-02, Mac: "Audit everything and ensure perfection")
 

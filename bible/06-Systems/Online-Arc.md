@@ -31,7 +31,8 @@ shape, and that record says so at its head.
 (a hello once and first - an id and its secret, a name, a look, a pose
 - then poses at most `POSE_HZ_MAX` a second under a token bucket, and
 pings), the bounds of a name, a pose and a look (its items projected
-onto the six fields the doll reads), the room key's shape, the world's
+onto the six fields the doll reads, and a weapon in a hand's `glow` word -
+WEAPON-GLOW1, `05-Combat/Weapon-Glow.md`), the room key's shape, the world's
 cell shard, the range a pose travels inside a cell, what a joiner is
 told (the nearest `ROSTER_MAX`), the room's own gates (`HELLO_HZ_MAX`,
 `SOCKETS_MAX`, `DROP_STRIKES_MAX`). The relay (`server/src/relay.js`) re-exports it and the session
@@ -10705,7 +10706,7 @@ saved one grew two to eight times. STALL-SHAPE rebuilt the pack's second stall (
 - **By what it was placed.** The service's own clock says: `placed_at` before 1792111405 (TEMPLE-STEPS' deploy) - WD3's
   stand-ins (unchanged from f3ed9e2097 to c2b52fdff1^); since - TEMPLE-STEPS', where only the second stall has moved. The
   boxes are the stand-ins' own: WD3's evaluated off their builders at that revision, the present ones held to the live
-  builders by `test/fb1016_stallshape.test.js`.
+  builders by `test/fb1016b_stallshape.test.js`.
 - **Once.** The ledger applies it once; a re-seated place carries `"reseat": "STALL-SHAPE"` (decorPlaceOf reads past it -
   a move writes a fresh place without it), and the statement never moves a place that carries it. A room's pieces (`yard`
   0) and every other model are never asked; a place that is not JSON is passed over whatever order SQLite reads the terms
@@ -10722,9 +10723,9 @@ saved one grew two to eight times. STALL-SHAPE rebuilt the pack's second stall (
   the account service's deploy applies the migration. **The four hosts:** a yard stands in `scenes/world.js` alone (the
   data moved, nothing of the host); `scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` stand
   none. The town's own stalls are `03-World/Beautiful-Towns.md`'s (the stand-ins' table).
-- **Pinned**: `test/fb1016_stallshape.test.js` (the migration over the real service's rows, placed by the real placer
+- **Pinned**: `test/fb1016b_stallshape.test.js` (the migration over the real service's rows, placed by the real placer
   against the stand-ins of their day; the statement against the tool's law at every kind of turn; the migration the
-  tool's); `tools/mutants/fb1016_stallshape.json`.
+  tool's); `tools/mutants/fb1016b_stallshape.json`.
 
 ### YARD-SHED - a town's yards asked within reach, kept by the service, needing no session (2026-10-06)
 
@@ -15678,6 +15679,9 @@ says so: "You cannot go back into Privateer's Hold." (`systems/startDungeon.js` 
   (the exterior fallback, as for any site with no entrance).
 - Offline, the Hold's door is DFU's. The relay is untouched: the Hold keeps its shared room (HOLD-SHARED, above), and
   every player in it is one who has not yet walked out.
+- INSTANCES (2026-10-15, `11-Multiplayer/Instances.md` section 6): what is refused is the Hold's PUBLIC room. At a relay
+  that admits instances (world208) its door offers "Your instance" - and a partner's - never Public; an instance of the
+  Hold is entered any time, for its owner and the owner's party.
 - Four hosts: `scenes/worldModes.js` holds the gate, and both town hosts build it; `scenes/world.js` marks its two
   ways in; `scenes/exterior.js` hands no `dungeonOnline` (offline, DFU's); `scenes/dungeonContext.js` enters no dungeon.
 

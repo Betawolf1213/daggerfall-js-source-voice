@@ -291,7 +291,7 @@ test('REVENANT-FATE the wire and the doors: a record says `yd` kneeling and `ex`
   assert.match(w, /const w = makeInventoryWindow\(\{ fate: model, loot: \{ items: \(\) => \[\], playerOwned: false \}, physicalDropOn: \(\) => false \}\);/, 'the loot window itself');
   // PIN MOVED (RVN3: an unbroken will tears away instead - the same gate)
   // PIN MOVED (FIELD BUGS 2026-10-16 RVN-OWNERS-CHOICE): a whole blow passes the gate only as the owner's own
-  // (revenantFate.js ownersWholeKill) - a party member's Disintegrate kneels it (test/fb1016_rvnownerschoice.test.js)
+  // (revenantFate.js ownersWholeKill) - a party member's Disintegrate kneels it (test/fb1016b_rvnownerschoice.test.js)
   assert.match(d, /if \(opts\.fates && !ownersWholeKill\(_whole, \{ fromPlayer, peer \}\) && \(!onlineRoom\(\) \|\| !isRoomFoe\(foe\)\) && revenantMayYield\(foe\)\) \{ if \(revenantWillHolds\(foe\)\) tearAwayDungeonFoe\(foe\); else yieldDungeonFoe\(foe\); return; \}/, 'underground: the player\'s alone');
   // underground a held foe decides nothing and animates nothing of its own, but is still DRAWN - the kneel, the burn
   const arm = d.slice(d.indexOf('      if (f.mobile) {\n'), d.indexOf('_mobileBatches.push(f.batch);'));

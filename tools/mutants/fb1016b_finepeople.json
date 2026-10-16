@@ -5,7 +5,7 @@
     "old": "changeLegalRep(player, regionIndex, pts, { kind: 'fine' }); raisePeopleForAnswer(player, regionIndex, pts); }",
     "new": "changeLegalRep(player, regionIndex, pts, { kind: 'fine' }); }",
     "tests": [
-      "test/fb1016_finepeople.test.js"
+      "test/fb1016b_finepeople.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "changeLegalRep(player, regionIndex, points, { kind: 'penance' }); raisePeopleForAnswer(player, regionIndex, points); }",
     "new": "changeLegalRep(player, regionIndex, points, { kind: 'penance' }); }",
     "tests": [
-      "test/fb1016_finepeople.test.js"
+      "test/fb1016b_finepeople.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "  const pts = Math.min(Math.trunc(legalPts / 2), -people.rep);",
     "new": "  const pts = Math.trunc(legalPts / 2);",
     "tests": [
-      "test/fb1016_finepeople.test.js"
+      "test/fb1016b_finepeople.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "  const pts = Math.min(Math.trunc(legalPts / 2), -people.rep);",
     "new": "  const pts = Math.min(legalPts, -people.rep);",
     "tests": [
-      "test/fb1016_finepeople.test.js"
+      "test/fb1016b_finepeople.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "  const pts = Math.min(Math.trunc(legalPts / 2), -people.rep);",
     "new": "  const pts = Math.min(Math.ceil(legalPts / 2), -people.rep);",
     "tests": [
-      "test/fb1016_finepeople.test.js"
+      "test/fb1016b_finepeople.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "  changeReputation(store, people.id, pts, true);\n  return pts;",
     "new": "  changeReputation(store, people.id, pts, false);\n  return pts;",
     "tests": [
-      "test/fb1016_finepeople.test.js"
+      "test/fb1016b_finepeople.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "  if (pts <= 0) return 0;\n",
     "new": "",
     "tests": [
-      "test/fb1016_finepeople.test.js"
+      "test/fb1016b_finepeople.test.js"
     ]
   }
 ]

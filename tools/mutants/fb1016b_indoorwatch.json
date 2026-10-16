@@ -5,7 +5,7 @@
     "old": "const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, yaw, {",
     "new": "const ai = new EnemyAI(collider, pending.feet, yaw, {",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, yaw, {",
     "new": "const ai = new (nav ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, yaw, {",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "        nav: nav?.chf, navWorld: nav?.world, navSeed: Math.imul(",
     "new": "        nav: null, navWorld: nav?.world, navSeed: Math.imul(",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "        nav: nav?.chf, navWorld: nav?.world, navSeed: Math.imul(",
     "new": "        nav: nav?.chf, navWorld: undefined, navSeed: Math.imul(",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, facing, {",
     "new": "const ai = new EnemyAI(collider, pending.feet, facing, {",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, facing, {",
     "new": "const ai = new (nav ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, facing, {",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "        nav: nav?.chf, navWorld: nav?.world, navSeed: (facing * 1000) | 0,",
     "new": "        nav: null, navWorld: nav?.world, navSeed: (facing * 1000) | 0,",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "        nav: nav?.chf, navWorld: nav?.world, navSeed: (facing * 1000) | 0,",
     "new": "        nav: nav?.chf, navWorld: undefined, navSeed: (facing * 1000) | 0,",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    chf: () => { if (room) room.read = true; return room?.chf ?? null; },",
     "new": "    chf: () => null,",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "        if (!r.read) return 0;   // nobody walks the mesh yet: nothing baked\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      if (!r || !enabled()) return 0;",
     "new": "      if (!r) return 0;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      world.pathBudget = world.budgetPerFrame;   // his enemy.js:404, the dungeon's line\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "        anchor: [feet[0], feet[1], feet[2]],",
     "new": "        anchor: [0, 0, 0],",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "        anchors: [...(ctx.waysIn ?? []), ...doorArrivals(ctx.doors, ctx.collider)],",
     "new": "        anchors: [...(ctx.waysIn ?? [])],",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "        if (grounded && playerFeet) r.feet.push(...feetAnchors(r.collider, playerFeet));\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  for (const r of FEET_RINGS) {",
     "new": "  for (const r of []) {",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "      if (kneeLine(collider, feet, p)) out.push(p);",
     "new": "      out.push(p);",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "if (isActionDoorObject(o) && !(o.currentLockValue > 0)) out.add(o.key);",
     "new": "if (isActionDoorObject(o)) out.add(o.key);",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "anchors: [...r.anchors, ...r.feet], exclude: doorsOutOfSoup(r.actions), key: 'interior' }))",
     "new": "anchors: [...r.anchors, ...r.feet], exclude: null, key: 'interior' }))",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "      if (soupWord(r.actions) !== r.soup) bake();   // a door locked or unlocked since: another soup\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    if (r.flying) { r.again = true; return; }",
     "new": "    if (r.flying) return;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "r.flying = false; if (r.again) bake(); });",
     "new": "r.flying = false; });",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "{ r.chf = b.chf; world.navEpoch++; } })",
     "new": "{ r.chf = b.chf; } })",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "      .then((b) => { if (g === gen && b?.chf)",
     "new": "      .then((b) => { if (b?.chf)",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "      .finally(() => { if (g !== gen) return; r.flying = false;",
     "new": "      .finally(() => { r.flying = false;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "      room = null; gen++;",
     "new": "      room = null;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "      r?.client?.dispose?.();\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "          r.feet.push(...feetAnchors(r.collider, playerFeet));\n          bake();\n",
     "new": "          r.feet.push(...feetAnchors(r.collider, playerFeet));\n",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "if (grounded && !r.flying && r.tried.size < MAX_FEET_BAKES && !r.tried.has(cell)) {",
     "new": "if (grounded && !r.flying && !r.tried.has(cell)) {",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "if (grounded && !r.flying && r.tried.size < MAX_FEET_BAKES && !r.tried.has(cell)) {",
     "new": "if (grounded && !r.flying && r.tried.size < MAX_FEET_BAKES) {",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "if (grounded && !r.flying && r.tried.size < MAX_FEET_BAKES && !r.tried.has(cell)) {",
     "new": "if (!r.flying && r.tried.size < MAX_FEET_BAKES && !r.tried.has(cell)) {",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "    if (dy > LEVEL_DY) continue;\n    const q = nearestIn(p, feet[0], feet[2]);",
     "new": "    const q = nearestIn(p, feet[0], feet[2]);",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "{ reach = ISLAND_REACH, collider = null, skip = null } = {}",
     "new": "{ reach = 0.3, collider = null, skip = null } = {}",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "  for (const n of near) if (n.q.d === 0 || kneeLine(collider, feet, [n.q.x, n.y, n.q.z], skip)) return n.i;",
     "new": "  for (const n of near) return n.i;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "        if (at >= 0 && island[at] === island[me]) { cut.delete(g); continue; }",
     "new": "        if (at >= 0 && island[at] !== island[me]) { cut.delete(g); continue; }",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "        if (at >= 0 && island[at] === island[me]) { cut.delete(g); continue; }",
     "new": "        if (at >= 0) { cut.delete(g); continue; }",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "        if (t < CUT_OFF_S) continue;",
     "new": "        if (t < 0) continue;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "        const t = cut.has(g) ? cut.get(g) + step : 0;",
     "new": "        const t = (cut.get(g) ?? 0) + step;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": "        g.ai.standAt(spot);\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "    const k = l > 1e-6 ? Math.min(1, STAND_INSET / l) : 0;",
     "new": "    const k = 0;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "      if (Math.hypot(spot[0] - playerFeet[0], spot[2] - playerFeet[2]) < STAND_CLEAR_M) continue;\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "      if (others.some((o) => Math.hypot(spot[0] - o[0], spot[2] - o[2]) < STAND_CROWD_M)) continue;\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "  if (!bodyFits(collider, spot) || lodgedIn(collider, spot)) return null;",
     "new": "  if (lodgedIn(collider, spot)) return null;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": "  if (spot[1] < poly.lo - STAND_STEP || spot[1] > poly.hi + STAND_STEP) return null;",
     "new": "  if (spot[1] < poly.lo - LEVEL_DY || spot[1] > poly.hi + LEVEL_DY) return null;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -401,7 +401,7 @@
     "old": "  if (!ai || g.dead || g.puppet || g.leaving",
     "new": "  if (!ai || g.puppet || g.leaving",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "old": "|| g.puppet || g.leaving || g.fleeing ||",
     "new": "|| g.puppet || g.fleeing ||",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -419,7 +419,7 @@
     "old": "|| g.leaving || g.fleeing || g.defender ||",
     "new": "|| g.leaving || g.defender ||",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -428,7 +428,7 @@
     "old": "|| g.fleeing || g.defender || typeof ai.standAt",
     "new": "|| g.fleeing || typeof ai.standAt",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -437,7 +437,7 @@
     "old": "|| g.defender || typeof ai.standAt !== 'function') return false;",
     "new": "|| g.defender) return false;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "old": "  if (ai.isHostile === false || ai.canAct === false",
     "new": "  if (ai.canAct === false",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -455,7 +455,7 @@
     "old": "|| ai.canAct === false || !(ai.giveUpTimer > 0)",
     "new": "|| !(ai.giveUpTimer > 0)",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -464,7 +464,7 @@
     "old": "|| !(ai.giveUpTimer > 0) || !ai.predictedTargetPos) return false;",
     "new": "|| !ai.predictedTargetPos) return false;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -473,7 +473,7 @@
     "old": "|| !(ai.giveUpTimer > 0) || !ai.predictedTargetPos) return false;",
     "new": "|| !(ai.giveUpTimer > 0)) return false;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -482,7 +482,7 @@
     "old": "  return ai.target == null || isPlayerTarget(ai.target);",
     "new": "  return true;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -491,7 +491,7 @@
     "old": "    this.path = null; this.pathI = 1; this.repathT = 0; this.stuckT = 0; this.lastX = feet[0]; this.lastZ = feet[2];\n  }\n\n  /** WORLD2",
     "new": "    this.lastX = feet[0]; this.lastZ = feet[2];\n  }\n\n  /** WORLD2",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -500,7 +500,7 @@
     "old": "    this.lastGroundedY = feet[1]; this._airborne = false; this.velY = 0; this.landedFall = 0; this._restGrounded = false;",
     "new": "    this.landedFall = 0; this._restGrounded = false;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -509,7 +509,7 @@
     "old": "    this.obstacleDetected = false; this.fallDetected = false; this.foundUpwardSlope = false; this.foundDoor = false;\n    this.avoidObstaclesTimer = 0; this.checkingClockwiseTimer = 0; this.didClockwiseCheck = false;\n    this.knockbackSpeed = 0; this.moving = false;\n    this.path = null;",
     "new": "    this.knockbackSpeed = 0; this.moving = false;\n    this.path = null;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -518,7 +518,7 @@
     "old": "import { createInteriorNav } from './interiorNav.js';",
     "new": "const createInteriorNav = () => ({ world: {}, chf: () => null, mount() {}, release() {}, frame() {} });",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -527,7 +527,7 @@
     "old": "      renderer, collider: ctx.collider, nav: interiorNav, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh\n      playerEntity, audio,\n",
     "new": "      renderer, collider: ctx.collider, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh\n      playerEntity, audio,\n",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -536,7 +536,7 @@
     "old": "      renderer, collider: ctx.collider, nav: interiorNav, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh\n      playerEntity, audio, shake:",
     "new": "      renderer, collider: ctx.collider, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh\n      playerEntity, audio, shake:",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -545,7 +545,7 @@
     "old": "      interiorNav.mount(ctx, spot);",
     "new": "      void spot;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -554,7 +554,7 @@
     "old": "      interiorNav.frame(foeDt, player.pos, interiorGuards?.guards, !!player.grounded);",
     "new": "      void foeDt;",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -563,7 +563,7 @@
     "old": "    interiorNav.release();   // INDOOR-WATCH: the room's mesh and its worker, with the room\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -572,7 +572,7 @@
     "old": "        interiorNav.release();   // INDOOR-WATCH: the same, the quest-teleport / load arm\n",
     "new": "",
     "tests": [
-      "test/fb1016_indoorwatch.test.js"
+      "test/fb1016b_indoorwatch.test.js"
     ]
   },
   {

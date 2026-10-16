@@ -142,7 +142,7 @@ The relay was split out of SCALE2 on reading: every piece of the reconnect storm
 
 FIELD BUGS 2026-10-16, the Discord: "Friend invivible and randomly popping up"; "Partied players popping in and out
 randomly after leaving tombs at graveyard ... also partied players inside tombs are invisible for a time". The record is
-`01-Overview/Field-Bugs-2026-10-16.md` DOOR-TOKEN.
+`01-Overview/Field-Bugs-2026-10-16b.md` DOOR-TOKEN.
 
 SCALE2's minter answers a room's socket as it opens, and every place change is a new room, so the hello waited on a
 mint whenever the token held could not open the room: past its minute, or already spent there (the cell a crypt's door
@@ -170,7 +170,7 @@ Measured over two real sessions and the real Room, with a mint taking 3 s: a par
 reuse minute was seen 3.1 s after the room changed, now 0.7 s (the build covers the rest); walking back out, 3.1 s, now
 0.1 s. The pages minted five tokens on the same walk either way.
 
-**Pins.** `test/fb1016_doortoken.test.js` (5). `tools/mutants/fb1016_doortoken.json`: 25 mutants, 25 dead.
+**Pins.** `test/fb1016b_doortoken.test.js` (5). `tools/mutants/fb1016b_doortoken.json`: 25 mutants, 25 dead.
 
 ## NET-SMOOTH: shipped (client only, no relay deploy)
 

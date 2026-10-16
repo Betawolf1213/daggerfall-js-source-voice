@@ -3,7 +3,7 @@
 // reporter's - a Large Boat and a Carrack laid up at Aldwall Rock, her refits named - and the Refits and Crew Hall pages
 // (a recruit's swap picker among them), at a desktop's width, a narrow window's, 600 and a phone's. A row's words (its
 // middle cell) must stand at least 100 px wide - the shipped `auto` acts track left them 0-38 px, a word a line, 400-700
-// px tall - and nothing may spill sideways. test/fb1016_yardrows.test.js holds the CSS's law; this measures what a fake
+// px tall - and nothing may spill sideways. test/fb1016b_yardrows.test.js holds the CSS's law; this measures what a fake
 // page cannot. Photographs the fleet to SHOT_DIR (default tools/shots/, ignored).
 //
 //     node tools/shipyardWindowProbe.mjs

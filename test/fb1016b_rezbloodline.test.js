@@ -1,4 +1,4 @@
-// REZ-BLOODLINE (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16.md; bible/06-Systems/Legacy-Arc.md
+// REZ-BLOODLINE (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16b.md; bible/06-Systems/Legacy-Arc.md
 // section 6): "I was testing with a friend, he dies and I cast resurrection. It works for a moment then he disappears and
 // remains dead" - "You died without a descendant. ... The line ends here". A Bloodline death was written at the death
 // door (AUDIT LEGACY A1/B3), so the party's Resurrect raised a body whose house had already buried it, and the slow step

@@ -7,7 +7,7 @@
 // weapon, armour of any material, clothing, uses alike - so every worn piece's share climbs 2% a tick. Which piece the
 // tick takes is MEND-WORN's and MEND-TIERS' (repairsObjectsTarget), unchanged. Every piece from its producer
 // (weaponOfMaterial, armorOfMaterial, the template's mint), put on by equipItem, the rounds the pump's
-// (runMagicRoundsFor). bible/01-Overview/Field-Bugs-2026-10-16.md MEND-ARMOUR.
+// (runMagicRoundsFor). bible/01-Overview/Field-Bugs-2026-10-16b.md MEND-ARMOUR.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
