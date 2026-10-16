@@ -52,8 +52,8 @@
   {
     "name": "TOWNECON-cycle-unphased",
     "file": "src/net/townEconLaw.js",
-    "old": "s += w.amp * Math.sin(2 * Math.PI * (day / w.days + fnv(`${key}:${i}`) / 4294967296));",
-    "new": "s += w.amp * Math.sin(2 * Math.PI * (day / w.days));",
+    "old": "    const wave = Math.sin(2 * Math.PI * (day / w.days + fnv(`${key}:${i}`) / 4294967296));",
+    "new": "    const wave = Math.sin(2 * Math.PI * (day / w.days));",
     "tests": [
       "test/townecon.test.js"
     ],
@@ -192,8 +192,8 @@
   {
     "name": "TOWNECON-price-words",
     "file": "src/net/townEconLaw.js",
-    "old": "if (ask < 0) return `Shops ask ${0 - ask}% less than the region's.`;",
-    "new": "if (ask < 0) return `Shops ask ${ask}% less than the region's.`;",
+    "old": "if (ask < 0) return t('town.econ.price.less', 'Shops ask {pct}% less than the region\\'s.', { pct: 0 - ask });",
+    "new": "if (ask < 0) return t('town.econ.price.less', 'Shops ask {pct}% less than the region\\'s.', { pct: ask });",
     "tests": [
       "test/townecon.test.js"
     ],

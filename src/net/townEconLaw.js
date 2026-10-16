@@ -22,6 +22,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { charterName, guildWords, seatTipOf } from './townSeatLaw.js';   // TE0 decision 5: a seat town's Charter, its area's holder
+import { t } from '../systems/textManager.js';   // L10N4: the card's words in the player's language, each read when it is said
 
 /** The location types that are towns (mapsFile.js LOCATION_TYPES TownCity, TownHamlet, TownVillage). */
 export const TOWN_ECON_TYPES = Object.freeze([0, 1, 2]);
@@ -74,7 +75,8 @@ export function townCycle(key, day) {
   let s = 0;
   for (let i = 0; i < TOWN_CYCLE.length; i++) {
     const w = TOWN_CYCLE[i];
-    s += w.amp * Math.sin(2 * Math.PI * (day / w.days + fnv(`${key}:${i}`) / 4294967296));
+    const wave = Math.sin(2 * Math.PI * (day / w.days + fnv(`${key}:${i}`) / 4294967296));   // the wave's angle, never a wrap
+    s += w.amp * wave;
   }
   return s;
 }
@@ -115,27 +117,49 @@ export function townShopFactor(p, mode, seatFactor = 1) {
   return Math.max(TOWN_FACTOR_FLOOR, townBuyFactor(p) * seatFactor);
 }
 
-/** What a town card's trend says, yesterday to today. @param {number} p @param {number} prev */
+/** What a town card's trend is, yesterday to today - its id; the card says it in the player's language (TREND_WORDS).
+ *  @param {number} p @param {number} prev */
 export const townTrendWord = (p, prev) => (p > prev ? 'rising' : p < prev ? 'falling' : 'holding');
+/** L10N4: the card's words in the player's language, each read when it is said (systems/textManager.js t). */
+const BAND_WORDS = Object.freeze({
+  Booming: () => t('town.econ.band.booming', 'Booming'),
+  Thriving: () => t('town.econ.band.thriving', 'Thriving'),
+  Steady: () => t('town.econ.band.steady', 'Steady'),
+  Struggling: () => t('town.econ.band.struggling', 'Struggling'),
+  Destitute: () => t('town.econ.band.destitute', 'Destitute'),
+});
+const TREND_WORDS = Object.freeze({
+  rising: () => t('town.econ.trend.rising', 'rising'),
+  falling: () => t('town.econ.trend.falling', 'falling'),
+  holding: () => t('town.econ.trend.holding', 'holding'),
+});
+/** A band in the player's language (its id is townBandOf's). @param {string} band */
+export const townBandWord = (band) => BAND_WORDS[/** @type {keyof typeof BAND_WORDS} */ (band)]?.() ?? band;
+/** The card's first line: the band, the Prosperity and its trend. @param {number} p @param {number} prev */
+export const townEconomyLine = (p, prev) => t('town.econ.line', 'Economy: {band} ({p}), {trend}',
+  { band: townBandWord(townBandOf(p)), p: held(p), trend: TREND_WORDS[townTrendWord(held(p), held(prev))]() });
 /** The card's price line - the town's own factors, as a share of the region's prices. @param {number} p */
 export function townPriceLine(p) {
   const ask = Math.round((townBuyFactor(p) - 1) * 100);
   const pay = Math.round((1 - townSaleFactor(p)) * 100);
-  if (ask < 0) return `Shops ask ${0 - ask}% less than the region's.`;
-  if (ask > 0) return pay > 0 ? `Shops ask ${ask}% more and pay ${pay}% less than the region's.` : `Shops ask ${ask}% more than the region's.`;
-  return 'Shops ask the region\'s prices.';
+  if (ask < 0) return t('town.econ.price.less', 'Shops ask {pct}% less than the region\'s.', { pct: 0 - ask });
+  if (ask > 0) {
+    return pay > 0 ? t('town.econ.price.moreLess', 'Shops ask {ask}% more and pay {pay}% less than the region\'s.', { ask, pay })
+      : t('town.econ.price.more', 'Shops ask {pct}% more than the region\'s.', { pct: ask });
+  }
+  return t('town.econ.price.same', 'Shops ask the region\'s prices.');
 }
-/** Why a town stands where it does, in one line - the strongest reason first, or null. */
+/** Why a town stands where it does, in one line - the strongest reason first (townReasonLine), each read when said. */
 export const TOWN_REASONS = Object.freeze({
-  raid: 'A raid at its gates is hurting trade.',
-  'market-day': 'Market Day draws trade.',
-  festival: 'The Festival draws visitors.',
-  'open-gates': 'Open Gates draw trade.',
-  levy: 'The Levy weighs on trade.',
-  curfew: 'The Curfew keeps buyers home.',
-  players: 'Busy with travellers and traders.',
+  get raid() { return t('town.econ.reason.raid', 'A raid at its gates is hurting trade.'); },
+  get 'market-day'() { return t('town.econ.reason.marketDay', 'Market Day draws trade.'); },
+  get festival() { return t('town.econ.reason.festival', 'The Festival draws visitors.'); },
+  get 'open-gates'() { return t('town.econ.reason.openGates', 'Open Gates draw trade.'); },
+  get levy() { return t('town.econ.reason.levy', 'The Levy weighs on trade.'); },
+  get curfew() { return t('town.econ.reason.curfew', 'The Curfew keeps buyers home.'); },
+  get players() { return t('town.econ.reason.players', 'Busy with travellers and traders.'); },
 });
-/** @param {{ raided?: boolean, edict?: string|null, players?: number }} t */
+/** @param {{ raided?: boolean, edict?: string|null, players?: number }} r */
 export function townReasonLine({ raided = false, edict = null, players = 0 }) {
   if (raided) return TOWN_REASONS.raid;
   if (edict && Object.prototype.hasOwnProperty.call(TOWN_EDICT_TERMS, edict)) return TOWN_REASONS[/** @type {keyof typeof TOWN_REASONS} */ (edict)];
@@ -143,9 +167,12 @@ export function townReasonLine({ raided = false, edict = null, players = 0 }) {
 }
 /** The area's line for a town that is not a seat: the seat whose bailiwick it is in and its holder; no seat, nobody's.
  *  @param {any} area a dressed seat, or null for a region with none */
-export const townAreaLine = (area) => (area
-  ? `Under ${charterName(area)}: ${area.holder?.guild ? `held by ${guildWords(area.holder.guild)}` : 'unheld'}`
-  : 'No guild holds this area.');
+export function townAreaLine(area) {
+  if (!area) return t('town.econ.area.none', 'No guild holds this area.');
+  const charter = charterName(area);
+  return area.holder?.guild ? t('town.econ.area.held', 'Under {charter}: held by {guild}', { charter, guild: guildWords(area.holder.guild) })
+    : t('town.econ.area.unheld', 'Under {charter}: unheld', { charter });
+}
 
 /**
  * A TOWN'S CARD for a map's hover (`{ title, lines }`, the EVENT-TIP card - ui/eventMapMarks.js readTip): its economy
@@ -156,7 +183,7 @@ export const townAreaLine = (area) => (area
  */
 export function townTipOf({ name, p, prev, raided = false, players = 0, seat = null, area = undefined }, nowMs = Date.now()) {
   if (!name) return null;
-  const lines = [`Economy: ${townBandOf(p)} (${held(p)}), ${townTrendWord(held(p), held(prev))}`, townPriceLine(p)];
+  const lines = [townEconomyLine(p, prev), townPriceLine(p)];
   const reason = townReasonLine({ raided, edict: seat?.holder?.edict ?? null, players });
   if (reason) lines.push(reason);
   const card = seat ? seatTipOf(seat, nowMs) : null;
