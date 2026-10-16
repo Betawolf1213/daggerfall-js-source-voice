@@ -10684,6 +10684,48 @@ was written against among them.
   standing, a room's high shelf kept, a malformed place passed over, a second run nothing more), the town read, the
   client's yard over the real pool; `tools/mutants/yardsweep.json` (5, all killed).
 
+### STALL-SHAPE's re-seat - a yard's saved stalls and boulders, put back where their owners put them (2026-10-16)
+
+FIELD BUGS 2026-10-16 STALL-SHAPE (the Discord, 2026-10-15: "market stalls all shifted into the ground/walls" - a red
+awning against a wall, its counter half buried). A yard's piece records where its model's ORIGIN stands, worked out
+against the model as it stood the day it was placed: a model is lifted by its own bottom and set clear of a wall by its
+own reach (`systems/decorPlacer.js` - "the RECORD says where the origin is - nothing is re-derived at a restore"). TEMPLE-STEPS
+(FIELD BUGS 2026-10-15f, the web's deploy done 2026-10-16T00:43:25Z) rebuilt two of the kinds a yard can hold about
+other origins: the market stalls at the prefab's 0.75 with their counter at the origin, where the stand-in had been the
+mesh at 1 with its back there - every saved stall drew 2.06 m (times its scale) further back, into the wall its owner had
+stood it against, and a quarter smaller; and the boulders at their prefabs' 2 to 8 about their meshes' middles - every
+saved one grew two to eight times. STALL-SHAPE rebuilt the pack's second stall (53113 on) 0.26 m further back again.
+
+- **The re-seat.** Migration `0120_yard_reseat.sql` (written by `tools/yardReseat.mjs`, whose header says why) moves each
+  saved stall's and boulder's origin so the box of its model as it now stands - turned by the piece's turn, times its
+  scale - has its middle over the ground and its foot where the box it was placed by had them, and divides its scale by
+  what the model grew (`k`: the stalls 0.75, each rock its prefab's), so it is the size its owner saw. Never under the
+  law's least scale (`DECOR_SCALE_MIN` - a boulder of 8 placed under 2 stands at 0.25, bigger than it was), never past the
+  yard's bound (`DECOR_YARD_POS_MAX`) nor up past `DECOR_YARD_HIGH`.
+- **By what it was placed.** The service's own clock says: `placed_at` before 1792111405 (TEMPLE-STEPS' deploy) - WD3's
+  stand-ins (unchanged from f3ed9e2097 to c2b52fdff1^); since - TEMPLE-STEPS', where only the second stall has moved. The
+  boxes are the stand-ins' own: WD3's evaluated off their builders at that revision, the present ones held to the live
+  builders by `test/fb1016_stallshape.test.js`.
+- **Once.** The ledger applies it once; a re-seated place carries `"reseat": "STALL-SHAPE"` (decorPlaceOf reads past it -
+  a move writes a fresh place without it), and the statement never moves a place that carries it. A room's pieces (`yard`
+  0) and every other model are never asked; a place that is not JSON is passed over whatever order SQLite reads the terms
+  in (0109's care). The turn's cosine and sine are their series in plain arithmetic: no statement leans on SQLite's math
+  extension, which a D1 database is not promised to carry.
+- **What no record says.** A piece placed before the deploy and moved since was moved against TEMPLE-STEPS' box, and is
+  put back as if it had not been - its owner moves it once more. And a stall placed in the hour after the deploy by a
+  client still running the old build stands as TEMPLE-STEPS drew it.
+- **The rule it leaves.** A stand-in a saved piece stands by keeps its box, or comes with its pieces' re-seat: the test
+  holds the stalls' and the rocks' boxes to the ones this migration re-seated to, so the next change to either fails
+  there until its yards are put back too. Every other piece the decorator offers out of the town mods stands by its
+  stand-in's box the same way, unguarded (FLAGGED in the record).
+- **No service change, no relay change.** The Worker reads the places as it did (`server-account/src/decor.js` pieceOfRow);
+  the account service's deploy applies the migration. **The four hosts:** a yard stands in `scenes/world.js` alone (the
+  data moved, nothing of the host); `scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` stand
+  none. The town's own stalls are `03-World/Beautiful-Towns.md`'s (the stand-ins' table).
+- **Pinned**: `test/fb1016_stallshape.test.js` (the migration over the real service's rows, placed by the real placer
+  against the stand-ins of their day; the statement against the tool's law at every kind of turn; the migration the
+  tool's); `tools/mutants/fb1016_stallshape.json`.
+
 ### YARD-SHED - a town's yards asked within reach, kept by the service, needing no session (2026-10-06)
 
 The account service went down for everyone on 2026-10-06: every database call failed with `D1_ERROR: D1 DB is
