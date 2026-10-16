@@ -1,5 +1,5 @@
 // @ts-check
-// GRAVE-PARTY (FIELD BUGS 2026-10-16b, bible/01-Overview/Field-Bugs-2026-10-16b.md; the Discord's "objects in tombs are un
+// GRAVE-PARTY (FIELD BUGS 2026-10-16b, bible/01-Overview/bugs/Field-Bugs-2026-10-16b.md; the Discord's "objects in tombs are un
 // lootable"; Mac's SEARCH1-PARTY: "When one player in the party interacted with it no one else can again for 5 hours ...
 // visible for everyone in the party the same the looter sees"): A DUNGEON'S SEARCHED OBJECT IS ITS SEARCHER'S PARTY'S.
 //
@@ -24,7 +24,7 @@
 // session's issued name): the five hours are the account's, and another character of it is told whose search it was
 // (systems/searchables.js searchToldBy), no longer "You have already searched here." of an object it never touched.
 import { searchKinOf, searchAcctOfPeer, searchSelfAcct, searchSelfName, searchToldBy, SEARCH_ACCT_MAX, SEARCH_LOOT_MAX } from '../systems/searchables.js';
-import { validLootList } from '../systems/loot.js';
+import { validLootList } from '../systems/loot/loot.js';
 import { peerHanded } from '../systems/peerWord.js';
 import { NAME_MAX, sanitizeName } from '../net/wire.js';   // AUDIT GRAVE-PARTY G5: a searching character's name is a name the wire would carry
 

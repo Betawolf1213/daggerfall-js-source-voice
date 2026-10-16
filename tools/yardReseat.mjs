@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // FIELD BUGS 2026-10-16b STALL-SHAPE: A YARD'S SAVED STALLS AND BOULDERS, RE-SEATED WHERE THEIR OWNERS PUT THEM.
 //
-//   node tools/yardReseat.mjs           print the migration (server-account/migrations/0120_yard_reseat.sql) it writes
+//   node tools/yardReseat.mjs           print the migration (server-account/migrations/0121_yard_reseat.sql) it writes
 //   node tools/yardReseat.mjs --write   write it
 //
 // A yard's piece is a record of where its model's ORIGIN stands - `pos`, from its building's own origin, with its turn
 // and its scale (net/decorLaw.js decorPlaceOf) - worked out by the placer against the model as it stood that day: a
-// model is lifted by its own bottom and set clear of a wall by its own reach (systems/decorPlacer.js - "the RECORD says
+// model is lifted by its own bottom and set clear of a wall by its own reach (systems/decor/decorPlacer.js - "the RECORD says
 // where the origin is - nothing is re-derived at a restore"). So a stand-in rebuilt round another origin moves every
 // piece placed by the old one. FIELD BUGS 2026-10-15f TEMPLE-STEPS (c2b52fdff1, the web's deploy done at
 // 2026-10-16T00:43:25Z) rebuilt two kinds a yard can hold:
@@ -29,19 +29,19 @@
 // since, by TEMPLE-STEPS' - its rocks are STALL-SHAPE's, and only the second stall moved. No record says a piece was moved
 // since it was placed: one placed before and moved since is put back as if it had not been (the owner moves it once more).
 //
-// The turn is the place's yaw alone (`rot[0]`): the placer mints a model's place [yaw, 0, 0] (systems/decorPlacer.js), so
+// The turn is the place's yaw alone (`rot[0]`): the placer mints a model's place [yaw, 0, 0] (systems/decor/decorPlacer.js), so
 // no saved stall or boulder carries a pitch or a roll; one sent by hand is re-seated about its yaw.
 //
 // Arithmetic alone: the turn's cosine and sine are their Taylor series to the 18th and 19th powers (|turn| <= 180
 // degrees - within 1e-8), so no statement leans on SQLite's math extension, which a D1 database is not promised to carry.
 // The WAS boxes are the stand-ins' own, evaluated from their builders at f3ed9e2097 (WD3, unchanged to c2b52fdff1^) and
-// at c2b52fdff1; the NOW boxes are the builders' at this change - test/fb1016b_stallshape.test.js holds them to the live
+// at c2b52fdff1; the NOW boxes are the builders' at this change - test/world/fb1016b_stallshape.test.js holds them to the live
 // builders, so a stand-in whose box moves again fails there until its saved pieces are re-seated.
 import { writeFileSync, readFileSync } from 'node:fs';
 import { isMain } from './lib/isMain.mjs';
 import { DECOR_SCALE_MIN, DECOR_SCALE_MAX, DECOR_YARD_POS_MAX, DECOR_YARD_HIGH } from '../src/net/decorLaw.js';
 
-export const YARD_RESEAT_FILE = 'server-account/migrations/0120_yard_reseat.sql';
+export const YARD_RESEAT_FILE = 'server-account/migrations/0121_yard_reseat.sql';
 /** What a re-seated piece's place carries, and the statement asks before it moves one. */
 export const YARD_RESEAT_MARK = 'STALL-SHAPE';
 /** TEMPLE-STEPS' stand-ins reached the players: #934's web deploy done, 2026-10-16T00:43:25Z (the service's seconds). */
@@ -131,7 +131,7 @@ export function reseatPlace(place, reseat) {
  * STALL-SHAPE's audit: A YARD PIECE BROUGHT BACK FROM A SNAPSHOT (tools/realmRestore.mjs, a `home_decor` row as the dump
  * holds it) stands as this migration would have left it. One placed by WD3's stand-ins (before YARD_RESEAT_AT) with no
  * mark was never re-seated - by this law it is now. One placed since by TEMPLE-STEPS' open stall may have been placed by
- * STALL-SHAPE's instead (no record says which stand-in a piece was placed against, nor a snapshot whether 0120 had run):
+ * STALL-SHAPE's instead (no record says which stand-in a piece was placed against, nor a snapshot whether 0121 had run):
  * it is written as the snapshot holds it, and `unsure` says so to the operator. Never moved twice: a marked place is kept.
  * @param {Record<string, any>} row
  * @returns {{ row: Record<string, any>, reseated: boolean, unsure: boolean }}
@@ -167,7 +167,7 @@ export function reseatSql() {
 --
 -- Applied exactly once through the \`d1_migrations\` ledger, which the deploy runs (ACC1-CI).
 --
--- WRITTEN BY tools/yardReseat.mjs (node tools/yardReseat.mjs --write) - its header says why; test/fb1016b_stallshape.test.js
+-- WRITTEN BY tools/yardReseat.mjs (node tools/yardReseat.mjs --write) - its header says why; test/world/fb1016b_stallshape.test.js
 -- holds this file to it, and runs it over the real service's own rows.
 --
 -- A yard's piece records where its model's origin stands, worked out against the model as it stood the day it was placed.

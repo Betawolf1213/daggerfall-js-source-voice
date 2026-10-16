@@ -1,38 +1,38 @@
 [
   {
     "name": "RVN-OWNERS-CHOICE-a-peers-whole-kills",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  return !!whole && !!fromPlayer && !peer;",
     "new": "  return !!whole && !!fromPlayer;",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
     "name": "RVN-OWNERS-CHOICE-a-foes-whole-kills",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  return !!whole && !!fromPlayer && !peer;",
     "new": "  return !!whole && !peer;",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
     "name": "RVN-OWNERS-CHOICE-any-whole-kills",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  return !!whole && !!fromPlayer && !peer;",
     "new": "  return !!whole;",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
     "name": "RVN-OWNERS-CHOICE-a-blow-not-whole-kills",
-    "file": "src/systems/revenantFate.js",
+    "file": "src/systems/revenant/revenantFate.js",
     "old": "  return !!whole && !!fromPlayer && !peer;",
     "new": "  return !!fromPlayer && !peer;",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      if (fates && !ownersWholeKill(_whole, { fromPlayer, peer }) && revenantMayYield(f)) {",
     "new": "      if (fates && !_whole && revenantMayYield(f)) {",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "      if (fates && !ownersWholeKill(_whole, { fromPlayer, peer }) && revenantMayYield(f)) {",
     "new": "      if (fates && !ownersWholeKill(_whole, { fromPlayer }) && revenantMayYield(f)) {",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "      if (f.entity?.revenant?.id && !ownersWholeKill(_whole, { fromPlayer, peer }) && revenantLastStandDue(f)) {",
     "new": "      if (!_whole && f.entity?.revenant?.id && revenantLastStandDue(f)) {",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "      if (fates && !ownersWholeKill(_whole, { fromPlayer, peer }) && revenantMayYield(f)) {",
     "new": "      if (fates && revenantMayYield(f)) {",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "      if (f.entity?.revenant?.id && !ownersWholeKill(_whole, { fromPlayer, peer }) && revenantLastStandDue(f)) {",
     "new": "      if (f.entity?.revenant?.id && revenantLastStandDue(f)) {",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "      if (opts.fates && !ownersWholeKill(_whole, { fromPlayer, peer }) && (!onlineRoom() || !isRoomFoe(foe)) && revenantMayYield(foe)) {",
     "new": "      if (opts.fates && !_whole && (!onlineRoom() || !isRoomFoe(foe)) && revenantMayYield(foe)) {",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      if (foe.entity?.revenant?.id && !ownersWholeKill(_whole, { fromPlayer, peer }) && (!onlineRoom() || !isRoomFoe(foe)) && revenantLastStandDue(foe)) {",
     "new": "      if (!_whole && foe.entity?.revenant?.id && (!onlineRoom() || !isRoomFoe(foe)) && revenantLastStandDue(foe)) {",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      if (opts.fates && !ownersWholeKill(_whole, { fromPlayer, peer }) && (!onlineRoom() || !isRoomFoe(foe)) && revenantMayYield(foe)) {",
     "new": "      if (opts.fates && (!onlineRoom() || !isRoomFoe(foe)) && revenantMayYield(foe)) {",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "      if (foe.entity?.revenant?.id && !ownersWholeKill(_whole, { fromPlayer, peer }) && (!onlineRoom() || !isRoomFoe(foe)) && revenantLastStandDue(foe)) {",
     "new": "      if (foe.entity?.revenant?.id && (!onlineRoom() || !isRoomFoe(foe)) && revenantLastStandDue(foe)) {",
     "tests": [
-      "test/fb1016b_rvnownerschoice.test.js"
+      "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ]
   }
 ]

@@ -29,7 +29,7 @@ the texture archive each wears and where it stands; the ids are DFU's model numb
   from the BODY to the nearest point of the object's box (`searchReachFor`), not from the eye to where the ray meets it.
 - The roll: a third each underground; at a Graveyard location's headstone two in three nothing, a sixth each.
 - Foe: a grave, a coffin or a shelf wakes an undead by the player's level; a chest or a crate draws from the
-  dungeon's own layout roster, less its water species (SLAUGHTER-BOX, `01-Overview/Field-Bugs-2026-10-15c.md`: the
+  dungeon's own layout roster, less its water species (SLAUGHTER-BOX, `01-Overview/bugs/Field-Bugs-2026-10-15c.md`: the
   foe stands on the dry floor beside the box; RDBLayout's Slaughterfish, Dreugh and Lamia stand in the roster only for
   a marker under water - `characters/dungeonEnemies.js` WATER_SPECIES, the one home). The named foe is an elite half the
   time (systems/eliteFoes.js) - offline too, as asked.
@@ -59,13 +59,13 @@ looter sees".
 ## GRAVE-PARTY - the search is the party's, above ground and below (FIELD BUGS 2026-10-16b)
 
 The Discord's "A few things": "graveyard loot on headstones are able to be looted by others, objects in tombs are un
-lootable (have not tried dungeons yet)" (`01-Overview/Field-Bugs-2026-10-16b.md`). A "tomb" is the Graveyard's Cemetery
+lootable (have not tried dungeons yet)" (`01-Overview/bugs/Field-Bugs-2026-10-16b.md`). A "tomb" is the Graveyard's Cemetery
 dungeon (dungeonType 18, the M0000000-8 crypt blocks), its room `dungeon:m<id>`.
 
 - **ABOVE GROUND THE STONE IS THE PARTY'S.** A headstone's search was its searcher's game's alone (the act channel is a
   world room's, and a street cell is not one), so every partymate searched it again and found again. The cell keeps it
   now - the overworld ledger's third kind, `gr` (`net/overworldLaw.js` `owFoldGraves`, the relay's `_owGraves`,
-  world211): the searcher's game says `[px, py, n]` (the stone's pixel and its number in the build,
+  world212): the searcher's game says `[px, py, n]` (the stone's pixel and its number in the build,
   `world.js` graveTargets' `loc`/`key`), the relay stamps it with its own minute, the searcher's VERIFIED account (the
   token's subject, never the word's) and the searching character's name (the token's - AUDIT GRAVE-PARTY G5, below) -
   `[px, py, n, minute, acct, name]` - and keeps it the search's five hours (`OW_GRAVE_KEEP_MIN`, pinned to
@@ -73,7 +73,7 @@ dungeon (dungeonType 18, the M0000000-8 crypt blocks), its room `dungeon:m<id>`.
   game lands the rows of its own party (and its own account's - another tab, an earlier visit, another character) on the
   ledger's five hours, by the searcher's name (`scenes/searchPartyHost.js`, `searchToldBy`), and keeps every row in a
   small book read again at the stone - so a partymate who searched before the party was made, or before the hub's picture
-  came, locks it too. A stranger's row locks nothing of mine, and mine nothing of theirs. A relay before world211 is told
+  came, locks it too. A stranger's row locks nothing of mine, and mine nothing of theirs. A relay before world212 is told
   nothing (`relaySupportsOwGraves`, `OW_GRAVE_RELAY_MIN` 211 - it would close the socket on the word: main's INSTANCES
   world208, WEAPON-GLOW1 world209 and HUB-PULL + DO-ASK world210 among them, AUDIT GRAVE-PARTY G1); there each game keeps
   its own five hours, as before. A LAYER keeps its own graves (a party plays in one layer), where the spent and the spawns

@@ -3,7 +3,7 @@
 //
 // The law is systems/legacy/ (family.js the record and its inheritance, age.js the span and the toll, store.js where a
 // family lives and the birth's handoff, places.js the town an heir is born in, heirloom.js the heirloom, the remains
-// and the blessing); the windows are ui/familyPages.js (the pause window's Family tab) and ui/legacyDoor.js (the
+// and the blessing); the windows are ui/familyPages.js (the pause window's Family tab) and ui/legacy/legacyDoor.js (the
 // Succession). This file reaches the world only through the deps the world host (scenes/world.js) hands it, so a test
 // drives it headless.
 //
@@ -47,7 +47,7 @@ import { legacySettings } from '../systems/legacy/settings.js';
 import { registerModSaveData } from '../systems/modSaveData.js';
 import { REALM_ACT_TRANSIENT } from '../systems/realmSaves.js';   // REZ-BLOODLINE AUDIT R1: a Resurrect's ask the realm never heard
 import { t } from '../systems/textManager.js';   // REZ-BLOODLINE AUDIT R1: the fallen told in their own language (L10N4)
-import { repairItemLists } from '../systems/save.js';   // ITEM-WALK B: the load's item repairs, on what leaves the line's record
+import { repairItemLists } from '../systems/save/save.js';   // ITEM-WALK B: the load's item repairs, on what leaves the line's record
 import { rollStats, rollSkills, spendPoolLowest, STAT_KEYS_ORDER } from '../systems/chargen.js';
 import { LEVELING_CLASSIC } from '../systems/oblivionLeveling.js';
 import { pickHeirloom, markHeirloom, mintRemainsItem, isRemainsItem, isHeirloom, attuneHeirloom, blessingOf, blessedIn, remainsGoldOf, REMAINS_LIST, BLESSING_POINTS } from '../systems/legacy/heirloom.js';
@@ -428,7 +428,7 @@ export function createLegacyHost(deps) {
     if (pieces.length) {
       // ITEM-WALK B (2026-10-07): A BEQUEST IS REPAIRED AS IT IS PAID. It reaches its heir from the line's record, by no
       // load - at the heir's birth, or on their first days played - and that record may be the device's copy, never the
-      // save's (mergeFamily). So the load's item repairs (systems/save.js repairItemLists) run on the pieces paid, as a
+      // save's (mergeFamily). So the load's item repairs (systems/save/save.js repairItemLists) run on the pieces paid, as a
       // load runs them on every list a save holds; the line's record keeps its own, paid once.
       const given = pieces.map((it) => JSON.parse(JSON.stringify(it)));
       repairItemLists([given]);
@@ -808,7 +808,7 @@ export function createLegacyHost(deps) {
   }
   /** FB1013d REMAINS-STAND: A LIST MADE READY TO BE TAKEN FROM where it lies - by its own window, or by its body (the
    *  world's stand, remainsToStand). It wears its remains' mark (AUDIT LEGACY II H4: the bones go back into it, and into
-   *  nothing that is not the character's own keeping - systems/itemTransfer.js planStore); the load's item repairs run
+   *  nothing that is not the character's own keeping - systems/item/itemTransfer.js planStore); the load's item repairs run
    *  on it once (ITEM-WALK B: whichever copy it came from) before its claim's mark; and, nobody's, it is noted as it
    *  stands before them - a change from here is a claim (claimTouched). */
   const repairedLists = new WeakSet();

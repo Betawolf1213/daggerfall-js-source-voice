@@ -54,8 +54,8 @@ import { rand } from '../formats/dfRandom.js';
 import { skillValue, tallySkill, SKILLS } from './skills.js';
 import { goldPiecesOf, addGoldPieces, LETTER_OF_CREDIT_TEMPLATE, addItem } from './inventory.js';   // E4: the counter's two members; B1: letters are tender; STOLEN-GOODS AUDIT S2: a bag's honest goods into the pack
 import { hasBag } from '../net/bagLaw.js';   // STOLEN-GOODS AUDIT S2: whether a Materials Bag still rides in the pack
-import { getPeopleOfCurrentRegion } from './talk.js';   // T3a shipped the lookup
-import { changeReputation } from './factionRep.js';     // S25
+import { getPeopleOfCurrentRegion } from './talk/talk.js';   // T3a shipped the lookup
+import { changeReputation } from './faction/factionRep.js';     // S25
 import { isEquipped, unequipItem } from './equip.js';   // STOLEN-GOODS: a worn stolen piece is taken off before it is taken
 import { setLightSource } from './lightSource.js';   // STOLEN-GOODS: and a stolen torch in hand goes out with it (DISC7's one door)
 import { isStolen } from './stolenGoods.js';   // STOLEN-GOODS: the theft's mark

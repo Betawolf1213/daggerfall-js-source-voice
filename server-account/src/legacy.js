@@ -23,7 +23,7 @@
 //
 // A FALL HELD FOR A PARTY'S RESURRECT (FIELD BUGS 2026-10-16b REZ-BLOODLINE, AUDIT R1): the playing tab's death door
 // stamps the tombstone at once, `hold` - `dead_at`, so no door joins, checkpoints or trades the character from there, and
-// its lease kept aside (`rez_lease`, migration 0121) - and for REZ_HOLD_S that lease alone may take the death back, once
+// its lease kept aside (`rez_lease`, migration 0122) - and for REZ_HOLD_S that lease alone may take the death back, once
 // (realmRaise: the tombstone cleared, the lease handed back, the line's copy stamped with the death taken back - the
 // REVIVE law, src/systems/legacy/revived.js). What a tombstone takes with it (afterTomb) waits on the window's close: the
 // tab's own word that it went on (realmDie without `hold`), or the minute's clock for a tab that never said (settleHolds).

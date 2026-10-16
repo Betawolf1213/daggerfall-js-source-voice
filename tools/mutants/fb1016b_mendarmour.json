@@ -5,7 +5,7 @@
     "old": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
     "new": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : (it.group === 'Weapons' ? Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)) : CONDITION_AMOUNT));",
     "tests": [
-      "test/fb1016b_mendarmour.test.js"
+      "test/systems/fb1016b_mendarmour.test.js"
     ],
     "note": "The report's law: a weapon its share, every other piece DFU's point."
   },
@@ -15,7 +15,7 @@
     "old": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
     "new": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(1600 / MEND_SHARE_OF)));",
     "tests": [
-      "test/fb1016b_mendarmour.test.js"
+      "test/systems/fb1016b_mendarmour.test.js"
     ],
     "note": "MEND-WORN's 32 handed to every piece: a share of the pool, not of the piece's own condition."
   },
@@ -25,7 +25,7 @@
     "old": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
     "new": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round((templateByIndex(it.templateIndex)?.hitPoints ?? it.maxCondition) / MEND_SHARE_OF)));",
     "tests": [
-      "test/fb1016b_mendarmour.test.js"
+      "test/systems/fb1016b_mendarmour.test.js"
     ],
     "note": "The row's size before its material: steel and Daedric plate climbing slower than iron."
   },
@@ -35,7 +35,7 @@
     "old": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
     "new": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.round(it.maxCondition / MEND_SHARE_OF));",
     "tests": [
-      "test/fb1016b_mendarmour.test.js"
+      "test/systems/fb1016b_mendarmour.test.js"
     ]
   },
   {
@@ -44,7 +44,7 @@
     "old": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
     "new": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.floor(it.maxCondition / MEND_SHARE_OF)));",
     "tests": [
-      "test/fb1016b_mendarmour.test.js"
+      "test/systems/fb1016b_mendarmour.test.js"
     ]
   },
   {
@@ -53,7 +53,7 @@
     "old": "export const MEND_SHARE_OF = ITEM_TEMPLATES[WEAPONS.Dagger].hitPoints;",
     "new": "export const MEND_SHARE_OF = ITEM_TEMPLATES[WEAPONS.Dagger].hitPoints * 2;",
     "tests": [
-      "test/fb1016b_mendarmour.test.js"
+      "test/systems/fb1016b_mendarmour.test.js"
     ]
   },
   {
@@ -62,7 +62,7 @@
     "old": "export const repairsObjectsMend = (it) => (it.magic || it.artifact ? CONDITION_AMOUNT : Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF)));",
     "new": "export const repairsObjectsMend = (it) => Math.max(CONDITION_AMOUNT, Math.round(it.maxCondition / MEND_SHARE_OF));",
     "tests": [
-      "test/fb1016b_mendarmour.test.js"
+      "test/systems/fb1016b_mendarmour.test.js"
     ]
   }
 ]

@@ -18,7 +18,7 @@
 // it to both pools (`nav`: the bake as a thunk and the routes' world, the
 // dungeon's own two), and runs its frame before the pools step.
 //
-// THE BAKE is the dungeon's, through the same NavClient (ai/navClient.js): the
+// THE BAKE is the dungeon's, through the same NavClient (ai/nav/navClient.js): the
 // room's collider, the unlocked action doors left out of the soup (a foe opens
 // those - openDoorsStep's own test; a locked one stays a wall), anchored on
 // every place an agent lives - the player's arrival, the room's ways in, and
@@ -60,12 +60,12 @@
 // The classic lane (the switch off) bakes nothing and stands nobody: DFU's
 // motor, DFU's wall.
 // ═══════════════════════════════════════════════════════════════════
-import { NavClient } from '../ai/navClient.js';
+import { NavClient } from '../ai/nav/navClient.js';
 import { makeNavWorld } from '../ai/enhancedMotor.js';
 import { isActionDoorObject } from '../world/actionSystem.js';
 import { doorWorldPosition, doorWorldNormal } from '../player/enterExit.js';
 import { indoorWatchSpot, GUARD_INDOOR_DOOR_OFFSET } from './cityGuards.js';
-import { isPlayerTarget } from '../characters/enemyTargets.js';
+import { isPlayerTarget } from '../characters/enemy/enemyTargets.js';
 import { bodyFits, lodgedIn } from '../characters/foeSpacing.js';
 import { CAPSULE_RADIUS, STEP_OFFSET } from '../player/motor.js';
 import { getPref } from '../systems/uiPrefs.js';

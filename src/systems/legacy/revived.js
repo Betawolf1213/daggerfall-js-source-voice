@@ -25,7 +25,7 @@
 
 /** REZ-BLOODLINE (FIELD BUGS 2026-10-16b): HOW LONG A FALL IS HELD FOR A PARTY'S RESURRECT, in seconds - the longest an
  *  online death screen stands (ui/deathScreen.js ONLINE_RESPAWN_SECONDS, the body's minute; the open zone's two,
- *  systems/wildZone.js WILD_DEATH_HOLD_S - each counted on the wall clock) and half a minute over. One number for both
+ *  systems/wild/wildZone.js WILD_DEATH_HOLD_S - each counted on the wall clock) and half a minute over. One number for both
  *  doors: the page asks the realm no later (scenes/legacyHost.js REZ_HOLD_MS), and the realm takes a raise no later than
  *  this past the tombstone it stamped (server-account/src/legacy.js realmRaise) - the realm's clock starts at the
  *  tombstone's landing, after the page's, so the page's window closes first. */

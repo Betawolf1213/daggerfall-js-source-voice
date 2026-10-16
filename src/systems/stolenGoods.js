@@ -4,16 +4,16 @@
 // completely disrupts the economy ... Also, when you're sent to prison, all the stolen items stay with you and aren't
 // taken away"): A STOLEN PIECE CARRIES ITS THEFT.
 //
-// One flag on the item (`stolen: true`, declared in systems/itemFields.js, so it rides the save, the wire and a realm
+// One flag on the item (`stolen: true`, declared in systems/item/itemFields.js, so it rides the save, the wire and a realm
 // trade as `counterBought` does - a piece handed to another player is no less stolen). It is written at the moment a
 // piece is taken from someone else's keeping, at every theft arm:
-//   - the open shop's Steal, on either skin (ui/nativeTrade.js _doSteal, ui/enhancedTrade.js runSteal) - its success;
+//   - the open shop's Steal, on either skin (ui/native/nativeTrade.js _doSteal, ui/enhanced/enhancedTrade.js runSteal) - its success;
 //   - the shut shop's shelf, a stranger's cupboard (scenes/worldModes.js openShelf, the `container:` arm) and a robbed
 //     caravan's goods (scenes/world.js caravanHost's openLoot), the inventory window over a loot target whose host hands
 //     over THE OWNER'S KEEPING (`loot.stolenFrom`, systems/inventorySession.js theftTarget): a take of the owner's piece
-//     marks it BEFORE it lands (systems/itemTransfer.js applyTransfer), and the owner's piece put back there is theirs
+//     marks it BEFORE it lands (systems/item/itemTransfer.js applyTransfer), and the owner's piece put back there is theirs
 //     again, its mark cleared before it lands (takenFromKeeping, returnedToKeeping below);
-//   - a lawful ship's hold, taken by Piracy (scenes/navalHost.js, the prize's hold as it is drawn) - every way out of
+//   - a lawful ship's hold, taken by Piracy (scenes/naval/navalHost.js, the prize's hold as it is drawn) - every way out of
 //     her hold carries it.
 // Marked before it lands, because a stack merges on the way in (inventory.js addItem): a diff at the window's close (the
 // theft basket, systems/theft.js) found the shelf's three arrows gone and the record that held them merged into the

@@ -3,7 +3,7 @@
 // lists them. The law that reads them is systems/tutorials.js; the box is ui/tutorialPopup.js; the menu's pane is
 // ui/tutorialsPane.js.
 //
-// THE RULES A PAGE KEEPS (test/tut1_tutorials.test.js holds every page to them):
+// THE RULES A PAGE KEEPS (test/ui/tut1_tutorials.test.js holds every page to them):
 // - The game is DFO. A page never names the old game it grew from - not the game, not its capital.
 // - A key is written `{Action}` (an action of systems/inputActions.js) and filled with the key the player has bound
 //   now, never a key's name: a rebound key would make the page lie.
@@ -107,12 +107,12 @@ export const TUTORIALS = Object.freeze([
   page({
     id: 'combat', group: 'combat', title: 'Fighting', trigger: 'When you first draw a weapon.',
     body: [
-      '{ReadyWeapon} draws your weapon and {SwingWeapon} attacks. The way you move the mouse sets the swing.',
-      'If you keep missing, you are either unskilled with the weapon or its material is too weak for the target. You can always run.',
+      '{ReadyWeapon} draws your weapon and {SwingWeapon} attacks; how you move the mouse sets the swing.',
+      'Missing a lot means low skill or a weapon too weak for the target. You can always run.',
     ],
     points: [
-      '{SwitchHand} swaps hands.',
-      'Some weapons have a technique, a special move on {WeaponTechnique}. It costs fatigue and has a cooldown.',
+      '{SwitchHand} swaps hands, or picks the lead when both hands fight.',
+      'Some weapons have a technique on {WeaponTechnique}, at a cost in fatigue and a cooldown.',
     ],
   }),
   page({

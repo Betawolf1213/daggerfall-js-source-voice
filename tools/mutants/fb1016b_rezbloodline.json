@@ -5,7 +5,7 @@
     "old": "    writeDeath(h, { hold: online });\n",
     "new": "    if (!online) writeDeath(h, { hold: online });\n",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ],
     "note": "AUDIT R1, the audit's bug: the death in the page's memory alone - a killed tab or a second device escapes it"
   },
@@ -15,7 +15,7 @@
     "old": "    writeDeath(h, { hold: online });\n",
     "new": "    writeDeath(h, { hold: false });\n",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ],
     "note": "online the tombstone stamped for good at the door - the Resurrect the reporter cast is refused again"
   },
@@ -25,7 +25,7 @@
     "old": "    if (online) held = h;",
     "new": "    held = h;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ],
     "note": "offline no party can raise them: decided at the door, as AUDIT LEGACY A1/B3 has it"
   },
@@ -35,7 +35,7 @@
     "old": "    if (online) held = h;",
     "new": "    if (false) held = h;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -44,7 +44,7 @@
     "old": "    d.at = Math.max(d.at, ...revivedOf(p).map((at) => at + 1));\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ],
     "note": "the stamp knows a death by its minute: a second death in the same minute would be taken back with the first"
   },
@@ -54,7 +54,7 @@
     "old": "      const paid = payToll({ ...p }, toll.share, toll.lived, toll);",
     "new": "      const paid = payToll(p, toll.share, toll.lived, toll);",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -63,7 +63,7 @@
     "old": "      payToll(p, h.toll.share, h.toll.lived, h.toll);   // the years the door counted\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -72,7 +72,7 @@
     "old": "    (family.remains ??= []).push(h.remains);\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -81,7 +81,7 @@
     "old": "    h.kept = { look: p.look ?? null, heard: p.heard ?? null };",
     "new": "    h.kept = { look: null, heard: null };",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -90,7 +90,7 @@
     "old": "    if (!hold) tellNews('died'",
     "new": "    if (true) tellNews('died'",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -99,7 +99,7 @@
     "old": "    if (!hold) tellNews('died'",
     "new": "    if (false) tellNews('died'",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -108,7 +108,7 @@
     "old": "    store();\n    entomb({ hold });\n",
     "new": "    store();\n",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -117,7 +117,7 @@
     "old": "hold ? { keepalive, hold: true } : { keepalive }",
     "new": "{ keepalive }",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -126,7 +126,7 @@
     "old": "      tellNews('died', fullNameOf(p.given, p.surname), h.d.place?.mapId, h.sky);\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -135,7 +135,7 @@
     "old": "      store();\n      entomb({ keepalive });\n",
     "new": "      store();\n",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -144,7 +144,7 @@
     "old": "    if (!h || h.rise || h.ask) return outcome;",
     "new": "    if (!h || h.rise) return outcome;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ],
     "note": "a load while the realm answers: the close lands first and the raise is refused - the Resurrect lost"
   },
@@ -154,7 +154,7 @@
     "old": "  const heldOver = () => !!held && !held.ask && !held.granted && wallNow() >= held.until;",
     "new": "  const heldOver = () => false;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -163,7 +163,7 @@
     "old": "  const heldOver = () => !!held && !held.ask && !held.granted && wallNow() >= held.until;",
     "new": "  const heldOver = () => !!held && !held.granted && wallNow() >= held.until;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -172,7 +172,7 @@
     "old": "  const heldOver = () => !!held && !held.ask && !held.granted && wallNow() >= held.until;",
     "new": "  const heldOver = () => !!held && !held.ask && wallNow() >= held.until;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -181,7 +181,7 @@
     "old": "    if (held) return !heldOver();",
     "new": "    if (held) return false;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -190,7 +190,7 @@
     "old": "    return !(fallen?.died && playedHere(fallen));",
     "new": "    return true;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -199,7 +199,7 @@
     "old": "    if (h.granted) { held = null; deathSeen = false; outcome = null; return true; }",
     "new": "    if (h.granted) { held = null; deathSeen = false; outcome = null; return false; }",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -208,7 +208,7 @@
     "old": "    if (h.ask) return false;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -217,7 +217,7 @@
     "old": "    if (heldOver()) { decideDeath(); return false; }\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -226,7 +226,7 @@
     "old": "    if (h.rise) { giveTollBack(h); held = null;",
     "new": "    if (h.rise) { held = null;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -235,7 +235,7 @@
     "old": "    if (rez?.at != null && h.unheard === rez.at) return false;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -244,7 +244,7 @@
     "old": "  const raised = () => held?.granted ?? null;",
     "new": "  const raised = () => null;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -253,7 +253,7 @@
     "old": "    const ask = Promise.resolve(tomb).catch(() => false)",
     "new": "    const ask = Promise.resolve(null).catch(() => false)",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ],
     "note": "a Resurrect at once, its tombstone slow: the realm takes back a death it never heard, and stamps it after"
   },
@@ -263,7 +263,7 @@
     "old": "      .then(() => (deps.raiseDeath ? deps.raiseDeath(h.d.at) : { ok: true }))",
     "new": "      .then(() => ({ ok: true }))",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -272,7 +272,7 @@
     "old": "      takeBack(h);\n      if (held === h) h.granted",
     "new": "      if (held === h) h.granted",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -281,7 +281,7 @@
     "old": "      if (held === h) h.granted = rez ?? { acct: null, name: null, at: null };",
     "new": "      if (held === h) h.granted = null;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -290,7 +290,7 @@
     "old": "    if (held !== h) return;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -299,7 +299,7 @@
     "old": "    if (REALM_ACT_TRANSIENT.includes(r?.error)) {",
     "new": "    if (false) {",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -308,7 +308,7 @@
     "old": "    deps.say(LEGACY_TEXT.raiseRefused());\n    decideDeath();\n",
     "new": "    deps.say(LEGACY_TEXT.raiseRefused());\n",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -317,7 +317,7 @@
     "old": "    deps.say(LEGACY_TEXT.raiseRefused());\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -326,7 +326,7 @@
     "old": "    stampRevived(p, h.d.at);\n    dropRevived(family);\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -335,7 +335,7 @@
     "old": "    if (h.kept?.look && !p.look) p.look = h.kept.look;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -344,7 +344,7 @@
     "old": "    if (h.kept?.heard && !p.heard) p.heard = h.kept.heard;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -353,7 +353,7 @@
     "old": "    if (past?.id === p.id && isAlive(p)) past = null;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -362,7 +362,7 @@
     "old": "    if (past?.id === p.id && isAlive(p)) past = null;\n    touch(family);\n    store();\n",
     "new": "    if (past?.id === p.id && isAlive(p)) past = null;\n",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -371,7 +371,7 @@
     "old": "    if (!p || (p.toll | 0) !== h.tollPaid) return;",
     "new": "    if (!p) return;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -380,7 +380,7 @@
     "old": "    p.toll = h.tollWas;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -389,7 +389,7 @@
     "old": "  function pageGone() { if (held) decideDeath({ keepalive: true }); }",
     "new": "  function pageGone() {}",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -398,7 +398,7 @@
     "old": "  function pageGone() { if (held) decideDeath({ keepalive: true }); }",
     "new": "  function pageGone() { if (held) decideDeath(); }",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -407,7 +407,7 @@
     "old": "  (deps.whenGone ?? ((fn) => globalThis.addEventListener?.('pagehide', fn)))(pageGone);\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -416,7 +416,7 @@
     "old": "  (deps.whenGone ?? ((fn) => globalThis.addEventListener?.('pagehide', fn)))(pageGone);",
     "new": "  (deps.whenGone ?? ((fn) => globalThis.addEventListener?.('unload', fn)))(pageGone);",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -425,7 +425,7 @@
     "old": "    if (held?.ask || held?.granted) {",
     "new": "    if (held?.granted) {",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -434,7 +434,7 @@
     "old": "    if (held?.ask || held?.granted) {",
     "new": "    if (held?.ask) {",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -443,7 +443,7 @@
     "old": "    if (held) decideDeath();\n    deathSeen = false;\n    const out = outcome",
     "new": "    deathSeen = false;\n    const out = outcome",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -452,7 +452,7 @@
     "old": "    if (held) decideDeath();\n    past = null; outcome = null; deathSeen = false; elderSaid = false;",
     "new": "    past = null; outcome = null; deathSeen = false; elderSaid = false;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -461,7 +461,7 @@
     "old": "      if (held) decideDeath();   // REZ-BLOODLINE: a held death's window closed before the page plays anyone else\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -470,7 +470,7 @@
     "old": "    if (held && !held.ask && (heldOver() || (deps.entity?.health ?? 0) > 0)) decideDeath();",
     "new": "    if (held && (heldOver() || (deps.entity?.health ?? 0) > 0)) decideDeath();",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -479,7 +479,7 @@
     "old": "    if (held && !held.ask && (heldOver() || (deps.entity?.health ?? 0) > 0)) decideDeath();",
     "new": "    if (held && !held.ask && ((deps.entity?.health ?? 0) > 0)) decideDeath();",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -488,7 +488,7 @@
     "old": "    if (held && !held.ask && (heldOver() || (deps.entity?.health ?? 0) > 0)) decideDeath();",
     "new": "    if (held && !held.ask && (heldOver())) decideDeath();",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -497,7 +497,7 @@
     "old": "    if (held) return null;   // REZ-BLOODLINE: the dead wait on the hold",
     "new": "    if (false) return null;   // REZ-BLOODLINE: the dead wait on the hold",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -506,7 +506,7 @@
     "old": "export const REZ_HOLD_MS = REZ_HOLD_S * 1000;",
     "new": "export const REZ_HOLD_MS = REZ_HOLD_S * 1200;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -515,7 +515,7 @@
     "old": "  raiseRefused: () => t('legacy.rez.refused', 'The realm will not let you rise. Your death stands.'),",
     "new": "  raiseRefused: () => 'The realm will not let you rise. Your death stands.',",
     "tests": [
-      "test/l10n4_hardcoded.test.js"
+      "test/systems/l10n4_hardcoded.test.js"
     ]
   },
   {
@@ -524,7 +524,7 @@
     "old": "export const REZ_HOLD_S = 150;",
     "new": "export const REZ_HOLD_S = 120;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -533,7 +533,7 @@
     "old": "      const r = await realmDie(io, id, lease, why, { hold: hold && !closing });",
     "new": "      const r = await realmDie(io, id, lease, why, { hold: false });",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -542,7 +542,7 @@
     "old": "json: why === 'retired' ? { id, lease, why } : hold ? { id, lease, hold: true } : { id, lease }, keepalive });",
     "new": "json: why === 'retired' ? { id, lease, why } : { id, lease }, keepalive });",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -551,7 +551,7 @@
     "old": "      if (lost === 'dead' && !(rezHeld && !hold)) return true;",
     "new": "      if (lost === 'dead') return true;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -560,7 +560,7 @@
     "old": "      rezHeld = hold && !closing && why === 'fell';",
     "new": "      rezHeld = false;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -569,7 +569,7 @@
     "old": "      if (keepalive) { lost = 'dead'; rezHeld = false; pending = null; dropUnsent(storage, id); return realmDie(io, id, lease, why, { keepalive: true }).then((r) => !!r.ok, () => false); }\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -578,7 +578,7 @@
     "old": "      if (keepalive) { lost = 'dead'; rezHeld = false;",
     "new": "      if (keepalive) { rezHeld = false;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -587,7 +587,7 @@
     "old": "      if (lost === 'dead') { lost = null; rezHeld = false; }\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -596,7 +596,7 @@
     "old": "  realmAsk(io, '/v1/realm/raise', { method: 'POST', json: { id, lease, diedAt } });",
     "new": "  Promise.resolve({ ok: true, data: {} });",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -605,7 +605,7 @@
     "old": "        if (rez && legacyHost?.raise(rez) !== false) { resurrectInPlace(rez); return; }",
     "new": "        if (rez) { resurrectInPlace(rez); return; }",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -614,7 +614,7 @@
     "old": "legacyHost?.raise(rez) !== false",
     "new": "legacyHost?.raise() !== false",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -623,7 +623,7 @@
     "old": "rezFor(social.others(), social.acct, _rezSeen) ?? legacyHost?.raised() ?? null : null;",
     "new": "rezFor(social.others(), social.acct, _rezSeen) : null;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -632,7 +632,7 @@
     "old": "raiseDeath: (at) => (realmSession ? realmSession.raise(at) : { ok: true }),",
     "new": "raiseDeath: (at) => ({ ok: true }),",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -641,7 +641,7 @@
     "old": "    whenPageGoes(globalThis, () => { legacyHost?.pageGone(); realmSession.leave({ keepalive: true }); }",
     "new": "    whenPageGoes(globalThis, () => { realmSession.leave({ keepalive: true }); legacyHost?.pageGone(); }",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -650,7 +650,7 @@
     "old": "    tombstone: (why, o) => (realmSession ? realmSession.die(why, o) : false),",
     "new": "    tombstone: (why, o) => (realmSession ? realmSession.die(why) : false),",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -659,7 +659,7 @@
     "old": "...(legacyHost?.raisable() === false ? { fg: 1 } : {}),",
     "new": "...({}),",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -668,7 +668,7 @@
     "old": ", gone: mate.p?.fg === 1 });",
     "new": ", gone: false });",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -677,7 +677,7 @@
     "old": "    if (this.online) this.clock = Math.max(this.clock, (Number(this._wall()) - this._fellAt) / 1000 || 0);\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ],
     "note": "below ten frames a second the open zone's screen outlasted the window it stands for"
   },
@@ -687,7 +687,7 @@
     "old": "this.clock = Math.max(this.clock, (Number(this._wall()) - this._fellAt) / 1000 || 0);",
     "new": "this.clock = (Number(this._wall()) - this._fellAt) / 1000 || 0;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -696,7 +696,7 @@
     "old": "why: body.why, hold: body.hold ?? false }));",
     "new": "why: body.why }));",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -705,7 +705,7 @@
     "old": "        if (path === '/v1/realm/raise') return answer(",
     "new": "        if (path === '/v1/realm/raise-never') return answer(",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -714,7 +714,7 @@
     "old": "  '/v1/realm/raise',\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -723,7 +723,7 @@
     "old": "  'not-dead': 409, 'raise-late': 409,",
     "new": "  'raise-late': 409,",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -732,7 +732,7 @@
     "old": "  if ((why !== 'fell' && why !== 'retired') || typeof hold !== 'boolean') return { error: 'body' };",
     "new": "  if (why !== 'fell' && why !== 'retired') return { error: 'body' };",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -741,7 +741,7 @@
     "old": "    if (!hold) await settleHeld(db, playerId, id, row.dead_at);\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -750,7 +750,7 @@
     "old": "  if (row.dead_at != null && row.rez_lease != null) {",
     "new": "  if (false) {",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -759,7 +759,7 @@
     "old": "  if (hold && why === 'fell') {",
     "new": "  if (false) {",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -768,7 +768,7 @@
     "old": "rez_lease = lease, lease = NULL, updated_at = ? WHERE id = ? AND player = ? AND dead_at IS NULL AND lease IS NOT NULL",
     "new": "rez_lease = NULL, lease = NULL, updated_at = ? WHERE id = ? AND player = ? AND dead_at IS NULL AND lease IS NOT NULL",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -777,7 +777,7 @@
     "old": "    if (row.dead_at == null) await entomb(db, playerId, row.id, nowS, why, null, { hold: true });",
     "new": "    if (row.dead_at == null) await entomb(db, playerId, row.id, nowS, why, null);",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ],
     "note": "the line landing ahead of the door's tombstone stamped it for good - the Resurrect refused"
   },
@@ -787,7 +787,7 @@
     "old": "  const took = await db.prepare('UPDATE realm_characters SET rez_lease = NULL WHERE id = ? AND player = ? AND rez_lease IS NOT NULL AND dead_at IS NOT NULL').bind(id, playerId).run();\n  if (!took.meta.changes) return false;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -796,7 +796,7 @@
     "old": "  await afterTomb(db, playerId, id, deadAt, 'fell');\n  return true;\n}",
     "new": "  return true;\n}",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -805,7 +805,7 @@
     "old": "    .bind(nowS - REZ_HOLD_S, REZ_SETTLE_MAX).all();",
     "new": "    .bind(nowS, REZ_SETTLE_MAX).all();",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -814,7 +814,7 @@
     "old": "export const REZ_SETTLE_MAX = 25;",
     "new": "export const REZ_SETTLE_MAX = 0;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -823,7 +823,7 @@
     "old": "    if (n && !budget()) break;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -832,7 +832,7 @@
     "old": "    await afterTomb(db, row.player, row.id, row.dead_at, 'fell');\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -841,7 +841,7 @@
     "old": "    const took = await db.prepare('UPDATE realm_characters SET rez_lease = NULL WHERE id = ? AND player = ? AND rez_lease IS NOT NULL AND dead_at = ?')",
     "new": "    const took = await db.prepare('UPDATE realm_characters SET rez_lease = rez_lease WHERE id = ? AND player = ? AND rez_lease IS NOT NULL AND dead_at = ?')",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -850,7 +850,7 @@
     "old": "  if (!row.lineage_id || !Number.isSafeInteger(row.person_id)) return { error: 'raise-no-line' };\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -859,7 +859,7 @@
     "old": "    if (row.lease !== lease) return { error: 'not-dead' };\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -868,7 +868,7 @@
     "old": "=== 'stamped' ? { ok: true, held: false } : { error: 'not-dead' };",
     "new": "!== null ? { ok: true, held: false } : { error: 'not-dead' };",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -877,7 +877,7 @@
     "old": " WHERE id = ?2 AND player = ?3 AND rez_lease = ?4 AND dead_at > ?5'",
     "new": " WHERE id = ?2 AND player = ?3 AND (rez_lease = ?4 OR 1) AND dead_at > ?5'",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -886,7 +886,7 @@
     "old": " WHERE id = ?2 AND player = ?3 AND rez_lease = ?4 AND dead_at > ?5'",
     "new": " WHERE id = ?2 AND player = ?3 AND rez_lease = ?4 AND dead_at > 0'",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -895,7 +895,7 @@
     "old": "    + ' AND NOT EXISTS (SELECT 1 FROM realm_characters o WHERE o.player = ?3 AND o.id != ?2 AND o.lease IS NOT NULL)')",
     "new": "    + ' AND ?3 = ?3 AND ?2 = ?2')",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -904,7 +904,7 @@
     "old": "dead_why = NULL, lease = rez_lease, rez_lease = NULL, lease_at = ?1",
     "new": "dead_why = NULL, lease = NULL, rez_lease = NULL, lease_at = ?1",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -913,7 +913,7 @@
     "old": "return { error: row.rez_lease == null || row.dead_at <= nowS - REZ_HOLD_S ? 'raise-late' : 'lease' };",
     "new": "return { error: row.dead_at <= nowS - REZ_HOLD_S ? 'raise-late' : 'lease' };",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -922,7 +922,7 @@
     "old": "return { error: row.rez_lease == null || row.dead_at <= nowS - REZ_HOLD_S ? 'raise-late' : 'lease' };",
     "new": "return { error: row.rez_lease == null ? 'raise-late' : 'lease' };",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -931,7 +931,7 @@
     "old": "  await reviveOnLine(db, playerId, row.lineage_id, row.person_id, at, nowS);\n  return { ok: true, held: true };",
     "new": "  return { ok: true, held: true };",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -940,7 +940,7 @@
     "old": "  if (!p) return null;\n  if (revivedOf(p).includes(diedAt)) return 'had';",
     "new": "  if (revivedOf(p).includes(diedAt)) return 'had';",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -949,7 +949,7 @@
     "old": "  if (revivedOf(p).includes(diedAt)) return 'had';\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -958,7 +958,7 @@
     "old": "  stampRevived(p, diedAt);\n  dropRevived(rec);\n",
     "new": "  stampRevived(p, diedAt);\n",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -967,7 +967,7 @@
     "old": "  rec.rev = (Number(line.rev) || 0) + 1;",
     "new": "  rec.rev = Number(line.rev) || 0;",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -976,7 +976,7 @@
     "old": "  ['rez-holds', (ctx) => rounds(() => settleHolds(ctx), REZ_SETTLE_MAX, ctx.budget)],\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -985,7 +985,7 @@
     "old": "  if (p.fg === 1) out.fg = 1;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -994,7 +994,7 @@
     "old": "    if (fallen?.gone) { say(RESURRECT_TEXT.forGood(fallen.name)); return false; }\n",
     "new": "",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -1003,7 +1003,7 @@
     "old": "sent = !!(f && !f.gone && raiseFallen?.(f));",
     "new": "sent = !!(f && raiseFallen?.(f));",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -1012,7 +1012,7 @@
     "old": "say(sent ? RESURRECT_TEXT.cast(f.name) : f?.gone ? RESURRECT_TEXT.forGood(f.name) : RESURRECT_TEXT.noBody);",
     "new": "say(sent ? RESURRECT_TEXT.cast(f.name) : RESURRECT_TEXT.noBody);",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -1021,7 +1021,7 @@
     "old": "say(f?.gone ? RESURRECT_TEXT.forGood(f.name) : f ? pressButtonToFireSpellText() : RESURRECT_TEXT.aim);",
     "new": "say(f ? pressButtonToFireSpellText() : RESURRECT_TEXT.aim);",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   },
   {
@@ -1030,7 +1030,7 @@
     "old": "{ name: name || t('resurrect.companion', 'Your companion') }",
     "new": "{ name: t('resurrect.companion', 'Your companion') }",
     "tests": [
-      "test/fb1016b_rezbloodline.test.js"
+      "test/systems/legacy/fb1016b_rezbloodline.test.js"
     ]
   }
 ]

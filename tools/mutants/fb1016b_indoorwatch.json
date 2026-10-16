@@ -5,7 +5,7 @@
     "old": "const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, yaw, {",
     "new": "const ai = new EnemyAI(collider, pending.feet, yaw, {",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, yaw, {",
     "new": "const ai = new (nav ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, yaw, {",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: Math.imul(",
     "new": "        nav: null, navWorld: nav?.world, navGoal: nav?.goal, navSeed: Math.imul(",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: Math.imul(",
     "new": "        nav: nav?.chf, navWorld: undefined, navGoal: nav?.goal, navSeed: Math.imul(",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, facing, {",
     "new": "const ai = new EnemyAI(collider, pending.feet, facing, {",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, facing, {",
     "new": "const ai = new (nav ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, facing, {",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
     "new": "        nav: null, navWorld: nav?.world, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
     "new": "        nav: nav?.chf, navWorld: undefined, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -77,7 +77,7 @@
     "old": "    chf: () => { if (room) room.read = true; return room?.chf ?? null; },",
     "new": "    chf: () => null,",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "old": "        if (!r.read) return 0;   // nobody walks the mesh yet: nothing baked\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -95,7 +95,7 @@
     "old": "      if (!r || !enabled()) return 0;",
     "new": "      if (!r) return 0;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -104,7 +104,7 @@
     "old": "      world.pathBudget = world.budgetPerFrame;   // his enemy.js:404, the dungeon's line\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -113,7 +113,7 @@
     "old": "        anchor: [feet[0], feet[1], feet[2]],",
     "new": "        anchor: [0, 0, 0],",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -122,7 +122,7 @@
     "old": "        anchors: [...(ctx.waysIn ?? []), ...doorArrivals(ctx.doors, ctx.collider)],",
     "new": "        anchors: [...(ctx.waysIn ?? [])],",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -131,7 +131,7 @@
     "old": "        if (grounded && playerFeet) r.feet.push(...feetAnchors(r.collider, playerFeet));\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -140,7 +140,7 @@
     "old": "  for (const r of FEET_RINGS) {",
     "new": "  for (const r of []) {",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -149,7 +149,7 @@
     "old": "      if (kneeLine(collider, feet, p)) out.push(p);",
     "new": "      out.push(p);",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -158,7 +158,7 @@
     "old": "if (isActionDoorObject(o) && !(o.currentLockValue > 0)) out.add(o.key);",
     "new": "if (isActionDoorObject(o)) out.add(o.key);",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -167,7 +167,7 @@
     "old": "anchors: [...r.anchors, ...r.feet], exclude: doorsOutOfSoup(r.actions), key: 'interior' }))",
     "new": "anchors: [...r.anchors, ...r.feet], exclude: null, key: 'interior' }))",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "old": "      if (soupWord(r.actions) !== r.soup) bake();   // a door locked or unlocked since: another soup\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -185,7 +185,7 @@
     "old": "    if (r.flying) { r.again = true; return; }",
     "new": "    if (r.flying) return;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -194,7 +194,7 @@
     "old": "r.flying = false; if (r.again) bake(); });",
     "new": "r.flying = false; });",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -203,7 +203,7 @@
     "old": "{ r.chf = b.chf; world.navEpoch++; } })",
     "new": "{ r.chf = b.chf; } })",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -212,7 +212,7 @@
     "old": "      .then((b) => { if (g === gen && b?.chf)",
     "new": "      .then((b) => { if (b?.chf)",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -221,7 +221,7 @@
     "old": "      .finally(() => { if (g !== gen) return; r.flying = false;",
     "new": "      .finally(() => { r.flying = false;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -230,7 +230,7 @@
     "old": "      room = null; gen++;",
     "new": "      room = null;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -239,7 +239,7 @@
     "old": "      r?.client?.dispose?.();\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -248,7 +248,7 @@
     "old": "          r.feet.push(...feetAnchors(r.collider, playerFeet));\n          bake();\n",
     "new": "          r.feet.push(...feetAnchors(r.collider, playerFeet));\n",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -257,7 +257,7 @@
     "old": "if (grounded && !r.flying && r.tried.size < MAX_FEET_BAKES && !r.tried.has(cell)) {",
     "new": "if (grounded && !r.flying && !r.tried.has(cell)) {",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "old": "if (grounded && !r.flying && r.tried.size < MAX_FEET_BAKES && !r.tried.has(cell)) {",
     "new": "if (grounded && !r.flying && r.tried.size < MAX_FEET_BAKES) {",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -275,7 +275,7 @@
     "old": "if (grounded && !r.flying && r.tried.size < MAX_FEET_BAKES && !r.tried.has(cell)) {",
     "new": "if (!r.flying && r.tried.size < MAX_FEET_BAKES && !r.tried.has(cell)) {",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -284,7 +284,7 @@
     "old": "    if (dy > LEVEL_DY) continue;\n    const q = nearestIn(p, feet[0], feet[2]);",
     "new": "    const q = nearestIn(p, feet[0], feet[2]);",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -293,7 +293,7 @@
     "old": "{ reach = ISLAND_REACH, collider = null, skip = null } = {}",
     "new": "{ reach = 0.3, collider = null, skip = null } = {}",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -302,7 +302,7 @@
     "old": "  for (const n of near) if (n.q.d === 0 || kneeLine(collider, feet, [n.q.x, n.y, n.q.z], skip)) return { i: n.i, x: n.q.x, y: n.y, z: n.q.z, d: n.q.d };",
     "new": "  for (const n of near) return { i: n.i, x: n.q.x, y: n.y, z: n.q.z, d: n.q.d };",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -311,7 +311,7 @@
     "old": "        if (at >= 0 && island[at] === island[me]) { cut.delete(g); continue; }",
     "new": "        if (at >= 0 && island[at] !== island[me]) { cut.delete(g); continue; }",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -320,7 +320,7 @@
     "old": "        if (at >= 0 && island[at] === island[me]) { cut.delete(g); continue; }",
     "new": "        if (at >= 0) { cut.delete(g); continue; }",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -329,7 +329,7 @@
     "old": "        if (t < CUT_OFF_S) continue;",
     "new": "        if (t < 0) continue;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -338,7 +338,7 @@
     "old": "        const t = cut.has(g) ? cut.get(g) + step : 0;",
     "new": "        const t = (cut.get(g) ?? 0) + step;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -347,7 +347,7 @@
     "old": "        g.ai.standAt(spot);\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "old": "    const k = l > 1e-6 ? Math.min(1, STAND_INSET / l) : 0;",
     "new": "    const k = 0;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -365,7 +365,7 @@
     "old": "      if (Math.hypot(spot[0] - playerFeet[0], spot[2] - playerFeet[2]) < STAND_CLEAR_M) continue;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -374,7 +374,7 @@
     "old": "      if (others.some((o) => Math.hypot(spot[0] - o[0], spot[2] - o[2]) < STAND_CROWD_M)) continue;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -383,7 +383,7 @@
     "old": "  if (!bodyFits(collider, spot) || lodgedIn(collider, spot)) return null;",
     "new": "  if (lodgedIn(collider, spot)) return null;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -392,7 +392,7 @@
     "old": "  if (spot[1] < poly.lo - STAND_STEP || spot[1] > poly.hi + STAND_RISE) return null;",
     "new": "  if (spot[1] < poly.lo - LEVEL_DY || spot[1] > poly.hi + LEVEL_DY) return null;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -401,7 +401,7 @@
     "old": "  if (!ai || g.dead || g.puppet || g.leaving",
     "new": "  if (!ai || g.puppet || g.leaving",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -410,7 +410,7 @@
     "old": "|| g.puppet || g.leaving || g.fleeing ||",
     "new": "|| g.puppet || g.fleeing ||",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -419,7 +419,7 @@
     "old": "|| g.leaving || g.fleeing || g.defender ||",
     "new": "|| g.leaving || g.defender ||",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -428,7 +428,7 @@
     "old": "|| g.fleeing || g.defender || typeof ai.standAt",
     "new": "|| g.fleeing || typeof ai.standAt",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -437,7 +437,7 @@
     "old": "|| g.defender || typeof ai.standAt !== 'function') return false;",
     "new": "|| g.defender) return false;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "old": "  if (ai.isHostile === false || ai.canAct === false",
     "new": "  if (ai.canAct === false",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -455,7 +455,7 @@
     "old": "|| ai.canAct === false || !(ai.giveUpTimer > 0)",
     "new": "|| !(ai.giveUpTimer > 0)",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -464,7 +464,7 @@
     "old": "|| !(ai.giveUpTimer > 0) || !ai.predictedTargetPos) return false;",
     "new": "|| !ai.predictedTargetPos) return false;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -473,7 +473,7 @@
     "old": "|| !(ai.giveUpTimer > 0) || !ai.predictedTargetPos) return false;",
     "new": "|| !(ai.giveUpTimer > 0)) return false;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -482,7 +482,7 @@
     "old": "  return ai.target == null || isPlayerTarget(ai.target);",
     "new": "  return true;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -491,25 +491,25 @@
     "old": "    this.path = null; this.pathI = 1; this.repathT = 0; this.stuckT = 0; this.lastX = feet[0]; this.lastZ = feet[2];\n  }\n\n  /** WORLD2",
     "new": "    this.lastX = feet[0]; this.lastZ = feet[2];\n  }\n\n  /** WORLD2",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-standAt-old-floor",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this.lastGroundedY = this.feet[1]; this._airborne = false; this.velY = 0; this.landedFall = 0;\n    this.destination = [this.feet[0], this.feet[1], this.feet[2]]; this.detourDestination",
     "new": "    this.landedFall = 0;\n    this.destination = [this.feet[0], this.feet[1], this.feet[2]]; this.detourDestination",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-standAt-keeps-detour",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this.obstacleDetected = false; this.fallDetected = false; this.foundUpwardSlope = false; this.foundDoor = false;\n    this.avoidObstaclesTimer = 0; this.checkingClockwiseTimer = 0; this.didClockwiseCheck = false; this.lastTimeWasStuck = -Infinity;\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -518,7 +518,7 @@
     "old": "import { createInteriorNav } from './interiorNav.js';",
     "new": "const createInteriorNav = () => ({ world: {}, chf: () => null, mount() {}, release() {}, frame() {} });",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -527,7 +527,7 @@
     "old": "      renderer, collider: ctx.collider, nav: interiorNav, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh\n      playerEntity, audio,\n",
     "new": "      renderer, collider: ctx.collider, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh\n      playerEntity, audio,\n",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -536,7 +536,7 @@
     "old": "      renderer, collider: ctx.collider, nav: interiorNav, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh\n      playerEntity, audio, shake:",
     "new": "      renderer, collider: ctx.collider, fetchBytes, getTexture, uploadRecordFrame,   // INDOOR-WATCH: the room's mesh\n      playerEntity, audio, shake:",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -545,7 +545,7 @@
     "old": "      interiorNav.mount(ctx, spot);",
     "new": "      void spot;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -554,7 +554,7 @@
     "old": "      interiorNav.frame(foeDt, player.pos, interiorGuards?.guards, !!player.grounded);",
     "new": "      void foeDt;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -563,7 +563,7 @@
     "old": "    interiorNav.release();   // INDOOR-WATCH: the room's mesh and its worker, with the room\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -572,7 +572,7 @@
     "old": "        interiorNav.release();   // INDOOR-WATCH: the same, the quest-teleport / load arm\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -581,7 +581,7 @@
     "old": "        isActionDoor,   // AUDIT 63 F42: ObstacleCheck's DaggerfallActionDoor arm (EnemyMotor.cs:1158-1171)\n",
     "new": "",
     "tests": [
-      "test/audit63_world_actions.test.js"
+      "test/scenes/audit63_world_actions.test.js"
     ]
   },
   {
@@ -590,7 +590,7 @@
     "old": "        isActionDoor,   // AUDIT 63 F42: ObstacleCheck's DaggerfallActionDoor arm (EnemyMotor.cs:1158-1171)\n",
     "new": "",
     "tests": [
-      "test/audit63_world_actions.test.js"
+      "test/scenes/audit63_world_actions.test.js"
     ]
   },
   {
@@ -599,7 +599,7 @@
     "old": "new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, yaw, {",
     "new": "new (getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, yaw, {",
     "tests": [
-      "test/enhancedAI4.test.js"
+      "test/ai/nav/enhancedAI4.test.js"
     ]
   },
   {
@@ -608,7 +608,7 @@
     "old": "  nav = null }) {\n",
     "new": "  nav = {} }) {\n",
     "tests": [
-      "test/enhancedAI4.test.js"
+      "test/ai/nav/enhancedAI4.test.js"
     ]
   },
   {
@@ -617,7 +617,7 @@
     "old": "import { fishKind } from './fishHost.js';",
     "new": "import { fishKind } from './fishHost.js'; // interiorNav",
     "tests": [
-      "test/enhancedAI4.test.js"
+      "test/ai/nav/enhancedAI4.test.js"
     ]
   },
   {
@@ -626,7 +626,7 @@
     "old": "      if (gen !== epoch) return null;\n      const idleH = idleSpriteHeight(tex);\n",
     "new": "      const idleH = idleSpriteHeight(tex);\n",
     "tests": [
-      "test/incident_ceiling_bats.test.js"
+      "test/scenes/incident_ceiling_bats.test.js"
     ]
   },
   {
@@ -635,7 +635,7 @@
     "old": "const np = findPath(chf, this.feet, goal) ?? this._routeOffMesh(chf, goal);",
     "new": "const np = findPath(chf, this.feet, goal);",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -644,7 +644,7 @@
     "old": "    p.push([goal[0], goal[1], goal[2]]);\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -653,7 +653,7 @@
     "old": "navGoal: nav?.goal, navSeed: Math.imul(",
     "new": "navGoal: null, navSeed: Math.imul(",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -662,7 +662,7 @@
     "old": "navGoal: nav?.goal, navSeed: (facing * 1000) | 0,",
     "new": "navGoal: null, navSeed: (facing * 1000) | 0,",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -671,7 +671,7 @@
     "old": "  return q && q.d > 0 ? [q.x, q.y, q.z] : null;",
     "new": "  return null;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ],
     "note": "RE-AIMED BY CONTENT (the merge: the building's goal and the dungeon's one law, interiorNav.js navGoalOn)"
   },
@@ -681,7 +681,7 @@
     "old": "  return q && q.d > 0 ? [q.x, q.y, q.z] : null;",
     "new": "  return q ? [q.x, q.y, q.z] : null;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ],
     "note": "RE-AIMED BY CONTENT (the merge: the building's goal and the dungeon's one law, interiorNav.js navGoalOn)"
   },
@@ -691,7 +691,7 @@
     "old": "  return meshPointUnder(chf, feet, { ...opts, reach: ISLAND_REACH }) ?? meshPointUnder(chf, feet, { ...opts, reach: GOAL_REACH });",
     "new": "  return meshPointUnder(chf, feet, { ...opts, reach: ISLAND_REACH });",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -700,7 +700,7 @@
     "old": "      const me = meshPointNear(r.chf, playerFeet, near)?.i ?? -1;",
     "new": "      const me = polyUnder(r.chf, playerFeet, near);",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -709,7 +709,7 @@
     "old": "        const at = meshPointNear(r.chf, g.ai.feet, near)?.i ?? -1;",
     "new": "        const at = polyUnder(r.chf, g.ai.feet, near);",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -718,7 +718,7 @@
     "old": "          bake();\n        }\n      }\n      // their island",
     "new": "          bake();\n        }\n        return 0;\n      }\n      // their island",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -727,7 +727,7 @@
     "old": "export const FEET_RINGS = Object.freeze([0.5, 1.0, 2.0, 3.0, GOAL_REACH]);",
     "new": "export const FEET_RINGS = Object.freeze([0.5, 1.0]);",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -736,7 +736,7 @@
     "old": "    const n = Math.max(8, Math.ceil((2 * Math.PI * r) / FEET_ARC_M));",
     "new": "    const n = 8;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -745,7 +745,7 @@
     "old": "    if (!last && p && this.inSight && this._dist <= this.stopDistance) { this.destination = [p[0], this._aimY(p[1]), p[2]]; return; }\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -754,7 +754,7 @@
     "old": "spot[1] > poly.hi + STAND_RISE) return null;",
     "new": "spot[1] > poly.hi + STAND_STEP) return null;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -763,169 +763,169 @@
     "old": "    this._standAfresh();\n    this.path = null; this.pathI = 1;",
     "new": "    this.path = null; this.pathI = 1;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W4-afresh-stays-crouched",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this.controllerHeight = this.height; this.collidedSides = false; this._resetHeight = false; this._heightChangeTimer = 0;   // DOOR-JAM: it stands at its own height, as a fresh controller does\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W4-afresh-keeps-crumb",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this._crumb = null; this._trailMode = null; this._trailT = 0;   // COMPANION-TRAIL: stood afresh, it looks afresh\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W4-afresh-keeps-step",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "    this._acc = 0; this.knockbackSpeed = 0; this.hurtKnock = false; this.moving = false;",
     "new": "    this.knockbackSpeed = 0; this.moving = false;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W4-afresh-stuck-stamp",
-    "file": "src/characters/enemyMotor.js",
+    "file": "src/characters/enemy/enemyMotor.js",
     "old": "this.didClockwiseCheck = false; this.lastTimeWasStuck = -Infinity;",
     "new": "this.didClockwiseCheck = false;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-packed-as-array",
-    "file": "src/ai/navmesh.js",
+    "file": "src/ai/nav/navmesh.js",
     "old": "idx = colliders.box ? buildPackedIndex(colliders) : buildColliderIndex(colliders);",
     "new": "idx = buildColliderIndex(colliders);",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-count-shifted",
-    "file": "src/ai/navmesh.js",
+    "file": "src/ai/nav/navmesh.js",
     "old": "for (let k = k0; k <= k1; k++) for (let i = i0; i <= i1; i++) start[k * bx + i + 1]++;",
     "new": "for (let k = k0; k <= k1; k++) for (let i = i0; i <= i1; i++) start[k * bx + i]++;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-no-prefix",
-    "file": "src/ai/navmesh.js",
+    "file": "src/ai/nav/navmesh.js",
     "old": "  for (let j = 0; j < bx * bz; j++) start[j + 1] += start[j];\n",
     "new": "",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-fill-wrong-box",
-    "file": "src/ai/navmesh.js",
+    "file": "src/ai/nav/navmesh.js",
     "old": "list[fill[k * bx + i]++] = ci;",
     "new": "list[fill[k * bx + i]++] = n - 1 - ci;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-mint-top-bottom",
-    "file": "src/ai/navmesh.js",
+    "file": "src/ai/nav/navmesh.js",
     "old": "top: box[o + 4], bottom: box[o + 5],",
     "new": "top: box[o + 5], bottom: box[o + 4],",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-mint-x1",
-    "file": "src/ai/navmesh.js",
+    "file": "src/ai/nav/navmesh.js",
     "old": "x0: box[o], x1: box[o + 1], z0: box[o + 2],",
     "new": "x0: box[o], x1: box[o], z0: box[o + 2],",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-client-unpacks",
-    "file": "src/ai/navClient.js",
+    "file": "src/ai/nav/navClient.js",
     "old": "      if (m) result = m;",
     "new": "      if (m) result = { ...m, cols: Array.from({ length: m.cols.noNavTop.length }, (_, i) => ({ x0: m.cols.box[i * 6], x1: m.cols.box[i * 6 + 1], z0: m.cols.box[i * 6 + 2], z1: m.cols.box[i * 6 + 3], top: m.cols.box[i * 6 + 4], bottom: m.cols.box[i * 6 + 5], noNavTop: m.cols.noNavTop[i] === 1 })) };",
     "tests": [
-      "test/audit68_enemies.test.js"
+      "test/ai/nav/audit68_enemies.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-client-recuts-hit",
-    "file": "src/ai/navClient.js",
+    "file": "src/ai/nav/navClient.js",
     "old": "    if (m) return m.cols;",
     "new": "    if (m) return trianglesToColliders(input.positions, input.indices, { cs, maxSlope: agent.maxSlope });",
     "tests": [
-      "test/audit68_enemies.test.js"
+      "test/ai/nav/audit68_enemies.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-soup-unturned-x",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": "const x = R ? R[0] * v[0] + R[3] * v[1] + R[6] * v[2] : v[0],",
     "new": "const x = v[0],",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-soup-unmoved-y",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": ": v[1]) + t[1], z = R",
     "new": ": v[1]), z = R",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-soup-unmoved-x",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": "positions[p++] = x + t[0];",
     "new": "positions[p++] = x;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-soup-indices",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": "indices[p / 3] = p / 3;",
     "new": "indices[p / 3] = 0;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-soup-count",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": "use.push(bucket); tris += bucket.tris.length;",
     "new": "use.push(bucket); tris += 1;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
     "name": "INDOOR-WATCH-AUDIT-W2-soup-minY",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": "        if (y < minY) minY = y; if (y > maxY) maxY = y;",
     "new": "        if (y > maxY) maxY = y;",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -934,7 +934,7 @@
     "old": "        nav: () => enhancedNav.chf, navWorld: enhancedNav.world, navGoal: (f) => navGoalOn(enhancedNav.chf, f, { collider }), navSeed: (yawDeg * 1000) | 0,   // INDOOR-WATCH AUDIT: a player past the mesh's snap is walked in to, as in a building\n        // AUDIT 39: a THUNK, not a snapshot - TakeAction re-reads\n",
     "new": "        nav: () => enhancedNav.chf, navWorld: enhancedNav.world, navSeed: (yawDeg * 1000) | 0,\n        // AUDIT 39: a THUNK, not a snapshot - TakeAction re-reads\n",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   },
   {
@@ -943,7 +943,7 @@
     "old": "        nav: () => enhancedNav.chf, navWorld: enhancedNav.world, navGoal: (f) => navGoalOn(enhancedNav.chf, f, { collider }), navSeed: (yawDeg * 1000) | 0,   // INDOOR-WATCH AUDIT: a player past the mesh's snap is walked in to, as in a building\n        liveSpeed: () => liveStat(entity, 'speed'),   // AUDIT 39: EnemyMotor.cs:432 re-reads it per FixedUpdate\n",
     "new": "        nav: () => enhancedNav.chf, navWorld: enhancedNav.world, navSeed: (yawDeg * 1000) | 0,\n        liveSpeed: () => liveStat(entity, 'speed'),   // AUDIT 39: EnemyMotor.cs:432 re-reads it per FixedUpdate\n",
     "tests": [
-      "test/fb1016b_indoorwatch.test.js"
+      "test/ai/nav/fb1016b_indoorwatch.test.js"
     ]
   }
 ]
