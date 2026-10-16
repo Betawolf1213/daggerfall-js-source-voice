@@ -8134,6 +8134,41 @@
   "tr": "da4a1555b1e8",
   "by": "claude-in-session"
  },
+ "inventory.store.anyMaterial": {
+  "en": "8177dd78731e",
+  "tr": "6518d50439a8",
+  "by": "claude-in-session"
+ },
+ "inventory.store.anyRarity": {
+  "en": "cc8474c6626b",
+  "tr": "0f8d500d3389",
+  "by": "claude-in-session"
+ },
+ "inventory.store.containerFull": {
+  "en": "25e48df7aefe",
+  "tr": "ac7ee0a796d0",
+  "by": "claude-in-session"
+ },
+ "inventory.store.materialIn": {
+  "en": "030f080652b6",
+  "tr": "3b71dd8b5764",
+  "by": "claude-in-session"
+ },
+ "inventory.store.rarityIn": {
+  "en": "4edd5e0b523a",
+  "tr": "e299bd1bd4ee",
+  "by": "claude-in-session"
+ },
+ "inventory.store.stashAll": {
+  "en": "2490f5ae2af4",
+  "tr": "b6f963600353",
+  "by": "claude-in-session"
+ },
+ "inventory.store.takeAll": {
+  "en": "d3b3b1b348b9",
+  "tr": "be665ba11d7d",
+  "by": "claude-in-session"
+ },
  "knight.seatHouse": {
   "en": "e9887780668b",
   "tr": "6aab192546c2",

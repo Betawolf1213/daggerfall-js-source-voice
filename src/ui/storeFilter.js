@@ -30,6 +30,7 @@ import { isMaterialItem } from '../systems/materialsBag.js';
 import { RARITIES, RARITY_ORDER, rarityOf } from '../systems/lootRarity.js';
 import { materialName } from '../systems/itemInfo.js';   // MAT-FILTER: the metal the card already says
 import { isAmmunition } from '../systems/itemTemplates.js';
+import { t } from '../systems/textManager.js';
 
 /** The remote kinds (enhancedInventory.js remoteModel) that carry the bar: the player's own stores, and a container. */
 export const STORE_FILTER_KINDS = Object.freeze(new Set(['wagon', 'storage', 'bag', 'container']));
@@ -91,7 +92,7 @@ export function storeRarityOptions(items, chosen = 'all') {
     const id = rarityOf(it);
     counts.set(id, (counts.get(id) ?? 0) + 1);
   }
-  const out = [{ id: 'all', label: 'Any Rarity', count: items.length }];
+  const out = [{ id: 'all', label: t('inventory.store.anyRarity', 'Any Rarity'), count: items.length }];
   for (const id of RARITY_ORDER) {
     const count = counts.get(id) ?? 0;
     if (count > 0 || id === chosen) out.push({ id, label: RARITIES[id].label, count });
@@ -126,7 +127,7 @@ export function storeMaterialOptions(items, chosen = 'all') {
     if (!id) continue;
     counts.set(id, (counts.get(id) ?? 0) + 1);
   }
-  const out = [{ id: 'all', label: 'Any Material', count: items.length }];
+  const out = [{ id: 'all', label: t('inventory.store.anyMaterial', 'Any Material'), count: items.length }];
   for (const id of MATERIAL_ORDER) {
     const count = counts.get(id) ?? 0;
     if (count > 0 || id === chosen) out.push({ id, label: id, count });

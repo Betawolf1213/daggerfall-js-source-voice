@@ -127,7 +127,7 @@ import { bagStoreRefusal, bagMayLeave } from '../systems/materialsBag.js';   // 
 import { shiftDrop } from '../systems/physicalItems.js';   // PI1: Physical Items' shift-drop, one law for both packs
 import { BAG_KG_LIMIT } from '../net/bagLaw.js';
 import { STORE_FILTER_KINDS, filterStore, storeFilterOptions, storeRarityOptions, storeMaterialOptions, freshStoreFilter } from './storeFilter.js';   // WAGON-FILTER: the wagon, the storage and the bag, filtered; LOOT-BULK: a container too, and its rarity and metal
-import { bulkVerdict, runBulk, listAtCap, CONTAINER_LIST_CAP, CONTAINER_FULL } from './storeBulk.js';   // LOOT-BULK: Take all / Stash all
+import { bulkVerdict, runBulk, listAtCap, CONTAINER_LIST_CAP, containerFull } from './storeBulk.js';   // LOOT-BULK: Take all / Stash all
 import { entityMaxEncumbrance } from '../combat/formulas.js';   // AUDIT 26: PlayerEntity.MaxEncumbrance, enchantment allowance and all
 import { liveStat } from '../systems/statMods.js';
 import { conditionWord, conditionPercentage, itemNameParts, itemLongName, itemDamageLine, itemArmourLine, itemHandsLine } from '../systems/itemInfo.js';   // RF6: the long name's two parts, ResolveItemLongName's arms once
@@ -166,7 +166,7 @@ import { createReforgeOverlay, reforgeDoorOpen, closeReforgeDoor } from './refor
 import { SOUND } from '../systems/soundClips.js';
 
 import { expandRowValues } from '../systems/quest/questMacros.js';   // MACROS1: a used item's record through its own context (%map)
-import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
+import { localizedText, t } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N4: LOOT-BULK's words
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 /** Slot id -> where it sits on the body, and what to call it.
  *
@@ -1806,7 +1806,7 @@ function bulkMove(dir) {
       const no = bagRefuses(item);
       if (no) return { verdict: 'skip', refusal: no };
       if (remote.kind === 'ground' && lockRefuses(item, 'drop')) return { verdict: 'skip', refusal: { text: lockedText(itemLongName(item, { getQuest: deps.getQuest ?? null })) } };
-      if (listAtCap(to, item, cap)) return { verdict: 'stop', refusal: { text: CONTAINER_FULL } };
+      if (listAtCap(to, item, cap)) return { verdict: 'stop', refusal: { text: containerFull() } };
     }
     const plan = taking
       ? planTake(item, {
@@ -2900,7 +2900,7 @@ function remoteCol() {
   }
   // LOOT-BULK: Take all stays on the list it empties. Stash all sits on the pack's own list (below).
   if (STORE_FILTER_KINDS.has(remote.kind)) {
-    const takeAll = el('button', 'act', 'Take all');
+    const takeAll = el('button', 'act', t('inventory.store.takeAll', 'Take all'));
     takeAll.onclick = () => bulkMove('take');
     acts.append(takeAll);
   }
@@ -3026,7 +3026,7 @@ function storeFilterBar(list) {
   // LOOT-BULK: the tiers this container holds, and how many. Absent while the ladder is off - there is nothing to pick.
   if (lootRarityOn()) {
     const rarity = el('select', 'storerarity');
-    rarity.setAttribute('aria-label', `Rarity in the ${String(remote.title).toLowerCase()}`);
+    rarity.setAttribute('aria-label', t('inventory.store.rarityIn', 'Rarity in the {list}', { list: String(remote.title).toLowerCase() }));
     for (const c of storeRarityOptions(remote.items, storeFilter.rarity)) {
       const o = el('option', null, `${c.label} (${c.count})`);
       o.value = c.id;
@@ -3039,7 +3039,7 @@ function storeFilterBar(list) {
   }
   // MAT-FILTER: the metals this list's armour and weapons are made of, beside the tiers, in the same shape.
   const material = el('select', 'storemat');
-  material.setAttribute('aria-label', `Material in the ${String(remote.title).toLowerCase()}`);
+  material.setAttribute('aria-label', t('inventory.store.materialIn', 'Material in the {list}', { list: String(remote.title).toLowerCase() }));
   for (const c of storeMaterialOptions(remote.items, storeFilter.material)) {
     const o = el('option', null, `${c.label} (${c.count})`);
     o.value = c.id;
@@ -4041,7 +4041,7 @@ function render() {
     // LOOT-BULK: Stash all belongs to the list it walks - the pack page - centred on the bottom edge of that list.
     if (STORE_FILTER_KINDS.has(remote.kind)) {
       const foot = el('div', 'stashfoot');
-      const stashAll = el('button', 'act', 'Stash all');
+      const stashAll = el('button', 'act', t('inventory.store.stashAll', 'Stash all'));
       stashAll.onclick = () => bulkMove('stash');
       foot.append(stashAll);
       dock.append(foot);
