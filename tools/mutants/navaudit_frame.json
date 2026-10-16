@@ -82,7 +82,7 @@
   },
   {
     "name": "NAVF-navsoup-unturned",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": "    const R = bucket.r ? bucket.r() : null;   // AUDIT NAV1 (#12): a mover's bucket, its triangles turned as they stand",
     "new": "    const R = null;",
     "tests": [

@@ -8,7 +8,7 @@ import {
   EnemyAI, FOLLOW_YAW_GATE_DEG, FOLLOW_RUN_M, FOLLOW_RUN_PACE, FOLLOW_SIGHT_S, FOLLOW_CRUMB_REACH, enemyMoveSpeed,
 } from '../src/characters/enemy/enemyMotor.js';
 import { EnhancedEnemyAI, makeNavWorld } from '../src/ai/enhancedMotor.js';
-import { bakeNavFromCollider } from '../src/ai/navBake.js';
+import { bakeNavFromCollider } from '../src/ai/nav/navBake.js';
 import { Collider } from '../src/player/collider.js';
 import { runTargetMachine } from '../src/characters/enemy/enemyTargets.js';
 import { createCompanions } from '../src/systems/naval/crewCompanions.js';

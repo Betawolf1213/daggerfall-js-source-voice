@@ -10,7 +10,7 @@
 // thread no longer re-voxelises the soup to rebuild them; a cache hit
 // asks for them alone ('cols'), cut here at the cached cell size.
 import { bakeSoup, SOUP_AGENT } from './navBake.js';
-import { trianglesToColliders, packColliders } from './triRaster.js';
+import { trianglesToColliders, packColliders } from '../triRaster.js';
 import { bakeNavData } from './navmesh.js';
 
 globalThis.onmessage = (ev) => {

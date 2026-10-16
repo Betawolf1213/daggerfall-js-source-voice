@@ -10,8 +10,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
 import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
-import { bakeNavFromCollider } from '../src/ai/navBake.js';
-import { findPath } from '../src/ai/navmesh.js';
+import { bakeNavFromCollider } from '../src/ai/nav/navBake.js';
+import { findPath } from '../src/ai/nav/navmesh.js';
 import {
   EnhancedEnemyAI, makeNavWorld, navWalkable,
   REPATH_INT, REPATH_FAIL, STUCK_T, STUCK_EPS2, STUCK_NUDGE, WP_REACH, PATH_BUDGET_PER_FRAME, PROJECT_MARGIN,
@@ -409,12 +409,12 @@ test('ENHANCED AI 4a: the bake is height-invariant - the anchor carries its y', 
   // ONE HOME: the anchor is built through regionAnchor, in the one bake
   // core (AUDIT 68: navBake's bakeSoup) - the worker and the main-thread
   // fallback call it and spell no pipeline of their own.
-  const core = rd('src/ai/navBake.js');
+  const core = rd('src/ai/nav/navBake.js');
   assert.equal((core.match(/buildRegions\(chf, \{ anchor: regionAnchor\(/g) ?? []).length, 1, 'navBake builds the anchor, once');
-  for (const f of ['src/ai/navBake.js', 'src/ai/navWorker.js', 'src/ai/navClient.js']) {
+  for (const f of ['src/ai/nav/navBake.js', 'src/ai/nav/navWorker.js', 'src/ai/nav/navClient.js']) {
     const src = rd(f);
     assert.ok(!/anchor: \{ x: [a-z.]*anchor\[0\], z:/.test(src), `${f} still builds an anchor without y`);
-    if (f === 'src/ai/navBake.js') continue;
+    if (f === 'src/ai/nav/navBake.js') continue;
     assert.ok(/bakeSoup\(/.test(src), `${f} bakes through the core`);
     assert.ok(!/buildRegions\(|coarsenAgent\(|buildNav\(/.test(src), `${f} spells a pipeline of its own`);
   }

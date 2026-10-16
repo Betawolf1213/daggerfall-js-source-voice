@@ -79,7 +79,7 @@ the lanes tagged them; C0-C38 in the fleet's own ledger).
 
 ### The enhanced AI (`bible/12-Enhanced-AI/Enhanced-AI-Arc.md`)
 
-- **F1 - the navmesh could not hold a stacked dungeon** (`ai/navmesh.js`,
+- **F1 - the navmesh could not hold a stacked dungeon** (`ai/nav/navmesh.js`,
   HIGH). `buildPolyMesh` welded vertices by (x,z) alone. A Daggerfall
   dungeon stacks floors by construction - a mezzanine, a bridge, a hall
   under an upper corridor - and wherever two walkable spans overlapped in
@@ -109,7 +109,7 @@ the lanes tagged them; C0-C38 in the fleet's own ledger).
   now sweep a bat, a rat and an orc against a real classic `EnemyAI` of
   the same shape.
 - **F2 - the bake cache was never versioned past the anchor-y fix**
-  (`ai/navClient.js`). `NAV_BAKE_VERSION` had been 1 since the cache was
+  (`ai/nav/navClient.js`). `NAV_BAKE_VERSION` had been 1 since the cache was
   born, through a fix that changed every bake's output for the same
   input; and the key carried no anchor, so a bake from the wrong
   component was served forever per dungeon. Version 2, and the anchor's

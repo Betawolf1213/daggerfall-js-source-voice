@@ -21,7 +21,7 @@ the enhanced tab."
    the one it plays; the classic motor is one press away and All off's.
    An unstamped shelf's materialised Off adopts it once (`uiPrefs.js`
    PREF1_ADOPT_NEW_DEFAULT).
-3. **The navmesh is project-final's, ported whole.** `src/ai/navmesh.js`
+3. **The navmesh is project-final's, ported whole.** `src/ai/nav/navmesh.js`
    is Mac's file from `// Agent params` to the end; the header differs
    only by the four-line `surfaceY` inlined verbatim from project-final's
    terrain.js and a linter global. A change is made in both repos and
@@ -77,7 +77,7 @@ the reason in its own idiom.
 
 ## ENHANCED AI 3 - a level bakes from its own collider (2026-09-02)
 
-`src/ai/navBake.js`, pure: the Collider's buckets hold every triangle
+`src/ai/nav/navBake.js`, pure: the Collider's buckets hold every triangle
 in world space - the ones the player collides with - and the bake
 reads them back, so the nav's ground and the game's ground are one
 source. An anchor is required, always. THE PHANTOM FLOOR: his buildNav
@@ -357,8 +357,8 @@ A player's console carried `navmesh bake looks degenerate (11 polys from
 exactly in node, and it was every classic dungeon's: Privateer's Hold
 baked 130 polys from 9,079 triangles, and 11 of 12 sampled dungeons
 tripped the guard. Four faults in the soup bake compounded, and the
-one-anchor cull finished the job (`src/ai/navBake.js`,
-`src/ai/triRaster.js`, `src/ai/navClient.js`):
+one-anchor cull finished the job (`src/ai/nav/navBake.js`,
+`src/ai/triRaster.js`, `src/ai/nav/navClient.js`):
 
 - The cell was coarsened. His budget rule (`coarsenAgent`) is for open
   terrain and sizes by the soup's box; every classic dungeon's box is

@@ -66,7 +66,7 @@ was read; each is either fixed here, recorded as expected, or open.
   classic dungeon's soup bake was broken - Privateer's Hold gave 130 polys
   from 9,079 triangles, 11 of 12 sampled dungeons tripped the guard - by
   four faults in the triangle-soup bake that compound, and the one-anchor
-  cull (`src/ai/navBake.js`, `src/ai/triRaster.js`, `src/ai/navClient.js`):
+  cull (`src/ai/nav/navBake.js`, `src/ai/triRaster.js`, `src/ai/nav/navClient.js`):
   1. **The cell was coarsened.** Mac's budget rule (`coarsenAgent`) is for
      open terrain and sizes by the soup's box; every classic dungeon's box
      is three blocks or more a side, so all 4,232 coarsened, to 0.54-1.05 m

@@ -752,5 +752,9 @@
   ["src/player/eotbWagon.js","src/player/eyeOfTheBeholder/eotbWagon.js"],
   ["src/player/climbFeel.js","src/player/climb/climbFeel.js"],
   ["src/player/climbPose.js","src/player/climb/climbPose.js"],
-  ["src/player/climbSounds.js","src/player/climb/climbSounds.js"]
+  ["src/player/climbSounds.js","src/player/climb/climbSounds.js"],
+  ["src/ai/navBake.js","src/ai/nav/navBake.js"],
+  ["src/ai/navClient.js","src/ai/nav/navClient.js"],
+  ["src/ai/navWorker.js","src/ai/nav/navWorker.js"],
+  ["src/ai/navmesh.js","src/ai/nav/navmesh.js"]
 ]

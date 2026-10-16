@@ -28,7 +28,7 @@
   },
   {
     "name": "AIWATER-the-degenerate-bake-is-cached-anyway",
-    "file": "src/ai/navClient.js",
+    "file": "src/ai/nav/navClient.js",
     "old": "    if (input.tris >= DEGENERATE_MIN_TRIS && (polys < DEGENERATE_MIN_POLYS || polys < input.tris * DEGENERATE_POLY_SHARE)) {",
     "new": "    if (false) {",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AIWATER-an-honestly-small-dungeon-is-refused-the-cache",
-    "file": "src/ai/navClient.js",
+    "file": "src/ai/nav/navClient.js",
     "old": "    if (input.tris >= DEGENERATE_MIN_TRIS && (polys < DEGENERATE_MIN_POLYS || polys < input.tris * DEGENERATE_POLY_SHARE)) {",
     "new": "    if (polys < DEGENERATE_MIN_POLYS || polys < input.tris * DEGENERATE_POLY_SHARE) {",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AIWATER-the-guard-measures-the-voxelizer-instead-of-the-input",
-    "file": "src/ai/navClient.js",
+    "file": "src/ai/nav/navClient.js",
     "old": "    const polys = result.stats?.polys ?? 0;",
     "new": "    const polys = result.stats?.boxes ?? result.stats?.polys ?? 0;",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AIWATER-a-degenerate-bake-is-silent",
-    "file": "src/ai/navClient.js",
+    "file": "src/ai/nav/navClient.js",
     "old": "      console.warn(`[enhanced-ai] navmesh bake looks degenerate (${polys} polys from ${input.tris} triangles) - not caching, so the next entry gets a fresh retry instead of being stuck with this one`);",
     "new": "",
     "tests": [

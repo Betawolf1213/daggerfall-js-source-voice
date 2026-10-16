@@ -13,9 +13,9 @@
 // cached dungeon answers the same heights as a fresh bake. No change to
 // his file for it.
 import { navInputFromCollider, bakeSoup, SOUP_AGENT } from './navBake.js';
-import { trianglesToColliders, unpackColliders } from './triRaster.js';
+import { trianglesToColliders, unpackColliders } from '../triRaster.js';
 import { hydrateBakedNav, bakeNavData } from './navmesh.js';
-import { idbStore } from '../world/roadsCache.js';
+import { idbStore } from '../../world/roadsCache.js';
 
 /** Bumped BY HAND whenever the bake's output for the same input changes
  *  (roadsCache.js's GENERATOR_VERSION rule) - a cached bake under an old

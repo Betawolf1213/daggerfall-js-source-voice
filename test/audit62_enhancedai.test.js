@@ -12,9 +12,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Collider } from '../src/player/collider.js';
-import { bakeNavFromCollider } from '../src/ai/navBake.js';
-import { findPath, bakeNavData, hydrateBakedNav, locatePolyLinear, __locatePolyIndexed, polyHeight, AGENT } from '../src/ai/navmesh.js';
-import { navCacheKey, NAV_BAKE_VERSION } from '../src/ai/navClient.js';
+import { bakeNavFromCollider } from '../src/ai/nav/navBake.js';
+import { findPath, bakeNavData, hydrateBakedNav, locatePolyLinear, __locatePolyIndexed, polyHeight, AGENT } from '../src/ai/nav/navmesh.js';
+import { navCacheKey, NAV_BAKE_VERSION } from '../src/ai/nav/navClient.js';
 
 const QUAD = new Uint32Array([0, 1, 2, 0, 2, 3]);
 const I = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);

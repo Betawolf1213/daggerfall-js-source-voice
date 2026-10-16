@@ -115,7 +115,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 /* global atob, btoa */
-// HOST GLOBALS, declared the way ai/navmesh.js declares its own: base64
+// HOST GLOBALS, declared the way ai/nav/navmesh.js declares its own: base64
 // is in every runtime this file has to run in - the browser, the Worker
 // and node 22 - and in none of the shared globals lists, because this
 // is the first module in src/net/ to need it.

@@ -51,7 +51,7 @@ function statementAt(src, needle) {
 }
 
 test('AUDIT 59 F1: the nav worker is spelled the way Vite bundles it - the literal terrainGenClient.js records', () => {
-  const client = read('src/ai/navClient.js');
+  const client = read('src/ai/nav/navClient.js');
   // the one spelling the bundler turns into a worker chunk; anything
   // else (a ctor in a variable) 404s in production and every bake ran
   // on the main thread
@@ -67,7 +67,7 @@ test('AUDIT 59 F1: the nav worker is spelled the way Vite bundles it - the liter
 });
 
 test('AUDIT 59 F1: a worker double is constructed through WorkerCtor and the bake goes to it', async () => {
-  const { NavClient } = await import('../src/ai/navClient.js');
+  const { NavClient } = await import('../src/ai/nav/navClient.js');
   const made = [];
   class FakeWorker {
     constructor(url, opts) { made.push([url, opts]); this.onmessage = null; this.onerror = null; }

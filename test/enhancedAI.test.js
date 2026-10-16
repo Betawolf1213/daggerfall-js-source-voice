@@ -5,10 +5,10 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { trianglesToColliders } from '../src/ai/triRaster.js';
-import { buildNav, buildCompact, buildRegions, buildContours, buildPolyMesh, buildPolyMeshDetail, findPath, AGENT } from '../src/ai/navmesh.js';
+import { buildNav, buildCompact, buildRegions, buildContours, buildPolyMesh, buildPolyMeshDetail, findPath, AGENT } from '../src/ai/nav/navmesh.js';
 
 test('ENHANCED AI 1: the navmesh body is project-final\u2019s, byte for byte from the agent params on', () => {
-  const ours = readFileSync('src/ai/navmesh.js', 'utf8');
+  const ours = readFileSync('src/ai/nav/navmesh.js', 'utf8');
   const bodyStart = ours.indexOf('// Agent params');
   assert.ok(bodyStart > 0);
   // the two lines that differ are ABOVE the body: the inlined surfaceY and the linter globals
@@ -105,7 +105,7 @@ test('ENHANCED AI 2: a free-standing pillar is a hole in the mesh, and a path be
       assert.ok(!(x > 4.5 && x < 5.5 && z > 4.5 && z < 5.5), `segment ${k} crosses the pillar at (${x.toFixed(2)},${z.toFixed(2)})`);
     }
   }
-  const src = readFileSync('src/ai/navmesh.js', 'utf8');
+  const src = readFileSync('src/ai/nav/navmesh.js', 'utf8');
   assert.match(src, /const mergeHoles = \(outer, holes\) => \{/, 'Recast’s mergeRegionHoles, in his file');
   assert.ok(!/arena has none; hole-merging into the outer loop is future work/.test(src), 'the limit’s line is gone');
 });
@@ -115,7 +115,7 @@ test('ENHANCED AI 2: a free-standing pillar is a hole in the mesh, and a path be
 // phantom floor: a dungeon's floors are its own triangles.
 test('ENHANCED AI 3: the bake reads the Collider\u2019s own triangles, needs an anchor, and lays no phantom floor', async () => {
   const { Collider } = await import('../src/player/collider.js');
-  const { navInputFromCollider, bakeNavFromCollider, navPath } = await import('../src/ai/navBake.js');
+  const { navInputFromCollider, bakeNavFromCollider, navPath } = await import('../src/ai/nav/navBake.js');
   const Id = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   // a 10x10 room whose floor sits at y = -5 (a dungeon level below the world's zero), a pillar, walls
   const P = [], I = [];
@@ -141,7 +141,7 @@ test('ENHANCED AI 3: the bake reads the Collider\u2019s own triangles, needs an 
   // point, never the world's zero and never the far floor the bake laid
   // to be dropped. (A mesh vertex's y is not the height - his detail
   // step is a query layer; v.y is snapped lazily for the dev overlay.)
-  const { polyHeight, __locatePolyIndexed } = await import('../src/ai/navmesh.js');
+  const { polyHeight, __locatePolyIndexed } = await import('../src/ai/nav/navmesh.js');
   for (const [x, z] of [[1, 5], [9, 5], [5, 1], [5, 9], [2, 2]]) {
     const pi = __locatePolyIndexed(bake.chf, x, z);
     assert.ok(pi >= 0, `(${x},${z}) is on the mesh`);
@@ -196,7 +196,7 @@ function doorwayLevel({ y = 12.8, door = 1.25, off = 0, pad = 0 } = {}) {
 }
 
 test('DEGENERATE-BAKE ROOT: a classic 1.25 m doorway joins two rooms at every grid alignment, however large the dungeon’s box', async () => {
-  const { bakeNavFromCollider, navPath } = await import('../src/ai/navBake.js');
+  const { bakeNavFromCollider, navPath } = await import('../src/ai/nav/navBake.js');
   for (const [pad, offsets] of [[0, 12], [160, 3]]) {
     for (let k = 0; k < offsets; k++) {
       const L = doorwayLevel({ off: k * 0.0237, pad });
@@ -211,8 +211,8 @@ test('DEGENERATE-BAKE ROOT: a classic 1.25 m doorway joins two rooms at every gr
 });
 
 test('DEGENERATE-BAKE ROOT: a floor whose height lands on a voxel boundary is still a floor, and no phantom plane runs under the walls', async () => {
-  const { bakeNavFromCollider, navPath } = await import('../src/ai/navBake.js');
-  const { __locatePolyIndexed, polyHeight } = await import('../src/ai/navmesh.js');
+  const { bakeNavFromCollider, navPath } = await import('../src/ai/nav/navBake.js');
+  const { __locatePolyIndexed, polyHeight } = await import('../src/ai/nav/navmesh.js');
   // a speck of floor at y = 0 sets minY, so the grid is based at -10.2 and (32 + 10.2) / 0.2 is exactly 211: the
   // room's floor, a zero-thickness box, quantised to nothing in addSpan (float32 16, 24, 32, 48 - 5,865 m2 of the field
   // dungeon's floors), the anchor elected the implicit plane 10 m under everything, and routes ran through walls
@@ -235,8 +235,8 @@ test('DEGENERATE-BAKE ROOT: a floor whose height lands on a voxel boundary is st
 });
 
 test('DEGENERATE-BAKE ROOT: a door a foe opens is left out of the soup, and the host leaves out every unlocked action door', async () => {
-  const { NavClient } = await import('../src/ai/navClient.js');
-  const { navPath } = await import('../src/ai/navBake.js');
+  const { NavClient } = await import('../src/ai/nav/navClient.js');
+  const { navPath } = await import('../src/ai/nav/navBake.js');
   const L = doorwayLevel();
   const collider = await colliderOf(L.s, { 'act:0:7': L.door3 });
   const client = new NavClient({ store: null, WorkerCtor: undefined });
@@ -254,8 +254,8 @@ test('DEGENERATE-BAKE ROOT: a door a foe opens is left out of the soup, and the 
 });
 
 test('DEGENERATE-BAKE ROOT: every place agents live is kept - a foe’s room with no walk to the player survives the cull, and an anchor over no floor elects nothing', async () => {
-  const { bakeNavFromCollider, navPath } = await import('../src/ai/navBake.js');
-  const { __locatePolyIndexed, polyHeight } = await import('../src/ai/navmesh.js');
+  const { bakeNavFromCollider, navPath } = await import('../src/ai/nav/navBake.js');
+  const { __locatePolyIndexed, polyHeight } = await import('../src/ai/nav/navmesh.js');
   // room A under a 0.2 m ceiling slab whose top is a roof; room B 20 m off and 12.8 m down with no walk between them -
   // a ledge dropped off one way, a flooded hall, a locked door (the field dungeon: 56 of 93 foes beyond the player's)
   const s = soup();
@@ -338,10 +338,10 @@ async function realDungeon(which) {
 
 test('DEGENERATE-BAKE ROOT (ARENA2): m1204685 and Privateer’s Hold bake a navmesh that serves their foes',
   noArena2 ? { skip: 'ARENA2_PATH not set or the path does not exist' } : {}, async () => {
-    const { NavClient, DEGENERATE_POLY_SHARE, DEGENERATE_MIN_POLYS } = await import('../src/ai/navClient.js');
-    const { navPath } = await import('../src/ai/navBake.js');
+    const { NavClient, DEGENERATE_POLY_SHARE, DEGENERATE_MIN_POLYS } = await import('../src/ai/nav/navClient.js');
+    const { navPath } = await import('../src/ai/nav/navBake.js');
     const { isActionDoorObject } = await import('../src/world/actionSystem.js');
-    const { __locatePolyIndexed, polyHeight } = await import('../src/ai/navmesh.js');
+    const { __locatePolyIndexed, polyHeight } = await import('../src/ai/nav/navmesh.js');
     // the far points are floors the port's own capsule walks to from the entry (player/collider.js move(), doors open)
     for (const [which, tris, far, minFoes] of [['m1204685', 16216, [61.93, 19.2, 100.18], 0.6], ['ph', 8406, [76.28, 12.81, 24.54], 0.6]]) {
       const D = await realDungeon(which);
@@ -368,7 +368,7 @@ test('DEGENERATE-BAKE ROOT (ARENA2): m1204685 and Privateer’s Hold bake a navm
 // heights as a fresh one (the ground put back), and the host asks only
 // with the switch on and only once.
 test('DEGENERATE-BAKE ROOT: a worker that dies on a large soup leaves the classic motor standing - no main-thread bake - while a small soup, or a client that never had a worker, still bakes here (mutant: the guard dropped)', async () => {
-  const { NavClient, DEGENERATE_MIN_TRIS } = await import('../src/ai/navClient.js');
+  const { NavClient, DEGENERATE_MIN_TRIS } = await import('../src/ai/nav/navClient.js');
   const { Collider } = await import('../src/player/collider.js');
   const Id = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   class DyingWorker {
@@ -406,9 +406,9 @@ test('DEGENERATE-BAKE ROOT: a worker that dies on a large soup leaves the classi
 
 test('ENHANCED AI 3b: the client bakes without a worker, caches, and a hydrated bake keeps the floor', async () => {
   const { Collider } = await import('../src/player/collider.js');
-  const { NavClient, navCacheKey } = await import('../src/ai/navClient.js');
-  const { polyHeight, __locatePolyIndexed } = await import('../src/ai/navmesh.js');
-  const { navPath } = await import('../src/ai/navBake.js');
+  const { NavClient, navCacheKey } = await import('../src/ai/nav/navClient.js');
+  const { polyHeight, __locatePolyIndexed } = await import('../src/ai/nav/navmesh.js');
+  const { navPath } = await import('../src/ai/nav/navBake.js');
   const Id = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   const P = [], I = []; const Y = -5;
   const quad = (a, b, c, d) => { const s = P.length / 3; P.push(...a, ...b, ...c, ...d); I.push(s, s + 1, s + 2, s, s + 2, s + 3); };
@@ -450,7 +450,7 @@ test('ENHANCED AI 3b: the client bakes without a worker, caches, and a hydrated 
 // bad bake deserves a fresh attempt next visit, not to be stuck for good.
 test('ENHANCED AI 3b / DEGENERATE-BAKE: a bake that culls almost everything is not cached, so the next visit retries', async () => {
   const { Collider } = await import('../src/player/collider.js');
-  const { NavClient, DEGENERATE_MIN_TRIS, DEGENERATE_MIN_POLYS } = await import('../src/ai/navClient.js');
+  const { NavClient, DEGENERATE_MIN_TRIS, DEGENERATE_MIN_POLYS } = await import('../src/ai/nav/navClient.js');
   const Id = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   const P = [], I = []; const Y = -5;
   const quad = (a, b, c, d) => { const s = P.length / 3; P.push(...a, ...b, ...c, ...d); I.push(s, s + 1, s + 2, s, s + 2, s + 3); };
@@ -499,7 +499,7 @@ test('ENHANCED AI 3b / DEGENERATE-BAKE: a bake that culls almost everything is n
 // is built from.
 test('ENHANCED AI 3b / DEGENERATE-BAKE: an honestly small dungeon still caches', async () => {
   const { Collider } = await import('../src/player/collider.js');
-  const { NavClient, DEGENERATE_MIN_TRIS } = await import('../src/ai/navClient.js');
+  const { NavClient, DEGENERATE_MIN_TRIS } = await import('../src/ai/nav/navClient.js');
   const Id = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   const P = [], I = []; const Y = -5;
   const quad = (a, b, c, d) => { const s = P.length / 3; P.push(...a, ...b, ...c, ...d); I.push(s, s + 1, s + 2, s, s + 2, s + 3); };

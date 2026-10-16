@@ -1,7 +1,7 @@
 [
   {
     "name": "N2-the-players-feet-leave-the-union-when-they-do-not-land",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": "const landed = [...(feet.length ? feet : [regionAnchor(anchor)]), ",
     "new": "const landed = [...feet, ",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "N3-the-anchor-tolerance-a-tenth-short",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": "export const ANCHOR_Y_TOLERANCE = 0.6;",
     "new": "export const ANCHOR_Y_TOLERANCE = 0.5;",
     "tests": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "N3-the-anchor-tolerance-a-tenth-long",
-    "file": "src/ai/navBake.js",
+    "file": "src/ai/nav/navBake.js",
     "old": "export const ANCHOR_Y_TOLERANCE = 0.6;",
     "new": "export const ANCHOR_Y_TOLERANCE = 0.7;",
     "tests": [
@@ -29,7 +29,7 @@
   },
   {
     "name": "N4-the-workers-word-dropped",
-    "file": "src/ai/navClient.js",
+    "file": "src/ai/nav/navClient.js",
     "old": "{ failed = e; return null; });",
     "new": "{ return null; });",
     "tests": [
@@ -38,7 +38,7 @@
   },
   {
     "name": "N4-a-small-soup-bakes-here-in-silence",
-    "file": "src/ai/navClient.js",
+    "file": "src/ai/nav/navClient.js",
     "old": "    if (!result && this._hadWorker) console.warn(`[enhanced-ai] the nav worker failed - baking ${input.tris} triangles on the main thread (the worker: ${workerWord(failed)})`);",
     "new": "",
     "tests": [
@@ -47,7 +47,7 @@
   },
   {
     "name": "N5-a-cache-hit-re-cuts-a-dead-workers-large-soup-here",
-    "file": "src/ai/navClient.js",
+    "file": "src/ai/nav/navClient.js",
     "old": "if (this._hadWorker && input.tris >= DEGENERATE_MIN_TRIS) {",
     "new": "if (false) {",
     "tests": [

@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { Collider } from '../src/player/collider.js';
-import { navInputFromCollider } from '../src/ai/navBake.js';
+import { navInputFromCollider } from '../src/ai/nav/navBake.js';
 import {
   collidersOf, colliderPoses, raycastColliders, rayMeshEntry, rayMeshEntryWithin, rayBoxEntry, rayConvexEntry, hullOf, invertAffine, boxColliderTriangles,
 } from '../src/world/prefabColliders.js';

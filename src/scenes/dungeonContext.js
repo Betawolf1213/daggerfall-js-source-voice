@@ -290,7 +290,7 @@ import { worldHoverFrame, destroyWorldPlaque } from '../ui/worldPlaque.js';   //
 import { quickLootTake, plaqueActionFor } from '../systems/quickLoot.js'; import { showPickups } from '../ui/pickupFeed.js';   // QUICK-LOOT B4: the take, through the window's own door; PICKUP-FEED: what a take moved, as cards (the take's `took`)
 import { combatVisualsOn, foeDraw, markConcealedHit } from '../systems/combatVisuals.js';   // ECV1: what the enhanced skin draws for a concealed foe
 import { UnderwaterFog } from '../render/underwaterFog.js';   // ROAD-B (b3): UnderwaterFog.cs, called from PlayerEnterExit.Update's dungeon guard
-import { NavClient } from '../ai/navClient.js';   // ENHANCED AI 3b
+import { NavClient } from '../ai/nav/navClient.js';   // ENHANCED AI 3b
 import { getPref } from '../systems/uiPrefs.js';
 import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';   // MWNPC5b: the foes in their Morrowind bodies
 import { isBodyFoe, foeActor, foeFx, foeId, foeSeed, applyWireLook, drawBodiesUnderWindow } from '../characters/foeBodies.js';

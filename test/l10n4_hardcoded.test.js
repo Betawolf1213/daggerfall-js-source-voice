@@ -13,7 +13,7 @@ import { hardcodedCounts, hardcodedStrings, isProse } from '../tools/l10nHardcod
 
 /** The hard-coded prose literals, file by file (`node tools/l10nHardcoded.mjs` prints this map). */
 const HARDCODED = {
-  'src/ai/navClient.js': 1,
+  'src/ai/nav/navClient.js': 1,
   'src/characters/atronachs.js': 4,
   'src/characters/beasts.js': 7,
   'src/characters/clothing.js': 12,

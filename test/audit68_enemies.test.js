@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Collider } from '../src/player/collider.js';
 import { EnemyAI } from '../src/characters/enemy/enemyMotor.js';
-import { bakeNavFromCollider } from '../src/ai/navBake.js';
+import { bakeNavFromCollider } from '../src/ai/nav/navBake.js';
 import { EnhancedEnemyAI, makeNavWorld } from '../src/ai/enhancedMotor.js';
 import { EnemyAttack, resetMeleeTimer } from '../src/characters/enemy/enemyAttack.js';
 import { setSeed } from '../src/formats/dfRandom.js';
@@ -178,7 +178,7 @@ test('AUDIT 68 S02-contextlost-tap-dead: the lost-context report takes the tap i
 test('AUDIT 68 S02-surfh-linear-scan: a route\'s heights read only the boxes under its points, and answer as the full scan did', async () => {
   // surfH/surfHNear scanned every collider per query: each waypoint of
   // every findPath cost O(colliders) - 66k-400k boxes on a real soup.
-  const { findPath, polyHeight } = await import('../src/ai/navmesh.js');
+  const { findPath, polyHeight } = await import('../src/ai/nav/navmesh.js');
   const chf = bakeNavFromCollider(stackedRoom(), { anchor: [2, 0, 8] }).chf;
   const boxes = chf.colliders;
   // the law, spelled out: the tallest covering top, else the ground
@@ -203,7 +203,7 @@ test('AUDIT 68 S02-surfh-linear-scan: a route\'s heights read only the boxes und
 /** A worker double that runs the REAL navWorker module: each posted job
  *  reaches its onmessage, each reply comes back through `onReply` first. */
 async function realWorker(onReply = () => {}) {
-  await import('../src/ai/navWorker.js');
+  await import('../src/ai/nav/navWorker.js');
   const handler = globalThis.onmessage;
   const posted = [];
   class RealWorker {
@@ -237,7 +237,7 @@ test('AUDIT 68 S02-hydrate-main-thread-revoxelize: the client hydrates over the 
   // rebuilding boxes the worker had just cut. The shipped set is marked
   // here (every top +100) so the hydrated height layer shows whose boxes
   // it reads.
-  const { NavClient } = await import('../src/ai/navClient.js');
+  const { NavClient } = await import('../src/ai/nav/navClient.js');
   let shipped = null;
   const { RealWorker, posted } = await realWorker((reply) => {
     if (!reply.cols) return;
@@ -264,8 +264,8 @@ test('AUDIT 68 S02-bake-pipeline-triplicated: the worker, the fallback and navBa
   // Three hand-copies of the pipeline had drifted: bakeHere carried no ms
   // or cells (the host logged "undefinedms" on every fallback bake) and
   // the worker no tris.
-  const { bakeHere } = await import('../src/ai/navClient.js');
-  const { navInputFromCollider } = await import('../src/ai/navBake.js');
+  const { bakeHere } = await import('../src/ai/nav/navClient.js');
+  const { navInputFromCollider } = await import('../src/ai/nav/navBake.js');
   const collider = roomAtMinus5();
   const want = Object.keys(bakeNavFromCollider(collider, { anchor: [1, -5, 5] }).stats).sort();
   assert.deepEqual(want, ['boxes', 'cells', 'cs', 'ms', 'polys', 'tris']);
@@ -274,7 +274,7 @@ test('AUDIT 68 S02-bake-pipeline-triplicated: the worker, the fallback and navBa
   assert.equal(typeof here.ms, 'number');
   let fromWorker = null;
   const { RealWorker } = await realWorker((reply) => { if (reply.t === 'baked') fromWorker = reply.stats; });
-  const { NavClient } = await import('../src/ai/navClient.js');
+  const { NavClient } = await import('../src/ai/nav/navClient.js');
   const client = new NavClient({ store: null, WorkerCtor: RealWorker });
   await client.bake({ collider, anchor: [1, -5, 5], key: 'dungeon:a68s' });
   assert.deepEqual(Object.keys(fromWorker ?? {}).sort(), want, 'the worker');
@@ -286,7 +286,7 @@ test('AUDIT 68 S02-coarsen-sizing-pass: the grid is sized from the soup\'s bound
   // soup's bounds snapped to cells: the fine first pass every bake cut
   // only to measure it (~2 s on a large dungeon) carried nothing more.
   const { soupExtent, trianglesToColliders } = await import('../src/ai/triRaster.js');
-  const { coarsenAgent, AGENT } = await import('../src/ai/navmesh.js');
+  const { coarsenAgent, AGENT } = await import('../src/ai/nav/navmesh.js');
   let seed = 3; const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
   for (const span of [30, 400]) {
     const P = [], I = [];
@@ -300,7 +300,7 @@ test('AUDIT 68 S02-coarsen-sizing-pass: the grid is sized from the soup\'s bound
     assert.deepEqual(ext(soupExtent(P, I, AGENT.cs)), ext(cols), `span ${span}: the voxeliser's own extent`);
     assert.deepEqual(coarsenAgent(soupExtent(P, I, AGENT.cs), AGENT), coarsenAgent(cols, AGENT), `span ${span}: the same cell size`);
   }
-  const nb = rd('src/ai/navBake.js'), at = nb.indexOf('export function bakeSoup(');
+  const nb = rd('src/ai/nav/navBake.js'), at = nb.indexOf('export function bakeSoup(');
   assert.ok(at > 0, 'the one bake core');
   const core = nb.slice(at, nb.indexOf('\n}\n', at));
   assert.equal((core.match(/trianglesToColliders\(/g) ?? []).length, 1, 'the bake voxelises the soup once');

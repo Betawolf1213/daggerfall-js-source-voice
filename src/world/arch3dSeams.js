@@ -40,7 +40,7 @@
 // the sloped stair, a hand high, by 13-14% (AUDIT DUNGEON-SEAMS 6). No
 // triangle flips or folds flat. The collider is built from the same positions, so a
 // foot finds the tread where the eye does - and the nav-mesh cache is
-// versioned past it (ai/navClient.js NAV_BAKE_VERSION).
+// versioned past it (ai/nav/navClient.js NAV_BAKE_VERSION).
 // ═══════════════════════════════════════════════════════════════════
 
 /** @typedef {{ axis: 'x'|'y'|'z', map: Record<string, number> }} AxisRule */

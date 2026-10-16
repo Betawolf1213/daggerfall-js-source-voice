@@ -52,7 +52,7 @@ function twoRooms({ h = 3 } = {}) {
   return s;
 }
 const A = [2, 0, 5], FOE = [35, 0, 5], FOE2 = [38, 0, 8];
-const on = async (bake, x, z, y = 0) => (await import('../src/ai/navmesh.js')).__locatePolyIndexed(bake.chf, x, z, y) >= 0;
+const on = async (bake, x, z, y = 0) => (await import('../src/ai/nav/navmesh.js')).__locatePolyIndexed(bake.chf, x, z, y) >= 0;
 /** A large soup for the worker's guards: a floor of small quads, over DEGENERATE_MIN_TRIS. */
 async function quadFloor(n) {
   const s = soup();
@@ -61,7 +61,7 @@ async function quadFloor(n) {
 }
 /** A worker double that runs the REAL navWorker module (AUDIT 68's rig): each posted job reaches its onmessage. */
 async function realWorker() {
-  await import('../src/ai/navWorker.js');
+  await import('../src/ai/nav/navWorker.js');
   const handler = globalThis.onmessage;
   const posted = [];
   class RealWorker {
@@ -97,8 +97,8 @@ const captureWarn = async (fn) => {
 
 // ─── N1 ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 test('AUDIT PRE-MERGE 0928 N1: the worker bakes the anchor union - a foe’s room with no walk to the player is kept through the real navWorker (mutants: the client sends no anchors; the worker drops them)', async () => {
-  const { NavClient } = await import('../src/ai/navClient.js');
-  const { navPath } = await import('../src/ai/navBake.js');
+  const { NavClient } = await import('../src/ai/nav/navClient.js');
+  const { navPath } = await import('../src/ai/nav/navBake.js');
   const { RealWorker, posted } = await realWorker();
   const collider = await colliderOf(twoRooms());
   const client = new NavClient({ store: null, WorkerCtor: RealWorker });
@@ -112,7 +112,7 @@ test('AUDIT PRE-MERGE 0928 N1: the worker bakes the anchor union - a foe’s roo
 
 // ─── N2 ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 test('AUDIT PRE-MERGE 0928 N2: the player’s feet stay in the union when they do not land - loaded swimming 1.5 m over a flooded hall’s floor, the player’s room stands beside a foe’s', async () => {
-  const { bakeNavFromCollider } = await import('../src/ai/navBake.js');
+  const { bakeNavFromCollider } = await import('../src/ai/nav/navBake.js');
   const collider = await colliderOf(twoRooms({ h: 4 }));
   const SWIM = [5, 1.5, 5];   // 1.5 m over the floor: past ANCHOR_Y_TOLERANCE, so the feet do not land
   const alone = bakeNavFromCollider(collider, { anchor: SWIM });
@@ -126,7 +126,7 @@ test('AUDIT PRE-MERGE 0928 N2: the player’s feet stay in the union when they d
 
 // ─── N3 ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 test('AUDIT PRE-MERGE 0928 N3: a foe leaning on its wall lands on the floor beside it - its own cell is the eroded margin (the ring, and the walkable filter)', async () => {
-  const { bakeNavFromCollider, landAnchors } = await import('../src/ai/navBake.js');
+  const { bakeNavFromCollider, landAnchors } = await import('../src/ai/nav/navBake.js');
   const collider = await colliderOf(twoRooms());
   const LEANING = [39.8, 0, 5];   // 0.2 m off room B's east wall, in the one ring of erosion
   const bake = bakeNavFromCollider(collider, { anchor: A, anchors: [LEANING] });
@@ -137,7 +137,7 @@ test('AUDIT PRE-MERGE 0928 N3: a foe leaning on its wall lands on the floor besi
 });
 
 test('AUDIT PRE-MERGE 0928 N3: ANCHOR_Y_TOLERANCE - feet 0.55 m over their floor land, 0.65 m over do not, and a foe 1.5 m up elects nothing', async () => {
-  const { bakeNavFromCollider, landAnchors, ANCHOR_Y_TOLERANCE } = await import('../src/ai/navBake.js');
+  const { bakeNavFromCollider, landAnchors, ANCHOR_Y_TOLERANCE } = await import('../src/ai/nav/navBake.js');
   assert.equal(ANCHOR_Y_TOLERANCE, 0.6);
   const collider = await colliderOf(twoRooms());
   const bake = bakeNavFromCollider(collider, { anchor: A });
@@ -153,7 +153,7 @@ test('AUDIT PRE-MERGE 0928 N3: ANCHOR_Y_TOLERANCE - feet 0.55 m over their floor
 });
 
 test('AUDIT PRE-MERGE 0928 N3: the cache key carries the union - a moved foe is a new key, the same cell the same one, and the cache never serves a bake to another union', async () => {
-  const { navCacheKey, NavClient } = await import('../src/ai/navClient.js');
+  const { navCacheKey, NavClient } = await import('../src/ai/nav/navClient.js');
   const base = { key: 'loc', tris: 10, minY: -5, maxY: 3, anchor: [1, 0, 1] };
   const one = navCacheKey({ ...base, anchors: [[35, 0, 5]] });
   assert.notEqual(one, navCacheKey(base), 'a union is not the lone anchor’s key');
@@ -173,8 +173,8 @@ test('AUDIT PRE-MERGE 0928 N3: the cache key carries the union - a moved foe is 
 });
 
 test('AUDIT PRE-MERGE 0928 N3: SOUP_AGENT’s one ring never links a 0.7 m gap (a body is 0.7 m), at every grid alignment, while a 1.25 m doorway links', async () => {
-  const { bakeNavFromCollider, navPath, SOUP_AGENT } = await import('../src/ai/navBake.js');
-  const { AGENT } = await import('../src/ai/navmesh.js');
+  const { bakeNavFromCollider, navPath, SOUP_AGENT } = await import('../src/ai/nav/navBake.js');
+  const { AGENT } = await import('../src/ai/nav/navmesh.js');
   assert.deepEqual(SOUP_AGENT, { ...AGENT, radius: AGENT.cs });
   const level = (door, off) => {   // two 6 m rooms, a 0.3 m wall and one doorway 2.22 m high (the classic frame's lintel)
     const s = soup(), len = 6, wall = 0.3, X0 = off, X1 = off + 2 * len + wall, Z0 = off, Z1 = off + len, y = 12.8;
@@ -193,7 +193,7 @@ test('AUDIT PRE-MERGE 0928 N3: SOUP_AGENT’s one ring never links a 0.7 m gap (
 
 // ─── N4 ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 test('AUDIT PRE-MERGE 0928 N4: the worker’s own error reaches the console - on a large soup the classic motor stands, and a small soup’s main-thread bake says so', async () => {
-  const { NavClient, DEGENERATE_MIN_TRIS } = await import('../src/ai/navClient.js');
+  const { NavClient, DEGENERATE_MIN_TRIS } = await import('../src/ai/nav/navClient.js');
   const WORD = 'RangeError: Array buffer allocation failed';
   const big = await quadFloor(Math.ceil(DEGENERATE_MIN_TRIS / 2) + 10);
   const large = await captureWarn(() => new NavClient({ store: null, WorkerCtor: errWorker(WORD) }).bake({ collider: big, anchor: [1, 0, 1], key: 'n4:big' }));
@@ -207,8 +207,8 @@ test('AUDIT PRE-MERGE 0928 N4: the worker’s own error reaches the console - on
 
 // ─── N5 ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 test('AUDIT PRE-MERGE 0928 N5: a cache hit with a dead worker does not re-cut a large soup on the main thread - the classic motor stands, as on the bake path; a small soup still hydrates here', async () => {
-  const { NavClient, DEGENERATE_MIN_TRIS, bakeHere } = await import('../src/ai/navClient.js');
-  const { navInputFromCollider } = await import('../src/ai/navBake.js');
+  const { NavClient, DEGENERATE_MIN_TRIS, bakeHere } = await import('../src/ai/nav/navClient.js');
+  const { navInputFromCollider } = await import('../src/ai/nav/navBake.js');
   const hitOf = (collider, anchor) => { const r = bakeHere(navInputFromCollider(collider), anchor); return { async get() { return { baked: r.baked, cs: r.cs, stats: r.stats }; }, async set() {} }; };
   const big = await quadFloor(Math.ceil(DEGENERATE_MIN_TRIS / 2) + 10);
   const large = await captureWarn(() => new NavClient({ store: hitOf(big, [1, 0, 1]), WorkerCtor: DyingWorker }).bake({ collider: big, anchor: [1, 0, 1], key: 'n5:big' }));

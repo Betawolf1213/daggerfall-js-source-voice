@@ -18,7 +18,7 @@
 // height layer falls back to still sits ten metres below the lowest
 // triangle, where no real floor can step onto it.
 
-import { trianglesToColliders } from './triRaster.js';
+import { trianglesToColliders } from '../triRaster.js';
 import {
   AGENT, buildNav, buildCompact, buildRegions, buildContours,
   buildPolyMesh, buildPolyMeshDetail, findPath,

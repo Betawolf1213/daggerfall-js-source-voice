@@ -1681,7 +1681,7 @@ others share it, and the reader and the parity harness keep DFU's bytes.
 The collider's positions are the drawn ones, so a foot finds a tread where
 the eye does (33 scripted walks up, down and against the walls of 61018
 and 63026 on the real collider end where they did unpatched), and the
-nav-mesh cache is versioned past it (`ai/navClient.js NAV_BAKE_VERSION` 3:
+nav-mesh cache is versioned past it (`ai/nav/navClient.js NAV_BAKE_VERSION` 3:
 same triangle count, mostly the same height bounds - its key could not tell
 a bake of the old corners). Texture coordinates are per corner in ARCH3D
 and are kept: no corner moves more than five units (4.47 the most).

@@ -12,7 +12,7 @@ import { createCrewAshore, CATCH_UP_M, HEEL_M, HEEL_STEP_M } from '../src/scenes
 import { ENCOUNTER_CULL_DISTANCE } from '../src/scenes/exteriorFoes.js';
 import { EnemyAI, FOLLOW_STOP, FOLLOW_SLACK, FOLLOW_LEASH } from '../src/characters/enemy/enemyMotor.js';
 import { Collider } from '../src/player/collider.js';
-import { bakeNavFromCollider } from '../src/ai/navBake.js';
+import { bakeNavFromCollider } from '../src/ai/nav/navBake.js';
 import { EnhancedEnemyAI, makeNavWorld } from '../src/ai/enhancedMotor.js';
 import { runTargetMachine, getTargets, PLAYER_TARGET, fightsOurSide, targetPriority, COMPANION_ASSIST_PRIORITY } from '../src/characters/enemy/enemyTargets.js';
 import { createCrewLife } from '../src/systems/naval/crewLife.js';

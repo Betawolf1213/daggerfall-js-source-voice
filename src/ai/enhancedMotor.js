@@ -108,7 +108,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { EnemyAI } from '../characters/enemy/enemyMotor.js';
-import { findPath } from './navmesh.js';
+import { findPath } from './nav/navmesh.js';
 
 // ── project-final enemyShared.js:7-12, verbatim ────────────────────
 export const REPATH_INT = 0.4;     // s between findPath refreshes toward the (moving) player

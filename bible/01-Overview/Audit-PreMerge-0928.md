@@ -78,7 +78,7 @@ Mutants: `tools/mutants/audit0928_online.json` 34, `audit0928_save.json` 31,
 | U3 | med | At the helm the phone stick's 80% throw pressed Run, and Run with a side key is the oars' strafe - a full side push or forward diagonal never turned the boat. | The touch layer takes a host gate (`hooks.stickRuns`); the world's is false while the helm is held. |
 | U8 | low | The map declared no `hidesHud`, so the large HUD stayed painted under PauseGame(true, true)'s map. | `hidesHud: true`, read by the street's, the building's and the dungeon's drawHud. |
 
-**The nav bake and the re-pins** (`ai/navBake.js`, `ai/navClient.js`, `systems/handheldTorches.js`)
+**The nav bake and the re-pins** (`ai/nav/navBake.js`, `ai/nav/navClient.js`, `systems/handheldTorches.js`)
 
 | ID | Sev | Finding | Fix |
 |---|---|---|---|

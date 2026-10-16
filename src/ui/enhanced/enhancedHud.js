@@ -178,7 +178,7 @@ const svgEl = (doc, tag, cls) => {
 };
 
 // FOEBAR1: the blade face's two pictures RIDE THE MODULE. `new URL(...,
-// import.meta.url)` is the pattern the workers use (ai/navClient.js): vite
+// import.meta.url)` is the pattern the workers use (ai/nav/navClient.js): vite
 // serves it in dev and bundles it with the page's base in a build, and
 // node resolves it to a file URL it never fetches. public/ was wrong for
 // this: it is served at the root alone, and the game runs at /play/, where
