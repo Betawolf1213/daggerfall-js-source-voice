@@ -353,7 +353,7 @@ export function reviewedRank(m, guild, entity, store, ctx = null) {
   return Number.isInteger(ceiling) && ruled > ceiling ? Math.max(ceiling, Math.min(ruled, m.rank)) : ruled;
 }
 
-/** STANDING-WORDS (Field-Bugs-2026-10-15c): the days until a membership's next review may move its rank down - the
+/** STANDING-WORDS (Field-Bugs-2026-10-15g): the days until a membership's next review may move its rank down - the
  *  28-day gate UpdateRank reads (`lastRankChange` + DAYS_BETWEEN_RANK_CHANGES), on the character's own date; 0 when it
  *  is due (the next hall visit reviews). A probation's review is the one that expels below GUILD_EXPEL_BELOW. */
 export function reviewDaysLeft(m, now) {
@@ -364,7 +364,7 @@ export function reviewDaysLeft(m, now) {
 /** PROMO-NOW: what the next rank asks, read exactly as baseCalculateNewRank reads its row - the reputation, and how
  *  many guild skills clear the row's high and low bars. Null for a stranger, without a faction store, or at DFU's
  *  nine. The rows only rise, so the next row met is every row below it met.
- *  SEAT-LINE (FIELD BUGS 2026-10-15c): a member AT the host's `ctx.rankCeiling` (online, 7 while the Roll holds) is
+ *  SEAT-LINE (FIELD BUGS 2026-10-15g): a member AT the host's `ctx.rankCeiling` (online, 7 while the Roll holds) is
  *  answered `{ rank, seat: true, reputation, reputationNeed }` - the next rank is a chapter's seat, not a review's,
  *  and the seat's Eligible asks rank 8's reputation (Chapters-Arc 3.5). A book read seated, past the ceiling, is null. */
 export function rankNeeds(memberships, guild, entity, store, ctx = null) {

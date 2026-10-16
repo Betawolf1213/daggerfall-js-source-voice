@@ -5250,7 +5250,9 @@ export function lawRows(entity, worldNow) {
  *  19 says rather than drawing an empty section. */
 export function statsGuilds(detail, entity) {
   detail.append(pxDivider(t('pause.guilds.title', 'Guilds')));
-  const book = affiliations(entity, { now: dateFromClassicMinutes(Math.floor(ownMinutes())) });   // STANDING-WORDS: a probation's days on the character's own clock, as the review reads it
+  // STANDING-WORDS: a probation's days on the character's own clock, as the review reads it; AUDIT GUILD-WORDS II C-7:
+  // online a promotion does not wait (PROMO-NOW), so a probation may end sooner
+  const book = affiliations(entity, { now: dateFromClassicMinutes(Math.floor(ownMinutes())), online: isOnlinePage() });
   if (!book.length) {
     detail.append(el('p', 'px-note', t('pause.guilds.none', 'You have no affiliations.')));
     return;
@@ -5259,9 +5261,9 @@ export function statsGuilds(detail, entity) {
     const r = el('div', 'px-stat px-guild');
     r.append(el('span', 'k', a.affiliation), el('span', 'v px-rank', a.probation ? t('pause.guilds.probation', '{title} - on probation', { title: a.title }) : a.title), signedRep(a.rep));   // REP6
     detail.append(r);
-    // STANDING-WORDS (Field-Bugs-2026-10-15c): a probation's stakes, and what the Roll still owes online
+    // STANDING-WORDS (Field-Bugs-2026-10-15g): a probation's stakes, and what the Roll still owes online
     for (const w of a.warnings) detail.append(el('p', 'px-note', w));   // AUDIT GUILD-WORDS L1-2: a probation's stakes, a demotion before it lands
-    if (a.owed > 0) detail.append(el('p', 'px-note', t('pause.guilds.owed', '{owed} more standing on the way, at most {max} a real day.', { owed: a.owed, max: ROLL_GAIN_DAY_MAX })));   // AUDIT GUILD-WORDS L1-6: the owed's pace, not the standing's
+    if (a.owed > 0) detail.append(el('p', 'px-note', t('pause.guilds.owed', '{owed} more standing on the way, at most {max} a real day (days turn at midnight UTC).', { owed: a.owed, max: ROLL_GAIN_DAY_MAX })));   // AUDIT GUILD-WORDS L1-6: the owed's pace, not the standing's; II C-8: the UTC day
   }
 }
 

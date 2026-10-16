@@ -422,6 +422,41 @@ test('AUDIT GUILD-WORDS L6: a join the client made at 0 and a loss in the same c
   assert.equal(r.roll.factions[40], -30);
 });
 
+test('AUDIT GUILD-WORDS II B-4, B-5: every answer says what it paid of what was owed - a read on a new day, a claim before its own line - and nothing where nothing was (mutants: the read\'s paid, the claim\'s paid, a paid kept when none)', async () => {
+  const s = await stand();
+  const who = await s.registered('Rolly');
+  const R = await seatRealm(s.env, who.secret, 'Rolly');
+  const ctx = (t) => ({ db: s.env.DB, nowS: t });
+  const player = { id: who.id };
+  assert.deepEqual((await readRoll(ctx(T0), player, { character: R.id, lease: R.lease, seed: { factions: { 40: 0 }, members: [] } })).paid, undefined, 'the seed: no payment to say');
+  const claim = (t, deltas) => claimRoll(ctx(t), player, { character: R.id, lease: R.lease, rid: rid(), deltas, members: [] });
+  let r = await claim(T0 + 10, { 40: 25 });
+  assert.deepEqual([r.roll.factions[40], r.roll.owed[40], r.credited[40], r.paid], [15, 10, 15, {}], 'fifteen today, ten owed, nothing paid');
+  r = await claim(T0 + 15, {});
+  assert.deepEqual(r.paid, {}, 'a claim that moves nothing says it paid nothing (the tracker then reads a turned-away gain as lost)');
+  r = await readRoll(ctx(T0 + 20), player, { character: R.id, lease: R.lease });
+  assert.deepEqual(r.paid, {}, 'the same day: no room, nothing paid');
+  r = await readRoll(ctx(T0 + DAY + 10), player, { character: R.id, lease: R.lease });
+  assert.deepEqual([r.roll.factions[40], r.roll.owed[40], r.paid], [25, undefined, { 40: 10 }], 'the next day\'s read paid the ten');
+  r = await claim(T0 + DAY + 20, { 40: 25 });
+  assert.deepEqual([r.roll.factions[40], r.roll.owed[40], r.credited[40], r.paid], [30, 20, 5, {}]);
+  r = await claim(T0 + 2 * DAY + 10, { 40: -5 });
+  assert.deepEqual([r.roll.factions[40], r.roll.owed[40], r.paid], [45, undefined, { 40: 15 }], 'the claim paid fifteen before its loss, which the rest of the owed took');
+});
+
+test('AUDIT GUILD-WORDS II E-10: the join reads the standing before the claim WITH what was owed - -5 and ten owed is a member\'s 5, though the claim\'s loss leaves -25 (mutant: the owed dropped from before)', async () => {
+  const s = await stand();
+  const who = await s.registered('Rolle');
+  const R = await seatRealm(s.env, who.secret, 'Rolle');
+  const ctx = (t) => ({ db: s.env.DB, nowS: t });
+  const player = { id: who.id };
+  await readRoll(ctx(T0), player, { character: R.id, lease: R.lease, seed: { factions: { 40: -20 }, members: [] } });
+  let r = await claimRoll(ctx(T0 + 10), player, { character: R.id, lease: R.lease, rid: rid(), deltas: { 40: 25 }, members: [] });
+  assert.deepEqual([r.roll.factions[40], r.roll.owed[40]], [-5, 10]);
+  r = await claimRoll(ctx(T0 + 20), player, { character: R.id, lease: R.lease, rid: rid(), deltas: { 40: -30 }, members: [{ f: 40, rank: 0 }] });
+  assert.deepEqual([r.roll.factions[40], r.roll.members.map((m) => m.f)], [-25, [40]]);
+});
+
 // ── THE TAB ─────────────────────────────────────────────────────────
 
 test('CHAP2a the tab\'s refresh: after a hall writ the next tick claims with nothing moved, even inside the minute, and the Roll\'s +2 is adopted; nothing before the first read or once stopped (mutants: the refresh ignored, the minute kept)', async () => {

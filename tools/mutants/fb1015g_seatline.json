@@ -5,7 +5,7 @@
     "old": "    return m.rank === top\n      ? { rank, seat: true, reputation: getReputation(store, guild.factionId), reputationNeed: RANK_REQ_REPUTATION[rank] }\n      : null;",
     "new": "    return null;",
     "tests": [
-      "test/fb1015c_seatline.test.js"
+      "test/fb1015g_seatline.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    return m.rank === top\n",
     "new": "    return true\n",
     "tests": [
-      "test/fb1015c_seatline.test.js"
+      "test/fb1015g_seatline.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "reputationNeed: RANK_REQ_REPUTATION[rank] }\n      : null;",
     "new": "reputationNeed: RANK_REQ_REPUTATION[top] }\n      : null;",
     "tests": [
-      "test/fb1015c_seatline.test.js"
+      "test/fb1015g_seatline.test.js"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "old": "      t('guild.rankNeeds.seat', \"Ranks {officer} and {master} are each chapter's council and Master, won by Merit - no review gives them\",\n        { officer: SEAT_RANK.officer, master: SEAT_RANK.master }),\n",
     "new": "",
     "tests": [
-      "test/fb1015c_seatline.test.js"
+      "test/fb1015g_seatline.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      ...(n.reputation < n.reputationNeed ? [reputationLine(n, owed)] : []),",
     "new": "      ...(true ? [reputationLine(n, owed)] : []),",
     "tests": [
-      "test/fb1015c_seatline.test.js"
+      "test/fb1015g_seatline.test.js"
     ]
   },
   {
@@ -50,16 +50,16 @@
     "old": "days: SEAT_TENURE_S / 86_400,",
     "new": "days: 7,",
     "tests": [
-      "test/fb1015c_seatline.test.js"
+      "test/fb1015g_seatline.test.js"
     ]
   },
   {
     "name": "SEAT-LINE-the-merit-line-dropped",
     "file": "src/systems/guildServiceFlow.js",
-    "old": "      t('guild.rankNeeds.seatMerit', 'Each Sunday\\'s Turning seats the most Merit of the last {weeks} weeks, among members {days} real days in the guild, on accounts {age} real days old',\n        { weeks: SEAT_MERIT_WEEKS, days: SEAT_TENURE_S / 86_400, age: SEAT_ACCOUNT_AGE_S / 86_400 }),\n",
+    "old": "      t('guild.rankNeeds.seatMerit', 'Each Sunday\\'s Turning gives the chairs to the most Merit of the last {weeks} weeks, among members {days} real days in the guild, on accounts {age} real days old',\n        { weeks: SEAT_MERIT_WEEKS, days: SEAT_TENURE_S / 86_400, age: SEAT_ACCOUNT_AGE_S / 86_400 }),\n",
     "new": "",
     "tests": [
-      "test/fb1015c_seatline.test.js"
+      "test/fb1015g_seatline.test.js"
     ]
   },
   {
@@ -68,7 +68,7 @@
     "old": "rankNeedsLines(playerEntity, guild, seated(), store,",
     "new": "rankNeedsLines(playerEntity, guild, memberships, store,",
     "tests": [
-      "test/fb1015c_seatline.test.js"
+      "test/fb1015g_seatline.test.js"
     ]
   }
 ]

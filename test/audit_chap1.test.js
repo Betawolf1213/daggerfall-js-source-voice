@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 
 import {
   ROLL_EPOCH_S, ROLL_EVENTS_KEEP_S, ROLL_RETRY_MS, ROLL_RETRY_MAX_MS, ROLL_CLAIM_MS, ROLL_KEPT_VENDOR,
-  rollCredit, rollDrain, rollSeedOf, rollSeedOk, rollRankCapOf, rollDeltasOf, rollAdopt, rollKeptOf, rollMembersKey, rollCeilingLine, rollFactionName,
+  rollCredit, rollDrain, rollSeedOf, rollSeedOk, rollRankCapOf, rollDeltasOf, rollAdopt, rollKeptOf, rollMembersKey,
 } from '../src/net/npcChapterLaw.js';
 import { createRollTracker, rollEntityDoors, rollRid, ROLL_STOPS } from '../src/net/npcRollTracker.js';
 import { createFactionRep } from '../src/systems/factionRep.js';
@@ -209,7 +209,7 @@ test('AUDIT CHAP C1/C2/C4: every adoption is kept; the next page, finding the Ro
   const p = tab(io, { held: { 40: 16, 41: 0 }, kept: { seq: 4, factions: { 40: 10, 41: 0 } } });
   p.tracker.tick(); await p.settle();
   assert.equal(p.h[40], 16, 'the save\'s unclaimed 6 kept');
-  assert.deepEqual(p.box.kept, { seq: 4, factions: rollAdopt({}, {}, {}, { 40: 10, 41: 0 }).base, owed: {} });   // PIN MOVED (AUDIT GUILD-WORDS L2-1): the owed kept with it
+  assert.deepEqual(p.box.kept, { seq: 4, factions: rollAdopt({}, {}, {}, { 40: 10, 41: 0 }).base });
   p.tracker.tick(); await p.settle();
   assert.deepEqual(io.calls[1].deltas, { 40: 6 }, 'and claimed');
   // a Roll that moved on since the save (a claim the save never saw): the save's past is not this page's to claim
@@ -277,8 +277,7 @@ test('AUDIT CHAP T6/T10: a promotion alone is claimed; an uncut claim says nothi
   p.h[40] += 5;
   p.at(ROLL_CLAIM_MS); p.tracker.tick(); await p.settle();
   assert.deepEqual(p.box.said, [[40]], 'a repeat said nothing more');
-  assert.equal(rollCeilingLine('The Mages Guild'), 'Your standing with the Mages Guild rises no further today. The rest will follow in the days to come.');
-  assert.equal(rollFactionName(undefined), 'the guild');
+  // PIN MOVED (AUDIT GUILD-WORDS II B-3, C-4): the pace's words are rollNoticeHost.js's, with what is owed - test/fb1015g_guildwords.test.js
 });
 
 test('AUDIT CHAP T8/T9: the wait doubles from 30 seconds to 15 minutes and resets on an answer; no Roll found reads again; a read with no Roll is a stop (mutants: the doubling, the cap, the reset, the unseeded reset)', async () => {

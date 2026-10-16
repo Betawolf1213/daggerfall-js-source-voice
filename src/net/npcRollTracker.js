@@ -123,22 +123,23 @@ export const rollVampireOf = (/** @type {any} */ entity) => !!(entity?.racialOve
  * character this tab plays and its lease (null: not playing - nothing is asked); `read()` the twenty-two as the entity
  * holds them now (rollValuesOf - null before its store stands); `write(values)` puts the Roll's word on the entity;
  * `members()` its memberships (rollMembersOf - null with no book); `kept()` the last adoption as the save keeps it and
- * `keep(k)` the new one (the host's mod-save record). `onCeiling(factions)` hears the lines the day's pace cut;
- * `onStop(error)` the refusal that ended it. CHAP4b: `cap()` holds the book at 7 (rollBookCap - the guild factions it
- * held), `onCapped(factions)` hears them; STANDING-WORDS: `onStanding(changes, first)` every adoption - what the Roll's
- * word moved since its last (npcChapterLaw.js rollMovesOf: `{ f, delta | paid, now, owed }`; at the page's first word,
- * against the kept adoption the Roll still stands at, or none), `first` true once a page; `onSeats(seats, before)` the character's seats at each adoption (`before` null
- * at the first).
+ * `keep(k)` the new one (the host's mod-save record). `onCeiling(factions)` hears the lines the day's pace cut - AUDIT
+ * GUILD-WORDS II B-3: where what is owed grew by it - and `onFull(factions)` the lines whose gain was lost, the standing
+ * and what is owed already at the most; `onStop(error)` the refusal that ended it. CHAP4b: `cap()` holds the book at 7
+ * (rollBookCap - the guild factions it held), `onCapped(factions)` hears them; STANDING-WORDS: `onStanding(changes,
+ * first)` every adoption - what the Roll's word moved since its last (npcChapterLaw.js rollMovesOf: `{ f, delta?, paid?,
+ * now, owed }`; at the page's first word, what that read paid of what was owed - II B-2, B-5), `first` true once a page;
+ * `onSeats(seats, before)` the character's seats at each adoption (`before` null at the first).
  * @param {{ io: any, character: () => string | null, lease: () => string | null, read: () => Record<number, number> | null,
  *   write: (values: Record<number, number>) => void, members: () => { f: number, rank: number }[] | null,
- *   kept?: () => unknown, keep?: (k: { seq: number, factions: Record<number, number>, owed?: Record<number, number> }) => void, now?: () => number,
- *   rid?: () => string, onCeiling?: (factions: number[]) => void, onStop?: (error: string) => void, cap?: () => number[],
+ *   kept?: () => unknown, keep?: (k: { seq: number, factions: Record<number, number> }) => void, now?: () => number,
+ *   rid?: () => string, onCeiling?: (factions: number[]) => void, onFull?: (factions: number[]) => void, onStop?: (error: string) => void, cap?: () => number[],
  *   onCapped?: (factions: number[]) => void, onSeats?: (seats: { f: number, region: number, seat: string }[], before: { f: number, region: number, seat: string }[] | null) => void,
  *   onStanding?: (changes: { f: number, delta?: number, paid?: number, now: number, owed: number }[], first: boolean) => void }} o
  */
 export function createRollTracker({
   io, character, lease, read, write, members, kept = () => null, keep = () => {}, now = () => Date.now(), rid = () => rollRid(),
-  onCeiling = () => {}, onStop = () => {}, cap = () => [], onCapped = () => {}, onSeats = () => {}, onStanding = () => {},
+  onCeiling = () => {}, onFull = () => {}, onStop = () => {}, cap = () => [], onCapped = () => {}, onSeats = () => {}, onStanding = () => {},
 }) {
   /** @type {Record<number, number> | null} the Roll's last word, as adopted */
   let base = null;
@@ -167,27 +168,29 @@ export function createRollTracker({
   let sinces = new Map();
 
   const fail = (/** @type {string} */ error, /** @type {string | null} */ ls = null) => {
-    if (ROLL_STOPS.includes(error)) { stopped = error; stoppedLease = ls; setStandingOwed(null); onStop(error); return; }   // STANDING-WORDS: stopped, nothing owed is said
+    // STANDING-WORDS: stopped, nothing owed is said - AUDIT GUILD-WORDS II E-14: but a lease's stop is the page hiding,
+    // and the next lease resumes the Roll as it stood, so what it owes is still said
+    if (ROLL_STOPS.includes(error)) { stopped = error; stoppedLease = ls; if (error !== 'lease') setStandingOwed(null); onStop(error); return; }
     if (error === 'roll-unseeded') { base = null; pending = null; }   // no Roll after all: read (and seed) again
     nextAt = now() + wait;
     wait = Math.min(ROLL_RETRY_MAX_MS, wait * 2);
   };
   const adopt = (/** @type {Record<number, number>} */ from, /** @type {Record<number, number>} */ sent, /** @type {any} */ roll,
-    /** @type {{ factions: Record<number, number>, owed?: Record<number, number> } | null} */ prev = null) => {
+    /** @type {Record<number, number> | null} */ paid = null) => {
     const a = rollAdopt(read() ?? from, from, sent, roll.factions);
     write(a.local);
     // STANDING-WORDS: what the Roll's word moved since its last - a claim's credit, a hall writ's, the owed paid - and what
-    // it still owes, said and kept; AUDIT GUILD-WORDS L2-1: at the page's first word, against the kept adoption the Roll
-    // still stands at (`prev`: only its own credits moved it since - the owed a first read pays)
+    // it still owes, said and kept; AUDIT GUILD-WORDS II B-2, B-4, B-5: what the answer paid of what was owed is the
+    // service's own word (`paid`), so a page's first word says that payment alone - never a move an earlier page said, nor
+    // one a save's older record would invent (B-1)
     /** @type {Record<number, number>} */
     const owed = {};
     for (const [k, v] of Object.entries(roll.owed ?? {})) if (Number.isSafeInteger(v) && v > 0) owed[Number(k)] = v;
-    const last = base ?? prev?.factions ?? null;
-    const changes = last ? rollMovesOf(last, base ? lastOwed : (prev?.owed ?? {}), a.base, owed) : [];
+    const changes = rollMovesOf(base, lastOwed, a.base, owed, paid && typeof paid === 'object' ? paid : null);
     setStandingOwed(owed);
     base = a.base;
     lastOwed = owed;
-    keep({ seq: roll.seq, factions: a.base, owed });
+    keep({ seq: roll.seq, factions: a.base });
     heldKey = rollMembersKey(membersOf(roll.members));
     sinces = new Map((Array.isArray(roll.members) ? roll.members : []).filter((m) => Number.isFinite(m?.since)).map((m) => [m.f, m.since]));   // ROLL-PACE
     wait = ROLL_RETRY_MS;
@@ -211,9 +214,8 @@ export function createRollTracker({
     // the base the answer is adopted over: the seed itself, when this read made the Roll; the kept adoption, when the Roll
     // still stands where the save last saw it (whatever the save holds past it was never claimed); else this page's start
     const k = rollKeptOf(kept());
-    const still = !r.data.seeded && !!k && k.seq === r.data.from;
-    const from = r.data.seeded ? values : still ? /** @type {any} */ (k).factions : /** @type {Record<number, number>} */ (values0);
-    adopt(from, {}, roll, still ? k : null);
+    const from = r.data.seeded ? values : k && k.seq === r.data.from ? k.factions : /** @type {Record<number, number>} */ (values0);
+    adopt(from, {}, roll, r.data.paid ?? null);   // AUDIT GUILD-WORDS II B-5: what this read paid, the service's word
   }
 
   /** The claim due now, or null: the one still out, or what moved since the Roll's last word. */
@@ -241,14 +243,23 @@ export function createRollTracker({
     if (!r.ok) return fail(r.error, ls);   // kept: sent again as it was
     pending = null;
     doneGen = Math.max(doneGen, g);
-    adopt(from, c.deltas, r.data.roll);
+    const owedBefore = lastOwed;
+    const paid = r.data.paid && typeof r.data.paid === 'object' ? r.data.paid : null;
+    adopt(from, c.deltas, r.data.roll, paid);
     // AUDIT CHAP2 C2 (= D1): the book as SENT is what the next claim compares with - the Roll records it by its own law
     // (a rank above the Roll's reputation between DFU's reviews, a join under the floor), so comparing with its answer
     // claimed again every minute for as long as the two differed
     if (c.members) heldKey = rollMembersKey(c.members);
     const credited = r.data.credited ?? {};
     const cut = Object.keys(c.deltas).map(Number).filter((f) => c.deltas[f] > 0 && (credited[f] ?? c.deltas[f]) < c.deltas[f]);
-    if (cut.length) onCeiling(cut);
+    // AUDIT GUILD-WORDS II B-3, C-4: what the day's room did not take is owed only under the most a standing holds
+    // (npcChapterLaw.js owedUnder) - the pace's line where the owed grew by it (against the owed after this claim's own
+    // payment), the lost line where some of it went nowhere; a service before `paid` is read as AUDIT CHAP's pace alone
+    const grew = (/** @type {number} */ f) => (lastOwed[f] ?? 0) - Math.max(0, (owedBefore[f] ?? 0) - (paid ? Math.max(0, paid[f] ?? 0) : 0));
+    const paced = paid ? cut.filter((f) => grew(f) > 0) : cut;
+    if (paced.length) onCeiling(paced);
+    const lost = paid ? cut.filter((f) => c.deltas[f] - (credited[f] ?? c.deltas[f]) > Math.max(0, grew(f))) : [];
+    if (lost.length) onFull(lost);
   }
 
   return {
