@@ -306,7 +306,7 @@
     "tests": [
       "test/rvn4_stand.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
+    "note": "FIELD BUGS 2026-10-16b RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
   },
   {
     "name": "RVN4-the-street-whole-stood",
@@ -316,7 +316,7 @@
     "tests": [
       "test/rvn4_stand.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
+    "note": "FIELD BUGS 2026-10-16b RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
   },
   {
     "name": "RVN4-the-street-roar-touchable",
@@ -371,7 +371,7 @@
     "tests": [
       "test/rvn4_stand.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
+    "note": "FIELD BUGS 2026-10-16b RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
   },
   {
     "name": "RVN4-the-dungeon-room-stood",
@@ -381,7 +381,7 @@
     "tests": [
       "test/rvn4_stand.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
+    "note": "FIELD BUGS 2026-10-16b RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
   },
   {
     "name": "RVN4-the-dungeon-roar-touchable",

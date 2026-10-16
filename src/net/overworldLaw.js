@@ -220,7 +220,7 @@ export function owLedgerOf(v) {
 
 // ═══ THE GRAVES (GRAVE-PARTY) ════════════════════════════════════════════════════════════════════
 //
-// (FIELD BUGS 2026-10-16, "graveyard loot on headstones are able to be looted by others"; Mac's SEARCH1-PARTY: "When one
+// (FIELD BUGS 2026-10-16b, "graveyard loot on headstones are able to be looted by others"; Mac's SEARCH1-PARTY: "When one
 // player in the party interacted with it no one else can again for 5 hours".) A headstone's search was its searcher's
 // game's alone - the act channel is a world room's, and a street cell is not one - so a partymate searched the same stone
 // again and found again. The cell keeps who searched which stone now: one row a stone and a SEARCHER, its minute the

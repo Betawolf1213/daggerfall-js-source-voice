@@ -21,7 +21,7 @@
 //
 // Nothing here decides a bout: the relay referees, the account service keeps. Offline (no session, a relay before the
 // arena's rooms; AUDIT PRE-MERGE 1003 O9: a seat given up) `live()` is false and every host keeps ARENA3's offline arena.
-// FIELD BUGS 2026-10-16 ARENA-WAIT: but on the online lane before the relay has said either (`waiting()` - no session
+// FIELD BUGS 2026-10-16b ARENA-WAIT: but on the online lane before the relay has said either (`waiting()` - no session
 // yet, or none welcomed), the arena is neither: every door waits, as it does for the board. AUDIT (2026-10-16): and on
 // that lane the offline arena runs for ONE word alone - a relay that said it opens no arena room; a seat given up (O9)
 // and a session no welcome can answer (terminal) shut the doors too, each saying why (`shutText`).
@@ -137,7 +137,7 @@ export function createArenaOnline(deps) {
    *  sand stood the local exhibition and the hour was never the relay's again. A door that needs a socket waits on that
    *  socket itself (the bout's `in` once its room is open, `hallWait` for the hall's). */
   const live = () => { const s = deps.session?.(); return !!s && !!s.arenaOk && !s.superseded; };
-  /** FIELD BUGS 2026-10-16 ARENA-WAIT: ON THE ONLINE LANE (`deps.lane` - a realm character) BEFORE THE RELAY HAS SAID
+  /** FIELD BUGS 2026-10-16b ARENA-WAIT: ON THE ONLINE LANE (`deps.lane` - a realm character) BEFORE THE RELAY HAS SAID
    *  whether its arena is open: no session yet (the host starts it once the player stands in the world), or a session no
    *  primary welcome has answered (`arenaHeard`). O4 kept the last welcome's word across a reconnect; the FIRST word after a
    *  load had none to keep, so for those seconds every door read `live()` false as offline - the Herald offered Fight off
@@ -820,7 +820,7 @@ export function createArenaOnline(deps) {
 
   return {
     live, model, act, fightLadder, team, word, hit, tick, claims,
-    waiting,   // FIELD BUGS 2026-10-16 ARENA-WAIT: the online lane before the relay's word - every door waits
+    waiting,   // FIELD BUGS 2026-10-16b ARENA-WAIT: the online lane before the relay's word - every door waits
     shutText,   // ARENA-WAIT (AUDIT A3/A4): what a shut door says - the seat elsewhere, the server gone, or the wait's own line
     climb, fetchBoard, realm,   // ARENA4b: the account's climb as Fight reads it, the board waited for, the realm's banners
     /** ARENA4b: the board asked when it is stale (a door that reads it without a press - the pause window's). */

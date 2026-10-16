@@ -151,7 +151,7 @@ that -2 was what players read as standing decaying. A success still pays +5; off
 
 ## STOLEN-GOODS - a stolen piece is marked, a fence's last stop, and the court takes it
 
-FIELD BUGS 2026-10-16 (`01-Overview/Field-Bugs-2026-10-16b.md`, STOLEN-GOODS; the Discord: "you steal something from the
+FIELD BUGS 2026-10-16b (`01-Overview/Field-Bugs-2026-10-16b.md`, STOLEN-GOODS; the Discord: "you steal something from the
 shelf and can sell it back to an NPC, and he'll put the item back on the shelf again, and it just goes in a circle ...
 Also, when you're sent to prison, all the stolen items stay with you"). Three rules, the port's own - DFU's items carry
 no theft, its Sell discards every sold piece (ConfirmTrade's `remoteItems.Clear()`, DaggerfallTradeWindow.cs:1051) and

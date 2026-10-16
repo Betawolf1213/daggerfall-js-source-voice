@@ -187,7 +187,7 @@ export class EnhancedEnemyAI extends EnemyAI {
     return true;
   }
 
-  /** FIELD BUGS 2026-10-16 INDOOR-WATCH, AUDIT W1: a goal findPath cannot place - off the mesh past its locate's
+  /** FIELD BUGS 2026-10-16b INDOOR-WATCH, AUDIT W1: a goal findPath cannot place - off the mesh past its locate's
    *  half-metre snap (navmesh.js:"return bestD <= 2 ? best : -1;"), a player between two shelves 0.8 m deep or in a
    *  closet the erosion kept no floor of. The host's `navGoal` names the mesh's point a route there ends at (the room's
    *  meshPointNear, never through a wall); the route runs to it and its last leg is the straight walk in. No hook, or
@@ -322,7 +322,7 @@ export class EnhancedEnemyAI extends EnemyAI {
     }
   }
 
-  /** FIELD BUGS 2026-10-16 INDOOR-WATCH (scenes/interiorNav.js, NO ROUTE): stood at `feet` by the host, on the island
+  /** FIELD BUGS 2026-10-16b INDOOR-WATCH (scenes/interiorNav.js, NO ROUTE): stood at `feet` by the host, on the island
    *  the route could not reach. The pursuit stands - its target, its give-up timer, its belief of where the player is;
    *  what the motor held of where it stood goes - EnemyAI._standAfresh, resumeLive's own list (AUDIT W4: this kept a
    *  shorter one, and a watchman crouched at the wall that stopped him was stood crouched) - and the route and the

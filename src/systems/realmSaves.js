@@ -628,7 +628,7 @@ export function createRealmSession({
      *  (server-account/src/legacy.js realmDie). The session ends with it, quietly - nothing of the dead is written
      *  again, and the page stays for the Succession. Answers whether the realm took it (a refusal - unheard, offline -
      *  leaves the session as it was, to be asked again). Part three: `why` 'retired' for an elder's mantle passed.
-     *  REZ-BLOODLINE (FIELD BUGS 2026-10-16): `keepalive` - THE PAGE IS GOING over a death Project Legacy held for a
+     *  REZ-BLOODLINE (FIELD BUGS 2026-10-16b): `keepalive` - THE PAGE IS GOING over a death Project Legacy held for a
      *  Resurrect (scenes/legacyHost.js pageGone): the tombstone alone, at once - no put waited for, the page will not
      *  wait - by keepalive, so the browser finishes it after the page; the lease goes with it, so the session is the
      *  dead's from here and the realm's leave behind it sends nothing.

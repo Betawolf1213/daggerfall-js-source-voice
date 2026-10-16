@@ -469,7 +469,7 @@ export function clearLightSourceOnLeave(item, entity, fromLocal) {
  * therefore taken WITHOUT closing the picker, which is DFU's quirk and
  * not the port's. Every other move answers the record that arrived.
  *
- * STOLEN-GOODS (FIELD BUGS 2026-10-16): `stolenFrom` - the move takes a piece out of someone else's keeping (a shut
+ * STOLEN-GOODS (FIELD BUGS 2026-10-16b): `stolenFrom` - the move takes a piece out of someone else's keeping (a shut
  * shop's shelf, a stranger's cupboard, a robbed caravan's goods: systems/inventorySession.js theftTarget, the owner's
  * keeping the host took as the window opened) - marks the record that travels when its source is the owner's; and
  * `returnTo` - the move puts a piece into that keeping - clears it when the piece is the owner's. Both BEFORE it lands,

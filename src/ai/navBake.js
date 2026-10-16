@@ -44,7 +44,7 @@ export const ANCHOR_Y_TOLERANCE = 0.6;
  *  applied so the soup is in the frame the queries use. `exclude` names
  *  buckets left out - the dungeon's openable doors, which are the motor's
  *  to open, not the navmesh's walls.
- *  FIELD BUGS 2026-10-16 INDOOR-WATCH, AUDIT W2: it runs on the main
+ *  FIELD BUGS 2026-10-16b INDOOR-WATCH, AUDIT W2: it runs on the main
  *  thread, at the frame a room is asked for (the crime's), so it is
  *  counted first and written straight into the soup's own arrays - the
  *  same soup to the bit (each corner rounded to float32 as it is stored,

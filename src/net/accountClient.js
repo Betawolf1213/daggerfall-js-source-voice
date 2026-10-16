@@ -1293,7 +1293,7 @@ export const lineHoldMs = (/** @type {unknown} */ wait, rand = Math.random) => {
  * handed the token again within TOKEN_REUSE_MS - the retry mints nothing. A relay deploy's reconnect wave was a mint a
  * player and another a busy refusal; it is a mint a player.
  *
- * DOOR-TOKEN (FIELD BUGS 2026-10-16, the Discord: "Partied players popping in and out randomly after leaving tombs at
+ * DOOR-TOKEN (FIELD BUGS 2026-10-16b, the Discord: "Partied players popping in and out randomly after leaving tombs at
  * graveyard ... also partied players inside tombs are invisible for a time"): A TOKEN MINTED AHEAD OF THE DOOR. A place
  * change opens a new room, and its socket asked for its token only as it opened - a mint on the wire (seconds, for a
  * player: TOKEN-WAIT) between the door and the hello, the player invisible to the party on both sides of it. The host

@@ -1,5 +1,5 @@
 // @ts-check
-// GRAVE-PARTY (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16b.md; the Discord's "objects in tombs are un
+// GRAVE-PARTY (FIELD BUGS 2026-10-16b, bible/01-Overview/Field-Bugs-2026-10-16b.md; the Discord's "objects in tombs are un
 // lootable"; Mac's SEARCH1-PARTY: "When one player in the party interacted with it no one else can again for 5 hours ...
 // visible for everyone in the party the same the looter sees"): A DUNGEON'S SEARCHED OBJECT IS ITS SEARCHER'S PARTY'S.
 //

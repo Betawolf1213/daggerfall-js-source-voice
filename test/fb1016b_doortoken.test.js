@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-16 (DOOR-TOKEN) - the Discord: "Friend invivible and randomly popping up"; "Partied players popping
+// FIELD BUGS 2026-10-16b (DOOR-TOKEN) - the Discord: "Friend invivible and randomly popping up"; "Partied players popping
 // in and out randomly after leaving tombs at graveyard ... also partied players inside tombs are invisible for a time."
 //
 // Every place change is a new relay room, and the room's socket asked the page's minter for its identity token only as it

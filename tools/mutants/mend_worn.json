@@ -7,7 +7,7 @@
     "tests": [
       "test/mend_worn.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 MEND-ARMOUR (PIN MOVED): re-aimed by content - the tick mends repairsObjectsMend, every piece a fiftieth of its own condition."
+    "note": "FIELD BUGS 2026-10-16b MEND-ARMOUR (PIN MOVED): re-aimed by content - the tick mends repairsObjectsMend, every piece a fiftieth of its own condition."
   },
   {
     "name": "MEND-WORN-pack-order",
@@ -62,7 +62,7 @@
     "tests": [
       "test/mend_worn.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 MEND-ARMOUR (PIN MOVED): re-aimed by content - a pool weapon's 32 is one case of every piece's fiftieth now; DFU's point restored on every piece."
+    "note": "FIELD BUGS 2026-10-16b MEND-ARMOUR (PIN MOVED): re-aimed by content - a pool weapon's 32 is one case of every piece's fiftieth now; DFU's point restored on every piece."
   },
   {
     "name": "MEND-WORN-uses-on-the-share",
@@ -93,7 +93,7 @@
     "tests": [
       "test/mend_worn.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 MEND-ARMOUR (PIN MOVED): re-aimed by content - the cap on the one law's line."
+    "note": "FIELD BUGS 2026-10-16b MEND-ARMOUR (PIN MOVED): re-aimed by content - the cap on the one law's line."
   },
   {
     "name": "MEND-WORN-row-pool-kept",
@@ -112,7 +112,7 @@
     "tests": [
       "test/mend_worn.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 MEND-ARMOUR (PIN MOVED): re-aimed by content - POOL_WEAPON_MEND (the pool over the Dagger row) is MEND_SHARE_OF (the Dagger row) now."
+    "note": "FIELD BUGS 2026-10-16b MEND-ARMOUR (PIN MOVED): re-aimed by content - POOL_WEAPON_MEND (the pool over the Dagger row) is MEND_SHARE_OF (the Dagger row) now."
   },
   {
     "name": "MEND-WORN-a-foes-ring",

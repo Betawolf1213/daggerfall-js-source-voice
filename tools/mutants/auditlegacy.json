@@ -130,7 +130,7 @@
     "tests": [
       "test/auditlegacy.test.js"
     ],
-    "note": "LEGACY7 (PIN MOVED): re-aimed by content - the law inverted: online a Bloodline death falls (the realm's tombstone) - the mutant puts the room's death back. PERMADEATH-HOUSES (PIN MOVED): re-aimed by content - the law it guards now stands at this line. PIN MOVED (FIELD BUGS 2026-10-16 REZ-BLOODLINE): re-aimed by content - an online death is read at the door and written when it is decided (legacyHost.js decideDeath)"
+    "note": "LEGACY7 (PIN MOVED): re-aimed by content - the law inverted: online a Bloodline death falls (the realm's tombstone) - the mutant puts the room's death back. PERMADEATH-HOUSES (PIN MOVED): re-aimed by content - the law it guards now stands at this line. PIN MOVED (FIELD BUGS 2026-10-16b REZ-BLOODLINE): re-aimed by content - an online death is read at the door and written when it is decided (legacyHost.js decideDeath)"
   },
   {
     "name": "AUDIT-LEGACY-B4-online-succession",

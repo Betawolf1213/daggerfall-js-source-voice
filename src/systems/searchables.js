@@ -46,11 +46,11 @@ import { WATER_SPECIES } from '../characters/dungeonEnemies.js';   // SLAUGHTER-
 import { t } from './textManager.js';   // GRAVE-PARTY: who searched it, in the player's language
 
 // ── reach and time ──────────────────────────────────────────────────
-/** Half a door's reach (DoorActivationDistance, 128 classic units): 64 units, 1.6 m. GRAVE-PARTY (FIELD BUGS 2026-10-16):
+/** Half a door's reach (DoorActivationDistance, 128 classic units): 64 units, 1.6 m. GRAVE-PARTY (FIELD BUGS 2026-10-16b):
  *  measured from the BODY to the nearest point of the object's box (searchReachFor), no longer from the eye. */
 export const SEARCH_REACH = DOOR_ACTIVATION_DISTANCE / 2;
 /**
- * GRAVE-PARTY (FIELD BUGS 2026-10-16, "objects in tombs are un lootable"): HOW FAR THE BODY IS FROM A SEARCHABLE - the
+ * GRAVE-PARTY (FIELD BUGS 2026-10-16b, "objects in tombs are un lootable"): HOW FAR THE BODY IS FROM A SEARCHABLE - the
  * distance from the upright segment the player stands as (the feet to `top`, the head) to the nearest point of the
  * object's box, metres. A coffin lies on the floor: the eye's ray met its lid a metre and more below the eye, so
  * SEARCH_REACH from the eye left it "too far away" a pace from the player's boots (under ~0.9 m across, standing
@@ -240,7 +240,7 @@ export const isPicked = (key) => !!_ledger.get(key)?.u;
 export const markPicked = (key) => { _ledger.set(key, { t: -Infinity, w: null, ...(_ledger.get(key) ?? {}), u: true }); };
 /** The text a searched object answers inside its five hours. */
 export const SEARCHED_TEXT = 'You have already searched here.';
-/** GRAVE-PARTY (FIELD BUGS 2026-10-16): who searched it, when another of the party did - their name, else null (mine). */
+/** GRAVE-PARTY (FIELD BUGS 2026-10-16b): who searched it, when another of the party did - their name, else null (mine). */
 export const searchedBy = (key) => _ledger.get(key)?.w ?? null;
 /** GRAVE-PARTY: what a searched object answers inside its hours - SEARCHED_TEXT for my own search, and the searcher by
  *  name for a partymate's ("Already searched by Ann."), so a stone a partymate searched is not a mystery. */
@@ -278,7 +278,7 @@ registerModSaveData(SEARCH_SAVE_VENDOR, {
 export const _resetSearchLedgerForTests = () => _ledger.clear();
 
 // ── GRAVE-PARTY: whose search it was ────────────────────────────────
-// (FIELD BUGS 2026-10-16, "graveyard loot on headstones are able to be looted by others, objects in tombs are un
+// (FIELD BUGS 2026-10-16b, "graveyard loot on headstones are able to be looted by others, objects in tombs are un
 // lootable"; Mac, SEARCH1-PARTY: "When one player in the party interacted with it no one else can again for 5 hours".)
 // A search's five hours are its searcher's PARTY's - underground (the room's `srch:<i>` word, scenes/searchRoom.js) and
 // above (the cell's grave stamps, net/overworldLaw.js) alike - and never a stranger's: a stranger's search locks nothing

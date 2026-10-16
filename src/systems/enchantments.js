@@ -366,9 +366,9 @@ export function mobileAffinityMatches(mobileType, paramType) {
 // uses in their condition (a tent's nights, a campfire's fuel). So every tick went to the oldest worn thing carried and
 // nothing the player wore was seen to mend; and WEAPON-POOL's pools (1,600 to 12,800) left a weapon a point a tick, a
 // 32nd of what a dagger had. The departures (Port-Ledger A, MEND-WORN): the mend order below, nothing a smith will not
-// repair, and a pool weapon's tick - since MEND-ARMOUR (FIELD BUGS 2026-10-16) every piece's, a fiftieth of its own.
+// repair, and a pool weapon's tick - since MEND-ARMOUR (FIELD BUGS 2026-10-16b) every piece's, a fiftieth of its own.
 
-/** MEND-ARMOUR (FIELD BUGS 2026-10-16; the Discord: "my weapon WILL repair but no other worn items are repairing with
+/** MEND-ARMOUR (FIELD BUGS 2026-10-16b; the Discord: "my weapon WILL repair but no other worn items are repairing with
  *  repair objects"): WHAT ONE TICK MENDS - a fiftieth of the piece's own condition, the share a classic Dagger's point
  *  was of its row (Daggerfall's Dagger, 50: MEND-WORN's yardstick, Mac's "Weapons as a classic dagger"), and never less
  *  than DFU's point (CONDITION_AMOUNT - Armbands' 15). ONE LAW for every piece the tick reaches - a weapon, armour,

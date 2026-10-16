@@ -439,7 +439,7 @@ import { chestIdentity, matchChests } from './chestRecords.js';   // HOLD-KEPT: 
 import { placeFoeEnv, placeRoomQuestFoe, entityOccupancy, questFoeGender, reviveQuestBehaviour as reviveQuestBehaviourFromSave, heldSpots, holdSpotWhile, restandMendedQuestFoe } from './questFoeHost.js';   // B1 (PlaceFoeFreely reads the fieldOfView import below)   // AUDIT 63 F24: SerializableEnemy.cs:206-217 re-adds the component on restore
 import { standLooseFoe } from './hostEnchant.js';   // ROAD-G G1: SoulBound's break release / the Sanguine Rose, inside a building
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';   // MERGE: FinalizeFoe's Flying lift reads the behaviour flag // WORLD-HOVER H2: GetLocalizedEnemyName - Entity.Name for a live one (.cs:310)
-import { createInteriorNav } from './interiorNav.js';   // FIELD BUGS 2026-10-16 INDOOR-WATCH: ENHANCED AI 5's interior half - the room's mesh, its routes, NO ROUTE
+import { createInteriorNav } from './interiorNav.js';   // FIELD BUGS 2026-10-16b INDOOR-WATCH: ENHANCED AI 5's interior half - the room's mesh, its routes, NO ROUTE
 import { openDoorsStep, foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT 63 F42: EnemyMotor.OpenDoors (EnemyMotor.cs:1424-1442), which lives in the motor and runs wherever an enemy does
 import { billboardSize } from '../world/rmbFlats.js';
 import { positionHash, staticNpcData } from './questBridge.js';   // B7: the guild popup's TALK builds display data without re-registering the click
@@ -2390,7 +2390,7 @@ export function createWorldModes(host) {
    *  OnTransitionExterior takes the interior's enemies with it, and
    *  the watch are enemies. */
   let interiorGuards = null;
-  /** FIELD BUGS 2026-10-16 INDOOR-WATCH (scenes/interiorNav.js): the room's navmesh - mounted with each building, released
+  /** FIELD BUGS 2026-10-16b INDOOR-WATCH (scenes/interiorNav.js): the room's navmesh - mounted with each building, released
    *  with it, handed to both pools (the watch and the building's foes walk its routes with the Enhanced AI switch on),
    *  its frame before they step: the routes' budget, the bake, and NO ROUTE's re-stand for a watchman cut off. */
   const interiorNav = createInteriorNav();

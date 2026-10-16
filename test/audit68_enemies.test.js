@@ -251,7 +251,7 @@ test('AUDIT 68 S02-hydrate-main-thread-revoxelize: the client hydrates over the 
   assert.ok(a && !a.cached && a.stats.polys > 0, 'the worker baked it');
   assert.deepEqual(posted, ['bake']);
   assert.ok(shipped && shipped.length > 0, 'the worker shipped its boxes');
-  // PIN MOVED (FIELD BUGS 2026-10-16 INDOOR-WATCH, AUDIT W2): the set the height layer reads is the worker's packed one
+  // PIN MOVED (FIELD BUGS 2026-10-16b INDOOR-WATCH, AUDIT W2): the set the height layer reads is the worker's packed one
   // as it landed - never unpacked into objects on this thread (navmesh.js buildPackedIndex) - so its tops are read packed
   const tops = (cols) => { assert.ok(cols.box instanceof Float64Array, 'the packed set itself, never unpacked here'); return Array.from({ length: cols.noNavTop.length }, (_, i) => cols.box[i * 6 + 4]); };
   assert.deepEqual(tops(a.chf.colliders), shipped, 'the hydrated height layer is the worker\'s set, not a main-thread re-cut');

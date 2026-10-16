@@ -518,7 +518,7 @@ export function createArrestFlow({
   }
 
   function finish(result, court) {
-    // STOLEN-GOODS (FIELD BUGS 2026-10-16): EVERY GUILTY EXIT ENDS HERE - the plea's (a fine paid, a sentence, banishment),
+    // STOLEN-GOODS (FIELD BUGS 2026-10-16b): EVERY GUILTY EXIT ENDS HERE - the plea's (a fine paid, a sentence, banishment),
     // the failed defence's (state 2's verdict and its banishment) - and the court takes the stolen goods the prisoner
     // carries (court.js confiscateStolen), at the verdict. An acquittal (verdict's `free` arm) and a guild's rescue
     // (startCourtFlow) release without coming here: nothing is taken, the guild got you out. The line is said at the

@@ -644,7 +644,7 @@ export function drawProfessionsPage(detail, rerender, kit) {
       if (two) card.append(el('i', 'prof-of', disciplineName(specDiscipline(s.id))));   // CRAFT3: whose choice it is
       const locked = tr.rank < r || !practised || !!s.later;   // AUDIT 29 A17: a choice whose slice is to come is named, never chosen
       const free = tr.free?.includes(r) === true;   // CRAFT3: the merge's free change
-      // FIRST-PICK (FIELD BUGS 2026-10-16): a change on its way gates a paid CHANGE, as the service's chooseSpec refuses
+      // FIRST-PICK (FIELD BUGS 2026-10-16b): a change on its way gates a paid CHANGE, as the service's chooseSpec refuses
       // one (prof-respec-pending) - never a rank's first choice, nor the merge's free change, which it answers first
       const waits = !!chosen && !!tr.respec && !free;
       card.disabled = locked || chosen === s.id || waits;

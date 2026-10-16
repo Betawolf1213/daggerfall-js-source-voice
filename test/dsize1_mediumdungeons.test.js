@@ -314,7 +314,7 @@ test('DETECT-FINDS: a searched object\'s find is in the one loot walk, at its bo
   assert.match(src('src/scenes/dungeonContext.js'), /loot: \(\) => nearbyLootRecords\(\{ piles: \[\.\.\.lootPiles, \.\.\.droppedLoot\._piles\], foes, searched: searchables \}\),/);
   // AUDIT DELVE (the open item closed): the street's searched headstones need no walk of their own - a grave's find is
   // minted as a dropped pile on the ground (searchPartyHost.js activateGrave), and the street's Detect walk carries every pile
-  // PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): activateGrave left bootWorld for scenes/searchPartyHost.js
+  // PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): activateGrave left bootWorld for scenes/searchPartyHost.js
   const w = src('src/scenes/world.js');
   const sp = src('src/scenes/searchPartyHost.js');
   const grave = sp.slice(sp.indexOf('function activateGrave(g, mode = \'grab\') {'), sp.indexOf('  return { activateGrave'));

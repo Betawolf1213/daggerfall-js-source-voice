@@ -107,7 +107,7 @@ export function createArenaGate(deps) {
   const league = () => (P.arenaLeague = rollLeague(P.arenaLeague, gm()));
   const choice = (ch, act) => deps.showOverlay(new ChoiceWindow({ lines: ch.lines, options: ch.options.map((o) => ({ code: o.code, label: o.label ?? undefined, action: () => act(o.act, o) })) }));
   const liveHour = () => deps.liveHour?.() ?? null;
-  /** ARENA4: the arena online while it is live, else null. FIELD BUGS 2026-10-16 ARENA-WAIT: and while the online lane
+  /** ARENA4: the arena online while it is live, else null. FIELD BUGS 2026-10-16b ARENA-WAIT: and while the online lane
    *  waits for the relay's first word (scenes/arenaOnline.js waiting) - its climb, board and verdicts not yet in, so every
    *  door here takes its online arm and waits, never the save's ladder, league or house. AUDIT (A3/A4): and while its doors
    *  are shut for a seat given up or a server gone - on the online lane the save's arena runs for a relay's no alone. */

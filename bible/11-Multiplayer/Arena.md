@@ -1067,7 +1067,7 @@ correctness, the online trust), every finding reproduced and fixed here:
 Deploy order: the account service (acct82, migration 0082) BEFORE the relay (world169), BEFORE the site. The record:
 `01-Overview/Audit-Arena-Ladder.md`.
 
-## FIELD BUGS 2026-10-16 ARENA-WAIT - a reload offered the save's ladder to a Grand Champion
+## FIELD BUGS 2026-10-16b ARENA-WAIT - a reload offered the save's ladder to a Grand Champion
 
 A realm character who had fought all forty reloaded beside the gate, was offered Fight, fought, and found a 4-0 Pit
 Fighter in a season with no number. The online lane read "not yet welcomed" as offline: AUDIT PRE-MERGE 1003 O4 kept the

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// FIELD BUGS 2026-10-16 STALL-SHAPE: A YARD'S SAVED STALLS AND BOULDERS, RE-SEATED WHERE THEIR OWNERS PUT THEM.
+// FIELD BUGS 2026-10-16b STALL-SHAPE: A YARD'S SAVED STALLS AND BOULDERS, RE-SEATED WHERE THEIR OWNERS PUT THEM.
 //
 //   node tools/yardReseat.mjs           print the migration (server-account/migrations/0120_yard_reseat.sql) it writes
 //   node tools/yardReseat.mjs --write   write it
@@ -161,7 +161,7 @@ export function reseatSql() {
   const rows = YARD_RESEATS.map((m) => `  (${m.model}, ${m.before ? 1 : 0}, ${num(mid(m.was, 0))}, ${num(mid(m.was, 2))}, ${num(m.was[1])}, ${num(mid(m.now, 0))}, ${num(mid(m.now, 2))}, ${num(m.now[1])}, ${num(m.k)})`);
   const B = DECOR_YARD_POS_MAX;
   const at = new Date(YARD_RESEAT_AT * 1000).toISOString().replace('.000Z', 'Z');
-  return `-- FIELD BUGS 2026-10-16 STALL-SHAPE - A YARD'S SAVED STALLS AND BOULDERS, RE-SEATED WHERE THEIR OWNERS PUT THEM.
+  return `-- FIELD BUGS 2026-10-16b STALL-SHAPE - A YARD'S SAVED STALLS AND BOULDERS, RE-SEATED WHERE THEIR OWNERS PUT THEM.
 --
 --   npx wrangler d1 migrations apply daggerfall-accounts --remote
 --

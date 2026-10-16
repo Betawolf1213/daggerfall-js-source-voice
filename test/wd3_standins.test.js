@@ -227,7 +227,7 @@ test('WD3 stand-ins, every built piece is sound - Rosy\'s hangings and rugs, the
     const { lo, hi, tex } = box[id];
     assert.ok(tex.has(`${a}_${r}`) && tex.has('67_1'), `${id}: its awning, ${a}_${r}`);
     // TEMPLE-STEPS: the mesh as Unity imports it (x mirrored - its high back on -x, its counter at the origin) at the prefab's 0.75
-    // PIN MOVED (FIELD BUGS 2026-10-16 STALL-SHAPE): the second mesh (53113 on) the frame 0.2 m back, 0.206 up, 0.066 across,
+    // PIN MOVED (FIELD BUGS 2026-10-16b STALL-SHAPE): the second mesh (53113 on) the frame 0.2 m back, 0.206 up, 0.066 across,
     // its front the front posts' (no counter)
     const [dx, dy, dz] = Number(id) >= 53113 ? [-0.2, 0.206, 0.066] : [0, 0, 0], front = Number(id) >= 53113 ? 0.118 : 0.4;
     assert.ok(near(lo[0], (-2.75 + dx) * 0.75, 1e-5) && near(hi[0], (front + dx) * 0.75, 1e-5) && near(hi[1], (4.4 + dy) * 0.75, 1e-5) && near(lo[2], (-2.48 + dz) * 0.75, 1e-5) && near(hi[2], (2.4 + dz) * 0.75, 1e-5), id);

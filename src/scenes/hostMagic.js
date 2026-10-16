@@ -1174,7 +1174,7 @@ export function createPlayerMagic({
     const raising = hasResurrect(sp) && !readiedFree;
     const fallen = raising ? fallenInReach(eye, dir) : null;
     if (raising && !fallen) { say(RESURRECT_TEXT.noBody); return false; }
-    // REZ-BLOODLINE (FIELD BUGS 2026-10-16): ...nor on a body fallen for good - their house's death is decided (their party
+    // REZ-BLOODLINE (FIELD BUGS 2026-10-16b): ...nor on a body fallen for good - their house's death is decided (their party
     // pose's `fg`, scenes/legacyHost.js raisable), and their own client would refuse the call: said, and the spell kept
     if (fallen?.gone) { say(RESURRECT_TEXT.forGood(fallen.name)); return false; }
     // AUDIT CONTRIB A1: a Resurrect's touch IS the body - the gate above found one in reach, and the probe below sees

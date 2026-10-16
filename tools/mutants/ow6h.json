@@ -97,7 +97,7 @@
     "tests": [
       "test/ow6_ledger.test.js"
     ],
-    "note": "The cell's word never heard. PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): the line routes the graves' rows to the search party first - re-aimed by content."
+    "note": "The cell's word never heard. PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): the line routes the graves' rows to the search party first - re-aimed by content."
   },
   {
     "name": "OW6H-never-said",
@@ -107,7 +107,7 @@
     "tests": [
       "test/ow6_ledger.test.js"
     ],
-    "note": "What is owed is never said. PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): the line says the stones searched beside it - re-aimed by content."
+    "note": "What is owed is never said. PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): the line says the stones searched beside it - re-aimed by content."
   },
   {
     "name": "OW6H-load-keeps-owed",

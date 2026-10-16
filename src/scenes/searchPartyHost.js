@@ -3,7 +3,7 @@
 // settled names by value at construction, every live one (a `let` someone writes, a `const` made below) read at its
 // use as `host.<name>` - as the code read them where it was.
 //
-// GRAVE-PARTY (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16b.md; the Discord's "graveyard loot on
+// GRAVE-PARTY (FIELD BUGS 2026-10-16b, bible/01-Overview/Field-Bugs-2026-10-16b.md; the Discord's "graveyard loot on
 // headstones are able to be looted by others"; Mac's SEARCH1-PARTY: "When one player in the party interacted with it no
 // one else can again for 5 hours"): THE STREAMING HOST'S HALF OF A SEARCH'S PARTY. A Graveyard location's headstone
 // (SEARCH1, the activateGrave moved here) was searched in its searcher's game alone - its five hours on this save's

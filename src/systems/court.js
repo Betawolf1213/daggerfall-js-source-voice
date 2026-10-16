@@ -488,7 +488,7 @@ export function raiseRepForSentence(player, court, { acquitted = false } = {}) {
   if (people && refund.people) changeReputation(store, people.id, refund.people, true);
 }
 
-/** FIELD BUGS 2026-10-16 FINE-PEOPLE (the Discord's "Possible bug: Repeated ..." thread again: "I paid 2 x 600 gold
+/** FIELD BUGS 2026-10-16b FINE-PEOPLE (the Discord's "Possible bug: Repeated ..." thread again: "I paid 2 x 600 gold
  *  today, and even though it said +5 reputation, my reputation didn't go up at all"): THE PEOPLE'S HALF OF AN ANSWER SHORT
  *  OF THE COURT. A charge costs two names (lowerRepForCrime: the law's, and half of it off the region's People, spread to
  *  the kingdom it belongs to - the Standing page's Kingdoms row); a sentence gives back both (raiseRepForSentence), but the
@@ -605,7 +605,7 @@ export function resolveGuiltyVerdict(court, player) {
   return { outcome: 'released' };
 }
 
-/** STOLEN-GOODS (FIELD BUGS 2026-10-16; the report: "when you're sent to prison, all the stolen items stay with you and
+/** STOLEN-GOODS (FIELD BUGS 2026-10-16b; the report: "when you're sent to prison, all the stolen items stay with you and
  *  aren't taken away"): A GUILTY VERDICT TAKES THE STOLEN GOODS. Every piece the character carries with the theft's
  *  mark (systems/stolenGoods.js) - in the pack, worn or held among it, and in the Materials Bag that rides in it - is
  *  the court's: a worn piece is taken off first (its armour and its enchantments' stop, equip.js unequipItem), a lit

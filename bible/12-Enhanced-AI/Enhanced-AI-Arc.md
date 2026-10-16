@@ -424,7 +424,7 @@ and mutation-proven (`tools/mutants/navbake.json`,
   host builds them through DUNGEON-SEAMS' `patchSeams`; it builds them
   as the host does.
 
-## ENHANCED AI 5 (interiors) - a building's mesh, and the watch that always comes (FIELD BUGS 2026-10-16 INDOOR-WATCH)
+## ENHANCED AI 5 (interiors) - a building's mesh, and the watch that always comes (FIELD BUGS 2026-10-16b INDOOR-WATCH)
 
 The Discord: "If you just sit near the wall between the shelves, when you
 fail to steal something, the guard will come running, but they simply

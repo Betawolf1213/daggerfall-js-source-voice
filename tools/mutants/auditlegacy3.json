@@ -852,7 +852,7 @@
     "file": "src/scenes/legacyHost.js",
     "old": "mapId, at = deps.sky?.() ?? deps.now()) {",
     "new": "mapId, at = deps.now()) {",
-    "note": "PIN MOVED (FIELD BUGS 2026-10-16 REZ-BLOODLINE): re-aimed by content - an online death is read at the door and written when it is decided (legacyHost.js decideDeath)",
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16b REZ-BLOODLINE): re-aimed by content - an online death is read at the door and written when it is decided (legacyHost.js decideDeath)",
     "tests": [
       "test/auditlegacy3.test.js"
     ]

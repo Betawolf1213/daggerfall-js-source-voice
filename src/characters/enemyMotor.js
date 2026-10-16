@@ -2273,7 +2273,7 @@ export class EnemyAI {
 
   /** What the motor held of where it stood, forgotten - the feet stand: the grounding, the destination and the detour
    *  with its flags and its stuck stamp, the fixed-step accumulator, the knockback, the trail's crumb, the door crouch.
-   *  resumeLive's half that is not the pursuit, and the half of FIELD BUGS 2026-10-16 INDOOR-WATCH's stand (a watchman
+   *  resumeLive's half that is not the pursuit, and the half of FIELD BUGS 2026-10-16b INDOOR-WATCH's stand (a watchman
    *  the host puts past the wall that stopped him) that is not the route - AUDIT W4: the stand had kept its own shorter
    *  list, and a watchman crouched at that wall was stood crouched. One list, so the two never drift. */
   _standAfresh() {

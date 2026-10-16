@@ -217,7 +217,7 @@ function bondMeter(el, meter, h) {
 /** STEED-UI: hours of food as a card says them. */
 const foodHours = (hours) => (hours >= 2 ? `${Math.floor(hours)} hours` : hours * 60 >= 2 ? `${Math.round(hours * 60)} minutes` : 'a minute');
 export const hungerLine = (h, care = null) => (h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed - food in it for ${foodHours(h.fedHours)}.` : (care?.hungerCosts === false ? HUNGER_LINE_BOONS : HUNGER_LINE)[h.hungerKey] ?? '');
-/** STEED1: the choice to ride horse `h` (`chooseRiddenHorse` - made the pack's first). FIELD BUGS 2026-10-16
+/** STEED1: the choice to ride horse `h` (`chooseRiddenHorse` - made the pack's first). FIELD BUGS 2026-10-16b
  *  HORSE-CARE-OFF: on every other horse's card in every tier - with its care, or (Off, any skin but the enhanced one)
  *  in a row of its own. */
 function rideButton(el, h, act) {
@@ -465,7 +465,7 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
       if (_lookOpen === 'horse') for (const row of m.look.rows) extra.push(choiceRow(el, row.name, row, (i) => act(/** @type {any} */ (row.part), i)));
     }
     list.append(card(el, { art: HORSE_ART, glyph: '♞', name, words: words.horse, sub: v?.horseName ? 'Your horse' : null, extra, rerender }).item);
-    // STEED1: every other horse owned - its look, its care, and the choice to ride it. FIELD BUGS 2026-10-16
+    // STEED1: every other horse owned - its look, its care, and the choice to ride it. FIELD BUGS 2026-10-16b
     // HORSE-CARE-OFF: on every tier - Off (and any skin but the enhanced one) its look and the choice, no care to show
     for (const h of care ? care.horses.filter((x) => !x.ridden) : []) {
       const cared = !!care.horseCare;

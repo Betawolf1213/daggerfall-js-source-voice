@@ -7,7 +7,7 @@
     "tests": [
       "test/revenant_fate.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-16 RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
+    "note": "FIELD BUGS 2026-10-16b RVN-OWNERS-CHOICE (PIN MOVED): re-aimed by content - a whole blow passes the gate only as the owner's own (ownersWholeKill)."
   },
   {
     "name": "REVENANT-FATE-a-blow-kills-it-kneeling",

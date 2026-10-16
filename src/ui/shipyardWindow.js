@@ -73,7 +73,7 @@ export const SHIPYARD_CSS = `
 .dfyard-row span { font-size: 12px; color: #b9ab93; }
 .dfyard-row .dfyard-acts { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
 .dfyard-row .dfnaval-btn { min-width: 0; font-size: 12px; padding: 4px 9px; }
-/* FIELD BUGS 2026-10-16 YARD-ROWS ("Shipyard formatting is cooked"): an \`auto\` acts track took its every press on one
+/* FIELD BUGS 2026-10-16b YARD-ROWS ("Shipyard formatting is cooked"): an \`auto\` acts track took its every press on one
    line before the fr tracks had a pixel, so a ship's words stood a word a line; the acts' track is held to fit-content,
    and a ship of the fleet carries hers on a line of their own under her words, as the Holdings card does
    (ui/fleetPage.js shipCard's hld-acts) */

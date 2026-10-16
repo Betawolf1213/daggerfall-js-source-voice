@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-16 STALL-SHAPE (Discord, 2026-10-15 9:59 PM: "market stalls all shifted into the ground/walls",
+// FIELD BUGS 2026-10-16b STALL-SHAPE (Discord, 2026-10-15 9:59 PM: "market stalls all shifted into the ground/walls",
 // "at least the lawn decoration owns" - a stall's awning low over the street, a stall-keeper standing inside it; a red
 // awning against a wall, its counter half buried).
 //

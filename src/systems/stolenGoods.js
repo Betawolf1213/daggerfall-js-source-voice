@@ -1,5 +1,5 @@
 // @ts-check
-// STOLEN-GOODS (FIELD BUGS 2026-10-16, the Discord's "A bug related to infinite...": "you steal something from the shelf
+// STOLEN-GOODS (FIELD BUGS 2026-10-16b, the Discord's "A bug related to infinite...": "you steal something from the shelf
 // and can sell it back to an NPC, and he'll put the item back on the shelf again, and it just goes in a circle ...
 // completely disrupts the economy ... Also, when you're sent to prison, all the stolen items stay with you and aren't
 // taken away"): A STOLEN PIECE CARRIES ITS THEFT.

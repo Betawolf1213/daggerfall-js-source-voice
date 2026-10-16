@@ -590,7 +590,7 @@ test('LEGACY7 part three the inspect card: the Propose button beside the Challen
   assert.match(w, /onWed: \(union\) => \{ legacyHost\?\.wedPlayer\(union\); \},/);
   assert.match(w, /peerCan: \(id\) => !!online\?\.peers\.get\(id\)\?\.house,/);
   assert.match(w, /wedFrame\(\);/);
-  // PIN MOVED (FIELD BUGS 2026-10-16 REZ-BLOODLINE): the tombstone carries its options - `keepalive` as the page goes
+  // PIN MOVED (FIELD BUGS 2026-10-16b REZ-BLOODLINE): the tombstone carries its options - `keepalive` as the page goes
   assert.match(w, /tombstone: \(why, o\) => \(realmSession \? realmSession\.die\(why, o\) : false\),/);
   assert.match(w, /realmId: \(\) => realmSession\?\.id \?\? null,/);
   assert.match(w, /realmUnions\(realmIoNow\(\)\)\.then\(\(r\) => \{ if \(r\.ok\) legacyHost\?\.unionsHeard\(r\.unions\); \}\)/);

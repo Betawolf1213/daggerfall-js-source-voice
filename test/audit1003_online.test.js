@@ -340,10 +340,10 @@ test('AUDIT PRE-MERGE 1003 O4 online is a fact of the session, not of its socket
   assert.deepEqual(asked, [], 'no local exhibition stood online');
   assert.notEqual(D.kind(), 'exhibition');
   assert.equal(links2.length, 1, 'the hour\'s room watched from a socket of its own');
-  // PIN MOVED (FIELD BUGS 2026-10-16 ARENA-WAIT, test/fb1016b_arenawait.test.js): the branch takes the online lane's wait too
+  // PIN MOVED (FIELD BUGS 2026-10-16b ARENA-WAIT, test/fb1016b_arenawait.test.js): the branch takes the online lane's wait too
   assert.match(rd('src/scenes/world.js'), /if \(arenaOnline\?\.exhibitions\?\.\(\) \|\| arenaOnline\?\.waiting\?\.\(\)\) arenaOnline\.watchCity\(ex\);[^\n]*\n\s+else if \(ex\?\.open && ex\.hour !== _arenaHourRun\)/, 'world.js arenaFrame is that branch');
   // offline: a seat lost (net/online.js supersede - its status 'error', its relay's word kept), a relay without the arena
-  // PIN MOVED (FIELD BUGS 2026-10-16 ARENA-WAIT AUDIT A4): `live()` false still - but on the online lane a seat lost is SHUT
+  // PIN MOVED (FIELD BUGS 2026-10-16b ARENA-WAIT AUDIT A4): `live()` false still - but on the online lane a seat lost is SHUT
   // (`waiting()`, the seat's words - the O9 test and test/fb1016b_arenawait.test.js), never ARENA3's offline arena
   S2.status = 'open';
   assert.equal(B.live(), true);
@@ -542,7 +542,7 @@ test('AUDIT PRE-MERGE 1003 O9 ONE-SEAT: a tab that gave its seat up leaves the a
   await settled();
   assert.deepEqual([entered, closed, B.bout()], [[], [], null], 'the call not followed - the window kept, the floor not entered');
   assert.match(rd('src/scenes/world.js'), /const leaveSeat = \(now\) => \{[\s\S]*?online\?\.supersede\(\);[\s\S]*?arenaOnline\?\.leaveAll\(\)[\s\S]*?seatLock\?\.release\(\);/, 'world.js leaveSeat leaves the arena\'s rooms');
-  // PIN MOVED (FIELD BUGS 2026-10-16 ARENA-WAIT AUDIT A4, test/fb1016b_arenawait.test.js): the seat given up was OFFLINE
+  // PIN MOVED (FIELD BUGS 2026-10-16b ARENA-WAIT AUDIT A4, test/fb1016b_arenawait.test.js): the seat given up was OFFLINE
   // here - `live()` false, so every door ran ARENA3's arena: the save's ladder fought, its purses paid into the realm's save
   // (47,950 gold over 40 bouts), the book settling an online wager by the house's record. On the online lane (a realm
   // character) the offline arena runs for a relay's no alone: a seat given up shuts the doors, said in ONE-SEAT's words

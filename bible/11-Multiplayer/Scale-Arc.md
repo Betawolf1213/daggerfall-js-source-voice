@@ -142,7 +142,7 @@ The relay was split out of SCALE2 on reading: every piece of the reconnect storm
 
 ## DOOR-TOKEN: shipped (client only, no relay deploy)
 
-FIELD BUGS 2026-10-16, the Discord: "Friend invivible and randomly popping up"; "Partied players popping in and out
+FIELD BUGS 2026-10-16b, the Discord: "Friend invivible and randomly popping up"; "Partied players popping in and out
 randomly after leaving tombs at graveyard ... also partied players inside tombs are invisible for a time". The record is
 `01-Overview/Field-Bugs-2026-10-16b.md` DOOR-TOKEN.
 

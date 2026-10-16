@@ -28,7 +28,7 @@
 import { CRIMES } from './crimes.js';
 import {
   legalRepOf, changeLegalRep, LEGAL_REP_MAX, BASE_PENALTY, PENALTY_PER_LEGAL_REP_POINT, MIN_PENALTY, MAX_PENALTY,
-  raisePeopleForAnswer,   // FIELD BUGS 2026-10-16 FINE-PEOPLE: a fine and a penance give back the People's half too
+  raisePeopleForAnswer,   // FIELD BUGS 2026-10-16b FINE-PEOPLE: a fine and a penance give back the People's half too
 } from './court.js';
 import { SEVERE_PUNISHMENT_BANISHED } from './encounters.js';
 import { skyMinuteOfEvent, eventMinuteOfSky } from './skyCalendar.js';   // BANISH-SKY: the calendar the player sees, against the event clock's stamps

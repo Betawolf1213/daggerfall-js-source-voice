@@ -31,7 +31,7 @@
     "file": "src/scenes/legacyHost.js",
     "old": "lived: p.lived, ageless: cursed };",
     "new": "lived: p.lived, ageless: false };",
-    "note": "PIN MOVED (FIELD BUGS 2026-10-16 REZ-BLOODLINE): re-aimed by content - an online death is read at the door and written when it is decided (legacyHost.js decideDeath)",
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16b REZ-BLOODLINE): re-aimed by content - an online death is read at the door and written when it is decided (legacyHost.js decideDeath)",
     "tests": [
       "test/legacy1_family.test.js"
     ]

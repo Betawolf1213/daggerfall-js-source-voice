@@ -150,7 +150,7 @@ test('HC1: owner access - house OR ship - opens loot-target storage, never stock
   // fixed +200 character reach was always a bet on that. The claim is
   // the same: BOTH arms open through the one openLoot, whose remote
   // side IS the container collection.
-  // PIN MOVED (FIELD BUGS 2026-10-16 STOLEN-GOODS): and a stranger's is someone else's goods (`stolen: privateProperty`).
+  // PIN MOVED (FIELD BUGS 2026-10-16b STOLEN-GOODS): and a stranger's is someone else's goods (`stolen: privateProperty`).
   // PIN MOVED (STOLEN-GOODS AUDIT S1): the owner's keeping, taken as the window opens (`stolenFrom: before` - null in an
   // owned house or ship, a Set of the stranger's own records in theirs)
   assert.ok(arm.slice(0, ownedLatch).includes('loot: { items: () => c.items, storage: !privateProperty, stolenFrom: before },'),

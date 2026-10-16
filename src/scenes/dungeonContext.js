@@ -9705,7 +9705,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       delete w.droppedTorches;   // HT1
       // WORLD4: the memory carries EMPTIED, not contents - the piles' blanket list goes, and in its place the
       // containers the room has actually opened, each with what is left in it. A pile nobody has touched stays
-      // every client's own roll, as it was before anyone arrived. GRAVE-PARTY (FIELD BUGS 2026-10-16): and beside them the
+      // every client's own roll, as it was before anyone arrived. GRAVE-PARTY (FIELD BUGS 2026-10-16b): and beside them the
       // strangers' searches this client heard and did not land (scenes/searchRoom.js records) - carried on, so a stranger's
       // own partymates who walk in later still hear their party's search.
       // AUDIT WORLD4 D4/B3: and neither does a FOE's item list, which `corpse:<i>` reads - it rode the foes half of

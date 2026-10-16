@@ -191,6 +191,6 @@
     "tests": [
       "test/fb1004c_robes.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): the reach is the body's now (searchReachFor) - re-aimed by content at the same `surface: true`."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): the reach is the body's now (searchReachFor) - re-aimed by content at the same `surface: true`."
   }
 ]

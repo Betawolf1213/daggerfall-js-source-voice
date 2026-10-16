@@ -119,7 +119,7 @@ export const LEGACY_TEXT = Object.freeze({
   raiseUnheard: () => t('legacy.rez.unheard', 'The realm did not hear the call that would raise you. Another may yet reach you.'),
 });
 
-/** REZ-BLOODLINE (FIELD BUGS 2026-10-16): HOW LONG AN ONLINE DEATH IS HELD for a party's Resurrect (legacyHost onDeath) -
+/** REZ-BLOODLINE (FIELD BUGS 2026-10-16b): HOW LONG AN ONLINE DEATH IS HELD for a party's Resurrect (legacyHost onDeath) -
  *  systems/legacy/revived.js REZ_HOLD_S, the realm's own window (server-account/src/legacy.js realmRaise): the longest an
  *  online death screen stands and half a minute over. AUDIT R2: both count the wall clock - the screen too
  *  (ui/deathScreen.js tick), which counted the frames' clamped time and outlasted the hold below ten frames a second - so
@@ -518,7 +518,7 @@ export function createLegacyHost(deps) {
    *     their years and fall.
    *   - Bloodline: the member falls - recorded dead (B13), the remains laid, the Succession left waiting on the
    *     record, and online the realm's tombstone asked (LEGACY7, `entomb`).
-   * REZ-BLOODLINE (FIELD BUGS 2026-10-16, "he dies and I cast resurrection. It works for a moment then he disappears and
+   * REZ-BLOODLINE (FIELD BUGS 2026-10-16b, "he dies and I cast resurrection. It works for a moment then he disappears and
    * remains dead"): ONLINE a party's Resurrect can still raise the fallen where they lie (systems/resurrect.js,
    * RESURRECT1), so the death is HELD (`held`) for REZ_HOLD_MS - AUDIT R1: BY THE REALM, never by this page. It was held
    * here unwritten, and a tab killed under its death screen (no pagehide: a crash, the task manager, a phone discarding

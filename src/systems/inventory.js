@@ -253,7 +253,7 @@ export function stacksWith(a, b) {
     (a.locked === true) === (b.locked === true) &&
     // CARDS8 (the port's own field, Ledger A): a card stacks only with its own card - two Rats, never a Rat and a Lich
     (a.card ?? null) === (b.card ?? null) &&
-    // STOLEN-GOODS (FIELD BUGS 2026-10-16; the port's own field, Ledger A): a stolen piece stacks only with stolen kin -
+    // STOLEN-GOODS (FIELD BUGS 2026-10-16b; the port's own field, Ledger A): a stolen piece stacks only with stolen kin -
     // three arrows off a shut shop's shelf merged into the pack's twenty were twenty-three honest arrows (or twenty-three
     // stolen ones), and the court took the wrong count
     isStolen(a) === isStolen(b);

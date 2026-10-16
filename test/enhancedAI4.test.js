@@ -479,7 +479,7 @@ test('AUDIT 55: the switch\u2019s reach is the dungeon host\u2019s foes and noth
   // none of them is a path a townsperson, a guard or an exterior foe
   // takes. This pins that reach so a future reader can answer the same
   // question in one test instead of a sweep.
-  // PIN MOVED (FIELD BUGS 2026-10-16 INDOOR-WATCH): ENHANCED AI 5's interior half - a building's mesh (scenes/interiorNav.js)
+  // PIN MOVED (FIELD BUGS 2026-10-16b INDOOR-WATCH): ENHANCED AI 5's interior half - a building's mesh (scenes/interiorNav.js)
   // and the two pools that walk it. The pools read the switch only where a host hands them a mesh (`nav && getPref`), and
   // only the mode machine's building does: the street's pools (world.js, exterior.js) hand none, so no townsperson, no
   // street guard and no street foe sees it - the reach this pin was written for.
@@ -515,7 +515,7 @@ test('ENHANCED AI 4: the host chooses the motor by the switch and refills the bu
   assert.ok(decl < lazy, 'enhancedNav must be declared before the lazy foe block');
   assert.ok(decl < firstMint, 'enhancedNav must be declared before buildFoeAt');
   assert.ok(/enhancedNav\.world = makeNavWorld\(\)/.test(host), 'one world per host, made in the lazy block');
-  // PIN MOVED (FIELD BUGS 2026-10-16 INDOOR-WATCH): the other two pools are AI 5's - its interior half constructs the
+  // PIN MOVED (FIELD BUGS 2026-10-16b INDOOR-WATCH): the other two pools are AI 5's - its interior half constructs the
   // enhanced motor in each where the room hands a mesh, by the same switch (test/fb1016b_indoorwatch.test.js)
   for (const f of ['src/scenes/cityGuards.js', 'src/scenes/exteriorFoes.js']) {
     assert.equal((rd(f).match(/getPref\('enhancedAI'\) \? EnhancedEnemyAI : EnemyAI/g) || []).length, 1, `${f}: its one construction site chooses by the pref`);

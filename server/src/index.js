@@ -8822,7 +8822,7 @@ export class Room {
   }
 
   /**
-   * GRAVE-PARTY (FIELD BUGS 2026-10-16): A PLAYER'S SEARCHED GRAVES, on its cell's ledger (net/overworldLaw.js
+   * GRAVE-PARTY (FIELD BUGS 2026-10-16b): A PLAYER'S SEARCHED GRAVES, on its cell's ledger (net/overworldLaw.js
    * owFoldGraves). JUNK, struck, when a stone's pixel lies outside the cell's square widened by OW_CELL_MARGIN_PX (the
    * session holds its word to the same law). Otherwise each stone is taken under the SPEAKER'S verified account (the
    * token's subject - never the word's) at the relay's own minute, written, and the rows taken said to everyone hello'd in

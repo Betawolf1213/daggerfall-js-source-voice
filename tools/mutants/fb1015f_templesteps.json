@@ -91,7 +91,7 @@
       "test/fb1015f_templesteps.test.js",
       "test/wd3_standins.test.js"
     ],
-    "note": "the stall built off its origin again, the mesh's width east of where Unity stands it (re-aimed by content, FIELD BUGS 2026-10-16 STALL-SHAPE: the stall is built over RMBRP_STALL_FRAME, every x through X)"
+    "note": "the stall built off its origin again, the mesh's width east of where Unity stands it (re-aimed by content, FIELD BUGS 2026-10-16b STALL-SHAPE: the stall is built over RMBRP_STALL_FRAME, every x through X)"
   },
   {
     "name": "TEMPLESTEPS-10-top-covers",

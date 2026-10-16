@@ -269,7 +269,7 @@ pack's first (`chooseRiddenHorse`), so its look, its breath and its stats are th
 only within Horse Cart and Cargo's own mount reach (a horse waiting across the map is not), and never at the stable
 (`upkeepRuntime.js` upkeepReach).
 
-**Every horse owned, on every tier** (FIELD BUGS 2026-10-16 HORSE-CARE-OFF; a player: "turning horse care off completely
+**Every horse owned, on every tier** (FIELD BUGS 2026-10-16b HORSE-CARE-OFF; a player: "turning horse care off completely
 hides my other horses"). The horses are the player's whatever the tier; only their care is the tier's. Off - and on any
 skin but the enhanced one, where the one accessor answers null - every other horse owned still has its card ("Another
 horse of yours", its look in words) and **Ride this one**, and the choice is the same `chooseRiddenHorse`; what drops

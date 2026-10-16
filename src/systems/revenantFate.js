@@ -49,7 +49,7 @@ export function revenantMayYield(f) {
   return !!r && !r.defeated && !r.sworn;
 }
 
-/** RVN-OWNERS-CHOICE (FIELD BUGS 2026-10-16; Discord: "I believe it bypasses the kill/spare on revenants. And it seems
+/** RVN-OWNERS-CHOICE (FIELD BUGS 2026-10-16b; Discord: "I believe it bypasses the kill/spare on revenants. And it seems
  *  it does this to other players' revenants, too"): DOES THIS WHOLE BLOW CLOSE ONE OF MY REVENANTS OUTRIGHT - past its
  *  last stand, its will and its kneel? A whole blow (the doors' `_whole`: a Disintegrate, the Razor's whole-health
  *  strike, a stat drained to zero) does so only when it is the OWNER's own: the player's blow (`fromPlayer`), never a

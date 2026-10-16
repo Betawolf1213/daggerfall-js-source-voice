@@ -72,7 +72,7 @@ export const RESURRECT_TEXT = Object.freeze({
   cast: (name) => `You call ${name || 'your companion'} back from death.`,
   raised: (name) => `${name || 'A companion'} has brought you back from death.`,
   spared: (n) => `Death takes none of your gold: the ${n.toLocaleString('en-US')} it claimed stay in your purse.`,   // AUDIT 28 B5: the screen's loss, withdrawn
-  // REZ-BLOODLINE (FIELD BUGS 2026-10-16): a body whose death is decided for good (their pose's `fg` - net/wire.js
+  // REZ-BLOODLINE (FIELD BUGS 2026-10-16b): a body whose death is decided for good (their pose's `fg` - net/wire.js
   // validPartyPose): said to the caster, and nothing spent
   forGood: (name) => t('resurrect.forGood', '{name} has fallen for good. No spell will raise them now.', { name: name || t('resurrect.companion', 'Your companion') }),
 });

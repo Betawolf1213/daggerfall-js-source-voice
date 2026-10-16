@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-16 YARD-ROWS, MEASURED (the Discord: "Shipyard formatting is cooked" - "The text here may need a bit
+// FIELD BUGS 2026-10-16b YARD-ROWS, MEASURED (the Discord: "Shipyard formatting is cooked" - "The text here may need a bit
 // of work, as you can see!"): THE SHIPYARD WINDOW (ui/shipyardWindow.js) drawn in Chromium over a fleet like the
 // reporter's - a Large Boat and a Carrack laid up at Aldwall Rock, her refits named - and the Refits and Crew Hall pages
 // (a recruit's swap picker among them), at a desktop's width, a narrow window's, 600 and a phone's. A row's words (its

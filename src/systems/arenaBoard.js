@@ -575,7 +575,7 @@ export function recordsPageOnline(board, { league = null, gameMinutes = 0 } = {}
   };
 }
 
-/** FIELD BUGS 2026-10-16 ARENA-WAIT: the realm's board before the service's is in - its season and day by the wall clock
+/** FIELD BUGS 2026-10-16b ARENA-WAIT: the realm's board before the service's is in - its season and day by the wall clock
  *  (`nowS`, unix seconds), nobody on it. Only ever drawn as "on its way" (arenaBoard's no-board arm). */
 function pendingBoard(nowS) {
   const t = Number.isFinite(nowS) ? Number(nowS) : Date.now() / 1000;
@@ -583,7 +583,7 @@ function pendingBoard(nowS) {
   return { season: arenaSeasonOf(t), day: arenaSeasonDay(t), me: {}, team: { standings: { red: 0, blue: 0 }, rosters: {}, members: {}, laurel: null, last: null }, pve: none, pvp: none, fast: none, hall: [] };
 }
 
-/** FIELD BUGS 2026-10-16 ARENA-WAIT (AUDIT A1): THE LADDER PAGE BEFORE THE ACCOUNT'S CLIMB IS IN (arenaBoard's no-board
+/** FIELD BUGS 2026-10-16b ARENA-WAIT (AUDIT A1): THE LADDER PAGE BEFORE THE ACCOUNT'S CLIMB IS IN (arenaBoard's no-board
  *  arm) - the ten tiers as the law has them (their bouts, champions, purses and the titles they give), and nobody's climb
  *  on them: no tier cleared or current (`waiting`), no pip, no champion beaten, no next bout, no title earned and no tier
  *  the climb stands on (`current` null) - `line` saying why (the climb on its way, the seat elsewhere, the server gone). The
@@ -626,7 +626,7 @@ export function arenaBoard(o) {
       // a shut door's Watch says why on its card - the hour's bout is the relay's (the press closed the window to say it)
       if (shutWhy) for (const c of m.bouts.cards) if (c.kind === 'exhibition') c.acts = c.acts.map((a) => (a.act === 'watch' ? { ...a, why: a.why ?? shutWhy } : a));
       m.records = { ...recordsPageOnline(null, o), stats: [], ...(away ? { empty: away } : {}) };
-      // FIELD BUGS 2026-10-16 ARENA-WAIT: nor the header, the banners or the boards - the save's offline season ("Season
+      // FIELD BUGS 2026-10-16b ARENA-WAIT: nor the header, the banners or the boards - the save's offline season ("Season
       // of 3E 406"), its title and record and its seeded roster stood over a realm Grand Champion while the board was
       // asked. The realm's season by the clock (net/arenaLaw.js arenaSeasonOf), no title, record or banner of the save's,
       // and every board says the names are on their way.

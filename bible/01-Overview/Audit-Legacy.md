@@ -27,7 +27,7 @@ before the save that held them). The fix is a law, stated once in `scenes/legacy
 - **The store answers the world's facts** - who lived, who died, Arkay's toll, who is played, which remains exist. A
   death is decided AT THE DOOR (`characters/playerEntity.js setDeathListener`, DFU's `PlayerEntity.OnDeath`, which the
   mod itself subscribed to), before any screen, mode exit or reload; a fall leaves its Succession waiting ON THE RECORD
-  (`family.pending`). DEPARTED FROM ONLINE (REZ-BLOODLINE, FIELD BUGS 2026-10-16, `06-Systems/Legacy-Arc.md`): a party's
+  (`family.pending`). DEPARTED FROM ONLINE (REZ-BLOODLINE, FIELD BUGS 2026-10-16b, `06-Systems/Legacy-Arc.md`): a party's
   Resurrect can still raise the fallen while their death screen stands (a Bloodline character raised by a friend
   "disappears and remains dead" - the line ended over a living body), so online the death the door writes is HELD BY THE
   REALM for that window - its tombstone stamped at the door with a hold, the lease that fell kept aside - and the realm's

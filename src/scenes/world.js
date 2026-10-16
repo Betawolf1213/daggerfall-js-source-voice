@@ -1028,7 +1028,7 @@ import { LookFilter, swingSuppressesLook } from '../player/lookFilter.js';   // 
 import { controllerLook } from '../player/lookFilter.js';   // AUDIT NAV1 (the presentation): a pad in hand - the sea fight's readout names its buttons (MAC-O2's seam line above kept as it is pinned)
 import { MoveAxes } from '../player/moveAxes.js';   // AUDIT 28 W8: MovementAcceleration
 import { CameraRecoiler } from '../player/cameraRecoiler.js';   // AUDIT 28 W9: CameraRecoilStrength
-import { createDoorToken } from './doorTokenHost.js';   // DOOR-TOKEN (FIELD BUGS 2026-10-16): the next room's identity token, minted at the door
+import { createDoorToken } from './doorTokenHost.js';   // DOOR-TOKEN (FIELD BUGS 2026-10-16b): the next room's identity token, minted at the door
 import { HeadBobber } from '../player/headBobber.js';   // AUDIT 28 W10: HeadBobbing
 import { createClimbFeelHost } from '../player/climbFeel.js';   // CLIMB4: the climb's camera
 import { lastHealthLost, lastHealthLostPercent } from '../ui/hudVitals.js';   // AUDIT 28 W9: the detector's loss
@@ -12229,7 +12229,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const ex = exhibitionFor(worldMinutes());
       // ARENA4b: ONLINE THE HOUR'S BOUT IS THE RELAY'S - its room watched from the city's sand (scenes/arenaOnline.js
       // watchCity), every screen the one bout; offline, or on a relay before it, this screen's own seeded bout as ever
-      if (arenaOnline?.exhibitions?.() || arenaOnline?.waiting?.()) arenaOnline.watchCity(ex);   // FIELD BUGS 2026-10-16 ARENA-WAIT: the online lane before the relay's word stands nothing of its own
+      if (arenaOnline?.exhibitions?.() || arenaOnline?.waiting?.()) arenaOnline.watchCity(ex);   // FIELD BUGS 2026-10-16b ARENA-WAIT: the online lane before the relay's word stands nothing of its own
       else if (ex?.open && ex.hour !== _arenaHourRun) { _arenaHourRun = ex.hour; arenaBouts.ask({ where: 'city', kind: 'exhibition', ex }); }
     }
     if (!stg) { arenaBouts.frame(dt, {}); if (!arenaBouts.bout()) arenaSound.stop(); return; }
@@ -12266,7 +12266,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       modes?.enterArenaFloor?.('watch');
     } else if (a === 'fight') {
       // ARENA4: ONLINE THE LADDER IS THE ACCOUNT'S - its next bout fought on the relay (scenes/arenaOnline.js)
-      if (arenaOnline?.live() || arenaOnline?.waiting()) { const r = arenaOnline.fightLadder(); if (!r.ok && r.text) townTalk.say(r.text); return; }   // FIELD BUGS 2026-10-16 ARENA-WAIT: never the save's ladder on the online lane
+      if (arenaOnline?.live() || arenaOnline?.waiting()) { const r = arenaOnline.fightLadder(); if (!r.ok && r.text) townTalk.say(r.text); return; }   // FIELD BUGS 2026-10-16b ARENA-WAIT: never the save's ladder on the online lane
       const next = nextLadderBout(arenaLadderRestore(playerEntity.arenaLadder));
       if (!next) return;
       arenaBouts.ask({ where: 'floor', kind: 'ladder', next });
@@ -19994,7 +19994,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // ── SEARCH1 (systems/searchables.js): A GRAVEYARD'S HEADSTONE, searched ─────────────────────────────────────────
   // Two in three find nothing; the last third is a find or the dead, half each. The box is clicked away first: the
   // foe stands, or the find opens, only from its onClose (ui/actionText.js). Info mode reads the stone instead (GRAVE1).
-  // GRAVE-PARTY (FIELD BUGS 2026-10-16): the search is the PARTY's - said to the cell, heard from it, the party lens
+  // GRAVE-PARTY (FIELD BUGS 2026-10-16b): the search is the PARTY's - said to the cell, heard from it, the party lens
   // registered for the dungeon's searchables too (scenes/searchPartyHost.js).
   setSearchClock(() => worldMinutes());
   const { activateGrave, frame: searchPartyFrame, heard: searchPartyHeard } = createSearchParty({   // HOST-SPLIT: src/scenes/searchPartyHost.js
@@ -24926,7 +24926,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // relay's bout on the floor's instance (its room the presence session's), the boards and the receipts. ═══════════════
   arenaOnline = createArenaOnline({
     now: () => performance.now(),
-    session: () => online, lane: () => onlineOn, nowS: () => relayNowS() ?? Date.now() / 1000,   // FIELD BUGS 2026-10-16 ARENA-WAIT: a realm character waits for the relay's word; the realm's season by the clock
+    session: () => online, lane: () => onlineOn, nowS: () => relayNowS() ?? Date.now() / 1000,   // FIELD BUGS 2026-10-16b ARENA-WAIT: a realm character waits for the relay's word; the realm's season by the clock
     // the hall's socket: a presence-less session of my own id, minting its token as every link does
     makeHall: () => {
       if (!online?.url) return null;
@@ -29769,7 +29769,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (!_respawning) {
         if (!_rezSeen) _rezSeen = rezSnapshot(social?.others() ?? []);
         const rez = social?.acct && modes?.sdRealmSlot?.() == null ? rezFor(social.others(), social.acct, _rezSeen) ?? legacyHost?.raised() ?? null : null;   // SD-ONELIFE: no Resurrect in the Hour - one life (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`); REZ-BLOODLINE AUDIT R1: or the call the realm let go, the caster's pose done carrying it
-        if (rez && legacyHost?.raise(rez) !== false) { resurrectInPlace(rez); return; }   // REZ-BLOODLINE (FIELD BUGS 2026-10-16): a Bloodline death held for it is let go; one decided for good stays down (legacyHost.js raise); AUDIT R1: the realm asked first - down until it answers
+        if (rez && legacyHost?.raise(rez) !== false) { resurrectInPlace(rez); return; }   // REZ-BLOODLINE (FIELD BUGS 2026-10-16b): a Bloodline death held for it is let go; one decided for good stays down (legacyHost.js raise); AUDIT R1: the realm asked first - down until it answers
       }
       peerBodies.destroy(); remotePlayers.sync([], onlineToScene); peerRiders?.destroy(); peerWalkers?.destroy(); peerCandlesFrame([], dt); return;   // PEERLIGHT2: and no candle hangs over the dead; AUDIT RIDE: and no rider stands frozen over it either
     }   // AUDIT WORLD B6: the dungeon's and the building's death screens stand in the mode's slot   // AUDIT MWBODY B7: and no body stands frozen over the death screen

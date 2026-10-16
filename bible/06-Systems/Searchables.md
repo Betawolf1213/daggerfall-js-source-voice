@@ -56,7 +56,7 @@ looter sees".
   names its searcher and starts the five hours, and lands the find, in the searcher's PARTY alone - no longer everyone's
   in the room.
 
-## GRAVE-PARTY - the search is the party's, above ground and below (FIELD BUGS 2026-10-16)
+## GRAVE-PARTY - the search is the party's, above ground and below (FIELD BUGS 2026-10-16b)
 
 The Discord's "A few things": "graveyard loot on headstones are able to be looted by others, objects in tombs are un
 lootable (have not tried dungeons yet)" (`01-Overview/Field-Bugs-2026-10-16b.md`). A "tomb" is the Graveyard's Cemetery

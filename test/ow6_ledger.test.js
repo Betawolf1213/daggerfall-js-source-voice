@@ -244,7 +244,7 @@ test('OW6L law: THE BOUNDS AND THE PRUNE - OW_CELL_ROWS_MAX rows, the oldest fir
   // storage read back
   assert.deepEqual(owLedgerOf(undefined), newOwLedger());
   assert.deepEqual(owLedgerOf({ sp: [[bandIn(0), 5], [bandIn(0), 6], ['junk', 5], [bandIn(1), 'x'], 'x'], dg: { a: [...S1, 7], b: [...EMPTY, 7], c: [...S2, 9, 8], d: 'x' } }),
-    { sp: [[bandIn(0), 5]], dg: { [owRowKey(...S1)]: [...S1, 7] }, gr: {} });   // PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): a ledger holds its graves searched too (none here)
+    { sp: [[bandIn(0), 5]], dg: { [owRowKey(...S1)]: [...S1, 7] }, gr: {} });   // PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): a ledger holds its graves searched too (none here)
   const copy = owLedgerOf(p);
   assert.deepEqual(copy, p); assert.notEqual(copy.dg[owRowKey(...S1)], p.dg[owRowKey(...S1)], 'a copy, never the live rows');
 });
@@ -272,7 +272,7 @@ test('SPAWN-REBIRTH relay law: a row is kept until its spawn stands again and no
 // ═══ THE WIRE ════════════════════════════════════════════════════════════════════════════════════
 
 test('OW6L wire: the `ow` word - after a hello, projected by validOwIn, the whole word refused for one bad entry or past its bound; a cell\'s frames and welcome halves projected by validOwOut, cut at the cell\'s bounds; the frames\' own bucket; the relay that keeps the ledger is world127 and this build\'s (mutants: a bound off by one; the relay floor below or above 127; a bad entry let through)', () => {
-  assert.deepEqual(OW_KINDS, ['sp', 'dg', 'gr']);   // PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): the graves searched, the third kind (test/fb1016b_graveparty.test.js)
+  assert.deepEqual(OW_KINDS, ['sp', 'dg', 'gr']);   // PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): the graves searched, the third kind (test/fb1016b_graveparty.test.js)
   assert.equal(OW_WORD_IDS_MAX, 8); assert.equal(OW_WORD_ROWS_MAX, 8); assert.equal(OW_CELL_SPENT_MAX, 64); assert.equal(OW_CELL_ROWS_MAX, 512);
   const sp = { t: 'ow', k: 'sp', ids: [bandIn(0), raiderIn()] }, dg = { t: 'ow', k: 'dg', rows: [[...S1, M0], [...S2, M0 - 5, M0]] };
   assert.deepEqual(parseClient(JSON.stringify(sp)), { error: 'ow before hello' });
@@ -684,7 +684,7 @@ test('OW6L host wiring: a band\'s spend and a raider\'s owe themselves to the ce
   assert.match(W, /onDungeonSpawned: \(\) => \{ const p = playerTravelPixel\(\); _spawnSeen\(`\$\{p\.x\},\$\{p\.y\}`\); \},/);
   assert.doesNotMatch(W, /_spawnLedger\.note\(key, _spawnClock\(\)\);   \/\/ TTL1/, 'no other first-sight door');
   assert.match(W, /_spawnLedger\.clear\(key, _spawnClock\(\)\);\n\s*owSayRow\(key\);/);
-  assert.match(W, /online\.onOverworld = \(msg\) => \(msg\?\.k === 'gr' \? searchPartyHeard\(msg\) : overworldLedgerHeard\(msg\)\);/);   // PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): the graves' rows to the search party's own door (scenes/searchPartyHost.js), every other word to the ledger's
+  assert.match(W, /online\.onOverworld = \(msg\) => \(msg\?\.k === 'gr' \? searchPartyHeard\(msg\) : overworldLedgerHeard\(msg\)\);/);   // PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): the graves' rows to the search party's own door (scenes/searchPartyHost.js), every other word to the ledger's
   assert.match(W, /hccParkTick\(now\);[^\n]*\n\s*overworldLedgerFrame\(now\);/);
   const reset = W.slice(W.indexOf('  function overworldLoadReset() {'), W.indexOf('\n  }\n', W.indexOf('  function overworldLoadReset() {')));
   assert.match(reset, /travelView\?\.exit\('load', true\);[^\n]*\n\s*_owSay\.sp\.clear\(\); _owSay\.dg\.clear\(\);/, 'the load forgets what was owed - after the view\'s exit, the last thing that could owe');

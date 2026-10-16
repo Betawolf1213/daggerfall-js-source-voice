@@ -702,7 +702,7 @@ export class OnlineSession {
     this.gateHealOk = false;      // GATE-HEAL: and a gate room's `heal` (relaySupportsGateHeal) - an older relay junks the word
     this._gateSiteSaid = null;    // DISCORD-GATES: the socket and day my `site` last went on - once a socket and day
     this.arenaOk = false;         // ARENA4: the relay that welcomed this socket opens the arena's rooms (relaySupportsArena)
-    this.arenaHeard = false;      // FIELD BUGS 2026-10-16 ARENA-WAIT: a primary welcome has said `arenaOk` (sticky) - before it the arena on the online lane waits (scenes/arenaOnline.js waiting)
+    this.arenaHeard = false;      // FIELD BUGS 2026-10-16b ARENA-WAIT: a primary welcome has said `arenaOk` (sticky) - before it the arena on the online lane waits (scenes/arenaOnline.js waiting)
     this.onArena = null;          // ARENA4: (word, room) => void - the hall's or a bout's word, projected by the wire's readArenaOut
     this._arenaBucket = null;     // ARENA4: my own arena words out - arenaGate's law
     this.gateOk = false;          // WB3: the relay that welcomed this socket runs a gate's boss room (relaySupportsGate) - an older one CLOSES the socket on the frame and holds no fight

@@ -246,7 +246,7 @@ export function createUpkeep({ items, now, horseCare = () => null, wagonUpkeep =
 
   // ── the Stable card ──────────────────────────────────────────────
   /** The card's horses and wagon: each horse's look, stats, bond, hunger and breath; the wagon's soundness.
-   *  FIELD BUGS 2026-10-16 HORSE-CARE-OFF ("turning horse care off completely hides my other horses"): every horse owned,
+   *  FIELD BUGS 2026-10-16b HORSE-CARE-OFF ("turning horse care off completely hides my other horses"): every horse owned,
    *  on every tier - Off, and any skin but the enhanced one (horseCareRules' null), each its place, whether it is ridden,
    *  its name and its look, for its card and the choice to ride it; its care (stats, bond, hunger, breath) only where
    *  horse care rules. */

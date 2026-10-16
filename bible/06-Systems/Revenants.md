@@ -334,7 +334,7 @@ underground, a joiner's own frame) name an heir for every other live foe and non
 never told. It goes with its owner, as a watchman goes with his own. A party member's killing blow lands at the owner,
 where the record is, and brings its last stand and then its fate there (`test/revenant_fate.test.js`).
 
-**RVN-OWNERS-CHOICE** (FIELD BUGS 2026-10-16; Discord, "I erased a Revenant fro[m]...": "I believe it bypasses the
+**RVN-OWNERS-CHOICE** (FIELD BUGS 2026-10-16b; Discord, "I erased a Revenant fro[m]...": "I believe it bypasses the
 kill/spare on revenants. And it seems it does this to other players' revenants, too ... It probably shouldn't be doable
 to other peoples revs"): **another player's revenant can never be closed by anyone but its owner.** A whole blow - a
 Disintegrate, Mehrunes' Razor's whole-health strike, a stat drained to zero (the doors' `_whole`) - passes over a

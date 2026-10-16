@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-16 HORSE-CARE-OFF (the Discord: "turning horse care off completely hides my other horses"). The
+// FIELD BUGS 2026-10-16b HORSE-CARE-OFF (the Discord: "turning horse care off completely hides my other horses"). The
 // Stable page drew every other horse owned - its card, its care, and "Ride this one" - only under a horse care tier: the
 // upkeep's model built its list of horses only `if (care)`, and the page's loop read `care?.horseCare`. So Off (and the
 // classic skin, where the one accessor answers null) the page drew the ridden horse alone, and no other could be chosen

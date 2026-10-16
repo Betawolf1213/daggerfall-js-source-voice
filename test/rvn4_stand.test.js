@@ -222,7 +222,7 @@ test('RVN4 THE POOLS AND DOORS: the ember rim where no wind-up glints and a tent
   assert.match(read('src/scenes/exteriorFoes.js'), /if \(f\.yielded \|\| f\.executing \|\| f\.sparing \|\| f\.leaving \|\| f\.roaring\) return;/);
   const d = read('src/scenes/dungeonContext.js');
   assert.match(d, /if \(foe\.yielded \|\| foe\.executing \|\| foe\.sparing \|\| foe\.leaving \|\| foe\.roaring\) return;/);
-  // PIN MOVED (FIELD BUGS 2026-10-16 RVN-OWNERS-CHOICE): a whole blow passes the stand only as the owner's own
+  // PIN MOVED (FIELD BUGS 2026-10-16b RVN-OWNERS-CHOICE): a whole blow passes the stand only as the owner's own
   // (revenantFate.js ownersWholeKill) - a party member's Disintegrate brings it (test/fb1016b_rvnownerschoice.test.js)
   assert.match(d, /if \(foe\.entity\?\.revenant\?\.id && !ownersWholeKill\(_whole, \{ fromPlayer, peer \}\) && \(!onlineRoom\(\) \|\| !isRoomFoe\(foe\)\) && revenantLastStandDue\(foe\)\) \{ lastStandDungeonFoe\(foe\); return; \}\n[^\n]*\n\s*if \(opts\.fates && !ownersWholeKill\(_whole, \{ fromPlayer, peer \}\)/);
   assert.match(d, /function lastStandDungeonFoe\(f\) \{\n\s*const ev = beginLastStand\(playerEntity, f, \{ now: Date\.now\(\), clock: tacticsNow\(\), roar: \(s\) => beginRoar\(f\.ai, f\.entity, s\) \}\);/);

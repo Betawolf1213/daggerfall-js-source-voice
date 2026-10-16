@@ -790,7 +790,7 @@ whose next write entombs her. And a plan with any statement past STATEMENT_MAX_B
 nothing deletes a fallen character's saves (no cron touches realm_characters or the bucket; a tombstone only refuses
 writes) and the game never checkpoints a dead character, so the save the revival hands back is her last before the death.
 
-## REZ-BLOODLINE - a friend's Resurrect saves a Bloodline character (FIELD BUGS 2026-10-16)
+## REZ-BLOODLINE - a friend's Resurrect saves a Bloodline character (FIELD BUGS 2026-10-16b)
 
 THE REPORT ("Bloodline Resurrection."): *"I was testing with a friend, he dies and I cast resurrection. It works for a
 moment then he disappears and remains dead."* The screenshot: "...of Gothway Garden has Fallen - You died without a

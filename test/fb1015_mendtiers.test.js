@@ -51,7 +51,7 @@ const rounds = (p, from, to, ctx = {}) => { for (let r = from; r <= to; r++) enc
 const conditions = (items) => items.map((it) => it.currentCondition);
 /** Ticks `from`..`to` (multiples of 4) over two worn pieces that wear themselves, `a` ahead of `b` in the pack: each tick
  *  mends the one with the less share left (a tie the pack's first) by its fiftieth (repairsObjectsMend), never past its
- *  condition, and then each wears its point. FIELD BUGS 2026-10-16 MEND-ARMOUR: the tick's fiftieth, where it was a
+ *  condition, and then each wears its point. FIELD BUGS 2026-10-16b MEND-ARMOUR: the tick's fiftieth, where it was a
  *  point - the order is MEND-TIERS'. */
 const eachTickTheMoreWorn = (p, a, b, from, to, ctx = {}) => {
   for (let r = from; r <= to; r += 4) {
@@ -73,7 +73,7 @@ test('MEND-TIERS: the report - a worn Cast When Held ring, or worn Item Deterior
     assert.equal(repairsObjectsTarget(p.items, ALLOW), piece, `${what} first all the same`);
     const packed = conditions(trash);
     rounds(p, 1, 400);
-    // PIN MOVED (FIELD BUGS 2026-10-16 MEND-ARMOUR): a point mended on each tick it wore one held it where it stood; a
+    // PIN MOVED (FIELD BUGS 2026-10-16b MEND-ARMOUR): a point mended on each tick it wore one held it where it stood; a
     // fiftieth mended now climbs it to whole, less the point it wears on the tick's round - below its condition still,
     // so the pack still waits
     assert.equal(piece.currentCondition, piece.maxCondition - 1, `${what} held ahead of the pack: mended on each of the 100 ticks it wore a point, to whole less that point`);
@@ -88,7 +88,7 @@ test('MEND-TIERS: three tiers - a plain worn cuirass, the least worn, is mended 
   assert.ok(conditionShare(helm) < conditionShare(held) && conditionShare(held) < conditionShare(cuirass), 'the helm the most worn of what is worn, the cuirass the least');
   assert.equal(repairsObjectsTarget(p.items, ALLOW), cuirass, 'the plain worn piece first');
   const [h0, r0, c0, packed] = [helm.currentCondition, held.currentCondition, cuirass.currentCondition, conditions(trash)];
-  // PIN MOVED (FIELD BUGS 2026-10-16 MEND-ARMOUR): a point a tick, the cuirass's 41 took 41 ticks and then the tick HELD
+  // PIN MOVED (FIELD BUGS 2026-10-16b MEND-ARMOUR): a point a tick, the cuirass's 41 took 41 ticks and then the tick HELD
   // the helm while the ring wore; a fiftieth of the piece's own a tick now - the cuirass whole in one, then the more worn
   // of the two mended each tick (the helm first, until the ring has less share left), the other wearing its point
   const ticks = Math.ceil((cuirass.maxCondition - c0) / repairsObjectsMend(cuirass));
@@ -119,7 +119,7 @@ test('MEND-TIERS: once nothing worn is below its condition the pack is mended, i
   rounds(p, 57, 60, { inSunlight: () => true });
   const [packed, pair] = [conditions(trash), held.currentCondition + helm.currentCondition];
   assert.ok(pair < held.maxCondition + helm.maxCondition, 'they wore');
-  // PIN MOVED (FIELD BUGS 2026-10-16 MEND-ARMOUR): one mended a point and two wearing one, the pair went a point a tick
+  // PIN MOVED (FIELD BUGS 2026-10-16b MEND-ARMOUR): one mended a point and two wearing one, the pair went a point a tick
   // down; the one mended takes its fiftieth now, so the more worn of the two is mended whole each tick
   eachTickTheMoreWorn(p, held, helm, 64, 460, { inSunlight: () => true });
   assert.deepEqual(conditions(trash), packed, 'from the next tick on the pack waits: a piece that wears on every tick holds every tick (Mac\'s trade-off)');

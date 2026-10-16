@@ -1,6 +1,6 @@
 // @ts-check
 // ═══════════════════════════════════════════════════════════════════
-// DOOR-TOKEN (FIELD BUGS 2026-10-16, the Discord: "Friend invisible and
+// DOOR-TOKEN (FIELD BUGS 2026-10-16b, the Discord: "Friend invisible and
 // randomly popping up"; "Partied players popping in and out randomly
 // after leaving tombs at graveyard ... also partied players inside tombs
 // are invisible for a time") - THE NEXT ROOM'S TOKEN, MINTED AT THE DOOR.

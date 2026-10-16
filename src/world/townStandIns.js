@@ -722,7 +722,7 @@ export const RMBRP_STALLS = Object.freeze({
  *  from -0.4 to 2.75 m, where the mesh as Unity imports it (x mirrored, as the docks') runs from -2.76 to 0.43 - its high
  *  back on -x, its counter at the origin. */
 export const RMBRP_STALL_SCALE = 0.75;
-/** FIELD BUGS 2026-10-16 STALL-SHAPE: THE PACK'S STALL, MEASURED - ext_city_stall001-013 (the mesh of 53099-53112) off
+/** FIELD BUGS 2026-10-16b STALL-SHAPE: THE PACK'S STALL, MEASURED - ext_city_stall001-013 (the mesh of 53099-53112) off
  *  the pack's published FBX (Assets/Meshes/Market), in its metres as Unity imports it (x mirrored), before
  *  RMBRP_STALL_SCALE. Four posts 0.375 m square - `back` and `front` their x, `sides` their z, `tops` the back pair's and
  *  the front pair's; a beam across the back pair and a lintel across the front pair, each [its underside, its top]; the

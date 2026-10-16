@@ -22,7 +22,7 @@ import { damageShieldPool, playerBlowCameToNothing } from '../characters/playerE
 import { lycanthropeAttackVoice } from '../systems/lycanthropy.js';   // V4: the beast's attack voice
 import { copyEffectEntry } from '../systems/save.js';   // AUDIT 26 F216: the caster-stripping effect copy, one home
 import { EnemyAI, isBackFacing, withinYaw, MELEE_DISTANCE, foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT WORLD6b-iii(a) B4: the puppet's cast is read against the owner's own bands
-import { EnhancedEnemyAI } from '../ai/enhancedMotor.js';   // FIELD BUGS 2026-10-16 INDOOR-WATCH: the routes, where the host hands a mesh (`nav`)
+import { EnhancedEnemyAI } from '../ai/enhancedMotor.js';   // FIELD BUGS 2026-10-16b INDOOR-WATCH: the routes, where the host hands a mesh (`nav`)
 import { getPref } from '../systems/uiPrefs.js';   // INDOOR-WATCH: the Enhanced AI switch, as the dungeon's construction sites read it
 import { spaceFoes, freeLodgedFeet } from '../characters/foeSpacing.js';   // FOE-SPACING: the pack keeps apart; FIELD BUGS 2026-10-04d CRATE-FREE: and no foe stands in a crate
 import { blowConnects, blowScaled } from '../ai/foeBlows.js';   // TACT4
@@ -286,7 +286,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   // HALT-ONE: the living watch's lane (cityGuards.js `oneVoice`) - a peer's watchman riding my stream (WATCH1) calls
   // on his owner's client, where he is after the player he hunts: here he is silent, and his tells a person's
   oneVoice = () => false,
-  // FIELD BUGS 2026-10-16 INDOOR-WATCH (ENHANCED AI 5's interior half, scenes/interiorNav.js): the room's mesh -
+  // FIELD BUGS 2026-10-16b INDOOR-WATCH (ENHANCED AI 5's interior half, scenes/interiorNav.js): the room's mesh -
   // `{ chf, world, goal }` - where the host has one (the mode machine's building, makeInteriorFoes); with the Enhanced AI switch
   // on a foe walks the routes (EnhancedEnemyAI), as a dungeon's does. The street's pools hand none: the classic motor.
   nav = null }) {

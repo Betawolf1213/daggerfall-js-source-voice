@@ -1297,7 +1297,7 @@ test('PX28: looting just TAKES - no second popup over the frame you are reading'
   assert.match(src, /tab = pageOf\(taken\);/,
     'the tab-follows-the-item law is unchanged - it just belongs to the pack (PX31: the page an item lives on)');
   // The transfer itself is untouched: this slice changes what is SHOWN.
-  // PIN MOVED (FIELD BUGS 2026-10-16 STOLEN-GOODS): and a take from someone else's keeping is marked as it lands (`stolen`);
+  // PIN MOVED (FIELD BUGS 2026-10-16b STOLEN-GOODS): and a take from someone else's keeping is marked as it lands (`stolen`);
   // PIN MOVED (STOLEN-GOODS AUDIT S1): the owner's keeping itself rides (`stolenFrom`) - the owner's piece alone is marked
   assert.match(src, /const taken = applyTransfer\(item, \{ \.\.\.plan, amount \}, from, bag, \{ entity: deps\.entity, toPlayer: true, stolenFrom: theftTarget\(deps, sessionState\(\)\) \}\);/,
     'E4: `PlayerEntity.Items == to` is the destination test DoTransferItem makes');
@@ -1369,7 +1369,7 @@ test('PX24: wear, take off, use and stow all clear the pick on success; refusals
   // transfer as it always did - but only when the thing it moved IS the pick,
   // so dragging one item out no longer closes the tooltip a player opened on
   // another and sends `side` to a remote list with nothing picked on it.
-  // PIN MOVED (FIELD BUGS 2026-10-16 STOLEN-GOODS): the call also says whether the piece is put back into its owner's keeping
+  // PIN MOVED (FIELD BUGS 2026-10-16b STOLEN-GOODS): the call also says whether the piece is put back into its owner's keeping
   // (STOLEN-GOODS AUDIT S1: the keeping itself, `returnTo`)
   assert.match(stow, /applyTransfer\(item, \{ \.\.\.plan, amount \}, deps\.items\?\.\(\) \?\? \[\], to, \{ entity: deps\.entity, fromLocal: true, returnTo: theftTarget\(deps, sessionState\(\)\) \}\);[\s\S]{0,600}?if \(picked === item\) \{ picked = null; side = 'remote'; \}/,
     'stow must clear the pick after the transfer, and only its own');
@@ -1572,7 +1572,7 @@ test('INV1: a drag equips through the one act, and never crosses a side', () => 
   // (AUDIT 26 F157) and a map is an INTERCEPTION, not a transfer (F156).
   const stow = code.slice(code.indexOf('function stow(item)'), code.indexOf('function take(item)'));
   assert.match(stow, /if \(plan\.map\) \{ use\(item, deps\.items\?\.\(\) \?\? \[\]\); return; \}/, 'the map reveals rather than landing on the floor');
-  // PIN MOVED (FIELD BUGS 2026-10-16 STOLEN-GOODS): and whether it is put back into its owner's keeping (`putBack`;
+  // PIN MOVED (FIELD BUGS 2026-10-16b STOLEN-GOODS): and whether it is put back into its owner's keeping (`putBack`;
   // STOLEN-GOODS AUDIT S1: the keeping itself, `returnTo`)
   assert.match(stow, /applyTransfer\(item, \{ \.\.\.plan, amount \}, deps\.items\?\.\(\) \?\? \[\], to, \{ entity: deps\.entity, fromLocal: true, returnTo: theftTarget\(deps, sessionState\(\)\) \}\);/,
     'the entity and the provenance ride, or clearLightSourceOnLeave is a no-op and a dropped torch keeps lighting the player');

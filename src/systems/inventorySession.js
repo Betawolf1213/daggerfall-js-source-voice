@@ -214,7 +214,7 @@ export function remoteTargetType(deps = {}, state = {}) {
   return deps.loot ? REMOTE_TARGET_TYPES.Loot : REMOTE_TARGET_TYPES.Dropped;
 }
 
-/** STOLEN-GOODS (FIELD BUGS 2026-10-16): THE OWNER'S KEEPING while the remote list showing is someone else's goods - the
+/** STOLEN-GOODS (FIELD BUGS 2026-10-16b): THE OWNER'S KEEPING while the remote list showing is someone else's goods - the
  *  host's `loot.stolenFrom`, the Set of the records the target held as its window opened (a shut shop's shelf, a
  *  stranger's cupboard: scenes/worldModes.js; a robbed caravan's goods: scenes/world.js) - asked only while that list IS
  *  the loot target, never the wagon, the bag or a reward tray; else null. A take of the owner's piece from it is a theft

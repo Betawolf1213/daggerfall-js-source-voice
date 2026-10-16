@@ -10687,7 +10687,7 @@ was written against among them.
 
 ### STALL-SHAPE's re-seat - a yard's saved stalls and boulders, put back where their owners put them (2026-10-16)
 
-FIELD BUGS 2026-10-16 STALL-SHAPE (the Discord, 2026-10-15: "market stalls all shifted into the ground/walls" - a red
+FIELD BUGS 2026-10-16b STALL-SHAPE (the Discord, 2026-10-15: "market stalls all shifted into the ground/walls" - a red
 awning against a wall, its counter half buried). A yard's piece records where its model's ORIGIN stands, worked out
 against the model as it stood the day it was placed: a model is lifted by its own bottom and set clear of a wall by its
 own reach (`systems/decorPlacer.js` - "the RECORD says where the origin is - nothing is re-derived at a restore"). TEMPLE-STEPS
