@@ -157,8 +157,8 @@
   {
     "name": "EGLOOK-span-batched-undressed",
     "file": "src/scenes/egSpan.js",
-    "old": "models.set(mk, egBandDress(modelFn(), band));",
-    "new": "models.set(mk, modelFn());",
+    "old": "models.set(mk, m ? egBandDress(m, band) : null);",
+    "new": "models.set(mk, m ? m : null);",
     "tests": [
       "test/eglook_pieces.test.js"
     ]
@@ -220,8 +220,8 @@
   {
     "name": "EGLOOK-batch-never-culls",
     "file": "src/scenes/egPieceBatch.js",
-    "old": "if (show && planes && !sphereInPlanes(planes, k.centre[0] + x,",
-    "new": "if (false && planes && !sphereInPlanes(planes, k.centre[0] + x,",
+    "old": "if (show && planes && !sphereInPlanes(planes, B.centre[0] + x,",
+    "new": "if (false && planes && !sphereInPlanes(planes, B.centre[0] + x,",
     "tests": [
       "test/eglook_pieces.test.js"
     ]
@@ -229,8 +229,8 @@
   {
     "name": "EGLOOK-batch-no-pad",
     "file": "src/scenes/egPieceBatch.js",
-    "old": "k.r + EG_BATCH_CULL_PAD)) { show = false; culled++; }",
-    "new": "k.r - EG_BATCH_CULL_PAD)) { show = false; culled++; }",
+    "old": "B.r + EG_BATCH_CULL_PAD)) { show = false; culled++; }",
+    "new": "B.r - EG_BATCH_CULL_PAD)) { show = false; culled++; }",
     "tests": [
       "test/eglook_pieces.test.js"
     ]
@@ -265,8 +265,8 @@
   {
     "name": "EGLOOK-batch-copies-share-verts",
     "file": "src/scenes/egPieceBatch.js",
-    "old": "= m.indices[start + q] + i * V;",
-    "new": "= m.indices[start + q];",
+    "old": "indices[at++] = m.indices[sm.startIndex + q] + vo[i];",
+    "new": "indices[at++] = m.indices[sm.startIndex + q];",
     "tests": [
       "test/eglook_pieces.test.js"
     ]
