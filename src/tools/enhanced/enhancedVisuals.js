@@ -35,8 +35,8 @@
 // apology. The screen says what it has; it does not pretend, and it does
 // not nag.
 
-import { ITEM_TEMPLATES } from '../systems/item/itemTemplates.js';
-import { buildNeutralBody, NECK_PIVOT_Y } from '../characters/neutralBody.js';
+import { ITEM_TEMPLATES } from '../../systems/item/itemTemplates.js';
+import { buildNeutralBody, NECK_PIVOT_Y } from '../../characters/neutralBody.js';
 
 /** Our own palette, the same one paperdollPayload falls back to. */
 const BLOCKS = [
@@ -87,7 +87,7 @@ function buildDressed(zones, matSpans) {
 // The engine's own constant, imported rather than copied: the day
 // CHAR_PIXEL moves, this moves with it. It has moved once already —
 // 9 to 7 in 2026, then 7 to 12.
-import { CHAR_PIXEL } from '../render/renderer.js';
+import { CHAR_PIXEL } from '../../render/renderer.js';
 
 /** Real item templates, by name, so the prototype's bag is the game's. */
 const BY_NAME = new Map(ITEM_TEMPLATES.map((t) => [t.name.toLowerCase(), t]));

@@ -53,6 +53,6 @@ byte for byte what it was: `t` answers the English pattern while no table has th
    HARDCODED (a count only falls); a DFU word you routed through `localizedText` is counted in
    `test/systems/l10n3d_sites.test.js` ROUTED (`node tools/l10nRouted.mjs` lists them). `node tools/l10nExtract.mjs`
    regenerates the English catalog.
-6. **Run.** The tests that read your files (`grep -l <basename> test/*.test.js`), `test/l10n4_*.test.js`,
+6. **Run.** The tests that read your files (`grep -rl <basename> test --include=*.test.js`), every `test/**/l10n4_*.test.js`,
    `test/systems/l10n3d_sites.test.js`, `test/tooling/mutantdrift.test.js`, and `npx eslint <your files>`. `test/systems/l10n1b.test.js`'s
    "every language's file" test fails until the drafts land - that one failure is expected; every other must pass.

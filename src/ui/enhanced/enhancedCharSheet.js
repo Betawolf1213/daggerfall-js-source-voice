@@ -20,7 +20,7 @@
 //
 // ── THE DENSITY ARGUMENT, WHICH IS THIS SCREEN'S WHOLE POINT ─────
 //
-// src/tools/enhancedUI.js's header makes it: Daggerfall has 35 skills
+// src/tools/enhanced/enhancedUI.js's header makes it: Daggerfall has 35 skills
 // where Skyrim has 18, and the density IS the game. The classic sheet
 // answers that by showing NINE of them - keys 1-4 pop a text panel over
 // the art and `_drawSkillPage` slices to `ids.slice(0, 9)`, because a
@@ -51,7 +51,7 @@
 // THE PAPERDOLL. The classic sheet composes it at DFU's (200,8) and
 // the prototype answers the same slot with a 28-node body schematic -
 // but that schematic is the INVENTORY's signature, it wants
-// tools/enhancedVisuals.js and the three.js tag enhanced.html loads
+// tools/enhanced/enhancedVisuals.js and the three.js tag enhanced.html loads
 // from a CDN, and the port's doctrine has exactly one third-party
 // request in it already - the Ledger's THE ENHANCED SKIN'S WEB FONTS
 // row, which is another file's departure and not a claim of one here.

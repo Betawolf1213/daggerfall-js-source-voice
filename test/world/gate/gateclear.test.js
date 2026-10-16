@@ -193,7 +193,7 @@ test('GATE-CLEAR over the shipped lists: a gate\'s spot DOES land in the mod\'s 
   const prefabs = new Map();
   for (const f of readdirSync(join(V, 'LocationPrefab'))) prefabs.set(f.replace(/\.txt$/, ''), loadLocationPrefab(readFileSync(join(V, 'LocationPrefab', f), 'utf8')));
   const session = new LocationSession();
-  // the room's order (world/worldOfDaggerfall.js): 17 first, then ascending - the gate is online's alone
+  // the room's order (world/worldOfDaggerfall/worldOfDaggerfall.js): 17 first, then ascending - the gate is online's alone
   const regions = readdirSync(join(V, 'Locations')).map((f) => [parseInt(f, 10), f]).sort((a, b) => (a[0] === 17 ? -1 : b[0] === 17 ? 1 : a[0] - b[0]));
   for (const [r, f] of regions) session.appendRegion(r, decodeRegionPack(new Uint8Array(readFileSync(join(V, 'Locations', f)))));
   const pixels = [];

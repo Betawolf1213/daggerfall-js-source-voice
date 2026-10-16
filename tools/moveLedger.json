@@ -4268,5 +4268,13 @@
   ["test/virt_pack.test.js","test/systems/virt_pack.test.js"],
   ["test/weaponglow1.test.js","test/systems/weaponglow1.test.js"],
   ["bible/01-Overview/Audit-Weapon-Glow.md","bible/01-Overview/audits/Audit-Weapon-Glow.md"],
-  ["bible/01-Overview/Field-Bugs-2026-10-16.md","bible/01-Overview/bugs/Field-Bugs-2026-10-16.md"]
+  ["bible/01-Overview/Field-Bugs-2026-10-16.md","bible/01-Overview/bugs/Field-Bugs-2026-10-16.md"],
+  ["src/world/worldOfDaggerfall.js","src/world/worldOfDaggerfall/worldOfDaggerfall.js"],
+  ["src/tools/paperdollViewer.js","src/tools/paperdoll/paperdollViewer.js"],
+  ["src/tools/enhancedChargen.js","src/tools/enhanced/enhancedChargen.js"],
+  ["src/tools/enhancedMenu.js","src/tools/enhanced/enhancedMenu.js"],
+  ["src/tools/enhancedUI.js","src/tools/enhanced/enhancedUI.js"],
+  ["src/tools/enhancedVisuals.js","src/tools/enhanced/enhancedVisuals.js"],
+  ["test/tree/crafthold.test.js","test/server/crafthold.test.js"],
+  ["bible/01-Overview/audits/Audit-Log.md","bible/01-Overview/Audit-Log.md"]
 ]

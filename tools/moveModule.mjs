@@ -5,16 +5,20 @@
 // A move by hand misses some of them, and the ones it misses fail late or, worse, not at all. This moves the files
 // with `git mv` and rewrites each address in one pass:
 //
-//   SPECIFIER  a relative module specifier - `from '…'`, `import '…'`, `import('…')`, `new URL('…', import.meta.url)`
+//   SPECIFIER  a relative module specifier - `from '…'`, `import '…'`, `import('…')`, `new URL('…', import.meta.url)`,
+//              `require('…')`, `createRequire(import.meta.url)('…')`, `require.resolve('…')`, `import.meta.resolve('…')`
 //              - that resolves to a moved file is rewritten from its own file; every specifier INSIDE a moved file is
 //              re-based to where the file now stands - a template's static folder too (`new URL(`../../vendor/x/${n}`,
-//              import.meta.url)`: its file is chosen at run time, its folder is not). Only those four forms: a runtime
-//              URL (`fetch('./sfx/…')`) is the page's, not the module's, and is left alone.
+//              import.meta.url)`: its file is chosen at run time, its folder is not), a root concatenated into a URL
+//              (`new URL('../' + p, ...)`), an `import.meta.glob` pattern's folder (GLOBBED), and the module's own
+//              folder (ROOTED). A runtime URL (`fetch('./sfx/…')`) is the page's, not the module's, and is left alone.
 //   ROOT PATH  `src/systems/arenaBout.js` anywhere in a tracked text file, with an optional `/`, `./` or `../..`
-//              before it - pins, docs, mutant records, workflows, comments.
+//              before it, or a host's (`http://localhost:5241/`) - pins, docs, mutant records, workflows, comments.
 //   SRC PATH   `systems/arenaBout.js` - the spelling the bible (a cite's path form among them), the comments and the
 //              tests' `src()` helpers use for a file under src/; and `01-Overview/X.md`, the bible's own spelling of
-//              a page. With `./` or `../..` before it, it is a specifier quoted by a pin, rewritten the same.
+//              a page. With `./` or `../..` before it, it is a specifier quoted by a pin, rewritten the same - not in
+//              server/ or server-account/, whose `../net/x.js` is their own tree's. A file directly under src/ or bible/
+//              has no such spelling: its bare name is its cites' and its prose's, kept with the name.
 //   ESCAPED    either path escaped for a pattern (`/06-Systems\/X\.md/`, `src\/systems\/x\.js`).
 //   QUOTED     a test's pin on an import as its file spells it (`from '\.\/y\.js'`), where the move re-based it.
 //
@@ -24,14 +28,17 @@
 // relay's and the account service's migrations (applied, so frozen), the lockfile, and this tool and its pins (their
 // examples are fixtures).
 //
-// What it cannot rewrite it names: a directory sweep that does not recurse (`readdirSync('src/systems')` - it stops
-// seeing a moved file and passes on what is left, silently), an import or a URL built from a template into the folder
-// a file left, and a sibling's quoted `./x.js`. And it refuses a move that changes a byte of the relay's bundle (RELAY
-// lines) unless told `--relay`: that is a new RELAY_VERSION and a deploy that drops every connected player.
+// What it cannot rewrite it names (BLIND): a directory sweep that does not recurse (`readdirSync('src/systems')` - it
+// stops seeing a moved file and passes on what is left, silently), an import or a URL built from a template into the
+// folder a file left, a sibling's quoted `./x.js`, a negative pin quoting a spelling its moved subject no longer has, a
+// URL built from a variable, a path that named nothing where its file stood, a glob a move empties (a workflow's
+// `paths:`, an import.meta.glob). And it refuses a move that changes a byte of the relay's bundle (RELAY lines) unless
+// told `--relay`: that is a new RELAY_VERSION and a deploy that drops every connected player; a plan whose moves
+// collide; and a --fixup over an old path that is tracked again.
 //
 // THE LEDGER (TIDY2). Every move is appended to tools/moveLedger.json. A branch written before a move still names the
 // old paths; after it merges main, `--fixup` rewrites every address the ledger knows is gone to where the file went,
-// and test/tidy1_codemap.test.js fails while any is left.
+// and test/tooling/tidy1_codemap.test.js fails while any is left.
 //
 //   node tools/moveModule.mjs src/systems/arena src/systems/arena*.js        move them, rewrite every address
 //   node tools/moveModule.mjs --plan moves.json                              many moves, one pass: [[from, to], ...]
@@ -49,7 +56,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 /** Tracked files that can hold an address - the parity scripts' (`.sh`, `.py`) among them. */
 export const TEXT_EXT = /\.(js|mjs|cjs|ts|json|md|html|yml|yaml|toml|css|txt|sh|py)$/;
 /** Files whose text is a record that is never rewritten. */
-export const FROZEN = [/^server(-account)?\/migrations\//, /^package-lock\.json$/, /(^|\/)node_modules\//, /^tools\/moveModule\.mjs$/, /^test\/(?:[\w-]+\/)*tidy1_codemap\.test\.js$/, /^tools\/moveLedger\.json$/];
+export const FROZEN = [/^server(-account)?\/migrations\//, /^package-lock\.json$/, /(^|\/)node_modules\//, /^tools\/moveModule\.mjs$/, /^test\/(?:[\w-]+\/)*tidy1_(?:codemap|movetool)\.test\.js$/, /^tools\/moveLedger\.json$/];
 /** Every move made, in order: [[from, to], ...]. */
 export const LEDGER = 'tools/moveLedger.json';
 /** The roots a path is also spelled from: `systems/x.js` is src's, `01-Overview/X.md` the bible's. */
@@ -68,6 +75,9 @@ const SPECIFIER_RES = [
   // a createRequire's require, relative to its module as an import is - named, or called where it is made
   /(\brequire\s*\(\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/g,
   /(\bcreateRequire\(\s*import\.meta\.url\s*\)\s*\(\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/g,
+  // a path resolved without loading it (AUDIT TIDY TOOL-6)
+  /(\brequire\.resolve\s*\(\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/g,
+  /(\bimport\.meta\.resolve\s*\(\s*)(['"])(\.{1,2}\/[^'"\n]*)\2/g,
 ];
 
 /** The leads of the two forms a template can be a specifier in. */
@@ -165,11 +175,23 @@ export function rewriteSpecifiers(text, file, home, moved, exists = null) {
 
 /** The file names a text mentions, plainly or escaped for a pattern (`x\\.js`) - a move whose name is not among them
  *  has nothing to rewrite there, and is not tried. */
-export function namesIn(text) {
+export function namesIn(text, exts = 'm?js|cjs|json|md|html') {
   const out = new Set();
   // a name's own dots may be escaped too: `online\.test\.js` is online.test.js, not test.js
-  for (const m of text.matchAll(/([\w-]+(?:\\?\.[\w-]+)*)\\?\.(m?js|cjs|json|md|html)(?![\w-])/g)) out.add(`${m[1].replace(/\\/g, '')}.${m[2]}`);
+  for (const m of text.matchAll(new RegExp(`([\\w-]+(?:\\\\?\\.[\\w-]+)*)\\\\?\\.(${exts})(?![\\w-])`, 'g'))) out.add(`${m[1].replace(/\\/g, '')}.${m[2]}`);
   return out;
+}
+
+/** The extensions of the moved files' names, as a pattern's alternatives - a `.css`, a `.sh` or a `.glsl` moved is
+ *  looked for by its own extension (AUDIT TIDY TOOL-5: a fixed list read none of them, and rewrote nothing, silently). */
+const EXTS = new WeakMap();
+export function extsOf(names) {
+  let e = EXTS.get(names);
+  if (!e) {
+    e = [...new Set([...names.keys()].map((n) => n.slice(n.lastIndexOf('.') + 1)).filter(Boolean))].map(esc).join('|') || 'js';
+    EXTS.set(names, e);
+  }
+  return e;
 }
 
 /** `moves` by their file's name. */
@@ -185,9 +207,11 @@ const escaped = (p) => p.replace(/[/.]/g, (c) => `\\${c}`);
 /** Rewrite the root paths and src paths of the moved files in any text. `names` is byName(moved), for speed: only the
  *  moves whose file the text names are tried, all of them in one pass - a page that names three thousand tests is read
  *  once, not three thousand times. */
-export function rewritePaths(text, moved, names = byName(moved)) {
+export function rewritePaths(text, moved, names = byName(moved), file = '') {
   const plain = new Map(), esc2 = new Map();   // a spelling -> [what it becomes, whether it is a root's own spelling]
-  for (const name of namesIn(text)) for (const [from, to] of names.get(name) ?? []) {
+  // a server's own tree has its own src/: a `../net/x.js` there is its own, not the client's (AUDIT TIDY TOOL-10)
+  const otherTree = /^server(?:-account)?\//.test(file);
+  for (const name of namesIn(text, extsOf(names))) for (const [from, to] of names.get(name) ?? []) {
     plain.set(from, [to, false]);
     esc2.set(escaped(from), [escaped(to), false]);
     const root = ROOTS.find((r) => from.startsWith(r) && to.startsWith(r));
@@ -196,6 +220,7 @@ export function rewritePaths(text, moved, names = byName(moved)) {
     // (`from.includes('../systems/x.js')`): the specifier pass cannot know what it is relative to, and the src path
     // names the same file from any depth it is written at
     const [f, t] = [from.slice(root.length), to.slice(root.length)];
+    if (!f.includes('/')) continue;   // `main.js` alone is its name, which a move keeps (AUDIT TIDY TOOL-4)
     if (!plain.has(f)) plain.set(f, [t, true]);
     if (!esc2.has(escaped(f))) esc2.set(escaped(f), [escaped(t), true]);
   }
@@ -205,7 +230,7 @@ export function rewritePaths(text, moved, names = byName(moved)) {
   // a root path may stand after `/`; a root's own spelling may not (`foo/systems/x.js` is no src path)
   text = text.replace(new RegExp(`(?<![\\w\\-./])(\\/|\\.\\/|(?:\\.\\.\\/)+)?(${alt(plain)})(?![\\w\\-])`, 'g'), (all, lead = '', key) => {
     const [to, own] = plain.get(key);
-    if (own && lead === '/') return all;
+    if (own && (lead === '/' || (lead && otherTree))) return all;
     n++;
     return lead + to;
   });
@@ -218,7 +243,7 @@ export function rewritePaths(text, moved, names = byName(moved)) {
   });
   text = text.replace(new RegExp(`(?<![\\w\\-.])(?<!\\\\/)(\\\\/|\\\\.\\\\/|(?:\\\\.\\\\.\\\\/)+)?(${alt(esc2)})(?![\\w\\-])`, 'g'), (all, lead = '', key) => {
     const [to, own] = esc2.get(key);
-    if (own && lead === '\\/') return all;
+    if (own && (lead === '\\/' || (lead && otherTree))) return all;
     n++;
     return lead + to;
   });
@@ -318,33 +343,40 @@ export function rebaseOwnDir(text, deeper, file = '') {
  * tracked text file. Returns the new texts by their NEW path, the count of addresses rewritten in each, and the blind
  * spots.
  */
-export function planMove(moves, texts, exists = null) {
+export function planMove(moves, texts, exists = null, { blind: named = true } = {}) {
   const moved = new Map(moves), names = byName(moves);
   const fromDirs = [...new Set(moves.map(([f]) => posix.dirname(f)))];
   const writes = new Map(), counts = new Map(), blind = [];
   // QUOTED IMPORTS first: what each code file's own specifiers become - read off the text as it stands, before any path
   // in a pin is rewritten, so the pin's old spelling is still there to find
-  const changes = new Map();
+  const changes = new Map(), kept = new Map();
   for (const [file, text] of texts) {
     // the subjects pins read - a test's own imports are its own, rewritten once by the specifier pass
     if (!CODE_EXT.test(file) || FROZEN.some((re) => re.test(file)) || /^test\//.test(file)) continue;
     const c = specifierChanges(text, rewriteSpecifiers(text, file, moved.get(file) ?? file, moved).text);
     if (c.size) changes.set(file, c);   // by the path a pin names it by now
+    else kept.set(file, new Set(specifierList(text)));
   }
   const depth = (f) => f.split('/').length;
   for (const [file, text] of texts) {
     const home = moved.get(file) ?? file;
     if (FROZEN.some((re) => re.test(file))) {
       // a frozen file's text is a fixture - but a frozen file that moves still has to reach what it imports
+      // - its top-level lines alone: what it quotes inside a test is a fixture, never re-based (AUDIT TIDY TOOL-3)
       if (home !== file && CODE_EXT.test(file)) {
-        const r = rewriteSpecifiers(text, file, home, moved, exists), o = rebaseOwnDir(r.text, depth(home) - depth(file), home);
-        writes.set(home, o.text); blind.push(...o.blind);
+        const TOP = /^(?:import\b|export\b|\} from\b|const\b|let\b)/;
+        writes.set(home, text.split('\n').map((l) => {
+          if (!TOP.test(l)) return l;
+          const o = rebaseOwnDir(rewriteSpecifiers(l, file, home, moved, exists).text, depth(home) - depth(file), home);
+          blind.push(...o.blind);
+          return o.text;
+        }).join('\n'));
       }
       continue;
     }
     let t = text, n = 0;
     if (changes.size && /^test\//.test(file)) {
-      const q = rewriteQuotedImports(t, changes, home);
+      const q = rewriteQuotedImports(t, changes, home, kept);
       t = q.text; n += q.n; blind.push(...q.blind);
     }
     if (CODE_EXT.test(file)) { const r = rewriteSpecifiers(t, file, home, moved, exists); t = r.text; n += r.n; }
@@ -374,11 +406,39 @@ export function planMove(moves, texts, exists = null) {
       const r = rewriteRecords(t, moved, file);
       t = r.text; n += r.n; blind.push(...r.blind);
     }
-    const p = rewritePaths(t, moved, names);
+    const p = rewritePaths(t, moved, names, home);
     if (p.n) { t = p.text; n += p.n; }
     if (t !== text || home !== file) writes.set(home, t);
     if (n) counts.set(home, n);
-    if (/\.(js|mjs|cjs)$/.test(home)) blind.push(...blindSpots(t, home, fromDirs, moved, names));
+    if (named && /\.(js|mjs|cjs)$/.test(home)) blind.push(...blindSpots(t, home, fromDirs, moved, names));
+  }
+  if (!named) return { writes, counts, blind: [] };   // a gate that asks only what is left to rewrite (AUDIT TIDY TOOL-11)
+  // AUDIT TIDY TOOL-1: A NEGATIVE PIN QUOTING A SPELLING ITS SUBJECT NO LONGER HAS. A pin that an import is ABSENT
+  // (`!src.includes("from './x.js'")`, `doesNotMatch(src, /from '\.\.\/ui\//)`) quotes it as its subject spelled it;
+  // once the subject moves, that spelling may name nothing from where it stands, and the pin passes on anything. The
+  // specifier pass re-bases what a file HAS, never what a pin says it must not - so each is named
+  if (exists) {
+    const NEG = /doesNotMatch\(|assert\.ok\(\s*!|\.includes\([^)]*\)\s*={2,3}\s*false|assert\.equal\([^;]*,\s*false\s*[,)]/;
+    const QUOTE = /(['"`])((?:\.\.?\/)+[\w./-]*)\1|((?:\\\.\\\.\\\/|\\\.\\\/)+(?:[\w-]+\\\/)*(?:[\w-]+(?:\\\.[\w-]+)*)?)/g;
+    const movedTo = new Set(moved.values());
+    const newDirs = new Set([...movedTo].flatMap((f) => f.split('/').slice(0, -1).map((_, i, a) => a.slice(0, i + 1).join('/'))));
+    const after = (p) => (exists(p) && !moved.has(p)) || movedTo.has(p) || newDirs.has(p);
+    for (const [file, text] of texts) {
+      if (!/\.(m?js|cjs)$/.test(file) || FROZEN.some((re) => re.test(file))) continue;
+      const subjects = [...namesIn(text, extsOf(names))].flatMap((nm) => names.get(nm) ?? []).filter(([f, to]) => text.includes(f) || text.includes(to));
+      if (!subjects.length) continue;
+      text.split('\n').forEach((l, i) => {
+        if (!NEG.test(l)) return;
+        for (const m of l.matchAll(QUOTE)) {
+          const q = (m[2] ?? m[3].replace(/\\(.)/g, '$1'));
+          const hit = subjects.find(([f, to]) => {
+            const was = posix.normalize(posix.join(posix.dirname(f), q)).replace(/\/$/, ''), now = posix.normalize(posix.join(posix.dirname(to), q)).replace(/\/$/, '');
+            return !was.startsWith('..') && exists(was) && !after(now);
+          });
+          if (hit) { blind.push(`${moved.get(file) ?? file}:${i + 1}: a negative pin quotes ${q}, which names nothing from ${hit[1]} - it passes on anything: spell it at any depth`); break; }
+        }
+      });
+    }
   }
   // a module's import.meta.glob over a folder a moved file left: the pattern stands, the file it matched does not
   for (const [file, text] of texts) {
@@ -437,20 +497,32 @@ export function specifierChanges(oldText, newText) {
  * becomes the new one - in one pass, so a spelling that became another's is not rewritten twice. One the files a text
  * names disagree on is named, not guessed.
  */
-export function rewriteQuotedImports(text, changes, file = '') {
+export function rewriteQuotedImports(text, changes, file = '', kept = new Map()) {
   const plan = new Map();
+  const names = (path) => text.includes(path) || (path.startsWith('src/') && text.includes(path.slice(4)));
   for (const [path, specs] of changes) {
-    if (!(text.includes(path) || (path.startsWith('src/') && text.includes(path.slice(4))))) continue;
+    if (!names(path)) continue;
     for (const [a, b] of specs) {
       for (const [x, y] of [[a, b], [escaped(a), b === null ? null : escaped(b)]]) plan.set(x, plan.has(x) && plan.get(x) !== y ? null : y);
     }
+  }
+  // AUDIT TIDY TOOL-2: a file the text also names that the move left as it was still spells it the old way - which
+  // file the quote reads is not known, so the two ways are named, not guessed
+  for (const [path, specs] of kept) {
+    if (!names(path)) continue;
+    for (const a of specs) if (plan.has(a)) for (const x of [a, escaped(a)]) plan.set(x, plan.get(x) === x ? x : null);
   }
   const quoted = [...plan.keys()].filter((x) => plan.get(x) !== x && (text.includes(`'${x}'`) || text.includes(`"${x}"`)));
   if (!quoted.length) return { text, n: 0, blind: [] };
   const blind = quoted.filter((x) => plan.get(x) === null).map((x) => `${file}: quotes ${x}, an import the files it names re-based two ways`);
   const sure = quoted.filter((x) => plan.get(x) !== null);
   let n = 0;
-  if (sure.length) text = text.replace(new RegExp(`(['"])(${sure.map(esc).join('|')})\\1`, 'g'), (all, q, x) => { n++; return q + plan.get(x) + q; });
+  // the text's own import lines are its own, re-based by the specifier pass from where it stands - never a quote
+  const OWN_LINE = /^\s*(?:import\b|export\b[^'"`]*\bfrom\b|\}\s*from\b)/;
+  if (sure.length) {
+    const re = new RegExp(`(['"])(${sure.map(esc).join('|')})\\1`, 'g');
+    text = text.split('\n').map((l) => (OWN_LINE.test(l) ? l : l.replace(re, (all, q, x) => { n++; return q + plan.get(x) + q; }))).join('\n');
+  }
   return { text, n, blind };
 }
 
@@ -517,7 +589,14 @@ function main(argv) {
   const trackedSet = new Set(tracked);
   const ledger = existsSync(join(ROOT, LEDGER)) ? JSON.parse(readFileSync(join(ROOT, LEDGER), 'utf8')) : [];
   let moves;
-  if (fixup) moves = composeLedger(ledger).filter(([f, t]) => !trackedSet.has(f) && trackedSet.has(t));
+  if (fixup) {
+    // AUDIT TIDY TOOL-9: an old path tracked again beside the file it moved to - a merge kept main's copy, or a branch
+    // wrote a file there - is two files, and re-basing the old one would keep it alive; it is named, and nothing written
+    const revived = composeLedger(ledger).filter(([f, t]) => trackedSet.has(f) && trackedSet.has(t));
+    for (const [f, t] of revived) console.error(`REVIVED ${f}: tracked again where the ledger moved it from (${t}) - keep one`);
+    if (revived.length) return 1;
+    moves = composeLedger(ledger).filter(([f, t]) => !trackedSet.has(f) && trackedSet.has(t));
+  }
   else if (planAt >= 0) moves = JSON.parse(readFileSync(argv[planAt + 1], 'utf8'));
   else {
     const [dest, ...sources] = args;
@@ -526,6 +605,14 @@ function main(argv) {
       return 2;
     }
     moves = sources.map((f) => [f, posix.join(dest, posix.basename(f))]);
+  }
+  // AUDIT TIDY TOOL-8: a plan's moves checked against each other before any of them is made - two to one place, one file
+  // twice, or onto a file another move takes away - or the first `git mv` lands and the second fails with the rest unwritten
+  if (!fixup) {
+    const seen = (xs) => xs.filter((x, i) => xs.indexOf(x) !== i);
+    const clash = [...seen(moves.map(([f]) => f)).map((f) => `moved twice: ${f}`), ...seen(moves.map(([, t]) => t)).map((t) => `two moves to: ${t}`),
+      ...moves.filter(([, t]) => moves.some(([f]) => f === t)).map(([, t]) => `onto a file another move takes: ${t}`)];
+    if (clash.length) { for (const c of clash) console.error(c); return 1; }
   }
   if (!fixup) for (const [f, t] of moves) {
     if (!trackedSet.has(f)) { console.error(`not a tracked file: ${f}`); return 1; }
@@ -541,7 +628,7 @@ function main(argv) {
   const was = within(trackedSet), now = within(after);
   const broken = [...writes].filter(([f]) => CODE_EXT.test(f))
     .flatMap(([f, t]) => brokenBy(texts.get(back.get(f) ?? f), back.get(f) ?? f, t, f, was, now));
-  // THE RELAY'S BYTES ARE ITS VERSION (test/relayversion.test.js): a move that changes one byte of the relay's bundle -
+  // THE RELAY'S BYTES ARE ITS VERSION (test/net/relayversion.test.js): a move that changes one byte of the relay's bundle -
   // a moved file in it, a re-based import, a path in one of its comments - is a new RELAY_VERSION, and the relay
   // redeploys on its merge and drops every connected player. A tidy is not worth that alone; it goes with a relay slice.
   // a fixup mends a merge whose imports still name the old paths - the relay's walk cannot follow them yet, and the

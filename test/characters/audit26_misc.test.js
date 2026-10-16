@@ -11,7 +11,7 @@ import { PALETTES, HUMAN_SKINS } from '../../src/characters/palettes.js';
 import { RACE_TONE as DESIGN_TONE, VILLAGER_DESIGNS } from '../../src/characters/villagerDesigns.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const viewerPath = join(root, 'src/tools/paperdollViewer.js');
+const viewerPath = join(root, 'src/tools/paperdoll/paperdollViewer.js');
 const viewerSrc = readFileSync(viewerPath, 'utf8');
 
 const walk = (dir) => readdirSync(dir).flatMap((n) => {

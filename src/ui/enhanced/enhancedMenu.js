@@ -7,7 +7,7 @@
 //
 // ONE IMPLEMENTATION, THREE HOSTS. This module is mounted by the game
 // at boot (src/main.js), by the prototype page (/menu.html, via
-// src/tools/enhancedMenu.js), and by the PAUSE DOOR once the game is
+// src/tools/enhanced/enhancedMenu.js), and by the PAUSE DOOR once the game is
 // running (ui/pauseDoor.js) - and there is no second copy of any of
 // it. The prototype exists to be argued with and must therefore be the
 // same screen that ships, or the argument is with something else.

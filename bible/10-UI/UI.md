@@ -77,7 +77,7 @@ piles, the wagon and the guild reward picker are the enhanced pane now,
 and `CLASSIC_ONLY_MODES` is gone. U59 gave the pack the AVATAR, by
 keeping the RGBA composite `ui/paperDoll.js` was already building and
 throwing away, and turned the slot map's twenty-seven dots into a named
-list of what is worn. `enhanced.html` + `src/tools/enhancedUI.js` is
+list of what is worn. `enhanced.html` + `src/tools/enhanced/enhancedUI.js` is
 the prototype for those and is not mounted by anything.
 
 WHAT THIS LANE OWES NEXT is logged at the top of `UI-Arc.md` under THE

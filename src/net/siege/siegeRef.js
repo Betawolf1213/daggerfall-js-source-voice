@@ -35,7 +35,7 @@
 //   - A FALLEN fighter rises at its side's next wave, with 3 seconds no
 //     blow touches.
 //
-// A LEAF: the relay bundles every byte it imports (test/relayversion
+// A LEAF: the relay bundles every byte it imports (test/net/relayversion
 // .test.js), so DFU's damage tables are copied here and pinned EQUAL to
 // characters/weapons.js and combat/formulas.js by test, not imported
 // (the gate's way - test/net/gate/wb4b_gate_blows.test.js).

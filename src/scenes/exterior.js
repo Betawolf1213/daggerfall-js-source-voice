@@ -13,7 +13,7 @@ import { markPuddleWater, carryPuddleMask } from '../world/puddleMask.js';   // 
 import { dilateCoastalClimate } from '../world/terrain/terrainHelper.js';   // AUDIT C&C (lens T): ReadyCheck's coastal repair, as the streaming host runs it
 import { WORLD_FRAME } from '../render/renderer.js';   // AUDIT-EL F5
 import { windmillsOn } from '../world/windmills.js';   // WM3: the Windmills pack's switch
-import { wodOn, wodLightColors } from '../world/worldOfDaggerfall.js';   // WOD4: the mod's switch and its per-light colours
+import { wodOn, wodLightColors } from '../world/worldOfDaggerfall/worldOfDaggerfall.js';   // WOD4: the mod's switch and its per-light colours
 import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS, HOLD_FLATS, holdModelMatrix, holdFireLights, rollHoldFoes } from '../world/worldOfDaggerfall/wodPrivateersHold.js';   // WOD4: the camp at Privateer's Hold
 import { frameBegin, frameEnd, frameAbort } from '../systems/frameClock.js';   // PERF1: the frame's script time; AUDIT-WH2 L1-F4: and the door an early return takes
 import { frameCapSkip } from '../systems/frameCap.js';   // FPS-CAP1: DFU's TargetFrameRate - a held frame re-arms before the clock and the input frame

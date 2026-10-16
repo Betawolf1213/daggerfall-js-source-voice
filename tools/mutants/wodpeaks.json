@@ -1,14 +1,14 @@
 [
   {
     "name": "WODPEAKS-spires-always",
-    "file": "src/world/worldOfDaggerfall.js",
+    "file": "src/world/worldOfDaggerfall/worldOfDaggerfall.js",
     "old": "    const prefabOf = this.mountains ? (name) => this.prefabs.get(name) ?? null : (name) => (WOD_MOUNTAIN_PREFAB.test(name ?? '') ? null : this.prefabs.get(name) ?? null);",
     "new": "    const prefabOf = (name) => this.prefabs.get(name) ?? null;",
     "tests": ["test/world/worldOfDaggerfall/ow_wod.test.js"]
   },
   {
     "name": "WODPEAKS-massifs-when-off",
-    "file": "src/world/worldOfDaggerfall.js",
+    "file": "src/world/worldOfDaggerfall/worldOfDaggerfall.js",
     "old": "      if (!this.mountains) break;   // WOD-PEAKS: no spires stood, none for the route to go round\n",
     "new": "",
     "tests": ["test/world/worldOfDaggerfall/ow_wod.test.js"]

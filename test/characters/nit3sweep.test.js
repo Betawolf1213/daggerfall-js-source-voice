@@ -111,7 +111,7 @@ test('NT3 (F162): while a choose-one is up NOTHING leaves the pack - wagon or no
 // ---------------------------------------------------------------
 
 test('NT3 (F135): the paperdoll bench gates on the TRAVEL sum with a rolling trim', () => {
-  const pv = src('tools/paperdollViewer.js');
+  const pv = src('tools/paperdoll/paperdollViewer.js');
   assert.ok(pv.includes('if (gest.travel / longest >= ATTACK_THRESHOLD) {'),
     'the gate is TravelDist / longestDim - the summed PATH, not the net displacement');
   assert.ok(pv.includes('gest.x -= p.dx; gest.y -= p.dy; gest.travel -= p.mag;'),

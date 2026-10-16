@@ -7,7 +7,7 @@ import { Renderer } from '../src/render/renderer.js';
 import { EL_LANE, lanternColor } from '../src/render/enhancedLighting.js';
 import { CITY_LIGHT_COLOR, fillLanternPool, nearestLights, rangesFor, capFadeColors, capFadePairs } from '../src/world/city/cityLights.js';
 import { withPlayerLights } from '../src/scenes/magicCandle.js';
-import { wodLightColors } from '../src/world/worldOfDaggerfall.js';
+import { wodLightColors } from '../src/world/worldOfDaggerfall/worldOfDaggerfall.js';
 import { yardLampRows } from '../src/scenes/homeYards.js';
 import { adoptLight } from '../src/render/lightId.js';
 

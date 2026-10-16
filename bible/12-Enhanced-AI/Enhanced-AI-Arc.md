@@ -132,7 +132,7 @@ without asking - which is how three lanes each filed an Audit 49 on
 2026-09-02 and two of them silently overwrote a predecessor. Both are
 recovered from history (52 the roads calibration, 53 the road-to-1:1
 campaign; 49 stays with the grass audit that holds the file now). The
-law: before filing an audit, `ls bible/01-Overview/Audit-*.md` and take
+law: before filing an audit, `ls bible/01-Overview/audits/Audit-*.md` and take
 the next free number; never write an audit file that already exists.
 
 ## ENHANCED AI 4 - the motor reads the switch (2026-09-02)

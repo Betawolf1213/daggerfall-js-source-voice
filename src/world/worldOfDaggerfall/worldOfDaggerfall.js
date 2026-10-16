@@ -37,13 +37,13 @@
 // loads nothing and throws nothing.
 // ═══════════════════════════════════════════════════════════════════
 
-import { modSetting } from '../systems/modSettings.js';
-import { loadLocationPrefab, validateValue } from './worldOfDaggerfall/wodLocationData.js';
-import { decodeRegionPack } from './worldOfDaggerfall/wodLocationPack.js';
+import { modSetting } from '../../systems/modSettings.js';
+import { loadLocationPrefab, validateValue } from './wodLocationData.js';
+import { decodeRegionPack } from './wodLocationPack.js';
 import {
   LocationSession, pickLocations, placeObjects, WOD_AWAKE_REGION, WOD_REFUSED_REGION,
-} from './worldOfDaggerfall/wodLocationLoader.js';
-import { classifyObject, objectMatrix, objectNormalMatrix } from './worldOfDaggerfall/wodLocationObjects.js';
+} from './wodLocationLoader.js';
+import { classifyObject, objectMatrix, objectNormalMatrix } from './wodLocationObjects.js';
 
 export const WOD_VENDOR = 'world-of-daggerfall';
 /** The mod's switch, read where the world mounts (the loader is built
@@ -59,10 +59,10 @@ const IN_BROWSER = typeof window !== 'undefined';
 // out of the JS), the prefabs as text, each its own lazy chunk. Node
 // sees empty tables and the tests feed the same files off the disk.
 const PACK_URLS = IN_BROWSER
-  ? import.meta.glob('../../vendor/world-of-daggerfall/Locations/*.bin', { eager: true, query: '?url', import: 'default' })
+  ? import.meta.glob('../../../vendor/world-of-daggerfall/Locations/*.bin', { eager: true, query: '?url', import: 'default' })
   : {};
 const PREFAB_TEXT = IN_BROWSER
-  ? import.meta.glob('../../vendor/world-of-daggerfall/LocationPrefab/*.txt', { query: '?raw', import: 'default' })
+  ? import.meta.glob('../../../vendor/world-of-daggerfall/LocationPrefab/*.txt', { query: '?raw', import: 'default' })
   : {};
 
 const baseName = (p) => p.split('/').pop();

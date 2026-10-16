@@ -197,7 +197,7 @@ DFU's draw for draw. What the move would strand, held:
 THE FOUR HOSTS: `scenes/worldModes.js` and `scenes/dungeonContext.js` build and save through the law
 (`dungeonLocationFor`, `smallerDungeonsStamp`, `needsStartWarp`) and need no seam; `scenes/world.js` and
 `scenes/exterior.js` size the quest layer's locations through it and load quests through the bridge, which runs the
-re-lay. AUDIT FIELD-BUGS 1008 (`01-Overview/audits/Audit-Log.md`): the re-lay reads only a build that moved (`distinct`), offline
+re-lay. AUDIT FIELD-BUGS 1008 (`01-Overview/Audit-Log.md`): the re-lay reads only a build that moved (`distinct`), offline
 only a dungeon a link holds (unlinked, the build is the settings'), and a shared copy arriving
 (`questRepair.js relayQuestMovedLayout`). `test/systems/quest/mediumdistinct.test.js` (4); `tools/mutants/mediumdistinct.json` (18), all dead.
 

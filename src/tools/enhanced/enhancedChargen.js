@@ -12,15 +12,15 @@
 // player has handed the file over. The pick is the same one the game
 // uses, and a refusal falls through to the map's named-list arm rather
 // than to a blank page.
-import { mountEnhancedChargen, attachChargenText } from '../ui/enhanced/enhancedChargen.js';
-import { createChargenFlow } from '../systems/chargenSession.js';
-import { ensureArena2, getBytes } from '../scenes/dataSource.js';
-import { ImgFile } from '../formats/imgFile.js';
-import { DFPalette } from '../formats/dfPalette.js';
-import { TextRsc } from '../formats/textRsc.js';
-import { CifRciFile } from '../formats/cifRciFile.js';
-import { raceArt, FACES_PER_RACE } from '../systems/races.js';
-import { bitmapCanvas } from '../ui/bitmapCanvas.js';
+import { mountEnhancedChargen, attachChargenText } from '../../ui/enhanced/enhancedChargen.js';
+import { createChargenFlow } from '../../systems/chargenSession.js';
+import { ensureArena2, getBytes } from '../../scenes/dataSource.js';
+import { ImgFile } from '../../formats/imgFile.js';
+import { DFPalette } from '../../formats/dfPalette.js';
+import { TextRsc } from '../../formats/textRsc.js';
+import { CifRciFile } from '../../formats/cifRciFile.js';
+import { raceArt, FACES_PER_RACE } from '../../systems/races.js';
+import { bitmapCanvas } from '../../ui/bitmapCanvas.js';
 
 const app = document.getElementById('app');
 

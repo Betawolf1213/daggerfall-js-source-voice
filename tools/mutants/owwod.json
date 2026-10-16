@@ -91,7 +91,7 @@
   },
   {
     "name": "OW-WOD-PATH-rock-fields-too",
-    "file": "src/world/worldOfDaggerfall.js",
+    "file": "src/world/worldOfDaggerfall/worldOfDaggerfall.js",
     "old": "export const WOD_MOUNTAIN_PREFAB = /^WOD_Mountain_/;",
     "new": "export const WOD_MOUNTAIN_PREFAB = /^WOD_(?:Mountain_|Rocks_Large)/;",
     "tests": [

@@ -223,7 +223,7 @@ test('drape: girth only — a garment is never scaled in height', () => {
   // The rig's own law: every exported constant on it is a HEIGHT, so
   // scaling a garment vertically drops its hem through the floor on a
   // giant and hitches it to the knee on a lich.
-  const src = readFileSync(new URL('../../src/tools/paperdollViewer.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../../src/tools/paperdoll/paperdollViewer.js', import.meta.url), 'utf8');
   const call = /drapedMeshes\[nm\]\.scale\.set\(([^)]*)\)/.exec(src);
   assert.ok(call, 'nothing scales the drape at all');
   const [x, y, z] = call[1].split(',').map((t) => t.trim());
@@ -261,7 +261,7 @@ test('spectral: the transparency does not outlive the ghost', () => {
   // The body material is SHARED by every design. Set it transparent for
   // a ghost and forget to set it back, and the next orc you pick is a
   // see-through orc.
-  const src = readFileSync(new URL('../../src/tools/paperdollViewer.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../../src/tools/paperdoll/paperdollViewer.js', import.meta.url), 'utf8');
   const sets = src.match(/mat\.transparent = [^;]+;/g) || [];
   assert.ok(sets.length >= 2, 'transparency is set but never cleared');
   assert.ok(

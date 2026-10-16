@@ -18,7 +18,7 @@
 // ── WHY A CONSTELLATION, AND WHY IT IS NOT SKYRIM'S ───────────────
 // Skyrim's level-up screen is a sky: your skills are stars, and the
 // moment you gain a level the camera is already pointed at them. The
-// INTERACTION MODEL is what src/tools/enhancedUI.js says the port
+// INTERACTION MODEL is what src/tools/enhanced/enhancedUI.js says the port
 // borrows - one thing at a time, targets big enough for a thumb,
 // four directions and a confirm - and that model is exactly right for
 // a screen whose whole job is "choose one of eight".

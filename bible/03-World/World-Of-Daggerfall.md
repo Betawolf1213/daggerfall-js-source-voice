@@ -730,7 +730,7 @@ then differ from the room's for the rest of the page.
   list, the pick, the flatten, the object positions.
 - `src/world/worldOfDaggerfall/wodLocationObjects.js` - `LoadObject` and its helpers as
   data: the archive-string arms, the mod's `AddLight`, the transform.
-- `src/world/worldOfDaggerfall.js` - the page's one loader: Awake, the
+- `src/world/worldOfDaggerfall/worldOfDaggerfall.js` - the page's one loader: Awake, the
   region events in order, the room's list, the placements.
 - `src/world/worldOfDaggerfall/wodSpawner.js` - `LocationEnemySpawner.cs`: Start, Update
   and the five arms as one machine.

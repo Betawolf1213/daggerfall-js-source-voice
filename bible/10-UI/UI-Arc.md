@@ -2515,7 +2515,7 @@ picture of a person tells you how they look; this tells you what you
 are carrying, which is what the screen is for.
 
 IT IS INLINE SVG, NOT THE PROTOTYPE'S THREE.JS. `mountFigure` in
-`src/tools/enhancedVisuals.js` builds a small three.js scene and
+`src/tools/enhanced/enhancedVisuals.js` builds a small three.js scene and
 `enhanced.html` loads that library from a CDN - and the port already
 carries exactly one third-party request (Ledger A, the web fonts),
 which is one more than it wants. Twenty-seven positioned nodes need no
@@ -2669,7 +2669,7 @@ NOT DRAWN HERE, recorded rather than dropped quietly: THE PAPERDOLL.
 The classic sheet composes it at DFU's (200,8) and the prototype
 answers the same slot with the 28-node body schematic - but that
 schematic is the INVENTORY's signature, it wants
-`src/tools/enhancedVisuals.js` and the three.js tag `enhanced.html` loads
+`src/tools/enhanced/enhancedVisuals.js` and the three.js tag `enhanced.html` loads
 from a CDN, and the port's doctrine already carries exactly one
 third-party request (Ledger A, the web fonts). It belongs to the
 inventory slice with the equip map it explains. The LEVEL-UP screen
@@ -2812,7 +2812,7 @@ about that changed; the CONTROLS grid stays classic-only - the enhanced
 settings pane renders all 171 DFU keys, and key REBINDING is not one of
 them; and the in-game screens behind this door - inventory, the sheet,
 the spellbook, the travel map, the journal - are all still classic. The
-prototype for those is `enhanced.html` + `src/tools/enhancedUI.js` and
+prototype for those is `enhanced.html` + `src/tools/enhanced/enhancedUI.js` and
 it is the next frontier, not this slice.
 
 ## U50 THE ENHANCED WIZARD (2026-08-25, Mac's call, ONE STAGE AT A TIME)
@@ -2947,7 +2947,7 @@ classic door cannot do this and still gates first: it needs PICK03I0, a
 palette and FONT0003 before it can draw one word.
 
 ONE IMPLEMENTATION, TWO HOSTS. `/menu.html` and the game mount the same
-module; `src/tools/enhancedMenu.js` is four lines and `menu.html` carries
+module; `src/tools/enhanced/enhancedMenu.js` is four lines and `menu.html` carries
 no tokens or layout at all (`ui/enhanced/enhancedStyle.js` owns both and injects
 them at mount, so a player who chose classic never loads a byte of it).
 A prototype with its own copy of the design is a prototype arguing about
@@ -17197,7 +17197,7 @@ DELETES THE SENTENCE.
 **Why a constellation, and why it is not Skyrim's.** Skyrim's level-up
 screen is a sky: your skills are stars and the camera is already
 pointed at them when you gain a level. What the port borrows from
-Skyrim is the INTERACTION MODEL `src/tools/enhancedUI.js` names - one
+Skyrim is the INTERACTION MODEL `src/tools/enhanced/enhancedUI.js` names - one
 thing at a time, targets big enough for a thumb, four directions and a
 confirm - and that model is exactly right for a screen whose whole job
 is "choose one of eight". What it does NOT borrow is the information

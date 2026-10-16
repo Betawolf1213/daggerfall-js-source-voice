@@ -758,7 +758,7 @@ the clock, and the legacy record held to its own law.
   Its review added: a held character with pieces of its make at the account is not deleted (its row is where the hold
   lives; one with none goes, its Stores with it), and the guild Stores deposit and the guild writ supply ask the hold
   (they asked none). `ACCOUNT_VERSION` acct116 (acct115 on its branch, renumbered past BR5 at the merge).
-  `test/tree/crafthold.test.js` (7); `tools/mutants/crafthold.json` (15, all dead). Record:
+  `test/server/crafthold.test.js` (7); `tools/mutants/crafthold.json` (15, all dead). Record:
   `01-Overview/audits/Exploit-Audit-2026-10-11.md`.
 - **INT1-INT6 (2026-10-09): lane 1, the economy - built, and audited (4b).** Migration `0096_integrity`;
   `ACCOUNT_VERSION` acct100 (acct99 and migration 0095 on its branch, renumbered past main's CARDS9 and CARDS10 at the merge). Pins: `test/systems/item/int1_itemlaw.test.js`, `int2_judge.test.js`, `int4_itemids.test.js`,

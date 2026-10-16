@@ -20,7 +20,7 @@ import {
 import {
   classifyObject, wodLightProperties, wodLightPosition, objectMatrix, objectNormalMatrix, WOD_SPAWN_TYPE, WOD_ENEMY_ID,
 } from '../../../src/world/worldOfDaggerfall/wodLocationObjects.js';
-import { WodWorld, wodLightColors } from '../../../src/world/worldOfDaggerfall.js';
+import { WodWorld, wodLightColors } from '../../../src/world/worldOfDaggerfall/worldOfDaggerfall.js';
 import { validateValue } from '../../../src/world/worldOfDaggerfall/wodLocationData.js';
 import { interiorLightProperties } from '../../../src/world/interior/interiorLights.js';
 import { basicRoadsPathsPoint } from '../../../src/world/roadsProducer.js';

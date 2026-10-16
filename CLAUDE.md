@@ -9,7 +9,7 @@ change) and read `bible/01-Overview/Port-Doctrine.md` before touching code.
   history; Port-Doctrine's Scope section governs new work.
 
 - **Before a push** (FAST-SUITE, `bible/09-Testing/Testing.md` "How the suite
-  runs"): `npm run lint`, `npm run types`, the bible's gates (`test/manifest`,
+  runs"): `npm run lint`, `npm run types`, the bible's gates (`test/bible/manifest`,
   `citeanchor`, `citedrift`, `mutantdrift`, `audit18_bible_docs`, `ledger` -
   always: they catch a cite or a mutant record a change moved, which the tests
   it picks do not) and `npm run test:changed` - the tests a change can move. When that is

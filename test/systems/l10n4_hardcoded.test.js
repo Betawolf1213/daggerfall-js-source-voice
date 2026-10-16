@@ -519,12 +519,12 @@ const HARDCODED = {
   'src/tools/abyssLab.js': 2,
   'src/tools/cardsLab.js': 5,
   'src/tools/depthCopyCheck.js': 8,
-  'src/tools/enhancedUI.js': 24,
-  'src/tools/enhancedVisuals.js': 1,
+  'src/tools/enhanced/enhancedUI.js': 24,
+  'src/tools/enhanced/enhancedVisuals.js': 1,
   'src/tools/firmamentLab.js': 3,
   'src/tools/gunLab.js': 7,
   'src/tools/mwViewer.js': 9,
-  'src/tools/paperdollViewer.js': 18,
+  'src/tools/paperdoll/paperdollViewer.js': 18,
   'src/ui/accountFlow.js': 2,
   'src/ui/arena/arenaWindow.js': 4,
   'src/ui/armourCard.js': 5,
@@ -742,7 +742,7 @@ const HARDCODED = {
   'src/world/townPictures.js': 6,
   'src/world/windowRoomArt.js': 2,
   'src/world/worldOfDaggerfall/wodLocationData.js': 3,
-  'src/world/worldOfDaggerfall.js': 7,
+  'src/world/worldOfDaggerfall/worldOfDaggerfall.js': 7,
 };
 
 test('L10N4 the ratchet: no file holds more hard-coded English than it did - route a new sentence through t(key, en, args); when a count falls, write the map down again', () => {
@@ -757,7 +757,7 @@ test('L10N4 the scan itself: prose counted; the text core\'s arguments, console 
   try {
     mkdirSync(join(root, 'src/ui'), { recursive: true });
     writeFileSync(join(root, 'src/ui/a.js'), [
-      "import { t } from '../../systems/textManager.js';",
+      "import { t } from '../systems/textManager.js';",   // a fixture's own src/ui/a.js (AUDIT TIDY MERGE-3: re-based by the move, put back)
       "export const A = 'You have no gold left.';",
       "export const B = t('ui.gold.none', 'You have no gold left.');",
       "export function f(n) { console.log('this is a log line'); if (!n) throw new Error('this never shows'); return `${n} coins in the purse`; }",

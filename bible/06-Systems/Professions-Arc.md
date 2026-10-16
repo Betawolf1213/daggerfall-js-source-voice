@@ -1898,7 +1898,7 @@ As built:
 - **The four hosts** (17.1). **The streaming world** stands every kind through `scenes/gatherHost.js`: Herbalism is
   `herbKind` (`scenes/herbHost.js`), Mining `mineKind` (`scenes/mineHost.js`). A built pixel carries its rock pieces
   (`rocks`: the boxes of World of Daggerfall's placements named `Rocks` or `Mountains` that stood - after the road's
-  clearance - `world/worldOfDaggerfall.js` picks now carry their name). **The fixed city** - **FLAGGED by name**, as
+  clearance - `world/worldOfDaggerfall/worldOfDaggerfall.js` picks now carry their name). **The fixed city** - **FLAGGED by name**, as
   PROF1's. **Building interiors**: the forge (above). **Dungeons**: `scenes/dungeonContext.js` hands the host its
   identity (`MapId & 0xfffff`, none for a spawned dungeon), its wall ray (`veinWall`: from a foe marker at chest
   height, a near-vertical face within 12 m) and its own flats' doors; the mode machine tells the host a dungeon was

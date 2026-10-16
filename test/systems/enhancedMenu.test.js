@@ -43,12 +43,12 @@ test('the prototype page carries no design of its own', () => {
   const html = read('menu.html');
   assert.ok(!/--brass|--verdigris|\.railbtn|\.subbtn/.test(html),
     'menu.html must not hold tokens or layout - they live in src/ui/enhanced/enhancedStyle.js');
-  assert.match(html, /src\/tools\/enhancedMenu\.js/);
+  assert.match(html, /src\/tools\/enhanced\/enhancedMenu\.js/);
 });
 
 test('the prototype host is a mount and nothing else', () => {
-  const src = read('src/tools/enhancedMenu.js');
-  assert.match(src, /from '\.\.\/ui\/enhanced\/enhancedMenu\.js'/, 'it must mount the shipping module');
+  const src = read('src/tools/enhanced/enhancedMenu.js');
+  assert.match(src, /from '\.\.\/\.\.\/ui\/enhanced\/enhancedMenu\.js'/, 'it must mount the shipping module');
   // if this host ever grows a screen of its own it stops being a
   // prototype OF anything
   assert.ok(src.split('\n').filter((l) => l.trim() && !l.trim().startsWith('//')).length < 12,

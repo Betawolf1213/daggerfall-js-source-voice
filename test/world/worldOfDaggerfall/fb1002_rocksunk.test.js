@@ -11,7 +11,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { isWodShrub, WOD_BUSH_MODEL, WOD_ROCK_SITES, objectMatrix } from '../../../src/world/worldOfDaggerfall/wodLocationObjects.js';
-import { WodWorld } from '../../../src/world/worldOfDaggerfall.js';
+import { WodWorld } from '../../../src/world/worldOfDaggerfall/worldOfDaggerfall.js';
 import { loadLocationPrefab } from '../../../src/world/worldOfDaggerfall/wodLocationData.js';
 import { decodeRegionPack } from '../../../src/world/worldOfDaggerfall/wodLocationPack.js';
 import { LocationSession } from '../../../src/world/worldOfDaggerfall/wodLocationLoader.js';

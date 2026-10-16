@@ -6549,7 +6549,7 @@ the only path. Repair could not help: it puts back what a marker lost, and his m
 
 Not done, offered to Mac: an Abandon for an ordinary guild quest (DFU's console `endquest`, `machine.tombstoneQuest`) -
 the port gives Abandon to bounties and revenant hunts alone. `test/systems/quest/kvarhold.test.js` (3); `tools/mutants/kvarhold.json`
-(12), all dead. AUDIT FIELD-BUGS 1008 (`01-Overview/audits/Audit-Log.md`): drawn among the few nearest the Hold it leaves, never
+(12), all dead. AUDIT FIELD-BUGS 1008 (`01-Overview/Audit-Log.md`): drawn among the few nearest the Hold it leaves, never
 this client's player (every shared copy the same); a `local dungeon` rescued too; the new site fitted to the size its
 link builds once the link stands there (`fitSiteToBuild`); a reveal that throws leaves the move and the link standing. PIN MOVED: `test/systems/quest/nearby_quests.test.js`'s fixture ids start past 5000 (1001 is Mantellan Crux).
 
@@ -6590,7 +6590,7 @@ as it was. A DEPARTURE (Port-Ledger A), the port's own.
   The classic skin's logbook is DFU's native window and draws no button (THE NATIVE-WINDOW RULE: no DFU geometry to cite
   for one); a quest set aside leaves its active page. The chronicle (the L key) is read-only and leaves it out.
 
-AUDIT QUEST-SHELF (`01-Overview/audits/Audit-Log.md`, 2026-10-09): a copy RUNNING answers for its name before one set aside
+AUDIT QUEST-SHELF (`01-Overview/Audit-Log.md`, 2026-10-09): a copy RUNNING answers for its name before one set aside
 (`sharedCandidateNamed`), so the same quest taken again is never shadowed, and the copy set aside is not reclaimed while
 it runs (`twin`); a reclaim relinks at once what stands of it and its topics; a named NPC's home copy stands
 (`individualHome`); a partner's envelope carries no shelf (`NO_SHELF`); the Settings repair, the rumor mill

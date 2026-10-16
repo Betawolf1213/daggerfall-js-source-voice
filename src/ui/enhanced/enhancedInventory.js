@@ -8,7 +8,7 @@
 //
 // ── THE SIGNATURE ────────────────────────────────────────────────
 //
-// src/tools/enhancedUI.js's header calls the slot map the most
+// src/tools/enhanced/enhancedUI.js's header calls the slot map the most
 // Daggerfall thing in the game, and it is right: twenty-seven equip
 // slots, TWO amulets, TWO bracelets, TWO marks, TWO crystals, and
 // chest armour and chest clothes as separate layers. The classic
@@ -22,7 +22,7 @@
 // carrying, which is what the screen is for.
 //
 // IT IS INLINE SVG, NOT THE PROTOTYPE'S THREE.JS. `mountFigure` in
-// tools/enhancedVisuals.js builds a small three.js scene and
+// tools/enhanced/enhancedVisuals.js builds a small three.js scene and
 // enhanced.html loads that library from a CDN - and the port's
 // doctrine already carries exactly one third-party request (Ledger A,
 // the web fonts), which is one more than it wants. Twenty-seven

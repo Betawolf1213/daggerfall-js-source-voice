@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { Collider } from '../../../src/player/collider.js';
 import { objectMatrix } from '../../../src/world/worldOfDaggerfall/wodLocationObjects.js';
 import { loadLocationPrefab } from '../../../src/world/worldOfDaggerfall/wodLocationData.js';
-import { WodWorld, fetchPackBytes, WOD_RETRY_MAX } from '../../../src/world/worldOfDaggerfall.js';
+import { WodWorld, fetchPackBytes, WOD_RETRY_MAX } from '../../../src/world/worldOfDaggerfall/worldOfDaggerfall.js';
 import { StreamingWorldState, TerrainSlots, MAX_TERRAIN_ARRAY, nearestFirstFrom } from '../../../src/world/streamingWorld.js';
 import { createExteriorFoes } from '../../../src/scenes/exteriorFoes.js';
 import { createDroppedLoot } from '../../../src/scenes/droppedLoot.js';
@@ -243,7 +243,7 @@ test('AUDIT BRANCH (WoD) M2: a region heard before Awake waits for region 17; a 
   assert.deepEqual(w.session.regions, [17, 16], 'Awake\'s folder first, as the C# event cannot fire before Awake');
   assert.equal(w.prefabs.get('WOD_Rocks_Small_01'), null, 'a null text reads as a layout that failed');
   assert.ok(w.prefabs.get('WOD_Rocks_Small_02'), 'and the rest read');
-  assert.match(rd('src/world/worldOfDaggerfall.js'), /out\.set\(baseName\(p\)\.replace\(\/\\\.txt\$\/, ''\), await load\(\)\.catch\(\(\) => null\)\);/, 'the browser source catches per file');
+  assert.match(rd('src/world/worldOfDaggerfall/worldOfDaggerfall.js'), /out\.set\(baseName\(p\)\.replace\(\/\\\.txt\$\/, ''\), await load\(\)\.catch\(\(\) => null\)\);/, 'the browser source catches per file');
 });
 
 test('WOD6: a region whose pack failed is tried again off the chain and lands in its own place - the list built again in the order the events came, the host told which pixels it names', async () => {
@@ -308,7 +308,7 @@ test('AUDIT BRANCH (WoD) M2: a pack fetch is abandoned after a stall and tried t
   assert.deepEqual([...await fetchPackBytes('x', { fetchFn: async (u, { signal }) => ({ ok: true, body: slow(signal) }), stallMs: 30, attempts: 1, sleep: noSleep })], [0, 1, 2, 3, 4], 'bytes arriving inside the stall window keep it alive past it - the window is per byte, not per request');
   calls = 0;
   assert.deepEqual([...await fetchPackBytes('x', { fetchFn: async () => (++calls < 3 ? { ok: false, status: 503 } : { ok: true, arrayBuffer: async () => new Uint8Array([9]).buffer }), sleep: noSleep })], [9], 'a 503 is retried');
-  assert.match(rd('src/world/worldOfDaggerfall.js'), /try \{ return await fetchPackBytes\(url\); \}/, 'the browser source fetches through it');
+  assert.match(rd('src/world/worldOfDaggerfall/worldOfDaggerfall.js'), /try \{ return await fetchPackBytes\(url\); \}/, 'the browser source fetches through it');
 });
 
 test('AUDIT BRANCH (WoD) M2: the build\'s pick can cost a pixel its site, never the pixel; with the mod off no frame walks the pixels for its lights', () => {
@@ -316,7 +316,7 @@ test('AUDIT BRANCH (WoD) M2: the build\'s pick can cost a pixel its site, never 
   // PIN MOVED (AUDIT CAPTAIN'S SEA G8): the pick asked on the Bay alone - its sites are the Bay's
   assert.match(w, /if \(wod && onTheBay\(px, py\) && await wodOpened\) \{[^\n]*\n[^\n]*\n[^\n]*\n      try \{\n        const here = state\.current \?\? \{ x: px, y: py \};[\s\S]{0,900}\} catch \(e\) \{\n        console\.warn\(`\[wod\] pixel \$\{key\}: the loader failed here[^\n]*\n        wodPicks = null;\n      \}/);
   assert.match(w, /const wodLit = wod \? _wodLitCount\(\) : 0;/);
-  assert.match(rd('src/world/worldOfDaggerfall.js'), /if \(!b\) return;\n[^\n]*\n[^\n]*\n      await new Promise\(\(r\) => setTimeout\(r, 0\)\);[\s\S]{0,400}decodeRegionPack\(b\)/, 'one decode a task');
+  assert.match(rd('src/world/worldOfDaggerfall/worldOfDaggerfall.js'), /if \(!b\) return;\n[^\n]*\n[^\n]*\n      await new Promise\(\(r\) => setTimeout\(r, 0\)\);[\s\S]{0,400}decodeRegionPack\(b\)/, 'one decode a task');
 });
 
 // ── L1-3: DFU's terrain array ──────────────────────────────────────────

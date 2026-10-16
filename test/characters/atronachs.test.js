@@ -48,7 +48,7 @@ test('atronachs: three render modes across four designs', () => {
 test('atronachs: the additive blend does not outlive the fire', () => {
   // Same trap as the ghost's transparency: one material, shared by every
   // design. Leave it additive and the next orc glows.
-  const src = readFileSync(new URL('../../src/tools/paperdollViewer.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../../src/tools/paperdoll/paperdollViewer.js', import.meta.url), 'utf8');
   const blends = src.match(/mat\.blending = [^;]+;/g) || [];
   assert.ok(blends.length >= 2, 'blending is set but never reset');
   assert.ok(

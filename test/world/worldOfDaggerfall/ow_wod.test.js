@@ -21,7 +21,7 @@ import { objectMatrix } from '../../../src/world/worldOfDaggerfall/wodLocationOb
 import { loadLocationPrefab } from '../../../src/world/worldOfDaggerfall/wodLocationData.js';
 import { WOD_TERRAIN_SIZE_MULTI, LocationSession } from '../../../src/world/worldOfDaggerfall/wodLocationLoader.js';
 import { decodeRegionPack } from '../../../src/world/worldOfDaggerfall/wodLocationPack.js';
-import { WodWorld, WOD_MOUNTAIN_PREFAB } from '../../../src/world/worldOfDaggerfall.js';
+import { WodWorld, WOD_MOUNTAIN_PREFAB } from '../../../src/world/worldOfDaggerfall/worldOfDaggerfall.js';
 import { boxNearPath } from '../../../src/world/road/roadClearance.js';
 import { planRoute, routeLegs, routeGround } from '../../../src/systems/travel/travelRoute.js';
 import { ringPassPoints, ringSideOf, locationRectsOf, RING_ORDER } from '../../../src/systems/travel/travelOptions.js';
@@ -298,7 +298,7 @@ test('WOD-PEAKS: with the Mountains switch off (the default) a Mountains instanc
     return w;
   };
   // the pick's prefab door, as picksFor hands it to pickLocations
-  const src = readFileSync(new URL('../../../src/world/worldOfDaggerfall.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../../../src/world/worldOfDaggerfall/worldOfDaggerfall.js', import.meta.url), 'utf8');
   assert.match(src, /const prefabOf = this\.mountains \? \(name\) => this\.prefabs\.get\(name\) \?\? null : \(name\) => \(WOD_MOUNTAIN_PREFAB\.test\(name \?\? ''\) \? null : this\.prefabs\.get\(name\) \?\? null\);\n\s*return pickLocations\(tile, session, prefabOf, pathsPoint, siteClear\)/);
   const body = src.slice(src.indexOf('const prefabOf = '), src.indexOf('return pickLocations(tile, session, prefabOf'));
   for (const on of [false, true]) {

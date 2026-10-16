@@ -73,7 +73,7 @@ test('drape: a design with none is passed to the drape path, not null', () => {
   // Handing it null for every design without a drape meant a bat wore
   // whatever happened to be showing: cycle the control to a skirt, pick
   // an animal, and the animal is in a skirt.
-  const src = readFileSync(new URL('../../src/tools/paperdollViewer.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../../src/tools/paperdoll/paperdollViewer.js', import.meta.url), 'utf8');
   assert.ok(
     /applyVillagerDrape\(o\);/.test(src),
     'the enemy path still hands the drape function null for undressed designs',

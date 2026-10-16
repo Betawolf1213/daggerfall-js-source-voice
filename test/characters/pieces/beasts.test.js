@@ -101,7 +101,7 @@ test('beasts: the piece is what the player sees, so it must exist', () => {
   // building a table for the line left three animals rendering as
   // NOTHING — the rig under them is collapsed, so there was not even a
   // man left to see. The tables are keyed by line now.
-  const src = readFileSync(new URL('../../../src/tools/paperdollViewer.js', import.meta.url), 'utf8');
+  const src = readFileSync(new URL('../../../src/tools/paperdoll/paperdollViewer.js', import.meta.url), 'utf8');
   assert.ok(/pieceTables = \{/.test(src), 'piece tables are not keyed by line');
   for (const line of ['orc', 'undead', 'class', 'atronach', 'beast']) {
     assert.ok(new RegExp(`${line}: buildPieces\\(`).test(src), `the ${line} line has no piece table`);

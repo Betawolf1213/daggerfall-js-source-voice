@@ -23,7 +23,7 @@ import { liveDungeonAutomapKey, getDungeonAutomap, mergePartyAutomap } from '../
 import { FlatAnimator, armFlatAnim } from '../render/flatAnimation.js';   // FA1: the flats that move
 import { WORLD_FRAME } from '../render/renderer.js';   // AUDIT-EL F5
 import { windmillsOn } from '../world/windmills.js';   // WM3: the Windmills pack's switch
-import { openWodWorld, wodOn, wodLightColors } from '../world/worldOfDaggerfall.js';   // WOD2: World of Daggerfall's loader, one per page
+import { openWodWorld, wodOn, wodLightColors } from '../world/worldOfDaggerfall/worldOfDaggerfall.js';   // WOD2: World of Daggerfall's loader, one per page
 import { wodLightPosition, wodLightProperties, isWodShrub, WOD_ROCK_SITES, rockSeatDrop } from '../world/worldOfDaggerfall/wodLocationObjects.js'; import { wodRockUvs } from '../world/worldOfDaggerfall/wodRockUv.js';   // WOD2: the mod's own AddLight; WOD-BUSH: its shrub, stood on the ground (ROCK-SUNK: never a rock field's boulder); FB1001-WODROCK: a stretched rock piece's faces at its pebble's texel density (on this line, so no cite below it moves)
 import { WodSpawner, WOD_LOOT_LOCATION_INDEX, WOD_LOOT_ALIGN } from '../world/worldOfDaggerfall/wodSpawner.js';   // WOD3: LocationEnemySpawner
 import { wodSiteId, yieldsTo } from '../world/worldOfDaggerfall/wodShared.js';   // WOD7: a camp's marker, shared online

@@ -34,11 +34,11 @@ export const NOT_IMPORTABLE = Object.freeze({
   'src/main.js': 'addEventListener/document at module scope',   // BOOT1: it used to reject at LINK time, through world.js's import.meta.glob - the hosts are behind doors now, its body runs, and the crash listeners at its module scope are what node lacks
   'src/scenes/quest/questData.js': 'import.meta.glob',
   'src/scenes/world.js': 'import.meta.glob',
-  'src/tools/enhancedChargen.js': 'document at module scope',
-  'src/tools/enhancedMenu.js': 'document at module scope',
-  'src/tools/enhancedUI.js': 'document at module scope',
+  'src/tools/enhanced/enhancedChargen.js': 'document at module scope',
+  'src/tools/enhanced/enhancedMenu.js': 'document at module scope',
+  'src/tools/enhanced/enhancedUI.js': 'document at module scope',
   'src/tools/mwViewer.js': 'document at module scope',
-  'src/tools/paperdollViewer.js': 'document at module scope',
+  'src/tools/paperdoll/paperdollViewer.js': 'document at module scope',
   'src/tools/skyLab.js': 'location at module scope',
   'src/tools/waterLab.js': 'location at module scope',   // WATER1: the water lab
   'src/tools/levelUpLab.js': 'document at module scope',   // LV1: the level-up lab

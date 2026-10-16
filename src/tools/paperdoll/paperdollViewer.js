@@ -22,12 +22,12 @@
 // faking, and the entire class of failure goes away.
 // ═══════════════════════════════════════════════════════════════════
 
-import { MISSILE_SPEED } from '../systems/spellcast.js';   // AUDIT 23: the arrow speed's one home
-import { createSkin } from './paperdoll/skin.js';
-import { buildPaperdollPayload } from '../characters/paperdoll/paperdollPayload.js';
-import { makeCoreFn, buildCloth, stepCloth, articulatedCapsules } from '../characters/clothSim.js';
-import { beastAttackPose, hitPointOf } from '../characters/beastAttack.js';
-import { DIRECTION_TO_STRIKE, STRIKES, sampleClip, REACTIONS } from '../characters/anims.js';
+import { MISSILE_SPEED } from '../../systems/spellcast.js';   // AUDIT 23: the arrow speed's one home
+import { createSkin } from './skin.js';
+import { buildPaperdollPayload } from '../../characters/paperdoll/paperdollPayload.js';
+import { makeCoreFn, buildCloth, stepCloth, articulatedCapsules } from '../../characters/clothSim.js';
+import { beastAttackPose, hitPointOf } from '../../characters/beastAttack.js';
+import { DIRECTION_TO_STRIKE, STRIKES, sampleClip, REACTIONS } from '../../characters/anims.js';
 import {
   CLASSIC_UPDATE_INTERVAL,
   getMeleeWeaponAnimTime,
@@ -45,7 +45,7 @@ import {
   machineAttack,
   machineCancelBowDraw,
   machineStep,
-} from '../characters/weaponStates.js';
+} from '../../characters/weaponStates.js';
 // The aliases the standalone build faked with a regex. See the note above.
 import {
   rotX,
@@ -56,7 +56,7 @@ import {
   RUN,
   createAnimContext,
   animateTarget as animateTargetCore,
-} from '../characters/animate.js';
+} from '../../characters/animate.js';
 
 // three.js comes from the CDN tag in viewer.html, exactly as the
 // standalone viewer has always taken it — dagger has no dependencies
@@ -79,10 +79,10 @@ import {
 async function tryArena2() {
   try {
     const [{ getBytes }, { DFPalette }, { ImgFile }, { CifRciFile }] = await Promise.all([
-      import('../scenes/dataSource.js'),
-      import('../formats/dfPalette.js'),
-      import('../formats/imgFile.js'),
-      import('../formats/cifRciFile.js'),
+      import('../../scenes/dataSource.js'),
+      import('../../formats/dfPalette.js'),
+      import('../../formats/imgFile.js'),
+      import('../../formats/cifRciFile.js'),
     ]);
     const race = (p) => Promise.race([p, new Promise((_, no) => setTimeout(no, 4000))]);
     const pal = new DFPalette();
