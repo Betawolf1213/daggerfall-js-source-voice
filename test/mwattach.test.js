@@ -292,8 +292,11 @@ test('MW-D19: the rig hands the worn item to the arm every frame, in machine ord
   // snapshot again. Sheathe state first (it is the cheaper compare and
   // the reference's updateWeaponState reads stance before weapon), the
   // swap next, the tick last so a swapped arm poses its OWN clip.
+  // PIN MOVED (TWO-HANDS, bible/05-Combat/Two-Hands.md): the item is the worn one the sprite reads - the weapon in use,
+  // or with both hands up the RIGHT hand's (its mesh does not swap for the left's blow; the left's is setOffWeapon's)
+  assert.match(rig, /const armItem = pairUp\(\) \? playerWeapon\.handItem\('R'\) : playerWeapon\.weapon;/);
   assert.match(rig,
-    /fpArm\.setWeapon\(playerWeapon\.weapon, \{ hasAmmo: hasAmmoFor\(entity\?\.items, playerWeapon\.weapon\), ammoCount: ammoCountFor\(entity\?\.items, playerWeapon\.weapon\) \}\);/,   // WS1: the quiver's count rides the same read; THUNDERLOCK: asked OF THE WEAPON, since a gun spends pellets
+    /fpArm\.setWeapon\(armItem, \{ hasAmmo: hasAmmoFor\(entity\?\.items, armItem\), ammoCount: ammoCountFor\(entity\?\.items, armItem\) \}\);/,   // WS1: the quiver's count rides the same read; THUNDERLOCK: asked OF THE WEAPON, since a gun spends pellets
     'the swap seam reads the same worn item the sprite does, ammo included');
   const sheatheAt = rig.indexOf('fpArm.setSheathed(');
   const swapAt = rig.indexOf('fpArm.setWeapon(');

@@ -466,7 +466,9 @@ test('CLIMB6 C16: THE FOUR HOSTS hand the rig the snapshot (world, exterior, int
   for (const f of ['src/scenes/dungeon.js', 'src/scenes/worldModes.js']) assert.match(rd(f), /player\.feetAt\(\), climbRigInput\(player, cam\.yaw\), aimView\);/, `${f}: drawFoes hands it on`);
   const fp = rd('src/combat/fpArm.js');
   assert.match(fp, /climb: thirdClimb\(climbWorld, cam\),/, 'the body\'s pose');
-  assert.match(fp, /climb: held \? null : firstClimb\(climbWorld, cam\),/, 'the arms\' pose (the sheet\'s hands are the sheet\'s)');
+  // PIN MOVED (TWO-HANDS): off the stone the same slot carries the running hands - the climb's request first, the run's
+  // only where there is none (was: `climb: held ? null : firstClimb(climbWorld, cam),`)
+  assert.match(fp, /climb: held \? null : \(firstClimb\(climbWorld, cam\) \?\? firstRun\(cam\)\),/, 'the arms\' pose (the sheet\'s hands are the sheet\'s)');
   assert.match(fp, /if \(climbHands && \(r\.slot === 'weapon' \|\| r\.slot === 'arrow' \|\| r\.slot === 'torch'\)\) r\.hidden = true;/, 'nothing in hands on the stone');
   assert.match(rd('src/combat/weaponRig.js'), /if \(_climbLower > 0 && !armsClimb\)/, 'posed arms stay on the screen');
   assert.match(rd('src/net/peerBodies.js'), /b\.cam\.climb = \(b\.climbTrack \?\?= new PeerClimbTrack\(\)\)\.input\(peer\.shown, f, b\.yaw, this\._now\(\), this\._collider\(\)\);/, 'the peers\' bodies');

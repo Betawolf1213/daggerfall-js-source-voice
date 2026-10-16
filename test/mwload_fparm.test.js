@@ -343,13 +343,14 @@ test('MW-LOAD: every synchronous archive read in fpArm.js is covered, in its own
 
   // The two exemptions, discharged: every call site of each opens the
   // door before it walks through.
-  const callsCovered = (call, cover) => {
+  const callsCovered = (call, cover, doors = []) => {
     let at = 0;
     let n = 0;
     for (let i = 0; i < lines.length; i++) {
       if (FN_START.test(lines[i])) { at = i; continue; }
       if (!lines[i].includes(call)) continue;
       if (/^export function /.test(lines[i])) continue;   // the definition is not a call
+      if (doors.includes(nameOf(lines[at]))) continue;   // TWO-HANDS: a door's own call - its callers open it, pinned below
       n++;
       assert.ok(new RegExp(cover).test(lines.slice(at + 1, i).join('\n')),
         `${call} at line ${i + 1} is not preceded by ${cover} in its own function`);
@@ -358,7 +359,11 @@ test('MW-LOAD: every synchronous archive read in fpArm.js is covered, in its own
   };
   // resolveWeaponParts: buildTpBody, buildFpArm, and the swap's two
   // rigs (which share one load, the same records for both).
-  assert.equal(callsCovered('resolveWeaponParts({', 'loadFromArchives\\([\\s\\S]*weaponPartPaths\\(|weaponPartPaths\\('), 4);
+  // PIN MOVED (TWO-HANDS, bible/05-Combat/Two-Hands.md): resolveOffWeaponParts is resolveWeaponParts' door for the
+  // left hand - synchronous, its `find` the caller's - so its one call inside is discharged at ITS call sites: the
+  // left hand's swap, its two rigs under the one load
+  assert.equal(callsCovered('resolveWeaponParts({', 'loadFromArchives\\([\\s\\S]*weaponPartPaths\\(|weaponPartPaths\\(', ['resolveOffWeaponParts']), 4);
+  assert.equal(callsCovered('resolveOffWeaponParts({', 'loadFromArchives\\([\\s\\S]*weaponPartPaths\\(|weaponPartPaths\\('), 2);
   // MW-D51 resolveTorchPart: buildTpBody, buildFpArm, and setTorch's
   // slow path (one load, one resolve per rig inside it).
   assert.equal(callsCovered('resolveTorchPart({', 'loadFromArchives\\([\\s\\S]*torchPartPaths\\(|torchPartPaths\\('), 3);

@@ -15,18 +15,28 @@ export const CLASSIC_FRAME_UPDATE = 980;           // const int classicFrameUpda
 export const CLASSIC_UPDATE_INTERVAL = 0.0625;     // GameManager.classicUpdateInterval (classic 16Hz); bow anim tick
 export function getMeleeWeaponAnimTime(liveSpeed, ctx = null) {
   const o = _animTimeOverride?.(liveSpeed, ctx, CLASSIC_FRAME_UPDATE);   // TryGetOverride("GetMeleeWeaponAnimTime") - RRI2's weaponBalance registers one
-  if (o != null) return o;
+  if (o != null) return strikeTempoed(o, ctx);
   // SWING-LAW: a wielder the port knows (`ctx.entity` - the player's machine, the Weapon Widget's clone, the third-person
   // body) swings on the port's own law; one it does not (a foe's machine, a peer's walker at PEER_SWING_SPEED, the
   // viewers) keeps DFU's line - which DFU never asks for a foe at all (characters/enemyAttack.js).
   if (ctx?.entity) {
     const w = _swingReader?.(ctx) ?? null;
-    return swingFrameSeconds(liveSpeed, {
+    return strikeTempoed(swingFrameSeconds(liveSpeed, {
       heft: w ? swingHeft(w.weight, w.strength) : 1,
       handling: swingHandling(ctx.weaponType, !!w?.twoHanded),
-    });
+    }), ctx);
   }
   return (3 * (115 - liveSpeed)) / CLASSIC_FRAME_UPDATE;   // seconds per anim frame
+}
+/** TWO-HANDS (bible/05-Combat/Two-Hands.md): A STRIKE'S OWN TEMPO - `ctx.tempo`, the dual law's factor on this strike's
+ *  frames (combat/handsLaw.js strikeTempo: a flurry's quickness, the off hand's burden), laid on whichever answer the
+ *  time came from - the law's, or a mod's that answers through it - and held to the law's own bounds, so no pair swings
+ *  quicker than SWING_FRAME_MIN allows one weapon. A ctx with no tempo (every single weapon, every fist, every foe) is
+ *  the time untouched. */
+function strikeTempoed(seconds, ctx) {
+  const k = ctx?.tempo;
+  if (!ctx?.entity || !Number.isFinite(k) || k <= 0 || k === 1) return seconds;
+  return Math.max(SWING_FRAME_MIN, Math.min(SWING_FRAME_MAX, seconds * k));
 }
 
 // ── SWING-LAW (2026-09-28, Mac: "swing speed is insane", then "Do whatever is the most detailed. I dont care about

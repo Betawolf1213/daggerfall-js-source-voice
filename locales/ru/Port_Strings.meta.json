@@ -6159,6 +6159,16 @@
   "tr": "638385896dbe",
   "by": "claude-in-session"
  },
+ "combat.leadLeftHand": {
+  "en": "9a84e174d1b8",
+  "tr": "5632763715f2",
+  "by": "claude-in-session"
+ },
+ "combat.leadRightHand": {
+  "en": "40a5921dea29",
+  "tr": "12adfef5d799",
+  "by": "claude-in-session"
+ },
  "credits.ambientText.terms": {
   "en": "c62316ae06a4",
   "tr": "95e1c5579fd2",

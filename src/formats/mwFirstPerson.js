@@ -172,6 +172,7 @@ import { getTextKeyTime, animVelocity } from './mwAnim.js';
 import { mat33Mul } from './mwNifMesh.js';   // AUDIT 68 S11-affine-dup: the one row-major 3x3 product
 import { batchMoves, posePartBatch, nodeAffineAt, nodeClockAt, clockFor } from './mwPartClock.js';   // MW-BOW1: a part's own clock
 import { applyClimbRig } from '../combat/climbRig.js';   // CLIMB6: the climb's pose on the rig's own bones
+import { applyMirrorRig } from '../combat/mirrorRig.js';   // TWO-HANDS: the second hand - an arm, or the body, in the mirror
 import { ownFacePools } from '../characters/ownHeadModels.js';   // MW-HEADS1: the port's own heads and hairs - a race's pools where it has them
 
 /** The four parts allowed to fall back to a third-person mesh when the
@@ -2739,10 +2740,15 @@ export function posePartClocks(assembly, value, { frameTime = value, slots = WEA
 }
 
 export function poseAssembly(assembly, { tracks = null, sampleTrack = null,
-  time = 0, accumRoot = null, neckPitch = 0, neckAim = 0, neckOffset = null, climb = null, skin = true } = {}) {
+  time = 0, accumRoot = null, neckPitch = 0, neckAim = 0, neckOffset = null, climb = null, skin = true, mirror = null } = {}) {
   const { fns, skeleton, pieces } = assembly;
   if (!fns || !skeleton) return assembly;
   const pose = fns.poseSkeleton(skeleton, tracks, sampleTrack, time, { accumRoot });
+  // TWO-HANDS (bible/05-Combat/Two-Hands.md): THE SECOND HAND - an arm, or the whole body, as the mirror of another
+  // (combat/mirrorRig.js), straight over the clip's pose and under every law that follows it (the neck's look, the
+  // climb's hands): a left-hand blow, a second weapon held up. An arm read from ANOTHER clip (`clip`: the idle under a
+  // blow) is posed here, on this skeleton, at that clip's own time.
+  assembly.mirrored = mirror ? applyMirrorRig(skeleton, pose, GRAPH_ROOT, fns.skelMats, mirrorWithPoses(mirror, fns, skeleton, accumRoot)) : null;
   // MW-D20: ONE SPACE. The reference poses every piece - skinned, rigid,
   // and the camera node rule 54 reads - in the same space, the full
   // graph below the Skeleton group with the root node's own transform
@@ -2791,6 +2797,21 @@ export function poseAssembly(assembly, { tracks = null, sampleTrack = null,
   if (assembly.afterPose) assembly.afterPose(assembly);
   assembly.bounds = pieces.length ? foldPieceBounds(pieces) : null;   // PR-BOW1b: and each piece's own box, in the same walk
   return assembly;
+}
+
+/** TWO-HANDS: a mirror request's arms read from another clip (`limbs.X.clip` - { tracks, sampleTrack, time }) posed into
+ *  the pose maps combat/mirrorRig.js reads (`limbs.X.pose`). */
+function mirrorWithPoses(req, fns, skeleton, accumRoot) {
+  if (!req.limbs) return req;
+  const limbs = {};
+  for (const side of ['L', 'R']) {
+    const l = req.limbs[side];
+    if (!l) continue;
+    limbs[side] = l.clip && !l.pose
+      ? { ...l, pose: fns.poseSkeleton(skeleton, l.clip.tracks, l.clip.sampleTrack, l.clip.time, { accumRoot }) }
+      : l;
+  }
+  return { ...req, limbs };
 }
 
 /**

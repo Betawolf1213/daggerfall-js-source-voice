@@ -77,6 +77,7 @@ import { customWeaponImage } from './diverseWeaponsAssets.js';   // DW1: both bu
 import { widgetMetalName } from './weaponWidgetAssets.js';
 import { getItemHands } from '../systems/equip.js';
 import { ITEM_HANDS } from '../characters/equipTable.js';
+import { mirrorRect } from './handsLaw.js';   // TWO-HANDS: a hand of a pair on the left of the screen, drawn whole in the mirror
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const inverseLerp = (a, b, v) => (a === b ? 0 : clamp((v - a) / (b - a), 0, 1));
@@ -156,7 +157,9 @@ export function createWeaponWidget({
   const machineFrame = () => ctx?.machine?.frame ?? 0;
   const hitFrame = () => (ctx?.machine?.isBow ? HIT_FRAME_BOW : HIT_FRAME_MELEE);
   const liveSpeed = () => (ctx?.entity ? liveStat(ctx.entity, 'speed') : 50);
-  const animCtx = () => ({ entity: ctx?.entity ?? null, weaponType: w.currentWeaponType, usingRightHand: usingRightHand() });   // RRI2: what GetMeleeWeaponAnimTime's C# signature carries
+  // RRI2: what GetMeleeWeaponAnimTime's C# signature carries. TWO-HANDS: the rig's own ctx when it hands one (the striking
+  // hand, the strike's tempo - PlayerWeapon.swingCtx), so the clone's swing runs on the clock the machine does
+  const animCtx = () => ctx?.animCtx?.() ?? ({ entity: ctx?.entity ?? null, weaponType: w.currentWeaponType, usingRightHand: usingRightHand() });
   const anims = () => w.art?.anims ?? null;
   const usingRightHand = () => ctx?.usingRightHand !== false;
   const sheathed = () => !!ctx?.sheathed;
@@ -625,8 +628,13 @@ export function createWeaponWidget({
     // (the mod's field starts false, so DFU hears the clip once at every load - a boot artefact, not carried)
     if (w.lastSheathed === null) w.lastSheathed = c.sheathed;
     if (c.sheathed !== w.lastSheathed) { if (c.sheathed) playSheatheSound(); w.lastSheathed = c.sheathed; }
+    // TWO-HANDS (bible/05-Combat/Two-Hands.md): A HAND OF A PAIR is drawn as DFU draws any right hand - never flipped
+    // here: the rig mirrors the one on the left of the screen whole (draw's `mirror`), every state, so a left hand is a
+    // right hand in the mirror rather than DFU's three-state flip of one sprite. Ambidexterity's law is the one used hand's.
+    if (c.pairHand) {
+      if (w.flipHorizontal) { w.flipHorizontal = false; changeWeaponState(S.Idle); }
+    } else if (w.s.ambidexterity && !c.sheathed) {
     // Ambidexterity (0x19c2-0x1b97): the sprite's hand
-    if (w.s.ambidexterity && !c.sheathed) {
       let want;
       if (c.weaponType === T.Bow) want = w.s.mirrorBows ? !w.leftHanded : w.leftHanded;
       else if (!usingRightHand()) want = !w.leftHanded;
@@ -712,7 +720,7 @@ export function createWeaponWidget({
   /** OnGUI's repaint (IL 0x1424-0x1582): with the Offset module the
    *  sprite draws whatever the show clocks say (the slide takes it off
    *  screen); without it, only while the rig would show it. */
-  function draw(renderer, canvas, tint = null) {   // MAC-I: the room's light, as the sprite this clone stands in for takes it
+  function draw(renderer, canvas, tint = null, { transform = null, mirror = false } = {}) {   // MAC-I: the room's light, as the sprite this clone stands in for takes it; TWO-HANDS: a pair's hand - its guard (`transform`, on the rect) and the mirror
     if (!ctx || !w.art || !renderer || !canvas) return false;
     if (ctx.weaponType === T.None) return false;
     // WW4 (Mac's curated fix, 2026-09-16): an applicable clone that
@@ -737,8 +745,25 @@ export function createWeaponWidget({
     if (!rec) return false;
     const tex = w.curCustomTexture?.tex ?? rec.frames[Math.min(Math.max(0, w.currentFrame), rec.frames.length - 1)];
     if (!tex) return false;
-    renderer.drawScreenQuad(tex, getWeaponRect(), w.curAnimRect, tint ?? undefined);
+    if (!transform && !mirror) {
+      renderer.drawScreenQuad(tex, getWeaponRect(), w.curAnimRect, tint ?? undefined);
+      return true;
+    }
+    // TWO-HANDS: a hand of a pair - its guard on the rect, then the mirror about the screen's middle, its source read
+    // right to left (the one hand above is the mod's own line, untouched)
+    let rect = getWeaponRect();
+    if (transform) rect = transform(rect);
+    if (mirror) rect = mirrorRect(rect, w.screenRect.width, w.screenRect.x);
+    const uv = mirror ? { u0: w.curAnimRect.u1, v0: w.curAnimRect.v0, u1: w.curAnimRect.u0, v1: w.curAnimRect.v1 } : w.curAnimRect;
+    renderer.drawScreenQuad(tex, rect, uv, tint ?? undefined);
     return true;
+  }
+  /** TWO-HANDS: would draw() put a picture on the screen this frame - the clone applicable and not choosing silence
+   *  (frame -1, hidden, third person, not shown with no slide). The pair's running hands take over from a hand that is. */
+  function drawing() {
+    if (!ctx || !w.art || ctx.weaponType === T.None) return false;
+    if (w.currentFrame === -1 || !w.showWeapon || ctx.thirdPerson) return false;
+    return !!(w.s.offset || ctx.shown);
   }
 
   /** The channels for the Morrowind arms: the frame's Position and
@@ -750,7 +775,7 @@ export function createWeaponWidget({
   }
 
   return {
-    lateUpdate, draw, endOfFrame, onAttackDamageCalculated, armsTransform, transformRect,
+    lateUpdate, draw, drawing, endOfFrame, onAttackDamageCalculated, armsTransform, transformRect,
     /** The mod's `showWeapon` / `hideWeapon` messages. */
     setShowWeapon(v) { w.showWeapon = !!v; },
     setThirdPerson(v) { w.isInThirdPerson = !!v; },
