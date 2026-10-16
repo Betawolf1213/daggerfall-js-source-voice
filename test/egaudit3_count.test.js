@@ -434,10 +434,16 @@ test('AUDIT EG III #11 THE DOOR\'S REACH, ONE NUMBER (section 7: `down` "accepte
   const calls = [];
   const walk = (dir) => { for (const n of readdirSync(dir)) { const p = join(dir, n); if (statSync(p).isDirectory()) walk(p); else if (/\.m?js$/.test(n)) for (const m of readFileSync(p, 'utf8').matchAll(/egAtDoor\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g)) calls.push([p, m[1]]); } };
   walk(new URL('../src', import.meta.url).pathname);
-  const used = calls.filter(([, a]) => !/^spec, x, z, pad = 0$/.test(a));
+  // PIN MOVED (THE ASCENT - HEIGHT, LAW 9; Elite-Gates-Ascent.md section 2): the door's law takes the body's FEET after its
+  // plan (`egAtDoor(spec, x, z, y)` - a hall that judges by height asks the door's own floor; the laws before ignore it, so
+  // their every answer is the same), its pad after them, and still no caller passes a pad: three arguments, or a fourth that
+  // is a height (a member's, a pose's, my own feet's `.y`, or the trail's `y`) - never a fifth
+  const used = calls.filter(([, a]) => !/^spec, x, z, y = NaN, pad = 0$/.test(a));
   assert.ok(used.length >= 5, `the door's law is called (${used.length})`);
   const args = (a) => { let depth = 0, n = 1; for (const ch of a) { if (ch === '(') depth++; else if (ch === ')') depth--; else if (ch === ',' && depth === 0) n++; } return n; };
-  for (const [p, a] of used) assert.equal(args(a), 3, `${p}: egAtDoor(${a}) - no pad`);
+  const last = (a) => { let depth = 0, at = 0; for (let i = 0; i < a.length; i++) { const ch = a[i]; if (ch === '(') depth++; else if (ch === ')') depth--; else if (ch === ',' && depth === 0) at = i + 1; } return a.slice(at).trim(); };
+  const feet = (a) => /(?:^|\.)y$/.test(last(a));
+  for (const [p, a] of used) assert.ok(args(a) === 3 || (args(a) === 4 && feet(a)), `${p}: egAtDoor(${a}) - no pad`);
   assert.ok(used.some(([p]) => p.endsWith('scenes/egClient.js')), 'the screen\'s `down` among them');
 });
 

@@ -233,8 +233,8 @@
   {
     "name": "EGA3L-fade-caster",
     "file": "src/net/egLegion.js",
-    "old": "const tgt = seen[Math.floor(rng() * seen.length)] ?? n.m;",
-    "new": "const tgt = here[Math.floor(rng() * here.length)] ?? n.m;",
+    "old": "const mine = egByHeight(spec) ? seen.filter((m) => egSameStorey(spec, a, m)) : seen;",
+    "new": "const mine = egByHeight(spec) ? here.filter((m) => egSameStorey(spec, a, m)) : here;",
     "tests": [
       "test/egaudit3_legion.test.js"
     ],
@@ -373,7 +373,7 @@
   {
     "name": "EGA3L-vigil-escort",
     "file": "src/net/egBrain.js",
-    "old": "    egLegionRaise(F, egWaveKinds(F, rng, k), ringSpots(spec, at[0], at[1], 5, k, rng), now, out, { wave: 1 });\n",
+    "old": "    egLegionRaise(F, egWaveKinds(F, rng, k), ringSpots(spec, at[0], at[1], 5, k, rng, spec.arrive.y), now, out, { wave: 1 });\n",
     "new": "",
     "tests": [
       "test/egaudit3_legion.test.js"

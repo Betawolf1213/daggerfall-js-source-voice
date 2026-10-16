@@ -262,7 +262,7 @@
   {
     "name": "EGZK-a-run-through-the-wall",
     "file": "src/net/egLords.js",
-    "old": "const cut = egArchCut(view, L.x, L.z, to[0], to[1]);",
+    "old": "const cut = egArchCut(view, L.x, L.z, to[0], to[1], L.y);",
     "new": "const cut = null;",
     "tests": [
       "test/egz_lords.test.js"
@@ -289,8 +289,8 @@
   {
     "name": "EGZK-a-run-at-another-height",
     "file": "src/net/egLords.js",
-    "old": "\n      && (!b.run || oneLevel(view, L, target)));",
-    "new": ");",
+    "old": "\n      && (!b.run || oneLevel(view, L, target)) && (b.ch || egSameStorey(view, L, target)));",
+    "new": "\n      && (b.ch || egSameStorey(view, L, target)));",
     "tests": [
       "test/egz_lords.test.js"
     ]

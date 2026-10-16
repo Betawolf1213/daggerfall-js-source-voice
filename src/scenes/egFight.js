@@ -110,7 +110,9 @@ import { EG_LOOK_BIT } from '../world/egLook.js';   // EG-ZD: a cut feint's dash
 import { TELL_FEINT_FADE } from '../ai/blowShapes.js';   // EG-ZD (section 13.2): the feint's fade - Feud-Arc section 7.3's one number
 import { egCensusDr, EG_HEAL_WORD_MS, EG_LIFELINE_MS } from '../net/egBrain.js';   // EG-ZP (sections 15 and 21): THE CENSUS'S VESTIGES, the relay's own law; Lifeline's window
 import { EG_TRAIL_MS } from '../net/egFair.js';   // EG-ZP: how long the census keeps a trail - and a Lifeline window
+import { egBlowLandsOn } from '../net/egFair.js';   // THE ASCENT - HEIGHT: a blow lands on its own storey, on every screen as on the relay
 import { egFightView } from '../net/egWalkGraph.js';   // EG-ZP: the hall's fight ground, the census's floor
+import { egFeetY, egBears, egByHeight, egOneStorey, egStoreyY } from '../net/egWalkGraph.js';   // THE ASCENT - HEIGHT: a zone lies on its own floor, a blow is mine on my storey alone
 import { egRunOfMember } from '../net/egLink.js';   // EG-ZP: each member's Vestiges and Mastery
 import { egVOf, egHymnOf, EG_BLOODIED_UNDER, EG_HYMN_MS } from '../net/egVestige.js';   // EG-ZR (section 15): the holder's Vestiges, Shield-Hymn's pair
 import { egAccordMates, EG_ECHO_Q } from '../net/egVestige.js';   // EG-ZS (section 15): the pair law; an Echo's number
@@ -229,7 +231,7 @@ export function egLookShapes(shapes, acc, stage) {
 const slot = () => ({ kind: 0, origin: [0, 0], yaw: 0, r: 0, halfArc: 0, body: 0, end: [0, 0], halfW: 0, r0: 0, r1: 0, points: [], n: 0,
   t: 0, flash: 0, alpha: 0, color: GOLD, edge: TELEGRAPH_EDGE_DAGON, court: 0, style: TELEGRAPH_STYLE.weight, since: 0, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.blow,
   mine: false, fillK: 1, look: 0, fogFloor: EG_FOG_FLOOR_ARR, cut: false,   // EG-G2: aimed at me, the fill, the style bit, the fog floor; EG-ZD: a cut feint
-  y: NaN, order: Infinity });   // EG-ZG: its own surface's height (none: the fight floors it covers), its rank in THE TELEGRAPH BUDGET - both cleared each frame
+  y: NaN, order: Infinity, by: NaN });   // EG-ZG: its own surface's height (none: the fight floors it covers), its rank in THE TELEGRAPH BUDGET - both cleared each frame; THE ASCENT: the height its blow or zone lands at (none: every floor under it in plan)
 /** EG-ZG: the Eclipse's darkening's line (none - it is the floor's dark, never a warning's line) and a Drop's dust. */
 const DARK_EDGE = Object.freeze([0, 0, 0]);
 const DUST_COLOR = Object.freeze([0.62, 0.58, 0.52]);
@@ -623,6 +625,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** EG-ZP: the share of blow `bl` on me my company's Vestiges spare (egShieldDr - the census's own law) - each companion
    *  where this screen draws them, at their feet (the pose stands at the eye). */
   const spared = (E, F, bl) => egShieldDr(E, F, spec, bl, me(), trail, peerFeet, ll, hymn);
+  /** THE ASCENT (Elite-Gates-Ascent.md section 2): a blow's verdict `v` on feet at (x, y, z) held to its own storey - a hit off
+   *  the floors it lands on (net/egFair.js egBlowLandsOn - the relay's rule) waits while its span lasts, then misses. A hall
+   *  that judges in plan alone keeps the verdict as it was. */
+  const onStorey = (v, bl, x, y, z, t) => (v !== 'hit' || egBlowLandsOn(egFightView(spec), bl, x, y, z) ? v : t >= bl.at + Math.max(1, bl.sp ?? 0) ? 'miss' : 'wait');
   /** One body drawn: its look's sprite at its act's frame, at its place. EG-LOOK (section 9): at its DRAWN size (a lord's
    *  presence over its body's scale), its feet on the body's place - the quad stands up from its base - a flyer's hover its
    *  drawn one; a grown sprite casts no shadow; `top` its drawn head this frame (NaN while it stands nowhere on this screen). */
@@ -744,9 +750,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       sh.color = COLOR_OF[bl.el] ?? COLOR_OF.null; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.court = 0; sh.mine = aimedAtMe;
       sh.style = bl.ch ? TELEGRAPH_STYLE.dagon : STYLE_OF[bl.el] ?? TELEGRAPH_STYLE.weight;
       sh.since = Math.max(0, (t - from) / 1000); sh.span = Math.max(0.001, bl.wu / 1000); sh.after = t >= bl.at ? (t - bl.at) / 1000 : -1; sh.runS = (bl.sp ?? 0) / 1000;
+      sh.by = Number.isFinite(bl.y) ? bl.y : NaN;   // THE ASCENT (Elite-Gates-Ascent.md section 2): drawn on its own storey's floors
       _shapes.push(sh);
       // a CHECK's havens, gold and safe
-      if (s[0] === 'h') for (let i = 1; i + 2 < s.length; i += 3) { const hv = (_slots[_shapes.length] ??= slot()); hv.mine = false; hv.kind = TELEGRAPH_KIND.disc; hv.origin[0] = s[i]; hv.origin[1] = s[i + 1]; hv.r = s[i + 2]; hv.color = GOLD; hv.edge = TELEGRAPH_EDGE_SAFE; hv.pool = TELEGRAPH_POOL.ground; hv.t = 1; hv.flash = 0; hv.alpha = 1; hv.style = TELEGRAPH_STYLE.weight; hv.since = 0; hv.span = 1; hv.after = -1; hv.court = 0; hv.order = rank; _shapes.push(hv); }
+      if (s[0] === 'h') for (let i = 1; i + 2 < s.length; i += 3) { const hv = (_slots[_shapes.length] ??= slot()); hv.mine = false; hv.kind = TELEGRAPH_KIND.disc; hv.origin[0] = s[i]; hv.origin[1] = s[i + 1]; hv.r = s[i + 2]; hv.color = GOLD; hv.edge = TELEGRAPH_EDGE_SAFE; hv.pool = TELEGRAPH_POOL.ground; hv.t = 1; hv.flash = 0; hv.alpha = 1; hv.style = TELEGRAPH_STYLE.weight; hv.since = 0; hv.span = 1; hv.after = -1; hv.court = 0; hv.order = rank; hv.by = sh.by; _shapes.push(hv); }
     }
   }
   /** EG-H1 - WATCHFIRE'S EARLY OUTLINE (section 15): a told blow's stamps as a PULSING solid red line - no fill, never blue -
@@ -758,7 +765,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const sh = (_slots[_shapes.length] ??= slot());
       if (!fillStamp(sh, s)) continue;
       sh.t = 0; sh.flash = 0; sh.alpha = 0.65 + 0.35 * Math.sin((t / TOLD_PULSE_MS) * Math.PI);
-      sh.color = COLOR_OF.null; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.court = 0; sh.style = TELEGRAPH_STYLE.weight;
+      sh.color = COLOR_OF.null; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.court = 0; sh.style = TELEGRAPH_STYLE.weight; sh.by = Number.isFinite(bl.y) ? bl.y : NaN;
       sh.since = 0; sh.span = Math.max(0.001, bl.wu / 1000); sh.after = -1; sh.runS = 0;
       _shapes.push(sh);
     }
@@ -1054,7 +1061,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       mix.peers(true);   // EG-ZH (section 26): every peer's sound 4 dB down while a hall's fight runs
       const F = E.fight.h === E.h ? E.fight : null;
       _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0; _barks.length = 0; _pending.length = 0;
-      for (const sl of _slots) { sl.mine = false; sl.cut = false; sl.y = NaN; sl.order = Infinity; }   // EG-G2: a slot is mine only when this frame's blow says so; EG-ZD: a cut feint's the same; EG-ZG: its own surface and its rank this frame's
+      for (const sl of _slots) { sl.mine = false; sl.cut = false; sl.y = NaN; sl.order = Infinity; sl.by = NaN; }   // EG-G2: a slot is mine only when this frame's blow says so; EG-ZD: a cut feint's the same; EG-ZG: its own surface and its rank this frame's
       { const pw = pullsWas; pullsWas = pullsNow; pullsNow = pw; pullsNow.clear(); }   // AUDIT EG V (L6-4): swapped in place, no pair made a frame
       stageNow = E.sg;
       place(E, t);
@@ -1081,9 +1088,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       for (const b of F.bodies) if (b.role === EG_ROLE.lord) lordIds.add(b.i);
       _orderIn.length = 0;
       for (const bl of F.blows) if (!bl.cut || t - bl.cut < EG_FEINT_FADE_MS) _orderIn.push(bl);
+      const st = f && egByHeight(spec) ? egStoreyY(egFightView(spec), f[0], fy, f[1]) : NaN;   // THE ASCENT (Elite-Gates-Ascent.md section 2): my storey (none known in a hall that judges in plan)
       const order = egShapeOrder(_orderIn, f ?? NO_FEET, t, _orderOpts);   // AUDIT EG IV (lane1 #5): a failure blow naming me is aimed at me (namesMe's own law, kept in _orderOpts)
       for (let k = 0; k < order.length; k++) {
-        const bl = order[k], mine = bl.on ? bl.on.includes(me()) : !!f && bl.s.some((s) => egInShape(s, f[0], f[1]));   // AUDIT EG IV (lane1 #5): a failure blow is mine when it names me
+        const bl = order[k], mine = bl.on ? bl.on.includes(me()) : !!f && egOneStorey(st, bl.y) && bl.s.some((s) => egInShape(s, f[0], f[1]));   // AUDIT EG IV (lane1 #5): a failure blow is mine when it names me; THE ASCENT: never one of another storey over my plan
         drawBlow(bl, t, mine, k);   // EG-ZG: its rank, THE TELEGRAPH BUDGET's order for the floors' draws
         // EG-G2 - THE SPIRE MIX: a personal sting at its word for a lord's blow or a CHECK on my feet; an add's at most one each 1.5 s
         if (mine && standing && !stung.has(bl.i) && t < bl.at) { stung.add(bl.i); const d0 = feet(); mix.sting(bl.ch ? 'check' : lordIds.has(bl.o) ? 'lord' : 'add', d0 ? [d0[0], d0[1], d0[2]] : null); }
@@ -1099,13 +1107,13 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       for (const bl of F.blows) {
         if (!bl.cut && t < bl.at) _pending.push(bl);   // EG-ZG: the peril arrow's
         if (!judged.has(bl.i) && !bl.cut && standing) {
-          const v = egBlowVerdict(bl, f[0], f[1], t, 400, me());   // AUDIT EG IV (lane1 #5): a failure blow that names me lands wherever I stand
+          const v = onStorey(egBlowVerdict(bl, f[0], f[1], t, 400, me()), bl, f[0], fy, f[1], t);   // AUDIT EG IV (lane1 #5): a failure blow that names me lands wherever I stand; THE ASCENT: on its own storey
           if (v !== 'wait') { judged.add(bl.i); if (v === 'hit') { landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part * egTouchedX(F, bl, me(), t), true); if (bl.pu > 0) { const s = bl.s[0]; const ox = s[0] === 'l' ? s[3] - s[1] : f[0] - s[1], oz = s[0] === 'l' ? s[4] - s[2] : f[1] - s[2], d = Math.hypot(ox, oz) || 1; push(ox / d, oz / d, bl.pu); } } }   // AUDIT EG III (lane1 #4): THE TWINS' TOUCHED, on my own blow
         }
         if (mates.length && !bl.cut && standing) for (const sub of mates) {   // AUDIT EG III (lane1 #12): my part of a blow on a chained mate, at their feet where this screen draws them
           const key = `${bl.i}:${sub}`, q = judged.has(key) ? null : peerFeet(sub);
           if (!q) continue;
-          const v = egBlowVerdict(bl, q[0], q[2], t, 400, sub);
+          const v = onStorey(egBlowVerdict(bl, q[0], q[2], t, 400, sub), bl, q[0], q[1], q[2], t);
           if (v !== 'wait') { judged.add(key); if (v === 'hit') landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part, true); }   // AUDIT EG V (L8-1): a body's blow
         }
         if (!landedSet.has(bl.i) && t >= bl.at && t - bl.at < 1500) {
@@ -1119,9 +1127,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         const sh = (_slots[_shapes.length] ??= slot());
         if (fillStamp(sh, z.s)) { sh.t = 1; sh.flash = 0; sh.alpha = Math.min(1, (t - z.from) / 200, (z.until - t) / 1000); sh.color = ZONE_COLORS[z.kind] ?? ZONE_COLORS.burn; sh.edge = z.kind === 'haven' ? TELEGRAPH_EDGE_SAFE : TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.ground; sh.style = z.kind === 'burn' ? STYLE_OF[z.el] ?? TELEGRAPH_STYLE.fire : TELEGRAPH_STYLE.weight; sh.since = (t - z.from) / 1000; sh.span = 1; sh.after = -1; sh.court = 0; _shapes.push(sh); }
         if (z.kind === 'burn') { sh.color = egPoolRgb(band); sh.pool = TELEGRAPH_POOL_SPIRE.pool; }   // EG-ZG (section 25.2): A SPIRE POOL - the band's ramp darkened, its rim dashed
-        if (!standing || !egInShape(z.s, f[0], f[1])) continue;
+        sh.by = Number.isFinite(z.y) ? z.y : NaN;   // THE ASCENT (section 2): drawn on its own floor
+        if (!standing || !egInShape(z.s, f[0], f[1]) || (Number.isFinite(z.y) && !egBears(z.y, egFeetY(spec, fy)))) continue;   // THE ASCENT: it holds only feet its floor bears
         if (z.kind === 'burn' && t - (zoneTick.get(z.i) ?? 0) >= EG_TICK_MS) { zoneTick.set(z.i, t); landShare(z.p, z.b, z.el, 'Burning ground'); }
-        if (z.kind === 'void' && t - voidAt >= 1500 && egRimCastsBack(F.zones, f[0], f[1], t)) { voidAt = t; castBack(); }   // AUDIT EG V: never on a haven (a Molten Rim's causeway)
+        if (z.kind === 'void' && t - voidAt >= 1500 && egRimCastsBack(F.zones, f[0], f[1], t, egFeetY(spec, fy))) { voidAt = t; castBack(); }   // AUDIT EG V: never on a haven (a Molten Rim's causeway)
       }
       // THE TETHERS (EG-ZG, section 25.5): the pull-apart grammar for a drain and a Blood Tether, the stay-close for a chain; a Wraith's drain on me ticks
       const meSub = me();

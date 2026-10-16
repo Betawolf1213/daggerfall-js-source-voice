@@ -92,8 +92,8 @@
   {
     "name": "EGA4L-caster-pool-copy",
     "file": "src/net/egLegion.js",
-    "old": "POOLS.hellfire.ms, POOLS.hellfire.pct, POOLS.hellfire.base, F.el);",
-    "new": "POOLS.hellfire.ms, 0.06, 2, F.el);",
+    "old": "POOLS.hellfire.ms, POOLS.hellfire.pct, POOLS.hellfire.base, F.el, 'burn', bl.y);",
+    "new": "POOLS.hellfire.ms, 0.06, 2, F.el, 'burn', bl.y);",
     "tests": [
       "test/egaudit4_legion.test.js"
     ],
@@ -572,8 +572,8 @@
   {
     "name": "EGA4L-dusk-divers-raised",
     "file": "src/net/egLords.js",
-    "old": "if (L.ph >= 3) egLegionSummon(F, [EG_KIND.diver, EG_KIND.diver], [[ax, az]], now, out); }",
-    "new": "if (L.ph >= 3) egLegionRaise(F, [EG_KIND.diver, EG_KIND.diver], [[ax, az]], now, out); }",
+    "old": "if (L.ph >= 3) egLegionSummon(F, [EG_KIND.diver, EG_KIND.diver], [Number.isFinite(y) ? [ax, az, y] : [ax, az]], now, out); }",
+    "new": "if (L.ph >= 3) egLegionRaise(F, [EG_KIND.diver, EG_KIND.diver], [Number.isFinite(y) ? [ax, az, y] : [ax, az]], now, out); }",
     "tests": [
       "test/egaudit4_legion.test.js"
     ],

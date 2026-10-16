@@ -63,6 +63,8 @@ import { EG_KIND, egLegionRaise, egWaveKinds, egWaveSize, egFromBehind, egFromFr
 import { egLegionSummon } from './egLegion.js';   // AUDIT EG IV (lane1 #6): a lord's summons held to the room under the legion's cap
 import { walkGraph, walkAir } from './egLegion.js';   // EG-ZK (section 11.7): the lords walk the graph and fly about the rock
 import { egFightView, egWalkGraph, egRegionAt, egKeepInRegion, egArchCut, egWayOn, EG_LEVEL_M } from './egWalkGraph.js';   // EG-ZK: the fight ground's graph and its regions; a run cut at an arch's wall. EG-ZQ: the way on kept only while walked
+import { egByHeight, egFeetY, egBears } from './egWalkGraph.js';   // THE ASCENT - HEIGHT: a lord keeps to its own storey
+import { egSameStorey } from './egLegion.js';   // THE ASCENT - HEIGHT: a blow only at a member of its own storey
 import { bossSeam } from './bossSeam.js';   // EG-ZK (section 13.1): the Spire's lords written to the boss seam
 import { judgeShapes } from './bossRef.js';   // EG-ZK: the seam's judge - the Spire's one (EG-H1)
 import { SD_ECHO_PAIR_MS } from './sdRemnant.js';   // AUDIT EG IV (lane1 #32; section 13.3): the Twins' window is the Echoes' law, read
@@ -247,7 +249,7 @@ export function egLordsShare(F, sub, lv, admits) {
  *  - 0 its look's own; net/egBodies.js egBodyWire), so every screen draws, aims at and strikes it there. */
 function stand(F, spec, key, x, z, hp, now, out, o = {}) {
   const look = egBossLook(key, o.pt ?? 0), size = (F.mem.law ?? egLordLaw()).sizeX;
-  return egBodyNew(F, EG_ROLE.lord, egBossNo(key), x, z, hp, { pt: o.pt ?? 0, r: bodyR(look.scale * size), sz: size === 1 ? 0 : Math.round(size * EG_LAW_UNIT), fl: o.fl ?? 0, now, out, key, ph: 1, up2: false, nextAt: Infinity, threat: {}, ward: 0, stunUntil: 0, yaw: Math.PI, lastBlow: '', run: 0, cds: {}, ...o.extra });
+  return egBodyNew(F, EG_ROLE.lord, egBossNo(key), x, z, hp, { pt: o.pt ?? 0, r: bodyR(look.scale * size), sz: size === 1 ? 0 : Math.round(size * EG_LAW_UNIT), fl: o.fl ?? 0, now, out, key, ph: 1, up2: false, nextAt: Infinity, threat: {}, ward: 0, stunUntil: 0, yaw: Math.PI, lastBlow: '', run: 0, cds: {}, ...o.extra, ...(Number.isFinite(o.y) ? { y: o.y } : {}) });
 }
 /** The lord bodies of the fight (the living). */
 export const egLordsOf = (F) => egBodiesOf(F, EG_ROLE.lord);
@@ -256,10 +258,14 @@ export const egLordsOf = (F) => egBodiesOf(F, EG_ROLE.lord);
 const mirrorsOf = (F, L) => egLordsOf(F).filter((x) => egHas(x, EG_FL.mirror) && x.by === L.i);
 /** The fight's errand objects (role 2) of a type. */
 export const egObjsOf = (F, t) => egBodiesOf(F, EG_ROLE.obj).filter((o) => o.t === t);
-/** An object stood: its type, place, health (0 a stood-on one - it carries 1 and is never struck), radius. */
+/** An object stood: its type, place, health (0 a stood-on one - it carries 1 and is never struck), radius. THE ASCENT
+ *  (Elite-Gates-Ascent.md section 2): at the floor's height `o.y` where the caller names it (a spot kept on a storey). */
 function obj(F, t, x, z, hp, now, out, o = {}) {
-  return egBodyNew(F, EG_ROLE.obj, EG_OBJ[t] ?? 0, x, z, hp > 0 ? hp : 1, { t, r: o.r ?? 1.2, fl: hp > 0 ? 0 : EG_FL.ward, pt: o.pt ?? 0, now, out, st: 0, ...o.extra });
+  return egBodyNew(F, EG_ROLE.obj, EG_OBJ[t] ?? 0, x, z, hp > 0 ? hp : 1, { t, r: o.r ?? 1.2, fl: hp > 0 ? 0 : EG_FL.ward, pt: o.pt ?? 0, now, out, st: 0, ...o.extra, ...(Number.isFinite(o.y) ? { y: o.y } : {}) });
 }
+/** THE ASCENT (section 2): a law spot's floor height (its `y`, the law's centimetres) where hall `spec` judges by height; else
+ *  not known (NaN - a body stood there stands on the fight ground under it, as before). */
+const spotY = (spec, q) => (egByHeight(spec) && Number.isFinite(q?.y) ? q.y / 100 : NaN);
 /** THE OBJECTS' TYPES on the wire (`k` of an object body). */
 export const EG_OBJ = Object.freeze({ rift: 0, anchor: 1, rune: 2, gem: 3, haven: 4, brazier: 5, banner: 6, heart: 7, seal: 8, pillar: 9, standard: 10, chain: 11, relic: 12, isle: 13, spark: 14, plate: 15, cache: 16, niche: 17, shrine: 18, sutler: 19, engine: 20, image: 21, umbra: 22, memento: 23, vault: 24, stone: 25, fwall: 26 });   // LAYER THREE: `fwall` an alcove's false wall (one blow)
 
@@ -291,14 +297,14 @@ function lordWalk(F, spec, L, gx, gz, stop, speed, now, gy = NaN) {
   // blink or a straight walk since leaves none; one it stands at is reached - its region the lord's now (a stair's top, its
   // upper floor's), its feet on that floor. EG-ZQ: the graph's own rule (net/egWalkGraph.js egWayOn), the legion's too
   egWayOn(view, L, G);
-  const from = regionOf(view, G, L.x, L.z, NaN, L.fr), to = regionOf(view, G, gx, gz, gy);
+  const from = regionOf(view, G, L.x, L.z, egFeetY(view, L.y), L.fr), to = regionOf(view, G, gx, gz, Number.isFinite(gy) ? gy : egFeetY(view, L.y));   // THE ASCENT: by its own feet
   if (from === to) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r); return; }
   walkGraph(F, view, L, gx, gz, stop, speed, now, gy);
 }
 /** EG-ZK (section 11.7): do lord `L` and member `m` (its feet's height `y` when known) stand on floors of one height? */
 function oneLevel(view, L, m) {
   if (!view?.fl?.length) return true;
-  const G = egWalkGraph(view), a = regionOf(view, G, L.x, L.z, NaN, L.fr), b = regionOf(view, G, m.x, m.z, m.y);
+  const G = egWalkGraph(view), a = regionOf(view, G, L.x, L.z, egFeetY(view, L.y), L.fr), b = regionOf(view, G, m.x, m.z, m.y);
   return Math.abs((view.fl[G.rg[a].f].y ?? 0) - (view.fl[G.rg[b].f].y ?? 0)) <= EG_LEVEL_M;
 }
 /** EG-ZK (section 11.7): a lord's RUN (a row's `run` - the champions' Charge, the Armsmaster's Lunge, the Night-Stalker's) to
@@ -306,10 +312,10 @@ function oneLevel(view, L, m) {
  *  net/egWalkGraph.js egArchCut) - and none runs up or down a ledge's face: a run that would end on a floor of another height
  *  ends on the region it began in. A leap or a blink is no run. */
 function runTo(view, L, to) {
-  const cut = egArchCut(view, L.x, L.z, to[0], to[1]);
+  const cut = egArchCut(view, L.x, L.z, to[0], to[1], L.y);
   let end = cut ? [cut[0], cut[1] - Math.sign(to[1] - L.z) * (L.r + 0.4)] : to;
   if (!view?.fl?.length) return end;
-  const G = egWalkGraph(view), from = regionOf(view, G, L.x, L.z, NaN, L.fr), at = regionOf(view, G, end[0], end[1], NaN, from);
+  const H = egFeetY(view, L.y), G = egWalkGraph(view), from = regionOf(view, G, L.x, L.z, H, L.fr), at = regionOf(view, G, end[0], end[1], H, from);   // THE ASCENT: by its own feet
   if (Math.abs((view.fl[G.rg[at].f].y ?? 0) - (view.fl[G.rg[from].f].y ?? 0)) > EG_LEVEL_M) end = egKeepInRegion(view, G, from, end[0], end[1], L.r);
   return end;
 }
@@ -385,14 +391,14 @@ export const EG_HAVENS_MAX = 8;
  * route measured, whatever it is. Pure. `{ havens: [[x, z, r]...], routeM }`.
  * @param {any} spec @param {number[][]} base @param {number} aim
  */
-export function egHavenFloor(spec, base, aim) {
-  const havens = base.map((h) => [...h]), G = floorWalker(spec);
+export function egHavenFloor(spec, base, aim, y = NaN) {
+  const havens = base.map((h) => [...h]), G = floorWalker(spec, y);
   if (!G) return { havens, routeM: 0 };
   const g = G.g;
   for (const [hx, hz, hr] of havens) G.spread(hx, hz, hr);
   let [far, worst] = G.farthest();
   while (worst + g / Math.SQRT2 > aim && havens.length < EG_HAVENS_MAX && far >= 0) {
-    const [hx, hz] = egKeepOnFight(spec, G.x0 + (far % G.W) * g, G.z0 + Math.floor(far / G.W) * g, 3), h = [r2(hx), r2(hz), 3];
+    const [hx, hz] = egKeepOnFight(spec, G.x0 + (far % G.W) * g, G.z0 + Math.floor(far / G.W) * g, 3, y), h = [r2(hx), r2(hz), 3];
     havens.push(h); G.spread(h[0], h[1], h[2]);
     [far, worst] = G.farthest();
   }
@@ -404,10 +410,11 @@ export function egHavenFloor(spec, base, aim) {
  * from the discs `spread` was given - lowered where a disc is nearer (Dijkstra over the floor cells, eight neighbours, a
  * diagonal x√2: never under the straight walk, never across the magma); `farthest()` the floor cell farthest from them
  * `[cell, m]`, `at(x, z)` a point's (its nearest floor cell's), `clear()` every distance forgotten. Null on a floor of no
- * pieces. Pure.
- * @param {any} spec
+ * pieces. Pure. THE ASCENT (Elite-Gates-Ascent.md section 2): `y` the storey's feet - in a hall that judges by height, the floor
+ * that bears them alone (egOnFight's band: a haven never laid, nor a route walked, on a floor stacked over or under it).
+ * @param {any} spec @param {number} [y]
  */
-function floorWalker(spec) {
+function floorWalker(spec, y = NaN) {
   const g = EG_HAVEN_GRID_M, fl = spec?.fl ?? [];
   let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
   const box = (x, z, r) => { x0 = Math.min(x0, x - r); z0 = Math.min(z0, z - r); x1 = Math.max(x1, x + r); z1 = Math.max(z1, z + r); };
@@ -415,7 +422,7 @@ function floorWalker(spec) {
   if (!Number.isFinite(x0)) return null;
   const W = Math.floor((x1 - x0) / g) + 1, H = Math.floor((z1 - z0) / g) + 1, N = W * H;
   const floor = new Uint8Array(N), D = new Float64Array(N).fill(Infinity);
-  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (egOnFight(spec, x0 + i * g, z0 + j * g)) floor[j * W + i] = 1;
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (egOnFight(spec, x0 + i * g, z0 + j * g, 0, y)) floor[j * W + i] = 1;
   // the walked distances from one disc, lowered where it is nearer (Dijkstra over the floor cells; a binary heap)
   const spread = (hx, hz, hr) => {
     const heap = [], push = (d, c) => { heap.push([d, c]); let k = heap.length - 1; while (k > 0) { const p = (k - 1) >> 1; if (heap[p][0] <= heap[k][0]) break; [heap[p], heap[k]] = [heap[k], heap[p]]; k = p; } };
@@ -458,8 +465,8 @@ export const EG_RUNE_STAND_M = 1.8;
  * spread over Grath's islands or the Twins' far court meets the runes about the master's own floor in time. Pure; m.
  * @param {any} spec @param {number[][]} runes @param {number} n
  */
-export function egRuneRouteM(spec, runes, n) {
-  const G = runes.length ? floorWalker(spec) : null;
+export function egRuneRouteM(spec, runes, n, y = NaN) {
+  const G = runes.length ? floorWalker(spec, y) : null;
   if (!G) return 0;
   const half = G.g / Math.SQRT2;
   if (n >= runes.length) {
@@ -479,8 +486,10 @@ export function egRuneRouteM(spec, runes, n) {
  *  about its own floor - never about the ground's first island or court, where it may not be; a ground of no disc, one about
  *  the lord. A Court's own lord, a ground of one disc and every hall but a Court keep the first. */
 function mainDisc(spec, L) {
-  const discs = (spec.fl ?? []).filter((f) => f.t === 'd');
-  if (!discs.length) return { x: L.x, z: L.z, r: 18 };
+  // THE ASCENT (Elite-Gates-Ascent.md section 2): of the storey its feet stand in (the discs that bear them), where any does
+  const H = egFeetY(spec, L.y), all = (spec.fl ?? []).filter((f) => f.t === 'd'), own = Number.isFinite(H) ? all.filter((f) => egBears(f.y ?? 0, H)) : all;
+  const discs = own.length ? own : all;
+  if (!discs.length) return Number.isFinite(H) ? { x: L.x, z: L.z, r: 18, y: H } : { x: L.x, z: L.z, r: 18 };
   if (discs.length === 1 || spec.kind !== 'court' || L.key === spec.lord) return discs[0];
   let best = discs[0], bd = Infinity;
   for (const f of discs) { const d = dist(L.x, L.z, f.x, f.z) - f.r; if (d < bd) { bd = d; best = f; } }
@@ -489,9 +498,9 @@ function mainDisc(spec, L) {
 /** A ground's spots of a role, or `k` laid on a ring `rr` out from the main disc's heart (a lord on another's ground). */
 function spotsOr(spec, L, role, k, rr, own = true) {
   const have = spec.spots?.[role];
-  if (own && have?.length) return have.map((q) => [q.x, q.z]);   // AUDIT EG IV: `own` false - the ring, whatever the ground lays
+  if (own && have?.length) return have.map((q) => (Number.isFinite(spotY(spec, q)) ? [q.x, q.z, spotY(spec, q)] : [q.x, q.z]));   // AUDIT EG IV: `own` false - the ring, whatever the ground lays; THE ASCENT: a spot's floor with it
   const f = mainDisc(spec, L), R = Math.min(rr, Math.max(2, f.r - 1.5));
-  return Array.from({ length: k }, (_, j) => egKeepOnFight(spec, f.x + Math.sin((j / k) * 2 * Math.PI + Math.PI / 4) * R, f.z + Math.cos((j / k) * 2 * Math.PI + Math.PI / 4) * R, 1));
+  return Array.from({ length: k }, (_, j) => egKeepOnFight(spec, f.x + Math.sin((j / k) * 2 * Math.PI + Math.PI / 4) * R, f.z + Math.cos((j / k) * 2 * Math.PI + Math.PI / 4) * R, 1, f.y));
 }
 
 /**
@@ -515,13 +524,15 @@ export function egLordsNew(F, spec, key, now, out, ctx) {
   const [x, z] = ctx.at ?? [spec.foe?.x ?? 0, spec.foe?.z ?? 0];
   if (key === 'twins') {
     const courts = spec.spots.court ?? [{ x, z }, { x, z: z + 20 }], one = ctx.n <= 2;
-    const a = stand(F, spec, 'twins', courts[0].x, courts[0].z, hp * EG_TWIN_SHARE, now, out, { pt: 0 });
-    const b = stand(F, spec, 'twins', one ? courts[0].x + 6 : courts[1].x, one ? courts[0].z + 4 : courts[1].z, hp * EG_TWIN_SHARE, now, out, { pt: 1 });
+    const a = stand(F, spec, 'twins', courts[0].x, courts[0].z, hp * EG_TWIN_SHARE, now, out, { pt: 0, y: spotY(spec, courts[0]) });
+    const b = stand(F, spec, 'twins', one ? courts[0].x + 6 : courts[1].x, one ? courts[0].z + 4 : courts[1].z, hp * EG_TWIN_SHARE, now, out, { pt: 1, y: spotY(spec, one ? courts[0] : courts[1]) });
     F.mem.twins = { a: a.i, b: b.i, crossAt: 0, one };
     egLordsPair(F, a, b, one ? EG_TWIN_ONE_MS : SD_ECHO_PAIR_MS);
     return [a, b];
   }
-  const L = stand(F, spec, key, x, z, hp, now, out, champ ? { extra: { champ: 1 } } : {});
+  // THE ASCENT (section 2): on its foe's floor where the law says its height (`foe.y`, metres; `ctx.at`'s third)
+  const fy = egFeetY(spec, ctx.at?.[2] ?? spec.foe?.y);
+  const L = stand(F, spec, key, x, z, hp, now, out, { ...(champ ? { extra: { champ: 1 } } : {}), y: fy });
   if (decree) L.decree = decree;
   if (asp) L.asp = asp.id;
   if (EG_LORDS[key]?.fly) egSetFl(F, L, EG_FL.fly, true, out);
@@ -588,7 +599,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     if (bl.ld || now < bl.at) continue;
     bl.ld = 1;
     const pl = F.mem.pools?.[bl.i];
-    if (pl) { delete F.mem.pools[bl.i]; for (const st of bl.s) zoneOut(F, 'burn', shDisc(st[1], st[2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el }); }   // AUDIT EG IV (lane1 #16): one under each of its marks, as the gate's Hellfire lays it (net/gateStrike.js landingPools)
+    if (pl) { delete F.mem.pools[bl.i]; for (const st of bl.s) zoneOut(F, 'burn', shDisc(st[1], st[2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el, y: bl.y }); }   // AUDIT EG IV (lane1 #16): one under each of its marks, as the gate's Hellfire lays it (net/gateStrike.js landingPools)
   }
   if (F.mem.pools) for (const k of Object.keys(F.mem.pools)) { const i = Number(k); if (!F.blows.some((b) => b.i === i) && !(F.pend ?? []).some((q) => q.b.i === i) && !F.held.some((h) => h.b?.i === i)) delete F.mem.pools[k]; }
   const view = egFightView(spec);   // EG-ZK (section 11.7): the fight ground a lord's run is cut on
@@ -607,7 +618,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     F.mem.furySteps = (F.mem.furySteps ?? 0) + 1;
     F.mem.furyX = Math.min(1.5, (F.mem.furyX ?? 1) + EG_FURY_STEP);
     const L0 = furious[0], spots = [];
-    for (let k = 0; k < egWaveSize(ctx.n); k++) { const a = rng() * Math.PI * 2; spots.push(egKeepOnFight(spec, L0.x + Math.sin(a) * 9, L0.z + Math.cos(a) * 9, 1)); }
+    for (let k = 0; k < egWaveSize(ctx.n); k++) { const a = rng() * Math.PI * 2; spots.push(egKeepOnFight(spec, L0.x + Math.sin(a) * 9, L0.z + Math.cos(a) * 9, 1, L0.y)); }
     egLegionRaise(F, egWaveKinds(F, rng, spots.length, { waveNo: (F.mem.waves = (F.mem.waves ?? 0) + 1) }), spots, now, out, { wave: 1000 + F.mem.waves });
   }
   if (ctx.covenant) {
@@ -650,7 +661,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     const kit = KITS[L.key];
     // AUDIT EG V (NEW-1): a member inside the lord's body stands at no gap - never a negative one that every blow's `minGap` refuses (the lord frozen)
     const blows = (kit?.blows ?? []).filter((b) => (b.ph ?? 1) <= L.ph && (!b.when || b.when(F, L, target, here, ctx)) && now >= (L.cds[b.nm] ?? 0) && dist(L.x, L.z, target.x, target.z) - L.r <= (b.range ?? 40) && Math.max(0, dist(L.x, L.z, target.x, target.z) - L.r) >= (b.minGap ?? 0)
-      && (!b.run || oneLevel(view, L, target)));   // EG-ZK: a run reaches no member on another floor's height - the lord walks the graph to them
+      && (!b.run || oneLevel(view, L, target)) && (b.ch || egSameStorey(view, L, target)));   // EG-ZK: a run reaches no member on another floor's height - the lord walks the graph to them; THE ASCENT: nor a blow one a storey over or under
     const fresh = blows.filter((b) => b.nm !== L.lastBlow || L.run < 2);
     const can = fresh.length ? fresh : blows;
     if (!can.length) { if (!egHas(L, EG_FL.fly) && L.key !== 'colossus') lordWalk(F, spec, L, target.x, target.z, L.r + 1, L.speed ?? 3.4, now, target.y); continue; }
@@ -796,7 +807,7 @@ const gateKit = () => [
 const champKit = () => [
   { ...CLEAVE, make: (F, spec, L, t) => ({ stamps: [shCone(L.x, L.z, Math.atan2(t.x - L.x, t.z - L.z), ATTACKS.cleave.r, ATTACKS.cleave.arc)] }) },
   { ...SLAM, make: (F, spec, L) => ({ stamps: [shDisc(L.x, L.z, ATTACKS.slam.r)] }) },
-  { ...CHARGE, sp: ATTACKS.charge.active, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z), [ex, ez] = egKeepOnFight(spec, L.x + Math.sin(yaw) * ATTACKS.charge.len, L.z + Math.cos(yaw) * ATTACKS.charge.len, L.r); return { stamps: [shLane(L.x, L.z, ex, ez, 4)], to: [ex, ez] }; } },
+  { ...CHARGE, sp: ATTACKS.charge.active, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z), [ex, ez] = egKeepOnFight(spec, L.x + Math.sin(yaw) * ATTACKS.charge.len, L.z + Math.cos(yaw) * ATTACKS.charge.len, L.r, L.y); return { stamps: [shLane(L.x, L.z, ex, ez, 4)], to: [ex, ez] }; } },
 ];
 
 /** AUDIT EG IV (lane9 #16; section 13.4): Garoth's third phase card - the older signature he borrows, by its own name. */
@@ -846,7 +857,7 @@ const KITS = {
   kynreeve: { blows: champKit() },
   // AUDIT EG V (lane1 #11; sections 8.5 and 8.6): the Citadel's three standards PLANTED AS HE WAKES - a champion asleep takes no
   // blow, and nothing of his errand stands to be broken before his ring wakes him
-  kynmarcher: { blows: champKit(), wake(F, spec, L, now, out) { for (const [sx, sz] of spotsOr(spec, L, 'standard', 3, 9).slice(0, 3)) obj(F, 'standard', sx, sz, egHpTeam(F, 4), now, out, { r: 0.8 }); } },
+  kynmarcher: { blows: champKit(), wake(F, spec, L, now, out) { for (const [sx, sz, y] of spotsOr(spec, L, 'standard', 3, 9).slice(0, 3)) obj(F, 'standard', sx, sz, egHpTeam(F, 4), now, out, { r: 0.8, y }); } },
   markynaz: { blows: champKit() },
 
   // ── GRATH, THE HOUND: a fight about ground ──
@@ -864,14 +875,14 @@ const KITS = {
       } },
     ],
     wake(F, spec, L, now, out) {
-      for (const s of spec.spots.isle ?? []) obj(F, 'isle', s.x, s.z, 0, now, out, { r: 11 });
+      for (const s of spec.spots.isle ?? []) obj(F, 'isle', s.x, s.z, 0, now, out, { r: 11, y: spotY(spec, s) });
       F.mem.scentAt = now + 12_000; F.mem.burnAt = 0;
     },
     phase(F, spec, L, ph, now) { if (ph === 2) F.mem.burnAt = now + 4000; },
     tick(F, spec, L, now, here, rng, out, ctx) {
       // the islands crack and fall, and rise again
       for (const o of egObjsOf(F, 'isle')) {
-        if (o.st === 1 && now >= o.stAt) { o.st = 2; o.stAt = now + 15_000; egObSay(o, 2, now, out); zoneOut(F, 'void', shDisc(o.x, o.z, 11), now, now + 15_000, out); }
+        if (o.st === 1 && now >= o.stAt) { o.st = 2; o.stAt = now + 15_000; egObSay(o, 2, now, out); zoneOut(F, 'void', shDisc(o.x, o.z, 11), now, now + 15_000, out, { y: o.y }); }
         else if (o.st === 2 && now >= o.stAt) { o.st = 0; egObSay(o, 0, now, out); }
       }
       // THE SCENT: a member hunted for 8 s at 5.2 m/s; a catch is a Maul (n = 1: no Scent - it gores twice as often, Gore's `w1`)
@@ -907,7 +918,7 @@ const KITS = {
           const s = shLane(b.x, b.z, b.bx, b.bz, 6);
           // AUDIT EG V (lane1 #10; section 13.2): the place's own fire - no CHECK (it has an edge to run to), so THE UNION FLOOR
           // sets it beside every blow pending on a member; aimed at no one, it is never itself held
-          egAim(F, spec, { o: L.i, s: [s], at: now + 3000, wu: 3000, p: 0.2 * egShareX(F.c), b: 4, el: 'fire', nm: 'Burning Bridge', sp: 12_000 }, [], now, out);
+          egAim(F, spec, { o: L.i, s: [s], at: now + 3000, wu: 3000, p: 0.2 * egShareX(F.c), b: 4, el: 'fire', nm: 'Burning Bridge', sp: 12_000, y: spotY(spec, b) }, [], now, out);
           (F.mem.burning ??= []).push({ s, from: now + 3000, until: now + 15_000 });   // AUDIT EG V (lane1 #30): burning from its landing, told before
         }
         F.mem.burnAt = now + 14_000;
@@ -923,7 +934,7 @@ const KITS = {
         const f = mainDisc(spec, L), fl = spec.fl ?? [];
         if (fl.length <= 1 && (fl[0]?.t ?? 'd') === 'd') return { stamps: [shOut(havens)], B: { wu: havenWu(havens, f) } };
         // AUDIT EG V (lane1 #26): another lord's ground of many pieces - the havens over the whole floor, its walked route measured
-        const H = egHavenFloor(spec, havens, egHavenRouteM(havens, f));
+        const H = egHavenFloor(spec, havens, egHavenRouteM(havens, f), f.y);   // THE ASCENT: over the master's own storey
         return { stamps: [shOut(H.havens)], B: { wu: egErrandMs(H.routeM) } };
       } },
       { nm: 'Arcane Lattice', wu: 1400, rec: 800, p: 0.35, b: 10, el: 'shock', range: 99, w: 2, cd: 12_000, make: (F, spec, L, t) => {
@@ -933,11 +944,11 @@ const KITS = {
       } },
       { nm: 'Arcane Bolt', wu: 1600, rec: 700, p: 0.3, b: 8, el: 'shock', range: 30, w: 3, make: (F, spec, L, t) => ({ stamps: [shDisc(t.x, t.z, 3)] }) },
       { nm: 'Mirror Images', wu: 600, rec: 400, p: 0, b: 0, range: 99, w: 1, cd: 30_000, when: (F, L) => !egHas(L, EG_FL.mirror) && mirrorsOf(F, L).length === 0, make: (F, spec, L, t, here, rng, now, out) => {
-        for (let k = 0; k < 3; k++) { const a = (k / 3) * Math.PI * 2 + rng(); const [x, z] = egKeepOnFight(spec, L.x + Math.sin(a) * 8, L.z + Math.cos(a) * 8, 1); const im = stand(F, spec, 'spellmaster', x, z, 1, now, out, { pt: 1 + k, fl: EG_FL.mirror }); if (im) { im.up2 = true; im.nextAt = now + 1500 + k * 700; im.image = 1; im.by = L.i; im.asp = L.asp; } }
+        for (let k = 0; k < 3; k++) { const a = (k / 3) * Math.PI * 2 + rng(); const [x, z, y] = egKeepOnFight(spec, L.x + Math.sin(a) * 8, L.z + Math.cos(a) * 8, 1, L.y); const im = stand(F, spec, 'spellmaster', x, z, 1, now, out, { pt: 1 + k, fl: EG_FL.mirror, y }); if (im) { im.up2 = true; im.nextAt = now + 1500 + k * 700; im.image = 1; im.by = L.i; im.asp = L.asp; } }
         say(out, 'images');
         return null;
       } },
-      { nm: 'Blink', wu: 500, rec: 300, p: 0, b: 0, range: 99, minGap: 0, w: 1, cd: 15_000, make: (F, spec, L, t, here, rng, now) => { const f = mainDisc(spec, L), a = Math.atan2(L.x - f.x, L.z - f.z) + Math.PI; return { stamps: null, to: egKeepOnFight(spec, f.x + Math.sin(a) * f.r * 0.7, f.z + Math.cos(a) * f.r * 0.7, 2) }; } },
+      { nm: 'Blink', wu: 500, rec: 300, p: 0, b: 0, range: 99, minGap: 0, w: 1, cd: 15_000, make: (F, spec, L, t, here, rng, now) => { const f = mainDisc(spec, L), a = Math.atan2(L.x - f.x, L.z - f.z) + Math.PI; return { stamps: null, to: egKeepOnFight(spec, f.x + Math.sin(a) * f.r * 0.7, f.z + Math.cos(a) * f.r * 0.7, 2, L.y) }; } },
     ],
     phase(F, spec, L, ph, now, here, rng, out, ctx) {
       if (ph === 2) examination(F, spec, L, now, here, rng, out, ctx);
@@ -960,7 +971,7 @@ const KITS = {
   // ── THE LAST ARMSMASTER: a fight about the duel ──
   armsmaster: {
     blows: [
-      { nm: 'Lunge', wu: 1000, rec: 900, p: 0.4, b: 12, range: 10, minGap: 3, w: 3, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z); return { stamps: [shLaneAt(L.x, L.z, yaw, 10, 4)], to: egKeepOnFight(spec, L.x + Math.sin(yaw) * 8, L.z + Math.cos(yaw) * 8, L.r) }; } },
+      { nm: 'Lunge', wu: 1000, rec: 900, p: 0.4, b: 12, range: 10, minGap: 3, w: 3, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z); return { stamps: [shLaneAt(L.x, L.z, yaw, 10, 4)], to: egKeepOnFight(spec, L.x + Math.sin(yaw) * 8, L.z + Math.cos(yaw) * 8, L.r, L.y) }; } },
       { nm: 'Whirl', wu: 1300, rec: 1100, p: 0.45, b: 12, range: 3, w: 2, make: (F, spec, L) => ({ stamps: [shDisc(L.x, L.z, 4)] }) },
       { nm: 'Guard', wu: 600, rec: 200, p: 0, b: 0, range: 8, w: 1, cd: 9000, make: (F, spec, L, t, here, rng, now, out) => { L.guardUntil = now + 600; egSetFl(F, L, EG_FL.lit, true, out); return null; } },
     ],
@@ -984,7 +995,7 @@ const KITS = {
         // AUDIT EG IV (lane1 #7): each ring burns until the next closes it; the last stands to the fight's end - AUDIT EG V (h): the
         // last its own (r 17 on THE MASTERS' GROUND burned 6 s and went out), kept whole (F NEW-3: egZonesKeep)
         const end = F.mem.lessonR <= last;
-        zoneOut(F, 'burn', shRing(f.x, f.z, F.mem.lessonR, f.r + 4), now, end ? now + EG_ZONE_FIGHT_MS : now + 6000, out, { p: 0.08, b: 3, el: elOf(L, 'fire'), whole: end });
+        zoneOut(F, 'burn', shRing(f.x, f.z, F.mem.lessonR, f.r + 4), now, end ? now + EG_ZONE_FIGHT_MS : now + 6000, out, { p: 0.08, b: 3, el: elOf(L, 'fire'), whole: end, y: f.y });
       }
     },
   },
@@ -1004,9 +1015,9 @@ const KITS = {
       const f = mainDisc(spec, L);
       if (now >= (F.mem.conquestAt ?? Infinity) && !egObjsOf(F, 'banner').length) {
         F.mem.conquestAt = now + 45_000;
-        spotsOr(spec, L, 'balcony', 3, f.r - 2).map(([x, z]) => ({ x, z })).forEach((b, j) => {
-          const ban = obj(F, 'banner', b.x, b.z, egHpTeam(F, 4), now, out, { r: 0.8, extra: { third: j } });
-          if (ban) { const yaw = Math.atan2(b.x - f.x, b.z - f.z); ban.zone = zoneOut(F, 'burn', shCone(f.x, f.z, yaw, f.r, 120), now + 3500, now + 60_000, out, { p: 0.08, b: 3, el: elOf(L, 'fire') }); }
+        spotsOr(spec, L, 'balcony', 3, f.r - 2).map(([x, z, y]) => ({ x, z, y })).forEach((b, j) => {
+          const ban = obj(F, 'banner', b.x, b.z, egHpTeam(F, 4), now, out, { r: 0.8, extra: { third: j }, y: b.y });
+          if (ban) { const yaw = Math.atan2(b.x - f.x, b.z - f.z); ban.zone = zoneOut(F, 'burn', shCone(f.x, f.z, yaw, f.r, 120), now + 3500, now + 60_000, out, { p: 0.08, b: 3, el: elOf(L, 'fire'), y: f.y }); }
         });
         F.mem.bannerWardUntil = now + 25_000;
         say(out, 'conquest');
@@ -1019,8 +1030,8 @@ const KITS = {
       if (L.ph >= 3 && now >= (F.mem.chargeAt ?? Infinity)) {
         F.mem.chargeAt = now + 20_000;
         const third = (F.mem.third = ((F.mem.third ?? -1) + 1) % 3), yaw = (third * 2 * Math.PI) / 3;
-        egAim(F, spec, { o: L.i, s: [shCone(f.x, f.z, yaw, f.r + 1, 120)], at: now + 5000, wu: 5000, p: 0.1, b: 0, el: null, nm: 'The Floor Falls' }, [], now, out);   // AUDIT EG V (lane1 #10): the place's, in THE UNION FLOOR's set
-        zoneOut(F, 'void', shCone(f.x, f.z, yaw, f.r + 1, 118), now + 5000, now + 25_000, out);   // AUDIT EG IV (lane1 #24): it rises as the next third FALLS (25 s on), never at its telling
+        egAim(F, spec, { o: L.i, s: [shCone(f.x, f.z, yaw, f.r + 1, 120)], at: now + 5000, wu: 5000, p: 0.1, b: 0, el: null, nm: 'The Floor Falls', y: f.y }, [], now, out);   // AUDIT EG V (lane1 #10): the place's, in THE UNION FLOOR's set
+        zoneOut(F, 'void', shCone(f.x, f.z, yaw, f.r + 1, 118), now + 5000, now + 25_000, out, { y: f.y });   // AUDIT EG IV (lane1 #24): it rises as the next third FALLS (25 s on), never at its telling
       }
     },
   },
@@ -1033,7 +1044,7 @@ const KITS = {
       { nm: 'Bone Lance', wu: 1300, rec: 900, p: 0.35, b: 10, el: 'poison', range: 14, w: 2, make: (F, spec, L, t) => ({ stamps: [laneTo(L, t, 14, 4)] }) },
     ],
     wake(F, spec, L, now, out, ctx) {
-      for (const [gx, gz] of spotsOr(spec, L, 'gem', 4, 12.5)) obj(F, 'gem', gx, gz, 0, now, out, { r: 1.5, extra: { souls: 0, cap: ctx.n } });
+      for (const [gx, gz, y] of spotsOr(spec, L, 'gem', 4, 12.5)) obj(F, 'gem', gx, gz, 0, now, out, { r: 1.5, extra: { souls: 0, cap: ctx.n }, y });
       F.mem.titheAt = now + 15_000;
     },
     phase(F, spec, L, ph, now, here, rng, out, ctx) {
@@ -1087,7 +1098,7 @@ const KITS = {
         F.mem.twinsBurn = 1;
         const courts = spec.lord === 'twins' ? spec.spots.court ?? [] : [];
         // AUDIT EG V (lane1 #17): "for the rest of the fight" - the module's own fight's end (EG_ZONE_FIGHT_MS), never ten minutes
-        if (courts.length === 2) for (const [k, c] of courts.entries()) { const toward = k === 0 ? 0 : Math.PI; zoneOut(F, 'burn', shCone(c.x, c.z, toward, 14.2, 120), now + 3000, now + EG_ZONE_FIGHT_MS, out, { p: 0.08, b: 3, el: k === 0 ? 'frost' : 'fire', whole: true }); }
+        if (courts.length === 2) for (const [k, c] of courts.entries()) { const toward = k === 0 ? 0 : Math.PI; zoneOut(F, 'burn', shCone(c.x, c.z, toward, 14.2, 120), now + 3000, now + EG_ZONE_FIGHT_MS, out, { p: 0.08, b: 3, el: k === 0 ? 'frost' : 'fire', whole: true, y: spotY(spec, c) }); }
       }
     },
     tick(F, spec, L, now, here, rng, out) {
@@ -1155,7 +1166,7 @@ const KITS = {
       { nm: 'Dusk Dive', wu: 1300, rec: 1400, p: 0.4, b: 12, el: 'frost', range: 99, w: 3, when: (F, L, t, here, ctx) => true, make: (F, spec, L, t) => ({ stamps: [laneTo(L, t, 16, 4)] }) },
       { ...HELLFIRE, el: ATTACKS.hellfire.el, range: 99, make: (F, spec, L, t, here) => ({ stamps: here.slice(0, ATTACKS.hellfire.max).map((m) => shDisc(m.x, m.z, ATTACKS.hellfire.r)) }) },   // AUDIT EG IV (lane1 #16): the gate's row, its burning ground with it
     ],
-    wake(F, spec, L, now, out) { for (const [ax, az] of spotsOr(spec, L, 'anchor', 3, 20)) obj(F, 'anchor', ax, az, egHpTeam(F, 6), now, out, { r: 0.9 }); F.mem.gutterAt = now + 30_000; },
+    wake(F, spec, L, now, out) { for (const [ax, az, y] of spotsOr(spec, L, 'anchor', 3, 20)) obj(F, 'anchor', ax, az, egHpTeam(F, 6), now, out, { r: 0.9, y }); F.mem.gutterAt = now + 30_000; },
     phase(F, spec, L, ph, now) { if (ph === 2) F.mem.gustAt = now + 4000; },
     tick(F, spec, L, now, here, rng, out) {
       const f = mainDisc(spec, L);
@@ -1175,7 +1186,7 @@ const KITS = {
       }
       if (F.mem.anchorsBackAt && now >= F.mem.anchorsBackAt) {
         F.mem.anchorsBackAt = 0;
-        for (const [ax, az] of spotsOr(spec, L, 'anchor', 3, 20)) { obj(F, 'anchor', ax, az, egHpTeam(F, 6), now, out, { r: 0.9 }); if (L.ph >= 3) egLegionSummon(F, [EG_KIND.diver, EG_KIND.diver], [[ax, az]], now, out); }
+        for (const [ax, az, y] of spotsOr(spec, L, 'anchor', 3, 20)) { obj(F, 'anchor', ax, az, egHpTeam(F, 6), now, out, { r: 0.9, y }); if (L.ph >= 3) egLegionSummon(F, [EG_KIND.diver, EG_KIND.diver], [Number.isFinite(y) ? [ax, az, y] : [ax, az]], now, out); }
         say(out, 'anchors');
       }
       // Wingbeat: a glade-wide gust every 8 s, told 1 s - 3 m/s for 1 s
@@ -1189,7 +1200,7 @@ const KITS = {
   stalker: {
     blows: [
       { nm: 'Shadow Strike', wu: 1300, rec: 900, p: 0.4, b: 12, range: 6, w: 3, make: (F, spec, L, t) => ({ stamps: [shCone(L.x, L.z, Math.atan2(t.x - L.x, t.z - L.z), 6, 110)] }) },
-      { nm: 'Night Lunge', wu: 1200, rec: 1000, p: 0.4, b: 12, range: 12, minGap: 3, w: 2, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z); return { stamps: [shLaneAt(L.x, L.z, yaw, 12, 4)], to: egKeepOnFight(spec, L.x + Math.sin(yaw) * 10, L.z + Math.cos(yaw) * 10, L.r) }; } },
+      { nm: 'Night Lunge', wu: 1200, rec: 1000, p: 0.4, b: 12, range: 12, minGap: 3, w: 2, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z); return { stamps: [shLaneAt(L.x, L.z, yaw, 12, 4)], to: egKeepOnFight(spec, L.x + Math.sin(yaw) * 10, L.z + Math.cos(yaw) * 10, L.r, L.y) }; } },
     ],
     wake(F, spec, L, now) { F.mem.vanishAt = now + 12_000; F.mem.tetherAt = now + 20_000; },
     tick(F, spec, L, now, here, rng, out, ctx) {
@@ -1202,10 +1213,10 @@ const KITS = {
         F.mem.vanishAt = now + 25_000; F.mem.reappearAt = now + EG_UMBRA_MS; F.mem.glintAt = now + EG_UMBRA_MS - EG_UMBRA_GLINT_MS;
         egSetFl(F, L, EG_FL.hidden, true, out);
         egStop(F, L, now);
-        const spots = [egKeepOnFight(spec, f.x + (rng() - 0.5) * f.r, f.z + (rng() - 0.5) * f.r, 3)];
-        if (L.ph >= 2) for (let k = 0; k < 2; k++) spots.push(egKeepOnFight(spec, f.x + (rng() - 0.5) * f.r, f.z + (rng() - 0.5) * f.r, 3));
+        const spots = [egKeepOnFight(spec, f.x + (rng() - 0.5) * f.r, f.z + (rng() - 0.5) * f.r, 3, f.y)];
+        if (L.ph >= 2) for (let k = 0; k < 2; k++) spots.push(egKeepOnFight(spec, f.x + (rng() - 0.5) * f.r, f.z + (rng() - 0.5) * f.r, 3, f.y));
         const trueAt = Math.floor(rng() * spots.length);
-        spots.forEach((p, j) => obj(F, 'umbra', p[0], p[1], 0, now, out, { r: 2, extra: { real: j === trueAt ? 1 : 0 } }));
+        spots.forEach((p, j) => obj(F, 'umbra', p[0], p[1], 0, now, out, { r: 2, extra: { real: j === trueAt ? 1 : 0 }, y: p[2] }));
         F.mem.riseAt = spots[trueAt];
         say(out, 'vanish');
       }
@@ -1264,8 +1275,8 @@ const KITS = {
       if (now >= (F.mem.mirrorsAt ?? Infinity) && mirrorsOf(F, L).length < 2) {
         F.mem.mirrorsAt = Infinity;
         for (let k = mirrorsOf(F, L).length; k < 2; k++) {
-          const a = rng() * Math.PI * 2, [x, z] = egKeepOnFight(spec, f.x + Math.sin(a) * 10, f.z + Math.cos(a) * 10, 2);
-          const mi = stand(F, spec, L.key, x, z, egHpTeam(F, 8), now, out, { pt: 1 + k, fl: EG_FL.mirror });   // AUDIT EG IV (lane1 #10): the true lord's mirrors - his look, his name, his kit (Garoth's under Garoth)
+          const a = rng() * Math.PI * 2, [x, z, y] = egKeepOnFight(spec, f.x + Math.sin(a) * 10, f.z + Math.cos(a) * 10, 2, f.y);
+          const mi = stand(F, spec, L.key, x, z, egHpTeam(F, 8), now, out, { pt: 1 + k, fl: EG_FL.mirror, y });   // AUDIT EG IV (lane1 #10): the true lord's mirrors - his look, his name, his kit (Garoth's under Garoth)
           if (mi) { mi.up2 = true; mi.nextAt = now + 2000; mi.shareX = 0.5; mi.by = L.i; mi.asp = L.asp; }
         }
         say(out, 'mirrors');
@@ -1286,7 +1297,7 @@ const KITS = {
       const R = spec.spots.route?.[0];
       F.mem.route = R ? [R.z, R.z1] : [L.z, L.z + 30]; L.dir = 0;
       const k = 4 + 2 * Math.floor(ctx.n / 3);
-      for (let j = 0; j < k; j++) obj(F, 'heart', L.x, L.z, egHpTeam(F, 3), now, out, { r: 0.7, pt: Math.floor(j / 2) + 1, extra: { off: [((j % 2) ? 1 : -1) * 2.5, (Math.floor(j / 2) - (k / 4)) * 1.5], pair: Math.floor(j / 2) } });
+      for (let j = 0; j < k; j++) obj(F, 'heart', L.x, L.z, egHpTeam(F, 3), now, out, { r: 0.7, pt: Math.floor(j / 2) + 1, extra: { off: [((j % 2) ? 1 : -1) * 2.5, (Math.floor(j / 2) - (k / 4)) * 1.5], pair: Math.floor(j / 2) }, y: egFeetY(spec, L.y) });
       F.mem.overloadAt = now + 75_000; F.mem.railAt = now + 15_000;
     },
     phase(F, spec, L, ph, now, here, rng, out) { if (ph === 3) { L.kneelUntil = now + 20_000; egStun(F, L, 20_000, now, out); } },
@@ -1305,11 +1316,11 @@ const KITS = {
       if (now >= F.mem.railAt) { F.mem.railAt = now + 15_000; F.mem.railUntil = now + 8000; out.push({ k: 'erail', until: now + 8000 }); }
       for (const h of egObjsOf(F, 'heart')) egSetFl(F, h, EG_FL.ward, !(now < (F.mem.railUntil ?? 0)), out);
       // Paired Hearts: a pair broken more than 5 s apart relights
-      if (L.ph >= 2) for (const [pair, at] of Object.entries(F.mem.pairBroke ?? {})) if (now - at > 5000) { const mate = egObjsOf(F, 'heart').find((h) => h.pair === Number(pair)); if (mate) { obj(F, 'heart', L.x, L.z, egHpTeam(F, 3), now, out, { r: 0.7, pt: mate.pt, extra: { off: [-mate.off[0], mate.off[1]], pair: mate.pair } }); say(out, 'relit'); } delete F.mem.pairBroke[pair]; }
+      if (L.ph >= 2) for (const [pair, at] of Object.entries(F.mem.pairBroke ?? {})) if (now - at > 5000) { const mate = egObjsOf(F, 'heart').find((h) => h.pair === Number(pair)); if (mate) { obj(F, 'heart', L.x, L.z, egHpTeam(F, 3), now, out, { r: 0.7, pt: mate.pt, extra: { off: [-mate.off[0], mate.off[1]], pair: mate.pair }, y: egFeetY(spec, L.y) }); say(out, 'relit'); } delete F.mem.pairBroke[pair]; }
       // THE OVERLOAD: every 75 s, 70% to all (a CHECK) - unless every heart is broken first, which stuns it
       if (now >= F.mem.overloadAt) {
         F.mem.overloadAt = now + 75_000;
-        if (!egObjsOf(F, 'heart').length) { egStun(F, L, 8000, now, out); const k = 4 + 2 * Math.floor(ctx.n / 3); for (let j = 0; j < k; j++) obj(F, 'heart', L.x, L.z, egHpTeam(F, 3), now + 8000, out, { r: 0.7, pt: Math.floor(j / 2) + 1, extra: { off: [((j % 2) ? 1 : -1) * 2.5, (Math.floor(j / 2) - (k / 4)) * 1.5], pair: Math.floor(j / 2) } }); }
+        if (!egObjsOf(F, 'heart').length) { egStun(F, L, 8000, now, out); const k = 4 + 2 * Math.floor(ctx.n / 3); for (let j = 0; j < k; j++) obj(F, 'heart', L.x, L.z, egHpTeam(F, 3), now + 8000, out, { r: 0.7, pt: Math.floor(j / 2) + 1, extra: { off: [((j % 2) ? 1 : -1) * 2.5, (Math.floor(j / 2) - (k / 4)) * 1.5], pair: Math.floor(j / 2) }, y: egFeetY(spec, L.y) }); }
         else egAim(F, spec, { o: L.i, s: [shAll()], at: now + 4000, wu: 4000, p: 0.7, b: 0, el: elOf(L, 'shock'), nm: 'Overload', ch: 1 }, [], now, out);
       }
     },
@@ -1322,7 +1333,7 @@ const KITS = {
       { nm: 'Searing Breath', wu: 1500, rec: 1000, p: 0.45, b: 12, el: 'fire', range: 12, w: 2, make: (F, spec, L, t) => (L.ph >= 3 ? { stamps: [shCone(L.x, L.z, Math.atan2(t.x - L.x, t.z - L.z), 12, 180)], B: { wu: 1600 } } : { stamps: [shCone(L.x, L.z, Math.atan2(t.x - L.x, t.z - L.z), 10, 90)] }) },
       { nm: 'Meteor', wu: 1800, rec: 700, p: 0.5, b: 12, el: 'fire', range: 99, w: 2, when: (F, L) => egHas(L, EG_FL.fly), make: (F, spec, L, t, here) => ({ stamps: here.slice(0, 3).map((m) => shDisc(m.x, m.z, 4)) }) },
     ],
-    wake(F, spec, L, now, out) { for (const [px, pz] of spotsOr(spec, L, 'pillar', 3, 18)) obj(F, 'pillar', px, pz, egHpTeam(F, 6), now, out, { r: 1.5 }); perch(F, spec, L, now, out); },
+    wake(F, spec, L, now, out) { for (const [px, pz, y] of spotsOr(spec, L, 'pillar', 3, 18)) obj(F, 'pillar', px, pz, egHpTeam(F, 6), now, out, { r: 1.5, y }); perch(F, spec, L, now, out); },
     phase(F, spec, L, ph, now, here, rng, out) { if (ph === 3) { egSetFl(F, L, EG_FL.fly, false, out); egSetFl(F, L, EG_FL.grounded, true, out); const f = mainDisc(spec, L); egPlace(F, L, f.x, f.z, now); } },
     tick(F, spec, L, now, here, rng, out) {
       if (L.ph >= 3) return;
@@ -1375,9 +1386,10 @@ export const EG_LESSON_LAST_R = 12;
  *  fight's end (`o.whole`) is kept by egZonesKeep. */
 export function zoneOut(F, kind, s, from, until, out, o = {}) {
   const z = { i: ++F.bl, kind, s, from, until, p: o.p ?? 0, b: o.b ?? 0, el: o.el ?? null };
+  if (Number.isFinite(o.y) && egByHeight(F.view)) z.y = r2(o.y);   // THE ASCENT (Elite-Gates-Ascent.md section 2): the floor it lies on
   (F.zones ??= []).push(z);
   F.zones = F.zones.filter((q) => q.until > from - 1000).slice(-24);
-  if (o.whole) (F.keep ??= []).push({ i: z.i, kind, s, from, until, p: z.p, b: z.b, el: z.el });
+  if (o.whole) (F.keep ??= []).push({ i: z.i, kind, s, from, until, p: z.p, b: z.b, el: z.el, ...(z.y != null ? { y: z.y } : {}) });
   out.push({ k: 'ez', ...z });
   return z;
 }
@@ -1423,9 +1435,9 @@ function perch(F, spec, L, now, out) {
 function examination(F, spec, L, now, here, rng, out, ctx) {
   const n = Math.max(1, ctx.n), k = Math.min(4, Math.max(2, n));
   const f = mainDisc(spec, L);
-  const spots = (n < k ? [45, 135, 225, 315].map((d) => egKeepOnFight(spec, f.x + Math.sin((d * Math.PI) / 180) * 8, f.z + Math.cos((d * Math.PI) / 180) * 8, 1)) : spotsOr(spec, L, 'rune', 4, Math.min(F.mem.runeR ?? Infinity, f.r - 1.5), !F.mem.runeR)).slice(0, k);   // AUDIT EG IV (section 18): THE MASTERS' GROUND's ring (net/egBrain.js EG_MASTERS_RUNE_R)
+  const spots = (n < k ? [45, 135, 225, 315].map((d) => egKeepOnFight(spec, f.x + Math.sin((d * Math.PI) / 180) * 8, f.z + Math.cos((d * Math.PI) / 180) * 8, 1, f.y)) : spotsOr(spec, L, 'rune', 4, Math.min(F.mem.runeR ?? Infinity, f.r - 1.5), !F.mem.runeR)).slice(0, k);   // AUDIT EG IV (section 18): THE MASTERS' GROUND's ring (net/egBrain.js EG_MASTERS_RUNE_R)
   const order = spots.map((_, j) => j).sort(() => rng() - 0.5);
-  spots.forEach((p, j) => obj(F, 'rune', p[0], p[1], 0, now, out, { r: 1.6, pt: order.indexOf(j) + 1 }));
+  spots.forEach((p, j) => obj(F, 'rune', p[0], p[1], 0, now, out, { r: 1.6, pt: order.indexOf(j) + 1, y: p[2] }));
   // AUDIT EG V (h; B NEW-3 - THE ERRAND FLOOR): the window never under the errand floor of its route walked over the whole floor
   // (egRuneRouteM) - the 10 s keep it on a court of its own; on another lord's ground of many pieces it may need more
   const wMs = Math.max((10 + 4 * Math.max(0, k - n)) * 1000, egErrandMs(egRuneRouteM(spec, order.map((j) => spots[j]), n)));
@@ -1439,7 +1451,7 @@ function finalExam(F, spec, L, now, here, rng, out, ctx) {
   const bound = n >= 2 ? here[Math.floor(rng() * here.length)] : null;
   const seals = n >= 2 ? Math.max(1, Math.min(3, n - 1)) : 3;
   const c = bound ?? here[0] ?? { x: L.x, z: L.z };
-  for (let j = 0; j < seals; j++) { const a = (j / seals) * Math.PI * 2; const [x, z] = egKeepOnFight(spec, c.x + Math.sin(a) * (n >= 2 ? 9 : 6), c.z + Math.cos(a) * (n >= 2 ? 9 : 6), 1); obj(F, 'seal', x, z, egHpTeam(F, 2.5, seals), now, out, { r: 0.8 }); }
+  for (let j = 0; j < seals; j++) { const a = (j / seals) * Math.PI * 2; const [x, z, y] = egKeepOnFight(spec, c.x + Math.sin(a) * (n >= 2 ? 9 : 6), c.z + Math.cos(a) * (n >= 2 ? 9 : 6), 1, c.y ?? L.y); obj(F, 'seal', x, z, egHpTeam(F, 2.5, seals), now, out, { r: 0.8, y }); }
   if (bound) { egMark(F, bound.sub, 5, now + 8000); F.mem.mkDirty = 1; }
   F.mem.exam = { kind: 'seals', bound: bound?.sub ?? null, until: now + 8000 };
   say(out, 'cage');
@@ -1488,7 +1500,7 @@ function challengeTick(F, spec, L, now, here, rng, out, ctx, ms, garoth = false)
     const need = garoth || open ? 0 : Math.max(1, Math.min(3, ctx.n - picks.length));
     F.mem.challenge = { by: L.i, subs: picks.map((m) => m.sub), until: now + ms, dealt: 0, x: cx, z: cz, r: open ? 0 : 6, need };
     for (const m of picks) egMark(F, m.sub, 6, now + ms);
-    for (let j = 0; j < need; j++) { const a = (j / need) * Math.PI * 2; const [x, z] = egKeepOnFight(spec, cx + Math.sin(a) * 9, cz + Math.cos(a) * 9, 1); obj(F, 'brazier', x, z, egHpTeam(F, 4), now, out, { r: 0.8 }); }
+    for (let j = 0; j < need; j++) { const a = (j / need) * Math.PI * 2; const [x, z, y] = egKeepOnFight(spec, cx + Math.sin(a) * 9, cz + Math.cos(a) * 9, 1, L.y); obj(F, 'brazier', x, z, egHpTeam(F, 4), now, out, { r: 0.8, y }); }
     if (!open) { egPlace(F, L, cx + 2, cz, now); F.pg.ring = [cx, cz, 6]; }
     F.mem.mkDirty = 1;
     say(out, 'challenge', { s: picks.map((m) => m.sub) });

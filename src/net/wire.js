@@ -5746,7 +5746,9 @@ function egBody(t) {
 }
 const egBodies = (a, max = EG_WIRE_BODIES_MAX) => { if (!Array.isArray(a) || a.length > max) return null; const out = a.map(egBody); return out.every(Boolean) ? out : null; };
 /** A blow (net/egShape.js egBlowOf): its number, thrower, stamps, landing, wind-up, share, points, element, name, CHECK,
- *  push, span. */
+ *  push, span. THE ASCENT (LAW 9; Elite-Gates-Ascent.md section 2): `y`, the height it lands at (a hall that judges by height
+ *  says it - net/egBodies.js egAim; a coordinate's bound), so every screen draws and judges it on its own storey; none
+ *  before. */
 function egBlowW(m) {
   if (!m || !intIn(m.i, 1, 1e9) || !intIn(m.o, 0, 1e9) || !Array.isArray(m.s) || m.s.length < 1 || m.s.length > 10 || !m.s.every((s) => egStampOk(s, EG_XZ_MAX))) return null;
   if (!gateMs(m.at) || !intIn(m.wu, 0, 30_000) || !finite(m.p) || m.p < 0 || m.p > 10 || !finite(m.b) || m.b < 0 || m.b > 999) return null;
@@ -5754,13 +5756,15 @@ function egBlowW(m) {
   if (!(m.ch === 0 || m.ch === 1) || !finite(m.pu) || m.pu < 0 || m.pu > 20 || !intIn(m.sp, 0, 60_000)) return null;
   if (m.on != null && !(Array.isArray(m.on) && m.on.length >= 1 && m.on.length <= 8 && m.on.every(egId))) return null;   // AUDIT EG IV (lane1 #5): the members a failure blow names (net/egShape.js egBlowOn)
   if (m.ol != null && !intIn(m.ol, 1, EG_OUTLINE_WIRE_MAX)) return null;   // AUDIT EG V (lane1 #18): a chained shape's dim outline's lead
-  return { i: m.i, o: m.o, s: m.s.map((s) => [...s]), at: m.at, wu: m.wu, p: m.p, b: m.b, el: m.el ?? null, nm: egText(m.nm ?? '', 48) ?? '', ch: m.ch, pu: m.pu, sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}), ...(m.ol != null ? { ol: m.ol } : {}) };
+  if (m.y != null && !egXZ(m.y)) return null;   // THE ASCENT: the height it lands at
+  return { i: m.i, o: m.o, s: m.s.map((s) => [...s]), at: m.at, wu: m.wu, p: m.p, b: m.b, el: m.el ?? null, nm: egText(m.nm ?? '', 48) ?? '', ch: m.ch, pu: m.pu, sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}), ...(m.ol != null ? { ol: m.ol } : {}), ...(m.y != null ? { y: m.y } : {}) };
 }
-/** A zone (net/egLords.js zoneOut). */
+/** A zone (net/egLords.js zoneOut). THE ASCENT (section 2): `y`, the floor it lies on (a hall that judges by height says it). */
 function egZone(m) {
   if (!m || !intIn(m.i, 1, 1e9) || !EG_ZONE_KINDS.includes(m.kind) || !egStampOk(m.s, EG_XZ_MAX) || !egMs(m.from) || !egMs(m.until)) return null;
   if (!finite(m.p) || m.p < 0 || m.p > 1 || !finite(m.b) || m.b < 0 || m.b > 99 || (m.el != null && !['fire', 'frost', 'shock', 'poison', 'magic'].includes(m.el))) return null;
-  return { i: m.i, kind: m.kind, s: [...m.s], from: m.from, until: m.until, p: m.p, b: m.b, el: m.el ?? null };
+  if (m.y != null && !egXZ(m.y)) return null;
+  return { i: m.i, kind: m.kind, s: [...m.s], from: m.from, until: m.until, p: m.p, b: m.b, el: m.el ?? null, ...(m.y != null ? { y: m.y } : {}) };
 }
 /** A tether: `[a, b, kind, r]` - a body or a member to a member or a body. */
 const egTether = (t) => Array.isArray(t) && t.length === 4 && (intIn(t[0], 1, 1e9) || egId(t[0])) && (intIn(t[1], 1, 1e9) || egId(t[1])) && intIn(t[2], 0, 9) && intIn(t[3], 0, 99_999) ? [...t] : null;

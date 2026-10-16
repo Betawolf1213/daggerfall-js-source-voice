@@ -524,8 +524,8 @@
   {
     "name": "EGHL-on-fight-polygon-unread",
     "file": "src/net/egLaw.js",
-    "old": "if (f.t === 'p' ? egPieceIn(f, x, z, pad) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segD(x, z, f.ax, f.az, f.bx, f.bz).d <= f.hw + pad) return true;",
-    "new": "if (f.t === 'p' ? false : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segD(x, z, f.ax, f.az, f.bx, f.bz).d <= f.hw + pad) return true;",
+    "old": "const onPiece = (f, x, z, pad) => (f.t === 'p' ? egPieceIn(f, x, z, pad) :",
+    "new": "const onPiece = (f, x, z, pad) => (f.t === 'p' ? false :",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -551,8 +551,8 @@
   {
     "name": "EGHL-piece-at-polygon-unread",
     "file": "src/net/egLaw.js",
-    "old": "(spec.fl ?? []).find((f) => (f.t === 'p' ? egPieceIn(f, x, z, pad) :",
-    "new": "(spec.fl ?? []).find((f) => (f.t === 'p' ? false :",
+    "old": "if (!Number.isFinite(H)) return (spec.fl ?? []).find((f) => onPiece(f, x, z, pad)) ?? null;",
+    "new": "if (!Number.isFinite(H)) return (spec.fl ?? []).find((f) => f.t !== 'p' && onPiece(f, x, z, pad)) ?? null;",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -623,8 +623,8 @@
   {
     "name": "EGHL-air-no-hero-walls",
     "file": "src/net/egWalkGraph.js",
-    "old": "{ if (!open.has(`${fi}:${e}`)) { const n = f.poly[(e + 1) % f.poly.length]; walls.push(",
-    "new": "{ if (false) { const n = f.poly[(e + 1) % f.poly.length]; walls.push(",
+    "old": "{ if (!open.has(`${fi}:${e}`)) { const n = f.poly[(e + 1) % f.poly.length]; wall(",
+    "new": "{ if (false) { const n = f.poly[(e + 1) % f.poly.length]; wall(",
     "tests": [
       "test/eghero_lay.test.js"
     ]

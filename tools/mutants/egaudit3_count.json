@@ -461,8 +461,8 @@
   {
     "name": "EGA3-count-door-relay-pad",
     "file": "src/net/egBrain.js",
-    "old": "if (!p || !egAtDoor(spec, p.x, p.z) || !fairOf(B, sub)) return false;",
-    "new": "if (!p || !egAtDoor(spec, p.x, p.z, 2) || !fairOf(B, sub)) return false;",
+    "old": "if (!p || !egAtDoor(spec, p.x, p.z, p.y) || !fairOf(B, sub)) return false;",
+    "new": "if (!p || !egAtDoor(spec, p.x, p.z, p.y, 2) || !fairOf(B, sub)) return false;",
     "tests": [
       "test/egaudit3_count.test.js"
     ]
@@ -470,8 +470,8 @@
   {
     "name": "EGA3-count-door-screen-pad",
     "file": "src/scenes/egClient.js",
-    "old": "egAtDoor(spec, egLocalX(spec, at.sx), at.z) && t - downAt >= EG_DOWN_EVERY_MS",
-    "new": "egAtDoor(spec, egLocalX(spec, at.sx), at.z, 1) && t - downAt >= EG_DOWN_EVERY_MS",
+    "old": "egAtDoor(spec, egLocalX(spec, at.sx), at.z, at.y) && t - downAt >= EG_DOWN_EVERY_MS",
+    "new": "egAtDoor(spec, egLocalX(spec, at.sx), at.z, at.y, 1) && t - downAt >= EG_DOWN_EVERY_MS",
     "tests": [
       "test/egaudit3_count.test.js"
     ]

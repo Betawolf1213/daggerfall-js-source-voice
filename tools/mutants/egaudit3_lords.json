@@ -20,8 +20,8 @@
   {
     "name": "EGA3-dusk-moonfall-no-divers",
     "file": "src/net/egLords.js",
-    "old": "if (L.ph >= 3) egLegionSummon(F, [EG_KIND.diver, EG_KIND.diver], [[ax, az]], now, out); }",
-    "new": "if (L.ph >= 4) egLegionSummon(F, [EG_KIND.diver, EG_KIND.diver], [[ax, az]], now, out); }",
+    "old": "if (L.ph >= 3) egLegionSummon(F, [EG_KIND.diver, EG_KIND.diver], [Number.isFinite(y) ? [ax, az, y] : [ax, az]], now, out); }",
+    "new": "if (L.ph >= 4) egLegionSummon(F, [EG_KIND.diver, EG_KIND.diver], [Number.isFinite(y) ? [ax, az, y] : [ax, az]], now, out); }",
     "tests": [
       "test/egaudit3_lords.test.js"
     ]
@@ -389,8 +389,8 @@
   {
     "name": "EGA3-pool-plain",
     "file": "src/net/egLords.js",
-    "old": "{ p: pl[2], b: pl[3], el: bl.el }",
-    "new": "{ p: pl[2], b: pl[3], el: null }",
+    "old": "{ p: pl[2], b: pl[3], el: bl.el, y: bl.y }",
+    "new": "{ p: pl[2], b: pl[3], el: null, y: bl.y }",
     "tests": [
       "test/egaudit3_lords.test.js"
     ]

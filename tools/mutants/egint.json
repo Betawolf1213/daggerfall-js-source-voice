@@ -137,7 +137,7 @@
   {
     "name": "EGINT-a-trail-begun-anywhere",
     "file": "src/net/egBrain.js",
-    "old": "if (!egOnArrive(spec, x, z, 2) && m.roseH !== B.h) { m.fair.brk = 1;",
+    "old": "if (!egOnArrive(spec, x, z, 2, y) && m.roseH !== B.h) { m.fair.brk = 1;",
     "new": "if (false) { m.fair.brk = 1;",
     "tests": [
       "test/egint_relay.test.js"
@@ -164,8 +164,8 @@
   {
     "name": "EGINT-down-on-any-trail",
     "file": "src/net/egBrain.js",
-    "old": "  if (!p || !egAtDoor(spec, p.x, p.z) || !fairOf(B, sub)) return false;",
-    "new": "  if (!p || !egAtDoor(spec, p.x, p.z)) return false;",
+    "old": "  if (!p || !egAtDoor(spec, p.x, p.z, p.y) || !fairOf(B, sub)) return false;",
+    "new": "  if (!p || !egAtDoor(spec, p.x, p.z, p.y)) return false;",
     "tests": [
       "test/egint_relay.test.js"
     ]
@@ -254,8 +254,8 @@
   {
     "name": "EGINT-an-element-counted",
     "file": "src/net/bossRef.js",
-    "old": "    const share = a.el == null ? Math.min(1, Math.max(0, a.p)) : 0, ys = floorsUnder(spec, a.s?.[0]),",
-    "new": "    const share = Math.min(1, Math.max(0, a.p)), ys = floorsUnder(spec, a.s?.[0]),",
+    "old": "    const by = egFeetY(spec, a.y), share = a.el == null ? Math.min(1, Math.max(0, a.p)) : 0, ys = floorsUnder(spec, a.s?.[0], by),",
+    "new": "    const by = egFeetY(spec, a.y), share = Math.min(1, Math.max(0, a.p)), ys = floorsUnder(spec, a.s?.[0], by),",
     "tests": [
       "test/egint_relay.test.js"
     ]
@@ -263,8 +263,8 @@
   {
     "name": "EGINT-the-wait-skipped",
     "file": "src/net/bossRef.js",
-    "old": "      if (!egTrailReady(b.tr, a.at, now)) continue;\n      a.bh.push(b.sub);\n      if (deepShared(test, b.tr, a.at, F.h, spec, ys, free)) out.push(hit);",
-    "new": "      a.bh.push(b.sub);\n      if (deepShared(test, b.tr, a.at, F.h, spec, ys, free)) out.push(hit);",
+    "old": "      if (!egTrailReady(b.tr, a.at, now)) continue;\n      a.bh.push(b.sub);\n      if (deepShared(test, b.tr, a.at, F.h, spec, ys, free, by)) out.push(hit);",
+    "new": "      a.bh.push(b.sub);\n      if (deepShared(test, b.tr, a.at, F.h, spec, ys, free, by)) out.push(hit);",
     "tests": [
       "test/egint_relay.test.js"
     ]

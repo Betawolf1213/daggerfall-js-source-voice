@@ -84,6 +84,7 @@ import { egPieceIn, egPolyIn, egPolyKeep } from './egShape.js';   // EG-HERO-LAY
 import { egInShape, shRing, shLane } from './egShape.js';   // AUDIT EG V (lane1 #21): THE MOLTEN RIM's magma and its ways across
 import { gateTrialOf } from './gateMods.js';   // EG5: the gate's boss-general trials the lord family recasts (a leaf - it imports nothing)
 import { egRouteInHall } from './egRoute.js';   // THE ASCENT (LAW 9): a hall's ground is its route's bound (a leaf - it imports nothing)
+import { egByHeight, egFeetY, egBears, egOneStorey } from './egWalkGraph.js';   // THE ASCENT - HEIGHT: every floor test by the body's feet
 
 /** The spec law's number - a change to any draw below changes it (and the relay's version with it). EG-ZC: 5, the last
  *  fragments (the law before kept - net/egDurable.js EG_LAWS). AUDIT EG III: 6, the span decrees on every span (laws 4 and 5
@@ -1615,14 +1616,20 @@ const segD = (px, pz, ax, az, bx, bz) => {
   return { d: Math.hypot(px - (ax + dx * t), pz - (az + dz * t)), x: ax + dx * t, z: az + dz * t };
 };
 /** Is (x, z) (the hall's own frame, as every helper below) on one of the spec's floors - its discs, its bands, its lanes,
- *  its steps at rest - within `pad` m? */
-export function egOnFloor(spec, x, z, pad = 0) {
-  for (const d of spec.discs) if (Math.hypot(x - d.x, z - d.z) <= d.r + pad) return true;
-  for (const b of spec.bands) if (z >= b.z0 - pad && z <= b.z1 + pad && Math.abs(x - b.x) <= b.halfW + pad) return true;
-  for (const l of spec.lanes ?? []) if (segD(x, z, l.ax, l.az, l.bx, l.bz).d <= l.hw + pad) return true;
-  for (const s of spec.steps) if (Math.abs(z - s.z) <= s.d / 2 + pad && Math.abs(x - s.x) <= s.w / 2 + s.amp + pad) return true;
+ *  its steps at rest - within `pad` m? THE ASCENT (section 2): `y` the body's feet - in a hall that judges by height
+ *  (net/egWalkGraph.js egByHeight), only a floor that bears them (egBears - a stair's whole rise); not known, any. */
+export function egOnFloor(spec, x, z, pad = 0, y = NaN) {
+  const H = egFeetY(spec, y), on = (fy) => egBears(fy ?? 0, H);
+  for (const d of spec.discs) if (on(d.y) && Math.hypot(x - d.x, z - d.z) <= d.r + pad) return true;
+  for (const b of spec.bands) if (on(b.y) && z >= b.z0 - pad && z <= b.z1 + pad && Math.abs(x - b.x) <= b.halfW + pad) return true;
+  for (const l of spec.lanes ?? []) if (on(l.y) && segD(x, z, l.ax, l.az, l.bx, l.bz).d <= l.hw + pad) return true;
+  for (const s of spec.steps) if (on(s.y) && Math.abs(z - s.z) <= s.d / 2 + pad && Math.abs(x - s.x) <= s.w / 2 + s.amp + pad) return true;
   // EG-HERO-LAY: a hero's floors and stairs (its law's own outlines)
-  for (const q of spec.heroes ?? []) for (const g of [...q.floors, ...q.ramps]) if (egPolyIn(g.poly.map((p) => (p.length > 2 ? [p[0], p[2]] : p)), x, z, pad)) return true;
+  for (const q of spec.heroes ?? []) for (const g of [...q.floors, ...q.ramps]) {
+    // a stair bears the feet anywhere along its rise (its corners' heights)
+    if (Number.isFinite(H) && !(g.y != null ? on(g.y) : on(Math.min(...g.poly.map((p) => p[1]))) || on(Math.max(...g.poly.map((p) => p[1]))) || (H >= Math.min(...g.poly.map((p) => p[1])) && H <= Math.max(...g.poly.map((p) => p[1]))))) continue;
+    if (egPolyIn(g.poly.map((p) => (p.length > 2 ? [p[0], p[2]] : p)), x, z, pad)) return true;
+  }
   return false;
 }
 /** Is the Spire-frame point (sx, z) within hall `spec`'s ground at all (`pad` m about) - a member is in a hall when their
@@ -1637,25 +1644,45 @@ export function egSlotAt(x) {
   const s = Math.round(x / EG_HALL_PITCH) + 1;
   return s >= 1 && s <= 5 && Math.abs(x - (s - 1) * EG_HALL_PITCH) <= EG_HALL_PITCH / 2 ? s : 0;
 }
-/** Is (x, z) on the hall's arrival plate (pad m about)? On its end plate, at its door? */
-export const egOnArrive = (spec, x, z, pad = 1) => !!spec.arrive && Math.hypot(x - spec.arrive.x, z - spec.arrive.z) <= spec.arrive.r + pad;
-export const egAtDoor = (spec, x, z, pad = 0) => !!spec.end && Math.hypot(x - spec.end.x, z - spec.end.z) <= EG_DOOR_REACH_M + pad;
+/** Is (x, z) on the hall's arrival plate (pad m about)? On its end plate, at its door? THE ASCENT (section 2): `y` the body's
+ *  feet - in a hall that judges by height, on the plate's own floor (egBears); not known, as before. The door's law takes no
+ *  pad from any caller (AUDIT EG III #11), so its feet come before it. */
+export const egOnArrive = (spec, x, z, pad = 1, y = NaN) => !!spec.arrive && Math.hypot(x - spec.arrive.x, z - spec.arrive.z) <= spec.arrive.r + pad && egBears(spec.arrive.y ?? 0, egFeetY(spec, y));
+export const egAtDoor = (spec, x, z, y = NaN, pad = 0) => !!spec.end && Math.hypot(x - spec.end.x, z - spec.end.z) <= EG_DOOR_REACH_M + pad && egBears(spec.end.y ?? 0, egFeetY(spec, y));
+/** Does fight floor piece `f` (a disc, a lane's capsule; EG-HERO-LAY: a hero's polygon) hold (x, z) in plan, `pad` m about? */
+const onPiece = (f, x, z, pad) => (f.t === 'p' ? egPieceIn(f, x, z, pad) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segD(x, z, f.ax, f.az, f.bx, f.bz).d <= f.hw + pad);
 /** Is (x, z) on THE FIGHT FLOOR (its discs and lanes - section 11.7; EG-HERO-LAY: a hero's polygons), `pad` m about? A
- *  negative pad asks that far inside its edge. */
-export function egOnFight(spec, x, z, pad = 0) {
-  for (const f of spec.fl ?? []) {
-    if (f.t === 'p' ? egPieceIn(f, x, z, pad) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segD(x, z, f.ax, f.az, f.bx, f.bz).d <= f.hw + pad) return true;
-  }
+ *  negative pad asks that far inside its edge. THE ASCENT (section 2): `y` the body's feet - in a hall that judges by height
+ *  (net/egWalkGraph.js egByHeight), only a piece that bears them (egBears, the walk graph's band: a body on a floor stacked over
+ *  another is never on the one under it, nor one under a floor on the floor over it); not known, any (the laws before). */
+export function egOnFight(spec, x, z, pad = 0, y = NaN) {
+  const H = egFeetY(spec, y);
+  for (const f of spec.fl ?? []) if (egBears(f.y ?? 0, H) && onPiece(f, x, z, pad)) return true;
   return false;
 }
-/** The fight floor's piece under (x, z) (pad m about), or null. */
-export const egFightPieceAt = (spec, x, z, pad = 0) => (spec.fl ?? []).find((f) => (f.t === 'p' ? egPieceIn(f, x, z, pad) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segD(x, z, f.ax, f.az, f.bx, f.bz).d <= f.hw + pad)) ?? null;
-/** The nearest point of the fight floor to (x, z), `inset` m inside its edge (the legion and the lord keep to it). */
-export function egKeepOnFight(spec, x, z, inset = 0) {
+/** The fight floor's piece under (x, z) (pad m about), or null. THE ASCENT (section 2): `y` the body's feet - in a hall that
+ *  judges by height, the highest piece that bears them (egGroundAt's); not known, the first (as before). */
+export function egFightPieceAt(spec, x, z, pad = 0, y = NaN) {
+  const H = egFeetY(spec, y);
+  if (!Number.isFinite(H)) return (spec.fl ?? []).find((f) => onPiece(f, x, z, pad)) ?? null;
+  let best = null;
+  for (const f of spec.fl ?? []) if (egBears(f.y ?? 0, H) && onPiece(f, x, z, pad) && (!best || (f.y ?? 0) > (best.y ?? 0))) best = f;
+  return best;
+}
+/** The nearest point of the fight floor to (x, z), `inset` m inside its edge (the legion and the lord keep to it). THE ASCENT
+ *  (section 2): `y` the walker's feet - in a hall that judges by height, kept to the pieces that bear them (a spot, a charge's
+ *  end, a blink never set on a floor over or under the one it stands on; none bearing them, every piece), and answered with the
+ *  kept piece's height (`[x, z, y]` - a body stood there stands on it); not known, `[x, z]` as before. */
+export function egKeepOnFight(spec, x, z, inset = 0, y = NaN) {
   if (!spec.fl?.length) return [x, z];
-  if (egOnFight(spec, x, z, -inset)) return [x, z];
+  const H = egFeetY(spec, y), fl = Number.isFinite(H) && spec.fl.some((f) => egBears(f.y ?? 0, H)) ? spec.fl.filter((f) => egBears(f.y ?? 0, H)) : spec.fl;
+  if (Number.isFinite(H)) {
+    let on = null;
+    for (const f of fl) if (onPiece(f, x, z, -inset) && (!on || (f.y ?? 0) > (on.y ?? 0))) on = f;
+    if (on) return [x, z, on.y ?? 0];
+  } else if (egOnFight(spec, x, z, -inset)) return [x, z];
   let best = null, bd = Infinity;
-  for (const f of spec.fl) {
+  for (const f of fl) {
     let px, pz, d;
     if (f.t === 'p') { [px, pz] = egPolyKeep(f.poly, x, z, inset); d = Math.hypot(px - x, pz - z); }   // EG-HERO-LAY: a hero's fight floor
     else if (f.t === 'd') {
@@ -1665,7 +1692,7 @@ export function egKeepOnFight(spec, x, z, inset = 0) {
       const s = segD(x, z, f.ax, f.az, f.bx, f.bz), W = Math.max(0, f.hw - inset);
       if (s.d <= W) { px = x; pz = z; d = 0; } else { px = s.x + ((x - s.x) / (s.d || 1)) * W; pz = s.z + ((z - s.z) / (s.d || 1)) * W; d = s.d - W; }
     }
-    if (d < bd) { bd = d; best = [px, pz]; }
+    if (d < bd) { bd = d; best = Number.isFinite(H) ? [px, pz, f.y ?? 0] : [px, pz]; }
   }
   return best ?? [x, z];
 }
@@ -1686,42 +1713,66 @@ export const EG_RIM_WAY_IN_M = 0.5;
  * disc: its `after`), a lane's end (Grath's bridges, a side span), a band's end (the Twin Lords' bridge), a stair's foot or top
  * (the Wyrm's perches' - spec law 8) - laid along the line from the disc's heart through that end, across the band and
  * EG_RIM_WAY_IN_M past it either side. The director zones them (net/egBrain.js - `void` and `haven`); a screen casts back on
- * the magma only off every causeway (egRimCastsBack). Pure.
+ * the magma only off every causeway (egRimCastsBack). THE ASCENT (section 2): in a hall that judges by height (net/egWalkGraph.js
+ * egByHeight) the rim is the disc's own floor's - a way counts only where its end stands at the disc's height (egBears: a bridge
+ * passing over the rim a storey up keeps no causeway there), and each ring and way says its floor's height (`ys` - `{ rings,
+ * ways }`, the zones' `y`). Pure.
  * @param {any} spec
  */
 export function egMoltenRim(spec) {
-  const rings = [], ways = [], ends = [];
-  for (const q of spec?.steps ?? []) if ((q.road ?? 0) === 0 && q.after > 0) ends.push([q.x, q.z + q.d / 2 + q.after, q.w / 2]);
-  for (const l of spec?.lanes ?? []) ends.push([l.ax, l.az, l.hw], [l.bx, l.bz, l.hw]);
-  for (const b of spec?.bands ?? []) ends.push([b.x, b.z0, b.halfW], [b.x, b.z1, b.halfW]);
-  for (const q of spec?.ramps ?? []) ends.push([q.ax, q.az, q.hw], [q.bx, q.bz, q.hw]);
+  const rings = [], ways = [], ends = [], byH = egByHeight(spec), ry = [], wy = [];
+  for (const q of spec?.steps ?? []) if ((q.road ?? 0) === 0 && q.after > 0) ends.push([q.x, q.z + q.d / 2 + q.after, q.w / 2, q.ya ?? NaN]);
+  for (const l of spec?.lanes ?? []) ends.push([l.ax, l.az, l.hw, l.y ?? 0], [l.bx, l.bz, l.hw, l.y ?? 0]);
+  for (const b of spec?.bands ?? []) ends.push([b.x, b.z0, b.halfW, b.y ?? 0], [b.x, b.z1, b.halfW, b.y ?? 0]);
+  for (const q of spec?.ramps ?? []) ends.push([q.ax, q.az, q.hw, q.y0], [q.bx, q.bz, q.hw, q.y1]);
   for (const f of spec?.fl ?? []) {
     if (f.t !== 'd' || !(f.r > EG_RIM_DISC_M)) continue;
     const r0 = f.r - EG_RIM_IN_M, r1 = f.r + EG_RIM_OUT_M;
     rings.push(shRing(f.x, f.z, r0, r1));
-    for (const [x, z, hw] of ends) {
+    ry.push(f.y ?? 0);
+    for (const [x, z, hw, ey] of ends) {
       const d = Math.hypot(x - f.x, z - f.z);
       if (!(d > 0) || d < r0 - EG_RIM_WAY_IN_M || d > r1 + EG_RIM_WAY_IN_M) continue;
+      if (byH && !egBears(f.y ?? 0, ey)) continue;   // THE ASCENT: a way at another storey crosses no rim of this floor
       const ux = (x - f.x) / d, uz = (z - f.z) / d, a = r0 - EG_RIM_WAY_IN_M, b = r1 + EG_RIM_WAY_IN_M;
       ways.push(shLane(f.x + ux * a, f.z + uz * a, f.x + ux * b, f.z + uz * b, 2 * hw + EG_RIM_WAY_PAD_M));
+      wy.push(f.y ?? 0);
     }
   }
-  return { rings, ways };
+  return byH ? { rings, ways, ys: { rings: ry, ways: wy } } : { rings, ways };
 }
 /** Does a screen cast a member back at (x, z) at relay ms `t` (section 18's magma - net/egBrain.js's zones, `void` and `haven`)?
  *  A live `void` zone holds the feet and no live `haven` does (a causeway across the Molten Rim, the Moon-Mirror's lit branch:
- *  gold on what you stand on means it holds). One law for the screens (scenes/egFight.js) and the pins. Pure. */
-export function egRimCastsBack(zones, x, z, t) {
+ *  gold on what you stand on means it holds). One law for the screens (scenes/egFight.js) and the pins. Pure. THE ASCENT
+ *  (section 2): `y` the feet - a zone that says its floor's height (`y`, a hall that judges by height) holds only feet its floor
+ *  bears (net/egWalkGraph.js egBears); not known, any. */
+export function egRimCastsBack(zones, x, z, t, y = NaN) {
   let magma = false;
   for (const q of zones ?? []) {
     if (!(t >= q.from && t < q.until) || !egInShape(q.s, x, z)) continue;
+    if (Number.isFinite(q.y) && !egBears(q.y, y)) continue;
     if (q.kind === 'haven') return false;
     if (q.kind === 'void') magma = true;
   }
   return magma;
 }
-/** Hall `spec`'s fight floor as a test (net/egFloor.js egUnionHolds' `onFloor` - EG-H1 moved it there). */
-export const egFloorTest = (spec) => (x, z) => egOnFight(spec, x, z);
+/** Hall `spec`'s fight floor as a test (net/egFloor.js egUnionHolds' `onFloor` - EG-H1 moved it there). THE ASCENT (section 2):
+ *  `y` the member's feet - in a hall that judges by height, the floor that bears them (a member's union floor is its own
+ *  storey's); not known, every piece. */
+export const egFloorTest = (spec, y = NaN) => (x, z) => egOnFight(spec, x, z, 0, y);
+/**
+ * THE ASCENT (section 2) - THE FLOORS A STAMP LANDS ON: the heights of the fight floors (`spec.fl`) whose plan holds stamp `s`'s
+ * anchor within `pad` m (net/bossRef.js floorsUnder's rule - a CHECK's, every floor: null), and in a hall that judges by height
+ * (net/egWalkGraph.js egByHeight) only those in the storey of the blow's own height `y` (egOneStorey: under EG_STACK_M from it -
+ * never the floor stacked over or under it); none holding it, null (any floor of its storey). Pure.
+ * @param {any} spec @param {any} s @param {number} [y] @param {number} [pad]
+ */
+export function egStampFloors(spec, s, y = NaN, pad = 1) {
+  if (!s || s[0] === 'a' || s[0] === 'h') return null;
+  const H = egFeetY(spec, y);
+  const ys = (spec?.fl ?? []).filter((f) => egOneStorey(f.y ?? 0, H) && onPiece(f, s[1], s[2], pad)).map((f) => f.y ?? 0);
+  return ys.length ? ys : null;
+}
 /** A FALLING WALL's fallen edge at `now` (section 8.3): the walkway behind it is gone - 20 s after the wake, 1.5 m/s. */
 export const egWallFallenZ = (spec, wokeAt, now) => (spec.variant === 'fallingwall' && spec.walk && wokeAt > 0 ? spec.walk.z0 + Math.max(0, now - wokeAt - EG_WALL_FALL_AFTER_MS) * (EG_WALL_FALL_MPS / 1000) : -Infinity);
 /** The waystone a member pushed off the walkway returns to: the nearest behind (z) - else the arrival plate. */

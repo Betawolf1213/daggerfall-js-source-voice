@@ -137,8 +137,8 @@
   {
     "name": "EGZ-peril-landed-fled",
     "file": "src/world/egTelegraph.js",
-    "old": "if (!(now < b.at) || now < b.at - b.wu || !inStamps(b, f[0], f[1])) continue;",
-    "new": "if (now < b.at - b.wu || !inStamps(b, f[0], f[1])) continue;",
+    "old": "if (!(now < b.at) || now < b.at - b.wu || !inStamps(b, f[0], f[1]) ||",
+    "new": "if (now < b.at - b.wu || !inStamps(b, f[0], f[1]) ||",
     "tests": [
       "test/egz_telegraph.test.js"
     ]

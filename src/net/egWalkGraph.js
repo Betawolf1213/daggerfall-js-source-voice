@@ -50,6 +50,25 @@ export const EG_STRIKE_PAD_M = 1.5;
 /** A body is on a floor while its feet lie at most this under it and this over it (m - section 11.7's band). */
 export const EG_GROUND_UNDER_M = 0.5;
 export const EG_GROUND_OVER_M = 3.0;
+
+// ── THE ASCENT - HEIGHT (LAW 9; Elite-Gates-Ascent.md section 2): every test of where a body stands reads its feet ────────
+/** THE ASCENT - HEIGHT: the spec law from which every test that asks "is this point on (or which) floor" answers by the body's
+ *  feet as well as its plan - LAW 9's ways cross over and under each other, a fight floor stacked over a fight floor. The laws
+ *  before are judged in plan alone, as they were (a breach keeps the law it opened under, its judging with it). */
+export const EG_HEIGHT_LAW = 9;
+/** Floors stacked stand at least this apart (m - a body's height and a ceiling's thickness; Elite-Gates-Ascent.md section 2):
+ *  a blow lands only on the floors under it within this of its own height, never on the one over or under it. */
+export const EG_STACK_M = 4;
+/** Does hall `spec` (or its fight view) judge by height - its law (`v`, the spec's own number) THE ASCENT's or after? */
+export const egByHeight = (/** @type {any} */ spec) => (spec?.law ?? spec?.v ?? 0) >= EG_HEIGHT_LAW;
+/** A body's feet `y` as hall `spec` judges them: its own in a hall that judges by height, not known (NaN) before - the laws
+ *  before judge in plan alone, so every test handed it answers as it did. */
+export const egFeetY = (/** @type {any} */ spec, /** @type {number|undefined} */ y) => (egByHeight(spec) && Number.isFinite(y) ? /** @type {number} */ (y) : NaN);
+/** Does a floor whose top stands at `fy` bear feet at `y` - its top at most EG_GROUND_UNDER_M over them, they at most
+ *  EG_GROUND_OVER_M over it (section 11.7's band)? Every floor does when `y` is not known (NaN). */
+export const egBears = (/** @type {number} */ fy, /** @type {number} */ y) => !Number.isFinite(y) || (fy <= y + EG_GROUND_UNDER_M && y - fy <= EG_GROUND_OVER_M);
+/** Do two heights (two floors, or a blow's and a floor's) stand in one storey - under EG_STACK_M apart? Either not known: yes. */
+export const egOneStorey = (/** @type {number} */ a, /** @type {number} */ b) => !Number.isFinite(a) || !Number.isFinite(b) || Math.abs(a - b) < EG_STACK_M;
 /** Two pieces within this of each other (m) touch; within this in height (m) they are one level; a higher piece within this
  *  over a lower one (m - THE DROP, net/egLaw.js EG_DROP_CM) is stepped off. */
 export const EG_PIECE_TOUCH_M = 0.3;
@@ -146,6 +165,14 @@ export function egFeetAt(view, x, z, y0 = NaN, none = 0) {
   const f = (Number.isFinite(y0) ? egGroundAt(view, x, y0, z, EG_PIECE_TOUCH_M) : null) ?? egGroundAt(view, x, NaN, z, EG_PIECE_TOUCH_M);
   return cm(f ? f.y ?? 0 : Number.isFinite(y0) ? y0 : none);
 }
+/** THE ASCENT (section 2) - THE STOREY A BODY STANDS IN: the top of the fight ground its feet at (x, y, z) stand on (egGroundAt,
+ *  EG_PIECE_TOUCH_M about - a jump's apex is still its floor's), else its feet themselves (traversal ground, the air); NaN when
+ *  its height is not known. What a blow's and a zone's storey is held against (egOneStorey). Pure. */
+export function egStoreyY(view, x, y, z) {
+  if (!Number.isFinite(y)) return NaN;
+  const f = egGroundAt(view, x, y, z, EG_PIECE_TOUCH_M);
+  return f ? f.y ?? 0 : y;
+}
 
 // ── THE WALK GRAPH ──────────────────────────────────────────────────────────────────────────────────────────
 /** The closest points of two pieces' cores (a disc's centre, a lane's segment): `[ax, az, bx, bz]`. */
@@ -204,11 +231,20 @@ export function egWalkGraph(view) {
   const adj = [];
   const node = (x, z, r) => { nodes.push({ x, z, rg: r }); adj.push([]); return nodes.length - 1; };
   const edge = (a, b, w, both = true) => { adj[a].push([b, w]); if (both) adj[b].push([a, w]); };
+  const byH = egByHeight(view);
   for (let a = 0; a < fl.length; a++) for (let b = a + 1; b < fl.length; b++) {
     const A = fl[a], Bp = fl[b], dy = (A.y ?? 0) - (Bp.y ?? 0);
     if (Math.abs(dy) > EG_DROP_M) continue;
     const P = egPortalOf(A, Bp);
     if (!P) continue;
+    if (byH && Math.abs(dy) > EG_LEVEL_M) {
+      // THE ASCENT (section 2): a drop is stepped off only where a body can fall - at an open edge of the higher piece over
+      // the lower, nothing between (no floor, no ceiling, no wall) - never through the higher piece's own floor at the middle
+      // of their overlap, where the laws before stepped off
+      const hi = dy > 0 ? a : b, lo = dy > 0 ? b : a, D = egDropAt(view, hi, lo, P);
+      if (D) edge(node(D[0], D[1], regionIn(hi, D[1])), node(D[2], D[3], regionIn(lo, D[3])), 0.5, false);
+      continue;
+    }
     const na = node(P[0], P[1], regionIn(a, P[1])), nb = node(P[0], P[1], regionIn(b, P[1]));
     if (Math.abs(dy) <= EG_LEVEL_M) edge(na, nb, 0);
     else edge(dy > 0 ? na : nb, dy > 0 ? nb : na, 0.5, false);   // the higher stepped off onto the lower, never climbed
@@ -253,6 +289,92 @@ export function egWalkGraph(view) {
   const G = { rg, nodes, adj, archOf };
   _graphs.set(view, G);
   return G;
+}
+// ── THE ASCENT - HEIGHT (section 2): where a body really falls ──────────────────────────────────────────────────────
+/** How far past a higher piece's open edge a body stepped off lands (m), and how finely an edge is looked along (m). */
+export const EG_DROP_OUT_M = 0.5;
+export const EG_DROP_STEP_M = 0.5;
+/** EG-HERO-LAY's polygon `f` (a fight floor of `view.fl`): the edges its hero's law leaves open (`open` - `[floor, edge]`), by
+ *  their index; null when no hero lays it (every edge open). */
+function openEdges(view, f) {
+  for (const q of view?.heroes ?? []) for (const [fi, g] of q.floors.entries()) {
+    if (g.y !== f.y || g.poly.length !== f.poly.length || !g.poly.every((p, i) => p[0] === f.poly[i][0] && p[1] === f.poly[i][1])) continue;
+    return new Set(q.open.filter((e) => e[0] === fi).map((e) => e[1]));
+  }
+  return null;
+}
+/** Piece `f`'s rim as points a body may step off, every EG_DROP_STEP_M - `[x, z, nx, nz]`, its outward way: a disc's circle, a
+ *  lane's two sides and round ends, a polygon's OPEN edges alone (a hero's walls are no edge to step off). */
+function rimOf(view, f) {
+  const out = [], S = EG_DROP_STEP_M;
+  if (f.t === 'd') {
+    const n = Math.max(12, Math.ceil((2 * Math.PI * f.r) / S));
+    for (let k = 0; k < n; k++) { const a = ((k + 0.5) / n) * 2 * Math.PI, sx = Math.sin(a), cz = Math.cos(a); out.push([f.x + sx * f.r, f.z + cz * f.r, sx, cz]); }
+  } else if (f.t === 'l') {
+    const L = Math.hypot(f.bx - f.ax, f.bz - f.az), ux = L > 0 ? (f.bx - f.ax) / L : 0, uz = L > 0 ? (f.bz - f.az) / L : 1, n = Math.max(1, Math.ceil(L / S));
+    for (let k = 0; k < n; k++) for (const s of [-1, 1]) { const t = ((k + 0.5) / n) * L; out.push([f.ax + ux * t - s * uz * f.hw, f.az + uz * t + s * ux * f.hw, -s * uz, s * ux]); }
+    const c = Math.max(4, Math.ceil((Math.PI * f.hw) / S)), head = Math.atan2(ux, uz);
+    for (const [x, z, a0] of [[f.bx, f.bz, head - Math.PI / 2], [f.ax, f.az, head + Math.PI / 2]]) for (let k = 0; k < c; k++) { const a = a0 + ((k + 0.5) / c) * Math.PI; out.push([x + Math.sin(a) * f.hw, z + Math.cos(a) * f.hw, Math.sin(a), Math.cos(a)]); }
+  } else {
+    const open = openEdges(view, f), P = f.poly;
+    for (let e = 0; e < P.length; e++) {
+      if (open && !open.has(e)) continue;
+      const p = P[e], q = P[(e + 1) % P.length], L = Math.hypot(q[0] - p[0], q[1] - p[1]);
+      if (!(L > 0)) continue;
+      let nx = (q[1] - p[1]) / L, nz = -(q[0] - p[0]) / L;
+      const mx = (p[0] + q[0]) / 2, mz = (p[1] + q[1]) / 2;
+      if (egPolyIn(P, mx + nx * 0.05, mz + nz * 0.05)) { nx = -nx; nz = -nz; }   // its outward way, whichever way it winds
+      const n = Math.max(1, Math.ceil(L / S));
+      for (let k = 0; k < n; k++) { const t = (k + 0.5) / n; out.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t, nx, nz]); }
+    }
+  }
+  return out;
+}
+/** Does any floor or ceiling of hall `view` stand over (x, z) between a fall's foot `y0` and its head `y1` - a floor above the
+ *  foot's level up to the head's own (the body would stand on it, or never leave the head's), a ceiling between (the fall
+ *  would pass through it)? Its fight ground, its discs, bands and lanes, its stairs, its heroes' floors and ceilings, a
+ *  covered passage's roof. Pure. */
+export function egFloorBetween(view, x, z, y0, y1) {
+  const lo = y0 + EG_LEVEL_M, hi = y1 + EG_LEVEL_M, mid = (h) => h > lo && h < hi;
+  for (const f of view?.fl ?? []) if (mid(f.y ?? 0) && holds(f, x, z)) return true;
+  for (const d of view?.discs ?? []) if (mid(d.y ?? 0) && Math.hypot(x - d.x, z - d.z) <= d.r) return true;
+  for (const b of view?.bands ?? []) if (mid(b.y ?? 0) && z >= b.z0 && z <= b.z1 && Math.abs(x - b.x) <= b.halfW) return true;
+  for (const l of view?.lanes ?? []) if (mid(l.y ?? 0) && segDist(x, z, l.ax, l.az, l.bx, l.bz) <= l.hw) return true;
+  for (const q of view?.ramps ?? []) if (Math.max(q.y0, q.y1) > lo && Math.min(q.y0, q.y1) < hi && segDist(x, z, q.ax, q.az, q.bx, q.bz) <= q.hw) return true;
+  for (const q of view?.caves ?? []) {
+    if (Math.abs(x - q.x) > q.halfW || z < q.z0 || z > q.z1) continue;
+    if (Math.max(q.y, q.yB) > lo && Math.min(q.y, q.yB) < hi) return true;   // a passage's floor between
+    if (!q.open && Math.max(q.y, q.yB) + q.height > y0 && Math.max(q.y, q.yB) + q.height < y1) return true;   // its roof between
+  }
+  for (const q of view?.heroes ?? []) {
+    for (const g of q.floors) if (mid(g.y) && egPolyIn(g.poly, x, z)) return true;
+    for (const g of q.ramps) { const ys = g.poly.map((p) => p[1]); if (Math.max(...ys) > lo && Math.min(...ys) < hi && egPolyIn(g.poly.map((p) => [p[0], p[2]]), x, z)) return true; }
+    for (const c of q.ceil ?? []) if (c.y > y0 && c.y < y1 && egPolyIn(c.poly, x, z)) return true;
+  }
+  return false;
+}
+/**
+ * THE ASCENT (section 2) - WHERE A BODY STEPS OFF piece `hi` of `view.fl` onto the lower piece `lo`: of the higher piece's rim
+ * (rimOf - a hero's open edges alone), the point nearest where their plans meet (`P`, egPortalOf's) whose step EG_DROP_OUT_M
+ * out lands on the lower piece, with no floor or ceiling between the two heights there (egFloorBetween - the higher's own floor
+ * among them, so a step across a slot of it lands on it, never a drop) and no wall of the air across the step at their heights
+ * (egAirOf) - `[x, z, lx, lz]`, the rim's point and the landing; null where none (a ceiling over the lower floor, a walled rim,
+ * a floor stacked whole over the other: no drop). Pure.
+ * @param {any} view @param {number} hi @param {number} lo @param {number[]} P
+ * @returns {number[] | null}
+ */
+export function egDropAt(view, hi, lo, P) {
+  const A = view.fl[hi], B = view.fl[lo], yA = A.y ?? 0, yB = B.y ?? 0, air = egAirOf(view);
+  let best = null, bd = Infinity;
+  for (const [x, z, nx, nz] of rimOf(view, A)) {
+    const lx = x + nx * EG_DROP_OUT_M, lz = z + nz * EG_DROP_OUT_M;
+    if (!holds(B, lx, lz)) continue;   // it lands on the lower piece
+    if (egFloorBetween(view, lx, lz, yB, yA)) continue;   // never through a floor or a ceiling - nor onto the higher floor itself (a slot in it)
+    if (air.walls.some((w) => w.length > 4 && w[4] < yA + EG_AIR_BODY_M && w[5] > yB && crosses(x, z, lx, lz, w[0], w[1], w[2], w[3]))) continue;   // never through a wall
+    const d = Math.hypot(x - P[0], z - P[1]);
+    if (d < bd - 1e-9) { bd = d; best = [x, z, lx, lz]; }
+  }
+  return best;
 }
 /** EG-HERO-LAY: does a straight walk inside region k (of regions `rg`) stay on it - always on a disc or a lane (each convex),
  *  on a polygon where egSeesIn says so? */
@@ -347,7 +469,10 @@ export function egWalkNext(view, b, gx, gz, gy = NaN, inset = 0) {
   b.wn = -1;
   const [from] = egRegionAt(view, G, b.x, b.z, Number.isFinite(b.y) ? b.y : NaN, Number.isInteger(b.fr) ? b.fr : -1);   // EG-ZJ: by its own feet (a Caster on its pillar's top, never the walkway its plan overlaps)
   b.fr = from;
-  const to = b.pinned ? from : egRegionAt(view, G, gx, gz, gy)[0];   // EG-ZQ: a pinned walker's ground is its own region
+  // EG-ZQ: a pinned walker's ground is its own region. THE ASCENT (section 2): a goal of no height known is read at the walker's
+  // own feet (a hall that judges by height - egFeetY): on its own storey where a floor of it holds the goal, else the floor
+  // that holds it (egRegionAt's nearest - a floor below reached by its drop); the laws before, on the lowest, as before
+  const to = b.pinned ? from : egRegionAt(view, G, gx, gz, Number.isFinite(gy) ? gy : egFeetY(view, b.y))[0];
   const goal = egKeepInRegion(view, G, to, gx, gz, inset);   // `inset` in, as net/egLaw.js egKeepOnFight keeps a walker
   const sees = (k, ax, az, bx, bz) => seesRg(view, G.rg, k, ax, az, bx, bz);   // EG-HERO-LAY: a polygon's way straight only where it stays on it
   if (to === from && sees(from, b.x, b.z, goal[0], goal[1])) return [goal[0], goal[1], true];
@@ -390,11 +515,14 @@ export function egWalkFeet(view, b) {
   return [at(b.fr), at(n ? n.rg : b.fr)];
 }
 /** Does the straight walk from (ax, az) to (bx, bz) cross an arch's wall? Where it first meets one, else null (a
- *  Breaker's run is cut there). */
-export function egArchCut(view, ax, az, bx, bz) {
+ *  Breaker's run is cut there). THE ASCENT (section 2): `y` the walker's feet - in a hall that judges by height, only an arch
+ *  standing on its floor's storey (its foot under its body's head, its top over its feet). */
+export function egArchCut(view, ax, az, bx, bz, y = NaN) {
   let best = null, bt = Infinity;
+  const H = egFeetY(view, y);
   for (const d of (view?.deco ?? []).filter((q) => q.t === 'arch')) {
     if ((az - d.z) * (bz - d.z) >= 0 || Math.abs(bz - az) < 1e-9) continue;
+    if (Number.isFinite(H) && !(H + EG_AIR_BODY_M > (d.y ?? 0) && H < (d.y ?? 0) + (d.h ?? 0))) continue;
     const t = (d.z - az) / (bz - az), x = ax + (bx - ax) * t;
     if (Math.abs(x - d.x) <= d.w / 2 || Math.abs(x - d.x) > d.r + 1) continue;
     if (t < bt) { bt = t; best = [ax + (bx - ax) * t, d.z]; }
@@ -403,11 +531,17 @@ export function egArchCut(view, ax, az, bx, bz) {
 }
 
 // ── THE AIR ──────────────────────────────────────────────────────────────────────────────────────────────────
+/** THE ASCENT (section 2): a flier's body, from the height it hovers at up (m) - a wall stands in its way only where the wall
+ *  stands within it. */
+export const EG_AIR_BODY_M = 2;
 /**
  * THE AIR of hall `spec`: the rock a flier cannot pass, as wall segments (`[ax, az, bx, bz]`) - each covered passage's rock
  * mass beside its tunnel, each arch's wall either side of its gap, each chamber's wall ring but where the course comes in
  * and goes on - and the ways about them (`ways` - the mouths, the rock's corners, the gaps, EG_AIR_CLEAR_M off), with the
- * ways' sight of each other. Pure, cached on the spec.
+ * ways' sight of each other. THE ASCENT (section 2): in a hall that judges by height (egByHeight) each wall says the heights it
+ * stands between (`[ax, az, bx, bz, y0, y1]` - a passage's floor to its roof, an arch's and a ring's foot to their top, a hero's
+ * closed edge from its floor to the ceiling over it or its box's top), so a flier passes over a wall, or under a way, at
+ * another storey; the ways' sight at a height is reckoned once a height (`at`). Pure, cached on the spec.
  * @param {any} spec
  */
 export function egAirOf(spec) {
@@ -415,12 +549,15 @@ export function egAirOf(spec) {
   if (had) return had;
   /** @type {number[][]} */
   const walls = [], ways = [];
-  const C = EG_AIR_CLEAR_M;
+  const C = EG_AIR_CLEAR_M, byH = egByHeight(spec);
+  /** a wall, with its heights where the hall judges by height */
+  const wall = (/** @type {number[]} */ w, /** @type {number} */ y0, /** @type {number} */ y1) => walls.push(byH ? [...w, y0, y1] : w);
   for (const q of spec?.caves ?? []) {
     if (q.open) continue;
+    const y0 = Math.min(q.y, q.yB), y1 = Math.max(q.y, q.yB) + q.height;
     for (const s of [-1, 1]) {
       const x0 = q.x + s * q.halfW, x1 = q.x + s * (q.halfW + EG_ROCK_M);
-      walls.push([x0, q.z0, x0, q.z1], [x1, q.z0, x1, q.z1], [x0, q.z0, x1, q.z0], [x0, q.z1, x1, q.z1]);
+      wall([x0, q.z0, x0, q.z1], y0, y1); wall([x1, q.z0, x1, q.z1], y0, y1); wall([x0, q.z0, x1, q.z0], y0, y1); wall([x0, q.z1, x1, q.z1], y0, y1);
       ways.push([x1 + s * C, q.z0 - C], [x1 + s * C, q.z1 + C]);
     }
     ways.push([q.x, q.z0 - C], [q.x, q.z1 + C]);
@@ -428,14 +565,14 @@ export function egAirOf(spec) {
   for (const d of spec?.deco ?? []) {
     if (d.t === 'arch') {
       // its wall runs to the disc's rim and a metre past (world/egHall.js archParts), met by the ring's - no slot between
-      for (const s of [-1, 1]) walls.push([d.x + s * (d.w / 2), d.z, d.x + s * (d.r + 2), d.z]);
+      for (const s of [-1, 1]) wall([d.x + s * (d.w / 2), d.z, d.x + s * (d.r + 2), d.z], d.y ?? 0, (d.y ?? 0) + (d.h ?? 0));
       ways.push([d.x, d.z - C], [d.x, d.z + C]);
     } else if (d.t === 'wall') {
       // the ring as drawn (world/egHall.js): 32 faces, but those where the course comes in (-z) and goes on (+z)
       for (let k = 0; k < 32; k++) {
         const a0 = (k / 32) * Math.PI * 2, a1 = ((k + 1) / 32) * Math.PI * 2;
         if (Math.abs(Math.sin((a0 + a1) / 2)) < 0.2) continue;
-        walls.push([d.x + Math.sin(a0) * d.r, d.z + Math.cos(a0) * d.r, d.x + Math.sin(a1) * d.r, d.z + Math.cos(a1) * d.r]);
+        wall([d.x + Math.sin(a0) * d.r, d.z + Math.cos(a0) * d.r, d.x + Math.sin(a1) * d.r, d.z + Math.cos(a1) * d.r], d.y ?? 0, (d.y ?? 0) + (d.h ?? 0));
       }
       for (const s of [-1, 1]) ways.push([d.x, d.z + s * (d.r - C)], [d.x, d.z + s * (d.r + C)]);
     }
@@ -443,14 +580,26 @@ export function egAirOf(spec) {
   // EG-HERO-LAY: a hero's walls - every edge of its floors its law does not open - and the ways in and out at its sockets
   for (const q of spec?.heroes ?? []) {
     const open = new Set(q.open.map((e) => `${e[0]}:${e[1]}`));
-    q.floors.forEach((f, fi) => f.poly.forEach((p, e) => { if (!open.has(`${fi}:${e}`)) { const n = f.poly[(e + 1) % f.poly.length]; walls.push([p[0], p[1], n[0], n[1]]); } }));
+    q.floors.forEach((f, fi) => {
+      const top = Math.min(q.box[4], ...(q.ceil ?? []).map((c) => c.y).filter((y) => y > f.y));   // THE ASCENT: up to the ceiling over it
+      f.poly.forEach((p, e) => { if (!open.has(`${fi}:${e}`)) { const n = f.poly[(e + 1) % f.poly.length]; wall([p[0], p[1], n[0], n[1]], f.y, top); } });
+    });
     ways.push([q.sockets.in.x, q.sockets.in.z - C], [q.sockets.in.x, q.sockets.in.z + C]);
     for (const o of q.sockets.out) ways.push([o.x, o.z - C], [o.x, o.z + C]);
   }
-  const A = { walls, ways, sees: /** @type {boolean[][]} */ ([]) };
+  const A = { walls, ways, sees: /** @type {boolean[][]} */ ([]), at: /** @type {Map<number, boolean[][]>} */ (new Map()) };
   A.sees = ways.map((p) => ways.map((q) => egAirClear(A, p[0], p[1], q[0], q[1])));
   _airs.set(spec, A);
   return A;
+}
+/** THE ASCENT: the ways' sight of each other for a flier at height `y` (not known, NaN: the whole rock's - egAirOf's `sees`),
+ *  reckoned once a half metre of height and kept on the air. */
+function seesAt(A, y) {
+  if (!Number.isFinite(y) || !A.walls.some((w) => w.length > 4)) return A.sees;
+  const k = Math.round(y * 2) / 2;
+  let s = A.at.get(k);
+  if (!s) { s = A.ways.map((p) => A.ways.map((q) => egAirClear(A, p[0], p[1], q[0], q[1], k))); A.at.set(k, s); }
+  return s;
 }
 /** Do two segments cross (their interiors - touching at an end is no crossing)? */
 function crosses(ax, az, bx, bz, cx, cz, dx, dz) {
@@ -458,41 +607,47 @@ function crosses(ax, az, bx, bz, cx, cz, dx, dz) {
   const d1 = o(cx, cz, dx, dz, ax, az), d2 = o(cx, cz, dx, dz, bx, bz), d3 = o(ax, az, bx, bz, cx, cz), d4 = o(ax, az, bx, bz, dx, dz);
   return ((d1 > 1e-9 && d2 < -1e-9) || (d1 < -1e-9 && d2 > 1e-9)) && ((d3 > 1e-9 && d4 < -1e-9) || (d3 < -1e-9 && d4 > 1e-9));
 }
-/** Is the air between two points clear of every wall of `air` (egAirOf)? */
-export function egAirClear(air, ax, az, bx, bz) {
-  for (const w of air.walls) if (crosses(ax, az, bx, bz, w[0], w[1], w[2], w[3])) return false;
+/** Is the air between two points clear of every wall of `air` (egAirOf)? THE ASCENT: for a flier at height `y` (its own,
+ *  where the hall judges by height - egFeetY), clear of every wall that stands within its body (EG_AIR_BODY_M); not known
+ *  (NaN), of every wall at all. */
+export function egAirClear(air, ax, az, bx, bz, y = NaN) {
+  for (const w of air.walls) if ((w.length < 6 || !Number.isFinite(y) || (y + EG_AIR_BODY_M > w[4] && y < w[5])) && crosses(ax, az, bx, bz, w[0], w[1], w[2], w[3])) return false;
   return true;
 }
 /**
  * A FLIER'S NEXT POINT from (fx, fz) toward (tx, tz) over hall `spec`: the target when the air between is clear, else the
  * first way of the fewest metres about the rock (each way's sight of the next clear); with no way, the target (the flier
- * presses on and the next beat tries again). `[x, z]`.
- * @param {any} spec @param {number} fx @param {number} fz @param {number} tx @param {number} tz
+ * presses on and the next beat tries again). `[x, z]`. THE ASCENT (section 2): `y` the flier's height - in a hall that judges
+ * by height, only the walls standing within its body bar it (egAirClear).
+ * @param {any} spec @param {number} fx @param {number} fz @param {number} tx @param {number} tz @param {number} [y]
  * @returns {[number, number]}
  */
-export function egAirNext(spec, fx, fz, tx, tz) {
-  const A = egAirOf(spec);
-  if (!A.walls.length || egAirClear(A, fx, fz, tx, tz)) return [tx, tz];
+export function egAirNext(spec, fx, fz, tx, tz, y = NaN) {
+  const A = egAirOf(spec), H = egFeetY(spec, y), sees = seesAt(A, H);
+  if (!A.walls.length || egAirClear(A, fx, fz, tx, tz, H)) return [tx, tz];
   const W = A.ways, N = W.length, dist = new Array(N).fill(Infinity), prev = new Array(N).fill(-1), done = new Array(N).fill(false);
-  for (let i = 0; i < N; i++) if (egAirClear(A, fx, fz, W[i][0], W[i][1])) dist[i] = Math.hypot(W[i][0] - fx, W[i][1] - fz);
+  for (let i = 0; i < N; i++) if (egAirClear(A, fx, fz, W[i][0], W[i][1], H)) dist[i] = Math.hypot(W[i][0] - fx, W[i][1] - fz);
   let end = -1, endCost = Infinity;
   for (;;) {
     let u = -1;
     for (let i = 0; i < N; i++) if (!done[i] && dist[i] < Infinity && (u < 0 || dist[i] < dist[u])) u = i;
     if (u < 0 || dist[u] >= endCost) break;
     done[u] = true;
-    if (egAirClear(A, W[u][0], W[u][1], tx, tz)) { const c = dist[u] + Math.hypot(tx - W[u][0], tz - W[u][1]); if (c < endCost) { endCost = c; end = u; } }
-    for (let v = 0; v < N; v++) if (v !== u && A.sees[u][v]) { const c = dist[u] + Math.hypot(W[v][0] - W[u][0], W[v][1] - W[u][1]); if (c < dist[v]) { dist[v] = c; prev[v] = u; } }
+    if (egAirClear(A, W[u][0], W[u][1], tx, tz, H)) { const c = dist[u] + Math.hypot(tx - W[u][0], tz - W[u][1]); if (c < endCost) { endCost = c; end = u; } }
+    for (let v = 0; v < N; v++) if (v !== u && sees[u][v]) { const c = dist[u] + Math.hypot(W[v][0] - W[u][0], W[v][1] - W[u][1]); if (c < dist[v]) { dist[v] = c; prev[v] = u; } }
   }
   if (end < 0) return [tx, tz];
   let u = end;
   while (prev[u] >= 0) u = prev[u];
   return [W[u][0], W[u][1]];
 }
-/** A point kept out of a covered passage's rock (a flier's spot or goal): inside its rock mass, moved into its tunnel. */
-export function egAirKeep(spec, x, z) {
+/** A point kept out of a covered passage's rock (a flier's spot or goal): inside its rock mass, moved into its tunnel. THE
+ *  ASCENT (section 2): `y` its height - in a hall that judges by height, a passage's rock only between its floor and its roof. */
+export function egAirKeep(spec, x, z, y = NaN) {
+  const H = egFeetY(spec, y);
   for (const q of spec?.caves ?? []) {
     if (q.open || z < q.z0 || z > q.z1) continue;
+    if (Number.isFinite(H) && !(H + EG_AIR_BODY_M > Math.min(q.y, q.yB) && H < Math.max(q.y, q.yB) + q.height)) continue;
     const d = x - q.x;
     if (Math.abs(d) > q.halfW && Math.abs(d) < q.halfW + EG_ROCK_M) return [q.x + Math.sign(d) * Math.max(0, q.halfW - 0.6), z];
   }

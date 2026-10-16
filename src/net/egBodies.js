@@ -34,6 +34,7 @@ import { egBlowOf, egInBlow, egBlowOn, EG_BLOWS_MAX } from './egShape.js';
 import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from './egFloor.js';
 import { egZoneLandings, egFloorLess, egBurnsIn } from './egFloor.js';   // AUDIT EG V (lane1 #10): the fight's own zones in the set   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
 import { egFightView, egFeetAt } from './egWalkGraph.js';   // EG-ZJ: the fight ground a body's feet stand on
+import { egByHeight, egFeetY, egOneStorey, egStoreyY } from './egWalkGraph.js';   // THE ASCENT - HEIGHT: a blow on its own storey
 
 /** A body's role. */
 export const EG_ROLE = Object.freeze({ lord: 0, add: 1, obj: 2 });
@@ -162,7 +163,7 @@ export function egRaise(F, role, k, spots, hp, now, out, o = {}) {
 export function egWalk(F, b, gx, gz, stop, speed, now, spec, inset = b.r ?? 0.6, free = false, ty = NaN) {
   const dx = gx - b.x, dz = gz - b.z, d = Math.hypot(dx, dz), go = Math.max(0, d - stop);
   let tx = b.x + (d > 0 ? (dx / d) * go : 0), tz = b.z + (d > 0 ? (dz / d) * go : 0);
-  if (!free) [tx, tz] = egKeepOnFight(spec, tx, tz, inset);
+  if (!free) [tx, tz] = egKeepOnFight(spec, tx, tz, inset, b.y);   // THE ASCENT: kept to the floor its feet stand on
   const y = r2(b.y ?? 0), toY = Number.isFinite(ty) ? r2(ty) : egFeetAt(spec, tx, tz, y);
   const m = b.mv;
   if (m && Math.hypot(m.tx - tx, m.tz - tz) < MOVE_RESAY_M && now - m.at < MOVE_RESAY_MS && Math.abs(m.ty - toY) <= EG_Y_RESAY_M && Math.abs(egWalkY(m, now) - y) <= EG_Y_RESAY_M) return;
@@ -231,11 +232,15 @@ export const EG_FARWATCH_MS = 50;
  * is due now (egSay). EG-H1: a lord's blow carries `lead` (EG_TELL_LEAD_MS) - committed now, its landing that much later,
  * kept pending (`F.pend`) until its word is due, told meanwhile to a Watchfire holder's company (egBlowsStep). Answers the
  * blow (said, or pending), or null (held).
- * @param {any} F @param {any} spec @param {any} o the blow (net/egShape.js egBlowOf's) @param {{sub: string, x: number, z: number}[]} here
+ * @param {any} F @param {any} spec @param {any} o the blow (net/egShape.js egBlowOf's) @param {{sub: string, x: number, z: number, y?: number}[]} here
  * @param {number} now @param {any[]} out @param {number} [lead]
  */
 export function egAim(F, spec, o, here, now, out, lead = 0) {
   const blow = egBlowOf({ ...o, i: ++F.bl });
+  // THE ASCENT (Elite-Gates-Ascent.md section 2): in a hall that judges by height, THE HEIGHT IT LANDS AT (`y`, said with it) -
+  // its own where its caller names it (`o.y`: a hall's blow at a member, an object's burst), else its thrower's feet - so it
+  // lands on the floors of that storey alone (net/bossRef.js judgeShapes, the screens' verdict and telegraphs)
+  if (egByHeight(spec)) { const y = Number.isFinite(o.y) ? o.y : o.o ? egBodyById(F, o.o)?.y : NaN; if (Number.isFinite(y)) blow.y = r2(y); }
   if (lead > 0) { blow.at = Math.max(blow.at + lead, now + lead + blow.wu); (F.pend ??= []).push({ b: blow, say: now + lead, told: [] }); return blow; }
   return egSay(F, spec, blow, here, now, out, []) ? blow : null;
 }
@@ -246,15 +251,20 @@ export function egAim(F, spec, o, here, now, out, lead = 0) {
  * (EG-H1: a floored wind-up and a late beat lengthen the wait, never shorten what a screen shows). A blow Watchfire told
  * (`told`) and then held is untold at once (`untell`, to each it was told) - no ghost outline stays on the floor. Answers
  * whether it was said.
- * @param {any} F @param {any} spec @param {any} blow @param {{sub: string, x: number, z: number}[]} here @param {number} now @param {any[]} out @param {string[]} told
+ * @param {any} F @param {any} spec @param {any} blow @param {{sub: string, x: number, z: number, y?: number}[]} here @param {number} now @param {any[]} out @param {string[]} told
  */
 function egSay(F, spec, blow, here, now, out, told) {
   blow.at = Math.max(blow.at, now + blow.wu + (blow.ol ?? 0));   // AUDIT EG V (lane1 #18): a chained shape's outline lead kept whole too - its fill from the first's landing, however late their word
   if (!blow.ch && here.length) {
     const onFloor = egFloorLess(egFloorTest(spec), F.zones, now, blow.at), burns = egBurnsIn(F.zones, now, blow.at), pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egPlaceLandings(spec, F.wokeAt, now, blow.at), ...egZoneLandings(F.zones, now, blow.at)];
+    const byH = egByHeight(spec);
     for (const m of here) {
       if (!blow.s.some((s) => s[0] === 'a' || s[0] === 'h' || (s.length >= 3 && Math.hypot(m.x - s[1], m.z - s[2]) < 40))) continue;
-      if (egUnionHolds(pending, blow, m.x, m.z, now, onFloor, burns)) {
+      // THE ASCENT (section 2): a member's union floor is its own storey's - a blow of another storey leaves it its floor, and
+      // only the landings, burns and voids of its own floor take cells of it
+      const H = byH ? egFeetY(spec, m.y) : NaN, st = Number.isFinite(H) ? egStoreyY(F.view ?? spec, m.x, H, m.z) : NaN;
+      if (Number.isFinite(st) && !egOneStorey(st, blow.y)) continue;
+      if (Number.isFinite(st) ? egUnionHolds(pending.filter((b) => egOneStorey(st, b.y)), blow, m.x, m.z, now, egFloorLess(egFloorTest(spec, H), F.zones, now, blow.at, H), egBurnsIn(F.zones, now, blow.at, H)) : egUnionHolds(pending, blow, m.x, m.z, now, onFloor, burns)) {
         for (const sub of told) out.push({ k: 'untell', to: sub, i: blow.i });
         F.held.push({ b: blow, ticks: 0, at: now });
         return false;
@@ -272,7 +282,7 @@ function egSay(F, spec, blow, here, now, out, told) {
  * greatest, Far Watch's EG_FARWATCH_MS more for a blow aimed at a Long Sight holder, never past EG_TELL_LEAD_MS); once its
  * word is that near (`say` less the lead), each holder and each member within EG_TELL_NEAR_M of it is told, with the lead
  * shown (`lead`). Pure.
- * @param {any} blow @param {{sub: string, x: number, z: number, lead: number, ls?: number[][]}[]} watch @param {{sub: string, x: number, z: number}[]} here
+ * @param {any} blow @param {{sub: string, x: number, z: number, lead: number, ls?: number[][]}[]} watch @param {{sub: string, x: number, z: number, y?: number}[]} here
  * @param {number} say @param {number} now
  */
 export function egTellTo(blow, watch, here, say, now) {
@@ -360,8 +370,12 @@ export function egHitBody(F, spec, p, i, d, r, pose, now, seq = null, mult = 1, 
   if (!spendBlow(p, now, seq, `e${i}`)) return { got: 0, b: null };
   if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z)) return { got: 0, b: null };
   const [bx, bz] = egBodyAt(b, now), gap = dist(pose.x, pose.z, bx, bz) - (b.r ?? 0.6);
-  const onFloor = egOnFight(spec, pose.x, pose.z, POSE_SLACK + 6);
+  const onFloor = egOnFight(spec, pose.x, pose.z, POSE_SLACK + 6, pose.y);   // THE ASCENT: by the member's feet
   if (!onFloor && gap > MELEE_REACH + POSE_SLACK + 4) return { got: 0, b: null };
+  // THE ASCENT (Elite-Gates-Ascent.md section 2): in a hall that judges by height, a blow reaches no body a storey over or under
+  // the member (a lord on the floor stacked over the member's, over its plan, is out of its reach)
+  const H = egFeetY(spec, pose.y);
+  if (Number.isFinite(H) && Number.isFinite(b.y) && !egOneStorey(egStoreyY(F.view ?? spec, pose.x, H, pose.z), egStoreyY(F.view ?? spec, bx, b.y, bz))) return { got: 0, b: null };
   if (r === HIT_KINDS.Melee && gap > MELEE_REACH + POSE_SLACK) return { got: 0, b: null };
   if (egHas(b, EG_FL.ward) || !(mult > 0)) return { got: 0, b };
   const got = spendPurse(p, d * mult, b.hp, now, bucketX);

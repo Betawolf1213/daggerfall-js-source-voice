@@ -741,8 +741,8 @@
   {
     "name": "EGA5A1-horn-held",
     "file": "src/net/egBrain.js",
-    "old": "egLegionSummon(F, [EG_KIND.kynval], [[at.x, at.z]], now, out, { need: 1, wave: 0 });",
-    "new": "egLegionSummon(F, [EG_KIND.kynval], [[at.x, at.z]], now, out, { need: 0, wave: 0 });",
+    "old": "egLegionSummon(F, [EG_KIND.kynval], [Number.isFinite(spotY(spec, at)) ? [at.x, at.z, spotY(spec, at)] : [at.x, at.z]], now, out, { need: 1, wave: 0 });",
+    "new": "egLegionSummon(F, [EG_KIND.kynval], [Number.isFinite(spotY(spec, at)) ? [at.x, at.z, spotY(spec, at)] : [at.x, at.z]], now, out, { need: 0, wave: 0 });",
     "tests": [
       "test/egaudit5_a1_legion.test.js"
     ],
