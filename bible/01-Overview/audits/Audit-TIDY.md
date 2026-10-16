@@ -106,10 +106,22 @@ line outside the conflicts in order.
 | DOC-10 | NIT | The map's test reach overstated; rule 4's "the table above" ambiguous; the two small folders unnamed | FIXED |
 | DOC-11 | NIT | Stale paths (`tools/moveModule.mjs`'s header, a `tidy1` comment, `siegeRef.js`'s split `test/relayversion`), "holds 274" for "held", 18 `travel*` for 19, `Audit-Log.md` filed among the audits though it is one of Home.md's index pages | FIXED: each; `Audit-Log.md` back beside `Page-Index.md` |
 
+## After the audit
+
+Main moved 30 commits while the audit ran (TWO-HANDS and its audit, AUDIT GUILD-WORDS II, DEV6, SMOKE-HANG), and the
+pull request conflicted - so no workflow ran on the audit's pushes until it was merged in (`Code-Map.md`'s rule: a
+conflicting pull request runs nothing). Merged twice as the first merge was: main's and the base's text of every
+moved or conflicted file run through the ledger, then merged with `git merge-file`; `--fixup` mended 242 addresses;
+main's new tests and records filed, and TWO-HANDS's three modules into `src/combat/twoHands/` by the map's rule.
+`--fixup`'s BLIND lines on the merged tree showed TOOL-1's new rule reading the wrong subject - every moved file a
+test names - and flagging sound pins about files that never moved: it now takes the file a pin reads (on its line,
+or bound to a name it tests; a `from` before a quote is the keyword, not a name), and a path a pin reads is no
+spelling. Pinned both ways; the full suite on the merged tree: 28,560 tests, 0 failing.
+
 ## What stands
 
 - `test/tooling/tidy1_movetool.test.js`: 10 tests (split from `tidy1_codemap` so the tool's mutants are judged in
-  seconds); `test/tooling/tidy1_codemap.test.js`: 5. `tools/mutants/tidy1.json`: 60 mutants (16 before TIDY5, 32 at
+  seconds); `test/tooling/tidy1_codemap.test.js`: 5. `tools/mutants/tidy1.json`: 63 mutants (16 before TIDY5, 32 at
   the audit's start), all dead.
 - The relay: `siegeRef.js`'s comment (DOC-11) is a byte of the bundle, so world211 - undeployed - is re-hashed in place;
   still one relay deploy on the merge.
