@@ -19588,3 +19588,53 @@ default since STANDING-ON, 2026-10-11 - Mac: "should be on by default"), it list
 (`systems/factionStanding.js` standingGroups, drawn by `enhancedMenu.js` statsEveryStanding): the guilds, the temples,
 the knightly orders, the kingdoms, the covens, the vampire clans, the Daedric Princes - a membership under Guilds above,
 with its rank, never twice. The classic skin's sheet is untouched. The record: `01-Overview/Field-Bugs-2026-10-09e.md`.
+
+## VIRT - THE LONG PACK: the rows on screen, a picture into its tile, the pictures kept by use (2026-10-16)
+
+A report against `ui/enhancedInventory.js` and `ui/textureCanvas.js`: a container of hundreds of pieces opened slowly,
+froze while its pictures landed and repainted the whole window on every pick. Measured in a browser
+(`tools/packVirtProbe.mjs`: 700 pieces over 351 kinds of picture, synthetic archives, no ARENA2, this machine's
+Chromium; the same probe on the tree before), it was worse than reported. Three causes, each fixed where it stood:
+
+1. EVERY LANDING REPAINTED THE WINDOW. A cold picture's `onReady` was `render`, and a render rebuilt every row, so a
+   pile of 351 cold kinds was 311 whole repaints of 700 rows - 46 s of long tasks before the loot window settled (22 s
+   for a 700-piece page of the pack). A tile drawn on its initials now waits in `_waitingTiles`; a landing asks for ONE
+   pass on the next frame (`tileLanded`), and the pass gives each waiting tile the tile `itemTile` draws for its line
+   and box, the wear bar carried over (`liveTile`, `paintLandedTiles`). The pictures that land together are one pass,
+   a tile a repaint threw away is dropped, and the pack is not repainted at all. The card's, the gems' and the fate
+   portrait's pictures still repaint, one picture each.
+2. EVERY PASS BUILT EVERY ROW. A list past `VIRTUAL_MIN` (120) rows - the dock's page, the side window's rows - draws
+   the rows in its visible band and half a band each side (never under two lines), and two spacers stand in for the
+   rest (`ui/virtualRows.js`). The layout is MEASURED: the columns are the rows sharing the first row's top, the pitch
+   the next line's top less the first's, and a spacer is whole lines of that pitch less the one gap the layout puts
+   beside it - the dock's wrapping tiles, the loot window's two grid tracks and its one column on a pair, a desktop
+   and a phone, all the same law. A scroll keeps the rows it keeps (never moved, never rebuilt) and builds the rows
+   that enter; a list that cannot be measured is drawn whole. The windowed list is no scroll anchor
+   (`overflow-anchor: none`): Chrome's hold on a node while whole lines were swapped for spacer landed a jump to the
+   foot 22 px short. A repaint measures the new lists before a scroll is given back (`syncLists({ draw: false })`),
+   and aims them after (`syncLists()`); a resize that keeps the slots' boxes measures them again. The window follows
+   the list's own scroll even when an outer box hides the list whole (a phone's paired store, below the fixed host's
+   fold - the layout as it stood, not touched here).
+3. THE FITTED PICTURES WERE KEPT BY THE ORDER MADE. `FIT_CACHE_MAX` (AUDIT UI A4) let go of the oldest made, which a
+   long list asks for first on every pass, so a list over the bound made each picture again forever. A hit now goes to
+   the back of the line (the one asked least recently goes), and the bound is 2000.
+
+And an item's line is read once a pass (`lineOf`, by the item, an epoch every `render` opens): the store's search
+read every name and then every row its line, on every key typed. `itemLine` stays pure.
+
+Measured, before / after, 700 pieces on a desktop (1440x900; a phone, 393x851 at 2.625, measured alike):
+
+| | the loot window | the player's storage | a page of the pack |
+| --- | --- | --- | --- |
+| cold, opened to settled | 46.1 s, 311 repaints / 0.20 s, 2 | 2.3 s, 14 repaints / 0.24 s, 2 | 22.1 s, 171 repaints / 0.20 s, 2 |
+| warm open, to the frame | 305 ms / 69 ms | 297 ms / 74 ms | 285 ms / 66 ms |
+| a pick (a take, in a pile) | 968 ms / 72 ms | 1092 ms / 66 ms | 2017 ms / 126 ms |
+
+What a player sees is the list it was: the probe scrolls each list to six depths and finds every drawn row the piece
+the whole list puts at its place, the list exactly as tall (one exception: a one-column store's last row has no
+bottom border, which its spacer counts until the window reaches it - 2 px), the scroll kept through a pick, the last
+piece flush at the foot, the search's focus kept. No DFU member is touched - the classic skin's lists are
+`ui/itemScroller.js`'s, untouched - and nothing here is a departure from DFU's behaviour. Pins:
+`test/virt_pack.test.js` (the window over a document that lays its rows out, the bound, a real replacement record
+landing into a mounted pack's tile, a repaint reading a changed stack); mutants `tools/mutants/virt.json` (15, all
+dead); re-aimed by content: `ui1.json`'s UI1-the-second-waiter-dropped, `shiftstow.json`'s AUDIT-WAGON-FILTER-S8.

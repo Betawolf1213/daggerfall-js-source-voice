@@ -231,9 +231,13 @@ export function requestIcon(archive, record, { scale = 2, onReady = null, dye = 
 const fitted = new Map();      // `${picture}@${box}x${dpr}c${cap}` -> { src, w, h, smooth } | null
 const fitWaiting = new Map();  // the same key -> the screens waiting on it, while it is made
 /** AUDIT UI A4: how many fitted pictures are kept - every zoom and every HUD scale is a new set, and a picture that never
- *  comes held its waiters for good. Past this the OLDEST asked goes, and its waiters with it (a picture on screen keeps
- *  its source; asked again, it is made again). */
-export const FIT_CACHE_MAX = 600;
+ *  comes held its waiters for good. Past this the one asked for LEAST RECENTLY goes, and its waiters with it (a picture
+ *  on screen keeps its source; asked again, it is made again).
+ *  VIRT (2026-10-16): 600 was under one long store's pictures - a wagon of a few hundred kinds, each at the pack's box
+ *  and the loot window's, is past it - and the bound let go of the OLDEST MADE, which are the ones every pass down such a
+ *  list asks for first: each was made again, landed, and pushed out the next. Kept by the last ask now, and 2000 of them
+ *  (a list's picture is a few kilobytes of PNG at its device size). */
+export const FIT_CACHE_MAX = 2000;
 
 /** A picture's data URL as the fitted picture, or null (a page with no Image or no 2D canvas - node, the pins). */
 async function fitUrl(url, opts) {
@@ -264,7 +268,8 @@ export function requestFittedPicture(name, ask, { box, dpr = 1, cap = ICON_CAP, 
   if (!(box > 0) || typeof ask !== 'function') return null;
   const r = clampDpr(dpr);
   const key = `${name}@${box}x${r}c${cap}${trim ? '' : 'w'}${snap ? '' : 'nosnap'}`;
-  if (fitted.has(key)) { hear(fitWaiting.get(key), onReady); return fitted.get(key); }
+  // VIRT: AN ASK IS A USE - the picture goes to the back of the line the bound below takes from
+  if (fitted.has(key)) { const pic = fitted.get(key); fitted.delete(key); fitted.set(key, pic); hear(fitWaiting.get(key), onReady); return pic; }
   fitted.set(key, null);
   while (fitted.size > FIT_CACHE_MAX) {
     const oldest = fitted.keys().next().value;

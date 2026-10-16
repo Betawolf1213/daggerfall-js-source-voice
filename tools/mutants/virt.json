@@ -1,0 +1,137 @@
+[
+  {
+    "name": "VIRT-the-spacers-gap-not-taken-off",
+    "file": "src/ui/virtualRows.js",
+    "old": "    top = spacer(top, above > 0 ? above * pitch - gap : 0, true);",
+    "new": "    top = spacer(top, above > 0 ? above * pitch : 0, true);",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-foot-gap-not-taken-off",
+    "file": "src/ui/virtualRows.js",
+    "old": "    foot = spacer(foot, below > 0 ? below * pitch - gap : 0, false);",
+    "new": "    foot = spacer(foot, below > 0 ? below * pitch : 0, false);",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-window-never-moved",
+    "file": "src/ui/virtualRows.js",
+    "old": "    aim(line(v0 - over) * cols, Math.min(total, (line(v1 + over) + 1) * cols));",
+    "new": "    place();",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-window-rebuilt-whole-on-every-move",
+    "file": "src/ui/virtualRows.js",
+    "old": "    for (const [i, n] of nodes) if (i < ns || i >= ne) { n.remove(); nodes.delete(i); }",
+    "new": "    for (const [i, n] of nodes) if (i >= 0) { n.remove(); nodes.delete(i); }",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-window-rebuilt-inside-its-margin",
+    "file": "src/ui/virtualRows.js",
+    "old": "    if (aligned && start <= line(v0 - 1) * cols && end >= Math.min(total, (line(v1 + 1) + 1) * cols)) { place(); return; }",
+    "new": "    if (false) { place(); return; }",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-a-resize-never-measured-again",
+    "file": "src/ui/virtualRows.js",
+    "old": "    if (remeasure || !geo) {",
+    "new": "    if (!geo) {",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-an-unmeasurable-list-left-cut-short",
+    "file": "src/ui/virtualRows.js",
+    "old": "      if (!g) { if (!geo) drawAll(); return; }",
+    "new": "      if (!g) return;",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-a-short-list-windowed",
+    "file": "src/ui/virtualRows.js",
+    "old": "  if (total < min) {",
+    "new": "  if (total < 0) {",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-scroll-never-let-go",
+    "file": "src/ui/virtualRows.js",
+    "old": "      for (const s of scrollers ?? []) s.removeEventListener('scroll', onScroll);",
+    "new": "      for (const s of []) s.removeEventListener('scroll', onScroll);",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-fitted-bound-by-the-order-made",
+    "file": "src/ui/textureCanvas.js",
+    "old": "  if (fitted.has(key)) { const pic = fitted.get(key); fitted.delete(key); fitted.set(key, pic); hear(fitWaiting.get(key), onReady); return pic; }",
+    "new": "  if (fitted.has(key)) { const pic = fitted.get(key); hear(fitWaiting.get(key), onReady); return pic; }",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-fitted-bound-back-at-600",
+    "file": "src/ui/textureCanvas.js",
+    "old": "export const FIT_CACHE_MAX = 2000;",
+    "new": "export const FIT_CACHE_MAX = 600;",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-a-landing-repaints-the-pack",
+    "file": "src/ui/enhancedInventory.js",
+    "old": "  const tile = itemTile(line, box, tileLanded, snap);\n  if (!tile.classList.contains('has-icon')) _waitingTiles.set(tile, { line, box, snap });",
+    "new": "  const tile = itemTile(line, box, render, snap);\n  if (!tile.classList.contains('has-icon')) _waitingTiles.set(tile, { line, box, snap });",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-tile-left-on-its-initials",
+    "file": "src/ui/enhancedInventory.js",
+    "old": "    tile.replaceWith(fresh);",
+    "new": "    void fresh;",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-wear-bar-lost",
+    "file": "src/ui/enhancedInventory.js",
+    "old": "    if (bar) fresh.append(bar);",
+    "new": "    void bar;",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  },
+  {
+    "name": "VIRT-the-lines-kept-across-passes",
+    "file": "src/ui/enhancedInventory.js",
+    "old": "  _lineEpoch++;   // VIRT: a pass reads every item as it stands now",
+    "new": "  void _lineEpoch;",
+    "tests": [
+      "test/virt_pack.test.js"
+    ]
+  }
+]

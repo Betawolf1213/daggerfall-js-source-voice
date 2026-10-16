@@ -151,6 +151,7 @@ import { letterRefusesPut, letterPutText } from '../systems/peerWord.js';   // H
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1
 import { repaintKeepingScroll } from './domRepaint.js';
+import { virtualRows } from './virtualRows.js';   // VIRT: a long list draws the rows on screen
 import { overlayAction, eventActions } from './input.js';   // MAC-C: and the REGISTRY's answer for the two window keys
 import { audio } from '../systems/audio.js';   // MAC-O6: the pack's own transfer cue - this window carried none at all
 import { dismantleStones, dismantleRefusal, dismantleWare, dismantleAsk, DISMANTLED, DISMANTLE_WORN } from '../systems/sigilBroker.js';   // SS5: a Broker ware back into stones
@@ -693,12 +694,12 @@ let lockHandler = null;
 let resizeHandler = null;
 let fitSig = '';
 const packFitSig = () => `${gridBox()}|${wornBox(false)}|${wornBox(true)}|${screenDpr()}`;
-// U54: how many times this screen has rebuilt itself. Every cold icon
-// repaints when it lands, which is what makes the letters give way to
-// the picture - so the count should be ROUGHLY the number of distinct
-// icons and no more. A cache that forgot its in-flight records decodes
-// each one once per repaint until the first lands, and the count
-// doubles; the probe measures it, which is the only way that shows.
+// U54: how many times this screen has rebuilt itself. VIRT: a cold icon
+// no longer repaints it when it lands - the tile waiting on it takes its
+// picture in place (liveTile) - so the count is the mount and the acts,
+// and a picture landing adds nothing. A cache that forgot its in-flight
+// records would still decode each one again per pass; the probe measures
+// the count, which is the only way that shows.
 let repaints = 0;
 
 /** "1 item", not "1 items". A count printed by a template literal is
@@ -749,6 +750,37 @@ const refresh = () => {
     } catch { /* see above */ }
   }
 };
+
+/** VIRT: AN ITEM'S LINE, ONCE A PASS. `itemLine` reads the name's arms, the weight, the condition and the damage and
+ *  armour lines afresh each call, and a pass asked it more than once an item - the store's search read every name, then
+ *  every row its line - and a search typed into a long store asked it of every piece on every key. Kept by the item for
+ *  one epoch, and every `render` opens a new one: a pass reads each item as it stands when the pass begins, the rows a
+ *  scroll draws later read what that pass read, and every act's repaint reads them all again. Never `itemLine` itself,
+ *  which stays pure (the shop and the tests ask it directly). */
+let _lineEpoch = 0;
+const _lines = new WeakMap();   // item -> { epoch, line }
+function lineOf(item) {
+  if (!item || typeof item !== 'object') return itemLine(item, deps.entity);
+  const had = _lines.get(item);
+  if (had && had.epoch === _lineEpoch) return had.line;
+  const line = itemLine(item, deps.entity);
+  _lines.set(item, { epoch: _lineEpoch, line });
+  return line;
+}
+
+/** VIRT: THE LONG LISTS THE DOM SHOWS (ui/virtualRows.js) - the dock's page and the side window's rows. A repaint
+ *  lets go of them before it builds and aims the new ones once they are in the document; a resize measures them again. */
+let _lists = [];
+const keepList = (v) => { _lists.push(v); return v; };
+/** Let go of the lists drawn into `container`, or of every list. */
+function dropLists(container = null) {
+  _lists = _lists.filter((v) => {
+    if (container && v.container !== container) return true;
+    v.dispose();
+    return false;
+  });
+}
+const syncLists = (opts) => { for (const v of _lists) v.sync(opts); };
 
 /** U59: recompose the avatar and repaint when it lands. The
  *  compositor coalesces overlapping requests itself (AUDIT 17e F16),
@@ -2224,7 +2256,7 @@ function transportHalves() {
     const node = el(isCart && owned ? 'button' : 'div',
       `wornrow${owned ? '' : ' wornempty'}${isCart && owned && session.usingWagon ? ' on' : ''}`);
     const line = owned ? itemLine(owned, deps.entity) : null;
-    node.append(line ? itemTile(line, wornBox(true), render, false) : el('span', 'worntile', '\u25c7'));   // UI1: a half panel's box
+    node.append(line ? liveTile(line, wornBox(true), false) : el('span', 'worntile', '\u25c7'));   // UI1: a half panel's box; VIRT: its picture put in when it lands
     const txt = el('span', 'worntext');
     txt.append(el('span', 'wornslot', t.label), el('span', `wornname${owned ? '' : ' wornempty'}`, line ? line.name : t.empty));
     node.append(txt);
@@ -2549,17 +2581,48 @@ export function wearBar(item) {
   bar.append(fill);
   return bar;
 }
+/** VIRT: THE TILES STILL WAITING ON THEIR PICTURE, and what each was drawn from. A cold picture repainted the whole
+ *  pack when it landed - every row, every panel, the scroll kept and given back - and a long store of cold pictures was
+ *  one full repaint a picture. A landing now asks for one pass on the next frame, and that pass gives each waiting tile
+ *  its picture in place: the tile `itemTile` draws for the same line and box, with the wear bar the old one carried.
+ *  The pictures that land together are one pass. A tile a repaint has thrown away is dropped, never drawn into. */
+const _waitingTiles = new Map();   // the initials tile -> { line, box, snap }
+let _tilesQueued = false;
+function tileLanded() {
+  if (_tilesQueued) return;
+  _tilesQueued = true;
+  (globalThis.requestAnimationFrame ?? ((f) => setTimeout(f, 16)))(paintLandedTiles);
+}
+function paintLandedTiles() {
+  _tilesQueued = false;
+  for (const [tile, t] of _waitingTiles) {
+    if (!host || tile.isConnected === false) { _waitingTiles.delete(tile); continue; }
+    const fresh = itemTile(t.line, t.box, tileLanded, t.snap);
+    if (!fresh.classList.contains('has-icon')) continue;   // still on its way (a record lands before its fitting)
+    _waitingTiles.delete(tile);
+    const bar = tile.querySelector('.wear');
+    if (bar) fresh.append(bar);
+    tile.replaceWith(fresh);
+  }
+}
+/** A row's or a panel's picture, as `itemTile` draws it - and when it is not made yet, its initials now and the picture
+ *  put in their place when it lands (above), not a repaint of the pack. */
+function liveTile(line, box, snap = true) {
+  const tile = itemTile(line, box, tileLanded, snap);
+  if (!tile.classList.contains('has-icon')) _waitingTiles.set(tile, { line, box, snap });
+  return tile;
+}
 /** An item's picture with its wear bar in it; `holder` (the row or socket that frames it) is marked `hasbar`, so the
  *  sheet can lift what shares the tile's foot. */
 function tileWithWear(line, holder, box, snap = true) {
-  const tile = itemTile(line, box, render, snap);
+  const tile = liveTile(line, box, snap);
   const bar = wearBar(line.item);
   if (bar) { tile.append(bar); holder.classList.add('hasbar'); }
   return tile;
 }
 
 function itemRow(item, from = 'local') {
-  const line = itemLine(item, deps.entity);
+  const line = lineOf(item);   // VIRT: once a pass
   const row = el('button', `itemrow${picked === item && side === from ? ' on' : ''}`);
   markItemFrame(row, item);   // LR1: the tier colours the name (enhancedStyle's [data-rarity] rules); RARITY-UI: and the icon's frame; SIGIL-UI: the rune
   const wasPicked = picked === item && side === from;
@@ -2818,10 +2881,11 @@ export const SHIFT_STOW_HINT = Object.freeze({
   bag: 'Shift-click a material in your pack to put the whole stack in the bag.',
 });
 /** The row's own name, so the search reads what the row says. */
-const storeNameOf = (it) => itemLine(it, deps.entity).name;
+const storeNameOf = (it) => lineOf(it).name;   // VIRT: the row's own line, read once a pass - not once a key typed
 /** The remote rows - all of them, or what the store's filter shows. A take is by the item itself (take(item)), so a
  *  filtered list takes the right piece from the whole store. */
 function fillRemoteList(list, filtering = STORE_FILTER_KINDS.has(remote.kind) && remote.items.length > 0) {
+  dropLists(list);   // VIRT: a refill (the filter's) lets go of the window it replaces
   list.innerHTML = '';
   const shown = filtering ? filterStore(remote.items, storeFilter, storeNameOf) : remote.items;
   if (!remote.items.length) {
@@ -2829,7 +2893,8 @@ function fillRemoteList(list, filtering = STORE_FILTER_KINDS.has(remote.kind) &&
       ? 'Nothing dropped here yet.'
       : 'Empty.'));
   } else if (!shown.length) list.append(el('p', 'packempty', 'Nothing here matches.'));
-  for (const it of shown) list.append(itemRow(it, 'remote'));
+  // VIRT: a long pile draws the rows on screen; a refill in place (the filter's) is aimed at once, a repaint's after it lands
+  keepList(virtualRows(list, shown, (it) => itemRow(it, 'remote'))).sync();
 }
 
 /**
@@ -2922,7 +2987,7 @@ function listCol() {
   if (!rows.length) {
     col.append(el('p', 'packempty', 'Nothing in this pack answers to that page.'));
   }
-  for (const it of rows) col.append(itemRow(it));
+  keepList(virtualRows(col, rows, (it) => itemRow(it)));   // VIRT: a long page draws the tiles on screen
   return col;
 }
 
@@ -3687,6 +3752,7 @@ function render() {
   // after the pane is gone is a no-op, not a crash.
   if (!host) return;
   repaints++;
+  _lineEpoch++;   // VIRT: a pass reads every item as it stands now
   // ENH-NOTICE3 - THE `notice` LINE IS DFU'S CLICK-ANYWHERE BOX, not a
   // status line, and on the enhanced skin it is the panel's. Every
   // writer of `notice` above is one of DaggerfallInventoryWindow.cs's
@@ -3746,6 +3812,8 @@ function render() {
     // round trip, measured).
     const prevList = host.querySelector('.packlists');
     if (prevList && _renderedTab) _scrollMemo.set(_renderedTab, prevList.scrollTop);
+    dropLists();   // VIRT: the old DOM's windows and waiting tiles go with it
+    _waitingTiles.clear();
     host.innerHTML = '';
     // PX16b (Mac: "really study the reference"): the reference's
     // ground is THE GAME - two translucent columns on the left third,
@@ -3985,10 +4053,13 @@ function render() {
     // same exit the Close button takes, so the close law (the drop, the
     // equip cue) runs as it always does.
     closeOnOutsideTap(shell, '.pack-win, .loot-win', () => onExit());
+    // VIRT: measured, and the spacers stood, before a scroll is given back (below, and repaintKeepingScroll's)
+    syncLists({ draw: false });
     const list = host.querySelector('.packlists');
     if (list && _scrollMemo.has(tab)) list.scrollTop = _scrollMemo.get(tab);
     _renderedTab = tab;
   });
+  syncLists();   // VIRT: each long list's window aimed at the scroll it was given back
   if (filterFocus) restoreStoreFilterFocus(filterFocus);
 }
 
@@ -4175,7 +4246,8 @@ export function mountEnhancedInventory(hostEl, d = {}) {
   releaseLock();
   if (typeof document !== 'undefined') document.addEventListener('pointerlockchange', lockHandler);
   fitSig = packFitSig();
-  resizeHandler = () => { const sig = packFitSig(); if (sig !== fitSig) { fitSig = sig; if (host) render(); } };
+  // VIRT: a resize that leaves the boxes as they were still moves a long list's columns and band - measured again
+  resizeHandler = () => { const sig = packFitSig(); if (sig !== fitSig) { fitSig = sig; if (host) render(); } else syncLists({ remeasure: true }); };
   globalThis.addEventListener?.('resize', resizeHandler);
   globalThis.__pack = () => JSON.stringify({
     tab, repaints, count: model.count, worn: model.worn.size,
@@ -4225,6 +4297,8 @@ export function mountEnhancedInventory(hostEl, d = {}) {
       // unmounted from paths that never touch `notice` (F6 again, the
       // door's close law, a scene change), and a refusal left on
       // screen would then outlive the pack that said it.
+      dropLists();   // VIRT: the windows' scroll listeners, and the tiles that will never be drawn into
+      _waitingTiles.clear();
       noticeRelease(noticeOwner);
       hostEl.innerHTML = '';
       host = null;

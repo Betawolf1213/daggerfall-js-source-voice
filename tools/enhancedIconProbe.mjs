@@ -208,11 +208,13 @@ check('the address came from inventoryItemImage',
   JSON.stringify(addr));
 
 // ── THE REPAINT MUST SETTLE ────────────────────────────────────────
-// Every cold icon repaints the screen when it lands, which is what
-// makes the letters give way to the picture. A cache that forgot an
-// in-flight record would ask again on that repaint, land again, and
-// repaint again - a loop running at whatever rate a decode takes,
-// invisible except as a hot fan. So: let it settle, then prove it HAS.
+// A cold icon used to repaint the screen when it landed, which is what
+// made the letters give way to the picture; since VIRT the waiting tile
+// takes its picture in place and the screen is not repainted at all
+// (bible/10-UI/UI-Arc.md VIRT). A cache that forgot an in-flight record
+// would still ask again, land again and draw again - a loop running at
+// whatever rate a decode takes, invisible except as a hot fan. So: let
+// it settle, then prove it HAS.
 const settled = await page.evaluate(() => JSON.parse(globalThis.__pack()).repaints);
 await page.waitForTimeout(1200);
 const later = await page.evaluate(() => JSON.parse(globalThis.__pack()).repaints);

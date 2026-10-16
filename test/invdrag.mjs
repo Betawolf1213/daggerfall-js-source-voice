@@ -33,6 +33,7 @@ export function fakeDom({ w = 1280, h = 800 } = {}) {
       replaceChildren(...cs) { for (const c of n.children) c.parent = null; n.children.length = 0; n.append(...cs); },
       after(...cs) { const p = n.parent; if (!p) return; let i = p.children.indexOf(n); for (const c of cs) { if (c == null) continue; c.parent = p; p.children.splice(++i, 0, c); } },   // AUDIT BAL: the enhanced death face hangs its zone block after its line
       remove() { const i = n.parent?.children.indexOf(n) ?? -1; if (i >= 0) n.parent.children.splice(i, 1); n.parent = null; },
+      replaceWith(...cs) { const p = n.parent; const i = p?.children.indexOf(n) ?? -1; if (i < 0) return; p.children.splice(i, 1, ...cs.filter((c) => c != null)); for (const c of cs) if (c != null) c.parent = p; n.parent = null; },   // VIRT: a landed picture takes its tile's place
       setAttribute(k, v) { n.attrs[k] = String(v); },
       getAttribute(k) { return n.attrs[k] ?? null; },
       removeAttribute(k) { delete n.attrs[k]; },   // HB-LYCFREE: the hotbar is up by default, and its icon ladder takes a picture's `src` off
