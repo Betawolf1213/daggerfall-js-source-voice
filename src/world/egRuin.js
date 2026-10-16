@@ -35,8 +35,12 @@
 // LITE (section 3.5, phones): one spire a foundation, a column each 12 m, no statues or banners, a bridge's arch each 12 m.
 // The lamps' columns are the same on both tiers (the lights are every screen's).
 //
+// THE ASCENT (LAW 9, 2026-10-16; Elite-Gates-Ascent.md section 1): a Brink's thirds are thirds of its ROUTE (net/egRoute.js -
+// the progress of a piece's place along the hall's ways), never of its z; laws 4-8 read the numbers they did.
+//
 // Pure: no DOM, no GL. Not a DFU member. Ledger A (ELITE-GATES).
 import { egCircleSpecs, egBandOfHall, EG_BRINK_HALLS, egSeed } from '../net/egLaw.js';
+import { egRouteAlongAt, egRouteLen } from '../net/egRoute.js';   // THE ASCENT (LAW 9): a Brink's thirds along its route
 import { SD_REALM_ORIGIN } from '../net/sdBrain.js';
 import { SD_LIP, SD_ISLAND_SIDES } from './sdRealm.js';
 import { hangPlan, SD_HANG } from './sdIslandModel.js';
@@ -131,12 +135,13 @@ function h01(seed, a = 0, b = 0, c = 0) {
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 }
 const hallSeed = (spec) => egSeed(spec.seed >>> 0, RUIN_SALT ^ Math.imul(spec.h | 0, 0x2545f491));
-/** The band a hall's ruin is dressed in at (x, z) - a Brink hall (net/egLaw.js EG_BRINK_HALLS, section 1.5) the band above
- *  in its first third, its own in its last, the two mixed piece by piece between on the hall's seed (`key` the piece). */
-function bandAt(spec, seed, z, key) {
+/** The band a hall's ruin is dressed in at (x, y, z) - a Brink hall (net/egLaw.js EG_BRINK_HALLS, section 1.5) the band above
+ *  in its first third, its own in its last, the two mixed piece by piece between on the hall's seed (`key` the piece). THE
+ *  ASCENT: the thirds of its route (net/egRoute.js - laws 4-8 its z over its length; `y` undefined, in plan). */
+function bandAt(spec, seed, x, y, z, key) {
   const band = egBandOfHall(spec.h);
   if (!EG_BRINK_HALLS.includes(spec.h) || band <= 0) return band;
-  const t = clamp(z / Math.max(1, spec.len ?? 80), 0, 1);
+  const t = clamp(egRouteAlongAt(spec, x, y, z) / Math.max(1, spec.route ? egRouteLen(spec) : spec.len ?? 80), 0, 1);
   if (t < 1 / 3) return band - 1;
   if (t > 2 / 3) return band;
   return h01(seed, 777, key) < (t - 1 / 3) * 3 ? band : band - 1;
@@ -909,7 +914,7 @@ function planRings(spec, lite) {
     const nl = egDiscLamps(d), ring = RING_ROLES.includes(d.role), y = d.y ?? 0;
     if (!nl && !ring && d.role !== 'island') return;
     if (egIsleDisc(spec, d)) return;   // Grath's islands fall (the spans' own, each with its cornice and torn foundation): no ring round them
-    const band0 = bandAt(spec, seed, d.z, i), { R, rad, gap } = ringOf(spec, d, band0), ds = (seed ^ Math.imul(i + 1, 0x632be5ab)) >>> 0;
+    const band0 = bandAt(spec, seed, d.x, y, d.z, i), { R, rad, gap } = ringOf(spec, d, band0), ds = (seed ^ Math.imul(i + 1, 0x632be5ab)) >>> 0;
     const footOf = (x, z, j) => {
       const f = y - lerp(EG_RUIN.depth[0], EG_RUIN.depth[1], h01(ds, 5, j));
       return magma && Math.abs(x - magma.x) < magma.r && Math.abs(z - magma.z) < magma.r ? Math.max(f, magma.y - 0.3) : f;   // rising out of the magma
@@ -923,7 +928,7 @@ function planRings(spec, lite) {
       let got = null;
       for (const LR of gap ? [gap.R] : [R, R + 2.5, R + 5]) for (let step = 0; step * 0.035 <= lim && !got; step++) for (const sg of step ? [1, -1] : [1]) {
         const a = a0 + sg * step * 0.035, x = d.x + Math.cos(a) * LR, z = d.z + Math.sin(a) * LR;
-        const cb = bandAt(spec, seed, z, 1000 + i * 16 + k), kind = egKitStyle(cb).fixture, fk = gap ? clamp((gap.room / 2 - fp - 0.03) / FIXTURE_R[kind], 0.45, 1) : 1;
+        const cb = bandAt(spec, seed, x, y, z, 1000 + i * 16 + k), kind = egKitStyle(cb).fixture, fk = gap ? clamp((gap.room / 2 - fp - 0.03) / FIXTURE_R[kind], 0.45, 1) : 1;
         if (!clearTall(L, x, z, Math.max(lrad, FIXTURE_R[kind] * fk), fp, rp) || taken.some((t) => Math.hypot(t[0] - x, t[1] - z) < 2 * lrad + 1.6)) continue;
         const top = y + lerp(EG_RUIN.lampTop[0], EG_RUIN.lampTop[1], h01(ds, 6, k)), flame = flameAt(kind, x, z, top, d.x, d.z, d.r, fk);
         if (kind === 'lantern' && !clearTall(L, flame[0], flame[2], FIXTURE_R.lantern * fk, fp, rp)) continue;
@@ -939,7 +944,7 @@ function planRings(spec, lite) {
       for (let j = 0; j < 2; j++) {
         const a = h01(ds, 7, j) * TAU, [x, z] = place(a);
         if (!clearTall(L, x, z, rad)) continue;
-        cols.push({ d: i, k: -1, kind: 'broken', x, z, a, rad, foot: footOf(x, z, j), top: y + lerp(-2, 3.5, h01(ds, 8, j)), floor: y, band: bandAt(spec, seed, z, 2000 + i * 8 + j), slot: -1, ring: R, cx: d.x, cz: d.z });
+        cols.push({ d: i, k: -1, kind: 'broken', x, z, a, rad, foot: footOf(x, z, j), top: y + lerp(-2, 3.5, h01(ds, 8, j)), floor: y, band: bandAt(spec, seed, x, y, z, 2000 + i * 8 + j), slot: -1, ring: R, cx: d.x, cz: d.z });
       }
       return;
     }
@@ -953,7 +958,7 @@ function planRings(spec, lite) {
       const a = a0 + (j / n) * TAU, [x, z] = place(a);
       if (taken.some((t) => Math.hypot(t[0] - x, t[1] - z) < Math.max(2 * rad + 1.6, pitch * 0.55)) || !clearTall(L, x, z, rad)) continue;
       const whole = j % EG_RUIN.wholeEvery === wholeAt && d.role !== 'arrive' && d.role !== 'end';
-      slots.push({ d: i, k: -1, kind: whole ? 'whole' : 'broken', x, z, a, rad, foot: footOf(x, z, j), top: whole ? H : y + lerp(EG_RUIN.broken[0], EG_RUIN.broken[1], h01(ds, 13, j)), floor: y, band: bandAt(spec, seed, z, 3000 + i * 64 + j), slot: j, ring: R, cx: d.x, cz: d.z, n });
+      slots.push({ d: i, k: -1, kind: whole ? 'whole' : 'broken', x, z, a, rad, foot: footOf(x, z, j), top: whole ? H : y + lerp(EG_RUIN.broken[0], EG_RUIN.broken[1], h01(ds, 13, j)), floor: y, band: bandAt(spec, seed, x, y, z, 3000 + i * 64 + j), slot: j, ring: R, cx: d.x, cz: d.z, n });
     }
     // THE STATUES (section 3.4): one or two a court on broken plinths, in slots that stand clear for a figure
     if (!lite && d.role === 'court') {
@@ -967,7 +972,7 @@ function planRings(spec, lite) {
       for (const dz of [0, 1.5, -1.5, 3, -3]) {
         const x = d.x + sx * (d.r + 3.4), z = d.z + dz, w = 3.2, kk = 4000 + i * 4 + (sx > 0 ? 1 : 0);
         if (!clearTall(L, x, z - w / 2 - 0.4, 0.6) || !clearTall(L, x, z + w / 2 + 0.4, 0.6) || taken.some((t) => Math.hypot(t[0] - x, t[1] - z) < w / 2 + 2)) continue;
-        arches.push({ d: i, x, z, w, h: y + 5.2 + 1.2 * h01(ds, 16, sx + 1), foot: y - lerp(14, 24, h01(ds, 17, sx + 1)), floor: y, band: bandAt(spec, seed, z, kk), key: kk });
+        arches.push({ d: i, x, z, w, h: y + 5.2 + 1.2 * h01(ds, 16, sx + 1), foot: y - lerp(14, 24, h01(ds, 17, sx + 1)), floor: y, band: bandAt(spec, seed, x, y, z, kk), key: kk });
         break;
       }
     }
@@ -977,7 +982,7 @@ function planRings(spec, lite) {
       for (let j = 0; j < m; j++) {
         const a = a0 + ((j + 0.5) / m) * TAU + 0.3 * (h01(ds, 18, j) - 0.5), rr = R + 2.2 + 2.5 * h01(ds, 19, j), x = d.x + Math.cos(a) * rr, z = d.z + Math.sin(a) * rr;
         if (!clearTall(L, x, z, 1.4) || cols.some((c) => c.d === i && Math.hypot(c.x - x, c.z - z) < c.rad + 2.2)) continue;
-        among.push({ d: i, x, z, a, floor: y, band: bandAt(spec, seed, z, 5000 + i * 8 + j), key: 5000 + i * 8 + j, foot: footOf(x, z, 300 + j) });
+        among.push({ d: i, x, z, a, floor: y, band: bandAt(spec, seed, x, y, z, 5000 + i * 8 + j), key: 5000 + i * 8 + j, foot: footOf(x, z, 300 + j) });
       }
     }
   });
@@ -1362,14 +1367,14 @@ function hallRuin(W, spec, lite, tally = null) {
   // THE FOUNDATIONS AND THE CORNICES under every disc but the spans' falling isles
   spec.discs.forEach((d, i) => {
     if (egIsleDisc(spec, d)) return;
-    const self = law.floors.find((F) => F.t === 'd' && F.i === i), band = bandAt(spec, seed, d.z, i), ds = (seed ^ Math.imul(i + 1, 0x7fffffed)) >>> 0, kind = egKitStyle(band).cornice;
+    const self = law.floors.find((F) => F.t === 'd' && F.i === i), band = bandAt(spec, seed, d.x, d.y ?? 0, d.z, i), ds = (seed ^ Math.imul(i + 1, 0x7fffffed)) >>> 0, kind = egKitStyle(band).cornice;
     foundation(W, pieces(band, 'foundation'), d, band, ds, lite);
     for (const run of rimRuns(law, d, self)) lay(band, false, () => { corniceRun(W, K.moulding, run.path, corn(kind), { closed: run.closed }); if (kind === 'straps') corniceSpikes(W, run.path, run.closed); }, 'cornice');
   });
   // THE BRIDGES AND THE CORNICES under every band and lane but those the spans fell
   spec.bands.forEach((b, i) => {
     if (egWallBand(spec, b) || egTubeBand(b)) return;
-    const self = law.floors.find((F) => F.t === 'b' && F.x0 === b.x - b.halfW && F.z0 === b.z0 && F.z1 === b.z1), band = bandAt(spec, seed, (b.z0 + b.z1) / 2, 100 + i), y = b.y ?? 0;
+    const self = law.floors.find((F) => F.t === 'b' && F.x0 === b.x - b.halfW && F.z0 === b.z0 && F.z1 === b.z1), band = bandAt(spec, seed, b.x, b.y ?? 0, (b.z0 + b.z1) / 2, 100 + i), y = b.y ?? 0;
     const q = b.role === 'cave' ? (spec.caves ?? []).find((c) => b.z0 >= c.z0 - 0.01 && b.z1 <= c.z1 + 0.01 && !c.open) : null, bs = (seed ^ Math.imul(i + 1, 7919)) >>> 0;
     // the run clipped to the discs it meets (their foundations carry it there)
     let z0 = b.z0, z1 = b.z1;
@@ -1394,7 +1399,7 @@ function hallRuin(W, spec, lite, tally = null) {
     for (const path of edgeRuns(law, b.x, b.z0, b.x, b.z1, b.halfW, y, self)) lay(band, false, () => { corniceRun(W, K.moulding, path, corn(kind)); if (kind === 'straps') corniceSpikes(W, path, false); }, 'cornice');
   });
   (spec.lanes ?? []).forEach((l, i) => {
-    const self = law.floors.find((F) => F.t === 'l' && F.ax === l.ax && F.az === l.az && F.bx === l.bx && F.bz === l.bz), band = bandAt(spec, seed, (l.az + l.bz) / 2, 200 + i), y = l.y ?? 0;
+    const self = law.floors.find((F) => F.t === 'l' && F.ax === l.ax && F.az === l.az && F.bx === l.bx && F.bz === l.bz), band = bandAt(spec, seed, (l.ax + l.bx) / 2, l.y ?? 0, (l.az + l.bz) / 2, 200 + i), y = l.y ?? 0;
     const len = Math.hypot(l.bx - l.ax, l.bz - l.az), ux = (l.bx - l.ax) / len, uz = (l.bz - l.az) / len;
     let s0 = 0, s1 = len;
     for (const d of spec.discs) {   // clipped to the discs at its ends
@@ -1410,7 +1415,7 @@ function hallRuin(W, spec, lite, tally = null) {
   // THE LAMPS (each an occluder): every disc's on its column under its fixture, the walkway's on their posts
   for (const c of plan.cols) if (c.kind === 'lamp') lay(c.band, true, () => column(W, c, lite), 'lamp');
   if (spec.walk) for (let z = spec.walk.z0 + 8; z < spec.walk.z1; z += EG_LAMP.pitch) for (const s of [-1, 1]) {
-    const band = bandAt(spec, seed, z, 6000 + Math.round(z));
+    const band = bandAt(spec, seed, spec.walk.x, undefined, z, 6000 + Math.round(z));
     lay(band, true, () => walkLamp(W, s * (spec.walk.halfW + 0.3), z, s, band, lite, (seed ^ Math.imul(Math.round(z * 10) + 1, s > 0 ? 17 : 23)) >>> 0), 'lamp');
   }
   // THE PLATES' ARCHES, THE COLUMN RINGS, THE STATUES on their plinths (each an occluder)
