@@ -330,8 +330,8 @@
   {
     "name": "EGA5E-lamps-ring-one-side",
     "file": "src/world/egHall.js",
-    "old": "EG_LAMP.color, Number(EG_LAMP.range), 1 + spreadRank(k, n)); }",
-    "new": "EG_LAMP.color, Number(EG_LAMP.range), 1 + k); }",
+    "old": ": tint, Number(EG_LAMP.range), 1 + spreadRank(k, n));",
+    "new": ": tint, Number(EG_LAMP.range), 1 + k);",
     "tests": [
       "test/egaudit5_e_look.test.js"
     ]

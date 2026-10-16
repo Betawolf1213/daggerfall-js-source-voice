@@ -10,6 +10,11 @@
 //     turns each wing on the shared clock (the same turn on every screen).
 // The circle's host (scenes/egCircleHost.js) lays the draws in the level's context and takes them out again; the Spire lab
 // (src/tools/spireLab.js) draws the same. Nothing here is a collider and nothing here moves the law.
+//   THE RUIN'S OCCLUDERS (EG-ZN's law - Elite-Gates.md section 11.8): its tall pieces (a column and its fixture or its
+//     entablature, a statue on its plinth, an arch, an obelisk, a thicket, a pylon - world/egRuin.js `model.occluders`)
+//     dither out of a third-person camera's way as the circle's rock does: a dither pass a ruin (scenes/egOcclude.js, its
+//     shadow unrecorded - the ruin casts none), the eye's hall's tried on the frame's ray, laid beside the circle's
+//     (`occluders(circle)` - the circle's host hands its pass to it and keeps one pass for both).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { buildEgRuinParts } from '../world/egRuin.js';
@@ -18,6 +23,7 @@ import { egCircleSpecs, egBandOfCircle, EG_HALL_PITCH } from '../net/egLaw.js';
 import { realmToDungeon, SD_REALM_ORIGIN } from '../net/sdBrain.js';
 import { identity } from '../world/mat4.js';
 import { isTouchDevice } from '../ui/touchDevice.js';
+import { createEgOccluders } from './egOcclude.js';   // EG-LOOK: the ruin's tall pieces dither out of the camera's way
 
 /** A matrix written in place: translate (x, y, z), turn `ry` about y, lean `rx` about x, scale `s` (column-major). */
 function place(M, x, y, z, ry = 0, rx = 0, s = 1) {
@@ -36,8 +42,10 @@ function place(M, x, y, z, ry = 0, rx = 0, s = 1) {
  */
 export function createEgGroundLook({ renderer = null, lite = isTouchDevice() } = {}) {
   const IDENT = identity();
-  /** @type {Array<{ h: number, x0: number, gpu: any, draw: any }>} */
+  /** @type {Array<{ h: number, x0: number, gpu: any, draw: any, occ: any }>} */
   let ruins = [];
+  /** The hall the eye stands in (its origin along the level) - its ruin drawn and tried for the camera's ray. */
+  let eyeX0 = NaN;
   /** The circle's halls: each one's origin along the level and its course's middle (the wreck's anchor). */
   let halls = /** @type {Array<{ x0: number, zc: number }>} */ ([]);
   /** @type {{ band: number, parts: Array<{ gpu: any, draw: any, at: number[], spin: number, tilt: number, scale: number }> } | null} */
@@ -48,6 +56,12 @@ export function createEgGroundLook({ renderer = null, lite = isTouchDevice() } =
   };
   const free = (gpu) => { if (gpu) { try { renderer?.destroyMesh?.(gpu); } catch { /* gone */ } } };
   const drawOf = (gpu, matrix) => (gpu ? { gpu, object: { matrix }, noShadow: true, hidden: false } : null);
+  /** Every ruin let go: each one's dither pass first (its views over the mesh), then its mesh - the slot emptied first. */
+  function dropRuins() {
+    const was = ruins;
+    ruins = []; eyeX0 = NaN;
+    for (const r of was) { r.occ?.clear(); free(r.gpu); }
+  }
   function dropVista() {
     for (const p of vista?.parts ?? []) free(p.gpu);
     vista = null;
@@ -71,8 +85,14 @@ export function createEgGroundLook({ renderer = null, lite = isTouchDevice() } =
       halls = egCircleSpecs(seed, c, geo).map((s) => ({ x0: s.x0, zc: (s.len ?? 80) / 2 }));
       let parts = built;
       if (!Array.isArray(parts)) { try { parts = buildEgRuinParts(seed, c, geo, { lite }); } catch (e) { console.warn('[eg] the ruin would not build', e?.message ?? e); parts = []; } }
-      ruins = [];
-      for (const p of parts) { const gpu = make(p.model); if (gpu) ruins.push({ h: p.h, x0: p.x0, gpu, draw: drawOf(gpu, IDENT) }); }
+      dropRuins();
+      for (const p of parts) {
+        const gpu = make(p.model);
+        if (!gpu) continue;
+        const draw = drawOf(gpu, IDENT), occ = createEgOccluders({ renderer, shadow: false });
+        occ.set(gpu, p.model); occ.stand(draw);
+        ruins.push({ h: p.h, x0: p.x0, gpu, draw, occ });
+      }
       vistaFor(egBandOfCircle(c), vistaBuilt);
       return api.draws();
     },
@@ -85,6 +105,7 @@ export function createEgGroundLook({ renderer = null, lite = isTouchDevice() } =
       const ex = eye[0] - SD_REALM_ORIGIN[0];
       let at = halls[0];
       for (const hl of halls) if (Math.abs(hl.x0 - ex) < Math.abs(at.x0 - ex)) at = hl;
+      if (at.x0 !== eyeX0) { eyeX0 = at.x0; for (const r of ruins) r.occ.stand(r.draw); }   // another hall: every ruin's dither let go
       for (const r of ruins) if (r.draw) r.draw.hidden = Math.abs(r.x0 - at.x0) > EG_HALL_PITCH / 2;
       const [ax, ay, az] = realmToDungeon(at.x0, 0, at.zc);
       for (const p of vista?.parts ?? []) place(p.draw.object.matrix, ax + p.at[0], ay + p.at[1], az + p.at[2], p.spin * seconds, p.tilt, p.scale);
@@ -95,12 +116,26 @@ export function createEgGroundLook({ renderer = null, lite = isTouchDevice() } =
       const mine = new Set(api.draws());
       if (Array.isArray(list)) for (let i = list.length - 1; i >= 0; i--) if (mine.has(list[i])) list.splice(i, 1);
       const n = ruins.filter((r) => r.gpu).length;
-      for (const r of ruins) free(r.gpu);
-      ruins = []; halls = [];
+      dropRuins(); halls = [];
       return n;
     },
     /** The breach's end: the wreck freed too (the circle's ruins already went with it). */
-    release() { for (const r of ruins) free(r.gpu); ruins = []; halls = []; dropVista(); },
+    release() { dropRuins(); halls = []; dropVista(); },
+    /**
+     * THE ONE DITHER PASS (scenes/egOcclude.js's shape - the host's `egOcc`): the circle's pass `circle` and the eye's hall's
+     * ruin's, tried on the one ray and drawn one after the other; the circle's own seams (set, stand, clear, shares) and its
+     * stats as they were, the ruin's beside them (`stats().ruin`).
+     * @param {any} circle
+     */
+    occluders(circle) {
+      const eyes = () => ruins.filter((r) => r.x0 === eyeX0);
+      return {
+        set: (gpu, model) => circle.set(gpu, model), stand: (d) => circle.stand(d), clear: () => circle.clear(), shares: () => circle.shares(),
+        frame(f) { let n = circle.frame(f); for (const r of eyes()) n += r.occ.frame(f); return n; },
+        draw(texRemap = null) { let n = circle.draw(texRemap); for (const r of eyes()) n += r.occ.draw(texRemap); return n; },
+        stats: () => ({ ...circle.stats(), ruin: eyes().reduce((a, r) => { const q = r.occ.stats(); return { pieces: a.pieces + q.pieces, dithering: a.dithering + q.dithering, glDraws: a.glDraws + q.glDraws }; }, { pieces: 0, dithering: 0, glDraws: 0 }) }),
+      };
+    },
     /** What it holds (tests, stats). */
     stats: () => ({ ruins: ruins.length, drawn: ruins.filter((r) => r.draw && !r.draw.hidden).length, band: vista?.band ?? -1, wreck: vista?.parts.length ?? 0 }),
   };

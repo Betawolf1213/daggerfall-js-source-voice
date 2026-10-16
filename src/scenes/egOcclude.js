@@ -133,10 +133,11 @@ export function egOccludeRanges(subs, pieces, ids, cut) {
 }
 
 /**
- * The circle's occluders on this screen.
- * @param {{ renderer?: any }} deps
+ * The circle's occluders on this screen. EG-LOOK (Elite-Gates-Look.md section 3, THE RUIN): `shadow` false for a mesh drawn
+ * `noShadow` (the ruin's - scenes/egGroundLook.js): its dithering frame records no shadow for it, as the loop would not.
+ * @param {{ renderer?: any, shadow?: boolean }} deps
  */
-export function createEgOccluders({ renderer = null } = {}) {
+export function createEgOccluders({ renderer = null, shadow = true } = {}) {
   /** @type {any} */
   let mesh = null, subs = /** @type {any[]} */ ([]), draw = null, hid = false, lastDraws = 0;
   /** @type {Array<{ b: number[], at: number, n: number, r: number[][] }>} */
@@ -217,7 +218,7 @@ export function createEgOccluders({ renderer = null } = {}) {
       const rest = viewOf(`r:${ids.join(',')}`, ids, true);
       if (!rest) { unhide(); return 0; }
       draw.hidden = true; hid = true;
-      renderer.recordShadowMesh?.(mesh, M, remap);
+      if (shadow) renderer.recordShadowMesh?.(mesh, M, remap);
       renderer.drawMesh(rest, M, remap, NO_SHADOW);
       lastDraws += rest.subMeshes.length;
       const byShare = new Map();

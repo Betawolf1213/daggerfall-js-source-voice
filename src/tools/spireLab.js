@@ -31,6 +31,7 @@ import { realmArt } from '../world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../world/sdRealm.js';
 import { buildEgCircleModel, egCircleLights, egLightsWith, egHallLighting, egHallFog, egHallGrade, egToDungeon, egHallCentre } from '../world/egHall.js';
 import { createEgGroundLook } from '../scenes/egGroundLook.js';   // EG-LOOK: the ruin and the wreck, as the circle's host stands them
+import { egRuinBands } from '../world/egRuin.js';   // EG-LOOK (THE RUIN): the bands a circle's ruin wears
 import { egBandArt, egBandArchive, EG_BAND_RECORDS, EG_KIT_MAP, EG_DRESS } from '../world/egBandArt.js';
 import { createMeshKit } from '../world/meshKit.js';   // EG-LOOK: the swatch wall
 import { egAtmosOf } from '../world/egAtmos.js';
@@ -67,6 +68,8 @@ const SLOT = MIST ? SPECS.indexOf(MIST.spec) : Math.max(0, Math.min(4, Number(pa
 const SPEC = SPECS[SLOT];
 for (const [rec, art] of realmArt()) { renderer.uploadTexture(SD_REALM_ARCHIVE, rec, art.albedo); renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, { white: true }); }
 for (const [rec, art] of egBandArt(BAND)) { renderer.uploadTexture(egBandArchive(BAND), rec, art.albedo, art.cutout ? { cutout: true } : {}); renderer.uploadEmissionTexture?.(egBandArchive(BAND), rec, art.emission, { white: true }); }   // EG-LOOK: a cutout picture's holes asked (the host's way)
+// THE RUIN: a Brink circle's band above too (world/egRuin.js egRuinBands - its first halls' ruin wears it), the host's way
+for (const b of egRuinBands(C)) if (b !== BAND) for (const [rec, art] of egBandArt(b)) { renderer.uploadTexture(egBandArchive(b), rec, art.albedo, art.cutout ? { cutout: true } : {}); renderer.uploadEmissionTexture?.(egBandArchive(b), rec, art.emission, { white: true }); }
 const circleMesh = renderer.createMesh(buildEgCircleModel(SEED, C, 0));
 const lookModel = buildEgLookModel(SEED, C, 0), lookMesh = lookModel ? renderer.createMesh(lookModel) : null;
 const lamps = egCircleLights(SEED, C, 0);
@@ -120,7 +123,7 @@ const VIEWS = {
   // EG-LOOK (THE RUIN): `ring` the court's column ring from beside its rim, `bridge` a way's arches from below its side;
   // ?eye=x,y,z,yaw,pitch any camera of the hall's frame
   ring: { at: [court.x + (court.r ?? 12) * 0.7, (court.y ?? 0) + 2.2, court.z - (court.r ?? 12) * 0.7], yaw: 40, pitch: 6 },
-  bridge: { at: [9, -6, (SPEC.len ?? 80) * 0.12], yaw: -35, pitch: 12 },
+  bridge: (() => { const l = SPEC.lanes?.find((q) => Math.hypot(q.bx - q.ax, q.bz - q.az) > 8) ?? { ax: 0, az: 0, bx: 0, bz: 24, y: 0 }; return { at: [(l.ax + l.bx) / 2 + 13, (l.y ?? 0) - 7, (l.az + l.bz) / 2 - 6], yaw: -70, pitch: 14 }; })(),
   eye: params.has('eye') ? (([x, y, z, yaw, pitch]) => ({ at: [x, y, z], yaw, pitch }))(params.get('eye').split(',').map(Number)) : null,
   swatch: SWATCH ? (params.has('rec') ? (() => { const k = Math.max(0, EG_BAND_RECORDS.indexOf(Number(params.get('rec')))), c = swAt(k); return { at: [c[0] + 5.2, c[1], c[2]], yaw: -90, pitch: 0 }; })() : { at: [SW.x + 15.5, SW.y + SW.row * 1.5 + 0.8, SW.z], yaw: -90, pitch: 0 }) : null,   // EG-LOOK: the band's pictures
 };
