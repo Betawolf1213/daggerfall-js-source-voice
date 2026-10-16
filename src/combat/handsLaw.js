@@ -66,9 +66,9 @@ export const otherHand = (hand) => (hand === 'L' ? 'R' : 'L');
 // ---- WHICH HAND STRIKES ---------------------------------------------------------------------------------------------
 
 /** THE FLURRY: a strike begun within this many seconds of the last one ending is the next blow of the same exchange -
- *  the other hand throws it. Past it the hands have settled, and the lead hand opens again. A beat at any Speed: the
- *  swing law's longest frame (SWING_FRAME_MAX, 0.4 s) is half again as long, so a slow fighter's held button still
- *  alternates - a strike begins the moment the last one ends while it is held (WeaponSwingMode 2, the default). */
+ *  the other hand throws it. Past it the hands have settled, and the lead hand opens again. A beat at any Speed: nearly
+ *  twice the swing law's longest frame (SWING_FRAME_MAX, 0.4 s), so a slow fighter's held button still alternates - a
+ *  strike begins the moment the last one ends while it is held (WeaponSwingMode 2, the default). */
 export const FLURRY_WINDOW = 0.75;
 
 /**
@@ -152,28 +152,33 @@ export function strikePicture(hand, state, { leftHanded = false, painted = () =>
 
 /**
  * TWO WEAPONS ARE TEMPO, NOT TWICE THE DAMAGE. A pair gives up the shield (its armour - GetShieldArmorValue on the parts
- * it covers) and gets the exchange: the other hand is cocked while one strikes, so a flurry's blows come quicker - and the
- * off hand is the weaker and the less sure one. Every number here is a multiplier or a term on DFU's own: the lead hand's
+ * it covers) and gets the exchange: the other hand is cocked while one strikes, so a flurry's blow is thrown from a raised
+ * hand - and the off hand is the weaker and the less sure one. Every number here is a term on DFU's own: the lead hand's
  * blow is DFU's exactly (CalculateAttackDamage, the swing modifiers, the skill tallied by the weapon in that hand), the
- * off hand's blow is DFU's with the off-hand terms, and a swing never comes quicker than SWING-LAW's floor
- * (SWING_FRAME_MIN), so a fast fighter's pair is held to the cap one weapon is held to.
+ * off hand's blow is DFU's with the off-hand terms, and no swing comes quicker than SWING-LAW's floor (SWING_FRAME_MIN).
  *
- * Measured against one weapon (the same weapon, the same skill): at a 65% chance to hit the pair's exchange lands 0.53 of
- * a blow's damage a swing where one weapon lands 0.65, and swings 1.33 times as often - about 9% more damage a second,
- * and 33% more fatigue a second (DFU's per-swing cost, the same each swing). Bought with the shield. A heavy weapon in the
- * off hand gives the quickness back (OFF_WEIGHT below): a dagger is the off hand's natural blade.
+ * THE QUICKNESS IS IN FRAMES, NOT SECONDS (AUDIT): the machine steps a swing's frames one tick at a time and drops each
+ * tick's remainder at the frame it lands on (DFU's coroutine - weaponStates.js machineStep), so a factor on the tick's
+ * time rounds away to a different answer at every frame rate. A flurry's blow instead STARTS FLURRY_FROM_FRAME frames
+ * into its swing - four ticks of five, the hit a tick sooner - which is 0.8 of one weapon's time at ANY frame rate.
+ *
+ * Measured through the machine and the formula, not on paper (bible/05-Combat/Two-Hands.md "The balance"): a held button
+ * swings 1.25 times as often as one weapon; a matched pair lands about 9% more damage a second than one of its weapons
+ * at any frame rate and Speed, for a quarter more fatigue a second (DFU's per-swing cost) and the shield. A lighter off
+ * weapon trades its damage for quickness; a heavy one in the off hand is felt (OFF_WEIGHT).
  */
 export const DUAL = Object.freeze({
-  /** A flurry's swing takes this share of its frames' time (either hand, once the exchange has begun). */
-  FLURRY_TEMPO: 0.75,
+  /** A flurry's blow starts this many frames into its swing - the hand already raised (either hand, once the exchange
+   *  has begun): its swing is (5 - this) ticks of five. */
+  FLURRY_FROM_FRAME: 1,
   /** The off hand's blow lands this share of the damage DFU rolls (a landed blow is never less than 1). */
-  OFF_DAMAGE: 0.75,
-  /** The off hand's to-hit term at Agility 50 - a StrikeDown's own -10 (CalculateSwingModifiers) - eased by the
-   *  hand's sureness: a point of it each 10 of Agility past 50, a point worse each 10 under, held in [-15, -5]. */
-  OFF_TO_HIT: -10,
+  OFF_DAMAGE: 0.8,
+  /** The off hand's to-hit term at Agility 50 - half a StrikeDown's own -10 (CalculateSwingModifiers) - eased by the
+   *  hand's sureness: the rounded tenth of (Agility - 50) added, held in [-10, 0]. */
+  OFF_TO_HIT: -5,
   OFF_TO_HIT_PER_AGILITY: 0.1,
-  OFF_TO_HIT_MIN: -15,
-  OFF_TO_HIT_MAX: -5,
+  OFF_TO_HIT_MIN: -10,
+  OFF_TO_HIT_MAX: 0,
   /** The off arm feels its weapon this much heavier - SWING-LAW's heft read at OFF_WEIGHT times the weight, over the
    *  heft at the weight itself: a dagger (0.5 kg) costs nothing, a longsword (4.5 kg) a tenth of the swing at Strength 50. */
   OFF_WEIGHT: 1.5,
@@ -192,10 +197,11 @@ export function offHandBurden(weightKg, strength) {
   return swingHeft((weightKg || 0) * DUAL.OFF_WEIGHT, strength) / swingHeft(weightKg || 0, strength);
 }
 
-/** The factor on a strike's frame time (SWING-LAW's `ctx.tempo`): the flurry's quickness and the off hand's burden. 1 for
- *  every strike that is neither - every single-weapon and every fist strike. */
-export function strikeTempo({ flurry = false, off = false, weight = 0, strength = 50 } = {}) {
-  return (flurry ? DUAL.FLURRY_TEMPO : 1) * (off ? offHandBurden(weight, strength) : 1);
+/** The factor on a strike's frame time (SWING-LAW's `ctx.tempo`): the off hand's burden. 1 for every strike that is not
+ *  the off hand's - every single-weapon, every fist and every lead strike. (A flurry's quickness is in its frames -
+ *  FLURRY_FROM_FRAME - never its time.) */
+export function strikeTempo({ off = false, weight = 0, strength = 50 } = {}) {
+  return off ? offHandBurden(weight, strength) : 1;
 }
 
 /** The off hand's damage: the rolled damage at OFF_DAMAGE, a miss (0) staying a miss and a landed blow at least 1. */
@@ -269,7 +275,13 @@ export const RUN_PUMP = Object.freeze({
   MIN_SPEED: 1.0,
 });
 
-/** The stride's phase after running `speed` m/s for `dt`: PI a step, as HeadBobber's timer. */
+/** THE STRIDE ON THE HEAD BOB'S CLOCK (AUDIT): the pump's phase from HeadBobber's own timer - which sways the eye over the
+ *  planted foot (cos: the right at 0, the left at PI) - so the right arm is most forward (pumpOf's sin at its crest) as the
+ *  left foot is planted: the phase a quarter turn behind the timer. */
+export const runPhaseOfBob = (timer) => timer - Math.PI / 2;
+
+/** The stride's phase after running `speed` m/s for `dt`: PI a step, as HeadBobber's timer - the fallback with head
+ *  bobbing off, when there is no bob to keep step with. */
 export function runPhaseStep(phase, speed, dt) {
   const p = phase + Math.max(0, speed || 0) * Math.max(0, dt) * Math.PI / RUN_STEP_M;
   return p % (2 * Math.PI);

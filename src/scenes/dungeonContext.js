@@ -4515,7 +4515,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         if (!playerMeleeCanHit(dist, !!inViewFn?.(c), !Number.isFinite(wall) || wall >= dist - 1e-3)) continue;
         if (dist < bestD) { bestD = dist; best = b.id; }
       }
-      if (best && opts.wildStrike(best, playerWeapon.strikingWeapon, playerWeapon.machine?.state)) return true;
+      if (best && opts.wildStrike(best, playerWeapon.strikingWeapon, playerWeapon.machine?.state, { off: playerWeapon.offStrike })) return true;
     }
     nextArenaQ();   // ARENA4b: this swing is one blow to the referee, every body it meets
     // AUDIT 23 (combat-14): entity colliders resolve FIRST
@@ -8125,7 +8125,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         largeHud: largeHudOptions({ renderer, fetchBytes, palette }, playerEntity),
         // AUDIT 39: the enhanced HUD's two hand plaques - see world.js.
         readied: magic.readied() ?? null,
-        weapon: playerWeapon.weapon ?? null,
+        weapon: playerWeapon.restingWeapon ?? null,   // TWO-HANDS (AUDIT): the lead's, never the off hand's mid-blow
         // QS4: THE PHONE'S OWN DOORS. The diamond's cells take a finger
         // on a touch-first device (ui/enhancedHud.js's second departure),
         // and a door the host never handed over is a control that

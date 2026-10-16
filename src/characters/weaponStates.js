@@ -29,9 +29,9 @@ export function getMeleeWeaponAnimTime(liveSpeed, ctx = null) {
   return (3 * (115 - liveSpeed)) / CLASSIC_FRAME_UPDATE;   // seconds per anim frame
 }
 /** TWO-HANDS (bible/05-Combat/Two-Hands.md): A STRIKE'S OWN TEMPO - `ctx.tempo`, the dual law's factor on this strike's
- *  frames (combat/handsLaw.js strikeTempo: a flurry's quickness, the off hand's burden), laid on whichever answer the
- *  time came from - the law's, or a mod's that answers through it - and held to the law's own bounds, so no pair swings
- *  quicker than SWING_FRAME_MIN allows one weapon. A ctx with no tempo (every single weapon, every fist, every foe) is
+ *  frames (combat/handsLaw.js strikeTempo: the off hand's burden), laid on whichever answer the time came from - the
+ *  law's, or a mod's that answers through it - and held to the law's own bounds, so no pair swings quicker than
+ *  SWING_FRAME_MIN allows one weapon. A ctx with no tempo (every single weapon, every fist, every lead blow, every foe) is
  *  the time untouched. */
 function strikeTempoed(seconds, ctx) {
   const k = ctx?.tempo;
@@ -271,7 +271,10 @@ export function blowSchedule(m, liveSpeed, animCtx = null, dt = 0) {
     return { seconds: LEFT_UNARMED_ANIMS.length * step, hitAt: (LEFT_UNARMED_ANIMS.indexOf(HIT_FRAME_MELEE) + 1) * step, step };
   }
   const frames = (m.frames ?? MELEE_NUM_FRAMES)[m.state] ?? 5;
-  return { seconds: frames * step, hitAt: (m.hitFrame ?? HIT_FRAME_MELEE) * step, step };
+  // TWO-HANDS (AUDIT): timed from the frame the strike stands on - 0 for every strike DFU begins, 1 for a pair's flurry
+  // (handsLaw.js DUAL.FLURRY_FROM_FRAME: the blow thrown from the raised hand)
+  const at = Math.max(0, m.frame | 0);
+  return { seconds: (frames - at) * step, hitAt: Math.max(0, (m.hitFrame ?? HIT_FRAME_MELEE) - at) * step, step };
 }
 
 export function machineStep(m, dt, liveSpeed, animCtx = null) {   // AUDIT-RR F1: the rig's { entity, weaponType, usingRightHand } for a registered GetMeleeWeaponAnimTime override

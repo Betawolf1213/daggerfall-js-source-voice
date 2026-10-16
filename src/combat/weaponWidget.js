@@ -334,6 +334,11 @@ export function createWeaponWidget({
     });
   }
   const getWeaponRect = () => transformRect(w.weaponPosition);
+  /** TWO-HANDS (AUDIT): a hand of a pair's rect, BEFORE the mirror that puts it on the left: its sway (Bob, Inertia - the
+   *  frame's `position`) turned about first, so the mirror hands it back in the screen's own direction - both hands
+   *  sway together, as the body does (the mod keeps Inertia's screen direction for its own mirrored sprite the same way,
+   *  inertiaStep's sign). The Offset slide is the hand's own and is mirrored with it. */
+  const pairRect = (mirror) => (mirror ? transformRect(w.weaponPosition, { position: [-w.position[0], w.position[1]] }) : getWeaponRect());
 
   // ---- Recoil: OnAttackDamageCalculated (IL 0xc5c) and CheckForEnvDamage (0x1730) ----
   /** The host's word on one struck target: `damage` is the calc's
@@ -393,7 +398,7 @@ export function createWeaponWidget({
     if (w.s.swingWindup === WINDUP.FirstFrame) changeWeaponState(state); else changeWeaponState(S.Idle);
     if (w.s.swingRecoveryOverride && recoveryOverride()) tickTime *= 0.5;
     // the wind-up: the pose the setting names, held until the ORIGINAL reaches its hit frame
-    while (machineFrame() < hitFrame()) {
+    while (machineIsAttacking() && machineFrame() < hitFrame()) {
       if (w.s.swingWindup === WINDUP.FirstFrame) w.currentFrame = 0;
       else if (w.s.swingWindup === WINDUP.Idle) {
         if (offsetOverride()) w.offsetTarget = leanFor(state, w.flipHorizontal);
@@ -401,6 +406,10 @@ export function createWeaponWidget({
       } else w.currentFrame = -1;
       yield FRAME;
     }
+    // TWO-HANDS (AUDIT): the strike this wind-up shadows ENDED before its hit frame - a hand of a pair whose blow stopped
+    // being its own (the pair dissolved mid-blow: a light lit, a weapon swapped, the beast). DFU's one machine always
+    // reaches the hit frame first, so the one hand never comes here; a pair's clone must not wind up forever.
+    if (!machineIsAttacking()) { finishSwing(state); return; }
     changeWeaponState(state);
     playSwingSound();
     if (w.s.recoil && w.s.recoilEnvironment && checkForEnvDamage()) w.hasCurrentAttackHit = true;
@@ -751,7 +760,7 @@ export function createWeaponWidget({
     }
     // TWO-HANDS: a hand of a pair - its guard on the rect, then the mirror about the screen's middle, its source read
     // right to left (the one hand above is the mod's own line, untouched)
-    let rect = getWeaponRect();
+    let rect = pairRect(mirror);
     if (transform) rect = transform(rect);
     if (mirror) rect = mirrorRect(rect, w.screenRect.width, w.screenRect.x);
     const uv = mirror ? { u0: w.curAnimRect.u1, v0: w.curAnimRect.v0, u1: w.curAnimRect.u0, v1: w.curAnimRect.v1 } : w.curAnimRect;
@@ -775,7 +784,7 @@ export function createWeaponWidget({
   }
 
   return {
-    lateUpdate, draw, drawing, endOfFrame, onAttackDamageCalculated, armsTransform, transformRect,
+    lateUpdate, draw, drawing, endOfFrame, onAttackDamageCalculated, armsTransform, transformRect, pairRect,
     /** The mod's `showWeapon` / `hideWeapon` messages. */
     setShowWeapon(v) { w.showWeapon = !!v; },
     setThirdPerson(v) { w.isInThirdPerson = !!v; },
@@ -783,6 +792,9 @@ export function createWeaponWidget({
     get position() { return [w.position[0], w.position[1]]; },
     get scale() { return [w.scale[0], w.scale[1]]; },
     get offset() { return [w.offset[0], w.offset[1]]; },
+    /** TWO-HANDS (AUDIT): nothing left to step while hidden - no swing playing, and the Offset slide (when on) at its
+     *  hidden place. A pair's left clone rests here between pairs: stepped again when a pair returns, it slides in. */
+    get settledHidden() { return !w.animating && (!w.s.offset || (w.offsetCurrent[0] >= 2 && w.offsetCurrent[1] >= 2)); },
     get state() { return w.weaponState; },
     get frame() { return w.currentFrame; },
     get flipHorizontal() { return w.flipHorizontal; },

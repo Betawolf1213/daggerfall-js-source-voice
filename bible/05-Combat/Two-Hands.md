@@ -41,83 +41,153 @@ described (`playerWeapon.js` `handDesc`: the item, its WeaponTypes, its ItemHand
 | `dual` | two one-handed melee weapons (`DUAL_TYPES`: blades, daggers, maces, flails, hammers, axes, plain and magic - one-handed by ItemHands) | both weapons up |
 | `single` | everything else - a shield (a fist and a shield is DFU's), a two-hander, a bow, a staff, a gun, the beast's claws, one weapon and an empty hand, **a light carried in a hand** | DFU's one used hand |
 
-The light: a lit torch or lantern held (not hung at the waist, HT-WAIST) takes the left hand, as Handheld Torches and
-the Morrowind arm's Shield Bone draw it - so it is one fist beside the light, DFU's and the mod's (`leftBusy`, set by
-`weaponRig.js` `syncWorn` before ApplyWeapon). A pair never meets one: the mod stows a light when no hand is free.
+The light: a lit torch or lantern held (not hung at the waist, HT-WAIST) takes the left hand where a lane paints it there -
+Handheld Torches' sprite on the classic lane, the Morrowind arm's torch on its Shield Bone (a torch alone: the arm holds no
+lantern) - so it is one fist beside the light, DFU's and the mod's (`leftBusy`, set by `weaponRig.js` `syncWorn` before
+ApplyWeapon). A light NO lane draws in a hand (Handheld Torches off on the classic lane) holds no hand: both fists stand
+(AUDIT, lanes 1/2/4). The mod stows a light when no hand is free, so a pair seldom meets one - except under its
+RelaxedLanterns (with LanternsAtWaist off, both non-default), where a lit lantern stays in the hand and the pair is one
+hand until it is put out.
 
 **Which hand strikes** (`strikeHandOf`): the LEAD hand opens an exchange; a strike begun within `FLURRY_WINDOW` (0.75 s)
 of the last one ending is the OTHER hand's - a flurry; past it the hands have settled and the lead opens again. The
-window is half again SWING_FRAME_MAX, so a slow fighter's held button still alternates. In `single` the hand is always
-the lead. The lead is DFU's `usingRightHand`.
+window is nearly twice SWING_FRAME_MAX (0.4 s), so a slow fighter's held button still alternates. In `single` the hand
+is always the lead. The lead is DFU's `usingRightHand`.
 
 **H with both hands up** picks the lead and says so - "Leading with the right hand." / "Leading with the left hand."
-(`combat.leadRightHand` / `combat.leadLeftHand`, the port's own lines, in every locale). One hand in use keeps DFU's two
-lines. Under the Morrowind arm H moved only between two held weapons (MW-HAND); it now moves between the fists too.
+(`combat.leadRightHand` / `combat.leadLeftHand`, the port's own lines, in every locale) - and ENDS the exchange in
+progress: the next blow opens a new one with the new lead (AUDIT: left running, a blow after H was the old exchange's
+quick answer thrown by the new lead with none of the off hand's costs - x1.2 damage for a key press between swings).
+Nothing changes hands, so BowLeftHandWithSwitching bills nothing. One hand in use keeps DFU's two lines and DFU's bill.
+Under the Morrowind arm H moved only between two held weapons (MW-HAND); it now moves between the fists too. The
+Fighting tutorial says so ("Two weapons or two fists both fight; H picks the lead").
 
 **The mirror**: a left hand is a right hand in the glass - CLIMB-HANDS' rule (`combat/climbHands.js`: Mac's painting a
 left hand, mirrored for the right). `mirrorStrike` keeps a strike's way across the screen (the left hand's sweep to the
-right is the right hand's sweep to the left, mirrored); `mirrorRect` mirrors a screen rect about the middle; a hand of a
-pair is mirrored WHOLE, every state - DFU flips three because a side strike's art crosses the screen, and a second hand
-would cross the first. `handOnLeft`: a left-handed player's picture is mirrored whole - the right hand on the left.
+right is the right hand's sweep to the left, mirrored); `mirrorRect` mirrors a screen rect about the middle;
+`handOnLeft`: a left-handed player's picture is mirrored whole - the right hand on the left.
+
+### The painted arm
+
+Probed with Daggerfall's own `WEAPON10.CIF` (DFU's freeware DaggerfallGameFiles, `tools/fetch-data.sh`): **the bare
+hand's art paints BOTH arms.** Its idle (record 0) and its StrikeDownLeft, StrikeRight and StrikeDownRight records are
+the right arm (the light glove, the grey sleeve); its StrikeDown, StrikeLeft and StrikeUp records are the LEFT arm (the
+dark glove, the brown sleeve with the stitched cuff) - classic Daggerfall threw its hand-to-hand with both fists, by
+direction. WeaponBasics carries nothing of it (every melee strike aligns Center); it is a fact of the shipped frames,
+`MELEE_PAINTED_ARM` (by record). Every weapon file paints the right arm alone.
+
+So a hand's picture is CHOSEN, never assumed (`strikePicture`), and the arm on the screen is always the hand that throws
+the blow, on its own side:
+
+1. the state's own record as painted, when it paints this hand's side - DFU's own picture;
+2. else the mirror state's record in the mirror, when that paints the other side - this hand, this way across;
+3. else the art has this hand only the other way across: the mirror state's record as painted.
+
+A weapon is always 1 for the right hand and 2 for the left - the mirror of the mirrored strike, as before. The fists take
+all three; e.g. the right fist's StrikeDown is the left-arm painting mirrored, the left fist's StrikeDown the painting
+as it is. Every draw uses ONE rule - a record is mirrored exactly when its painted arm is not the hand's side - so the
+classic sprite, each Weapon Widget clone (by the record the clone actually draws, a frame behind the machine), the rest
+and the run all agree. Before this the left StrikeDown mirrored a left-arm painting into a second right fist.
 
 ## The balance - two weapons are tempo, not twice the damage
 
-`DUAL` in `handsLaw.js`. Every number is a multiplier or a term on DFU's own, and the LEAD's blow is DFU's exactly
-(CalculateAttackDamage, the swing modifiers, the skill tallied by the weapon in the striking hand). The fists keep DFU's
+`DUAL` in `handsLaw.js`. Every number is a term on DFU's own, and the LEAD's blow is DFU's exactly (CalculateAttackDamage,
+the swing modifiers, the skill tallied by the weapon in the striking hand) - its flurry blows too. The fists keep DFU's
 numbers whole: hand-to-hand was always both fists.
 
 | Term | Value | Why |
 |---|---|---|
-| `FLURRY_TEMPO` | 0.75 of the frames' time | the other hand is cocked while one strikes, so the exchange's blows come quicker |
-| `OFF_DAMAGE` | 0.75 of the rolled damage (a landed blow at least 1, a miss a miss) | the weaker hand |
-| `OFF_TO_HIT` | -10 at Agility 50, a point back each 10 past it, a point worse each 10 under, held in [-15, -5] | a StrikeDown's own -10 (CalculateSwingModifiers); the off hand's sureness is Agility's |
-| `OFF_WEIGHT` | the off arm feels its weapon 1.5x heavier (SWING-LAW's heft at 1.5x the weight over the heft at the weight) | a dagger (0.5 kg) costs nothing, a longsword (4.5 kg) a tenth of the swing at Strength 50: the dagger is the off hand's blade |
+| `FLURRY_FROM_FRAME` | a flurry's blow starts 1 frame into its swing: 4 ticks of 5, the hit a tick sooner | the other hand is already raised; in FRAMES, so it is the same at every frame rate (below) |
+| `OFF_DAMAGE` | 0.8 of the rolled damage (a landed blow at least 1, a miss a miss) | the weaker hand |
+| `OFF_TO_HIT` | -5 at Agility 50, plus the rounded tenth of (Agility - 50), held in [-10, 0] | half a StrikeDown's own -10 (CalculateSwingModifiers); the off hand's sureness is Agility's |
+| `OFF_WEIGHT` | the off arm feels its weapon 1.5x heavier (SWING-LAW's heft at 1.5x the weight over the heft at the weight) - the only factor on a tick's time | a dagger (0.5 kg) costs nothing, a longsword (4.5 kg) a tenth of the swing at Strength 50 |
 
-The tempo rides SWING-LAW's answer (`weaponStates.js` `strikeTempoed`, on whichever answer the time came from - the
-law's or a mod's) and is held to its bounds: no pair swings quicker than SWING_FRAME_MIN allows one weapon. A ctx with no
-tempo - every single weapon, every fist, every foe - is the time untouched.
+**Why frames, not seconds (AUDIT, lane 1).** The machine steps a swing's frames one tick at a time and drops each tick's
+remainder at the frame it lands on (DFU's coroutine, `weaponStates.js` `machineStep`), so the first cut's 0.75 factor on
+a tick's time rounded to a different answer at every frame rate: measured through the machine the pair was x0.97 at
+30 fps and x1.09 at 1000 fps - a 144 Hz player's pair out-dealt a 60 Hz player's. Starting the flurry a frame in is 0.8
+of one weapon's time at any frame rate. The Morrowind arm's pacing (`blowSchedule`) times a strike from the frame it
+stands on.
 
-Measured against one weapon (the same weapon and skill, a 65% chance to hit): the pair's exchange lands 0.53 of a blow a
-swing where one weapon lands 0.65, and swings 1.33 times as often - about 9% more damage a second, for 33% more fatigue a
-second (DFU's per-swing cost, unchanged) and the shield's armour given up. A heavy off-hand weapon gives the quickness
-back. The off hand's to-hit term rides the swing's own channel (`playerAttackOptions`' `toHitMod`), so an
-AdjustWeaponHitChanceMod override sees it as it sees the StrikeDown's.
+**Measured, not on paper** (the audit's own scripts, through the real machine and the real formula):
+
+| | swings a second | damage a second |
+|---|---|---|
+| a dagger pair vs one dagger, 65% to hit, Speed 50 and 100, 30/60/144/1000 fps | x1.24-1.25 | x1.08-1.09 at every frame rate |
+| a longsword pair vs one longsword (the off arm feels 4.5 kg) | x1.11-1.20 | x0.96-1.05 |
+| a longsword pair, the real formula, 200k seeded rolls, 60 fps, Speed 50 / 100 | | x1.058 / x1.031 |
+| longsword + dagger vs the longsword alone, same | | x0.881 / x0.839 |
+
+A matched pair lands about 9% more damage a second than one of its weapons, for a quarter more fatigue a second (DFU's
+per-swing cost, unchanged) and the shield's armour given up. A heavy off weapon gives part of that back. A light off
+weapon trades damage for quickness: half the blows are the dagger's (a quarter of the longsword's), so a longsword with a
+dagger lands LESS than the longsword alone - the pair is as good as its weaker hand. (The first cut's record called the
+dagger "the off hand's natural blade"; measured, it is not.)
+
+**One home for the off hand's blow** (AUDIT): its share is laid INSIDE the formula (`formulas.js` `calculateAttackDamage`'s
+`blowShare`) - in the stock core ahead of the equipment's wear, after a mod's core - so the HUD's number, the strike
+listeners (a leech, an echo, Ruhn's Cleave, the feud ledger), the Strikes payloads and the wear all see the blow that
+landed. Its to-hit rides the swing's own channel (`playerAttackOptions`' `toHitMod`), so an AdjustWeaponHitChanceMod
+override sees it as it sees the StrikeDown's. And **a blow between players carries the same terms**
+(`duelCombat.js` `resolveDuelStrike`'s `off`, on the striker's own sheet): every duel, siege, siege-work, Royal Tourney
+and wild-zone arm hands the STRIKING rig's `offStrike` on (world.js's and the dungeon's own rig alike) - measured equal
+to the blow against a foe (the off hand's mean blow 13.657 both ways, where it had landed whole between players).
 
 **What the strike carries** (`playerWeapon.js`): `_attack` asks the law for the hand (`_nextStrike`), and while a strike
 of both hands is in flight the weapon in use is the STRIKING hand's (`activeHand`, `handItem`) - its art, its skill
-tally, its swing time, its poison, its recoil - and the lead's again after it. `swingCtx` hands the tempo (the striking
-weapon's weight, the live Strength, `readSwing`); `resolveHit` adds the off hand's to-hit by the live Agility
-(`liveStat`) and its damage share. A technique (TECH1) is always the lead hand's (`lead: true`), never a flurry's.
+tally, its swing time, its poison, its recoil - and the lead's again after it; if the hands stop being two mid-strike
+(a quickslot swap) the weapon in use is the one hand's at once. `restingWeapon` is the lead's - what the HUD's diamond
+(all four hosts) and a technique read, so neither flickers to the off hand's item for its blows. `swingCtx` hands the off
+hand's burden (`readSwing`); `resolveHit` the off hand's to-hit by the live Agility (`liveStat`) and its share. A
+technique (TECH1) is always the lead hand's (`lead: true`), never a flurry's.
 
 ## The sprite lane - `src/combat/twoHands.js`
 
 Wired by `combat/weaponRig.js`, the one surface all four hosts mount (no host carries a line of it, HOST-SPLIT).
 
 - **The machine is one.** The rig's PlayerWeapon runs DFU's one machine; each hand sees a VIEW of it (`view(hand)`):
-  the strike while it is that hand's, the idle otherwise - mapped to its mirror when the hand is on the left.
-- **Each hand drawn as DFU draws a right hand**: the classic body by `fpsWeaponQuad` (`fpsWeapon.js`, drawFpsWeapon's
-  placement without the draw), or a Weapon Widget clone - the rig's own for the right hand, `offWidget` for the left.
-  A pair's clone is never flipped by Handedness or Ambidexterity (`pairHand`); the one on the left is drawn mirrored
-  (`draw`'s `mirror`, its UVs swapped). Each clone plays its own hand's blows and holds its idle - bob, slide and all -
-  through the other's; the left clone's coroutines are resumed at the frame's end like the right's (`endOfFrame`).
-  The striking hand is drawn over the other. A pair's left hand's blow recoils the left clone (WW1's recoil).
+  its picture's state (above) while the strike is that hand's, the idle otherwise.
+- **Each hand drawn by DFU's own placement**: the classic body by `fpsWeaponQuad` (`fpsWeapon.js`, drawFpsWeapon's
+  placement without the draw), or a Weapon Widget clone - the rig's own for the right hand, `offWidget` for the left -
+  mirrored by the one rule. A pair's clone is never flipped by Handedness or Ambidexterity (`pairHand`). Each clone plays
+  its own hand's blows and holds its idle through the other's; the left clone's coroutines resume at the frame's end
+  like the right's (`endOfFrame`). The striking hand is drawn over the other. A pair's left hand's blow recoils the left
+  clone (WW1's recoil).
+- **Both hands sway as one body** (AUDIT): the Weapon Widget's Bob and Inertia sway (its `position`) is turned about
+  before the mirror (`weaponWidget.js` `pairRect`), so the mirror hands it back in the screen's own direction - the mod
+  keeps Inertia's screen direction for its own mirrored sprite the same way. The Offset slide is the hand's own and is
+  mirrored with it.
+- **A clone lets go of a blow that stopped being its own** (AUDIT): the Swings module's wind-up ends when the strike it
+  shadows ends (a pair dissolved mid-blow - a light lit, a weapon swapped, the beast); before, the left clone wound up
+  forever and its fist sat off the screen until its next blow. DFU's one machine always reaches the hit frame first, so
+  the one hand never comes there. The left clone is stepped only while a pair is up, or until its swing has ended and
+  its slide settled out of sight (`settledHidden`): single-hand play never pays for it.
 - **The guard** (`GUARD`): while one hand strikes the other draws in toward the middle (10 px) and down (9 px) on the
-  320x200 surface, eased in fast (0.05 s) and out slower (0.14 s) - ClimbPose's limb law, no pop. The fists' guard is
-  alive at rest: a 1.6 px bounce at 1.15 Hz, the two hands out of step, gone in a strike or a walk.
-- **The running hands** (`RUN_PUMP`): running on the feet (DFU's run - not standing, crouched, mounted, swimming, in the air
-  or on a wall) at 1 m/s or more with NOTHING in either hand (`weaponRig.js` `handsEmpty`: no weapon or shield, no
-  light, not the beast, no spell, no act's tool, no held sheet, no swap under way) - drawn or sheathed - the two fists
-  pump. One stroke a step on the head bob's own clock (`RUN_STEP_M` 2.5 m, WalkStepInterval), the right forward as the
-  left foot falls; the stroke snaps (|sin|^0.7) - up 0.42 of the fist's height and toward the middle at the top, down
-  1.05 (out of the view, the hand passing the hip) and outward at the bottom, 9% nearer the eye at the top. Up from the
-  guard when the fists were up, or up from below the view (as CLIMB-HANDS' hands rise, no sleeve shown) when the hands
-  were down; in over
-  0.12 s, away over 0.16 s, at once (0.04 s) for a punch thrown on the run.
+  320x200 surface, eased in fast (0.05 s time constant) and out slower (0.14 s) - ClimbPose's limb law, no pop; laid in
+  SCREEN space, from the hand's own side, whatever its picture. The fists' guard is alive standing: a 1.6 px bounce at
+  1.15 Hz, the two hands out of step, gone in a strike or a walk.
+- **The running hands** (`RUN_PUMP`): running on the feet (DFU's run - not standing, crouched, mounted, swimming, in the
+  air or on a wall) at 1 m/s or more with NOTHING in either hand (`weaponRig.js` `handsEmpty`: no weapon or shield, no
+  light a lane draws, not the beast, no spell, no act's tool, no held sheet, no swap under way) - drawn or sheathed - the
+  two fists pump, ON THE HEAD BOB'S OWN CLOCK (AUDIT): `HeadBobber` hands its timer out every frame
+  (`player/headBobber.js`'s `out`, `player/motor.js` `motionBagOf`'s `bobTimer`) and the pump's phase is that timer a
+  quarter turn behind (`runPhaseOfBob`) - the right arm most forward as the left foot is planted, every step, with no
+  drift; with head bobbing off the pump keeps its own stride (`RUN_STEP_M` 2.5 m a step). The stroke snaps (|sin|^0.7) -
+  up 0.42 of the fist's height and toward the middle at the top, down 1.05 (out of the view, the hand passing the hip)
+  and outward at the bottom, 9% nearer the eye at the top. Measured on the real `WEAPON10.CIF` (a 63x53 idle on DFU's
+  320x200): the fist's top edge never rises above 60% down the screen. Up from the guard when the fists were up, or up
+  from below the view when the hands were down (as CLIMB-HANDS' hands rise, no sleeve shown); the weight follows time
+  constants of 0.12 s in and 0.16 s out. A punch thrown on the run is drawn from its FIRST frame over the other fist,
+  which eases out of the pump (0.04 s); a hand TAKEN mid-run (a weapon, a shield, a light, a spell, a tool, the beast, a
+  swap) ends the run at once - the fade is for a run that ends with the hands still empty. The ground speed is read off
+  the eye every frame, whatever mods are on (AUDIT: kept inside the mods' gate, the running hands never ran with the
+  Weapon Widget, Handheld Torches and Shield Widget off).
 - **The draw seam** (`weaponRig.js`): the two-hands branch stands after the climb's return and before the Morrowind
   arm's seam, never under the Beholder's sprite, the Morrowind arm or the held map's window (MAP-WEAPON); it draws whole
-  and returns. A pair holds no shield and no light, so the one-hand ladder below it (the shield, the torch hand, the
-  gun, the clone, the sprite) is the single hand's, untouched. The gate gains `runHands` and `armsRun`: an empty-handed
-  run is often a sheathed one, and the running hands are not a weapon either (as CLIMB-HANDS' `armsClimb`).
+  and returns - the running fists first, then the pair (a punch on the run over them). A pair holds no shield and no
+  light, so the one-hand ladder below it (the shield, the torch hand, the gun, the clone, the sprite) is the single
+  hand's, untouched. The gate gains `runHands` and `armsRun`: an empty-handed run is often a sheathed one, and the
+  running hands are not a weapon either (as CLIMB-HANDS' `armsClimb`).
 
 ## The Morrowind lane - `src/combat/mirrorRig.js`, `src/combat/fpArm.js`
 
@@ -159,11 +229,15 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
 
 ## Departures from DFU (Port-Ledger A, TWO-HANDS)
 
-1. ToggleHand/ApplyWeapon: with both hands up both are in use; H picks the lead, and the weapon in use is the striking
-   hand's while a strike is in flight.
-2. FPSWeapon: a second sprite; a hand of a pair mirrored whole (every state), not three states for Handedness.
-3. GetMeleeWeaponAnimTime: a strike's tempo on its answer, inside SWING-LAW's bounds.
-4. CalculateAttackDamage's caller: the off hand's to-hit term and damage share.
+1. ToggleHand/ApplyWeapon: with both hands up both are in use; H picks the lead, ends the exchange and bills no switch
+   (BowLeftHandWithSwitching's delay is a swap's, and nothing changes hands); the weapon in use is the striking hand's
+   while a strike is in flight, the lead's at rest (`restingWeapon`: the HUD's plaque, a technique's weapon).
+2. FPSWeapon: a second sprite; a hand of a pair mirrored whole (every state) by the one painted-arm rule, not three
+   states for Handedness.
+3. The weapon state machine: a flurry's blow starts at frame 1 - a tick sooner, in ticks, so the same at any frame rate;
+   the off weapon's burden slows only its own blows (GetMeleeWeaponAnimTime's weight term, SWING-LAW's bounds).
+4. CalculateAttackDamage: the off hand's to-hit term at its caller, its damage share INSIDE the formula (`blowShare`),
+   so the share, the report and the wear agree; the player-vs-player blow (`resolveDuelStrike`'s `off`) carries both.
 5. The running hands: DFU draws nothing in the hands on a run.
 
 ## Not carried
@@ -175,25 +249,32 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
 - **The Beholder's sprite body** (EOTB): third person on the sprite body shows one weapon.
 - **Werecreature claws**: the beast stays single (DFU's racial override, one claw sprite).
 - **Skeletons without Weapon Bone Left**: no left weapon is drawn on them; the pair still swings.
-- **No browser or ARENA2 probe run**: the sprite lane is pinned through a real rig on a synthetic WEAPON CIF, the
-  Morrowind lane on the retail biped and the fixture arm; neither was seen on a GPU in this slice.
+- **The test suite holds no ARENA2**: the sprite lane is pinned through a real rig on a synthetic WEAPON CIF (its
+  painted arms set as WEAPON10's are), the Morrowind lane on the retail biped and the fixture arm. The real art was
+  probed outside the suite (Audit-Two-Hands.md, "Evidence").
 
 ## Pins
 
-- `test/twohands.test.js` (16): the law, the swing, PlayerWeapon through the real formula and the override seam, the
-  rig on a synthetic CIF - the fists, the guard, the widget's two clones, the pair, the running hands, the branch by
-  source, a left-handed player.
+- `test/twohands.test.js` (19): the law and the painted arm, the balance MEASURED through the machine at two frame
+  rates, PlayerWeapon through the real formula and the override seam (the flurry's frame, the schedule's ticks, H's
+  exchange, the resting weapon, the off strike), the off hand's blow in the formula and between players, the rig on a
+  synthetic CIF - the fists, the guard, the widget's two clones, the pair, the running hands (the stroke, the bob's
+  clock, what takes a hand, the mods), the branch by source, a left-handed player.
 - `test/twohands_mw.test.js` (10): the mirror rig on the retail biped (counterparts, the plan, the law, no pop, which
   fist a clip throws) and the arm over the fixture arm (the left weapon, the pair, the fists, the running hands, by
   source).
-- `tools/mutants/twohands.json`: 55 mutants, all dead.
-- PIN MOVED, each with its note: `a12_lefthand` (H's lines with both hands up), `ww1_weaponwidget` (the recoil's hand,
-  the frame's end), `ht1_handheldtorches`, `climbhands2`, `mwcast1`, `map3_heldpose` (the draw gate's two new legs),
-  `mwtorch`, `werewolf1`, `mwattach` MW-D19 (the arm's item is the right hand's in a pair), `climb6` C16 (the climb
-  slot's run), `fparm` MAC-S1 (five busy takers), `thunderlock` FIELD-GUN13 (the gate), `auditrr` F1 and `rri2_realism`
-  (the swing's ctx is `swingCtx`, the clone's the rig's when handed one), `tech1_hosts` (a technique through `_attack`,
-  the lead's), `fb1003_widgetlook` (the clone's frame built by `cloneFrame`), `mwload_fparm` MW-LOAD
-  (`resolveOffWeaponParts` a door its callers open), `arrowPick` MW-D50 (the left weapon's three archive reads).
+- `tools/mutants/twohands.json`: 98 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and each
+  claim the record made that no pin could fail).
+- PIN MOVED, each with its note: `a12_lefthand` (H's lines with both hands up; the bow-switch arm on its own case, a
+  bow in the left hand), `audit_seats_client` G5, `auditcc_pvp` H5 and `duel_combat` DUEL1 (the off hand's blow between
+  players), `enhancedHud` AUDIT 39 (the plaque reads the resting weapon), `ww2_idlebob` WW2 (the motion bag's
+  `bobTimer`), `ww1_weaponwidget` (the recoil's hand, the frame's end), `ht1_handheldtorches`, `climbhands2`,
+  `mwcast1`, `map3_heldpose` (the draw gate's two new legs), `mwtorch`, `werewolf1`, `mwattach` MW-D19 (the arm's item
+  is the right hand's in a pair), `climb6` C16 (the climb slot's run), `fparm` MAC-S1 (five busy takers), `thunderlock`
+  FIELD-GUN13 (the gate), `auditrr` F1 and `rri2_realism` (the swing's ctx is `swingCtx`, the clone's the rig's when
+  handed one), `tech1_hosts` (a technique through `_attack`, the lead's), `fb1003_widgetlook` (the clone's frame built
+  by `cloneFrame`), `mwload_fparm` MW-LOAD (`resolveOffWeaponParts` a door its callers open), `arrowPick` MW-D50 (the
+  left weapon's three archive reads).
 - Mutant records whose anchors this slice moved, re-aimed by content and re-run (all dead): `arrow2`,
   `auditdisc28_arrest`, `climb4`, `climbhands2`, `disc10`, `l10n3dcrossings` (two), `mwcast1`, `mwhand`, `sw1`, `tech1`,
   `torchvis`.

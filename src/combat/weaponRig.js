@@ -92,7 +92,7 @@ import { castRate } from '../systems/castSpeed.js';   // CAST-SPEED: the rate bo
 import './swingLaw.js';   // AUDIT PRE-MERGE 0929 S5: SWING-LAW's reader of the weapon in the hand, registered as it loads - every rig's
 import { walkSpeed } from '../player/motor.js';   // WW1: GetBaseSpeed's walk arm
 import { localizedText, t } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; TWO-HANDS: the lead's two lines, the port's own
-import { HANDS_MODE, twoHanded, runHandsWanted } from './handsLaw.js';   // TWO-HANDS: how the hands are held, and when they run
+import { HANDS_MODE, twoHanded, runHandsWanted, runPhaseOfBob } from './handsLaw.js';   // TWO-HANDS: how the hands are held, and when they run
 import { stepTechnique, claimShot, techniqueFlying, TECHNIQUE_ACTION } from './techniques.js';   // TECH1: the technique key - every host's rig steps the one runner
 import { techniqueHands } from './techniqueFx.js';   // TECH-FX: a technique's push of the first-person layer
 
@@ -502,8 +502,11 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
   // component every host's rig owns, as the clone is.
   const twoHands = createTwoHands({ audio, envHit: envCast, missEffect, settings: widgetSettings });
   /** TWO-HANDS: a light carried in a hand - it takes the left hand (handsLaw.js handsModeOf), a lantern at the waist
-   *  none (HT-WAIST). */
-  const lightInHand = () => !!entity && isHeldLight(entity.lightSource) && !lanternAtWaist(entity.lightSource);
+   *  none (HT-WAIST). AUDIT: only where a lane paints it in that hand - Handheld Torches' sprite on the classic lane, the
+   *  Morrowind arm's torch on the Shield Bone (a torch alone: the arm holds no lantern); a light no lane draws holds no
+   *  hand, and the two fists (the pair, the running hands) stand. */
+  const lightInHand = () => !!entity && isHeldLight(entity.lightSource) && !lanternAtWaist(entity.lightSource)
+    && (fpArm.ready() ? isLitTorch(entity.lightSource) : handheldOn());
   /** TWO-HANDS: the pair's hands are drawn and swung - the rig is bound to an equip table (bindWorn), not the beast. */
   const pairUp = () => bindWorn && twoHanded(playerWeapon.handsMode);
   /** TWO-HANDS: nothing at all in either hand - both hand slots of the table empty (no weapon, no shield), no light, not
@@ -547,9 +550,9 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
     });
     twoHands.step(dt, {
       mode: pairUp() ? playerWeapon.handsMode : HANDS_MODE.Single, machine: playerWeapon.machine, strike: playerWeapon.strikeInFlight,
-      leftHanded: handedFlip(), standing: !!mv.standing, run: { wanted: wanted && handsLane, punching: attacking, speed },
+      leftHanded: handedFlip(), standing: !!mv.standing, run: { wanted: wanted && handsLane, punching: attacking, speed, taken: !handsEmpty(), bob: mv.bobTimer },
     });
-    fpArm.setRunHands?.(wanted, { speed });
+    fpArm.setRunHands?.(wanted, { speed, phase: Number.isFinite(mv.bobTimer) ? runPhaseOfBob(mv.bobTimer) : null });   // AUDIT: the arms on the head bob's clock too
   }
   const widgetOn = () => modSetting('weapon-widget', 'Enabled');
   // SW1: the shield's own component. Its sprites come from the player's
@@ -1849,6 +1852,8 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
         const yaw = cam.yaw || 0, sy = Math.sin(yaw), cy = Math.cos(yaw);
         localVel = [v[0] * cy - v[2] * sy, v[1], v[0] * sy + v[2] * cy];   // InverseTransformVector: right, up, forward
       }
+      // TWO-HANDS (AUDIT): the eye kept here, every frame - inside the mods' gate the running hands never ran with them off
+      if (cam?.pos) { if (_lastEye) { _lastEye[0] = cam.pos[0]; _lastEye[1] = cam.pos[1]; _lastEye[2] = cam.pos[2]; } else _lastEye = [cam.pos[0], cam.pos[1], cam.pos[2]]; } else _lastEye = null;
       const frameMotion = { grounded: mv.grounded !== false, crouching: !!mv.crouching, riding: !!mv.riding, standing: !!mv.standing, speedRatio: ratio, baseSpeed: base, localVel };
       stepTwoHands(dt, mv, localVel, { climbing, handsLane });   // TWO-HANDS: the strike's hand, the guard, the running hands
       // AUDIT 27h S3b: THE SWITCHED-OFF FRAME IS COUNTED AT THE GATE, NOT INSIDE IT. S3 counted it as the `else` of the
@@ -1859,7 +1864,6 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
       if (widgetOn() || _torchesOn || shieldOn() || thunderlockHeld()) {
         const held = activateHeld();
         _activateStarted = held && !_activatePrev; _activatePrev = held;
-        _lastEye = cam?.pos ? [cam.pos[0], cam.pos[1], cam.pos[2]] : null;
         const look = takeFrameLook();   // WW1/HT1: the frame's look, read once, shared by both - in the camera's radians, the Thunderlock's own (its lab's)
         const lookAxes = dfuLookAxes(look);   // WIDGET-LOOK: the same look as InputManager.LookX/LookY, what the mods' Inertia reads
         // FIELD-GUN12: the gun's own rig steps on the same frame, from
@@ -1920,10 +1924,11 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
           ...(pair ? {} : { machine: playerWeapon.machine, usingRightHand: playerWeapon.usingRightHand }),
           sheathed: playerWeapon.sheathed, shown: spriteShown(),
         });
-        // the left hand's clone: every frame, hidden while the hands are not a pair (it slides in from below when they
-        // become one, the Offset module, and never wakes on a stale swing) - and never the sheathe's voice (the right's
-        // clone has it: one sheathe, one clip)
-        if (widgetOn()) twoHands.offWidget.lateUpdate(dt, { ...cloneFrame(playerWeapon.handItem('L'), 'L', cf), sheathed: false, shown: pair && spriteShown() });
+        // the left hand's clone: while a pair is up, and after one until its swing has ended and its slide settled out of
+        // sight (AUDIT: single-hand play never pays for it) - it slides in from below when the hands become a pair again
+        // (the Offset module) and never wakes on a stale swing; and never the sheathe's voice (the right's clone has it:
+        // one sheathe, one clip)
+        if (widgetOn() && (pair || !twoHands.offWidget.settledHidden)) twoHands.offWidget.lateUpdate(dt, { ...cloneFrame(playerWeapon.handItem('L'), 'L', cf), sheathed: false, shown: pair && spriteShown() });   // AUDIT: never while it rests hidden
       }
       // MW-D42c (Mac: "in third person, clicking instantly triggers the
       // attack, unlike the changes we made to first person. Ensure
@@ -2232,8 +2237,10 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
       // hands down (sheathed, nothing in either).
       if (c && !eotbHidesWeapon() && !fpArm.active() && !sheetWindowUp() && (runHands || (pairUp() && shown()))) {
         const o = { widget, widgetOn: widgetOn(), shown: spriteShown(), tint: fpTint, offsetHeight: weaponOffsetHeight() - climbDrop(_climbLower, c.height) };   // CLIMB4: lowered for the climb, as the one sprite is
-        if (pairUp() && shown()) twoHands.drawPair(renderer, c, { ...o, artFor: (hand) => artFor(playerWeapon.handItem(hand)) });
+        // TWO-HANDS (AUDIT): the running fists first, then the pair over them - a punch thrown on the run is drawn from its
+        // first frame, over the other fist easing from the pump to its guard (drawRun leaves the striking hand to drawPair)
         if (runHands) twoHands.drawRun(renderer, c, artFor(null), pairUp() && shown() ? o : { ...o, shown: false });
+        if (pairUp() && shown()) twoHands.drawPair(renderer, c, { ...o, artFor: (hand) => artFor(playerWeapon.handItem(hand)) });
         return;
       }
       _armDrewLast = !eotbHidesWeapon() && fpArm.active();   // MAP3: the two lines below draw the arm exactly when this is true

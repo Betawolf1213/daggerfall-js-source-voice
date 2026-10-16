@@ -106,12 +106,12 @@ export const TUTORIALS = Object.freeze([
   page({
     id: 'combat', group: 'combat', title: 'Fighting', trigger: 'When you first draw a weapon.',
     body: [
-      '{ReadyWeapon} draws your weapon and {SwingWeapon} attacks. The way you move the mouse sets the swing.',
-      'If you keep missing, you are either unskilled with the weapon or its material is too weak for the target. You can always run.',
+      '{ReadyWeapon} draws your weapon and {SwingWeapon} attacks; how you move the mouse sets the swing.',
+      'Missing a lot means low skill or a weapon too weak for the target. You can always run.',
     ],
     points: [
-      '{SwitchHand} swaps hands.',
-      'Some weapons have a technique, a special move on {WeaponTechnique}. It costs fatigue and has a cooldown.',
+      'Two weapons or two fists both fight; {SwitchHand} picks the lead.',
+      'Some weapons have a technique on {WeaponTechnique}, at a cost in fatigue and a cooldown.',
     ],
   }),
   page({

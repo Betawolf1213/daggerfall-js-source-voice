@@ -581,7 +581,7 @@ export function damageEquipment(attacker, target, damage, weapon, struckBodyPart
   }
 }
 
-export function calculateAttackDamage(attacker, target, { weapon = null, damageMod = 0, toHitMod = 0, backstabChance = 0, weaponAnimTime = 0, rolls = Math.random, dfRand = rand, onMonsterHit = null, onInflictPoison = null, say = null, enchantCtx = null, playerReflexes = null, unaware = false, blowInfo = null } = {}) {
+export function calculateAttackDamage(attacker, target, { weapon = null, damageMod = 0, toHitMod = 0, backstabChance = 0, weaponAnimTime = 0, rolls = Math.random, dfRand = rand, onMonsterHit = null, onInflictPoison = null, say = null, enchantCtx = null, playerReflexes = null, unaware = false, blowInfo = null, blowShare = null } = {}) {
   if (!attacker || !target) return 0;
   // SOFTCAP1: THE FOE THIS BLOW WAS TRADED WITH, remembered on the player
   // for the tallies that follow it (hit or miss - a swing at a tough foe is
@@ -623,8 +623,13 @@ export function calculateAttackDamage(attacker, target, { weapon = null, damageM
   // struck hook said -1 on every blow and the Shield Widget's "Attack On Shield" Recoil (its default) never fired
   const overridden = core ? core(attacker, target, { weapon, damageMod, toHitMod, backstabChance, weaponAnimTime, rolls, dfRand, onMonsterHit, onInflictPoison, say, playerReflexes, notes, onStruck: (part) => (struckPart = part), unaware }) : undefined;
   let damage = 0;
+  // TWO-HANDS (AUDIT, bible/05-Combat/Two-Hands.md): THE BLOW'S SHARE - the off hand's (handsLaw.js offHandDamage), a
+  // function of the rolled damage - laid where the blow is rolled, before anything reads it: in the stock core ahead of
+  // the equipment's wear, after a mod's core; so the HUD, the strike listeners (a leech, an echo), the Strikes payloads
+  // and the report all see the blow that landed, never the whole roll. Null for every other blow.
+  const shared = (d) => (blowShare && d > 0 ? blowShare(d) : d);
   if (overridden !== undefined) {
-    damage = overridden;
+    damage = shared(overridden);
   } else {
   if (weapon && (target.minMetalToHit ?? -1) > weapon.material) {
     // L-slice (AUDIT 23 combat-16): FormulaHelper.cs:576-583 - a
@@ -737,7 +742,7 @@ export function calculateAttackDamage(attacker, target, { weapon = null, damageM
     if (onInflictPoison) onInflictPoison(attacker, target, weapon.poisonType);
     weapon.poisonType = -1;
   }
-  damage = Math.max(0, damage);
+  damage = shared(Math.max(0, damage));
   // FormulaHelper.cs:699-701: the equipment damages at the TAIL with
   // the clamped value, whatever the hit rolled.
   damageEquipment(attacker, target, damage, weapon, struck, { rolls, say });

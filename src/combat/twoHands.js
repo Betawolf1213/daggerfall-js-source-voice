@@ -34,7 +34,7 @@ import { createWeaponWidget } from './weaponWidget.js';
 import { fpsWeaponQuad, getWeaponAnims, STATE_INDEX, WEAPON_TYPES, NATIVE_W, NATIVE_H } from './fpsWeapon.js';
 import {
   HANDS_MODE, twoHanded, otherHand, mirrorRect, MIRROR_UV, handOnLeft, MELEE_PAINTED_ARM, strikePicture,
-  guardStep, guardOffset, easeTo, runPhaseStep, pumpOf, runWeightStep,
+  guardStep, guardOffset, easeTo, runPhaseStep, runPhaseOfBob, pumpOf, runWeightStep,
 } from './handsLaw.js';
 
 /** The fists' guard bounce comes and goes over this (the guard alive at rest, gone in a strike or a walk). */
@@ -89,7 +89,8 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
   /**
    * The frame (the rig's LateUpdate block, after the machine's step):
    *   mode, machine, strike (the strike in flight - PlayerWeapon.strikeInFlight - or null), leftHanded;
-   *   run: { wanted, punching, speed } - runHandsWanted's answer, a strike in flight, metres a second over the ground;
+   *   run: { wanted, punching, speed, taken } - runHandsWanted's answer, a strike in flight, metres a second over the
+   *     ground, and a hand no longer empty (AUDIT: the run ends at once);
    *   standing - the body still (the fists' guard bounces only standing).
    */
   function step(dt, { mode = HANDS_MODE.Single, machine = null, strike = null, leftHanded = false, run = null, standing = false } = {}) {
@@ -102,9 +103,11 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     st.bounce = easeTo(st.bounce, mode === HANDS_MODE.Fists && !st.strikeHand && standing ? 1 : 0, BOUNCE_TAU, d);
     const r = run ?? {};
     st.run.wanted = !!r.wanted;
-    if (st.run.wanted || st.run.w > 0) st.run.phase = runPhaseStep(st.run.phase, r.speed ?? 0, d);
+    if (st.run.wanted || st.run.w > 0) st.run.phase = Number.isFinite(r.bob) ? runPhaseOfBob(r.bob) : runPhaseStep(st.run.phase, r.speed ?? 0, d);   // AUDIT: on the bob's clock
     st.run.w = runWeightStep(st.run.w, st.run.wanted, !!r.punching, d);
-    if (!st.run.wanted && st.run.w < 1e-3) st.run.w = 0;
+    // AUDIT: a hand TAKEN mid-run (a weapon, a shield, a light, a spell, a tool, the beast) ends the run at once - the
+    // fade is for a run that ends with the hands still empty; anything that takes them owns the seam from its frame
+    if (r.taken || (!st.run.wanted && st.run.w < 1e-3)) st.run.w = 0;
   }
 
   /** The guard's offset for a hand in canvas pixels, ON THE SCREEN - toward the middle from the hand's own side, and
@@ -143,8 +146,10 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
    */
   function drawPair(renderer, canvas, { widget = null, widgetOn = false, artFor, shown = true, tint = null, offsetHeight = 0 } = {}) {
     if (!renderer || !canvas || !twoHanded(st.mode)) return false;
-    if (st.run.w > 0) return true;   // the running hands own the fists (drawRun, after this)
+    // the running hands own the fists (drawRun, before this) - all but a punch thrown on the run, drawn here over them
+    const running = st.run.w > 0;
     for (const hand of drawOrder()) {
+      if (running && hand !== st.strikeHand) continue;
       const clone = hand === 'R' ? widget : offWidget;
       const mirror = mirrorOf(hand, paintedAt(clone?.state ?? 0));   // the record the clone draws - it plays its strike a frame behind the machine
       if (widgetOn && clone?.draw(renderer, canvas, tint, { transform: (r) => moved(r, nudgeBefore(hand, canvas, mirror)), mirror })) continue;
@@ -160,7 +165,7 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     const mirror = mirrorOf(hand, painted('Idle'));
     const clone = hand === 'R' ? widget : offWidget;
     let rect = null;
-    if (widgetOn && clone?.drawing()) rect = clone.rect;
+    if (widgetOn && clone?.drawing()) rect = clone.pairRect(mirror);   // the rect its draw lays the mirror over
     else if (shown && art) rect = fpsWeaponQuad(canvas, art, 'Idle', 0, { flipHorizontal: false, offsetHeight })?.rect ?? null;
     if (!rect) return null;
     return moved(mirror ? mirrorRect(rect, canvas.width) : rect, nudge(hand, canvas));
@@ -176,7 +181,7 @@ export function createTwoHands({ audio = null, envHit = null, missEffect = null,
     if (!(w > 0) || !renderer || !canvas || !fistArt) return false;
     const q = fpsWeaponQuad(canvas, fistArt, 'Idle', 0, { flipHorizontal: false, offsetHeight });
     if (!q) return false;
-    const hands = ['R', 'L'].map((hand) => {
+    const hands = /** @type {const} */ (['R', 'L']).filter((hand) => hand !== st.strikeHand).map((hand) => {   // a punch on the run is drawPair's
       const left = handOnLeft(hand, st.leftHanded);
       const mirror = mirrorOf(hand, painted('Idle'));
       const base = mirror ? mirrorRect(q.rect, canvas.width) : q.rect;

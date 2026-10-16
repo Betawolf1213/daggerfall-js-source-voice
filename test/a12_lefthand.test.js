@@ -109,25 +109,37 @@ test('a12: ToggleHand raises the two classic lines, and the shield refuses (:702
 });
 
 test('a12: ToggleHand\'s BowLeftHandWithSwitching arm - the switch delay, verbatim (:713-727)', () => {
+  // PIN MOVED (TWO-HANDS AUDIT): the arm is pinned on its own case, a bow in the left hand - a katana and a dagger are a
+  // dual pair now (handsLaw.js handsModeOf), both up, and H between them changes the lead and nothing else, so it bills
+  // nothing (playerWeapon.js toggleHand; Two-Hands.md "H ends the exchange").
   const pw = new PlayerWeapon({});
-  pw.updateHands(KATANA, DAGGER);
+  pw.updateHands(KATANA, LONG_BOW);
+  pw.applyWeapon();
   const entity = {};
   // Default OFF (defaults.ini Enhancements/BowLeftHandWithSwitching =
   // False), which is the CLASSIC lane: switching costs nothing.
   pw.toggleHand({ entity });
   assert.equal(entity.equipCountdown ?? 0, 0, 'the classic lane pays no switch delay');
   // ON: sum over both hands of (EquipDelayTimes[GroupIndex] - 500),
-  // divided by 1.7. Katana is weapon index 8 (1700), Dagger index 0
-  // (500), so 1200 + 0 = 1200.
+  // divided by 1.7. Katana is weapon index 8 (1700), Long Bow index
+  // 17 (5000), so 1200 + 4500 = 5700.
   pw.toggleHand({ entity, bowSwitching: true });
-  assert.equal(entity.equipCountdown, 1200 / BOW_SWITCH_DIVISOR);
+  assert.equal(entity.equipCountdown, 5700 / BOW_SWITCH_DIVISOR);
   assert.equal(BOW_SWITCH_DIVISOR, 1.7, 'WeaponManager.cs:45');
-  // switchDelay <= 0 bills nothing (:720): two daggers are 0 + 0.
+  // switchDelay <= 0 bills nothing (:720): a lone dagger is 0.
   const e2 = {};
   const pw2 = new PlayerWeapon({});
-  pw2.updateHands(DAGGER, DAGGER);
+  pw2.updateHands(DAGGER, null);
+  pw2.applyWeapon();
   pw2.toggleHand({ entity: e2, bowSwitching: true });
   assert.equal(e2.equipCountdown ?? 0, 0, 'a non-positive switchDelay never bills');
+  // The pair: H picks the lead, nothing is billed.
+  const e3 = {};
+  const pw3 = new PlayerWeapon({});
+  pw3.updateHands(KATANA, DAGGER);
+  pw3.applyWeapon();
+  pw3.toggleHand({ entity: e3, bowSwitching: true });
+  assert.equal(e3.equipCountdown ?? 0, 0, 'a dual pair pays no switch delay');
 });
 
 test('a12: usingLeftHandWeapon imports off a classic save (StartGameBehaviour.cs:606)', () => {
