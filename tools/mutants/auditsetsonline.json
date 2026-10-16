@@ -182,11 +182,12 @@
   {
     "name": "SETS-M2-dungeon-opens-it",
     "file": "src/scenes/dungeonContext.js",
-    "old": "      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }   // AUDIT SETS M2: not opened here\n",
+    "old": "      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u)) && !roomPersonal(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }   // AUDIT SETS M2: not opened here - GRAVE-PARTY: unless it is a room container (PARTY-LOOT's), which is this player's own then (roomLootHost.js roomPersonal)\n",
     "new": "",
     "tests": [
       "test/auditsetsonline.test.js"
-    ]
+    ],
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): the line gained the room container's personal arm (roomPersonal) - re-aimed by content; deleting it still opens what no word says may open."
   },
   {
     "name": "SETS-L6-values-unchecked",

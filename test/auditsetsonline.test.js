@@ -210,7 +210,7 @@ test('AUDIT SETS M2: A ROOM\'S WORD THIS BUILD CANNOT READ - a newer game\'s ite
   assert.match(wm, /unreadable: _intShared\.unreadable \}\)/, 'the building\'s set handed to the door');
   assert.match(dun, /if \(!items\) \{ if \(lootHolder\(canon\) && !respawnDue\(rec\.t, _wallNow\(\)\)\) \{ _lootSeen\.add\(canon\); _lootUnreadable\.add\(canon\); \} continue; \}/, 'a word due back (WORLD8) locks nothing');
   assert.match(dun, /if \(_lootUnreadable\.has\(canon\)\) return false;   \/\/ AUDIT SETS M2/, 'never claimed or closed over in a dungeon');
-  assert.match(dun, /if \(_u && _lootUnreadable\.has\(lootKeyOf\(_u\)\)\) \{ setMidScreenText\(LOOT_NEWER_TEXT\); return 0; \}/, 'nor opened');
+  assert.match(dun, /if \(_u && _lootUnreadable\.has\(lootKeyOf\(_u\)\) && !roomPersonal\(lootKeyOf\(_u\)\)\) \{ setMidScreenText\(LOOT_NEWER_TEXT\); return 0; \}/, 'nor opened');   // PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): unless it is a room container (PARTY-LOOT's shared base), which is the player's own then - never said to the room (roomLootHost.js roomPersonal; test/fb1016b_graveparty.test.js)
   assert.match(LOOT_NEWER_TEXT, /newer version of the game/);
 });
 

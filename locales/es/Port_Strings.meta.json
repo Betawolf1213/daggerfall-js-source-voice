@@ -8019,6 +8019,11 @@
   "tr": "9dfd5aaba365",
   "by": "claude-in-session"
  },
+ "loot.ownVersion": {
+  "en": "009b8efb6dce",
+  "tr": "d276e61a2508",
+  "by": "claude-in-session"
+ },
  "lootBanner.honour.aura": {
   "en": "87c2003333d4",
   "tr": "f44abb052aab",
@@ -18697,6 +18702,16 @@
  "sea.chart.zoomOut": {
   "en": "a4ae4b24a1f5",
   "tr": "b2ff5750d776",
+  "by": "claude-in-session"
+ },
+ "search.searchedBy": {
+  "en": "e585f232c88f",
+  "tr": "334fffb748fe",
+  "by": "claude-in-session"
+ },
+ "search.yourParty": {
+  "en": "157a6a9b14df",
+  "tr": "236728032d90",
   "by": "claude-in-session"
  },
  "serpent.honour.aura": {

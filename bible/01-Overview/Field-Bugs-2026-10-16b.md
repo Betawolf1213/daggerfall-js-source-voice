@@ -18,6 +18,7 @@ main's `7e0424e0` (main took `Field-Bugs-2026-10-16b.md` for HORSE-LIT meanwhile
 | 10 | "Friend invivible and randomly popping up"; "Partied players popping in and out randomly after leaving tombs at graveyard ... also partied players inside tombs are invisible for a time" | every place change is a new relay room whose socket asked for its identity token only as it opened - a mint on the wire (seconds) between the door and the hello, paid going in past the reuse minute and always coming out (the cell outside spent by the token that left it); a hello sent tokenless because its token came late waited out its backoff after the token arrived | fixed (DOOR-TOKEN) |
 | 11 | "If you just sit near the wall between the shelves, when you fail to steal something, the guard will come running, but they simply can't reach you because they run into the wall instead of going through the door" | the watch called into a building walked the classic motor - straight at the player, along the first wall - and only the dungeon baked a navmesh; a partition held them for the whole crime | fixed (INDOOR-WATCH) |
 | 12 | "I was testing with a friend, he dies and I cast resurrection. It works for a moment then he disappears and remains dead" | online the death door wrote a Bloodline fall at once - the death, the remains, the Succession waiting and the realm's tombstone - so the Resurrect raised a body the house had already buried, and the slow step opened "The line ends" over it a second later | fixed (REZ-BLOODLINE) |
+| 13 | "graveyard loot on headstones are able to be looted by others, objects in tombs are un lootable" | a headstone's search lived in its searcher's game alone; underground a coffin's word locked everyone in the room, strangers too ("You have already searched here."); a floor coffin was out of SEARCH_REACH measured from the eye; a PARTY-LOOT pile another build's word made unreadable stood unborn for good | fixed (GRAVE-PARTY) |
 
 ## FIRST-PICK: a change on its way gates a change, never a rank's first choice (1)
 
@@ -585,3 +586,80 @@ What the reporter is owed: your friend's Resurrection now saves him. While his d
 minutes), a party member's Resurrection brings him back with his house untouched - no death on the tree, no Succession,
 no tombstone. If the death has already been settled (he chose to go on, the time ran out, the page was closed or
 reloaded), the caster is told "<name> has fallen for good" and keeps the spell's magicka.
+
+## GRAVE-PARTY: a search is its searcher's party's, above ground and below (13)
+
+`src/systems/searchables.js` (the ledger's name, `searchedText`, the party lens, `searchReachFor`);
+`src/scenes/searchPartyHost.js` (new: activateGrave out of bootWorld, the stone said to and heard from the cell);
+`src/scenes/searchRoom.js` (new: whose a `srch:` word is); `src/net/overworldLaw.js` owFoldGraves; `src/net/wire.js` the
+`gr` kind; `src/net/online.js` sendOverworld 'gr' and the welcome; `server/src/index.js` `_owGraves`;
+`src/scenes/dungeonContext.js` applyLoot, lootRecords, searchHeard, activateSearchable, lootTargets and the memory;
+`src/scenes/roomLootHost.js` roomUnborn, roomPersonal, roomSettle; `src/scenes/worldModes.js` the headstones' reach;
+`src/scenes/world.js` the wiring.
+
+THE REPORT ("A few things"): "graveyard loot on headstones are able to be looted by others, objects in tombs are un
+lootable (have not tried dungeons yet)". A "tomb" is the Graveyard's Cemetery dungeon (dungeonType 18, the M0000000-8
+crypt blocks), its room `dungeon:m<id>`.
+
+FOUND.
+- **Headstones.** `activateGrave` keyed its five hours on this save's own ledger (`searchKey(g.loc, g.key)`,
+  `markSearched`) and its find was a pile at the searcher's feet; nothing was said to anyone - Searchables.md's own four
+  hosts line read "NOT shared with the party above ground", and the overworld ledger's cell knew only `sp` and `dg`.
+  Driven over the real relay Room and real OnlineSessions, a partymate's press searched the stone again - against Mac's
+  SEARCH1-PARTY ask ("When one player in the party interacted with it no one else can again for 5 hours").
+- **Tombs, three causes.** (1) Every search said `srch:<i>` to the whole room whatever it rolled, and `applyLoot` ->
+  `searchHeard` started five hours for everyone who heard it, strangers too - the only answer "You have already searched
+  here." - and landed the stranger's list over the holder's own find. (2) A PARTY-LOOT pile whose room word this build
+  cannot read (M2's `_lootUnreadable`, a mixed-build room) stayed `roomUnborn` for good: drawn with no plaque and no press,
+  M2's own "Reload to open it" never reached. (3) Reach was measured from the eye: on the real pick, from 1.2 m beside a
+  0.45 m coffin the eye's ray to its lid runs 1.80 m, past SEARCH_REACH (1.6 m) - "too far"; a coffin answered only within
+  ~0.9 m of its side.
+
+CHANGED:
+- **The cell keeps its graves.** The overworld ledger's third kind is `gr`: the searcher's game says `[px, py, n]`; the
+  relay (`_owGraves`, a Room method of its own) stamps each stone with its own minute and the searcher's verified account
+  (`a.sub`), keeps it `OW_GRAVE_KEEP_MIN` (pinned to SEARCH_COOLDOWN_MINUTES), says it to the cell and repeats it in the
+  welcome; junk off the cell's widened square is refused; bounded at `OW_CELL_GRAVES_MAX`; an older relay is told nothing
+  (`relaySupportsOwGraves`). `scenes/searchPartyHost.js` owes the stone until the cell takes it, lands the rows of my party
+  (or my own account) through `markSearched` with the searcher's seat name, and keeps a book it reads again at the stone -
+  a partymate who searched before the party was made still locks it. The cell keeps them in each relay layer apart (a
+  party plays in one).
+- **The tomb's word is the searcher's party's.** `srch:` records carry `by` (the account); `scenes/searchRoom.js` decides
+  whose a word is (one with no `by`, an older build's, is its live speaker's through the hub's peer map). A stranger's word
+  is kept unlanded, read again at the object, and carried in the room's memory for the stranger's own partymates who walk
+  in later - bounded hard, as they ride the 512 KB memory (an honest find only, at most four pieces under 4,096 bytes, 4 an
+  object, 24 in all, each let go at the room's hour).
+- **"Already searched by <name>."** (`searchedText`) for a partymate's search; my own still says SEARCHED_TEXT; the save
+  keeps the name.
+- **The reach is the body's.** `searchReachFor` measures from the feet-to-head segment to the box's nearest point, in the
+  dungeon's lootTargets and the street's headstones alike; the bound stays Mac's 1.6 m.
+- **An unreadable PARTY-LOOT container is the player's own** (`roomPersonal`): a target again with its own list, said once
+  ("Another version of the game shares this room - what you find here is yours alone."), its takes never said to the room
+  nor claimed of the host.
+- DEPARTURES, named in Searchables.md: SEARCH1-PARTY's "the room's word starts everyone's five hours" struck (Mac's ask
+  was the party's); SEARCH1's "half of the interact range as doors" measured from the body, not the eye. Three new
+  strings through `t()`, drafted in the thirteen whole languages. The relay's version moves with REZ-BLOODLINE's (one
+  deploy, world210).
+
+THE FOUR HOSTS: world.js - WIRED (activateGrave moved out by tools/hostMove.mjs; construction, routing and frame on lines
+it already had; the ceiling LOWERED to 21,638); worldModes.js - WIRED (the headstones' reach); dungeonContext.js - WIRED (both
+dungeon hosts have it; dungeon.js has no room and no lens); exterior.js - the bench stands no headstone (pinned). Pinned by
+`test/fb1016b_graveparty.test.js` (8, end to end above ground over the real relay Room and OnlineSessions, and underground
+over the dungeon host's own doors); `tools/mutants/fb1016b_graveparty.json` (61, all dead). PINS MOVED (each marked):
+auditsetsonline (M2's personal arm), auditworld34, auditworld4, world1, world4 (the memory composes strangers' searches;
+world4 the applyLoot ask and lootRecords' fields), world8 (lootRecords' fields), dsize1_mediumdungeons, renowngate,
+search1_searchables, silverfinds_client (activateGrave in searchPartyHost.js), fb1004c_robes (the reach), ow6_ledger
+(owLedgerOf's shape, OW_KINDS, the routing), hostceiling; mutants SETS-M2-dungeon-opens-it, ROBES-dungeon-search-box-raced,
+HOST-SPLIT-a-ceiling-under-its-host, OW6H-unheard, OW6H-never-said, OW6L-relay-the-welcome-unsaid, S38-version-not-bumped
+and SILVER-FINDS-grave-unasked re-aimed by content, all dead.
+
+FLAGGED, not taken: above ground the FIND is not shared - the stone is locked for the party, its pile the searcher's (a
+cell has no container protocol; a slice of its own); a `srch:` word's `by` is a peer's word (a modified client could name
+a partymate of mine and lock my coffin - the act channel's existing trust); an older build in the room still lands every
+`srch:` word room-wide; a stone at a cell seam is said to the searcher's primary cell (a partymate in the next cell hears
+it only through a halo); a PARTY-LOOT claim in flight when the word turns unreadable lapses and recomposes the list.
+
+What the reporter is owed: a headstone your party searched is searched for the whole party, and the game tells you who
+searched it; a stranger's search no longer locks anything for you. In a tomb, coffins a stranger opened are yours to
+search, and you can search one standing right beside it. A treasure pile that showed but could not be clicked (another
+game version in the room) opens now.

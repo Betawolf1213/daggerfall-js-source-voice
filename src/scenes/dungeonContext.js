@@ -60,7 +60,7 @@ import { releaseUnloadGuard } from '../systems/unloadGuard.js';   // AUDIT-MACL 
 import { longitudeLatitudeToMapPixel } from '../formats/mapsFile.js';   // MAC6 #1: the save names the pixel the dungeon stands on
 import { openPixelDial } from '../ui/pixelDial.js';   // PX15b: the Tab compass rose
 import { ActionTextBox, ActionInputBox } from '../ui/actionText.js';
-import { searchableKind, searchName, SEARCH_KINDS, SEARCH_REACH, SEARCH_FOES_PER_PLAYER, SEARCH_FOE_SPACING, SEARCH_DOOR_REACH_M, searchKey, searchCooldownLeft, markSearched, isPicked, markPicked, SEARCHED_TEXT, searchLockValue, rollSearchOutcome, pickSearchUndead, pickRosterFoe, rollSearchElite, searchMessage, mintSearchFind, setSearchClock } from '../systems/searchables.js';   // SEARCH1: coffins, shelves, headstones, chests and crates
+import { searchableKind, searchName, SEARCH_KINDS, SEARCH_FOES_PER_PLAYER, SEARCH_FOE_SPACING, SEARCH_DOOR_REACH_M, searchKey, searchCooldownLeft, markSearched, isPicked, markPicked, searchedText, searchReachFor, searchLockValue, rollSearchOutcome, pickSearchUndead, pickRosterFoe, rollSearchElite, searchMessage, mintSearchFind, setSearchClock } from '../systems/searchables.js';   // SEARCH1: coffins, shelves, headstones, chests and crates
 import { silverFindAt } from '../systems/silverFinds.js';   // SILVER-FINDS: a body, a treasure pile or a search's find holds silver now and then
 import { interiorLockpickingChance } from '../world/actionSystem.js';   // SEARCH1: a locked chest picks as an interior door does
 import { registerPresenter, messageBox } from '../systems/notify.js';   // ENH-NOTICE3: this context's window stack and its PopupText, offered to the one door every message goes through - and the door itself, for the seams that name a KIND
@@ -332,6 +332,7 @@ import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first tou
 import { isStartDungeon } from '../systems/startDungeon.js';   // TUT1: the starting cave is the welcome tour's
 import { takeOwed } from '../systems/playerDoor.js';   // FIELD BUGS 2026-10-12g OPEN-HAND: a follow-up blow owed a body the relay runs, sent in its blow's one claim
 import { createRoomLoot } from './roomLootHost.js';   // HOST-SPLIT
+import { createSearchRoom } from './searchRoom.js';   // GRAVE-PARTY: whose a searched object's word is - the searcher's party's, never a stranger's
 
 
 
@@ -1432,7 +1433,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   let _roomMintHold = 0;            // a restore lands the room's words before anything mints over them
   let _roomClaimN = 0;              // this context's claims, counted (roomClaimId)
   let _roomNowMs = 0;               // the frame's clock as the claims' tick last read it
-  const { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, settleRoomBonus } = createRoomLoot({   // HOST-SPLIT: src/scenes/roomLootHost.js
+  const { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomPersonal, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, settleRoomBonus } = createRoomLoot({   // HOST-SPLIT: src/scenes/roomLootHost.js
     _deepCleared, _deepFoeCleared, _sharedFoe, _wildDungeon, _wildRing, eliteLootOpts, fightN, foes, lootKeyOf,
     lootableBody, opts, respawnDue, rollPileItems, roomLootKey, settleLootFlat,
     get _authority() { return _authority; },
@@ -6011,6 +6012,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  own roll and its close said that roll, so every piece a newer player had stored there was gone for the room and
    *  its memory. Such a container is the room's, unread: never opened, claimed or closed over here. */
   const _lootUnreadable = new Set();
+  const searchRoom = createSearchRoom({ respawnDue, wallNow: () => _wallNow() });   // GRAVE-PARTY (scenes/searchRoom.js): a `srch:` word lands only from my party - a stranger's is kept, unlanded
   const _lootAt = new Map();     // WORLD8: canon -> when the room last spoke about it (the relay's clock); the hour's respawn reads it
   let _lootOpenKey = null;       // AUDIT WORLD4 C1: the container THIS player has a window open on
   const _lootTooBig = new Set(); // AUDIT WORLD4 A1/A2/B2/D1: the containers this client cannot say (said once)
@@ -6118,7 +6120,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         continue;
       }
       _lootTooBig.delete(canon);
-      out.push({ k: canon, r: peerHanded(held).map((it) => ({ ...it })), ...(Number.isFinite(_lootAt.get(canon)) ? { t: _lootAt.get(canon) } : {}) });   // WORLD8: the stamp rides the record   // AUDIT SS: and never a bound piece (itemBound.js) - an older build connected beside this one would land it; HACKED-GOLD: nor a letter of credit
+      out.push({ k: canon, r: peerHanded(held).map((it) => ({ ...it })), ...(Number.isFinite(_lootAt.get(canon)) ? { t: _lootAt.get(canon) } : {}), ...(canon.startsWith('srch:') ? searchRoom.fields(searchables[Number(canon.slice(5))]) : {}) });   // GRAVE-PARTY: a searched object's word names its searcher   // WORLD8: the stamp rides the record   // AUDIT SS: and never a bound piece (itemBound.js) - an older build connected beside this one would land it; HACKED-GOLD: nor a letter of credit
     }
     return out;
   }
@@ -6170,6 +6172,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       const canon = lootKeyOf(rec?.k);
       if (!canon) continue;
       if (isRoomBaseContainer(canon)) { n += landRoomWord(canon, rec, from); continue; }   // PARTY-LOOT: a room container's word is takes against its base, merged - never a list landed over it
+      const _srch = canon.startsWith('srch:') ? searchRoom.ours(canon, rec, from) : true; if (!_srch) continue;   // GRAVE-PARTY: a stranger's search is no word of mine - kept, never landed (its hours, its find)
       const items = peerHanded(validLootList(rec.r));   // SS3: a container is the room's - a bound piece in one never lands; HACKED-GOLD: nor a letter of credit, a peer's gold
       if (!items) { if (lootHolder(canon) && !respawnDue(rec.t, _wallNow())) { _lootSeen.add(canon); _lootUnreadable.add(canon); } continue; }   // AUDIT SETS M2: the room has spoken, in words this build cannot read (a word due back is the room's no longer - WORLD8)
       const held = lootHolder(canon);
@@ -6179,7 +6182,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (respawnDue(rec.t, _now)) continue;   // WORLD8: the room emptied it longer ago than this dungeon's respawn - due back; my own roll stands and the record is not the room's word any more
       _lootSeen.add(canon);   // the room HAS opened it, whether or not I may land it right now
       { const _t = Number.isFinite(rec.t) ? (_now == null ? rec.t : Math.min(rec.t, _now)) : _now; if (_t != null) _lootAt.set(canon, _t); }
-      if (canon.startsWith('srch:')) searchHeard(Number(canon.slice(5)), _lootAt.get(canon));   // SEARCH1: another's search starts my five hours too   // WORLD8: the room's stamp, or now for a record without one; AUDIT WORLD7/8 C2: never AHEAD of now - a peer's far-future stamp switched the hour off for everyone and rode into the memory for thirty days
+      if (canon.startsWith('srch:')) searchHeard(Number(canon.slice(5)), _lootAt.get(canon), _srch);   // SEARCH1: another's search starts my five hours too   // WORLD8: the room's stamp, or now for a record without one; AUDIT WORLD7/8 C2: never AHEAD of now - a peer's far-future stamp switched the hour off for everyone and rode into the memory for thirty days
       if (canon === _lootOpenKey) { n++; continue; }   // C1: not under an open window
       held.length = 0;
       for (const it of items) held.push(it);
@@ -8289,11 +8292,12 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   setSearchClock(() => worldMinutes());   // a save drops the cooldowns already run out
   /** SEARCH1-PARTY: the room has spoken about searchable `i` (applyLoot) - its five hours run for me from the room's
    *  stamp (the relay's millisecond, read back as the shared world minute), or from now where there is none. */
-  function searchHeard(i, stampMs) {
+  function searchHeard(i, stampMs, w = null) {
     const sb = searchables[i];
     if (!sb) return;
     const at = Number.isFinite(stampMs) && sharedClockOn() ? sharedClassicMinutes(stampMs) : worldMinutes();
-    markSearched(searchKey(searchLocationKey(), sb.key), Math.min(at, worldMinutes()));
+    if (w?.acct) sb.by = w.acct;   // GRAVE-PARTY: whose find it holds, said on with it
+    markSearched(searchKey(searchLocationKey(), sb.key), Math.min(at, worldMinutes()), w?.who ?? null);   // GRAVE-PARTY: a partymate's by name
   }
   /** SEARCH1-PARTY: how many foes a search wakes - two for every player of the party standing in this dungeon. */
   const searchFoeCount = () => SEARCH_FOES_PER_PLAYER * (1 + Math.max(0, (opts.party?.() ?? []).length | 0));
@@ -8381,13 +8385,14 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!sb) return 0;
     if (activeOverlay && !activeOverlay.done) return 1;
     const key = searchKey(searchLocationKey(), sb.key);
+    searchRoom.adopt(i, (rec, from) => applyLoot([rec], from));   // GRAVE-PARTY: a word kept as a stranger's, now my party's (the party made since) - landed before anything is asked
     const open = sb.items.length > 0;   // a find still lying in it (mine, or a partymate's)
     if (mode === 'info') { setMidScreenText(presentNpcInfoText(`a ${searchName(sb.kind, !open && sb.lock > 0 && !isPicked(key)).toLowerCase()}`)); return 1; }
     const centre = [(sb.aabb.min[0] + sb.aabb.max[0]) / 2, (sb.aabb.min[1] + sb.aabb.max[1]) / 2, (sb.aabb.min[2] + sb.aabb.max[2]) / 2];
     const now = worldMinutes();
     const cooling = searchCooldownLeft(key, now) > 0;
     if (cooling && open) return api.takeLoot(`srch:${i}`);   // the room's find, as it stands
-    if (cooling) { setMidScreenText(SEARCHED_TEXT); return 1; }
+    if (cooling) { setMidScreenText(searchedText(key)); return 1; }   // GRAVE-PARTY: and by whom, a partymate's
     if (sb.lock > 0 && !isPicked(key)) {
       const skill = skillValue(playerEntity, SKILLS.Lockpicking);
       // PVPFIX (the owner: \"Undeniable Access/lockpicking should actually work on locked crates\"): an armed Open spell
@@ -8419,7 +8424,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       find = mintSearchFind(sb.kind, { level, gender: playerEntity.gender, tier: dungeonRarityTier(dt), family: dungeonFamily(dt), luck: liveStat(playerEntity, 'luck') });
     }
     sb.items.length = 0;
-    sb.items.push(...find);   // in place: the room's holder
+    sb.items.push(...find); sb.by = searchRoom.mine();   // in place: the room's holder; GRAVE-PARTY: and the search mine
     publishLoot(`srch:${i}`);   // the room hears it now - its five hours, and the find's list
     let rows, onClose = null;
     if (outcome === 'foe') {
@@ -8477,7 +8482,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // its mesh against the Hall's box, the winner turned on rounding ray by ray. The search stands down while the Hall
     // claims the shelf, and stands again when it does not.
     const recordsHere = !!opts.castleRecordsHere?.();
-    searchables.forEach((sb, i) => { if (!(sb.records && recordsHere)) targets.push({ key: `search:${i}`, aabb: sb.aabb, distance: RAY_DISTANCE, reach: SEARCH_REACH, surface: true }); });
+    searchables.forEach((sb, i) => { if (!(sb.records && recordsHere)) targets.push({ key: `search:${i}`, aabb: sb.aabb, distance: RAY_DISTANCE, reach: searchReachFor(sb.aabb, lastPlayerFeet, lastPlayerFeet ? lastPlayerFeet[1] + lastPlayerHeight : NaN), surface: true }); });   // GRAVE-PARTY: the reach from the body to the box (systems/searchables.js searchReachFor) - a coffin on the floor beside the player
     targets.push(...droppedLoot.lootTargets());   // U26: the player's own drops
     targets.push(...droppedTorches.targets());   // HT1: the dropped torches, at the mod's 3.2
     targets.push(...camps.targets());   // SURV3: the fires, at the same 3.2
@@ -9699,7 +9704,9 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       delete w.droppedTorches;   // HT1
       // WORLD4: the memory carries EMPTIED, not contents - the piles' blanket list goes, and in its place the
       // containers the room has actually opened, each with what is left in it. A pile nobody has touched stays
-      // every client's own roll, as it was before anyone arrived.
+      // every client's own roll, as it was before anyone arrived. GRAVE-PARTY (FIELD BUGS 2026-10-16): and beside them the
+      // strangers' searches this client heard and did not land (scenes/searchRoom.js records) - carried on, so a stranger's
+      // own partymates who walk in later still hear their party's search.
       // AUDIT WORLD4 D4/B3: and neither does a FOE's item list, which `corpse:<i>` reads - it rode the foes half of
       // the same envelope for every body, opened or not, so the law was false for half the container vocabulary and
       // an opened corpse was carried twice. The foes half keeps the foe (WORLD2's roster is the room's); its loot is
@@ -9710,7 +9717,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // validSharedFoe) has no field for it, and one there is a relay deploy. Every client destroys the same flame
       // foes on its own build (PrepareAbyssDungeon), and the hour's respawn refuses a destroyed foe on each.
       for (const f of w.foes) delete f.abyssDestroyed;
-      w.loot = lootRecords([..._lootSeen]);
+      w.loot = [...lootRecords([..._lootSeen]), ...searchRoom.records()];
       for (const f of w.foes) delete f.noBody;   // REVENANT-FATE: the room's door has no field for it either
       for (const f of w.foes) delete f.eliteFoe;   // AUDIT BAL: the save's word on an elite is the save's alone - every client's pick is the room's (applyWorld)
       // AUDIT WORLD34 C2: the memory's action records are the SHARED half, as an act's are (AUDIT WORLD3 B1) - the
@@ -10527,7 +10534,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         if (p) lootHooks = droppedLootHooks(p);   // G5: playerOwned - the icon cycles
       }
       if (!source) return 0;
-      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }   // AUDIT SETS M2: not opened here
+      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u)) && !roomPersonal(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }   // AUDIT SETS M2: not opened here - GRAVE-PARTY: unless it is a room container (PARTY-LOOT's), which is this player's own then (roomLootHost.js roomPersonal)
       if ((kind === 'loot' || kind === 'corpse') && roomUnborn(key)) return 0;   // PARTY-LOOT: the room's word for it has not come - nothing of this copy's own is taken
       // LOOT-STACK: a window that has CLOSED is no window - a tab closes
       // its body's window and opens the next through here in one click,

@@ -1,0 +1,612 @@
+[
+  {
+    "name": "GRAVE-PARTY-the-name-dropped",
+    "file": "src/systems/searchables.js",
+    "old": "t: nowMinutes, w: typeof who === 'string' && who ? who.slice(0, SEARCH_WHO_MAX) : null });",
+    "new": "t: nowMinutes, w: null });",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a partymate's search lands with no name - \"You have already searched here.\" of a stone the player never touched"
+  },
+  {
+    "name": "GRAVE-PARTY-an-earlier-word-shortens",
+    "file": "src/systems/searchables.js",
+    "old": "  if (e && Number.isFinite(e.t) && e.t > nowMinutes) return;\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a memory or welcome about an earlier search winds a later one back"
+  },
+  {
+    "name": "GRAVE-PARTY-the-text-never-names",
+    "file": "src/systems/searchables.js",
+    "old": "return w ? t('search.searchedBy', 'Already searched by {name}.', { name: w }) : SEARCHED_TEXT; };",
+    "new": "return SEARCHED_TEXT; };",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the searcher unsaid"
+  },
+  {
+    "name": "GRAVE-PARTY-the-save-drops-the-name",
+    "file": "src/systems/searchables.js",
+    "old": "rows.push(e.w ? [k, Number.isFinite(e.t) ? e.t : null, e.u ? 1 : 0, e.w] : [k,",
+    "new": "rows.push(e.w ? [k, Number.isFinite(e.t) ? e.t : null, e.u ? 1 : 0] : [k,",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the save forgets who searched it"
+  },
+  {
+    "name": "GRAVE-PARTY-the-restore-drops-the-name",
+    "file": "src/systems/searchables.js",
+    "old": "_ledger.set(r[0], { t, u: r[2] === 1, w: typeof r[3] === 'string' && r[3] ? r[3].slice(0, SEARCH_WHO_MAX) : null });",
+    "new": "_ledger.set(r[0], { t, u: r[2] === 1, w: null });",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a load forgets who searched it"
+  },
+  {
+    "name": "GRAVE-PARTY-a-stranger-is-the-party",
+    "file": "src/systems/searchables.js",
+    "old": "  return _party.inParty?.(acct) ? 'party' : null;",
+    "new": "  return 'party';",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "every searcher locks everyone - the bug"
+  },
+  {
+    "name": "GRAVE-PARTY-a-stranger-named",
+    "file": "src/systems/searchables.js",
+    "old": "  if (searchKinOf(acct) !== 'party') return null;\n  const n = _party?.nameOf?.(acct);",
+    "new": "  const n = _party?.nameOf?.(acct);",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stranger's search told by name"
+  },
+  {
+    "name": "GRAVE-PARTY-the-reach-from-the-eye",
+    "file": "src/systems/searchables.js",
+    "old": "  return searchBodyDistance(aabb, feet, Number.isFinite(top) ? top : feet[1]) <= SEARCH_REACH ? RAY_DISTANCE : SEARCH_REACH;",
+    "new": "  return SEARCH_REACH;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the coffin on the floor too far again - the bug"
+  },
+  {
+    "name": "GRAVE-PARTY-the-reach-unbounded",
+    "file": "src/systems/searchables.js",
+    "old": "  return searchBodyDistance(aabb, feet, Number.isFinite(top) ? top : feet[1]) <= SEARCH_REACH ? RAY_DISTANCE : SEARCH_REACH;",
+    "new": "  return RAY_DISTANCE;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "searched from across the room"
+  },
+  {
+    "name": "GRAVE-PARTY-the-body-has-no-height",
+    "file": "src/systems/searchables.js",
+    "old": "  const lo = Math.min(feet[1], top), hi = Math.max(feet[1], top);",
+    "new": "  const lo = feet[1], hi = feet[1];",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the body a point at the feet"
+  },
+  {
+    "name": "GRAVE-PARTY-a-grave-re-taken",
+    "file": "src/net/overworldLaw.js",
+    "old": "    if (led.gr[k]) continue;\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the same searcher's row re-taken inside its hours - its clock wound on"
+  },
+  {
+    "name": "GRAVE-PARTY-a-grave-kept-past-its-hours",
+    "file": "src/net/overworldLaw.js",
+    "old": "nowMin - /** @type {number} */ (g[3]) < OW_GRAVE_KEEP_MIN;",
+    "new": "nowMin - /** @type {number} */ (g[3]) < OW_GRAVE_KEEP_MIN * 2;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stone locked ten hours"
+  },
+  {
+    "name": "GRAVE-PARTY-the-graves-unbounded",
+    "file": "src/net/overworldLaw.js",
+    "old": "  if (keys.length <= OW_CELL_GRAVES_MAX) return false;\n  keys.sort((a, b) => /** @type {number} */ (led.gr[a][3])",
+    "new": "  return false;\n  keys.sort((a, b) => /** @type {number} */ (led.gr[a][3])",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a cell keeps every grave ever searched"
+  },
+  {
+    "name": "GRAVE-PARTY-the-welcome-unsaid",
+    "file": "src/net/overworldLaw.js",
+    "old": "  return gr.length ? { sp, dg, gr } : { sp, dg };",
+    "new": "  return { sp, dg };",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a player who walks in later is never told"
+  },
+  {
+    "name": "GRAVE-PARTY-the-graves-unread",
+    "file": "src/net/overworldLaw.js",
+    "old": "  for (const r of gsrc && typeof gsrc === 'object' ? Object.values(gsrc) : []) { const g = owGraveOut(r); if (g) led.gr[owGraveKey(g)] = g; }\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the stored graves never read back - forgotten at every sleep"
+  },
+  {
+    "name": "GRAVE-PARTY-the-prune-keeps-them",
+    "file": "src/net/overworldLaw.js",
+    "old": "  for (const [k, g] of Object.entries(led.gr)) if (!owGraveLive(g, nowMin)) { delete led.gr[k]; dropped = true; }",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stone searched hours ago stays in the store"
+  },
+  {
+    "name": "GRAVE-PARTY-an-older-relay-told",
+    "file": "src/net/wire.js",
+    "old": "export const OW_GRAVE_RELAY_MIN = 208;",
+    "new": "export const OW_GRAVE_RELAY_MIN = 207;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "world207 closes the socket on the word"
+  },
+  {
+    "name": "GRAVE-PARTY-no-such-kind",
+    "file": "src/net/wire.js",
+    "old": "export const OW_KINDS = Object.freeze(['sp', 'dg', 'gr']);",
+    "new": "export const OW_KINDS = Object.freeze(['sp', 'dg']);",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the word refused at both ends"
+  },
+  {
+    "name": "GRAVE-PARTY-an-empty-account",
+    "file": "src/net/wire.js",
+    "old": "typeof r[4] === 'string' && r[4].length > 0 && r[4].length <= OW_GRAVE_ACCT_MAX",
+    "new": "typeof r[4] === 'string' && r[4].length <= OW_GRAVE_ACCT_MAX",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a row naming nobody heard"
+  },
+  {
+    "name": "GRAVE-PARTY-the-session-tells-an-older-relay",
+    "file": "src/net/online.js",
+    "old": ": k === 'gr' && this.owGraveOk ? validOwIn(",
+    "new": ": k === 'gr' ? validOwIn(",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "an older relay closes the socket on the word"
+  },
+  {
+    "name": "GRAVE-PARTY-the-session-asks-no-margin",
+    "file": "src/net/online.js",
+    "old": "validOwIn({ k, rows: payload.filter((r) => owRowInCell(r, room)).slice(0, OW_WORD_ROWS_MAX) }) : null;",
+    "new": "validOwIn({ k, rows: payload.slice(0, OW_WORD_ROWS_MAX) }) : null;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stone the cell would strike said - the socket struck"
+  },
+  {
+    "name": "GRAVE-PARTY-the-welcome-unread",
+    "file": "src/net/online.js",
+    "old": ", validOwOut({ k: 'gr', rows: m.ow.gr })].filter(Boolean) : [];",
+    "new": "].filter(Boolean) : [];",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a later player never hears the cell's graves"
+  },
+  {
+    "name": "GRAVE-PARTY-the-session-never-knows",
+    "file": "src/net/online.js",
+    "old": "      if (primary) this.owGraveOk = relaySupportsOwGraves(relayV);",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "nothing is ever said"
+  },
+  {
+    "name": "GRAVE-PARTY-the-relay-asks-no-margin",
+    "file": "server/src/index.js",
+    "old": "    if (!m.rows.every((r) => owRowInCell(r, a.key))) { this._junk(ws); return; }\n    if (typeof a.sub",
+    "new": "    if (typeof a.sub",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stone in another cell kept here"
+  },
+  {
+    "name": "GRAVE-PARTY-the-relay-unfanned",
+    "file": "server/src/index.js",
+    "old": "    const out = JSON.stringify({ t: 'ow', k: 'gr', rows: taken });\n    const room = owRoomGate(this._roomOw, now);\n    this._roomOw = room.bucket;\n    if (room.pass) { for (const [other, b] of [...this._all()]) if (b.id) this._send(other, out); }",
+    "new": "    const out = JSON.stringify({ t: 'ow', k: 'gr', rows: taken });\n    const room = owRoomGate(this._roomOw, now);\n    this._roomOw = room.bucket;\n    if (room.pass) { this._send(ws, out); }",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the partymates standing there never told"
+  },
+  {
+    "name": "GRAVE-PARTY-the-relay-trusts-a-name",
+    "file": "server/src/index.js",
+    "old": "    const taken = owFoldGraves(led, m.rows, a.sub, sharedClassicMinutes(now));",
+    "new": "    const taken = owFoldGraves(led, m.rows, a.name, sharedClassicMinutes(now));",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the searcher by a name, not the verified account"
+  },
+  {
+    "name": "GRAVE-PARTY-the-relay-unwritten",
+    "file": "server/src/index.js",
+    "old": "    owPrune(led, now);\n    await this._owWrite(led);\n    const out = JSON.stringify({ t: 'ow', k: 'gr', rows: taken });",
+    "new": "    owPrune(led, now);\n    const out = JSON.stringify({ t: 'ow', k: 'gr', rows: taken });",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "kept in memory, gone at the object's sleep"
+  },
+  {
+    "name": "GRAVE-PARTY-the-relay-welcome-blind",
+    "file": "server/src/index.js",
+    "old": "return w.sp.length || w.dg.length || w.gr?.length ? `,\"ow\":${JSON.stringify(w)}` : '';",
+    "new": "return w.sp.length || w.dg.length ? `,\"ow\":${JSON.stringify(w)}` : '';",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a cell holding graves alone welcomes nobody with them"
+  },
+  {
+    "name": "GRAVE-PARTY-the-relay-routes-it-not",
+    "file": "server/src/index.js",
+    "old": "    if (m.k === 'gr') return this._owGraves(ws, a, m, now);   // GRAVE-PARTY: the graves' own law\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the graves read as dungeon rows - junk"
+  },
+  {
+    "name": "GRAVE-PARTY-the-stone-never-owed",
+    "file": "src/scenes/searchPartyHost.js",
+    "old": "    owe(row);   // GRAVE-PARTY: the cell hears it - my party's games lock the stone\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the search is the searcher's game's alone - the bug"
+  },
+  {
+    "name": "GRAVE-PARTY-the-book-not-read-at-the-stone",
+    "file": "src/scenes/searchPartyHost.js",
+    "old": "    adopt(row);   // GRAVE-PARTY: the cell's word about this stone, read against my party now\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a partymate made since searches it again"
+  },
+  {
+    "name": "GRAVE-PARTY-a-strangers-row-landed",
+    "file": "src/scenes/searchPartyHost.js",
+    "old": "    const kin = searchKinOf(g[4]);\n    if (!kin) return false;",
+    "new": "    const kin = searchKinOf(g[4]);",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stranger's search locks mine - the bug"
+  },
+  {
+    "name": "GRAVE-PARTY-the-stone-unnamed",
+    "file": "src/scenes/searchPartyHost.js",
+    "old": "kin === 'party' ? searchWhoOf(g[4]) : null);",
+    "new": "null);",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a partymate's stone answered as if mine"
+  },
+  {
+    "name": "GRAVE-PARTY-the-stone-says-the-old-words",
+    "file": "src/scenes/searchPartyHost.js",
+    "old": "if (searchCooldownLeft(key, now) > 0) { setMidScreenText(searchedText(key)); return true; }",
+    "new": "if (searchCooldownLeft(key, now) > 0) { setMidScreenText('You have already searched here.'); return true; }",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "who searched it unsaid"
+  },
+  {
+    "name": "GRAVE-PARTY-the-frame-says-nothing",
+    "file": "src/scenes/searchPartyHost.js",
+    "old": "    for (const r of online.sendOverworld('gr', [...owed.values()].map((o) => o.row))) owed.delete(`${r[0]},${r[1]}|${r[2]}`);",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "what is owed never said"
+  },
+  {
+    "name": "GRAVE-PARTY-a-strangers-word-landed",
+    "file": "src/scenes/searchRoom.js",
+    "old": "    return kin ? { acct, kin, who: kin === 'party' ? searchWhoOf(acct) : null } : null;",
+    "new": "    return { acct, kin, who: kin === 'party' ? searchWhoOf(acct) : null };",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stranger's search is the room's - the bug"
+  },
+  {
+    "name": "GRAVE-PARTY-a-word-names-no-searcher",
+    "file": "src/scenes/searchRoom.js",
+    "old": "  const fields = (sb) => (typeof sb?.by === 'string' && sb.by ? { by: sb.by } : {});",
+    "new": "  const fields = () => ({});",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a memory's word is nobody's"
+  },
+  {
+    "name": "GRAVE-PARTY-a-kept-word-never-read-again",
+    "file": "src/scenes/searchRoom.js",
+    "old": "      if (!k.startsWith(head) || !whose(e.rec, e.from)) continue;",
+    "new": "      continue;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a partymate made since searches it again"
+  },
+  {
+    "name": "GRAVE-PARTY-the-strangers-forgotten",
+    "file": "src/scenes/searchRoom.js",
+    "old": "  function records() { prune(); return [...foreign.values()].map((e) => ({ ...e.rec })); }",
+    "new": "  function records() { return []; }",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stranger's partymate who walks in later never hears their party's search"
+  },
+  {
+    "name": "GRAVE-PARTY-a-forged-list-kept",
+    "file": "src/scenes/searchRoom.js",
+    "old": "    if (!items || items.length > SEARCH_LOOT_MAX) return null;",
+    "new": "    if (!items) return null;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stranger's word of any length rides my memory"
+  },
+  {
+    "name": "GRAVE-PARTY-a-fat-record-kept",
+    "file": "src/scenes/searchRoom.js",
+    "old": "    if (JSON.stringify(kept).length > SEARCH_FOREIGN_BYTES) return null;\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a record fat inside the clamp rides my memory"
+  },
+  {
+    "name": "GRAVE-PARTY-no-cap-an-object",
+    "file": "src/scenes/searchRoom.js",
+    "old": "    for (const x of about.slice(0, Math.max(0, about.length - SEARCH_FOREIGN_PER_OBJECT))) foreign.delete(x);\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "one object fills the store"
+  },
+  {
+    "name": "GRAVE-PARTY-no-cap-in-all",
+    "file": "src/scenes/searchRoom.js",
+    "old": "    while (foreign.size > SEARCH_FOREIGN_MAX) foreign.delete(foreign.keys().next().value);\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the store - and my memory - unbounded"
+  },
+  {
+    "name": "GRAVE-PARTY-the-hour-unasked",
+    "file": "src/scenes/searchRoom.js",
+    "old": "    for (const [k, e] of [...foreign]) if (host.respawnDue(e.rec.t, now)) foreign.delete(k);\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stranger's word outlives the room's hour"
+  },
+  {
+    "name": "GRAVE-PARTY-a-word-carries-its-fields",
+    "file": "src/scenes/searchRoom.js",
+    "old": "    const kept = { k: canon, r: items,",
+    "new": "    const kept = { ...rec, k: canon, r: items,",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "whatever else a word carried rides my memory"
+  },
+  {
+    "name": "GRAVE-PARTY-the-dungeon-asks-nobody",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      const _srch = canon.startsWith('srch:') ? searchRoom.ours(canon, rec, from) : true; if (!_srch) continue;",
+    "new": "      const _srch = true;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "every word lands - the bug"
+  },
+  {
+    "name": "GRAVE-PARTY-my-search-unnamed",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "sb.items.push(...find); sb.by = searchRoom.mine();",
+    "new": "sb.items.push(...find);",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "my word names nobody"
+  },
+  {
+    "name": "GRAVE-PARTY-the-coffin-unnamed",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "Math.min(at, worldMinutes()), w?.who ?? null);",
+    "new": "Math.min(at, worldMinutes()), null);",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a partymate's coffin answered as if mine"
+  },
+  {
+    "name": "GRAVE-PARTY-the-coffin-reads-nothing-again",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    searchRoom.adopt(i, (rec, from) => applyLoot([rec], from));",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a partymate made since searches it again"
+  },
+  {
+    "name": "GRAVE-PARTY-the-coffin-says-the-old-words",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "if (cooling) { setMidScreenText(searchedText(key)); return 1; }",
+    "new": "if (cooling) { setMidScreenText('You have already searched here.'); return 1; }",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "who searched it unsaid"
+  },
+  {
+    "name": "GRAVE-PARTY-the-memory-without-strangers",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      w.loot = [...lootRecords([..._lootSeen]), ...searchRoom.records()];",
+    "new": "      w.loot = [...lootRecords([..._lootSeen])];",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stranger's partymate under my memory never hears it"
+  },
+  {
+    "name": "GRAVE-PARTY-the-coffin-from-the-eye",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "reach: searchReachFor(sb.aabb, lastPlayerFeet, lastPlayerFeet ? lastPlayerFeet[1] + lastPlayerHeight : NaN), surface: true",
+    "new": "reach: 1.6, surface: true",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the coffin on the floor too far - the bug"
+  },
+  {
+    "name": "GRAVE-PARTY-the-coffin-no-height",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "lastPlayerFeet ? lastPlayerFeet[1] + lastPlayerHeight : NaN), surface: true",
+    "new": "NaN), surface: true",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the body a point at the feet"
+  },
+  {
+    "name": "GRAVE-PARTY-the-stone-from-the-eye",
+    "file": "src/scenes/worldModes.js",
+    "old": "reach: searchReachFor(aabb, player.pos, player.eye[1]) }));",
+    "new": "reach: 1.6 }));",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a headstone from the eye again"
+  },
+  {
+    "name": "GRAVE-PARTY-the-graves-unheard",
+    "file": "src/scenes/world.js",
+    "old": "online.onOverworld = (msg) => (msg?.k === 'gr' ? searchPartyHeard(msg) : overworldLedgerHeard(msg));",
+    "new": "online.onOverworld = (msg) => (overworldLedgerHeard(msg));",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the cell's graves never reach the search party"
+  },
+  {
+    "name": "GRAVE-PARTY-the-stones-never-said",
+    "file": "src/scenes/world.js",
+    "old": "overworldLedgerFrame(now); searchPartyFrame(now);",
+    "new": "overworldLedgerFrame(now);",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the frame never says the stones"
+  },
+  {
+    "name": "GRAVE-PARTY-no-hub-picture",
+    "file": "src/scenes/world.js",
+    "old": "get online() { return online; }, get social() { return social; },",
+    "new": "get online() { return online; },",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the party lens sees no party"
+  },
+  {
+    "name": "GRAVE-PARTY-unreadable-unborn-for-good",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    return !_roomState.has(canon) && !host._lootUnreadable.has(canon);",
+    "new": "    return !_roomState.has(canon) || host._lootUnreadable.has(canon);",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the pile on the floor that answers nothing - the bug"
+  },
+  {
+    "name": "GRAVE-PARTY-said-every-press",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "if (!_roomOwnSaid.has(canon)) { _roomOwnSaid.add(canon); setMidScreenText(lootOwnText()); }",
+    "new": "setMidScreenText(lootOwnText());",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the word at every press"
+  },
+  {
+    "name": "GRAVE-PARTY-a-personal-take-claimed",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    if (host._lootUnreadable.has(canon)) { _roomSeen.delete(canon); return false; }   // GRAVE-PARTY: a personal container's takes are no claims (roomPersonal)\n",
+    "new": "",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a take from another build's pile claimed of the host - out of the pack, never granted"
+  },
+  {
+    "name": "GRAVE-PARTY-the-refusal-stands",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "&& !roomPersonal(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }",
+    "new": ") { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the pile answers with the refusal and opens nothing"
+  }
+]

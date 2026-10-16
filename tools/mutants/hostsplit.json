@@ -2,11 +2,12 @@
   {
     "name": "HOST-SPLIT-a-ceiling-under-its-host",
     "file": "test/hostceiling.test.js",
-    "old": "['src/scenes/world.js', 'bootWorld', 21_676, MODULE]",
+    "old": "['src/scenes/world.js', 'bootWorld', 21_638, MODULE]",
     "new": "['src/scenes/world.js', 'bootWorld', 21_400, MODULE]",
     "tests": [
       "test/hostceiling.test.js"
-    ]
+    ],
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16 GRAVE-PARTY): world.js's ceiling lowered 21,679 -> 21,641 (activateGrave out)."
   },
   {
     "name": "HOST-SPLIT-a-ceiling-left-high",

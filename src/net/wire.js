@@ -1442,7 +1442,7 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world210';   // REZ-BLOODLINE (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16b.md; NOT YET DEPLOYED; world208 on its branch, renumbered past main's INSTANCES world208 and WEAPON-GLOW1 world209 at the merge): A PARTY POSE SAYS A BODY FALLEN FOR GOOD - validPartyPose carries `fg` (1, else omitted): the sender's death is decided (Project Legacy's Bloodline, or an Enduring line's last - scenes/legacyHost.js raisable), so a party member's Resurrect at the body is refused at the caster's before a point is spent (scenes/hostMagic.js). A relay before it drops the field: the caster spends, and the fallen's own client refuses the call as ever - deploy with the clients, in either order.
+export const RELAY_VERSION = 'world210';   // REZ-BLOODLINE (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16b.md; NOT YET DEPLOYED; world208 on its branch, renumbered past main's INSTANCES world208 and WEAPON-GLOW1 world209 at the merge): A PARTY POSE SAYS A BODY FALLEN FOR GOOD - validPartyPose carries `fg` (1, else omitted): the sender's death is decided (Project Legacy's Bloodline, or an Enduring line's last - scenes/legacyHost.js raisable), so a party member's Resurrect at the body is refused at the caster's before a point is spent (scenes/hostMagic.js). A relay before it drops the field: the caster spends, and the fallen's own client refuses the call as ever - deploy with the clients, in either order. AND GRAVE-PARTY (FIELD BUGS 2026-10-16, bible/01-Overview/Field-Bugs-2026-10-16b.md; the Discord's "graveyard loot on headstones are able to be looted by others"; Mac's SEARCH1-PARTY: "When one player in the party interacted with it no one else can again for 5 hours"; NOT YET DEPLOYED; world208 on its branch, the same bump as REZ-BLOODLINE at the merge): A CELL KEEPS ITS GRAVES' SEARCHES - the overworld ledger's third kind, `gr` (net/overworldLaw.js owFoldGraves): a headstone a player searched, `[px, py, n]`, stamped by the relay with its own minute and the searcher's verified account and kept for the search's five game hours, said to the cell and in its welcome, so every partymate's game locks the stone the party searched (a stranger's game reads the account and locks nothing). A relay before it closes the socket on the word (relaySupportsOwGraves: the session says none to it).
 // world207:   ONE-BODY (FIELD BUGS 2026-10-15c, bible/01-Overview/Field-Bugs-2026-10-15c.md; Mac: "One body per account"; NOT YET DEPLOYED; world206 on its branch, renumbered past main's SERPENT5 world206 at the merge): A PLACE STANDS ONE BODY AN ACCOUNT - a cell's room (the open country, a town) and a world room (a dungeon, an interior) close an account's older socket when it says hello again on a new one, as a gate's court, a siege's field and a Super dungeon's realm already did (server/src/index.js the hello's one-socket law). A relay deploy drops every socket, and a tab or a half-open socket that outlived the gap stood beside the account's new one - two bodies of one player, the friend's own page seeing the copy (`rosterFor` carries no account, so no client could tell them apart). Two tabs of one account in a place are one player now.
 // world206:   SERPENT5 (2026-10-15, Mac: "A gilded weapon to the serpent + a rare chance of a title/aura drop"; bible/11-Multiplayer/Sea-Serpent.md section 17; NOT YET DEPLOYED; world205 on its branch, renumbered past main's PVP-LOOT + QUEST-HOME world205 at the merge): the vocabulary's two new words - COILBREAKER last of TITLES and THE MAELSTROM last of AURAS (net/identityToken.js), which the relay reads off every hello's token; nothing else in the law moved. Deploy the relay BEFORE the account service (acct135), or a token signing either word is refused whole
 // world205:   PVP-LOOT + QUEST-HOME (FIELD BUGS 2026-10-14, one pull request, one bump; NOT YET DEPLOYED - world201 on each branch, renumbered past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge; world203 on the integration, renumbered past main's KG-SET world203 and KG5 world204 at the merge of main). PVP-LOOT (2026-10-14, the Discord's "Equipped items Disappear after looting in PvP zone" - bible/01-Overview/Field-Bugs-2026-10-14.md): THE FRIEND LAW IS THE DROP'S - a remains' take is refused a fallen's guildmate or party member only for a record of the drop; the record the service's order names (the killer's worn piece, net/wildLaw.js remainsNamedFor) is its killer's whoever the guilds and the hub count them, and takeFrom judges it alone. A guildmate's kill had the room refuse the killer the piece the service had already taken off the fallen's record. Then MAC'S TWO DECISIONS (2026-10-14; bible/11-Multiplayer/Wild-Zone.md sections 3 and 4): "Guildmates are friends" - the referee counts one guild kin, as a party, its truce and a duel (net/wildRef.js wildKin, at the relay and every client door); and "Yes, build it" - THE TWO-PHASE HANDOFF: a piece the service holds in escrow (the order's `we`) the room never hands as a record - its killer's take is answered a signed collect (`cr`, net/wildReceipt.js `g1`), kept with the remains (`wc`) and said again to every asking, which the killer's tab carries to the service; a tab asks the escrow only of a room at WILD_COLLECT_RELAY_MIN or later. QUEST-HOME (2026-10-15, Mac: "Close both" - of a quest's residence that was another player's home; bible/01-Overview/Field-Bugs-2026-10-14.md QUEST-HOME; world201 on its branch - deploy with or after the account service's acct136, in either order: a client sends a home order only to a hub whose welcome names world205, HOME_RELAY_MIN, and an older client drops the frame): THE HUB SAYS A HOME THAT MOVED TO EVERY PAGE ONLINE - the frame `home` both ways (a page carries the service's signed home order in, net/identityToken.js kind 'home'; the hub checks it with the key it holds and fans `{t:'home', l:[{m, u, d, i}]}` to every hub socket, a shard's by the bus), the words of the last HOME_WORDS_KEEP_MS held in the hub's storage (HOME_WORDS_KEY) and said on every welcome (_hubHelloWords), the order's own bucket (homeGate, HOME_ORDER_HZ_MAX).
@@ -4986,8 +4986,8 @@ export const RITE_ASK_TIMEOUT_MS = 2_000;
 // Every id and row is the SHAPE here; whether a cell takes it is the ledger's law (its time, its pixel against the
 // cell's square, the spawn roll).
 
-/** What a client says and what a cell says back: spent ids, spawned-dungeon rows. */
-export const OW_KINDS = Object.freeze(['sp', 'dg']);
+/** What a client says and what a cell says back: spent ids, spawned-dungeon rows, and (GRAVE-PARTY) graves searched. */
+export const OW_KINDS = Object.freeze(['sp', 'dg', 'gr']);
 /** The most ids, and the most rows, one word carries. */
 export const OW_WORD_IDS_MAX = 8;
 export const OW_WORD_ROWS_MAX = 8;
@@ -5015,6 +5015,34 @@ export const OW_RELAY_MIN = 127;
 export const relaySupportsOverworld = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= OW_RELAY_MIN; };
 /** A cell's storage key for its ledger - never under `world:`, the prefix a cell's alarm sweeps (a world room's memory). */
 export const OW_LEDGER_KEY = 'ow:led';
+// GRAVE-PARTY (FIELD BUGS 2026-10-16): THE GRAVES' SEARCHES, the ledger's third kind (net/overworldLaw.js owFoldGraves):
+//   client -> cell:  {t:'ow', k:'gr', rows}   the headstones I searched - [px, py, n], a Graveyard location's map pixel
+//                                             and the stone's number in its build (world.js pixelGraves' `n`)
+//   cell -> client:  {t:'ow', k:'gr', rows}   [px, py, n, minute, acct] - the relay's own shared classic minute and the
+//                                             searcher's verified account (the token's subject), to everyone in the cell;
+//                                             welcome `ow.gr` the rows still inside their five hours
+/** The first relay that keeps a cell's grave searches. An older one CLOSES the socket on the word (its validOwIn knows
+ *  no `gr`), so a client says none to it. */
+export const OW_GRAVE_RELAY_MIN = 208;
+export const relaySupportsOwGraves = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= OW_GRAVE_RELAY_MIN; };
+/** The most grave rows one cell keeps (each lives five game hours - twenty-five real minutes of the shared clock). */
+export const OW_CELL_GRAVES_MAX = 128;
+/** A stone's number in its pixel's build, at most. */
+export const OW_GRAVE_N_MAX = 4095;
+/** The longest account a grave row names (the token's subject). */
+export const OW_GRAVE_ACCT_MAX = 128;
+/** A searched grave as a client says it - `[px, py, n]` - or null. @param {unknown} r @returns {number[]|null} */
+export function owGraveIn(r) {
+  if (!Array.isArray(r) || r.length !== 3) return null;
+  const [px, py, n] = r;
+  return intIn(px, 0, 999) && intIn(py, 0, 499) && intIn(n, 0, OW_GRAVE_N_MAX) ? [px, py, n] : null;
+}
+/** A searched grave as a cell says it - `[px, py, n, minute, acct]` - or null. @param {unknown} r @returns {Array<number|string>|null} */
+export function owGraveOut(r) {
+  if (!Array.isArray(r) || r.length !== 5) return null;
+  const g = owGraveIn(r.slice(0, 3));
+  return g && finite(r[3]) && r[3] >= 0 && typeof r[4] === 'string' && r[4].length > 0 && r[4].length <= OW_GRAVE_ACCT_MAX ? [...g, r[3], r[4]] : null;
+}
 /** A cell room's own cell, [cx, cy] - worldRoom's inverse - or null for a key that is no cell. */
 export const cellOfRoom = (key) => (isCellRoom(key) ? String(key).slice(6).split(',').map(Number) : null);
 /** An id a word may carry: a band's or a raider's. */
@@ -5044,6 +5072,10 @@ export function validOwIn(m) {
     return { k: 'sp', ids: [...new Set(m.ids)] };
   }
   if (!Array.isArray(m.rows) || !m.rows.length || m.rows.length > OW_WORD_ROWS_MAX) return null;
+  if (m.k === 'gr') {   // GRAVE-PARTY: each stone once
+    const graves = m.rows.map(owGraveIn);
+    return graves.every(Boolean) ? { k: 'gr', rows: [...new Map(graves.map((g) => [g.join(','), g])).values()] } : null;
+  }
   const rows = m.rows.map(owWireRow);
   return rows.every(Boolean) ? { k: 'dg', rows } : null;
 }
@@ -5061,6 +5093,7 @@ export function validOwOut(m) {
     return ids.length ? { k: 'sp', ids } : null;
   }
   if (!Array.isArray(m.rows)) return null;
+  if (m.k === 'gr') { const graves = m.rows.slice(0, OW_CELL_GRAVES_MAX).map(owGraveOut).filter(Boolean); return graves.length ? { k: 'gr', rows: graves } : null; }   // GRAVE-PARTY
   const rows = m.rows.slice(0, OW_CELL_ROWS_MAX).map(owWireRow).filter(Boolean);
   return rows.length ? { k: 'dg', rows } : null;
 }

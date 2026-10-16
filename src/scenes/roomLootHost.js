@@ -10,6 +10,7 @@ import { grantEliteLoot } from '../systems/eliteFoes.js';
 import { isDeepPileKey } from '../systems/restItems.js';
 import { isEquipped, unequipItem } from '../systems/equip.js';
 import { LOOT_LIST_MAX, validLootList } from '../systems/loot.js';
+import { t } from '../systems/textManager.js';   // GRAVE-PARTY: the personal container's word, in the player's language
 import { neverPeerHanded, peerHanded } from '../systems/peerWord.js';
 import { playerEntity } from '../characters/playerEntity.js';
 import { raiseEnemyDeath } from './corpseMarker.js';
@@ -73,11 +74,27 @@ export function createRoomLoot(host) {
   const isRoomBaseContainer = (canon) => roomLootOn() && !!roomBaseHolder(canon);
   /** Whether a room container stands here to be looted at all: a pile always, a body once it has fallen. */
   const roomBorn = (h) => !!h && (h.pile ? true : lootableBody(h.foe));
-  /** UNBORN: a room's container standing here with no terms yet - nothing to show, nothing to take. */
+  /** UNBORN: a room's container standing here with no terms yet - nothing to show, nothing to take. GRAVE-PARTY (FIELD
+   *  BUGS 2026-10-16, "objects in tombs are un lootable"): never one whose room word this build CANNOT READ (another
+   *  build's - AUDIT SETS M2's `_lootUnreadable`): that one was unborn for good, its pile standing on the floor with no
+   *  plaque and no press, because the mint waits on a word that will never be read. It is PERSONAL now (roomPersonal). */
   function roomUnborn(key) {
     const canon = roomLootKey(key) ?? lootKeyOf(key);
     if (!canon || !isRoomBaseContainer(canon)) return false;
-    return !_roomState.has(canon) || host._lootUnreadable.has(canon);
+    return !_roomState.has(canon) && !host._lootUnreadable.has(canon);
+  }
+  const _roomOwnSaid = new Set();   // GRAVE-PARTY: the personal containers this player has been told of
+  /** GRAVE-PARTY: what a player hears, once, opening a room container whose word this build cannot read. */
+  const lootOwnText = () => t('loot.ownVersion', 'Another version of the game shares this room - what you find here is yours alone.');
+  /** GRAVE-PARTY: A ROOM CONTAINER WHOSE WORD THIS BUILD CANNOT READ IS THIS PLAYER'S OWN - its list as it stood here
+   *  (the build's own roll for a pile never composed, else its last composition), taken from freely and never said
+   *  (sayRoomWord and roomSettle stand aside for it - M2's law: nothing is claimed or closed over a word that cannot be
+   *  read, and so nothing of the room's is overwritten); told once (lootOwnText).
+   *  Answers whether `canon` is such a container. A word it can read again makes it the room's again (landRoomWord). */
+  function roomPersonal(canon) {
+    if (!canon || !host._lootUnreadable.has(canon) || !isRoomBaseContainer(canon)) return false;
+    if (!_roomOwnSaid.has(canon)) { _roomOwnSaid.add(canon); setMidScreenText(lootOwnText()); }
+    return true;
   }
   /** What a foe's build left in its list - the pieces and their counts - so its body can tell what reached it alive. */
   function lootBuiltOf(entity) {
@@ -376,6 +393,7 @@ export function createRoomLoot(host) {
   /** THE TAKES AND THE PUTS a room container's list shows since its last compose, read against what it held then. A
    *  list some load replaced is no list composed here, and says nothing. Answers whether anything was taken or put. */
   function roomSettle(canon) {
+    if (host._lootUnreadable.has(canon)) { _roomSeen.delete(canon); return false; }   // GRAVE-PARTY: a personal container's takes are no claims (roomPersonal)
     const seen = _roomSeen.get(canon), h = roomBaseHolder(canon), st = _roomState.get(canon), base = _roomComposed.get(canon)?.base;
     if (!seen || !h || !st || !base || seen.list !== holderList(h)) return false;
     const here = new Set(seen.list);
@@ -534,5 +552,5 @@ export function createRoomLoot(host) {
       if (host._authority || due(canon)) mintRoomTerms(canon, Number.isFinite(f._diedAt) ? f._diedAt : 0);
     }
   }
-  return { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, settleRoomBonus };
+  return { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomPersonal, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, settleRoomBonus };
 }

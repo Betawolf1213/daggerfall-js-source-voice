@@ -29,7 +29,7 @@ import { WodSpawner, WOD_LOOT_LOCATION_INDEX, WOD_LOOT_ALIGN } from '../world/wo
 import { wodSiteId, yieldsTo } from '../world/wodShared.js';   // WOD7: a camp's marker, shared online
 import { alignBillboardToGround, alignControllerToGround } from '../world/groundAlign.js';   // WOD3: SpawnLoot's drop; CSA-D: BoardBoat's AlignControllerToGround
 import { PRIVATEERS_HOLD_BLOCK, HOLD_MODELS, HOLD_FLATS, holdModelMatrix, holdFireLights, rollHoldFoes } from '../world/wodPrivateersHold.js';   // WOD4: the camp at Privateer's Hold
-import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons } from '../systems/lootRarity.js';   // WOD3: LR1 over the camps' piles; SIGIL1: their weapons' sigils
+import { rollLootRarity, pileSource, dungeonRarityTier, stampWonWeapons } from '../systems/lootRarity.js';   // WOD3: LR1 over the camps' piles; SIGIL1: their weapons' sigils
 import { revenantToReturn, revenantSpawnOptions, revenantPresence, takeRevenantNotice, revenantSay, releaseRevenantStand, revenantRecord, revenantMomentEvent, revenantRumor, revenantMapMarks, revenantHuntEntries, revenantTakes, revenantFelled, revenantFelledEvent, revenantRoutSweep, revenantRoutedEvent, revenantWarnEvent, revenantBetrayEvent, forgetLastSlew, killerOf as revenantKillerOf, inheritRevenant } from '../systems/revenant.js';   // REVENANT: who comes back, and what the player is told
 import { endPlayerFights, playerHarmMark } from '../systems/harmMark.js';   // RVN10 (bible/12-Enhanced-AI/Feud-Arc.md 21.2): a respawn's jump is no flight
 import { DEVOTED } from '../systems/revenantFeud.js';   // RVN11 (Feud-Arc.md 22.1): a Devoted one's wait between warnings
@@ -179,7 +179,7 @@ import { createBloodMarks } from '../combat/bloodMarks.js';   // BLOOD1a: the ri
 import { preloadRestArt } from '../ui/restWindow.js';   // S40: rest above ground   // D3: REST00I0/01I0/02I0
 import { createRestWindow } from '../ui/restDoor.js';   // the enhanced/native fork, same law as ui/tradeDoor.js
 import { ActionTextBox } from '../ui/actionText.js';   // AUDIT 23 (C5)
-import { isTombstoneModel, searchKey, searchCooldownLeft, markSearched, SEARCHED_TEXT, rollSearchOutcome, pickSearchUndead, rollSearchElite, searchMessage, mintSearchFind, setSearchClock, SEARCH_FOES_PER_PLAYER, SEARCH_FOE_SPACING } from '../systems/searchables.js';   // SEARCH1: a graveyard's headstones
+import { isTombstoneModel, setSearchClock } from '../systems/searchables.js';   // SEARCH1: a graveyard's headstones
 import { toggleStatusReadout } from '../ui/statusBox.js';   // STATUS-LIVE: the Status readout, one composer for all four hosts
 import { statusReadoutTakesAction } from '../systems/statusReadout.js';   // STATUS-LIVE: ...and the yield this host's own key ladder owes, which never reaches routeAction
 import { maxFatigue, FATIGUE_MULTIPLIER, liveStat, STAT_KEYS_ORDER, clampFatigue } from '../systems/statMods.js';   // AUDIT 23 (C5); AUDIT SOC B5: the party pose's fatigue in the digits a sheet shows
@@ -1110,6 +1110,7 @@ import { siegeBlowKind, siegeCastClamp, siegeSpellNumbers, siegeSpellBarred, SIE
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { startTutorialTour } from '../ui/tutorialPopup.js';   // TUT1: the welcome tour - and the popups' handler, registered by this host (the four hosts' rule)
 import { createTravelViewMarks } from './travelViewMarks.js';   // HOST-SPLIT
+import { createSearchParty } from './searchPartyHost.js';   // HOST-SPLIT
 
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
  *  (ThievesGuild.cs:115, DarkBrotherhood.cs:108). %map is the
@@ -19992,50 +19993,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // ── SEARCH1 (systems/searchables.js): A GRAVEYARD'S HEADSTONE, searched ─────────────────────────────────────────
   // Two in three find nothing; the last third is a find or the dead, half each. The box is clicked away first: the
   // foe stands, or the find opens, only from its onClose (ui/actionText.js). Info mode reads the stone instead (GRAVE1).
+  // GRAVE-PARTY (FIELD BUGS 2026-10-16): the search is the PARTY's - said to the cell, heard from it, the party lens
+  // registered for the dungeon's searchables too (scenes/searchPartyHost.js).
   setSearchClock(() => worldMinutes());
-  function activateGrave(g, mode = 'grab') {
-    if (!g) return false;
-    if (mode === 'info') { townTalk.say(randomEpitaph()); return true; }
-    const key = searchKey(g.loc, g.key);
-    const now = worldMinutes();
-    if (searchCooldownLeft(key, now) > 0) { setMidScreenText(SEARCHED_TEXT); return true; }
-    markSearched(key, now);
-    const outcome = rollSearchOutcome({ graveyard: true });
-    const level = effectiveLevel(playerEntity);
-    let rows, onClose = null;
-    if (outcome === 'foe') {
-      const type = pickSearchUndead(level);
-      const elite = rollSearchElite();
-      const count = SEARCH_FOES_PER_PLAYER * (1 + partyNear().length);   // SEARCH1-PARTY: two for every player of the party here
-      rows = searchMessage('tombstone', 'foe', { foeName: enemyDisplayName(type) ?? 'creature', elite, count });
-      onClose = () => {
-        // a ring about the stone, opening toward the player (a graveyard is open ground - no room to run out of)
-        const feet = player.pos;
-        const c = [(g.min[0] + g.max[0]) / 2, Math.min(g.min[1], feet[1]), (g.min[2] + g.max[2]) / 2];
-        const half = Math.max(g.max[0] - g.min[0], g.max[2] - g.min[2]) / 2;
-        const toward = Math.atan2(feet[0] - c[0], feet[2] - c[2]);
-        for (let n = 0; n < count; n++) {
-          const a = toward + (n % 2 ? 1 : -1) * Math.ceil(n / 2) * (Math.PI / 5);
-          const r = half + 0.7 + Math.floor(n / 10) * SEARCH_FOE_SPACING;
-          const at = [c[0] + Math.sin(a) * r, c[1] + 0.05, c[2] + Math.cos(a) * r];
-          exteriorFoes.spawnFoe(type, at, { yaw: Math.atan2(-(feet[0] - at[0]), -(feet[2] - at[2])), feetGiven: true, loose: true, eliteFoe: elite && n === 0 })
-            .catch((e) => console.warn('[search] a grave\'s foe would not stand', e));
-        }
-      };
-    } else if (outcome === 'loot') {
-      const items = mintSearchFind('tombstone', { level, gender: playerEntity.gender, tier: dungeonRarityTier(18), family: dungeonFamily(18), luck: liveStat(playerEntity, 'luck') });   // a Cemetery's tier and family (DFRegion.DungeonTypes 18)
-      rows = searchMessage('tombstone', 'loot');
-      onClose = () => {
-        const pile = droppedLoot.dropPile(items, dropFeet(), `${playerTravelPixel().x},${playerTravelPixel().y}`);
-        if (!pile) return;
-        silverFindAt('search', items);   // SILVER-FINDS: this search's find rolls its silver once (the stone searched again after its hours, again)
-        const w = makeInventoryWindow({ onClose: () => droppedLoot.releaseEmptied(), loot: droppedLootHooks(pile) });
-        if (w) townTalk.showOverlay(w);   // a refused pack is null - the find stays on the ground
-      };
-    } else rows = searchMessage('tombstone', 'nothing');
-    townTalk.showOverlay(new ActionTextBox(rows, { onClose }));
-    return true;
-  }
+  const { activateGrave, frame: searchPartyFrame, heard: searchPartyHeard } = createSearchParty({   // HOST-SPLIT: src/scenes/searchPartyHost.js
+    dropFeet, droppedLoot, exteriorFoes, makeInventoryWindow, player, playerTravelPixel, townTalk,
+    get partyNear() { return partyNear; }, get online() { return online; }, get social() { return social; },
+  });
   /** RW1 / FORAGE4: a quest's reward, given - its pile minted on the ground the player stands on now and opened, or,
    *  while a quest box is being read, opened when that box closes (GivePc's OnClose). */
   const giveReward = (dfItem) => {
@@ -22595,7 +22559,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     onlineArrival(); empireJoin({ entity: playerEntity, nowMinutes: ownMinutes(), say: (l, d) => townTalk.say(l, d) });   // REALM P0.3: the Empire calls in the debt it would not have lent - the loans run on the character's own clock (LIVED1)
     alignSurvival(playerEntity, Math.floor(ownMinutes()), Math.floor(ownMinutes()));   // SURV7: a record ahead of the character's own clock starts fresh; the absence itself is save.js's load arm
     online.onClock = (offsetMs) => { const was = _sharedOffsetMs; _sharedOffsetMs = offsetMs; _sharedClockHeard = true; if (Math.abs(offsetMs - was) > 1000) onlineArrival(); hearSharedClock(); };   // WORLD5: the relay's clock corrects this machine's; AUDIT LIVED1b P4: and the load's absence is paid on it
-    online.onOverworld = (msg) => overworldLedgerHeard(msg);   // OW6L: my cell's (and a halo's) overworld ledger - its welcome, and each change
+    online.onOverworld = (msg) => (msg?.k === 'gr' ? searchPartyHeard(msg) : overworldLedgerHeard(msg));   // OW6L: my cell's (and a halo's) overworld ledger - its welcome, and each change; GRAVE-PARTY: its graves searched, to the search party's own door (scenes/searchPartyHost.js)
     remotePlayers = new RemotePlayers({ renderer, deps: { fetchBytes, palette, getTexture, uploadRecordFrame, audio } });   // 2026-09-17: uploadRecordFrame added for the class-enemy billboard path (net/remotePlayers.js _buildMobile/_syncMobilePeer) - the doll path never touches it
     // MWBODY1: the enhanced skin with Morrowind data attached puts every peer in a body of its own; otherwise the doll
     const enhanced = isEnhanced();   // the skin cannot change without a reload (switchSkin), so it is read once, not per frame
@@ -29982,7 +29946,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     hitFlush(now);     // AUDIT FOES FOE2: and a BLOW the wire refused - a joiner applies none locally, so a lost frame is a lost blow
     modes?.setDungeonAuthority?.(dungeonAuthority(now));   // AUDIT WORLD2 C2: the seat re-read every frame - a dead socket, a terminal close or a silent host hands the foes back
     hccParkTick(now); doorToken.frame();   // HCC-PARK: my parked team's word to the cell it stands in, when it changed   // DOOR-TOKEN: the way out approached - its token minted on the walk to the door
-    overworldLedgerFrame(now);   // OW6L: what I spent and my spawns' clocks, to the cell that keeps them
+    overworldLedgerFrame(now); searchPartyFrame(now);   // OW6L: what I spent and my spawns' clocks, to the cell that keeps them; GRAVE-PARTY: and the stones I searched
     caravanDecorTick(now);   // WAGONS2-VISIT: what I placed in my caravan, to its room, when it changed
     caravanVisitLink.tick(key ? online : null, modes?.caravanVisit ?? null);   // WAGONS2-VISIT: the visited caravan's cell, heard from inside it (after my primary's own join and tick)
     if (isCellRoom(online.room)) { const ids = ownerIds(); if (ids) camps.sweepOwners(ids, now, FOES_STALE_MS); }   // PERF11: the same list   // SURV3: a peer's camps go as their puppets do - the same liveness, the same answer-gate   // AUDIT WORLD6b-iii(b) C3/B5: no answer (the socket not open) is not "nobody" - it pruned every owner while the halos kept feeding frames, a spawn-and-discard loop per frame   // AUDIT WORLD6b-ii C2: ONE liveness for the owner - the peers the hunt reads (visible: a pose, in range, inside the timeout) are the peers whose puppets stand
