@@ -41,11 +41,11 @@ export function piecesLockedNotice(/** @type {string[]} */ names, /** @type {num
  *  ship's hold, a companion's pack (systems/possessedItems.js, the judge's own reading) - the own lists being the live
  *  pack's to say (a piece sold since the save is no longer held, and its shelf must show it). */
 export function stowedKeysOf(/** @type {any} */ save) {
-  const keys = new Set();
-  if (!save || typeof save !== 'object') return keys;
+  const stowed = new Set();
+  if (!save || typeof save !== 'object') return stowed;
   const away = { ...save, items: [], wagonItems: [], bagItems: [], furnishings: [], otherItems: [] };
-  for (const list of possessedItemLists(away)) for (const it of list) { const k = ledgerKeyOf(it); if (k) keys.add(k); }
-  return keys;
+  for (const list of possessedItemLists(away)) for (const it of list) { const k = ledgerKeyOf(it); if (k) stowed.add(k); }
+  return stowed;
 }
 
 /** The stowed keys off the session's last landed save, read once a landing (a save is parsed only when a shelf asks). */
