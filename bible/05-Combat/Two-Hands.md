@@ -162,12 +162,16 @@ Wired by `combat/weaponRig.js`, the one surface all four hosts mount (no host ca
   forever and its fist sat off the screen until its next blow. DFU's one machine always reaches the hit frame first, so
   the one hand never comes there. The left clone is stepped only while a pair is up, or until its swing has ended and
   its slide settled out of sight (`settledHidden`): single-hand play never pays for it.
-- **The guard** (`GUARD`): while one hand strikes the other draws in toward the middle (10 px on the 320x200 surface)
-  and down - a fist by 9 px; **a pair's resting weapon by `LOWER`, 0.12 of its own drawn height** (Mac, after the first
-  pictures: "When attacking with a weapon, the other weapon in hand should lower slightly"). A weapon's picture is several
-  fists tall (WEAPON02's dagger 143 design px, WEAPON04's katana 86), so the fists' 9 px, which the pair had, did not
-  read on it; a share of its own height lowers every weapon alike - the dagger 17 px, the katana 10, its hand still in
-  the view. Eased in fast (0.05 s time constant) and out slower (0.14 s) - ClimbPose's limb law, no pop; laid in SCREEN
+- **The guard** (`GUARD`): while one hand strikes the other draws in - a fist toward the middle (10 px on the 320x200
+  surface) and down 9 px; **a pair's resting weapon straight down by `LOWER`, 0.12 of its own drawn height** (Mac, after
+  the first pictures: "When attacking with a weapon, the other weapon in hand should lower slightly"). A weapon's picture
+  is several fists tall (WEAPON02's dagger 143 design px, WEAPON04's katana 86), so the fists' 9 px, which the pair had,
+  did not read on it; a share of its own height lowers every weapon alike - the dagger 17 px, the katana 10, its hand
+  still in the view. Straight down, never in: **THE CUT STAYS OFF THE SCREEN** (Mac: "The sprite on the right moves ...
+  and exposes where it clips off"). Every weapon a pair holds is painted with its hand leaving the frame through its
+  outer side (measured on the shipped idles: the katana 32 rows cut down its right column, a warhammer 53, a battleaxe
+  37 - every one but the plain mace) and WeaponBasics draws it flush to the view's side (AlignRight, Offset 0; the
+  dagger DFU's 0.04), so the fists' tuck toward the middle drew the katana's cut 30 px into the view. Eased in fast (0.05 s time constant) and out slower (0.14 s) - ClimbPose's limb law, no pop; laid in SCREEN
   space, from the hand's own side, whatever its picture, on the classic sprite and on a Weapon Widget clone alike (the
   clone's own rect height). The fists' guard is alive standing: a 1.6 px bounce at 1.15 Hz, the two hands out of step,
   gone in a strike or a walk.
@@ -182,9 +186,14 @@ Wired by `combat/weaponRig.js`, the one surface all four hosts mount (no host ca
     floating hands"). The first cut lifted the bare hand's idle - `WEAPON10.CIF` record 0, a 63x53 fist cut at the
     wrist, painted to stand on the view's bottom edge - up to 0.42 of its height, and the cut floated. The one record of
     the bare hand's art that lifts a fist on its own forearm from the frame's foot is the right arm's rising punch
-    (record 5, StrikeDownRight: frames 0-3 the fist coming up on its grey sleeve, 4 the follow-through across). So a
+    (record 5, StrikeDownRight: the fist coming up on its grey sleeve, then the follow-through across). So a
     running hand is drawn in those frames (`ARM_STATE`, `ARM_FRAMES`), the frame by how far up its stroke is (the
-    stroke snaps, |sin|^0.7), each placed as FPSWeapon places a frame - **its foot on the view's bottom edge, never
+    stroke snaps, |sin|^0.7) - **frames 1, 2 and 3, the ones whose arm leaves the frame through its foot alone**: frame
+    0's sleeve also leaves through its right side (15 rows cut down its right column) and the stroke's outward swing
+    drew that cut into the view (Mac: "The sprite on the right moves to the right and exposes where it clips off");
+    frame 4's leaves through its left (8). Measured on the shipped file and pinned there (the ARENA2 test); frame 2's
+    knuckles touch its top row (3 px), Daggerfall's own punch frame as it draws it. Each is placed as FPSWeapon places a
+    frame - **its foot on the view's bottom edge, never
     lifted** (OnGUI's `height - h`): the pump only LOWERS a sprite (1.05 of its height at the back of the stroke, out
     of the view - the hand passing the hip), so the forearm always runs off the screen. Across the view it stands where
     its fist rests (the idle's own place), 0.06 of the width toward the middle at the top and 0.03 out at the bottom;
@@ -271,7 +280,7 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
 
 ## Pins
 
-- `test/twohands.test.js` (19): the law and the painted arm, the balance MEASURED through the machine at two frame
+- `test/twohands.test.js` (20): the law and the painted arm, the balance MEASURED through the machine at two frame
   rates, PlayerWeapon through the real formula and the override seam (the flurry's frame, the schedule's ticks, H's
   exchange, the resting weapon, the off strike), the off hand's blow in the formula and between players, the rig on a
   synthetic CIF - the fists, the guard, the widget's two clones, the pair, the running hands (the stroke, the bob's
@@ -279,8 +288,8 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
 - `test/twohands_mw.test.js` (10): the mirror rig on the retail biped (counterparts, the plan, the law, no pop, which
   fist a clip throws) and the arm over the fixture arm (the left weapon, the pair, the fists, the running hands, by
   source).
-- `tools/mutants/twohands.json`: 110 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
-  each claim the record made that no pin could fail; 12 the running arm's and the lowered weapon's, `TWOHANDS-ARM-*`,
+- `tools/mutants/twohands.json`: 112 mutants, all dead (39 of them the audit's, `TWOHANDS-AUDIT-*`: each fix reverted, and
+  each claim the record made that no pin could fail; 14 the running arm's and the lowered weapon's, `TWOHANDS-ARM-*`,
   `TWOHANDS-LOWER-*`).
 - PIN MOVED, each with its note: `a12_lefthand` (H's lines with both hands up; the bow-switch arm on its own case, a
   bow in the left hand), `audit_seats_client` G5, `auditcc_pvp` H5 and `duel_combat` DUEL1 (the off hand's blow between

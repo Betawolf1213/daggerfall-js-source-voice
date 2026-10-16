@@ -214,10 +214,15 @@ export function offHandDamage(damage) {
 
 /** While one hand strikes, the other draws in: toward the middle of the view and down, the shoulder turned behind the
  *  blow - eased in fast, back out slower (ClimbPose's limb law: no pop between states). IN and DOWN are design pixels on
- *  DFU's 320x200 surface - the fists' tuck. A pair's resting WEAPON lowers by LOWER of its own drawn height (Mac: "When
- *  attacking with a weapon, the other weapon in hand should lower slightly"): a weapon's picture is several fists tall
- *  (a dagger's 143 design pixels, a katana's 86), so the fists' nine pixels did not read on it - a share of its own
- *  height lowers every weapon alike. The fists' guard is alive at rest: a slow bounce, the two hands out of step. */
+ *  DFU's 320x200 surface - the fists' tuck. A pair's resting WEAPON lowers by LOWER of its own drawn height, and only
+ *  lowers (Mac: "When attacking with a weapon, the other weapon in hand should lower slightly"; then, of the tuck, "The
+ *  sprite on the right moves ... and exposes where it clips off"): a weapon's picture is several fists tall (a dagger's
+ *  143 design pixels, a katana's 86), so the fists' nine pixels did not read on it - a share of its own height lowers
+ *  every weapon alike; and every weapon a pair holds is painted with its hand leaving the frame through its OUTER side
+ *  (WEAPON04's katana 32 rows cut on its right, a warhammer 53 - measured on every one-handed weapon's idle) and drawn
+ *  flush to the view's side (WeaponBasics' idle: AlignRight, Offset 0; the dagger DFU's 0.04), so a tuck toward the
+ *  middle drew the cut into the view. THE CUT STAYS OFF THE SCREEN (RUN_PUMP's rule too). The fists' guard is alive at
+ *  rest: a slow bounce, the two hands out of step. */
 export const GUARD = Object.freeze({
   IN: 10,
   DOWN: 9,
@@ -240,14 +245,16 @@ export function guardStep(g, otherStriking, dt) {
 }
 
 /** The guard's offset in design pixels for a hand at weight `g` drawn on `side` ('right'|'left'): x toward the middle,
- *  y down - a fist's DOWN, or a weapon's LOWER of its drawn `height` (design pixels) when one is handed. And the fists'
- *  bounce at `time` seconds, out of step between the hands, faded by `bounce` (0..1). */
+ *  y down - a fist's IN and DOWN, or a weapon's LOWER of its drawn `height` (design pixels) when one is handed, straight
+ *  down (its cut side stays on the view's edge). And the fists' bounce at `time` seconds, out of step between the hands,
+ *  faded by `bounce` (0..1). */
 export function guardOffset(g, side, { time = 0, bounce = 0, hand = 'R', height = null } = {}) {
   const toMid = side === 'left' ? 1 : -1;
   const phase = hand === 'L' ? Math.PI : 0;
   const b = bounce > 0 ? Math.sin(time * 2 * Math.PI * GUARD.BOUNCE_HZ + phase) * GUARD.BOUNCE_PX * bounce : 0;
-  const down = Number.isFinite(height) ? GUARD.LOWER * /** @type {number} */ (height) : GUARD.DOWN;
-  return [toMid * GUARD.IN * g, down * g + b];
+  const weapon = Number.isFinite(height);
+  const down = weapon ? GUARD.LOWER * /** @type {number} */ (height) : GUARD.DOWN;
+  return [weapon ? 0 : toMid * GUARD.IN * g, down * g + b];
 }
 
 // ---- THE RUNNING HANDS ----------------------------------------------------------------------------------------------
@@ -261,11 +268,15 @@ export const RUN_STEP_M = 2.5;
  * The pump. THE RUNNING ARM IS THE ART'S OWN (Mac: "theres no arm portion of the sprite, so it looks like floating hands").
  * The bare hand's idle (WEAPON10.CIF record 0, 63x53) is a fist cut at the wrist, painted to stand on the view's bottom
  * edge - lifted, its cut floats. The one record of the bare hand's art that lifts a fist on its own forearm from the
- * frame's foot is the right arm's rising punch (record 5, StrikeDownRight: frames 0-3 the fist coming up on its grey
- * sleeve, 4 the follow-through across). So a running hand is drawn in those frames, by how far up its stroke is, each as
- * FPSWeapon draws a frame - its foot on the view's bottom edge (OnGUI's `height - h`): THE PUMP NEVER LIFTS A SPRITE. It
- * only lowers one (the back of the stroke, out of the view), so the arm always runs off the bottom of the screen.
- *   ARM_STATE / ARM_FRAMES - the record (by its state) and the rise's frames, low to high;
+ * frame's foot is the right arm's rising punch (record 5, StrikeDownRight: the fist coming up on its grey sleeve, then
+ * the follow-through across). So a running hand is drawn in its frames, by how far up its stroke is, each as FPSWeapon
+ * draws a frame - its foot on the view's bottom edge (OnGUI's `height - h`): THE PUMP NEVER LIFTS A SPRITE. It only
+ * lowers one (the back of the stroke, out of the view), so the arm always runs off the bottom of the screen. THE CUT
+ * STAYS OFF THE SCREEN: only the frames whose arm leaves the frame through its FOOT alone - 1, 2 and 3. Frame 0's sleeve
+ * also leaves through its right side (15 rows cut on WEAPON10's right column; the pump's sideways stroke drew that cut
+ * into the view - Mac: "The sprite on the right moves to the right and exposes where it clips off") and frame 4's
+ * through its left (8) - measured on the shipped file, frames 1-3 cut nowhere but the foot.
+ *   ARM_STATE / ARM_FRAMES - the record (by its state) and the rise's frames that leave only at the foot, low to high;
  *   DROP      - the back of the stroke, down, of the frame's height (past the view's edge: the hand passing the hip);
  *   IN/OUT    - toward the middle at the top (the arm across the chest) and out at the bottom, of the view's width;
  *   SHAPE     - the stroke's snap: the hand drives up and falls, not a sine's even glide (|sin|^SHAPE);
@@ -278,7 +289,7 @@ export const RUN_STEP_M = 2.5;
  */
 export const RUN_PUMP = Object.freeze({
   ARM_STATE: 'StrikeDownRight',
-  ARM_FRAMES: Object.freeze([0, 1, 2, 3]),
+  ARM_FRAMES: Object.freeze([1, 2, 3]),
   DROP: 1.05,
   IN: 0.06,
   OUT: 0.03,

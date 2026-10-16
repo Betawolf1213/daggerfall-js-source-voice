@@ -104,9 +104,11 @@
   { "name": "TWOHANDS-ARM-fists-vanish", "file": "src/combat/twoHands.js", "old": "    if (w < RUN_PUMP.SWAP) {\n", "new": "    if (false) {\n", "tests": ["test/twohands.test.js"] },
   { "name": "TWOHANDS-ARM-unmirrored", "file": "src/combat/twoHands.js", "old": "uv: mirrorOf(hand, painted(RUN_PUMP.ARM_STATE)) ? MIRROR_UV : q.uv,", "new": "uv: q.uv,", "tests": ["test/twohands.test.js"] },
   { "name": "TWOHANDS-ARM-one-art-twice", "file": "src/combat/twoHands.js", "old": "const hands = /** @type {const} */ (['R', 'L']).filter((hand) => hand !== st.strikeHand);   // a punch on the run is drawPair's", "new": "const hands = /** @type {const} */ (['R', 'L']);", "tests": ["test/twohands.test.js"] },
-  { "name": "TWOHANDS-LOWER-the-fists-tuck", "file": "src/combat/handsLaw.js", "old": "const down = Number.isFinite(height) ? GUARD.LOWER * /** @type {number} */ (height) : GUARD.DOWN;", "new": "const down = GUARD.DOWN;", "tests": ["test/twohands.test.js"] },
+  { "name": "TWOHANDS-LOWER-the-fists-tuck", "file": "src/combat/handsLaw.js", "old": "const down = weapon ? GUARD.LOWER * /** @type {number} */ (height) : GUARD.DOWN;", "new": "const down = GUARD.DOWN;", "tests": ["test/twohands.test.js"] },
   { "name": "TWOHANDS-LOWER-no-height-classic", "file": "src/combat/twoHands.js", "old": "nudge(hand, canvas, q.rect.h));", "new": "nudge(hand, canvas));", "tests": ["test/twohands.test.js"] },
   { "name": "TWOHANDS-LOWER-no-height-widget", "file": "src/combat/twoHands.js", "old": "nudgeBefore(hand, canvas, mirror, r.h)),", "new": "nudgeBefore(hand, canvas, mirror)),", "tests": ["test/twohands.test.js"] },
   { "name": "TWOHANDS-LOWER-fists-by-height", "file": "src/combat/twoHands.js", "old": "const height = st.mode === HANDS_MODE.Dual && Number.isFinite(h) ?", "new": "const height = Number.isFinite(h) ?", "tests": ["test/twohands.test.js"] },
-  { "name": "TWOHANDS-LOWER-too-far", "file": "src/combat/handsLaw.js", "old": "  LOWER: 0.12,", "new": "  LOWER: 0.2,", "tests": ["test/twohands.test.js"] }
+  { "name": "TWOHANDS-LOWER-too-far", "file": "src/combat/handsLaw.js", "old": "  LOWER: 0.12,", "new": "  LOWER: 0.2,", "tests": ["test/twohands.test.js"] },
+  { "name": "TWOHANDS-ARM-frame-zero-cut-at-its-side", "file": "src/combat/handsLaw.js", "old": "  ARM_FRAMES: Object.freeze([1, 2, 3]),", "new": "  ARM_FRAMES: Object.freeze([0, 1, 2, 3]),", "tests": ["test/twohands.test.js"] },
+  { "name": "TWOHANDS-LOWER-tucks-in", "file": "src/combat/handsLaw.js", "old": "  return [weapon ? 0 : toMid * GUARD.IN * g, down * g + b];", "new": "  return [toMid * GUARD.IN * g, down * g + b];", "tests": ["test/twohands.test.js"] }
 ]

@@ -5,7 +5,8 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   HANDS_MODE, DUAL_TYPES, dualEligible, handsModeOf, twoHanded, otherHand, strikeHandOf, FLURRY_WINDOW,
   mirrorStrike, mirrorRect, MIRROR_UV, handOnLeft, DUAL, offHandToHit, offHandBurden, strikeTempo, offHandDamage,
@@ -14,7 +15,8 @@ import {
 } from '../src/combat/handsLaw.js';
 import { PlayerWeapon, handDesc } from '../src/combat/playerWeapon.js';
 import { createWeaponRig } from '../src/combat/weaponRig.js';
-import { WEAPON_TYPES, weaponTypeForItem } from '../src/combat/fpsWeapon.js';
+import { WEAPON_TYPES, weaponTypeForItem, WEAPON_FILE, getWeaponAnims, STATE_INDEX } from '../src/combat/fpsWeapon.js';
+import { CifRciFile } from '../src/formats/cifRciFile.js';
 import { ITEM_HANDS } from '../src/characters/equipTable.js';
 import { EQUIP_SLOTS } from '../src/systems/equip.js';
 import { WALK_STEP_INTERVAL } from '../src/systems/footsteps.js';
@@ -165,8 +167,8 @@ test('TWO-HANDS law: the guard, the run - the guard\'s follower eased in fast an
   assert.deepEqual(guardOffset(1, 'left'), [GUARD.IN, GUARD.DOWN]);
   assert.deepEqual(guardOffset(0, 'right'), [-0, 0]);
   // a pair's resting WEAPON lowers by a share of its own height (Mac: "the other weapon in hand should lower slightly")
-  assert.deepEqual(guardOffset(1, 'right', { height: 143 }), [-GUARD.IN, GUARD.LOWER * 143], 'a dagger\'s picture, 143 design pixels tall');
-  assert.deepEqual(guardOffset(0.5, 'left', { height: 86 }), [GUARD.IN * 0.5, GUARD.LOWER * 86 * 0.5], 'a katana\'s, half way in');
+  assert.deepEqual(guardOffset(1, 'right', { height: 143 }), [0, GUARD.LOWER * 143], 'a dagger\'s picture, 143 design pixels tall - straight down');
+  assert.deepEqual(guardOffset(0.5, 'left', { height: 86 }), [0, GUARD.LOWER * 86 * 0.5], 'a katana\'s, half way, never in: its cut side stays on the view\'s edge');
   assert.ok(GUARD.LOWER * 86 > GUARD.DOWN, 'a weapon dips past the fists\' nine pixels - the tuck did not read on a weapon');
   assert.ok(GUARD.LOWER <= 0.15, 'slightly: the dagger\'s hand stays in the view');
   const b = guardOffset(0, 'right', { time: 0.25 / GUARD.BOUNCE_HZ, bounce: 1, hand: 'R' })[1];
@@ -182,6 +184,7 @@ test('TWO-HANDS law: the guard, the run - the guard\'s follower eased in fast an
   assert.deepEqual([back.dx, back.dy, back.frame], [-RUN_PUMP.OUT, RUN_PUMP.DROP, RUN_PUMP.ARM_FRAMES[0]], 'the bottom: out, the lowest frame, down past the view');
   assert.ok(RUN_PUMP.DROP > 1, 'the bottom of the stroke leaves the view');
   assert.equal(RUN_PUMP.ARM_STATE, 'StrikeDownRight', 'WEAPON10 record 5 - the one bare-hand record that lifts a fist on its forearm');
+  assert.deepEqual([...RUN_PUMP.ARM_FRAMES], [1, 2, 3], 'the frames that leave their frame only at the foot (frame 0\'s sleeve leaves through its right side, 4\'s its left - the real-art pin below)');
   assert.equal(MELEE_PAINTED_ARM[5], 'R', 'the right arm, mirrored for the left (one rule)');
   const mid = pumpOf(Math.PI / 6, 'R');   // sin = 0.5, snapped up by SHAPE
   assert.ok(Math.abs(mid.s - Math.pow(0.5, RUN_PUMP.SHAPE)) < 1e-9 && mid.s > 0.5, 'the stroke drives (|sin|^SHAPE)');
@@ -582,6 +585,7 @@ test('TWO-HANDS rig, the pair: a katana and a dagger - both drawn, the katana le
     assert.equal(p2.r.playerWeapon.strikeInFlight?.hand, 'R', 'the katana strikes');
     const dip = at(q2).y - restL.y;
     assert.ok(Math.abs(dip - GUARD.LOWER * restL.h) < 2, `the dagger lowers by its share (${widget ? 'widget' : 'classic'}): ${dip.toFixed(2)} of ${restL.h}`);
+    assert.ok(Math.abs(at(q2).x - restL.x) < 1.5, `straight down - never toward the middle, its cut side stays on the view's edge: ${at(q2).x} vs ${restL.x}`);
     for (let i = 0; i < 120; i++) await p2.frame();
     assert.ok(Math.abs(at(await p2.frame()).y - restL.y) < 2, 'and back up after');
   }
@@ -798,6 +802,33 @@ test('TWO-HANDS rig, AUDITED: a fist and a shield is DFU\'s one hand (the shield
   const back = await stuck.frame();
   const bl = back.find((x) => x.mirrored), br = back.find((x) => !x.mirrored);
   assert.ok(bl && br && Math.abs(bl.rect.y - br.rect.y) < 6, `both fists home again, the left not pushed off the screen: ${JSON.stringify(back.map((x) => x.rect))}`);
+});
+
+const ARENA2 = process.env.ARENA2_PATH;
+const NO_ARENA2 = (!ARENA2 || !existsSync(ARENA2)) && 'ARENA2_PATH not set or missing - real-data validation skipped';
+
+test('TWO-HANDS (ARENA2): THE CUT STAYS OFF THE SCREEN, measured on the shipped art - the run\'s frames of WEAPON10\'s rising punch leave their frame at the foot alone (frame 0\'s sleeve by its right side too, 4\'s by its left: never run); every weapon a pair holds is drawn flush to the view\'s side, its hand cut at its outer side (all but the plain mace), so its guard only lowers (Mac: "The sprite on the right moves to the right and exposes where it clips off")', { skip: NO_ARENA2 }, () => {
+  const cif = (file) => { const c = new CifRciFile(); c.load(new Uint8Array(readFileSync(join(/** @type {string} */ (ARENA2), file))), file); return c; };
+  /** Opaque pixels down a column, the foot's own row aside (a sleeve leaving at the foot touches its corner). */
+  const sideCut = (b, x) => { let n = 0; for (let y = 0; y < b.height - 1; y++) if (b.data[y * b.width + x]) n++; return n; };
+  const w10 = cif('WEAPON10.CIF');
+  const rec = getWeaponAnims(WEAPON_TYPES.Melee)[STATE_INDEX[RUN_PUMP.ARM_STATE]].Record;
+  assert.equal(rec, 5);
+  for (let f = 0; f < w10.getFrameCount(rec); f++) {
+    const b = w10.getDFBitmap(rec, f);
+    const cut = sideCut(b, 0) + sideCut(b, b.width - 1);
+    const foot = b.data.subarray((b.height - 1) * b.width).some((v) => v > 0);
+    if (RUN_PUMP.ARM_FRAMES.includes(f)) assert.ok(cut === 0 && foot, `frame ${f}: the arm leaves at its foot alone (${cut} cut at its sides)`);
+    else assert.ok(cut > 0, `frame ${f} is cut at a side (${cut}) - never run`);
+  }
+  const uncut = [];
+  for (const t of DUAL_TYPES) {
+    const a = getWeaponAnims(t)[STATE_INDEX.Idle];
+    assert.ok(a.Alignment === getWeaponAnims(WEAPON_TYPES.Melee)[0].Alignment && a.Offset <= 0.04, `${WEAPON_FILE[t]}: its idle flush to the view's right side (Offset ${a.Offset})`);
+    const b = cif(WEAPON_FILE[t]).getDFBitmap(0, 0);
+    if (!sideCut(b, b.width - 1)) uncut.push(WEAPON_FILE[t]);
+  }
+  assert.deepEqual(uncut, ['WEAPON05.CIF'], 'every one-handed weapon\'s idle is cut at its outer side but the plain mace\'s - a tuck in drew the cut');
 });
 
 test('TWO-HANDS rig, by source: the two-hands branch is the classic body\'s own (after the climb\'s return, before the arm\'s seam, never behind the held map) and the one-hand ladder below it is untouched; the hosts carry none of it', () => {

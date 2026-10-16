@@ -22,8 +22,9 @@
 // hand's blows and holds its idle - bob, slide and all - through the other's.
 //
 // THE GUARD (handsLaw.js GUARD): while one hand strikes the other draws in toward the middle and down - a pair's resting
-// weapon lowered by a share of its own height - the way the climbing hands carry a held hand from one place to the next
-// (ClimbPose's limb law, eased - no pop); the fists' guard is alive at rest, the two out of step.
+// weapon only down, by a share of its own height (its art is cut at its outer side, which stays on the view's edge) -
+// the way the climbing hands carry a held hand from one place to the next (ClimbPose's limb law, eased - no pop); the
+// fists' guard is alive at rest, the two out of step.
 //
 // THE RUNNING HANDS (handsLaw.js RUN_PUMP): running with nothing in either hand, the two arms pump with the stride - the right
 // forward as the left foot falls, one stroke a step on the head bob's own clock (DFU's HeadBobber walks its timer by the
