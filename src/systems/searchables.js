@@ -286,9 +286,9 @@ export const _resetSearchLedgerForTests = () => _ledger.clear();
 /** The longest account a search names. */
 export const SEARCH_ACCT_MAX = 128;
 const acctOk = (a) => typeof a === 'string' && a.length > 0 && a.length <= SEARCH_ACCT_MAX;
-/** The party lens: `{ self() -> my account, inParty(acct), nameOf(acct) -> a member's name, acctOfPeer(peerId) }` (the
- *  hub's picture - scenes/searchPartyHost.js registers the streaming host's). None (the bench, offline): every other
- *  searcher is nobody of mine. */
+/** The party lens: `{ self() -> my account, selfName() -> my character's name, inParty(acct), nameOf(acct) -> a member's
+ *  name, acctOfPeer(peerId) }` (the hub's picture and the session's issued name - scenes/searchPartyHost.js registers the
+ *  streaming host's). None (the bench, offline): every other searcher is nobody of mine. */
 let _party = null;
 export const setSearchParty = (lens) => { _party = lens && typeof lens === 'object' ? lens : null; };
 /** The lens registered now (a harness standing several players in one process swaps them by it). */
@@ -310,6 +310,23 @@ export function searchWhoOf(acct, fallback = null) {
   const n = _party?.nameOf?.(acct);
   const name = typeof n === 'string' && n ? n : (typeof fallback === 'string' && fallback ? fallback : t('search.yourParty', 'your party'));
   return name.slice(0, SEARCH_WHO_MAX);
+}
+/** My own character's name (the lens's - the session's issued name, the one the relay stamps), or null. */
+export const searchSelfName = () => { const n = _party?.selfName?.(); return typeof n === 'string' && n ? n.slice(0, SEARCH_WHO_MAX) : null; };
+/**
+ * AUDIT GRAVE-PARTY G5: THE NAME A SEARCH IS TOLD BY, its searcher's account `acct` and the searching character's `name`
+ * (the relay's stamp above ground, the word's `bn` below). A partymate's: their seat name (searchWhoOf, `name` the
+ * fallback). MY ACCOUNT'S on ANOTHER of its characters: that character's name - the five hours are the account's (one
+ * player, whichever character: an alt searching the stone again is the same player's second find), but the character
+ * pressing now never searched it, and "You have already searched here." told it it had. Mine, this character's - or a
+ * name nobody said, or mine unknown - null: the old words. A stranger's: null (it lands nowhere).
+ */
+export function searchToldBy(acct, name = null) {
+  const kin = searchKinOf(acct);
+  if (kin === 'party') return searchWhoOf(acct, name);
+  if (kin !== 'me' || typeof name !== 'string' || !name) return null;
+  const n = name.slice(0, SEARCH_WHO_MAX), mine = searchSelfName();
+  return mine && n !== mine ? n : null;
 }
 
 // ── the words ───────────────────────────────────────────────────────

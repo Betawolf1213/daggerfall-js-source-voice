@@ -36,7 +36,7 @@
 // byte this file reaches is the relay's deploy - test/ow6_ledger.test.js holds each copy to its home.
 //
 // Not a DFU member: Daggerfall has no other players, and no Overworld.
-import { WORLD_CELL, sharedClassicMinutes, cellOfRoom, OW_BAND_ID_RE, OW_RAIDER_ID_RE, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX, owWireRow, OW_CELL_GRAVES_MAX, OW_GRAVE_ACCT_MAX, owGraveIn, owGraveOut } from './wire.js';
+import { WORLD_CELL, sharedClassicMinutes, cellOfRoom, OW_BAND_ID_RE, OW_RAIDER_ID_RE, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX, owWireRow, OW_CELL_GRAVES_MAX, OW_GRAVE_ACCT_MAX, OW_GRAVE_ACCT_ROWS_MAX, owGraveIn, owGraveOut, NAME_MAX } from './wire.js';
 import { gateHash, GATE_DAY_MINUTES } from './gateLaw.js';   // the spawned dungeons' hash (world/spawnedDungeons.js hash32) - the relay's one copy; a game day's minutes
 import { RAID_SLACK_MINUTES } from './raidLaw.js';   // ten real seconds of two clocks' skew (WORLD5)
 
@@ -174,7 +174,7 @@ export function owRowFits(r, nowMin) {
 /**
  * A cell's ledger: `sp` the spent ids in the order they were taken, each with the moment (ms) it stops mattering;
  * `dg` the rows by their key, each the wire's own row; `gr` (GRAVE-PARTY) the graves searched, by grave and searcher,
- * each the wire's own `[px, py, n, minute, acct]`.
+ * each the wire's own `[px, py, n, minute, acct, name]`.
  * @typedef {{ sp: Array<[string, number]>, dg: Record<string, number[]>, gr: Record<string, Array<number|string>> }} OwLedger
  */
 
@@ -224,37 +224,57 @@ export function owLedgerOf(v) {
 // player in the party interacted with it no one else can again for 5 hours".) A headstone's search was its searcher's
 // game's alone - the act channel is a world room's, and a street cell is not one - so a partymate searched the same stone
 // again and found again. The cell keeps who searched which stone now: one row a stone and a SEARCHER, its minute the
-// relay's own (the shared clock, never the word's) and its account the token's subject - kept OW_GRAVE_KEEP_MIN and not
-// a minute past it. The relay knows no party: every game in the cell hears every row, and each locks the stones its own
-// party searched (systems/searchables.js searchKinOf) - a stranger's row locks nothing of theirs.
+// relay's own (the shared clock, never the word's), its account the token's subject and its name the token's character's
+// (AUDIT GRAVE-PARTY G5: the lock is the account's, and another character of it is told whose search it was) - kept
+// OW_GRAVE_KEEP_MIN and not a minute past it. The relay knows no party: every game in the cell hears every row, and each
+// locks the stones its own party searched (systems/searchables.js searchKinOf) - a stranger's row locks nothing of theirs.
 
 /** A grave row's key in a ledger: its stone and its searcher. @param {Array<number|string>} g */
 export const owGraveKey = (g) => `${g[0]},${g[1]}|${g[2]}|${g[4]}`;
 /** Is a grave row still inside its search's hours at `nowMin`? @param {Array<number|string>} g @param {number} nowMin */
 export const owGraveLive = (g, nowMin) => Number.isFinite(nowMin) && nowMin - /** @type {number} */ (g[3]) < OW_GRAVE_KEEP_MIN;
-/** The oldest searches out, down to OW_CELL_GRAVES_MAX; answers whether any went. @param {OwLedger} led */
+/**
+ * THE BOUNDS (AUDIT GRAVE-PARTY G3): each searcher's own oldest out past OW_GRAVE_ACCT_ROWS_MAX; then, past
+ * OW_CELL_GRAVES_MAX, the oldest of whichever searcher holds the MOST - so no searcher's rows push out another's while
+ * it holds more of the cell than they do (the oldest in the cell went, and one account's fresh stone numbers evicted
+ * every honest row). Answers whether any went. @param {OwLedger} led
+ */
 function capGraves(led) {
-  const keys = Object.keys(led.gr);
-  if (keys.length <= OW_CELL_GRAVES_MAX) return false;
-  keys.sort((a, b) => /** @type {number} */ (led.gr[a][3]) - /** @type {number} */ (led.gr[b][3]));
-  for (const k of keys.slice(0, keys.length - OW_CELL_GRAVES_MAX)) delete led.gr[k];
-  return true;
+  const age = (k) => /** @type {number} */ (led.gr[k][3]);
+  const by = new Map();
+  for (const [k, g] of Object.entries(led.gr)) { const l = by.get(g[4]); if (l) l.push(k); else by.set(g[4], [k]); }
+  let total = 0, dropped = false;
+  for (const keys of by.values()) {
+    keys.sort((a, b) => age(a) - age(b));   // stable: one minute's rows in the order they were taken
+    while (keys.length > OW_GRAVE_ACCT_ROWS_MAX) { delete led.gr[/** @type {string} */ (keys.shift())]; dropped = true; }
+    total += keys.length;
+  }
+  for (; total > OW_CELL_GRAVES_MAX; total--) {
+    let most = null;
+    for (const keys of by.values()) if (!most || keys.length > most.length || (keys.length === most.length && age(keys[0]) < age(most[0]))) most = keys;
+    delete led.gr[/** @type {string} */ (/** @type {string[]} */ (most).shift())];
+    dropped = true;
+  }
+  return dropped;
 }
 /**
- * THE GRAVES, FOLDED IN: each stone the word names, searched by `acct` at the relay's `nowMin` - a stone this searcher's
- * row already holds inside its hours changes nothing (a search is the earliest of its hours); the rows past their hours
- * let go first, the oldest past OW_CELL_GRAVES_MAX after. Answers the rows taken - what the cell fans. No account (a hello
- * the relay could not name), nothing.
- * @param {OwLedger} led @param {unknown} rows @param {unknown} acct @param {number} nowMin @returns {Array<Array<number|string>>}
+ * THE GRAVES, FOLDED IN: each stone the word names, searched by `acct` (its character `name`, the token's - '' where none)
+ * at the relay's `nowMin` - a stone this searcher's row already holds inside its hours changes nothing (a search is the
+ * earliest of its hours); the rows past their hours let go first, then the bounds (capGraves: the searcher's own oldest
+ * past OW_GRAVE_ACCT_ROWS_MAX, the heaviest searcher's past OW_CELL_GRAVES_MAX). Answers the rows taken - what the cell
+ * fans, and all the relay writes for: a word that took nothing writes nothing. No account (a hello the relay could not
+ * name), nothing.
+ * @param {OwLedger} led @param {unknown} rows @param {unknown} acct @param {number} nowMin @param {unknown} [name] @returns {Array<Array<number|string>>}
  */
-export function owFoldGraves(led, rows, acct, nowMin) {
+export function owFoldGraves(led, rows, acct, nowMin, name = '') {
   const taken = [];
   if (!led || !Array.isArray(rows) || typeof acct !== 'string' || !acct || acct.length > OW_GRAVE_ACCT_MAX || !Number.isFinite(nowMin) || nowMin < 0) return taken;
+  const who = typeof name === 'string' && name.length <= NAME_MAX ? name : '';
   for (const [k, g] of Object.entries(led.gr)) if (!owGraveLive(g, nowMin)) delete led.gr[k];
   for (const r of rows.slice(0, OW_WORD_ROWS_MAX)) {
     const w = owGraveIn(r);
     if (!w) continue;
-    const g = [...w, nowMin, acct], k = owGraveKey(g);
+    const g = [...w, nowMin, acct, who], k = owGraveKey(g);
     if (led.gr[k]) continue;
     led.gr[k] = g;
     taken.push(g.slice());

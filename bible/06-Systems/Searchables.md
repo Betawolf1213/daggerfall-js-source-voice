@@ -65,16 +65,25 @@ dungeon (dungeonType 18, the M0000000-8 crypt blocks), its room `dungeon:m<id>`.
 - **ABOVE GROUND THE STONE IS THE PARTY'S.** A headstone's search was its searcher's game's alone (the act channel is a
   world room's, and a street cell is not one), so every partymate searched it again and found again. The cell keeps it
   now - the overworld ledger's third kind, `gr` (`net/overworldLaw.js` `owFoldGraves`, the relay's `_owGraves`,
-  world208): the searcher's game says `[px, py, n]` (the stone's pixel and its number in the build,
-  `world.js` graveTargets' `loc`/`key`), the relay stamps it with its own minute and the searcher's VERIFIED account (the
-  token's subject, never the word's) and keeps it the search's five hours (`OW_GRAVE_KEEP_MIN`, pinned to
+  world211): the searcher's game says `[px, py, n]` (the stone's pixel and its number in the build,
+  `world.js` graveTargets' `loc`/`key`), the relay stamps it with its own minute, the searcher's VERIFIED account (the
+  token's subject, never the word's) and the searching character's name (the token's - AUDIT GRAVE-PARTY G5, below) -
+  `[px, py, n, minute, acct, name]` - and keeps it the search's five hours (`OW_GRAVE_KEEP_MIN`, pinned to
   `SEARCH_COOLDOWN_MINUTES`), says it to everyone in the cell and in every later welcome. The relay knows no party: each
-  game lands the rows of its own party (and its own account's - another tab, an earlier visit) on the ledger's five
-  hours, by the searcher's seat name (`scenes/searchPartyHost.js`), and keeps every row in a small book read again at the
-  stone - so a partymate who searched before the party was made, or before the hub's picture came, locks it too. A
-  stranger's row locks nothing of mine, and mine nothing of theirs. A relay before world208 is told nothing
-  (`relaySupportsOwGraves` - it would close the socket on the word); there each game keeps its own five hours, as before.
-  A LAYER keeps its own graves (a party plays in one layer), where the spent and the spawns are the place's.
+  game lands the rows of its own party (and its own account's - another tab, an earlier visit, another character) on the
+  ledger's five hours, by the searcher's name (`scenes/searchPartyHost.js`, `searchToldBy`), and keeps every row in a
+  small book read again at the stone - so a partymate who searched before the party was made, or before the hub's picture
+  came, locks it too. A stranger's row locks nothing of mine, and mine nothing of theirs. A relay before world211 is told
+  nothing (`relaySupportsOwGraves`, `OW_GRAVE_RELAY_MIN` 211 - it would close the socket on the word: main's INSTANCES
+  world208, WEAPON-GLOW1 world209 and HUB-PULL + DO-ASK world210 among them, AUDIT GRAVE-PARTY G1); there each game keeps
+  its own five hours, as before. A LAYER keeps its own graves (a party plays in one layer), where the spent and the spawns
+  are the place's. BOUNDED BY ITS SEARCHER (AUDIT GRAVE-PARTY G3): a cell keeps at most `OW_GRAVE_ACCT_ROWS_MAX` (32,
+  pinned to the stones a game owes, `GRAVE_OWED_MAX`) rows of one account, its own oldest out past it, and past
+  `OW_CELL_GRAVES_MAX` (128) the oldest of whichever searcher holds the most - never another's row for a flooder's; the
+  word rides a bucket of its own (`owGraveGate`, a word a second, four deep - the honest game's own pace, kept at home in
+  `sendOverworld`), and a word that takes nothing writes nothing. A row's key is its stone and its searcher, and a stone's
+  number runs to 4,095, so before it one account saying fresh numbers at the `ow` frames' four a second wrote the whole
+  ledger 241 times a minute (3.3 MB) and evicted every honest row.
 - **BELOW, THE ROOM'S WORD IS THE SEARCHER'S PARTY'S.** SEARCH1-PARTY's `srch:<i>` started the five hours of EVERYONE in
   the room, whatever it rolled - in a Cemetery every coffin a stranger had touched answered "You have already searched
   here." for five game hours to a player who had never seen it. The word names its searcher now (`by`, the account), and
@@ -84,11 +93,23 @@ dungeon (dungeonType 18, the M0000000-8 crypt blocks), its room `dungeon:m<id>`.
   carried on in the room's memory this client publishes, so the stranger's own partymates who walk in later still hear
   their party's search - bounded hard, since it rides that memory (512 KB a dungeon): an honest find's alone
   (`SEARCH_LOOT_MAX` pieces through the wire's projection, its own four fields, under `SEARCH_FOREIGN_BYTES`),
-  `SEARCH_FOREIGN_PER_OBJECT` an object and `SEARCH_FOREIGN_MAX` in all, the newest kept, each let go at the room's hour.
-  Each party's find is its own list; a stranger in the same crypt rolls their own.
+  `SEARCH_FOREIGN_PER_OBJECT` an object and `SEARCH_FOREIGN_MAX` in all, the newest kept, each let go at the room's hour -
+  its stamp kept NEVER AHEAD OF NOW, an unstamped word's now (AUDIT GRAVE-PARTY G4, the WORLD7/8 C2 law applyLoot keeps
+  for a landed word: a forged far-future stamp was kept as said, never let go, and filled the 24 slots in the room's
+  memory for good). Each party's find is its own list; a stranger in the same crypt rolls their own. The word names the
+  searching character too (`bn`, the session's issued name - G5).
 - **"Already searched by <name>."** (`searchedText`, `t('search.searchedBy')`) for an object a partymate searched; my own
   answers SEARCHED_TEXT as before. The ledger keeps the name through the save (`[key, minute, picked, name]`), and the
   LATER search holds the hours - a memory or a welcome about an earlier one never winds a search back.
+- **THE FIVE HOURS ARE THE ACCOUNT'S, AND ITS CHARACTER IS NAMED** (AUDIT GRAVE-PARTY G5, chosen). The lock is per
+  account - one player, whichever character: an alt searching the stone or the coffin again is the same player's second
+  find, which is what Mac's "no one else can again for 5 hours" closes. But a search on character A answered character B
+  of the same account "You have already searched here." of an object B never touched. A row (the relay's, from the
+  token's name) and a word (`bn`) carry the searching character's name, and `searchToldBy` answers it: a search of my
+  account by ANOTHER character is told by that character's name ("Already searched by Ann."); this character's own, or
+  one whose name nobody said, the old words. Two characters of one account wearing one name - an account that wears its
+  own name (NAME-AS 'account'), or a character's name the service refused (`accounts.js` wornNameOf) - are told the old
+  words: they are one name to everyone in the room too.
 - **THE REACH IS THE BODY'S.** From the eye, SEARCH_REACH met a coffin's lid a metre and more below it: a coffin on the
   floor answered "You are too far away." unless the player stood within ~0.9 m of its side. The distance is now from the
   upright segment the player stands as (the feet to the capsule's top - the frame's `lastPlayerFeet`/`lastPlayerHeight`

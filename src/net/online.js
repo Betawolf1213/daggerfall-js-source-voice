@@ -99,7 +99,7 @@ import { dungeonRoomTag } from './wire.js';   // SD-ONLINE: a dungeon's room car
 import { nativePoseRoom } from './wire.js';   // SLIM-FRAME: the frame a room's poses are in - one home, the relay's slim pose rounds by it
 import { validSdIn, validSdOut, sdGate, sdPzGate, relaySupportsSd, sdFightGate, SD_BRAIN_V } from './wire.js';   // SD3: the Super dungeon's frame - a find out, the hub's record in; SD6b: a turn out, the realm's Orrery in
 import { isSdRoom } from './sdLaw.js';   // SD6b: the realm's room, where the Orrery's turns go
-import { owGate, validOwIn, validOwOut, relaySupportsOverworld, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, relaySupportsOwGraves } from './wire.js';   // GRAVE-PARTY: and the graves' word's relay
+import { owGate, validOwIn, validOwOut, relaySupportsOverworld, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, relaySupportsOwGraves, owGraveGate } from './wire.js';   // GRAVE-PARTY: and the graves' word's relay - AUDIT GRAVE-PARTY G3: and its own bucket
 import { validSerpentIn, validSerpentOut, serpentGate, relaySupportsSerpent, relaySupportsSerpentSite } from './wire.js';   // SERPENT1: the sea serpent's frame, both ways   // OW6L: the overworld ledger's frame, both ways
 import { owIdInCell, owRowInCell, owRowSane } from './overworldLaw.js';   // OW6L: and the cell's law, held at home before a word is said
 import { reconnectWave } from './reconnectWave.js';   // SCALE2c: a relay deploy's reconnect, spread by the hub's count
@@ -742,6 +742,7 @@ export class OnlineSession {
     this.owGraveOk = false;       // GRAVE-PARTY: ...and its graves searched (relaySupportsOwGraves) - an older one closes the socket on a `gr` word
     this.onOverworld = null;      // OW6L: (msg, room) => void - a cell's word on its overworld ledger, `{k:'sp', ids}` or `{k:'dg', rows}` (validOwOut), from my own cell or a halo's, its welcome's half by half
     this._owBucket = null;        // OW6L: my own `ow` words out - owGate's law
+    this._owGrBucket = null;      // AUDIT GRAVE-PARTY G3: and my graves' words, on their own - owGraveGate's law, the relay's
     // name (below), so once Local chat went down this session a heal cast at a mate spent a chat line and a chat line a cast
     this._inTradeBuckets = new Map();   // TRADE1: and the gate on trade frames coming IN, per sender (AUDIT DROPS B3) - a peer is chosen by the sender, so a flood is a peer's, never the relay's
     this._inDirectedSaid = new Set();   // AUDIT 68 S14-inbound-directed-gate-dup: the kinds whose flood the console has said, once each (`_directedIn`)
@@ -1765,7 +1766,8 @@ export class OnlineSession {
    * quietly, never struck. ANSWERS THE ENTRIES THAT WENT, projected and in order - an empty list when nothing did (not a
    * cell, an older relay, the socket down, the gate shut, nothing the cell's law takes); the caller says the rest again.
    * GRAVE-PARTY: `sendOverworld('gr', rows)` the headstones I searched (`[px, py, n]`), to a relay that keeps them alone
-   * (relaySupportsOwGraves), each stone's pixel inside my cell's widened square.
+   * (relaySupportsOwGraves), each stone's pixel inside my cell's widened square - on the graves' own bucket too (AUDIT
+   * GRAVE-PARTY G3, owGraveGate: the relay's, so an honest word is never the one it drops).
    * @param {'sp'|'dg'|'gr'} k @param {unknown[]} payload @returns {Array<string|number[]>}
    */
   sendOverworld(k, payload) {
@@ -1776,9 +1778,11 @@ export class OnlineSession {
         : k === 'gr' && this.owGraveOk ? validOwIn({ k, rows: payload.filter((r) => owRowInCell(r, room)).slice(0, OW_WORD_ROWS_MAX) }) : null;
     if (!w) return [];
     const gate = owGate(this._owBucket, this._now());
-    if (!gate.pass) return [];
+    const gr = w.k === 'gr' ? owGraveGate(this._owGrBucket, this._now()) : null;
+    if (!gate.pass || (gr && !gr.pass)) return [];
     try { this._ws.send(JSON.stringify({ t: 'ow', ...w })); } catch { return []; }
     this._owBucket = gate.bucket; this.stats.sent++; this.stats.ow = (this.stats.ow ?? 0) + 1;
+    if (gr) this._owGrBucket = gr.bucket;
     return w.k === 'sp' ? w.ids : w.rows;
   }
 

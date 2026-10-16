@@ -122,12 +122,13 @@
   {
     "name": "GRAVE-PARTY-the-graves-unbounded",
     "file": "src/net/overworldLaw.js",
-    "old": "  if (keys.length <= OW_CELL_GRAVES_MAX) return false;\n  keys.sort((a, b) => /** @type {number} */ (led.gr[a][3])",
-    "new": "  return false;\n  keys.sort((a, b) => /** @type {number} */ (led.gr[a][3])",
+    "old": "  for (; total > OW_CELL_GRAVES_MAX; total--) {",
+    "new": "  for (; false; total--) {",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "a cell keeps every grave ever searched"
+    "why": "a cell keeps every grave ever searched",
+    "note": "AUDIT GRAVE-PARTY: re-aimed by content - G3 rewrote capGraves (each searcher's bound, then the heaviest's oldest past the cell's)"
   },
   {
     "name": "GRAVE-PARTY-the-welcome-unsaid",
@@ -162,12 +163,13 @@
   {
     "name": "GRAVE-PARTY-an-older-relay-told",
     "file": "src/net/wire.js",
-    "old": "export const OW_GRAVE_RELAY_MIN = 208;",
-    "new": "export const OW_GRAVE_RELAY_MIN = 207;",
+    "old": "export const OW_GRAVE_RELAY_MIN = 211;",
+    "new": "export const OW_GRAVE_RELAY_MIN = 210;",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "world207 closes the socket on the word"
+    "why": "main's world210 closes the socket on the word - a headstone's search takes its player offline",
+    "note": "AUDIT GRAVE-PARTY: re-aimed by content - G1: the graves' first relay is world211, and the mutant names main's world210 (HUB-PULL + DO-ASK), which closes the socket on the word"
   },
   {
     "name": "GRAVE-PARTY-no-such-kind",
@@ -252,12 +254,13 @@
   {
     "name": "GRAVE-PARTY-the-relay-trusts-a-name",
     "file": "server/src/index.js",
-    "old": "    const taken = owFoldGraves(led, m.rows, a.sub, sharedClassicMinutes(now));",
-    "new": "    const taken = owFoldGraves(led, m.rows, a.name, sharedClassicMinutes(now));",
+    "old": "owFoldGraves(led, m.rows, a.sub, sharedClassicMinutes(now), a.name);",
+    "new": "owFoldGraves(led, m.rows, a.name, sharedClassicMinutes(now), a.name);",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "the searcher by a name, not the verified account"
+    "why": "the searcher by a name, not the verified account",
+    "note": "AUDIT GRAVE-PARTY: re-aimed by content - G5 added the character's name beside the account"
   },
   {
     "name": "GRAVE-PARTY-the-relay-unwritten",
@@ -312,22 +315,24 @@
   {
     "name": "GRAVE-PARTY-a-strangers-row-landed",
     "file": "src/scenes/searchPartyHost.js",
-    "old": "    const kin = searchKinOf(g[4]);\n    if (!kin) return false;",
-    "new": "    const kin = searchKinOf(g[4]);",
+    "old": "    if (!searchKinOf(g[4])) return false;\n",
+    "new": "",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "a stranger's search locks mine - the bug"
+    "why": "a stranger's search locks mine - the bug",
+    "note": "AUDIT GRAVE-PARTY: re-aimed by content - G5: the told-by name is searchToldBy's, so `kin` is asked once"
   },
   {
     "name": "GRAVE-PARTY-the-stone-unnamed",
     "file": "src/scenes/searchPartyHost.js",
-    "old": "kin === 'party' ? searchWhoOf(g[4]) : null);",
+    "old": "searchToldBy(g[4], g[5]));",
     "new": "null);",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "a partymate's stone answered as if mine"
+    "why": "a partymate's stone answered as if mine",
+    "note": "AUDIT GRAVE-PARTY: re-aimed by content - G5: the stone is told by searchToldBy (a partymate's, or another character of my account's)"
   },
   {
     "name": "GRAVE-PARTY-the-stone-says-the-old-words",
@@ -352,22 +357,24 @@
   {
     "name": "GRAVE-PARTY-a-strangers-word-landed",
     "file": "src/scenes/searchRoom.js",
-    "old": "    return kin ? { acct, kin, who: kin === 'party' ? searchWhoOf(acct) : null } : null;",
-    "new": "    return { acct, kin, who: kin === 'party' ? searchWhoOf(acct) : null };",
+    "old": "    return kin ? { acct, kin, who: searchToldBy(acct, name), name } : null;",
+    "new": "    return { acct, kin, who: searchToldBy(acct, name), name };",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "a stranger's search is the room's - the bug"
+    "why": "a stranger's search is the room's - the bug",
+    "note": "AUDIT GRAVE-PARTY: re-aimed by content - G5: whose() names the searching character too"
   },
   {
     "name": "GRAVE-PARTY-a-word-names-no-searcher",
     "file": "src/scenes/searchRoom.js",
-    "old": "  const fields = (sb) => (typeof sb?.by === 'string' && sb.by ? { by: sb.by } : {});",
+    "old": "  const fields = (sb) => ({ ...(typeof sb?.by === 'string' && sb.by ? { by: sb.by } : {}), ...(nameOf(sb) && sb.by ? { bn: sb.bn } : {}) });",
     "new": "  const fields = () => ({});",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "a memory's word is nobody's"
+    "why": "a memory's word is nobody's",
+    "note": "AUDIT GRAVE-PARTY: re-aimed by content - G5: a record carries the searching character's name beside its account"
   },
   {
     "name": "GRAVE-PARTY-a-kept-word-never-read-again",
@@ -462,12 +469,13 @@
   {
     "name": "GRAVE-PARTY-my-search-unnamed",
     "file": "src/scenes/dungeonContext.js",
-    "old": "sb.items.push(...find); sb.by = searchRoom.mine();",
+    "old": "sb.items.push(...find); Object.assign(sb, searchRoom.mine());",
     "new": "sb.items.push(...find);",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "my word names nobody"
+    "why": "my word names nobody",
+    "note": "AUDIT GRAVE-PARTY: re-aimed by content - G5: mine() is the account and the character's name"
   },
   {
     "name": "GRAVE-PARTY-the-coffin-unnamed",
@@ -577,36 +585,207 @@
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "the pile on the floor that answers nothing - the bug"
+    "why": "the pile on the floor that answers no press, for good",
+    "note": "AUDIT GRAVE-PARTY G2: unchanged - the unreadable pile is a target again, its press M2's refusal"
   },
   {
-    "name": "GRAVE-PARTY-said-every-press",
-    "file": "src/scenes/roomLootHost.js",
-    "old": "if (!_roomOwnSaid.has(canon)) { _roomOwnSaid.add(canon); setMidScreenText(lootOwnText()); }",
-    "new": "setMidScreenText(lootOwnText());",
+    "name": "AUDIT-G2-the-personal-arm-again",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }",
+    "new": "      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u)) && !isRoomBaseContainer(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "the word at every press"
+    "why": "GRAVE-PARTY's personal arm: an unreadable room pile opens - the empty list it was built with, or its base unclaimed"
   },
   {
-    "name": "GRAVE-PARTY-a-personal-take-claimed",
+    "name": "AUDIT-G2-the-refusal-gone",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }",
+    "new": "      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u))) { return 0; } }",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the press answers nothing - the pile is a target, and silent"
+  },
+  {
+    "name": "AUDIT-G2-the-plaque-names-the-list",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "(roomUnborn(key) || _lootUnreadable.has(roomLootKey(key)))) return null;",
+    "new": "roomUnborn(key)) return null;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the plaque lists a base this build cannot say is the room's"
+  },
+  {
+    "name": "AUDIT-G2-a-take-under-the-window-kept-unclaimed",
     "file": "src/scenes/roomLootHost.js",
-    "old": "    if (host._lootUnreadable.has(canon)) { _roomSeen.delete(canon); return false; }   // GRAVE-PARTY: a personal container's takes are no claims (roomPersonal)\n",
+    "old": "  function roomSettle(canon) {\n",
+    "new": "  function roomSettle(canon) {\n    if (host._lootUnreadable.has(canon)) { _roomSeen.delete(canon); return false; }\n",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "GRAVE-PARTY's guard: a take under a window open before the word turned unreadable is never claimed - a copy beside the room's"
+  },
+  {
+    "name": "AUDIT-G3-no-searchers-cap",
+    "file": "src/net/overworldLaw.js",
+    "old": "    while (keys.length > OW_GRAVE_ACCT_ROWS_MAX) {",
+    "new": "    while (false) {",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "one account's fresh stones fill the cell"
+  },
+  {
+    "name": "AUDIT-G3-the-oldest-in-the-cell-out",
+    "file": "src/net/overworldLaw.js",
+    "old": "    for (const keys of by.values()) if (!most || keys.length > most.length || (keys.length === most.length && age(keys[0]) < age(most[0]))) most = keys;",
+    "new": "    for (const keys of by.values()) if (!most || age(keys[0]) < age(most[0])) most = keys;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "past the cell's bound the oldest row goes, whoever's - a flood of searchers evicts an honest one"
+  },
+  {
+    "name": "AUDIT-G3-the-read-back-unbounded",
+    "file": "src/net/overworldLaw.js",
+    "old": "  capGraves(led);\n  return led;",
+    "new": "  return led;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a stored ledger read back past its bounds"
+  },
+  {
+    "name": "AUDIT-G3-the-relay-unbucketed",
+    "file": "server/src/index.js",
+    "old": "    if (!this._spend(ws, now, owGraveGate, 'owGrBucket', 'owGrDrops', 'too many grave words')) return;\n",
     "new": "",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "a take from another build's pile claimed of the host - out of the pack, never granted"
+    "why": "one account's words write the cell's ledger four times a second"
   },
   {
-    "name": "GRAVE-PARTY-the-refusal-stands",
-    "file": "src/scenes/dungeonContext.js",
-    "old": "&& !roomPersonal(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }",
-    "new": ") { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }",
+    "name": "AUDIT-G3-the-bucket-widened",
+    "file": "src/net/wire.js",
+    "old": "export const OW_GRAVE_HZ_MAX = 1;",
+    "new": "export const OW_GRAVE_HZ_MAX = 4;",
     "tests": [
       "test/fb1016b_graveparty.test.js"
     ],
-    "why": "the pile answers with the refusal and opens nothing"
+    "why": "the graves' bucket at the flood's pace"
+  },
+  {
+    "name": "AUDIT-G3-the-session-unbucketed",
+    "file": "src/net/online.js",
+    "old": "    if (!gate.pass || (gr && !gr.pass)) return [];",
+    "new": "    if (!gate.pass) return [];",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the session says what the relay's bucket drops - and counts it said"
+  },
+  {
+    "name": "AUDIT-G4-the-stamp-as-said",
+    "file": "src/scenes/searchRoom.js",
+    "old": "    const t = Number.isFinite(rec.t) ? (Number.isFinite(now) ? Math.min(rec.t, /** @type {number} */ (now)) : rec.t) : now;",
+    "new": "    const t = Number.isFinite(rec.t) ? rec.t : now;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a forged far-future stamp kept - never let go at the room's hour, riding the memory for good"
+  },
+  {
+    "name": "AUDIT-G4-unstamped-kept-unstamped",
+    "file": "src/scenes/searchRoom.js",
+    "old": " : rec.t) : now;",
+    "new": " : rec.t) : null;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "an unstamped stranger's word never let go"
+  },
+  {
+    "name": "AUDIT-G5-another-character-as-this-one",
+    "file": "src/systems/searchables.js",
+    "old": "  return mine && n !== mine ? n : null;",
+    "new": "  return null;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "\"You have already searched here.\" of a stone this character never touched"
+  },
+  {
+    "name": "AUDIT-G5-the-relay-row-unnamed",
+    "file": "server/src/index.js",
+    "old": "sharedClassicMinutes(now), a.name);",
+    "new": "sharedClassicMinutes(now));",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the cell's row names no character"
+  },
+  {
+    "name": "AUDIT-G5-the-fold-unnamed",
+    "file": "src/net/overworldLaw.js",
+    "old": "    const g = [...w, nowMin, acct, who], k = owGraveKey(g);",
+    "new": "    const g = [...w, nowMin, acct, ''], k = owGraveKey(g);",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the fold drops the character's name"
+  },
+  {
+    "name": "AUDIT-G5-a-row-name-unread",
+    "file": "src/net/wire.js",
+    "old": "[...g, r[3], r[4], r[5]] : null;",
+    "new": "[...g, r[3], r[4], ''] : null;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "the client reads no character off the cell's row"
+  },
+  {
+    "name": "AUDIT-G5-the-lens-names-nobody",
+    "file": "src/scenes/searchPartyHost.js",
+    "old": "    selfName: () => host.online?.name || host.social?.name || null,",
+    "new": "    selfName: () => null,",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "no character is mine - another character's search answered as this one's"
+  },
+  {
+    "name": "AUDIT-G5-the-word-unnamed",
+    "file": "src/scenes/searchRoom.js",
+    "old": "  const mine = () => ({ by: searchSelfAcct(), bn: searchSelfName() });",
+    "new": "  const mine = () => ({ by: searchSelfAcct(), bn: null });",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "my search's word names no character"
+  },
+  {
+    "name": "AUDIT-G5-the-word-name-unread",
+    "file": "src/scenes/searchRoom.js",
+    "old": "  const nameOf = (rec) => (typeof rec?.bn === 'string' && rec.bn.length > 0 && rec.bn.length <= NAME_MAX && sanitizeName(rec.bn) === rec.bn ? rec.bn : null);",
+    "new": "  const nameOf = (rec) => null;",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a word's character never read"
+  },
+  {
+    "name": "AUDIT-G5-the-name-not-carried-on",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (w?.acct) Object.assign(sb, { by: w.acct, bn: w.name });",
+    "new": "    if (w?.acct) Object.assign(sb, { by: w.acct });",
+    "tests": [
+      "test/fb1016b_graveparty.test.js"
+    ],
+    "why": "a partymate who landed the find says it on with no character"
   }
 ]

@@ -15815,13 +15815,18 @@ one breath should end - each keeping it, or the room deciding): **"Host arbitrat
 - **ANOTHER BUILD'S WORD IS NO DEAD END** (GRAVE-PARTY, `01-Overview/Field-Bugs-2026-10-16b.md`: "objects in tombs are
   un lootable"). A room container whose word this build cannot read (AUDIT SETS M2's `_lootUnreadable` - another build's
   base signature, or a word `validRoomWord` refuses) was UNBORN for good: the mint waits on a word it will never read,
-  so its pile stood on the floor with no plaque and no press, and M2's own line was never reached. It is the player's
-  OWN now (`scenes/roomLootHost.js` `roomPersonal`): a target again, its list as it stood here (the build's own roll for
-  a pile never composed, its last composition else), opened with one line said once ("Another version of the game shares
-  this room - what you find here is yours alone.", `loot.ownVersion`), its takes neither said to the room (`sayRoomWord`)
-  nor claimed of the host (`roomSettle`) - M2's law holds, nothing of the room's is overwritten. A word it can read makes
-  it the room's again (`landRoomWord`). A body a non-host saw fall holds nothing of its own (emptied at its fall), so it
-  stays an empty body; a container outside PARTY-LOOT (a searched object's find, a building's) keeps M2's refusal.
+  so its pile stood on the floor with no plaque and no press, and M2's own line was never reached. It is a TARGET again
+  (`scenes/roomLootHost.js` `roomUnborn` no longer holds it), and its press says M2's own line ("Something in here is
+  from a newer version of the game. Reload to open it.", `LOOT_NEWER_TEXT`) and opens nothing; its plaque names no list
+  (`lootContents`). A word it can read makes it the room's again (`landRoomWord`). AUDIT GRAVE-PARTY G2 (2026-10-16):
+  GRAVE-PARTY first opened it as the player's OWN (`roomPersonal`, "Another version of the game shares this room - what
+  you find here is yours alone."), and that was a dead end or a copy, never a find: an online pile is BUILT EMPTY (the
+  pile loop's `onlineRoom() ? [] :`), so a pile never composed here opened an empty list and its flat went at the close
+  (`settleLootFlat`); one composed here and turned unreadable handed its base out unclaimed beside every other build's
+  takes of the same base. Its own pin had hand-built a pile holding a list, which no online pile does. Gone, with its
+  string; and `roomSettle` reads a take under a window opened before the word turned unreadable again - lifted back out
+  of the pack and claimed of the host, one copy (the claim lapses, and the piece is back in the list, when no verdict
+  comes).
 - **THE WORD IS THE TAKES, AND THE HOST'S.** The room's word about a room container is no longer its list: `{k, g, lv,
   n, tm, h, x, c, s, si, y, t}` - its terms, its base's signature (`h`), the base places gone (`x`, a set that only
   grows), a base stack's count where it was drawn down (`c`, a count that only falls), the pieces stored in it (`s`,

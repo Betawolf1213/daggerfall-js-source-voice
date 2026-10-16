@@ -710,13 +710,14 @@ FOUND.
 
 CHANGED:
 - **The cell keeps its graves.** The overworld ledger's third kind is `gr`: the searcher's game says `[px, py, n]`; the
-  relay (`_owGraves`, a Room method of its own) stamps each stone with its own minute and the searcher's verified account
-  (`a.sub`), keeps it `OW_GRAVE_KEEP_MIN` (pinned to SEARCH_COOLDOWN_MINUTES), says it to the cell and repeats it in the
-  welcome; junk off the cell's widened square is refused; bounded at `OW_CELL_GRAVES_MAX`; an older relay is told nothing
-  (`relaySupportsOwGraves`). `scenes/searchPartyHost.js` owes the stone until the cell takes it, lands the rows of my party
-  (or my own account) through `markSearched` with the searcher's seat name, and keeps a book it reads again at the stone -
-  a partymate who searched before the party was made still locks it. The cell keeps them in each relay layer apart (a
-  party plays in one).
+  relay (`_owGraves`, a Room method of its own) stamps each stone with its own minute and the searcher's verified
+  account (`a.sub`), keeps it `OW_GRAVE_KEEP_MIN` (pinned to SEARCH_COOLDOWN_MINUTES), says it to the cell and repeats
+  it in the welcome; junk off the cell's widened square is refused; bounded at `OW_CELL_GRAVES_MAX` (and since the audit
+  by its searcher, G3); an older relay is told nothing (`relaySupportsOwGraves` - world211 on, since the audit's G1).
+  `scenes/searchPartyHost.js` owes the stone until the cell takes it, lands the rows of my party (or my own account)
+  through `markSearched` with the searcher's seat name, and keeps a book it reads again at the stone - a partymate who
+  searched before the party was made still locks it. The cell keeps them in each relay layer apart (a party plays in
+  one).
 - **The tomb's word is the searcher's party's.** `srch:` records carry `by` (the account); `scenes/searchRoom.js` decides
   whose a word is (one with no `by`, an older build's, is its live speaker's through the hub's peer map). A stranger's word
   is kept unlanded, read again at the object, and carried in the room's memory for the stranger's own partymates who walk
@@ -726,20 +727,24 @@ CHANGED:
   keeps the name.
 - **The reach is the body's.** `searchReachFor` measures from the feet-to-head segment to the box's nearest point, in the
   dungeon's lootTargets and the street's headstones alike; the bound stays Mac's 1.6 m.
-- **An unreadable PARTY-LOOT container is the player's own** (`roomPersonal`): a target again with its own list, said once
-  ("Another version of the game shares this room - what you find here is yours alone."), its takes never said to the room
-  nor claimed of the host.
+- **An unreadable PARTY-LOOT container is a target again**, its press M2's own "Reload to open it" (`LOOT_NEWER_TEXT`).
+  CORRECTED BY THE AUDIT (G2): this line said it was "the player's own (`roomPersonal`): a target again with its own list,
+  said once ... its takes never said to the room nor claimed of the host" - an online pile is built EMPTY, so that list
+  was empty (and the pile's flat went at the close), or, composed here before the word turned unreadable, a base handed
+  out unclaimed beside every other build's. The arm and its string are gone.
 - DEPARTURES, named in Searchables.md: SEARCH1-PARTY's "the room's word starts everyone's five hours" struck (Mac's ask
   was the party's); SEARCH1's "half of the interact range as doors" measured from the body, not the eye. Three new
-  strings through `t()`, drafted in the thirteen whole languages. The relay's version moves with REZ-BLOODLINE's (one
-  deploy, world210).
+  strings through `t()`, drafted in the thirteen whole languages (two since the audit: `loot.ownVersion` went with the
+  personal arm). The relay's version moves with REZ-BLOODLINE's (one deploy - world210 when this was written, world211
+  since the merge past main's HUB-PULL + DO-ASK world210).
 
 THE FOUR HOSTS: world.js - WIRED (activateGrave moved out by tools/hostMove.mjs; construction, routing and frame on lines
 it already had; the ceiling LOWERED to 21,638); worldModes.js - WIRED (the headstones' reach); dungeonContext.js - WIRED (both
 dungeon hosts have it; dungeon.js has no room and no lens); exterior.js - the bench stands no headstone (pinned). Pinned by
-`test/fb1016b_graveparty.test.js` (8, end to end above ground over the real relay Room and OnlineSessions, and underground
-over the dungeon host's own doors); `tools/mutants/fb1016b_graveparty.json` (61, all dead). PINS MOVED (each marked):
-auditsetsonline (M2's personal arm), auditworld34, auditworld4, world1, world4 (the memory composes strangers' searches;
+`test/fb1016b_graveparty.test.js` (8 at the slice, 14 since the audit; end to end above ground over the real relay Room
+and OnlineSessions, and underground over the dungeon host's own doors); `tools/mutants/fb1016b_graveparty.json` (61 at
+the slice, 78 since the audit, all dead). PINS MOVED (each marked): auditsetsonline (M2's personal arm - MOVED BACK by the
+audit, G2), auditworld34, auditworld4, world1, world4 (the memory composes strangers' searches;
 world4 the applyLoot ask and lootRecords' fields), world8 (lootRecords' fields), dsize1_mediumdungeons, renowngate,
 search1_searchables, silverfinds_client (activateGrave in searchPartyHost.js), fb1004c_robes (the reach), ow6_ledger
 (owLedgerOf's shape, OW_KINDS, the routing), hostceiling; mutants SETS-M2-dungeon-opens-it, ROBES-dungeon-search-box-raced,
@@ -747,12 +752,65 @@ HOST-SPLIT-a-ceiling-under-its-host, OW6H-unheard, OW6H-never-said, OW6L-relay-t
 and SILVER-FINDS-grave-unasked re-aimed by content, all dead.
 
 FLAGGED, not taken: above ground the FIND is not shared - the stone is locked for the party, its pile the searcher's (a
-cell has no container protocol; a slice of its own); a `srch:` word's `by` is a peer's word (a modified client could name
-a partymate of mine and lock my coffin - the act channel's existing trust); an older build in the room still lands every
-`srch:` word room-wide; a stone at a cell seam is said to the searcher's primary cell (a partymate in the next cell hears
-it only through a halo); a PARTY-LOOT claim in flight when the word turns unreadable lapses and recomposes the list.
+cell has no container protocol; a slice of its own); a `srch:` word's `by` is a peer's word (a modified client could
+name a partymate of mine and lock my coffin - the act channel's existing trust; its `bn`, the audit's G5, likewise); an
+older build in the room still lands every `srch:` word room-wide; a stone at a cell seam is said to the searcher's
+primary cell (a partymate in the next cell hears it only through a halo); a PARTY-LOOT claim in flight when the word
+turns unreadable lapses and recomposes the list.
 
 What the reporter is owed: a headstone your party searched is searched for the whole party, and the game tells you who
 searched it; a stranger's search no longer locks anything for you. In a tomb, coffins a stranger opened are yours to
 search, and you can search one standing right beside it. A treasure pile that showed but could not be clicked (another
-game version in the room) opens now.
+game version in the room) answers now: something in it is from another version of the game, reload to open it
+(AUDIT G2: it does not open as "yours alone", which opened it empty). Another of your own characters is told which of
+yours searched it (AUDIT G5).
+
+AUDIT (2026-10-16), the slice re-read at `2c968516c2` (the merge that made its relay world211), every finding fixed at
+its root, each pinned by a test that fails without its fix and mutation-checked
+(`tools/mutants/fb1016b_graveparty.json`, 78 records, all dead - the personal arm's three gone, eight re-aimed by
+content, twenty new). THE FOUR HOSTS: dungeonContext.js - WIRED (line-neutral: M2's refusal back in takeLoot, the
+plaque's `lootContents`, the searcher's character beside its account at the search and in `searchHeard`); world.js -
+unchanged (the search party already reads the live session and hub picture it is handed, and the character's name is the
+session's); worldModes.js - unchanged (both dungeon hosts take dungeonContext.js's doors); exterior.js - stands no
+headstone and no room container. The findings:
+- **G1 (MAJOR) - a headstone's search took its player offline.** `OW_GRAVE_RELAY_MIN` was 208, and main's world208
+  (INSTANCES), world209 (WEAPON-GLOW1) and world210 (HUB-PULL + DO-ASK) know no `gr`: their parseClient answers
+  `bad ow`, the relay closes the socket CLOSE_POLICY and `net/online.js` makes the session TERMINAL. Now 211
+  (`net/wire.js`), and the pin walks world207-211 (the session at each of 208-210 says nothing); the audit's own
+  end-to-end script, this branch's session against main's world210 relay, now stays open after a headstone's search. The
+  same number in the test's comments and in `06-Systems/Searchables.md` ("_owGraves, world208", "A relay before
+  world208") moved with it.
+- **G2 (MAJOR) - the "personal" PARTY-LOOT arm was a dead end or a copy.** An online pile is built EMPTY (the pile
+  loop's `const items = onlineRoom() ? [] : rollPileItems();`), so an unreadable pile never composed here opened an
+  empty list and its flat went at the close (`onEmptied` -> `settleLootFlat`); one composed here and turned unreadable
+  handed its base out unclaimed (`roomSettle` stood aside) beside every other build's takes of the same base. The
+  slice's own pin hand-built `items: own.map(...)`, a pile production never makes. Chosen: the dead-end-free honest
+  design - the pile is a TARGET again (`roomUnborn` no longer holds it), its press M2's own `LOOT_NEWER_TEXT` ("Reload
+  to open it": the player is told to update, nothing opens, nothing is copied), its plaque naming no list
+  (`lootContents`); `roomPersonal`, its string `loot.ownVersion` (14 locales) and `roomSettle`'s guard are gone, so a
+  take under a window opened before the word turned unreadable is lifted and claimed of the host again - one copy.
+  Pinned over the pile loop's OWN build of a pile (the slice of `dungeonContext.js` from its list to its push), never a
+  hand-built one. `test/auditsetsonline.test.js`'s M2 pin and `SETS-M2-dungeon-opens-it` moved back to the refusal
+  (marked).
+- **G3 (MINOR) - one account flooded a cell's grave ledger.** A row's key is its stone and its searcher with a stone's
+  number in 0..4095, so every word carried fresh rows: four a second for a minute wrote the whole ledger 241 times (3.3
+  MB), kept 128 rows and evicted Ann's. Now (`net/overworldLaw.js` capGraves): a cell keeps at most
+  `OW_GRAVE_ACCT_ROWS_MAX` (32, pinned to `GRAVE_OWED_MAX`) rows of one searcher, its OWN oldest out past it; past
+  `OW_CELL_GRAVES_MAX` the oldest of whichever searcher holds the most - never another's for a flooder's; and the word
+  rides its own bucket (`owGraveGate`, a word a second, four deep: the relay's `_owGraves` spends it, and the session's
+  `sendOverworld` keeps the same law at home so an honest word is never the one dropped). A word that takes nothing
+  writes nothing (it already did). The audit's flood re-run: 64 ledger writes in the minute (Ann's one among them) and
+  237 KB, against 241 and 3.3 MB; 33 rows kept, Ann's standing. Pinned over the real Room (`test/fakeRoom.mjs`). The
+  relay bundle changed: world211 re-hashed in place (undeployed).
+- **G4 (MINOR) - a stranger's forged future stamp never expired.** `scenes/searchRoom.js` kept a stranger's word's `t`
+  as said, so a far-future stamp was never let go at the room's hour and filled the 24 kept slots, riding the room's
+  memory for good. Now never ahead of now (`Math.min(rec.t, wallNow)`, the WORLD7/8 C2 law applyLoot keeps), and an
+  unstamped word is stamped now, so every one goes at the hour.
+- **G5 (NIT) - the lock is per account, and it spoke as if the character had searched.** A search on character A locked
+  the same account's character B with "You have already searched here." (B never searched). Chosen: the lock STAYS the
+  account's (one player, whichever character - an alt's second search is the same player's second find), and the words
+  name the searching character: the relay's grave row carries the token's name (`[px, py, n, minute, acct, name]`), a
+  `srch:` word its `bn` (the session's issued name), and `systems/searchables.js` `searchToldBy` answers "Already
+  searched by Ann." for another character of my account, the old words for this one (`searchSelfName`, the lens's
+  `selfName`). Two characters wearing one name (NAME-AS 'account', or a name the service refused) are told the old
+  words: they are one name to everyone.

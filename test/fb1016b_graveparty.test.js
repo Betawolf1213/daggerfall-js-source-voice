@@ -2,18 +2,25 @@
 // loot on headstones are able to be looted by others, objects in tombs are un lootable (have not tried dungeons yet)"; Mac's
 // SEARCH1-PARTY: "When one player in the party interacted with it no one else can again for 5 hours ... visible for
 // everyone in the party the same the looter sees"). A SEARCH IS ITS SEARCHER'S PARTY'S - above ground and below:
-//   - above, a headstone's search is said to the cell (net/overworldLaw.js owFoldGraves, the relay's `gr` kind, world208)
-//     and every partymate's game locks the stone, by the searcher's name ("Already searched by Ann.") - a stranger's game
-//     reads the row and locks nothing (scenes/searchPartyHost.js, over the REAL relay Room and REAL OnlineSessions);
+//   - above, a headstone's search is said to the cell (net/overworldLaw.js owFoldGraves, the relay's `gr` kind, world211 -
+//     world208 on its branch, and AUDIT GRAVE-PARTY G1: main's world208-210 close the socket on the word) and every
+//     partymate's game locks the stone, by the searcher's name ("Already searched by Ann.") - a stranger's game reads the
+//     row and locks nothing (scenes/searchPartyHost.js, over the REAL relay Room and REAL OnlineSessions);
 //   - below, a coffin's `srch:<i>` word names its searcher and lands only in the searcher's party - a stranger in the same
 //     crypt keeps their own roll, and is never told "You have already searched here." of an object they never touched
 //     (scenes/searchRoom.js, over the dungeon host's own doors sliced from scenes/dungeonContext.js);
 //   - a searchable's reach is the BODY's, to the nearest point of its box (systems/searchables.js searchReachFor): a coffin
 //     on the floor answers from beside it (the dungeon's own lootTargets, the real pick);
-//   - a PARTY-LOOT container whose room word this build cannot read is the player's own, no longer unborn for good
-//     (scenes/roomLootHost.js roomPersonal, the dungeon's own takeLoot and lootTargets).
+//   - a PARTY-LOOT container whose room word this build cannot read is no longer unborn for good: a target again, its
+//     press M2's own "Reload to open it" (scenes/roomLootHost.js roomUnborn, the dungeon's own takeLoot and lootTargets).
 // Run against the tree before GRAVE-PARTY every test here fails (no searchedText, no `gr` kind, no searchRoom, a reach
 // of SEARCH_REACH from the eye, an unreadable pile unborn).
+// AUDIT GRAVE-PARTY (2026-10-16), each finding pinned here and failing without its fix: G1 the graves' relay is world211
+// (main's world208-210 close the socket on `gr`); G2 the unreadable pile opens nothing - GRAVE-PARTY's "personal" arm
+// opened the EMPTY list an online pile is built with, or handed a composed base out unclaimed; G3 one account's flood of
+// fresh stones neither evicts another searcher's row nor writes the ledger at its pace (the real Room); G4 a stranger's
+// word kept is stamped never ahead of now; G5 the lock is the account's, and another character of it is told whose
+// search it was.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -21,7 +28,7 @@ import * as acorn from 'acorn';
 
 import {
   searchKey, markSearched, searchCooldownLeft, searchedText, searchedBy, SEARCHED_TEXT, searchLedgerRecord, restoreSearchLedger,
-  _resetSearchLedgerForTests, setSearchParty, searchPartyLens, searchKinOf, searchWhoOf, searchSelfAcct, searchAcctOfPeer,
+  _resetSearchLedgerForTests, setSearchParty, searchPartyLens, searchKinOf, searchWhoOf, searchSelfAcct, searchAcctOfPeer, searchSelfName, searchToldBy,
   SEARCH_COOLDOWN_MINUTES, SEARCH_REACH, searchReachFor, searchBodyDistance, searchableKind, isPicked, searchName, rollSearchOutcome,
   mintSearchFind, searchMessage, SEARCH_KINDS, pickSearchUndead, pickRosterFoe, rollSearchElite, SEARCH_LOOT_MAX,
 } from '../src/systems/searchables.js';
@@ -31,10 +38,11 @@ import {
 import {
   validOwIn, validOwOut, OW_KINDS, OW_GRAVE_RELAY_MIN, relaySupportsOwGraves, OW_CELL_GRAVES_MAX, RELAY_VERSION, worldRoom,
   PIXEL_UNITS, sharedClassicMinutes, wallMsForClassicMinutes, parseClient, OW_LEDGER_KEY, respawnDue, validSocialFrame,
+  OW_GRAVE_ACCT_ROWS_MAX, OW_GRAVE_HZ_MAX, OW_GRAVE_BURST_MAX, owGraveGate, owGate, RESPAWN_MS, NAME_MAX,
 } from '../src/net/wire.js';
 import { OnlineSession } from '../src/net/online.js';
 import { SocialState } from '../src/net/social.js';
-import { createSearchParty } from '../src/scenes/searchPartyHost.js';
+import { createSearchParty, GRAVE_OWED_MAX, GRAVE_SAY_MS } from '../src/scenes/searchPartyHost.js';
 import { createSearchRoom, SEARCH_FOREIGN_MAX, SEARCH_FOREIGN_PER_OBJECT, SEARCH_FOREIGN_BYTES } from '../src/scenes/searchRoom.js';
 import { createRoomLoot } from '../src/scenes/roomLootHost.js';
 import { setSharedClock, worldMinutes, sharedClockOn } from '../src/systems/worldTick.js';
@@ -49,6 +57,7 @@ import { liveStat } from '../src/systems/statMods.js';
 import { dungeonRarityTier, dungeonFamily } from '../src/systems/lootRarity.js';
 import { enemyDisplayName, ENEMY_BASICS } from '../src/characters/enemyBasics.js';
 import * as RL from '../src/systems/roomLoot.js';
+import { playerEntity } from '../src/characters/playerEntity.js';   // AUDIT GRAVE-PARTY G2: the pack a room container's take is lifted back out of (roomLootHost.js roomLift)
 import { installRoleplayRealismItems } from '../src/systems/rriInstall.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
@@ -91,14 +100,16 @@ const mount = (body, state) => new Function('__s', `with (__s) { ${body} }`)(sco
 
 // ═══ THE PLAYERS ═══════════════════════════════════════════════════════════════════════════════════════════════════
 /** A player's hub picture (net/social.js SocialState), through the wire's own projection. `party` the accounts seated
- *  with them (names and peer ids from PLAYERS), the first its leader; none, no party. */
+ *  with them (names and peer ids from PLAYERS), the first its leader; none, no party. `me` the character this account
+ *  plays now (AUDIT GRAVE-PARTY G5: ANNABEL is Ann's account on another character - another name, another tab). */
 const PLAYERS = {
   'acct-ann': { name: 'Ann', peer: 'a0a0-0001' }, 'acct-bob': { name: 'Bob', peer: 'b0b0-0002' }, 'acct-eve': { name: 'Eve', peer: 'e0e0-0003' },
   'acct-dan': { name: 'Dan', peer: 'd0d0-0004' }, 'acct-fay': { name: 'Fay', peer: 'f0f0-0005' },
 };
-function picture(social, acct, party = null) {
+const ANNABEL = { name: 'Annabel', peer: 'a0a0-0011' };
+function picture(social, acct, party = null, me = PLAYERS[acct]) {
   const row = (a) => ({ acct: a, name: PLAYERS[a].name, online: true, peers: [PLAYERS[a].peer] });
-  const f = validSocialFrame({ t: 'social', k: 'state', acct, name: PLAYERS[acct].name, peers: [PLAYERS[acct].peer], friends: [], in: [], out: [], invites: [],
+  const f = validSocialFrame({ t: 'social', k: 'state', acct, name: me.name, peers: [me.peer], friends: [], in: [], out: [], invites: [],
     party: party ? { id: 'party-0001', leader: party[0], members: party.map(row) } : null });
   assert.ok(f, 'a hub picture the wire takes');
   social.apply(f);
@@ -113,7 +124,7 @@ const box = (min, max) => ({ min, max });
 
 // ═══ 1. THE LAW ════════════════════════════════════════════════════════════════════════════════════════════════════
 
-test('GRAVE-PARTY law: a search\'s hours carry WHO searched - mine says SEARCHED_TEXT, a partymate\'s "Already searched by <name>." (kept through the save); the later search holds the hours; the party lens says me, my party or nobody; the reach is the body\'s to the box; the cell keeps a grave row a stone and a searcher, stamped and kept its five hours, said in the welcome only when it holds any; the wire\'s third kind, world208 (mutants: the name dropped or unsaid; an earlier word shortening a search; a stranger taken for the party; the reach from the eye; the row re-taken inside its hours, kept past them or unbounded; an older relay told)', () => {
+test('GRAVE-PARTY law: a search\'s hours carry WHO searched - mine says SEARCHED_TEXT, a partymate\'s "Already searched by <name>." (kept through the save); the later search holds the hours; the party lens says me, my party or nobody; the reach is the body\'s to the box; the cell keeps a grave row a stone and a searcher (and the searching character\'s name), stamped and kept its five hours, said in the welcome only when it holds any; the wire\'s third kind, world211 - never main\'s world208-210 (AUDIT G1) (mutants: the name dropped or unsaid; an earlier word shortening a search; a stranger taken for the party; the reach from the eye; the row re-taken inside its hours, kept past them or unbounded; an older relay told)', () => {
   _resetSearchLedgerForTests();
   const social = picture(new SocialState({ acct: 'acct-ann' }), 'acct-ann', ['acct-ann', 'acct-bob']);
   const { lens } = searchParty({ social });
@@ -152,32 +163,38 @@ test('GRAVE-PARTY law: a search\'s hours carry WHO searched - mine says SEARCHED
   // THE CELL'S GRAVES
   assert.equal(OW_GRAVE_KEEP_MIN, SEARCH_COOLDOWN_MINUTES, 'pinned equal: the search\'s own hours');
   const M = 900_000, led = newOwLedger();
-  assert.deepEqual(owFoldGraves(led, [[101, 207, 3], [101, 207, 3], [101, 207, 4]], 'acct-ann', M), [[101, 207, 3, M, 'acct-ann'], [101, 207, 4, M, 'acct-ann']], 'each stone once, stamped and named by the relay');
-  assert.deepEqual(owFoldGraves(led, [[101, 207, 3]], 'acct-ann', M + 10), [], 'inside its hours the same searcher\'s row stands');
-  assert.deepEqual(owFoldGraves(led, [[101, 207, 3]], 'acct-eve', M + 10), [[101, 207, 3, M + 10, 'acct-eve']], 'another searcher, a row of their own');
-  assert.deepEqual(owFoldGraves(led, [[101, 207, 3]], null, M), [], 'no account, nothing');
+  assert.deepEqual(owFoldGraves(led, [[101, 207, 3], [101, 207, 3], [101, 207, 4]], 'acct-ann', M, 'Ann'), [[101, 207, 3, M, 'acct-ann', 'Ann'], [101, 207, 4, M, 'acct-ann', 'Ann']], 'each stone once, stamped and named by the relay - its account and its character');
+  assert.deepEqual(owFoldGraves(led, [[101, 207, 3]], 'acct-ann', M + 10, 'Annabel'), [], 'inside its hours the same searcher\'s row stands - another character of the account searched it already');
+  assert.deepEqual(owFoldGraves(led, [[101, 207, 3]], 'acct-eve', M + 10, 'Eve'), [[101, 207, 3, M + 10, 'acct-eve', 'Eve']], 'another searcher, a row of their own');
+  assert.deepEqual(owFoldGraves(led, [[101, 207, 3]], null, M, 'Ann'), [], 'no account, nothing');
+  assert.deepEqual(owFoldGraves(newOwLedger(), [[101, 207, 3]], 'acct-ann', M), [[101, 207, 3, M, 'acct-ann', '']], 'no name held: none said');
+  assert.deepEqual(owFoldGraves(newOwLedger(), [[101, 207, 3]], 'acct-ann', M, 'x'.repeat(NAME_MAX + 1)), [[101, 207, 3, M, 'acct-ann', '']], 'nor one longer than a name');
   assert.equal(owGraveLive(led.gr[owGraveKey([101, 207, 3, M, 'acct-ann'])], M + OW_GRAVE_KEEP_MIN - 1), true);
   assert.equal(owGraveLive(led.gr[owGraveKey([101, 207, 3, M, 'acct-ann'])], M + OW_GRAVE_KEEP_MIN), false);
-  assert.deepEqual(owFoldGraves(led, [[101, 207, 3]], 'acct-ann', M + OW_GRAVE_KEEP_MIN), [[101, 207, 3, M + OW_GRAVE_KEEP_MIN, 'acct-ann']], 'past its hours: taken again, fresh');
+  assert.deepEqual(owFoldGraves(led, [[101, 207, 3]], 'acct-ann', M + OW_GRAVE_KEEP_MIN, 'Ann'), [[101, 207, 3, M + OW_GRAVE_KEEP_MIN, 'acct-ann', 'Ann']], 'past its hours: taken again, fresh');
   const T = wallMsForClassicMinutes(M + OW_GRAVE_KEEP_MIN + 20);
-  assert.deepEqual(toWelcome(led, T).gr, [[101, 207, 3, M + OW_GRAVE_KEEP_MIN, 'acct-ann']], 'the welcome: the rows inside their hours');
+  assert.deepEqual(toWelcome(led, T).gr, [[101, 207, 3, M + OW_GRAVE_KEEP_MIN, 'acct-ann', 'Ann']], 'the welcome: the rows inside their hours');
   assert.equal(owPrune(led, T), true, 'the prune lets the rest go');
   assert.equal(Object.keys(led.gr).length, 1);
   assert.equal('gr' in toWelcome(newOwLedger(), T), false, 'none held: the welcome as it was');
   assert.deepEqual(owLedgerOf(JSON.parse(JSON.stringify(led))), led, 'stored and read back');
   assert.equal(owLedgerEmpty(led), false);
-  const many = newOwLedger();
-  for (let i = 0; i < OW_CELL_GRAVES_MAX + 4; i++) owFoldGraves(many, [[101, 207, i]], 'acct-ann', M + i);
+  const many = newOwLedger();   // (the bounds' own law - each searcher's, and the heaviest's first - is AUDIT G3's pin below)
+  for (let i = 0; i < OW_CELL_GRAVES_MAX + 4; i++) owFoldGraves(many, [[101, 207, i]], `acct-${i % 8}`, M + i, 'X');
   assert.equal(Object.keys(many.gr).length, OW_CELL_GRAVES_MAX, 'bounded');
-  assert.ok(!many.gr[owGraveKey([101, 207, 0, M, 'acct-ann'])] && many.gr[owGraveKey([101, 207, OW_CELL_GRAVES_MAX + 3, M + OW_CELL_GRAVES_MAX + 3, 'acct-ann'])], 'the oldest out');
+  assert.ok(!many.gr[owGraveKey([101, 207, 0, M, 'acct-0'])] && many.gr[owGraveKey([101, 207, OW_CELL_GRAVES_MAX + 3, M + OW_CELL_GRAVES_MAX + 3, 'acct-3'])], 'the oldest out');
   // THE WIRE
   assert.deepEqual(OW_KINDS, ['sp', 'dg', 'gr']);
   assert.deepEqual(validOwIn({ k: 'gr', rows: [[101, 207, 3], [101, 207, 3]] }), { k: 'gr', rows: [[101, 207, 3]] });
   for (const bad of [{ k: 'gr', rows: [] }, { k: 'gr', rows: [[101, 207]] }, { k: 'gr', rows: [[1000, 207, 3]] }, { k: 'gr', rows: [[101, 207, -1]] }, { k: 'gr', rows: [[101, 207, 3, M, 'acct-ann']] }]) assert.equal(validOwIn(bad), null, JSON.stringify(bad));
   assert.deepEqual(parseClient(JSON.stringify({ t: 'ow', k: 'gr', rows: [[101, 207, 3]] }), { hasHello: true }), { t: 'ow', k: 'gr', rows: [[101, 207, 3]] });
-  assert.deepEqual(validOwOut({ k: 'gr', rows: [[101, 207, 3, M, 'acct-ann'], [101, 207, 3], 'x', [101, 207, 3, -1, 'acct-ann'], [101, 207, 3, M, '']] }), { k: 'gr', rows: [[101, 207, 3, M, 'acct-ann']] });
-  assert.equal(OW_GRAVE_RELAY_MIN, 208);
-  assert.deepEqual(['world207', 'world208', 'world300', 'junk', null].map(relaySupportsOwGraves), [false, true, true, false, false]);
+  assert.deepEqual(validOwOut({ k: 'gr', rows: [[101, 207, 3, M, 'acct-ann', 'Ann'], [101, 207, 3], 'x', [101, 207, 3, -1, 'acct-ann', 'Ann'], [101, 207, 3, M, '', 'Ann'], [101, 207, 3, M, 'acct-ann'], [101, 207, 3, M, 'acct-ann', 7], [101, 207, 3, M, 'acct-ann', 'x'.repeat(NAME_MAX + 1)], [101, 207, 4, M, 'acct-ann', '']] }),
+    { k: 'gr', rows: [[101, 207, 3, M, 'acct-ann', 'Ann'], [101, 207, 4, M, 'acct-ann', '']] }, 'a row names its account and its character (or none) - nothing else is a row');
+  // AUDIT GRAVE-PARTY G1: main's INSTANCES world208, WEAPON-GLOW1 world209 and HUB-PULL + DO-ASK world210 know no `gr`
+  // (their parseClient answers `bad ow`, the socket closes CLOSE_POLICY and the session is terminal) - a headstone's
+  // search took its player offline. The first relay that keeps the graves is this one, world211.
+  assert.equal(OW_GRAVE_RELAY_MIN, 211);
+  assert.deepEqual(['world207', 'world208', 'world209', 'world210', 'world211', 'world300', 'junk', null].map(relaySupportsOwGraves), [false, false, false, false, true, true, false, false]);
   assert.ok(relaySupportsOwGraves(RELAY_VERSION), 'this build\'s relay keeps them');
 });
 
@@ -218,8 +235,8 @@ function relayWorld(clock) {
     close(code = 1000, reason = '') { if (this.readyState === 3) return; this.readyState = 3; pending.push(async () => { const i = this.r.sockets.indexOf(this.rws); if (i >= 0) this.r.sockets.splice(i, 1); await this.r.room.webSocketClose(this.rws, code, reason); }); }
   }
   async function pump(rounds = 12) { for (let k = 0; k < rounds; k++) { while (pending.length) await pending.shift()(); await new Promise((r) => setTimeout(r, 0)); } }
-  function session(acct) {
-    const { name, peer } = PLAYERS[acct];
+  function session(acct, me = PLAYERS[acct]) {
+    const { name, peer } = me;
     const s = new OnlineSession({ url: 'wss://relay.test', name, id: peer, secret: 'secret-of-' + peer, WebSocketImpl: BridgeWS, now: () => clock.t });
     s.mintToken = (room) => rooms.room(room).token(peer, { s: acct, n: name });
     return s;
@@ -229,10 +246,10 @@ function relayWorld(clock) {
 
 /** A player at the graveyard: their hub picture, their session, the streaming host's search party over both (its lens
  *  captured), their own ledger and dice - swapped in for everything they do (one process stands them all). */
-function graveyardPlayer(world, acct, party, first = 0.1) {
-  const social = picture(new SocialState({ acct }), acct, party);
+function graveyardPlayer(world, acct, party, first = 0.1, me = PLAYERS[acct]) {
+  const social = picture(new SocialState({ acct }), acct, party, me);
   const shown = [];
-  const session = world.session(acct);
+  const session = world.session(acct, me);
   const townTalk = { say: (l) => shown.push(l), showOverlay: (w) => shown.push(w) };
   const { sp, lens } = searchParty({ townTalk, droppedLoot: { dropPile: () => null, releaseEmptied: () => {} }, exteriorFoes: { spawnFoe: () => Promise.resolve() }, makeInventoryWindow: () => null, player: { pos: [0, 0, 1], eye: [0, 1.7, 1] }, playerTravelPixel: () => ({ x: GPX, y: GPY }), dropFeet: () => [0, 0, 1], partyNear: () => [], online: session, social });
   const P = { acct, social, session, sp, shown, ledger: { rows: [] }, rand: dieFrom(first, acct.length * 7919) };
@@ -289,7 +306,7 @@ test('GRAVE-PARTY above ground END TO END: Ann searches a headstone; the cell ke
   } finally { Date.now = realNow; setSharedClock(null); _resetSearchLedgerForTests(); setSearchParty(null); }
 });
 
-test('GRAVE-PARTY the cell\'s door: a stone is said down the primary cell\'s socket alone, to a relay that keeps the graves - never to an older one (it would close the socket); a stone off the cell\'s widened square is junk at the relay and kept by nobody, one in its margin is taken (mutants: an older relay told; the margin not asked at home or at the relay)', async () => {
+test('GRAVE-PARTY the cell\'s door: a stone is said down the primary cell\'s socket alone, to a relay that keeps the graves - never to an older one (it would close the socket: main\'s world210 too, AUDIT G1); a stone off the cell\'s widened square is junk at the relay and kept by nobody, one in its margin is taken, named by the speaker\'s account and character (mutants: an older relay told; the margin not asked at home or at the relay; the character unnamed)', async () => {
   const { FakeWS, sockets } = fakeSocketClass();
   const rig = (v) => {
     const s = new OnlineSession({ url: 'wss://relay.test', name: 'Ann', id: 'a0a0-0001', secret: 'secret-of-a0a0-0001', WebSocketImpl: FakeWS, now: () => 1000 });
@@ -300,10 +317,12 @@ test('GRAVE-PARTY the cell\'s door: a stone is said down the primary cell\'s soc
       return { s, ws, said: () => ws.sent.map((x) => JSON.parse(x)).filter((x) => x.t === 'ow') };
     });
   };
-  const old = await rig('world207');
-  assert.equal(old.s.owGraveOk, false);
-  assert.deepEqual(old.s.sendOverworld('gr', [[GPX, GPY, 3]]), [], 'nothing to a relay that would close the socket');
-  assert.deepEqual(old.said(), []);
+  for (const v of ['world207', 'world208', 'world209', 'world210']) {   // AUDIT G1: main's world208-210 among them
+    const old = await rig(v);
+    assert.equal(old.s.owGraveOk, false, v);
+    assert.deepEqual(old.s.sendOverworld('gr', [[GPX, GPY, 3]]), [], `nothing to ${v} - it would close the socket`);
+    assert.deepEqual(old.said(), []);
+  }
   const now = await rig(RELAY_VERSION);
   assert.deepEqual(now.s.sendOverworld('gr', [[GPX, GPY, 3], [300, GPY, 4]]), [[GPX, GPY, 3]], 'the cell\'s own law at home: a stone off its square left out');
   assert.deepEqual(now.said(), [{ t: 'ow', k: 'gr', rows: [[GPX, GPY, 3]] }]);
@@ -322,7 +341,7 @@ test('GRAVE-PARTY the cell\'s door: a stone is said down the primary cell\'s soc
     const edge = Math.floor(GPX / 16) * 16 - 3;   // in the cell's margin
     await r.raw(a, JSON.stringify({ t: 'ow', k: 'gr', rows: [[edge, GPY, 3]] }));
     const M = sharedClassicMinutes(clock.t);
-    assert.deepEqual(grs(b), [{ t: 'ow', k: 'gr', rows: [[edge, GPY, 3, M, 'acct-ann']] }], 'a stone over the seam is taken, stamped with the relay\'s minute and the speaker\'s account, and fanned');
+    assert.deepEqual(grs(b), [{ t: 'ow', k: 'gr', rows: [[edge, GPY, 3, M, 'acct-ann', 'Ann']] }], 'a stone over the seam is taken, stamped with the relay\'s minute, the speaker\'s account and its character\'s name (the token\'s), and fanned');
     assert.deepEqual(grs(a), grs(b), 'the speaker too');
   } finally { Date.now = realNow; }
 });
@@ -345,12 +364,12 @@ function actRoom() {
 }
 /** A player in the tomb: the dungeon host's own doors over two coffins - its search, its room word out and in, its
  *  memory's loot - with the streaming host's party lens, their own ledger and dice. */
-function tombPlayer(net, acct, party) {
-  const id = PLAYERS[acct].peer;
-  const social = picture(new SocialState({ acct }), acct, party);
+function tombPlayer(net, acct, party, me = PLAYERS[acct]) {
+  const id = me.peer;
+  const social = picture(new SocialState({ acct }), acct, party, me);
   const { lens } = searchParty({ social });
   const said = [], windows = [];
-  const player = { level: 6, gender: 'male', name: PLAYERS[acct].name, stats: { luck: 50, strength: 50 }, activeEffects: [], items: [], goldPieces: 0 };
+  const player = { level: 6, gender: 'male', name: me.name, stats: { luck: 50, strength: 50 }, activeEffects: [], items: [], goldPieces: 0 };
   const P = { id, acct, social, said, windows, ledger: { rows: [] }, rand: lcg(acct.length * 104729), next: null };
   P.as = (fn) => {
     restoreSearchLedger(P.ledger); setSearchParty(lens);
@@ -364,7 +383,7 @@ function tombPlayer(net, acct, party) {
     _locationKey: ROOM, dfLocation: { name: 'The Tombs of Test', mapTableData: { mapId: 777, dungeonType: 18 } },
     playerEntity: player, activeOverlay: null, _ctxDead: false, enemies: [],
     opts: { onActions: (data) => net.send(id, data), onLootClaimed: () => {}, party: () => [] },
-    isRoomBaseContainer: () => false, roomPersonal: () => false, roomUnborn: () => false, roomRecordOf: () => null, sayRoomWord: () => false, landRoomWord: () => 0,
+    isRoomBaseContainer: () => false, roomUnborn: () => false, roomRecordOf: () => null, sayRoomWord: () => false, landRoomWord: () => 0,
     settleLootFlat: () => {}, camps: { applyOwner: () => {}, activate: () => false }, roomEncounterAsked: () => false, actions: { applyRemote: () => 0 },
     droppedLoot: { physical: { owns: () => false }, pileFor: () => null }, droppedTorches: { activate: () => false }, plaqueActionFor: () => null,
     setMidScreenText: (t) => said.push(t), pushDungeonWindow: (w) => windows.push(w),
@@ -457,7 +476,7 @@ test('GRAVE-PARTY underground, the strangers\' words kept are BOUNDED - they rid
   try {
     const room = createSearchRoom({ respawnDue, wallNow: () => clock.t });
     const gold = (n) => ({ group: 'Currency', templateIndex: 276, name: 'Gold Pieces', value: 1, stackCount: n });
-    const word = (by, n = 1, extra = {}) => ({ k: 'srch:0', r: Array.from({ length: n }, (_, i) => gold(10 + i)), t: clock.t, by, rider: 'x'.repeat(64), ...extra });   // `rider`: a field no search word has
+    const word = (by, n = 1, extra = {}) => ({ k: 'srch:0', r: Array.from({ length: n }, (_, i) => gold(10 + i)), t: clock.t, by, bn: 'Zed', rider: 'x'.repeat(64), ...extra });   // `rider`: a field no search word has
     assert.equal(room.ours('srch:0', word('acct-bob'), null)?.kin, 'party', 'a partymate\'s word is to be landed');
     assert.equal(room.records().length, 0, 'and is not a stranger\'s');
     assert.equal(room.ours('srch:0', word('acct-zed', SEARCH_LOOT_MAX + 1), null), null);
@@ -471,7 +490,7 @@ test('GRAVE-PARTY underground, the strangers\' words kept are BOUNDED - they rid
     const kept = room.records();
     assert.equal(kept.length, SEARCH_FOREIGN_MAX, 'and the room its newest in all');
     assert.equal(kept.at(-1).k, `srch:${SEARCH_FOREIGN_MAX + 3}`);
-    assert.deepEqual(Object.keys(kept.at(-1)).sort(), ['by', 'k', 'r', 't'], 'its own fields alone - nothing else a word carried rides on');
+    assert.deepEqual(Object.keys(kept.at(-1)).sort(), ['bn', 'by', 'k', 'r', 't'], 'its own fields alone - nothing else a word carried rides on');
     clock.t += 24 * 60 * 60 * 1000;
     assert.equal(room.records().length, 0, 'past the room\'s hour: let go');
   } finally { setSearchParty(null); }
@@ -520,26 +539,35 @@ test('GRAVE-PARTY the reach: a coffin on a tomb\'s floor answers from beside it 
 });
 
 // ═══ 5. PARTY-LOOT: A ROOM CONTAINER THIS BUILD CANNOT READ ════════════════════════════════════════════════════════
-test('GRAVE-PARTY a PARTY-LOOT pile whose room word this build cannot read (another build\'s, in a mixed room) is the player\'s OWN - a target again (it stood unborn for good: drawn on the floor, no plaque, no press), opened with its own list and one word that says so, its takes never said to the room nor claimed of the host; one it can read is the room\'s again (mutants: roomUnborn holding the unreadable; the M2 refusal standing over it; the word said twice; a take claimed or said; the list recomposed under its taker)', () => {
+/** THE PILE LOOP'S OWN BUILD of a pile (dungeonContext.js, from its list to its push) - the producer this pin stands on
+ *  (TEST THE SHAPE THE PRODUCER MINTS): online a pile's list is built EMPTY, its base composed into it once its terms
+ *  come. AUDIT GRAVE-PARTY G2: GRAVE-PARTY's own pin hand-built a pile holding a list, which no online pile does. */
+const PILE_BUILD = (() => {
+  const lines = SRC.split('\n');
+  const from = lines.findIndex((x) => x.trim().startsWith('const items = ') && x.includes('rollPileItems()'));
+  const to = lines.findIndex((x, i) => i > from && x.trim().startsWith('lootPiles.push({ pos: [m.x + b.originX'));
+  assert.ok(from > 0 && to > from && to - from < 8, 'the pile loop builds a pile, its list to its push');
+  return lines.slice(from, to + 1).join('\n');
+})();
+
+test('GRAVE-PARTY + AUDIT G2: a PARTY-LOOT pile whose room word this build cannot read (another build\'s, in a mixed room) is no longer unborn for good - a TARGET again (it stood on the floor with no plaque and no press), and its press says M2\'s own "Reload to open it" and opens NOTHING: not the empty list an online pile is built with (GRAVE-PARTY\'s "personal" arm opened it, and its flat went at the close), not a base composed here (handed out unclaimed beside every other build\'s); its plaque names no list; a take made under a window open before the word turned unreadable is still lifted and claimed of the host - one copy (mutants: roomUnborn holding the unreadable; the refusal gone; the plaque naming the list; a take under the window kept unclaimed)', () => {
   const clock = { t: Date.UTC(2027, 3, 1, 12, 0, 0) };
-  const frames = [], said = [], windows = [];
+  const frames = [], said = [], windows = [], settled = [];
   const own = [{ name: 'Gold Pieces', templateIndex: 276, group: 'Currency', value: 1, stackCount: 40 }, { name: 'Torc', templateIndex: 138, group: 'Jewellery', value: 120 }];
-  const pile = { pos: [0, 0, 0], record: 0, items: own.map((it) => ({ ...it })), isFixed: false, batch: {}, half: [0.5, 0.5] };
   const state = {
-    foes: [], _layoutFoes: 0, _sharedById: new Map(), lootPiles: [pile], searchables: [], _locationKey: ROOM,
+    foes: [], _layoutFoes: 0, _sharedById: new Map(), lootPiles: [], searchables: [], _locationKey: ROOM,
     _lootSeen: new Set(), _lootUnreadable: new Set(), _lootAt: new Map(), _lootOpenKey: null, _lootTooBig: new Set(),
-    _authority: false, _deepCleared: new Set(), _deepFoeCleared: new Set(), _wildDungeon: false, _wildRing: null,
+    _authority: false, _deepCleared: new Set(), _deepFoeCleared: new Set(), _wildDungeon: false, _wildRing: null, wildPileMore: () => {},
     opts: { selfId: () => 'b0b0-0002', onActions: (data) => frames.push(data), onLootClaimed: () => {}, partyLevels: () => [], roomHost: () => 'a0a0-0001' },
     _foesFrom: 'a0a0-0001', _sharedStamp: 'st1', _roomClaimN: 0, _roomMintHold: 0, _roomNowMs: 0,
     lootKey: 'N', onlineRoom: () => true, _wallNow: () => clock.t, respawnDue, validLootList, peerHanded, LOOT_LIST_MAX, LOOT_NEWER_TEXT,
-    eliteLootOpts: () => ({}), _sharedFoe: () => false, fightN: () => 1, rollPileItems: () => own.map((it) => ({ ...it })), settleLootFlat: () => {}, searchHeard: () => {}, searchRoom: { ours: () => true, fields: () => ({}) },
+    eliteLootOpts: () => ({}), _sharedFoe: () => false, fightN: () => 1, rollPileItems: () => own.map((it) => ({ ...it })), settleLootFlat: (i) => settled.push(i), searchHeard: () => {}, searchRoom: { ours: () => true, fields: () => ({}) },
     createRoomLoot, RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE, CORPSE_ACTIVATION_DISTANCE, searchReachFor, lastPlayerFeet: null, lastPlayerHeight: CAPSULE_HEIGHT,
-    droppedLoot: { lootTargets: () => [], physical: { owns: () => false }, pileFor: () => null }, droppedTorches: { targets: () => [], activate: () => false }, camps: { targets: () => [], activate: () => false }, sdEnd: null, sdHall: null, plaqueActionFor: () => null,
+    droppedLoot: { lootTargets: () => [], physical: { owns: () => false }, pileFor: () => null, contents: () => null }, droppedTorches: { targets: () => [], activate: () => false }, camps: { targets: () => [], activate: () => false }, sdEnd: null, sdHall: null, plaqueActionFor: () => null,
     setMidScreenText: (t) => said.push(t), activeOverlay: null, silverFindKey: () => null, silverFindAt: () => {}, quickLootTake: () => false, showPickups: null, lootPile: () => null, RANDOM_TREASURE_ARCHIVE: 216, ENEMY_BASICS,
-    openInventory: (source, onEmptied, o) => { const w = { source, lootKey: o?.lootKey ?? null, done: false }; windows.push(w); return w; },
+    openInventory: (source, onEmptied, o) => { const w = { source, onEmptied, lootKey: o?.lootKey ?? null, done: false }; windows.push(w); return w; },
   };
-  // the module, constructed as the host constructs it (its handles: the by-value names and the live ones) - its own
-  // mid-screen line (roomLootHost.js imports ui/midScreenText.js) is the label's
+  // the module, constructed as the host constructs it (its handles: the by-value names and the live ones)
   const handles = `{ _deepCleared, _deepFoeCleared, _sharedFoe, _wildDungeon, _wildRing, eliteLootOpts, fightN, foes, lootKeyOf, lootableBody, opts, respawnDue, rollPileItems, roomLootKey, settleLootFlat,
     get _authority() { return _authority; }, get _foesFrom() { return _foesFrom; }, get _layoutFoes() { return _layoutFoes; }, get _locationKey() { return _locationKey; }, get _lootAt() { return _lootAt; }, get _lootOpenKey() { return _lootOpenKey; }, get _lootSeen() { return _lootSeen; }, get _lootTooBig() { return _lootTooBig; }, get _lootUnreadable() { return _lootUnreadable; },
     get _roomClaimN() { return _roomClaimN; }, set _roomClaimN(v) { _roomClaimN = v; }, get _roomMintHold() { return _roomMintHold; }, get _roomNowMs() { return _roomNowMs; }, set _roomNowMs(v) { _roomNowMs = v; }, get _sharedById() { return _sharedById; }, get _sharedStamp() { return _sharedStamp; }, get _wallNow() { return _wallNow; }, get lootKey() { return lootKey; }, get lootPiles() { return lootPiles; }, get onlineRoom() { return onlineRoom; } }`;
@@ -549,59 +577,74 @@ test('GRAVE-PARTY a PARTY-LOOT pile whose room word this build cannot read (anot
     ${fnSrc('lootableBody')}
     ${fnSrc('lootHolder')}
     ${fnSrc('roomLootKey')}
-    const { _roomState, _roomMine, isRoomBaseContainer, landRoomWord, roomClaimTick, roomPersonal, roomRecordOf, roomSayNow, roomSettle, roomUnborn, settleRoomBonus, holderList, roomBaseHolder, composeRoomContainer, mintUnbornRoom } = createRoomLoot(${handles});
+    const { _roomState, _roomMine, isRoomBaseContainer, landRoomWord, roomClaimTick, roomRecordOf, roomSayNow, roomSettle, roomUnborn, settleRoomBonus, holderList, roomBaseHolder, composeRoomContainer, mintUnbornRoom } = createRoomLoot(${handles});
     ${fnSrc('lootRecords')}
     ${fnSrc('publishLoot')}
     ${fnSrc('sayRoomWord')}
     ${fnSrc('applyLoot')}
     ${fnSrc('corpseAt')}
     ${fnSrc('lootTargets')}
-    const api = { takeLoot: ${memberSrc('takeLoot')} };
-    return { api, applyLoot, lootTargets, roomUnborn, roomClaimTick, mintUnbornRoom, _roomMine, close: (key) => { _lootOpenKey = null; publishLoot(key); } };
+    const api = { takeLoot: ${memberSrc('takeLoot')}, lootContents: ${memberSrc('lootContents')} };
+    const buildPile = (m, b, bi, isRandom, isFixed, record) => { ${PILE_BUILD} };
+    return { api, applyLoot, lootTargets, roomUnborn, roomClaimTick, mintUnbornRoom, _roomMine, buildPile, close: (key) => { _lootOpenKey = null; publishLoot(key); } };
   `, state);
-  const press = () => {
-    midScreenText.text = '';
-    said.length = 0;
-    const n = windows.length;
-    h.api.takeLoot('loot:0', 'grab');
-    return windows.length > n ? windows.at(-1) : null;
-  };
+  /** A pile as the loop builds it, and drawn: every pile's flat stands at the build, its list empty or not (dungeonContext.js
+   *  `pile.half = ...` and `pile.batch = renderer.createBillboardBatch(...)`, pinned below). */
+  const pileAt = (x) => { h.buildPile({ x, y: 0, z: 0, position: 100 + x }, { originX: 0, originZ: 0 }, 0, true, false, 0); Object.assign(state.lootPiles.at(-1), { half: [0.5, 0.5], batch: {} }); return state.lootPiles.length - 1; };
+  assert.match(SRC, /pile\.half = \[size\.w \/ 2, size\.h \/ 2\];[\s\S]{0,2400}?pile\.batch = renderer\.createBillboardBatch\(RANDOM_TREASURE_ARCHIVE, pile\.record, size, \[\[g\[0\], g\[1\], g\[2\]\]\]\);/, 'every pile drawn at the build');
+  const press = (key) => { said.length = 0; const n = windows.length; h.api.takeLoot(key, 'grab'); return windows.length > n ? windows.at(-1) : null; };
+  const unreadable = (key) => h.applyLoot([{ k: key, g: 0, lv: 1, n: 1, tm: clock.t, x: 'from another build', c: [] }], 'a0a0-0001');
+
+  // 1. A PILE NEVER COMPOSED HERE - the commonest: the room's first word about it is another build's
+  const p0 = pileAt(0);
+  assert.deepEqual(state.lootPiles[p0].items, [], 'online the pile loop builds it EMPTY - the room\'s base, not this copy\'s roll, fills it');
   assert.equal(h.roomUnborn('loot:0'), true, 'before any word: unborn, waiting for its terms');
   assert.ok(!h.lootTargets().some((t) => t.key === 'loot:0'), 'no target while it waits');
-  // another build's word about it - one this build cannot read
-  assert.equal(h.applyLoot([{ k: 'loot:0', g: 0, lv: 1, n: 1, tm: clock.t, x: 'from another build', c: [] }], 'a0a0-0001'), 0);
+  assert.equal(unreadable('loot:0'), 0);
   assert.ok(state._lootUnreadable.has('loot:0'), 'the room has spoken, in words this build cannot read');
   assert.equal(h.roomUnborn('loot:0'), false, 'no longer unborn for good');
-  assert.ok(h.lootTargets().some((t) => t.key === 'loot:0'), 'a target again - its plaque, its press');
-  const w = press();
-  assert.ok(w, 'the press opens it');
-  assert.deepEqual(w.source.map((it) => it.name), ['Gold Pieces', 'Torc'], 'its own list, as it stood here');
-  assert.equal(midScreenText.text, 'Another version of the game shares this room - what you find here is yours alone.', 'said once');
-  assert.ok(!said.includes(LOOT_NEWER_TEXT), 'never the refusal');
-  w.source.splice(1, 1);   // the Torc taken
-  w.done = true; h.close('loot:0');
-  h.roomClaimTick(1000);
-  assert.deepEqual(frames, [], 'nothing said to the room - no take, no claim of the host');
-  assert.equal(h._roomMine.size, 0, 'no claim waiting');
-  const again = press();
-  assert.deepEqual(again.source.map((it) => it.name), ['Gold Pieces'], 'what is left of it, still its own');
-  assert.equal(midScreenText.text, '', 'the word said once, not at every press');
-  again.done = true; h.close('loot:0');
-  assert.deepEqual(frames, []);
-  // a pile that WAS the room's - its terms minted here, its base composed - when another build's word about it comes
-  state.lootPiles.push({ pos: [3, 0, 0], record: 0, items: [], isFixed: false, batch: {}, half: [0.5, 0.5] });
+  assert.ok(h.lootTargets().some((t) => t.key === 'loot:0'), 'a target again - its press reaches');
+  assert.equal(h.api.lootContents('loot:0'), null, 'its plaque names no list - the list is the room\'s, in words this build cannot read');
+  for (let k = 0; k < 2; k++) {
+    assert.equal(press('loot:0'), null, 'the press opens nothing - never the empty list it was built with');
+    assert.deepEqual(said, [LOOT_NEWER_TEXT], 'and says why, M2\'s own line: "Reload to open it"');
+  }
+  assert.deepEqual(settled, [], 'its flat stands - no window closed on an empty list, so nothing settled it away');
+  assert.ok(h.lootTargets().some((t) => t.key === 'loot:0'), 'and it is still there to press');
+  assert.deepEqual(frames, [], 'nothing said to the room');
+
+  // 2. A PILE COMPOSED HERE, then another build's word about it
+  const p1 = pileAt(3);
   h.mintUnbornRoom(0); h.mintUnbornRoom(10_000);   // no host word in ROOM_TERMS_WAIT: this client mints its terms
-  assert.deepEqual(state.lootPiles[1].items.map((it) => it.name), ['Gold Pieces', 'Torc'], 'the room\'s base, composed');
+  assert.deepEqual(state.lootPiles[p1].items.map((it) => it.name), ['Gold Pieces', 'Torc'], 'the room\'s base, composed');
   frames.length = 0;
-  h.applyLoot([{ k: 'loot:1', g: 0, lv: 1, n: 1, tm: clock.t, x: 'from another build', c: [] }], 'a0a0-0001');
+  unreadable('loot:1');
   assert.ok(state._lootUnreadable.has('loot:1'));
-  const w1 = (() => { said.length = 0; const n = windows.length; h.api.takeLoot('loot:1', 'grab'); return windows.length > n ? windows.at(-1) : null; })();
-  assert.ok(w1, 'opened, its own');
-  w1.source.splice(0, 1);   // the gold taken
-  w1.done = true; h.close('loot:1');
-  h.roomClaimTick(2000); h.roomClaimTick(2000 + 60_000);
-  assert.deepEqual(frames, [], 'a take from a personal pile is no claim of the host and no word of the room\'s');
-  assert.equal(h._roomMine.size, 0);
+  assert.equal(press('loot:1'), null, 'not opened - its base is every build\'s, and a take here would be claimed of nobody');
+  assert.deepEqual(said, [LOOT_NEWER_TEXT]);
+  assert.equal(h.api.lootContents('loot:1'), null, 'its plaque names no list');
+  assert.deepEqual(state.lootPiles[p1].items.map((it) => it.name), ['Gold Pieces', 'Torc'], 'nothing taken');
+  h.roomClaimTick(1000);
+  assert.deepEqual(frames, [], 'nothing said');
+
+  // 3. A WINDOW OPEN BEFORE THE WORD TURNED UNREADABLE: its take is lifted and claimed of the host - one copy
+  const p2 = pileAt(6);
+  h.mintUnbornRoom(20_000); h.mintUnbornRoom(30_000);
+  const w = press('loot:2');
+  assert.ok(w, 'a readable pile opens');
+  const torc = w.source.find((it) => it.name === 'Torc');
+  const pack = playerEntity.items;
+  playerEntity.items = [torc];   // the window's transfer: the very piece into the pack
+  try {
+    w.source.splice(w.source.indexOf(torc), 1);
+    unreadable('loot:2');
+    assert.ok(state._lootUnreadable.has('loot:2'));
+    h.roomClaimTick(40_000);
+    assert.ok(!playerEntity.items.includes(torc), 'the piece lifted back out of the pack - never kept unclaimed beside the room\'s');
+    assert.equal(h._roomMine.size, 1, 'and claimed of the host, whose word decides it');
+  } finally { playerEntity.items = pack; }
+  w.done = true; h.close('loot:2');
+  assert.equal(state.lootPiles[p2].items.length, 1, 'the pile holds what was left');
 });
 
 // ═══ 6. THE FOUR HOSTS ═════════════════════════════════════════════════════════════════════════════════════════════
@@ -613,7 +656,177 @@ test('GRAVE-PARTY THE FOUR HOSTS: world.js constructs the search party with its 
   assert.doesNotMatch(W, /function activateGrave\(/, 'the stone\'s search is the module\'s alone');
   assert.match(D, /searchables\.push\(\{ kind: sk, aabb, key: `\$\{bi\}:\$\{p\.position\}`, lock: 0, items: \[\], records: /, 'the build mints the searchable this pin stands');
   assert.match(D, /const searchRoom = createSearchRoom\(\{ respawnDue, wallNow: \(\) => _wallNow\(\) \}\);/);
-  assert.match(D, /sb\.items\.push\(\.\.\.find\); sb\.by = searchRoom\.mine\(\);/);
+  assert.match(D, /sb\.items\.push\(\.\.\.find\); Object\.assign\(sb, searchRoom\.mine\(\)\);/);
   assert.match(D, /if \(cooling\) \{ setMidScreenText\(searchedText\(key\)\); return 1; \}/);
   assert.doesNotMatch(X, /graveTargets/, 'the bench stands no headstone');
+});
+
+// ═══ 7. AUDIT GRAVE-PARTY (2026-10-16) ═════════════════════════════════════════════════════════════════════════════
+
+test('AUDIT GRAVE-PARTY G3 the law: a cell keeps at most OW_GRAVE_ACCT_ROWS_MAX rows of one searcher - past it the searcher\'s OWN oldest go, never another\'s; past OW_CELL_GRAVES_MAX the heaviest searcher\'s oldest first (the oldest in the cell went: one account\'s fresh stone numbers evicted every honest row); the stored ledger is read back under the same bounds; the graves\' word has a bucket of its own at the honest pace (mutants: no searcher\'s cap; another\'s row evicted for it; the oldest in the cell out again; the read-back unbounded; the bucket gone or widened)', () => {
+  assert.equal(OW_GRAVE_ACCT_ROWS_MAX, GRAVE_OWED_MAX, 'pinned equal: the most stones a game owes its cell');
+  const M = 900_000;
+  const led = newOwLedger();
+  owFoldGraves(led, [[101, 207, 3]], 'acct-ann', M, 'Ann');
+  let n = 0;
+  for (let w = 0; w < 20; w++) owFoldGraves(led, Array.from({ length: 8 }, () => [101, 207, 100 + n++]), 'acct-mal', M + w, 'Mal');   // 160 fresh stones, a word a minute
+  const mal = Object.values(led.gr).filter((g) => g[4] === 'acct-mal').map((g) => g[2]).sort((a, b) => a - b);
+  assert.deepEqual(mal, Array.from({ length: OW_GRAVE_ACCT_ROWS_MAX }, (_, i) => 100 + 160 - OW_GRAVE_ACCT_ROWS_MAX + i), 'the flooder holds its own newest OW_GRAVE_ACCT_ROWS_MAX');
+  assert.ok(led.gr[owGraveKey([101, 207, 3, M, 'acct-ann'])], 'Ann\'s row stands');
+  assert.deepEqual(owFoldGraves(led, [[101, 207, 3]], 'acct-ann', M + 30, 'Ann'), [], 'a word that takes nothing changes nothing - and the relay writes nothing for it');
+  // the cell's own bound: the heaviest searcher gives way, never the lightest
+  const cell = newOwLedger();
+  owFoldGraves(cell, [[101, 207, 1]], 'acct-ann', M, 'Ann');
+  for (let a = 0; a < 4; a++) for (let i = 0; i < OW_GRAVE_ACCT_ROWS_MAX; i++) owFoldGraves(cell, [[101, 207, 1000 + a * 100 + i]], `acct-${a}`, M + 1 + a * OW_GRAVE_ACCT_ROWS_MAX + i, 'X');   // all inside their hours
+  assert.equal(Object.keys(cell.gr).length, OW_CELL_GRAVES_MAX, 'the cell bounded');
+  assert.ok(cell.gr[owGraveKey([101, 207, 1, M, 'acct-ann'])], 'Ann\'s one row - the oldest in the cell - stands');
+  assert.deepEqual([0, 1, 2, 3].map((a) => Object.values(cell.gr).filter((g) => g[4] === `acct-${a}`).length), [OW_GRAVE_ACCT_ROWS_MAX - 1, OW_GRAVE_ACCT_ROWS_MAX, OW_GRAVE_ACCT_ROWS_MAX, OW_GRAVE_ACCT_ROWS_MAX], 'the heaviest gave its oldest - the first of them to fill');
+  assert.ok(!cell.gr[owGraveKey([101, 207, 1000, M + 1, 'acct-0'])], 'that one');
+  // read back (the relay's storage) under the same bounds
+  const stored = { sp: [], dg: {}, gr: {} };
+  const put = (g) => { stored.gr[owGraveKey(g)] = g; };
+  put([101, 207, 1, M, 'acct-ann', 'Ann']);
+  for (let i = 0; i < 40; i++) put([101, 207, 10 + i, M + 1 + i, 'acct-mal', 'Mal']);
+  const back = owLedgerOf(JSON.parse(JSON.stringify(stored)));
+  assert.equal(Object.values(back.gr).filter((g) => g[4] === 'acct-mal').length, OW_GRAVE_ACCT_ROWS_MAX);
+  assert.ok(back.gr[owGraveKey([101, 207, 1, M, 'acct-ann'])], 'and Ann\'s stands');
+  // the graves' own bucket: an honest game's word a second never meets it; a flood at the `ow` frames' pace is held to it
+  assert.deepEqual([OW_GRAVE_HZ_MAX, OW_GRAVE_BURST_MAX, GRAVE_SAY_MS], [1, 4, 1000]);
+  let b = null, passed = 0;
+  for (let t = 0; t < 60_000; t += GRAVE_SAY_MS) { const g = owGraveGate(b, t); assert.ok(g.pass, `an honest word at ${t} ms`); b = g.bucket; }
+  b = null;
+  for (let t = 0; t < 60_000; t += 1000 / 4) { const g = owGraveGate(b, t); if (g.pass) passed++; b = g.bucket; }
+  assert.ok(passed <= 60 + OW_GRAVE_BURST_MAX, `four a second for a minute: ${passed} words pass`);
+  let o = null, ow = 0;
+  for (let t = 0; t < 60_000; t += 1000 / 4) { const g = owGate(o, t); if (g.pass) ow++; o = g.bucket; }
+  assert.ok(ow > 3 * passed, 'where the `ow` frames\' own bucket passes them all');
+});
+
+test('AUDIT GRAVE-PARTY G3 over the REAL relay Room: one account saying fresh stones at the `ow` frames\' own pace for a minute no longer evicts another searcher\'s row - Ann\'s stands, the flooder holds its own OW_GRAVE_ACCT_ROWS_MAX - nor writes the cell\'s ledger at its pace (241 whole-ledger writes a minute, 3.3 MB): the graves\' bucket holds it to a word a second; a word of stones the cell already holds writes nothing; the session keeps the same bucket at home, so an honest word is never the one the relay drops (mutants: the relay\'s bucket gone; the session\'s; no searcher\'s cap)', async () => {
+  const clock = { t: Date.UTC(2027, 3, 1, 12, 0, 0) };
+  const realNow = Date.now; Date.now = () => clock.t;
+  try {
+    const r = fakeRooms({ now: () => clock.t }).room(CELL);
+    let puts = 0, bytes = 0;
+    const put = r.state.storage.put.bind(r.state.storage);
+    r.state.storage.put = async (k, v) => { if (k === OW_LEDGER_KEY) { puts++; bytes += JSON.stringify(v).length; } return put(k, v); };
+    const ann = r.connect(), mal = r.connect();
+    await quiet(async () => { await r.hello(ann, 'a0a0-0001', ON, { tokenSub: 'acct-ann', name: 'Ann' }); await r.hello(mal, 'm0m0-0009', ON, { tokenSub: 'acct-mal', name: 'Mal' }); });
+    await r.raw(ann, JSON.stringify({ t: 'ow', k: 'gr', rows: [[GPX, GPY, 3]] }));
+    assert.equal(puts, 1, 'Ann\'s stone kept');
+    let n = 0;
+    await quiet(async () => {
+      for (let s = 0; s < 60; s++) for (let k = 0; k < 4; k++) {   // a minute, a word every 250 ms - the `ow` frames' own OW_HZ_MAX
+        await r.raw(mal, JSON.stringify({ t: 'ow', k: 'gr', rows: Array.from({ length: 8 }, () => [GPX, GPY, n++ % 4096]) }));
+        clock.t += 250;
+      }
+    });
+    const led = r.store.get(OW_LEDGER_KEY);
+    assert.ok(Object.values(led.gr).some((g) => g[4] === 'acct-ann' && g[2] === 3), 'Ann\'s row stands');
+    assert.equal(Object.values(led.gr).filter((g) => g[4] === 'acct-mal').length, OW_GRAVE_ACCT_ROWS_MAX, 'the flooder holds its own cap');
+    assert.ok(puts - 1 <= 60 + OW_GRAVE_BURST_MAX + 1, `the ledger written ${puts - 1} times in the minute - the graves' bucket, not the flood's pace`);
+    assert.ok(bytes < 200_000, `${bytes} bytes written`);
+    const before = puts;
+    clock.t += 5000;
+    await r.raw(ann, JSON.stringify({ t: 'ow', k: 'gr', rows: [[GPX, GPY, 3]] }));
+    assert.equal(puts, before, 'a word of a stone the cell already holds for its searcher writes nothing');
+  } finally { Date.now = realNow; }
+  // the session's own law at home: what it says, the relay's bucket takes
+  const { FakeWS, sockets } = fakeSocketClass();
+  let now = 1000;
+  const s = new OnlineSession({ url: 'wss://relay.test', name: 'Ann', id: 'a0a0-0001', secret: 'secret-of-a0a0-0001', WebSocketImpl: FakeWS, now: () => now });
+  await quiet(() => { s.join(CELL, { ...ON }); const ws = sockets.at(-1); ws.open(); ws.receive({ t: 'welcome', id: 'a0a0-0001', peers: [], host: 'a0a0-0001', world: null, v: RELAY_VERSION }); });
+  let went = 0, relay = null, dropped = 0;
+  for (let k = 0; k < 40; k++) {
+    if (s.sendOverworld('gr', [[GPX, GPY, k]]).length) { went++; const g = owGraveGate(relay, now); relay = g.bucket; if (!g.pass) dropped++; }
+    now += 250;
+  }
+  assert.ok(went <= 10 + OW_GRAVE_BURST_MAX && went >= 10, `the session says ${went} of 40 in ten seconds - the graves' own pace`);
+  assert.equal(dropped, 0, 'and the relay\'s bucket takes every one it said');
+});
+
+test('AUDIT GRAVE-PARTY G4: a stranger\'s word kept (scenes/searchRoom.js) is stamped NEVER AHEAD OF NOW - the WORLD7/8 C2 law applyLoot keeps for a landed word: a forged far-future stamp was kept as said, never let go at the room\'s hour, and its SEARCH_FOREIGN_MAX slots rode the room\'s memory for good; an unstamped word is stamped now (mutants: the stamp kept as said; an unstamped word kept unstamped)', () => {
+  const clock = { t: Date.UTC(2027, 3, 1, 12, 0, 0) };
+  const social = picture(new SocialState({ acct: 'acct-ann' }), 'acct-ann', null);
+  const { lens } = searchParty({ social });
+  setSearchParty(lens);
+  try {
+    let find = [];
+    for (let seed = 1; !find.length; seed++) find = peerHanded(validLootList(JSON.parse(JSON.stringify(mintSearchFind('coffin', { level: 5, rolls: lcg(seed) })))));   // a real search's find, as the wire carries it
+    const room = createSearchRoom({ respawnDue, wallNow: () => clock.t });
+    room.ours('srch:0', { k: 'srch:0', r: find, t: clock.t - 60_000, by: 'acct-eve', bn: 'Eve' }, PLAYERS['acct-eve'].peer);
+    for (let i = 1; i <= SEARCH_FOREIGN_MAX + 6; i++) room.ours(`srch:${i}`, { k: `srch:${i}`, r: find, t: clock.t + 10 * 365 * 864e5, by: `acct-m${i}`, bn: 'Mal' }, null);
+    const kept = room.records();
+    assert.equal(kept.length, SEARCH_FOREIGN_MAX);
+    assert.ok(kept.every((r) => r.t <= clock.t), 'every stamp kept is now or before');
+    assert.equal(kept.at(-1).t, clock.t, 'a stamp ahead of now kept as now');
+    room.ours('srch:99', { k: 'srch:99', r: find, by: 'acct-zed' }, null);
+    assert.equal(room.records().at(-1).t, clock.t, 'an unstamped word stamped now');
+    clock.t += RESPAWN_MS;
+    assert.deepEqual(room.records(), [], 'past the room\'s hour every one is let go - the forged ones too');
+  } finally { setSearchParty(null); }
+});
+
+test('AUDIT GRAVE-PARTY G5 the law: the five hours are the ACCOUNT\'s (one player, whichever character - an alt searching it again is the same player\'s second find), and a search of my account on ANOTHER of its characters is told by that character\'s name - this one\'s, mine unknown or unnamed, the old words; a partymate\'s by their seat name, the row\'s name the fallback (mutants: another character answered as this one; the name unread)', () => {
+  const social = picture(new SocialState({ acct: 'acct-ann' }), 'acct-ann', ['acct-ann', 'acct-bob'], ANNABEL);
+  const { lens } = searchParty({ social });
+  setSearchParty(lens);
+  try {
+    assert.equal(searchSelfName(), 'Annabel', 'the lens names the character I play');
+    assert.equal(searchToldBy('acct-ann', 'Ann'), 'Ann', 'my account on another character: by its name');
+    assert.equal(searchToldBy('acct-ann', 'Annabel'), null, 'this character: the old words');
+    assert.equal(searchToldBy('acct-ann', null), null, 'unnamed: the old words');
+    assert.equal(searchToldBy('acct-bob', 'Robert'), 'Bob', 'a partymate: the hub\'s seat name');
+    assert.equal(searchToldBy('acct-eve', 'Eve'), null, 'a stranger: nobody of mine');
+    setSearchParty({ ...lens, selfName: () => null });
+    assert.equal(searchToldBy('acct-ann', 'Ann'), null, 'my own name unknown: the old words');
+  } finally { setSearchParty(null); }
+});
+
+test('AUDIT GRAVE-PARTY G5 above ground END TO END: Ann searches a headstone; her account comes back on ANOTHER character, Annabel, and the stone is still locked - the account\'s five hours - but told "Already searched by Ann.", never "You have already searched here." of a stone Annabel never touched (the relay stamps the token\'s name); Ann herself is told the old words (mutants: the relay\'s row unnamed; the name unread; the lens naming nobody)', async () => {
+  const clock = { t: Date.UTC(2027, 3, 1, 12, 0, 0) };
+  const realNow = Date.now; Date.now = () => clock.t;
+  setSharedClock(() => sharedClassicMinutes(clock.t));
+  try {
+    await quiet(async () => {
+      const world = relayWorld(clock);
+      const ann = graveyardPlayer(world, 'acct-ann', null);
+      ann.session.join(CELL, { ...ON });
+      await world.pump();
+      assert.equal(ann.session.owGraveOk, true);
+      assert.equal(ann.press(), 'searched', 'Ann searches the stone');
+      ann.sp.frame(performance.now() + 5000);
+      await world.pump();
+      assert.equal(ann.press(), SEARCHED_TEXT, 'Ann: her own words');
+      ann.session.leave();   // the account leaves the cell, and comes back on another character
+      const annabel = graveyardPlayer(world, 'acct-ann', null, 0.1, ANNABEL);
+      annabel.session.join(CELL, { ...ON });
+      await world.pump();
+      assert.equal(annabel.press(), 'Already searched by Ann.', 'Annabel: the account\'s stone, and which character searched it');
+      assert.equal(annabel.press(), 'Already searched by Ann.', 'still - and no second search');
+    });
+  } finally { Date.now = realNow; setSharedClock(null); _resetSearchLedgerForTests(); setSearchParty(null); }
+});
+
+test('AUDIT GRAVE-PARTY G5 underground: Ann\'s coffins, under the room\'s memory, are her account\'s - Annabel (Ann\'s account on another character) opens Ann\'s find and is told "Already searched by Ann." of the empty one, under Ann\'s own memory and under Bob\'s (her partymate, who landed Ann\'s words and says them on) (mutants: the word not naming its character; the name not carried on with the find; the name unread)', () => {
+  const clock = { t: Date.UTC(2027, 3, 1, 12, 0, 0) };
+  setSharedClock(() => sharedClassicMinutes(clock.t));
+  try {
+    const net = actRoom();
+    const ann = tombPlayer(net, 'acct-ann', ['acct-ann', 'acct-bob']);
+    const bob = tombPlayer(net, 'acct-bob', ['acct-ann', 'acct-bob']);
+    assert.equal(ann.press(0, 0.5), 'searched', 'Ann: coffin 0 - a find');
+    assert.equal(ann.press(1, 0.9), 'searched', 'Ann: coffin 1 - nothing');
+    const find = ann.state.searchables[0].items.map((it) => it.name);
+    net.flush();
+    assert.equal(ann.press(1), SEARCHED_TEXT, 'Ann: her own words');
+    for (const [whose, P] of [['Ann\'s', ann], ['Bob\'s', bob]]) {
+      const memory = P.as(() => P.h.memory());
+      assert.ok(memory.some((r) => r.k === 'srch:1' && r.by === 'acct-ann' && r.bn === 'Ann'), `${whose} memory names the searching character`);
+      const annabel = tombPlayer(actRoom(), 'acct-ann', ['acct-ann', 'acct-bob'], ANNABEL);
+      annabel.as(() => annabel.h.applyLoot(memory, null));
+      assert.equal(annabel.press(1), 'Already searched by Ann.', `under ${whose} memory: Annabel is told whose search it was`);
+      assert.deepEqual(annabel.press(0), { opened: find }, 'and opens her account\'s find');
+    }
+  } finally { setSharedClock(null); _resetSearchLedgerForTests(); setSearchParty(null); }
 });

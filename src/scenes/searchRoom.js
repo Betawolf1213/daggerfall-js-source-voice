@@ -17,9 +17,16 @@
 //
 // THE ONE HOME for whose a `srch:` word is: the dungeon host constructs it once and asks it at applyLoot, at the search,
 // at its memory's composition and at its records.
-import { searchKinOf, searchAcctOfPeer, searchSelfAcct, searchWhoOf, SEARCH_ACCT_MAX, SEARCH_LOOT_MAX } from '../systems/searchables.js';
+//
+// AUDIT GRAVE-PARTY (2026-10-16): G4 - a stranger's word kept is stamped NEVER AHEAD OF NOW (the WORLD7/8 C2 law
+// applyLoot keeps for a landed word): its forged far-future `t` was kept as said, so it was never let go at the room's
+// hour and its 24 slots rode the room's memory for good. G5 - the word names its searching CHARACTER too (`bn`, the
+// session's issued name): the five hours are the account's, and another character of it is told whose search it was
+// (systems/searchables.js searchToldBy), no longer "You have already searched here." of an object it never touched.
+import { searchKinOf, searchAcctOfPeer, searchSelfAcct, searchSelfName, searchToldBy, SEARCH_ACCT_MAX, SEARCH_LOOT_MAX } from '../systems/searchables.js';
 import { validLootList } from '../systems/loot.js';
 import { peerHanded } from '../systems/peerWord.js';
+import { NAME_MAX, sanitizeName } from '../net/wire.js';   // AUDIT GRAVE-PARTY G5: a searching character's name is a name the wire would carry
 
 /** The most strangers' words one client keeps (each about one object, by one searcher), the oldest out first - and the
  *  most about any one object. They ride the room's memory this client publishes (WORLD_FRAME_MAX, 512 KB a dungeon), so
@@ -36,12 +43,16 @@ export function createSearchRoom(host) {
   const foreign = new Map();
   /** The searcher a word names: its own `by`, else its live speaker's account (an older build's word), else null. */
   const searcherOf = (rec, from) => (typeof rec?.by === 'string' && rec.by.length > 0 && rec.by.length <= SEARCH_ACCT_MAX ? rec.by : searchAcctOfPeer(from));
-  /** Whose search a room word about a searched object is to me: `{ acct, kin, who }` - 'me' (who null) or 'party' (who
-   *  their name) - or null: a stranger's, or nobody's I can tell. */
+  /** The searching character's name a word carries (`bn`), or null - a name the wire would carry, else none. */
+  const nameOf = (rec) => (typeof rec?.bn === 'string' && rec.bn.length > 0 && rec.bn.length <= NAME_MAX && sanitizeName(rec.bn) === rec.bn ? rec.bn : null);
+  /** Whose search a room word about a searched object is to me: `{ acct, kin, who, name }` - 'me' or 'party', `who` the
+   *  name it is told by (searchToldBy: a partymate's, or another character of my account's - null for this one's) and
+   *  `name` the searching character's the word carried - or null: a stranger's, or nobody's I can tell. */
   function whose(rec, from = null) {
     const acct = searcherOf(rec, from);
     const kin = searchKinOf(acct);
-    return kin ? { acct, kin, who: kin === 'party' ? searchWhoOf(acct) : null } : null;
+    const name = nameOf(rec);
+    return kin ? { acct, kin, who: searchToldBy(acct, name), name } : null;
   }
   /** A stranger's words past the room's hour let go (WORLD8's respawnDue on their stamp), then the oldest past the cap. */
   function prune() {
@@ -54,10 +65,12 @@ export function createSearchRoom(host) {
   function ours(canon, rec, from = null) {
     const w = whose(rec, from);
     if (w) return w;
-    const acct = searcherOf(rec, from);
+    const acct = searcherOf(rec, from), name = nameOf(rec);
     const items = peerHanded(validLootList(rec?.r));
     if (!items || items.length > SEARCH_LOOT_MAX) return null;   // no search's find: kept by nobody
-    const kept = { k: canon, r: items, ...(Number.isFinite(rec.t) ? { t: rec.t } : {}), ...(acct ? { by: acct } : {}) };
+    const now = host.wallNow();
+    const t = Number.isFinite(rec.t) ? (Number.isFinite(now) ? Math.min(rec.t, /** @type {number} */ (now)) : rec.t) : now;   // AUDIT GRAVE-PARTY G4: never AHEAD of now (WORLD7/8 C2), an unstamped word now - every one let go at the room's hour
+    const kept = { k: canon, r: items, ...(Number.isFinite(t) ? { t } : {}), ...(acct ? { by: acct } : {}), ...(name ? { bn: name } : {}) };
     if (JSON.stringify(kept).length > SEARCH_FOREIGN_BYTES) return null;
     const k = `${canon}|${acct ?? (typeof from === 'string' ? `peer:${from}` : '?')}`;
     foreign.delete(k);
@@ -77,10 +90,11 @@ export function createSearchRoom(host) {
       land(e.rec, e.from);
     }
   }
-  /** The searcher a search of MINE names - my account, or nobody where the lens has none. */
-  const mine = () => searchSelfAcct();
-  /** The fields a `srch:` record carries for the searchable holding it: its searcher's account. */
-  const fields = (sb) => (typeof sb?.by === 'string' && sb.by ? { by: sb.by } : {});
+  /** The searcher a search of MINE names, as the searchable keeps it: `by` my account and `bn` my character's name (AUDIT
+   *  GRAVE-PARTY G5) - each null where the lens has none. */
+  const mine = () => ({ by: searchSelfAcct(), bn: searchSelfName() });
+  /** The fields a `srch:` record carries for the searchable holding it: its searcher's account and character's name. */
+  const fields = (sb) => ({ ...(typeof sb?.by === 'string' && sb.by ? { by: sb.by } : {}), ...(nameOf(sb) && sb.by ? { bn: sb.bn } : {}) });
   /** The strangers' words, for the room's memory this client publishes (every one still inside the room's hour). */
   function records() { prune(); return [...foreign.values()].map((e) => ({ ...e.rec })); }
   return { whose, ours, adopt, mine, fields, records };

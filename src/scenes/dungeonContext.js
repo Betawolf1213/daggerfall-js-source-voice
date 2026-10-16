@@ -1433,7 +1433,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   let _roomMintHold = 0;            // a restore lands the room's words before anything mints over them
   let _roomClaimN = 0;              // this context's claims, counted (roomClaimId)
   let _roomNowMs = 0;               // the frame's clock as the claims' tick last read it
-  const { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomPersonal, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, settleRoomBonus } = createRoomLoot({   // HOST-SPLIT: src/scenes/roomLootHost.js
+  const { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, settleRoomBonus } = createRoomLoot({   // HOST-SPLIT: src/scenes/roomLootHost.js
     _deepCleared, _deepFoeCleared, _sharedFoe, _wildDungeon, _wildRing, eliteLootOpts, fightN, foes, lootKeyOf,
     lootableBody, opts, respawnDue, rollPileItems, roomLootKey, settleLootFlat,
     get _authority() { return _authority; },
@@ -8296,7 +8296,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     const sb = searchables[i];
     if (!sb) return;
     const at = Number.isFinite(stampMs) && sharedClockOn() ? sharedClassicMinutes(stampMs) : worldMinutes();
-    if (w?.acct) sb.by = w.acct;   // GRAVE-PARTY: whose find it holds, said on with it
+    if (w?.acct) Object.assign(sb, { by: w.acct, bn: w.name });   // GRAVE-PARTY: whose find it holds, said on with it - AUDIT G5: and by which character
     markSearched(searchKey(searchLocationKey(), sb.key), Math.min(at, worldMinutes()), w?.who ?? null);   // GRAVE-PARTY: a partymate's by name
   }
   /** SEARCH1-PARTY: how many foes a search wakes - two for every player of the party standing in this dungeon. */
@@ -8424,7 +8424,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       find = mintSearchFind(sb.kind, { level, gender: playerEntity.gender, tier: dungeonRarityTier(dt), family: dungeonFamily(dt), luck: liveStat(playerEntity, 'luck') });
     }
     sb.items.length = 0;
-    sb.items.push(...find); sb.by = searchRoom.mine();   // in place: the room's holder; GRAVE-PARTY: and the search mine
+    sb.items.push(...find); Object.assign(sb, searchRoom.mine());   // in place: the room's holder; GRAVE-PARTY: and the search mine - AUDIT G5: my account and my character's name
     publishLoot(`srch:${i}`);   // the room hears it now - its five hours, and the find's list
     let rows, onClose = null;
     if (outcome === 'foe') {
@@ -10459,7 +10459,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     lootContents(key) {
       const [kind, iStr] = key.split(':');
       const i = Number(iStr);
-      if ((kind === 'loot' || kind === 'corpse') && roomUnborn(key)) return null;   // PARTY-LOOT: a room container with no terms yet names nothing - its list is the room's, not this copy's
+      if ((kind === 'loot' || kind === 'corpse') && (roomUnborn(key) || _lootUnreadable.has(roomLootKey(key)))) return null;   // PARTY-LOOT: a room container with no terms yet names nothing - its list is the room's, not this copy's; AUDIT GRAVE-PARTY G2: nor one whose word this build cannot read
       if (kind === 'loot') return lootPiles[i]?.batch ? (lootPiles[i].items ?? []) : null;
       if (kind === 'corpse') { const f = foes[i]; return lootableBody(f) ? (f.entity?.items ?? []) : null; }   // AUDIT 68 S19-removed-foe-lootable
       if (kind === 'droppedLoot') return droppedLoot.contents?.(key) ?? null;
@@ -10534,7 +10534,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         if (p) lootHooks = droppedLootHooks(p);   // G5: playerOwned - the icon cycles
       }
       if (!source) return 0;
-      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u)) && !roomPersonal(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }   // AUDIT SETS M2: not opened here - GRAVE-PARTY: unless it is a room container (PARTY-LOOT's), which is this player's own then (roomLootHost.js roomPersonal)
+      { const _u = roomLootKey(key); if (_u && _lootUnreadable.has(lootKeyOf(_u))) { setMidScreenText(LOOT_NEWER_TEXT); return 0; } }   // AUDIT SETS M2: not opened here - AUDIT GRAVE-PARTY G2: a room container too (PARTY-LOOT's), a target again so its press says so (roomLootHost.js roomUnborn)
       if ((kind === 'loot' || kind === 'corpse') && roomUnborn(key)) return 0;   // PARTY-LOOT: the room's word for it has not come - nothing of this copy's own is taken
       // LOOT-STACK: a window that has CLOSED is no window - a tab closes
       // its body's window and opens the next through here in one click,

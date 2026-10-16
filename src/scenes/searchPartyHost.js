@@ -25,7 +25,7 @@ import { dungeonFamily, dungeonRarityTier } from '../systems/lootRarity.js';
 import { effectiveLevel } from '../systems/mentorMode.js';
 import { enemyDisplayName } from '../characters/enemyBasics.js';
 import { liveStat } from '../systems/statMods.js';
-import { markSearched, mintSearchFind, pickSearchUndead, rollSearchElite, rollSearchOutcome, SEARCH_FOE_SPACING, SEARCH_FOES_PER_PLAYER, searchCooldownLeft, searchKey, searchMessage, searchedText, setSearchParty, searchKinOf, searchWhoOf, SEARCH_COOLDOWN_MINUTES } from '../systems/searchables.js';
+import { markSearched, mintSearchFind, pickSearchUndead, rollSearchElite, rollSearchOutcome, SEARCH_FOE_SPACING, SEARCH_FOES_PER_PLAYER, searchCooldownLeft, searchKey, searchMessage, searchedText, setSearchParty, searchKinOf, searchToldBy, SEARCH_COOLDOWN_MINUTES } from '../systems/searchables.js';
 import { playerEntity } from '../characters/playerEntity.js';
 import { randomEpitaph } from '../systems/gravestoneLore.js';
 import { setMidScreenText } from '../ui/midScreenText.js';
@@ -37,7 +37,8 @@ import { isCellRoom } from '../net/wire.js';
 export const GRAVE_SAY_MS = 1000;
 /** ...a stone owed longer than this is let go (its hours are half run; my own ledger keeps it). */
 export const GRAVE_OWED_KEEP_MS = 10 * 60 * 1000;
-/** ...and never more owed, or kept heard, than these - the oldest out first. */
+/** ...and never more owed, or kept heard, than these - the oldest out first. GRAVE_OWED_MAX is the cell's own bound on one
+ *  searcher's rows (net/wire.js OW_GRAVE_ACCT_ROWS_MAX - pinned equal; AUDIT GRAVE-PARTY G3). */
 export const GRAVE_OWED_MAX = 32;
 export const GRAVE_BOOK_MAX = 256;
 /** A stone's place - `g<px>,<py>`, world.js graveTargets' `loc` - read back to its map pixel. */
@@ -51,6 +52,7 @@ export function createSearchParty(host) {
   // THE PARTY LENS - the hub's picture, read at each question (it changes under the session)
   setSearchParty({
     self: () => host.social?.acct ?? null,
+    selfName: () => host.online?.name || host.social?.name || null,   // AUDIT GRAVE-PARTY G5: my character's name, the issued one the relay stamps
     inParty: (acct) => !!host.social?.inMyParty?.(acct),
     nameOf: (acct) => host.social?.party?.members?.find((m) => m.acct === acct)?.name ?? null,
     acctOfPeer: (id) => host.social?.accountOfPeer?.(id) ?? null,
@@ -65,12 +67,12 @@ export function createSearchParty(host) {
     return m && Number.isInteger(n) && n >= 0 ? [Number(m[1]), Number(m[2]), n] : null;
   }
   /** A cell's row on my ledger, when its searcher is mine or my party's - from the relay's minute (the shared clock's),
-   *  never ahead of now - answering whether it landed. A stranger's row locks nothing of mine. */
+   *  never ahead of now - answering whether it landed. A stranger's row locks nothing of mine. Told by the searcher's
+   *  name - a partymate's, or (AUDIT GRAVE-PARTY G5) another character of my account's, the row's own (searchToldBy). */
   function land(g) {
-    const kin = searchKinOf(g[4]);
-    if (!kin) return false;
+    if (!searchKinOf(g[4])) return false;
     const now = worldMinutes();
-    markSearched(searchKey(`g${g[0]},${g[1]}`, String(g[2])), sharedClockOn() ? Math.min(g[3], now) : now, kin === 'party' ? searchWhoOf(g[4]) : null);
+    markSearched(searchKey(`g${g[0]},${g[1]}`, String(g[2])), sharedClockOn() ? Math.min(g[3], now) : now, searchToldBy(g[4], g[5]));
     return true;
   }
   /** THE CELL'S WORD (`ow` `gr`, net/online.js onOverworld) - its welcome's rows or a change: each kept, and landed. */
