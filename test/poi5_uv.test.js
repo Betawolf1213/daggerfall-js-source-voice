@@ -1,7 +1,7 @@
 // POI-5 (2026-10-14; bible/06-Systems/POI-Editor-Arc.md) - THE UV EDITOR'S GEOMETRY.
 // Mac, asked what "UV map" covers: "Full UV editor" - select vertices, edges, faces and islands; move, rotate, scale;
 // seams; unwrap; pack.
-//   - the session (src/poi/uvMesh.js): a mesh's corners welded into its surface, the model's own seams found, its
+//   - the session (src/poi/uv/uvMesh.js): a mesh's corners welded into its surface, the model's own seams found, its
 //     islands; back to a mesh split exactly where the UVs part;
 //   - the tools: corners moved, turned and sized; the projections (planar, box, cylindrical, spherical) in metres and
 //     unmirrored as each face is seen from its front; the LSCM unwrap (a flat island laid true to its lengths and
@@ -13,7 +13,7 @@ import {
   uvSessionOf, islandsOf, setSeam, edgeKey, cornersOf, uvVertexCorners, transformCorners, uvBounds, projectPlanar,
   projectBox, projectCylinder, projectSphere, unwrapLscm, packIslands, texelDensity, setTexelDensity, meshFromSession,
   pictureAxes, minAreaTurn, hull2,
-} from '../src/poi/uvMesh.js';
+} from '../src/poi/uv/uvMesh.js';
 
 const near = (a, b, eps = 1e-6, what = '') => {
   if (Array.isArray(a)) a.forEach((v, i) => assert.ok(Math.abs(v - b[i]) <= eps, `${what}[${i}] ${v} vs ${b[i]}`));
@@ -257,7 +257,7 @@ test('POI-5 THE UNWRAP AT SIZE: a curved sheet of 7,200 triangles laid flat by t
   assert.ok(worst < 0.03, `the worst face's area off by ${worst}`);
 });
 
-import { createUvEdit, UV_UNDO_DEPTH } from '../src/poi/uvEdit.js';
+import { createUvEdit, UV_UNDO_DEPTH } from '../src/poi/uv/uvEdit.js';
 
 /** A cube with two materials: its first two faces the second. */
 function cube2() {

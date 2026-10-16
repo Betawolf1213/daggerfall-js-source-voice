@@ -23,8 +23,8 @@ import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import './chargenDom.mjs';
-import * as UV from '../src/poi/uvMesh.js';
-import * as ED from '../src/poi/uvEdit.js';
+import * as UV from '../src/poi/uv/uvMesh.js';
+import * as ED from '../src/poi/uv/uvEdit.js';
 import * as THUMB from '../src/poi/poiThumb.js';
 
 const near = (a, b, eps, what = '') => assert.ok(Math.abs(a - b) <= eps, `${what} ${a} vs ${b}`);
@@ -204,7 +204,7 @@ test('AUDIT POI M5: a selection\'s corners are read from the UV vertices\' table
  *  measure's flags have one home, test/allocChild.mjs) - the buffers the heap still holds once the collector has had its
  *  way, asked a few times with the loop turned between (a dead buffer's backing store is freed by a sweeper of its own). */
 const UNDO_CHILD = `
-import { createUvEdit } from ${JSON.stringify(new URL('../src/poi/uvEdit.js', import.meta.url).href)};
+import { createUvEdit } from ${JSON.stringify(new URL('../src/poi/uv/uvEdit.js', import.meta.url).href)};
 const n = 100, pos = [], idx = [], uv = [];
 for (let j = 0; j <= n; j++) for (let i = 0; i <= n; i++) { pos.push(i, 0, j); uv.push(i / n, j / n); }
 const at = (i, j) => j * (n + 1) + i;
@@ -406,8 +406,8 @@ test('AUDIT POI M12: the thumbnail\'s rasterizer gives a pixel centre on an edge
 });
 
 test('AUDIT POI M13: the unwrap runs off the page\'s thread - on a worker over its own session of the same mesh, laying the very UVs the same-thread unwrap lays, as one step; the tools wait while it works; a worker that errors or dies, a factory that throws, or none at all, and it runs here; an idle worker is let go; the worker\'s URL in the spelling the bundler reads (mutants: the answer unlaid; the tools not waiting; a dead worker\'s job dropped)', async () => {
-  const { handleUnwrap } = await import('../src/poi/uvUnwrapWorker.js');
-  const { createUnwrapThread } = await import('../src/poi/uvUnwrapClient.js');
+  const { handleUnwrap } = await import('../src/poi/uv/uvUnwrapWorker.js');
+  const { createUnwrapThread } = await import('../src/poi/uv/uvUnwrapClient.js');
   const fake = (answer = (msg, w) => handleUnwrap(msg, (reply) => w.onmessage?.({ data: reply }))) => {
     const w = { terminated: 0, onmessage: null, onerror: null, postMessage(msg) { queueMicrotask(() => answer(msg, w)); }, terminate() { w.terminated++; } };
     return w;
@@ -460,6 +460,6 @@ test('AUDIT POI M13: the unwrap runs off the page\'s thread - on a worker over i
   await new Promise((r) => setTimeout(r, 40));
   assert.equal(w2.terminated, 1); assert.equal(th.onWorker, false);
   th.close();
-  const client = readFileSync(new URL('../src/poi/uvUnwrapClient.js', import.meta.url), 'utf8');
+  const client = readFileSync(new URL('../src/poi/uv/uvUnwrapClient.js', import.meta.url), 'utf8');
   assert.match(client, /return new Worker\(new URL\('\.\/uvUnwrapWorker\.js', import\.meta\.url\), \{ type: 'module' \}\);/, 'the literal spelling Vite bundles');
 });

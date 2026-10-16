@@ -2,7 +2,7 @@
 // ═══════════════════════════════════════════════════════════════════
 // POI-5 (2026-10-14) - THE UV EDITOR'S HANDS: WHAT IS SELECTED, WHAT A PRESS DOES, AND EVERY STEP BACK.
 //
-// Mac: "Full UV editor" (bible/06-Systems/POI-Editor-Arc.md POI-5). Over one part's mesh as poi/uvMesh.js holds it, one
+// Mac: "Full UV editor" (bible/06-Systems/POI-Editor-Arc.md POI-5). Over one part's mesh as poi/uv/uvMesh.js holds it, one
 // material's faces at a time (the submesh its picture is drawn on), pure - the panel (ui/poi/poiUvPanel.js) draws it and
 // hands it the presses, a test drives it alone:
 //
@@ -12,7 +12,7 @@
 //     islands and the UV vertices are the UVs' own (uvMesh.js uvVertices), read once for each change of the UVs.
 //   - THE TOOLS over the selection (the whole material when nothing is selected): move, turn and size about the
 //     selection's centre, flip; mark and clear seams along selected edges; unwrap (on a worker of its own when one can
-//     be had - poi/uvUnwrapClient.js); project (planar along an axis, box, cylindrical, spherical); pack the islands;
+//     be had - poi/uv/uvUnwrapClient.js); project (planar along an axis, box, cylindrical, spherical); pack the islands;
 //     read and set the texel density against the material's picture.
 //   - EVERY TOOL IS ONE STEP of the UV editor's own undo (what it changed - the corners' UVs and the seams - as they were);
 //     a drag is one step however long (`begin` / `drag` / `end`); a tool that changes nothing is no step.
@@ -53,7 +53,7 @@ function inTri(p, a, b, c) {
 /**
  * @param {any} mesh a POI mesh (poiMesh.js decodePoiMesh's `mesh`)
  * @param {{ sub?: number, workerFactory?: (() => any) | null, undoBytes?: number }} [opts] the material's submesh; the
- *   unwrap worker's factory (a test's fake, or null for this thread alone - poi/uvUnwrapClient.js); the undo's bytes
+ *   unwrap worker's factory (a test's fake, or null for this thread alone - poi/uv/uvUnwrapClient.js); the undo's bytes
  */
 export function createUvEdit(mesh, { sub = 0, workerFactory = undefined, undoBytes = UV_UNDO_BYTES } = {}) {
   const s = uvSessionOf(mesh);
@@ -284,7 +284,7 @@ export function createUvEdit(mesh, { sub = 0, workerFactory = undefined, undoByt
       return pieces.length;
     },
     /**
-     * AUDIT POI M13: THE SAME UNWRAP, OFF THIS THREAD (poi/uvUnwrapClient.js) - the page paints, the view zooms and pans
+     * AUDIT POI M13: THE SAME UNWRAP, OFF THIS THREAD (poi/uv/uvUnwrapClient.js) - the page paints, the view zooms and pans
      * and the selection moves while it works; the UVs wait for it (`busy`: every tool that changes them does nothing
      * meanwhile), and its answer lands as one step. Where no worker can be had it runs here, as `unwrap`. Resolves the
      * pieces it laid.

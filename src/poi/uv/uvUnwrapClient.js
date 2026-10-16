@@ -2,9 +2,9 @@
 // ═══════════════════════════════════════════════════════════════════
 // AUDIT POI M13 (2026-10-15) - THE UNWRAP, OFF THE THREAD THAT DRAWS THE EDITOR.
 //
-// The UV editor's unwrap (poi/uvMesh.js unwrapLscm) of an island at the mesh law's size is seconds of solve - 522,000
+// The UV editor's unwrap (poi/uv/uvMesh.js unwrapLscm) of an island at the mesh law's size is seconds of solve - 522,000
 // triangles (the law's 262,144 vertices) eight of them - and it ran on the page's own thread, which stood still: no
-// paint, no pointer, the tab "not responding". This client hands it to a module Worker (poi/uvUnwrapWorker.js) that runs
+// paint, no pointer, the tab "not responding". This client hands it to a module Worker (poi/uv/uvUnwrapWorker.js) that runs
 // the SAME unwrap over its own session of the SAME mesh, and answers the corners it laid with their UVs.
 //
 // The shape is mwTextureClient.js's, law for law:

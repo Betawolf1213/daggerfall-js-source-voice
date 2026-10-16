@@ -31,7 +31,7 @@ import { writePack, readPackBytes } from '../src/poi/poiPack.js';
 import { prepareImport, uploadImport } from '../src/poi/poiImport.js';
 import { writeGlb } from '../src/poi/gltfExport.js';
 import { readGltf, bakeGltf } from '../src/poi/gltfImport.js';
-import { handleUnwrap } from '../src/poi/uvUnwrapWorker.js';
+import { handleUnwrap } from '../src/poi/uv/uvUnwrapWorker.js';
 import { gltfErrorText, meshErrorText, packErrorText, problemText, problemWhere } from '../src/poi/poiText.js';
 
 const sha256 = async (bytes) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map((b) => b.toString(16).padStart(2, '0')).join('');

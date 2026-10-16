@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDITPOI-L2-the-let-go-unwrap-run-here",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "      if (disposed) return 0;\n      if (!r) {",
     "new": "      if (!r) {",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDITPOI-L2-a-let-go-editor-unwraps-again",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "      if (busy || disposed) return 0;",
     "new": "      if (busy) return 0;",
     "tests": [
@@ -370,7 +370,7 @@
   },
   {
     "name": "AUDITPOI-ONCRASH1-the-angles-round-the-axis-unwrapped",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "    ang[k] = ang[ref] + wrapAngle(ang[k] - ang[ref]);",
     "new": "    ang[k] = ang[k] + 0 * wrapAngle(ang[k] - ang[ref]);",
     "tests": [

@@ -30,8 +30,8 @@
 // Not a DFU member. Ledger A (POI).
 // ═══════════════════════════════════════════════════════════════════
 
-import { orderByDissection, cholesky, solveCholesky, upperCsc } from './sparseCholesky.js';
-import { wrapAngle } from '../world/mat4.js';
+import { orderByDissection, cholesky, solveCholesky, upperCsc } from '../sparseCholesky.js';
+import { wrapAngle } from '../../world/mat4.js';
 
 const EPS_UV = 1e-6;
 

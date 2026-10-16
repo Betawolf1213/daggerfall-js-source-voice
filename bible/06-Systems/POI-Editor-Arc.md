@@ -436,7 +436,7 @@ Mac, asked what "UV map" covers: **"Full UV editor"**.
   and its strength (the colour times the strength, up to 16 - KHR_materials_emissive_strength's meaning). Where the
   picture lies: its offset, its repeats, its turn (in degrees on the panel, radians in the document). **Edit UVs...**
   opens the UV editor over that material.
-- **THE UV EDITOR'S GEOMETRY** (`src/poi/uvMesh.js`, pure): a mesh as its triangles' corners, each with a UV, its
+- **THE UV EDITOR'S GEOMETRY** (`src/poi/uv/uvMesh.js`, pure): a mesh as its triangles' corners, each with a UV, its
   vertices WELDED by position (within `weldEps` on every axis, wherever they fall on its grid - AUDIT POI M10: a
   rounding had opened edges); an edge is a SEAM where its faces disagree on its UVs (the model's own seams found, never
   invented; the builder marks or clears more); an ISLAND, for the unwrap, the faces reached across edges that are not
@@ -462,7 +462,7 @@ Mac, asked what "UV map" covers: **"Full UV editor"**.
   cannot fit nothing moves and no step is taken, and the panel says so - AUDIT POI M9); TEXEL DENSITY read and set in
   the picture's pixels a metre. Back to a mesh (`meshFromSession`): a vertex for each distinct position and UV, split
   exactly where the UVs part, the submeshes' order kept.
-- **THE UV EDITOR'S HANDS** (`src/poi/uvEdit.js`, pure): one material's faces at a time; four ways to select (vertex,
+- **THE UV EDITOR'S HANDS** (`src/poi/uv/uvEdit.js`, pure): one material's faces at a time; four ways to select (vertex,
   edge, face, island), a click the nearest within reach, Shift adding and taking away, a box everything inside; every
   tool over the selection (the whole material when none), turned and sized about the middle of its UV bounds (AUDIT POI
   M11), and one step of its own undo (100 steps, each holding only the corners and seams it changed, under

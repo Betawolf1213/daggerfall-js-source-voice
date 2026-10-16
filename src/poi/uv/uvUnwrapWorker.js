@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════
-// AUDIT POI M13 (2026-10-15) - THE UNWRAP'S WORKER. The other half of poi/uvUnwrapClient.js: a 'mesh' message hands it
-// a COPY of the part's mesh, from which it makes its own session (poi/uvMesh.js uvSessionOf - the same weld, the same
+// AUDIT POI M13 (2026-10-15) - THE UNWRAP'S WORKER. The other half of poi/uv/uvUnwrapClient.js: a 'mesh' message hands it
+// a COPY of the part's mesh, from which it makes its own session (poi/uv/uvMesh.js uvSessionOf - the same weld, the same
 // edges, the same numbers as the editor's); each 'unwrap' message names the faces and the seams as the editor holds them
 // then, runs the SAME unwrap (unwrapLscm) and answers the corners it laid and their UVs, TRANSFERRED. An unwrap of the
 // mesh law's largest island is seconds of solve; on the thread that draws the editor the page stood still for them.

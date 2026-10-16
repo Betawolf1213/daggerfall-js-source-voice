@@ -3,8 +3,8 @@
 // POI-5 (2026-10-14) - THE UV EDITOR'S PANEL: ONE MATERIAL'S UVS OVER ITS PICTURE.
 //
 // Mac: "Full UV editor" (bible/06-Systems/POI-Editor-Arc.md POI-5). A dialog over the POI editor, drawn on a canvas -
-// the material's picture as it is (u right, v down from its top: poi/uvMesh.js's order), the square's grid, every face
-// of the material, the seams red, the selection lit - over the UV editor's hands (poi/uvEdit.js):
+// the material's picture as it is (u right, v down from its top: poi/uv/uvMesh.js's order), the square's grid, every face
+// of the material, the seams red, the selection lit - over the UV editor's hands (poi/uv/uvEdit.js):
 //
 //   - THE POINTER: a click takes the vertex, edge, face or island under it (1 2 3 4 the modes), Shift adds and takes
 //     away; a drag from empty space a box; a drag from the selection the tool's - move, turn or size about the
@@ -21,7 +21,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { t } from '../../systems/textManager.js';   // L10N4: the words through the text core
-import { createUvEdit } from '../../poi/uvEdit.js';
+import { createUvEdit } from '../../poi/uv/uvEdit.js';
 import { isTextEntryTarget } from '../input.js';   // AUDIT POI U6: a key typed into the dialog's own fields is the field's
 
 export const POI_UV_STYLE_ID = 'dfpoi-uv-style';
@@ -112,7 +112,7 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
     btn(t('poi.uv.fit', 'Fit to the square'), () => ed.fit()),
     btn(t('poi.uv.markSeam', 'Mark seam'), () => { if (!ed.seams(true)) say(t('poi.uv.seamHint', 'Select edges first (2).')); }),
     btn(t('poi.uv.clearSeam', 'Clear seam'), () => { if (!ed.seams(false)) say(t('poi.uv.seamHint', 'Select edges first (2).')); }),
-    // AUDIT POI M13 (the lead's wiring): the unwrap off the page's thread (poi/uvEdit.js unwrapOffThread) - the dialog
+    // AUDIT POI M13 (the lead's wiring): the unwrap off the page's thread (poi/uv/uvEdit.js unwrapOffThread) - the dialog
     // paints and pans while it works; its answer lands as one step, and is let go if the dialog closed meanwhile
     btn(t('poi.uv.unwrap', 'Unwrap'), () => {
       if (ed.busy()) return;
@@ -136,7 +136,7 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
   const rot = el('input'); rot.type = 'checkbox'; rot.checked = rotate; rot.addEventListener('change', () => { rotate = !!rot.checked; });
   const densityOut = el('span', '');
   const densityIn = el('input'); densityIn.type = 'number'; densityIn.step = '1'; densityIn.min = '1'; densityIn.value = '256';
-  // AUDIT POI M9: a pack that cannot fit moves nothing and is no step (poi/uvMesh.js packIslands) - and says so
+  // AUDIT POI M9: a pack that cannot fit moves nothing and is no step (poi/uv/uvMesh.js packIslands) - and says so
   pack.append(btn(t('poi.uv.pack', 'Pack'), () => { if (!ed.pack({ margin, rotate })) say(t('poi.uv.packNoRoom', 'The islands do not fit in the square at that margin - nothing was moved. Try a smaller margin.')); }), marginIn, el('label', '', t('poi.uv.packTurn', 'turn islands')), rot,
     el('span', 'dfpoi-sep'), densityOut, densityIn,
     btn(t('poi.uv.setDensity', 'Set density'), () => { if (picW) ed.setDensity(Number(densityIn.value) || 256, picW, picH); else say(t('poi.uv.noPicture', 'This material has no picture: its density has no pixels to count.')); }));

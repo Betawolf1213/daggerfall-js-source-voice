@@ -756,5 +756,9 @@
   ["src/ai/navBake.js","src/ai/nav/navBake.js"],
   ["src/ai/navClient.js","src/ai/nav/navClient.js"],
   ["src/ai/navWorker.js","src/ai/nav/navWorker.js"],
-  ["src/ai/navmesh.js","src/ai/nav/navmesh.js"]
+  ["src/ai/navmesh.js","src/ai/nav/navmesh.js"],
+  ["src/poi/uvEdit.js","src/poi/uv/uvEdit.js"],
+  ["src/poi/uvMesh.js","src/poi/uv/uvMesh.js"],
+  ["src/poi/uvUnwrapClient.js","src/poi/uv/uvUnwrapClient.js"],
+  ["src/poi/uvUnwrapWorker.js","src/poi/uv/uvUnwrapWorker.js"]
 ]

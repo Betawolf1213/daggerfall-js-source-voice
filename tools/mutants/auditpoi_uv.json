@@ -1,7 +1,7 @@
 [
   {
     "name": "AUDITPOI-M1-two-corners-on-one-weld-a-triangle",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "  return a !== b && b !== c && a !== c && len3(faceNormal(s, f)) > LIVE_AREA2;",
     "new": "  return len3(faceNormal(s, f)) > LIVE_AREA2;",
     "tests": [
@@ -10,7 +10,7 @@
   },
   {
     "name": "AUDITPOI-M1-the-faces-of-no-area-solved",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "  for (let i = 0; i < n; i++) live[i] = isLive(s, faces[i]) ? 1 : 0;",
     "new": "  for (let i = 0; i < n; i++) live[i] = 1;",
     "tests": [
@@ -19,7 +19,7 @@
   },
   {
     "name": "AUDITPOI-M1-their-corners-left-unlaid",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "      let from = firstOf[r];",
     "new": "      let from = -1;",
     "tests": [
@@ -28,7 +28,7 @@
   },
   {
     "name": "AUDITPOI-M2-pieces-joined-through-a-face-of-no-area",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "      if (live[i] && live[j]) { join(fp, i, j); joinAt(i, j, wa); joinAt(i, j, wb); } else later.push(i, j, wa, wb);",
     "new": "      join(fp, i, j); if (live[i] && live[j]) { joinAt(i, j, wa); joinAt(i, j, wb); } else later.push(i, j, wa, wb);",
     "tests": [
@@ -37,7 +37,7 @@
   },
   {
     "name": "AUDITPOI-M3-the-uv-islands-joined-where-the-uvs-part",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "        if (!sameUv(s, ca, cornerAt(s, g, s.weld[s.tris[ca]])) || !sameUv(s, cb, cornerAt(s, g, s.weld[s.tris[cb]]))) continue;\n",
     "new": "",
     "tests": [
@@ -46,7 +46,7 @@
   },
   {
     "name": "AUDITPOI-M3-the-pack-one-island",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "      const isl = uvIslandsOf(s, selectedFaces());",
     "new": "      const isl = [selectedFaces()];",
     "tests": [
@@ -55,7 +55,7 @@
   },
   {
     "name": "AUDITPOI-M3-the-density-one-island",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "setDensity(target, w, h) { const isl = uvIslandsOf(s, selectedFaces());",
     "new": "setDensity(target, w, h) { const isl = [selectedFaces()];",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "AUDITPOI-M4-the-piece-unsized",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "  if (areaUv > 0) { const k = Math.sqrt(area3 / areaUv);",
     "new": "  if (false) { const k = Math.sqrt(area3 / areaUv);",
     "tests": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "AUDITPOI-M4-sized-by-its-area-not-its-length",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "const k = Math.sqrt(area3 / areaUv);",
     "new": "const k = area3 / areaUv;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "AUDITPOI-M5-the-table-read-on-every-ask",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "    if (!topoCache || topoCache.uvGen !== uvGen || topoCache.sub !== shownSub) topoCache",
     "new": "    if (true) topoCache",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "AUDITPOI-M5-a-uv-vertex-taken-twice",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "      if (v < 0 || seen[v]) return;",
     "new": "      if (v < 0) return;",
     "tests": [
@@ -100,7 +100,7 @@
   },
   {
     "name": "AUDITPOI-M5-an-island-taken-for-each-of-its-faces",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "          if (taken[i]) continue;\n",
     "new": "",
     "tests": [
@@ -109,7 +109,7 @@
   },
   {
     "name": "AUDITPOI-M6-a-whole-copy-a-step",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "    if (within) for (const c of within) look(c); else for (let c = 0; c < s.faces * 3; c++) look(c);",
     "new": "    for (let c = 0; c < s.faces * 3; c++) cs.push(c);",
     "tests": [
@@ -118,7 +118,7 @@
   },
   {
     "name": "AUDITPOI-M6-the-budget-unread",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "(held > undoBytes && undo.length > 1)",
     "new": "(false && undo.length > 1)",
     "tests": [
@@ -127,7 +127,7 @@
   },
   {
     "name": "AUDITPOI-M6-a-steps-seams-unrestored",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "    for (const k of e.del) s.seams.delete(k);\n",
     "new": "",
     "tests": [
@@ -136,7 +136,7 @@
   },
   {
     "name": "AUDITPOI-M6-the-steps-let-go-unchanged",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "    changed: () => undo.length > 0 || dropped,",
     "new": "    changed: () => undo.length > 0,",
     "tests": [
@@ -145,7 +145,7 @@
   },
   {
     "name": "AUDITPOI-M7-the-axis-corner-at-its-own-angle",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "  for (let k = 0; k < 3; k++) if (!(rho[k] > onAxis)) ang[k] = sum / off;\n",
     "new": "",
     "tests": [
@@ -154,7 +154,7 @@
   },
   {
     "name": "AUDITPOI-M7-the-wrap-read-from-the-axis",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "  for (let k = 0; k < 3 && ref < 0; k++) if (rho[k] > onAxis) ref = k;",
     "new": "  ref = 0;",
     "tests": [
@@ -190,7 +190,7 @@
   },
   {
     "name": "AUDITPOI-M9-the-turns-applied-before-a-fit",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "  if (!place) return 0;\n  items.forEach",
     "new": "  if (!place) { for (const it of items) it.corners.forEach((c, j) => { s.cornerUv[c * 2] = it.at[j * 2]; s.cornerUv[c * 2 + 1] = it.at[j * 2 + 1]; }); return 0; }\n  items.forEach",
     "tests": [
@@ -199,7 +199,7 @@
   },
   {
     "name": "AUDITPOI-M9-the-empty-island-read",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "    if (!faces.length) continue;\n    const corners = [...new Set(cornersOf(faces))];",
     "new": "    const corners = [...new Set(cornersOf(faces))];",
     "tests": [
@@ -208,7 +208,7 @@
   },
   {
     "name": "AUDITPOI-M9-the-tie-by-an-amount",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "    if (area < bestArea * (1 - 1e-12)) { bestArea = area; best = a; }",
     "new": "    if (area < bestArea - 1e-12) { bestArea = area; best = a; }",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "AUDITPOI-M10-the-weld-by-its-own-cell",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "    for (let ix = Math.floor((x - weldEps) * q); ix <= Math.floor((x + weldEps) * q); ix++) {",
     "new": "    for (let ix = Math.floor(x * q); ix <= Math.floor(x * q); ix++) {",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "AUDITPOI-M11-the-corners-averaged",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "  const [u0, v0, u1, v1] = uvBounds(s, corners);\n  return [(u0 + u1) / 2, (v0 + v1) / 2];",
     "new": "  let u = 0, v = 0;\n  for (const c of corners) { u += s.cornerUv[c * 2]; v += s.cornerUv[c * 2 + 1]; }\n  return [u / corners.length, v / corners.length];",
     "tests": [
@@ -271,7 +271,7 @@
   },
   {
     "name": "AUDITPOI-M13-the-answer-unlaid",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "      lay(r.corners, r.uvs);\n",
     "new": "",
     "tests": [
@@ -280,7 +280,7 @@
   },
   {
     "name": "AUDITPOI-M13-the-tools-not-waiting",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "  const step = (fn, within = null) => { if (busy) return false; fn(); return record(within); };",
     "new": "  const step = (fn, within = null) => { fn(); return record(within); };",
     "tests": [
@@ -289,7 +289,7 @@
   },
   {
     "name": "AUDITPOI-M13-the-old-path-not-taken",
-    "file": "src/poi/uvEdit.js",
+    "file": "src/poi/uv/uvEdit.js",
     "old": "      if (!r) {\n        // the old path",
     "new": "      if (false) {\n        // the old path",
     "tests": [
@@ -298,7 +298,7 @@
   },
   {
     "name": "AUDITPOI-M13-an-idle-worker-kept",
-    "file": "src/poi/uvUnwrapClient.js",
+    "file": "src/poi/uv/uvUnwrapClient.js",
     "old": "    if (jobs.size || !w) return;\n    idle = setTimeout",
     "new": "    return;\n    idle = setTimeout",
     "tests": [
@@ -347,7 +347,7 @@
   },
   {
     "name": "AUDITPOI-M13-a-triangles-entry-below-unconjugated",
-    "file": "src/poi/uvMesh.js",
+    "file": "src/poi/uv/uvMesh.js",
     "old": "} else { I[cnt] = rb; J[cnt] = ra; Vz[cnt] = -im; }",
     "new": "} else { I[cnt] = rb; J[cnt] = ra; Vz[cnt] = im; }",
     "tests": [
