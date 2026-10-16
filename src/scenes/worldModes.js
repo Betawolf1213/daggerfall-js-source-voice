@@ -6104,11 +6104,11 @@ export function createWorldModes(host) {
         revealLocation,   // G8: the TG/DB map reveals - MACRO-4: through the popup's own wrapper, which keeps the name for %dng
         // F114: OwnsHouse per CURRENT region (DaggerfallBankManager.cs:136).
         ownsHouse: () => ownsHouse(playerEntity.houses ?? [], interiorBuilding?.regionIndex ?? 0),
-        rankCeiling: host.rollRankCeiling?.() ?? null,   // CHAP4b: 7 online while the Roll holds - 8 and 9 are seats
-        promoteWhenEarned: sharedClockOn(),   // PROMO-NOW: online, a promotion does not wait the 28 days
+        rankCeiling: host.rollPace?.(guild.factionId)?.ceiling ?? null,   // CHAP4b: 7 online while the Roll holds - 8 and 9 are seats; ROLL-PACE: and no further than its pace since joining
+        promoteWhenEarned: sharedClockOn() && !!host.rollPace?.(guild.factionId),   // PROMO-NOW: online, a promotion does not wait the 28 days - ROLL-PACE: while the Roll paces it
       }),
       // PROMO-NOW: online, the popup says what the next rank asks (the enhanced skin's line; the classic window is DFU's)
-      rankNeeds: () => (sharedClockOn() ? rankNeedsLines(playerEntity, guild, memberships, store, { rankCeiling: host.rollRankCeiling?.() ?? null }) : null),
+      rankNeeds: () => { const pace = sharedClockOn() ? host.rollPace?.(guild.factionId) ?? null : null; return sharedClockOn() ? rankNeedsLines(playerEntity, guild, memberships, store, { rankCeiling: pace?.book ?? null, pace }) : null; },   // ROLL-PACE: and when the pace holds it
       onJoin: () => {
         // JoinButton_OnMouseClick (:497-525). joinDecision is null for
         // the two invitation-only guilds, which DFU reaches by
