@@ -1322,8 +1322,8 @@ test('INTERIOR-BODIES: a body killed inside a building is stood, named, listed a
   // THAT host stands - it was one prefix while the interior stood no
   // bodies, and a body reading "Empty" over a full pack is the defect
   // AUDIT-WH H3 extracted this ladder for outdoors.
-  assert.match(wm, /contents: composeContents\(\[\n\s*\(key\) => \(typeof key === 'string' && key\.startsWith\('droppedLoot:'\)[^\n]*\n\s*\(key\) => interiorFoes\?\.hoverContents\?\.\(key\) \?\? null,\n\s*\(key\) => interiorGuards\?\.hoverContents\?\.\(key\) \?\? null,\n\s*\]\),/,
-    'the interior reads contents as a LADDER, over every itemised key it stands');
+  assert.match(wm, /contents: composeContents\(\[\n\s*\(key\) => \(typeof key === 'string' && key\.startsWith\('droppedLoot:'\)[^\n]*\n\s*\(key\) => interiorFoes\?\.hoverContents\?\.\(key\) \?\? null,\n\s*\(key\) => interiorGuards\?\.hoverContents\?\.\(key\) \?\? null,\n\s*\/\/ CONTAINER-PEEK:[^\n]*\n\s*\(key\) => interiorHeldPreview\(key, \{/,
+    'the interior reads contents as a LADDER, over every itemised key it stands, then a cupboard\'s glance');
   assert.match(wm, /import \{ composeNamer, composeContents \} from '\.\.\/systems\/worldHover\.js';/);
 
   // OPENED - the same door the street and the dungeon open: the pool's

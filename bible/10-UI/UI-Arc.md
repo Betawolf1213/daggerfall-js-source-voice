@@ -19331,7 +19331,7 @@ Port-Ledger A: THE PLAYER'S OWN STORES, FILTERED and SHIFT AND A CLICK STOW THE 
   chosen one stays at nought rather than vanishing from under the hand. A choice refills the rows in place - a card
   open on a pack item stays open.
 - **What does not change.** A take is `take(item)`, so a filtered list takes that piece out of the whole store. A
-  corpse, a container, the ground and a reward tray keep their whole list. The filter is fresh for every store shown:
+  The ground and a reward tray keep their whole list. A corpse and a container carry the bar too (LOOT-BULK, below). The filter is fresh for every store shown:
   each open, each wagon or bag door pressed, and a store emptied.
 - **The classic skin draws none.** THE NATIVE-WINDOW RULE: DFU's parchment has no such control and no source for one.
 
@@ -19354,7 +19354,7 @@ Port-Ledger A: THE PLAYER'S OWN STORES, FILTERED and SHIFT AND A CLICK STOW THE 
 Chromium through vite and Playwright, from the scratchpad (below).
 
 **Proof.** `test/shiftstow.test.js` (9 after the audit): the filter law; the one row, the menu and the search
-refilling in place, a take from the narrowed list, Back, no bar over a corpse; the filter fresh per store; the search
+refilling in place, a take from the narrowed list, Back, a corpse carrying the bar and a reward tray none; the filter fresh per store; the search
 blind to a hidden name; Shift into the wagon, a plain click still a pick, the refused piece never worn, nothing on the
 ground; the how-many field not applying; the 750 kg taking what fits, and the storage; the classic latch, the arm in
 Info mode, no popup on a partial fit, the ground, a right and a middle click unchanged, the repeat, the focus loss and
