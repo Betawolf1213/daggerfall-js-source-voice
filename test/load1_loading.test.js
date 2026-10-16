@@ -471,7 +471,7 @@ test('LOAD1 the layers: over the death screen and under the crash banner, read o
   assert.ok(veil, 'the veil rule');
   const sels = veil[1].split(',').map((x) => x.trim().replace(/^body\.ld-up /, ''));
   assert.deepEqual(sels.sort(), ['#plus-pad-prompts', '.arena-hud', '.rvncard-stack', '.sg-hud', '.wb-dmg-chart', '.wb-gate-banner', '.wb-title-card']);
-  const home = { '.wb-gate-banner': 'gateBanner.js', '.wb-title-card': 'gateTitleCard.js', '.wb-dmg-chart': 'gateDamageChart.js', '.sg-hud': 'siegeHud.js', '.arena-hud': 'arenaHud.js', '.rvncard-stack': 'revenantCard.js', '#plus-pad-prompts': 'plusPad.js' };
+  const home = { '.wb-gate-banner': 'gate/gateBanner.js', '.wb-title-card': 'gate/gateTitleCard.js', '.wb-dmg-chart': 'gate/gateDamageChart.js', '.sg-hud': 'siegeHud.js', '.arena-hud': 'arena/arenaHud.js', '.rvncard-stack': 'revenant/revenantCard.js', '#plus-pad-prompts': 'plus/plusPad.js' };   // TIDY2: each in its feature folder
   for (const sel of sels) assert.ok(read(`src/ui/${home[sel]}`).includes(sel.slice(1)), `${sel} is still drawn by ui/${home[sel]}`);
   // and the body wears the veil only while the screen is seen
   mock.timers.enable({ apis: ['setTimeout', 'setInterval', 'Date'] });

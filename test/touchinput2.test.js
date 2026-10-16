@@ -302,7 +302,7 @@ test('TI2 pins: the prefs shelf carries the touch knobs with their shipped answe
   assert.equal(PREF_DEFAULTS.touchHaptics, true);
   assert.equal(PREF_DEFAULTS.touchFullscreen, true);
   const menu = read('src/ui/enhanced/enhancedMenu.js');
-  assert.match(menu, /import \{ isTouchDevice \} from '\.\/touch\.js';/);
+  assert.match(menu, /import \{ isTouchDevice \} from '\.\.\/touch\/touch\.js';/);
   // SO1: the touch knobs are rows under CONTROLS (beside the mouse and
   // the pad), and the whole set is gated on the device the same way.
   // PAD-CURSOR: the controller's cursor-assist row stands ahead of the gate - a controller's, on every device

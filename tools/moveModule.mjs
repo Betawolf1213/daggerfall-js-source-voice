@@ -16,6 +16,7 @@
 //              tests' `src()` helpers use for a file under src/; and `01-Overview/X.md`, the bible's own spelling of
 //              a page. With `./` or `../..` before it, it is a specifier quoted by a pin, rewritten the same.
 //   ESCAPED    either path escaped for a pattern (`/06-Systems\/X\.md/`, `src\/systems\/x\.js`).
+//   QUOTED     a test's pin on an import as its file spells it (`from '\.\/y\.js'`), where the move re-based it.
 //
 // A move changes the directory, never the name: the bible's cites by file name alone resolve by name
 // (tools/citeAnchor.mjs makeResolver), so a kept name keeps them. An address is an address - a path in an old record
@@ -223,11 +224,23 @@ export function planMove(moves, texts) {
   const moved = new Map(moves), names = byName(moves);
   const fromDirs = [...new Set(moves.map(([f]) => posix.dirname(f)))];
   const writes = new Map(), counts = new Map(), blind = [];
+  // QUOTED IMPORTS first: what each code file's own specifiers become - read off the text as it stands, before any path
+  // in a pin is rewritten, so the pin's old spelling is still there to find
+  const changes = new Map();
+  for (const [file, text] of texts) {
+    if (!CODE_EXT.test(file) || FROZEN.some((re) => re.test(file))) continue;
+    const c = specifierChanges(text, rewriteSpecifiers(text, file, moved.get(file) ?? file, moved).text);
+    if (c.size) changes.set(file, c);   // by the path a pin names it by now
+  }
   for (const [file, text] of texts) {
     if (FROZEN.some((re) => re.test(file))) continue;
     const home = moved.get(file) ?? file;
     let t = text, n = 0;
-    if (CODE_EXT.test(file)) ({ text: t, n } = rewriteSpecifiers(t, file, home, moved));
+    if (changes.size && /^test\//.test(file)) {
+      const q = rewriteQuotedImports(t, changes, home);
+      t = q.text; n += q.n; blind.push(...q.blind);
+    }
+    if (CODE_EXT.test(file)) { const r = rewriteSpecifiers(t, file, home, moved); t = r.text; n += r.n; }
     if (/^tools\/mutants\/.*\.json$/.test(file)) {
       const r = rewriteRecords(t, moved, file);
       t = r.text; n += r.n; blind.push(...r.blind);
@@ -239,6 +252,39 @@ export function planMove(moves, texts) {
     if (/\.(js|mjs|cjs)$/.test(home)) blind.push(...blindSpots(t, home, fromDirs, moved, names));
   }
   return { writes, counts, blind };
+}
+
+/** The specifiers a rewrite changed in one file, old spelling to new - null where one spelling became two - and, as
+ *  `x -> x`, those it left as they were: a pin naming this file and another may quote either. */
+export function specifierChanges(oldText, newText) {
+  const a = specifierList(oldText), b = specifierList(newText), out = new Map();
+  if (a.length !== b.length) return out;
+  a.forEach((x, i) => out.set(x, out.has(x) && out.get(x) !== b[i] ? null : b[i]));
+  return [...out].some(([x, y]) => x !== y) ? out : new Map();
+}
+
+/**
+ * QUOTED IMPORTS. A pin quotes an import as its file spells it - `assert.match(rd('src/ui/x.js'), /from '\.\/y\.js'/)` -
+ * and a move that re-based the import leaves the quote naming nothing. Where a text names a file (`changes` maps each
+ * file's path to the specifiers the move changed in it), each quoted old spelling, plain or escaped for a pattern,
+ * becomes the new one - in one pass, so a spelling that became another's is not rewritten twice. One the files a text
+ * names disagree on is named, not guessed.
+ */
+export function rewriteQuotedImports(text, changes, file = '') {
+  const plan = new Map();
+  for (const [path, specs] of changes) {
+    if (!(text.includes(path) || (path.startsWith('src/') && text.includes(path.slice(4))))) continue;
+    for (const [a, b] of specs) {
+      for (const [x, y] of [[a, b], [escaped(a), b === null ? null : escaped(b)]]) plan.set(x, plan.has(x) && plan.get(x) !== y ? null : y);
+    }
+  }
+  const quoted = [...plan.keys()].filter((x) => plan.get(x) !== x && (text.includes(`'${x}'`) || text.includes(`"${x}"`)));
+  if (!quoted.length) return { text, n: 0, blind: [] };
+  const blind = quoted.filter((x) => plan.get(x) === null).map((x) => `${file}: quotes ${x}, an import the files it names re-based two ways`);
+  const sure = quoted.filter((x) => plan.get(x) !== null);
+  let n = 0;
+  if (sure.length) text = text.replace(new RegExp(`(['"])(${sure.map(esc).join('|')})\\1`, 'g'), (all, q, x) => { n++; return q + plan.get(x) + q; });
+  return { text, n, blind };
 }
 
 /** The ledger's moves composed - a file moved twice is one move from where it first stood to where it stands now. */

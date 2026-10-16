@@ -86,7 +86,7 @@ test('CURSOR-EDGE: no scroller on the game page is a native scrollbar in Chromiu
   }
   // and every other sheet the UI writes (chat, dialogs, windows) - a source sweep, so a new sheet is held too
   const dir = join(root, 'src/ui');
-  for (const f of readdirSync(dir).filter((f) => f.endsWith('.js'))) {
+  for (const f of readdirSync(dir, { recursive: true }).filter((f) => f.endsWith('.js'))) {
     const live = withoutFirefoxBlocks(readFileSync(join(dir, f), 'utf8'));
     assert.doesNotMatch(live, /scrollbar-color\s*:/, `src/ui/${f}`);
     assert.doesNotMatch(live, /scrollbar-width\s*:(?!\s*none)/, `src/ui/${f}`);

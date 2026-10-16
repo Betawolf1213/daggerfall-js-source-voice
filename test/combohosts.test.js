@@ -89,7 +89,7 @@ test('AUDIT 58 (f3/input): routeKey carries the Set through to the same arm (the
 test('AUDIT 58 (f3/input): EVERY host that registers a keydown hands its held-keys Set in', () => {
   // DISCOVERED, not enumerated - the U47 host sweep's shape
   // (test/nativeinventory.test.js). A host joins this law by existing.
-  const hosts = readdirSync(SCENES).filter((f) => f.endsWith('.js')
+  const hosts = readdirSync(SCENES, { recursive: true }).filter((f) => f.endsWith('.js')
     && /\n {2}addEventListener\('keydown', \(e\) => \{/.test(body(f)));
   assert.deepEqual(hosts.sort(), ['dungeon.js', 'exterior.js', 'interior.js', 'world.js', 'worldModes.js'],
     'the host-level keydowns in the tree');

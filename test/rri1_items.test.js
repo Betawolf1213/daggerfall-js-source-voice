@@ -331,5 +331,6 @@ test('RRI1 wiring: the install at the scene boot, the Features row and its curat
   assert.match(rd('src/systems/enchanting.js'), /if \(cls\?\.enchantmentPower\) return cls\.enchantmentPower\(item, \{ enchantmentPoints: basePower, armorEnchantmentMultiplier \}\);/);
   assert.match(rd('src/systems/armorMaterials.js'), /const custom = _customArmorValue\?\.\(item\);\n\s+if \(custom != null\) return custom;/);
   assert.match(rd('src/systems/roleplayRealismItems/rriItems.js'), /^import /m);
-  assert.ok(!/from '\.\/itemTemplates\.js'|from '\.\/equip\.js'|from '\.\.\/characters\/equipTable\.js'|from '\.\/soundClips\.js'/.test(rd('src/systems/roleplayRealismItems/rriItems.js')), 'the law is a leaf of the systems it feeds');
+  // TIDY2: by the file's name, at any depth - a spelled path stops meaning anything when either file moves
+  assert.ok(!/from '(?:\.\.?\/)+(?:\w+\/)*(?:itemTemplates|equip|equipTable|soundClips)\.js'/.test(rd('src/systems/roleplayRealismItems/rriItems.js')), 'the law is a leaf of the systems it feeds');
 });

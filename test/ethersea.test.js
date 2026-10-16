@@ -311,7 +311,7 @@ test('ETHER-SEA by source: the host composes the sea over the ground between the
   // PIN MOVED (AUDIT CAPTAIN'S SEA G4/G9): the continent's past the map wherever it stands, the sea's in its law, the Bay edge's clamp else
   assert.match(src, /climatePast: tamrielLand \? \(x, y\) => maps\.getClimateIndex\(x, y\)\n\s+: etherSea \? \(x, y\) => maps\.getClimateIndex\(\.\.\.\(inEtherLaw\(x, y\) \? \[x, y\] : \[Math\.max\(0, Math\.min\(MAP_WIDTH - 1, x\)\), Math\.max\(0, Math\.min\(MAP_HEIGHT - 1, y\)\)\]\)\) : null,/);
   const worker = read('src/world/terrain/terrainGenWorker.js');
-  assert.match(worker, /import \{ etherWoods \} from '\.\/ethericSea\.js';/);
+  assert.match(worker, /import \{ etherWoods \} from '\.\.\/ethericSea\.js';/);
   assert.match(worker, /if \(m\.ether\) woods = etherWoods\(woods\);/);
   const sea = read('src/world/ethericSea.js');
   assert.deepEqual([...sea.matchAll(/^import[^'"]*from ['"]([^'"]+)['"]/gm)].map((m) => m[1]), ['../formats/mapsTables.js'], 'worker-safe: formats alone');

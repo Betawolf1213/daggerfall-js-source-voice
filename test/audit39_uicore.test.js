@@ -152,7 +152,7 @@ test('AUDIT 39 F127 / TI1: the drag hook is live - the swipe calls it, and no bu
   for (const h of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeon.js', 'src/scenes/interior.js']) {
     const s = read(h);
     assert.match(s, /\n    enhanced: isEnhanced\(\),/, `${h}: mutants: the skin flag dropped, so this host's touch layer is in the system face under the enhanced skin`);
-    assert.match(s, /import \{[^}]*isEnhanced[^}]*\} from '\.\.\/systems\/uiSkin\.js';/, `${h}: ...and it reads the real skin, not a literal`);
+    assert.match(s, /import \{[^}]*isEnhanced[^}]*\} from '\.\.\/\.\.\/systems\/uiSkin\.js';/, `${h}: ...and it reads the real skin, not a literal`);
   }
   // AUDIT FONT F6: the naming field is an <input> and inherits nothing
   // from the layer's root, so it set its own font shorthand and was the

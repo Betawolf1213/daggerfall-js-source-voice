@@ -119,8 +119,8 @@ test('SEAT2b part two THE HOST\'S SEAMS: a members\' Harbour is the travel map\'
   // PIN MOVED (AUDIT CAPTAIN'S SEA P10): past the Veil an isle's place answers by its own kind first, the Bay's as before
   assert.match(W, /portTown: \(loc\.ether \? loc\.etherKind === 'port' : modSetting\('travel-options', 'Enabled'\) === true \? hasPortFor\(loc\.mapTableData\?\.mapId\) :/);
   assert.match(W, /if \(hasPortFor\(summary\.id\)\) return true;/);
-  for (const f of ['travelPopUp.js', 'travelMapOptions.js', 'heldMap.js']) {
-    assert.match(readFileSync(new URL(`../src/ui/${f}`, import.meta.url), 'utf8'), /import \{ hasPortFor as hasPort \} from '\.\.\/systems\/travel\/travelPorts\.js';/, f);
+  for (const f of ['src/ui/travel/travelPopUp.js', 'src/ui/travel/travelMapOptions.js', 'src/ui/heldMap.js']) {   // TIDY2: whole paths, so a move rewrites them
+    assert.match(readFileSync(new URL(`../${f}`, import.meta.url), 'utf8'), /import \{ hasPortFor as hasPort \} from '(?:\.\.\/)+systems\/travel\/travelPorts\.js';/, f);
   }
   assert.match(readFileSync(new URL('../src/systems/travel/travelOptions.js', import.meta.url), 'utf8'), /hasPort: \(mapId\) => hasPortFor\(mapId\),/);
   assert.match(W, /const seaPixel = \(x, y\) => isWaterPixel\(maps\.getClimateIndex\(x, y\), woods\.getHeightMapValue\(x, y\)\);/);

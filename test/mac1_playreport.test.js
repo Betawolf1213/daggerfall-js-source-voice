@@ -60,7 +60,7 @@ function fakeIndexedDb(initial = {}) {
 // ── A ────────────────────────────────────────────────────────────
 test('MAC1 A: the boot door counts the Morrowind store itself and repaints when the count lands', async () => {
   const menu = src('src/ui/enhanced/enhancedMenu.js');
-  assert.match(menu, /import \{[^}]*\bcountMorrowindArchives\b[^}]*\} from '\.\.\/scenes\/dataSource\.js'/, 'the menu imports the NAMES-ONLY count');
+  assert.match(menu, /import \{[^}]*\bcountMorrowindArchives\b[^}]*\} from '\.\.\/\.\.\/scenes\/dataSource\.js'/, 'the menu imports the NAMES-ONLY count');
   const mountBlock = menu.slice(menu.indexOf('hooks = h ?? {};'), menu.indexOf('sections = mode ==='));
   assert.doesNotMatch(mountBlock, /registerMorrowindData\(\)/, 'AUDIT 65 XL-6: the MOUNT never calls the fingerprinting pass (the attach pick does - MWA4 - before a build spends seconds)');
   // MWA4: the Build-arms toggle is gone; Attach builds, AFTER the pick - and the pick measures what it stored itself

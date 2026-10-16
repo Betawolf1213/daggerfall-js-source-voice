@@ -277,7 +277,7 @@ test('ETHER-CHART the doors: the travel map\'s door opens the chart past the Vei
   assert.match(src, /const word = \(\) => \{ const p = playerTravelPixel\(\); return etherHost\.chart\(p\.x, p\.y, heading\(\)\); \};/);   // PIN MOVED (AUDIT CAPTAIN'S SEA X16): the ship's heading at her helm
   assert.match(src, /const heading = \(\) => \{ const boat = csaRuntime\?\.isSailing\?\.\(\) \? csaRuntime\.state\.CurrentBoat : null; if \(!boat\) return cam\.yaw; const f = boatForward\(boat\); return Math\.atan2\(f\[0\], f\[2\]\); \};/);
   const door = read('src/ui/naval/navalPlunderDoor.js');
-  assert.match(door, /load: \(\) => import\('\.\/etherChartWindow\.js'\),/);
+  assert.match(door, /load: \(\) => import\('\.\.\/etherChartWindow\.js'\),/);
   const o = { ether: true, port: 'Veilhaven', waters: 'the Shallows, 7 leagues past the Veil', rumours: ['A tale.', 'Another.'], charted: 1, chart: { price: 150, fresh: 12, can: true, why: '' } };
   const t = officeText(o);
   assert.deepEqual(t, etherOfficeText(o));

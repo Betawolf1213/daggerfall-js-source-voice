@@ -155,9 +155,9 @@ test('AUDIT 65 UI-5: one wheel shape in src/ui - every other window ignores the 
   // (:1100) rather than by a host and keeps its own argument order.
   const dir = join(root, 'src/ui');
   const multi = [];
-  for (const f of readdirSync(dir).filter((n) => n.endsWith('.js'))) {
+  for (const f of readdirSync(dir, { recursive: true }).filter((n) => n.endsWith('.js'))) {
     for (const m of readFileSync(join(dir, f), 'utf8').matchAll(/^\s*wheel\(([^)]*)\)/gm)) {
-      if (m[1].split(',').filter((a) => a.trim()).length > 1) multi.push(`${f}: wheel(${m[1]})`);
+      if (m[1].split(',').filter((a) => a.trim()).length > 1) multi.push(`${f.split(/[\\/]/).pop()}: wheel(${m[1]})`);   // TIDY2: named by its file, wherever its feature folder
     }
   }
   assert.deepEqual(multi.sort(), [

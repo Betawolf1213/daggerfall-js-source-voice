@@ -234,7 +234,7 @@ test('F100: the coins-only reader is gone from the service module', () => {
   const g = src('systems/guild/guildServiceActions.js');
   assert.equal(/\bgoldAmount\(/.test(g), false,
     'goldAmount is DFU\'s goldPieces alone; every gate here is GetGoldAmount');
-  assert.match(g, /import \{ totalGoldAmount, deductGold \} from '\.\/court\.js';/);
+  assert.match(g, /import \{ totalGoldAmount, deductGold \} from '\.\.\/court\.js';/);
 });
 
 // ── F101 / F115 ───────────────────────────────────────────────────

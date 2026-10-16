@@ -200,7 +200,7 @@ test('VE3 Mod.Enabled: a mod switched off answers nothing and keeps its place; t
   const ds = src('scenes/dataSource.js');
   assert.match(ds, /await storeAssets\(TEXTURE_STORE, \[f\], \(\) => true, \(\) => key\);\n\s+forgetDfmodOff\(key\);/);
   assert.match(ds, /await deleteAssets\(TEXTURE_STORE, \[key, dfmodIndexKey\(key\)\]\);\n\s+forgetDfmodOff\(key\);/);
-  assert.match(ds, /await deleteAssets\(TEXTURE_STORE, names\);\n\s+\(await import\('\.\.\/systems\/dfmodTextures\.js'\)\)\.forgetDfmodOff\(names\);/);
+  assert.match(ds, /await deleteAssets\(TEXTURE_STORE, names\);\n\s+\(await import\('\.\.\/\.\.\/systems\/dfmodTextures\.js'\)\)\.forgetDfmodOff\(names\);/);
   assert.match(src('systems/dfmodTextures.js'), /if \(dfmodEnabled\(key\)\) await bundleFor\(key\);/);
 });
 

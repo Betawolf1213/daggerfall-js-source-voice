@@ -363,7 +363,7 @@ test('AUDIT CARDS-2 the panel in play and between hands: the buttons the law all
   // the phone: the panel never wider than the screen less its gutters
   const css = read('src/ui/card/cardTableHud.js');
   assert.match(css, /box-sizing:border-box;min-width:min\(520px,calc\(100vw - 32px\)\);max-width:min\(760px,calc\(100vw - 32px\)\)/);
-  assert.match(css, /import \{ BUY_IN_MIN_BB, BUY_IN_START_BB \} from '\.\.\/systems\/card\/cardTableSession\.js';/);
+  assert.match(css, /import \{ BUY_IN_MIN_BB, BUY_IN_START_BB \} from '\.\.\/\.\.\/systems\/card\/cardTableSession\.js';/);
 });
 
 test('CARDS9/10 the house at its card table: a pack bought from the purse at the table\'s price, refused when the purse is short; "Play Iliac Hand" closes Hold\'em and opens the other game on the seat, a regular for every free chair; standing up closes it (mutants: the pack press; the iliac press)', () => {

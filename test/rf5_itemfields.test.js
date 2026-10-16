@@ -180,5 +180,5 @@ test('RF5: one declaration - the array list derives from the kinds, the validato
   assert.match(loot, /if \(!validItemFields\(out\)\) return null;/, 'the validator checks every declared field');
   assert.doesNotMatch(loot, /\['enchantments', 'customEnchantments', 'affixes'\]/, 'no hand list');
   assert.doesNotMatch(loot, /validAffixList/, 'LR4\'s check rides the schema');
-  assert.doesNotMatch(read('src/systems/item/itemFields.js'), /from '\.\/loot\.js'|from '\.\/inventory\.js'|from '\.\/equip\.js'/, 'the schema sits under the mints');
+  assert.doesNotMatch(read('src/systems/item/itemFields.js'), /from '(?:\.\.?\/)+(?:[\w-]+\/)*loot\.js'|from '(?:\.\.?\/)+(?:[\w-]+\/)*inventory\.js'|from '(?:\.\.?\/)+(?:[\w-]+\/)*equip\.js'/, 'the schema sits under the mints');
 });

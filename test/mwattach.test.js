@@ -186,7 +186,7 @@ test('MWFIX: the classic sprite path is the ONLY path, and fpsWeapon never hears
     'an inactive arm falls through to the clone-or-sprite (TORCH-VIS: unless it is the lit hand alone, which stops at its own return), and an active one returns so the two never both draw');
   // and the branch must name a module the file actually imports, or it is
   // a literal that satisfies a regex and does nothing.
-  assert.match(rig, /import \{ fpArm(?:, [\w$, ]+)? \} from '\.\/fpArm\.js';/,
+  assert.match(rig, /import \{ fpArm(?:, [\w$, ]+)? \} from '\.\.\/fpArm\.js';/,
     'the arm branch is wired to a real module (MW-D19 widened the import list)');
   for (const gone of ['mwView', 'createMwFpView', 'mwFp']) {
     assert.ok(!rig.includes(gone), `weaponRig must not mention ${gone} while the layer is absent`);

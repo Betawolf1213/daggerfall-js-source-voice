@@ -425,11 +425,11 @@ test('TAMRIEL3 host: the world host traces the two files after the travel art, f
   const held = read('src/ui/heldMap.js');
   assert.match(held, /tamrielLandVersion\(\),   \/\/ TAMRIEL3/, 'the sheet repaints when the trace lands');
   const ground = read('src/world/tamriel/tamrielGround.js');
-  assert.match(ground, /import \{ provinceKeyAt, coastDistanceAt \} from '\.\/tamrielLand\.js';/);
+  assert.match(ground, /import \{ provinceKeyAt, coastDistanceAt \} from '\.\.\/tamriel\/tamrielLand\.js';/);
   assert.ok(!/\bprovinceAt\(|\bcoastDistance\(/.test(ground), 'the ground reads the land module, never the authored rings directly');
   const raster = read('src/world/tamriel/tamrielRaster.js');
-  assert.match(raster, /import \{ provinceKeyAt \} from '\.\/tamrielLand\.js';/);
+  assert.match(raster, /import \{ provinceKeyAt \} from '\.\.\/tamriel\/tamrielLand\.js';/);
   assert.match(raster, /const \{ ox, oy \} = tamrielFit\(\);/);
   const client = read('src/world/terrain/terrainGenClient.js');
-  assert.match(client, /import \{ setTamrielTrace \} from '\.\/tamrielLand\.js';/);
+  assert.match(client, /import \{ setTamrielTrace \} from '\.\.\/tamriel\/tamrielLand\.js';/);
 });

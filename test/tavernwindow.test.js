@@ -344,7 +344,7 @@ test('U39: the host consumes the tavern route the G8 law has answered all along'
   assert.match(code, /freeTavernRooms\(knightGuild/);
   assert.match(code, /INTERIOR_MARKER\.REST/, 'the bed comes from the interior\'s own markers');
   // the save carries both halves
-  const save = readFileSync(join(root, 'src', 'systems', 'save.js'), 'utf8');
+  const save = readFileSync(join(root, 'src/systems/save/save.js'), 'utf8');   // TIDY2: one path, so a move rewrites it
   assert.match(save, /'lastTimePlayerAteOrDrankAtTavern'/);
   assert.match(save, /snap\.rentedRooms =/);
   assert.match(save, /entity\.rentedRooms = \(snap\.rentedRooms \?\? \[\]\)/);

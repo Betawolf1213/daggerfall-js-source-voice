@@ -45,7 +45,7 @@ const last1f = (calls, name) => { const c = calls.filter((x) => x[0] === 'unifor
 test('VOL1: the march by source - the air pass builds the glow from the lane\'s curve and integral and the shadow block handed in (still a leaf), walks each caster\'s overlap in AIR_VOL_STEPS jittered steps through pointShadowOne, keeps the closed form for a lantern with no map, tonemaps as elFinish does, blurs once and adds at the resolve (mutants: the shadow tap dropped; the closed form for every light; the glow unblurred; the resolve not adding it)', () => {
   assert.equal(AIR_VOL_STEPS, 8);
   const a = rd('src/render/airPass.js');
-  assert.ok(!/from '\.\/renderer\.js'/.test(a) && !/from '\.\/enhancedLighting\.js'/.test(a) && !/from '\.\/shadowPass\.js'/.test(a), 'a leaf still');
+  assert.ok(!/from '(?:\.\.?\/)+(?:[\w-]+\/)*renderer\.js'/.test(a) && !/from '(?:\.\.?\/)+(?:[\w-]+\/)*enhancedLighting\.js'/.test(a) && !/from '(?:\.\.?\/)+(?:[\w-]+\/)*shadowPass\.js'/.test(a), 'a leaf still');
   const fs = a.slice(a.indexOf('const volFs = ('), a.indexOf('const BOX_FS = `'));
   assert.match(fs, /const volFs = \(\{ shadow, tonemap, scatter \}, maxLights, linear\) => `#version 300 es/, 'AUDIT VOL1: built for a float target or a byte one');
   assert.match(fs, /\$\{shadow\}\n\$\{tonemap\}\n\$\{scatter\}/, 'the three blocks handed in');

@@ -201,7 +201,7 @@ test('L10N3d the scan itself: the core\'s routers under any local name, a lookup
   try {
     mkdirSync(join(root, 'src/ui'), { recursive: true });
     writeFileSync(join(root, 'src/ui/a.js'), [
-      "import { localizedText as lt, localizedTable, TextCollections } from '../systems/textManager.js';",
+      "import { localizedText as lt, localizedTable, TextCollections } from '../../systems/textManager.js';",
       "import { localizedText } from './elsewhere.js';",
       "export const LOAD = lt('saveGame', 'Save Game');",
       "export const label = () => lt('loadGame', 'Load Game') + localizedText('quit', 'Quit');",

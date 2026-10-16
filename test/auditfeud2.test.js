@@ -274,7 +274,7 @@ test('AUDIT FEUD 2 W5: THE HOSTS - no lair in the Ocean Holes abyss (its pixel i
   assert.ok(d.includes("damageFoe(t, d, lastPlayerFeet, m.dir, { kind: 'arrow', weapon: m.weapon ?? null })"));
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js']) assert.ok(read(f).includes("exteriorFoes.damageFoe(f, d, player.pos, m.dir, { kind: 'arrow', weapon: m.weapon ?? null })"), f);
   assert.ok(read('src/scenes/worldModes.js').includes("interiorFoes?.damageFoe(f, d, player.pos, m.dir, { kind: 'arrow', weapon: m.weapon ?? null })"));
-  assert.doesNotMatch(read('src/scenes/hostCombat.js'), /BLOW_VERDICT_LIFE \} from '\.\.\/ai\/foeBlows\.js';   \/\/ TELL1:/);
+  assert.doesNotMatch(read('src/scenes/hostCombat.js'), /BLOW_VERDICT_LIFE \} from '(?:\.\.?\/)+(?:[\w-]+\/)*foeBlows\.js';   \/\/ TELL1:/);
 });
 
 // ── the duel harness ────────────────────────────────────────────────

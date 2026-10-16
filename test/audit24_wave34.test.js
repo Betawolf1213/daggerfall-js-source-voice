@@ -386,8 +386,8 @@ test('audit24 wave34: the walk-base cycle is broken, one home and one direction'
   const motor = rd('src/player/motor.js');
   const enemy = rd('src/characters/enemy/enemyMotor.js');
   assert.ok(motor.includes('export const DF_WALK_BASE = 150;'), 'the home is motor.js, beside DF_CROUCH_BASE');
-  assert.equal(/from '\.\.\/characters\/enemy\/enemyMotor\.js'/.test(motor), false, 'motor.js imports nothing from enemyMotor.js');
-  assert.ok(enemy.includes("import { CAPSULE_HEIGHT, CAPSULE_RADIUS, DF_WALK_BASE } from '../player/motor.js';"),
+  assert.equal(/from '(?:\.\.?\/)+(?:[\w-]+\/)*enemyMotor\.js'/.test(motor), false, 'motor.js imports nothing from enemyMotor.js');
+  assert.ok(enemy.includes("import { CAPSULE_HEIGHT, CAPSULE_RADIUS, DF_WALK_BASE } from '../../player/motor.js';"),
     'and the edge runs one way');
   assert.equal((`${motor}${enemy}`.match(/^export const DF_WALK_BASE = /gm) ?? []).length, 1, 'declared once');
 });

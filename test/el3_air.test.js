@@ -176,7 +176,7 @@ test('EL3: the receiver block and the shaders - the AO by screen position, off a
   assert.match(a, /float flame\(vec4 vc, float lantern\) \{/, 'EL7: the presence test, per tap in view space');
   assert.match(a, /float sky = depthAt\(uv\) >= 0\.99999 \? 1\.0 : 0\.0;/, 'the shafts\' mask is the sky (EL6: off the frame\'s depth, at the world rect)');
   assert.equal((a.match(/gl\.blendFunc\(gl\.ONE, gl\.ONE\);/g) || []).length, 2, 'additive: the bloom source and the bright pass, both at the resolve (EL6)');
-  assert.ok(!/from '\.\/renderer\.js'/.test(a) && !/from '\.\/enhancedLighting\.js'/.test(a) && !/from '\.\/shadowPass\.js'/.test(a), 'a leaf');
+  assert.ok(!/from '(?:\.\.?\/)+(?:[\w-]+\/)*renderer\.js'/.test(a) && !/from '(?:\.\.?\/)+(?:[\w-]+\/)*enhancedLighting\.js'/.test(a) && !/from '(?:\.\.?\/)+(?:[\w-]+\/)*shadowPass\.js'/.test(a), 'a leaf');
 });
 
 test('EL3: the renderer builds the pass with the lane behind the door, sizes the images to the world viewport, draws them after the shadow maps and before the clear, composites on the first screen quad, and uploads the receiver', () => {

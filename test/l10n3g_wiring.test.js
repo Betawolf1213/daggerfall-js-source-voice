@@ -157,7 +157,7 @@ test('L10N3g wiring the scan itself: the core\'s processGrammar under any local 
   try {
     mkdirSync(join(root, 'src/ui'), { recursive: true });
     writeFileSync(join(root, 'src/ui/a.js'), [
-      "import { processGrammar as pg, localizedText } from '../systems/textManager.js';",
+      "import { processGrammar as pg, localizedText } from '../../systems/textManager.js';",
       "import { processGrammar } from './elsewhere.js';",
       "export const FIRST = pg(localizedText('k', 'x'));",
       "export const shown = (t) => [pg(t), processGrammar(t)];",

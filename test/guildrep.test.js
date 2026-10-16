@@ -84,5 +84,5 @@ test('GUILD-REP: one model, both skins - the classic box and the enhanced page r
   // DRESS1 (2026-09-30): PIN MOVED again - the Dress line (test/dress_standing.test.js) sits under the groups, before the law
   assert.match(menu, /r\.append\(el\('span', 'k', groupNames\[i\]\), signedRep\(reps\[i\] \?\? 0\)\);\s*detail\.append\(r\);\s*\}\s*statsDress\(detail, playerEntity\);\s*statsLaw\(detail, playerEntity\);\s*statsGuilds\(detail, playerEntity\);/,
     'the Standing page draws the guilds after the social groups (and the law between)');
-  assert.doesNotMatch(menu, /from '\.\/charsheet\.js'/, 'the enhanced skin never imports the classic sheet');
+  assert.doesNotMatch(menu, /from '(?:\.\.?\/)+(?:[\w-]+\/)*charsheet\.js'/, 'the enhanced skin never imports the classic sheet');
 });

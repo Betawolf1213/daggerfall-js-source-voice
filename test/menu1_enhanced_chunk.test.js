@@ -189,7 +189,7 @@ test('MENU1: no ui/*Door.js mounts a lazy chunk on its own', () => {
     // `paintChunkNotice` as well, to clear its own wait before the
     // notice is drawn over it (LV1b). What the gate is about is the
     // HOME, not the spelling of the list.
-    assert.match(text, /import \{[^}]*\bmountEnhancedChunk\b[^}]*\} from '\.\/enhancedChunk\.js'/, `${f} imports the one home`);
+    assert.match(text, /import \{[^}]*\bmountEnhancedChunk\b[^}]*\} from '(?:\.\/|(?:\.\.\/)+)(?:enhanced\/)?enhancedChunk\.js'/, `${f} imports the one home`);   // TIDY2: a door in a feature folder reaches it from one deeper
   }
   assert.ok(lazy.length >= 7, `every enhanced door is a lazy chunk: ${lazy.join(', ')}`);
   assert.deepEqual(rogue, [],

@@ -135,7 +135,7 @@ test('U51: every host gates on the door, and not on the classic art', () => {
       `${rel} must not gate the enhanced screen on classic art`);
     assert.match(src, /from '\.\.\/ui\/pauseDoor\.js'/,
       `${rel} reaches the pause screen through the ONE seam`);
-    assert.doesNotMatch(src, /from '\.\.\/ui\/pauseWindow\.js'/,
+    assert.doesNotMatch(src, /from '(?:\.\.?\/)+(?:[\w-]+\/)*pauseWindow\.js'/,
       `${rel} must not import the classic window past the fork`);
   }
 });
@@ -168,7 +168,7 @@ test('PX2: both doors open on the pixel home', () => {
 
 test('U51: the pause door mounts the FRONT DOOR, not a second design', () => {
   const src = read('src/ui/pauseDoor.js');
-  assert.match(src, /import\('\.\/enhancedMenu\.js'\)/,
+  assert.match(src, /import\('\.\/enhanced\/enhancedMenu\.js'\)/,
     'the pause screen IS ui/enhanced/enhancedMenu.js');
   // PX26 added the LANDING to this call; the law U51 guards is
   // unchanged - pause mode, the host's own hooks, one front door.
@@ -277,7 +277,7 @@ test('U51: the host arms are no-ops BY DESIGN, and say so', () => {
 
 test('U51: Escape closes the pause door, through the shared table', () => {
   const src = read('src/ui/enhanced/enhancedMenu.js');
-  assert.match(src, /import \{ overlayAction, bindings, eventMeans \} from '\.\/input\.js'/,   // UXB1-F: and the live bindings a Features tile names; DISC28-A: the pause action's own key
+  assert.match(src, /import \{ overlayAction, bindings, eventMeans \} from '\.\.\/input\.js'/,   // UXB1-F: and the live bindings a Features tile names; DISC28-A: the pause action's own key
     'not a second key map - the same table every other window answers through');
   const onKey = src.slice(src.indexOf('function onKey(e)'), src.indexOf('function releaseLock()'));
   assert.match(onKey, /overlayAction\(e\) !== 'back' && !pauseKey/, 'the table\'s back, or (DISC28-A, test/disc28_pause.test.js) the pause action\'s own key on the pause face');
@@ -408,10 +408,10 @@ test('PX22: a quest is filed under its kind, never TITLED by it', () => {
   assert.match(read('src/ui/quest/questRail.js'), /main: isMainQuest\(q\.questName\)/);
   // AUDIT 68 S31-questshare-mainquest-dup: MOVED, deliberately - the predicate had a second copy in
   // systems/quest/questShare.js; its one home is systems/quest/questLists.js and the rail imports it.
-  assert.match(read('src/ui/quest/questRail.js'), /import \{ isMainQuestName as isMainQuest \} from '\.\.\/systems\/quest\/questLists\.js';/);
+  assert.match(read('src/ui/quest/questRail.js'), /import \{ isMainQuestName as isMainQuest \} from '\.\.\/\.\.\/systems\/quest\/questLists\.js';/);
   assert.match(read('src/systems/quest/questLists.js'),
     /export const isMainQuestName = \(questName\) => \/\^S0000\/\.test\(questName \?\? ''\) \|\| questName === '_BRISIEN';/);
-  assert.match(src, /from '\.\/questRail\.js'/, 'and the pause window takes it from there');
+  assert.match(src, /from '\.\.\/quest\/questRail\.js'/, 'and the pause window takes it from there');
   // The archive is NOT split by kind, and that is the data's shape: the
   // notebook's filed header keeps only the display name, so the
   // questName is gone by the time a quest is filed.
@@ -429,7 +429,7 @@ test('PX22: the timer PX5 designed is still there, and only when there is one', 
   // GUIDE2: the words live in ui/quest/questRail.js now, shared with the chronicle's deadline.
   const rail = read('src/ui/quest/questRail.js');
   assert.match(rail, /export function remainWords\(s\) \{/);
-  assert.match(src, /remainWords \} from '\.\/questRail\.js'/);
+  assert.match(src, /remainWords \} from '\.\.\/quest\/questRail\.js'/);
   const words = rail.slice(rail.indexOf('function remainWords(s) {'), rail.indexOf('function remainWords(s) {') + 420);
   assert.match(words, /if \(d > 0\) return `\$\{d\} day\$\{d === 1 \? '' : 's'\}/);
   assert.match(words, /if \(h > 0\) return `\$\{h\} hour/);

@@ -668,7 +668,7 @@ test('c2/S10 REVIEW: ONE compass drawer (hud.js) at COMPBOX\'s own 69x17, and th
       'the strip window is the box inset by the 2px outline, so 69-4 - never 76-4');
     // and it is the SHARED drawer, not a second home for the scroll law
     const wsrc = src('src/ui/exteriorAutomapWindow.js');
-    assert.match(wsrc, /import \{ drawCompassStrip \} from '\.\/hud\.js';/);
+    assert.match(wsrc, /import \{ drawCompassStrip \} from '\.\/hud\/hud\.js';/);
     assert.equal(/compassScroll|COMPASS_BOX_OUTLINE|COMPASS_BOX_INTERIOR/.test(wsrc), false,
       'the scroll law and the outline inset live in hud.js and nowhere else');
 
@@ -773,7 +773,7 @@ test('c2/S10 SOURCE PINS: the rotate option is the only new GL, the chrome is th
   assert.match(r, /try \{ return body\(\); \} finally \{ this\.clearScreenScissor\(\); \}/);
   const w = src('src/ui/exteriorAutomapWindow.js');
   assert.equal(/renderer\.setScreenScissor\(/.test(w), false, 'the window never sets the scissor itself');
-  assert.match(w, /from '\.\/automapChrome\.js'/, 'ONE chrome module, two tables');
+  assert.match(w, /from '\.\/automap\/automapChrome\.js'/, 'ONE chrome module, two tables');
   assert.match(w, /EXTERIOR_ACTIONS/, 'and the exterior table is this window\'s');
   // no rotated nameplate corners anywhere in the arc. The headers NAME
   // RotateBuildingNameplates to record that it is dead; the CODE must

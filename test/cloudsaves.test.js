@@ -589,7 +589,7 @@ test('ACC2b: a download is SP1\'s import law and not a second merge rule', async
   // writing the three keys itself, which is what makes the law above
   // one law instead of two.
   const s = src('src/systems/cloudSaves.js');
-  assert.match(s, /import \{ importSlots \} from '\.\/saveTransfer\.js'/);
+  assert.match(s, /import \{ importSlots \} from '\.\/save\/saveTransfer\.js'/);
   assert.match(s, /importSlots\(/);
   assert.doesNotMatch(s.split('export async function pullSlot')[1] ?? '', /setItem\(/, 'the pull writes the store through the carrier, never around it');
 });
@@ -813,7 +813,7 @@ test('ACC2c: the DOWNLOAD reaches a player - the pane, the act and the one sente
   // THE CALLER pullSlot NEVER HAD. This is the finding itself: the
   // function was written, pinned end to end above, and reached by
   // nothing.
-  assert.match(menu, /import \{[^}]*\bpullSlot\b[^}]*\} from '\.\.\/systems\/cloudSaves\.js'/);
+  assert.match(menu, /import \{[^}]*\bpullSlot\b[^}]*\} from '\.\.\/\.\.\/systems\/cloudSaves\.js'/);
   assert.match(menu, /function download\(card\) \{\s*runCloud\(card, \(io\) => pullSlot\(io, appStorage\(\), card\), 'download'\);/,
     'Download pulls - and through `runCloud`, so it is busy under its own slot and its refusal is the service\'s own word');
   assert.match(menu, /label: t\('menu\.cloud\.download', 'Download'\),\s*primary: true,/);

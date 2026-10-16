@@ -119,7 +119,7 @@ test('TECH1 THE WORLD HOST\'S OWN: the chip off the MODE\'s rig with its key\'s 
   assert.match(w, /offsetTactics\(r\.offset\);\s*offsetTechniques\(r\.offset\);/);
   assert.equal(TECH_CHIP_COLOUR, '#59c7ff');
   assert.match(code('src/ui/enhanced/enhancedHud.js'), /const shade = t\.set === 'technique' \? TECH_CHIP_COLOUR : colour;/);
-  assert.doesNotMatch(read('src/ui/enhanced/enhancedHud.js'), /from '\.\.\/combat\/techniques\.js'/, 'the HUD never imports the runtime (it reaches half the game)');
+  assert.doesNotMatch(read('src/ui/enhanced/enhancedHud.js'), /from '(?:\.\.?\/)+(?:[\w-]+\/)*techniques\.js'/, 'the HUD never imports the runtime (it reaches half the game)');
   for (const file of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeon.js']) {
     assert.match(code(file), /for \(const kind of \['mousedown', 'mouseup'\]\) addEventListener\(kind, \(e\) => \{ if \(e\.button === 3 \|\| e\.button === 4\) e\.preventDefault\(\); \}\);/, file);
   }

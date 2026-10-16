@@ -410,7 +410,7 @@ test('OL5: the gate law is the COMPONENT\'s, and its default is the shared clock
   // AUDIT ALL O1's finding, paid here before it can bite: the predicate is the
   // shared clock, not the URL, and the production default is PINNED - OL4
   // shipped this same parameter unpinned and the audit had to come back for it.
-  assert.match(law, /import \{ sharedClockOn \} from '\.\.\/systems\/worldTick\.js';/,
+  assert.match(law, /import \{ sharedClockOn \} from '\.\.\/\.\.\/systems\/worldTick\.js';/,
     'the default is the shared clock, not isOnlinePage');
   assert.match(law, /export function updateCityGate\(gate, night, \{ online = sharedClockOn\(\) \} = \{\} \) \{|export function updateCityGate\(gate, night, \{ online = sharedClockOn\(\) \} = \{\}\) \{/,
     'and it is the DEFAULT, so a host that passes nothing still gets the law');

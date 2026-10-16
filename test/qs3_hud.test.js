@@ -341,9 +341,9 @@ test('QS3: the block is written only when it CHANGED, and a phone can press it',
     'a cold record marks the block dirty for the NEXT frame rather than rebuilding inside a render');
   // The icon is the inventory's own, out of the module both import -
   // NOT by importing that 2200-line window into the HUD.
-  assert.match(HUD, /import \{ modelIconUrl \} from '\.\/itemIconUrl\.js';/);
-  assert.doesNotMatch(HUD, /from '\.\/enhancedInventory\.js'/, 'the window is named in a comment and imported nowhere');
-  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /import \{ modelIconUrl as modelIconUrlOf \} from '\.\/itemIconUrl\.js';/,
+  assert.match(HUD, /import \{ modelIconUrl \} from '\.\.\/item\/itemIconUrl\.js';/);
+  assert.doesNotMatch(HUD, /from '(?:\.\.?\/)+(?:[\w-]+\/)*enhancedInventory\.js'/, 'the window is named in a comment and imported nowhere');
+  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /import \{ modelIconUrl as modelIconUrlOf \} from '\.\.\/item\/itemIconUrl\.js';/,
     'and the window still draws its tiles with it');
   assert.match(read('src/ui/enhanced/enhancedInventory.js'), /const modelIconUrl = \(item, size\) => modelIconUrlOf\(item, size, deps\.fpArm\);/,
     'through its own injected rig, exactly as before');
@@ -415,11 +415,11 @@ test('QS3: drawHud forwards the sheathe state and the two phone doors', () => {
   assert.match(HUD, /quickslotView\(vitals, \{ weapon: opts\.weapon \?\? null, sheathed: opts\.weaponSheathed \?\? false,\s*\n\s*readiedIndex: opts\.readied\?\.index \?\? null \}\)/);   // QS6: and which spell is actually in hand
   // THE MODEL IS NOT RESTATED HERE. systems/quickslots.js owns what a
   // slot holds, what a ghost is and what the off hand shows.
-  assert.match(HUD, /import \{ quickslotView, quickslotKey, cycleQuickslot, quickslotCycling, spellQuickslot,\s*\n\s*QUICK_HOLD_MS, QUICK_STEP_MS \} from '\.\.\/systems\/quickslots\.js';/);
+  assert.match(HUD, /import \{ quickslotView, quickslotKey, cycleQuickslot, quickslotCycling, spellQuickslot,\s*\n\s*QUICK_HOLD_MS, QUICK_STEP_MS \} from '\.\.\/\.\.\/systems\/quickslots\.js';/);
   assert.doesNotMatch(HUD, /isShieldTemplate|lightSource/, 'the off hand\'s ladder is the model\'s, never a second copy');
   // The pad's family comes from the poller, and "the pad is live" from
   // GP1's own importable latch rather than the layer's local.
-  assert.match(HUD, /import \{ controllerLook \} from '\.\.\/player\/lookFilter\.js';/);
+  assert.match(HUD, /import \{ controllerLook \} from '\.\.\/\.\.\/player\/lookFilter\.js';/);
   assert.match(HUD, /const controller = controllerLook\(\) && !!family;/);
   const gp = read('src/ui/gamepadInput.js');
   // the EM3-3D patch's crossbar fix: the family is still the pad's own id, now held (sticky) until the pad ACTS - the

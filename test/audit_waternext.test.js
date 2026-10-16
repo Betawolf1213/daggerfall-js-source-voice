@@ -394,6 +394,6 @@ test('AUDIT WATER-NEXT m8: PUDDLE-DRY\'s tie goes to the first ground in the wal
   assert.equal(grid[5][5].tileBitfield, A, 'a tie: the first ground the walk met');
   for (const p of ['src/scenes/world.js', 'src/ui/ink/inkTown.js']) {
     const s = rd(p);
-    assert.doesNotMatch(s, /dryPuddles|from '\.\.\/world\/puddleDry\.js'/, `${p} reads the ground served, with no drying of its own`);
+    assert.doesNotMatch(s, /dryPuddles|from '(?:\.\.?\/)+(?:[\w-]+\/)*puddleDry\.js'/, `${p} reads the ground served, with no drying of its own`);
   }
 });

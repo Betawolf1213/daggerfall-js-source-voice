@@ -186,7 +186,7 @@ test('AUDIT 39: the two new stages speak through the flow\'s own doors', () => {
   // in - and the answer goes through applyHit, not a second law.
   assert.match(view, /flow\.applyHit\(\{ answerClass: i \}\)/);
   assert.match(view, /\[\[aIndex, bIndex\], \[bIndex, cIndex\], \[cIndex, lines\.length\]\]/);
-  assert.match(view, /import \{ QUESTION_COUNT \} from '\.\.\/systems\/classQuestions\.js'/,
+  assert.match(view, /import \{ QUESTION_COUNT \} from '\.\.\/\.\.\/systems\/classQuestions\.js'/,
     'the count is the quiz\'s own, not a ten typed here');
   assert.match(view, /flow\.applyHit\(\{ confirmQClass: true \}\)/);
   assert.match(view, /flow\.applyHit\(\{ cancelQClass: true \}\)/);
@@ -202,7 +202,7 @@ test('AUDIT 39: the two new stages speak through the flow\'s own doors', () => {
     'the view must not write the builder - the laws are ui/chargen.js\'s');
   // The words for an advantage are DFU's recovered HardStrings, and
   // the ones for a skill are the skill table's.
-  assert.match(view, /import \{ labelFor \} from '\.\.\/systems\/specialAdvantages\.js'/);
+  assert.match(view, /import \{ labelFor \} from '\.\.\/\.\.\/systems\/specialAdvantages\.js'/);
   // AND THE FALLBACK PANE NO LONGER LIES: nothing classic is mounted
   // behind the enhanced skin (chargenSession mounts this view alone).
   assert.doesNotMatch(view, /is still the classic screen/);
@@ -351,7 +351,7 @@ test('AUDIT 39: the class list\'s last row reaches a builder the view can drive'
 // three things that would rot quietly.
 test('the wizard routes keys through the SHARED table, not a second map', () => {
   const src = readFileSync(new URL('../src/ui/enhanced/enhancedChargen.js', import.meta.url), 'utf8');
-  assert.match(src, /import \{ overlayAction, isTextEntryTarget \} from '\.\/input\.js'/,
+  assert.match(src, /import \{ overlayAction, isTextEntryTarget \} from '\.\.\/input\.js'/,
     'a second key map is how the two skins come to disagree about what Escape does');
   assert.match(src, /const action = overlayAction\(e\);/);
   assert.match(src, /flow\.input\(action\)/, 'and the FLOW answers it, not this file');
@@ -383,7 +383,7 @@ test('a real text field keeps its own keys', () => {
 // remembering.
 test('no host mounts the enhanced wizard itself', () => {
   const dir = new URL('../src/scenes/', import.meta.url);
-  for (const f of readdirSync(dir)) {
+  for (const f of readdirSync(dir, { recursive: true })) {
     if (!f.endsWith('.js')) continue;
     const src = readFileSync(new URL(f, dir), 'utf8');
     assert.ok(!/enhancedChargen/.test(src),
@@ -461,10 +461,10 @@ test('the real TAMRIEL2 traces to nine regions', { skip: skipReal }, () => {
 // repaint written straight would take the bug back, and it is the kind
 // of edit that looks like a simplification.
 test('both enhanced screens repaint through the scroll-keeping helper', () => {
-  for (const f of ['enhancedChargen.js', 'enhancedMenu.js']) {
-    const src = readFileSync(new URL(`../src/ui/${f}`, import.meta.url), 'utf8');
-    assert.match(src, /repaintKeepingScroll\(/, `src/ui/${f} repaints without keeping the scroll`);
-    assert.match(src, /from '\.\/domRepaint\.js'/);
+  for (const f of ['src/ui/enhanced/enhancedChargen.js', 'src/ui/enhanced/enhancedMenu.js']) {   // TIDY2: whole paths, so a move rewrites them
+    const src = readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
+    assert.match(src, /repaintKeepingScroll\(/, `${f} repaints without keeping the scroll`);
+    assert.match(src, /from '\.\.\/domRepaint\.js'/);
   }
 });
 

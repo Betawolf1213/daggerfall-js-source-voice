@@ -134,7 +134,7 @@ test('U38: drawHud is the ONE call - all four hosts get both components', () => 
   // hudCrosshair import back (which would be a cycle)
   assert.match(code('ui/hud/hud.js'), /drawCrosshairAndModeIcon\(renderer, canvas, font,/);
   assert.match(code('ui/hud/hud.js'), /border: HUD_BORDER, barWidth: HUD_NATIVE_BAR_WIDTH/);
-  assert.doesNotMatch(code('ui/hud/hudCrosshair.js'), /from '\.\/hud\.js'/,
+  assert.doesNotMatch(code('ui/hud/hudCrosshair.js'), /from '(?:\.\.?\/)+(?:[\w-]+\/)*hud\.js'/,
     'the dependency runs ONE way - hud.js -> hudCrosshair.js');
   // and the hosts hand it a font and their cursor state
   // AUDIT 39 (#132) MOVED THIS PIN. The comment that stood here -

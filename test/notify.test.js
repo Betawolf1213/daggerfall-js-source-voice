@@ -259,7 +259,7 @@ test('ENH-NOTICE3: notify decides WHICH MODEL, the draw decides WHICH FACE - the
   const code = s.split('\n').filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   assert.equal(/uiSkin/.test(code), false, 'systems/notify.js must not import or read ui/uiSkin.js');
   assert.equal(/enhancedSkin|isEnhanced|skin\(\)/.test(code), false, 'nor ask which skin is on by another name');
-  assert.equal(/from '\.\.\/ui\/enhanced\/enhancedNotice\.js'/.test(code), false, 'nor the enhanced panel itself');
+  assert.equal(/from '(?:\.\.?\/)+(?:[\w-]+\/)*enhancedNotice\.js'/.test(code), false, 'nor the enhanced panel itself');
   // the two it DOES stand on are the model's own, not a face's
   assert.match(code, /import \{ ActionTextBox \} from '\.\.\/ui\/actionText\.js';/);
 });

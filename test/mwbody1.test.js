@@ -239,7 +239,7 @@ test('MWBODY1: the host - the gate is the enhanced skin (read once) and Morrowin
   const m = rd('src/scenes/worldModes.js');
   assert.equal((m.match(/mwViewDrawBody\(canvas, \{ proj, view, eye: mwv\.eye, feet: player\.bodyFeetAt\(\), yaw: player\.bodyYawFor\(cam\.yaw\), viewYaw: cam\.yaw \}\);   \/\/ MW-D24[^\n]*\n\s*host\.drawPeerBodies\?\.\(\{ proj, view, eye: mwv\.eye \}\);/g) || []).length, 2, 'the dungeon\'s and the interior\'s passes');
   const pbSrc = rd('src/net/peer/peerBodies.js');
-  assert.match(pbSrc, /import \{ createFpArm \} from '\.\.\/combat\/fpArm\.js';/, 'the factory, never the exported instance');
+  assert.match(pbSrc, /import \{ createFpArm \} from '\.\.\/\.\.\/combat\/fpArm\.js';/, 'the factory, never the exported instance');
   assert.doesNotMatch(pbSrc, /\bfpArm\.(?!js)|import \{[^}]*\bfpArm\b/, 'the singleton is not touched (the module path is not a use)');
   assert.match(rd('src/scenes/dataSource.js'), /if \(_mwArchivesInflight && _mwArchivesInflight\.gen === _mwGeneration\) return _mwArchivesInflight\.promise;/, 'AUDIT MWBODY B10: two builds at once open the archives once');
 });

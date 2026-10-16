@@ -111,7 +111,7 @@ test('REL8: the line is one declaration, found by its diff - this checkout\'s li
 
 test('REL8: the game says it - the pause window\'s version line leads with the number and keeps the commit for a report, a build that cannot know it says the commit alone; the About pane has its row', () => {
   const pause = rd('src/ui/pauseWindow.js');
-  assert.match(pause, /import \{ BUILD_TAG, UPDATE \} from '\.\.\/buildTag\.js';/);
+  assert.match(pause, /import \{ BUILD_TAG, UPDATE \} from '\.\.\/\.\.\/buildTag\.js';/);
   const line = pause.match(/^ {4}const ver = [^;]+;/m)?.[0];
   assert.ok(line, 'the line');
   const ver = (UPDATE, BUILD_TAG) => new Function('UPDATE', 'BUILD_TAG', `${line}\nreturn ver;`)(UPDATE, BUILD_TAG);

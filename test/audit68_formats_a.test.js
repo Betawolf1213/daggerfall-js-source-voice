@@ -184,7 +184,7 @@ test('AUDIT 68 S10-rmb-record-readers-dup: one BuildingData reader, shared by RM
   };
   assert.deepEqual(blocks.readBuildingData(v, 4), want);
   assert.deepEqual(readBuildingRecords(rec, 0).record.recordData, [want]);
-  const decoders = ['blocksFile.js', 'mapsFile.js', 'saveTreeFile.js']
+  const decoders = ['blocksFile.js', 'mapsFile.js', 'save/saveTreeFile.js']
     .reduce((n, f) => n + (src(f).match(/serviceTimeLimit: \w+\.getUint32/g) ?? []).length, 0);
   assert.equal(decoders, 1, 'DFLocation.BuildingData has one reader');
 });

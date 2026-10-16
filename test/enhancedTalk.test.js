@@ -63,7 +63,7 @@ test('ET1 door: townTalk opens every conversation through createTalkWindow, and 
   // ONE MODEL, TWO FACES: the classic window is built on BOTH skins,
   // and the fork only chooses the face over it.
   assert.match(door, /const model = new NativeTalkWindow\(greeting, hooks\);\s*\n[\s\S]{0,300}if \(isEnhanced\(\) && typeof document !== 'undefined'\) return enhancedTalkOverlay\(model, hooks\);\s*\n\s*return model;/);
-  assert.match(door, /import\('\.\/enhancedTalk\.js'\)/, 'dynamic: classic pays nothing');
+  assert.match(door, /import\('\.\/enhanced\/enhancedTalk\.js'\)/, 'dynamic: classic pays nothing');
   assert.match(door, /unregister = registerOverlay\(goodbye\);/, 'PX28: Tab says goodbye');
   assert.match(door, /if \(!model\.done\) model\.press\('goodbye'\);/, 'and goodbye goes THROUGH the model, so the note is filed and onClose fires');
   assert.match(door, /click\(\) \{ return true; \}/, 'a press beside the panel is consumed, never a pointer grab');
@@ -217,8 +217,8 @@ test('ET1 panel: a bottom rectangle over the world, the pixel frame, no art, and
   const src = read('src/ui/enhanced/enhancedTalk.js');
   // paint and bones: the imports are the style and the portrait pixels, nothing that reads ARENA2
   const imports = [...src.matchAll(/^import .* from '([^']+)';/gm)].map((m) => m[1]).sort();
-  assert.deepEqual(imports, ['./enhancedOverlays.js', './enhancedStyle.js', './nativeTalk.js'], 'the style, the portrait pixels, and OT1\'s outside-tap helper');
-  assert.match(src, /import \{ npcPortraitPixels, npcPortraitKey \} from '\.\/nativeTalk\.js';/);
+  assert.deepEqual(imports, ['../native/nativeTalk.js', './enhancedOverlays.js', './enhancedStyle.js'], 'the style, the portrait pixels, and OT1\'s outside-tap helper');
+  assert.match(src, /import \{ npcPortraitPixels, npcPortraitKey \} from '\.\.\/native\/nativeTalk\.js';/);
   assert.doesNotMatch(src, /_pickIndex|_setListboxTopics|_openFlat|_setTone|_close\(/, 'the panel presses named buttons; it reaches no private arm');
   for (const name of ['tonePolite', 'toneNormal', 'toneBlunt', 'goodbye', 'tellMeAbout', 'whereIs', 'okay', 'logbook', 'categoryLocation']) {
     assert.ok(src.includes(`'${name}'`), `${name} is pressed by name`);

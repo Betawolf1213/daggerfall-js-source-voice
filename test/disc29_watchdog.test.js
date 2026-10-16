@@ -120,7 +120,7 @@ test('DISC29-D: all eight faces read the one law, and none keeps a wall-clock wa
   };
   for (const [f, ms] of Object.entries(faces)) {
     const s = src(f).split('\n').filter((l) => !/^\s*(\/\/|\*|\/\*\*)/.test(l)).join('\n');   // the code, not the prose about it
-    assert.match(s, /import \{ armDrawWatchdog, disarmDraw \} from '\.\/drawWatchdog\.js';/, `${f}: the one law`);
+    assert.match(s, /import \{ armDrawWatchdog, disarmDraw \} from '(?:\.\/|(?:\.\.\/)+)drawWatchdog\.js';/, `${f}: the one law`);
     const uses = [...s.matchAll(new RegExp(`\\b${ms}\\b`, 'g'))].length;
     const armed = [...s.matchAll(new RegExp(`armDrawWatchdog\\(${ms}\\b`, 'g'))].length;
     const declared = [...s.matchAll(new RegExp(`const ${ms} = `, 'g'))].length;

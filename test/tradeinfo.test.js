@@ -123,5 +123,5 @@ test('TRADE-LOC (Dudey: "when players trade in any ui the letter of credit doesn
   assert.equal(letterWorthLine(arrived), 'Worth 4,321 gold', 'the letter the peer offered, through the wire clamp, keeps its worth');
   const t = src('src/ui/enhanced/enhancedPlayerTrade.js');
   assert.match(t, /const bits = \[letterWorthLine\(selected\.item\), line\.material, line\.word,/, 'the detail a click opens - the window every skin wears');
-  assert.match(src('src/ui/playerTradeDoor.js'), /import\('\.\/enhancedPlayerTrade\.js'\)/, 'one window over either skin');
+  assert.match(src('src/ui/playerTradeDoor.js'), /import\('\.\/enhanced\/enhancedPlayerTrade\.js'\)/, 'one window over either skin');
 });

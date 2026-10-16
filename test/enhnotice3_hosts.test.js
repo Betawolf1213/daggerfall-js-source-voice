@@ -111,6 +111,6 @@ test('ENH-NOTICE3: the seam is imported where the hosts build their deps, and no
   // ...and notify.js itself never forks on the skin: the face is the
   // draw's decision (ui/actionText.js, ui/hud/hudText.js), not the door's.
   const notify = rd('src/systems/notify.js');
-  assert.doesNotMatch(notify, /from '\.\/uiSkin\.js'|isEnhanced\(/, 'mutant: a skin fork in the door - a second home for the skin decision');
+  assert.doesNotMatch(notify, /from '(?:\.\.?\/)+(?:[\w-]+\/)*uiSkin\.js'|isEnhanced\(/, 'mutant: a skin fork in the door - a second home for the skin decision');
   assert.match(notify, /import \{ ActionTextBox \} from '\.\.\/ui\/actionText\.js';/, 'the one box class, the port\'s home for DaggerfallUI.MessageBox');
 });

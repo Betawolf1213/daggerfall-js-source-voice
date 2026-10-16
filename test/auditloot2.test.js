@@ -427,5 +427,5 @@ test('AUDIT LOOT II C5: a sold piece\'s junk mark ends at the shelf - both of th
   const wm = read('src/scenes/worldModes.js');
   const pushes = [...wm.matchAll(/shelf\.items\.push\(it\);[^\n]*\n\s*setJunk\(it, false\);/g)];
   assert.equal(pushes.length, 2, 'the counter\'s sale and the keyed shelf\'s');
-  assert.match(wm, /import \{ setJunk \} from '\.\.\/systems\/item\/itemJunk\.js';/);
+  assert.match(wm, /import \{ setJunk \} from '\.\.\/\.\.\/systems\/item\/itemJunk\.js';/);
 });

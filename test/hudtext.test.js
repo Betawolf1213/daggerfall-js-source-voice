@@ -266,7 +266,7 @@ test('ENH-NOTICE3: the toast wears the popup\'s yellow on the box\'s dark, in th
   const mod = rd('src/ui/enhanced/enhancedHudText.js');
   assert.doesNotMatch(mod, /export function drawEnhancedHudText|export function releaseEnhancedHudText|ENHANCED_HUD_TEXT_ID/,
     'mutant: the column\'s draw back in the module - two enhanced faces for one PopupText');
-  assert.match(rd('src/ui/hud/hudText.js'), /import \{ drawEnhancedToasts, releaseEnhancedToasts \} from '\.\/enhancedNotice\.js';/,
+  assert.match(rd('src/ui/hud/hudText.js'), /import \{ drawEnhancedToasts, releaseEnhancedToasts \} from '\.\.\/enhanced\/enhancedNotice\.js';/,
     'the model draws through the notice stack and nothing else');
 });
 

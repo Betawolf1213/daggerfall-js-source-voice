@@ -173,7 +173,7 @@ test('CRATE-LAYOUT the online host: the boot\'s move stamps the new home\'s reco
   const w = rd('src/scenes/world.js');
   const fn = w.slice(w.indexOf('async function moveArenaHomesOnline('), w.indexOf('async function holdRealmDeedsOnline('));
   assert.ok(fn.includes('emptyScene: (from, to) => emptyArenaScene(scenes, homeSceneName(now.mapId, from), homeSceneName(now.mapId, to), { layout: layoutStampOfMapId(now.mapId) }),'));
-  assert.match(w, /^import \{[^}]*\blayoutStampOfMapId\b[^}]*\} from '\.\.\/systems\/layoutPins\.js';/m, 'the pins\' own reading');
+  assert.match(w, /^import \{[^}]*\blayoutStampOfMapId\b[^}]*\} from '\.\.\/\.\.\/systems\/layoutPins\.js';/m, 'the pins\' own reading');
   // the move waits for the homes' towns: their layouts are applied before it reads the city
   const landing = w.slice(w.indexOf('function takeHomeLayouts('), w.indexOf('function askHomeLayoutsAgain('));
   assert.ok(/_homeLayoutsApplied = true;[\s\S]{0,300}void moveArenaHomesOnline\(\);/.test(landing));

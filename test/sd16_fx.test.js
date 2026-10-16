@@ -230,7 +230,7 @@ test('SD16 THE BURSTS AS THE SPARK PASS TAKES THEM: sixteen at most, the oldest 
   // the draw: nothing to draw, no pass made
   assert.equal(r.fx.draw(null, null, null, [0, 0, 0], r.at()), false);
   // the world
-  assert.match(W, /import \{ createSdFx \} from '\.\/sdFx\.js';/);
+  assert.match(W, /import \{ createSdFx \} from '\.\/superDungeon\/sdFx\.js';/);
   assert.match(W, /const sdFx = sdFightLink \? createSdFx\(\{\n\s+link: sdFightLink,\n\s+feet: \(\) => \(playerSpawned && modes\?\.sdRealmSlot\?\.\(\) != null \? player\.feetAt\(\) : null\),\n\s+shake: \(k\) => betterAmbience\.weaponKick\(k\),/);
   assert.match(W, /if \(inRealm\) \{ try \{ sdFx\?\.frame\(\); \} catch/);
   assert.match(W, /sdRemVoice\?\.leave\(\); sdFx\?\.leave\(\); _sdFightHeld = false;/);

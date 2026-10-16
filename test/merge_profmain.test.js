@@ -53,7 +53,7 @@ test('THE MERGE: CSA-H\'s rows are a provider in GetCustomItemsForGroup\'s one h
   assert.doesNotMatch(rd('src/systems/roleplayRealismItems/rriItems.js'), /registerCustomItemGroup|_otherModItems/, 'rriItems.js answers RRI\'s own again');
   // PIN MOVED (SHIPYARDS, 2026-10-11): Come Sail Away's two rows stand on no shelf - a port town's shipyard sells every
   // hull (systems/shipyards.js) - so the fish are the one home's mod rows
-  assert.match(rd('src/systems/deepWater/deepWatersFishItems.js'), /import \{[^}]*registerCustomItemGroup[^}]*\} from '\.\/itemTemplates\.js';/, 'the fish register into the one home');
+  assert.match(rd('src/systems/deepWater/deepWatersFishItems.js'), /import \{[^}]*registerCustomItemGroup[^}]*\} from '\.\.\/item\/itemTemplates\.js';/, 'the fish register into the one home');
   assert.doesNotMatch(rd('src/systems/comeSailAway/comeSailAwayItems.js').replace(/^\s*\/\/.*$/gm, ''), /registerCustomItemGroup/, 'the boats register no shelf row');
 });
 

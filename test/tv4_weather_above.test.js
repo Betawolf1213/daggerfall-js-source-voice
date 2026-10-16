@@ -173,13 +173,15 @@ test('TV4 lightning: a strike\'s column stands on the traveller\'s ground - from
 test('AUDIT DEEP R-1: EVERY fogged program under the travel view measures its fog from the traveller - it uploads the focus itself, or the renderer does it for it; the rest never draw under the view, each named with its reason', async () => {
   const { readdirSync } = await import('node:fs');
   const dir = new URL('../src/render/', import.meta.url);
-  const fogged = readdirSync(dir).filter((f) => f.endsWith('.js')).filter((f) => /\$\{FOG_GLSL\}|\$\{FOG_FACTOR_GLSL\}/.test(readFileSync(new URL(f, dir), 'utf8')));
+  const foggedAt = readdirSync(dir, { recursive: true }).filter((f) => f.endsWith('.js')).filter((f) => /\$\{FOG_GLSL\}|\$\{FOG_FACTOR_GLSL\}/.test(readFileSync(new URL(f, dir), 'utf8')));
+  const at = Object.fromEntries(foggedAt.map((p) => [p.split(/[\\/]/).pop(), p]));   // TIDY2: named by its file, read where its feature folder keeps it
+  const fogged = Object.keys(at);
   const RENDERER_OWNED = { 'renderer.js': 'its own programs (_fogLocs, _waterLocs, _uploadFog)', 'waterSurface.js': 'the renderer\'s _waterLocs upload it' };
   const DW_SENT = { 'oceanHolesRender.js': 'Deep Waters\' _frameUniforms sends it (merged beside OH-C)' };
   const NEVER_UNDER_THE_VIEW = { 'deadlands.js': 'the Burning Court alone - no sky, no view', 'gateTelegraph.js': 'the Burning Court alone', 'spoilsGlow.js': 'the Burning Court alone', 'courtCrystals.js': 'the Burning Court alone (WB9c: the Reckoning\'s crystals)', 'gateFx.js': 'the Burning Court alone (WB9e: his blows\' sparks, the meteor)', 'auraRing.js': 'a wearer\'s feet in the walking views - the hosts draw no aura under the travel view (WB9g: world.js auraFrame)', 'nodeGlow.js': 'a gathering node near the walker - the host lights none under the travel view (NODE-MARKS: world.js drawVeiledPeerBodies, the glow\'s own gate; the compass keeps the marks)', 'sdBeam.js': 'the Hour alone (SD17: the Hour-Hand\'s sweep inside the realm, the dungeon arm\'s pass - no sky, no view; AUDIT SD III named it)', 'sdMotes.js': 'the Hour alone (SD14c: the Hour\'s motes about the realm, the dungeon arm\'s pass - no sky, no view; AUDIT SD III named it)', 'sdArenaGlow.js': 'the Hour alone (SD-LOOK S7: the arena\'s floor reads the clock)', 'sdStompWall.js': 'the Hour alone (SD-LOOK S7: the Stomp\'s wall, the hold\'s curtain)', 'sdPillarPass.js': 'the Hour alone (SD-LOOK S7: the pillars\' dials, their watching hands, their lanterns)', 'sdHalo.js': 'the Hollow and the Hour alone (SD-LOOK S2: the dungeon arm\'s halos)', 'sdRiftPass.js': 'the Hollow and the Hour alone (SD-LOOK S4: the Rift\'s and the Return\'s windows, the dungeon arm\'s pass)', 'sdStepsPass.js': 'the Hour alone (SD-LOOK S9: the Steps\' ghosts, the dungeon arm\'s pass - no sky, no view)' };
   for (const f of fogged) {
     if (RENDERER_OWNED[f] || NEVER_UNDER_THE_VIEW[f]) continue;
-    const src = readFileSync(new URL(f, dir), 'utf8');
+    const src = readFileSync(new URL(at[f], dir), 'utf8');
     assert.match(src, /'uFocus'/, `${f}: the focus located`);
     if (DW_SENT[f]) assert.match(src, /this\.dw\._frameUniforms\(u\);/, `${f}: and uploaded - ${DW_SENT[f]}`);
     else assert.match(src, /gl\.uniform4fv\([^\n]*uFocus/, `${f}: and uploaded`);

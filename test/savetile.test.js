@@ -294,7 +294,7 @@ test('TILE2: ONE tile for THREE panes, and the classes it draws belong to nobody
   // The drift this retired: three hand-rolled copies of the same four
   // lines is how three panes come to disagree about what a save is.
   assert.doesNotMatch(menu, /function slotCard\(/, 'the old per-pane card is gone');
-  assert.match(menu, /import \{ saveTile, cloudStateOf, saveFromCard, newerBackup \} from '\.\/saveTile\.js'/);   // + the newer-backup question (FIELD 2026-09-27, 0927b B1)
+  assert.match(menu, /import \{ saveTile, cloudStateOf, saveFromCard, newerBackup \} from '\.\.\/saveTile\.js'/);   // + the newer-backup question (FIELD 2026-09-27, 0927b B1)
   // AUDIT-312 F3: and the DECISION comes from there too, rather than
   // being re-inlined into a module no pin can drive. The gate is that
   // the menu asks; the arithmetic itself is pinned above.

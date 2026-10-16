@@ -788,9 +788,9 @@ test('FIX-F: the pane wears the skin’s own classes and adds no face of its own
     assert.ok(src.includes(fn), `${fn} must be driven, not reimplemented`);
   }
   const imports = [...src.matchAll(/from '([^']+)'/g)].map((m) => m[1]);
-  assert.ok(imports.includes('../systems/controlsConfig.js'));
+  assert.ok(imports.includes('../../systems/controlsConfig.js'));
   assert.deepEqual(imports.sort(),
-    ['../systems/controlsConfig.js', '../systems/inputActions.js', '../systems/modSettings.js', '../systems/textDatabases.js', '../systems/textManager.js', './input.js', './peerMenuBindCard.js'],   // PEERMENU1: the player menu's bind card - an enhanced-face card over its own pref, no classic canvas window; L10N3d: the text core, a leaf with no art; L10N3f: DFU's text databases, no art either
+    ['../../systems/controlsConfig.js', '../../systems/inputActions.js', '../../systems/modSettings.js', '../../systems/textDatabases.js', '../../systems/textManager.js', '../input.js', '../peerMenuBindCard.js'],   // PEERMENU1: the player menu's bind card - an enhanced-face card over its own pref, no classic canvas window; L10N3d: the text core, a leaf with no art; L10N3f: DFU's text databases, no art either
     'the enhanced pane drives the LAW modules and nothing else - dragging the '
     + 'classic canvas windows (controlsWindow/mouseControlsWindow/nativePanel) in '
     + 'would make the enhanced skin pay for art it never draws');

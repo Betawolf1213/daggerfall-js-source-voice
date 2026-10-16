@@ -225,7 +225,7 @@ test('EL1: the five lane shaders declare the 48-light arrays and the lane\'s two
   assert.match(EL_DECAL_FS, new RegExp(`uniform vec4 uPointLights\\[${EL_MAX_LIGHTS}\\];`), 'the lane\u2019s decal declares the lane\u2019s forty-eight, so the cap above never reads off its end');
   assert.equal(EL_LANE.decalFs, EL_DECAL_FS, 'and the lane carries it');
   assert.ok(!/uELExposure/.test(r.slice(0, r.indexOf('export class Renderer'))), 'no lane uniform in a classic shader');
-  assert.ok(!/import .* from '\.\/enhancedLighting\.js'/.test(r), 'the renderer does not import the lane - a host hands it over, and a classic page never loads its shaders into a program');
+  assert.ok(!/import .* from '(?:\.\.?\/)+(?:[\w-]+\/)*enhancedLighting\.js'/.test(r), 'the renderer does not import the lane - a host hands it over, and a classic page never loads its shaders into a program');
   assert.match(r, /const CLASSIC_MAX_LIGHTS = 16;/); assert.ok(!/16 \* 4|16 \* 3|Math\.min\(15,/.test(r), 'no literal cap in the renderer');
 });
 

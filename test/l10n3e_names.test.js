@@ -67,7 +67,7 @@ test('L10N3e the scan itself: the core\'s name lookups under any local name, a s
   try {
     mkdirSync(join(root, 'src/ui'), { recursive: true });
     writeFileSync(join(root, 'src/ui/a.js'), [
-      "import { getLocalizedLocationName as place, getLocalizedEnemyName } from '../systems/textManager.js';",
+      "import { getLocalizedLocationName as place, getLocalizedEnemyName } from '../../systems/textManager.js';",
       "import { getLocalizedItemName } from './elsewhere.js';",
       "export const FIRST = place(1, 'Daggerfall');",
       "export const shown = (f) => [getLocalizedEnemyName(f.id, f.name), getLocalizedItemName(3, 'x')];",

@@ -268,5 +268,5 @@ test('CAPT-TRADE the exchange\'s tab: each good\'s stand, its two prices and how
   // PIN MOVED (AUDIT CAPTAIN'S SEA B3/B11): the exchange for a ship lying to the quay at her helm alone, and her room with it
   assert.match(w, /if \(model\.atQuay\) model\.exchange = \(\) => harbourOffice\.exchange\(\{ uid: model\.uid \?\? null, cargo: model\.cargo\?\.\(\) \?\? null, room: \(\) => model\.room\?\.\(\) \?\? null \}\);/);
   assert.match(w, /registerItemUseHandler\(CHART_TEMPLATE, \(item, collection\) => \{\n\s+const r = harbourOffice\.readChart\(item\);\n\s+const i = r\.ok && Array\.isArray\(collection\) \? collection\.indexOf\(item\) : -1;\n\s+if \(i >= 0\) collection\.splice\(i, 1\);/);
-  assert.match(rd('src/systems/item/itemLaw.js'), /import '\.\/naval\/tradeGoods\.js';[^\n]*\nimport '\.\/naval\/treasureCharts\.js';/);
+  assert.match(rd('src/systems/item/itemLaw.js'), /import '\.\.\/naval\/tradeGoods\.js';[^\n]*\nimport '\.\.\/naval\/treasureCharts\.js';/);
 });

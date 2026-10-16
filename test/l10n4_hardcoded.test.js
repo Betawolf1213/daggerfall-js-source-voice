@@ -756,7 +756,7 @@ test('L10N4 the scan itself: prose counted; the text core\'s arguments, console 
   try {
     mkdirSync(join(root, 'src/ui'), { recursive: true });
     writeFileSync(join(root, 'src/ui/a.js'), [
-      "import { t } from '../systems/textManager.js';",
+      "import { t } from '../../systems/textManager.js';",
       "export const A = 'You have no gold left.';",
       "export const B = t('ui.gold.none', 'You have no gold left.');",
       "export function f(n) { console.log('this is a log line'); if (!n) throw new Error('this never shows'); return `${n} coins in the purse`; }",

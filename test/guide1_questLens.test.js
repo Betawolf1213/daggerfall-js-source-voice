@@ -393,7 +393,7 @@ test('GUIDE1 NOTHING THE JOURNAL HAS NOT SAID - the target over producer-minted 
 
 test('GUIDE1 ONE WALK, ONE HOME - the classic logbook takes GetLastPlaceMentionedInMessage from the lens and keeps no copy; the bridge makes the one lens and a host makes none; Message.getTextTokens still reveals by default (C#\'s literal true) and does not when told; the pause window\'s urgent line is QUEST_URGENT_SECONDS - not urgent at a day, urgent a second under (mutants: the default reveal off; the argument ignored; the literal back)', () => {
   const journal = rd('src/ui/quest/questJournal.js');
-  assert.match(journal, /import \{ lastPlaceMentionedInMessage\b[^}]*\} from '\.\/questLens\.js';/);
+  assert.match(journal, /import \{ lastPlaceMentionedInMessage\b[^}]*\} from '\.\.\/quest\/questLens\.js';/);
   assert.doesNotMatch(journal, /getMessageResources|_lastPlaceMentionedInMessage/, 'no private copy of the law');
   assert.match(journal, /const place = lastPlaceMentionedInMessage\(message\);/);
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) {

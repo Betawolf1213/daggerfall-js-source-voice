@@ -135,7 +135,7 @@ test('WATER-D1: inside drawFoes, EVERY world draw precedes the first screen-spac
 test('WATER-D1: no host draws the dungeon water itself, and both name the tile archive at the build', () => {
   // GENERATIVE over the scene directory: the context is the ONE caller.
   const dir = join(root, 'src/scenes');
-  for (const f of readdirSync(dir)) {
+  for (const f of readdirSync(dir, { recursive: true })) {
     if (!f.endsWith('.js') || f === 'dungeonContext.js') continue;
     assert.ok(!/renderer\.drawWater\(/.test(read(`src/scenes/${f}`)), `${f}: a host's own draw would run after drawFoes' overlay - the defect`);
   }
@@ -149,7 +149,7 @@ test('WATER-D1: the colour has one home, and the level law it draws is untouched
   const ctx = read('src/scenes/dungeonContext.js');
   assert.match(ctx, /export const DUNGEON_WATER_COLOR = Object\.freeze\(\[1, 1, 1, 0\.82\]\);/, 'the classic tile tinted only by alpha (AUDIT 65 CV-3/MC-5)');
   const dir = join(root, 'src/scenes');
-  for (const f of readdirSync(dir)) {
+  for (const f of readdirSync(dir, { recursive: true })) {
     if (!f.endsWith('.js') || f === 'dungeonContext.js') continue;
     assert.ok(!/\[1, 1, 1, 0\.82\]/.test(read(`src/scenes/${f}`)), `${f}: the literal lived in both hosts; it lives in the context now`);
   }

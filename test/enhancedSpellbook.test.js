@@ -77,7 +77,7 @@ test('PX23 book: it borrows every law and invents none', () => {
   assert.ok(rows[0].effects[0].group.length > 0);
   // ...and the source of the naming is the classic book's own module.
   const book = read('src/ui/enhanced/enhancedSpellbook.js');
-  assert.match(book, /from '\.\.\/systems\/spell\/spellEffects\.js'/, 'the same effectByKey spellbookWindow.js:"const template = effectByKey(key);" uses');
+  assert.match(book, /from '\.\.\/\.\.\/systems\/spell\/spellEffects\.js'/, 'the same effectByKey spellbookWindow.js:"const template = effectByKey(key);" uses');
   assert.match(book, /spellEffects, spellPointCost, effectNotFoundText,/, 'the laws are imported, not rewritten');
   assert.doesNotMatch(book, /tag === 'lycanthrope'|tag === 'vampire'/, 'the tags are constants, never typed');
 });
@@ -223,7 +223,7 @@ test('PX23b: the two icons the classic only shows on HOVER are printed as words'
   assert.deepEqual(spellFrame({ rangeType: 99, element: 99 }), { target: null, element: null },
     'an index off the end is nothing, not a blank chip');
   const src = read('src/ui/enhanced/enhancedSpellbook.js');
-  assert.match(src, /from '\.\/spellIcons\.js'/, 'the words are imported, never retyped');
+  assert.match(src, /from '\.\.\/spell\/spellIcons\.js'/, 'the words are imported, never retyped');
   assert.doesNotMatch(src, /'Caster only'|'Fire based'/);
 });
 

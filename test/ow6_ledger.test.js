@@ -546,7 +546,7 @@ test('OW6L by source: the relay\'s arm spends its own bucket before it asks for 
   assert.match(online, /if \(primary\) this\.owOk = relaySupportsOverworld\(relayV\);/);
   const law = rd('src/net/overworldLaw.js');
   const from = [...law.matchAll(/\bfrom\s+'([^']+)'/g)].map((m) => m[1]);
-  assert.deepEqual(from, ['./wire.js', './gateLaw.js', './raidLaw.js'], 'the relay\'s own files alone - never a systems or world module');
+  assert.deepEqual(from, ['./wire.js', './gate/gateLaw.js', './raid/raidLaw.js'], 'the relay\'s own files alone - never a systems or world module');
 });
 
 // ═══ THE HOST (scenes/world.js) - lifted and RUN ═══════════════════════════════════════════════════════════════════

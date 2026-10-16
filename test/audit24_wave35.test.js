@@ -45,7 +45,7 @@ test('audit24 wave35: the ranged band has ONE home, and the import runs one way'
   // declaring the band there and importing it here would close a cycle -
   // the third in three waves.
   assert.ok(attack.includes("from './enemyMotor.js';"), 'enemyAttack -> enemyMotor');
-  assert.equal(/from '\.\/enemyAttack\.js'/.test(motor), false, 'and never back');
+  assert.equal(/from '(?:\.\.?\/)+(?:[\w-]+\/)*enemyAttack\.js'/.test(motor), false, 'and never back');
   assert.equal((`${motor}${attack}${casting}`.match(/^export const M(IN|AX)_RANGED_DISTANCE = /gm) ?? []).length, 2,
     'declared once each');
 });

@@ -199,5 +199,5 @@ test('AUDIT BAY A14: HER FIRE, SMOKE, WAKE AND COLOURS GO WITH HER FLATS - under
   const lists = new Function('naval', 'csaRuntime', 'CSA_RENDER_MODE', 'CSA_FADE_FLATS', `${src}\nreturn csaParticleLists();`)(
     { enabled: true, boats: () => [going, coming] }, { AllBoats: [whole] }, { Mesh: 4 }, FADE_FLATS);
   assert.deepEqual([lists.wake.length, lists.drops.length, lists.flags.length], [2, 2, 2], 'mine and the one over FADE_FLATS - never the one under it');
-  assert.match(WORLD, /import \{ createComeSailAwayPool, CULL_DETAIL_PX, FADE_FLATS as CSA_FADE_FLATS \} from '\.\/comeSailAwayPool\.js';/);
+  assert.match(WORLD, /import \{ createComeSailAwayPool, CULL_DETAIL_PX, FADE_FLATS as CSA_FADE_FLATS \} from '\.\/comeSailAway\/comeSailAwayPool\.js';/);
 });

@@ -32,7 +32,7 @@ test('EB1 door: the reader has ONE construction site, the hook lives there, and 
   const door = read('src/ui/bookDoor.js');
   assert.match(door, /const model = new BookReaderWindow\(bookFile\);\s*\n[\s\S]{0,260}if \(isEnhanced\(\) && typeof document !== 'undefined'\) return enhancedBookOverlay\(model\);\s*\n\s*return model;/, 'one model, two faces');
   assert.match(door, /showReader\(createBookReaderWindow\(bookFile\)\);/, 'the hook opens through the door');
-  assert.match(door, /import\('\.\/enhancedBook\.js'\)/, 'dynamic: classic pays nothing');
+  assert.match(door, /import\('\.\/enhanced\/enhancedBook\.js'\)/, 'dynamic: classic pays nothing');
   assert.match(door, /unregister = registerOverlay\(exit\);/, 'PX28: Tab closes the book');
   assert.match(door, /z-index:14;image-rendering:pixelated/, 'above the enhanced pack (13): the inventory hands over THEN closes');
   assert.match(door, /const relock = \(\) => \{ if \(hostCanvas\) requestLook\(hostCanvas\); \};/, 'MAC1: the relock, on the canvas draw() taught it');
@@ -143,7 +143,7 @@ test('EB1 keys and the vendored book: Mac\'s own, its seams marked, its fold unt
   assert.match(book, /const pixelLayer = \(ctx, w, h, draw\) => \{/, 'EB2: the paper, the board and the stack at Raum\'s pixel size, blitted up');
   // the face: paint and bones - the model's law is imported, never re-read
   const src = read('src/ui/enhanced/enhancedBook.js');
-  assert.match(src, /import \{ placeBookLabels \} from '\.\/bookReader\.js';/);
+  assert.match(src, /import \{ placeBookLabels \} from '\.\.\/bookReader\.js';/);
   assert.doesNotMatch(src.replace(/^\s*\/\/.*$/gm, ''), /getPageTokens|RSC\.|TOKEN_TEXT/, 'no second reading of the token stream');
   assert.match(src, /placeBookLabels\(model\.lines, \(x\) => faces\[x\] \?\? faces\[0\], wrapW\)/, "LayoutBookLabels over FontPrefix's five cuts, at the leaf's width");
   assert.match(src, /if \(flipBook\(book, dir, now\(\)\)\) audio\.playOneShot\(SOUND\.PageTurn, 1\);/, 'the page turn per leaf');

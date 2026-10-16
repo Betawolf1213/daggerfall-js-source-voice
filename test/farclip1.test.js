@@ -299,7 +299,7 @@ test('FAR-CLIP1: the world draws a pixel whose TileMap the cap patched with the 
   assert.deepEqual(q.sort(dwClipLast).map((p) => p.n), ['near', 'mid', 'far', 'near patched', 'mid patched'], 'the patched pixels after the rest, near first within each: one swap of program a frame');
   assert.match(w, /latchModLoaded\(DEEP_WATERS_VENDOR, !!dwRender\);[^\n]*\n\s+if \(dwRender\) renderer\.prepareTerrainClip\(\);/, 'the mod\'s mount builds the clip program, beside its own');
   const cap = rd('src/world/deepWater/deepWaterCap.js');
-  assert.match(cap, /^import \{ CLIP_SENTINEL \} from '\.\/terrainSurface\.js';/m, 'the cap takes the byte from the TileMap format\'s module');
+  assert.match(cap, /^import \{ CLIP_SENTINEL \} from '\.\.\/terrain\/terrainSurface\.js';/m, 'the cap takes the byte from the TileMap format\'s module');
   assert.doesNotMatch(cap, /CLIP_SENTINEL = /, '...and never writes it down itself');
   assert.match(rd('src/render/renderer.js'), /^import \{ CLIP_SENTINEL \} from '\.\.\/world\/terrain\/terrainSurface\.js';/m, 'the renderer\'s clip variant reads it there too');
   // THE FOUR HOSTS: the fixed city runs no Deep Waters host and draws its ground plain; the interiors and the dungeon draw no terrain

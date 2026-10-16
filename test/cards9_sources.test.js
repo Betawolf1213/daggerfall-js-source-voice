@@ -164,7 +164,7 @@ test('CARDS9 the foes: a creature drops its own card - one draw at its card\'s t
   assert.equal(dropFoeCard({ mobileType: MOBILE_TYPES.Rat, items: null }, { rolls: () => 0 }), null, 'a body with no list takes none');
   assert.match(read('src/systems/card/cardSources.js'), /registerEnemyDeathHandler\(CARD_DROP_HANDLER, \(entity, opts = \{\}\) => \{ dropFoeCard\(entity, opts\); \}\);/);
   assert.equal(CARD_DROP_HANDLER, 'iliac-card');
-  assert.match(read('src/systems/worldTick.js'), /^import '\.\/cardSources\.js';/m, 'the app carries the import (AUDIT-THUNDERLOCK F1\'s wire)');
+  assert.match(read('src/systems/worldTick.js'), /^import '\.\/card\/cardSources\.js';/m, 'the app carries the import (AUDIT-THUNDERLOCK F1\'s wire)');
   // THE CAP keeps it: three Common pieces and a card, capped to three - the card stays
   const commons = [0, 1, 2].map((i) => ({ group: 'Weapons', templateIndex: 115 + i, value: 300 }));
   const items = [...commons, mintIliacCard('rat')];

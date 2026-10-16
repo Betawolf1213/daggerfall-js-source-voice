@@ -4,7 +4,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { planMove, rewriteSpecifiers, rewritePaths, rewriteRecords, blindSpots, brokenBy, relayHits, composeLedger, unresolvedIn, LEDGER, TEXT_EXT } from '../tools/moveModule.mjs';
+import { planMove, rewriteSpecifiers, rewritePaths, rewriteRecords, rewriteQuotedImports, specifierChanges, blindSpots, brokenBy, relayHits, composeLedger, unresolvedIn, LEDGER, TEXT_EXT } from '../tools/moveModule.mjs';
 
 // TIDY1 (2026-10-16, bible/01-Overview/Code-Map.md): THE MAP OF WHERE THINGS LIVE, AND THE TOOL THAT MOVES THEM.
 // The map is held to the tree both ways - a directory of code nobody wrote a row for fails, and so does a row for a
@@ -143,6 +143,27 @@ test('TIDY1: the move tool rewrites a mutant record\'s source as if it stood in 
   const t = rewriteRecords(twice, moved, 'tools/mutants/y.json');
   assert.equal(t.text, twice);
   assert.equal(t.blind.length, 1);
+});
+
+test('TIDY2: a pin quoting an import follows it where the move re-based it - read before the path pass, never against a file that kept it', () => {
+  // the importer and its target both move: the pin's quote is found in its OLD spelling, before any path in it is rewritten
+  const moves = [['src/ui/a.js', 'src/ui/q/a.js'], ['src/systems/x.js', 'src/systems/k/x.js']];
+  const texts = new Map([
+    ['src/ui/a.js', "import { x } from '../systems/x.js';\n"],
+    ['src/systems/x.js', 'export const x = 1;\n'],
+    ['test/a.test.js', String.raw`assert.match(rd('src/ui/a.js'), /from '\.\.\/systems\/x\.js'/); assert.ok(rd('src/ui/a.js').includes("from '../systems/x.js'"));`],
+  ]);
+  assert.equal(planMove(moves, texts).writes.get('test/a.test.js'),
+    String.raw`assert.match(rd('src/ui/q/a.js'), /from '\.\.\/\.\.\/systems\/k\/x\.js'/); assert.ok(rd('src/ui/q/a.js').includes("from '../../systems/k/x.js'"));`);
+  // a file the pin also names still spells it the old way: which file the pin reads is not known - named, not guessed
+  const changes = new Map([
+    ['src/ui/a.js', specifierChanges("from '../systems/x.js'", "from '../../systems/x.js'")],
+    ['src/ui/b.js', new Map([['../systems/x.js', '../systems/x.js']])],
+  ]);
+  const both = "for (const f of ['src/ui/a.js', 'src/ui/b.js']) assert.match(rd(f), /from '\\.\\.\\/systems\\/x\\.js'/);";
+  const r = rewriteQuotedImports(both, changes, 'test/b.test.js');
+  assert.equal(r.text, both);
+  assert.equal(r.blind.length, 1);
 });
 
 test('TIDY2: the ledger leads every path a file ever stood at to where it stands, and forgets one moved home', () => {

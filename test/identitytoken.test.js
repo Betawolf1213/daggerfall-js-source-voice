@@ -333,7 +333,7 @@ test('ACC1a: PURE, and both ends can import it', async () => {
   const imports = [...text.matchAll(/from\s+'(\.[^']+)'/g)].map((m) => m[1]);
   // PIN MOVED (FIELD BUGS 2026-10-14 QUEST-HOME, world201): and homeLaw.js's town and building shapes for a home order - it
   // imports nothing; the relay bundles it with this order
-  assert.deepEqual(imports, ['./wire.js', './guildLaw.js', './heraldryLaw.js', './siegeRef.js', './houseLaw.js', './homeLaw.js'], 'a new import here is a new file in the relay\'s bundle');
+  assert.deepEqual(imports, ['./wire.js', './guild/guildLaw.js', './heraldryLaw.js', './siege/siegeRef.js', './houseLaw.js', './homeLaw.js'], 'a new import here is a new file in the relay\'s bundle');
 });
 
 // ═══ ACC1d: THE TRIPWIRE FIRED, AND THIS IS WHAT REPLACED IT ═══════

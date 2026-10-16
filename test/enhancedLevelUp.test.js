@@ -106,7 +106,7 @@ test('LV1: each lane is counted and refused IN ITS OWN WORDS, imported rather th
   const v = src('src/ui/levelUp/levelUpView.js');
   assert.doesNotMatch(v, /'You must distribute/, 'quoted, never copied');
   assert.doesNotMatch(v, /'You must distribute all your points/);
-  assert.match(v, /import \{ mustDistributeBonusPointsText \} from '\.\/charsheet\.js'/);   // L10N3d: the row, read in the player's language
+  assert.match(v, /import \{ mustDistributeBonusPointsText \} from '\.\.\/charsheet\.js'/);   // L10N3d: the row, read in the player's language
 });
 
 // ── THE ROWS ASK THE LAW ──────────────────────────────────────────
@@ -505,8 +505,8 @@ test('LV1: every attribute has the port\'s OWN sentence, and no ARENA2 is read t
 
 test('LV1: the door hands this window to ALL FOUR HOSTS, and mounts it as a lazy chunk', () => {
   const door = src('src/ui/charSheetDoor.js');
-  assert.match(door, /import\('\.\/enhancedLevelUp\.js'\)/, 'MENU1: through the one lazy-chunk door');
-  assert.match(door, /mountEnhancedChunk\(\{\s*load: \(\) => import\('\.\/enhancedLevelUp\.js'\)/s);
+  assert.match(door, /import\('\.\/enhanced\/enhancedLevelUp\.js'\)/, 'MENU1: through the one lazy-chunk door');
+  assert.match(door, /mountEnhancedChunk\(\{\s*load: \(\) => import\('\.\/enhanced\/enhancedLevelUp\.js'\)/s);
   assert.match(door, /isEnhancedLevelUp: true/, 'the duck type the font-less escape asks for');
   // THE FOUR HOSTS RULE. Each of the four reaches a level-up screen
   // through the door and through nothing else - worldModes.js was the
@@ -672,7 +672,7 @@ test('LV1b: the chunk warms at boot, in the three hosts that warm the sheet - an
   assert.match(door, /export function warmLevelUpWindow\(\) \{/);
   assert.match(door, /if \(!isEnhanced\(\) \|\| typeof document === 'undefined'\) return null;/,
     'the classic skin pays for nothing, and node has no window to warm');
-  assert.match(door, /import\('\.\/enhancedLevelUp\.js'\)\.catch\(/,
+  assert.match(door, /import\('\.\/enhanced\/enhancedLevelUp\.js'\)\.catch\(/,
     'a rejection is SWALLOWED: a stale chunk is the door\'s to report when a player opens it, not the boot\'s');
   // THE FOUR HOSTS RULE: three wire it, the fourth is FLAGGED by name
   // rather than left unmentioned.
@@ -700,7 +700,7 @@ test('LV1b: the CHRONICLE answers the key it is named after, off the registry', 
   // the host consumed (the overlay is `isChoiceWindow`, so both key
   // seams hand it the raw code and return) and nobody answered.
   const cr = src('src/ui/enhanced/enhancedChronicle.js');
-  assert.match(cr, /import \{ overlayAction, eventMeans \} from '\.\/input\.js'/);   // AUDIT KB1: the event's own read; UXB1-S: shared or not
+  assert.match(cr, /import \{ overlayAction, eventMeans \} from '\.\.\/input\.js'/);   // AUDIT KB1: the event's own read; UXB1-S: shared or not
   assert.match(cr, /if \(eventMeans\(e, 'LogBook'\)\) \{/, 'off the REGISTRY, never the literal KeyL (AUDIT KB1: eventAction - a combo closes what it opened)');
   assert.doesNotMatch(cr, /e\.code === 'KeyL'/, 'a rebound key that cannot close its own window is the same bug one layer down');
   // The arm sits BELOW the text-entry guard: the note composer is a

@@ -370,7 +370,7 @@ test('B2: the host consumes the banking route that has been dead since G8', () =
   assert.match(code, /preloadBankArt\(/, 'and the art is preloaded with the rest');
   assert.match(code, /createBankAccounts\(/, 'the accounts are minted on first use');
   // the save carries them
-  const save = readFileSync(join(root, 'src', 'systems', 'save.js'), 'utf8');
+  const save = readFileSync(join(root, 'src/systems/save/save.js'), 'utf8');   // TIDY2: one path, so a move rewrites it
   assert.match(save, /snap\.bankAccounts =/);
   assert.match(save, /entity\.bankAccounts = snap\.bankAccounts\?\.length \? snap\.bankAccounts\.map\(\(a\) => \(\{ \.\.\.a \}\)\) : createBankAccounts\(\);/, 'JAN1: no accounts saved is the full table');
 });

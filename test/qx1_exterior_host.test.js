@@ -178,7 +178,7 @@ test('QX1: the fixed-city host mounts a quest bridge, and its world reads answer
   // The construction itself. `data` is the vendored pack and `world`
   // is the adapter below - the two seams createQuestBridge requires.
   assert.match(SRC, /questBridge = createQuestBridge\(\{\n {4}data: questPack,\n {4}world: questWorld,/);
-  assert.match(SRC, /const \{ loadQuestPack \} = await import\('\.\/questData\.js'\);/,
+  assert.match(SRC, /const \{ loadQuestPack \} = await import\('\.\/quest\/questData\.js'\);/,
     'a DYNAMIC import - a static one drags this host out of moduleload_smoke');
 
   // ...and the adapter, RUN. This is what "the machine mounts over

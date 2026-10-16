@@ -209,7 +209,7 @@ test('audit39 #73: the four staged item-geometry modules are not imported as if 
     assert.ok(!new RegExp(`import \\{[^}]*\\b${dead}\\b`).test(pp),
       `paperdollPayload.js no longer imports ${dead} without calling it`);
   }
-  assert.ok(pp.includes("import { STEEL_RAMP } from './pieces/cuirass.js';"),
+  assert.ok(pp.includes("import { STEEL_RAMP } from '../pieces/cuirass.js';"),
     'STEEL_RAMP stays - the pauldrons and helm are built from it');
   assert.ok(pp.includes('buildPauldrons(STEEL_RAMP)') && pp.includes('buildHelm(STEEL_RAMP)'));
   assert.ok(/STAGED, not shipped/.test(pp), 'the seam is named as staged, not silently dropped');

@@ -194,6 +194,6 @@ test('MWA4 (before the merge: "reorganize the marrowind attachment selector, rem
   // the two doors, by source (a picker and a confirm box are the browser's): Attach builds for a character in play
   // and leaves the rest to the doors; Remove unloads, then clears
   const menu = read('src/ui/enhanced/enhancedMenu.js');
-  assert.match(menu, /const n = await ds\.pickMorrowindFiles\(\);\n(?:\s*\/\/[^\n]*\n)*\s*if \(n > 0 && playerEntity\?\.chargenDone\) \{\n\s*const \{ buildArmsFor \} = await import\('\.\.\/combat\/weapon\/weaponRig\.js'\);\n\s*await buildArmsFor\(playerEntity\);/);
-  assert.match(menu, /async \(\) => \{\n\s*fpArm\.unload\(\);\n\s*const ds = await import\('\.\.\/scenes\/dataSource\.js'\);\n\s*await ds\.clearStoredMorrowind\(\);/);
+  assert.match(menu, /const n = await ds\.pickMorrowindFiles\(\);\n(?:\s*\/\/[^\n]*\n)*\s*if \(n > 0 && playerEntity\?\.chargenDone\) \{\n\s*const \{ buildArmsFor \} = await import\('\.\.\/\.\.\/combat\/weapon\/weaponRig\.js'\);\n\s*await buildArmsFor\(playerEntity\);/);
+  assert.match(menu, /async \(\) => \{\n\s*fpArm\.unload\(\);\n\s*const ds = await import\('\.\.\/\.\.\/scenes\/dataSource\.js'\);\n\s*await ds\.clearStoredMorrowind\(\);/);
 });

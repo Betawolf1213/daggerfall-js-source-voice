@@ -818,7 +818,7 @@ test('HT1: a foe struck - hostile, the to-hit roll with Accuracy, ContinuousDama
 
 test('HT1: the rig runs the component beside the widget - one per rig, the pool bound to it, Update then LateUpdate with the frame\'s inputs (the machine, the sheathe, the hand, the cast, the third person, the climb, the swim, the lycanthrope, the motion, the look, the camera, the collider, the raw keys, the sheathe door), the draw seam after the arms and before the widget', () => {
   const rig = rd('src/combat/weapon/weaponRig.js');
-  assert.match(rig, /import \{ createHandheldTorches, isHeldLight \} from '\.\.\/systems\/handheldTorches\.js';/);   // TORCH-VIS: and the mod's own light test, so the ladder asks it in the mod's words
+  assert.match(rig, /import \{ createHandheldTorches, isHeldLight \} from '\.\.\/\.\.\/systems\/handheldTorches\.js';/);   // TORCH-VIS: and the mod's own light test, so the ladder asks it in the mod's words
   assert.match(rig, /const handheld = createHandheldTorches\(\{ audio, say, torches(?:, dropRefusal)? \}\);/);
   assert.match(rig, /const handheldOn = \(\) => modSetting\('handheld-torches', 'Enabled'\);/);
   assert.match(rig, /pool\.setOnPickedUp\?\.\(\(item\) => handheld\.receivePickedUp\(item\)\);/, 'the pool hands a picked-up light to the component');

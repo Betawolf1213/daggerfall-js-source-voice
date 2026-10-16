@@ -474,7 +474,7 @@ test('SD7b THE CAST-BACK, run from the hosts\' own text: the mode machine stands
 
 test('SD7b the hosts by source: the dungeon host makes the Steps in the Hour alone, stands them once, rides them on the outer host\'s clock and frees them; the mode machine rides them beside the movers\' ride, BEFORE the motor, every frame of the dungeon - live only while the motor runs - stands a body cast back and hands the realm\'s clock on; the world host widens the edge, wards Levitate in the Hour and takes what the void costs', () => {
   const D = read('src/scenes/dungeonContext.js');
-  assert.match(D, /import \{ createSdSteps \} from '\.\/sdSteps\.js';/);
+  assert.match(D, /import \{ createSdSteps \} from '\.\/superDungeon\/sdSteps\.js';/);
   assert.match(D, /const sdSteps = _sdRealm \? createSdSteps\(\{ ending: sdMarksOf\(dfLocation\.sdRealm\)\[0\], renderer, audio \}\) : null;/);   // PIN MOVED (SD-LOOK S9): its Hollow's Ending on the vane
   assert.match(D, /if \(!_sdStepsStood\) \{ _sdStepsStood = true; sdSteps\.stand\(\{ dynamicDraws, collider \}\); \}\n\s+return sdSteps\.ride\(opts\.sdClock\?\.\(\) \?\? performance\.now\(\) \/ 1000, dt, body, live\);/);
   assert.match(D, /sdStepsRide\(dt, body, live = true\) \{ return sdStepsRide\(dt, body, live\); \},/);

@@ -233,7 +233,7 @@ test('BOARD-UI the board\'s chunk warmed: the Notice Board\'s window - its tabs 
   const warm = WARM_CHUNKS.filter((f) => String(f).includes('noticeWindow.js'));
   assert.equal(warm.length, 1, 'warmed, once');
   assert.equal((await warm[0]()).mountNoticeBoard, mountNoticeBoard, 'the very module the door mounts');
-  assert.match(src('src/ui/noticeDoor.js'), /load: \(\) => import\('\.\/noticeWindow\.js'\)/, 'the door still loads it through the one home');
+  assert.match(src('src/ui/noticeDoor.js'), /load: \(\) => import\('\.\.\/noticeWindow\.js'\)/, 'the door still loads it through the one home');
 });
 
 test('BOARD-UI the words: every fixed word of the board\'s tabs short, and none says "counting-house" - the service by its in-world name in every refusal was the board\'s commonest line (mutants: a line run long)', () => {

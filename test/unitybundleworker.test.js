@@ -225,7 +225,7 @@ test('DW1 spellings: the worker is spelled the way the bundler reads, imports on
   assert.deepEqual(imports, ['./unityBundle.js'], 'the worker\'s whole import graph is the reader');
   assert.match(worker, /globalThis\.onmessage = \(ev\) => handle\(ev\.data \?\? \{\}, /);
   const door = rd('src/combat/diverseWeapons/diverseWeaponsAssets.js');
-  assert.match(door, /import \{ openUnityBundle \} from '\.\.\/formats\/unity\/unityBundleClient\.js';/);
+  assert.match(door, /import \{ openUnityBundle \} from '\.\.\/\.\.\/formats\/unity\/unityBundleClient\.js';/);
   assert.ok(!/readUnityBundle/.test(door), 'the door never opens on this thread itself');
   assert.match(door, /const img = await b\.bundle\.rgba\(name\); if \(img\) return toScreenOrder\(img\);/, 'rows kept on this side of the wire (DWHD1)');
   assert.match(door, /if \(!manifest\) \{ bundle\.close\(\); continue; \}/, 'a bundle that is not a mod is closed, not leaked');

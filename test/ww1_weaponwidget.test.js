@@ -664,7 +664,7 @@ test('WW1: the bundle door - TryImportCifRci\'s spelling with the w_ prefix and 
   assert.equal(await weaponWidgetTexturesAttached(), false);
   assert.equal(await weaponWidgetImage('w_WEAPON04.CIF_0-0_Elven'), null);
   assert.equal(setWeaponWidgetSources(null, null), 0);
-  assert.match(rd('src/combat/weapon/weaponWidgetAssets.js'), /import \{ DFMOD_KEY_PREFIX \} from '\.\.\/systems\/seasonsIliacBayAssets\.js';/);
+  assert.match(rd('src/combat/weapon/weaponWidgetAssets.js'), /import \{ DFMOD_KEY_PREFIX \} from '\.\.\/\.\.\/systems\/seasonsIliacBayAssets\.js';/);
   // the atlas asks the door by that name and, until it lands, draws the classic frame at the classic size.
   // DW1: WHICH file is FPSWeapon.cs:637-644's choice - Diverse Weapons is on
   // by default (MO1), so a longsword asks LONGSWORD.CIF (WeaponBasics.cs

@@ -116,7 +116,7 @@ test('HUD-HELM THE CARD UNDER THE BAR: the sea\'s target card stands under the h
 
 test('HUD-HELM THE FOUR HOSTS: the panel has one builder, and it places itself - world.js, the only host with a sea to sail, draws it; exterior.js, worldModes.js and dungeonContext.js draw none (mutant: the build\'s placing dropped)', () => {
   const helm = rd('src/ui/enhanced/enhancedHelm.js');
-  assert.match(helm, /import \{ placeHudPieces \} from '\.\/hudPlacer\.js';/);
+  assert.match(helm, /import \{ placeHudPieces \} from '\.\.\/hud\/hudPlacer\.js';/);
   assert.ok(!helm.includes("from './hudLayout.js'"), 'through the leaf');
   assert.match(helm, /doc\.body\.append\(host\);\n {4}placeHudPieces\(doc\);/, 'placed the moment it is put on the page');
   assert.match(rd('src/scenes/world.js'), /import \{ drawEnhancedHelm, hideEnhancedHelm, enhancedHelmMounted, enhancedHelmBar,/);
@@ -125,7 +125,7 @@ test('HUD-HELM THE FOUR HOSTS: the panel has one builder, and it places itself -
 
 test('HUD-HELM THE HUD STAYS LIGHT: the editor\'s preview reaches the panel\'s module, so the panel reads the helm keys and the hull names from their leaves (systems/comeSailAway/comeSailAwayActions.js, comeSailAwayHulls.js) - never from the sea\'s law or the boat, which would carry the quest machine onto the HUD (AUDIT GUIDE O6) - and the sea reads the one table back (mutants: the keys or the names read from the sea\'s module or the boat)', async () => {
   const from = [...rd('src/ui/enhanced/enhancedHelm.js').matchAll(/^import [^;]*? from '([^']+)';/gm)].map((m) => m[1]);
-  assert.ok(from.includes('../systems/comeSailAway/comeSailAwayActions.js') && from.includes('../systems/comeSailAway/comeSailAwayHulls.js'), 'the two leaves');
+  assert.ok(from.includes('../../systems/comeSailAway/comeSailAwayActions.js') && from.includes('../../systems/comeSailAway/comeSailAwayHulls.js'), 'the two leaves');
   for (const heavy of ['../systems/comeSailAway/comeSailAway.js', '../systems/comeSailAway/comeSailAwayBoat.js']) assert.ok(!from.includes(heavy), `the panel reads nothing from ${heavy}`);
   assert.equal(/^import /m.test(rd('src/systems/comeSailAway/comeSailAwayActions.js')), false, 'the keys\' table a leaf');
   const [leaf, sea] = await Promise.all([import('../src/systems/comeSailAway/comeSailAwayActions.js'), import('../src/systems/comeSailAway/comeSailAway.js')]);

@@ -228,7 +228,7 @@ test('CG2: the four fields survive a save - a tally nobody persists never reache
   // that resets on load makes the guild unreachable by any player who
   // saves. SerializablePlayer.cs:144-147 writes all four in the same
   // player block as crimeCommitted, and so does this port.
-  const save = readFileSync(join(HERE, '..', 'src', 'systems', 'save.js'), 'utf8');
+  const save = readFileSync(join(HERE, '..', 'src/systems/save/save.js'), 'utf8');   // TIDY2: one path, so a move rewrites it
   for (const f of ['thievesGuildRequirementTally', 'darkBrotherhoodRequirementTally',
     'timeForThievesGuildLetter', 'timeForDarkBrotherhoodLetter']) {
     assert.match(save, new RegExp(`snap\\.${f} = entity\\.${f} \\?\\? 0`), `${f} is written`);

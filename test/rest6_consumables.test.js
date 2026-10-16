@@ -39,7 +39,7 @@ test('REST6 the seven: 1700-1706 registered with their weights, charges and pric
   const bed = createRestItem(REST_ITEM.Bedroll);
   assert.deepEqual([bed.name, bed.currentCondition, bed.group], ['Bedroll', 10, 'UselessItems2']);
   assert.equal(createRestItem(REST_ITEM.Firewood, { stackCount: 4 }).stackCount, 4);
-  assert.match(rd('src/systems/save/save.js'), /import '\.\/restItems\.js';/);
+  assert.match(rd('src/systems/save/save.js'), /import '\.\.\/rest\/restItems\.js';/);
   for (const t of Object.values(REST_ITEM)) assert.equal(typeof itemUseHandler(t), 'function', `${t} has its use`);
 });
 

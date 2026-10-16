@@ -358,7 +358,7 @@ test('AUDIT 27h H2-H7: the field keeps the browser\'s keys swallowed, its focus 
   const port = rd('src/ui/enhanced/enhancedPort.js');
   // H2: F5/F6/F11 typed in the field - the hosts' swallow never heard them, and F5 reloaded the page
   assert.match(port, /e\.stopPropagation\(\);   \/\/ the field's keys are the field's\n\s*swallowBrowserKey\(e\);/);
-  assert.match(port, /^import \{ swallowBrowserKey \} from '\.\/input\.js';/m);
+  assert.match(port, /^import \{ swallowBrowserKey \} from '\.\.\/input\.js';/m);
   // H3: a value clamped to the one already set repaints the field from the model
   assert.match(port, /fn\(v\);\n\s*sig = '';/);
   // H4: the focused field keeps its focus (by place), its uncommitted text and its selection through a rebuild

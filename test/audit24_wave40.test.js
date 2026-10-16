@@ -111,7 +111,7 @@ test('audit24 wave40: no window declares a fourth parameter that is not the scal
   // sheet's forward will fill with a number.
   const offenders = [];
   let seen = 0;
-  for (const file of readdirSync(UI_DIR).filter((f) => f.endsWith('.js'))) {
+  for (const file of readdirSync(UI_DIR, { recursive: true }).filter((f) => f.endsWith('.js'))) {
     const src = readFileSync(new URL(file, UI_DIR), 'utf8')
       .replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
     for (const m of src.matchAll(/^ {2}draw\(([^)]*)\)/gm)) {

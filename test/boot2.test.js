@@ -38,7 +38,7 @@ test('BOOT2: bitmapToColor32 has ONE home, the formats leaf - nobody takes it fr
   assert.deepEqual(defs, ['src/formats/color32Order.js'], 'the definition is in exactly one place, and it is the leaf');
   const hud = rd('src/ui/hud/hud.js');
   assert.doesNotMatch(hud, /export\s*\{[^}]*\bbitmapToColor32\b/, 'hud.js re-exports it - the hub edge is back for whoever takes the shortcut');
-  assert.match(hud, /import \{ bitmapToColor32 \} from '\.\.\/formats\/color32Order\.js';/, 'hud.js imports it from the leaf like every other caller');
+  assert.match(hud, /import \{ bitmapToColor32 \} from '\.\.\/\.\.\/formats\/color32Order\.js';/, 'hud.js imports it from the leaf like every other caller');
   const fromHud = [];
   for (const f of [...walk(join(root, 'src')), ...walk(join(root, 'test'))]) {
     const s = readFileSync(f, 'utf8');

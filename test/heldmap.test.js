@@ -383,7 +383,7 @@ test('MAP1: the enhanced skin gets the HELD MAP, holding the classic contract', 
     assert.equal(win.teleportationTravel, false);
     // the door names the successor and records the retirement
     const door = read('src/ui/travel/travelMapDoor.js');
-    assert.match(door, /import \{ HeldMapWindow \} from '\.\/heldMap\.js';/);
+    assert.match(door, /import \{ HeldMapWindow \} from '\.\.\/heldMap\.js';/);
     assert.doesNotMatch(door, /OverworldMapWindow/, 'the relief map is gone from the door');
     assert.match(door, /ui\/overworldMap\.js, RETIRED 2026-09-18/, 'and said so');
   });
@@ -426,7 +426,7 @@ test('MAP1: the relief map, its renderer and its probe are RETIRED - no file, no
     assert.equal(existsSync(new URL(`../${f}`, import.meta.url)), false, `${f} is gone`);
   }
   for (const f of ['src/ui/travel/travelMapDoor.js', 'src/ui/heldMap.js', 'src/ui/ink/inkMap.js', 'src/scenes/world.js']) {
-    assert.doesNotMatch(read(f), /overworldRenderer|from '\.\/overworldMap\.js'/, `${f} imports nothing retired`);
+    assert.doesNotMatch(read(f), /overworldRenderer|from '(?:\.\.?\/)+(?:[\w-]+\/)*overworldMap\.js'/, `${f} imports nothing retired`);
   }
   const css = read('src/ui/enhanced/enhancedStyle.js');
   assert.doesNotMatch(css, /\.ov[a-z]/, 'the .ov* rules went with the window they dressed');
@@ -2017,7 +2017,7 @@ test('MAP2 resume: a pending destination asks once on the first tick - Yes resum
 
 test('MAP2: the additions are the classic window\'s own functions, and the probe reports them', () => {
   const src = read('src/ui/heldMap.js');
-  assert.match(src, /import \{ teleportCost, teleportCostPrompt, portsFilterAllows, locationInfoRows, resumePrompt \} from '\.\/travelMapOptions\.js';/);
+  assert.match(src, /import \{ teleportCost, teleportCostPrompt, portsFilterAllows, locationInfoRows, resumePrompt \} from '\.\/travel\/travelMapOptions\.js';/);
   assert.match(src, /import \{ hasPortFor as hasPort \} from '\.\.\/systems\/travel\/travelPorts\.js';/);   // SEAT2b part two (PIN MOVED): HasPort, or a members' Harbour at a seat
   assert.match(src, /if \(!portsFilterAllows\(this\.portsFilter, summary\?\.mapID \?\? summary\?\.mapId\)\) return false;\s*\n\s*return checkLocationDiscovered\(summary\);/, 'the classic override, verbatim');
   assert.match(src, /get: \(\) => travelMapMarkedMapId\(\),\s*\n\s*set: \(v\) => setTravelMapMarkedMapId\(v\),/, 'the mark in the shared store');

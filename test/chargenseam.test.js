@@ -35,7 +35,7 @@ test('17i: no host CONSTRUCTS a ChargenFlow of its own', () => {
   // The seam (chargenSession.js) is the only place allowed to.
   const dir = 'src/scenes';
   const offenders = [];
-  for (const f of readdirSync(dir)) {
+  for (const f of readdirSync(dir, { recursive: true })) {
     if (!f.endsWith('.js')) continue;
     const src = readFileSync(join(dir, f), 'utf8');
     if (/new\s+ChargenFlow\s*\(/.test(src)) offenders.push(f);

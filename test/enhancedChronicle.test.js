@@ -32,8 +32,8 @@ test('MAC-K2: FOUR sections, and QUESTS leads them - the L key opens what it is 
   // one walk and one rail: the chronicle imports them rather than
   // re-deriving, and so does the pause tab.
   const cr = read('src/ui/enhanced/enhancedChronicle.js');
-  assert.match(cr, /from '\.\/questRail\.js'/, 'the chronicle takes the shared rail');
-  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /from '\.\/questRail\.js'/, 'and so does the pause tab');
+  assert.match(cr, /from '\.\.\/quest\/questRail\.js'/, 'the chronicle takes the shared rail');
+  assert.match(read('src/ui/enhanced/enhancedMenu.js'), /from '\.\.\/quest\/questRail\.js'/, 'and so does the pause tab');
   assert.doesNotMatch(cr, /getLogMessages|remainingTimeInSeconds/,
     'neither face walks the machine itself - that is scenes/quest/questBridge.js questLog()');
   assert.match(read('src/scenes/quest/questBridge.js'), /questLog\(\) \{/, 'the one walk');

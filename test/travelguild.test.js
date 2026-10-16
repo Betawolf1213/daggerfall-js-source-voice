@@ -70,7 +70,7 @@ test('TP1: it is a FOLD over memberships, as GuildManager.FastTravel is', () => 
   const two = { HolyOrder: { guild: akatosh, rank: 0 }, FightersGuild: { guild: 'Fighters Guild', rank: 9 } };
   assert.equal(guildFastTravel(null, 1000, { memberships: two }), 950,
     'the non-perk guild threads the value through unchanged');
-  const src = readFileSync(join(HERE, '..', 'src', 'systems', 'guildVariants.js'), 'utf8');
+  const src = readFileSync(join(HERE, '..', 'src/systems/guild/guildVariants.js'), 'utf8');
   const body = src.slice(src.indexOf('export function guildFastTravel'));
   const fn = body.slice(0, body.indexOf('\n}'));
   assert.match(fn, /for \(const m of Object\.values\(book \?\? \{\}\)\)/,
@@ -98,7 +98,7 @@ test('TP1: the discount is applied BEFORE the trip cost - it cuts the fare too',
   // cost would leave a member of Akatosh's temple paying the full fare
   // for a shorter trip, which is the plausible wrong wiring and the
   // reason the flag sat exactly where it did.
-  const src = readFileSync(join(HERE, '..', 'src', 'ui', 'travelPopUp.js'), 'utf8');
+  const src = readFileSync(join(HERE, '..', 'src/ui/travel/travelPopUp.js'), 'utf8');
   const discount = src.indexOf('guildFastTravel(');
   const cost = src.indexOf('calculateTripCost(');
   assert.ok(discount > 0 && cost > 0, 'both calls are present');
@@ -135,7 +135,7 @@ test('TP1: RaiseSkills has ONE home and fast travel calls it after the clamp', (
 });
 
 test('TP1: the two closed flags are gone from the popup header', () => {
-  const src = readFileSync(join(HERE, '..', 'src', 'ui', 'travelPopUp.js'), 'utf8');
+  const src = readFileSync(join(HERE, '..', 'src/ui/travel/travelPopUp.js'), 'utf8');
   // EF1c's rule: ban the claim as an assertion, not as a quotation.
   const unquoted = src.replace(/"[^"]*"/g, '""');
   for (const dead of [/no guild perk seam/, /RaiseSkills on arrival \(:380\), and/]) {

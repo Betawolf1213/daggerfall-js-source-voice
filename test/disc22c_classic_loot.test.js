@@ -117,7 +117,7 @@ test('DISC22-C: drawHud draws it on both classic branches, and the DOM plaque st
   assert.match(hud, /if \(loot\) drawLootPanel\(renderer, nativeMetrics\(canvas\), font, loot\.frame, loot\.lit, at\);/);   // AUDIT RETRO1 G5: `at` - beside the reticle where it is, above the bar
   // hud.js reads a LEAF: reaching for systems/quickLoot.js from here closed an import ring (itemTransfer.js initialised
   // before its own constants), so the frame module imports nothing at all
-  assert.doesNotMatch(hud, /from '\.\.\/systems\/quickLoot\.js'/);
+  assert.doesNotMatch(hud, /from '(?:\.\.?\/)+(?:[\w-]+\/)*quickLoot\.js'/);
   assert.doesNotMatch(readFileSync(join(ROOT, 'src/systems/classicLootFrame.js'), 'utf8'), /^import /m);
   const wp = readFileSync(join(ROOT, 'src/ui/worldPlaque.js'), 'utf8');
   // PIN MOVED (FIELD BUGS 2026-10-11g LOOT-SCROLL): the panel draws the plaque's window over the frame, its lit row counted from the window's top

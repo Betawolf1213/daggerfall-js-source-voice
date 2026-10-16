@@ -461,9 +461,10 @@ test('ENH-NOTICE2: the service flow - plain text steps ride the panel in place, 
 
 test('ENH-NOTICE2: THE ROSTER - the eight windows drawn on both skins that raise their own click-anywhere box, and (ENH-NOTICE3) the model, the three DOM windows and the wait page - no more and no fewer', () => {
   const ROSTER = ['potionMakerWindow', 'itemMakerWindow', 'spellMakerWindow', 'bankWindow', 'restWindow', 'covenWindow', 'guildServiceWindow', 'guildServiceWindows'];
+  const AT = { itemMakerWindow: 'item/', spellMakerWindow: 'spell/' };   // TIDY2: the two in feature folders
   for (const f of ROSTER) {
-    const src = rd(`src/ui/${f}.js`);
-    assert.match(src, /import \{ noticeFrame, noticeRelease \} from '\.\/enhancedNotice\.js'/, `${f}: the seam not imported`);
+    const src = rd(`src/ui/${AT[f] ?? ''}${f}.js`);
+    assert.match(src, /import \{ noticeFrame, noticeRelease \} from '(?:\.\/|(?:\.\.\/)+)enhanced\/enhancedNotice\.js'/, `${f}: the seam not imported`);
     assert.match(src, /noticeFrame\(this, /, `${f}: draw does not decide the frame`);
     assert.match(src, /_close\(\) \{[^}]*noticeRelease\(this\)/, `${f}: _close does not release - the host drops the window and never draws it again`);
   }

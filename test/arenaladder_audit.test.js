@@ -401,7 +401,7 @@ test('AUDIT ARENA-LADDER A2: a fighter on the sand is its bout\'s - no dispel or
   // the streaming host imports it; the dungeon's reaches it on the lazy foe subsystem (MT-iv: never static there)
   const w = rd('src/scenes/world.js'), dc = rd('src/scenes/dungeonContext.js'), ex = rd('src/scenes/exterior.js');
   assert.match(w, /dispelNearby\(list\.map\(\(no\) => no\.ref\)\.filter\(\(f\) => !inBout\(f\)\),/);
-  assert.match(w, /^(?:(?!\/\/).)*import \{[^}\n]*inBout[^}\n]*\} from '\.\.\/characters\/enemy\/enemyTargets\.js';/m, 'world.js: imported in code, not in a comment');
+  assert.match(w, /^(?:(?!\/\/).)*import \{[^}\n]*inBout[^}\n]*\} from '\.\.\/\.\.\/characters\/enemy\/enemyTargets\.js';/m, 'world.js: imported in code, not in a comment');
   assert.match(dc, /dispelNearby\(list\.map\(\(no\) => no\.ref\)\.filter\(\(f\) => !foeDeps\?\.inBout\?\.\(f\)\),/);
   assert.match(dc, /arrowAimDirection, bumpAtkCount, inBout, playerBoutOf \}\] = await Promise\.all\(\[/, 'the dungeon: taken off the lazy module');
   assert.match(dc, /resetAllyTeamOnPlayerAttack, boutGate, bumpAtkCount, inBout, playerBoutOf,/, '...and published on foeDeps');

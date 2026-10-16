@@ -28,7 +28,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { bindCursorToggle, cursorActive, setCursorActive } from '../src/player/pointerLock.js';
 import { actionOf, setBindings } from '../src/ui/input.js';
@@ -143,7 +143,7 @@ test('AUDIT 58 (f3/input): every ENTRY host binds ActivateCursor at most once (T
   assert.deepEqual(hosts.sort(), ['dungeon.js', 'exterior.js', 'interior.js', 'world.js'],
     'the hosts main.js boots - a fifth joins this sweep by existing, not by being remembered');
 
-  const all = new Set(readdirSync(SCENES).filter((f) => f.endsWith('.js')));
+  const all = new Set(readdirSync(SCENES, { recursive: true }).filter((f) => f.endsWith('.js')));
   const body = (f) => readFileSync(join(SCENES, f), 'utf8');
   const closure = (entry) => {
     const seen = new Set(); const stack = [entry];
@@ -151,7 +151,8 @@ test('AUDIT 58 (f3/input): every ENTRY host binds ActivateCursor at most once (T
       const f = stack.pop();
       if (seen.has(f) || !all.has(f)) continue;
       seen.add(f);
-      for (const m of body(f).matchAll(/from '\.\/([\w.-]+\.js)'/g)) stack.push(m[1]);
+      // TIDY2: every relative import, resolved - the hosts reach their feature folders through `./x/` and `../`
+      for (const m of body(f).matchAll(/from '(\.{1,2}\/[\w./-]+\.js)'/g)) stack.push(posix.normalize(posix.join(posix.dirname(f), m[1])));
     }
     return seen;
   };
@@ -167,7 +168,7 @@ test('AUDIT 58 (f3/input): every ENTRY host binds ActivateCursor at most once (T
   const wm = src('scenes/worldModes.js');
   assert.equal((wm.match(/^\s*bindCursorToggle\(/gm) ?? []).length, 0,
     'the mode machine registers no listener - both outdoor hosts build it unconditionally');
-  assert.doesNotMatch(wm, /bindCursorToggle \} from '\.\.\/player\/pointerLock\.js'/, 'and does not import it');
+  assert.doesNotMatch(wm, /bindCursorToggle \} from '(?:\.\.?\/)+(?:[\w-]+\/)*pointerLock\.js'/, 'and does not import it');
   assert.match(wm, /^ {4}modalWindowUp,$/m, 'it publishes its window predicate instead');
   for (const host of ['scenes/world.js', 'scenes/exterior.js']) {
     // TV1: the world host ORs the travel view in too - its cursor is the view's while it is up

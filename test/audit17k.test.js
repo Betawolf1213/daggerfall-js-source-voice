@@ -29,7 +29,7 @@ test('17k F2: no scene dereferences the player weapon without the null guard', (
   // member read in a host must go through ?. - the crash was
   // WEAPON_SKILL[playerWeapon.weapon.name] on the strike frame.
   const dir = join(root, 'src/scenes');
-  for (const f of readdirSync(dir).filter((n) => n.endsWith('.js'))) {
+  for (const f of readdirSync(dir, { recursive: true }).filter((n) => n.endsWith('.js'))) {
     const src = readFileSync(join(dir, f), 'utf8');
     for (const [i, line] of src.split('\n').entries()) {
       if (/playerWeapon\.weapon\.[a-zA-Z]/.test(line)) {

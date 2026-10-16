@@ -1150,7 +1150,7 @@ test('PX21c / WORLD-HOVER: the plaque names a pile without opening it, on the ta
   // so there is one answer to "where is the reticle" and the plaque
   // asks it. A docked large HUD moves the cross (ROAD-E E5) and moves
   // this with it.
-  assert.match(hov, /import \{ hudReticle \} from '\.\/hud\.js';/);
+  assert.match(hov, /import \{ hudReticle \} from '\.\/hud\/hud\.js';/);
   assert.match(read('src/ui/hud/hud.js'), /export const hudReticle = \(canvas\) => \(\{[\s\S]{0,200}largeHudHeight: dockedLargeHudHeight\(lastLargeHudBar\),/);
   assert.match(hov, /crosshairCentreY\(canvas\.height, largeHudHeight\) \+ CROSSHAIR_ARM \* scale\) \/ dpr \+ PLAQUE_GAP/);
   assert.match(css, /\.wplaque \{ position: fixed; left: var\(--wp-x, 50%\); top: var\(--wp-top, 55%\);/);
@@ -1170,7 +1170,7 @@ test('PX21c / WORLD-HOVER: the plaque names a pile without opening it, on the ta
   // `button`, `#app`) onto the classic page. "A player who chose
   // classic never loads a byte of this" is enhancedStyle.js's own
   // doctrine, and this is the line that keeps it true.
-  assert.match(hov, /import \{ isEnhanced \} from '\.\.\/systems\/uiSkin\.js';/);
+  assert.match(hov, /import \{ isEnhanced \} from '\.\.\/\.\.\/systems\/uiSkin\.js';/);
   // BOTH doors gate, and each gates FIRST. worldHoverFrame is the one
   // four hosts call, and it must refuse before it pulls a target list
   // or casts a ray, not only before it paints.

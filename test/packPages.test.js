@@ -82,7 +82,7 @@ test('PX31: where things live - the pages a player looks for', () => {
 
 test('PX31: the pack draws the pages; the classic keeps DFU\'s four', () => {
   const src = read('src/ui/enhanced/enhancedInventory.js');
-  assert.match(src, /import \{ PACK_PAGES, PAGE_IDS, pageOf, filterByPage \} from '\.\/packPages\.js';/);
+  assert.match(src, /import \{ PACK_PAGES, PAGE_IDS, pageOf, filterByPage \} from '\.\.\/packPages\.js';/);
   assert.doesNotMatch(src.replace(/^\s*(\/\/|\*|\/\*).*$/gm, ''), /filterByTab\(|\bTABS\b/, 'the pack no longer reads the four (its prose may still name them)');
   // PIN MOVED (WALLET1): the pages are drawn from the pack less what its wallet holds (`paged` - systems/walletItem.js)
   assert.match(src, /tabs: PACK_PAGES\.map\(\(\[tab, label\]\) => \(\{ tab, label, items: filterByPage\(paged, tab\) \}\)\)/);

@@ -124,9 +124,9 @@ test('PX30: it is a READOUT, and it is updated rather than rebuilt', () => {
   // THE ONE BUNDLE WALK. The first draft invented a second one that
   // read a shape nothing produces, and the row came back empty.
   // BUFF-END: beside it, the ONE law of which bundle the player may end
-  assert.match(src, /import \{ liveBundles, canEndBundle, endBundle, endedSpellText \} from '\.\.\/systems\/mysticism\.js'/);
+  assert.match(src, /import \{ liveBundles, canEndBundle, endBundle, endedSpellText \} from '\.\.\/\.\.\/systems\/mysticism\.js'/);
   assert.doesNotMatch(src, /entity\?\.effects\?\.bundles/, 'no second walk');
-  assert.match(read('src/ui/hud/hudActiveSpells.js'), /import \{ liveBundles, canEndBundle \} from '\.\.\/systems\/mysticism\.js'/,
+  assert.match(read('src/ui/hud/hudActiveSpells.js'), /import \{ liveBundles, canEndBundle \} from '\.\.\/\.\.\/systems\/mysticism\.js'/,
     'the same one the classic icons read');
 });
 
@@ -142,7 +142,7 @@ test('PX30b: the breath bar and the two hands - each only when there is one', ()
   // DETECT_MARKER_RGB for the Detect markers); the law pinned here is
   // that the threshold comes from the classic HUD rather than being
   // restated, so the pin asks for the name, not the whole list.
-  assert.match(src, /import \{ compassScroll, breathShortThreshold[^}]*\} from '\.\/hud\.js'/,
+  assert.match(src, /import \{ compassScroll, breathShortThreshold[^}]*\} from '\.\.\/hud\/hud\.js'/,
     'the threshold is the classic HUD\'s own');
   assert.match(read('src/ui/hud/hud.js'), /export const breathShortThreshold = \(liveEndurance\) => \(liveEndurance >> 3\) \+ 4;/);
   assert.match(src, /maxBreath\(vitals\) \|\| 1/, 'and the ceiling is statMods\', not a number typed here');
@@ -271,7 +271,7 @@ test('PX30d: fatigue has no FIELD, it has a LAW - and the bar said 576000%', () 
   // snapshot is built: it was reading the raw entity while the classic
   // read the law. Same law, same module, is the fix.
   const src = read('src/ui/enhanced/enhancedHud.js');
-  assert.match(src, /import \{ maxBreath, maxFatigue, liveStat \} from '\.\.\/systems\/statMods\.js'/);
+  assert.match(src, /import \{ maxBreath, maxFatigue, liveStat \} from '\.\.\/\.\.\/systems\/statMods\.js'/);
   assert.match(src, /\['fatigue', parts\.fatigue, vitals\.fatigue \?\? 0, maxFatigue\(vitals\) \|\| vitals\.maxFatigue \|\| 1\]/);
   assert.match(read('src/systems/statMods.js'),
     /export function maxFatigue\(entity\) \{\s*\n\s*return \(liveStat\(entity, 'strength'\) \+ liveStat\(entity, 'endurance'\)\) \* FATIGUE_MULTIPLIER;/);
@@ -294,8 +294,8 @@ test('PX32: the reticle - the enhanced skin had NO crosshair and NO mode word', 
   // mode's word the crosshair (Grab alone keeps the plain cross - it is
   // the mode you aim in), which styles show a corner word.
   const src = read('src/ui/enhanced/enhancedHud.js');
-  assert.match(src, /import \{ crosshairEnabled, interactionIconStyle, iconReplacesCrosshair, modeIconEnabled, MODE_LABEL \} from '\.\/hudCrosshair\.js'/);
-  assert.match(src, /import \{ getInteractionMode \} from '\.\.\/player\/interactionMode\.js'/);
+  assert.match(src, /import \{ crosshairEnabled, interactionIconStyle, iconReplacesCrosshair, modeIconEnabled, MODE_LABEL \} from '\.\.\/hud\/hudCrosshair\.js'/);
+  assert.match(src, /import \{ getInteractionMode \} from '\.\.\/\.\.\/player\/interactionMode\.js'/);
   assert.match(src, /const showCross = aim && crosshairEnabled\(\) && !\(asCross && mode !== 'grab'\);/);
   assert.match(src, /const showCentreWord = aim && crosshairEnabled\(\) && asCross && mode !== 'grab' && !!label;/);
   assert.match(src, /const showCorner = aim && !asCross && modeIconEnabled\(style\) && !!label;/);

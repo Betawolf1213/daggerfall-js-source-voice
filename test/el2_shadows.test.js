@@ -334,6 +334,6 @@ test('EL2: the renderer\'s wiring - the three draw paths record behind one gate,
   assert.match(r, /this\._shadows = this\._shadowPass \?\?= new ShadowPass\(this\.gl, \{ build: \(vs, fs\) => this\._buildProgram\(vs, fs\), vs: \{ mesh: VS, bb: BB_VS, terrain: TERRAIN_VS, char: CHAR_VS, charSkin: CHAR_SKIN_VS \} \}\);/);   // PIN MOVED (MWNPC16): and the skinned body's vertex shader, for a Morrowind body's own shadow
   assert.match(r, /if \(this\._shadows\) this\._shadows\.upload\(this\._el\[key\]\.shadow\);/);
   const sp = read('src/render/shadowPass.js');
-  assert.ok(!/from '\.\/renderer\.js'/.test(sp), 'the pass imports nothing of the renderer');
-  assert.ok(!/from '\.\/enhancedLighting\.js'/.test(sp), 'nor of the lane');
+  assert.ok(!/from '(?:\.\.?\/)+(?:[\w-]+\/)*renderer\.js'/.test(sp), 'the pass imports nothing of the renderer');
+  assert.ok(!/from '(?:\.\.?\/)+(?:[\w-]+\/)*enhancedLighting\.js'/.test(sp), 'nor of the lane');
 });

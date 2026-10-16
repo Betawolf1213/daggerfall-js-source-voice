@@ -113,7 +113,7 @@ test('FT0: every feature is reachable from every rail - ORG2: through Settings, 
   assert.doesNotMatch(menu, /\['features', 'Features'\],/, 'nor in the pause system rail (SYSTEM_PANES)');
   assert.doesNotMatch(menu, /features: paneFeatures,|function paneFeatures\(/, 'no pane, no dispatch');
   assert.match(menu, /if \(id === 'features'\) id = 'settings';/, 'a door still named features (a probe, an old link) lands on Settings');
-  assert.match(menu, /import \{ FEATURES, KINDS, KIND_ORDER, featureForControl, resolveControl, modModules, modDials, featureSearchText \} from '\.\.\/systems\/features\.js';/);
+  assert.match(menu, /import \{ FEATURES, KINDS, KIND_ORDER, featureForControl, resolveControl, modModules, modDials, featureSearchText \} from '\.\.\/\.\.\/systems\/features\.js';/);
   // the Features home's three kinds are filters over every tab now, after All and Changed
   assert.match(menu, /const OPT_FILTERS = Object\.freeze\(\[\['all', 'All'\], \['changed', 'Changed'\], \['enhanced', 'Enhanced'\], \['mod', 'Mods'\], \['classic', 'Daggerfall Unity'\]\]\);/);
   for (const k of KIND_ORDER) assert.match(menu, new RegExp(`\\['${k}', '`), `the ${k} filter`);

@@ -31,7 +31,7 @@ function* nodes(n, parent = null, key = null) {
 function seams() {
   const out = [];
   const dir = join(ROOT, 'src/scenes');
-  for (const f of readdirSync(dir).filter((n) => n.endsWith('.js')).sort()) {
+  for (const f of readdirSync(dir, { recursive: true }).filter((n) => n.endsWith('.js')).sort()) {
     const src = readFileSync(join(dir, f), 'utf8');
     const m = HEADER.exec(src);
     if (!m) continue;

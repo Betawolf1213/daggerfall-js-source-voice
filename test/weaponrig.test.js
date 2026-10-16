@@ -164,7 +164,7 @@ test('weaponRig: envAttack - a door in reach bashes and consumes; others Receive
 });
 
 test('FX1 (F024/F025): the show clocks - the bow cooldown FREEZES the state, an equip countdown shows empty hands', () => {
-  const rig = readFileSync(join(ROOT, 'src', 'combat', 'weaponRig.js'), 'utf8');
+  const rig = readFileSync(join(ROOT, 'src/combat/weapon/weaponRig.js'), 'utf8');   // TIDY2: one path, so a move rewrites it
   // F024: WeaponManager.Update RETURNS EARLY on cooldown (:230-233),
   // leaving ShowWeapon at its prior value - the latch is that value.
   // The old code hid the bow through the ~1.3s cooldown (blink).

@@ -195,7 +195,7 @@ function calledSeams() {
   for (const f of readdirSync(join(ROOT, dir))) {
     if (!f.endsWith('.js')) continue;
     const src = read(join(dir, f));
-    for (const m of src.matchAll(/\bworld\??\.(\w+)/g)) names.add(m[1]);
+    for (const m of src.matchAll(/\bworld\??\.(\w+)/g)) if (m[1] !== 'js') names.add(m[1]);   // TIDY2: `scenes/world.js` in a comment is no seam
     // Locals bound to the world seam ITSELF - `const w = hooks?.world;`
     // and `const w = world();`, the two shapes questMacros.js uses.
     // The initialiser must END at `world` (or `world()`): a local bound

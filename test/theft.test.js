@@ -149,7 +149,7 @@ test('PT1: Dice100 has ONE home and the tree stopped writing it out', () => {
     const s = codeOnly(read(p));
     assert.doesNotMatch(s, /Math\.floor\(\s*(rolls|this\._rolls)\(\)\s*\*\s*100\s*\)\s*>=/,
       `${p} still writes Dice100.FailedRoll out by hand`);
-    assert.match(s, /from '\.\.\/combat\/formulas\.js'/);
+    assert.match(s, /from '\.\.\/\.\.\/combat\/formulas\.js'/);
   }
   // and the strip is not vacuous - it must leave the code it is judging
   assert.match(codeOnly(read('src/systems/theft.js')), /export function privatePropertyTheft/);

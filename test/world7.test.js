@@ -76,7 +76,7 @@ test('WORLD7: the chain by source - the hosts hand the played step under the sha
   for (const p of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = rd(p);
     assert.match(s, /questClockStepMax: \(\) => \(sharedClockOn\(\) \? PLAYED_STEP_MAX_SECONDS : Infinity\),/, p);
-    assert.match(s, /import \{ PLAYED_STEP_MAX_SECONDS \} from '\.\.\/systems\/quest\/clock\.js';/, `${p}: one home for the step`);
+    assert.match(s, /import \{ PLAYED_STEP_MAX_SECONDS \} from '\.\.\/\.\.\/systems\/quest\/clock\.js';/, `${p}: one home for the step`);
   }
   assert.match(rd('src/scenes/quest/questBridge.js'), /questClockStepMax: \(\) => ctx\.questClockStepMax\?\.\(\) \?\? Infinity,/);
   assert.equal((rd('src/systems/quest/machine.js').match(/questClockStepMax: \(\) => this\.deps\.questClockStepMax\?\.\(\) \?\? Infinity/g) ?? []).length, 4);   // QUEST1: receiveSharedQuest is the fourth door

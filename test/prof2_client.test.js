@@ -432,6 +432,6 @@ test('PROF2 hosts: the streaming world stands every kind through the one host, i
   assert.match(d, /if \(dfLocation\?\.spawned \|\| isGateArena\(dfLocation\) \|\| isArenaFloor\(dfLocation\) \|\| !Number\.isSafeInteger\(dfLocation\?\.mapTableData\?\.mapId\)\) return null;/, 'a spawned dungeon grows none, nor the Burning Court (AUDIT 29 D5), nor the arena\'s floor (ARENA2)');
   assert.match(src('src/ui/hud/hud.js'), /drawNodeCompassMarks\(renderer, nodes, playerXZ, heading01, \{ bx, by, bw, s \}\);/);   // NODE-MARKS: in each profession's colour
   assert.match(src('src/ui/enhanced/enhancedHud.js'), /drawNodeMarks\(opts\.nodes \?\? null, opts\.playerXZ \?\? null, heading01\);/);
-  assert.match(src('src/systems/save/save.js'), /import '\.\/profTemplates\.js';/, 'every scene a save loads in knows the new templates');
+  assert.match(src('src/systems/save/save.js'), /import '\.\.\/professions\/profTemplates\.js';/, 'every scene a save loads in knows the new templates');
   assert.doesNotMatch(src('src/scenes/exterior.js'), /gatherHost|createProfBook/, 'the fixed city: no wilderness, no nodes (PROF0 17.1, FLAGGED)');
 });

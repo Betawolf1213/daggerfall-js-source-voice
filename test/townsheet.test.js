@@ -410,7 +410,7 @@ test('EM7: the quarters and their colours have ONE HOME, and BOTH skins read it 
   // could have come to be drawn as a shop on one map and a house on the
   // next. The ladder answers for both now.
   const classic = src('src/ui/exteriorAutomapWindow.js');
-  assert.match(classic, /from '\.\/townQuarters\.js'/, 'the classic window asks the one home');
+  assert.match(classic, /from '\.\/town\/townQuarters\.js'/, 'the classic window asks the one home');
   for (const dead of [/const TEMPLE_SET = new Set/, /const SHOP_SET = new Set/,
     /const HOUSE_SET = new Set/, /const SHOWALL_SET = new Set/, /const TAVERN_BYTE = /]) {
     assert.doesNotMatch(classic, dead, 'a second copy of the groups is a second answer');

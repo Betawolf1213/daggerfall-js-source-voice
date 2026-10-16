@@ -154,7 +154,7 @@ test('D4: the HUD parent panel is ONE colour with TWO writers', () => {
   // ...and ui/hud/hud.js actually feeds both from the fade layer, in DFU's
   // order: tick the fade, let the flicker overwrite, draw once.
   const hud = src('ui/hud/hud.js');
-  assert.match(hud, /import \{ hudFade \} from '\.\/fadeLayer\.js'/);
+  assert.match(hud, /import \{ hudFade \} from '\.\.\/fadeLayer\.js'/);
   const tick = hud.indexOf('hudFade.tickFade(dt);');
   const cycle = hud.indexOf('_flicker.nextCycle({');
   const write = hud.indexOf('if (c) hudFade.backgroundColor = c;');
